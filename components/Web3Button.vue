@@ -38,25 +38,31 @@ const closeConnection = () => {
       </button>
     </template>
     <template v-slot="{ closeModal }">
-      <div class="bg-gray-850 rounded-[20px] p-4">
-        <div class="flex items-center justify-end">
-          <button @click="closeModal" aria-label="Close modal">
-            <SVGX class="w-4 h-4" />
-          </button>
-        </div>
-        <div class="flex flex-col items-center justify-center mb-6 gap-3">
-          <span class="text-[26px] font-bold">Connect wallet</span>
-          <span class="text-center w-5/6 text-gray-400 text-xs">
+      <div class="relative bg-[#111827] rounded-[30px] px-12 py-10 text-center">
+        <button class="absolute top-0 right-0 m-6" @click="closeModal" aria-label="Close modal">
+          <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="30" height="30" rx="15" fill="#1E293B" />
+            <path d="M18.5 11.5L11.5 18.5" stroke="white" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+            <path d="M11.5 11.5L18.5 18.5" stroke="white" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </button>
+        <div class="flex flex-col items-center justify-center mb-7 gap-4">
+          <span class="text-lg">Connect wallet</span>
+
+          <span class="text-center text-slate-400 text-xs leading-5 font-medium">
             By connecting your wallet, you agree to our
             <a href="#" class="font-semibold text-blue-500">Terms of Service</a>
             and our
             <a href="#" class="font-semibold text-blue-500">Privacy Policy</a>
           </span>
         </div>
-        <ul class="grid gap-[12px] px-2 pb-2">
+
+        <ul class="grid gap-[15px] px-2 pb-2">
           <li :key="provider.name" v-for="provider in providers">
             <button @click="connect(closeModal, provider)"
-              class="p-5 w-full bg-opacity-5 rounded-[8px] group hover:!bg-opacity-10 hover:text-white transition-colors flex items-center gap-5 text-slate-400"
+              class="p-5 w-full bg-gray-850 rounded-[40px] group hover:!bg-opacity-10 hover:text-white transition-colors flex items-center gap-5 text-slate-400"
               :class="
                 provider.name === 'Metamask'
                   ? 'hover:bg-orange-50'
@@ -65,17 +71,23 @@ const closeConnection = () => {
               <div class="flex items-center flex-1 gap-5">
                 <component :is="provider.logo" />
 
-                <span class="text-gray-500 font-bold text-[16px]" :class="
+                <span class="text-white text-[16px]" :class="
                   provider.name === 'Metamask'
                     ? 'group-hover:text-orange-500'
                     : 'group-hover:text-blue-500'
                 ">{{ provider.name }}</span>
               </div>
-              <SVGArrowRight class="transition-all text-blue-400 transform group-hover:translate-x-1" :class="
+
+              <svg class="transition-all text-blue-400 transform group-hover:translate-x-1" :class="
                 provider.name === 'Metamask'
                   ? 'group-hover:text-orange-500'
                   : 'group-hover:text-blue-500'
-              " />
+              " width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.75 9H14.25" stroke="#64748B" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <path d="M9 3.75L14.25 9L9 14.25" stroke="#64748B" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
             </button>
           </li>
         </ul>

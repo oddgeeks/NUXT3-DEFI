@@ -55,7 +55,7 @@ defineExpose({
             leave-to="opacity-0"
           >
             <div
-              class="fixed inset-0 transition-opacity bg-white/10 backdrop-filter backdrop-blur-[2px]"
+              class="fixed inset-0 transition-opacity bg-slate-200/20 backdrop-filter backdrop-blur-[4px]"
               :class="backdropClass"
             />
           </TransitionChild>
