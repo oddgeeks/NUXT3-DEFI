@@ -52,8 +52,7 @@ const connect = async () => {
 
         </div>
 
-        <p class="text-slate-400 text-xs text-center">You need the WalletConnect app to be open to popup transactions.
-          You will not receive transaction requests when it is not open.</p>
+        <p class="text-slate-400 text-xs text-center">You need the Avocado web app to be open to popup transactions. You will not receive transaction requests when it is not open. Please don't close the tab.</p>
 
         <div class="bg-gray-850 rounded-[20px] divide-y divide-slate-800" v-if="wcStore.sessions.length">
           <template v-for="session in wcStore.sessions">
