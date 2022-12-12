@@ -69,7 +69,7 @@ const { account} = useWeb3();
                     <p class="font-semibold text-lg">Connect your wallet to see the balances</p>
 
                     <div class="w-28">
-                        <Web3Button button-class="bg-blue-500 hover:bg-blue-600" button-only />
+                        <Web3Button button-only />
                     </div>
                 </div>
             </div>

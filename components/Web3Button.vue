@@ -32,7 +32,7 @@ const closeConnection = () => {
 <template>
   <CommonModal containerClass="md:max-w-[364px] rounded-full shadow-2xl">
     <template #reveal="{ openModal }">
-      <button v-show="!active" class="w-full bg-slate-800 text-white rounded-[20px] py-2.5 px-4" :class="buttonClass"
+      <button v-show="!active" class="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-[20px] py-2.5 px-5" :class="buttonClass"
         @click="openModal">
         Connect
       </button>
