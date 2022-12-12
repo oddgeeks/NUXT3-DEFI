@@ -39,7 +39,7 @@ watch(() => [props.chainId], async () => {
   bridgeToChainId.value = props.chainId === "137" ? "10" : "137"
 }, { immediate: true })
 
-watch(() => [props.chainId, bridgeToChainId.value], async () => {
+watch(bridgeToChainId, async () => {
   const { data } = await http.get("https://api.socket.tech/v2/token-lists/to-token-list", {
     headers: {
       "api-key": "645b2c8c-5825-4930-baf3-d9b997fcd88c",
