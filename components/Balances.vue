@@ -1,14 +1,14 @@
 <script setup>
 const { tokenBalances, safeAddress } = useAvocadoSafe();
-const { account} = useWeb3();
+const { account } = useWeb3();
 </script>
 <template>
     <div>
         <h2 class="font-semibold mb-5">Balances</h2>
 
         <div class="relative">
-            <div :class="{ 'blur': !safeAddress }" class="bg-gray-850 rounded-[20px] overflow-hidden">
-                <div class="overflow-y-auto max-h-[600px]">
+            <div class="bg-gray-850 rounded-[20px] overflow-hidden">
+                <div class="overflow-y-auto max-h-[600px]" :class="{ 'blur': !safeAddress }">
                     <table class="table w-full">
                         <tbody class="divide-y divide-slate-800">
                             <template v-if="account && safeAddress">
