@@ -32,8 +32,8 @@ const closeConnection = () => {
 <template>
   <CommonModal containerClass="md:max-w-[364px] rounded-full shadow-2xl">
     <template #reveal="{ openModal }">
-      <button v-show="!active" class="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-[20px] py-2.5 px-5" :class="buttonClass"
-        @click="openModal">
+      <button v-show="!active" class="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-[20px] py-2.5 px-5"
+        :class="buttonClass" @click="openModal">
         Connect
       </button>
     </template>
@@ -92,7 +92,7 @@ const closeConnection = () => {
   </CommonModal>
   <button v-show="(active && !buttonOnly)" @click="closeConnection"
     class="w-full bg-slate-800 text-white rounded-[30px] text-white inline-flex items-center justify-between px-4 py-1.5 gap-3.5 ">
-    <div v-if="false" class="flex items-center space-x-2">
+    <div class="flex items-center">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
           d="M0 10C0 4.47715 4.47715 0 10 0H15C17.7614 0 20 2.23858 20 5V10C20 15.5228 15.5228 20 10 20C4.47715 20 0 15.5228 0 10Z"
@@ -101,15 +101,10 @@ const closeConnection = () => {
           d="M15 10C15 12.7614 12.7614 15 10 15C7.23858 15 5 12.7614 5 10C5 7.23858 7.23858 5 10 5C12.7614 5 15 7.23858 15 10Z"
           fill="#1E293B" />
       </svg>
-
-
-      <span>{{ gasBalance }} USDC</span>
     </div>
 
     <span class="flex items-center justify-between gap-3.5 font-semibold">
-
-      <!-- bg-slate-600 -->
-      <div class="flex flex-row items-center gap-2.5 py-1.5 px-3  rounded-[30px] leading-5">
+      <div class="flex flex-row items-center gap-2.5 py-1.5 px-3 bg-slate-600 rounded-[30px] leading-5">
         {{ shortenHash(account) }}
       </div>
 
