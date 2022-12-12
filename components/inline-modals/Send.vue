@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import SVGX from "~/assets/images/icons/x.svg?component";
 import { Erc20__factory } from "~~/contracts";
+import PendingTransaction from "../modals/PendingTransaction.vue";
 
 const props = defineProps({
   address: {
@@ -78,7 +79,7 @@ const send = async () => {
     let transactionHash = await sendTransaction({
       ...tx,
       chainId: props.chainId,
-      waitForConfirmation: true
+      waitForConfirmation: false
     })
 
     console.log(transactionHash)
@@ -90,6 +91,9 @@ const send = async () => {
     address.value = "";
     amount.value = "";
     modal.value?.cancel();
+
+    showPendingTransactionModal(transactionHash, props.chainId)
+
   } catch (e: any) {
     console.log(e)
     notify({
@@ -118,7 +122,7 @@ const send = async () => {
     Send
   </button>
 
-  <CommonModal v-else ref="modal" containerClass="rounded-[20px] md:max-w-md">
+  <CommonInlineModal v-else ref="modal" containerClass="rounded-[20px] md:max-w-md">
     <template #reveal="{ openModal }">
       <slot :openModal="openModal">
         <button @click="openModal" class="
@@ -208,7 +212,8 @@ const send = async () => {
               </button>
             </div>
 
-            <p class="text-slate-400 mt-2.5 text-xs font-medium text-left">Enter valid address existing on the Arbitrum Network.</p>
+            <p class="text-slate-400 mt-2.5 text-xs font-medium text-left">Enter valid address existing on the Arbitrum
+              Network.</p>
           </div>
         </div>
 
@@ -233,5 +238,5 @@ const send = async () => {
         </div>
       </div>
     </template>
-  </CommonModal>
+  </CommonInlineModal>
 </template>

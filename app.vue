@@ -1,10 +1,12 @@
 <script setup>
 onMounted(() => {
   window.wc = useWalletConnect()
+  window.showPendingTransactionModal = showPendingTransactionModal
 })
 useTokens()
 useSafe()
 useEagerConnect();
+
 </script>
 
 <template>
@@ -17,6 +19,7 @@ useEagerConnect();
       <NuxtPage />
     </NuxtLayout>
 
+    <Modal />
     <Notifications />
   </div>
 </template>

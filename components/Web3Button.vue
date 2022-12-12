@@ -30,7 +30,7 @@ const closeConnection = () => {
 </script>
 
 <template>
-  <CommonModal containerClass="md:max-w-[364px] rounded-full shadow-2xl">
+  <CommonInlineModal containerClass="md:max-w-[364px] rounded-full shadow-2xl">
     <template #reveal="{ openModal }">
       <button v-show="!active" class="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-[20px] py-2.5 px-5"
         :class="buttonClass" @click="openModal">
@@ -89,7 +89,7 @@ const closeConnection = () => {
         </ul>
       </div>
     </template>
-  </CommonModal>
+  </CommonInlineModal>
   <button v-show="(active && !buttonOnly)" @click="closeConnection"
     class="w-full bg-slate-800 text-white rounded-[30px] text-white inline-flex items-center justify-between px-4 py-1.5 gap-3.5 ">
     <div class="flex items-center">

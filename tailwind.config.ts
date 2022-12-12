@@ -12,8 +12,15 @@ export default <Partial<Config>>{
           750: "#2A3850"
         }
       },
-      fontFamily: {
-        sans: ["Source Code Pro", ...defaultTheme.fontFamily.sans]
+      animation: {
+        'reverse-spin': 'reverse-spin 1s linear infinite'
+      },
+      keyframes: {
+        'reverse-spin': {
+          from: {
+            transform: 'rotate(360deg)'
+          },
+        }
       }
     }
   },

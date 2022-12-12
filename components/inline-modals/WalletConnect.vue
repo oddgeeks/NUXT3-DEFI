@@ -23,7 +23,7 @@ const connect = async () => {
 </script>
 
 <template>
-  <CommonModal ref="modal" containerClass="rounded-[20px] md:max-w-md">
+  <CommonInlineModal ref="modal" containerClass="rounded-[20px] md:max-w-md">
     <template #reveal="{ openModal }">
       <slot :openModal="openModal">
         <button @click="openModal" class="text-blue-500 hover:text-blue-600 font-medium">Connect to dApps</button>
@@ -166,5 +166,5 @@ const connect = async () => {
         <button class="bg-blue-500 hover:bg-blue-600 rounded-[15px] w-full h-12" @click="connect">Approve</button>
       </div>
     </template>
-  </CommonModal>
+  </CommonInlineModal>
 </template>
