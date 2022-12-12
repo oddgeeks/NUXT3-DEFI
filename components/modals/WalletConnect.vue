@@ -6,6 +6,9 @@ const connection = shallowRef()
 const connectionChainId = shallowRef(137)
 
 const prepareAndConnect = async () => {
+  if(! uri.value){
+    return;
+  }
   connection.value = await wcStore.prepareConnection(uri.value);
   connectionChainId.value = connection.value.chainId;
   uri.value = null
@@ -139,7 +142,7 @@ const connect = async () => {
           <option :value="42161">Arbitrum</option>
         </select>
 
-        <button class="bg-blue-500 hover:bg-blue-600 rounded-[15px] w-full h-12" @click="connect">Connect</button>
+        <button class="bg-blue-500 hover:bg-blue-600 rounded-[15px] w-full h-12" @click="connect">Approve</button>
       </div>
     </template>
   </CommonModal>
