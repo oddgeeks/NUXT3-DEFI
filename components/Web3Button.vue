@@ -51,12 +51,12 @@ const closeConnection = () => {
         <div class="flex flex-col items-center justify-center mb-7 gap-4">
           <span class="text-lg">Connect wallet</span>
 
-          <span class="text-center text-slate-400 text-xs leading-5 font-medium">
+          <!-- <span class="text-center text-slate-400 text-xs leading-5 font-medium">
             By connecting your wallet, you agree to our
             <a href="#" class="font-semibold text-blue-500">Terms of Service</a>
             and our
             <a href="#" class="font-semibold text-blue-500">Privacy Policy</a>
-          </span>
+          </span> -->
         </div>
 
         <ul class="grid gap-[15px] px-2 pb-2">
@@ -107,7 +107,7 @@ const closeConnection = () => {
       </svg>
 
 
-      <span>{{ gasBalance }} GAS</span>
+      <span>{{ gasBalance }} USDC</span>
     </div>
 
     <span class="flex items-center justify-between gap-3.5 font-semibold">

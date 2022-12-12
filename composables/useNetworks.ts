@@ -118,7 +118,7 @@ export function useNetworks() {
                 chainName: "Avocado Network",
                 nativeCurrency: {
                     name: "Avocado",
-                    symbol: "USD",
+                    symbol: "USDC",
                     decimals: 18,
                 },
                 rpcUrls: ["https://rpc.avocado.instad.app/"],
