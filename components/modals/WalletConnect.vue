@@ -6,7 +6,7 @@ const connection = shallowRef()
 const connectionChainId = shallowRef(137)
 
 const prepareAndConnect = async () => {
-  if(! uri.value){
+  if (!uri.value) {
     return;
   }
   connection.value = await wcStore.prepareConnection(uri.value);
@@ -30,33 +30,45 @@ const connect = async () => {
       </slot>
     </template>
     <template v-slot="{ closeModal }">
-      <div v-if="!connection" class="bg-[#111827] rounded-[20px] p-8 space-y-8 text-center">
-        <div class="inline-flex items-center space-x-3">
-          <svg width="23" height="22" viewBox="0 0 23 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <div v-if="!connection" class="relative bg-[#111827] rounded-[20px] px-10 py-12 space-y-8 text-center w-full max-w-[460px]">
+        <button class="absolute top-0 right-0 m-6" @click="closeModal" aria-label="Close modal">
+          <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="30" height="30" rx="15" fill="#1E293B" />
+            <path d="M18.5 11.5L11.5 18.5" stroke="white" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+            <path d="M11.5 11.5L18.5 18.5" stroke="white" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </button>
+
+        <div class="inline-flex flex-col items-center">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" clip-rule="evenodd"
-              d="M11.5 0C17.5758 0 22.5 4.92422 22.5 11C22.5 17.0758 17.5758 22 11.5 22C5.42422 22 0.5 17.0758 0.5 11C0.5 4.92422 5.42422 0 11.5 0Z"
-              fill="url(#paint0_radial_2825_4573)" />
+              d="M20 0C31.0469 0 40 8.95312 40 20C40 31.0469 31.0469 40 20 40C8.95312 40 0 31.0469 0 20C0 8.95312 8.95312 0 20 0Z"
+              fill="url(#paint0_radial_2802_2420)" />
             <path
-              d="M7.49121 8.49502C9.7041 6.33369 13.2963 6.33369 15.5092 8.49502L15.7756 8.75713C15.8873 8.86455 15.8873 9.04072 15.7756 9.14814L14.8646 10.0376C14.8088 10.0935 14.7186 10.0935 14.6627 10.0376L14.2975 9.68096C12.7506 8.17275 10.2498 8.17275 8.70293 9.68096L8.31191 10.0634C8.25605 10.1192 8.16582 10.1192 8.10996 10.0634L7.19902 9.17393C7.0873 9.0665 7.0873 8.89033 7.19902 8.78291L7.49121 8.49502ZM17.3955 10.3341L18.2076 11.1247C18.3193 11.2321 18.3193 11.4083 18.2076 11.5157L14.551 15.0864C14.4393 15.1938 14.2588 15.1938 14.1514 15.0864L11.5561 12.5513C11.5303 12.5255 11.483 12.5255 11.4572 12.5513L8.86191 15.0864C8.7502 15.1938 8.56973 15.1938 8.4623 15.0864L4.79277 11.5157C4.68105 11.4083 4.68105 11.2321 4.79277 11.1247L5.60488 10.3341C5.7166 10.2267 5.89707 10.2267 6.00449 10.3341L8.5998 12.8692C8.62559 12.895 8.67285 12.895 8.69863 12.8692L11.2939 10.3341C11.4057 10.2267 11.5861 10.2267 11.6936 10.3341L14.2889 12.8692C14.3146 12.895 14.3619 12.895 14.3877 12.8692L16.983 10.3341C17.1033 10.2267 17.2838 10.2267 17.3955 10.3341Z"
+              d="M12.7109 15.4453C16.7344 11.5156 23.2656 11.5156 27.2891 15.4453L27.7734 15.9219C27.9766 16.1172 27.9766 16.4375 27.7734 16.6328L26.1172 18.25C26.0156 18.3516 25.8516 18.3516 25.75 18.25L25.0859 17.6016C22.2734 14.8594 17.7266 14.8594 14.9141 17.6016L14.2031 18.2969C14.1016 18.3984 13.9375 18.3984 13.8359 18.2969L12.1797 16.6797C11.9766 16.4844 11.9766 16.1641 12.1797 15.9687L12.7109 15.4453ZM30.7188 18.7891L32.1953 20.2266C32.3984 20.4219 32.3984 20.7422 32.1953 20.9375L25.5469 27.4297C25.3438 27.625 25.0156 27.625 24.8203 27.4297L20.1016 22.8203C20.0547 22.7734 19.9688 22.7734 19.9219 22.8203L15.2031 27.4297C15 27.625 14.6719 27.625 14.4766 27.4297L7.80469 20.9375C7.60156 20.7422 7.60156 20.4219 7.80469 20.2266L9.28125 18.7891C9.48437 18.5938 9.8125 18.5938 10.0078 18.7891L14.7266 23.3984C14.7734 23.4453 14.8594 23.4453 14.9062 23.3984L19.625 18.7891C19.8281 18.5938 20.1562 18.5938 20.3516 18.7891L25.0703 23.3984C25.1172 23.4453 25.2031 23.4453 25.25 23.3984L29.9688 18.7891C30.1875 18.5938 30.5156 18.5938 30.7188 18.7891Z"
               fill="white" />
             <defs>
-              <radialGradient id="paint0_radial_2825_4573" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
-                gradientTransform="translate(0.500068 11.0003) scale(22)">
+              <radialGradient id="paint0_radial_2802_2420" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+                gradientTransform="translate(0.000123978 20.0006) scale(40)">
                 <stop stop-color="#5D9DF6" />
                 <stop offset="1" stop-color="#006FFF" />
               </radialGradient>
             </defs>
           </svg>
 
-
-          <span>
+          <div class="text-lg mt-8 mb-4">
             WalletConnect
-          </span>
+          </div>
+
+          <p class="text-slate-400 text-xs text-center leading-5">You need the Avocado web app to be open to popup transactions.
+            You
+            will not receive transaction requests when it is not open. Please don't close the tab.</p>
 
         </div>
 
-        <p class="text-slate-400 text-xs text-center">You need the Avocado web app to be open to popup transactions. You
-          will not receive transaction requests when it is not open. Please don't close the tab.</p>
+
 
         <div class="bg-gray-850 rounded-[20px] divide-y divide-slate-800" v-if="wcStore.sessions.length">
           <template v-for="session in wcStore.sessions">
@@ -112,7 +124,17 @@ const connect = async () => {
           @click="prepareAndConnect">Connect</button>
       </div>
 
-      <div v-else class="bg-[#111827] rounded-[20px] p-8 space-y-8 text-center">
+      <div v-else class="relative bg-[#111827] rounded-[20px] px-10 py-12 space-y-8 text-center w-full max-w-[460px]">
+        <button class="absolute top-0 right-0 m-6" @click="closeModal" aria-label="Close modal">
+          <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="30" height="30" rx="15" fill="#1E293B" />
+            <path d="M18.5 11.5L11.5 18.5" stroke="white" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+            <path d="M11.5 11.5L18.5 18.5" stroke="white" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </button>
+
         <div class="flex flex-col items-center space-y-8">
           <div class="w-10 h-10" v-if="connection.peerMeta.icons.length">
             <img class="w-full h-full object-fit"
@@ -125,8 +147,7 @@ const connect = async () => {
 
         </div>
 
-        <p class="text-slate-400 text-xs text-center">You need the WalletConnect app to be open to popup transactions.
-          You will not receive transaction requests when it is not open.</p>
+        <p class="text-slate-400 text-xs text-center">You need the Avocado web app to be open to popup transactions. You will not receive transaction requests when it is not open. Please don't close the tab.</p>
 
         <div class="text-blue-500 text-sm">
           {{ connection.peerMeta.url }}
