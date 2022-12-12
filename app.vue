@@ -1,7 +1,6 @@
 <script setup>
 onMounted(() => {
   window.wc = useWalletConnect()
-  window.showPendingTransactionModal = showPendingTransactionModal
 })
 useTokens()
 useSafe()
