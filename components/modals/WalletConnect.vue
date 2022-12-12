@@ -52,7 +52,8 @@ const connect = async () => {
 
         </div>
 
-        <p class="text-slate-400 text-xs text-center">You need the Avocado web app to be open to popup transactions. You will not receive transaction requests when it is not open. Please don't close the tab.</p>
+        <p class="text-slate-400 text-xs text-center">You need the Avocado web app to be open to popup transactions. You
+          will not receive transaction requests when it is not open. Please don't close the tab.</p>
 
         <div class="bg-gray-850 rounded-[20px] divide-y divide-slate-800" v-if="wcStore.sessions.length">
           <template v-for="session in wcStore.sessions">
@@ -87,17 +88,13 @@ const connect = async () => {
                 </a>
 
 
-                <button @click="wcStore.disconnect(session)">
+                <button v-tippy="'Disconnect'" @click="wcStore.disconnect(session)">
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M6.75 15.75H3.75C3.35218 15.75 2.97064 15.592 2.68934 15.3107C2.40804 15.0294 2.25 14.6478 2.25 14.25V3.75C2.25 3.35218 2.40804 2.97064 2.68934 2.68934C2.97064 2.40804 3.35218 2.25 3.75 2.25H6.75"
-                      stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M12 12.75L15.75 9L12 5.25" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"
+                    <path d="M13.5 4.5L4.5 13.5" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"
                       stroke-linejoin="round" />
-                    <path d="M15.75 9H6.75" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"
+                    <path d="M4.5 4.5L13.5 13.5" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"
                       stroke-linejoin="round" />
                   </svg>
-
                 </button>
               </div>
             </div>
