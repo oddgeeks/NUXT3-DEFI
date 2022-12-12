@@ -7,10 +7,9 @@
             <TheHeader />
         </div>
 
-        <SwitchNetwork />
-
-        <div class="max-w-5xl 2xl:max-w-7xl mx-auto py-8 px-10">
-
+        <div class="max-w-5xl 2xl:max-w-7xl mx-auto px-10">
+            <SwitchNetwork class="mb-8"/>
+            
             <slot />
         </div>
     </div>
