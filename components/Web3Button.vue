@@ -62,7 +62,7 @@ const closeConnection = () => {
         <ul class="grid gap-[15px] px-2 pb-2">
           <li :key="provider.name" v-for="provider in providers">
             <button @click="connect(closeModal, provider)"
-              class="px-5 py-4 w-full bg-gray-850 rounded-[40px] group transition-colors flex items-center gap-5"
+              class="px-5 py-4 w-full bg-gray-850 rounded-[40px] group transition-colors flex items-center gap-4"
               :class="
                 provider.name === 'Metamask'
                   ? 'hover:bg-[#282125]'
