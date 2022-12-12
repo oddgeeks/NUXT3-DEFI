@@ -15,7 +15,7 @@ onMounted(() => deleteItem(props.item.id, props.item.duration));
 
 <template>
   <li
-    class="flex items-center gap-3 rounded-2xl bg-slate-50 p-2.5 pr-2 ring-1 ring-slate-200 bg-slate-800 ring-slate-700"
+    class="flex items-center gap-5 rounded-2xl bg-gray-850 p-3.5 pr-3 ring-1 ring-slate-800"
   >
     <NotificationsIcon :type="item.type" />
     <div>

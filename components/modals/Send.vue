@@ -29,6 +29,10 @@ const setMax = () => {
   amount.value = token.value!.balance;
 };
 
+const pasteAddress = async () => {
+  address.value = await navigator.clipboard.readText()
+}
+
 const loading = ref(false);
 const sendingDisabled = computed(
   () => !token.value || !address.value || !account.value || loading.value
@@ -89,6 +93,7 @@ const send = async () => {
   } catch (e: any) {
     console.log(e)
     notify({
+      type: "error",
       message: e.message,
     });
   }
@@ -134,103 +139,81 @@ const send = async () => {
       </slot>
     </template>
     <template v-slot="{ closeModal }">
-      <div class="bg-gray-850 rounded-[20px] p-5">
-        <div class="flex items-center justify-between mb-5">
-          <h1 class="text-lg font-medium">Send {{ token.name }}</h1>
-          <button @click="closeModal" aria-label="Close modal">
-            <SVGX class="w-4 h-4" />
-          </button>
-        </div>
-        <div></div>
-        <div class="space-y-4">
-          <div>
-            <label class="block text-md font-medium">
-              From
-            </label>
-            <div class="
-                relative
-                mt-1
-                flex flex-col
-                w-full
-                border border-gray-700
-                rounded-[15px] overflow-hidden
-              ">
-              <div class="flex">
-                <div class="
-                    px-4
-                    py-3
-                    flex flex-row
-                    items-center
-                    font-semibold
-                    text-sm text-slate-400
-                    w-3/8
-                  ">
-                  {{ chainIdToName(token.chainId) }}
-                </div>
-                <div class="
-                    p-4
-                    flex
-                    justify-between
-                    items-center
-                    font-semibold
-                    text-gray-400 text-sm
-                    w-5/8
-                    border-l border-gray-700
-                  ">
-                  Balance:
-                  <span class="text-white ml-2">{{ token.balance }} {{ token.symbol }}</span>
-                </div>
-              </div>
-              <div class="w-full flex border-t border-gray-700">
-                <div class="relative flex font-semibold w-6/8">
-                  <input type="number" id="amount" v-model="amount" class="
-                  bg-slate-800 placeholder-slate-400 focus:ring-2 border-none focus:bg-gray-850 focus:ring-slate-750 text-slate-200 px-5 h-12  w-full
+      <div class="relative bg-[#111827] rounded-[20px] px-10 pt-2 pb-12 space-y-8 text-center w-full max-w-[460px]">
+        <button class="absolute top-0 right-0 m-6" @click="closeModal" aria-label="Close modal">
+          <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="30" height="30" rx="15" fill="#1E293B" />
+            <path d="M18.5 11.5L11.5 18.5" stroke="white" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+            <path d="M11.5 11.5L18.5 18.5" stroke="white" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </button>
 
-                    " placeholder="0" />
-                  <button v-on:click="setMax" class="
-                      absolute
-                      flex
-                      justify-center
-                      items-center
-                      right-5
-                      top-4
-                      font-semibold
-                      text-blue-500
-                    ">
-                    MAX
-                  </button>
-                </div>
-                <div class="
-                    w-2/8
-                    flex
-                    items-center
-                    justify-between
-                    px-4
-                    font-semibold
-                    border-l border-gray-700
-                    rounded-br-md
-                  ">
-                  <div class="flex items-center text-sm">
-                    <!--- <img :src="token.icon" class="w-6 h-6 mr-2" /> -->
-                    {{ token.symbol }}
-                  </div>
-                </div>
-              </div>
+        <div class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0">
+          <img :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
+            onerror="this.onerror=null; this.remove();" />
+        </div>
+
+        <div>
+          <h2>{{ token.name }}</h2>
+
+          <div class="bg-gray-850 mt-4 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]">
+            <ChainLogo class="w-5 h-5" :chain="token.chainId" />
+            <span class="text-xs text-slate-400 leading-5">{{ chainIdToName(token.chainId) }} Network</span>
+          </div>
+        </div>
+
+        <div class="space-y-5">
+          <div class="space-y-2.5">
+            <div class="flex justify-between items-center">
+              <span>Amount</span>
+              <span>{{ token.balance }} {{ token.symbol }}</span>
             </div>
+
+            <div class="relative">
+              <input type="text"
+                class="bg-slate-800 placeholder-slate-400 focus:ring-2 border-none focus:bg-gray-850 focus:ring-slate-750 text-slate-200 px-5 h-12 rounded-[15px] w-full"
+                placeholder="Enter amount" v-model="amount" />
+
+              <button class="absolute top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
+                @click="setMax">MAX</button>
+            </div>
+
           </div>
 
-          <div class="relative">
-            <label class="block text-md font-medium"> To </label>
-            <input type="text" id="address" v-model="address" class="
-                mt-1
-                bg-slate-800 placeholder-slate-400 focus:ring-2 border-none focus:bg-gray-850 focus:ring-slate-750 text-slate-200 px-5 h-12 rounded-[15px] w-full
-              " placeholder="0xwallet" />
-            <p class="mt-2 text-xs font-semibold text-gray-500" id="email-description">
-              Enter valid address existing on the {{ chainIdToName(token.chainId) }} Network.
-            </p>
+          <div class="space-y-2.5">
+            <div class="flex justify-between items-center">
+              <span>Address To</span>
+            </div>
+
+            <div class="relative">
+              <input type="text"
+                class="peer bg-slate-800 placeholder-slate-400 focus:ring-2 border-none focus:bg-gray-850 focus:ring-slate-750 text-slate-200 px-5 h-12 rounded-[15px] w-full"
+                placeholder="Enter Address" v-model="address" />
+
+              <button
+                class="absolute z-10 bg-slate-800 peer-focus:bg-gray-850  top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
+                @click="pasteAddress">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M3.59528 15.0092C3.75544 16.6101 5.02628 17.9091 6.62344 18.1041C7.82371 18.2506 9.05632 18.377 10.3132 18.377C11.57 18.377 12.8026 18.2506 14.0029 18.1041C15.6 17.9091 16.8709 16.6101 17.031 15.0092C17.1695 13.6251 17.2923 12.2007 17.2923 10.7466C17.2923 9.29243 17.1695 7.86804 17.031 6.48398C16.8709 4.88293 15.6 3.58403 14.0029 3.38906C12.8026 3.24253 11.57 3.11621 10.3132 3.11621C9.05632 3.11621 7.82371 3.24253 6.62344 3.38906C5.02628 3.58403 3.75544 4.88293 3.59528 6.48398C3.45683 7.86804 3.33398 9.29243 3.33398 10.7466C3.33398 12.2007 3.45683 13.6251 3.59528 15.0092Z"
+                    stroke="#94A3B8" stroke-width="2" />
+                  <path
+                    d="M6.64062 3.28556C6.64062 4.46516 7.76321 5.35188 8.94099 5.41733C9.39091 5.44231 9.84856 5.46005 10.3125 5.46005C10.7764 5.46005 11.2341 5.44231 11.684 5.41733C12.8618 5.35188 13.9844 4.46516 13.9844 3.28556C13.9844 2.10596 12.8618 1.21924 11.684 1.1538C11.2341 1.1288 10.7764 1.11108 10.3125 1.11108C9.84856 1.11108 9.39091 1.1288 8.94099 1.1538C7.76321 1.21924 6.64062 2.10596 6.64062 3.28556Z"
+                    fill="#1E293B" stroke="#94A3B8" stroke-width="2" />
+                  <path d="M12.1905 9.44434H8.69531" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" />
+                  <path d="M12.1905 13.3799H8.69531" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" />
+                </svg>
+              </button>
+            </div>
+
+            <p class="text-slate-400 mt-2.5 text-xs font-medium text-left">Enter valid address existing on the Arbitrum Network.</p>
           </div>
         </div>
-        <div class="flex mt-4">
+
+
+        <div class="flex">
           <button :disabled="sendingDisabled" :loading="loading" @click="send"
             class="cursor-pointer bg-blue-500 hover:bg-blue-600 px-4 py-2 capitalize w-full shadow-md rounded-[15px] flex justify-center items-center space-x-2"
             :class="{

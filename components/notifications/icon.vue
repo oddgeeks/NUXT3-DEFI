@@ -11,20 +11,20 @@ const props = defineProps<{
 const textClass = computed(
   () =>
     ({
-      success: "text-hex-22c55e",
-      info: "text-hex-3b82f6",
-      warning: "text-hex-ef9500",
-      error: "text-hex-eb5757",
+      success: "text-[#22c55e]",
+      info: "text-[#3b82f6]",
+      warning: "text-[#ef9500]",
+      error: "text-[#eb5757]",
     }[props.type])
 );
 
 const bgClass = computed(
   () =>
     ({
-      success: "bg-hex-22c55e",
-      info: "bg-hex-3b82f6",
-      warning: "bg-hex-ef9500",
-      error: "bg-hex-eb5757",
+      success: "bg-[#22c55e]",
+      info: "bg-[#3b82f6]",
+      warning: "bg-[#ef9500]",
+      error: "bg-[#eb5757]",
     }[props.type])
 );
 </script>
