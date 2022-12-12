@@ -30,7 +30,7 @@ const connect = async () => {
       </slot>
     </template>
     <template v-slot="{ closeModal }">
-      <div v-if="!connection" class="relative bg-[#111827] rounded-[20px] px-10 py-12 space-y-8 text-center w-full max-w-[460px]">
+      <div v-if="!connection" class="relative bg-[#111827] rounded-[20px] px-10 pt-2 pb-12 space-y-8 text-center w-full max-w-[460px]">
         <button class="absolute top-0 right-0 m-6" @click="closeModal" aria-label="Close modal">
           <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="30" height="30" rx="15" fill="#1E293B" />
@@ -124,7 +124,7 @@ const connect = async () => {
           @click="prepareAndConnect">Connect</button>
       </div>
 
-      <div v-else class="relative bg-[#111827] rounded-[20px] px-10 py-12 space-y-8 text-center w-full max-w-[460px]">
+      <div v-else class="relative bg-[#111827] rounded-[20px] px-10 pt-2 pb-12 space-y-8 text-center w-full max-w-[460px]">
         <button class="absolute top-0 right-0 m-6" @click="closeModal" aria-label="Close modal">
           <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="30" height="30" rx="15" fill="#1E293B" />
