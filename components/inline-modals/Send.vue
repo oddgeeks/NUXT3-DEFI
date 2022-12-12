@@ -212,7 +212,7 @@ const send = async () => {
               </button>
             </div>
 
-            <p class="text-slate-400 mt-2.5 text-xs font-medium text-left">Enter valid address existing on the Arbitrum
+            <p class="text-slate-400 mt-2.5 text-xs font-medium text-left">Enter valid address existing on the {{ chainIdToName(props.chainId) }}
               Network.</p>
           </div>
         </div>

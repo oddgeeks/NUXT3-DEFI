@@ -14,10 +14,10 @@ export interface IBalance extends IToken {
 const balanceResolverAddresses: Record<string, string> = {
     "137": "0x58632D23120b20650262b8A629a14e4F4043E0D9",
     "42161": "0xca5f37e6D8bB24c5A7958d5eccE7Bd9Aacc944f2",
-    "43114": "0x63009f31D054E0ac9F321Cf0D642375236A4Bf1E",
+    // "43114": "0x63009f31D054E0ac9F321Cf0D642375236A4Bf1E",
     "10": "0xca5f37e6D8bB24c5A7958d5eccE7Bd9Aacc944f2",
-    "1": "0x5b7D61b389D12e1f5873d0cCEe7E675915AB5F43",
-    "250": "0x929376c77a2fb8152375a089a4fccf84ff481479",
+    // "1": "0x5b7D61b389D12e1f5873d0cCEe7E675915AB5F43",
+    // "250": "0x929376c77a2fb8152375a089a4fccf84ff481479",
 }
 
 const balanceResolverContracts = Object.keys(balanceResolverAddresses).reduce((acc, curr) => {
