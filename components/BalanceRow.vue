@@ -97,7 +97,8 @@ const chartOptions = {
         </td>
         <td class="text-center font-semibold px-8 py-6">
             <div class="w-20 h-8 mx-auto">
-                <Line :data="chartData" :options="chartOptions" :key="JSON.stringify({ ...chartData, ...chartOptions })" />
+                <Line :data="chartData" :options="chartOptions"
+                    :key="JSON.stringify({ ...chartData, ...chartOptions })" />
             </div>
         </td>
 
@@ -112,8 +113,13 @@ const chartOptions = {
         </td>
 
         <td class="text-right px-8 py-6">
-            <InlineModalsSend :address="tokenBalance.address" :chain-id="tokenBalance.chainId"
-                :disabled="isZero(tokenBalance.balance)" />
+            <div class="flex items-center space-x-3">
+                <InlineModalsSend :address="tokenBalance.address" :chain-id="tokenBalance.chainId"
+                    :disabled="isZero(tokenBalance.balance)" />
+
+                <InlineModalsBridge :address="tokenBalance.address" :chain-id="tokenBalance.chainId"
+                    :disabled="isZero(tokenBalance.balance)" />
+            </div>
         </td>
     </tr>
 
