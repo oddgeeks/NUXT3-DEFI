@@ -19,8 +19,10 @@ const shortenAddress = () => {
 
             <StyledQrCode class="rounded-[20px] mx-auto bg-white overflow-hidden" :data="account" :key="account" />
 
-            <div v-if="!copied" class="text-slate-400 font-semibold inline-flex items-center gap-2 cursor-pointer mt-5"
+            <div v-if="!copied" class="text-slate-400 font-semibold inline-flex items-center gap-1 cursor-pointer mt-5"
                 @click="copy(account)">
+                <span>{{ shortenAddress() }}</span>
+
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_2790_3105)">
                         <path
@@ -36,19 +38,24 @@ const shortenAddress = () => {
                         </clipPath>
                     </defs>
                 </svg>
-
-                <span v-if="!copied">{{ shortenAddress() }}</span>
-
             </div>
 
-            <div class="text-slate-400 font-semibold inline-flex items-center gap-2 cursor-pointer mt-5" v-else>
-                <svg width="18" height="18" fill="none" stroke="#94A3B8" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            <div class="text-slate-400 font-semibold inline-flex items-center gap-1 cursor-pointer mt-5" v-else>
+                <span> Copied </span>
+
+                <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="0.5" width="16" height="16" rx="8" fill="#94A3B8" />
+                    <g clip-path="url(#clip0_2949_8772)">
+                        <path d="M11.1663 6L7.49967 9.66667L5.83301 8" stroke="#0F172A" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </g>
+                    <defs>
+                        <clipPath id="clip0_2949_8772">
+                            <rect width="8" height="8" fill="white" transform="translate(4.5 4)" />
+                        </clipPath>
+                    </defs>
                 </svg>
 
-                <span> Copied </span>
             </div>
 
             <p v-if="safeAddress" class="mt-4 text-green-400 text-xs font-semibold text-center leading-5">
