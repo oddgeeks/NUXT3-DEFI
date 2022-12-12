@@ -36,6 +36,14 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                 wc.networkId = wc.chainId;
                 wc.rpcUrl = RPC_URLS[wc.chainId]
 
+                wc.updateSession({
+                    chainId: wc.chainId,
+                    networkId: wc.chainId,
+                    rpcUrl: RPC_URLS[wc.chainId],
+                    accounts: [safe.safeAddress.value],
+                })
+
+
                 wc.on('session_request', (error, payload) => {
                     console.log("session_request", error, payload)
                     if (error) {
