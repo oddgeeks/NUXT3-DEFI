@@ -23,7 +23,7 @@ const { safeAddress } = useAvocadoSafe();
 
             <h2 class="font-semibold text-white mt-4">WalletConnect</h2>
 
-            <ModalsWalletConnect />
+            <InlineModalsWalletConnect />
         </div>
     </div>
 </template>

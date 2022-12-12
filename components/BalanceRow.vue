@@ -112,7 +112,7 @@ const chartOptions = {
         </td>
 
         <td class="text-right px-8 py-6">
-            <ModalsSend :address="tokenBalance.address" :chain-id="tokenBalance.chainId"
+            <InlineModalsSend :address="tokenBalance.address" :chain-id="tokenBalance.chainId"
                 :disabled="isZero(tokenBalance.balance)" />
         </td>
     </tr>
