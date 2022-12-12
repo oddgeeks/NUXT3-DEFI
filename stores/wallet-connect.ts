@@ -33,6 +33,24 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                     session: JSON.parse(localStorage.getItem(id)!)
                 })
 
+                wc.networkId = wc.chainId;
+                wc.rpcUrl = RPC_URLS[wc.chainId]
+
+                wc.on('session_request', (error, payload) => {
+                    console.log("session_request", error, payload)
+                    if (error) {
+                        throw error;
+                    }
+
+                    wc.approveSession({
+                        chainId: wc.chainId,
+                        networkId: wc.chainId,
+                        rpcUrl: RPC_URLS[wc.chainId],
+                        accounts: [safe.safeAddress.value],
+                    })
+                });
+
+
                 wc.on('call_request', async (error, payload) => {
                     if (error) {
                         throw error;
@@ -66,6 +84,26 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                                     }
                                 })
                             }
+                        }
+                        else if (payload.method === "wallet_switchEthereumChain") {
+                            let chainId = toBN(payload.params[0].chainId).toNumber()
+
+                            // wc.chainId
+                            // wc.networkId = chainId;
+                            // wc.rpcUrl = RPC_URLS[chainId]
+
+                            wc.updateSession({
+                                chainId: chainId,
+                                networkId: chainId,
+                                rpcUrl: RPC_URLS[chainId],
+                                accounts: [safe.safeAddress.value],
+                            })
+
+                            wc.approveRequest({
+                                id: payload.id,
+                                result: payload.params[0].chainId
+                            })
+
                         } else {
                             const { data } = await http.post(RPC_URLS[wc.chainId], payload)
 
@@ -124,6 +162,8 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
         if (!connector.connected) {
             connector.approveSession({
                 chainId: chainId,
+                networkId: chainId,
+                rpcUrl: RPC_URLS[chainId],
                 accounts: [safe.safeAddress.value],
             })
         }
