@@ -72,6 +72,11 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                                 id: payload.id,
                                 result: "0x01"
                             })
+                        } else if (payload.method === "eth_requestAccounts") {
+                            wc.approveRequest({
+                                id: payload.id,
+                                result: [safe.safeAddress.value],
+                            })
                         } else if (payload.method === "eth_sendTransaction") {
                             try {
                                 let hash = await safe.sendTransaction({
