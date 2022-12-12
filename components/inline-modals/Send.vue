@@ -84,10 +84,10 @@ const send = async () => {
 
     console.log(transactionHash)
 
-    notify({
-      message: `${amount.value} ${token.value.symbol
-        } sent to ${address.value}`,
-    });
+    // notify({
+    //   message: `${amount.value} ${token.value.symbol
+    //     } sent to ${address.value}`,
+    // });
     address.value = "";
     amount.value = "";
     modal.value?.cancel();
