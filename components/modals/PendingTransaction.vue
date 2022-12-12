@@ -7,7 +7,7 @@ const provider = getRpcProvider(props.chainId)
 const transaction = ref<TransactionReceipt>()
 
 onMounted(async () => {
-  await wait(3000);
+  await wait(5000);
 
   transaction.value = await provider.waitForTransaction(props.hash)
 })
@@ -29,7 +29,7 @@ onMounted(async () => {
 
     <p v-if="!transaction" class="text-slate-400 text-xs">Transaction Broadcast</p>
 
-    <div v-if="!transaction" class="p-16 relative">
+    <div v-if="!transaction" class="p-24 relative">
       <div class="absolute inset-0 flex items-center justify-center">
         <svg class="animate-spin" width="60" height="60" viewBox="0 0 60 60" fill="none"
           xmlns="http://www.w3.org/2000/svg">
@@ -58,7 +58,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <a :href="getExplorerUrl(chainId, `/tx/${hash}`)" target="_blank"
+    <a :href="getExplorerUrl(chainId, `/tx/${hash}`)" target="_blank" :class="{ 'mt-8': !!transaction}"
       class="cursor-pointer bg-blue-500 hover:bg-blue-600 px-4 py-2 capitalize w-full shadow-md rounded-[15px] flex justify-center items-center space-x-2">
 
 
