@@ -62,30 +62,26 @@ const closeConnection = () => {
         <ul class="grid gap-[15px] px-2 pb-2">
           <li :key="provider.name" v-for="provider in providers">
             <button @click="connect(closeModal, provider)"
-              class="px-5 py-4 w-full bg-gray-850 rounded-[40px] group hover:!bg-opacity-10 hover:text-white transition-colors flex items-center gap-5 text-slate-400"
+              class="px-5 py-4 w-full bg-gray-850 rounded-[40px] group transition-colors flex items-center gap-5"
               :class="
                 provider.name === 'Metamask'
-                  ? 'hover:bg-orange-50'
-                  : 'hover:bg-blue-50'
+                  ? 'hover:bg-[#282125]'
+                  : 'hover:bg-[#15233C]'
               ">
               <div class="flex items-center flex-1 gap-5">
                 <component :is="provider.logo" />
 
-                <span class="text-white text-[16px]" :class="
-                  provider.name === 'Metamask'
-                    ? 'group-hover:text-orange-500'
-                    : 'group-hover:text-blue-500'
-                ">{{ provider.name }}</span>
+                <span class="text-white text-[16px]">{{ provider.name }}</span>
               </div>
 
-              <svg class="transition-all text-blue-400 transform group-hover:translate-x-1" :class="
+              <svg class="transition-all text-slate-500" :class="
                 provider.name === 'Metamask'
                   ? 'group-hover:text-orange-500'
                   : 'group-hover:text-blue-500'
               " width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3.75 9H14.25" stroke="#64748B" stroke-width="2" stroke-linecap="round"
+                <path d="M3.75 9H14.25" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                   stroke-linejoin="round" />
-                <path d="M9 3.75L14.25 9L9 14.25" stroke="#64748B" stroke-width="2" stroke-linecap="round"
+                <path d="M9 3.75L14.25 9L9 14.25" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                   stroke-linejoin="round" />
               </svg>
             </button>
