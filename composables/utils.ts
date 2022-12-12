@@ -1,4 +1,6 @@
 import { ethers } from "ethers";
+import axios from 'axios'
+import axiosRetry from 'axios-retry'
 import { RPC_URLS } from "~~/connectors";
 
 export function shortenHash(hash: string, length: number = 4) {
@@ -96,3 +98,10 @@ export function formatDecimal(
 
   return formatter.format(value);
 }
+
+export const http = axios.create()
+
+axiosRetry(http, {
+  retries: 3,
+  retryDelay: axiosRetry.exponentialDelay,
+})

@@ -1,7 +1,6 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
-import axios from "axios";
 import WalletConnect from '@walletconnect/client';
-import { IClientMeta, IWalletConnectSession } from '@walletconnect/types';
+import { IClientMeta } from '@walletconnect/types';
 import { RPC_URLS } from "~~/connectors";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -68,7 +67,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                                 })
                             }
                         } else {
-                            const { data } = await axios.post(RPC_URLS[wc.chainId], payload)
+                            const { data } = await http.post(RPC_URLS[wc.chainId], payload)
 
                             wc.approveRequest({
                                 id: payload.id,
