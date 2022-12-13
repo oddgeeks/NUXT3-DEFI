@@ -8,24 +8,14 @@ const { account } = useWeb3();
 
         <div class="relative">
             <div class="bg-gray-850 rounded-[20px] overflow-hidden">
-                <div class="overflow-y-auto max-h-[600px]" :class="{ 'blur': !safeAddress }">
+                <div class="overflow-y-auto max-h-[600px]" :class="{ 'blur': tokenBalances.length === 0}">
                     <table class="table w-full">
                         <tbody class="divide-y divide-slate-800">
-                            <template v-if="account && safeAddress">
-
+                            <template v-if="tokenBalances.length > 0">
                                 <BalanceRow v-for="tokenBalance in tokenBalances" :token-balance="tokenBalance" />
-
-                                <tr v-if="tokenBalances.length === 0">
-                                    <td colspan="100" class="p-10">
-                                        <div class="text-center">
-                                            <h3 class="text-lg font-semibold">Loading...</h3>
-                                        </div>
-                                    </td>
-                                </tr>
                             </template>
 
                             <template v-else>
-
                                 <tr v-for="i in 8">
                                     <td class="px-8 py-6">
                                         <div class="flex space-x-3">
