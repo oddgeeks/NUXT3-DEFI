@@ -51,7 +51,10 @@ watch(bridgeToChainId, async () => {
     },
   });
   bridgeToTokens.value = data.result
-  bridgeToTokenIndex.value = 0
+
+  let index = data.result.findIndex( (t: any) => t.symbol.toLowerCase().includes(token.value.symbol.toLowerCase()))
+  
+  bridgeToTokenIndex.value = index === -1 ? 0 : index
 
 }, { immediate: true })
 
