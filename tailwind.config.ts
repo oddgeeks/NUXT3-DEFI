@@ -4,6 +4,9 @@ import defaultTheme from 'tailwindcss/defaultTheme'
 export default <Partial<Config>>{
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["Source Code Pro", ...defaultTheme.fontFamily.sans]
+      },
       colors: {
         gray: {
           850: "#161E2D"
