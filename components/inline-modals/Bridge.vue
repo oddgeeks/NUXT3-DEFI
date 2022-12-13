@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Erc20__factory } from "~~/contracts";
+import PendingBridgeTransaction from "../modals/PendingBridgeTransaction.vue";
 
 const props = defineProps({
   address: {
@@ -160,8 +161,13 @@ const send = async () => {
     amount.value = "";
     modal.value?.cancel();
 
-    showPendingTransactionModal(transactionHash, props.chainId)
-
+    useModal().openModal(
+      PendingBridgeTransaction,
+      {
+        hash: transactionHash, 
+        chainId: props.chainId
+      }
+    )
   } catch (e: any) {
     console.log(e)
     notify({
