@@ -114,11 +114,42 @@ const chartOptions = {
 
         <td class="text-right px-8 py-6">
             <div class="flex items-center space-x-3">
-                <InlineModalsSend :address="tokenBalance.address" :chain-id="tokenBalance.chainId"
-                    :disabled="isZero(tokenBalance.balance)" />
 
-                <InlineModalsBridge :address="tokenBalance.address" :chain-id="tokenBalance.chainId"
-                    :disabled="isZero(tokenBalance.balance)" />
+                <button @click="openSendModal(tokenBalance.address, tokenBalance.chainId)"
+                    :disabled="isZero(tokenBalance.balance)" class="
+                        py-2
+                        px-7
+                        inline-flex
+                        justify-center
+                        items-center
+                        rounded-[20px]
+                        bg-blue-500
+                        disabled:bg-slate-800
+                        disabled:text-slate-500 
+                        hover:bg-blue-600
+                        text-sm
+                        font-semibold
+                    ">
+                    Send
+                </button>
+
+                <button @click="openBridgeModal(tokenBalance.address, tokenBalance.chainId)"
+                    :disabled="isZero(tokenBalance.balance)" class="
+                        py-2
+                        px-7
+                        inline-flex
+                        justify-center
+                        items-center
+                        rounded-[20px]
+                        bg-blue-500
+                        disabled:bg-slate-800
+                        disabled:text-slate-500 
+                        hover:bg-blue-600
+                        text-sm
+                        font-semibold
+                    ">
+                    Bridge
+                </button>
             </div>
         </td>
     </tr>

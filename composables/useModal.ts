@@ -15,7 +15,11 @@ const options = ref<Options>({
 
 const isOpen = ref(false)
 
+let timeout: any;
+
 const openModal = async (component: DefineComponent | any, componentProps: any = {}, modalOptions: Partial<Options> = {}) => {
+    timeout && clearTimeout(timeout)
+
     if (modal.value) {
         modal.value = null
         await nextTick()
@@ -30,7 +34,7 @@ const openModal = async (component: DefineComponent | any, componentProps: any =
 const closeModal = async () => {
     isOpen.value = false
 
-    setTimeout(() => {
+   timeout = setTimeout(() => {
         modal.value = null
         props.value = null
     }, 1000)

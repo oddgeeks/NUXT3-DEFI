@@ -23,7 +23,7 @@ const { safeAddress } = useAvocadoSafe();
 
             <h2 class="font-semibold text-white mt-4">WalletConnect</h2>
 
-            <InlineModalsWalletConnect />
+            <button @click="openWalletConnectModal()" class="text-blue-500 hover:text-blue-600 font-medium">Connect to dApps</button>
         </div>
     </div>
 </template>

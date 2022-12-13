@@ -17,7 +17,7 @@ onClickOutside(modalBoxRef, () => {
           <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100"
               leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
-              <div class="fixed inset-0 transition-opacity bg-slate-200/20 backdrop-filter backdrop-blur-[4px]" />
+              <div class="fixed inset-0 transition-opacity bg-slate-200/20 backdrop-filter backdrop-blur-[4px]" @click="closeModal"/>
             </TransitionChild>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             <TransitionChild as="template" enter="ease-out duration-300"
