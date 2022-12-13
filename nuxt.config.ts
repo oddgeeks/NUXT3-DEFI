@@ -18,17 +18,6 @@ export default defineNuxtConfig({
         "~/assets/css/app.css",
     ],
 
-    app: {
-        head: {
-            script: [
-                {
-                    src: "https://app.embed.im/snow.js",
-                    defer: true
-                }
-            ]
-        }
-    },
-
     imports: {
         dirs: [
             "./stores",
