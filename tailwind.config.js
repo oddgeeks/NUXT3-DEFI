@@ -1,7 +1,6 @@
-import type { Config } from 'tailwindcss'
-import defaultTheme from 'tailwindcss/defaultTheme'
+const defaultTheme = require('tailwindcss/defaultTheme')
 
-export default <Partial<Config>>{
+module.exports = {
   theme: {
     extend: {
       fontFamily: {
