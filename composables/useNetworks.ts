@@ -181,6 +181,11 @@ export function useNetworks() {
                     ]
                 );
             } catch (err) {
+                notify({
+                    type: "error",
+                    title: "Switch Network",
+                    message: "Failed to switch network, please add avocado network manualy then reconnect."
+                })
                 return Promise.reject(err);
             }
         }
