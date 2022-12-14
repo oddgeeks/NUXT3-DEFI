@@ -39,7 +39,7 @@ export const walletconnect = new WalletConnectConnector({
 });
 
 export const network = new NetworkConnector({
-    urls: { 1: RPC_URLS[1] },
+    urls: RPC_URLS,
     defaultChainId: 1
 });
 
