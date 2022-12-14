@@ -6,9 +6,10 @@ import SVGOptimism from "~/assets/images/logo/optimism.svg?component";
 import SVGAvalanche from "~/assets/images/logo/avalanche.svg?component";
 import SVGMetamask from "~/assets/images/wallet/metamask.svg?component";
 import SVGWalletConnect from "~/assets/images/wallet/wallet-connect.svg?component";
+import { ethers } from "ethers";
 
 export function useNetworks() {
-    const { chainId, provider } = useWeb3();
+    const { chainId, provider, library } = useWeb3();
 
     const providers: Provider[] = [
         {
@@ -158,17 +159,31 @@ export function useNetworks() {
     const switchNetworkByChainId = async (chainId: number) => {
         const network = networks.find((i) => i.chainId === Number(chainId))!;
 
-        if (!provider.value || provider.value.isMetaMask) {
-            const provider = providers.find((i) => i.name === "Metamask")!;
-            await provider.switchNetwork(network);
-            defaultNetwork.value = network;
-            useEagerConnect();
-        } else {
-            const provider = providers.find((i) => i.name === "WalletConnect")!;
-            await provider.switchNetwork(network);
-            defaultNetwork.value = network;
-        }
+        library.value.send("wallet_switchEthereumChain", [
 
+        ])
+
+        try {
+            await library.value.send(
+                "wallet_switchEthereumChain",
+                [{ chainId: ethers.utils.hexValue(network.chainId) }]
+            );
+            return Promise.resolve();
+        } catch (err: any) {
+            console.log(err)
+            try {
+                await library.value.send("wallet_addEthereumChain",
+                    [
+                        {
+                            ...network.params,
+                            chainId: ethers.utils.hexValue(network.chainId),
+                        }
+                    ]
+                );
+            } catch (err) {
+                return Promise.reject(err);
+            }
+        }
         await nextTick();
     }
 
