@@ -91,21 +91,33 @@ const closeConnection = () => {
     </template>
   </CommonInlineModal>
   <button v-show="(active && !buttonOnly)" @click="closeConnection"
-    class="w-full bg-slate-800 text-white rounded-[30px] text-white inline-flex items-center justify-between px-4 py-1.5 gap-3.5 ">
-    <div class="flex items-center">
+    class="w-full bg-slate-800 text-white rounded-[30px] text-white inline-flex items-center justify-between px-4 gap-x-3">
+    <div class="flex items-center space-x-2">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="10" height="16" rx="2" stroke="#94A3B8" stroke-width="2" />
+        <rect x="5.5" y="9.5" width="3" height="1" rx="0.5" stroke="#94A3B8" />
+        <rect x="5.5" y="13.5" width="3" height="1" rx="0.5" stroke="#94A3B8" />
         <path
-          d="M0 10C0 4.47715 4.47715 0 10 0H15C17.7614 0 20 2.23858 20 5V10C20 15.5228 15.5228 20 10 20C4.47715 20 0 15.5228 0 10Z"
-          fill="#7AD66C" />
-        <path
-          d="M15 10C15 12.7614 12.7614 15 10 15C7.23858 15 5 12.7614 5 10C5 7.23858 7.23858 5 10 5C12.7614 5 15 7.23858 15 10Z"
-          fill="#1E293B" />
+          d="M13 10H14.5C15.0523 10 15.5 10.4477 15.5 11V16C15.5 16.5523 15.9477 17 16.5 17H17.5C18.0523 17 18.5 16.5523 18.5 16V2.5"
+          stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
+
+
+      <span>{{ gasBalance }} USDC</span>
     </div>
 
-    <span class="flex items-center justify-between gap-3.5 font-semibold">
-      <div class="flex flex-row items-center gap-2.5 py-1.5 px-3 bg-slate-600 rounded-[30px] leading-5">
-        {{ shortenHash(account) }}
+    <span class="flex items-center justify-between gap-x-3 font-semibold py-1.5">
+      <div class="flex flex-row items-center gap-2 py-1.5 pl-2.5 pr-3 bg-slate-600 rounded-[30px] leading-5">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M0 9C0 4.02944 4.02944 0 9 0H13.5C15.9853 0 18 2.01472 18 4.5V9C18 13.9706 13.9706 18 9 18C4.02944 18 0 13.9706 0 9Z"
+            fill="#7AD66C" />
+          <path
+            d="M13 9C13 11.2091 11.2091 13 9 13C6.79086 13 5 11.2091 5 9C5 6.79086 6.79086 5 9 5C11.2091 5 13 6.79086 13 9Z"
+            fill="#475569" />
+        </svg>
+
+        <span>{{ shortenHash(account) }}</span>
       </div>
 
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
