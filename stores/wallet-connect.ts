@@ -70,7 +70,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                         if (payload.method === "eth_getBalance") {
                             wc.approveRequest({
                                 id: payload.id,
-                                result: "0x01"
+                                result: "0x0de0b6b3a7640000"
                             })
                         } else if (payload.method === "eth_requestAccounts") {
                             wc.approveRequest({
