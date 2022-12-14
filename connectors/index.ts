@@ -4,6 +4,9 @@ import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 import { setWeb3LibraryCallback } from "@instadapp/vue-web3";
 import { Web3Provider } from "@ethersproject/providers";
 import { ethers } from "ethers"
+import { TorusConnector } from '@web3-react/torus-connector'
+import { MagicConnector } from '@web3-react/magic-connector'
+import { CustomMagicConnector } from "./custom/magic";
 
 // const { networks } = useNetworks();
 
@@ -43,12 +46,25 @@ export const network = new NetworkConnector({
     defaultChainId: 1
 });
 
+export const torus = new TorusConnector({ chainId: 420 })
+
+export const magic = (email: string) => {
+   return new CustomMagicConnector({
+        network: {
+            chainId: 420,
+            rpcUrl: "https://rpc.avocado.instad.app"
+        },
+        apiKey: 'pk_live_B24F2BCF9A46C192',
+        email
+    })
+}
+
 export const changeMetamaskNetwork = async (network: Network) => {
     if (window.ethereum.networkVersion !== network.chainId) {
         try {
             await window.ethereum.request({
                 method: "wallet_switchEthereumChain",
-                params: [{ chainId: ethers.utils.hexValue(network.chainId)}],
+                params: [{ chainId: ethers.utils.hexValue(network.chainId) }],
             });
             return Promise.resolve();
         } catch (err: any) {

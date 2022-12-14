@@ -18,7 +18,7 @@ const { gasBalance } = storeToRefs(useSafe());
 const { providers } = useNetworks();
 
 const connect = async (closeModal: Function, provider: any) => {
-  await activate(await provider.connect());
+  await activate(await provider.connect(), undefined, true);
   closeModal();
 };
 
