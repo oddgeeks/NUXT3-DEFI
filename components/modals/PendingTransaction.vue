@@ -17,17 +17,28 @@ onMounted(async () => {
   <div>
 
     <div v-if="transaction" class="mb-8 flex justify-center">
-      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg v-if="transaction.status" width="40" height="40" viewBox="0 0 40 40" fill="none"
+        xmlns="http://www.w3.org/2000/svg">
         <rect width="40" height="40" rx="20" fill="#22C55E" />
         <path d="M26.6673 15L17.5007 24.1667L13.334 20" stroke="white" stroke-width="3" stroke-linecap="round"
           stroke-linejoin="round" />
       </svg>
+
+      <svg v-else width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="20" fill="#EB5757" />
+        <path d="M25 15L15 25" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M15 15L25 25" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+
     </div>
 
 
-    <h2 class="mb-4 text-lg">Transaction {{ transaction ? "Confirmed" : "Pending" }}</h2>
+    <h2 class="mb-4 text-lg">Transaction {{ transaction ? (transaction.status ? "Confirmed" : "Failed") : "Pending" }}
+    </h2>
 
     <p v-if="!transaction" class="text-slate-400 text-xs">Transaction Broadcast</p>
+
+    <p v-if="transaction && !transaction.status" class="text-slate-400 text-xs">Try again or return to the home page.</p>
 
     <div v-if="!transaction" class="p-24 relative">
       <div class="absolute inset-0 flex items-center justify-center">
@@ -58,7 +69,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <a :href="getExplorerUrl(chainId, `/tx/${hash}`)" target="_blank" :class="{ 'mt-8': !!transaction}"
+    <a :href="getExplorerUrl(chainId, `/tx/${hash}`)" target="_blank" :class="{ 'mt-8': !!transaction }"
       class="cursor-pointer bg-blue-500 hover:bg-blue-600 px-4 py-2 capitalize w-full shadow-md rounded-[15px] flex justify-center items-center space-x-2">
 
 
