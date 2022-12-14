@@ -1,6 +1,7 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import WalletConnect from '@walletconnect/client';
 import { IClientMeta } from '@walletconnect/types';
+import { signingMethods } from '@walletconnect/utils';
 import { RPC_URLS } from "~~/connectors";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -30,7 +31,11 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
             try {
                 let wc = new WalletConnect({
                     storageId: id,
-                    session: JSON.parse(localStorage.getItem(id)!)
+                    session: JSON.parse(localStorage.getItem(id)!),
+                    signingMethods: [
+                        ...signingMethods,
+                        "eth_getBalance"
+                    ]
                 })
 
                 wc.networkId = wc.chainId;
@@ -151,7 +156,11 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                 const connector = new WalletConnect({
                     uri: uri,
                     clientMeta,
-                    storageId
+                    storageId,
+                    signingMethods: [
+                        ...signingMethods,
+                        "eth_getBalance"
+                    ]
                 });
 
                 connector.on('session_request', (error, payload) => {
