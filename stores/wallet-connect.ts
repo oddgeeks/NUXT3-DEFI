@@ -133,6 +133,18 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                     }
                 });
 
+                wc.on("disconnect", async (error) => {
+                    if (error) {
+                        throw error;
+                    }
+                    try {
+                        await wc.killSession()
+                    } catch (error) {
+                    }
+
+                    storage.value.keys[safe.safeAddress.value] = storage.value.keys[safe.safeAddress.value].filter(key => key !== id)
+                })
+
                 return wc
             } catch (error) {
                 storage.value.keys[safe.safeAddress.value] = storage.value.keys[safe.safeAddress.value].filter(key => key !== id)
