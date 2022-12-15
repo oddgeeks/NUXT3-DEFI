@@ -6,6 +6,7 @@ import SVGOptimism from "~/assets/images/logo/optimism.svg?component";
 import SVGAvalanche from "~/assets/images/logo/avalanche.svg?component";
 import SVGMetamask from "~/assets/images/wallet/metamask.svg?component";
 import SVGWalletConnect from "~/assets/images/wallet/wallet-connect.svg?component";
+import SVGMagicConnect from "~/assets/images/wallet/magic.svg?component";
 import { ethers } from "ethers";
 
 export function useNetworks() {
@@ -38,6 +39,27 @@ export function useNetworks() {
                 window.wc = changeNetworkWalletConnect()
 
                 return changeNetworkWalletConnect();
+            },
+        },
+        // {
+        //     name: "Torus",
+        //     logo: SVGMetamask,
+        //     switchNetwork: async (network: Network) => {
+        //     },
+        //     connect: async () => {
+        //         const { torus } = await import("~/connectors");
+        //         return torus;
+        //     },
+        // },
+        {
+            name: "Magic",
+            logo: SVGMagicConnect,
+            switchNetwork: async (network: Network) => {
+            },
+            connect: async () => {
+                const { magic } = await import("~/connectors");
+
+                return magic("georges.kabbouchi@gmail.com");
             },
         },
     ];
@@ -159,9 +181,13 @@ export function useNetworks() {
     const switchNetworkByChainId = async (chainId: number) => {
         const network = networks.find((i) => i.chainId === Number(chainId))!;
 
-        library.value.send("wallet_switchEthereumChain", [
+        //@ts-ignore
+        window.provider = library.value;
 
-        ])
+        const cid = await library.value.getNetwork()
+        if (cid.chainId === chainId) {
+            return;
+        }
 
         try {
             await library.value.send(
@@ -181,6 +207,11 @@ export function useNetworks() {
                     ]
                 );
             } catch (err) {
+                notify({
+                    type: "error",
+                    title: "Switch Network",
+                    message: "Failed to switch network, please add avocado network manualy then reconnect."
+                })
                 return Promise.reject(err);
             }
         }
