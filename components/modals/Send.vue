@@ -141,17 +141,16 @@ const send = async () => {
           <span>Amount</span>
           <span>{{ token.balance }} {{ token.symbol }}</span>
         </div>
-
-        <div class="relative">
-          <CommonInput placeholder="Enter amount" v-model="amount" />
-
-          <button
-            class="absolute top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
-            @click="setMax"
-          >
-            MAX
-          </button>
-        </div>
+        <CommonInput placeholder="Enter amount" v-model="amount">
+          <template #suffix>
+            <button
+              class="absolute top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
+              @click="setMax"
+            >
+              MAX
+            </button>
+          </template>
+        </CommonInput>
       </div>
 
       <div class="space-y-2.5">
@@ -159,20 +158,16 @@ const send = async () => {
           <span>Address To</span>
         </div>
 
-        <div class="relative">
-          <CommonInput
-            class="peer"
-            placeholder="Enter Address"
-            v-model="address"
-          />
-
-          <button
-            class="absolute z-10 bg-slate-800 peer-focus:bg-gray-850 top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
-            @click="pasteAddress"
-          >
-            <ClipboardSVG />
-          </button>
-        </div>
+        <CommonInput input-classes="peer" placeholder="Enter Address" v-model="address">
+          <template #suffix>
+            <button
+              class="absolute z-10 bg-slate-800 peer-focus:bg-gray-850 top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
+              @click="pasteAddress"
+            >
+              <ClipboardSVG />
+            </button>
+          </template>
+        </CommonInput>
 
         <p class="text-slate-400 mt-2.5 text-xs font-medium text-left">
           Enter valid address existing on the

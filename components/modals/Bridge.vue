@@ -42,21 +42,22 @@ const bridgeToToken = computed(() =>
     : null
 );
 
-const selectableChains = computed(()=> [
-  {
-    value: 137,
-    label: "Polygon",
-  },
-  {
-    value: 10,
-    label: "Optimism",
-  },
-  {
-    value: 42161,
-    label: "Arbitrum",
-  },
-].filter((c) => String(c.value) !== props.chainId));
-
+const selectableChains = computed(() =>
+  [
+    {
+      value: 137,
+      label: "Polygon",
+    },
+    {
+      value: 10,
+      label: "Optimism",
+    },
+    {
+      value: 42161,
+      label: "Arbitrum",
+    },
+  ].filter((c) => String(c.value) !== props.chainId)
+);
 
 const txRoute = ref();
 
@@ -245,16 +246,16 @@ const send = async () => {
           <span>{{ token.balance }} {{ token.symbol }}</span>
         </div>
 
-        <div class="relative">
-          <CommonInput placeholder="Enter amount" v-model="amount" />
-
-          <button
-            class="absolute top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
-            @click="setMax"
-          >
-            MAX
-          </button>
-        </div>
+        <CommonInput placeholder="Enter amount" v-model="amount">
+          <template #suffix>
+            <button
+              class="absolute top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
+              @click="setMax"
+            >
+              MAX
+            </button>
+          </template>
+        </CommonInput>
       </div>
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
@@ -263,16 +264,18 @@ const send = async () => {
 
         <div class="flex items-center gap-4">
           <CommonSelect
-           isValueIndex
-           v-model="bridgeToTokenIndex"
-           label-key="name" 
-           :options="bridgeToTokens"/>
+            isValueIndex
+            v-model="bridgeToTokenIndex"
+            label-key="name"
+            :options="bridgeToTokens"
+          />
 
-           <CommonSelect 
+          <CommonSelect
             v-model="bridgeToChainId"
             value-key="value"
-            label-key="label" 
-            :options="selectableChains"/>
+            label-key="label"
+            :options="selectableChains"
+          />
         </div>
       </div>
     </div>

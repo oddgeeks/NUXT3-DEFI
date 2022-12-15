@@ -35,8 +35,10 @@ defineProps({
     class="font-semibold inline-flex disabled:pointer-events-none disabled:select-none"
     :disabled="loading"
   >
+    <slot name="prefix" />
     <slot v-if="!loading" />
     <div v-else class="dot-flashing my-1.5"></div>
+     <slot name="suffix" />
   </button>
 </template>
 
