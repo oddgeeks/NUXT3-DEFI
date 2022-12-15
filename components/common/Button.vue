@@ -5,9 +5,10 @@ defineProps({
     default: "blue",
     validator: (value: string) => ["blue"].includes(value),
   },
-  small: {
-    type: Boolean,
-    default: false,
+  size: {
+    type: String,
+    default: "md",
+    validator: (value: string) => ["md", "lg"].includes(value),
   },
   loading: {
     type: Boolean,
@@ -24,12 +25,18 @@ defineProps({
         'bg-blue-500 text-white hover:bg-blue-600 disabled:bg-slate-800 disabled:text-slate-500':
           color === 'blue',
       },
+      {
+        'text-sm py-2 px-5.5 rounded-5': size === 'md',
+      },
+      {
+        'text-sm py-3 px-5.5 rounded-10': size === 'lg',
+      },
     ]"
-    class="font-semibold inline-flex disabled:pointer-events-none text-sm py-2 disabled:select-none px-5.5 rounded-5"
+    class="font-semibold inline-flex disabled:pointer-events-none disabled:select-none"
     :disabled="loading"
   >
     <slot v-if="!loading" />
-    <div v-else class="dot-flashing"></div>
+    <div v-else class="dot-flashing my-1.5"></div>
   </button>
 </template>
 

@@ -71,7 +71,7 @@ const chartOptions = {
 </script>
 <template>
   <tr>
-    <td class="text-left px-8 py-6">
+    <td class="text-left pl-7.5 py-6">
       <div class="flex items-center space-x-3">
         <div
           class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
@@ -88,7 +88,9 @@ const chartOptions = {
         </div>
 
         <div>
-          <div class="text-lg font-semibold">{{ tokenBalance.name }}</div>
+          <div class="text-lg font-semibold whitespace-nowrap pr-2 md:w-52 truncate">
+            {{ tokenBalance.name }}
+          </div>
           <div class="text-sm font-medium text-slate-400 max-w-[256px]">
             {{ toBN(tokenBalance.balance).toFormat(6) }}
             {{ tokenBalance.symbol }}
@@ -96,10 +98,10 @@ const chartOptions = {
         </div>
       </div>
     </td>
-    <td class="text-center font-semibold px-8 py-6 whitespace-nowrap">
+    <td class="text-center font-semibold py-6 whitespace-nowrap">
       $ {{ tokenBalance.balanceInUSD }}
     </td>
-    <td class="text-center font-semibold px-8 py-6">
+    <td class="text-center font-semibold px-7.5 py-6">
       <div class="w-20 h-8 mx-auto">
         <Line
           :data="chartData"
@@ -109,7 +111,7 @@ const chartOptions = {
       </div>
     </td>
 
-    <td class="text-center font-semibold px-8 py-6">
+    <td style="min-width: 48px" class="text-center font-semibold py-6">
       <span v-if="priceDiff" :class="priceDiffClass">
         {{ priceDiff.toFixed(2) }}%
       </span>

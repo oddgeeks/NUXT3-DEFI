@@ -27,5 +27,5 @@ onMounted(async () => {
 })
 </script>
 <template>
-    <div ref="canvas"></div>
+    <div class="w-[140px] h-[140px]" ref="canvas" />
 </template>
