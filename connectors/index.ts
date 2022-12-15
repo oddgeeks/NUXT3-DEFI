@@ -51,10 +51,10 @@ export const torus = new TorusConnector({ chainId: 420 })
 export const magic = (email: string) => {
    return new CustomMagicConnector({
         network: {
-            chainId: 420,
-            rpcUrl: "https://rpc.avocado.instad.app"
+            chainId: 137,// 420,
+            rpcUrl: "https://rpc.ankr.com/polygon",// "https://rpc.avocado.instad.app"
         },
-        apiKey: 'pk_live_B24F2BCF9A46C192',
+        apiKey: 'pk_live_40A3A59B53603988',
         email
     })
 }
