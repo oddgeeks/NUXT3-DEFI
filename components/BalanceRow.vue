@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Line } from "vue-chartjs";
 import { IBalance } from "~/stores/safe";
+import BridgeSVG from "~/assets/images/icons/bridge.svg?component";
 
 const props = defineProps<{
   tokenBalance: IBalance;
@@ -71,7 +72,7 @@ const chartOptions = {
 </script>
 <template>
   <tr>
-    <td class="text-left pl-7.5 py-6">
+    <td class="text-left pl-7.5 pr-10 py-6">
       <div class="flex items-center space-x-3">
         <div
           class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
@@ -101,7 +102,7 @@ const chartOptions = {
     <td class="text-center font-semibold py-6 whitespace-nowrap">
       $ {{ tokenBalance.balanceInUSD }}
     </td>
-    <td class="text-center font-semibold px-7.5 py-6">
+    <td class="text-center font-semibold px-10 py-6">
       <div class="w-20 h-8 mx-auto">
         <Line
           :data="chartData"
@@ -110,16 +111,14 @@ const chartOptions = {
         />
       </div>
     </td>
-
-    <td style="min-width: 48px" class="text-center font-semibold py-6">
+    <td class="text-center font-semibold py-6">
       <span v-if="priceDiff" :class="priceDiffClass">
         {{ priceDiff.toFixed(2) }}%
       </span>
 
       <span v-else> - </span>
     </td>
-
-    <td class="text-right px-8 py-6">
+    <td class="text-right px-7.5 py-6">
       <div class="flex items-center space-x-3">
         <CommonButton
           :disabled="isZero(tokenBalance.balance)"
@@ -129,10 +128,12 @@ const chartOptions = {
         </CommonButton>
 
         <CommonButton
+          v-tippy="'Bridge'"
           :disabled="isZero(tokenBalance.balance)"
+          class="!p-[5.5px]"
           @click="openBridgeModal(tokenBalance.address, tokenBalance.chainId)"
         >
-          Bridge
+          <BridgeSVG />
         </CommonButton>
       </div>
     </td>
