@@ -3,7 +3,7 @@ const router = useRoute()
 const provider = getRpcProvider(420)
 
 
-const [avoInternalTransaction, tansaction, receipt] = await Promise.all([
+const [avoInternalTransaction, transaction, receipt] = await Promise.all([
     provider.send("api_getTransactionByHash", [
         router.params.hash
     ]),
@@ -16,13 +16,13 @@ const [avoInternalTransaction, tansaction, receipt] = await Promise.all([
 <template>
     <div class="container space-y-8">
          <div class="bg-gray-850 rounded-[20px] p-6">
-            <h2 class="font-bold text-lg mb-3">Avo Internal Tranasction</h2>
+            <h2 class="font-bold text-lg mb-3">Avo Internal Transaction</h2>
             <pre class="overflow-scroll">{{ avoInternalTransaction }}</pre>
         </div>
 
          <div class="bg-gray-850 rounded-[20px] p-6">
-            <h2 class="font-bold text-lg mb-3">Tranasction</h2>
-            <pre class="overflow-scroll">{{ tansaction }}</pre>
+            <h2 class="font-bold text-lg mb-3">Transaction</h2>
+            <pre class="overflow-scroll">{{ transaction }}</pre>
         </div>
 
 
