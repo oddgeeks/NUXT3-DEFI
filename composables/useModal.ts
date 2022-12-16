@@ -5,12 +5,16 @@ const props = ref<any>({})
 
 type Options = {
     raw: boolean,
-    clickToClose: boolean
+    clickToClose: boolean,
+    wrapperClass: string,
+    contentClass: string
 }
 
 const options = ref<Options>({
     raw: false,
-    clickToClose: true
+    clickToClose: true,
+    wrapperClass: '',
+    contentClass: ''
 })
 
 const isOpen = ref(false)

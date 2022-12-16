@@ -15,7 +15,9 @@ export const showPendingTransactionModal = (hash: string, chainId: number | stri
 export const openBridgeModal = (address: string, chainId: number | string) => {
     openModal(Bridge, {
         address,
-        chainId
+        chainId,
+        }, {
+        wrapperClass: 'max-w-[600px]',
     })
 }
 

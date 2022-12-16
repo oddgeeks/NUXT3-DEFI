@@ -112,7 +112,7 @@ const send = async () => {
 </script>
 
 <template>
-  <div class="space-y-8">
+  <div class="space-y-8 text-center">
     <div
       class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
     >

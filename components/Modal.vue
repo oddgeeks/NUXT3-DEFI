@@ -5,6 +5,7 @@ const modalBoxRef = ref(null);
 onClickOutside(modalBoxRef, () => {
   options.value.clickToClose && closeModal();
 });
+
 </script>
 
 <template>
@@ -26,11 +27,13 @@ onClickOutside(modalBoxRef, () => {
               leave-from="opacity-100 translate-y-0 sm:scale-100"
               leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
               <div
+                :class="options.wrapperClass"
                 class="inline-block w-full my-auto text-left align-middle transition-all transform shadow max-w-[460px]"
                 role="dialog" aria-modal="true">
                 <div ref="target">
                   <div
-                    class="relative bg-[#111827] rounded-[20px] px-10 pt-2 pb-12 space-y-8 text-center w-full">
+                    :class="options.contentClass"
+                    class="relative bg-[#111827] rounded-5 px-[50px] py-10 w-full">
                     <button class="absolute top-0 right-0 m-6" @click="closeModal" aria-label="Close modal">
                       <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect width="30" height="30" rx="15" fill="#1E293B" />
