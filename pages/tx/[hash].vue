@@ -1,6 +1,14 @@
 <script setup>
+import CopySVG from "~/assets/images/icons/copy.svg?component";
+import ClockCircleSVG from "~/assets/images/icons/clock-circle.svg?component";
+
 const router = useRoute()
 const provider = getRpcProvider(420)
+
+const { copy: copyTxHash, copied: txHashCopied } = useClipboard();
+const { copy: copyBroadcaster, copied: broadcasterCopied } = useClipboard();
+const { copy: copySigner, copied: signerCopied } = useClipboard();
+const { copy: copySafe, copied: safeCopied } = useClipboard();
 
 
 const [avoInternalTransaction, transaction, _receipt] = await Promise.all([
@@ -22,22 +30,80 @@ const [avoInternalTransaction, transaction, _receipt] = await Promise.all([
             <div class="space-y-[26px] px-6.25 py-7.5">
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Transaction Hash</div>
-                    <div class="text-lg text-white">{{ transaction.hash }}</div>
+                    <div class="text-white flex items-center space-x-2.5">
+                        <a :href="getExplorerUrl(transaction.chainId, `/tx/${transaction.hash}`)" target="_blank">{{
+                                transaction.hash
+                        }}</a>
+
+                        <div class="inline-flex items-center gap-1 text-xs" v-if="txHashCopied">
+
+                            <span> Copied </span>
+
+                            <svg width="17" height="16" viewBox="0 0 17 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect x="0.5" width="16" height="16" rx="8" fill="#94A3B8" />
+                                <g clip-path="url(#clip0_2949_8772)">
+                                    <path d="M11.1663 6L7.49967 9.66667L5.83301 8" stroke="#0F172A" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </g>
+                                <defs>
+                                    <clipPath id="clip0_2949_8772">
+                                        <rect width="8" height="8" fill="white" transform="translate(4.5 4)" />
+                                    </clipPath>
+                                </defs>
+                            </svg>
+                        </div>
+
+                        <button v-else @click="copyTxHash(transaction.hash)">
+                            <CopySVG />
+                        </button>
+                    </div>
                 </div>
 
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Broadcaster</div>
-                    <div class="text-lg text-white">{{ transaction.from }}</div>
+                    <div class="text-white flex items-center space-x-2.5">
+                        <a class="text-blue-500"
+                            :href="getExplorerUrl(transaction.chainId, `/address/${transaction.from}`)"
+                            target="_blank">{{ transaction.from }}</a>
+
+                        <div class="inline-flex items-center gap-1 text-xs" v-if="broadcasterCopied">
+
+                            <span> Copied </span>
+
+                            <svg width="17" height="16" viewBox="0 0 17 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect x="0.5" width="16" height="16" rx="8" fill="#94A3B8" />
+                                <g clip-path="url(#clip0_2949_8772)">
+                                    <path d="M11.1663 6L7.49967 9.66667L5.83301 8" stroke="#0F172A" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </g>
+                                <defs>
+                                    <clipPath id="clip0_2949_8772">
+                                        <rect width="8" height="8" fill="white" transform="translate(4.5 4)" />
+                                    </clipPath>
+                                </defs>
+                            </svg>
+                        </div>
+
+                        <button v-else @click="copyBroadcaster(transaction.from)">
+                            <CopySVG />
+                        </button>
+                    </div>
                 </div>
 
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Status</div>
-                    <div class="text-lg text-white capitalize">{{ avoInternalTransaction.status }}</div>
+                    <div class="capitalize text-yellow text-sm flex items-center space-x-2.5">
+                        <ClockCircleSVG class="w-[18px] h-[18px]" />
+
+                        <span>{{ avoInternalTransaction.status }}</span>
+                    </div>
                 </div>
 
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Timestamp</div>
-                    <div class="text-lg text-white capitalize">{{ avoInternalTransaction.created_at }}</div>
+                    <div class="text-white capitalize">{{ avoInternalTransaction.created_at }}</div>
                 </div>
             </div>
 
@@ -46,7 +112,7 @@ const [avoInternalTransaction, transaction, _receipt] = await Promise.all([
             <div class="space-y-[26px] px-6.25 py-7.5">
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Network</div>
-                    <div class="text-lg text-white capitalize flex items-center">
+                    <div class="text-white capitalize flex items-center">
                         <ChainLogo class="w-5 h-5 mr-2.5" :chain="avoInternalTransaction.chain_id" />
 
                         <span>{{ chainIdToName(avoInternalTransaction.chain_id) }}</span>
@@ -59,12 +125,75 @@ const [avoInternalTransaction, transaction, _receipt] = await Promise.all([
             <div class="space-y-[26px] px-6.25 py-7.5">
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Signer</div>
-                    <div class="text-lg text-white capitalize">{{ avoInternalTransaction.metadata.signer || '-' }}</div>
+
+                    <div v-if="avoInternalTransaction.metadata.signer"
+                        class="text-white flex items-center space-x-2.5">
+
+                        <a class="text-blue-500"
+                            :href="getExplorerUrl(avoInternalTransaction.chain_id, `/address/${avoInternalTransaction.metadata.signer}`)"
+                            target="_blank">{{ avoInternalTransaction.metadata.signer }}</a>
+
+                        <div class="inline-flex items-center gap-1 text-xs" v-if="signerCopied">
+
+                            <span> Copied </span>
+
+                            <svg width="17" height="16" viewBox="0 0 17 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect x="0.5" width="16" height="16" rx="8" fill="#94A3B8" />
+                                <g clip-path="url(#clip0_2949_8772)">
+                                    <path d="M11.1663 6L7.49967 9.66667L5.83301 8" stroke="#0F172A" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </g>
+                                <defs>
+                                    <clipPath id="clip0_2949_8772">
+                                        <rect width="8" height="8" fill="white" transform="translate(4.5 4)" />
+                                    </clipPath>
+                                </defs>
+                            </svg>
+                        </div>
+
+                        <button v-else @click="copySigner(avoInternalTransaction.metadata.signer)">
+                            <CopySVG />
+                        </button>
+                    </div>
+
+                    <div v-else class="text-white capitalize"> - </div>
                 </div>
 
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">AvoSafe</div>
-                    <div class="text-lg text-white capitalize">{{ avoInternalTransaction.metadata.safe || '-' }}</div>
+
+                    <div v-if="avoInternalTransaction.metadata.safe"
+                        class="text-white flex items-center space-x-2.5">
+                        <a class="text-blue-500"
+                            :href="getExplorerUrl(avoInternalTransaction.chain_id, `/address/${avoInternalTransaction.metadata.safe}`)"
+                            target="_blank">{{ avoInternalTransaction.metadata.safe }}</a>
+
+                        <div class="inline-flex items-center gap-1 text-xs" v-if="safeCopied">
+
+                            <span> Copied </span>
+
+                            <svg width="17" height="16" viewBox="0 0 17 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect x="0.5" width="16" height="16" rx="8" fill="#94A3B8" />
+                                <g clip-path="url(#clip0_2949_8772)">
+                                    <path d="M11.1663 6L7.49967 9.66667L5.83301 8" stroke="#0F172A" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </g>
+                                <defs>
+                                    <clipPath id="clip0_2949_8772">
+                                        <rect width="8" height="8" fill="white" transform="translate(4.5 4)" />
+                                    </clipPath>
+                                </defs>
+                            </svg>
+                        </div>
+
+                        <button v-else @click="copySafe(avoInternalTransaction.metadata.safe)">
+                            <CopySVG />
+                        </button>
+                    </div>
+
+                    <div v-else class="text-white capitalize"> - </div>
                 </div>
             </div>
 
@@ -74,7 +203,7 @@ const [avoInternalTransaction, transaction, _receipt] = await Promise.all([
 
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Transaction Fee</div>
-                    <div class="text-lg text-white capitalize"> - </div>
+                    <div class="text-white capitalize"> - </div>
                 </div>
             </div>
 

@@ -34,6 +34,9 @@ module.exports = {
         slate: {
           750: "#2A3850",
         },
+        yellow: {
+          DEFAULT: '#F2C94C'
+        }
       },
       animation: {
         "reverse-spin": "reverse-spin 1s linear infinite",
