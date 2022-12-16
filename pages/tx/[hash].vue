@@ -19,7 +19,7 @@ const [transaction] = await Promise.all([
 </script>
 
 <template>
-    <div class="container space-y-8">
+    <div class="container">
 
         <h1 class="mb-5">Transaction Details</h1>
 
