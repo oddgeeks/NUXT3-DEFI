@@ -10,12 +10,11 @@ const { copy: copyBroadcaster, copied: broadcasterCopied } = useClipboard();
 const { copy: copySigner, copied: signerCopied } = useClipboard();
 const { copy: copySafe, copied: safeCopied } = useClipboard();
 
-
-const [avoInternalTransaction, transaction, _receipt] = await Promise.all([
+const [avoInternalTransaction, _transaction, _receipt] = await Promise.all([
     provider.send("api_getTransactionByHash", [
         router.params.hash
     ]).catch(() => null),
-    provider.getTransaction(router.params.hash).catch(() => null),
+    // provider.getTransaction(router.params.hash).catch(() => null),
     // provider.getTransactionReceipt(router.params.hash),
 ])
 
@@ -30,13 +29,13 @@ const [avoInternalTransaction, transaction, _receipt] = await Promise.all([
 
         <h1 class="mb-5">Transaction Details</h1>
 
-        <div v-if="avoInternalTransaction && transaction" class="bg-gray-850 rounded-5.5 text-sm font-medium">
+        <div v-if="avoInternalTransaction" class="bg-gray-850 rounded-5.5 text-sm font-medium">
             <div class="space-y-[26px] px-6.25 py-7.5">
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Transaction Hash</div>
                     <div class="text-white flex items-center space-x-2.5">
-                        <a :href="getExplorerUrl(transaction.chainId, `/tx/${transaction.hash}`)" target="_blank">{{
-                                transaction.hash
+                        <a :href="getExplorerUrl(avoInternalTransaction.chain_id, `/tx/${avoInternalTransaction.hash}`)" target="_blank">{{
+                                avoInternalTransaction.hash
                         }}</a>
 
                         <div class="inline-flex items-center gap-1 text-xs" v-if="txHashCopied">
@@ -58,7 +57,7 @@ const [avoInternalTransaction, transaction, _receipt] = await Promise.all([
                             </svg>
                         </div>
 
-                        <button v-else @click="copyTxHash(transaction.hash)">
+                        <button v-else @click="copyTxHash(avoInternalTransaction.hash)">
                             <CopySVG />
                         </button>
                     </div>
@@ -68,8 +67,8 @@ const [avoInternalTransaction, transaction, _receipt] = await Promise.all([
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Broadcaster</div>
                     <div class="text-white flex items-center space-x-2.5">
                         <a class="text-blue-500"
-                            :href="getExplorerUrl(transaction.chainId, `/address/${transaction.from}`)"
-                            target="_blank">{{ transaction.from }}</a>
+                            :href="getExplorerUrl(avoInternalTransaction.chain_id, `/address/${avoInternalTransaction.from}`)"
+                            target="_blank">{{ avoInternalTransaction.from }}</a>
 
                         <div class="inline-flex items-center gap-1 text-xs" v-if="broadcasterCopied">
 
@@ -90,7 +89,7 @@ const [avoInternalTransaction, transaction, _receipt] = await Promise.all([
                             </svg>
                         </div>
 
-                        <button v-else @click="copyBroadcaster(transaction.from)">
+                        <button v-else @click="copyBroadcaster(avoInternalTransaction.from)">
                             <CopySVG />
                         </button>
                     </div>
