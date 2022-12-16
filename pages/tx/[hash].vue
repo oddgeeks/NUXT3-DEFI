@@ -100,7 +100,7 @@ const [transaction] = await Promise.all([
 
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Timestamp</div>
-                    <div class="text-white capitalize">{{ useTimeAgo(transaction.created_at).value }}</div>
+                    <div class="text-white capitalize">{{ useTimeAgo(transaction.created_at).value }} ({{ transaction.created_at }})</div>
                 </div>
             </div>
 
