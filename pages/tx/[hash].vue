@@ -10,17 +10,11 @@ const { copy: copyBroadcaster, copied: broadcasterCopied } = useClipboard();
 const { copy: copySigner, copied: signerCopied } = useClipboard();
 const { copy: copySafe, copied: safeCopied } = useClipboard();
 
-const [avoInternalTransaction, _transaction, _receipt] = await Promise.all([
+const [transaction] = await Promise.all([
     provider.send("api_getTransactionByHash", [
         router.params.hash
     ]).catch(() => null),
-    // provider.getTransaction(router.params.hash).catch(() => null),
-    // provider.getTransactionReceipt(router.params.hash),
 ])
-
-// if(! avoInternalTransaction) {
-//     throw createError({ statusCode: 404, statusMessage: 'Transaction Not Found' })
-// }
 
 </script>
 
@@ -29,13 +23,13 @@ const [avoInternalTransaction, _transaction, _receipt] = await Promise.all([
 
         <h1 class="mb-5">Transaction Details</h1>
 
-        <div v-if="avoInternalTransaction" class="bg-gray-850 rounded-5.5 text-sm font-medium">
+        <div v-if="transaction" class="bg-gray-850 rounded-5.5 text-sm font-medium">
             <div class="space-y-[26px] px-6.25 py-7.5">
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Transaction Hash</div>
                     <div class="text-white flex items-center space-x-2.5">
-                        <a :href="getExplorerUrl(avoInternalTransaction.chain_id, `/tx/${avoInternalTransaction.hash}`)" target="_blank">{{
-                                avoInternalTransaction.hash
+                        <a :href="getExplorerUrl(transaction.chain_id, `/tx/${transaction.hash}`)" target="_blank">{{
+                                transaction.hash
                         }}</a>
 
                         <div class="inline-flex items-center gap-1 text-xs" v-if="txHashCopied">
@@ -57,7 +51,7 @@ const [avoInternalTransaction, _transaction, _receipt] = await Promise.all([
                             </svg>
                         </div>
 
-                        <button v-else @click="copyTxHash(avoInternalTransaction.hash)">
+                        <button v-else @click="copyTxHash(transaction.hash)">
                             <CopySVG />
                         </button>
                     </div>
@@ -67,8 +61,8 @@ const [avoInternalTransaction, _transaction, _receipt] = await Promise.all([
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Broadcaster</div>
                     <div class="text-white flex items-center space-x-2.5">
                         <a class="text-blue-500"
-                            :href="getExplorerUrl(avoInternalTransaction.chain_id, `/address/${avoInternalTransaction.from}`)"
-                            target="_blank">{{ avoInternalTransaction.from }}</a>
+                            :href="getExplorerUrl(transaction.chain_id, `/address/${transaction.from}`)"
+                            target="_blank">{{ transaction.from }}</a>
 
                         <div class="inline-flex items-center gap-1 text-xs" v-if="broadcasterCopied">
 
@@ -89,7 +83,7 @@ const [avoInternalTransaction, _transaction, _receipt] = await Promise.all([
                             </svg>
                         </div>
 
-                        <button v-else @click="copyBroadcaster(avoInternalTransaction.from)">
+                        <button v-else @click="copyBroadcaster(transaction.from)">
                             <CopySVG />
                         </button>
                     </div>
@@ -100,13 +94,13 @@ const [avoInternalTransaction, _transaction, _receipt] = await Promise.all([
                     <div class="capitalize text-yellow text-sm flex items-center space-x-2.5">
                         <ClockCircleSVG class="w-[18px] h-[18px]" />
 
-                        <span>{{ avoInternalTransaction.status }}</span>
+                        <span>{{ transaction.status }}</span>
                     </div>
                 </div>
 
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Timestamp</div>
-                    <div class="text-white capitalize">{{ avoInternalTransaction.created_at }}</div>
+                    <div class="text-white capitalize">{{ useTimeAgo(transaction.created_at).value }}</div>
                 </div>
             </div>
 
@@ -116,9 +110,9 @@ const [avoInternalTransaction, _transaction, _receipt] = await Promise.all([
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Network</div>
                     <div class="text-white capitalize flex items-center">
-                        <ChainLogo class="w-5 h-5 mr-2.5" :chain="avoInternalTransaction.chain_id" />
+                        <ChainLogo class="w-5 h-5 mr-2.5" :chain="transaction.chain_id" />
 
-                        <span>{{ chainIdToName(avoInternalTransaction.chain_id) }}</span>
+                        <span>{{ chainIdToName(transaction.chain_id) }}</span>
                     </div>
                 </div>
             </div>
@@ -129,11 +123,11 @@ const [avoInternalTransaction, _transaction, _receipt] = await Promise.all([
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Signer</div>
 
-                    <div v-if="avoInternalTransaction.metadata.signer" class="text-white flex items-center space-x-2.5">
+                    <div v-if="transaction.metadata.signer" class="text-white flex items-center space-x-2.5">
 
                         <a class="text-blue-500"
-                            :href="getExplorerUrl(avoInternalTransaction.chain_id, `/address/${avoInternalTransaction.metadata.signer}`)"
-                            target="_blank">{{ avoInternalTransaction.metadata.signer }}</a>
+                            :href="getExplorerUrl(transaction.chain_id, `/address/${transaction.metadata.signer}`)"
+                            target="_blank">{{ transaction.metadata.signer }}</a>
 
                         <div class="inline-flex items-center gap-1 text-xs" v-if="signerCopied">
 
@@ -154,7 +148,7 @@ const [avoInternalTransaction, _transaction, _receipt] = await Promise.all([
                             </svg>
                         </div>
 
-                        <button v-else @click="copySigner(avoInternalTransaction.metadata.signer)">
+                        <button v-else @click="copySigner(transaction.metadata.signer)">
                             <CopySVG />
                         </button>
                     </div>
@@ -165,10 +159,10 @@ const [avoInternalTransaction, _transaction, _receipt] = await Promise.all([
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">AvoSafe</div>
 
-                    <div v-if="avoInternalTransaction.metadata.safe" class="text-white flex items-center space-x-2.5">
+                    <div v-if="transaction.metadata.safe" class="text-white flex items-center space-x-2.5">
                         <a class="text-blue-500"
-                            :href="getExplorerUrl(avoInternalTransaction.chain_id, `/address/${avoInternalTransaction.metadata.safe}`)"
-                            target="_blank">{{ avoInternalTransaction.metadata.safe }}</a>
+                            :href="getExplorerUrl(transaction.chain_id, `/address/${transaction.metadata.safe}`)"
+                            target="_blank">{{ transaction.metadata.safe }}</a>
 
                         <div class="inline-flex items-center gap-1 text-xs" v-if="safeCopied">
 
@@ -189,7 +183,7 @@ const [avoInternalTransaction, _transaction, _receipt] = await Promise.all([
                             </svg>
                         </div>
 
-                        <button v-else @click="copySafe(avoInternalTransaction.metadata.safe)">
+                        <button v-else @click="copySafe(transaction.metadata.safe)">
                             <CopySVG />
                         </button>
                     </div>
