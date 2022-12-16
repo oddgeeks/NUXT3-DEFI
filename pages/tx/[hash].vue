@@ -19,9 +19,9 @@ const [avoInternalTransaction, transaction, _receipt] = await Promise.all([
     // provider.getTransactionReceipt(router.params.hash),
 ])
 
-if(! avoInternalTransaction) {
-    throw createError({ statusCode: 404, statusMessage: 'Transaction Not Found' })
-}
+// if(! avoInternalTransaction) {
+//     throw createError({ statusCode: 404, statusMessage: 'Transaction Not Found' })
+// }
 
 </script>
 
@@ -30,7 +30,7 @@ if(! avoInternalTransaction) {
 
         <h1 class="mb-5">Transaction Details</h1>
 
-        <div class="bg-gray-850 rounded-5.5 text-sm font-medium">
+        <div v-if="avoInternalTransaction && transaction" class="bg-gray-850 rounded-5.5 text-sm font-medium">
             <div class="space-y-[26px] px-6.25 py-7.5">
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Transaction Hash</div>
@@ -130,8 +130,7 @@ if(! avoInternalTransaction) {
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Signer</div>
 
-                    <div v-if="avoInternalTransaction.metadata.signer"
-                        class="text-white flex items-center space-x-2.5">
+                    <div v-if="avoInternalTransaction.metadata.signer" class="text-white flex items-center space-x-2.5">
 
                         <a class="text-blue-500"
                             :href="getExplorerUrl(avoInternalTransaction.chain_id, `/address/${avoInternalTransaction.metadata.signer}`)"
@@ -167,8 +166,7 @@ if(! avoInternalTransaction) {
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">AvoSafe</div>
 
-                    <div v-if="avoInternalTransaction.metadata.safe"
-                        class="text-white flex items-center space-x-2.5">
+                    <div v-if="avoInternalTransaction.metadata.safe" class="text-white flex items-center space-x-2.5">
                         <a class="text-blue-500"
                             :href="getExplorerUrl(avoInternalTransaction.chain_id, `/address/${avoInternalTransaction.metadata.safe}`)"
                             target="_blank">{{ avoInternalTransaction.metadata.safe }}</a>
@@ -211,6 +209,11 @@ if(! avoInternalTransaction) {
                 </div>
             </div>
 
+        </div>
+
+        <div v-else class="bg-gray-850 rounded-5.5 text-sm font-medium p-16 text-center">
+            <p class="mb-2"> Sorry, We are unable to locate this TxnHash:</p>
+            <p>{{ $route.params.hash }}</p>
         </div>
     </div>
 </template>
