@@ -14,11 +14,21 @@ const [avoInternalTransaction, tansaction, receipt] = await Promise.all([
 </script>
 
 <template>
-    <div class="container">
-        <pre class="overflow-scroll">{{ avoInternalTransaction }}</pre>
+    <div class="container space-y-8">
+         <div class="bg-gray-850 rounded-[20px] p-6">
+            <h2 class="font-bold text-lg mb-3">Avo Internal Tranasction</h2>
+            <pre class="overflow-scroll">{{ avoInternalTransaction }}</pre>
+        </div>
 
-        <pre class="overflow-scroll">{{ tansaction }}</pre>
-        
-        <pre class="overflow-scroll">{{ receipt }}</pre>
+         <div class="bg-gray-850 rounded-[20px] p-6">
+            <h2 class="font-bold text-lg mb-3">Tranasction</h2>
+            <pre class="overflow-scroll">{{ tansaction }}</pre>
+        </div>
+
+
+         <div class="bg-gray-850 rounded-[20px] p-6">
+            <h2 class="font-bold text-lg mb-3">Receipt</h2>
+            <pre class="overflow-scroll">{{ receipt }}</pre>
+        </div>
     </div>
 </template>
