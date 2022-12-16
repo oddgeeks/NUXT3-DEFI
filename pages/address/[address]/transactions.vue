@@ -29,8 +29,7 @@ const transactions: { data: IAvocadoTransaction[], page: number, total: number }
                                     <span>{{ chainIdToName(transaction.chain_id) }}</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-4">{{ shortenHash(transaction.metadata.signer!) }}</td>
-                            <td class="px-6 py-4">{{ shortenHash(transaction.metadata.safe!) }}</td>
+                            <td class="px-6 py-4">{{ transaction.block_number }}</td>
                             <td class="px-6 py-4">{{ transaction.status }}</td>
                             <td class="px-6 py-4">{{ useTimeAgo(transaction.created_at).value }}</td>
                         </tr>
