@@ -14,10 +14,14 @@ const { copy: copySafe, copied: safeCopied } = useClipboard();
 const [avoInternalTransaction, transaction, _receipt] = await Promise.all([
     provider.send("api_getTransactionByHash", [
         router.params.hash
-    ]),
-    provider.getTransaction(router.params.hash),
+    ]).catch(() => null),
+    provider.getTransaction(router.params.hash).catch(() => null),
     // provider.getTransactionReceipt(router.params.hash),
 ])
+
+if(! avoInternalTransaction) {
+    throw createError({ statusCode: 404, statusMessage: 'Transaction Not Found' })
+}
 
 </script>
 
