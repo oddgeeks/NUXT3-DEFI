@@ -103,12 +103,15 @@ const [transaction] = await Promise.all([
                             <path d="M20 12L13.125 19L10 15.8182" stroke="currentColor" stroke-width="3"
                                 stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
-                        
+
                         <ClockCircleSVG v-else class="w-[18px] h-[18px]" />
 
-                        <span>{{ transaction.status }} ({{ transaction.confirmations > 128 ? '128+' :
+                        <span>{{ transaction.status }} 
+                        
+                            <span v-if="transaction.status !== 'confirmed'">({{ transaction.confirmations > 128 ? '128+' :
                                 transaction.confirmations
                         }}/128)</span>
+                        </span>
                     </div>
                 </div>
 
