@@ -76,11 +76,6 @@ const [avoInternalTransaction, transaction, _receipt] = await Promise.all([
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Transaction Fee</div>
                     <div class="text-lg text-white capitalize"> - </div>
                 </div>
-
-                <div class="flex items-center">
-                    <div class="text-slate-400 md:w-full md:max-w-[200px]">Gas Price</div>
-                    <div class="text-lg text-white capitalize"> - </div>
-                </div>
             </div>
 
         </div>
