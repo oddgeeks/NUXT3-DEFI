@@ -94,7 +94,7 @@ const [transaction] = await Promise.all([
                     <div class="capitalize text-yellow text-sm flex items-center space-x-2.5">
                         <ClockCircleSVG class="w-[18px] h-[18px]" />
 
-                        <span>{{ transaction.status }}</span>
+                        <span>{{ transaction.status }} ({{ transaction.confirmations > 128 ? '128+' : transaction.confirmations }}/128)</span>
                     </div>
                 </div>
 
