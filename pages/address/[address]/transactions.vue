@@ -17,22 +17,22 @@ const transactions: { data: IAvocadoTransaction[], page: number, total: number }
                 <table class="table w-full">
                     <tbody class="divide-y divide-slate-800">
                         <tr v-for="transaction in transactions.data">
-                            <td class="px-6 py-3.5">
+                            <td class="px-6 py-4">
                                 <NuxtLink :to="`/tx/${transaction.hash}`" class="text-blue-500">
                                     {{ shortenHash(transaction.hash, 8) }}
                                 </NuxtLink>
                             </td>
-                            <td class="px-6 py-3.5">
+                            <td class="px-6 py-4">
                                 <div class="text-white capitalize flex items-center">
                                     <ChainLogo class="w-5 h-5 mr-2.5" :chain="transaction.chain_id" />
 
                                     <span>{{ chainIdToName(transaction.chain_id) }}</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-3.5">{{ shortenHash(transaction.metadata.signer!) }}</td>
-                            <td class="px-6 py-3.5">{{ shortenHash(transaction.metadata.safe!) }}</td>
-                            <td class="px-6 py-3.5">{{ transaction.status }}</td>
-                            <td class="px-6 py-3.5">{{ useTimeAgo(transaction.created_at).value }}</td>
+                            <td class="px-6 py-4">{{ shortenHash(transaction.metadata.signer!) }}</td>
+                            <td class="px-6 py-4">{{ shortenHash(transaction.metadata.safe!) }}</td>
+                            <td class="px-6 py-4">{{ transaction.status }}</td>
+                            <td class="px-6 py-4">{{ useTimeAgo(transaction.created_at).value }}</td>
                         </tr>
                     </tbody>
                 </table>
