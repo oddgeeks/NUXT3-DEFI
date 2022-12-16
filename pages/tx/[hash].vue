@@ -1,6 +1,7 @@
 <script setup>
 import CopySVG from "~/assets/images/icons/copy.svg?component";
 import ClockCircleSVG from "~/assets/images/icons/clock-circle.svg?component";
+import CheckCircleSVG from "~/assets/images/icons/check-circle.svg?component";
 
 const router = useRoute()
 const provider = getRpcProvider(420)
@@ -91,16 +92,31 @@ const [transaction] = await Promise.all([
 
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Status</div>
-                    <div class="capitalize text-yellow text-sm flex items-center space-x-2.5">
-                        <ClockCircleSVG class="w-[18px] h-[18px]" />
+                    <div class="capitalize text-sm flex items-center space-x-2.5"
+                        :class="transaction.status === 'confirmed' ? 'text-green-500' : 'text-yellow'">
+                        <svg v-if="transaction.status === 'confirmed'" width="18" height="18" viewBox="0 0 30 30"
+                            fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M15.2271 27.5C22.1306 27.5 27.7271 21.9036 27.7271 15C27.7271 8.09644 22.1306 2.5 15.2271 2.5C8.32349 2.5 2.72705 8.09644 2.72705 15C2.72705 21.9036 8.32349 27.5 15.2271 27.5Z"
+                                fill="green" stroke="green" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path d="M20 12L13.125 19L10 15.8182" stroke="currentColor" stroke-width="3"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        
+                        <ClockCircleSVG v-else class="w-[18px] h-[18px]" />
 
-                        <span>{{ transaction.status }} ({{ transaction.confirmations > 128 ? '128+' : transaction.confirmations }}/128)</span>
+                        <span>{{ transaction.status }} ({{ transaction.confirmations > 128 ? '128+' :
+                                transaction.confirmations
+                        }}/128)</span>
                     </div>
                 </div>
 
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Timestamp</div>
-                    <div class="text-white capitalize">{{ useTimeAgo(transaction.created_at).value }} ({{ transaction.created_at }})</div>
+                    <div class="text-white capitalize">{{ useTimeAgo(transaction.created_at).value }} ({{
+                            transaction.created_at
+                    }})</div>
                 </div>
             </div>
 
