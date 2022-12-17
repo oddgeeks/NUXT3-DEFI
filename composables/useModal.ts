@@ -10,12 +10,14 @@ type Options = {
     contentClass: string
 }
 
-const options = ref<Options>({
+const defaultOptions = () => ({
     raw: false,
     clickToClose: true,
     wrapperClass: '',
     contentClass: ''
-})
+} as Options)
+
+const options = ref<Options>(defaultOptions())
 
 const isOpen = ref(false)
 
@@ -37,6 +39,7 @@ const openModal = async (component: DefineComponent | any, componentProps: any =
 
 const closeModal = async () => {
     isOpen.value = false
+    options.value = defaultOptions()
 
    timeout = setTimeout(() => {
         modal.value = null
