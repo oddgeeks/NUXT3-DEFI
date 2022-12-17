@@ -22,7 +22,7 @@ const handleInputChange = (e: Event) => {
       :value="modelValue"
       @input="handleInputChange"
       :class="inputClasses"
-      class="bg-slate-800 placeholder-slate-400 focus:ring-2 border-none focus:bg-gray-850 focus:ring-slate-750 text-slate-200 px-5 h-12 rounded-[15px] w-full"
+      class="bg-slate-800 placeholder-slate-400 focus:ring-2 border-none focus:bg-gray-850 focus:ring-slate-750 text-slate-200 px-5 py-3 rounded-[15px] w-full"
     />
    <slot name="suffix" />
   </div>

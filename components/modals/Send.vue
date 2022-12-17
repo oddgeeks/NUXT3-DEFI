@@ -118,10 +118,14 @@ const send = async () => {
 </script>
 
 <template>
-  <div class="space-y-8">
-    <div class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0">
-      <img :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
-        onerror="this.onerror=null; this.remove();" />
+  <div class="space-y-8 text-center">
+    <div
+      class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
+    >
+      <img
+        :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
+        onerror="this.onerror=null; this.remove();"
+      />
     </div>
 
     <div>

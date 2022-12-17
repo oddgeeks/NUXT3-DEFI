@@ -20,13 +20,32 @@ const props = defineProps({
 const { library, account } = useWeb3();
 const { switchNetworkByChainId } = useNetworks();
 const { sendTransactions, safeAddress, tokenBalances } = useAvocadoSafe();
+const { fromWei } = useBignumber();
 const token = computed(
   () =>
     tokenBalances.value.find(
       (t) => t.chainId === props.chainId && t.address === props.address
     )!
 );
+
+const txRoute = ref();
 const amount = ref("");
+
+const toAmount = computed(() =>
+  formatDecimal(
+    fromWei(txRoute.value?.toAmount || "0", bridgeToToken?.value?.decimals),
+    6
+  )
+);
+
+const bridgeFee = computed(() =>
+  formatDecimal(
+    fromWei(
+      minus(txRoute.value?.fromAmount || "0", txRoute.value?.toAmount || "0"),
+      bridgeToToken?.value?.decimals
+    )
+  )
+);
 
 const setMax = () => {
   amount.value = token.value!.balance;
@@ -58,8 +77,6 @@ const selectableChains = computed(() =>
     },
   ].filter((c) => String(c.value) !== props.chainId)
 );
-
-const txRoute = ref();
 
 watch(
   () => [props.chainId],
@@ -214,80 +231,154 @@ const send = async () => {
 </script>
 
 <template>
-  <div class="space-y-8">
-    <div
-      class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
-    >
+  <div class="flex gap-7.5 flex-col">
+    <div class="flex justify-center flex-col items-center">
       <img
+        width="40"
+        height="40"
+        class="h-10 w-10 mb-7.5"
         :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
         onerror="this.onerror=null; this.remove();"
       />
-    </div>
+      <div class="flex flex-col gap-[14px]">
+        <h2 class="text-lg leading-5 text-center">{{ token.name }}</h2>
 
-    <div>
-      <h2>{{ token.name }}</h2>
-
-      <div
-        class="bg-gray-850 mt-4 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]"
-      >
-        <ChainLogo class="w-5 h-5" :chain="token.chainId" />
-        <span class="text-xs text-slate-400 leading-5"
-          >{{ chainIdToName(token.chainId) }} Network</span
+        <div
+          class="bg-gray-850 px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5"
         >
+          <ChainLogo class="w-5 h-5" :chain="token.chainId" />
+          <span class="text-xs text-slate-400 leading-5"
+            >{{ chainIdToName(token.chainId) }} Network</span
+          >
+        </div>
       </div>
-
-      <div class="text-slate-400 mt-2">Estimated wait time is 10m</div>
     </div>
 
-    <div class="space-y-5">
+    <div class="flex flex-col gap-5">
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
-          <span>Amount</span>
+          <h1>Transfer from</h1>
           <span>{{ token.balance }} {{ token.symbol }}</span>
         </div>
 
-        <CommonInput placeholder="Enter amount" v-model="amount">
-          <template #suffix>
-            <button
-              class="absolute top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
-              @click="setMax"
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <CommonInput placeholder="Enter amount" v-model="amount">
+            <template #suffix>
+              <button
+                class="absolute top-0 bottom-0 right-0 mr-5 text-sm text-blue-500 hover:text-blue-500"
+                @click="setMax"
+              >
+                MAX
+              </button>
+            </template>
+          </CommonInput>
+          <div
+            class="bg-gray-850 px-3 max-w-full inline-flex items-center gap-2 rounded-2xl"
+          >
+            <ChainLogo class="w-5 h-5" :chain="token.chainId" />
+            <span class="text-xs text-slate-400 leading-5"
+              >{{ chainIdToName(token.chainId) }} Network</span
             >
-              MAX
-            </button>
-          </template>
-        </CommonInput>
+          </div>
+        </div>
       </div>
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
-          <span>Bridge To</span>
+          <h1>Transfer to</h1>
+          <!-- <span>{{toAmount}} {{token.symbol}}</span> -->
         </div>
+        <div class="px-5 pt-[14px] pb-5 bg-gray-850 rounded-5">
+          <div
+            class="flex flex-col gap-5"
+          >
+          <div class="grid items-center gap-4 grid-cols-1 md:grid-cols-2 md:gap-x-4 md:gap-y-5">
+            <div class="flex flex-col gap-2.5">
+              <span class="text-sm">Coin</span>
+              <CommonSelect
+                isValueIndex
+                v-model="bridgeToTokenIndex"
+                label-key="name"
+                icon-key="icon"
+                :options="bridgeToTokens"
+              />
+            </div>
 
-        <div class="flex items-center gap-4">
-          <CommonSelect
-            isValueIndex
-            v-model="bridgeToTokenIndex"
-            label-key="name"
-            :options="bridgeToTokens"
-          />
+            <div class="flex flex-col gap-2.5">
+              <span class="text-sm">Network</span>
+              <CommonSelect
+                v-model="bridgeToChainId"
+                value-key="value"
+                label-key="label"
+                :options="selectableChains"
+              />
+            </div>
+          </div>
+            
+            <div class="flex justify-between items-center">
+              <span class="text-slate-400 text-sm font-semibold"
+                >Bridge Fee</span
+              >
+              <span class="text-slate-400 text-sm font-semibold text-right"
+                >{{ bridgeFee }} USDC</span
+              >
+            </div>
 
-          <CommonSelect
-            v-model="bridgeToChainId"
-            value-key="value"
-            label-key="label"
-            :options="selectableChains"
-          />
+            <div class="divider" />
+
+            <div class="flex justify-between items-center">
+              <span class="md:text-lg font-semibold !leading-5">You receive</span>
+              <span class="sm:text-2xl text-lg font-semibold text-right !leading-5"
+                >{{ toAmount }} {{ token.symbol }}</span
+              >
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <CommonButton
-      :disabled="sendingDisabled"
-      :loading="loading"
-      @click="send"
-      class="justify-center w-full"
-      size="lg"
-    >
-      Bridge
-    </CommonButton>
+    <div class="flex gap-4 flex-col">
+      <CommonButton
+        :disabled="sendingDisabled"
+        :loading="loading"
+        @click="send"
+        class="justify-center w-full"
+        size="lg"
+      >
+        Bridge
+      </CommonButton>
+      <p class="text-xs text-center text-slate-400">
+        Estimated wait time is 10m.
+      </p>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.divider {
+  background-image: linear-gradient(
+    to right,
+    #1e293b 33%,
+    rgba(255, 255, 255, 0) 0%
+  );
+  background-position: bottom;
+  background-size: 21px 2px;
+  background-repeat: repeat-x;
+  border: 0;
+  height: 2px;
+  position: relative;
+}
+
+.divider:after {
+  @apply w-5 h-5 rounded-full absolute top-1/2 -right-10 -translate-x-1/2 -translate-y-1/2;
+  background-color: #111827;
+  content: "";
+  display: block;
+}
+
+.divider:before {
+  @apply w-5 h-5 rounded-full absolute top-1/2 -left-5 -translate-x-1/2 -translate-y-1/2;
+  background-color: #111827;
+  content: "";
+  display: block;
+}
+</style>
