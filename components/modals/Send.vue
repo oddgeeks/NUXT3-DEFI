@@ -100,11 +100,17 @@ const send = async () => {
 
     showPendingTransactionModal(transactionHash, props.chainId);
   } catch (e: any) {
-    console.log(e);
-    notify({
-      type: "error",
-      message: e.message,
-    });
+    try {
+      notify({
+        type: "error",
+        message: JSON.parse(e.body).error.message,
+      });
+    } catch {
+      notify({
+        type: "error",
+        message: e.message,
+      });
+    }
   }
 
   loading.value = false;
@@ -125,13 +131,9 @@ const send = async () => {
     <div>
       <h2>{{ token.name }}</h2>
 
-      <div
-        class="bg-gray-850 mt-4 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]"
-      >
+      <div class="bg-gray-850 mt-4 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]">
         <ChainLogo class="w-5 h-5" :chain="token.chainId" />
-        <span class="text-xs text-slate-400 leading-5"
-          >{{ chainIdToName(token.chainId) }} Network</span
-        >
+        <span class="text-xs text-slate-400 leading-5">{{ chainIdToName(token.chainId) }} Network</span>
       </div>
     </div>
 
@@ -143,10 +145,7 @@ const send = async () => {
         </div>
         <CommonInput placeholder="Enter amount" v-model="amount">
           <template #suffix>
-            <button
-              class="absolute top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
-              @click="setMax"
-            >
+            <button class="absolute top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500" @click="setMax">
               MAX
             </button>
           </template>
@@ -162,8 +161,7 @@ const send = async () => {
           <template #suffix>
             <button
               class="absolute z-10 bg-slate-800 peer-focus:bg-gray-850 top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
-              @click="pasteAddress"
-            >
+              @click="pasteAddress">
               <ClipboardSVG />
             </button>
           </template>
@@ -176,13 +174,7 @@ const send = async () => {
       </div>
     </div>
 
-    <CommonButton
-      :disabled="sendingDisabled"
-      :loading="loading"
-      @click="send"
-      class="justify-center w-full"
-      size="lg"
-    >
+    <CommonButton :disabled="sendingDisabled" :loading="loading" @click="send" class="justify-center w-full" size="lg">
       Send
     </CommonButton>
   </div>

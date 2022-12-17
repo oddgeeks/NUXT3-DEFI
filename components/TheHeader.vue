@@ -1,6 +1,9 @@
 <template>
     <div class="flex justify-between items-center">
-        <Logo />
+        <NuxtLink to="/">
+            <Logo />
+        </NuxtLink>
+
         <div>
             <Web3Button />
         </div>
