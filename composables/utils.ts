@@ -16,7 +16,7 @@ const rpcInstances: Record<string, ethers.providers.JsonRpcProvider> = {}
 
 export const getRpcProvider = (chainId: number | string) => {
   if (!rpcInstances[chainId]) {
-    rpcInstances[chainId] = new ethers.providers.StaticJsonRpcProvider(RPC_URLS[Number(chainId)])
+    rpcInstances[chainId] = new ethers.providers.JsonRpcProvider(RPC_URLS[Number(chainId)])
   }
 
   return rpcInstances[chainId]
