@@ -116,8 +116,9 @@ const closeConnection = () => {
       </div>
     </template>
   </CommonInlineModal>
-  <button v-show="(active && !buttonOnly)" @click="closeConnection"
-    class="w-full bg-slate-800 text-white rounded-[30px] text-white inline-flex items-center justify-between px-4 gap-x-3">
+
+  <button v-show="active" @click="closeConnection"
+    class="w-full bg-slate-800 text-white rounded-[30px] inline-flex items-center justify-between px-4 gap-x-3">
     <div class="flex items-center space-x-2">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
         <rect x="2" y="2" width="10" height="16" rx="2" stroke="#94A3B8" stroke-width="2" />
@@ -129,7 +130,7 @@ const closeConnection = () => {
       </svg>
 
 
-      <span>{{ gasBalance }} USDC</span>
+      <span>{{ formatDecimal(gasBalance, 2) }} USDC</span>
     </div>
 
     <span class="flex items-center justify-between gap-x-3 font-semibold py-1.5">
