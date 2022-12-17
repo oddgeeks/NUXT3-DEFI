@@ -34,7 +34,7 @@ const amount = ref("");
 const toAmount = computed(() =>
   formatDecimal(
     fromWei(txRoute.value?.toAmount || "0", bridgeToToken?.value?.decimals),
-    2
+    6
   )
 );
 
