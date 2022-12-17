@@ -33,7 +33,7 @@ onClickOutside(modalBoxRef, () => {
                 <div ref="target">
                   <div
                     :class="options.contentClass"
-                    class="relative bg-[#111827] rounded-5 px-[50px] py-10 w-full">
+                    class="relative bg-[#111827] rounded-5 md:px-[50px] px-6 py-8 md:py-10 w-full">
                     <button class="absolute top-0 right-0 m-6" @click="closeModal" aria-label="Close modal">
                       <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect width="30" height="30" rx="15" fill="#1E293B" />

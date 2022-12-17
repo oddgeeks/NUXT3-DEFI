@@ -67,7 +67,12 @@ const isSelected = (option: any, index: number) => {
 </script>
 
 <template>
-  <div @keydown.escape="toggle(false)" ref="containerRef" class="relative z-10">
+  <div
+    @keydown.escape="toggle(false)"
+    ref="containerRef"
+    class="relative"
+    :class="{ 'z-10': open }"
+  >
     <button
       ref="button"
       @click="toggle()"

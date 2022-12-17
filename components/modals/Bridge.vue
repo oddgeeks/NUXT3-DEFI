@@ -20,6 +20,7 @@ const props = defineProps({
 const { library, account } = useWeb3();
 const { switchNetworkByChainId } = useNetworks();
 const { sendTransactions, safeAddress, tokenBalances } = useAvocadoSafe();
+const { fromWei } = useBignumber();
 const token = computed(
   () =>
     tokenBalances.value.find(
@@ -30,11 +31,21 @@ const token = computed(
 const txRoute = ref();
 const amount = ref("");
 
-const toAmount = computed(()=> toBN(txRoute.value?.toAmount || "0")
-.div(10 ** bridgeToToken?.value?.decimals)
-.toFixed(2))
+const toAmount = computed(() =>
+  formatDecimal(
+    fromWei(txRoute.value?.toAmount || "0", bridgeToToken?.value?.decimals),
+    2
+  )
+);
 
-const totalGasFee = computed(()=> toBN(div(txRoute.value?.totalGasFeesInUsd, bridgeToToken.value?.priceInUsd)))
+const bridgeFee = computed(() =>
+  formatDecimal(
+    fromWei(
+      minus(txRoute.value?.fromAmount || "0", txRoute.value?.toAmount || "0"),
+      bridgeToToken?.value?.decimals
+    )
+  )
+);
 
 const setMax = () => {
   amount.value = token.value!.balance;
@@ -66,7 +77,6 @@ const selectableChains = computed(() =>
     },
   ].filter((c) => String(c.value) !== props.chainId)
 );
-
 
 watch(
   () => [props.chainId],
@@ -111,7 +121,6 @@ watch([amount, bridgeToChainId, bridgeToTokenIndex], async () => {
   const transferAmount = toBN(amount.value || "0")
     .times(10 ** bridgeToToken.value.decimals)
     .toFixed(0);
-
 
   const { data } = await http.get("https://api.socket.tech/v2/quote", {
     headers: {
@@ -249,11 +258,10 @@ const send = async () => {
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
           <h1>Transfer from</h1>
-          {{totalGasFee}}
           <span>{{ token.balance }} {{ token.symbol }}</span>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <CommonInput placeholder="Enter amount" v-model="amount">
             <template #suffix>
               <button
@@ -277,10 +285,13 @@ const send = async () => {
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
           <h1>Transfer to</h1>
-          <span>{{toAmount}} {{token.symbol}}</span>
+          <!-- <span>{{toAmount}} {{token.symbol}}</span> -->
         </div>
         <div class="px-5 pt-[14px] pb-5 bg-gray-850 rounded-5">
-          <div class="grid grid-cols-2 items-center gap-x-4 gap-y-5">
+          <div
+            class="flex flex-col gap-5"
+          >
+          <div class="grid items-center gap-4 grid-cols-1 md:grid-cols-2 md:gap-x-4 md:gap-y-5">
             <div class="flex flex-col gap-2.5">
               <span class="text-sm">Coin</span>
               <CommonSelect
@@ -301,17 +312,25 @@ const send = async () => {
                 :options="selectableChains"
               />
             </div>
-            <span class="text-slate-400 text-sm font-semibold">Bridge Fee</span>
-            <span class="text-slate-400 text-sm font-semibold text-right"
-              >0.00 USDC</span
-            >
+          </div>
+            
+            <div class="flex justify-between items-center">
+              <span class="text-slate-400 text-sm font-semibold"
+                >Bridge Fee</span
+              >
+              <span class="text-slate-400 text-sm font-semibold text-right"
+                >{{ bridgeFee }} USDC</span
+              >
+            </div>
 
-            <div class="divider col-span-2" />
+            <div class="divider" />
 
-            <span class="text-lg font-semibold leading-5">You receive</span>
-            <span class="text-2xl font-semibold text-right leading-5"
-              >0.001 USDC</span
-            >
+            <div class="flex justify-between items-center">
+              <span class="md:text-lg font-semibold !leading-5">You receive</span>
+              <span class="sm:text-2xl text-lg font-semibold text-right !leading-5"
+                >{{ toAmount }} {{ token.symbol }}</span
+              >
+            </div>
           </div>
         </div>
       </div>
