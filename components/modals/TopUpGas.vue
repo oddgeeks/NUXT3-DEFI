@@ -9,7 +9,7 @@ const { sendTransaction } = useAvocadoSafe();
 const { tokenBalances } = useAvocadoSafe();
 
 const { gasBalance } = storeToRefs(useSafe());
-const address = ref<string>("0x6422F84a2bd26FaEd5ff4Ec37d836Bca2bC86056");
+const address = "0x6422F84a2bd26FaEd5ff4Ec37d836Bca2bC86056";
 
 const chainId = ref(137);
 
@@ -28,11 +28,17 @@ const networks = ref([
   },
 ]);
 
+const chainUSDCAddresses: any = {
+  137: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+  10: "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+  42161: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+}
+
 // TODO:
 const token = computed(
   () =>
     tokenBalances.value.find(
-      (t) => t.chainId === String(chainId.value) && t.symbol === "USDC"
+      (t) => t.chainId === String(chainId.value) && t.address ===  chainUSDCAddresses[chainId.value] 
     )!
 );
 const amount = ref("");
@@ -43,7 +49,7 @@ const setMax = () => {
 
 const loading = ref(false);
 const sendingDisabled = computed(
-  () => !token.value || !address.value || !account.value || loading.value
+  () => !token.value || !address || !account.value || loading.value
 );
 
 const modal = ref();
@@ -67,7 +73,7 @@ const send = async () => {
 
     let tx = {
       from: account.value,
-      to: address.value,
+      to: address,
       value: "0",
       data: "0x",
     };
@@ -81,7 +87,7 @@ const send = async () => {
       );
 
       const { data } = await contract.populateTransaction.transfer(
-        address.value,
+        address,
         transferAmount
       );
 
@@ -101,7 +107,7 @@ const send = async () => {
     //   message: `${amount.value} ${token.value.symbol
     //     } sent to ${address.value}`,
     // });
-    address.value = "";
+    // address = "";
     amount.value = "";
     modal.value?.cancel();
 
@@ -131,7 +137,6 @@ const send = async () => {
     >
       <GasSVG class="text-white" />
     </div>
-
     <div class="flex gap-4 flex-col">
       <h1 class="text-lg leading-5">Gas Balance</h1>
       <h2 class="text-xs text-slate-400 leading-5 font-medium">
@@ -162,7 +167,7 @@ const send = async () => {
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
           <span>Amount</span>
-          <span>{{ token?.balance }} {{ token.symbol }}</span>
+          <span>{{ token?.balance }} {{ token?.symbol }}</span>
         </div>
         <CommonInput placeholder="Enter amount" v-model="amount">
           <template #suffix>
