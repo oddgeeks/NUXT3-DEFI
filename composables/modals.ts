@@ -1,6 +1,7 @@
 import Bridge from "~~/components/modals/Bridge.vue";
 import PendingTransaction from "~~/components/modals/PendingTransaction.vue";
 import Send from "~~/components/modals/Send.vue";
+import TopUpGas from "~~/components/modals/TopUpGas.vue";
 import WalletConnect from "~~/components/modals/WalletConnect.vue";
 
 const { openModal } = useModal();
@@ -30,4 +31,8 @@ export const openSendModal = (address: string, chainId: number | string) => {
 
 export const openWalletConnectModal = () => {
     openModal(WalletConnect, {})
+}
+
+export const openTopUpGasModal = () => {
+    openModal(TopUpGas, {})
 }
