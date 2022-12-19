@@ -1,6 +1,7 @@
 import { storeToRefs } from "pinia";
 import { ethers } from "ethers"
 import { Forwarder__factory, GaslessWallet__factory } from '~~/contracts';
+import { IGaslessSmartWallet } from "~~/contracts/Forwarder";
 
 
 export const useAvocadoSafe = () => {
@@ -25,11 +26,11 @@ export const useAvocadoSafe = () => {
         );
 
         const buildValidSignature = async (
-            targets: string[], // the targets to execute the actions on
-            datas: string[], // the data to be passed to the .call for each target
-            values: number[] | any[], // the msg.value to be passed
+            actions: IGaslessSmartWallet.ActionStruct[],
             validUntil: number | any, // the highest block number the request can be forwarded in
             gas: number | any, // an amount of gas limit to set for the execution
+            source: string,
+            metadata: string,
             signer: any, // user signing the txn
             gswNonce: any // gasless wallet nonce
         ) => {
@@ -45,7 +46,7 @@ export const useAvocadoSafe = () => {
 
                 version = await gaslessWallet.DOMAIN_SEPARATOR_VERSION();
                 name = await gaslessWallet.DOMAIN_SEPARATOR_VERSION();
-            } catch (error) { 
+            } catch (error) {
                 name = await forwarderContract.gswVersion("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
                 version = await forwarderContract.gswVersionName("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
             }
@@ -62,23 +63,28 @@ export const useAvocadoSafe = () => {
             // The named list of all type definitions
             let types = {
                 Cast: [
-                    { name: "targets", type: "address[]" },
-                    { name: "datas", type: "bytes[]" },
-                    { name: "values", type: "uint256[]" },
-                    { name: "gswNonce", type: "uint256" },
+                    { name: "actions", type: "Action[]" },
                     { name: "validUntil", type: "uint256" },
                     { name: "gas", type: "uint256" },
+                    { name: "source", type: "address" },
+                    { name: "metadata", type: "bytes" },
+                    { name: "gswNonce", type: "uint256" },
+                ],
+                Action: [
+                    { name: "target", type: "address" },
+                    { name: "data", type: "bytes" },
+                    { name: "value", type: "uint256" },
                 ],
             }
 
             // Adding values for types mentioned
             const value = {
-                targets,
-                datas,
-                values,
-                gswNonce,
+                actions,
                 validUntil,
                 gas,
+                source,
+                metadata,
+                gswNonce,
             }
 
             return await signer._signTypedData(domain, types, value)
@@ -87,20 +93,26 @@ export const useAvocadoSafe = () => {
         const gswNonce = await forwarderContract.gswNonce(account.value).then(String);
 
         const signatureData = {
-            targets: [transaction.to],
-            datas: [transaction.data || "0x"],
-            values: [transaction.value || "0"],
+            actions: [
+                {
+                    target: transaction.to,
+                    data: transaction.data || "0x",
+                    value: transaction.value || "0x",
+                }
+            ],
+            metadata: '0x',
+            source: '0x0000000000000000000000000000000000000001',
             gswNonce,
             validUntil: "0",
             gas: "8000000",
         }
 
         const signature = await buildValidSignature(
-            signatureData.targets,
-            signatureData.datas,
-            signatureData.values,
+            signatureData.actions,
             signatureData.validUntil,
             signatureData.gas,
+            signatureData.source,
+            signatureData.metadata,
             library.value.getSigner(),
             signatureData.gswNonce,
         )
@@ -151,13 +163,12 @@ export const useAvocadoSafe = () => {
             "0x52f30c01795e84e5c12fa29345f1274d517FB865",
             targetProvider
         );
-
         const buildValidSignature = async (
-            targets: string[], // the targets to execute the actions on
-            datas: string[], // the data to be passed to the .call for each target
-            values: number[] | any[], // the msg.value to be passed
+            actions: IGaslessSmartWallet.ActionStruct[],
             validUntil: number | any, // the highest block number the request can be forwarded in
             gas: number | any, // an amount of gas limit to set for the execution
+            source: string,
+            metadata: string,
             signer: any, // user signing the txn
             gswNonce: any // gasless wallet nonce
         ) => {
@@ -173,7 +184,7 @@ export const useAvocadoSafe = () => {
 
                 version = await gaslessWallet.DOMAIN_SEPARATOR_VERSION();
                 name = await gaslessWallet.DOMAIN_SEPARATOR_VERSION();
-            } catch (error) { 
+            } catch (error) {
                 name = await forwarderContract.gswVersion("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
                 version = await forwarderContract.gswVersionName("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
             }
@@ -190,23 +201,28 @@ export const useAvocadoSafe = () => {
             // The named list of all type definitions
             let types = {
                 Cast: [
-                    { name: "targets", type: "address[]" },
-                    { name: "datas", type: "bytes[]" },
-                    { name: "values", type: "uint256[]" },
-                    { name: "gswNonce", type: "uint256" },
+                    { name: "actions", type: "Action[]" },
                     { name: "validUntil", type: "uint256" },
                     { name: "gas", type: "uint256" },
+                    { name: "source", type: "address" },
+                    { name: "metadata", type: "bytes" },
+                    { name: "gswNonce", type: "uint256" },
+                ],
+                Action: [
+                    { name: "target", type: "address" },
+                    { name: "data", type: "bytes" },
+                    { name: "value", type: "uint256" },
                 ],
             }
 
             // Adding values for types mentioned
             const value = {
-                targets,
-                datas,
-                values,
-                gswNonce,
+                actions,
                 validUntil,
                 gas,
+                source,
+                metadata,
+                gswNonce,
             }
 
             return await signer._signTypedData(domain, types, value)
@@ -215,20 +231,24 @@ export const useAvocadoSafe = () => {
         const gswNonce = await forwarderContract.gswNonce(account.value).then(String);
 
         const signatureData = {
-            targets: transactions.map(t => t.to),
-            datas: transactions.map(t => t.data || "0x"),
-            values: transactions.map(t => t.value || "0"),
+            actions: transactions.map(transaction => ({
+                target: transaction.to,
+                data: transaction.data || "0x",
+                value: transaction.value || "0x",
+            })),
+            metadata: '0x',
+            source: '0x0000000000000000000000000000000000000001',
             gswNonce,
             validUntil: "0",
             gas: "8000000",
         }
 
         const signature = await buildValidSignature(
-            signatureData.targets,
-            signatureData.datas,
-            signatureData.values,
+            signatureData.actions,
             signatureData.validUntil,
             signatureData.gas,
+            signatureData.source,
+            signatureData.metadata,
             library.value.getSigner(),
             signatureData.gswNonce,
         )
