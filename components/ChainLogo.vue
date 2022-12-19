@@ -79,6 +79,6 @@
 
 <script setup>
 defineProps({
-  chain: String,
+  chain: [String, Number],
 });
 </script>

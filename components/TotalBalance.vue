@@ -1,6 +1,5 @@
 <script setup>
 const { totalBalance } = useAvocadoSafe();
-
 </script>
 <template>
     <div>
