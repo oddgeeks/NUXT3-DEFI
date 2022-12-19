@@ -100,7 +100,7 @@ export const useAvocadoSafe = () => {
                     value: transaction.value || "0x",
                 }
             ],
-            metadata: '0x',
+            metadata: '0x00',
             source: '0x0000000000000000000000000000000000000001',
             gswNonce,
             validUntil: "0",
@@ -236,7 +236,7 @@ export const useAvocadoSafe = () => {
                 data: transaction.data || "0x",
                 value: transaction.value || "0x",
             })),
-            metadata: '0x',
+            metadata: '0x00',
             source: '0x0000000000000000000000000000000000000001',
             gswNonce,
             validUntil: "0",
