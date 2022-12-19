@@ -5,8 +5,6 @@ const { account } = useWeb3();
 </script>
 <template>
   <div>
-    <h2 class="font-semibold mb-5">Balances</h2>
-
     <div class="relative">
       <div class="bg-gray-850 rounded-[20px] overflow-hidden">
         <div

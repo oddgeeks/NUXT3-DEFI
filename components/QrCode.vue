@@ -13,8 +13,6 @@ const shortenAddress = () => {
 </script>
 <template>
   <div>
-    <h2 class="font-semibold mb-5">QR to Receive</h2>
-
     <div
       class="py-7.5 px-5.5 bg-gray-850 rounded-5.5 flex flex-col justify-center items-center"
       :class="{ blur: !safeAddress }"
