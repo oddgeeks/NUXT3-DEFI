@@ -1,28 +1,44 @@
 <script setup lang="ts">
 import { Erc20__factory } from "~~/contracts";
+import { storeToRefs } from "pinia";
+import GasSVG from "~/assets/images/icons/gas.svg?component";
 
 const { library, account } = useWeb3();
 const { switchNetworkByChainId } = useNetworks();
 const { sendTransaction } = useAvocadoSafe();
 const { tokenBalances } = useAvocadoSafe();
+
+const { gasBalance } = storeToRefs(useSafe());
 const address = ref<string>("0x6422F84a2bd26FaEd5ff4Ec37d836Bca2bC86056");
 
-const chainId = ref(137)
+const chainId = ref(137);
+
+const networks = ref([
+  {
+    name: "Polygon",
+    chainId: 137,
+  },
+  {
+    name: "Optimism",
+    chainId: 10,
+  },
+  {
+    name: "Arbitrum",
+    chainId: 42161,
+  },
+]);
+
 // TODO:
 const token = computed(
   () =>
     tokenBalances.value.find(
-      (t) => t.chainId === String(chainId.value) && t.symbol === 'USDC'
+      (t) => t.chainId === String(chainId.value) && t.symbol === "USDC"
     )!
 );
 const amount = ref("");
 
 const setMax = () => {
   amount.value = token.value!.balance;
-};
-
-const pasteAddress = async () => {
-  address.value = await navigator.clipboard.readText();
 };
 
 const loading = ref(false);
@@ -109,39 +125,51 @@ const send = async () => {
 </script>
 
 <template>
-  <div class="space-y-8 text-center">
-    <div class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0">
-      <img :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
-        onerror="this.onerror=null; this.remove();" />
+  <div class="space-y-[30px] text-center">
+    <div
+      class="flex items-center mx-auto justify-center h-10 w-10 rounded-full bg-slate-800"
+    >
+      <GasSVG class="text-white" />
     </div>
 
-    <div>
-      <h2>{{ token.name }}</h2>
-
-      <div class="bg-gray-850 mt-4 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]">
-        <ChainLogo class="w-5 h-5" :chain="token.chainId" />
-        <span class="text-xs text-slate-400 leading-5">{{ chainIdToName(token.chainId) }} Network</span>
-      </div>
+    <div class="flex gap-4 flex-col">
+      <h1 class="text-lg leading-5">Gas Balance</h1>
+      <h2 class="text-xs text-slate-400 leading-5 font-medium">
+        Top-up balance for paying for transactions <br />
+        gas fees.
+      </h2>
+      <span
+        class="whitespace-nowrap px-5 py-3 bg-slate-750 rounded-[30px] w-fit leading-5 mx-auto"
+      >
+        {{ formatDecimal(gasBalance, 2) }} USDC</span
+      >
     </div>
-
-
     <div class="space-y-5">
-      <div>
-        <select v-model="chainId"
-          class="bg-slate-800 placeholder-slate-400 focus:ring-2 border-none focus:bg-gray-850 focus:ring-slate-750 text-slate-200 px-5 h-12 rounded-[15px] w-full">
-          <option :value="137">Polygon</option>
-          <option :value="10">Optimism</option>
-          <option :value="42161">Arbitrum</option>
-        </select>
-      </div>
+        <CommonSelect
+          v-model="chainId"
+          labelKey="name"
+          valueKey="chainId"
+          :options="networks"
+        >
+          <template #button-prefix>
+            <ChainLogo class="w-6 h-6" :chain="chainId" />
+          </template>
+          <template #item-prefix="{value}">
+            <ChainLogo class="w-6 h-6" :chain="value" />
+          </template>
+        </CommonSelect>
+        
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
           <span>Amount</span>
-          <span>{{ token.balance }} {{ token.symbol }}</span>
+          <span>{{ token?.balance }} {{ token.symbol }}</span>
         </div>
         <CommonInput placeholder="Enter amount" v-model="amount">
           <template #suffix>
-            <button class="absolute top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500" @click="setMax">
+            <button
+              class="absolute top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
+              @click="setMax"
+            >
               MAX
             </button>
           </template>
@@ -149,8 +177,14 @@ const send = async () => {
       </div>
     </div>
 
-    <CommonButton :disabled="sendingDisabled" :loading="loading" @click="send" class="justify-center w-full" size="lg">
-      Top up
+    <CommonButton
+      :disabled="sendingDisabled"
+      :loading="loading"
+      @click="send"
+      class="justify-center w-full"
+      size="lg"
+    >
+      Add Gas
     </CommonButton>
   </div>
 </template>
