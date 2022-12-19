@@ -44,11 +44,6 @@ export declare namespace IGaslessSmartWallet {
 
 export interface ForwarderInterface extends utils.Interface {
   functions: {
-    "admin()": FunctionFragment;
-    "changeAdmin(address)": FunctionFragment;
-    "implementation()": FunctionFragment;
-    "upgradeTo(address)": FunctionFragment;
-    "upgradeToAndCall(address,bytes)": FunctionFragment;
     "computeAddress(address)": FunctionFragment;
     "execute(address,(address,bytes,uint256)[],uint256,uint256,address,bytes,bytes)": FunctionFragment;
     "gswFactory()": FunctionFragment;
@@ -61,11 +56,6 @@ export interface ForwarderInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "admin"
-      | "changeAdmin"
-      | "implementation"
-      | "upgradeTo"
-      | "upgradeToAndCall"
       | "computeAddress"
       | "execute"
       | "gswFactory"
@@ -76,23 +66,6 @@ export interface ForwarderInterface extends utils.Interface {
       | "verify"
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "admin", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "changeAdmin",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "implementation",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "upgradeTo",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "upgradeToAndCall",
-    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
-  ): string;
   encodeFunctionData(
     functionFragment: "computeAddress",
     values: [PromiseOrValue<string>]
@@ -142,20 +115,6 @@ export interface ForwarderInterface extends utils.Interface {
     ]
   ): string;
 
-  decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "changeAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "implementation",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "upgradeToAndCall",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "computeAddress",
     data: BytesLike
@@ -172,49 +131,15 @@ export interface ForwarderInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "verify", data: BytesLike): Result;
 
   events: {
-    "AdminChanged(address,address)": EventFragment;
-    "BeaconUpgraded(address)": EventFragment;
-    "Upgraded(address)": EventFragment;
     "ExecuteFailed(address,address,address,bytes,string)": EventFragment;
     "Executed(address,address,address,bytes)": EventFragment;
     "Initialized(uint8)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ExecuteFailed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Executed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
 }
-
-export interface AdminChangedEventObject {
-  previousAdmin: string;
-  newAdmin: string;
-}
-export type AdminChangedEvent = TypedEvent<
-  [string, string],
-  AdminChangedEventObject
->;
-
-export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
-
-export interface BeaconUpgradedEventObject {
-  beacon: string;
-}
-export type BeaconUpgradedEvent = TypedEvent<
-  [string],
-  BeaconUpgradedEventObject
->;
-
-export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
-
-export interface UpgradedEventObject {
-  implementation: string;
-}
-export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
-
-export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
 export interface ExecuteFailedEventObject {
   gswOwner: string;
@@ -277,30 +202,6 @@ export interface Forwarder extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    admin(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    changeAdmin(
-      newAdmin: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    implementation(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    upgradeTo(
-      newImplementation: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    upgradeToAndCall(
-      newImplementation: PromiseOrValue<string>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     computeAddress(
       owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -349,30 +250,6 @@ export interface Forwarder extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
-
-  admin(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  changeAdmin(
-    newAdmin: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  implementation(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  upgradeTo(
-    newImplementation: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  upgradeToAndCall(
-    newImplementation: PromiseOrValue<string>,
-    data: PromiseOrValue<BytesLike>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   computeAddress(
     owner_: PromiseOrValue<string>,
@@ -423,26 +300,6 @@ export interface Forwarder extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    admin(overrides?: CallOverrides): Promise<string>;
-
-    changeAdmin(
-      newAdmin: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    implementation(overrides?: CallOverrides): Promise<string>;
-
-    upgradeTo(
-      newImplementation: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    upgradeToAndCall(
-      newImplementation: PromiseOrValue<string>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     computeAddress(
       owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -491,29 +348,6 @@ export interface Forwarder extends BaseContract {
   };
 
   filters: {
-    "AdminChanged(address,address)"(
-      previousAdmin?: null,
-      newAdmin?: null
-    ): AdminChangedEventFilter;
-    AdminChanged(
-      previousAdmin?: null,
-      newAdmin?: null
-    ): AdminChangedEventFilter;
-
-    "BeaconUpgraded(address)"(
-      beacon?: PromiseOrValue<string> | null
-    ): BeaconUpgradedEventFilter;
-    BeaconUpgraded(
-      beacon?: PromiseOrValue<string> | null
-    ): BeaconUpgradedEventFilter;
-
-    "Upgraded(address)"(
-      implementation?: PromiseOrValue<string> | null
-    ): UpgradedEventFilter;
-    Upgraded(
-      implementation?: PromiseOrValue<string> | null
-    ): UpgradedEventFilter;
-
     "ExecuteFailed(address,address,address,bytes,string)"(
       gswOwner?: PromiseOrValue<string> | null,
       gswAddress?: PromiseOrValue<string> | null,
@@ -547,30 +381,6 @@ export interface Forwarder extends BaseContract {
   };
 
   estimateGas: {
-    admin(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    changeAdmin(
-      newAdmin: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    implementation(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    upgradeTo(
-      newImplementation: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    upgradeToAndCall(
-      newImplementation: PromiseOrValue<string>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     computeAddress(
       owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -621,30 +431,6 @@ export interface Forwarder extends BaseContract {
   };
 
   populateTransaction: {
-    admin(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    changeAdmin(
-      newAdmin: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    implementation(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    upgradeTo(
-      newImplementation: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    upgradeToAndCall(
-      newImplementation: PromiseOrValue<string>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     computeAddress(
       owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
