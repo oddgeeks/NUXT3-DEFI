@@ -1,9 +1,37 @@
 <script setup lang="ts">
+import SVGQr from "~/assets/images/icons/qr.svg?component";
 const wcStore = useWalletConnect();
 
 const uri = ref();
 const connection = shallowRef();
 const connectionChainId = shallowRef(137);
+
+const networks = [
+  {
+    chainId: 137,
+    name: "Polygon",
+  },
+  {
+    chainId: 1,
+    name: "Mainnet",
+  },
+  {
+    chainId: 10,
+    name: "Optimism",
+  },
+  {
+    chainId: 250,
+    name: "Fantom",
+  },
+  {
+    chainId: 43114,
+    name: "Avalanche",
+  },
+  {
+    chainId: 42161,
+    name: "Arbitrum",
+  },
+];
 
 const prepareAndConnect = async () => {
   if (!uri.value) {
@@ -70,105 +98,11 @@ const connect = async () => {
       </p>
     </div>
 
-    <div
-      class="bg-gray-850 rounded-[20px] divide-y divide-slate-800"
-      v-if="wcStore.sessions.length"
-    >
-      <template v-for="session in wcStore.sessions">
-        <div v-if="session.peerMeta" class="flex items-center gap-3 p-5">
-          <div
-            class="relative inline-block h-9 w-9 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
-          >
-            <img
-              v-if="session.peerMeta.icons.length"
-              class="w-full h-full object-fit"
-              :src="session.peerMeta.icons[session.peerMeta.icons.length - 1]"
-            />
-
-            <ChainLogo
-              class="w-5 h-5 absolute -left-1 -bottom-1"
-              :chain="String(session.chainId)"
-            />
-          </div>
-
-          <div class="flex-1 text-left">
-            <div>{{ session.peerMeta.name }}</div>
-            <div
-              class="text-sm"
-              :class="{ 'text-green-400': session.connected }"
-            >
-              {{ session.connected ? "Connected" : "Connect" }}
-            </div>
-          </div>
-
-          <div class="flex items-center space-x-5">
-            <a
-              v-tippy="'Open in new link'"
-              :href="session.peerMeta.url"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 18 18"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M3.83279 16.1182L1.8826 14.168C0.983075 13.2684 0.868512 11.8494 1.61209 10.8172C2.1678 10.0458 2.84691 9.37134 3.62209 8.82093L4.0472 8.51909C4.84263 7.9543 5.92948 8.0458 6.6193 8.73561L6.6743 8.79062L9.241 11.3573L9.26515 11.3815C9.95496 12.0713 10.0465 13.1581 9.48167 13.9536L9.17983 14.3787C8.62942 15.1539 7.95494 15.833 7.18355 16.3887C6.15138 17.1322 4.73232 17.0177 3.83279 16.1182Z"
-                  stroke="#4E80EE"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M16.1182 3.83206L14.168 1.88187C13.2684 0.982343 11.8494 0.867779 10.8172 1.61136C10.0458 2.16706 9.37134 2.84618 8.82093 3.62136L8.51909 4.04647C7.9543 4.8419 8.0458 5.92875 8.73561 6.61857L8.79061 6.67357L11.3573 9.24027L11.3815 9.26441C12.0713 9.95423 13.1581 10.0457 13.9536 9.48094L14.3787 9.17909C15.1539 8.62869 15.833 7.95421 16.3887 7.18282C17.1322 6.15065 17.0177 4.73158 16.1182 3.83206Z"
-                  stroke="#4E80EE"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M11.393 6.60645L6.61719 11.3823"
-                  stroke="#4E80EE"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </a>
-
-            <button v-tippy="'Disconnect'" @click="wcStore.disconnect(session)">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 18 18"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M13.5 4.5L4.5 13.5"
-                  stroke="#94A3B8"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M4.5 4.5L13.5 13.5"
-                  stroke="#94A3B8"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
+    <CommonInput v-model="uri" placeholder="QR code or link">
+      <template #suffix>
+        <SVGQr class="absolute top-1/2 right-4 -translate-y-1/2" />
       </template>
-    </div>
-
-    <CommonInput v-model="uri" placeholder="QR code or link" />
+    </CommonInput>
 
     <CommonButton
       @click="prepareAndConnect"
@@ -201,23 +135,22 @@ const connect = async () => {
       {{ connection.peerMeta.url }}
     </div>
 
-    <select
+    <CommonSelect
       v-model="connectionChainId"
-      class="bg-slate-800 placeholder-slate-400 focus:ring-2 border-none focus:bg-gray-850 focus:ring-slate-750 text-slate-200 px-5 h-12 rounded-[15px] w-full"
+      labelKey="name"
+      valueKey="chainId"
+      :options="networks"
     >
-      <option :value="137">Polygon</option>
-      <option :value="1">Mainnet</option>
-      <option :value="10">Optimism</option>
-      <option :value="250">Fantom</option>
-      <option :value="43114">Avalanche</option>
-      <option :value="42161">Arbitrum</option>
-    </select>
+      <template #button-prefix>
+        <ChainLogo class="w-6 h-6" :chain="connectionChainId" />
+      </template>
+      <template #item-prefix="{ value }">
+        <ChainLogo class="w-6 h-6" :chain="value" />
+      </template>
+    </CommonSelect>
 
-    <button
-      class="bg-blue-500 hover:bg-blue-600 rounded-[15px] w-full h-12"
-      @click="connect"
-    >
+    <CommonButton @click="connect" class="w-full justify-center" size="lg">
       Approve
-    </button>
+    </CommonButton>
   </div>
 </template>

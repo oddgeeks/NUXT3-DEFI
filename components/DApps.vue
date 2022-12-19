@@ -9,63 +9,53 @@ const wcStore = useWalletConnect();
 const containerRef = ref(null);
 const hasScroll = ref(false);
 
-const { x, y, isScrolling, arrivedState, directions } = useScroll(
+const { x, arrivedState } = useScroll(
   containerRef,
   {
     behavior: "smooth",
   }
 );
 
-const { width } = useElementSize(containerRef)
+const setScrollAvaibility = async () => { 
+  if(!containerRef.value) return
+
+  hasScroll.value =
+    containerRef.value.scrollWidth > containerRef.value.clientWidth;
+    x.value += 1;
+}
+
 
 watch(
-  () => width,
-    async (n) => {
-    console.log('selam')
-    
-      await nextTick();
-      if (containerRef.value) {
-      hasScroll.value =
-        containerRef.value.scrollWidth > containerRef.value.clientWidth;
+  [wcStore, containerRef],
+  async () => {
+    if (containerRef.value) {
+      await nextTick()
+      setScrollAvaibility()
     }
+  },
+  {
+    immediate: true,
+    deep: true,
   }
 );
-
-// watch(
-//   [wcStore.sessions, containerRef],
-//   async () => {
-//     // check container has scroll
-
-//       console.log('selam', containerRef.value)
-//     if (containerRef.value) {
-//       hasScroll.value =
-//         containerRef.value.scrollWidth > containerRef.value.clientWidth;
-//     }
-//   },
-//     {
-//         deep: true,
-//         immediate: true
-//     }
-// );
 </script>
 <template>
   <div :class="{ 'blur pointer-events-none': !safeAddress }">
-    {{ width }}
     <div
       class="flex items-center relative gap-[15px]"
       v-if="wcStore.sessions.length"
     >
       <CommonButton
         @click="openWalletConnectModal()"
-        class="px-0 shrink-0 py-0 w-10 h-10 flex items-center justify-center"
+        class="!px-0 shrink-0 py-0 w-10 h-10 flex items-center justify-center"
       >
-        <PlusSVG class="w-3 h-3" />
+        <PlusSVG class="w-3 h-3 text-white shrink-0" />
       </CommonButton>
       <div
         v-if="hasScroll && !arrivedState.left"
         class="navigation-pattern left pl-[15px] absolute left-10 z-10 h-full pointer-events-none"
       >
-        <button @click="x -= 200" class="arrow-btn">
+        <button @click="x -= 300" class="arrow-btn">
           <ArrowLeft />
         </button>
       </div>
@@ -136,7 +126,7 @@ watch(
         v-if="hasScroll && !arrivedState.right"
         class="navigation-pattern absolute right-0 pr-[15px] h-full pointer-events-none"
       >
-        <button @click="x += 200" class="arrow-btn ml-auto">
+        <button @click="x += 300" class="arrow-btn ml-auto">
           <ArrowRight />
         </button>
       </div>
