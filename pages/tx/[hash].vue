@@ -4,7 +4,7 @@ import ClockCircleSVG from "~/assets/images/icons/clock-circle.svg?component";
 import CheckCircleSVG from "~/assets/images/icons/check-circle.svg?component";
 
 const router = useRoute()
-const provider = getRpcProvider(420)
+const provider = getRpcProvider(75)
 
 const { copy: copyTxHash, copied: txHashCopied } = useClipboard();
 const { copy: copyBroadcaster, copied: broadcasterCopied } = useClipboard();

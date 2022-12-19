@@ -28,123 +28,221 @@ import type {
   PromiseOrValue,
 } from "./common";
 
+export declare namespace IGaslessSmartWallet {
+  export type ActionStruct = {
+    target: PromiseOrValue<string>;
+    data: PromiseOrValue<BytesLike>;
+    value: PromiseOrValue<BigNumberish>;
+  };
+
+  export type ActionStructOutput = [string, string, BigNumber] & {
+    target: string;
+    data: string;
+    value: BigNumber;
+  };
+}
+
 export interface GaslessWalletInterface extends utils.Interface {
   functions: {
-    "cast(address[],bytes[],uint256[],bytes,uint256,uint256)": FunctionFragment;
-    "castTypeHash()": FunctionFragment;
-    "domainSeparatorName()": FunctionFragment;
+    "ACTION_TYPE_HASH()": FunctionFragment;
+    "CAST_TYPE_HASH()": FunctionFragment;
+    "DEFAULT_CHAIN_ID()": FunctionFragment;
+    "DOMAIN_SEPARATOR_NAME()": FunctionFragment;
+    "DOMAIN_SEPARATOR_VERSION()": FunctionFragment;
+    "TYPE_HASH()": FunctionFragment;
+    "_callTargets((address,bytes,uint256)[])": FunctionFragment;
+    "cast((address,bytes,uint256)[],uint256,uint256,address,bytes,bytes)": FunctionFragment;
     "domainSeparatorV4()": FunctionFragment;
-    "domainSeparatorVersion()": FunctionFragment;
+    "gswForwarder()": FunctionFragment;
+    "gswNonce()": FunctionFragment;
+    "gswVersionsRegistry()": FunctionFragment;
     "initialize(address)": FunctionFragment;
-    "nonce()": FunctionFragment;
     "owner()": FunctionFragment;
-    "verify(address[],bytes[],uint256[],bytes,uint256,uint256)": FunctionFragment;
+    "upgradeTo(address)": FunctionFragment;
+    "upgradeToAndCall(address,bytes,bool)": FunctionFragment;
+    "verify((address,bytes,uint256)[],uint256,uint256,address,bytes,bytes)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "ACTION_TYPE_HASH"
+      | "CAST_TYPE_HASH"
+      | "DEFAULT_CHAIN_ID"
+      | "DOMAIN_SEPARATOR_NAME"
+      | "DOMAIN_SEPARATOR_VERSION"
+      | "TYPE_HASH"
+      | "_callTargets"
       | "cast"
-      | "castTypeHash"
-      | "domainSeparatorName"
       | "domainSeparatorV4"
-      | "domainSeparatorVersion"
+      | "gswForwarder"
+      | "gswNonce"
+      | "gswVersionsRegistry"
       | "initialize"
-      | "nonce"
       | "owner"
+      | "upgradeTo"
+      | "upgradeToAndCall"
       | "verify"
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "ACTION_TYPE_HASH",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "CAST_TYPE_HASH",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DEFAULT_CHAIN_ID",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DOMAIN_SEPARATOR_NAME",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DOMAIN_SEPARATOR_VERSION",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "TYPE_HASH", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "_callTargets",
+    values: [IGaslessSmartWallet.ActionStruct[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "cast",
     values: [
-      PromiseOrValue<string>[],
-      PromiseOrValue<BytesLike>[],
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BytesLike>,
+      IGaslessSmartWallet.ActionStruct[],
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
     ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "castTypeHash",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "domainSeparatorName",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "domainSeparatorV4",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "domainSeparatorVersion",
+    functionFragment: "gswForwarder",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "gswNonce", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "gswVersionsRegistry",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "nonce", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "upgradeTo",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeToAndCall",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<boolean>
+    ]
+  ): string;
   encodeFunctionData(
     functionFragment: "verify",
     values: [
-      PromiseOrValue<string>[],
-      PromiseOrValue<BytesLike>[],
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BytesLike>,
+      IGaslessSmartWallet.ActionStruct[],
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
     ]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "ACTION_TYPE_HASH",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "CAST_TYPE_HASH",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "DEFAULT_CHAIN_ID",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "DOMAIN_SEPARATOR_NAME",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "DOMAIN_SEPARATOR_VERSION",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "TYPE_HASH", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_callTargets",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "cast", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "castTypeHash",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "domainSeparatorName",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "domainSeparatorV4",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "domainSeparatorVersion",
+    functionFragment: "gswForwarder",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "gswNonce", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "gswVersionsRegistry",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "nonce", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "upgradeToAndCall",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "verify", data: BytesLike): Result;
 
   events: {
-    "CastExecuted()": EventFragment;
-    "CastFailed(string,address,bytes,uint256)": EventFragment;
+    "CastExecuted(address,address,bytes)": EventFragment;
+    "CastFailed(address,address,string,bytes)": EventFragment;
     "Initialized(uint8)": EventFragment;
+    "Upgraded(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "CastExecuted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "CastFailed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
-export interface CastExecutedEventObject {}
-export type CastExecutedEvent = TypedEvent<[], CastExecutedEventObject>;
+export interface CastExecutedEventObject {
+  source: string;
+  caller: string;
+  metadata: string;
+}
+export type CastExecutedEvent = TypedEvent<
+  [string, string, string],
+  CastExecutedEventObject
+>;
 
 export type CastExecutedEventFilter = TypedEventFilter<CastExecutedEvent>;
 
 export interface CastFailedEventObject {
+  source: string;
+  caller: string;
   reason: string;
-  target: string;
-  data: string;
-  value: BigNumber;
+  metadata: string;
 }
 export type CastFailedEvent = TypedEvent<
-  [string, string, string, BigNumber],
+  [string, string, string, string],
   CastFailedEventObject
 >;
 
@@ -156,6 +254,13 @@ export interface InitializedEventObject {
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+
+export interface UpgradedEventObject {
+  gswImpl: string;
+}
+export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
+
+export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
 export interface GaslessWallet extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -184,219 +289,371 @@ export interface GaslessWallet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    cast(
-      targets: PromiseOrValue<string>[],
-      datas: PromiseOrValue<BytesLike>[],
-      values: PromiseOrValue<BigNumberish>[],
-      signature: PromiseOrValue<BytesLike>,
-      validUntil: PromiseOrValue<BigNumberish>,
-      gas: PromiseOrValue<BigNumberish>,
+    ACTION_TYPE_HASH(overrides?: CallOverrides): Promise<[string]>;
+
+    CAST_TYPE_HASH(overrides?: CallOverrides): Promise<[string]>;
+
+    DEFAULT_CHAIN_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    DOMAIN_SEPARATOR_NAME(overrides?: CallOverrides): Promise<[string]>;
+
+    DOMAIN_SEPARATOR_VERSION(overrides?: CallOverrides): Promise<[string]>;
+
+    TYPE_HASH(overrides?: CallOverrides): Promise<[string]>;
+
+    _callTargets(
+      actions_: IGaslessSmartWallet.ActionStruct[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    castTypeHash(overrides?: CallOverrides): Promise<[string]>;
-
-    domainSeparatorName(overrides?: CallOverrides): Promise<[string]>;
+    cast(
+      actions_: IGaslessSmartWallet.ActionStruct[],
+      validUntil_: PromiseOrValue<BigNumberish>,
+      gas_: PromiseOrValue<BigNumberish>,
+      source_: PromiseOrValue<string>,
+      metadata_: PromiseOrValue<BytesLike>,
+      signature_: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     domainSeparatorV4(overrides?: CallOverrides): Promise<[string]>;
 
-    domainSeparatorVersion(overrides?: CallOverrides): Promise<[string]>;
+    gswForwarder(overrides?: CallOverrides): Promise<[string]>;
+
+    gswNonce(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    gswVersionsRegistry(overrides?: CallOverrides): Promise<[string]>;
 
     initialize(
-      _owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    nonce(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     owner(overrides?: CallOverrides): Promise<[string]>;
 
+    upgradeTo(
+      gswImpl_: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    upgradeToAndCall(
+      gswImpl_: PromiseOrValue<string>,
+      data_: PromiseOrValue<BytesLike>,
+      forceCall_: PromiseOrValue<boolean>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     verify(
-      targets: PromiseOrValue<string>[],
-      datas: PromiseOrValue<BytesLike>[],
-      values: PromiseOrValue<BigNumberish>[],
-      signature: PromiseOrValue<BytesLike>,
-      validUntil: PromiseOrValue<BigNumberish>,
-      gas: PromiseOrValue<BigNumberish>,
+      actions_: IGaslessSmartWallet.ActionStruct[],
+      validUntil_: PromiseOrValue<BigNumberish>,
+      gas_: PromiseOrValue<BigNumberish>,
+      source_: PromiseOrValue<string>,
+      metadata_: PromiseOrValue<BytesLike>,
+      signature_: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
 
-  cast(
-    targets: PromiseOrValue<string>[],
-    datas: PromiseOrValue<BytesLike>[],
-    values: PromiseOrValue<BigNumberish>[],
-    signature: PromiseOrValue<BytesLike>,
-    validUntil: PromiseOrValue<BigNumberish>,
-    gas: PromiseOrValue<BigNumberish>,
+  ACTION_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
+
+  CAST_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
+
+  DEFAULT_CHAIN_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+  DOMAIN_SEPARATOR_NAME(overrides?: CallOverrides): Promise<string>;
+
+  DOMAIN_SEPARATOR_VERSION(overrides?: CallOverrides): Promise<string>;
+
+  TYPE_HASH(overrides?: CallOverrides): Promise<string>;
+
+  _callTargets(
+    actions_: IGaslessSmartWallet.ActionStruct[],
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  castTypeHash(overrides?: CallOverrides): Promise<string>;
-
-  domainSeparatorName(overrides?: CallOverrides): Promise<string>;
+  cast(
+    actions_: IGaslessSmartWallet.ActionStruct[],
+    validUntil_: PromiseOrValue<BigNumberish>,
+    gas_: PromiseOrValue<BigNumberish>,
+    source_: PromiseOrValue<string>,
+    metadata_: PromiseOrValue<BytesLike>,
+    signature_: PromiseOrValue<BytesLike>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   domainSeparatorV4(overrides?: CallOverrides): Promise<string>;
 
-  domainSeparatorVersion(overrides?: CallOverrides): Promise<string>;
+  gswForwarder(overrides?: CallOverrides): Promise<string>;
+
+  gswNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+  gswVersionsRegistry(overrides?: CallOverrides): Promise<string>;
 
   initialize(
-    _owner: PromiseOrValue<string>,
+    owner_: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  nonce(overrides?: CallOverrides): Promise<BigNumber>;
-
   owner(overrides?: CallOverrides): Promise<string>;
 
+  upgradeTo(
+    gswImpl_: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  upgradeToAndCall(
+    gswImpl_: PromiseOrValue<string>,
+    data_: PromiseOrValue<BytesLike>,
+    forceCall_: PromiseOrValue<boolean>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   verify(
-    targets: PromiseOrValue<string>[],
-    datas: PromiseOrValue<BytesLike>[],
-    values: PromiseOrValue<BigNumberish>[],
-    signature: PromiseOrValue<BytesLike>,
-    validUntil: PromiseOrValue<BigNumberish>,
-    gas: PromiseOrValue<BigNumberish>,
+    actions_: IGaslessSmartWallet.ActionStruct[],
+    validUntil_: PromiseOrValue<BigNumberish>,
+    gas_: PromiseOrValue<BigNumberish>,
+    source_: PromiseOrValue<string>,
+    metadata_: PromiseOrValue<BytesLike>,
+    signature_: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   callStatic: {
-    cast(
-      targets: PromiseOrValue<string>[],
-      datas: PromiseOrValue<BytesLike>[],
-      values: PromiseOrValue<BigNumberish>[],
-      signature: PromiseOrValue<BytesLike>,
-      validUntil: PromiseOrValue<BigNumberish>,
-      gas: PromiseOrValue<BigNumberish>,
+    ACTION_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
+
+    CAST_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
+
+    DEFAULT_CHAIN_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DOMAIN_SEPARATOR_NAME(overrides?: CallOverrides): Promise<string>;
+
+    DOMAIN_SEPARATOR_VERSION(overrides?: CallOverrides): Promise<string>;
+
+    TYPE_HASH(overrides?: CallOverrides): Promise<string>;
+
+    _callTargets(
+      actions_: IGaslessSmartWallet.ActionStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
-    castTypeHash(overrides?: CallOverrides): Promise<string>;
-
-    domainSeparatorName(overrides?: CallOverrides): Promise<string>;
+    cast(
+      actions_: IGaslessSmartWallet.ActionStruct[],
+      validUntil_: PromiseOrValue<BigNumberish>,
+      gas_: PromiseOrValue<BigNumberish>,
+      source_: PromiseOrValue<string>,
+      metadata_: PromiseOrValue<BytesLike>,
+      signature_: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<
+      [boolean, string] & { success_: boolean; revertReason_: string }
+    >;
 
     domainSeparatorV4(overrides?: CallOverrides): Promise<string>;
 
-    domainSeparatorVersion(overrides?: CallOverrides): Promise<string>;
+    gswForwarder(overrides?: CallOverrides): Promise<string>;
+
+    gswNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+    gswVersionsRegistry(overrides?: CallOverrides): Promise<string>;
 
     initialize(
-      _owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    nonce(overrides?: CallOverrides): Promise<BigNumber>;
-
     owner(overrides?: CallOverrides): Promise<string>;
 
+    upgradeTo(
+      gswImpl_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeToAndCall(
+      gswImpl_: PromiseOrValue<string>,
+      data_: PromiseOrValue<BytesLike>,
+      forceCall_: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     verify(
-      targets: PromiseOrValue<string>[],
-      datas: PromiseOrValue<BytesLike>[],
-      values: PromiseOrValue<BigNumberish>[],
-      signature: PromiseOrValue<BytesLike>,
-      validUntil: PromiseOrValue<BigNumberish>,
-      gas: PromiseOrValue<BigNumberish>,
+      actions_: IGaslessSmartWallet.ActionStruct[],
+      validUntil_: PromiseOrValue<BigNumberish>,
+      gas_: PromiseOrValue<BigNumberish>,
+      source_: PromiseOrValue<string>,
+      metadata_: PromiseOrValue<BytesLike>,
+      signature_: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
 
   filters: {
-    "CastExecuted()"(): CastExecutedEventFilter;
-    CastExecuted(): CastExecutedEventFilter;
+    "CastExecuted(address,address,bytes)"(
+      source?: PromiseOrValue<string> | null,
+      caller?: PromiseOrValue<string> | null,
+      metadata?: null
+    ): CastExecutedEventFilter;
+    CastExecuted(
+      source?: PromiseOrValue<string> | null,
+      caller?: PromiseOrValue<string> | null,
+      metadata?: null
+    ): CastExecutedEventFilter;
 
-    "CastFailed(string,address,bytes,uint256)"(
+    "CastFailed(address,address,string,bytes)"(
+      source?: PromiseOrValue<string> | null,
+      caller?: PromiseOrValue<string> | null,
       reason?: null,
-      target?: null,
-      data?: null,
-      value?: null
+      metadata?: null
     ): CastFailedEventFilter;
     CastFailed(
+      source?: PromiseOrValue<string> | null,
+      caller?: PromiseOrValue<string> | null,
       reason?: null,
-      target?: null,
-      data?: null,
-      value?: null
+      metadata?: null
     ): CastFailedEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
+
+    "Upgraded(address)"(
+      gswImpl?: PromiseOrValue<string> | null
+    ): UpgradedEventFilter;
+    Upgraded(gswImpl?: PromiseOrValue<string> | null): UpgradedEventFilter;
   };
 
   estimateGas: {
-    cast(
-      targets: PromiseOrValue<string>[],
-      datas: PromiseOrValue<BytesLike>[],
-      values: PromiseOrValue<BigNumberish>[],
-      signature: PromiseOrValue<BytesLike>,
-      validUntil: PromiseOrValue<BigNumberish>,
-      gas: PromiseOrValue<BigNumberish>,
+    ACTION_TYPE_HASH(overrides?: CallOverrides): Promise<BigNumber>;
+
+    CAST_TYPE_HASH(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DEFAULT_CHAIN_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DOMAIN_SEPARATOR_NAME(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DOMAIN_SEPARATOR_VERSION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TYPE_HASH(overrides?: CallOverrides): Promise<BigNumber>;
+
+    _callTargets(
+      actions_: IGaslessSmartWallet.ActionStruct[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    castTypeHash(overrides?: CallOverrides): Promise<BigNumber>;
-
-    domainSeparatorName(overrides?: CallOverrides): Promise<BigNumber>;
+    cast(
+      actions_: IGaslessSmartWallet.ActionStruct[],
+      validUntil_: PromiseOrValue<BigNumberish>,
+      gas_: PromiseOrValue<BigNumberish>,
+      source_: PromiseOrValue<string>,
+      metadata_: PromiseOrValue<BytesLike>,
+      signature_: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     domainSeparatorV4(overrides?: CallOverrides): Promise<BigNumber>;
 
-    domainSeparatorVersion(overrides?: CallOverrides): Promise<BigNumber>;
+    gswForwarder(overrides?: CallOverrides): Promise<BigNumber>;
+
+    gswNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+    gswVersionsRegistry(overrides?: CallOverrides): Promise<BigNumber>;
 
     initialize(
-      _owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    nonce(overrides?: CallOverrides): Promise<BigNumber>;
-
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
+    upgradeTo(
+      gswImpl_: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    upgradeToAndCall(
+      gswImpl_: PromiseOrValue<string>,
+      data_: PromiseOrValue<BytesLike>,
+      forceCall_: PromiseOrValue<boolean>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     verify(
-      targets: PromiseOrValue<string>[],
-      datas: PromiseOrValue<BytesLike>[],
-      values: PromiseOrValue<BigNumberish>[],
-      signature: PromiseOrValue<BytesLike>,
-      validUntil: PromiseOrValue<BigNumberish>,
-      gas: PromiseOrValue<BigNumberish>,
+      actions_: IGaslessSmartWallet.ActionStruct[],
+      validUntil_: PromiseOrValue<BigNumberish>,
+      gas_: PromiseOrValue<BigNumberish>,
+      source_: PromiseOrValue<string>,
+      metadata_: PromiseOrValue<BytesLike>,
+      signature_: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    cast(
-      targets: PromiseOrValue<string>[],
-      datas: PromiseOrValue<BytesLike>[],
-      values: PromiseOrValue<BigNumberish>[],
-      signature: PromiseOrValue<BytesLike>,
-      validUntil: PromiseOrValue<BigNumberish>,
-      gas: PromiseOrValue<BigNumberish>,
+    ACTION_TYPE_HASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    CAST_TYPE_HASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    DEFAULT_CHAIN_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    DOMAIN_SEPARATOR_NAME(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    DOMAIN_SEPARATOR_VERSION(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    TYPE_HASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    _callTargets(
+      actions_: IGaslessSmartWallet.ActionStruct[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    castTypeHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    domainSeparatorName(
-      overrides?: CallOverrides
+    cast(
+      actions_: IGaslessSmartWallet.ActionStruct[],
+      validUntil_: PromiseOrValue<BigNumberish>,
+      gas_: PromiseOrValue<BigNumberish>,
+      source_: PromiseOrValue<string>,
+      metadata_: PromiseOrValue<BytesLike>,
+      signature_: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     domainSeparatorV4(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    domainSeparatorVersion(
+    gswForwarder(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    gswNonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    gswVersionsRegistry(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      _owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    nonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    upgradeTo(
+      gswImpl_: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeToAndCall(
+      gswImpl_: PromiseOrValue<string>,
+      data_: PromiseOrValue<BytesLike>,
+      forceCall_: PromiseOrValue<boolean>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     verify(
-      targets: PromiseOrValue<string>[],
-      datas: PromiseOrValue<BytesLike>[],
-      values: PromiseOrValue<BigNumberish>[],
-      signature: PromiseOrValue<BytesLike>,
-      validUntil: PromiseOrValue<BigNumberish>,
-      gas: PromiseOrValue<BigNumberish>,
+      actions_: IGaslessSmartWallet.ActionStruct[],
+      validUntil_: PromiseOrValue<BigNumberish>,
+      gas_: PromiseOrValue<BigNumberish>,
+      source_: PromiseOrValue<string>,
+      metadata_: PromiseOrValue<BytesLike>,
+      signature_: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

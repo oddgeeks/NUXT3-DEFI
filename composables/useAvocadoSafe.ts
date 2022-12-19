@@ -15,12 +15,12 @@ export const useAvocadoSafe = () => {
         if (!account.value) return;
         if (!safeAddress.value) return;
 
-        await switchNetworkByChainId(420);
+        await switchNetworkByChainId(75);
 
         let targetProvider = getRpcProvider(transaction.chainId);
 
         const forwarderContract = Forwarder__factory.connect(
-            "0xbECEC328B5EF45c6e41d3C15b2253236646eA8cF",
+            "0x52f30c01795e84e5c12fa29345f1274d517FB865",
             targetProvider
         );
 
@@ -43,15 +43,18 @@ export const useAvocadoSafe = () => {
                     getRpcProvider(Number(transaction.chainId)),
                 );
 
-                version = await gaslessWallet.domainSeparatorVersion();
-                name = await gaslessWallet.domainSeparatorName();
-            } catch (error) { }
+                version = await gaslessWallet.DOMAIN_SEPARATOR_VERSION();
+                name = await gaslessWallet.DOMAIN_SEPARATOR_VERSION();
+            } catch (error) { 
+                name = await forwarderContract.gswVersion("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
+                version = await forwarderContract.gswVersionName("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
+            }
 
             // Creating domain for signing using gasless wallet address as the verifying contract
             let domain = {
                 name,
                 version,
-                chainId: '420',
+                chainId: '75',
                 salt: ethers.utils.solidityKeccak256(["uint256"], [transaction.chainId]),
                 verifyingContract: safeAddress.value,
             }
@@ -109,9 +112,9 @@ export const useAvocadoSafe = () => {
         //     message: signatureData
         // })
 
-        const avoProvider = getRpcProvider(420);
+        const avoProvider = getRpcProvider(75);
 
-        let transactionHash = await avoProvider.send("txn_relay", [
+        let transactionHash = await avoProvider.send("txn_broadcast", [
             signature,
             signatureData, // signature
             account.value, //signer 
@@ -140,12 +143,12 @@ export const useAvocadoSafe = () => {
         if (!account.value) return;
         if (!safeAddress.value) return;
 
-        await switchNetworkByChainId(420);
+        await switchNetworkByChainId(75);
 
         let targetProvider = getRpcProvider(chainId);
 
         const forwarderContract = Forwarder__factory.connect(
-            "0xbECEC328B5EF45c6e41d3C15b2253236646eA8cF",
+            "0x52f30c01795e84e5c12fa29345f1274d517FB865",
             targetProvider
         );
 
@@ -168,15 +171,18 @@ export const useAvocadoSafe = () => {
                     getRpcProvider(Number(chainId)),
                 );
 
-                version = await gaslessWallet.domainSeparatorVersion();
-                name = await gaslessWallet.domainSeparatorName();
-            } catch (error) { }
+                version = await gaslessWallet.DOMAIN_SEPARATOR_VERSION();
+                name = await gaslessWallet.DOMAIN_SEPARATOR_VERSION();
+            } catch (error) { 
+                name = await forwarderContract.gswVersion("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
+                version = await forwarderContract.gswVersionName("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
+            }
 
             // Creating domain for signing using gasless wallet address as the verifying contract
             let domain = {
                 name,
                 version,
-                chainId: '420',
+                chainId: '75',
                 salt: ethers.utils.solidityKeccak256(["uint256"], [chainId]),
                 verifyingContract: safeAddress.value,
             }
@@ -234,7 +240,7 @@ export const useAvocadoSafe = () => {
         //     message: signatureData
         // })
 
-        let transactionHash = await getRpcProvider(420).send("txn_relay", [
+        let transactionHash = await getRpcProvider(75).send("txn_broadcast", [
             signature,
             signatureData, // signature
             account.value, //signer 

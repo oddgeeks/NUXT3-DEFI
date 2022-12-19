@@ -164,7 +164,7 @@ const send = async () => {
 
   loading.value = true;
   try {
-    await switchNetworkByChainId(420);
+    await switchNetworkByChainId(75);
 
     const txs = [];
 

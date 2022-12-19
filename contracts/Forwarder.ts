@@ -14,7 +14,11 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -24,24 +28,71 @@ import type {
   PromiseOrValue,
 } from "./common";
 
+export declare namespace IGaslessSmartWallet {
+  export type ActionStruct = {
+    target: PromiseOrValue<string>;
+    data: PromiseOrValue<BytesLike>;
+    value: PromiseOrValue<BigNumberish>;
+  };
+
+  export type ActionStructOutput = [string, string, BigNumber] & {
+    target: string;
+    data: string;
+    value: BigNumber;
+  };
+}
+
 export interface ForwarderInterface extends utils.Interface {
   functions: {
+    "admin()": FunctionFragment;
+    "changeAdmin(address)": FunctionFragment;
+    "implementation()": FunctionFragment;
+    "upgradeTo(address)": FunctionFragment;
+    "upgradeToAndCall(address,bytes)": FunctionFragment;
     "computeAddress(address)": FunctionFragment;
-    "execute(address,address[],bytes[],uint256[],bytes,uint256,uint256)": FunctionFragment;
+    "execute(address,(address,bytes,uint256)[],uint256,uint256,address,bytes,bytes)": FunctionFragment;
     "gswFactory()": FunctionFragment;
     "gswNonce(address)": FunctionFragment;
-    "verify(address,address[],bytes[],uint256[],bytes,uint256,uint256)": FunctionFragment;
+    "gswVersion(address)": FunctionFragment;
+    "gswVersionName(address)": FunctionFragment;
+    "initialize()": FunctionFragment;
+    "verify(address,(address,bytes,uint256)[],uint256,uint256,address,bytes,bytes)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "admin"
+      | "changeAdmin"
+      | "implementation"
+      | "upgradeTo"
+      | "upgradeToAndCall"
       | "computeAddress"
       | "execute"
       | "gswFactory"
       | "gswNonce"
+      | "gswVersion"
+      | "gswVersionName"
+      | "initialize"
       | "verify"
   ): FunctionFragment;
 
+  encodeFunctionData(functionFragment: "admin", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "changeAdmin",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "implementation",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeTo",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeToAndCall",
+    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(
     functionFragment: "computeAddress",
     values: [PromiseOrValue<string>]
@@ -50,12 +101,12 @@ export interface ForwarderInterface extends utils.Interface {
     functionFragment: "execute",
     values: [
       PromiseOrValue<string>,
-      PromiseOrValue<string>[],
-      PromiseOrValue<BytesLike>[],
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BytesLike>,
+      IGaslessSmartWallet.ActionStruct[],
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
     ]
   ): string;
   encodeFunctionData(
@@ -67,18 +118,44 @@ export interface ForwarderInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "gswVersion",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "gswVersionName",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "verify",
     values: [
       PromiseOrValue<string>,
-      PromiseOrValue<string>[],
-      PromiseOrValue<BytesLike>[],
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BytesLike>,
+      IGaslessSmartWallet.ActionStruct[],
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
     ]
   ): string;
 
+  decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "changeAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "implementation",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "upgradeToAndCall",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "computeAddress",
     data: BytesLike
@@ -86,10 +163,92 @@ export interface ForwarderInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "gswFactory", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "gswNonce", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "gswVersion", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "gswVersionName",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "verify", data: BytesLike): Result;
 
-  events: {};
+  events: {
+    "AdminChanged(address,address)": EventFragment;
+    "BeaconUpgraded(address)": EventFragment;
+    "Upgraded(address)": EventFragment;
+    "ExecuteFailed(address,address,address,bytes,string)": EventFragment;
+    "Executed(address,address,address,bytes)": EventFragment;
+    "Initialized(uint8)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ExecuteFailed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Executed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
 }
+
+export interface AdminChangedEventObject {
+  previousAdmin: string;
+  newAdmin: string;
+}
+export type AdminChangedEvent = TypedEvent<
+  [string, string],
+  AdminChangedEventObject
+>;
+
+export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
+
+export interface BeaconUpgradedEventObject {
+  beacon: string;
+}
+export type BeaconUpgradedEvent = TypedEvent<
+  [string],
+  BeaconUpgradedEventObject
+>;
+
+export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
+
+export interface UpgradedEventObject {
+  implementation: string;
+}
+export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
+
+export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
+
+export interface ExecuteFailedEventObject {
+  gswOwner: string;
+  gswAddress: string;
+  source: string;
+  metadata: string;
+  reason: string;
+}
+export type ExecuteFailedEvent = TypedEvent<
+  [string, string, string, string, string],
+  ExecuteFailedEventObject
+>;
+
+export type ExecuteFailedEventFilter = TypedEventFilter<ExecuteFailedEvent>;
+
+export interface ExecutedEventObject {
+  gswOwner: string;
+  gswAddress: string;
+  source: string;
+  metadata: string;
+}
+export type ExecutedEvent = TypedEvent<
+  [string, string, string, string],
+  ExecutedEventObject
+>;
+
+export type ExecutedEventFilter = TypedEventFilter<ExecutedEvent>;
+
+export interface InitializedEventObject {
+  version: number;
+}
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface Forwarder extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -118,181 +277,419 @@ export interface Forwarder extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    admin(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    changeAdmin(
+      newAdmin: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    implementation(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    upgradeTo(
+      newImplementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    upgradeToAndCall(
+      newImplementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     computeAddress(
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     execute(
-      from: PromiseOrValue<string>,
-      targets: PromiseOrValue<string>[],
-      datas: PromiseOrValue<BytesLike>[],
-      values: PromiseOrValue<BigNumberish>[],
-      signature: PromiseOrValue<BytesLike>,
-      validUntil: PromiseOrValue<BigNumberish>,
-      gas: PromiseOrValue<BigNumberish>,
+      from_: PromiseOrValue<string>,
+      actions_: IGaslessSmartWallet.ActionStruct[],
+      validUntil_: PromiseOrValue<BigNumberish>,
+      gas_: PromiseOrValue<BigNumberish>,
+      source_: PromiseOrValue<string>,
+      metadata_: PromiseOrValue<BytesLike>,
+      signature_: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     gswFactory(overrides?: CallOverrides): Promise<[string]>;
 
     gswNonce(
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    gswVersion(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    gswVersionName(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    initialize(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     verify(
-      from: PromiseOrValue<string>,
-      targets: PromiseOrValue<string>[],
-      datas: PromiseOrValue<BytesLike>[],
-      values: PromiseOrValue<BigNumberish>[],
-      signature: PromiseOrValue<BytesLike>,
-      validUntil: PromiseOrValue<BigNumberish>,
-      gas: PromiseOrValue<BigNumberish>,
+      from_: PromiseOrValue<string>,
+      actions_: IGaslessSmartWallet.ActionStruct[],
+      validUntil_: PromiseOrValue<BigNumberish>,
+      gas_: PromiseOrValue<BigNumberish>,
+      source_: PromiseOrValue<string>,
+      metadata_: PromiseOrValue<BytesLike>,
+      signature_: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
+  admin(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  changeAdmin(
+    newAdmin: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  implementation(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  upgradeTo(
+    newImplementation: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  upgradeToAndCall(
+    newImplementation: PromiseOrValue<string>,
+    data: PromiseOrValue<BytesLike>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   computeAddress(
-    owner: PromiseOrValue<string>,
+    owner_: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   execute(
-    from: PromiseOrValue<string>,
-    targets: PromiseOrValue<string>[],
-    datas: PromiseOrValue<BytesLike>[],
-    values: PromiseOrValue<BigNumberish>[],
-    signature: PromiseOrValue<BytesLike>,
-    validUntil: PromiseOrValue<BigNumberish>,
-    gas: PromiseOrValue<BigNumberish>,
+    from_: PromiseOrValue<string>,
+    actions_: IGaslessSmartWallet.ActionStruct[],
+    validUntil_: PromiseOrValue<BigNumberish>,
+    gas_: PromiseOrValue<BigNumberish>,
+    source_: PromiseOrValue<string>,
+    metadata_: PromiseOrValue<BytesLike>,
+    signature_: PromiseOrValue<BytesLike>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   gswFactory(overrides?: CallOverrides): Promise<string>;
 
   gswNonce(
-    owner: PromiseOrValue<string>,
+    owner_: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  gswVersion(
+    owner_: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  gswVersionName(
+    owner_: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  initialize(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   verify(
-    from: PromiseOrValue<string>,
-    targets: PromiseOrValue<string>[],
-    datas: PromiseOrValue<BytesLike>[],
-    values: PromiseOrValue<BigNumberish>[],
-    signature: PromiseOrValue<BytesLike>,
-    validUntil: PromiseOrValue<BigNumberish>,
-    gas: PromiseOrValue<BigNumberish>,
+    from_: PromiseOrValue<string>,
+    actions_: IGaslessSmartWallet.ActionStruct[],
+    validUntil_: PromiseOrValue<BigNumberish>,
+    gas_: PromiseOrValue<BigNumberish>,
+    source_: PromiseOrValue<string>,
+    metadata_: PromiseOrValue<BytesLike>,
+    signature_: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    admin(overrides?: CallOverrides): Promise<string>;
+
+    changeAdmin(
+      newAdmin: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    implementation(overrides?: CallOverrides): Promise<string>;
+
+    upgradeTo(
+      newImplementation: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeToAndCall(
+      newImplementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     computeAddress(
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     execute(
-      from: PromiseOrValue<string>,
-      targets: PromiseOrValue<string>[],
-      datas: PromiseOrValue<BytesLike>[],
-      values: PromiseOrValue<BigNumberish>[],
-      signature: PromiseOrValue<BytesLike>,
-      validUntil: PromiseOrValue<BigNumberish>,
-      gas: PromiseOrValue<BigNumberish>,
+      from_: PromiseOrValue<string>,
+      actions_: IGaslessSmartWallet.ActionStruct[],
+      validUntil_: PromiseOrValue<BigNumberish>,
+      gas_: PromiseOrValue<BigNumberish>,
+      source_: PromiseOrValue<string>,
+      metadata_: PromiseOrValue<BytesLike>,
+      signature_: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     gswFactory(overrides?: CallOverrides): Promise<string>;
 
     gswNonce(
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    gswVersion(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    gswVersionName(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    initialize(overrides?: CallOverrides): Promise<void>;
+
     verify(
-      from: PromiseOrValue<string>,
-      targets: PromiseOrValue<string>[],
-      datas: PromiseOrValue<BytesLike>[],
-      values: PromiseOrValue<BigNumberish>[],
-      signature: PromiseOrValue<BytesLike>,
-      validUntil: PromiseOrValue<BigNumberish>,
-      gas: PromiseOrValue<BigNumberish>,
+      from_: PromiseOrValue<string>,
+      actions_: IGaslessSmartWallet.ActionStruct[],
+      validUntil_: PromiseOrValue<BigNumberish>,
+      gas_: PromiseOrValue<BigNumberish>,
+      source_: PromiseOrValue<string>,
+      metadata_: PromiseOrValue<BytesLike>,
+      signature_: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
 
-  filters: {};
+  filters: {
+    "AdminChanged(address,address)"(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
+    AdminChanged(
+      previousAdmin?: null,
+      newAdmin?: null
+    ): AdminChangedEventFilter;
+
+    "BeaconUpgraded(address)"(
+      beacon?: PromiseOrValue<string> | null
+    ): BeaconUpgradedEventFilter;
+    BeaconUpgraded(
+      beacon?: PromiseOrValue<string> | null
+    ): BeaconUpgradedEventFilter;
+
+    "Upgraded(address)"(
+      implementation?: PromiseOrValue<string> | null
+    ): UpgradedEventFilter;
+    Upgraded(
+      implementation?: PromiseOrValue<string> | null
+    ): UpgradedEventFilter;
+
+    "ExecuteFailed(address,address,address,bytes,string)"(
+      gswOwner?: PromiseOrValue<string> | null,
+      gswAddress?: PromiseOrValue<string> | null,
+      source?: PromiseOrValue<string> | null,
+      metadata?: null,
+      reason?: null
+    ): ExecuteFailedEventFilter;
+    ExecuteFailed(
+      gswOwner?: PromiseOrValue<string> | null,
+      gswAddress?: PromiseOrValue<string> | null,
+      source?: PromiseOrValue<string> | null,
+      metadata?: null,
+      reason?: null
+    ): ExecuteFailedEventFilter;
+
+    "Executed(address,address,address,bytes)"(
+      gswOwner?: PromiseOrValue<string> | null,
+      gswAddress?: PromiseOrValue<string> | null,
+      source?: PromiseOrValue<string> | null,
+      metadata?: null
+    ): ExecutedEventFilter;
+    Executed(
+      gswOwner?: PromiseOrValue<string> | null,
+      gswAddress?: PromiseOrValue<string> | null,
+      source?: PromiseOrValue<string> | null,
+      metadata?: null
+    ): ExecutedEventFilter;
+
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
+  };
 
   estimateGas: {
+    admin(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    changeAdmin(
+      newAdmin: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    implementation(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    upgradeTo(
+      newImplementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    upgradeToAndCall(
+      newImplementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     computeAddress(
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     execute(
-      from: PromiseOrValue<string>,
-      targets: PromiseOrValue<string>[],
-      datas: PromiseOrValue<BytesLike>[],
-      values: PromiseOrValue<BigNumberish>[],
-      signature: PromiseOrValue<BytesLike>,
-      validUntil: PromiseOrValue<BigNumberish>,
-      gas: PromiseOrValue<BigNumberish>,
+      from_: PromiseOrValue<string>,
+      actions_: IGaslessSmartWallet.ActionStruct[],
+      validUntil_: PromiseOrValue<BigNumberish>,
+      gas_: PromiseOrValue<BigNumberish>,
+      source_: PromiseOrValue<string>,
+      metadata_: PromiseOrValue<BytesLike>,
+      signature_: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     gswFactory(overrides?: CallOverrides): Promise<BigNumber>;
 
     gswNonce(
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    gswVersion(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    gswVersionName(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    initialize(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     verify(
-      from: PromiseOrValue<string>,
-      targets: PromiseOrValue<string>[],
-      datas: PromiseOrValue<BytesLike>[],
-      values: PromiseOrValue<BigNumberish>[],
-      signature: PromiseOrValue<BytesLike>,
-      validUntil: PromiseOrValue<BigNumberish>,
-      gas: PromiseOrValue<BigNumberish>,
+      from_: PromiseOrValue<string>,
+      actions_: IGaslessSmartWallet.ActionStruct[],
+      validUntil_: PromiseOrValue<BigNumberish>,
+      gas_: PromiseOrValue<BigNumberish>,
+      source_: PromiseOrValue<string>,
+      metadata_: PromiseOrValue<BytesLike>,
+      signature_: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    admin(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    changeAdmin(
+      newAdmin: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    implementation(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeTo(
+      newImplementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeToAndCall(
+      newImplementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     computeAddress(
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     execute(
-      from: PromiseOrValue<string>,
-      targets: PromiseOrValue<string>[],
-      datas: PromiseOrValue<BytesLike>[],
-      values: PromiseOrValue<BigNumberish>[],
-      signature: PromiseOrValue<BytesLike>,
-      validUntil: PromiseOrValue<BigNumberish>,
-      gas: PromiseOrValue<BigNumberish>,
+      from_: PromiseOrValue<string>,
+      actions_: IGaslessSmartWallet.ActionStruct[],
+      validUntil_: PromiseOrValue<BigNumberish>,
+      gas_: PromiseOrValue<BigNumberish>,
+      source_: PromiseOrValue<string>,
+      metadata_: PromiseOrValue<BytesLike>,
+      signature_: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     gswFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     gswNonce(
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    gswVersion(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    gswVersionName(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    initialize(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     verify(
-      from: PromiseOrValue<string>,
-      targets: PromiseOrValue<string>[],
-      datas: PromiseOrValue<BytesLike>[],
-      values: PromiseOrValue<BigNumberish>[],
-      signature: PromiseOrValue<BytesLike>,
-      validUntil: PromiseOrValue<BigNumberish>,
-      gas: PromiseOrValue<BigNumberish>,
+      from_: PromiseOrValue<string>,
+      actions_: IGaslessSmartWallet.ActionStruct[],
+      validUntil_: PromiseOrValue<BigNumberish>,
+      gas_: PromiseOrValue<BigNumberish>,
+      source_: PromiseOrValue<string>,
+      metadata_: PromiseOrValue<BytesLike>,
+      signature_: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

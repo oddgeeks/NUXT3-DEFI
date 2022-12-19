@@ -8,7 +8,18 @@ import type { GaslessWallet, GaslessWalletInterface } from "../GaslessWallet";
 
 const _abi = [
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "contract IGSWVersionsRegistry",
+        name: "gswVersionsRegistry_",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "gswForwarder_",
+        type: "address",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "constructor",
   },
@@ -28,14 +39,55 @@ const _abi = [
     type: "error",
   },
   {
-    anonymous: false,
     inputs: [],
+    name: "GaslessSmartWallet__Unauthorized",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "SelfUpgradeable__Unauthorized",
+    type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "source",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "bytes",
+        name: "metadata",
+        type: "bytes",
+      },
+    ],
     name: "CastExecuted",
     type: "event",
   },
   {
     anonymous: false,
     inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "source",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
       {
         indexed: false,
         internalType: "string",
@@ -44,21 +96,9 @@ const _abi = [
       },
       {
         indexed: false,
-        internalType: "address",
-        name: "target",
-        type: "address",
-      },
-      {
-        indexed: false,
         internalType: "bytes",
-        name: "data",
+        name: "metadata",
         type: "bytes",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
       },
     ],
     name: "CastFailed",
@@ -78,46 +118,21 @@ const _abi = [
     type: "event",
   },
   {
+    anonymous: false,
     inputs: [
       {
-        internalType: "address[]",
-        name: "targets",
-        type: "address[]",
-      },
-      {
-        internalType: "bytes[]",
-        name: "datas",
-        type: "bytes[]",
-      },
-      {
-        internalType: "uint256[]",
-        name: "values",
-        type: "uint256[]",
-      },
-      {
-        internalType: "bytes",
-        name: "signature",
-        type: "bytes",
-      },
-      {
-        internalType: "uint256",
-        name: "validUntil",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "gas",
-        type: "uint256",
+        indexed: true,
+        internalType: "address",
+        name: "gswImpl",
+        type: "address",
       },
     ],
-    name: "cast",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
+    name: "Upgraded",
+    type: "event",
   },
   {
     inputs: [],
-    name: "castTypeHash",
+    name: "ACTION_TYPE_HASH",
     outputs: [
       {
         internalType: "bytes32",
@@ -130,7 +145,33 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "domainSeparatorName",
+    name: "CAST_TYPE_HASH",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "DEFAULT_CHAIN_ID",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "DOMAIN_SEPARATOR_NAME",
     outputs: [
       {
         internalType: "string",
@@ -139,6 +180,128 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "DOMAIN_SEPARATOR_VERSION",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "TYPE_HASH",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "target",
+            type: "address",
+          },
+          {
+            internalType: "bytes",
+            name: "data",
+            type: "bytes",
+          },
+          {
+            internalType: "uint256",
+            name: "value",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct IGaslessSmartWallet.Action[]",
+        name: "actions_",
+        type: "tuple[]",
+      },
+    ],
+    name: "_callTargets",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "target",
+            type: "address",
+          },
+          {
+            internalType: "bytes",
+            name: "data",
+            type: "bytes",
+          },
+          {
+            internalType: "uint256",
+            name: "value",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct IGaslessSmartWallet.Action[]",
+        name: "actions_",
+        type: "tuple[]",
+      },
+      {
+        internalType: "uint256",
+        name: "validUntil_",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "gas_",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "source_",
+        type: "address",
+      },
+      {
+        internalType: "bytes",
+        name: "metadata_",
+        type: "bytes",
+      },
+      {
+        internalType: "bytes",
+        name: "signature_",
+        type: "bytes",
+      },
+    ],
+    name: "cast",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "success_",
+        type: "bool",
+      },
+      {
+        internalType: "string",
+        name: "revertReason_",
+        type: "string",
+      },
+    ],
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -156,12 +319,38 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "domainSeparatorVersion",
+    name: "gswForwarder",
     outputs: [
       {
-        internalType: "string",
+        internalType: "address",
         name: "",
-        type: "string",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "gswNonce",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "gswVersionsRegistry",
+    outputs: [
+      {
+        internalType: "contract IGSWVersionsRegistry",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -171,26 +360,13 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_owner",
+        name: "owner_",
         type: "address",
       },
     ],
     name: "initialize",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "nonce",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -209,34 +385,87 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address[]",
-        name: "targets",
-        type: "address[]",
+        internalType: "address",
+        name: "gswImpl_",
+        type: "address",
       },
+    ],
+    name: "upgradeTo",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
       {
-        internalType: "bytes[]",
-        name: "datas",
-        type: "bytes[]",
-      },
-      {
-        internalType: "uint256[]",
-        name: "values",
-        type: "uint256[]",
+        internalType: "address",
+        name: "gswImpl_",
+        type: "address",
       },
       {
         internalType: "bytes",
-        name: "signature",
+        name: "data_",
         type: "bytes",
       },
       {
+        internalType: "bool",
+        name: "forceCall_",
+        type: "bool",
+      },
+    ],
+    name: "upgradeToAndCall",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "target",
+            type: "address",
+          },
+          {
+            internalType: "bytes",
+            name: "data",
+            type: "bytes",
+          },
+          {
+            internalType: "uint256",
+            name: "value",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct IGaslessSmartWallet.Action[]",
+        name: "actions_",
+        type: "tuple[]",
+      },
+      {
         internalType: "uint256",
-        name: "validUntil",
+        name: "validUntil_",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "gas",
+        name: "gas_",
         type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "source_",
+        type: "address",
+      },
+      {
+        internalType: "bytes",
+        name: "metadata_",
+        type: "bytes",
+      },
+      {
+        internalType: "bytes",
+        name: "signature_",
+        type: "bytes",
       },
     ],
     name: "verify",

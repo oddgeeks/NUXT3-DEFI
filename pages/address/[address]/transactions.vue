@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const router = useRoute()
-const provider = getRpcProvider(420)
+const provider = getRpcProvider(75)
 
 const transactions: { data: IAvocadoTransaction[], page: number, total: number } = await provider.send("api_getTransactionsByOwner", [
     router.params.address

@@ -28,7 +28,7 @@ export const RPC_URLS: { [chainId: number]: string } = {
     250: 'https://rpc.ankr.com/fantom',
     10: 'https://rpc.ankr.com/optimism',
     42161: 'https://rpc.ankr.com/arbitrum',
-    420: 'https://rpc.avocado.instad.app',
+    75: 'https://rpc.avocado.instad.app',
 };
 
 export const injected = new InjectedConnector({
@@ -37,7 +37,7 @@ export const injected = new InjectedConnector({
 
 export const walletconnect = new WalletConnectConnector({
     rpc: RPC_URLS,
-    chainId: 420,
+    chainId: 75,
     qrcode: true
 });
 
@@ -46,12 +46,12 @@ export const network = new NetworkConnector({
     defaultChainId: 1
 });
 
-export const torus = new TorusConnector({ chainId: 420 })
+export const torus = new TorusConnector({ chainId: 75 })
 
 export const magic = (email: string) => {
    return new CustomMagicConnector({
         network: {
-            chainId: 137,// 420,
+            chainId: 137,// 75,
             rpcUrl: "https://rpc.ankr.com/polygon",// "https://rpc.avocado.instad.app"
         },
         apiKey: 'pk_live_40A3A59B53603988',

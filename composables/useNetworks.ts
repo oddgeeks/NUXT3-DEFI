@@ -135,7 +135,7 @@ export function useNetworks() {
         },
         {
             name: "Avocado",
-            chainId: 420,
+            chainId: 75,
             icon: SVGPolygon,
             params: {
                 chainName: "Avocado Network",
