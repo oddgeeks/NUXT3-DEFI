@@ -6,7 +6,6 @@ const { safeAddress } = useAvocadoSafe();
   <div class="container">
     <div>
       <TotalBalance />
-      <DApps />
     </div>
 
     <div class="flex gap-5 lg:flex-row flex-col">
