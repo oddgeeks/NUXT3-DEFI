@@ -79,7 +79,13 @@ const isSelected = (option: any, index: number) => {
       :class="{ 'border-b-transparent rounded-b-none adjuster': open }"
       class="relative w-full flex items-center gap-2.5 rounded-2xl border-2 border-slate-700 bg-gray-850 px-4 py-2.5 text-left"
     >
-      <img class="w-6 h-6" v-if="iconKey && selectedIcon" :src="selectedIcon" />
+      <slot name="button-prefix">
+        <img
+          class="w-6 h-6"
+          v-if="iconKey && selectedIcon"
+          :src="selectedIcon"
+        />
+      </slot>
       <span class="block truncate">{{ selectedLabel }}</span>
       <span class="pointer-events-none flex items-center ml-auto">
         <ChevronDownSVG class="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -104,11 +110,13 @@ const isSelected = (option: any, index: number) => {
             @click="setSelected(option, i)"
             class="w-full flex gap-2.5 items-center text-left py-3 px-3"
           >
-            <img
-              class="w-6 h-6"
-              v-if="iconKey && getIcon(option)"
-              :src="getIcon(option)"
-            />
+            <slot :value="getValue(option, i)" name="item-prefix">
+              <img
+                class="w-6 h-6"
+                v-if="iconKey && getIcon(option)"
+                :src="getIcon(option)"
+              />
+            </slot>
             {{ getLabel(option) }}
             <SVGSuccess
               v-if="isSelected(option, i)"
