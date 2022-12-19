@@ -131,7 +131,7 @@ const connect = async () => {
       the tab.
     </p>
 
-    <div class="text-blue-500 text-sm">
+    <div class="text-blue-500 text-sm text-center">
       {{ connection.peerMeta.url }}
     </div>
 
