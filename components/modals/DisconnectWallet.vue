@@ -38,15 +38,11 @@ const disconnectWallet = async () => {
         You need the Avocado web app to be open to popup transactions. Please
         don't close the tab.
       </p>
-      <p class="text-blue-500 text-sm">{{ props.session.peerMeta.url }}</p>
+      <a rel="noopener noreferrer" target="_blank" :href="props.session.peerMeta.url" class="text-blue-500 text-sm">
+        {{ props.session.peerMeta.url }}
+      </a>
       </div>
     </div>
-
-    <a target="_blank" class="mb-5 block" rel="noopener noreferrer" :href="props.session.peerMeta.url">
-      <CommonButton class="w-full justify-center" size="lg">
-        Open in new link
-      </CommonButton>
-    </a>
       <CommonButton :loading="loading" @click="disconnectWallet()" color="red" class="w-full justify-center" size="lg">
         Disconnect
       </CommonButton>
