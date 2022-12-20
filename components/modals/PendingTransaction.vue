@@ -14,7 +14,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
+  <div class="text-center">
 
     <div v-if="transaction" class="mb-8 flex justify-center">
       <svg v-if="transaction.status" width="40" height="40" viewBox="0 0 40 40" fill="none"
@@ -33,14 +33,14 @@ onMounted(async () => {
     </div>
 
 
-    <h2 class="mb-4 text-lg">Transaction {{ transaction ? (transaction.status ? "Confirmed" : "Failed") : "Pending" }}
+    <h2 class="mb-[15px] text-lg leading-5">Transaction {{ transaction ? (transaction.status ? "Confirmed" : "Failed") : "Pending" }}
     </h2>
 
-    <p v-if="!transaction" class="text-slate-400 text-xs">Transaction Broadcast</p>
+    <p v-if="!transaction" class="text-slate-400 text-xs leading-5">Transaction Broadcast</p>
 
     <p v-if="transaction && !transaction.status" class="text-slate-400 text-xs">Try again or return to the home page.</p>
 
-    <div v-if="!transaction" class="p-24 relative">
+    <div v-if="!transaction" class="p-[85px] relative">
       <div class="absolute inset-0 flex items-center justify-center">
         <svg class="animate-spin" width="60" height="60" viewBox="0 0 60 60" fill="none"
           xmlns="http://www.w3.org/2000/svg">
@@ -69,11 +69,8 @@ onMounted(async () => {
       </div>
     </div>
 
-    <a :href="getExplorerUrl(chainId, `/tx/${hash}`)" target="_blank" :class="{ 'mt-8': !!transaction }"
-      class="cursor-pointer bg-blue-500 hover:bg-blue-600 px-4 py-2 capitalize w-full shadow-md rounded-[15px] flex justify-center items-center space-x-2">
-
-
+     <CommonButton as="a" :href="getExplorerUrl(chainId, `/tx/${hash}`)" target="_blank" :class="{ 'mt-8': !!transaction }" class="w-full text-center justify-center" size="lg">
       View on {{ chainIdToName(String(chainId)) }} Explorer
-    </a>
+     </CommonButton>
   </div>
 </template>
