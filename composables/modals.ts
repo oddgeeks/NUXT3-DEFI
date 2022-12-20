@@ -3,6 +3,7 @@ import PendingTransaction from "~~/components/modals/PendingTransaction.vue";
 import Send from "~~/components/modals/Send.vue";
 import TopUpGas from "~~/components/modals/TopUpGas.vue";
 import WalletConnect from "~~/components/modals/WalletConnect.vue";
+import DisconnectWallet from "~~/components/modals/DisconnectWallet.vue";
 
 const { openModal } = useModal();
 
@@ -36,3 +37,9 @@ export const openWalletConnectModal = () => {
 export const openTopUpGasModal = () => {
     openModal(TopUpGas, {})
 }
+
+export const openDisconnectWalletModal = (session: any) => {
+    openModal(DisconnectWallet, {
+      session,
+    });
+};
