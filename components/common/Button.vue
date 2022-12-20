@@ -5,19 +5,22 @@ type ButtonProps = {
   color?: "blue" | "red";
   size?: "md" | "lg" | "sm";
   loading?: boolean;
+  as?: "button" | "a";
 };
 
 withDefaults(defineProps<ButtonProps>(), {
   color: "blue",
   size: "md",
   loading: false,
+  as: "button",
 })
 
 </script>
 
 <template>
-  <button
-    type="button"
+  <component
+    :is="as"
+    :type="as === 'button' ? 'button' : undefined"
     :class="[
   {
         'bg-[#EB5757] text-white hover:bg-red-500 disabled:bg-slate-800 disabled:text-slate-500':
@@ -44,7 +47,7 @@ withDefaults(defineProps<ButtonProps>(), {
     <slot v-if="!loading" />
     <div v-else class="dot-flashing my-1.5"></div>
      <slot name="suffix" />
-  </button>
+  </component>
 </template>
 
 <style scoped>
