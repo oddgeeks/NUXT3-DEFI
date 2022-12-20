@@ -6,7 +6,6 @@ const uri = ref();
 const connection = shallowRef();
 const connectionChainId = shallowRef(137);
 const { closeModal } = useModal();
-const { notify } = useNotification()
 
 const [loading, toggle] = useToggle(false)
  
@@ -48,11 +47,12 @@ const prepareAndConnect = async () => {
     connectionChainId.value = connection.value.chainId;
     uri.value = null;
   } catch (e: any) {
-    
-    notify({
-      type:"error",
-      title: e?.message,
-    })
+    console.log(e)
+    openDialogModal({
+      title: "Connected Failed",
+      content: "Try again or return to the home page.",
+      type: "error",
+    });
   } finally {
     toggle(false)
   }
