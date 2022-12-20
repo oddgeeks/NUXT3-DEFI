@@ -7,6 +7,8 @@ const connection = shallowRef();
 const connectionChainId = shallowRef(137);
 const { closeModal } = useModal();
 
+const [loading, toggle] = useToggle(false)
+ 
 const networks = [
   {
     chainId: 137,
@@ -38,21 +40,53 @@ const prepareAndConnect = async () => {
   if (!uri.value) {
     return;
   }
-  connection.value = await wcStore.prepareConnection(uri.value);
-  connectionChainId.value = connection.value.chainId;
-  uri.value = null;
+
+  try {
+    toggle(true)
+    connection.value = await wcStore.prepareConnection(uri.value);
+    connectionChainId.value = connection.value.chainId;
+    uri.value = null;
+  } catch (e: any) {
+    console.log(e)
+    openDialogModal({
+      title: "Connected Failed",
+      content: "Try again or return to the home page.",
+      type: "error",
+    });
+  } finally {
+    toggle(false)
+  }
 };
 
 const connect = async () => {
-  await wcStore.connect(
-    connection.value.connector,
-    connection.value.storageId,
-    connectionChainId.value
-  );
+  try {
+    toggle(true)
+    await wcStore.connect(
+      connection.value.connector,
+      connection.value.storageId,
+      connectionChainId.value
+    );
 
-  uri.value = null;
-  connection.value = undefined;
-  closeModal();
+    closeModal();
+    openDialogModal({
+      title: "Connected Successfully",
+      content: `Connected to ${connection.value.peerMeta.name}.`,
+      type: "success",
+    });
+
+    uri.value = null;
+    connection.value = undefined;
+   
+  } catch (e) {
+    closeModal();
+    openDialogModal({
+      title: "Connected Failed",
+      content: "Try again or return to the home page.",
+      type: "error",
+    });
+  } finally {
+    toggle(false)
+  }
 };
 </script>
 
@@ -107,6 +141,7 @@ const connect = async () => {
     </CommonInput>
 
     <CommonButton
+      :loading="loading"
       @click="prepareAndConnect"
       class="w-full justify-center"
       size="lg"
@@ -151,7 +186,7 @@ const connect = async () => {
       </template>
     </CommonSelect>
 
-    <CommonButton @click="connect" class="w-full justify-center" size="lg">
+    <CommonButton  :loading="loading" @click="connect" class="w-full justify-center" size="lg">
       Approve
     </CommonButton>
   </div>

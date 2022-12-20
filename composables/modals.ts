@@ -4,8 +4,14 @@ import Send from "~~/components/modals/Send.vue";
 import TopUpGas from "~~/components/modals/TopUpGas.vue";
 import WalletConnect from "~~/components/modals/WalletConnect.vue";
 import DisconnectWallet from "~~/components/modals/DisconnectWallet.vue";
+import Dialog from "~~/components/modals/Dialog.vue";
 
 const { openModal } = useModal();
+interface DialogModalProps {
+    title?: string;
+    content?: string;
+    type?: 'success' | 'error';
+}
 
 export const showPendingTransactionModal = (hash: string, chainId: number | string) => {
     openModal(PendingTransaction, {
@@ -43,3 +49,15 @@ export const openDisconnectWalletModal = (session: any) => {
       session,
     });
 };
+
+export const openDialogModal = ({
+    title = '',
+    content = '',
+    type = 'success',
+}: DialogModalProps)  => { 
+    openModal(Dialog, {
+        title,
+        content,
+        type
+    })
+}
