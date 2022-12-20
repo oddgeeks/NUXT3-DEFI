@@ -47,8 +47,8 @@ export const useAvocadoSafe = () => {
                 version = await gaslessWallet.DOMAIN_SEPARATOR_VERSION();
                 name = await gaslessWallet.DOMAIN_SEPARATOR_VERSION();
             } catch (error) {
-                name = await forwarderContract.gswVersion("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
-                version = await forwarderContract.gswVersionName("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
+                version = await forwarderContract.gswVersion("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
+                name = await forwarderContract.gswVersionName("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
             }
 
             // Creating domain for signing using gasless wallet address as the verifying contract
@@ -61,7 +61,7 @@ export const useAvocadoSafe = () => {
             }
 
             // The named list of all type definitions
-            let types = {
+            const types = {
                 Cast: [
                     { name: "actions", type: "Action[]" },
                     { name: "validUntil", type: "uint256" },
@@ -75,7 +75,7 @@ export const useAvocadoSafe = () => {
                     { name: "data", type: "bytes" },
                     { name: "value", type: "uint256" },
                 ],
-            }
+            };
 
             // Adding values for types mentioned
             const value = {
@@ -87,6 +87,7 @@ export const useAvocadoSafe = () => {
                 gswNonce,
             }
 
+            console.log({domain, types, value})
             return await signer._signTypedData(domain, types, value)
         }
 
@@ -97,11 +98,11 @@ export const useAvocadoSafe = () => {
                 {
                     target: transaction.to,
                     data: transaction.data || "0x",
-                    value: transaction.value || "0x",
+                    value: transaction.value || "0",
                 }
             ],
-            metadata: '0x00',
-            source: '0x0000000000000000000000000000000000000001',
+            metadata: '0x',
+            source: "0x0000000000000000000000000000000000000001",
             gswNonce,
             validUntil: "0",
             gas: "8000000",
@@ -185,8 +186,8 @@ export const useAvocadoSafe = () => {
                 version = await gaslessWallet.DOMAIN_SEPARATOR_VERSION();
                 name = await gaslessWallet.DOMAIN_SEPARATOR_VERSION();
             } catch (error) {
-                name = await forwarderContract.gswVersion("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
-                version = await forwarderContract.gswVersionName("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
+                version = await forwarderContract.gswVersion("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
+                name = await forwarderContract.gswVersionName("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
             }
 
             // Creating domain for signing using gasless wallet address as the verifying contract
@@ -234,9 +235,9 @@ export const useAvocadoSafe = () => {
             actions: transactions.map(transaction => ({
                 target: transaction.to,
                 data: transaction.data || "0x",
-                value: transaction.value || "0x",
+                value: transaction.value || "0",
             })),
-            metadata: '0x00',
+            metadata: '0x',
             source: '0x0000000000000000000000000000000000000001',
             gswNonce,
             validUntil: "0",
