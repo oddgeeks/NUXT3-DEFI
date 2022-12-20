@@ -184,7 +184,7 @@ export const useAvocadoSafe = () => {
                 );
 
                 version = await gaslessWallet.DOMAIN_SEPARATOR_VERSION();
-                name = await gaslessWallet.DOMAIN_SEPARATOR_VERSION();
+                name = await gaslessWallet.DOMAIN_SEPARATOR_NAME();
             } catch (error) {
                 version = await forwarderContract.gswVersion("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
                 name = await forwarderContract.gswVersionName("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE");
