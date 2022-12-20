@@ -5,6 +5,7 @@ const wcStore = useWalletConnect();
 const uri = ref();
 const connection = shallowRef();
 const connectionChainId = shallowRef(137);
+const { closeModal } = useModal();
 
 const networks = [
   {
@@ -51,6 +52,7 @@ const connect = async () => {
 
   uri.value = null;
   connection.value = undefined;
+  closeModal();
 };
 </script>
 

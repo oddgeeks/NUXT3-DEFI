@@ -1,29 +1,34 @@
 <script setup lang="ts">
-defineProps({
-  color: {
-    type: String,
-    default: "blue",
-    validator: (value: string) => ["blue"].includes(value),
-  },
-  size: {
-    type: String,
-    default: "md",
-    validator: (value: string) => ["md", "lg"].includes(value),
-  },
-  loading: {
-    type: Boolean,
-    default: false,
-  },
-});
+
+
+type ButtonProps = {
+  color?: "blue" | "red";
+  size?: "md" | "lg" | "sm";
+  loading?: boolean;
+};
+
+withDefaults(defineProps<ButtonProps>(), {
+  color: "blue",
+  size: "md",
+  loading: false,
+})
+
 </script>
 
 <template>
   <button
     type="button"
     :class="[
+  {
+        'bg-[#EB5757] text-white hover:bg-red-500 disabled:bg-slate-800 disabled:text-slate-500':
+          color === 'red',
+      },
       {
         'bg-blue-500 text-white hover:bg-blue-600 disabled:bg-slate-800 disabled:text-slate-500':
           color === 'blue',
+      },
+      {
+        'text-xs py-1 px-[15px] rounded-5 leading-5': size === 'sm',
       },
       {
         'text-sm py-2 px-5.5 rounded-5': size === 'md',

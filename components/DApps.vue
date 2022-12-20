@@ -1,5 +1,6 @@
 <script setup>
 import PlusSVG from "~/assets/images/icons/plus.svg?component";
+import SVGX from "~/assets/images/icons/x.svg?component";
 import ArrowLeft from "~/assets/images/icons/arrow-left.svg?component";
 import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
 import SVGWalletConnect from "~/assets/images/wallet/wallet-connect-lite.svg?component";
@@ -94,30 +95,8 @@ watch(
                 {{ session.connected ? "Connected" : "Connect" }}
               </h2>
             </div>
-
-            <button v-tippy="'Disconnect'" @click="wcStore.disconnect(session)">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 18 18"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M13.5 4.5L4.5 13.5"
-                  stroke="#94A3B8"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M4.5 4.5L13.5 13.5"
-                  stroke="#94A3B8"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
+            <button v-tippy="'Disconnect'" @click="openDisconnectWalletModal(session)">
+             <SVGX class="text-slate-400" />
             </button>
           </div>
         </template>
@@ -133,7 +112,8 @@ watch(
     </div>
     <CommonButton
       v-else
-      class="flex items-center gap-2 px-[18px]"
+      size="lg"
+      class="flex items-center gap-2 px-5"
       @click="openWalletConnectModal()"
     >
       <PlusSVG />

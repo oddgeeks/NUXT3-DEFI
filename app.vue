@@ -9,10 +9,9 @@ useEagerConnect();
 </script>
 
 <template>
-  <div>
-    <Html class="h-full bg-[#111827]" />
+    <Html class="bg-[#111827]" />
 
-    <Body class="h-full overflow-y-scroll bg-[#111827] text-white font-semibold" />
+    <Body class="h-screen bg-[#111827] text-white font-semibold" />
 
     <NuxtLayout>
       <NuxtPage />
@@ -20,7 +19,6 @@ useEagerConnect();
 
     <Modal />
     <Notifications />
-  </div>
 </template>
 
 
