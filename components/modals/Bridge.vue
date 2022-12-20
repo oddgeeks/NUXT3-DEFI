@@ -28,6 +28,7 @@ const token = computed(
     )!
 );
 
+const result = ref(null);
 const txRoute = ref();
 const amount = ref("");
 
@@ -45,6 +46,10 @@ const bridgeFee = computed(() =>
       bridgeToToken?.value?.decimals
     )
   )
+);
+
+const hasRouteEmpty = computed(
+  () => result.value && amount.value && !txRoute.value && !loading.value
 );
 
 const setMax = () => {
@@ -113,37 +118,46 @@ watch(
   { immediate: true }
 );
 
+const fetchQuote = async () => {
+  try {
+    loading.value = true;
+    const transferAmount = toBN(amount.value || "0")
+      .times(10 ** bridgeToToken.value.decimals)
+      .toFixed(0);
+
+    const { data } = await http.get("https://api.socket.tech/v2/quote", {
+      headers: {
+        "api-key": "645b2c8c-5825-4930-baf3-d9b997fcd88c",
+      },
+
+      params: {
+        fromTokenAddress: token.value.address,
+        fromChainId: props.chainId,
+        toTokenAddress: bridgeToToken.value.address,
+        toChainId: bridgeToChainId.value,
+        fromAmount: transferAmount,
+        userAddress: safeAddress.value,
+        recipient: safeAddress.value,
+        singleTxOnly: true,
+      },
+    });
+
+    const {
+      result: { routes },
+    } = data;
+
+    result.value = data.result;
+    txRoute.value = routes.length ? routes[0] : null;
+  } finally {
+    loading.value = false;
+  }
+};
+
 watch([amount, bridgeToChainId, bridgeToTokenIndex], async () => {
   if (!bridgeToToken.value) {
     return;
   }
-
-  const transferAmount = toBN(amount.value || "0")
-    .times(10 ** bridgeToToken.value.decimals)
-    .toFixed(0);
-
-  const { data } = await http.get("https://api.socket.tech/v2/quote", {
-    headers: {
-      "api-key": "645b2c8c-5825-4930-baf3-d9b997fcd88c",
-    },
-
-    params: {
-      fromTokenAddress: token.value.address,
-      fromChainId: props.chainId,
-      toTokenAddress: bridgeToToken.value.address,
-      toChainId: bridgeToChainId.value,
-      fromAmount: transferAmount,
-      userAddress: safeAddress.value,
-      recipient: safeAddress.value,
-      singleTxOnly: true,
-    },
-  });
-
-  const {
-    result: { routes },
-  } = data;
-
-  txRoute.value = routes.length ? routes[0] : null;
+  fetchQuote();
 });
 
 const loading = ref(false);
@@ -288,32 +302,32 @@ const send = async () => {
           <!-- <span>{{toAmount}} {{token.symbol}}</span> -->
         </div>
         <div class="px-5 pt-[14px] pb-5 bg-gray-850 rounded-5">
-          <div
-            class="flex flex-col gap-5"
-          >
-          <div class="grid items-center gap-4 grid-cols-1 md:grid-cols-2 md:gap-x-4 md:gap-y-5">
-            <div class="flex flex-col gap-2.5">
-              <span class="text-sm">Coin</span>
-              <CommonSelect
-                isValueIndex
-                v-model="bridgeToTokenIndex"
-                label-key="name"
-                icon-key="icon"
-                :options="bridgeToTokens"
-              />
+          <div class="flex flex-col gap-5">
+            <div
+              class="grid items-center gap-4 grid-cols-1 md:grid-cols-2 md:gap-x-4 md:gap-y-5"
+            >
+              <div class="flex flex-col gap-2.5">
+                <span class="text-sm">Coin</span>
+                <CommonSelect
+                  isValueIndex
+                  v-model="bridgeToTokenIndex"
+                  label-key="name"
+                  icon-key="icon"
+                  :options="bridgeToTokens"
+                />
+              </div>
+
+              <div class="flex flex-col gap-2.5">
+                <span class="text-sm">Network</span>
+                <CommonSelect
+                  v-model="bridgeToChainId"
+                  value-key="value"
+                  label-key="label"
+                  :options="selectableChains"
+                />
+              </div>
             </div>
 
-            <div class="flex flex-col gap-2.5">
-              <span class="text-sm">Network</span>
-              <CommonSelect
-                v-model="bridgeToChainId"
-                value-key="value"
-                label-key="label"
-                :options="selectableChains"
-              />
-            </div>
-          </div>
-            
             <div class="flex justify-between items-center">
               <span class="text-slate-400 text-sm font-semibold"
                 >Bridge Fee</span
@@ -326,8 +340,11 @@ const send = async () => {
             <div class="divider" />
 
             <div class="flex justify-between items-center">
-              <span class="md:text-lg font-semibold !leading-5">You receive</span>
-              <span class="sm:text-2xl text-lg font-semibold text-right !leading-5"
+              <span class="md:text-lg font-semibold !leading-5"
+                >You receive</span
+              >
+              <span
+                class="sm:text-2xl text-lg font-semibold text-right !leading-5"
                 >{{ toAmount }} {{ token.symbol }}</span
               >
             </div>
@@ -349,6 +366,24 @@ const send = async () => {
       <p class="text-xs text-center text-slate-400">
         Estimated wait time is 10m.
       </p>
+
+      <Transition
+        enter-active-class="duration-300 ease-out"
+        enter-from-class="transform opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="duration-200 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="transform opacity-0"
+      >
+        <div
+          v-if="hasRouteEmpty"
+          class="bg-orange-500 gap-[15px] w-full justify-center flex bg-opacity-10 text-orange-500 rounded-5 p-4 text-sm text-center"
+        >
+          <span class="text-xs self-center">
+            We could not find any routes for your desired transfer.
+          </span>
+        </div>
+      </Transition>
     </div>
   </div>
 </template>
