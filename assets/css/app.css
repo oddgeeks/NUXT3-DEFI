@@ -28,3 +28,20 @@
 .scroll-hide::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
 }
+
+/* Chrome, Edge, and Safari */
+.scroll-style::-webkit-scrollbar {
+  width: 16px;
+  background: none;
+}
+.scroll-style::-webkit-scrollbar-track {
+  margin-top: 10px;
+}
+.scroll-style::-webkit-scrollbar-thumb {
+  @apply rounded-[20px] bg-transparent;
+  box-shadow: inset 0 0 14px 14px #334155;
+  border: solid 5px transparent;
+}
+html.dark .scroll-style::-webkit-scrollbar-thumb {
+  box-shadow: inset 0 0 14px 14px #334155;
+}

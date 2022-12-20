@@ -3,7 +3,7 @@
 
 type ButtonProps = {
   color?: "blue" | "red";
-  size?: "md" | "lg";
+  size?: "md" | "lg" | "sm";
   loading?: boolean;
 };
 
@@ -26,6 +26,9 @@ withDefaults(defineProps<ButtonProps>(), {
       {
         'bg-blue-500 text-white hover:bg-blue-600 disabled:bg-slate-800 disabled:text-slate-500':
           color === 'blue',
+      },
+      {
+        'text-xs py-1 px-[15px] rounded-5 leading-5': size === 'sm',
       },
       {
         'text-sm py-2 px-5.5 rounded-5': size === 'md',

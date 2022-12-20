@@ -112,7 +112,8 @@ watch(
     </div>
     <CommonButton
       v-else
-      class="flex items-center gap-2 px-[18px]"
+      size="lg"
+      class="flex items-center gap-2 px-5"
       @click="openWalletConnectModal()"
     >
       <PlusSVG />

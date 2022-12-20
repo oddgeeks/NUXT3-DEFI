@@ -4,11 +4,10 @@ const { tokenBalances, safeAddress } = useAvocadoSafe();
 const { account } = useWeb3();
 </script>
 <template>
-  <div>
-    <div class="relative">
-      <div class="bg-gray-850 rounded-[20px] overflow-hidden">
+    <div class="relative flex-1">
+      <div class="bg-gray-850 rounded-5 h-full w-full">
         <div
-          class="overflow-y-auto max-h-[600px]"
+          class="overflow-y-auto absolute inset-0 flex-1 scroll-style"
           :class="{ blur: tokenBalances.length === 0 }"
         >
           <table class="table w-full">
@@ -43,5 +42,4 @@ const { account } = useWeb3();
         </div>
       </div>
     </div>
-  </div>
 </template>

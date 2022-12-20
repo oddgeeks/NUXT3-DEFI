@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <div>
+  <div class="flex flex-col h-full">
     <div class="py-8 px-10">
       <TheHeader />
     </div>
