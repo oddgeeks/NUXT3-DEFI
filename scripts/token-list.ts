@@ -156,7 +156,7 @@ const getTokens = async () => {
 const gen = async () => {
     await writeJson(resolve(__dirname, '../public/tokenlist.json'), {
         "name": "Avocado",
-        "logoURI": "https://instadapp.io/images/logo.svg",
+        "logoURI": "https://avocado.instad.app/logo.svg",
         "keywords": [
             "avocado",
             "defi"

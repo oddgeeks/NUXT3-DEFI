@@ -1,11 +1,11 @@
 {
 	"name": "Avocado",
-	"logoURI": "https://instadapp.io/images/logo.svg",
+	"logoURI": "https://avocado.instad.app/logo.svg",
 	"keywords": [
 		"avocado",
 		"defi"
 	],
-	"timestamp": "2022-12-21T18:44:44.388Z",
+	"timestamp": "2022-12-21T18:57:12.836Z",
 	"tokens": [
 		{
 			"chainId": 1,
