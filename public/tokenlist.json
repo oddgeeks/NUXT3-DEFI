@@ -5,7 +5,7 @@
 		"avocado",
 		"defi"
 	],
-	"timestamp": "2022-12-21T17:47:17.939Z",
+	"timestamp": "2022-12-21T18:44:44.388Z",
 	"tokens": [
 		{
 			"chainId": 1,
@@ -82,14 +82,6 @@
 		{
 			"chainId": 43114,
 			"address": "0x63a72806098bd3d9520cc43356dd78afe5d386d9",
-			"name": "Aave",
-			"symbol": "aave",
-			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/12645/large/AAVE.png?1601374110"
-		},
-		{
-			"chainId": 250,
-			"address": "0x6a07a792ab2965c72a5b8088d3a069a7ac3a993b",
 			"name": "Aave",
 			"symbol": "aave",
 			"decimals": 18,
@@ -200,14 +192,6 @@
 			"logoURI": "https://assets.coingecko.com/coins/images/877/large/chainlink-new-logo.png?1547034700"
 		},
 		{
-			"chainId": 250,
-			"address": "0xb3654dc3d10ea7645f8319668e8f54d2574fbdc8",
-			"name": "Chainlink",
-			"symbol": "link",
-			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/877/large/chainlink-new-logo.png?1547034700"
-		},
-		{
 			"chainId": 42161,
 			"address": "0xf97f4df75117a78c1a5a0dbb814af92458539fb4",
 			"name": "Chainlink",
@@ -296,14 +280,6 @@
 			"logoURI": "https://assets.coingecko.com/coins/images/12124/large/Curve.png?1597369484"
 		},
 		{
-			"chainId": 250,
-			"address": "0x1e4f97b9f9f913c46f1632781732927b9019c68b",
-			"name": "Curve DAO",
-			"symbol": "crv",
-			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/12124/large/Curve.png?1597369484"
-		},
-		{
 			"chainId": 137,
 			"address": "0x172370d5cd63279efa6d502dab29171933a610af",
 			"name": "Curve DAO",
@@ -322,14 +298,6 @@
 		{
 			"chainId": 100,
 			"address": "0x44fa8e6f47987339850636f88629646662444217",
-			"name": "Dai",
-			"symbol": "dai",
-			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/9956/large/4943.png?1636636734"
-		},
-		{
-			"chainId": 250,
-			"address": "0x8d11ec38a3eb5e956b052f67da8bdc9bef8abf3e",
 			"name": "Dai",
 			"symbol": "dai",
 			"decimals": 18,
@@ -442,14 +410,6 @@
 		{
 			"chainId": 42161,
 			"address": "0x17fc002b466eec40dae837fc4be5c67993ddbd6f",
-			"name": "Frax",
-			"symbol": "frax",
-			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/13422/large/ethCanonicalFRAX.png?1669277108"
-		},
-		{
-			"chainId": 250,
-			"address": "0xdc301622e621166bd8e82f2ca0a26c13ad0be355",
 			"name": "Frax",
 			"symbol": "frax",
 			"decimals": 18,
@@ -776,14 +736,6 @@
 			"logoURI": "https://assets.coingecko.com/coins/images/12271/large/512x512_Logo_no_chop.png?1606986688"
 		},
 		{
-			"chainId": 250,
-			"address": "0xae75a438b2e0cb8bb01ec1e1e376de11d44477cc",
-			"name": "Sushi",
-			"symbol": "sushi",
-			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/12271/large/512x512_Logo_no_chop.png?1606986688"
-		},
-		{
 			"chainId": 137,
 			"address": "0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a",
 			"name": "Sushi",
@@ -810,14 +762,6 @@
 		{
 			"chainId": 43114,
 			"address": "0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7",
-			"name": "Tether",
-			"symbol": "usdt",
-			"decimals": 6,
-			"logoURI": "https://assets.coingecko.com/coins/images/325/large/Tether.png?1668148663"
-		},
-		{
-			"chainId": 250,
-			"address": "0x049d68029688eabf473097a2fc38ef61633a3c7a",
 			"name": "Tether",
 			"symbol": "usdt",
 			"decimals": 6,
@@ -858,14 +802,6 @@
 		{
 			"chainId": 1,
 			"address": "0x0000000000085d4780b73119b644ae5ecd22b376",
-			"name": "TrueUSD",
-			"symbol": "tusd",
-			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/3449/large/tusd.png?1618395665"
-		},
-		{
-			"chainId": 250,
-			"address": "0x9879abdea01a879644185341f7af7d8343556b7a",
 			"name": "TrueUSD",
 			"symbol": "tusd",
 			"decimals": 18,
@@ -992,14 +928,6 @@
 			"logoURI": "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png?1547042389"
 		},
 		{
-			"chainId": 250,
-			"address": "0x04068da6c83afcfa0e13ba15a6696662335d5b75",
-			"name": "USD Coin",
-			"symbol": "usdc",
-			"decimals": 6,
-			"logoURI": "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png?1547042389"
-		},
-		{
 			"chainId": 56,
 			"address": "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
 			"name": "USD Coin",
@@ -1064,14 +992,6 @@
 			"logoURI": "https://assets.coingecko.com/coins/images/2518/large/weth.png?1628852295"
 		},
 		{
-			"chainId": 250,
-			"address": "0x74b23882a30290451a17c44f4f05243b6b58c76d",
-			"name": "WETH",
-			"symbol": "weth",
-			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/2518/large/weth.png?1628852295"
-		},
-		{
 			"chainId": 137,
 			"address": "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
 			"name": "WETH",
@@ -1128,14 +1048,6 @@
 			"logoURI": "https://assets.coingecko.com/coins/images/7598/large/wrapped_bitcoin_wbtc.png?1548822744"
 		},
 		{
-			"chainId": 250,
-			"address": "0x321162cd933e2be498cd2267a90534a804051b11",
-			"name": "Wrapped Bitcoin",
-			"symbol": "wbtc",
-			"decimals": 8,
-			"logoURI": "https://assets.coingecko.com/coins/images/7598/large/wrapped_bitcoin_wbtc.png?1548822744"
-		},
-		{
 			"chainId": 137,
 			"address": "0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6",
 			"name": "Wrapped Bitcoin",
@@ -1178,14 +1090,6 @@
 		{
 			"chainId": 42161,
 			"address": "0x82e3a8f066a6989666b031d916c43672085b1582",
-			"name": "yearn.finance",
-			"symbol": "yfi",
-			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/11849/large/yfi-192x192.png?1598325330"
-		},
-		{
-			"chainId": 250,
-			"address": "0x29b0da86e484e1c0029b56e817912d778ac0ec69",
 			"name": "yearn.finance",
 			"symbol": "yfi",
 			"decimals": 18,

@@ -35,7 +35,7 @@ const platforms = [
     { platformId: 'avalanche', chainId: 43114, },
     { platformId: 'arbitrum-one', chainId: 42161, },
     { platformId: 'optimistic-ethereum', chainId: 10, },
-    { platformId: 'fantom', chainId: 250, },
+    // { platformId: 'fantom', chainId: 250, },
     { platformId: 'binance-smart-chain', chainId: 56, },
     { platformId: 'xdai', chainId: 100 },
 ]

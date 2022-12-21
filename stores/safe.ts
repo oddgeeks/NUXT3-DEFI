@@ -8,7 +8,7 @@ import { wait } from "@instadapp/utils";
 
 export interface IBalance extends IToken {
     balance: string
-    balanceInUSD: string
+    balanceInUSD: string | null
 }
 
 const balanceResolverAddresses: Record<string, string> = {
@@ -17,7 +17,7 @@ const balanceResolverAddresses: Record<string, string> = {
     "43114": "0x63009f31D054E0ac9F321Cf0D642375236A4Bf1E",
     "10": "0xca5f37e6D8bB24c5A7958d5eccE7Bd9Aacc944f2",
     "1": "0x5b7D61b389D12e1f5873d0cCEe7E675915AB5F43",
-    "56": "0xb808cff38706e267067b0af427726aa099f69f89", 
+    "56": "0xb808cff38706e267067b0af427726aa099f69f89",
     "100": "0xfaa244e276b1597f663975ed007ee4ff70d27849",
 }
 
@@ -61,10 +61,11 @@ export const useSafe = defineStore("safe", () => {
 
             }, [] as IBalance[])
             .sort()
-            .sort((a, b) => toBN(a.balanceInUSD).isGreaterThan(b.balanceInUSD) ? -1 : 1)
+            .sort((a, b) => (toBN(a.balance).isGreaterThan(b.balance) ? -1 : 1))
+            .sort((a, b) => a.balanceInUSD && b.balanceInUSD ? (toBN(a.balanceInUSD).isGreaterThan(b.balanceInUSD) ? -1 : 1) : 1)
     });
 
-    const totalBalance = computed(() => tokenBalances.value.reduce((acc, curr) => acc.plus(curr.balanceInUSD), toBN(0)))
+    const totalBalance = computed(() => tokenBalances.value.reduce((acc, curr) => acc.plus(curr.balanceInUSD || "0"), toBN(0)))
 
     const fetchSafeddress = async () => {
         if (!account.value) {
@@ -104,7 +105,7 @@ export const useSafe = defineStore("safe", () => {
                     newBalances.push({
                         ...token,
                         balance: balance.toFixed(6),
-                        balanceInUSD: balance.times(token.price).toFixed(2),
+                        balanceInUSD: token.price ? balance.times(token.price).toFixed(2) : null,
                     })
                 }
             }
