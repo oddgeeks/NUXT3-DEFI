@@ -83,7 +83,7 @@ export const useSafe = defineStore("safe", () => {
 
         let newBalances: IBalance[] = []
 
-        const chainTokens = collect(tokens.value.filter(t => t.chainId === chainId && !!t.coingeckoId));
+        const chainTokens = collect(tokens.value.filter(t => t.chainId === chainId));
         const chunkedTokens = chainTokens.chunk(
             chainId === "42161" ? 5 : 20
         ).all()

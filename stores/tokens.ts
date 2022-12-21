@@ -20,7 +20,9 @@ export const useTokens = defineStore("tokens", () => {
 
     const fetchTokens = async () => {
         try {
-            tokens.value = await $fetch("https://prices.instadapp.io/tokens").then((ts) => (ts as any[]).filter(t => t.address !== "0x0000000000000000000000000000000000001010"));
+            tokens.value = await $fetch("https://prices.instadapp.io/tokens")
+                .then((ts) => (ts as any[]).filter(t => !!t.coingeckoId))
+                .then((ts) => (ts as any[]).filter(t => t.address !== "0x0000000000000000000000000000000000001010"));
         } catch (error) {
 
         }
