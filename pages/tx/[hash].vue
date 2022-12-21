@@ -217,7 +217,7 @@ const [transaction] = await Promise.all([
 
                 <div class="flex items-center">
                     <div class="text-slate-400 md:w-full md:max-w-[200px]">Transaction Fee</div>
-                    <div class="text-white capitalize"> - </div>
+                    <div class="text-white capitalize"> {{ typeof transaction.fee !== 'undefined' ? `$${transaction.fee}` : '-' }}  </div>
                 </div>
             </div>
 
