@@ -29,6 +29,8 @@ export const RPC_URLS: { [chainId: number]: string } = {
     10: 'https://rpc.ankr.com/optimism',
     42161: 'https://rpc.ankr.com/arbitrum',
     75: 'https://rpc.avocado.instad.app',
+    100: 'https://rpc.ankr.com/gnosis',
+    56: 'https://rpc.ankr.com/bsc',
 };
 
 export const injected = new InjectedConnector({

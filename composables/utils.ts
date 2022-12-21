@@ -46,7 +46,7 @@ export const ensureValue = (value: any) => {
 export const max = (...args: BigNumber.Value[]) => {
   return BigNumber.max(...args)
 }
-export const chainIdToName = (chainId: string|number) => {
+export const chainIdToName = (chainId: string | number) => {
   switch (String(chainId)) {
     case "1":
       return "Mainnet";
@@ -58,6 +58,10 @@ export const chainIdToName = (chainId: string|number) => {
       return "Arbitrum";
     case "43114":
       return "Avalanche";
+    case "100":
+      return "Gnosis";
+    case "56":
+      return "BSC";
     default:
       return "Mainnet";
   }
@@ -81,6 +85,10 @@ export const getExplorerUrl = (
       return "https://arbiscan.io" + suffix;
     case "250":
       return "https://ftmscan.com" + suffix;
+    case "56":
+      return "https://bscscan.com" + suffix;
+    case "100":
+      return "https://gnosisscan.io" + suffix;
   }
 };
 
