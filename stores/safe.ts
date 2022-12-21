@@ -17,7 +17,8 @@ const balanceResolverAddresses: Record<string, string> = {
     "43114": "0x63009f31D054E0ac9F321Cf0D642375236A4Bf1E",
     "10": "0xca5f37e6D8bB24c5A7958d5eccE7Bd9Aacc944f2",
     "1": "0x5b7D61b389D12e1f5873d0cCEe7E675915AB5F43",
-    // "250": "0x929376c77a2fb8152375a089a4fccf84ff481479",
+    "56": "0xb808cff38706e267067b0af427726aa099f69f89", 
+    "100": "0xfaa244e276b1597f663975ed007ee4ff70d27849",
 }
 
 const balanceResolverContracts = Object.keys(balanceResolverAddresses).reduce((acc, curr) => {
@@ -31,7 +32,7 @@ const forwarderProxyContract = Forwarder__factory.connect(
     new ethers.providers.JsonRpcProvider(RPC_URLS[137]),
 );
 
-const whitelistedSymbols = ["ETH", "WETH", "USDC", "USDT", "DAI", "MATIC", "INST", "AVAX"]
+const whitelistedSymbols = ["ETH", "WETH", "USDC", "USDT", "DAI", "MATIC", "INST", "AVAX", "XDAI", "BNB"]
 
 export const useSafe = defineStore("safe", () => {
     console.log("defineStore::safe");
@@ -47,14 +48,15 @@ export const useSafe = defineStore("safe", () => {
         "43114": [],
         "10": [],
         "1": [],
-        "250": [],
+        "100": [],
+        "56": [],
     });
 
     const tokenBalances = computed(() => {
         return Object.keys(chainTokenBalances.value)
             .reduce((acc, curr) => {
                 const balances = chainTokenBalances.value[curr]
-                
+
                 return [...acc, ...balances]
 
             }, [] as IBalance[])
@@ -74,9 +76,14 @@ export const useSafe = defineStore("safe", () => {
     };
 
     const fetchBalances = async (chainId: string) => {
+        if (!safeAddress.value) {
+            return []
+        }
+
+
         let newBalances: IBalance[] = []
 
-        const chainTokens = collect(tokens.value.filter(t => t.chainId === chainId && t.verified));
+        const chainTokens = collect(tokens.value.filter(t => t.chainId === chainId));
         const chunkedTokens = chainTokens.chunk(
             chainId === "42161" ? 5 : 20
         ).all()
