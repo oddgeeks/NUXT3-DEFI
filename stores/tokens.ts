@@ -8,6 +8,7 @@ export interface IToken {
     chainId: string
     price: number
     verified: boolean
+    coingeckoId?: string
     sparklinePrice7d: number[]
 }
 
