@@ -3,6 +3,7 @@ import PlusSVG from "~/assets/images/icons/plus.svg?component";
 import SVGX from "~/assets/images/icons/x.svg?component";
 import ArrowLeft from "~/assets/images/icons/arrow-left.svg?component";
 import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
+import LinkSVG from "~/assets/images/icons/external-link.svg?component";
 import SVGWalletConnect from "~/assets/images/wallet/wallet-connect-lite.svg?component";
 const { safeAddress } = useAvocadoSafe();
 const wcStore = useWalletConnect();
@@ -70,11 +71,11 @@ watch(
             class="flex flex-1 w-fit items-center gap-3 p-5 bg-gray-850 rounded-5 py-2.5 pr-[14px] pl-4"
           >
             <div
-              class="relative inline-block h-9 w-9 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
+              class="relative inline-block h-7.5 w-7.5 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
             >
               <img
                 v-if="session.peerMeta.icons.length"
-                class="w-full h-full object-fit"
+                class="w-full h-full object-fit rounded-[inherit]"
                 :src="session.peerMeta.icons[session.peerMeta.icons.length - 1]"
               />
 
@@ -89,15 +90,19 @@ watch(
                 {{ session.peerMeta.name }}
               </h1>
               <h2
-                class="text-sm"
-                :class="{ 'text-green-400': session.connected }"
+                class="text-xs text-blue-500 leading-5"
               >
-                {{ session.connected ? "Connected" : "Connect" }}
+               Connected
               </h2>
             </div>
+           <div class="flex items-center gap-2.5">
+            <a target="_blank" rel="noopener noreferrer" :href="session.peerMeta.url">
+              <LinkSVG class="text-blue-500" />
+            </a>
             <button v-tippy="'Disconnect'" @click="openDisconnectWalletModal(session)">
              <SVGX class="text-slate-400" />
             </button>
+           </div>
           </div>
         </template>
       </div>
