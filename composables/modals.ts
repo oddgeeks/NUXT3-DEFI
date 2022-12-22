@@ -8,56 +8,69 @@ import Dialog from "~~/components/modals/Dialog.vue";
 
 const { openModal } = useModal();
 interface DialogModalProps {
-    title?: string;
-    content?: string;
-    type?: 'success' | 'error';
+  title?: string;
+  content?: string;
+  type?: "success" | "error";
+  isButtonVisible?: boolean;
+  buttonText?: string;
 }
 
-export const showPendingTransactionModal = (hash: string, chainId: number | string) => {
-    openModal(PendingTransaction, {
-        hash,
-        chainId
-    })
-}
+export const showPendingTransactionModal = (
+  hash: string,
+  chainId: number | string
+) => {
+  openModal(PendingTransaction, {
+    hash,
+    chainId,
+  });
+};
 
 export const openBridgeModal = (address: string, chainId: number | string) => {
-    openModal(Bridge, {
-        address,
-        chainId,
-        }, {
-        wrapperClass: 'max-w-[600px]',
-    })
-}
+  openModal(
+    Bridge,
+    {
+      address,
+      chainId,
+    },
+    {
+      wrapperClass: "max-w-[600px]",
+    }
+  );
+};
 
 export const openSendModal = (address: string, chainId: number | string) => {
-    openModal(Send, {
-        address,
-        chainId
-    })
-}
+  openModal(Send, {
+    address,
+    chainId,
+  });
+};
 
 export const openWalletConnectModal = () => {
-    openModal(WalletConnect, {})
-}
+  openModal(WalletConnect, {});
+};
 
 export const openTopUpGasModal = () => {
-    openModal(TopUpGas, {})
-}
+  openModal(TopUpGas, {});
+};
 
 export const openDisconnectWalletModal = (session: any) => {
-    openModal(DisconnectWallet, {
-      session,
-    });
+  openModal(DisconnectWallet, {
+    session,
+  });
 };
 
 export const openDialogModal = ({
-    title = '',
-    content = '',
-    type = 'success',
-}: DialogModalProps)  => { 
-    openModal(Dialog, {
-        title,
-        content,
-        type
-    })
-}
+  title = "",
+  content = "",
+  type = "success",
+  buttonText = "Okay",
+  isButtonVisible = true,
+}: DialogModalProps) => {
+  openModal(Dialog, {
+    title,
+    content,
+    type,
+    buttonText,
+    isButtonVisible,
+  });
+};

@@ -52,6 +52,7 @@ const prepareAndConnect = async () => {
       title: "Connected Failed",
       content: "Try again or return to the home page.",
       type: "error",
+      buttonText: "Try Again",
     });
   } finally {
     toggle(false)
@@ -70,8 +71,11 @@ const connect = async () => {
     closeModal();
     openDialogModal({
       title: "Connected Successfully",
-      content: `Connected to ${connection.value.peerMeta.name}.`,
+      content: `You can now use <a target='_blank' rel='noopener noreferrer' class='text-blue-500' href=${connection.value.peerMeta.url}>
+        ${connection.value.peerMeta.name}
+        </a> with your Avocado wallet.`,
       type: "success",
+      isButtonVisible: false
     });
 
     uri.value = null;
@@ -83,6 +87,7 @@ const connect = async () => {
       title: "Connected Failed",
       content: "Try again or return to the home page.",
       type: "error",
+      buttonText: "Try Again",
     });
   } finally {
     toggle(false)

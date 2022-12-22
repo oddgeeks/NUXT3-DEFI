@@ -144,8 +144,7 @@ const send = async () => {
     <div class="flex gap-4 flex-col">
       <h1 class="text-lg leading-5">Gas Balance</h1>
       <h2 class="text-xs text-slate-400 leading-5 font-medium">
-        Top-up balance for paying for transactions <br />
-        gas fees.
+        Top up your gas balance to trigger transactions.
       </h2>
       <span
         class="whitespace-nowrap px-5 py-3 bg-slate-750 rounded-[30px] w-fit leading-5 mx-auto"
