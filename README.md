@@ -1,6 +1,12 @@
-# Nuxt 3 Minimal Starter
+# Avocado App
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+An interface for Avocado platform that makes web3 interaction easy by enabling network, gas and account abstraction allowing you to experience web3 more seamlessly.
+
+## Adding Tokenlist
+
+Add the token id in `coinIds` array at [scripts/token-list.ts](https://github.com/Instadapp/avocado/blob/master/scripts/token-list.ts) and run `yarn generate:tokenlist`. The script will take a few minutes tio fetch decimals and logo URI. Please make sure the token id is outsourced from Coingecko.
+
+https://github.com/Instadapp/avocado/blob/d32caec69d34138fed4b76b2bc4e7b19e20a1ea3/scripts/token-list.ts#L47-L97
 
 ## Setup
 
