@@ -10,7 +10,7 @@ const { openModal } = useModal();
 interface DialogModalProps {
   title?: string;
   content?: string;
-  type?: "success" | "error";
+  type?: "success" | "error" | "question";
   isButtonVisible?: boolean;
   buttonText?: string;
 }
