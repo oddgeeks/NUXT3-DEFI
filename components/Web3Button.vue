@@ -2,9 +2,12 @@
 import { storeToRefs } from "pinia";
 import GasSVG from "~/assets/images/icons/gas.svg?component";
 import PlusSVG from "~/assets/images/icons/plus.svg?component";
+import PowerOnSVG from "~/assets/images/icons/power-on.svg?component";
+import PowerOffSVG from "~/assets/images/icons/power-off.svg?component";
 
 const { active, activate, deactivate, account, connector } = useWeb3();
 const { gasBalance } = storeToRefs(useSafe());
+const [hovered, toggle] = useToggle(false)
 
 const { providers } = useNetworks();
 
@@ -23,7 +26,7 @@ const closeConnection = () => {
 <template>
   <CommonInlineModal containerClass="md:max-w-[364px] rounded-full shadow-2xl">
     <template #reveal="{ openModal }">
-      <CommonButton @click="openModal" v-show="!active"> Connect </CommonButton>
+      <CommonButton size="lg" @click="openModal" v-show="!active"> Connect </CommonButton>
     </template>
     <template v-slot="{ closeModal }">
       <div class="relative bg-[#111827] rounded-[30px] px-12 py-10 text-center">
@@ -58,13 +61,6 @@ const closeConnection = () => {
         </button>
         <div class="flex flex-col items-center justify-center mb-7 gap-4">
           <span class="text-lg">Connect wallet</span>
-
-          <!-- <span class="text-center text-slate-400 text-xs leading-5 font-medium">
-            By connecting your wallet, you agree to our
-            <a href="#" class="font-semibold text-blue-500">Terms of Service</a>
-            and our
-            <a href="#" class="font-semibold text-blue-500">Privacy Policy</a>
-          </span> -->
         </div>
 
         <ul class="grid gap-[15px] px-2 pb-2">
@@ -136,65 +132,18 @@ const closeConnection = () => {
       /></span>
     </button>
 
-    <button
+    <span
+     v-tippy="{ placement : 'bottom-end', content: shortenHash(account) }">
+      <button
+      @mouseenter="toggle(true)"
+      @mouseleave="toggle(false)"
       @click="closeConnection"
-      class="w-full bg-slate-800 text-white rounded-[30px] inline-flex items-center py-3 justify-between px-4 gap-x-3"
+      class="bg-slate-800 py-[9px] h-[44px] w-[44px] relative flex text-white rounded-[30px] items-center justify-center px-4 gap-x-3"
     >
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 18 18"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M0 9C0 4.02944 4.02944 0 9 0H13.5C15.9853 0 18 2.01472 18 4.5V9C18 13.9706 13.9706 18 9 18C4.02944 18 0 13.9706 0 9Z"
-          fill="#7AD66C"
-        />
-        <path
-          d="M13 9C13 11.2091 11.2091 13 9 13C6.79086 13 5 11.2091 5 9C5 6.79086 6.79086 5 9 5C11.2091 5 13 6.79086 13 9Z"
-          fill="#475569"
-        />
-      </svg>
-
-      <span class="leading-5">{{ shortenHash(account) }}</span>
-
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 14 14"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <g clip-path="url(#clip0_2790_3225)">
-          <path
-            d="M5.25 12.25H2.91667C2.60725 12.25 2.3105 12.1271 2.09171 11.9083C1.87292 11.6895 1.75 11.3928 1.75 11.0833V2.91667C1.75 2.60725 1.87292 2.3105 2.09171 2.09171C2.3105 1.87292 2.60725 1.75 2.91667 1.75H5.25"
-            stroke="#94A3B8"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M9.33301 9.91659L12.2497 6.99992L9.33301 4.08325"
-            stroke="#94A3B8"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M12.25 7H5.25"
-            stroke="#94A3B8"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </g>
-        <defs>
-          <clipPath id="clip0_2790_3225">
-            <rect width="14" height="14" fill="white" />
-          </clipPath>
-        </defs>
-      </svg>
+     <PowerOffSVG v-if="hovered" class="absolute pointer-events-none" />
+     <PowerOnSVG v-else class="absolute pointer-events-none" />
     </button>
+    </span>
+    
   </div>
 </template>
