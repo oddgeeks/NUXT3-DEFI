@@ -18,16 +18,15 @@ const { props, closeModal } = useModal();
       <div class="flex flex-col gap-[15px]">
         <h1 class="text-lg">{{ props.title }}</h1>
 
-        <p class="text-slate-400 text-xs text-center leading-5">
-          {{ props.content }}
-        </p>
+        <p v-html="props.content" class="text-slate-400 text-xs text-center leading-5" />
       </div>
       <CommonButton
+       v-if="props.isButtonVisible"
         @click="closeModal()"
         class="w-full justify-center"
         size="lg"
       >
-        Okay
+        {{ props.buttonText }}
       </CommonButton>
     </div>
 </template>

@@ -118,9 +118,9 @@ const send = async () => {
 </script>
 
 <template>
-  <div class="space-y-8 text-center">
+  <div class="text-center flex gap-7.5 flex-col">
     <div
-      class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
+      class="relative flex mx-auto h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
     >
       <img
         :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
@@ -128,10 +128,10 @@ const send = async () => {
       />
     </div>
 
-    <div>
+    <div class="flex flex-col justify-center gap-[15px] items-center">
       <h2>{{ token.name }}</h2>
 
-      <div class="bg-gray-850 mt-4 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]">
+      <div class="bg-gray-850 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]">
         <ChainLogo class="w-5 h-5" :chain="token.chainId" />
         <span class="text-xs text-slate-400 leading-5">{{ chainIdToName(token.chainId) }} Network</span>
       </div>
@@ -168,8 +168,8 @@ const send = async () => {
         </CommonInput>
 
         <p class="text-slate-400 mt-2.5 text-xs font-medium text-left">
-          Enter valid address existing on the
-          {{ chainIdToName(props.chainId) }} Network.
+          Sending on the Arbitrum
+          {{ chainIdToName(props.chainId) }} Network
         </p>
       </div>
     </div>

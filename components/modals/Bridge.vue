@@ -364,7 +364,7 @@ const send = async () => {
         Bridge
       </CommonButton>
       <p class="text-xs text-center text-slate-400">
-        Estimated wait time is 10m.
+        Estimated processing time is 10m.
       </p>
 
       <Transition
