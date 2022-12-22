@@ -15,7 +15,7 @@ const { safeAddress } = useAvocadoSafe();
           isButtonVisible: false,
           content:`These are your AvoSafe Balances, not your EOA balances. Deposit funds into your AvoSafe to use begin using Avocado.
           <br><br>
-          <a class='text-sm inline-flex gap-2.5 text-blue-500'>Learn more about how to deposit ${LinkSVG}</a>
+          <a href='https://instadapp.io' target='blank' rel='noopener noreferrer' class='text-sm inline-flex gap-2.5 text-blue-500'>Learn more about how to deposit ${LinkSVG}</a>
           `,
         })">
           <QuestionCircleSVG class="w-5 h-5" />
