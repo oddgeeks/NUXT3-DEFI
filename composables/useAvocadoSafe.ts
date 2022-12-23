@@ -1,12 +1,9 @@
 import { storeToRefs } from "pinia";
-import { ethers } from "ethers"
-import { Forwarder__factory, GaslessWallet__factory } from '~~/contracts';
-import { IGaslessSmartWallet } from "~~/contracts/Forwarder";
 import { createSafe } from "@instadapp/avocado"
 
 export const useAvocadoSafe = () => {
     const { switchNetworkByChainId } = useNetworks()
-    const { account, library } = useWeb3()
+    const { library } = useWeb3()
 
     // check if we have a cached safe address
     const { safeAddress, tokenBalances, totalBalance } = storeToRefs(useSafe())
