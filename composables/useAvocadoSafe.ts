@@ -12,35 +12,32 @@ export const useAvocadoSafe = () => {
     const { safeAddress, tokenBalances, totalBalance } = storeToRefs(useSafe())
 
     const safe = shallowRef<ReturnType<typeof createSafe>>()
+    const signer = computed(() => safe.value ? safe.value.getSigner(): null)
 
     watch(library, () => {
         safe.value = library.value ? createSafe(library.value.getSigner()) : undefined
     }, { immediate: true })
 
     const sendTransaction = async (transaction: { to: string, value?: string, data?: string, chainId: number }) => {
-        if (!safe.value) {
+        await switchNetworkByChainId(75);
+
+        if (!signer.value) {
             throw new Error("Safe not initialized");
         }
 
-        await switchNetworkByChainId(75);
-
-        const avoSigner = safe.value.getSigner();
-
-        const tx = await avoSigner.sendTransaction(transaction)
+        const tx = await signer.value.sendTransaction(transaction)
 
         return tx.hash!
     }
 
     const sendTransactions = async (transactions: { to: string, value?: string, data?: string }[], chainId: number) => {
-        if (!safe.value) {
-            throw new Error("Safe not initialized");
-        }
-        
         await switchNetworkByChainId(75);
 
-        const avoSigner = safe.value.getSigner();
+        if (!signer.value) {
+            throw new Error("Safe not initialized");
+        }
 
-        const tx = await avoSigner.sendTransactions(transactions, Number(chainId))
+        const tx = await signer.value.sendTransactions(transactions, Number(chainId))
 
         return tx.hash!
     }
