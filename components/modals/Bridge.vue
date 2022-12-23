@@ -233,10 +233,7 @@ const send = async () => {
       chainId: props.chainId,
     });
   } catch (e: any) {
-    console.log(e);
-        //@ts-ignore
-        window.e = e
-        try {
+    try {
       notify({
         type: "error",
         message: JSON.parse(e.body).error.message,
