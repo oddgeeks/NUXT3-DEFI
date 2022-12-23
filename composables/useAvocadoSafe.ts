@@ -18,7 +18,9 @@ export const useAvocadoSafe = () => {
     }, { immediate: true })
 
     const sendTransaction = async (transaction: { to: string, value?: string, data?: string, chainId: number }) => {
-        if (!safe.value) return;
+        if (!safe.value) {
+            throw new Error("Safe not initialized");
+        }
 
         await switchNetworkByChainId(75);
 
@@ -30,8 +32,10 @@ export const useAvocadoSafe = () => {
     }
 
     const sendTransactions = async (transactions: { to: string, value?: string, data?: string }[], chainId: number) => {
-        if (!safe.value) return;
-
+        if (!safe.value) {
+            throw new Error("Safe not initialized");
+        }
+        
         await switchNetworkByChainId(75);
 
         const avoSigner = safe.value.getSigner();
