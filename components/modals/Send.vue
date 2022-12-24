@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { Erc20__factory } from "~~/contracts";
 import ClipboardSVG from "~/assets/images/icons/clipboard.svg?component";
+import { useField, useForm } from "vee-validate";
+import * as yup from "yup";
+import { isAddress } from "@ethersproject/address";
 
 const props = defineProps({
   address: {
@@ -17,14 +20,37 @@ const { library, account } = useWeb3();
 const { switchNetworkByChainId } = useNetworks();
 const { sendTransaction } = useAvocadoSafe();
 const { tokenBalances } = useAvocadoSafe();
-const address = ref<string>("");
 const token = computed(
   () =>
     tokenBalances.value.find(
       (t) => t.chainId === props.chainId && t.address === props.address
     )!
 );
-const amount = ref("");
+const modal = ref();
+const loading = ref(false);
+
+const { handleSubmit, errors, meta, resetForm } = useForm({
+  validationSchema: yup.object({
+    amount: yup
+      .string()
+      .required()
+      .test("max-amount", 'Insufficient balance', (value) => {
+        const amount = toBN(value);
+        const balance = toBN(token.value.balance);
+
+        return amount.gt(0) && amount.lte(balance);
+      }),
+    address: yup
+      .string()
+      .required()
+      .test("is-address", "Invalid address", (value) => {
+        return isAddress(value);
+      }),
+  }),
+});
+
+const { value: amount, meta: amountMeta } = useField<string>("amount");
+const { value: address, meta: addressMeta } = useField<string>("address");
 
 const setMax = () => {
   amount.value = token.value!.balance;
@@ -34,14 +60,12 @@ const pasteAddress = async () => {
   address.value = await navigator.clipboard.readText();
 };
 
-const loading = ref(false);
 const sendingDisabled = computed(
-  () => !token.value || !address.value || !account.value || loading.value
+  () => !token.value || loading.value || !meta.value.valid
 );
 
-const modal = ref();
 
-const send = async () => {
+const onSubmit = handleSubmit(async() => {
   if (!token.value) {
     return;
   }
@@ -93,8 +117,7 @@ const send = async () => {
     //   message: `${amount.value} ${token.value.symbol
     //     } sent to ${address.value}`,
     // });
-    address.value = "";
-    amount.value = "";
+    resetForm()
     modal.value?.cancel();
 
     showPendingTransactionModal(transactionHash, props.chainId);
@@ -113,11 +136,11 @@ const send = async () => {
   }
 
   loading.value = false;
-};
+});
 </script>
 
 <template>
-  <div class="text-center flex gap-7.5 flex-col">
+  <form @submit="onSubmit" class="text-center flex gap-7.5 flex-col">
     <div
       class="relative flex mx-auto h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
     >
@@ -130,9 +153,13 @@ const send = async () => {
     <div class="flex flex-col justify-center gap-[15px] items-center">
       <h2>{{ token.name }}</h2>
 
-      <div class="bg-gray-850 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]">
+      <div
+        class="bg-gray-850 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]"
+      >
         <ChainLogo class="w-5 h-5" :chain="token.chainId" />
-        <span class="text-xs text-slate-400 leading-5">{{ chainIdToName(token.chainId) }} Network</span>
+        <span class="text-xs text-slate-400 leading-5"
+          >{{ chainIdToName(token.chainId) }} Network</span
+        >
       </div>
     </div>
 
@@ -142,9 +169,21 @@ const send = async () => {
           <span>Amount</span>
           <span>{{ token.balance }} {{ token.symbol }}</span>
         </div>
-        <CommonInput placeholder="Enter amount" v-model="amount">
+        <CommonInput
+          min="0.000001"
+          type="number"
+          step="0.000001"
+          inputmode="decimal"
+          :error-message="amountMeta.dirty ? errors['amount'] : ''"
+          name="amount"
+          placeholder="Enter amount"
+          v-model="amount"
+        >
           <template #suffix>
-            <button class="absolute top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500" @click="setMax">
+            <button
+              class="absolute top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
+              @click="setMax"
+            >
               MAX
             </button>
           </template>
@@ -156,11 +195,18 @@ const send = async () => {
           <span>Address To</span>
         </div>
 
-        <CommonInput input-classes="peer" placeholder="Enter Address" v-model="address">
+        <CommonInput
+          :error-message="addressMeta.dirty ? errors['address'] : ''"
+          name="address"
+          input-classes="peer"
+          placeholder="Enter Address"
+          v-model="address"
+        >
           <template #suffix>
             <button
               class="absolute z-10 bg-slate-800 peer-focus:bg-gray-850 top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
-              @click="pasteAddress">
+              @click="pasteAddress"
+            >
               <ClipboardSVG />
             </button>
           </template>
@@ -172,8 +218,14 @@ const send = async () => {
       </div>
     </div>
 
-    <CommonButton :disabled="sendingDisabled" :loading="loading" @click="send" class="justify-center w-full" size="lg">
+    <CommonButton
+       type="submit"
+      :disabled="sendingDisabled"
+      :loading="loading"
+      class="justify-center w-full"
+      size="lg"
+    >
       Send
     </CommonButton>
-  </div>
+  </form>
 </template>

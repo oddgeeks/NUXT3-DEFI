@@ -28,6 +28,9 @@ module.exports = {
         sans: ["Source Code Pro", ...defaultTheme.fontFamily.sans],
       },
       colors: {
+        red: {
+          alert: "#EB5757",
+        },
         gray: {
           850: "#161E2D",
         },
@@ -35,8 +38,8 @@ module.exports = {
           750: "#2A3850",
         },
         yellow: {
-          DEFAULT: '#F2C94C'
-        }
+          DEFAULT: "#F2C94C",
+        },
       },
       animation: {
         "reverse-spin": "reverse-spin 1s linear infinite",

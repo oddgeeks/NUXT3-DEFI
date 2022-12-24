@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Erc20__factory } from "~~/contracts";
 import PendingBridgeTransaction from "./PendingBridgeTransaction.vue";
+import { useField, useForm } from "vee-validate";
+import * as yup from "yup";
 
 const props = defineProps({
   address: {
@@ -17,7 +19,7 @@ const props = defineProps({
   },
 });
 
-const { library, account } = useWeb3();
+const { account } = useWeb3();
 const { switchNetworkByChainId } = useNetworks();
 const { sendTransactions, safeAddress, tokenBalances } = useAvocadoSafe();
 const { fromWei } = useBignumber();
@@ -28,9 +30,24 @@ const token = computed(
     )!
 );
 
+const { handleSubmit, errors, meta, resetForm } = useForm({
+  validationSchema: yup.object({
+    amount: yup
+      .string()
+      .required()
+      .test("max-amount", "Insufficient balance", (value) => {
+        const amount = toBN(value);
+        const balance = toBN(token.value.balance);
+
+        return amount.gt(0) && amount.lte(balance);
+      }),
+  }),
+});
+
+const { value: amount, meta: amountMeta } = useField<string>("amount");
+
 const result = ref(null);
 const txRoute = ref();
-const amount = ref("");
 
 const toAmount = computed(() =>
   formatDecimal(
@@ -49,7 +66,7 @@ const bridgeFee = computed(() =>
 );
 
 const hasRouteEmpty = computed(
-  () => result.value && amount.value && !txRoute.value && !loading.value
+  () =>  !txRoute.value && meta.value.valid && !loading
 );
 
 const setMax = () => {
@@ -162,12 +179,17 @@ watch([amount, bridgeToChainId, bridgeToTokenIndex], async () => {
 
 const loading = ref(false);
 const sendingDisabled = computed(
-  () => !token.value || !account.value || loading.value || !txRoute.value
+  () =>
+    !token.value ||
+    !account.value ||
+    loading.value ||
+    !txRoute.value ||
+    !meta.value.valid
 );
 
 const modal = ref();
 
-const send = async () => {
+const onSubmit = handleSubmit(async () => {
   if (!txRoute.value) {
     return;
   }
@@ -225,7 +247,7 @@ const send = async () => {
     //   message: `${amount.value} ${token.value.symbol
     //     } sent to ${address.value}`,
     // });
-    amount.value = "";
+    resetForm()
     modal.value?.cancel();
 
     useModal().openModal(PendingBridgeTransaction, {
@@ -247,11 +269,11 @@ const send = async () => {
   }
 
   loading.value = false;
-};
+});
 </script>
 
 <template>
-  <div class="flex gap-7.5 flex-col">
+  <form @submit="onSubmit" class="flex gap-7.5 flex-col">
     <div class="flex justify-center flex-col items-center">
       <img
         width="40"
@@ -282,9 +304,19 @@ const send = async () => {
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <CommonInput placeholder="Enter amount" v-model="amount">
+          <CommonInput
+            min="0.000001"
+            type="number"
+            step="0.000001"
+            inputmode="decimal"
+            :error-message="amountMeta.dirty ? errors['amount'] : ''"
+            name="amount"
+            placeholder="Enter amount"
+            v-model="amount"
+          >
             <template #suffix>
               <button
+                type="button"
                 class="absolute top-0 bottom-0 right-0 mr-5 text-sm text-blue-500 hover:text-blue-500"
                 @click="setMax"
               >
@@ -293,10 +325,10 @@ const send = async () => {
             </template>
           </CommonInput>
           <div
-            class="bg-gray-850 px-3 max-w-full inline-flex items-center gap-2 rounded-2xl"
+            class="bg-gray-850 px-3 max-w-full inline-flex items-center gap-2 rounded-2xl self-start h-[50px]"
           >
-            <ChainLogo class="w-5 h-5" :chain="token.chainId" />
-            <span class="text-xs text-slate-400 leading-5"
+            <ChainLogo class="w-6 h-6" :chain="token.chainId" />
+            <span class="text-sm leading-5"
               >{{ chainIdToName(token.chainId) }} Network</span
             >
           </div>
@@ -305,7 +337,6 @@ const send = async () => {
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
           <h1>Transfer to</h1>
-          <!-- <span>{{toAmount}} {{token.symbol}}</span> -->
         </div>
         <div class="px-5 pt-[14px] pb-5 bg-gray-850 rounded-5">
           <div class="flex flex-col gap-5">
@@ -314,13 +345,20 @@ const send = async () => {
             >
               <div class="flex flex-col gap-2.5">
                 <span class="text-sm">Coin</span>
-                <CommonSelect
-                  isValueIndex
-                  v-model="bridgeToTokenIndex"
-                  label-key="name"
-                  icon-key="icon"
-                  :options="bridgeToTokens"
-                />
+                <div
+                  class="bg-gray-800 w-full px-3 flex py-3 items-center gap-2.5 rounded-2xl"
+                >
+                  <img
+                    width="24"
+                    height="24"
+                    class="h-6 w-6"
+                    :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
+                    onerror="this.onerror=null; this.remove();"
+                  />
+                  <span class="text-sm leading-5">
+                    {{ token.name }}
+                  </span>
+                </div>
               </div>
 
               <div class="flex flex-col gap-2.5">
@@ -330,7 +368,14 @@ const send = async () => {
                   value-key="value"
                   label-key="label"
                   :options="selectableChains"
-                />
+                >
+                  <template #button-prefix>
+                    <ChainLogo class="w-6 h-6" :chain="bridgeToChainId" />
+                  </template>
+                  <template #item-prefix="{ value }">
+                    <ChainLogo class="w-6 h-6" :chain="value" />
+                  </template>
+                </CommonSelect>
               </div>
             </div>
 
@@ -361,9 +406,9 @@ const send = async () => {
 
     <div class="flex gap-4 flex-col">
       <CommonButton
+        type="submit"
         :disabled="sendingDisabled"
         :loading="loading"
-        @click="send"
         class="justify-center w-full"
         size="lg"
       >
@@ -391,7 +436,7 @@ const send = async () => {
         </div>
       </Transition>
     </div>
-  </div>
+  </form>
 </template>
 
 <style scoped>
