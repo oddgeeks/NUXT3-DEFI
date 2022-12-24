@@ -40,7 +40,7 @@ export const useSafe = defineStore("safe", () => {
 
     const { account } = useWeb3();
     const { tokens } = storeToRefs(useTokens());
-    const gasBalance = ref("0");
+    const gasBalance = ref();
 
     const chainTokenBalances = ref<Record<string, IBalance[]>>({
         "137": [],

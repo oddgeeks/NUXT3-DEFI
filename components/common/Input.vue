@@ -2,7 +2,7 @@
 import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
 
 withDefaults(defineProps<{
-  modelValue: string;
+  modelValue?: string | number | boolean | null | undefined;
   placeholder: string;
   inputClasses?: string;
   name: string;
