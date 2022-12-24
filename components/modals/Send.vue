@@ -43,7 +43,7 @@ const { handleSubmit, errors, meta, resetForm } = useForm({
     address: yup
       .string()
       .required()
-      .test("is-address", "Invalid address", (value) => {
+      .test("is-address", "Incorrect address", (value) => {
         return isAddress(value);
       }),
   }),
