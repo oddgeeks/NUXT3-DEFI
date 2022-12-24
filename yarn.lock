@@ -529,7 +529,7 @@
   dependencies:
     "@ethersproject/logger" "^5.7.0"
 
-"@ethersproject/providers@5.7.2", "@ethersproject/providers@^5.6.8":
+"@ethersproject/providers@5.7.2", "@ethersproject/providers@^5.6.8", "@ethersproject/providers@^5.7.2":
   version "5.7.2"
   resolved "https://registry.yarnpkg.com/@ethersproject/providers/-/providers-5.7.2.tgz#f8b1a4f275d7ce58cf0a2eec222269a08beb18cb"
   integrity sha512-g34EWZ1WWAVgr4aptGlVBF8mhl3VWjv+8hoAnzStu8Ah22VHBsuGzP17eb6xDVRzw895G4W7vvx60lFFur/1Rg==
@@ -689,6 +689,17 @@
   version "1.7.4"
   resolved "https://registry.yarnpkg.com/@headlessui/vue/-/vue-1.7.4.tgz#c554e9ac893a2ec2f58eb8b6b9d80b8be03c5d0e"
   integrity sha512-QHRlKCK/zRpjSjhth7c2CZvx5eMDFflXauqRdRJgp1CwScx6PwCpWiwDsjQcYM4z8Yik2ZvyX8W4PFT2Wsqqyw==
+
+"@instadapp/avocado@^0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.10.tgz#5e5bcbb730e123886eefa814b8104ccab3396ddf"
+  integrity sha512-lR1gx85J0BdQ8ny4DmZWC220+x4tghxH3BYTcNo8Zp+JNV5JEVm+/N/fVAF4zKwMRcll6K/7EQ8wehspKI04eQ==
+  dependencies:
+    "@ethersproject/abi" "^5.7.0"
+    "@ethersproject/abstract-provider" "^5.7.0"
+    "@ethersproject/abstract-signer" "^5.7.0"
+    "@ethersproject/providers" "^5.7.2"
+    ethers "^5.7.2"
 
 "@instadapp/utils@^0.4.5":
   version "0.4.5"

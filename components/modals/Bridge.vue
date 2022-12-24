@@ -233,11 +233,17 @@ const send = async () => {
       chainId: props.chainId,
     });
   } catch (e: any) {
-    console.log(e);
-    notify({
-      type: "error",
-      message: e.message,
-    });
+    try {
+      notify({
+        type: "error",
+        message: JSON.parse(e.body).error.message,
+      });
+    } catch {
+      notify({
+        type: "error",
+        message: e.message,
+      });
+    }
   }
 
   loading.value = false;

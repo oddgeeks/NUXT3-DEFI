@@ -84,8 +84,7 @@ const send = async () => {
 
     let transactionHash = await sendTransaction({
       ...tx,
-      chainId: props.chainId,
-      waitForConfirmation: false,
+      chainId: Number(props.chainId),
     });
 
     console.log(transactionHash);
@@ -168,8 +167,7 @@ const send = async () => {
         </CommonInput>
 
         <p class="text-slate-400 mt-2.5 text-xs font-medium text-left">
-          Sending on the Arbitrum
-          {{ chainIdToName(props.chainId) }} Network
+          Sending on the {{ chainIdToName(props.chainId) }} Network
         </p>
       </div>
     </div>

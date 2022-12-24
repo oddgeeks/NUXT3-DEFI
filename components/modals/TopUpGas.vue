@@ -102,7 +102,6 @@ const send = async () => {
     let transactionHash = await sendTransaction({
       ...tx,
       chainId: chainId.value,
-      waitForConfirmation: false,
     });
 
     console.log(transactionHash);
