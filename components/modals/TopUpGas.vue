@@ -193,7 +193,7 @@ const onSubmit = handleSubmit(async () => {
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
           <span>Amount</span>
-          <span>{{ token?.balance }} {{ token?.symbol }}</span>
+          <span class="uppercase">{{ token?.balance }} {{ token?.symbol }}</span>
         </div>
         <CommonInput
           min="0.000001"

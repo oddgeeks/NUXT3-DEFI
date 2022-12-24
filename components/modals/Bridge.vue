@@ -294,7 +294,7 @@ const onSubmit = handleSubmit(async () => {
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
           <h1>Transfer from</h1>
-          <span>{{ token.balance }} {{ token.symbol }}</span>
+          <span class="uppercase">{{ token.balance }} {{ token.symbol }}</span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -389,7 +389,7 @@ const onSubmit = handleSubmit(async () => {
                 >You receive</span
               >
               <span
-                class="sm:text-2xl text-lg font-semibold text-right !leading-5"
+                class="sm:text-2xl text-lg font-semibold text-right !leading-5 uppercase"
                 >{{ toAmount }} {{ token.symbol }}</span
               >
             </div>
