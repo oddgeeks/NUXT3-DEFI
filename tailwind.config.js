@@ -23,6 +23,7 @@ module.exports = {
         5: "20px",
         5.5: "25px",
         10: "40px",
+        7.5: "30px",
       },
       fontFamily: {
         sans: ["Source Code Pro", ...defaultTheme.fontFamily.sans],

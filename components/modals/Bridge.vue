@@ -255,17 +255,11 @@ const onSubmit = handleSubmit(async () => {
       chainId: props.chainId,
     });
   } catch (e: any) {
-    try {
-      notify({
-        type: "error",
-        message: JSON.parse(e.body).error.message,
-      });
-    } catch {
-      notify({
-        type: "error",
-        message: e.message,
-      });
-    }
+    console.log(e);
+    openSnackbar({
+      message: e?.reason ||  "Something went wrong",
+      type: "error",
+    })
   }
 
   loading.value = false;

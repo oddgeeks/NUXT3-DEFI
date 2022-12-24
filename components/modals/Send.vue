@@ -57,7 +57,15 @@ const setMax = () => {
 };
 
 const pasteAddress = async () => {
-  address.value = await navigator.clipboard.readText();
+  try {
+     address.value = await navigator.clipboard.readText();
+  } catch (e) {
+    console.log(e)
+    openSnackbar({
+      message: "Please allow clipboard access",
+      type: "error",
+    })
+  }
 };
 
 const sendingDisabled = computed(
@@ -122,17 +130,11 @@ const onSubmit = handleSubmit(async() => {
 
     showPendingTransactionModal(transactionHash, props.chainId);
   } catch (e: any) {
-    try {
-      notify({
-        type: "error",
-        message: JSON.parse(e.body).error.message,
-      });
-    } catch {
-      notify({
-        type: "error",
-        message: e.message,
-      });
-    }
+    console.log(e);
+    openSnackbar({
+      message: e?.reason ||  "Something went wrong",
+      type: "error",
+    })
   }
 
   loading.value = false;
