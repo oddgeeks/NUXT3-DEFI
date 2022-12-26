@@ -7,13 +7,22 @@ import PowerOffSVG from "~/assets/images/icons/power-off.svg?component";
 
 const { active, activate, deactivate, account, connector } = useWeb3();
 const { gasBalance } = storeToRefs(useSafe());
-const [hovered, toggle] = useToggle(false)
+const [hovered, toggle] = useToggle(false);
 
 const { providers } = useNetworks();
 
+const loading = ref<Record<string, boolean>>({});
+
 const connect = async (closeModal: Function, provider: any) => {
-  await activate(await provider.connect(), undefined, true);
-  closeModal();
+  try {
+    loading.value[provider.name] = true;
+    await activate(await provider.connect(), undefined, true);
+    closeModal();
+  } catch (e) {
+    console.log(e);
+  } finally {
+    loading.value[provider.name] = false;
+  }
 };
 
 const closeConnection = () => {
@@ -26,7 +35,9 @@ const closeConnection = () => {
 <template>
   <CommonInlineModal containerClass="md:max-w-[364px] rounded-full shadow-2xl">
     <template #reveal="{ openModal }">
-      <CommonButton size="lg" @click="openModal" v-show="!active"> Connect </CommonButton>
+      <CommonButton size="lg" @click="openModal" v-show="!active">
+        Connect
+      </CommonButton>
     </template>
     <template v-slot="{ closeModal }">
       <div class="relative bg-[#111827] rounded-[30px] px-12 py-10 text-center">
@@ -80,34 +91,62 @@ const closeConnection = () => {
                 <span class="text-white text-[16px]">{{ provider.name }}</span>
               </div>
 
-              <svg
-                class="transition-all text-slate-500"
-                :class="
-                  provider.name === 'Metamask'
-                    ? 'group-hover:text-orange-500'
-                    : 'group-hover:text-blue-500'
-                "
-                width="18"
-                height="18"
-                viewBox="0 0 18 18"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M3.75 9H14.25"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M9 3.75L14.25 9L9 14.25"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
+                <svg
+                 v-if="loading[provider.name]"
+                  :class="
+                    provider.name === 'Metamask'
+                      ? 'text-orange-500'
+                      : 'text-blue-500'
+                  "
+                  class="animate-spin -ml-1 mr-3 h-5 w-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+
+                <svg
+                 v-else
+                  class="transition-all text-slate-500"
+                  :class="
+                    provider.name === 'Metamask'
+                      ? 'group-hover:text-orange-500'
+                      : 'group-hover:text-blue-500'
+                  "
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M3.75 9H14.25"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M9 3.75L14.25 9L9 14.25"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
             </button>
           </li>
         </ul>
@@ -132,18 +171,16 @@ const closeConnection = () => {
       /></span>
     </button>
 
-    <span
-     v-tippy="{ placement : 'bottom-end', content: shortenHash(account) }">
+    <span v-tippy="{ placement: 'bottom-end', content: shortenHash(account) }">
       <button
-      @mouseenter="toggle(true)"
-      @mouseleave="toggle(false)"
-      @click="closeConnection"
-      class="bg-slate-800 py-[9px] h-[44px] w-[44px] relative flex text-white rounded-[30px] items-center justify-center px-4 gap-x-3"
-    >
-     <PowerOffSVG v-if="hovered" class="absolute pointer-events-none" />
-     <PowerOnSVG v-else class="absolute pointer-events-none" />
-    </button>
+        @mouseenter="toggle(true)"
+        @mouseleave="toggle(false)"
+        @click="closeConnection"
+        class="bg-slate-800 py-[9px] h-[44px] w-[44px] relative flex text-white rounded-[30px] items-center justify-center px-4 gap-x-3"
+      >
+        <PowerOffSVG v-if="hovered" class="absolute pointer-events-none" />
+        <PowerOnSVG v-else class="absolute pointer-events-none" />
+      </button>
     </span>
-    
   </div>
 </template>

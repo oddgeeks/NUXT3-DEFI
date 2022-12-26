@@ -11,28 +11,24 @@ const wcStore = useWalletConnect();
 const containerRef = ref(null);
 const hasScroll = ref(false);
 
-const { x, arrivedState } = useScroll(
-  containerRef,
-  {
-    behavior: "smooth",
-  }
-);
+const { x, arrivedState } = useScroll(containerRef, {
+  behavior: "smooth",
+});
 
-const setScrollAvaibility = async () => { 
-  if(!containerRef.value) return
+const setScrollAvaibility = async () => {
+  if (!containerRef.value) return;
 
   hasScroll.value =
     containerRef.value.scrollWidth > containerRef.value.clientWidth;
-    x.value += 1;
-}
-
+  x.value += 1;
+};
 
 watch(
   [wcStore, containerRef],
   async () => {
     if (containerRef.value) {
-      await nextTick()
-      setScrollAvaibility()
+      await nextTick();
+      setScrollAvaibility();
     }
   },
   {
@@ -68,41 +64,45 @@ watch(
         <template v-for="session in wcStore.sessions">
           <div
             v-if="session.peerMeta"
-            class="flex flex-1 w-fit items-center gap-3 p-5 bg-gray-850 rounded-5 py-2.5 pr-[14px] pl-4"
+            class="flex flex-1 items-center gap-3 p-5 bg-gray-850 rounded-5 py-2.5 pr-[14px] pl-4"
           >
-            <div
-              class="relative inline-block h-7.5 w-7.5 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
+            <a
+              class="flex gap-3 items-center"
+              target="_blank"
+              rel="noopener noreferrer"
+              :href="session.peerMeta.url"
             >
-              <img
-                v-if="session.peerMeta.icons.length"
-                class="w-full h-full object-fit rounded-[inherit]"
-                :src="session.peerMeta.icons[session.peerMeta.icons.length - 1]"
-              />
-
-              <ChainLogo
-                class="w-5 h-5 absolute -left-1 -bottom-1"
-                :chain="String(session.chainId)"
-              />
-            </div>
-
-            <div>
-              <h1 class="text-sm whitespace-nowrap">
-                {{ session.peerMeta.name }}
-              </h1>
-              <h2
-                class="text-xs text-blue-500 leading-5"
+              <div
+                class="relative inline-block h-7.5 w-7.5 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
               >
-               Connected
-              </h2>
-            </div>
-           <div class="flex items-center gap-2.5">
-            <a target="_blank" rel="noopener noreferrer" :href="session.peerMeta.url">
+                <img
+                  v-if="session.peerMeta.icons.length"
+                  class="w-full h-full object-fit rounded-[inherit]"
+                  :src="
+                    session.peerMeta.icons[session.peerMeta.icons.length - 1]
+                  "
+                />
+
+                <ChainLogo
+                  class="w-5 h-5 absolute -left-1 -bottom-1"
+                  :chain="String(session.chainId)"
+                />
+              </div>
+
+              <div>
+                <h1 class="text-sm whitespace-nowrap">
+                  {{ session.peerMeta.name }}
+                </h1>
+                <h2 class="text-xs text-blue-500 leading-5">Connected</h2>
+              </div>
               <LinkSVG class="text-blue-500" />
             </a>
-            <button v-tippy="'Disconnect'" @click="openDisconnectWalletModal(session)">
-             <SVGX class="text-slate-400" />
+            <button
+              v-tippy="'Disconnect'"
+              @click="openDisconnectWalletModal(session)"
+            >
+              <SVGX class="text-slate-400" />
             </button>
-           </div>
           </div>
         </template>
       </div>

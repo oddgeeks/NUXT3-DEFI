@@ -16,7 +16,7 @@ onClickOutside(modalBoxRef, () => {
           <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100"
               leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
-              <div class="fixed inset-0 transition-opacity bg-slate-200/20 backdrop-filter backdrop-blur-[4px]" @click="closeModal"/>
+              <div class="fixed inset-0 transition-opacity bg-slate-200/20 backdrop-filter backdrop-blur-[4px]"/>
             </TransitionChild>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             <TransitionChild as="template" enter="ease-out duration-300"
@@ -29,6 +29,7 @@ onClickOutside(modalBoxRef, () => {
                 class="inline-block w-full bg-[#111827] rounded-7.5 my-auto text-left align-middle transition-all transform max-w-[460px]"
                 role="dialog" aria-modal="true">
                   <div
+                  ref="modalBoxRef"
                     :class="options.contentClass"
                     class="relative  md:px-[50px] px-6 py-8 md:py-10 w-full">
                     <button class="absolute top-0 right-0 m-6" @click="closeModal" aria-label="Close modal">
