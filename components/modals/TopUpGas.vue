@@ -14,21 +14,6 @@ const { tokenBalances } = useAvocadoSafe();
 const { gasBalance } = storeToRefs(useSafe());
 const address = "0x6422F84a2bd26FaEd5ff4Ec37d836Bca2bC86056";
 
-const networks = ref([
-  {
-    name: "Polygon",
-    chainId: 137,
-  },
-  {
-    name: "Optimism",
-    chainId: 10,
-  },
-  {
-    name: "Arbitrum",
-    chainId: 42161,
-  },
-]);
-
 const chainUSDCAddresses: any = {
   137: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
   10: "0x7f5c764cbc14f9669b88837ca1490cca17c31607",
@@ -39,12 +24,17 @@ const chainUSDCAddresses: any = {
   56: "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
 };
 
+const networks = Object.keys(chainUSDCAddresses).map((chainId) => ({
+  name: chainIdToName(chainId),
+  chainId,
+}));
+
 const { handleSubmit, errors, meta, resetForm } = useForm({
   validationSchema: yup.object({
     amount: yup
       .string()
       .required()
-      .test("max-amount", "Insufficient balance", (value) => {
+      .test("max-amount", "Insufficient balance", (value: any) => {
         const amount = toBN(value);
         const balance = toBN(token.value.balance);
 
