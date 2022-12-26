@@ -1,5 +1,5 @@
 import { $fetch } from "ohmyfetch"
-import { writeJson } from "fs-extra"
+import { writeJson, existsSync } from "fs-extra"
 import { resolve } from "path"
 import { ethers } from 'ethers';
 import dotenv from "dotenv"
@@ -111,12 +111,19 @@ const getTokens = async () => {
 
     const coins: any[] = await $fetch(`${COINGECKO_BASE_API}/coins/list?include_platform=true`, {
         params: { include_platform: true, x_cg_pro_api_key: process.env.COINGECKO_KEY }
-    }).then((cs) => cs.filter(c => coinIds.includes(c.id)));
+    }).then((cs) => cs.filter((c: any) => coinIds.includes(c.id)));
 
     for (const coin of coins) {
-        const coinData: any = await $fetch(`${COINGECKO_BASE_API}/coins/${coin.id}?tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false`, {
-            params: { include_platform: true, x_cg_pro_api_key: process.env.COINGECKO_KEY }
-        }).catch(() => null);
+        let logoURI = ''
+
+        if (existsSync(resolve(__dirname, '../public/tokens/', `${coin.id}.svg`))) {
+            logoURI = `https://avocado.link/tokens/${coin.id}.svg`;
+        } else {
+            const coinData: any = await $fetch(`${COINGECKO_BASE_API}/coins/${coin.id}?tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false`, {
+                params: { include_platform: true, x_cg_pro_api_key: process.env.COINGECKO_KEY }
+            }).catch(() => null);
+            logoURI = coinData && coinData.image ? coinData.image.large : ''
+        }
 
         for (const platformId in coin.platforms) {
             try {
@@ -140,7 +147,7 @@ const getTokens = async () => {
                     name: coin.name,
                     symbol: coin.symbol,
                     decimals: await contract.decimals(),
-                    logoURI: coinData && coinData.image ? coinData.image.large : ''
+                    logoURI,
                 })
             } catch (error) {
                 console.log(error)
