@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { Erc20__factory } from "~~/contracts";
 import { storeToRefs } from "pinia";
+import { useField, useForm } from "vee-validate";
+import * as yup from "yup";
 import GasSVG from "~/assets/images/icons/gas.svg?component";
+import { toChecksumAddress } from "@walletconnect/utils";
 
 const { library, account } = useWeb3();
 const { switchNetworkByChainId } = useNetworks();
@@ -10,8 +13,6 @@ const { tokenBalances } = useAvocadoSafe();
 
 const { gasBalance } = storeToRefs(useSafe());
 const address = "0x6422F84a2bd26FaEd5ff4Ec37d836Bca2bC86056";
-
-const chainId = ref(137);
 
 const networks = ref([
   {
@@ -36,16 +37,40 @@ const chainUSDCAddresses: any = {
   43114: "0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
   100: "0xddafbb505ad214d7b80b1f830fccc89b60fb7a83",
   56: "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
-}
+};
+
+const { handleSubmit, errors, meta, resetForm } = useForm({
+  validationSchema: yup.object({
+    amount: yup
+      .string()
+      .required()
+      .test("max-amount", "Insufficient balance", (value) => {
+        const amount = toBN(value);
+        const balance = toBN(token.value.balance);
+
+        return amount.gt(0) && amount.lte(balance);
+      }),
+    chainId: yup.number().integer().required(),
+  }),
+});
+
+const { value: amount, meta: amountMeta } = useField<string>("amount");
+const { value: chainId } = useField<number>(
+  "chainId",
+  {},
+  { initialValue: 137 }
+);
 
 // TODO:
 const token = computed(
   () =>
     tokenBalances.value.find(
-      (t) => t.chainId === String(chainId.value) && t.address ===  chainUSDCAddresses[chainId.value] 
+      (t) =>
+        t.chainId === String(chainId.value) &&
+        toChecksumAddress(t.address) ===
+          toChecksumAddress(chainUSDCAddresses[chainId.value])
     )!
 );
-const amount = ref("");
 
 const setMax = () => {
   amount.value = token.value!.balance;
@@ -53,12 +78,17 @@ const setMax = () => {
 
 const loading = ref(false);
 const sendingDisabled = computed(
-  () => !token.value || !address || !account.value || loading.value
+  () =>
+    !token.value ||
+    !address ||
+    !account.value ||
+    loading.value ||
+    !meta.value.valid
 );
 
 const modal = ref();
 
-const send = async () => {
+const onSubmit = handleSubmit(async () => {
   if (!token.value) {
     return;
   }
@@ -111,30 +141,24 @@ const send = async () => {
     //     } sent to ${address.value}`,
     // });
     // address = "";
-    amount.value = "";
+    resetForm()
     modal.value?.cancel();
 
     showPendingTransactionModal(transactionHash, chainId.value);
   } catch (e: any) {
-    try {
-      notify({
-        type: "error",
-        message: JSON.parse(e.body).error.message,
-      });
-    } catch {
-      notify({
-        type: "error",
-        message: e.message,
-      });
-    }
+    console.log(e);
+    openSnackbar({
+      message: e?.reason ||  "Something went wrong",
+      type: "error",
+    })
   }
 
   loading.value = false;
-};
+});
 </script>
 
 <template>
-  <div class="space-y-[30px] text-center">
+  <form @submit="onSubmit" class="space-y-[30px] text-center">
     <div
       class="flex items-center mx-auto justify-center h-10 w-10 rounded-full bg-slate-800"
     >
@@ -152,29 +176,39 @@ const send = async () => {
       >
     </div>
     <div class="space-y-5">
-        <CommonSelect
-          v-model="chainId"
-          labelKey="name"
-          valueKey="chainId"
-          :options="networks"
-        >
-          <template #button-prefix>
-            <ChainLogo class="w-6 h-6" :chain="chainId" />
-          </template>
-          <template #item-prefix="{value}">
-            <ChainLogo class="w-6 h-6" :chain="value" />
-          </template>
-        </CommonSelect>
-        
+      <CommonSelect
+        v-model="chainId"
+        labelKey="name"
+        valueKey="chainId"
+        :options="networks"
+      >
+        <template #button-prefix>
+          <ChainLogo class="w-6 h-6" :chain="chainId" />
+        </template>
+        <template #item-prefix="{ value }">
+          <ChainLogo class="w-6 h-6" :chain="value" />
+        </template>
+      </CommonSelect>
+
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
           <span>Amount</span>
-          <span>{{ token?.balance }} {{ token?.symbol }}</span>
+          <span class="uppercase">{{ token?.balance }} {{ token?.symbol }}</span>
         </div>
-        <CommonInput placeholder="Enter amount" v-model="amount">
+        <CommonInput
+          min="0.000001"
+          type="number"
+          step="0.000001"
+          inputmode="decimal"
+          :error-message="amountMeta.dirty ? errors['amount'] : ''"
+          name="amount"
+          placeholder="Enter amount"
+          v-model="amount"
+        >
           <template #suffix>
             <button
-              class="absolute top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
+              type="button"
+              class="absolute top-0 bottom-0 right-0 mr-5 text-sm text-blue-500 hover:text-blue-500"
               @click="setMax"
             >
               MAX
@@ -185,13 +219,13 @@ const send = async () => {
     </div>
 
     <CommonButton
+      type="submit"
       :disabled="sendingDisabled"
       :loading="loading"
-      @click="send"
       class="justify-center w-full"
       size="lg"
     >
       Add Gas
     </CommonButton>
-  </div>
+  </form>
 </template>

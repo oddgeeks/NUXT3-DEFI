@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import SVGCheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import SVGErrorCircle from  "~/assets/images/icons/error-circle.svg?component";
+import SVGQuestionCircle from  "~/assets/images/icons/question-circle.svg?component";
 
 const { props, closeModal } = useModal();
 </script>
@@ -14,6 +15,7 @@ const { props, closeModal } = useModal();
         v-if="props.type === 'success'"
       />
       <SVGErrorCircle  v-if="props.type === 'error'" />
+      <SVGQuestionCircle  v-if="props.type === 'question'"/>
 
       <div class="flex flex-col gap-[15px]">
         <h1 class="text-lg">{{ props.title }}</h1>

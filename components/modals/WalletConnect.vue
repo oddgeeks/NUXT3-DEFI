@@ -1,14 +1,18 @@
 <script setup lang="ts">
+import { useField, useForm } from "vee-validate";
+import { parseWalletConnectUri } from "@walletconnect/utils";
+
+import * as yup from "yup";
 import SVGQr from "~/assets/images/icons/qr.svg?component";
+
 const wcStore = useWalletConnect();
 
-const uri = ref();
 const connection = shallowRef();
 const connectionChainId = shallowRef(137);
 const { closeModal } = useModal();
 
-const [loading, toggle] = useToggle(false)
- 
+const [loading, toggle] = useToggle(false);
+
 const networks = [
   {
     chainId: 137,
@@ -36,18 +40,44 @@ const networks = [
   },
 ];
 
-const prepareAndConnect = async () => {
+const { handleSubmit, errors, meta, resetForm } = useForm({
+  validationSchema: yup.object({
+    uri: yup
+      .string()
+      .required()
+      .test("uri", "Incorrect URI", (value: any) => {
+        const parsedURI = parseWalletConnectUri(value);
+
+        return (
+          !!parsedURI.key &&
+          !!parsedURI.bridge &&
+          !!parsedURI.bridge &&
+          !!parsedURI.protocol
+        );
+      }),
+  }),
+});
+
+const { value: uri, meta: uriMeta } = useField<string>(
+  "uri",
+  {},
+  {
+    initialValue: "",
+  }
+);
+
+const prepareAndConnect = handleSubmit(async () => {
   if (!uri.value) {
     return;
   }
 
   try {
-    toggle(true)
+    toggle(true);
     connection.value = await wcStore.prepareConnection(uri.value);
     connectionChainId.value = connection.value.chainId;
-    uri.value = null;
+    uri.value = "";
   } catch (e: any) {
-    console.log(e)
+    console.log(e);
     openDialogModal({
       title: "Connected Failed",
       content: "Try again or return to the home page.",
@@ -55,13 +85,13 @@ const prepareAndConnect = async () => {
       buttonText: "Try Again",
     });
   } finally {
-    toggle(false)
+    toggle(false);
   }
-};
+});
 
 const connect = async () => {
   try {
-    toggle(true)
+    toggle(true);
     await wcStore.connect(
       connection.value.connector,
       connection.value.storageId,
@@ -75,12 +105,11 @@ const connect = async () => {
         ${connection.value.peerMeta.name}
         </a> with your Avocado wallet.`,
       type: "success",
-      isButtonVisible: false
+      isButtonVisible: false,
     });
 
-    uri.value = null;
+    uri.value = "";
     connection.value = undefined;
-   
   } catch (e) {
     closeModal();
     openDialogModal({
@@ -90,13 +119,13 @@ const connect = async () => {
       buttonText: "Try Again",
     });
   } finally {
-    toggle(false)
+    toggle(false);
   }
 };
 </script>
 
 <template>
-  <div v-if="!connection" class="space-y-8">
+  <form @submit="prepareAndConnect" v-if="!connection" class="space-y-8">
     <div class="inline-flex flex-col items-center">
       <svg
         width="40"
@@ -139,21 +168,32 @@ const connect = async () => {
       </p>
     </div>
 
-    <CommonInput v-model="uri" placeholder="QR code or link">
+    <CommonInput
+      name="uri"
+      :error-message="uriMeta.dirty ? errors['uri'] : ''"
+      v-model="uri"
+      input-classes="peer"
+      placeholder="QR code or link"
+    >
       <template #suffix>
-        <SVGQr class="absolute top-1/2 right-4 -translate-y-1/2" />
+        <div
+          class="absolute flex justify-center items-center z-10 bg-slate-800 peer-focus:bg-gray-850 top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
+        >
+          <SVGQr />
+        </div>
       </template>
     </CommonInput>
 
     <CommonButton
+      type="submit"
+      :disabled="!meta.valid"
       :loading="loading"
-      @click="prepareAndConnect"
       class="w-full justify-center"
       size="lg"
     >
       Connect
     </CommonButton>
-  </div>
+  </form>
 
   <div v-else class="space-y-8">
     <div class="flex flex-col items-center space-y-8">
@@ -191,7 +231,12 @@ const connect = async () => {
       </template>
     </CommonSelect>
 
-    <CommonButton  :loading="loading" @click="connect" class="w-full justify-center" size="lg">
+    <CommonButton
+      :loading="loading"
+      @click="connect"
+      class="w-full justify-center"
+      size="lg"
+    >
       Approve
     </CommonButton>
   </div>

@@ -23,11 +23,15 @@ module.exports = {
         5: "20px",
         5.5: "25px",
         10: "40px",
+        7.5: "30px",
       },
       fontFamily: {
         sans: ["Source Code Pro", ...defaultTheme.fontFamily.sans],
       },
       colors: {
+        red: {
+          alert: "#EB5757",
+        },
         gray: {
           850: "#161E2D",
         },
@@ -35,8 +39,8 @@ module.exports = {
           750: "#2A3850",
         },
         yellow: {
-          DEFAULT: '#F2C94C'
-        }
+          DEFAULT: "#F2C94C",
+        },
       },
       animation: {
         "reverse-spin": "reverse-spin 1s linear infinite",

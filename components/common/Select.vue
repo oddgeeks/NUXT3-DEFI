@@ -74,10 +74,11 @@ const isSelected = (option: any, index: number) => {
     :class="{ 'z-10': open }"
   >
     <button
+      type="button"
       ref="button"
       @click="toggle()"
       :class="{ 'border-b-transparent rounded-b-none adjuster': open }"
-      class="relative w-full flex items-center gap-2.5 rounded-2xl border-2 border-slate-700 bg-gray-850 px-4 py-2.5 text-left"
+      class="relative w-full flex items-center gap-2.5 max-h-12 rounded-2xl border-2 border-slate-700 bg-gray-850 px-4 py-3 text-left"
     >
       <slot name="button-prefix">
         <img
@@ -86,7 +87,7 @@ const isSelected = (option: any, index: number) => {
           :src="selectedIcon"
         />
       </slot>
-      <span class="block truncate">{{ selectedLabel }}</span>
+      <span class="block truncate text-sm">{{ selectedLabel }}</span>
       <span class="pointer-events-none flex items-center ml-auto">
         <ChevronDownSVG class="h-5 w-5 text-gray-400" aria-hidden="true" />
       </span>
@@ -107,6 +108,7 @@ const isSelected = (option: any, index: number) => {
           :class="{ 'bg-slate-800': isSelected(option, i) }"
         >
           <button
+            type="button"
             @click="setSelected(option, i)"
             class="w-full flex gap-2.5 items-center text-left py-3 px-3"
           >
