@@ -144,7 +144,7 @@ export function useNetworks() {
                     symbol: "USDC",
                     decimals: 18,
                 },
-                rpcUrls: ["https://rpc.avocado.instad.app/"],
+                rpcUrls: ["https://rpc.avocado.link/"],
             },
         },
     ];

@@ -14,7 +14,7 @@ const RPC_URLS: { [chainId: number]: string } = {
     250: 'https://rpc.ankr.com/fantom',
     10: 'https://rpc.ankr.com/optimism',
     42161: 'https://rpc.ankr.com/arbitrum',
-    75: 'https://rpc.avocado.instad.app',
+    75: 'https://rpc.avocado.link',
     100: 'https://rpc.ankr.com/gnosis',
     56: 'https://rpc.ankr.com/bsc',
 };
@@ -156,7 +156,7 @@ const getTokens = async () => {
 const gen = async () => {
     await writeJson(resolve(__dirname, '../public/tokenlist.json'), {
         "name": "Avocado",
-        "logoURI": "https://avocado.instad.app/logo.svg",
+        "logoURI": "https://avocado.link/logo.svg",
         "keywords": [
             "avocado",
             "defi"

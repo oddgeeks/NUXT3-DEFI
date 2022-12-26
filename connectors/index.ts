@@ -28,7 +28,7 @@ export const RPC_URLS: { [chainId: number]: string } = {
     250: 'https://rpc.ankr.com/fantom',
     10: 'https://rpc.ankr.com/optimism',
     42161: 'https://rpc.ankr.com/arbitrum',
-    75: 'https://rpc.avocado.instad.app',
+    75: 'https://rpc.avocado.link',
     100: 'https://rpc.ankr.com/gnosis',
     56: 'https://rpc.ankr.com/bsc',
 };
@@ -54,7 +54,7 @@ export const magic = (email: string) => {
    return new CustomMagicConnector({
         network: {
             chainId: 137,// 75,
-            rpcUrl: "https://rpc.ankr.com/polygon",// "https://rpc.avocado.instad.app"
+            rpcUrl: "https://rpc.ankr.com/polygon",// "https://rpc.avocado.link"
         },
         apiKey: 'pk_live_40A3A59B53603988',
         email
