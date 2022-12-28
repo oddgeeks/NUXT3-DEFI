@@ -37,7 +37,7 @@ const { account } = useWeb3();
           </p>
 
           <div class="w-28">
-            <Web3Button button-only />
+            <Web3Button />
           </div>
         </div>
       </div>
