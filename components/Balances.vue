@@ -7,7 +7,7 @@ const { account } = useWeb3();
     <div class="relative flex-1">
       <div class="dark:bg-gray-850 bg-slate-50 rounded-5 h-full w-full">
         <div
-          class="overflow-y-auto absolute inset-0 flex-1 scroll-style"
+          class="overflow-y-auto overflow-x-auto md:overflow-x-hidden absolute inset-0 flex-1 scroll-style"
           :class="{ blur: tokenBalances.length === 0 }"
         >
           <table class="table w-full">
@@ -37,7 +37,7 @@ const { account } = useWeb3();
           </p>
 
           <div class="w-28">
-            <Web3Button button-only />
+            <Web3Button />
           </div>
         </div>
       </div>

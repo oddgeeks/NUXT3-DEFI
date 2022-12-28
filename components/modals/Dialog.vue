@@ -11,7 +11,7 @@ const { props, closeModal } = useModal();
       class="inline-flex gap-7.5 flex-col items-center justify-center text-center w-full"
     >
       <SVGCheckCircle
-        class="text-white success"
+        class="text-white success-circle"
         v-if="props.type === 'success'"
       />
       <SVGErrorCircle  class="text-white" v-if="props.type === 'error'" />
@@ -32,9 +32,3 @@ const { props, closeModal } = useModal();
       </CommonButton>
     </div>
 </template>
-
-<style scoped>
-.success :deep(path):first-child {
-  @apply fill-green-400 stroke-green-400;
-}
-</style>

@@ -26,23 +26,24 @@ interface Network {
 }
 
 interface IAvocadoTransaction {
-  id: number
-  chain_id: string
-  hash: string
-  from: string
-  to: string
-  data: string
-  confirmations: number
-  status: string
-  gas_limit: string
-  gas_price: string
-  value: string
-  block_number: number
-  nonce: number
+  id: number;
+  chain_id: string;
+  hash: string;
+  from: string;
+  to: string;
+  data: string;
+  fee: string;
+  confirmations: number;
+  status: "pending" | "confirming" | "success" | "failed";
+  gas_limit: string;
+  gas_price: string;
+  value: string;
+  block_number: number;
+  nonce: number;
   metadata: {
-    safe?: string
-    signer?: string
-  }
-  created_at: string
-  updated_at: string
+    safe?: string;
+    signer?: string;
+  };
+  created_at: string;
+  updated_at: string;
 }

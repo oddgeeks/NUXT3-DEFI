@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LinkSVG from "~/assets/images/icons/external-link.svg?component";
 import { Erc20__factory } from "~~/contracts";
 import { storeToRefs } from "pinia";
 import { useField, useForm } from "vee-validate";
@@ -131,16 +132,16 @@ const onSubmit = handleSubmit(async () => {
     //     } sent to ${address.value}`,
     // });
     // address = "";
-    resetForm()
+    resetForm();
     modal.value?.cancel();
 
     showPendingTransactionModal(transactionHash, chainId.value);
   } catch (e: any) {
     console.log(e);
     openSnackbar({
-      message: e?.reason ||  "Something went wrong",
+      message: e?.reason || "Something went wrong",
       type: "error",
-    })
+    });
   }
 
   loading.value = false;
@@ -152,38 +153,52 @@ const onSubmit = handleSubmit(async () => {
     <div
       class="flex items-center mx-auto justify-center h-10 w-10 rounded-full dark:bg-slate-800 bg-slate-100"
     >
-      <GasSVG class=" text-slate-900 dark:text-white" />
+      <GasSVG class="text-slate-900 dark:text-white" />
     </div>
     <div class="flex gap-4 flex-col">
       <h1 class="text-lg leading-5">Gas Balance</h1>
       <h2 class="text-xs text-slate-400 leading-5 font-medium">
         Top up your gas balance to trigger transactions.
       </h2>
-      <span
-        class="whitespace-nowrap px-5 py-3 dark:bg-slate-750 bg-slate-150 rounded-[30px] w-fit leading-5 mx-auto"
+      <a
+        href="https://instadapp.io"
+        target="blank"
+        rel="noopener noreferrer"
+        class="text-sm text-center justify-center inline-flex gap-2.5 text-blue-500"
       >
-        {{ formatDecimal(gasBalance, 2) }} USDC</span
-      >
+        What’s happening here?
+        <LinkSVG />
+      </a>
     </div>
+    <span
+      class="whitespace-nowrap block px-5 py-3 dark:bg-slate-750 bg-slate-150 rounded-[30px] w-fit leading-5 mx-auto"
+    >
+      {{ formatDecimal(gasBalance, 2) }} USDC</span
+    >
     <div class="space-y-5">
-      <CommonSelect
-        v-model="chainId"
-        labelKey="name"
-        valueKey="chainId"
-        :options="networks"
-      >
-        <template #button-prefix>
-          <ChainLogo class="w-6 h-6" :chain="chainId" />
-        </template>
-        <template #item-prefix="{ value }">
-          <ChainLogo class="w-6 h-6" :chain="value" />
-        </template>
-      </CommonSelect>
+      <div class="flex flex-col gap-2.5">
+        <span class="text-left leading-5">Network</span>
+        <CommonSelect
+          v-model="chainId"
+          labelKey="name"
+          valueKey="chainId"
+          :options="networks"
+        >
+          <template #button-prefix>
+            <ChainLogo class="w-6 h-6" :chain="chainId" />
+          </template>
+          <template #item-prefix="{ value }">
+            <ChainLogo class="w-6 h-6" :chain="value" />
+          </template>
+        </CommonSelect>
+      </div>
 
       <div class="space-y-2.5">
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between items-center leading-5">
           <span>Amount</span>
-          <span class="uppercase">{{ token?.balance }} {{ token?.symbol }}</span>
+          <span class="uppercase"
+            >{{ token?.balance }} {{ token?.symbol }}</span
+          >
         </div>
         <CommonInput
           min="0.000001"

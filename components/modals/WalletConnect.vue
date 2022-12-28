@@ -126,7 +126,7 @@ const connect = async () => {
 
 <template>
   <form @submit="prepareAndConnect" v-if="!connection" class="space-y-8">
-    <div class="inline-flex flex-col items-center">
+    <div class="flex flex-col items-center">
       <svg
         width="40"
         height="40"
@@ -159,12 +159,18 @@ const connect = async () => {
         </defs>
       </svg>
 
-      <div class="text-lg mt-8 mb-4">WalletConnect</div>
+      <div class="text-lg mt-8 mb-4">Connect with WalletConnect</div>
 
       <p class="text-slate-400 text-xs text-center leading-5">
-        You need the Avocado web app to be open to popup transactions. You will
-        not receive transaction requests when it is not open. Please don't close
-        the tab.
+        Do not close this window while connecting.<br />
+        Have a question? Follow this
+        <a
+          target="blank"
+          rel="noopener noreferrer"
+          href="https://future-molybdenum-905.notion.site/Connect-dApps-on-Avocado-Using-WalletConnect-dee060ee76b74b419ae28278be630fd1"
+          class="text-sm inline-flex gap-2.5 text-blue-500"
+          >guide</a
+        >.
       </p>
     </div>
 
@@ -176,7 +182,7 @@ const connect = async () => {
       placeholder="QR code or link"
     >
       <template #suffix>
-         <SVGQr />
+        <SVGQr />
       </template>
     </CommonInput>
 

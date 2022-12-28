@@ -74,17 +74,29 @@ const chartOptions = {
   <tr>
     <td class="text-left pl-7.5 pr-10 py-6">
       <div class="flex items-center space-x-3">
-        <div class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0">
-          <img :src="tokenBalance.logoURI" onerror="this.onerror=null; this.remove();" />
+        <div
+          class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
+        >
+          <img
+            :src="tokenBalance.logoURI"
+            onerror="this.onerror=null; this.remove();"
+          />
 
-          <ChainLogo class="w-6 h-6 absolute -left-1 -bottom-1" :chain="tokenBalance.chainId" />
+          <ChainLogo
+            class="w-6 h-6 absolute -left-1 -bottom-1"
+            :chain="tokenBalance.chainId"
+          />
         </div>
 
         <div>
-          <div class="text-lg font-semibold whitespace-nowrap pr-2 md:w-52 truncate">
+          <div
+            class="text-lg font-semibold whitespace-nowrap pr-2 md:w-52 truncate"
+          >
             {{ tokenBalance.name }}
           </div>
-          <div class="text-sm font-medium text-slate-400 max-w-[256px] uppercase">
+          <div
+            class="text-sm font-medium text-slate-400 max-w-[256px] uppercase"
+          >
             {{ toBN(tokenBalance.balance).toFormat(6) }}
             {{ tokenBalance.symbol }}
           </div>
@@ -96,17 +108,17 @@ const chartOptions = {
         $ {{ tokenBalance.balanceInUSD }}
       </span>
 
-      <span v-else>
-        -
-      </span>
+      <span v-else> - </span>
     </td>
     <td class="text-center font-semibold px-10 py-6">
       <div class="w-20 h-8 mx-auto">
-        <Line v-if="tokenBalance.sparklinePrice7d.length" :data="chartData" :options="chartOptions"
-          :key="JSON.stringify({ ...chartData, ...chartOptions })" />
-        <span v-else>
-          -
-        </span>
+        <Line
+          v-if="tokenBalance.sparklinePrice7d.length"
+          :data="chartData"
+          :options="chartOptions"
+          :key="JSON.stringify({ ...chartData, ...chartOptions })"
+        />
+        <span v-else> - </span>
       </div>
     </td>
     <td class="text-center font-semibold py-6">
@@ -118,13 +130,19 @@ const chartOptions = {
     </td>
     <td class="text-right px-7.5 py-6">
       <div class="flex items-center space-x-3">
-        <CommonButton :disabled="isZero(tokenBalance.balance)"
-          @click="openSendModal(tokenBalance.address, tokenBalance.chainId)">
+        <CommonButton
+          :disabled="isZero(tokenBalance.balance)"
+          @click="openSendModal(tokenBalance.address, tokenBalance.chainId)"
+        >
           Send
         </CommonButton>
 
-        <CommonButton v-tippy="'Bridge'" :disabled="isZero(tokenBalance.balance)" class="!p-[5.5px]"
-          @click="openBridgeModal(tokenBalance.address, tokenBalance.chainId)">
+        <CommonButton
+          v-tippy="{ arrow: true, arrowType: 'round', animation: 'fade', content: 'Bridge' }"
+          :disabled="isZero(tokenBalance.balance)"
+          class="!p-[5.5px]"
+          @click="openBridgeModal(tokenBalance.address, tokenBalance.chainId)"
+        >
           <BridgeSVG />
         </CommonButton>
       </div>

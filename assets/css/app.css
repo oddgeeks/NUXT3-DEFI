@@ -1,24 +1,16 @@
 .tippy-box {
-  background-color: #334155 !important;
-  color: white !important;
-  border: 1px solid #334155;
-  padding: 8px 16px !important;
-  border-radius: 15px !important;
-  font-size: 12px !important;
+  @apply dark:bg-slate-600 bg-slate-200 text-slate-900 dark:text-white border-none !important;
+  @apply px-3 py-[5px] rounded-5 text-xs !important;
 }
 
 .tippy-content {
+  @apply p-0 font-medium leading-5 !important;
   font-family: "Source Code Pro" !important;
   font-style: normal !important;
-  font-weight: 500 !important;
-  font-size: 12px !important;
-  line-height: 20px !important;
-  padding: 0 !important;
 }
 
 .tippy-arrow {
-  color: #334155 !important;
-  border-color: #334155 !important;
+  @apply dark:text-slate-600 text-slate-200 !important;
 }
 
 .scroll-hide {
@@ -59,4 +51,8 @@ input::-webkit-inner-spin-button {
 
 .clipboard_svg__paste-path {
   @apply dark:fill-slate-800 fill-slate-100;
+}
+
+.success-circle path:first-child {
+  @apply fill-green-500 stroke-green-500;
 }
