@@ -1,7 +1,4 @@
-<script lang="ts" setup>
-import ClockCircleSVG from "~/assets/images/icons/clock-circle.svg?component";
-import CheckCircleSVG from "~/assets/images/icons/check-circle.svg?component";
-
+<script setup lang="ts">
 const router = useRoute();
 const provider = getRpcProvider(75);
 
@@ -60,30 +57,7 @@ const [transaction] = (await Promise.all([
 
         <div class="flex items-center">
           <div class="text-slate-400 md:w-full md:max-w-[200px]">Status</div>
-          <div
-            class="capitalize text-sm flex items-center gap-2.5"
-            :class="
-              transaction.status === 'success'
-                ? 'text-green-500'
-                : 'text-yellow'
-            "
-          >
-            <CheckCircleSVG
-              class="text-white w-4 h-4 success-circle"
-              v-if="transaction.status === 'success'"
-            />
-            <ClockCircleSVG v-else class="w-4 h-4" />
-
-            {{ transaction.status }}
-
-            <span v-if="transaction.status !== 'success'"
-              >({{
-                transaction.confirmations > 128
-                  ? "128+"
-                  : transaction.confirmations
-              }}/128)</span
-            >
-          </div>
+          <TransactionStatus :status="transaction.status" />
         </div>
 
         <div class="flex items-center">

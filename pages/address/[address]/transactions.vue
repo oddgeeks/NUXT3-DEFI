@@ -1,27 +1,41 @@
 <script setup lang="ts">
-import SVGCheckCircle from "~/assets/images/icons/check-circle.svg?component";
-import SVGErrorCircle from "~/assets/images/icons/error-circle.svg?component";
-import SVGClockCircle from "~/assets/images/icons/clock-circle.svg?component";
+import type { Ref } from "vue";
+type ITransactionResponse = {
+  data: IAvocadoTransaction[];
+  page: number;
+  total: number;
+};
 
 const router = useRoute();
 const provider = getRpcProvider(75);
 
-const transactions: {
-  data: IAvocadoTransaction[];
-  page: number;
-  total: number;
-} = await provider.send("api_getTransactionsByOwner", [router.params.address]);
+const limit = 20;
+const page = computed(() => parseInt(router.query.page) || 1) as Ref<number>;
 
-const statusColor = (status: string) => {
-  switch (status) {
-    case "success":
-      return "text-green-500";
-    case "failed":
-      return "text-red-500";
-    default:
-      return "text-yellow";
-  }
+const defaultTransactions: ITransactionResponse = {
+  data: [],
+  page: 1,
+  total: 0,
 };
+
+const { data: transactions } = useAsyncData(
+  async () => {
+    const transactions: ITransactionResponse = await provider.send(
+      "api_getTransactionsByOwner",
+      [router.params.address, { page: page.value, limit }]
+    );
+
+    if (!transactions) {
+      return defaultTransactions;
+    }
+
+    return transactions;
+  },
+  {
+    watch: [page],
+    default: () => defaultTransactions,
+  }
+);
 </script>
 
 <template>
@@ -48,7 +62,7 @@ const statusColor = (status: string) => {
             <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
               <tr
                 class="text-sm relative"
-                v-for="transaction in transactions.data"
+                v-for="transaction in transactions?.data"
               >
                 <td>
                   <NuxtLink
@@ -79,24 +93,7 @@ const statusColor = (status: string) => {
                   >
                 </td>
                 <td>
-                  <span
-                    :class="statusColor(transaction.status)"
-                    class="inline-flex gap-2.5 items-center capitalize"
-                  >
-                    <SVGCheckCircle
-                      class="text-white w-4 h-4 success-circle"
-                      v-if="transaction.status === 'success'"
-                    />
-                    <SVGErrorCircle
-                      class="text-white w-4 h-4"
-                      v-else-if="transaction.status === 'failed'"
-                    />
-                     <SVGClockCircle
-                      v-else
-                      class="w-4 h-4"
-                    />
-                    {{ transaction.status }}</span
-                  >
+                  <TransactionStatus :status="transaction.status" />
                 </td>
                 <td>
                   <span
@@ -115,6 +112,13 @@ const statusColor = (status: string) => {
         </div>
       </div>
     </div>
+    <Pagination
+      v-if="transactions?.total || 0 > limit"
+      :url-prefix="$route.path"
+      :total="transactions?.total || 0"
+      :current="page"
+      :limit="limit"
+    />
   </div>
 </template>
 
