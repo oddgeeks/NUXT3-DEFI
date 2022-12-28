@@ -5,13 +5,13 @@ const { account } = useWeb3();
 </script>
 <template>
     <div class="relative flex-1">
-      <div class="bg-gray-850 rounded-5 h-full w-full">
+      <div class="dark:bg-gray-850 bg-slate-50 rounded-5 h-full w-full">
         <div
           class="overflow-y-auto absolute inset-0 flex-1 scroll-style"
           :class="{ blur: tokenBalances.length === 0 }"
         >
           <table class="table w-full">
-            <tbody class="divide-y divide-slate-800">
+            <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
               <template v-if="tokenBalances.length > 0">
                 <BalanceRow
                   v-for="tokenBalance in tokenBalances"

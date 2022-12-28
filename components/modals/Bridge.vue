@@ -280,7 +280,7 @@ const onSubmit = handleSubmit(async () => {
         <h2 class="text-lg leading-5 text-center">{{ token.name }}</h2>
 
         <div
-          class="bg-gray-850 px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5"
+          class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5"
         >
           <ChainLogo class="w-5 h-5" :chain="token.chainId" />
           <span class="text-xs text-slate-400 leading-5"
@@ -319,7 +319,7 @@ const onSubmit = handleSubmit(async () => {
             </template>
           </CommonInput>
           <div
-            class="bg-gray-850 px-3 max-w-full inline-flex items-center gap-2 rounded-2xl self-start h-[50px]"
+            class="dark:bg-gray-850 bg-slate-50 px-3 max-w-full inline-flex items-center gap-2 rounded-2xl self-start h-[50px]"
           >
             <ChainLogo class="w-6 h-6" :chain="token.chainId" />
             <span class="text-sm leading-5"
@@ -332,7 +332,7 @@ const onSubmit = handleSubmit(async () => {
         <div class="flex justify-between items-center">
           <h1>Transfer to</h1>
         </div>
-        <div class="px-5 pt-[14px] pb-5 bg-gray-850 rounded-5">
+        <div class="px-5 pt-[14px] pb-5 dark:bg-gray-850 bg-slate-50 rounded-5">
           <div class="flex flex-col gap-5">
             <div
               class="grid items-center gap-4 grid-cols-1 md:grid-cols-2 md:gap-x-4 md:gap-y-5"
@@ -340,7 +340,7 @@ const onSubmit = handleSubmit(async () => {
               <div class="flex flex-col gap-2.5">
                 <span class="text-sm">Coin</span>
                 <div
-                  class="bg-gray-800 w-full px-3 flex py-3 items-center gap-2.5 rounded-2xl"
+                  class="dark:bg-gray-800 bg-slate-100 w-full px-3 flex py-3 items-center gap-2.5 rounded-2xl"
                 >
                   <img
                     width="24"
@@ -435,11 +435,7 @@ const onSubmit = handleSubmit(async () => {
 
 <style scoped>
 .divider {
-  background-image: linear-gradient(
-    to right,
-    #1e293b 33%,
-    rgba(255, 255, 255, 0) 0%
-  );
+  @apply bg-dashed-pattern dark:bg-dashed-pattern-dark;
   background-position: bottom;
   background-size: 21px 2px;
   background-repeat: repeat-x;
@@ -449,15 +445,13 @@ const onSubmit = handleSubmit(async () => {
 }
 
 .divider:after {
-  @apply w-5 h-5 rounded-full absolute top-1/2 -right-10 -translate-x-1/2 -translate-y-1/2;
-  background-color: #111827;
+  @apply w-5 h-5 rounded-full absolute top-1/2 -right-10 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-950 bg-white;
   content: "";
   display: block;
 }
 
 .divider:before {
-  @apply w-5 h-5 rounded-full absolute top-1/2 -left-5 -translate-x-1/2 -translate-y-1/2;
-  background-color: #111827;
+  @apply w-5 h-5 rounded-full absolute top-1/2 -left-5 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-950 bg-white;
   content: "";
   display: block;
 }

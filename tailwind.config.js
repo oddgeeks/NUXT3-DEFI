@@ -1,6 +1,7 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
 
 module.exports = {
+  darkMode: "class",
   theme: {
     container: {
       center: true,
@@ -13,6 +14,10 @@ module.exports = {
       },
     },
     extend: {
+      backgroundImage: {
+        "dashed-pattern": `linear-gradient( to right, #E9EDF4 33%, rgba(255, 255, 255, 0) 0%);`,
+        "dashed-pattern-dark": `linear-gradient( to right, #1e293b 33%, rgba(255, 255, 255, 0) 0%);`,
+      },
       spacing: {
         5.5: "25px", // wrong? 22px
         6.25: "25px",
@@ -34,8 +39,10 @@ module.exports = {
         },
         gray: {
           850: "#161E2D",
+          950: "#111827",
         },
         slate: {
+          150: "#E9EDF4",
           750: "#2A3850",
         },
         yellow: {

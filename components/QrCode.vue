@@ -2,7 +2,6 @@
 import CopySVG from "~/assets/images/icons/copy.svg?component";
 import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
 
-import QrcodeVue from "qrcode.vue";
 const { safeAddress } = useAvocadoSafe();
 const { copy, copied } = useClipboard();
 const account = computed(() => safeAddress.value || "0x000000000000000");
@@ -14,14 +13,12 @@ const shortenAddress = () => {
 <template>
   <div>
     <div
-      class="py-7.5 px-5.5 bg-gray-850 rounded-5.5 flex flex-col justify-center items-center"
+      class="py-7.5 px-5.5 bg-slate-50 dark:bg-gray-850 rounded-5.5 flex flex-col justify-center items-center"
       :class="{ blur: !safeAddress }"
     >
-      <!-- <QrcodeVue :size="140" :margin="5" level="M" :value="account" foreground="#052740"
-                class="rounded-[20px] mx-auto" /> -->
 
       <StyledQrCode
-        class="rounded-[20px] mx-auto bg-white overflow-hidden"
+        class="rounded-5 mx-auto bg-white overflow-hidden"
         :data="account"
         :key="account"
       />
@@ -36,7 +33,7 @@ const shortenAddress = () => {
         </Transition>
 
        <Transition mode="out-in" name="slide">
-        <CheckCircle v-if="copied" class="w-4 h-4 text-slate-900 svg-circle" />
+        <CheckCircle v-if="copied" class="w-4 h-4 dark:text-slate-900 text-white svg-circle" />
         <CopySVG v-else />
        </Transition>
       </button>
@@ -55,6 +52,7 @@ const shortenAddress = () => {
 .svg-circle > :deep(path:first-child) {
   @apply stroke-slate-400 fill-slate-400;
 }
+
 
 .slide-left-enter-active,
 .slide-left-leave-active {

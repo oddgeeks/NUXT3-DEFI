@@ -156,7 +156,7 @@ const onSubmit = handleSubmit(async() => {
       <h2>{{ token.name }}</h2>
 
       <div
-        class="bg-gray-850 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]"
+        class="dark:bg-gray-850 bg-slate-50 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]"
       >
         <ChainLogo class="w-5 h-5" :chain="token.chainId" />
         <span class="text-xs text-slate-400 leading-5"
@@ -183,7 +183,7 @@ const onSubmit = handleSubmit(async() => {
         >
           <template #suffix>
             <button
-              class="absolute top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
+              class=" text-blue-500 hover:text-blue-500"
               @click="setMax"
             >
               MAX
@@ -206,7 +206,6 @@ const onSubmit = handleSubmit(async() => {
         >
           <template #suffix>
             <button
-              class="absolute z-10 bg-slate-800 peer-focus:bg-gray-850 top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
               @click="pasteAddress"
             >
               <ClipboardSVG />
