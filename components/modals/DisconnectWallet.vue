@@ -27,7 +27,7 @@ const disconnectWallet = async () => {
       </div>
       <div class="flex flex-col gap-5 mb-9 justify-center items-center">
         <div
-        class="bg-gray-850 px-2 pr-3 py-[5px] inline-flex justify-center items-center space-x-2 rounded-[20px]"
+        class="dark:bg-gray-850 bg-slate-50 px-2 pr-3 py-[5px] inline-flex justify-center items-center space-x-2 rounded-[20px]"
       >
         <ChainLogo class="w-5 h-5" :chain="props.session.chainId" />
         <span class="text-xs text-slate-400 leading-5"

@@ -39,7 +39,7 @@
 }
 .scroll-style::-webkit-scrollbar-thumb {
   @apply rounded-[20px] bg-transparent;
-  box-shadow: inset 0 0 14px 14px #334155;
+  box-shadow: inset 0 0 14px 14px #cbd5e1;
   border: solid 5px transparent;
 }
 html.dark .scroll-style::-webkit-scrollbar-thumb {
@@ -51,4 +51,12 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.copy_svg__copy-path {
+  @apply dark:fill-gray-850 fill-slate-50;
+}
+
+.clipboard_svg__paste-path {
+  @apply dark:fill-slate-800 fill-slate-100;
 }

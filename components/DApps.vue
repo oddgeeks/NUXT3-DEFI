@@ -64,7 +64,7 @@ watch(
         <template v-for="session in wcStore.sessions">
           <div
             v-if="session.peerMeta"
-            class="flex flex-1 items-center gap-3 p-5 bg-gray-850 rounded-5 py-2.5 pr-[14px] pl-4"
+            class="flex flex-1 items-center gap-3 p-5 dark:bg-gray-850 bg-slate-50 rounded-5 py-2.5 pr-[14px] pl-4"
           >
             <a
               class="flex gap-3 items-center"
@@ -101,7 +101,7 @@ watch(
               v-tippy="'Disconnect'"
               @click="openDisconnectWalletModal(session)"
             >
-              <SVGX class="text-slate-400" />
+              <SVGX class="text-slate-400 h-[18px] w-[18px]" />
             </button>
           </div>
         </template>

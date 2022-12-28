@@ -9,9 +9,9 @@ useEagerConnect();
 </script>
 
 <template>
-    <Html class="bg-[#111827]" />
+    <Html />
 
-    <Body class="h-screen bg-[#111827] text-white font-semibold" />
+    <Body class="h-screen dark:bg-gray-950 bg-white dark:text-white text-slate-900 font-semibold" />
 
     <NuxtLayout>
       <NuxtPage />

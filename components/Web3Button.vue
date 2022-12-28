@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
+import SVGX from "~/assets/images/icons/x.svg?component";
 import GasSVG from "~/assets/images/icons/gas.svg?component";
 import PlusSVG from "~/assets/images/icons/plus.svg?component";
 import PowerOnSVG from "~/assets/images/icons/power-on.svg?component";
@@ -40,35 +41,9 @@ const closeConnection = () => {
       </CommonButton>
     </template>
     <template v-slot="{ closeModal }">
-      <div class="relative bg-[#111827] rounded-[30px] px-12 py-10 text-center">
-        <button
-          class="absolute top-0 right-0 m-6"
-          @click="closeModal"
-          aria-label="Close modal"
-        >
-          <svg
-            width="30"
-            height="30"
-            viewBox="0 0 30 30"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect width="30" height="30" rx="15" fill="#1E293B" />
-            <path
-              d="M18.5 11.5L11.5 18.5"
-              stroke="white"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M11.5 11.5L18.5 18.5"
-              stroke="white"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+      <div class="relative dark:bg-gray-950 bg-white rounded-[30px] px-12 py-10 text-center">
+        <button class="absolute h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100 top-0 right-0 m-6" @click="closeModal" aria-label="Close modal">
+           <SVGX />
         </button>
         <div class="flex flex-col items-center justify-center mb-7 gap-4">
           <span class="text-lg">Connect wallet</span>
@@ -78,17 +53,17 @@ const closeConnection = () => {
           <li :key="provider.name" v-for="provider in providers">
             <button
               @click="connect(closeModal, provider)"
-              class="px-5 py-4 w-full bg-gray-850 rounded-[40px] group transition-colors flex items-center gap-4"
+              class="px-5 py-4 w-full dark:bg-gray-850 bg-slate-100 rounded-[40px] group transition-colors flex items-center gap-4"
               :class="
                 provider.name === 'Metamask'
-                  ? 'hover:bg-[#282125]'
-                  : 'hover:bg-[#15233C]'
+                  ? 'dark:hover:bg-[#282125] hover:bg-[#FEF1E8]'
+                  : 'dark:hover:bg-[#15233C] hover:bg-[#EBF2FE]'
               "
             >
               <div class="flex items-center flex-1 gap-5">
                 <component :is="provider.logo" />
 
-                <span class="text-white text-[16px]">{{ provider.name }}</span>
+                <span class="text-[16px]">{{ provider.name }}</span>
               </div>
 
                 <svg
@@ -156,17 +131,17 @@ const closeConnection = () => {
 
   <div v-show="active" class="flex items-center gap-[14px]">
     <button
-      class="px-4 py-[9px] flex items-center justify-between rounded-5 bg-slate-800 gap-2"
+      class="px-4 py-[9px] flex items-center justify-between rounded-5 dark:bg-slate-800 bg-slate-100 gap-2"
       @click="openTopUpGasModal()"
     >
-      <GasSVG />
+      <GasSVG class="text-slate-400" />
 
       <span class="whitespace-nowrap leading-5">
         {{ formatDecimal(gasBalance, 2) }} USDC</span
       >
 
       <span
-        class="h-[26px] w-[26px] flex items-center justify-center bg-blue-500 rounded-full"
+        class="h-[26px] w-[26px] flex items-center justify-center bg-blue-500 rounded-full text-white"
         ><PlusSVG
       /></span>
     </button>
@@ -176,7 +151,7 @@ const closeConnection = () => {
         @mouseenter="toggle(true)"
         @mouseleave="toggle(false)"
         @click="closeConnection"
-        class="bg-slate-800 py-[9px] h-[44px] w-[44px] relative flex text-white rounded-[30px] items-center justify-center px-4 gap-x-3"
+        class="dark:bg-slate-800 bg-slate-100 py-[9px] h-[44px] w-[44px] relative flex text-white rounded-[30px] items-center justify-center px-4 gap-x-3"
       >
         <PowerOffSVG v-if="hovered" class="absolute pointer-events-none" />
         <PowerOnSVG v-else class="absolute pointer-events-none" />

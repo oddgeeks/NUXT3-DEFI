@@ -176,11 +176,7 @@ const connect = async () => {
       placeholder="QR code or link"
     >
       <template #suffix>
-        <div
-          class="absolute flex justify-center items-center z-10 bg-slate-800 peer-focus:bg-gray-850 top-0 bottom-0 right-0 mr-5 text-blue-500 hover:text-blue-500"
-        >
-          <SVGQr />
-        </div>
+         <SVGQr />
       </template>
     </CommonInput>
 

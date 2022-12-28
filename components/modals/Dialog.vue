@@ -14,7 +14,7 @@ const { props, closeModal } = useModal();
         class="text-white success"
         v-if="props.type === 'success'"
       />
-      <SVGErrorCircle  v-if="props.type === 'error'" />
+      <SVGErrorCircle  class="text-white" v-if="props.type === 'error'" />
       <SVGQuestionCircle  v-if="props.type === 'question'"/>
 
       <div class="flex flex-col gap-[15px]">

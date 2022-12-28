@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SVGX from "~/assets/images/icons/x.svg?component";
 const { modal, props, options, isOpen, closeModal } = useModal();
 const modalBoxRef = ref(null);
 
@@ -26,20 +27,14 @@ onClickOutside(modalBoxRef, () => {
               leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
               <div
                 :class="options.wrapperClass"
-                class="inline-block w-full bg-[#111827] rounded-7.5 my-auto text-left align-middle transition-all transform max-w-[460px]"
+                class="inline-block w-full dark:bg-gray-950 bg-white rounded-7.5 my-auto text-left align-middle transition-all transform max-w-[460px]"
                 role="dialog" aria-modal="true">
                   <div
                   ref="modalBoxRef"
                     :class="options.contentClass"
                     class="relative  md:px-[50px] px-6 py-8 md:py-10 w-full">
-                    <button class="absolute top-0 right-0 m-6" @click="closeModal" aria-label="Close modal">
-                      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="30" height="30" rx="15" fill="#1E293B" />
-                        <path d="M18.5 11.5L11.5 18.5" stroke="white" stroke-width="2" stroke-linecap="round"
-                          stroke-linejoin="round" />
-                        <path d="M11.5 11.5L18.5 18.5" stroke="white" stroke-width="2" stroke-linecap="round"
-                          stroke-linejoin="round" />
-                      </svg>
+                    <button class="absolute h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100 top-0 right-0 m-6" @click="closeModal" aria-label="Close modal">
+                      <SVGX />
                     </button>
 
                     <component :is="modal" v-bind="props" />

@@ -107,13 +107,17 @@ export default defineNuxtConfig({
     },
   },
   modules: [
+    "@nuxtjs/color-mode",
     "@vueuse/nuxt",
     "@nuxtjs/tailwindcss",
     "@instadapp/vue-web3-nuxt",
     "@vueuse/nuxt",
     "@pinia/nuxt",
   ],
-
+  colorMode: {
+    preference: "dark",
+    classSuffix: "",
+  },
   css: [
     "@fontsource/source-code-pro/400.css",
     "@fontsource/source-code-pro/500.css",

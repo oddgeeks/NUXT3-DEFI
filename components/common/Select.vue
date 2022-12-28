@@ -78,7 +78,7 @@ const isSelected = (option: any, index: number) => {
       ref="button"
       @click="toggle()"
       :class="{ 'border-b-transparent rounded-b-none adjuster': open }"
-      class="relative w-full flex items-center gap-2.5 max-h-12 rounded-2xl border-2 border-slate-700 bg-gray-850 px-4 py-3 text-left"
+      class="relative w-full flex items-center gap-2.5 max-h-12 rounded-2xl border-2 dark:border-slate-700 border-slate-150 bg-slate-50 dark:bg-gray-850 px-4 py-3 text-left"
     >
       <slot name="button-prefix">
         <img
@@ -99,13 +99,13 @@ const isSelected = (option: any, index: number) => {
     >
       <ul
         v-if="open"
-        class="absolute w-full flex flex-col gap-1.5 px-1 py-[15px] max-h-60 border-2 border-slate-700 border-t-0 rounded-b-2xl overflow-auto bg-gray-850"
+        class="absolute w-full flex flex-col gap-1.5 px-1 py-[15px] max-h-60 border-2 dark:border-slate-700 border-slate-150 border-t-0 rounded-b-2xl overflow-auto bg-slate-50 dark:bg-gray-850"
       >
         <li
           v-for="(option, i) in options"
           :key="i"
-          class="text-left text-sm hover:bg-slate-800 rounded-[14px]"
-          :class="{ 'bg-slate-800': isSelected(option, i) }"
+          class="text-left text-sm hover:dark:bg-slate-800 hover:bg-slate-100 rounded-[14px]"
+          :class="{ 'dark:bg-slate-800 bg-slate-100': isSelected(option, i) }"
         >
           <button
             type="button"
@@ -143,7 +143,7 @@ const isSelected = (option: any, index: number) => {
   bottom: -2px;
   width: 2px;
   height: 2px;
-  @apply bg-slate-700;
+  @apply dark:bg-slate-700 bg-slate-150;
 }
 
 .adjuster:after {
@@ -153,6 +153,6 @@ const isSelected = (option: any, index: number) => {
   bottom: -2px;
   width: 2px;
   height: 2px;
-  @apply bg-slate-700;
+  @apply dark:bg-slate-700 bg-slate-150;
 }
 </style>

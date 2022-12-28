@@ -160,7 +160,7 @@ const onSubmit = handleSubmit(async () => {
         Top up your gas balance to trigger transactions.
       </h2>
       <span
-        class="whitespace-nowrap px-5 py-3 bg-slate-750 rounded-[30px] w-fit leading-5 mx-auto"
+        class="whitespace-nowrap px-5 py-3 dark:bg-slate-750 bg-slate-150 rounded-[30px] w-fit leading-5 mx-auto"
       >
         {{ formatDecimal(gasBalance, 2) }} USDC</span
       >
