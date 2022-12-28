@@ -167,12 +167,6 @@ const [transaction] = (await Promise.all([
 
       <div class="px-7.5 flex flex-col pt-6.5 gap-6.5">
         <div class="flex items-center">
-          <div class="text-slate-400 md:w-full md:max-w-[200px]">Value:</div>
-          <div class="capitalize">
-            {{ transaction.value }}
-          </div>
-        </div>
-        <div class="flex items-center">
           <div class="text-slate-400 md:w-full md:max-w-[200px]">
             Transaction Fee
           </div>
