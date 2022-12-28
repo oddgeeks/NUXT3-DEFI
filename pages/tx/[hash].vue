@@ -165,7 +165,7 @@ const [transaction] = (await Promise.all([
 
       <hr class="w-full dark:border-slate-800 border-slate-150" />
 
-      <div class="px-7.5 flex flex-col py-6.5 gap-6.5">
+      <div class="px-7.5 flex flex-col pt-6.5 gap-6.5">
         <div class="flex items-center">
           <div class="text-slate-400 md:w-full md:max-w-[200px]">Value:</div>
           <div class="capitalize">
@@ -181,19 +181,6 @@ const [transaction] = (await Promise.all([
               {{ formatUsd(transaction.fee) }}
             </span>
             <span v-else>-</span>
-          </div>
-        </div>
-      </div>
-
-      <hr class="w-full dark:border-slate-800 border-slate-150" />
-
-      <div class="px-7.5 flex flex-col pt-6.5 gap-6.5">
-        <div class="flex items-center">
-          <div class="text-slate-400 md:w-full md:max-w-[200px]">
-            Gas Price:
-          </div>
-          <div class="capitalize">
-            {{ transaction.gas_price }}
           </div>
         </div>
       </div>
