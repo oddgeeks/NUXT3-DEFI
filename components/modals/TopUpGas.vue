@@ -150,9 +150,9 @@ const onSubmit = handleSubmit(async () => {
 <template>
   <form @submit="onSubmit" class="space-y-[30px] text-center">
     <div
-      class="flex items-center mx-auto justify-center h-10 w-10 rounded-full bg-slate-800"
+      class="flex items-center mx-auto justify-center h-10 w-10 rounded-full dark:bg-slate-800 bg-slate-100"
     >
-      <GasSVG class="text-white" />
+      <GasSVG class=" text-slate-900 dark:text-white" />
     </div>
     <div class="flex gap-4 flex-col">
       <h1 class="text-lg leading-5">Gas Balance</h1>
