@@ -13,6 +13,7 @@ interface DialogModalProps {
   type?: "success" | "error" | "question";
   isButtonVisible?: boolean;
   buttonText?: string;
+  callback?: () => void;
 }
 
 export const showPendingTransactionModal = (
@@ -65,6 +66,7 @@ export const openDialogModal = ({
   type = "success",
   buttonText = "Okay",
   isButtonVisible = true,
+  callback = () => {},
 }: DialogModalProps) => {
   openModal(Dialog, {
     title,
@@ -72,5 +74,6 @@ export const openDialogModal = ({
     type,
     buttonText,
     isButtonVisible,
+    callback,
   });
 };
