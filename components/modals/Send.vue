@@ -196,7 +196,6 @@ const onSubmit = handleSubmit(async () => {
         <CommonInput
           :error-message="addressMeta.dirty ? errors['address'] : ''"
           name="address"
-          input-classes="peer"
           placeholder="Enter Address"
           v-model="address"
         >

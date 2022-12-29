@@ -14,6 +14,7 @@ const props = defineProps<{
   iconKey?: string;
   isValueIndex?: boolean;
   modelValue?: any;
+  containerClasses?: string;
 }>();
 
 onClickOutside(containerRef, () => {
@@ -77,7 +78,10 @@ const isSelected = (option: any, index: number) => {
       type="button"
       ref="button"
       @click="toggle()"
-      :class="{ 'border-b-transparent rounded-b-none adjuster': open }"
+      :class="[
+        { 'border-b-transparent rounded-b-none adjuster': open },
+        containerClasses,
+      ]"
       class="relative w-full flex items-center gap-2.5 max-h-12 rounded-2xl border-2 dark:border-slate-700 border-slate-150 bg-slate-50 dark:bg-gray-850 px-4 py-3 text-left"
     >
       <slot name="button-prefix">

@@ -178,7 +178,6 @@ const connect = async () => {
       name="uri"
       :error-message="uriMeta.dirty ? errors['uri'] : ''"
       v-model="uri"
-      input-classes="peer"
       placeholder="QR code or link"
     >
       <template #suffix>

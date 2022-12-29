@@ -33,7 +33,22 @@ export function useFormatter() {
     return formatter.format(value);
   }
 
+  function formatPercent(value, fractionDigits = 2, maxValue = null) {
+    if (isZero(value)) return "0.00%";
+
+    if (maxValue && gt(times(value, "100"), maxValue)) return `>${maxValue}%`;
+
+    const formatter = new Intl.NumberFormat("en-US", {
+      style: "percent",
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits,
+    });
+
+    return formatter.format(value);
+  }
+
   return {
     formatDecimal,
+    formatPercent,
   };
 }

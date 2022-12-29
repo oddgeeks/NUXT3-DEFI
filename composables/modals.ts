@@ -1,4 +1,5 @@
 import Bridge from "~~/components/modals/Bridge.vue";
+import Swap from "~~/components/modals/Swap.vue";
 import PendingTransaction from "~~/components/modals/PendingTransaction.vue";
 import Send from "~~/components/modals/Send.vue";
 import TopUpGas from "~~/components/modals/TopUpGas.vue";
@@ -29,6 +30,19 @@ export const showPendingTransactionModal = (
 export const openBridgeModal = (address: string, chainId: number | string) => {
   openModal(
     Bridge,
+    {
+      address,
+      chainId,
+    },
+    {
+      wrapperClass: "max-w-[600px]",
+    }
+  );
+};
+
+export const openSwapModal = (address: string, chainId: number | string) => {
+  openModal(
+    Swap,
     {
       address,
       chainId,

@@ -232,10 +232,15 @@ export function useNetworks() {
     await nextTick();
   };
 
+  const getNetworkByChainId = (chainId: number) => {
+    return networks.find((i) => i.chainId === Number(chainId))!;
+  };
+
   return {
     networks,
     providers,
     currentNetwork,
     switchNetworkByChainId,
+    getNetworkByChainId,
   };
 }
