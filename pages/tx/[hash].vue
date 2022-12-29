@@ -24,6 +24,7 @@ const [transaction] = (await Promise.all([
           </div>
           <div class="flex items-center space-x-2.5">
             <a
+              class="text-blue-500"
               :href="
                 getExplorerUrl(transaction.chain_id, `/tx/${transaction.hash}`)
               "
