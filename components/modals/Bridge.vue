@@ -20,9 +20,13 @@ const props = defineProps({
 });
 
 const { account } = useWeb3();
-const { switchNetworkByChainId } = useNetworks();
+const { switchNetworkByChainId, networks } = useNetworks();
 const { sendTransactions, safeAddress, tokenBalances } = useAvocadoSafe();
 const { fromWei } = useBignumber();
+
+const loading = ref(false);
+const modal = ref();
+
 const token = computed(
   () =>
     tokenBalances.value.find(
@@ -30,7 +34,7 @@ const token = computed(
     )!
 );
 
-const { handleSubmit, errors, meta, resetForm } = useForm({
+const { handleSubmit, errors, meta, resetForm, validate } = useForm({
   validationSchema: yup.object({
     amount: yup
       .string()
@@ -45,9 +49,6 @@ const { handleSubmit, errors, meta, resetForm } = useForm({
 });
 
 const { value: amount, meta: amountMeta } = useField<string>("amount");
-
-const result = ref(null);
-const txRoute = ref();
 
 const toAmount = computed(() =>
   formatDecimal(
@@ -65,39 +66,16 @@ const bridgeFee = computed(() =>
   )
 );
 
-const hasRouteEmpty = computed(
-  () =>  !txRoute.value && meta.value.valid && !loading
-);
-
 const setMax = () => {
   amount.value = token.value!.balance;
 };
 
 const bridgeToChainId = ref(props.chainId === "137" ? "10" : "137");
 
-const bridgeToTokenIndex = ref(0);
-const bridgeToTokens = ref<any[]>([]);
-const bridgeToToken = computed(() =>
-  bridgeToTokens.value.length
-    ? bridgeToTokens.value[bridgeToTokenIndex.value]
-    : null
-);
-
 const selectableChains = computed(() =>
-  [
-    {
-      value: 137,
-      label: "Polygon",
-    },
-    {
-      value: 10,
-      label: "Optimism",
-    },
-    {
-      value: 42161,
-      label: "Arbitrum",
-    },
-  ].filter((c) => String(c.value) !== props.chainId)
+  networks.filter(
+    (c) => String(c.chainId) !== props.chainId && c.chainId !== 75
+  )
 );
 
 watch(
@@ -108,94 +86,97 @@ watch(
   { immediate: true }
 );
 
-watch(
-  bridgeToChainId,
+const bridgeToToken = computed(() => {
+  return bridgeToTokens.value?.result?.find((t: any) =>
+    t.symbol.toLowerCase().includes(token.value.symbol.toLowerCase())
+  );
+});
+
+const { data: bridgeToTokens } = useAsyncData(
+  "bridge-tokens",
   async () => {
-    const { data } = await http.get(
+    const { data }: { data: IBridgeTokensResponse } = await http.get(
       "https://api.socket.tech/v2/token-lists/to-token-list",
       {
         headers: {
           "api-key": "645b2c8c-5825-4930-baf3-d9b997fcd88c",
         },
-
         params: {
           fromChainId: props.chainId,
           toChainId: bridgeToChainId.value,
         },
       }
     );
-    bridgeToTokens.value = data.result;
-
-    let index = data.result.findIndex((t: any) =>
-      t.symbol.toLowerCase().includes(token.value.symbol.toLowerCase())
-    );
-
-    bridgeToTokenIndex.value = index === -1 ? 0 : index;
+    return data;
   },
-  { immediate: true }
+  {
+    server: false,
+    immediate: true,
+    watch: [bridgeToChainId],
+  }
 );
 
-const fetchQuote = async () => {
-  try {
-    loading.value = true;
+const txRoute = computed(() => data.value?.result.routes[0] || null);
+
+const { data, error, pending } = useAsyncData(
+  "bridge-data",
+  async () => {
+    const { valid } = await validate();
+
+    if (!valid) return;
+
     const transferAmount = toBN(amount.value || "0")
       .times(10 ** bridgeToToken.value.decimals)
       .toFixed(0);
 
-    const { data } = await http.get("https://api.socket.tech/v2/quote", {
-      headers: {
-        "api-key": "645b2c8c-5825-4930-baf3-d9b997fcd88c",
-      },
+    const { data }: { data: IBridgeResponse } = await http.get(
+      "https://api.socket.tech/v2/quote",
+      {
+        headers: {
+          "api-key": "645b2c8c-5825-4930-baf3-d9b997fcd88c",
+        },
 
-      params: {
-        fromTokenAddress: token.value.address,
-        fromChainId: props.chainId,
-        toTokenAddress: bridgeToToken.value.address,
-        toChainId: bridgeToChainId.value,
-        fromAmount: transferAmount,
-        userAddress: safeAddress.value,
-        recipient: safeAddress.value,
-        singleTxOnly: true,
-      },
-    });
+        params: {
+          fromTokenAddress: token.value.address,
+          fromChainId: props.chainId,
+          toTokenAddress: bridgeToToken.value.address,
+          toChainId: bridgeToChainId.value,
+          fromAmount: transferAmount,
+          userAddress: safeAddress.value,
+          recipient: safeAddress.value,
+          singleTxOnly: true,
+        },
+      }
+    );
 
-    const {
-      result: { routes },
-    } = data;
+    if (!data.result.routes.length) {
+      throw new Error(
+        "We could not find any routes for your desired transfer."
+      );
+    }
 
-    result.value = data.result;
-    txRoute.value = routes.length ? routes[0] : null;
-  } finally {
-    loading.value = false;
+    return data;
+  },
+  {
+    server: false,
+    watch: [amount, bridgeToToken],
   }
-};
+);
 
-watch([amount, bridgeToChainId, bridgeToTokenIndex], async () => {
-  if (!bridgeToToken.value) {
-    return;
-  }
-  fetchQuote();
-});
-
-const loading = ref(false);
 const sendingDisabled = computed(
   () =>
     !token.value ||
     !account.value ||
     loading.value ||
+    pending.value ||
     !txRoute.value ||
     !meta.value.valid
 );
-
-const modal = ref();
 
 const onSubmit = handleSubmit(async () => {
   if (!txRoute.value) {
     return;
   }
-
-  loading.value = false;
-
   if (sendingDisabled.value) return;
 
   loading.value = true;
@@ -247,7 +228,7 @@ const onSubmit = handleSubmit(async () => {
     //   message: `${amount.value} ${token.value.symbol
     //     } sent to ${address.value}`,
     // });
-    resetForm()
+    resetForm();
     modal.value?.cancel();
 
     useModal().openModal(PendingBridgeTransaction, {
@@ -255,14 +236,13 @@ const onSubmit = handleSubmit(async () => {
       chainId: props.chainId,
     });
   } catch (e: any) {
-    console.log(e);
     openSnackbar({
-      message: e?.reason ||  "Something went wrong",
+      message: e?.error?.message || e?.reason || "Something went wrong",
       type: "error",
-    })
+    });
+  } finally {
+    loading.value = false;
   }
-
-  loading.value = false;
 });
 </script>
 
@@ -359,8 +339,8 @@ const onSubmit = handleSubmit(async () => {
                 <span class="text-sm">Network</span>
                 <CommonSelect
                   v-model="bridgeToChainId"
-                  value-key="value"
-                  label-key="label"
+                  value-key="chainId"
+                  label-key="name"
                   :options="selectableChains"
                 >
                   <template #button-prefix>
@@ -402,7 +382,7 @@ const onSubmit = handleSubmit(async () => {
       <CommonButton
         type="submit"
         :disabled="sendingDisabled"
-        :loading="loading"
+        :loading="loading || pending"
         class="justify-center w-full"
         size="lg"
       >
@@ -421,11 +401,11 @@ const onSubmit = handleSubmit(async () => {
         leave-to-class="transform opacity-0"
       >
         <div
-          v-if="hasRouteEmpty"
+          v-if="error"
           class="bg-orange-500 gap-[15px] w-full justify-center flex bg-opacity-10 text-orange-500 rounded-5 p-4 text-sm text-center"
         >
           <span class="text-xs self-center">
-            We could not find any routes for your desired transfer.
+            {{ error }}
           </span>
         </div>
       </Transition>

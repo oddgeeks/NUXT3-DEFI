@@ -139,7 +139,7 @@ const onSubmit = handleSubmit(async () => {
   } catch (e: any) {
     console.log(e);
     openSnackbar({
-      message: e?.reason || "Something went wrong",
+      message: e?.error?.message || e?.reason || "Something went wrong",
       type: "error",
     });
   }
