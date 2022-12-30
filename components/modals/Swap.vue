@@ -394,7 +394,7 @@ onMounted(() => {
                 </span>
               </div>
               <div class="flex justify-between text-sm items-center">
-                <span class="text-white">Price Impact</span>
+                <span >Price Impact</span>
                 <span class="text-green-500">
                   {{
                     formatPercent(
