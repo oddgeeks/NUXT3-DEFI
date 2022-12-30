@@ -19,7 +19,7 @@ const [transaction] = (await Promise.all([
     >
       <div class="flex flex-col gap-6.5 px-7.5">
         <div class="flex items-center">
-          <div class="text-slate-400 md:w-full md:max-w-[200px]">
+          <div class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]">
             Transaction Hash
           </div>
           <div class="flex items-center space-x-2.5">
@@ -36,7 +36,7 @@ const [transaction] = (await Promise.all([
         </div>
 
         <div class="flex items-center">
-          <div class="text-slate-400 md:w-full md:max-w-[200px]">
+          <div class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]">
             Broadcaster
           </div>
           <div class="flex items-center space-x-2.5">
@@ -57,12 +57,12 @@ const [transaction] = (await Promise.all([
         </div>
 
         <div class="flex items-center">
-          <div class="text-slate-400 md:w-full md:max-w-[200px]">Status</div>
+          <div class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]">Status</div>
           <TransactionStatus :status="transaction.status" />
         </div>
 
         <div class="flex items-center">
-          <div class="text-slate-400 md:w-full md:max-w-[200px]">Timestamp</div>
+          <div class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]">Timestamp</div>
           <div class="capitalize">
             {{ useTimeAgo(transaction.created_at).value }} ({{
               transaction.created_at
@@ -75,7 +75,7 @@ const [transaction] = (await Promise.all([
 
       <div class="px-7.5 py-6.5">
         <div class="flex items-center">
-          <div class="text-slate-400 md:w-full md:max-w-[200px]">Network</div>
+          <div class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]">Network</div>
           <div class="capitalize flex items-center">
             <ChainLogo class="w-5 h-5 mr-2.5" :chain="transaction.chain_id" />
 
@@ -88,7 +88,7 @@ const [transaction] = (await Promise.all([
 
       <div class="px-7.5 py-6.5 flex flex-col gap-6.5">
         <div class="flex items-center">
-          <div class="text-slate-400 md:w-full md:max-w-[200px]">Signer</div>
+          <div class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]">Signer</div>
 
           <div
             v-if="transaction.metadata.signer"
@@ -113,7 +113,7 @@ const [transaction] = (await Promise.all([
         </div>
 
         <div class="flex items-center">
-          <div class="text-slate-400 md:w-full md:max-w-[200px]">AvoSafe</div>
+          <div class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]">AvoSafe</div>
 
           <div
             v-if="transaction.metadata.safe"
@@ -142,7 +142,7 @@ const [transaction] = (await Promise.all([
 
       <div class="px-7.5 flex flex-col pt-6.5 gap-6.5">
         <div class="flex items-center">
-          <div class="text-slate-400 md:w-full md:max-w-[200px]">
+          <div class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]">
             Transaction Fee
           </div>
           <div class="capitalize">
