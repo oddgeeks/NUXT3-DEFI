@@ -30,7 +30,7 @@ const props = defineProps({
   },
 });
 
-const { tokenBalances, chainTokenBalances } = useAvocadoSafe();
+const { tokenBalances, chainTokenBalances, sendTransaction } = useAvocadoSafe();
 const { getNetworkByChainId } = useNetworks();
 const { account } = useWeb3();
 const { toWei, fromWei } = useBignumber();
@@ -73,12 +73,18 @@ const availableBuyTokens = computed(() => {
   return tokens.filter((t) => t.address !== sellToken.value.address);
 });
 
-const { handleSubmit, errors, meta, resetForm, validate } = useForm({
+const { handleSubmit, errors, meta, validate } = useForm({
+  initialValues: {
+    amount: undefined,
+    customSlippage: undefined,
+    slippage: "2",
+  },
   validationSchema: yup.object({
     amount: yup
       .string()
-      .required()
+      .required("Amount is required")
       .test("max-amount", "Insufficient balance", (value) => {
+        if (!value) return true;
         const sellToken = availableTokens.value.find(
           (t) => t.address === swap.value.sellToken.tokenAddress
         )!;
@@ -90,12 +96,7 @@ const { handleSubmit, errors, meta, resetForm, validate } = useForm({
       }),
     slippage: yup
       .string()
-      .required()
-      .test("slippage", "Slippage must be between 0.1% and 3%", (value) => {
-        const slippage = toBN(value);
-
-        return slippage.gte(0.1) && slippage.lte(3);
-      }),
+      .required(),
     customSlippage: yup
       .string()
       .test("slippage", "Slippage must be between 0.1% and 3%", (value) => {
@@ -109,14 +110,8 @@ const { handleSubmit, errors, meta, resetForm, validate } = useForm({
 });
 
 const { value: amount, meta: amountMeta } = useField<string>("amount");
-const { value: slippage, meta: slippageMeta } = useField<string>(
-  "slippage",
-  {},
-  {
-    initialValue: "2",
-  }
-);
-const { value: customSlippage, meta: customSlippageMeta } =
+const { value: slippage } = useField<string>("slippage");
+const { value: customSlippage, meta: slippageMeta } =
   useField<string>("customSlippage");
 
 const sellToken = computed(() => {
@@ -131,7 +126,9 @@ const buyToken = computed(() => {
   )!;
 });
 
-const sendingDisabled = computed(() => loading || pending);
+const sendingDisabled = computed(
+  () => loading.value || pending.value || !meta.value.valid
+);
 
 const { data: swapDetails, pending } = useAsyncData(
   "swap-details",
@@ -152,7 +149,7 @@ const { data: swapDetails, pending } = useAsyncData(
           maxSlippage: customSlippage.value || slippage.value,
           slippage: slippage.value,
           user: account.value,
-          access_token: "QBL73UaOjKmDkpempI9onHgIPtB2W4jSjXbcXCnHj3E=",
+          access_token: "hxBA1uxwaGWN0xcpPOncVJ3Tk7FdFxY7g3NX28R14C",
         },
       }
     );
@@ -218,7 +215,16 @@ const swapTokens = () => {
 
 const onSubmit = handleSubmit(async () => {
   loading.value = true;
+
+  if (!bestRoute.value?.data?.to) return;
+
   try {
+    await sendTransaction({
+      to: bestRoute.value?.data?.to,
+      data: bestRoute.value?.data.calldata,
+      value: bestRoute.value?.data.value,
+      chainId: +props.chainId,
+    });
   } catch (e: any) {
     openSnackbar({
       message: e?.error?.message || e?.reason || "Something went wrong",
@@ -259,11 +265,9 @@ onMounted(() => {
           <CommonInput
             transparent
             min="0.000001"
-            type="number"
             step="0.000001"
-            inputmode="decimal"
             placeholder="0.0"
-            name="sell-token"
+            name="amount"
             v-model="amount"
             class="flex-1"
             container-classes="!p-0"
@@ -286,7 +290,6 @@ onMounted(() => {
             </button>
           </div>
         </div>
-
         <span
           v-if="amountMeta.dirty && errors['amount']"
           class="text-xs flex gap-2 items-center text-left mt-2 text-red-alert"
@@ -295,7 +298,7 @@ onMounted(() => {
         >
         <button
           @click="swapTokens"
-          class="flex justify-center items-center absolute bg-slate-600 ring-[6px] ring-gray-950 rounded-full h-10 w-10 -bottom-[26px] left-1/2 -translate-x-1/2"
+          class="flex justify-center items-center absolute bg-slate-150 dark:bg-slate-600 ring-[6px] ring-white dark:ring-gray-950 rounded-full h-10 w-10 -bottom-[26px] left-1/2 -translate-x-1/2"
         >
           <RefreshSVG class="w-[18px] h-[18px]" />
         </button>
@@ -367,6 +370,13 @@ onMounted(() => {
                 </template>
               </CommonInput>
             </div>
+
+            <span
+              v-if="slippageMeta.dirty && errors['customSlippage']"
+              class="text-xs flex gap-2 items-center text-left mt-2 text-red-alert"
+            >
+              <SVGInfo /> {{ errors["customSlippage"] }}</span
+            >
 
             <div class="divider" />
 
