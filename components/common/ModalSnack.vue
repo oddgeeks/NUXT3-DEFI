@@ -9,7 +9,7 @@ const { options } = useModal();
     <div
       v-if="options.snackOptions.open"
       :class="options.snackOptions.type === 'error' ? 'bg-red-alert' : 'bg-green-400'"
-      class="absolute bottom-0 text-white rounded-b-7.5 min-h-[48px] flex-col w-full items-center justify-center flex gap-2 py-2"
+      class="absolute bottom-0 px-5 text-white rounded-b-7.5 min-h-[48px] flex-col w-full items-center justify-center flex gap-2 py-2"
     >
       <p class="text-xs flex gap-2">
         <SVGErrorCircle
