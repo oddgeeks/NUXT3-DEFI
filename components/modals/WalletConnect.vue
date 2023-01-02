@@ -201,6 +201,7 @@ const connect = async () => {
       <div class="w-10 h-10" v-if="connection.peerMeta.icons.length">
         <img
           class="w-full h-full object-fit"
+          referrerpolicy="no-referrer"
           :src="connection.peerMeta.icons[connection.peerMeta.icons.length - 1]"
         />
       </div>

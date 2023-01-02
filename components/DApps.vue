@@ -78,6 +78,7 @@ watch(
                 <img
                   v-if="session.peerMeta.icons.length"
                   class="w-full h-full object-fit rounded-[inherit]"
+                  referrerpolicy="no-referrer"
                   :src="
                     session.peerMeta.icons[session.peerMeta.icons.length - 1]
                   "
