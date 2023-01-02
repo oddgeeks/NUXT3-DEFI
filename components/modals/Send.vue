@@ -34,7 +34,7 @@ const { handleSubmit, errors, meta, resetForm } = useForm({
     amount: yup
       .string()
       .required()
-      .test("max-amount", 'Insufficient balance', (value) => {
+      .test("max-amount", "Insufficient balance", (value) => {
         const amount = toBN(value);
         const balance = toBN(token.value.balance);
 
@@ -58,13 +58,13 @@ const setMax = () => {
 
 const pasteAddress = async () => {
   try {
-     address.value = await navigator.clipboard.readText();
+    address.value = await navigator.clipboard.readText();
   } catch (e) {
-    console.log(e)
+    console.log(e);
     openSnackbar({
       message: "Please allow clipboard access",
       type: "error",
-    })
+    });
   }
 };
 
@@ -72,8 +72,7 @@ const sendingDisabled = computed(
   () => !token.value || loading.value || !meta.value.valid
 );
 
-
-const onSubmit = handleSubmit(async() => {
+const onSubmit = handleSubmit(async () => {
   if (!token.value) {
     return;
   }
@@ -125,16 +124,16 @@ const onSubmit = handleSubmit(async() => {
     //   message: `${amount.value} ${token.value.symbol
     //     } sent to ${address.value}`,
     // });
-    resetForm()
+    resetForm();
     modal.value?.cancel();
 
     showPendingTransactionModal(transactionHash, props.chainId);
   } catch (e: any) {
     console.log(e);
     openSnackbar({
-      message: e?.reason ||  "Something went wrong",
+      message: e?.error?.message || e?.reason || "Something went wrong",
       type: "error",
-    })
+    });
   }
 
   loading.value = false;
@@ -182,10 +181,7 @@ const onSubmit = handleSubmit(async() => {
           v-model="amount"
         >
           <template #suffix>
-            <button
-              class=" text-blue-500 hover:text-blue-500"
-              @click="setMax"
-            >
+            <button class="text-blue-500 hover:text-blue-500" @click="setMax">
               MAX
             </button>
           </template>
@@ -205,9 +201,7 @@ const onSubmit = handleSubmit(async() => {
           v-model="address"
         >
           <template #suffix>
-            <button
-              @click="pasteAddress"
-            >
+            <button @click="pasteAddress">
               <ClipboardSVG />
             </button>
           </template>
@@ -220,7 +214,7 @@ const onSubmit = handleSubmit(async() => {
     </div>
 
     <CommonButton
-       type="submit"
+      type="submit"
       :disabled="sendingDisabled"
       :loading="loading"
       class="justify-center w-full"

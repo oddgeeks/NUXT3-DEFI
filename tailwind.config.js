@@ -17,6 +17,10 @@ module.exports = {
       backgroundImage: {
         "dashed-pattern": `linear-gradient( to right, #E9EDF4 33%, rgba(255, 255, 255, 0) 0%);`,
         "dashed-pattern-dark": `linear-gradient( to right, #1e293b 33%, rgba(255, 255, 255, 0) 0%);`,
+        "navigation-pattern": `linear-gradient(270deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%);`,
+        "navigation-pattern-left": `linear-gradient(90deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%);`,
+        "navigation-pattern-dark": `linear-gradient(270deg, #111827 0%, rgba(17, 24, 39, 0) 100%);`,
+        "navigation-pattern-dark-left": `linear-gradient(90deg, #111827 0%, rgba(17, 24, 39, 0) 100%);`,
       },
       spacing: {
         5.5: "25px", // wrong? 22px

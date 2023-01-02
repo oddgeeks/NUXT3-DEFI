@@ -47,3 +47,33 @@ interface IAvocadoTransaction {
   created_at: string;
   updated_at: string;
 }
+
+interface IBridgeResponse {
+  success: boolean;
+  result: IBridgeResult;
+}
+
+interface IBridgeResult {
+  routes: Route[];
+  fromChainId: number;
+  fromAsset: FromAsset2;
+  toChainId: number;
+  toAsset: ToAsset3;
+  bridgeRouteErrors: BridgeRouteErrors;
+}
+
+interface IBridgeTokensResult {
+  name: string;
+  address: string;
+  icon: string;
+  decimals: number;
+  symbol: string;
+  chainId: number;
+  logoURI: string;
+  chainAgnosticId: string;
+}
+
+interface IBridgeTokensResponse {
+  success: boolean;
+  result: Result[];
+}

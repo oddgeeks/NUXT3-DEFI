@@ -111,7 +111,7 @@ watch(
         class="navigation-pattern absolute right-0 pr-[15px] h-full pointer-events-none"
       >
         <button @click="x += 300" class="arrow-btn ml-auto">
-          <ArrowRight />
+          <ArrowRight class="w-4 h-4" />
         </button>
       </div>
     </div>
@@ -130,16 +130,15 @@ watch(
 
 <style scoped>
 .navigation-pattern {
-  @apply flex items-center;
-  background: linear-gradient(-180deg, #111827 0%, rgba(17, 24, 39, 0) 100%);
+  @apply flex items-center bg-navigation-pattern dark:bg-navigation-pattern-dark;
   width: 200px;
 }
 
 .navigation-pattern.left {
-  background: linear-gradient(90deg, #111827 0%, rgba(17, 24, 39, 0) 100%);
+  @apply dark:bg-navigation-pattern-dark-left bg-navigation-pattern-left;
 }
 
 .arrow-btn {
-  @apply pointer-events-auto flex items-center justify-center h-[30px] w-[30px] bg-slate-750 rounded-full;
+  @apply pointer-events-auto flex items-center justify-center h-7.5 w-7.5 bg-slate-150 dark:bg-slate-750 rounded-full;
 }
 </style>
