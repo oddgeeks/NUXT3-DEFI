@@ -221,21 +221,22 @@ const onSubmit = handleSubmit(async () => {
   const erc20 = Erc20__factory.connect(address, getRpcProvider(props.chainId));
 
   try {
-    const { data } = await erc20.populateTransaction.approve(
-      address,
-      bestRoute.value.data.sellTokenAmount
-    );
+    if (token.value.address !== "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE") {
+      const { data } = await erc20.populateTransaction.approve(
+        address,
+        bestRoute.value.data.sellTokenAmount
+      );
 
-    txs.push({
-      to: token.value.address,
-      data,
-    });
+      txs.push({
+        to: token.value.address,
+        data,
+      });
+    }
 
     txs.push({
       to: bestRoute.value?.data?.to,
       data: bestRoute.value?.data.calldata,
       value: bestRoute.value?.data.value,
-      chainId: +props.chainId,
     });
 
     const transactionHash = await sendTransactions(txs, +props.chainId);
@@ -263,90 +264,46 @@ onMounted(() => {
     <div class="flex justify-center flex-col items-center">
       <div class="flex flex-col gap-[14px]">
         <h2 class="text-lg leading-5 text-center">Swap</h2>
-        <div
-          class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5"
-        >
+        <div class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5">
           <ChainLogo class="w-5 h-5" :chain="token.chainId" />
-          <span class="text-xs text-slate-400 leading-5"
-            >{{ chainIdToName(token.chainId) }} Network</span
-          >
+          <span class="text-xs text-slate-400 leading-5">{{ chainIdToName(token.chainId) }} Network</span>
         </div>
       </div>
     </div>
 
     <div class="flex flex-col gap-4">
-      <div
-        class="py-4 px-5 relative dark:bg-slate-800 bg-slate-100 rounded-5 flex flex-col gap-4"
-      >
+      <div class="py-4 px-5 relative dark:bg-slate-800 bg-slate-100 rounded-5 flex flex-col gap-4">
         <div class="flex">
-          <CommonInput
-            transparent
-            min="0.000001"
-            step="0.000001"
-            placeholder="0.0"
-            name="amount"
-            v-model="amount"
-            class="flex-1"
-            container-classes="!p-0"
-          />
-          <CommonSelect
-            class="basis-40"
-            v-model="swap.sellToken.tokenAddress"
-            iconKey="logoURI"
-            value-key="address"
-            label-key="name"
-            :options="availableTokens"
-          />
+          <CommonInput transparent min="0.000001" step="0.000001" placeholder="0.0" name="amount" v-model="amount"
+            class="flex-1" container-classes="!p-0" />
+          <CommonSelect class="basis-40" v-model="swap.sellToken.tokenAddress" iconKey="logoURI" value-key="address"
+            label-key="name" :options="availableTokens" />
         </div>
         <div class="flex justify-between items-center text-sm text-slate-400">
           <span>{{ formatUsd(sellTokenInUsd) }}</span>
           <div class="flex items-center gap-2.5">
             <span>{{ sellToken?.balance }} {{ sellToken?.symbol }}</span>
-            <button
-              type="button"
-              @click="amount = sellToken?.balance"
-              class="text-blue-500"
-            >
+            <button type="button" @click="amount = sellToken?.balance" class="text-blue-500">
               MAX
             </button>
           </div>
         </div>
-        <span
-          v-if="amountMeta.dirty && errors['amount']"
-          class="text-xs flex gap-2 items-center text-left mt-2 text-red-alert"
-        >
-          <SVGInfo /> {{ errors["amount"] }}</span
-        >
-        <button
-          type="button"
-          @click="swapTokens"
-          class="flex justify-center items-center absolute bg-slate-150 dark:bg-slate-600 ring-[6px] ring-white dark:ring-gray-950 rounded-full h-10 w-10 -bottom-[26px] left-1/2 -translate-x-1/2"
-        >
+        <span v-if="amountMeta.dirty && errors['amount']"
+          class="text-xs flex gap-2 items-center text-left mt-2 text-red-alert">
+          <SVGInfo /> {{ errors["amount"] }}
+        </span>
+        <button type="button" @click="swapTokens"
+          class="flex justify-center items-center absolute bg-slate-150 dark:bg-slate-600 ring-[6px] ring-white dark:ring-gray-950 rounded-full h-10 w-10 -bottom-[26px] left-1/2 -translate-x-1/2">
           <RefreshSVG class="w-[18px] h-[18px]" />
         </button>
       </div>
 
-      <div
-        class="py-4 px-5 dark:bg-slate-800 bg-slate-100 rounded-5 flex flex-col gap-4"
-      >
+      <div class="py-4 px-5 dark:bg-slate-800 bg-slate-100 rounded-5 flex flex-col gap-4">
         <div class="flex">
-          <CommonInput
-            transparent
-            readonly
-            placeholder="0.0"
-            name="buy-token"
-            :model-value="buyTokenAmount.toFixed(3)"
-            class="flex-1"
-            container-classes="!p-0"
-          />
-          <CommonSelect
-            class="basis-40"
-            v-model="swap.buyToken.tokenAddress"
-            iconKey="logoURI"
-            value-key="address"
-            label-key="name"
-            :options="availableBuyTokens"
-          />
+          <CommonInput transparent readonly placeholder="0.0" name="buy-token" :model-value="buyTokenAmount.toFixed(3)"
+            class="flex-1" container-classes="!p-0" />
+          <CommonSelect class="basis-40" v-model="swap.buyToken.tokenAddress" iconKey="logoURI" value-key="address"
+            label-key="name" :options="availableBuyTokens" />
         </div>
         <div class="flex justify-between items-center text-sm text-slate-400">
           <span>{{ formatUsd(buyTokenAmountInUsd, 6) }}</span>
@@ -361,51 +318,30 @@ onMounted(() => {
             <div class="flex flex-1 gap-4 items-end">
               <div class="flex flex-col gap-2.5 flex-1">
                 <span class="text-sm font-semibold">Slippage</span>
-                <CommonSelect
-                  v-model="slippage"
-                  value-key="value"
-                  label-key="label"
-                  :container-classes="!customSlippage ? '!border-blue-500' : ''"
-                  :options="slippages"
-                >
+                <CommonSelect v-model="slippage" value-key="value" label-key="label"
+                  :container-classes="!customSlippage ? '!border-blue-500' : ''" :options="slippages">
                   <template #button-prefix>
-                    <div
-                      :class="{ '!border-blue-500': !customSlippage }"
-                      class="radio !mr-0"
-                    ></div>
+                    <div :class="{ '!border-blue-500': !customSlippage }" class="radio !mr-0"></div>
                   </template>
                 </CommonSelect>
               </div>
-              <CommonInput
-                name="slippage"
-                placeholder="Custom"
-                input-classes="!py-3"
-                class="flex-1"
-                :container-classes="customSlippage ? '!ring-blue-500' : ''"
-                v-model="customSlippage"
-              >
+              <CommonInput name="slippage" placeholder="Custom" input-classes="!py-3" class="flex-1"
+                :container-classes="customSlippage ? '!ring-blue-500' : ''" v-model="customSlippage">
                 <template #prefix>
-                  <div
-                    :class="{ '!border-blue-500': customSlippage }"
-                    class="radio"
-                  ></div>
+                  <div :class="{ '!border-blue-500': customSlippage }" class="radio"></div>
                 </template>
               </CommonInput>
             </div>
 
-            <span
-              v-if="slippageMeta.dirty && errors['customSlippage']"
-              class="text-xs flex gap-2 items-center text-left mt-2 text-red-alert"
-            >
-              <SVGInfo /> {{ errors["customSlippage"] }}</span
-            >
+            <span v-if="slippageMeta.dirty && errors['customSlippage']"
+              class="text-xs flex gap-2 items-center text-left mt-2 text-red-alert">
+              <SVGInfo /> {{ errors["customSlippage"] }}
+            </span>
 
             <div class="divider" />
 
             <div class="flex flex-col gap-4">
-              <div
-                class="flex text-slate-400 uppercase text-sm justify-between items-center"
-              >
+              <div class="flex text-slate-400 uppercase text-sm justify-between items-center">
                 <span>
                   1 {{ sellToken?.symbol }} = {{ buyTokenAmountPerSellToken }}
                   {{ buyToken?.symbol }}
@@ -419,11 +355,10 @@ onMounted(() => {
                 <span>Price Impact</span>
                 <span class="text-green-500">
                   {{
-                    formatPercent(
-                      toBN(bestRoute?.data.priceImpact || 0).negated()
-                    )
-                  }}</span
-                >
+  formatPercent(
+    toBN(bestRoute?.data.priceImpact || 0).negated()
+)
+                  }}</span>
               </div>
             </div>
           </div>
@@ -431,13 +366,8 @@ onMounted(() => {
       </div>
     </div>
     <div class="flex gap-4 flex-col">
-      <CommonButton
-        type="submit"
-        :disabled="sendingDisabled"
-        :loading="isSubmitting || pending"
-        class="justify-center w-full"
-        size="lg"
-      >
+      <CommonButton type="submit" :disabled="sendingDisabled" :loading="isSubmitting || pending"
+        class="justify-center w-full" size="lg">
         Swap
       </CommonButton>
     </div>
@@ -446,7 +376,7 @@ onMounted(() => {
 
 <style scoped>
 .divider {
-  @apply bg-dashed-pattern dark:bg-dashed-pattern-dark;
+  @apply bg-dashed-pattern dark: bg-dashed-pattern-dark;
   background-position: bottom;
   background-size: 21px 2px;
   background-repeat: repeat-x;
@@ -456,18 +386,18 @@ onMounted(() => {
 }
 
 .divider:after {
-  @apply w-5 h-5 rounded-full absolute top-1/2 -right-10 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-950 bg-white;
+  @apply w-5 h-5 rounded-full absolute top-1/2 -right-10 -translate-x-1/2 -translate-y-1/2 dark: bg-gray-950 bg-white;
   content: "";
   display: block;
 }
 
 .divider:before {
-  @apply w-5 h-5 rounded-full absolute top-1/2 -left-5 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-950 bg-white;
+  @apply w-5 h-5 rounded-full absolute top-1/2 -left-5 -translate-x-1/2 -translate-y-1/2 dark: bg-gray-950 bg-white;
   content: "";
   display: block;
 }
 
 .radio {
-  @apply w-5 h-5 rounded-full border-[6.5px] dark:border-slate-600 mr-3 border-slate-300 shrink-0;
+  @apply w-5 h-5 rounded-full border-[6.5px] dark: border-slate-600 mr-3 border-slate-300 shrink-0;
 }
 </style>
