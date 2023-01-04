@@ -155,7 +155,7 @@ export function useNetworks() {
     },
     {
       name: "Gnosis",
-      chainId: 1,
+      chainId: 100,
       icon: SVGPolygon,
       params: {
         chainName: "Gnosis Safe",
