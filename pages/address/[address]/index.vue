@@ -61,7 +61,8 @@ const { data: transactions } = useAsyncData(
             </thead>
             <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
               <tr
-                class="text-sm relative"
+                @click="navigateTo(`/tx/${transaction.hash}`)"
+                class="text-sm relative cursor-pointer"
                 v-for="transaction in transactions?.data"
               >
                 <td>
