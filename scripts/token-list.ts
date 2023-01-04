@@ -2,6 +2,7 @@ import { $fetch } from "ohmyfetch"
 import { writeJson, existsSync } from "fs-extra"
 import { resolve } from "path"
 import { ethers } from 'ethers';
+import { StaticJsonRpcRetryProvider } from '@instadapp/utils';
 import dotenv from "dotenv"
 dotenv.config()
 
@@ -19,11 +20,20 @@ const RPC_URLS: { [chainId: number]: string } = {
     56: 'https://rpc.ankr.com/bsc',
 };
 
-const rpcInstances: Record<string, ethers.providers.JsonRpcProvider> = {}
+const nativeTokenIdChainIdsMapping: { [coinId: string]: number[] } = {
+    "ethereum": [1, 10, 42161],
+    "matic-network": [137],
+    "avalanche-2": [43114],
+    "fantom": [250],
+    "xdai": [100],
+    "binancecoin": [56],
+}
+
+const rpcInstances: Record<string, StaticJsonRpcRetryProvider> = {}
 
 const getRpcProvider = (chainId: number | string) => {
     if (!rpcInstances[chainId]) {
-        rpcInstances[chainId] = new ethers.providers.JsonRpcProvider(RPC_URLS[Number(chainId)])
+        rpcInstances[chainId] = new StaticJsonRpcRetryProvider(RPC_URLS[Number(chainId)])
     }
 
     return rpcInstances[chainId]
@@ -45,8 +55,16 @@ const platformIdChainIdMap = platforms.reduce((acc, curr) => {
 }, {} as Record<string, number>)
 
 const coinIds = [
-    "usd-coin",
+    // native
     "ethereum",
+    "matic-network",
+    "ethereum",
+    "avalanche-2",
+    "fantom",
+    "xdai",
+    "binancecoin",
+
+    "usd-coin",
     "dai",
     "tether",
     "weth",
@@ -55,7 +73,6 @@ const coinIds = [
     "compound",
     "lido-staked-ether",
     "aave",
-    "polygon",
     "liquity",
     "euro-coin",
     "chainlink",
@@ -125,6 +142,21 @@ const getTokens = async () => {
             logoURI = coinData && coinData.image ? coinData.image.large : ''
         }
 
+        const nativeChainIds = nativeTokenIdChainIdsMapping[coin.id]
+
+        if (nativeChainIds) {
+            for (const chainId of nativeChainIds) {
+                tokens.push({
+                    chainId,
+                    address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+                    name: coin.name,
+                    symbol: coin.symbol,
+                    decimals: 18,
+                    logoURI,
+                })
+            }
+        }
+
         for (const platformId in coin.platforms) {
             try {
                 let chainId = platformIdChainIdMap[platformId];
@@ -133,22 +165,29 @@ const getTokens = async () => {
                     continue
                 }
 
-                let contract = new ethers.Contract(
-                    coin.platforms[platformId],
-                    [
-                        "function decimals() view returns (uint8)",
-                    ],
-                    getRpcProvider(chainId)
-                );
+                if(nativeChainIds && nativeChainIds.includes(chainId)) {
+                    continue
+                }
 
-                tokens.push({
-                    chainId,
-                    address: coin.platforms[platformId],
-                    name: coin.name,
-                    symbol: coin.symbol,
-                    decimals: await contract.decimals(),
-                    logoURI,
-                })
+                if (coin.platforms[platformId]) {
+                    let contract = new ethers.Contract(
+                        coin.platforms[platformId],
+                        [
+                            "function decimals() view returns (uint8)",
+                        ],
+                        getRpcProvider(chainId)
+                    );
+
+                    tokens.push({
+                        chainId,
+                        address: coin.platforms[platformId],
+                        name: coin.name,
+                        symbol: coin.symbol,
+                        decimals: await contract.decimals(),
+                        logoURI,
+                    })
+                }
+
             } catch (error) {
                 console.log(error)
             }

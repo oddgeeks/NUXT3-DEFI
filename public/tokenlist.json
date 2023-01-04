@@ -5,7 +5,7 @@
 		"avocado",
 		"defi"
 	],
-	"timestamp": "2022-12-26T17:07:13.838Z",
+	"timestamp": "2023-01-03T10:56:43.267Z",
 	"tokens": [
 		{
 			"chainId": 1,
@@ -112,6 +112,14 @@
 			"logoURI": "https://avocado.link/tokens/ageur.svg"
 		},
 		{
+			"chainId": 43114,
+			"address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+			"name": "Avalanche",
+			"symbol": "avax",
+			"decimals": 18,
+			"logoURI": "https://avocado.link/tokens/avalanche-2.svg"
+		},
+		{
 			"chainId": 1,
 			"address": "0xba100000625a3754423978a60c9317c58a424e3d",
 			"name": "Balancer",
@@ -142,6 +150,14 @@
 			"symbol": "bal",
 			"decimals": 18,
 			"logoURI": "https://avocado.link/tokens/balancer.svg"
+		},
+		{
+			"chainId": 56,
+			"address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+			"name": "BNB",
+			"symbol": "bnb",
+			"decimals": 18,
+			"logoURI": "https://avocado.link/tokens/binancecoin.svg"
 		},
 		{
 			"chainId": 1,
@@ -361,6 +377,30 @@
 		},
 		{
 			"chainId": 1,
+			"address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+			"name": "Ethereum",
+			"symbol": "eth",
+			"decimals": 18,
+			"logoURI": "https://avocado.link/tokens/ethereum.svg"
+		},
+		{
+			"chainId": 10,
+			"address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+			"name": "Ethereum",
+			"symbol": "eth",
+			"decimals": 18,
+			"logoURI": "https://avocado.link/tokens/ethereum.svg"
+		},
+		{
+			"chainId": 42161,
+			"address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+			"name": "Ethereum",
+			"symbol": "eth",
+			"decimals": 18,
+			"logoURI": "https://avocado.link/tokens/ethereum.svg"
+		},
+		{
+			"chainId": 1,
 			"address": "0xc18360217d8f7ab5e7c516566761ea12ce7f9d72",
 			"name": "Ethereum Name Service",
 			"symbol": "ens",
@@ -382,6 +422,14 @@
 			"symbol": "euroc",
 			"decimals": 6,
 			"logoURI": "https://avocado.link/tokens/euro-coin.svg"
+		},
+		{
+			"chainId": 250,
+			"address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+			"name": "Fantom",
+			"symbol": "ftm",
+			"decimals": 18,
+			"logoURI": "https://avocado.link/tokens/fantom.svg"
 		},
 		{
 			"chainId": 1,
@@ -598,6 +646,30 @@
 			"symbol": "mkr",
 			"decimals": 18,
 			"logoURI": "https://avocado.link/tokens/maker.svg"
+		},
+		{
+			"chainId": 137,
+			"address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+			"name": "Polygon",
+			"symbol": "matic",
+			"decimals": 18,
+			"logoURI": "https://avocado.link/tokens/matic-network.svg"
+		},
+		{
+			"chainId": 1,
+			"address": "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0",
+			"name": "Polygon",
+			"symbol": "matic",
+			"decimals": 18,
+			"logoURI": "https://avocado.link/tokens/matic-network.svg"
+		},
+		{
+			"chainId": 56,
+			"address": "0xcc42724c6683b7e57334c4e856f4c9965ed682bd",
+			"name": "Polygon",
+			"symbol": "matic",
+			"decimals": 18,
+			"logoURI": "https://avocado.link/tokens/matic-network.svg"
 		},
 		{
 			"chainId": 1,
@@ -1078,6 +1150,14 @@
 			"symbol": "wsteth",
 			"decimals": 18,
 			"logoURI": "https://avocado.link/tokens/wrapped-steth.svg"
+		},
+		{
+			"chainId": 100,
+			"address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+			"name": "XDAI",
+			"symbol": "xdai",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/11062/large/Identity-Primary-DarkBG.png?1638372986"
 		},
 		{
 			"chainId": 1,
