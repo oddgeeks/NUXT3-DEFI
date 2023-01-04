@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { Line } from "vue-chartjs";
 import { IBalance } from "~/stores/safe";
+import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
 import BridgeSVG from "~/assets/images/icons/bridge.svg?component";
+import RefreshSVG from "~/assets/images/icons/refresh.svg?component";
 
 const props = defineProps<{
   tokenBalance: IBalance;
@@ -130,20 +132,52 @@ const chartOptions = {
     </td>
     <td class="text-right px-7.5 py-6">
       <div class="flex items-center space-x-3">
-        <CommonButton
+        <!-- <CommonButton
           :disabled="isZero(tokenBalance.balance)"
           @click="openSendModal(tokenBalance.address, tokenBalance.chainId)"
         >
-          Send
+        </CommonButton> -->
+
+        <CommonButton
+          v-tippy="{
+            arrow: true,
+            arrowType: 'round',
+            animation: 'fade',
+            content: 'Send',
+          }"
+          :disabled="isZero(tokenBalance.balance)"
+          class="!h-9 !w-9 !p-0 items-center justify-center"
+          @click="openSendModal(tokenBalance.address, tokenBalance.chainId)"
+        >
+          <ArrowRight class="-rotate-45" />
         </CommonButton>
 
         <CommonButton
-          v-tippy="{ arrow: true, arrowType: 'round', animation: 'fade', content: 'Bridge' }"
+          v-tippy="{
+            arrow: true,
+            arrowType: 'round',
+            animation: 'fade',
+            content: 'Bridge',
+          }"
           :disabled="isZero(tokenBalance.balance)"
-          class="!p-[5.5px]"
+          class="!h-9 !w-9 !p-0 items-center justify-center"
           @click="openBridgeModal(tokenBalance.address, tokenBalance.chainId)"
         >
           <BridgeSVG />
+        </CommonButton>
+
+        <CommonButton
+          v-tippy="{
+            arrow: true,
+            arrowType: 'round',
+            animation: 'fade',
+            content: 'Swap',
+          }"
+          :disabled="isZero(tokenBalance.balance)"
+          class="!h-9 !w-9 !p-0 items-center justify-center"
+          @click="openSwapModal(tokenBalance.address, tokenBalance.chainId)"
+        >
+          <RefreshSVG />
         </CommonButton>
       </div>
     </td>

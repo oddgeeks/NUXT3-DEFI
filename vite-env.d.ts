@@ -77,3 +77,137 @@ interface IBridgeTokensResponse {
   success: boolean;
   result: Result[];
 }
+
+interface ISellToken {
+  name: string;
+  address: string;
+  decimals: number;
+  symbol: string;
+  chainId: string;
+  price: number;
+  verified: boolean;
+  coingeckoId: string;
+  sparklinePrice7d: number[];
+}
+
+interface IBuyToken {
+  name: string;
+  address: string;
+  decimals: number;
+  symbol: string;
+  chainId: string;
+  price: number;
+  verified: boolean;
+  coingeckoId: string;
+  sparklinePrice7d: number[];
+}
+
+interface IData {
+  sellToken: ISellToken;
+  buyToken: IBuyToken;
+  sellTokenAmount: string;
+  buyTokenAmount: string;
+  slippage: number;
+  maxSlippage: number;
+  minBuyAmountSlippage: string;
+  totalAggregators: number;
+  bestBuyTokenAmount: string;
+  worstBuyTokenAmount: string;
+  avgBuyTokenAmount: string;
+}
+
+interface IConnector {
+  name: string;
+  calldata: string;
+}
+
+interface ISellToken2 {
+  name: string;
+  address: string;
+  decimals: number;
+  symbol: string;
+  chainId: string;
+  price: number;
+  verified: boolean;
+  coingeckoId: string;
+  sparklinePrice7d: number[];
+}
+
+interface IBuyToken2 {
+  name: string;
+  address: string;
+  decimals: number;
+  symbol: string;
+  chainId: string;
+  price: number;
+  verified: boolean;
+  coingeckoId: string;
+  sparklinePrice7d: number[];
+}
+
+interface IFromToken {
+  symbol: string;
+  name: string;
+  address: string;
+  decimals: number;
+  logoURI: string;
+  eip2612: boolean;
+  domainVersion: string;
+  tags: string[];
+}
+
+interface IToToken {
+  symbol: string;
+  name: string;
+  decimals: number;
+  address: string;
+  logoURI: string;
+  eip2612: boolean;
+  tags: string[];
+}
+
+interface ITx {
+  from: string;
+  to: string;
+  data: string;
+  value: string;
+  gas: number;
+  gasPrice: string;
+}
+
+interface IRaw {
+  fromToken: IFromToken;
+  toToken: IToToken;
+  toTokenAmount: string;
+  fromTokenAmount: string;
+  protocols: any[];
+  tx: ITx;
+}
+
+interface IData2 {
+  sellToken: ISellToken2;
+  buyToken: IBuyToken2;
+  sellTokenAmount: string;
+  buyTokenAmount: string;
+  unitAmt: string;
+  to: string;
+  allowanceSpender: string;
+  calldata: string;
+  gas: string;
+  gasPrice: string;
+  value: string;
+  slippage: string;
+  priceImpact: string;
+  raw: IRaw;
+}
+
+interface IAggregator {
+  name: string;
+  connector: IConnector;
+  data: IData2;
+}
+
+interface ISwapResponse {
+  data: IData;
+  aggregators: IAggregator[];
+}

@@ -1,49 +1,68 @@
 import { storeToRefs } from "pinia";
-import { createSafe } from "@instadapp/avocado"
+import { createSafe } from "@instadapp/avocado";
 
 export const useAvocadoSafe = () => {
-    const { switchNetworkByChainId } = useNetworks()
-    const { library } = useWeb3()
+  const { switchNetworkByChainId } = useNetworks();
+  const { library } = useWeb3();
 
-    // check if we have a cached safe address
-    const { safeAddress, tokenBalances, totalBalance } = storeToRefs(useSafe())
+  // check if we have a cached safe address
+  const { safeAddress, tokenBalances, totalBalance, chainTokenBalances } =
+    storeToRefs(useSafe());
 
-    const safe = shallowRef<ReturnType<typeof createSafe>>()
-    const signer = computed(() => safe.value ? safe.value.getSigner(): null)
+  const safe = shallowRef<ReturnType<typeof createSafe>>();
+  const signer = computed(() => (safe.value ? safe.value.getSigner() : null));
 
-    watch(library, () => {
-        safe.value = library.value ? createSafe(library.value.getSigner()) : undefined
-    }, { immediate: true })
+  watch(
+    library,
+    () => {
+      safe.value = library.value
+        ? createSafe(library.value.getSigner())
+        : undefined;
+    },
+    { immediate: true }
+  );
 
-    const sendTransaction = async (transaction: { to: string, value?: string, data?: string, chainId: number }) => {
-        await switchNetworkByChainId(75);
+  const sendTransaction = async (transaction: {
+    to: string;
+    value?: string;
+    data?: string;
+    chainId: number;
+  }) => {
+    await switchNetworkByChainId(75);
 
-        if (!signer.value) {
-            throw new Error("Safe not initialized");
-        }
-
-        const tx = await signer.value.sendTransaction(transaction)
-
-        return tx.hash!
+    if (!signer.value) {
+      throw new Error("Safe not initialized");
     }
 
-    const sendTransactions = async (transactions: { to: string, value?: string, data?: string }[], chainId: number) => {
-        await switchNetworkByChainId(75);
+    const tx = await signer.value.sendTransaction(transaction);
 
-        if (!signer.value) {
-            throw new Error("Safe not initialized");
-        }
+    return tx.hash!;
+  };
 
-        const tx = await signer.value.sendTransactions(transactions, Number(chainId))
+  const sendTransactions = async (
+    transactions: { to: string; value?: string; data?: string }[],
+    chainId: number
+  ) => {
+    await switchNetworkByChainId(75);
 
-        return tx.hash!
+    if (!signer.value) {
+      throw new Error("Safe not initialized");
     }
 
-    return {
-        tokenBalances,
-        totalBalance,
-        safeAddress,
-        sendTransaction,
-        sendTransactions,
-    }
-}
+    const tx = await signer.value.sendTransactions(
+      transactions,
+      Number(chainId)
+    );
+
+    return tx.hash!;
+  };
+
+  return {
+    tokenBalances,
+    totalBalance,
+    safeAddress,
+    sendTransaction,
+    sendTransactions,
+    chainTokenBalances,
+  };
+};

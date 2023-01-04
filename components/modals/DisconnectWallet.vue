@@ -20,7 +20,7 @@ const disconnectWallet = async () => {
 <template>
   <div>
     <div class="inline-flex flex-col items-center">
-      <img height="40" width="40" class="w-10 h-10" :src="icon" />
+      <img referrerpolicy="no-referrer" height="40" width="40" class="w-10 h-10" :src="icon" />
 
       <div class="text-lg text-center my-4">
         {{ props.session.peerMeta.name }} <span class="text-green-400">Connected</span>
