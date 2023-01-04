@@ -191,6 +191,7 @@ interface IData2 {
   buyTokenAmount: string;
   unitAmt: string;
   to: string;
+  allowanceSpender: string;
   calldata: string;
   gas: string;
   gasPrice: string;

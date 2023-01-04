@@ -223,7 +223,7 @@ const onSubmit = handleSubmit(async () => {
   try {
     if (token.value.address !== "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE") {
       const { data } = await erc20.populateTransaction.approve(
-        address,
+        bestRoute.value?.allowanceSpender || address,
         bestRoute.value.data.sellTokenAmount
       );
 
