@@ -376,7 +376,7 @@ onMounted(() => {
 
 <style scoped>
 .divider {
-  @apply bg-dashed-pattern dark: bg-dashed-pattern-dark;
+  @apply bg-dashed-pattern dark:bg-dashed-pattern-dark;
   background-position: bottom;
   background-size: 21px 2px;
   background-repeat: repeat-x;
@@ -386,18 +386,18 @@ onMounted(() => {
 }
 
 .divider:after {
-  @apply w-5 h-5 rounded-full absolute top-1/2 -right-10 -translate-x-1/2 -translate-y-1/2 dark: bg-gray-950 bg-white;
+  @apply w-5 h-5 rounded-full absolute top-1/2 -right-10 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-950 bg-white;
   content: "";
   display: block;
 }
 
 .divider:before {
-  @apply w-5 h-5 rounded-full absolute top-1/2 -left-5 -translate-x-1/2 -translate-y-1/2 dark: bg-gray-950 bg-white;
+  @apply w-5 h-5 rounded-full absolute top-1/2 -left-5 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-950 bg-white;
   content: "";
   display: block;
 }
 
 .radio {
-  @apply w-5 h-5 rounded-full border-[6.5px] dark: border-slate-600 mr-3 border-slate-300 shrink-0;
+  @apply w-5 h-5 rounded-full border-[6.5px] dark:border-slate-600 mr-3 border-slate-300 shrink-0;
 }
 </style>
