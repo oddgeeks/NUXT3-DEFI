@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Erc20__factory } from "~~/contracts";
 import { useField, useForm } from "vee-validate";
 import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
 import RefreshSVG from "~/assets/images/icons/refresh.svg?component";
@@ -30,12 +31,13 @@ const props = defineProps({
   },
 });
 
-const { tokenBalances, chainTokenBalances, sendTransaction } = useAvocadoSafe();
+const { tokenBalances, chainTokenBalances, sendTransactions } =
+  useAvocadoSafe();
 const { getNetworkByChainId } = useNetworks();
 const { account } = useWeb3();
 const { toWei, fromWei } = useBignumber();
 const { formatPercent } = useFormatter();
-
+const { closeModal } = useModal();
 const slippages = [
   { value: "0.1", label: "0.1%" },
   { value: "0.5", label: "0.5%" },
@@ -43,8 +45,6 @@ const slippages = [
   { value: "2", label: "2%" },
   { value: "3", label: "3%" },
 ];
-
-const loading = ref(false);
 
 const token = computed(
   () =>
@@ -73,41 +73,40 @@ const availableBuyTokens = computed(() => {
   return tokens.filter((t) => t.address !== sellToken.value.address);
 });
 
-const { handleSubmit, errors, meta, validate } = useForm({
-  initialValues: {
-    amount: undefined,
-    customSlippage: undefined,
-    slippage: "2",
-  },
-  validationSchema: yup.object({
-    amount: yup
-      .string()
-      .required("Amount is required")
-      .test("max-amount", "Insufficient balance", (value) => {
-        if (!value) return true;
-        const sellToken = availableTokens.value.find(
-          (t) => t.address === swap.value.sellToken.tokenAddress
-        )!;
+const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
+  useForm({
+    initialValues: {
+      amount: undefined,
+      customSlippage: undefined,
+      slippage: "2",
+    },
+    validationSchema: yup.object({
+      amount: yup
+        .string()
+        .required("Amount is required")
+        .test("max-amount", "Insufficient balance", (value) => {
+          if (!value) return true;
+          const sellToken = availableTokens.value.find(
+            (t) => t.address === swap.value.sellToken.tokenAddress
+          )!;
 
-        const amount = toBN(value);
-        const balance = toBN(sellToken.balance);
+          const amount = toBN(value);
+          const balance = toBN(sellToken.balance);
 
-        return amount.gt(0) && amount.lte(balance);
-      }),
-    slippage: yup
-      .string()
-      .required(),
-    customSlippage: yup
-      .string()
-      .test("slippage", "Slippage must be between 0.1% and 3%", (value) => {
-        const slippage = toBN(value);
+          return amount.gt(0) && amount.lte(balance);
+        }),
+      slippage: yup.string().required(),
+      customSlippage: yup
+        .string()
+        .test("slippage", "Slippage must be between 0.1% and 3%", (value) => {
+          const slippage = toBN(value);
 
-        if (value) {
-          return slippage.gte(0.1) && slippage.lte(3);
-        } else return true;
-      }),
-  }),
-});
+          if (value) {
+            return slippage.gte(0.1) && slippage.lte(3);
+          } else return true;
+        }),
+    }),
+  });
 
 const { value: amount, meta: amountMeta } = useField<string>("amount");
 const { value: slippage } = useField<string>("slippage");
@@ -127,7 +126,7 @@ const buyToken = computed(() => {
 });
 
 const sendingDisabled = computed(
-  () => loading.value || pending.value || !meta.value.valid
+  () => isSubmitting.value || pending.value || !meta.value.valid
 );
 
 const { data: swapDetails, pending } = useAsyncData(
@@ -214,24 +213,42 @@ const swapTokens = () => {
 };
 
 const onSubmit = handleSubmit(async () => {
-  loading.value = true;
+  const address = bestRoute.value?.data.to;
+  const txs = [];
 
-  if (!bestRoute.value?.data?.to) return;
+  if (!bestRoute.value?.data?.to || !address) return;
+
+  const erc20 = Erc20__factory.connect(address, getRpcProvider(props.chainId));
 
   try {
-    await sendTransaction({
+    const { data } = await erc20.populateTransaction.approve(
+      address,
+      bestRoute.value.data.sellTokenAmount
+    );
+
+    txs.push({
+      to: token.value.address,
+      data,
+    });
+
+    txs.push({
       to: bestRoute.value?.data?.to,
       data: bestRoute.value?.data.calldata,
       value: bestRoute.value?.data.value,
       chainId: +props.chainId,
     });
+
+    const transactionHash = await sendTransactions(txs, +props.chainId);
+
+    resetForm();
+    closeModal();
+
+    showPendingTransactionModal(transactionHash, props.chainId);
   } catch (e: any) {
     openSnackbar({
-      message: e?.error?.message || e?.reason || "Something went wrong",
+      message: e.error?.message || e?.reason || "Something went wrong",
       type: "error",
     });
-  } finally {
-    loading.value = false;
   }
 });
 
@@ -285,7 +302,11 @@ onMounted(() => {
           <span>{{ formatUsd(sellTokenInUsd) }}</span>
           <div class="flex items-center gap-2.5">
             <span>{{ sellToken?.balance }} {{ sellToken?.symbol }}</span>
-            <button @click="amount = sellToken?.balance" class="text-blue-500">
+            <button
+              type="button"
+              @click="amount = sellToken?.balance"
+              class="text-blue-500"
+            >
               MAX
             </button>
           </div>
@@ -297,6 +318,7 @@ onMounted(() => {
           <SVGInfo /> {{ errors["amount"] }}</span
         >
         <button
+          type="button"
           @click="swapTokens"
           class="flex justify-center items-center absolute bg-slate-150 dark:bg-slate-600 ring-[6px] ring-white dark:ring-gray-950 rounded-full h-10 w-10 -bottom-[26px] left-1/2 -translate-x-1/2"
         >
@@ -394,7 +416,7 @@ onMounted(() => {
                 </span>
               </div>
               <div class="flex justify-between text-sm items-center">
-                <span >Price Impact</span>
+                <span>Price Impact</span>
                 <span class="text-green-500">
                   {{
                     formatPercent(
@@ -408,12 +430,11 @@ onMounted(() => {
         </div>
       </div>
     </div>
-
     <div class="flex gap-4 flex-col">
       <CommonButton
         type="submit"
         :disabled="sendingDisabled"
-        :loading="loading || pending"
+        :loading="isSubmitting || pending"
         class="justify-center w-full"
         size="lg"
       >
