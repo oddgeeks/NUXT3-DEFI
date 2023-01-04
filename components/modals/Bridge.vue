@@ -145,6 +145,9 @@ const { data, error, pending } = useAsyncData(
           userAddress: safeAddress.value,
           recipient: safeAddress.value,
           singleTxOnly: true,
+          bridgeWithGas: false,
+          defaultSwapSlippage: 1,
+          sort: "output"
         },
       }
     );
@@ -218,6 +221,7 @@ const onSubmit = handleSubmit(async () => {
     txs.push({
       to: buildTx.result.txTarget,
       data: buildTx.result.txData,
+      value: buildTx.result.value
     });
 
     let transactionHash = await sendTransactions(txs, props.chainId);
