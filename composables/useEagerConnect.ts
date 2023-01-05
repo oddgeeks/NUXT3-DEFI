@@ -1,20 +1,26 @@
-import { injected } from "../connectors";
+import { injected, walletconnect } from "../connectors";
 
 export function useEagerConnect() {
-  const { activate, active } = useWeb3();
+  const { activate, active, provider } = useWeb3();
+  const { getConnector } = useConnectors()
 
   const tried = ref(false);
 
   onMounted(() => {
-    injected.isAuthorized().then((isAuthorized: boolean) => {
-      if (isAuthorized) {
-        activate(injected, undefined, true).catch(() => {
-          tried.value = true;
-        });
-      } else {
-        tried.value = true;
-      }
+    let connector = getConnector()
+    connector &&  activate(connector, undefined, true).catch(() => {
+      tried.value = true;
     });
+
+    // injected.isAuthorized().then((isAuthorized: boolean) => {
+    //   if (isAuthorized) {
+    //     activate(injected, undefined, true).catch(() => {
+    //       tried.value = true;
+    //     });
+    //   } else {
+    //     tried.value = true;
+    //   }
+    // });
   });
 
   // if the connection worked, wait until we get confirmation of that to flip the flag

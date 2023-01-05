@@ -3,6 +3,7 @@ interface Window {
 }
 
 interface Provider {
+  id: string;
   name: string;
   logo: any;
   connect: () => Promise<any>;

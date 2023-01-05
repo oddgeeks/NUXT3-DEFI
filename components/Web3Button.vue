@@ -12,6 +12,7 @@ const { gasBalance } = storeToRefs(useSafe());
 const [hovered, toggle] = useToggle(false);
 
 const { providers } = useNetworks();
+const { setConnectorName } = useConnectors();
 
 const loading = ref<Record<string, boolean>>({});
 
@@ -19,6 +20,7 @@ const connect = async (closeModal: Function, provider: any) => {
   try {
     loading.value[provider.name] = true;
     await activate(await provider.connect(), undefined, true);
+    setConnectorName(provider.id);
     closeModal();
   } catch (e) {
     console.log(e);
@@ -29,6 +31,7 @@ const connect = async (closeModal: Function, provider: any) => {
 
 const closeConnection = () => {
   trackingAccount.value = null;
+  setConnectorName(null);
   if (connector) {
     deactivate();
   }

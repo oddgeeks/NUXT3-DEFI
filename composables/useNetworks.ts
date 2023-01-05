@@ -10,10 +10,12 @@ import { ethers } from "ethers";
 
 export function useNetworks() {
   const { chainId, provider, library } = useWeb3();
+  const { setConnectorName } = useConnectors();
 
   const providers: Provider[] = [
     {
       name: "Metamask",
+      id: "injected",
       logo: SVGMetamask,
       switchNetwork: async (network: Network) => {
         const { changeMetamaskNetwork } = await import("~/connectors");
@@ -26,6 +28,7 @@ export function useNetworks() {
     },
     {
       name: "WalletConnect",
+      id: "walletconnect",
       logo: SVGWalletConnect,
       switchNetwork: async (network: Network) => {
         const { changeNetworkWalletConnect } = await import("~/connectors");
@@ -50,16 +53,17 @@ export function useNetworks() {
     //         return torus;
     //     },
     // },
-    {
-      name: "Magic",
-      logo: SVGMagicConnect,
-      switchNetwork: async (network: Network) => {},
-      connect: async () => {
-        const { magic } = await import("~/connectors");
+    // {
+    //   name: "Magic",
+    //   id: "magic",
+    //   logo: SVGMagicConnect,
+    //   switchNetwork: async (network: Network) => {},
+    //   connect: async () => {
+    //     const { magic } = await import("~/connectors");
 
-        return magic("georges.kabbouchi@gmail.com");
-      },
-    },
+    //     return magic("georges.kabbouchi@gmail.com");
+    //   },
+    // },
   ];
 
   const networks: Network[] = [
