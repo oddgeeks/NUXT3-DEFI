@@ -104,7 +104,7 @@ export const useSafe = defineStore("safe", () => {
                 if (balance.gt(0) || whitelistedSymbols.includes(token.symbol.toUpperCase())) {
                     newBalances.push({
                         ...token,
-                        balance: balance.toFixed(6),
+                        balance: balance.toFixed(6, 1),
                         balanceInUSD: token.price ? balance.times(token.price).toFixed(2) : null,
                     })
                 }
