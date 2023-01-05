@@ -45,7 +45,7 @@ export const walletconnect = new WalletConnectConnector({
 
 export const network = new NetworkConnector({
     urls: RPC_URLS,
-    defaultChainId: 1
+    defaultChainId: 56
 });
 
 export const torus = new TorusConnector({ chainId: 75 })

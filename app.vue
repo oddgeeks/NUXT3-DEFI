@@ -4,8 +4,11 @@ onMounted(() => {
 })
 useTokens()
 useSafe()
-useEagerConnect();
+const { tried } = useEagerConnect();
 
+whenever(tried, () => {
+  useAccountTrack();
+})
 </script>
 
 <template>

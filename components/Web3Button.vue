@@ -7,6 +7,7 @@ import PowerOnSVG from "~/assets/images/icons/power-on.svg?component";
 import PowerOffSVG from "~/assets/images/icons/power-off.svg?component";
 
 const { active, activate, deactivate, account, connector } = useWeb3();
+const { trackingAccount } = useAccountTrack();
 const { gasBalance } = storeToRefs(useSafe());
 const [hovered, toggle] = useToggle(false);
 
@@ -27,6 +28,7 @@ const connect = async (closeModal: Function, provider: any) => {
 };
 
 const closeConnection = () => {
+  trackingAccount.value = null;
   if (connector) {
     deactivate();
   }
@@ -146,7 +148,7 @@ const closeConnection = () => {
       /></span>
     </button>
 
-    <span v-tippy="{ placement: 'bottom-end', content: shortenHash(account) }">
+    <span v-tippy="{ placement: 'bottom-end', content: trackingAccount? `Tracking: ${shortenHash(account)}` : shortenHash(account) }">
       <button
         @mouseenter="toggle(true)"
         @mouseleave="toggle(false)"
