@@ -15,6 +15,7 @@ const clientMeta = {
 export const useWalletConnect = defineStore("wallet_connect", () => {
   const selfDisconnect = ref(false);
   const safe = useAvocadoSafe();
+  const { library, account } = useWeb3();
   const storage = useLocalStorage<{ keys: Record<string, string[]> }>(
     "wallet_connect",
     {
@@ -118,6 +119,22 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                   id: payload.id,
                   result: payload.params[0].chainId,
                 });
+              } else if (
+                // signingMethods.includes(payload.method)
+                payload.method === "personal_sign"
+              ) { // broken code
+
+                let params = payload.params;
+
+                params[1] = account.value;
+
+                const result = await library.value.send(payload.method, payload.params);
+
+                wc.approveRequest({
+                  id: payload.id,
+                  result,
+                });
+
               } else {
                 const { data } = await http.post(RPC_URLS[wc.chainId], payload);
 
@@ -241,7 +258,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
     let storageId = (connector as any)._sessionStorage.storageId;
     try {
       await connector.killSession();
-    } catch (error) {}
+    } catch (error) { }
 
     storage.value.keys[safe.safeAddress.value] = storage.value.keys[
       safe.safeAddress.value
