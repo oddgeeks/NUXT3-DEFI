@@ -127,7 +127,7 @@ const onSubmit = handleSubmit(async () => {
     resetForm();
     modal.value?.cancel();
 
-    showPendingTransactionModal(transactionHash, props.chainId);
+    showPendingTransactionModal(transactionHash, props.chainId, 'send');
   } catch (e: any) {
     console.log(e);
     openSnackbar({

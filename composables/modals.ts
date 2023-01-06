@@ -25,11 +25,13 @@ interface DialogModalProps {
 
 export const showPendingTransactionModal = (
   hash: string,
-  chainId: number | string
+  chainId: number | string,
+  type: ITxType
 ) => {
   openModal(PendingTransaction, {
     hash,
     chainId,
+    type,
   });
 };
 

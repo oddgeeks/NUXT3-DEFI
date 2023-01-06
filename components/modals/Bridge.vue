@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Erc20__factory } from "~~/contracts";
-import PendingBridgeTransaction from "./PendingBridgeTransaction.vue";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 
@@ -235,10 +234,11 @@ const onSubmit = handleSubmit(async () => {
     resetForm();
     modal.value?.cancel();
 
-    useModal().openModal(PendingBridgeTransaction, {
-      hash: transactionHash,
-      chainId: props.chainId,
-    });
+    showPendingTransactionModal(
+      transactionHash,
+      props.chainId,
+      'bridge'
+    )
   } catch (e: any) {
     openSnackbar({
       message: e?.error?.message || e?.reason || "Something went wrong",

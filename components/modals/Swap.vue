@@ -239,7 +239,7 @@ const onSubmit = handleSubmit(async () => {
     resetForm();
     closeModal();
 
-    showPendingTransactionModal(transactionHash, props.chainId);
+    showPendingTransactionModal(transactionHash, props.chainId, 'swap');
   } catch (e: any) {
     openSnackbar({
       message: e.error?.message || e?.reason || "Something went wrong",

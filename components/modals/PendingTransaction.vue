@@ -2,7 +2,7 @@
 import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { wait } from '@instadapp/utils';
 
-const props = defineProps<{ hash: string, chainId: number | string }>()
+const props = defineProps<{ hash: string, chainId: number | string, type: ITxType }>()
 const provider = getRpcProvider(props.chainId)
 const transaction = ref<TransactionReceipt>()
 
@@ -11,11 +11,25 @@ onMounted(async () => {
 
   transaction.value = await provider.waitForTransaction(props.hash)
 })
+
+const txnInfos = computed(() => {
+  if (props.type === 'bridge') {
+    return {
+      url: `https://socketscan.io/tx/${props.hash}`,
+      text: 'View on Bridge Explorer'
+    }
+  } else {
+    return {
+      url: getExplorerUrl(props.chainId, `/tx/${props.hash}`),
+      text:  `View on ${ chainIdToName(String(props.chainId))} Explorer`
+    }
+  }
+})
+
 </script>
 
 <template>
   <div class="text-center">
-
     <div v-if="transaction" class="mb-8 flex justify-center">
       <svg v-if="transaction.status" width="40" height="40" viewBox="0 0 40 40" fill="none"
         xmlns="http://www.w3.org/2000/svg">
@@ -36,7 +50,7 @@ onMounted(async () => {
     <h2 class="mb-[15px] text-lg leading-5">Transaction {{ transaction ? (transaction.status ? "Confirmed" : "Failed") : "Pending" }}
     </h2>
 
-    <p v-if="!transaction" class="text-slate-400 text-xs leading-5">Transaction Broadcast</p>
+    <p v-if="!transaction" class="text-slate-400 text-xs leading-5">The transaction has been sent to be processed.</p>
 
     <p v-if="transaction && !transaction.status" class="text-slate-400 text-xs">Try again or return to the home page.</p>
 
@@ -62,6 +76,7 @@ onMounted(async () => {
         <svg class="animate-reverse-spin" width="50" height="50" viewBox="0 0 50 50" fill="none"
           xmlns="http://www.w3.org/2000/svg">
           <path
+          class="dark:stroke-white stroke-slate-900"
             d="M14.4596 25.0001C14.4596 23.6157 14.7323 22.2449 15.2621 20.966C15.7918 19.687 16.5683 18.5249 17.5472 17.546C18.5261 16.5671 19.6882 15.7906 20.9672 15.2609C22.2462 14.7311 23.6169 14.4584 25.0013 14.4584C26.3857 14.4584 27.7564 14.7311 29.0354 15.2609C30.3144 15.7906 31.4765 16.5671 32.4554 17.546C33.4343 18.5249 34.2108 19.687 34.7405 20.966C35.2703 22.2449 35.543 23.6157 35.543 25.0001"
             stroke="white" stroke-width="6" stroke-linecap="round" />
         </svg>
@@ -69,8 +84,8 @@ onMounted(async () => {
       </div>
     </div>
 
-     <CommonButton as="a" :href="getExplorerUrl(chainId, `/tx/${hash}`)" target="_blank" :class="{ 'mt-8': !!transaction }" class="w-full text-center justify-center" size="lg">
-      View on {{ chainIdToName(String(chainId)) }} Explorer
+     <CommonButton as="a" :href="txnInfos.url" target="_blank" :class="{ 'mt-8': !!transaction }" class="w-full text-center justify-center" size="lg">
+        {{ txnInfos.text }}
      </CommonButton>
   </div>
 </template>

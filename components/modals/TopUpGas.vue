@@ -135,7 +135,7 @@ const onSubmit = handleSubmit(async () => {
     resetForm();
     modal.value?.cancel();
 
-    showPendingTransactionModal(transactionHash, chainId.value);
+    showPendingTransactionModal(transactionHash, chainId.value, 'topUpGas');
   } catch (e: any) {
     console.log(e);
     openSnackbar({

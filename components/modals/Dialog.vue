@@ -26,8 +26,8 @@ const handleCancel = () => {
       class="text-white success-circle"
       v-else-if="props.type === 'success'"
     />
-    <SVGErrorCircle class="text-white" v-else-if="props.type === 'error'" />
-    <SVGQuestionCircle v-else-if="props.type === 'question'" />
+    <SVGErrorCircle class="text-white w-10 h-10" v-else-if="props.type === 'error'" />
+    <SVGQuestionCircle class="w-10 h-10" v-else-if="props.type === 'question'" />
 
     <div class="flex flex-col gap-[15px]">
       <h1 class="text-lg">{{ props.title }}</h1>
