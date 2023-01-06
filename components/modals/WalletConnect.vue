@@ -167,8 +167,8 @@ const connect = async () => {
         <a
           target="blank"
           rel="noopener noreferrer"
-          href="https://future-molybdenum-905.notion.site/Connect-dApps-on-Avocado-Using-WalletConnect-dee060ee76b74b419ae28278be630fd1"
-          class="text-sm inline-flex gap-2.5 text-blue-500"
+          href="https://guides.avocado.link/en/getting-started/connect-d-apps-on-avocado-using-wallet-connect"
+          class="inline-flex gap-2.5 text-blue-500"
           >guide</a
         >.
       </p>
