@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import PlusSVG from "~/assets/images/icons/plus.svg?component";
 import SVGX from "~/assets/images/icons/x.svg?component";
 import ArrowLeft from "~/assets/images/icons/arrow-left.svg?component";
@@ -21,6 +21,32 @@ const setScrollAvaibility = async () => {
   hasScroll.value =
     containerRef.value.scrollWidth > containerRef.value.clientWidth;
   x.value += 1;
+};
+
+const handleDisconnectWallet = (session: any) => {
+openDialogModal({
+    title: "Are you sure you want to disconnect?",
+    type: "question",
+    headerIconUrl: getSessionIconURL(session),
+    isButtonVisible: true,
+    isCancelButtonVisible: true,
+    buttonText: "Disconnect",
+    cancelButtonText: "Cancel",
+    cancelButtonProps: {
+      color: "white",
+    },
+    buttonProps: {
+      color: 'red'
+    },
+    callback: () => wcStore.disconnect(session),
+  })
+}
+
+const getSessionIconURL = (session: any) => {
+  if (session.peerMeta.icons && session.peerMeta.icons.length) {
+    return session.peerMeta.icons[0];
+  }
+  return null;
 };
 
 watch(
@@ -66,22 +92,15 @@ watch(
             v-if="session.peerMeta"
             class="flex flex-1 items-center gap-3 p-5 dark:bg-gray-850 bg-slate-50 rounded-5 py-2.5 pr-[14px] pl-4"
           >
-            <a
-              class="flex gap-3 items-center"
-              target="_blank"
-              rel="noopener noreferrer"
-              :href="session.peerMeta.url"
-            >
+            <button @click="openWalletDetailsModal(session)" class="flex text-left gap-3 items-center">
               <div
                 class="relative inline-block h-7.5 w-7.5 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
               >
                 <img
-                  v-if="session.peerMeta.icons.length"
+                  v-if="getSessionIconURL(session)"
                   class="w-full h-full object-fit rounded-[inherit]"
                   referrerpolicy="no-referrer"
-                  :src="
-                    session.peerMeta.icons[session.peerMeta.icons.length - 1]
-                  "
+                  :src="getSessionIconURL(session)"
                 />
 
                 <ChainLogo
@@ -96,11 +115,17 @@ watch(
                 </h1>
                 <h2 class="text-xs text-blue-500 leading-5">Connected</h2>
               </div>
-              <LinkSVG class="text-blue-500" />
-            </a>
+            </button>
+             <a
+                target="_blank"
+                rel="noopener noreferrer"
+                :href="session.peerMeta.url"
+              >
+                <LinkSVG class="text-blue-500" />
+              </a>
             <button
               v-tippy="'Disconnect'"
-              @click="openDisconnectWalletModal(session)"
+              @click="handleDisconnectWallet(session)"
             >
               <SVGX class="text-slate-400 h-[18px] w-[18px]" />
             </button>
