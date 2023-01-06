@@ -161,7 +161,7 @@ const onSubmit = handleSubmit(async () => {
         Top up your gas balance to trigger transactions.
       </h2>
       <a
-        href="https://instadapp.io"
+        href="https://guides.avocado.link/en/getting-started/topping-up-gas-on-avocado"
         target="blank"
         rel="noopener noreferrer"
         class="text-sm text-center justify-center inline-flex gap-2.5 text-blue-500"
