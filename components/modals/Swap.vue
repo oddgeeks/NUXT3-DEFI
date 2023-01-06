@@ -436,6 +436,7 @@ onMounted(() => {
       >
         Swap
       </CommonButton>
+      <span class="text-xs text-slate-400 text-center font-medium">Powered by 1 inch</span>
     </div>
   </form>
 </template>

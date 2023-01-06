@@ -396,6 +396,8 @@ const onSubmit = handleSubmit(async () => {
         Estimated processing time is 10m.
       </p>
 
+      <span class="text-xs text-slate-500 text-center font-medium">Powered by Socket</span>
+
       <Transition
         enter-active-class="duration-300 ease-out"
         enter-from-class="transform opacity-0"
