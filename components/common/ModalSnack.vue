@@ -15,7 +15,7 @@ const { options } = useModal();
     >
       <p
         style="word-break: break-word"
-        class="text-xs flex gap-2 max-h-20 overflow-auto"
+        class="text-xs flex gap-2 max-h-20 overflow-auto capitalize"
       >
         <SVGErrorCircle
           v-if="options.snackOptions.type === 'error'"
