@@ -20,13 +20,16 @@ const { library, account } = useWeb3();
 const { switchNetworkByChainId } = useNetworks();
 const { sendTransaction } = useAvocadoSafe();
 const { tokenBalances } = useAvocadoSafe();
+const { parseTransactionError } = useErrorHandler()
+const { closeModal } = useModal()
+
+
 const token = computed(
   () =>
     tokenBalances.value.find(
       (t) => t.chainId === props.chainId && t.address === props.address
     )!
 );
-const modal = ref();
 const loading = ref(false);
 
 const { handleSubmit, errors, meta, resetForm } = useForm({
@@ -120,18 +123,14 @@ const onSubmit = handleSubmit(async () => {
 
     console.log(transactionHash);
 
-    // notify({
-    //   message: `${amount.value} ${token.value.symbol
-    //     } sent to ${address.value}`,
-    // });
     resetForm();
-    modal.value?.cancel();
+    closeModal()
 
     showPendingTransactionModal(transactionHash, props.chainId, 'send');
   } catch (e: any) {
-    console.log(e);
+
     openSnackbar({
-      message: e?.error?.message || e?.reason || "Something went wrong",
+      message: parseTransactionError(e),
       type: "error",
     });
   }

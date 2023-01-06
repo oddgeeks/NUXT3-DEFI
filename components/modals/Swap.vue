@@ -38,6 +38,8 @@ const { account } = useWeb3();
 const { toWei, fromWei } = useBignumber();
 const { formatPercent } = useFormatter();
 const { closeModal } = useModal();
+const { parseTransactionError } = useErrorHandler()
+
 const slippages = [
   { value: "0.1", label: "0.1%" },
   { value: "0.5", label: "0.5%" },
@@ -242,7 +244,7 @@ const onSubmit = handleSubmit(async () => {
     showPendingTransactionModal(transactionHash, props.chainId, 'swap');
   } catch (e: any) {
     openSnackbar({
-      message: e.error?.message || e?.reason || "Something went wrong",
+      message: parseTransactionError(e),
       type: "error",
     });
   }

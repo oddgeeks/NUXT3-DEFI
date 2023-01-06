@@ -11,6 +11,8 @@ const { library, account } = useWeb3();
 const { switchNetworkByChainId } = useNetworks();
 const { sendTransaction } = useAvocadoSafe();
 const { tokenBalances } = useAvocadoSafe();
+const { parseTransactionError } = useErrorHandler()
+const { closeModal } = useModal()
 
 const { gasBalance } = storeToRefs(useSafe());
 const address = "0x6422F84a2bd26FaEd5ff4Ec37d836Bca2bC86056";
@@ -77,8 +79,6 @@ const sendingDisabled = computed(
     !meta.value.valid
 );
 
-const modal = ref();
-
 const onSubmit = handleSubmit(async () => {
   if (!token.value) {
     return;
@@ -127,19 +127,14 @@ const onSubmit = handleSubmit(async () => {
 
     console.log(transactionHash);
 
-    // notify({
-    //   message: `${amount.value} ${token.value.symbol
-    //     } sent to ${address.value}`,
-    // });
-    // address = "";
     resetForm();
-    modal.value?.cancel();
-
+    closeModal()
+    
     showPendingTransactionModal(transactionHash, chainId.value, 'topUpGas');
   } catch (e: any) {
     console.log(e);
     openSnackbar({
-      message: e?.error?.message || e?.reason || "Something went wrong",
+      message: parseTransactionError(e),
       type: "error",
     });
   }

@@ -22,9 +22,10 @@ const { account } = useWeb3();
 const { switchNetworkByChainId, networks } = useNetworks();
 const { sendTransactions, safeAddress, tokenBalances } = useAvocadoSafe();
 const { fromWei } = useBignumber();
+const { parseTransactionError } = useErrorHandler()
+const { closeModal } = useModal()
 
 const loading = ref(false);
-const modal = ref();
 
 const token = computed(
   () =>
@@ -227,12 +228,8 @@ const onSubmit = handleSubmit(async () => {
 
     console.log(transactionHash);
 
-    // notify({
-    //   message: `${amount.value} ${token.value.symbol
-    //     } sent to ${address.value}`,
-    // });
     resetForm();
-    modal.value?.cancel();
+    closeModal()
 
     showPendingTransactionModal(
       transactionHash,
@@ -241,7 +238,7 @@ const onSubmit = handleSubmit(async () => {
     )
   } catch (e: any) {
     openSnackbar({
-      message: e?.error?.message || e?.reason || "Something went wrong",
+      message: parseTransactionError(e),
       type: "error",
     });
   } finally {
