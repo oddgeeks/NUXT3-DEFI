@@ -7,7 +7,7 @@ const meta = {
   description:
     "The platform that makes web3 interaction easy by enabling network, gas and account abstraction allowing you to experience web3 more seamlessly.",
   image:
-    "https://user-images.githubusercontent.com/45617686/209450593-b1f623e2-1d45-49d9-b9e1-36374e458f39.png",
+    "https://user-images.githubusercontent.com/45617686/211059835-0ecbb1b9-f448-4bed-9c52-a9359c67cbe6.png",
 };
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
