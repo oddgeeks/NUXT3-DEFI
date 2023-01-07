@@ -9,18 +9,25 @@ const handleClick = () => {
   props.value?.callback && props.value.callback();
   closeModal();
 };
+
+const handleCancel = () => {
+  closeModal();
+  props.value?.cancelCallback && props.value.cancelCallback();
+};
+
 </script>
 
 <template>
   <div
     class="inline-flex gap-7.5 flex-col items-center justify-center text-center w-full"
   >
+    <img v-if="props.headerIconUrl" class="w-10 h-10" width="40" height="40" :src="props.headerIconUrl"/>
     <SVGCheckCircle
       class="text-white success-circle"
-      v-if="props.type === 'success'"
+      v-else-if="props.type === 'success'"
     />
-    <SVGErrorCircle class="text-white" v-if="props.type === 'error'" />
-    <SVGQuestionCircle v-if="props.type === 'question'" />
+    <SVGErrorCircle class="text-white w-10 h-10" v-else-if="props.type === 'error'" />
+    <SVGQuestionCircle class="w-10 h-10" v-else-if="props.type === 'question'" />
 
     <div class="flex flex-col gap-[15px]">
       <h1 class="text-lg">{{ props.title }}</h1>
@@ -30,13 +37,25 @@ const handleClick = () => {
         class="text-slate-400 text-xs text-center leading-5"
       />
     </div>
+     <div v-if="props.isCancelButtonVisible || props.isButtonVisible" class="flex w-full gap-4 items-center">
+      <CommonButton
+      v-if="props.isCancelButtonVisible"
+      @click="handleCancel()"
+      class="flex-1 justify-center"
+      v-bind="props.cancelButtonProps"
+      size="lg"
+    >
+     {{ props.cancelButtonText }}
+    </CommonButton>
     <CommonButton
       v-if="props.isButtonVisible"
       @click="handleClick()"
-      class="w-full justify-center"
+      class="flex-1 justify-center"
+      v-bind="props.buttonProps"
       size="lg"
     >
       {{ props.buttonText }}
     </CommonButton>
+     </div>
   </div>
 </template>

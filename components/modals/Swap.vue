@@ -38,6 +38,8 @@ const { account } = useWeb3();
 const { toWei, fromWei } = useBignumber();
 const { formatPercent } = useFormatter();
 const { closeModal } = useModal();
+const { parseTransactionError } = useErrorHandler()
+
 const slippages = [
   { value: "0.1", label: "0.1%" },
   { value: "0.5", label: "0.5%" },
@@ -239,10 +241,10 @@ const onSubmit = handleSubmit(async () => {
     resetForm();
     closeModal();
 
-    showPendingTransactionModal(transactionHash, props.chainId);
+    showPendingTransactionModal(transactionHash, props.chainId, 'swap');
   } catch (e: any) {
     openSnackbar({
-      message: e.error?.message || e?.reason || "Something went wrong",
+      message: parseTransactionError(e),
       type: "error",
     });
   }
@@ -436,6 +438,7 @@ onMounted(() => {
       >
         Swap
       </CommonButton>
+      <span class="text-xs text-slate-400 text-center font-medium">Powered by 1 inch</span>
     </div>
   </form>
 </template>

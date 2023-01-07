@@ -113,7 +113,7 @@ const [transaction] = (await Promise.all([
         </div>
 
         <div class="flex items-center">
-          <div class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]">AvoSafe</div>
+          <div class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]">Avocado Wallet</div>
 
           <div
             v-if="transaction.metadata.safe"

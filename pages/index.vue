@@ -16,11 +16,11 @@ const { safeAddress } = useAvocadoSafe();
             @click="
               openDialogModal({
                 type: 'question',
-                title: 'AvoSafe Balances',
+                title: 'Avocado Wallet Balances',
                 isButtonVisible: false,
-                content: `These are your AvoSafe Balances, not your EOA balances. Deposit funds into your AvoSafe to begin using Avocado.
+                content: `These are your Avocado Wallet Balances, not your EOA balances. Deposit funds into your Avocado Wallet to begin using Avocado.
           <br><br>
-          <a href='https://instadapp.io' target='blank' rel='noopener noreferrer' class='text-sm inline-flex gap-2.5 text-blue-500'>Learn more about how to deposit ${LinkSVG}</a>
+          <a href='https://guides.avocado.link/en/getting-started/topping-up-your-avocado-account' target='blank' rel='noopener noreferrer' class='text-sm inline-flex gap-2.5 text-blue-500'>Learn more about how to deposit ${LinkSVG}</a>
           `,
               })
             "
@@ -30,7 +30,7 @@ const { safeAddress } = useAvocadoSafe();
         </h2>
         <Balances />
       </div>
-      <div class="flex flex-col md:basis-[213px] gap-5">
+      <div class="flex flex-col md:shrink-0 md:basis-[213px] gap-5">
         <div class="w-full flex flex-col gap-5">
           <h2 class="font-semibold inline-flex gap-2.5">
             Your Wallet
@@ -40,9 +40,9 @@ const { safeAddress } = useAvocadoSafe();
                   type: 'question',
                   title: 'Your Wallet',
                   isButtonVisible: false,
-                  content: `Deposit or receive funds by scanning or copying your AvoSafe QR code. You can deposit or receive from any supported chains.
+                  content: `Deposit or receive funds by scanning or copying your Avocado Wallet QR code. You can deposit or receive from any supported chains.
           <br><br>
-          <a href='https://instadapp.io' target='blank' rel='noopener noreferrer' class='text-sm inline-flex gap-2.5 text-blue-500'>Learn more about how to deposit ${LinkSVG}</a>
+          <a href='https://guides.avocado.link/en/getting-started/topping-up-your-avocado-account' target='blank' rel='noopener noreferrer' class='text-sm inline-flex gap-2.5 text-blue-500'>Learn more about how to deposit ${LinkSVG}</a>
           `,
                 })
               "
@@ -51,6 +51,12 @@ const { safeAddress } = useAvocadoSafe();
             </button>
           </h2>
           <QrCode />
+        </div>
+         <div class="w-full flex flex-col gap-5">
+          <h2 class="font-semibold inline-flex gap-2.5">
+            Supported Chains
+          </h2>
+          <SupportedChains />
         </div>
       </div>
     </div>

@@ -1,4 +1,9 @@
 <script lang="ts" setup>
+import ArrowLeft from "~/assets/images/icons/arrow-left.svg?component";
+import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
+
+type INavigationType = "first" | "prev" | "next" | "last";
+
 const props = defineProps({
   total: {
     type: Number,
@@ -19,10 +24,7 @@ const props = defineProps({
   },
 });
 
-const prevPage = computed(() => Math.max(props.current - 1, 1));
-const nextPage = computed(() =>
-  Math.min(props.current + 1, pages.value.length)
-);
+const router = useRouter()
 
 const pages = computed(() => {
   const pages = [];
@@ -31,39 +33,62 @@ const pages = computed(() => {
   }
   return pages;
 });
+
+const disabled = computed(() => {
+  return {
+    prev: props.current === 1,
+    next: props.current === pages.value.length,
+  }
+})
+
+const start = computed(()=> (props.current - 1) * props.limit + 1)
+const end = computed(()=> Math.min(props.current * props.limit, props.total))
+
+const navigate = (type: INavigationType) => {
+  let page;
+
+  switch (type) {
+    case "first":
+      page = 1;
+      break;
+    case "prev":
+      page = Math.max(props.current - 1, 1);
+      break;
+    case "next":
+      page = Math.min(props.current + 1, pages.value.length);
+      break;
+    case "last":
+      page = pages.value.length;
+      break;
+  }
+
+  router.push({
+    path: props.urlPrefix,
+    query: {
+      page,
+    },
+  });
+}
 </script>
 
 <template>
-  <nav aria-label="Page navigation example">
-    <ul class="inline-flex -space-x-px">
-      <li>
-        <NuxtLink
-          :to="{ path: urlPrefix, query: { page: prevPage } }"
-          class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-          >Previous
-        </NuxtLink>
-      </li>
-
-      <li :key="page" v-for="page in pages">
-        <NuxtLink
-          :to="{ path: urlPrefix, query: { page } }"
-          aria-current="page"
-          :class="{
-            'text-blue-600 bg-blue-50 dark:bg-gray-700 dark:text-white hover:bg-blue-100 hover:text-blue-700':
-              +page === +props.current,
-          }"
-          class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-        >
-          {{ page }}
-        </NuxtLink>
-      </li>
-      <li>
-        <NuxtLink
-          :to="{ path: urlPrefix, query: { page: nextPage } }"
-          class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-          >Next
-        </NuxtLink>
-      </li>
-    </ul>
+  <nav class="py-6 px-7.5 flex justify-between">
+    <div class="px-5 py-2 dark:bg-slate-800 bg-slate-150 text-sm rounded-7.5 w-fit">
+      Showing {{ start }} to {{ end }} of {{ total }} results
+    </div>
+    <div class="flex gap-4 items-center">
+      <CommonButton @click="navigate('first')" :disabled="disabled.prev" size="md" class="!px-4">
+        First
+      </CommonButton>
+       <CommonButton @click="navigate('prev')"  :disabled="disabled.prev" size="md" class="!px-2 !py-2">
+        <ArrowLeft class="w-5 h-5" />
+      </CommonButton>
+        <CommonButton @click="navigate('next')" :disabled="disabled.next" size="md" class="!px-2 !py-2">
+        <ArrowRight class="w-5 h-5" />
+      </CommonButton>
+      <CommonButton @click="navigate('last')" :disabled="disabled.next" size="md" class="!px-4">
+        Last
+      </CommonButton>
+    </div>
   </nav>
 </template>

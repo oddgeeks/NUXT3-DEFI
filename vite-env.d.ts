@@ -2,6 +2,7 @@ interface Window {
   ethereum: any;
 }
 
+type ITxType = "send" | "swap" | "bridge" | "topUpGas";
 interface Provider {
   id: string;
   name: string;

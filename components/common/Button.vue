@@ -2,24 +2,30 @@
 
 
 type ButtonProps = {
-  color?: "blue" | "red";
+  color?: "blue" | "red" | "white";
   size?: "md" | "lg" | "sm";
   loading?: boolean;
-  as?: "button" | "a";
+  as?: "button" | "a" | "NuxtLink";
 };
 
-withDefaults(defineProps<ButtonProps>(), {
+const props = withDefaults(defineProps<ButtonProps>(), {
   color: "blue",
   size: "md",
   loading: false,
   as: "button",
 })
 
+const componentToShow = computed(() => {
+  if (props.as === 'NuxtLink') return resolveComponent('NuxtLink')
+  return props.as
+})
+
+
 </script>
 
 <template>
   <component
-    :is="as"
+    :is="componentToShow"
     :type="as === 'button' ? 'button' : undefined"
     :class="[
   {
@@ -29,6 +35,10 @@ withDefaults(defineProps<ButtonProps>(), {
       {
         'bg-blue-500 text-white hover:bg-blue-600 dark:disabled:bg-slate-800 dark:disabled:text-slate-500 disabled:text-slate-400 disabled:bg-slate-200':
           color === 'blue',
+      },
+      {
+        'dark:bg-slate-800 bg-slate-100 dark:disabled:text-slate-500 disabled:text-slate-400':
+          color === 'white',
       },
       {
         'text-xs py-1 px-[15px] rounded-5 leading-5': size === 'sm',

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Erc20__factory } from "~~/contracts";
-import PendingBridgeTransaction from "./PendingBridgeTransaction.vue";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 
@@ -23,9 +22,10 @@ const { account } = useWeb3();
 const { switchNetworkByChainId, networks } = useNetworks();
 const { sendTransactions, safeAddress, tokenBalances } = useAvocadoSafe();
 const { fromWei } = useBignumber();
+const { parseTransactionError } = useErrorHandler()
+const { closeModal } = useModal()
 
 const loading = ref(false);
-const modal = ref();
 
 const token = computed(
   () =>
@@ -228,20 +228,17 @@ const onSubmit = handleSubmit(async () => {
 
     console.log(transactionHash);
 
-    // notify({
-    //   message: `${amount.value} ${token.value.symbol
-    //     } sent to ${address.value}`,
-    // });
     resetForm();
-    modal.value?.cancel();
+    closeModal()
 
-    useModal().openModal(PendingBridgeTransaction, {
-      hash: transactionHash,
-      chainId: props.chainId,
-    });
+    showPendingTransactionModal(
+      transactionHash,
+      props.chainId,
+      'bridge'
+    )
   } catch (e: any) {
     openSnackbar({
-      message: e?.error?.message || e?.reason || "Something went wrong",
+      message: parseTransactionError(e),
       type: "error",
     });
   } finally {
@@ -395,6 +392,8 @@ const onSubmit = handleSubmit(async () => {
       <p class="text-xs text-center text-slate-400">
         Estimated processing time is 10m.
       </p>
+
+      <span class="text-xs text-slate-500 text-center font-medium">Powered by Socket</span>
 
       <Transition
         enter-active-class="duration-300 ease-out"
