@@ -390,7 +390,7 @@ const onSubmit = handleSubmit(async () => {
         Bridge
       </CommonButton>
       <p class="text-xs text-center text-slate-400">
-        Estimated processing time is 10m.
+        Estimated processing time is 10-30m.
       </p>
 
       <span class="text-xs text-slate-500 text-center font-medium">Powered by Socket</span>

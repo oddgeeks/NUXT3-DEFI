@@ -48,7 +48,7 @@
     "uuidv4": "^6.2.13",
     "vite-svg-loader": "^3.6.0",
     "vue-chartjs": "^5.0.1",
-    "vue-tippy": "^6.0.0-alpha.65"
+    "vue-tippy": "^6.0.0"
   },
   "dependencies": {
     "vee-validate": "^4.7.3",
