@@ -5,21 +5,27 @@ type ButtonProps = {
   color?: "blue" | "red" | "white";
   size?: "md" | "lg" | "sm";
   loading?: boolean;
-  as?: "button" | "a";
+  as?: "button" | "a" | "NuxtLink";
 };
 
-withDefaults(defineProps<ButtonProps>(), {
+const props = withDefaults(defineProps<ButtonProps>(), {
   color: "blue",
   size: "md",
   loading: false,
   as: "button",
 })
 
+const componentToShow = computed(() => {
+  if (props.as === 'NuxtLink') return resolveComponent('NuxtLink')
+  return props.as
+})
+
+
 </script>
 
 <template>
   <component
-    :is="as"
+    :is="componentToShow"
     :type="as === 'button' ? 'button' : undefined"
     :class="[
   {
