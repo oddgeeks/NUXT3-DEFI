@@ -110,7 +110,7 @@ watch(
               </div>
 
               <div>
-                <h1 class="text-sm whitespace-nowrap">
+                <h1 style="width: 118px" class="text-sm overflow-hidden whitespace-nowrap text-shadow">
                   {{ session.peerMeta.name }}
                 </h1>
                 <h2 class="text-xs text-blue-500 leading-5">Connected</h2>
@@ -167,4 +167,23 @@ watch(
 .arrow-btn {
   @apply pointer-events-auto flex items-center justify-center h-7.5 w-7.5 bg-slate-150 dark:bg-slate-750 rounded-full;
 }
+
+.text-shadow {
+background: linear-gradient(90deg, #0F172A 85.41%, rgba(15, 23, 42, 0) 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+text-fill-color: transparent;
+}
+
+html.dark .text-shadow {
+  background: linear-gradient(90deg, #FFFFFF 85.41%, rgba(255, 255, 255, 0) 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+text-fill-color: transparent;
+}
+
+
+
 </style>
