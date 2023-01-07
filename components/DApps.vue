@@ -64,7 +64,7 @@ watch(
 );
 </script>
 <template>
-  <div :class="{ 'blur pointer-events-none': !safeAddress }">
+  <div>
     <div
       class="flex items-center relative gap-[15px]"
       v-if="wcStore.sessions.length"
@@ -143,6 +143,7 @@ watch(
     </div>
     <CommonButton
       v-else
+      :disabled="!safeAddress"
       size="lg"
       class="flex items-center gap-2 px-5"
       @click="openWalletConnectModal()"
