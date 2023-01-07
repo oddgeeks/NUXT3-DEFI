@@ -52,6 +52,12 @@ const { safeAddress } = useAvocadoSafe();
           </h2>
           <QrCode />
         </div>
+         <div class="w-full flex flex-col gap-5">
+          <h2 class="font-semibold inline-flex gap-2.5">
+            Supported Chains
+          </h2>
+          <SupportedChains />
+        </div>
       </div>
     </div>
   </div>
