@@ -71,6 +71,8 @@ export const chainIdToName = (chainId: string | number) => {
       return "Gnosis";
     case "56":
       return "BSC";
+    case "250":
+      return "Fantom";
     default:
       return "Mainnet";
   }
