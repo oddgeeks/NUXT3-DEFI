@@ -44,9 +44,12 @@ const { handleSubmit, errors, meta, resetForm, validate } = useForm({
         const balance = toBN(token.value.balance);
 
         return amount.gt(0) && amount.lte(balance);
-      }).test('min-amount', "Min. $10", async (value) => {
+      }).test('min-amount', "Min. $10", async (value, { path, createError }) => {
         const priceInUSD = times(value, token.value.price)
-        return priceInUSD.gt(10)
+        const amount10InUsd = div(10, token.value.price).toFixed(2)
+
+        if(priceInUSD.gt(10)) return true
+        return createError({ path, message: `Min. ${amount10InUsd} ${token.value.symbol.toUpperCase()}` })
       }),
   }),
 });
@@ -289,7 +292,7 @@ const onSubmit = handleSubmit(async () => {
             type="number"
             step="0.000001"
             inputmode="decimal"
-            :error-type="amountErrors.includes('Min. $10') ? 'warning' : 'error'"
+            :error-type="amountErrors.some(i=> i.toLocaleLowerCase().includes('min')) ? 'warning' : 'error'"
             :error-message="amountMeta.dirty ? errors['amount'] : ''"
             name="amount"
             placeholder="Enter amount"
