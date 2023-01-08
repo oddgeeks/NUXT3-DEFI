@@ -44,11 +44,14 @@ const { handleSubmit, errors, meta, resetForm, validate } = useForm({
         const balance = toBN(token.value.balance);
 
         return amount.gt(0) && amount.lte(balance);
+      }).test('min-amount', "Min. $10", async (value) => {
+        const priceInUSD = times(value, token.value.price)
+        return priceInUSD.gt(10)
       }),
   }),
 });
 
-const { value: amount, meta: amountMeta } = useField<string>("amount");
+const { value: amount, meta: amountMeta, errors: amountErrors } = useField<string>("amount");
 
 const toAmount = computed(() =>
   formatDecimal(
@@ -286,6 +289,7 @@ const onSubmit = handleSubmit(async () => {
             type="number"
             step="0.000001"
             inputmode="decimal"
+            :error-type="amountErrors.includes('Min. $10') ? 'warning' : 'error'"
             :error-message="amountMeta.dirty ? errors['amount'] : ''"
             name="amount"
             placeholder="Enter amount"
