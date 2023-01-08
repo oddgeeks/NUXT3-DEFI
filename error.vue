@@ -24,7 +24,7 @@ const { parseRequestError } = useErrorHandler()
             style="width: 280px; height: 280px"
             width="280"
             height="280"
-            src="./sad_logo.png"
+            src="/sad_logo.png"
           />
          <div class="flex flex-col gap-[26px] mb-10">
           <h1 class="text-[40px] leading-10">{{ parseRequestError(error).statusMessage }}</h1>
