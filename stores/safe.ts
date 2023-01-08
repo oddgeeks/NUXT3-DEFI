@@ -156,12 +156,13 @@ export const useSafe = defineStore("safe", () => {
     }, { immediate: true });
 
     return {
-        chainTokenBalances,
-        gasBalance,
-        safeAddress,
-        tokenBalances,
-        totalBalance,
-    }
+      chainTokenBalances,
+      gasBalance,
+      safeAddress,
+      tokenBalances,
+      totalBalance,
+      fetchGasBalance,
+    };
 });
 
 if (import.meta.hot) {
