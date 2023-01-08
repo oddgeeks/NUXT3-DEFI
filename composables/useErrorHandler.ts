@@ -18,7 +18,18 @@ export function useErrorHandler() {
     return errorMessage;
   };
 
+  function parseRequestError(error: any) {
+    if (error.statusCode == "404") {
+      error.statusMessage = "Oops! Something went wrong!";
+      error.message =
+        "The page you are looking for is either removed or had its URL changed, or is temporarily unavailable.";
+    }
+
+    return error;
+  }
+
   return {
     parseTransactionError,
+    parseRequestError,
   };
 }

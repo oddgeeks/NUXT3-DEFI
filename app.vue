@@ -12,10 +12,6 @@ whenever(tried, () => {
 </script>
 
 <template>
-    <Html />
-
-    <Body class="h-screen dark:bg-gray-950 bg-white dark:text-white text-slate-900 font-semibold" />
-
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
