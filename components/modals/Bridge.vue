@@ -147,7 +147,9 @@ const { data, error, pending } = useAsyncData(
           singleTxOnly: true,
           bridgeWithGas: false,
           defaultSwapSlippage: 1,
-          sort: "output"
+          sort: "output",
+          isContractCall: true,
+          excludeBridges: ['hyphen', 'anyswap-router-v4']
         },
       }
     );
