@@ -161,7 +161,7 @@ const connect = async () => {
 
       <div class="text-lg mt-8 mb-4">Connect with WalletConnect</div>
 
-      <p class="text-slate-400 text-xs text-center leading-5">
+      <p class="text-slate-400 text-xs text-center leading-5 font-medium">
         Do not close this window while connecting.<br />
         Have a question? Follow this
         <a

@@ -60,7 +60,7 @@ const val = computed({
         :name="name"
         v-model="val"
         :min="min"
-        class="placeholder-slate-400 border-none shadow-none focus:ring-0 focus:border-none bg-inherit rounded-[inherit] px-0 py-[13px] w-full"
+        class="placeholder-slate-400 placeholder:text-sm border-none shadow-none focus:ring-0 focus:border-none bg-inherit rounded-[inherit] px-0 py-[13px] w-full"
         :class="[inputClasses]"
       />
       <slot name="suffix" />

@@ -34,7 +34,7 @@ const disconnectWallet = async () => {
           >{{ chainIdToName(props.session.chainId) }} Network</span
         >
       </div>
-      <p class="text-slate-400 text-xs text-center leading-5">
+      <p class="text-slate-400 text-xs text-center leading-5 font-medium">
         You need the Avocado web app to be open to popup transactions. Please
         don't close the tab.
       </p>

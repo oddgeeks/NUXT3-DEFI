@@ -34,7 +34,7 @@ const handleCancel = () => {
 
       <p
         v-html="props.content"
-        class="text-slate-400 text-xs text-center leading-5"
+        class="text-slate-400 text-xs text-center leading-5 font-medium"
       />
     </div>
      <div v-if="props.isCancelButtonVisible || props.isButtonVisible" class="flex w-full gap-4 items-center">
