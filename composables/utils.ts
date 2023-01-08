@@ -74,7 +74,7 @@ export const chainIdToName = (chainId: string | number) => {
     case "250":
       return "Fantom";
     default:
-      return "Mainnet";
+      throw new Error("Unknown chainId");
   }
 };
 
