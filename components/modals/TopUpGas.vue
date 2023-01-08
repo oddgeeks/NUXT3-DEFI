@@ -15,6 +15,7 @@ const { parseTransactionError } = useErrorHandler()
 const { closeModal } = useModal()
 
 const { gasBalance } = storeToRefs(useSafe());
+const { fetchGasBalance } = useSafe()
 const address = "0x6422F84a2bd26FaEd5ff4Ec37d836Bca2bC86056";
 
 const chainUSDCAddresses: any = {
@@ -32,6 +33,21 @@ const networks = Object.keys(chainUSDCAddresses).map((chainId) => ({
   chainId,
 }));
 
+
+const claimLoading = ref(false);
+const provider = getRpcProvider(75);
+
+const { data, execute } = useAsyncData('airDrop', async () => {
+  const resp = await provider.send(
+      "api_hasAirdrop",
+      [account.value]
+  );
+  await fetchGasBalance()
+  return resp
+}, {
+  watch: [account]
+})
+
 const { handleSubmit, errors, meta, resetForm } = useForm({
   validationSchema: yup.object({
     amount: yup
@@ -39,7 +55,7 @@ const { handleSubmit, errors, meta, resetForm } = useForm({
       .required()
       .test("max-amount", "Insufficient balance", (value: any) => {
         const amount = toBN(value);
-        const balance = toBN(token.value.balance);
+        const balance = toBN(token.value?.balance || 0);
 
         return amount.gt(0) && amount.lte(balance);
       }),
@@ -78,6 +94,34 @@ const sendingDisabled = computed(
     loading.value ||
     !meta.value.valid
 );
+
+const claim = async () => {
+  try {
+    claimLoading.value = true;
+    const data = await provider.send(
+      "api_claimAirdrop",
+      [account.value]
+    );
+
+    if(data) {
+      openSnackbar({
+        message: 'Claimed successfully',
+        type: "success",
+      });
+    }
+
+    execute()
+
+  } catch (e: any) {
+    console.log(e);
+    openSnackbar({
+      message: "Something went wrong",
+      type: "error",
+    });
+  } finally {
+    claimLoading.value = false;
+  }
+};
 
 const onSubmit = handleSubmit(async () => {
   if (!token.value) {
@@ -144,7 +188,7 @@ const onSubmit = handleSubmit(async () => {
 </script>
 
 <template>
-  <form @submit="onSubmit" class="space-y-[30px] text-center">
+  <form @submit="onSubmit" class="space-y-7.5 text-center">
     <div
       class="flex items-center mx-auto justify-center h-10 w-10 rounded-full dark:bg-slate-800 bg-slate-100"
     >
@@ -159,17 +203,20 @@ const onSubmit = handleSubmit(async () => {
         href="https://guides.avocado.link/en/getting-started/topping-up-gas-on-avocado"
         target="blank"
         rel="noopener noreferrer"
-        class="text-sm text-center justify-center inline-flex gap-2.5 text-blue-500"
+        class="text-sm text-center justify-center font-medium inline-flex gap-2.5 text-blue-500"
       >
         What’s happening here?
         <LinkSVG />
       </a>
     </div>
     <span
-      class="whitespace-nowrap block px-5 py-3 dark:bg-slate-750 bg-slate-150 rounded-[30px] w-fit leading-5 mx-auto"
+      class="whitespace-nowrap block px-5 py-3 ring-2 dark:ring-slate-700 ring-slate-200 rounded-[30px] w-fit leading-5 mx-auto"
     >
-      {{ formatDecimal(gasBalance, 2) }} USDC</span
-    >
+      {{ formatDecimal(gasBalance, 2) }} USDC
+    </span>
+    <CommonButton :loading="claimLoading" @click="claim()" v-if="data?.id" class="flex text-sm items-center gap-2">
+       {{ data.message }}
+    </CommonButton>
     <div class="space-y-5">
       <div class="flex flex-col gap-2.5">
         <span class="text-left leading-5">Network</span>

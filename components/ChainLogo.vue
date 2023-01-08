@@ -123,8 +123,7 @@ const props = defineProps({
 const stroke = computed(() => {
   if (props.stroke) {
     return {
-      stroke: '#161E2D',
-      strokeWidth: '2',
+      class: 'dark:stroke-gray-900 stroke-slate-50 stroke-2'
     };
   }
   return {};
