@@ -232,7 +232,9 @@ const onSubmit = handleSubmit(async () => {
       value: buildTx.result.value
     });
 
-    let transactionHash = await sendTransactions(txs, props.chainId);
+    let transactionHash = await sendTransactions(txs, props.chainId, {
+      metadata: '0x'
+    });
 
     console.log(transactionHash);
 

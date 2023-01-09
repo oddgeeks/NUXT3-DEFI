@@ -26,22 +26,26 @@ export const useAvocadoSafe = () => {
     to: string;
     value?: string;
     data?: string;
-    chainId: number;
-  }) => {
+    chainId: number | string;
+  }, options?: { metadata?: string }) => {
     await switchNetworkByChainId(75);
 
     if (!signer.value) {
       throw new Error("Safe not initialized");
     }
 
-    const tx = await signer.value.sendTransaction(transaction);
+    const tx = await signer.value.sendTransaction({
+      ...transaction,
+      chainId: Number(transaction.chainId),
+    }, options);
 
     return tx.hash!;
   };
 
   const sendTransactions = async (
     transactions: { to: string; value?: string; data?: string }[],
-    chainId: number
+    chainId: number | string,
+    options?: { metadata?: string },
   ) => {
     await switchNetworkByChainId(75);
 
@@ -51,7 +55,8 @@ export const useAvocadoSafe = () => {
 
     const tx = await signer.value.sendTransactions(
       transactions,
-      Number(chainId)
+      Number(chainId),
+      options,
     );
 
     return tx.hash!;
