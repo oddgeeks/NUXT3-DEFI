@@ -292,12 +292,10 @@ onMounted(() => {
             v-model="swap.sellToken.tokenAddress"
             iconKey="logoURI"
             value-key="address"
-            label-key="name"
-            :options="availableTokens">
-            <template #item-text>
-              <span class="sr-only"></span>
-            </template>
-            </CommonSelect>
+            selected-label-classes="uppercase"
+            item-text-classes="uppercase"
+            label-key="symbol"
+            :options="availableTokens" />
         </div>
         <div class="flex justify-between items-center text-sm text-slate-400">
           <span>{{ formatUsd(sellTokenInUsd) }}</span>
@@ -345,12 +343,10 @@ onMounted(() => {
             v-model="swap.buyToken.tokenAddress"
             iconKey="logoURI"
             value-key="address"
-            label-key="name"
-            :options="availableBuyTokens">
-            <template #item-text>
-              <span class="sr-only"></span>
-            </template>
-          </CommonSelect>
+            label-key="symbol"
+            item-text-classes="uppercase"
+            selected-label-classes="uppercase"
+            :options="availableBuyTokens" />
         </div>
         <div class="flex justify-between items-center text-sm text-slate-400">
           <span>{{ formatUsd(buyTokenAmountInUsd, 6) }}</span>
