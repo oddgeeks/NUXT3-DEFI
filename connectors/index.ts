@@ -7,7 +7,7 @@ import { ethers } from "ethers"
 import { TorusConnector } from '@web3-react/torus-connector'
 import { MagicConnector } from '@web3-react/magic-connector'
 import { CustomMagicConnector } from "./custom/magic";
-
+import { WalletLinkConnector } from "./custom/walletlink"
 // const { networks } = useNetworks();
 
 const POLLING_INTERVAL = 12000;
@@ -36,6 +36,13 @@ export const RPC_URLS: { [chainId: number]: string } = {
 export const injected = new InjectedConnector({
     // supportedChainIds: [1, 3, 4, 5, 42, 56, 137]
 });
+
+export const walletlink = new WalletLinkConnector({
+    appName: 'Avocado',
+    url: 'https://avocado.link',
+    appLogoUrl: 'https://raw.githubusercontent.com/InstaDApp/brand/master/instadapp%20logo%20only%20filled.svg',
+    darkMode: false,
+})
 
 export const walletconnect = new WalletConnectConnector({
     rpc: RPC_URLS,

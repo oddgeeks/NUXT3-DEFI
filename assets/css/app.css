@@ -60,3 +60,6 @@ input::-webkit-inner-spin-button {
 .success-circle path:first-child {
   @apply fill-green-500 stroke-green-500;
 }
+.-cbwsdk-css-reset body {
+  background-color: transparent !important;
+}

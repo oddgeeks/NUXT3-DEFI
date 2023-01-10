@@ -27,6 +27,19 @@ export function useNetworks() {
       },
     },
     {
+      name: "Coinbase Wallet",
+      id: "walletlink",
+      logo: SVGMetamask,
+      switchNetwork: async (network: Network) => {
+        const { changeMetamaskNetwork } = await import("~/connectors");
+        return await changeMetamaskNetwork(network);
+      },
+      connect: async () => {
+        const { walletlink } = await import("~/connectors");
+        return walletlink;
+      },
+    },
+    {
       name: "WalletConnect",
       id: "walletconnect",
       logo: SVGWalletConnect,
