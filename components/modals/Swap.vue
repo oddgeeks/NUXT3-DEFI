@@ -293,8 +293,11 @@ onMounted(() => {
             iconKey="logoURI"
             value-key="address"
             label-key="name"
-            :options="availableTokens"
-          />
+            :options="availableTokens">
+            <template #item-text>
+              <span class="sr-only"></span>
+            </template>
+            </CommonSelect>
         </div>
         <div class="flex justify-between items-center text-sm text-slate-400">
           <span>{{ formatUsd(sellTokenInUsd) }}</span>
@@ -343,8 +346,11 @@ onMounted(() => {
             iconKey="logoURI"
             value-key="address"
             label-key="name"
-            :options="availableBuyTokens"
-          />
+            :options="availableBuyTokens">
+            <template #item-text>
+              <span class="sr-only"></span>
+            </template>
+          </CommonSelect>
         </div>
         <div class="flex justify-between items-center text-sm text-slate-400">
           <span>{{ formatUsd(buyTokenAmountInUsd, 6) }}</span>
@@ -438,7 +444,6 @@ onMounted(() => {
       >
         Swap
       </CommonButton>
-      <span class="text-xs text-slate-400 text-center font-medium">Powered by 1 inch</span>
     </div>
   </form>
 </template>

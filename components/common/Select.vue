@@ -123,7 +123,9 @@ const isSelected = (option: any, index: number) => {
                 :src="getIcon(option)"
               />
             </slot>
-            {{ getLabel(option) }}
+            <slot name="item-text">
+              {{ getLabel(option) }}
+            </slot>
             <SVGSuccess
               v-if="isSelected(option, i)"
               class="selected w-5 h-5 shrink-0 ml-auto text-white"
