@@ -1,7 +1,32 @@
-<script setup>
+<script setup lang="ts">
+import SearchSVG from "~/assets/images/icons/search.svg?component";
 
 const { tokenBalances, safeAddress } = useAvocadoSafe();
 const { account } = useWeb3();
+
+const searchQuery = ref('')
+
+const props = defineProps({
+  hideZeroBalances: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const filteredBalances =  computed(() => {
+  return tokenBalances.value.filter((token) => {
+    if (props.hideZeroBalances && isZero(token.balance)) {
+      return false
+    }
+
+    if (searchQuery.value) {
+      return token.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    }
+
+    return true
+  })
+})
+
 </script>
 <template>
     <div class="relative flex-1">
@@ -12,9 +37,18 @@ const { account } = useWeb3();
         >
           <table class="table w-full">
             <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
+              <tr class="border-b-0">
+                <td colspan="5" class="text-left pl-7.5 pr-10 py-6">
+                  <CommonInput name="Token Search" v-model="searchQuery" type="search" placeholder="Search">
+                    <template #prefix>
+                      <SearchSVG class="shrink-0 mr-2"/>
+                    </template>
+                    </CommonInput>
+                </td>
+              </tr>
               <template v-if="tokenBalances.length > 0">
                 <BalanceRow
-                  v-for="tokenBalance in tokenBalances"
+                  v-for="tokenBalance in filteredBalances"
                   :token-balance="tokenBalance"
                 />
               </template>
