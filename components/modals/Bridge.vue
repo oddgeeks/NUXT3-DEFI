@@ -48,7 +48,9 @@ const { handleSubmit, errors, meta, resetForm, validate } = useForm({
         const priceInUSD = times(value, token.value.price)
         const amount10InUsd = div(10, token.value.price).toFixed(2)
 
-        if(priceInUSD.gt(10)) return true
+        const roundedPrice = Math.ceil(priceInUSD.toNumber() * 2) / 2
+ 
+        if(toBN(roundedPrice).gte(10)) return true
         return createError({ path, message: `Min. ${amount10InUsd} ${token.value.symbol.toUpperCase()}` })
       }),
   }),
