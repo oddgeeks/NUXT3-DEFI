@@ -40,6 +40,30 @@
   .svg-circle.darker > path:first-child {
     @apply dark:stroke-slate-750 dark:fill-slate-750 fill-slate-150 stroke-slate-150;
   }
+
+  html.dark .loading-box {
+    background: linear-gradient(-45deg, #475569, #334155, #334155);
+    background-size: 400% 400%;
+    animation: gradient 2s ease infinite;
+  }
+
+  .loading-box {
+    background: linear-gradient(-45deg, #E2E8F0, #CBD5E1, #CBD5E1);
+    background-size: 400% 400%;
+    animation: gradient 2s ease infinite;
+  }
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
 }
 
 .tippy-box {
