@@ -1,22 +1,23 @@
-import { network , torus, injected, walletconnect, magic} from "~~/connectors";
+import { network, torus, injected, walletconnect, magic, walletlink } from "~~/connectors";
 
 const providers = {
   // network,
   // torus,
   injected,
   // magic,
-  walletconnect
+  walletconnect,
+  walletlink,
 }
 
 export function useConnectors() {
-  const cachedProviderName = useLocalStorage("cachedProviderName", null);
+  const cachedProviderName = useLocalStorage<string | null>("cachedProviderName", null);
 
-  function setConnectorName(name: string|null) {
+  function setConnectorName(name: string | null) {
     cachedProviderName.value = name
   }
 
-  function getConnector() {
-      return providers[cachedProviderName.value]
+  function getConnector(): any {
+    return cachedProviderName.value ? (providers as any)[cachedProviderName.value as any] : null
   }
 
   return {

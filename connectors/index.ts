@@ -7,7 +7,7 @@ import { ethers } from "ethers"
 import { TorusConnector } from '@web3-react/torus-connector'
 import { MagicConnector } from '@web3-react/magic-connector'
 import { CustomMagicConnector } from "./custom/magic";
-
+import { WalletLinkConnector } from "./custom/walletlink"
 // const { networks } = useNetworks();
 
 const POLLING_INTERVAL = 12000;
@@ -37,6 +37,13 @@ export const injected = new InjectedConnector({
     // supportedChainIds: [1, 3, 4, 5, 42, 56, 137]
 });
 
+export const walletlink = new WalletLinkConnector({
+    appName: 'Avocado',
+    url: 'https://avocado.link',
+    appLogoUrl: 'https://raw.githubusercontent.com/InstaDApp/brand/master/instadapp%20logo%20only%20filled.svg',
+    darkMode: false,
+})
+
 export const walletconnect = new WalletConnectConnector({
     rpc: RPC_URLS,
     chainId: 75,
@@ -51,7 +58,7 @@ export const network = new NetworkConnector({
 export const torus = new TorusConnector({ chainId: 75 })
 
 export const magic = (email: string) => {
-   return new CustomMagicConnector({
+    return new CustomMagicConnector({
         network: {
             chainId: 137,// 75,
             rpcUrl: "https://rpc.ankr.com/polygon",// "https://rpc.avocado.link"
@@ -62,25 +69,24 @@ export const magic = (email: string) => {
 }
 
 export const changeMetamaskNetwork = async (network: Network) => {
-    if (window.ethereum.networkVersion !== network.chainId) {
+    const { library, chainId } = useWeb3()
+    if (chainId.value !== network.chainId) {
         try {
-            await window.ethereum.request({
-                method: "wallet_switchEthereumChain",
-                params: [{ chainId: ethers.utils.hexValue(network.chainId) }],
-            });
+            await library.value.send("wallet_switchEthereumChain",
+                [{ chainId: ethers.utils.hexValue(network.chainId) }]
+            )
             return Promise.resolve();
         } catch (err: any) {
             if (err.code === 4902) {
                 try {
-                    await window.ethereum.request({
-                        method: "wallet_addEthereumChain",
-                        params: [
+                    await library.value.send("wallet_addEthereumChain",
+                        [
                             {
                                 ...network.params,
                                 chainId: ethers.utils.hexValue(network.chainId),
                             },
-                        ],
-                    });
+                        ]
+                    )
                 } catch (err) {
                     return Promise.reject(err);
                 }
