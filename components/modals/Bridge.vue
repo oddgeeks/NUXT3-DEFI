@@ -347,6 +347,7 @@ const onSubmit = handleSubmit(async () => {
                   />
                   <span class="text-sm leading-5">
                     {{ token.name }}
+                    <span class="uppercase">({{ token.symbol }})</span>
                   </span>
                 </div>
               </div>
