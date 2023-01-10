@@ -20,7 +20,8 @@ const filteredBalances =  computed(() => {
     }
 
     if (searchQuery.value) {
-      return token.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+      return token.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        token.symbol.toLowerCase().includes(searchQuery.value.toLowerCase())
     }
 
     return true
