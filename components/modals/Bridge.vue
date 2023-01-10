@@ -270,7 +270,9 @@ const onSubmit = handleSubmit(async () => {
         onerror="this.onerror=null; this.remove();"
       />
       <div class="flex flex-col gap-[14px]">
-        <h2 class="text-lg leading-5 text-center uppercase">{{ token.symbol }}</h2>
+        <h2 class="text-lg leading-5 text-center">{{ token.name }}
+        <span class="uppercase"> ({{token.symbol  }})</span>
+        </h2>
 
         <div
           class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5"
@@ -405,6 +407,7 @@ const onSubmit = handleSubmit(async () => {
       <p class="text-xs text-center text-slate-400">
         Estimated processing time is 10-30m.
       </p>
+
 
       <Transition
         enter-active-class="duration-300 ease-out"
