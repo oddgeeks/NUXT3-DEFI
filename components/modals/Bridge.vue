@@ -270,7 +270,7 @@ const onSubmit = handleSubmit(async () => {
         onerror="this.onerror=null; this.remove();"
       />
       <div class="flex flex-col gap-[14px]">
-        <h2 class="text-lg leading-5 text-center">{{ token.name }}</h2>
+        <h2 class="text-lg leading-5 text-center uppercase">{{ token.symbol }}</h2>
 
         <div
           class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5"
