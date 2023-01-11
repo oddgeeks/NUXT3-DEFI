@@ -196,7 +196,7 @@ const connect = async () => {
     </CommonButton>
   </form>
 
-  <div v-else class="space-y-8">
+  <form tabindex="0" v-focus @keypress.enter="connect" @submit="connect" v-else class="space-y-8 focus:outline-none">
     <div class="flex flex-col items-center space-y-8">
       <div class="w-10 h-10" v-if="connection.peerMeta.icons.length">
         <img
@@ -232,14 +232,13 @@ const connect = async () => {
         <ChainLogo class="w-6 h-6" :chain="value" />
       </template>
     </CommonSelect>
-
     <CommonButton
+      type="submit"
       :loading="loading"
-      @click="connect"
       class="w-full justify-center"
       size="lg"
     >
       Approve
     </CommonButton>
-  </div>
+  </form>
 </template>
