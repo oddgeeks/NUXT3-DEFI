@@ -49,8 +49,8 @@ const { handleSubmit, errors, meta, resetForm, validate } = useForm({
         const amount10InUsd = div(10, token.value.price).toFixed(2)
 
         const roundedPrice = Math.ceil(priceInUSD.toNumber() * 2) / 2
- 
-        if(toBN(roundedPrice).gte(10)) return true
+
+        if (toBN(roundedPrice).gte(10)) return true
         return createError({ path, message: `Min. ${amount10InUsd} ${token.value.symbol.toUpperCase()}` })
       }),
   }),
@@ -95,6 +95,14 @@ watch(
 );
 
 const bridgeToToken = computed(() => {
+  const t = bridgeToTokens.value?.result?.find((t: any) =>
+    t.symbol.toLowerCase() === token.value.symbol.toLowerCase()
+  );
+
+  if (t) {
+    return t;
+  }
+
   return bridgeToTokens.value?.result?.find((t: any) =>
     t.symbol.toLowerCase().includes(token.value.symbol.toLowerCase())
   );
@@ -262,25 +270,17 @@ const onSubmit = handleSubmit(async () => {
 <template>
   <form @submit="onSubmit" class="flex gap-7.5 flex-col">
     <div class="flex justify-center flex-col items-center">
-      <img
-        width="40"
-        height="40"
-        class="h-10 w-10 mb-7.5"
+      <img width="40" height="40" class="h-10 w-10 mb-7.5"
         :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
-        onerror="this.onerror=null; this.remove();"
-      />
+        onerror="this.onerror=null; this.remove();" />
       <div class="flex flex-col gap-[14px]">
         <h2 class="text-lg leading-5 text-center">{{ token.name }}
-        <span class="uppercase"> ({{token.symbol  }})</span>
+          <span class="uppercase"> ({{ token.symbol }})</span>
         </h2>
 
-        <div
-          class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5"
-        >
+        <div class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5">
           <ChainLogo class="w-5 h-5" :chain="token.chainId" />
-          <span class="text-xs text-slate-400 leading-5"
-            >{{ chainIdToName(token.chainId) }} Network</span
-          >
+          <span class="text-xs text-slate-400 leading-5">{{ chainIdToName(token.chainId) }} Network</span>
         </div>
       </div>
     </div>
@@ -293,34 +293,21 @@ const onSubmit = handleSubmit(async () => {
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <CommonInput
-            min="0.000001"
-            type="number"
-            step="0.000001"
-            inputmode="decimal"
-            :error-type="amountErrors.some(i=> i.toLocaleLowerCase().includes('min')) ? 'warning' : 'error'"
-            :error-message="amountMeta.dirty ? errors['amount'] : ''"
-            name="amount"
-            placeholder="Enter amount"
-            v-model="amount"
-          >
+          <CommonInput min="0.000001" type="number" step="0.000001" inputmode="decimal"
+            :error-type="amountErrors.some(i => i.toLocaleLowerCase().includes('min')) ? 'warning' : 'error'"
+            :error-message="amountMeta.dirty ? errors['amount'] : ''" name="amount" placeholder="Enter amount"
+            v-model="amount">
             <template #suffix>
-              <button
-                type="button"
-                class="absolute top-0 bottom-0 right-0 mr-5 text-sm text-blue-500 hover:text-blue-500"
-                @click="setMax"
-              >
+              <button type="button"
+                class="absolute top-0 bottom-0 right-0 mr-5 text-sm text-blue-500 hover:text-blue-500" @click="setMax">
                 MAX
               </button>
             </template>
           </CommonInput>
           <div
-            class="dark:bg-gray-850 bg-slate-50 px-3 max-w-full inline-flex items-center gap-2 rounded-2xl self-start h-[50px]"
-          >
+            class="dark:bg-gray-850 bg-slate-50 px-3 max-w-full inline-flex items-center gap-2 rounded-2xl self-start h-[50px]">
             <ChainLogo class="w-6 h-6" :chain="token.chainId" />
-            <span class="text-sm leading-5"
-              >{{ chainIdToName(token.chainId) }} Network</span
-            >
+            <span class="text-sm leading-5">{{ chainIdToName(token.chainId) }} Network</span>
           </div>
         </div>
       </div>
@@ -330,21 +317,13 @@ const onSubmit = handleSubmit(async () => {
         </div>
         <div class="px-5 pt-[14px] pb-5 dark:bg-gray-850 bg-slate-50 rounded-5">
           <div class="flex flex-col gap-5">
-            <div
-              class="grid items-center gap-4 grid-cols-1 md:grid-cols-2 md:gap-x-4 md:gap-y-5"
-            >
+            <div class="grid items-center gap-4 grid-cols-1 md:grid-cols-2 md:gap-x-4 md:gap-y-5">
               <div class="flex flex-col gap-2.5">
                 <span class="text-sm">Coin</span>
-                <div
-                  class="dark:bg-gray-800 bg-slate-100 w-full px-3 flex py-3 items-center gap-2.5 rounded-2xl"
-                >
-                  <img
-                    width="24"
-                    height="24"
-                    class="h-6 w-6"
+                <div class="dark:bg-gray-800 bg-slate-100 w-full px-3 flex py-3 items-center gap-2.5 rounded-2xl">
+                  <img width="24" height="24" class="h-6 w-6"
                     :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
-                    onerror="this.onerror=null; this.remove();"
-                  />
+                    onerror="this.onerror=null; this.remove();" />
                   <span class="text-sm leading-5">
                     {{ token.name }}
                     <span class="uppercase">({{ token.symbol }})</span>
@@ -354,12 +333,8 @@ const onSubmit = handleSubmit(async () => {
 
               <div class="flex flex-col gap-2.5">
                 <span class="text-sm">Network</span>
-                <CommonSelect
-                  v-model="bridgeToChainId"
-                  value-key="chainId"
-                  label-key="name"
-                  :options="selectableChains"
-                >
+                <CommonSelect v-model="bridgeToChainId" value-key="chainId" label-key="name"
+                  :options="selectableChains">
                   <template #button-prefix>
                     <ChainLogo class="w-6 h-6" :chain="bridgeToChainId" />
                   </template>
@@ -371,24 +346,17 @@ const onSubmit = handleSubmit(async () => {
             </div>
 
             <div class="flex justify-between items-center">
-              <span class="text-slate-400 text-sm font-semibold"
-                >Bridge Fee</span
-              >
-              <span class="text-slate-400 text-sm font-semibold text-right"
-                >{{ bridgeFee }} USDC</span
-              >
+              <span class="text-slate-400 text-sm font-semibold">Bridge Fee</span>
+              <span class="text-slate-400 text-sm font-semibold text-right">{{ bridgeFee }} USDC</span>
             </div>
 
             <div class="divider" />
 
             <div class="flex justify-between items-center">
-              <span class="md:text-lg font-semibold !leading-5"
-                >You receive</span
-              >
-              <span
-                class="sm:text-2xl text-lg font-semibold text-right !leading-5 uppercase"
-                >{{ toAmount }} {{ token.symbol }}</span
-              >
+              <span class="md:text-lg font-semibold !leading-5">You receive</span>
+              <span class="sm:text-2xl text-lg font-semibold text-right !leading-5 uppercase">{{ toAmount }} {{
+                token.symbol
+              }}</span>
             </div>
           </div>
         </div>
@@ -396,13 +364,8 @@ const onSubmit = handleSubmit(async () => {
     </div>
 
     <div class="flex gap-4 flex-col">
-      <CommonButton
-        type="submit"
-        :disabled="sendingDisabled"
-        :loading="loading || pending"
-        class="justify-center w-full"
-        size="lg"
-      >
+      <CommonButton type="submit" :disabled="sendingDisabled" :loading="loading || pending"
+        class="justify-center w-full" size="lg">
         Bridge
       </CommonButton>
       <p class="text-xs text-center text-slate-400">
@@ -410,18 +373,11 @@ const onSubmit = handleSubmit(async () => {
       </p>
 
 
-      <Transition
-        enter-active-class="duration-300 ease-out"
-        enter-from-class="transform opacity-0"
-        enter-to-class="opacity-100"
-        leave-active-class="duration-200 ease-in"
-        leave-from-class="opacity-100"
-        leave-to-class="transform opacity-0"
-      >
-        <div
-          v-if="error"
-          class="bg-orange-500 gap-[15px] w-full justify-center flex bg-opacity-10 text-orange-500 rounded-5 p-4 text-sm text-center"
-        >
+      <Transition enter-active-class="duration-300 ease-out" enter-from-class="transform opacity-0"
+        enter-to-class="opacity-100" leave-active-class="duration-200 ease-in" leave-from-class="opacity-100"
+        leave-to-class="transform opacity-0">
+        <div v-if="error"
+          class="bg-orange-500 gap-[15px] w-full justify-center flex bg-opacity-10 text-orange-500 rounded-5 p-4 text-sm text-center">
           <span class="text-xs self-center">
             {{ error }}
           </span>
