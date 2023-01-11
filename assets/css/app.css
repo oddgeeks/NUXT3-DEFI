@@ -6,33 +6,32 @@
   body {
     @apply h-screen dark:bg-gray-950 bg-white dark:text-white text-slate-900 font-semibold;
   }
-  
+
   html.dark .scroll-style::-webkit-scrollbar-thumb {
     box-shadow: inset 0 0 14px 14px #334155;
   }
-  
+
   /* Reset input number */
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
-  
+
   input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: none;
-  
+
     height: 20px;
     width: 20px;
     background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M14.8995 14.8995L5 5' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M10 10C10 10 10.1529 10 10.3132 10C10.3745 10 10.4368 10 10.5 10C10.5632 10 10.6255 10 10.6868 10C10.8471 10 11 10 11 10C11 10 10.8471 10 10.6868 10C10.6255 10 10.5632 10 10.5 10C10.4368 10 10.3745 10 10.3132 10C10.1529 10 10 10 10 10Z' fill='%231E293B' stroke='%2394A3B8'/%3E%3Cpath d='M14.8995 5.10051L5 15' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E%0A");
   }
 }
 
-
 @layer utilities {
   .success-circle path:first-child {
     @apply fill-green-500 stroke-green-500;
   }
-  
+
   .svg-circle > path:first-child {
     @apply stroke-slate-400 fill-slate-400;
   }
@@ -48,22 +47,22 @@
   }
 
   .loading-box {
-    background: linear-gradient(-45deg, #E2E8F0, #CBD5E1, #CBD5E1);
+    background: linear-gradient(-45deg, #e2e8f0, #cbd5e1, #cbd5e1);
     background-size: 400% 400%;
     animation: gradient 2s ease infinite;
   }
 
-@keyframes gradient {
+  @keyframes gradient {
     0% {
-        background-position: 0% 50%;
+      background-position: 0% 50%;
     }
     50% {
-        background-position: 100% 50%;
+      background-position: 100% 50%;
     }
     100% {
-        background-position: 0% 50%;
+      background-position: 0% 50%;
     }
-}
+  }
 }
 
 .tippy-box {
@@ -103,11 +102,17 @@
   border: solid 5px transparent;
 }
 
-
 .copy_svg__copy-path {
   @apply dark:fill-gray-850 fill-slate-50;
 }
 
 .clipboard_svg__paste-path {
   @apply dark:fill-slate-800 fill-slate-100;
+}
+
+.success-circle path:first-child {
+  @apply fill-green-500 stroke-green-500;
+}
+.-cbwsdk-css-reset body {
+  background-color: transparent !important;
 }

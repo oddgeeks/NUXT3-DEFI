@@ -263,6 +263,11 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
     storage.value.keys[safe.safeAddress.value] = storage.value.keys[
       safe.safeAddress.value
     ].filter((key) => key !== storageId);
+
+    try {
+      window.localStorage.removeItem(storageId)
+    } catch (error) {
+    }
   };
 
   const prepareAndConnect = async (uri: string) => {

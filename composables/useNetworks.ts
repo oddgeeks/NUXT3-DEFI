@@ -6,6 +6,7 @@ import SVGAvalanche from "~/assets/images/logo/avalanche.svg?component";
 import SVGMetamask from "~/assets/images/wallet/metamask.svg?component";
 import SVGWalletConnect from "~/assets/images/wallet/wallet-connect.svg?component";
 import SVGMagicConnect from "~/assets/images/wallet/magic.svg?component";
+import SVGWalletlink from "~/assets/images/wallet/walletlink.svg?component";
 import { ethers } from "ethers";
 
 export function useNetworks() {
@@ -24,6 +25,19 @@ export function useNetworks() {
       connect: async () => {
         const { injected } = await import("~/connectors");
         return injected;
+      },
+    },
+    {
+      name: "Coinbase Wallet",
+      id: "walletlink",
+      logo: SVGWalletlink,
+      switchNetwork: async (network: Network) => {
+        const { changeMetamaskNetwork } = await import("~/connectors");
+        return await changeMetamaskNetwork(network);
+      },
+      connect: async () => {
+        const { walletlink } = await import("~/connectors");
+        return walletlink;
       },
     },
     {
