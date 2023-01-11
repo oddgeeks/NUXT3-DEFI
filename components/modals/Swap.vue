@@ -32,7 +32,7 @@ const props = defineProps({
   },
 });
 
-const { chainTokenBalances, sendTransactions } = useAvocadoSafe();
+const { chainTokenBalances, sendTransactions, safeAddress } = useAvocadoSafe();
 
 const { tokens } = storeToRefs(useTokens())
 const { getNetworkByChainId } = useNetworks();
@@ -135,7 +135,7 @@ const { data: swapDetails, pending } = useAsyncData(
           sellAmount: toWei(amount.value, sellToken.value.decimals),
           maxSlippage: customSlippage.value || slippage.value,
           slippage: slippage.value,
-          user: account.value,
+          user: safeAddress.value,
           access_token: "hxBA1uxwaGWN0xcpPOncVJ3Tk7FdFxY7g3NX28R14C",
         },
       }
@@ -204,7 +204,7 @@ const onSubmit = handleSubmit(async () => {
   const address = bestRoute.value?.data.to;
   const txs = [];
 
-  if (!bestRoute.value?.data?.to || !address) return;
+  if (!address) return;
 
   const erc20 = Erc20__factory.connect(address, getRpcProvider(props.chainId));
 
@@ -213,7 +213,7 @@ const onSubmit = handleSubmit(async () => {
       sellToken.value.address !== "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
     ) {
       const { data } = await erc20.populateTransaction.approve(
-        bestRoute.value.data.allowanceSpender || address,
+        address || bestRoute.value.data.allowanceSpender,
         bestRoute.value.data.sellTokenAmount
       );
 
@@ -224,7 +224,7 @@ const onSubmit = handleSubmit(async () => {
     }
 
     txs.push({
-      to: bestRoute.value?.data?.to,
+      to: address,
       data: bestRoute.value?.data.calldata,
       value: bestRoute.value?.data.value,
     });
