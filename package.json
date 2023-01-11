@@ -54,6 +54,7 @@
   "dependencies": {
     "@coinbase/wallet-sdk": "3.0.4",
     "vee-validate": "^4.7.3",
+    "vue-gtag-next": "^1.14.0",
     "yup": "^0.32.11"
   }
 }

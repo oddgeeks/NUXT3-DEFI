@@ -4,6 +4,7 @@ import { useField, useForm } from "vee-validate";
 import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
 import RefreshSVG from "~/assets/images/icons/refresh.svg?component";
 import * as yup from "yup";
+import { storeToRefs } from "pinia";
 
 interface ISwap {
   sellToken: {
@@ -31,8 +32,9 @@ const props = defineProps({
   },
 });
 
-const { tokenBalances, chainTokenBalances, sendTransactions } =
-  useAvocadoSafe();
+const { chainTokenBalances, sendTransactions } = useAvocadoSafe();
+
+const { tokens } = storeToRefs(useTokens())
 const { getNetworkByChainId } = useNetworks();
 const { account } = useWeb3();
 const { toWei, fromWei } = useBignumber();
@@ -48,9 +50,6 @@ const slippages = [
   { value: "3", label: "3%" },
 ];
 
-const availableTokens = computed(() => {
-  return tokenBalances.value.filter((t) => t.chainId === props.chainId);
-});
 
 const swap = ref({
   sellToken: {
@@ -62,11 +61,19 @@ const swap = ref({
   },
 });
 
-const availableBuyTokens = computed(() => {
-  const tokens = chainTokenBalances.value[props.chainId];
+const availableTokens = computed(() =>  tokens.value.filter((t) => t.chainId === props.chainId));
+const availableBuyTokens = computed(() => availableTokens.value.filter((t) => t.address !== sellToken.value.address));
 
-  return tokens.filter((t) => t.address !== sellToken.value.address);
-});
+const sellToken = computed(() => availableTokens.value.find(
+    (t) => t.address === swap.value.sellToken.tokenAddress
+  )!);
+
+const sellTokenBalance = computed(() => chainTokenBalances.value[props.chainId].find(
+  (t) => t.address === swap.value.sellToken.tokenAddress)?.balance || "0.00")
+
+const buyToken = computed(() => availableTokens.value.find(
+    (t) => t.address === swap.value.buyToken.tokenAddress
+  )!);
 
 const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
   useForm({
@@ -81,12 +88,9 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
         .required("Amount is required")
         .test("max-amount", "Insufficient balance", (value) => {
           if (!value) return true;
-          const sellToken = availableTokens.value.find(
-            (t) => t.address === swap.value.sellToken.tokenAddress
-          )!;
 
           const amount = toBN(value);
-          const balance = toBN(sellToken.balance);
+          const balance = toBN(sellTokenBalance.value);
 
           return amount.gt(0) && amount.lte(balance);
         }),
@@ -94,7 +98,7 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
       customSlippage: yup
         .string()
         .test("slippage", "Slippage must be between 0.1% and 3%", (value) => {
-          const slippage = toBN(value);
+          const slippage = toBN(value!);
 
           if (value) {
             return slippage.gte(0.1) && slippage.lte(3);
@@ -108,17 +112,6 @@ const { value: slippage } = useField<string>("slippage");
 const { value: customSlippage, meta: slippageMeta } =
   useField<string>("customSlippage");
 
-const sellToken = computed(() => {
-  return chainTokenBalances.value[props.chainId].find(
-    (t) => t.address === swap.value.sellToken.tokenAddress
-  )!;
-});
-
-const buyToken = computed(() => {
-  return chainTokenBalances.value[props.chainId].find(
-    (t) => t.address === swap.value.buyToken.tokenAddress
-  )!;
-});
 
 const sendingDisabled = computed(
   () => isSubmitting.value || pending.value || !meta.value.valid
@@ -285,6 +278,7 @@ onMounted(() => {
             name="amount"
             v-model="amount"
             class="flex-1"
+            input-classes="text-[26px] placeholder:text-xl"
             container-classes="!p-0"
           />
           <CommonSelect
@@ -292,17 +286,19 @@ onMounted(() => {
             v-model="swap.sellToken.tokenAddress"
             iconKey="logoURI"
             value-key="address"
-            label-key="name"
-            :options="availableTokens"
-          />
+            selected-label-classes="uppercase"
+            item-text-classes="uppercase"
+            label-key="symbol"
+            :options="availableTokens" />
         </div>
         <div class="flex justify-between items-center text-sm text-slate-400">
-          <span>{{ formatUsd(sellTokenInUsd) }}</span>
-          <div class="flex items-center gap-2.5">
-            <span>{{ sellToken?.balance }} {{ sellToken?.symbol }}</span>
+          <div v-if="pending && meta.valid" style="width:100px; height: 20px;" class="loading-box rounded-lg" />
+          <span v-else>{{ formatUsd(sellTokenInUsd) }}</span>
+          <div class="flex items-center gap-2.5 uppercase">
+            <span>{{ sellTokenBalance }} {{ sellToken?.symbol }}</span>
             <button
               type="button"
-              @click="amount = sellToken?.balance"
+              @click="amount = sellTokenBalance"
               class="text-blue-500"
             >
               MAX
@@ -328,25 +324,31 @@ onMounted(() => {
         class="py-4 px-5 dark:bg-slate-800 bg-slate-100 rounded-5 flex flex-col gap-4"
       >
         <div class="flex">
+          <div class="flex-1 flex items-center">
+          <div v-if="pending && meta.valid" style="width:100px; height: 34px;" class="loading-box rounded-[10px]" />
           <CommonInput
+            v-else
             transparent
             readonly
             placeholder="0.0"
             name="buy-token"
             :model-value="buyTokenAmount.toFixed(3)"
-            class="flex-1"
-            container-classes="!p-0"
+            container-classes="!py-0 !p-0"
+            input-classes="!py-0 !p-0 text-[26px]"
           />
+          </div>
           <CommonSelect
             class="basis-40"
             v-model="swap.buyToken.tokenAddress"
             iconKey="logoURI"
             value-key="address"
-            label-key="name"
-            :options="availableBuyTokens"
-          />
+            label-key="symbol"
+            item-text-classes="uppercase"
+            selected-label-classes="uppercase"
+            :options="availableBuyTokens" />
         </div>
-        <div class="flex justify-between items-center text-sm text-slate-400">
+        <div v-if="pending && meta.valid" style="width:100px; height: 20px;" class="loading-box rounded-lg" />
+        <div v-else class="flex justify-between items-center text-sm text-slate-400">
           <span>{{ formatUsd(buyTokenAmountInUsd, 6) }}</span>
         </div>
       </div>
@@ -404,18 +406,21 @@ onMounted(() => {
               <div
                 class="flex text-slate-400 uppercase text-sm justify-between items-center"
               >
-                <span>
+               <div v-if="pending && meta.valid" style="width:140px; height: 20px;" class="loading-box rounded-lg" />
+                <span v-else>
                   1 {{ sellToken?.symbol }} = {{ buyTokenAmountPerSellToken }}
                   {{ buyToken?.symbol }}
                 </span>
-                <span>
+                <div v-if="pending && meta.valid" style="width:140px; height: 20px;" class="loading-box rounded-lg" />
+                <span v-else>
                   1 {{ buyToken?.symbol }} = {{ sellTokenAmountPerBuyToken }}
                   {{ sellToken?.symbol }}
                 </span>
               </div>
               <div class="flex justify-between text-sm items-center">
                 <span>Price Impact</span>
-                <span class="text-green-500">
+                <div v-if="pending && meta.valid" style="width:100px; height: 20px;" class="loading-box rounded-lg" />
+                <span v-else class="text-green-500">
                   {{
                     formatPercent(
                       toBN(bestRoute?.data.priceImpact || 0).negated()
@@ -438,7 +443,6 @@ onMounted(() => {
       >
         Swap
       </CommonButton>
-      <span class="text-xs text-slate-400 text-center font-medium">Powered by 1 inch</span>
     </div>
   </form>
 </template>

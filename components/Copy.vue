@@ -33,10 +33,6 @@ defineProps<{
 </template>
 
 <style scoped>
-.svg-circle > :deep(path:first-child) {
-  @apply stroke-slate-400 fill-slate-400;
-}
-
 .slide-left-enter-active,
 .slide-left-leave-active {
   transition: all 0.1s ease-out;

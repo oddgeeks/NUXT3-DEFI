@@ -151,7 +151,11 @@ const onSubmit = handleSubmit(async () => {
     </div>
 
     <div class="flex flex-col justify-center gap-[15px] items-center">
-      <h2>{{ token.name }}</h2>
+      <h2>{{ token.name }} 
+        <span class="uppercase">
+        ({{token.symbol }})
+      </span>
+    </h2>
 
       <div
         class="dark:bg-gray-850 bg-slate-50 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]"
@@ -199,7 +203,7 @@ const onSubmit = handleSubmit(async () => {
           v-model="address"
         >
           <template #suffix>
-            <button @click="pasteAddress">
+            <button type="button" @click="pasteAddress">
               <ClipboardSVG />
             </button>
           </template>

@@ -36,6 +36,12 @@ const closeConnection = () => {
     deactivate();
   }
 };
+
+const isProviderVisible = (provider: Provider) => {
+  if (provider.name === 'Metamask' && !window.ethereum) return false
+  return true
+}
+
 </script>
 
 <template>
@@ -57,6 +63,7 @@ const closeConnection = () => {
         <ul class="grid gap-[15px] px-2 pb-2">
           <li :key="provider.name" v-for="provider in providers">
             <button
+              v-if="isProviderVisible(provider)"
               @click="connect(closeModal, provider)"
               class="px-5 py-4 w-full dark:bg-gray-850 bg-slate-100 rounded-[40px] group transition-colors flex items-center gap-4"
               :class="

@@ -15,6 +15,8 @@ const props = defineProps<{
   isValueIndex?: boolean;
   modelValue?: any;
   containerClasses?: string;
+  itemTextClasses?: string;
+  selectedLabelClasses?: string;
 }>();
 
 onClickOutside(containerRef, () => {
@@ -91,7 +93,7 @@ const isSelected = (option: any, index: number) => {
           :src="selectedIcon"
         />
       </slot>
-      <span class="block truncate text-sm">{{ selectedLabel }}</span>
+      <span :class="selectedLabelClasses" class="block truncate text-sm">{{ selectedLabel }}</span>
       <span class="pointer-events-none flex items-center ml-auto">
         <ChevronDownSVG class="h-5 w-5 text-gray-400" aria-hidden="true" />
       </span>
@@ -123,7 +125,7 @@ const isSelected = (option: any, index: number) => {
                 :src="getIcon(option)"
               />
             </slot>
-            {{ getLabel(option) }}
+            <span :class="itemTextClasses">{{ getLabel(option) }}</span>
             <SVGSuccess
               v-if="isSelected(option, i)"
               class="selected w-5 h-5 shrink-0 ml-auto text-white"
