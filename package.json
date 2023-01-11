@@ -13,7 +13,6 @@
   "devDependencies": {
     "@fontsource/source-code-pro": "^4.5.12",
     "@headlessui/vue": "^1.7.7",
-    "@instadapp/avocado": "^0.0.16",
     "@instadapp/utils": "^0.4.5",
     "@instadapp/vue-web3-nuxt": "^0.9.8",
     "@magic-ext/connect": "^3.1.0",
@@ -53,6 +52,7 @@
   },
   "dependencies": {
     "@coinbase/wallet-sdk": "3.0.4",
+    "avocado-safe": "^0.0.28",
     "vee-validate": "^4.7.3",
     "vue-gtag-next": "^1.14.0",
     "yup": "^0.32.11"

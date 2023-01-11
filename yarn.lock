@@ -778,7 +778,7 @@
     elliptic "6.5.4"
     hash.js "1.1.7"
 
-"@ethersproject/solidity@5.7.0":
+"@ethersproject/solidity@5.7.0", "@ethersproject/solidity@^5.7.0":
   version "5.7.0"
   resolved "https://registry.yarnpkg.com/@ethersproject/solidity/-/solidity-5.7.0.tgz#5e9c911d8a2acce2a5ebb48a5e2e0af20b631cb8"
   integrity sha512-HmabMd2Dt/raavyaGukF4XxizWKhKQ24DoLtdNbBmNKUOPqwjsKQSdV9GQtj9CBEea9DlzETlVER1gYeXXBGaA==
@@ -875,17 +875,6 @@
   version "1.7.7"
   resolved "https://registry.yarnpkg.com/@headlessui/vue/-/vue-1.7.7.tgz#db7f2ffde01b9d1f6e9adce53c5de73d73399c08"
   integrity sha512-dkdNhJkxyT9rXW5fHx/MkKaM3U13P3duYuwoGTRmDGjE7xAsvcWOSJRJpw1AmCQTvjZF44bh2wSlySLaHW+WuQ==
-
-"@instadapp/avocado@^0.0.16":
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.16.tgz#4c2d5e4f86ca9a5fed3d78b9079433e19c3f0172"
-  integrity sha512-5wxfoHVKAYgjukyRHZLZCCA8eiwto6lj3ViktN+GPZsFjnNHE1qYFx0gCiwwqG0oKS32z9b8xfFXjDLmaZGzIw==
-  dependencies:
-    "@ethersproject/abi" "^5.7.0"
-    "@ethersproject/abstract-provider" "^5.7.0"
-    "@ethersproject/abstract-signer" "^5.7.0"
-    "@ethersproject/providers" "^5.7.2"
-    ethers "^5.7.2"
 
 "@instadapp/utils@^0.4.5":
   version "0.4.5"
@@ -1705,7 +1694,7 @@
     "@vue/reactivity" "3.2.45"
     "@vue/shared" "3.2.45"
 
-"@vue/runtime-dom@3.2.45":
+"@vue/runtime-dom@3.2.45", "@vue/runtime-dom@^3.2.45":
   version "3.2.45"
   resolved "https://registry.yarnpkg.com/@vue/runtime-dom/-/runtime-dom-3.2.45.tgz#1a2ef6ee2ad876206fbbe2a884554bba2d0faf59"
   integrity sha512-cy88YpfP5Ue2bDBbj75Cb4bIEZUMM/mAkDMfqDTpUYVgTf/kuQ2VQ8LebuZ8k6EudgH8pYhsGWHlY0lcxlvTwA==
@@ -2319,6 +2308,21 @@ available-typed-arrays@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/available-typed-arrays/-/available-typed-arrays-1.0.5.tgz#92f95616501069d07d10edb2fc37d3e1c65123b7"
   integrity sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==
+
+avocado-safe@^0.0.28:
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/avocado-safe/-/avocado-safe-0.0.28.tgz#3d3467a5d84f9f8ab44b676a7ef45270ccb85bd9"
+  integrity sha512-5hbWDF+lSr/N9mdQnhtvUa0V/VvIW9LURg3QZCiYbOe5AzQok3g5EA0/xuvC8wcjvnkWJ3RZNIJpkHh8DtnSrQ==
+  dependencies:
+    "@ethersproject/abi" "^5.7.0"
+    "@ethersproject/providers" "^5.7.2"
+    "@ethersproject/solidity" "^5.7.0"
+    "@vue/runtime-dom" "^3.2.45"
+    "@web3-react/abstract-connector" "^6.0.7"
+    ethers "^5.7.2"
+    events "^3.3.0"
+    mitt "^3.0.0"
+    tiny-warning "^1.0.3"
 
 axios-retry@^3.3.1:
   version "3.3.1"
@@ -5337,6 +5341,11 @@ minizlib@^2.1.1:
   dependencies:
     minipass "^3.0.0"
     yallist "^4.0.0"
+
+mitt@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/mitt/-/mitt-3.0.0.tgz#69ef9bd5c80ff6f57473e8d89326d01c414be0bd"
+  integrity sha512-7dX2/10ITVyqh4aOSVI9gdape+t9l2/8QxHrFmUXu4EEUpdlxl6RudZUPZoc+zuY2hk1j7XxVroIVIan/pD/SQ==
 
 mkdir@^0.0.2:
   version "0.0.2"

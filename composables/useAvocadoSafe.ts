@@ -1,5 +1,5 @@
 import { storeToRefs } from "pinia";
-import { createSafe } from "@instadapp/avocado";
+import { createSafe } from "avocado-safe";
 
 export const useAvocadoSafe = () => {
   const { switchNetworkByChainId } = useNetworks();
