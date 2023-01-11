@@ -12,6 +12,11 @@ const meta = {
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  runtimeConfig: {
+    public: {
+      googleAnalyticsId: process.env.GA_ID,
+    },
+  },
   app: {
     head: {
       title: meta.title,
