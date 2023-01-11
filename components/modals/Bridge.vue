@@ -48,7 +48,9 @@ const { handleSubmit, errors, meta, resetForm, validate } = useForm({
         const priceInUSD = times(value, token.value.price)
         const amount10InUsd = div(10, token.value.price).toFixed(2)
 
-        if(priceInUSD.gt(10)) return true
+        const roundedPrice = Math.ceil(priceInUSD.toNumber() * 2) / 2
+ 
+        if(toBN(roundedPrice).gte(10)) return true
         return createError({ path, message: `Min. ${amount10InUsd} ${token.value.symbol.toUpperCase()}` })
       }),
   }),
@@ -268,7 +270,9 @@ const onSubmit = handleSubmit(async () => {
         onerror="this.onerror=null; this.remove();"
       />
       <div class="flex flex-col gap-[14px]">
-        <h2 class="text-lg leading-5 text-center">{{ token.name }}</h2>
+        <h2 class="text-lg leading-5 text-center">{{ token.name }}
+        <span class="uppercase"> ({{token.symbol  }})</span>
+        </h2>
 
         <div
           class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5"
@@ -343,6 +347,7 @@ const onSubmit = handleSubmit(async () => {
                   />
                   <span class="text-sm leading-5">
                     {{ token.name }}
+                    <span class="uppercase">({{ token.symbol }})</span>
                   </span>
                 </div>
               </div>
@@ -404,7 +409,6 @@ const onSubmit = handleSubmit(async () => {
         Estimated processing time is 10-30m.
       </p>
 
-      <span class="text-xs text-slate-500 text-center font-medium">Powered by Socket</span>
 
       <Transition
         enter-active-class="duration-300 ease-out"

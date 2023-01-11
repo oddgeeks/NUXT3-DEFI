@@ -1,8 +1,10 @@
-<script setup></script>
+<script setup>
+const { trackingAccount } = useAccountTrack()
+</script>
 
 <template>
   <div class="flex flex-col h-full">
-    <AccountTrackingBanner />
+    <AccountTrackingBanner v-if="trackingAccount" />
     <div class="py-8 px-10">
       <TheHeader />
     </div>

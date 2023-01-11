@@ -1,9 +1,10 @@
-<script setup>
+<script lang="ts" setup>
 import { storeToRefs } from "pinia";
 const { gasBalance } = storeToRefs(useSafe());
+const { account, chainId } = useWeb3()
 
 const isGasBalanceInsufficient = computed(() => {
-  return lte(gasBalance.value, 0.1);
+  return account.value && chainId.value === 75 && lte(gasBalance.value, 0.1);
 });
 
 </script>
