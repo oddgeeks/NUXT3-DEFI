@@ -242,7 +242,7 @@ export function useNetworks() {
           type: "error",
           title: "Switch Network",
           message:
-            "Failed to switch network, please add avocado network manualy then reconnect.",
+            "Failed to switch network, please add avocado network manually then reconnect.",
         });
         return Promise.reject(err);
       }
