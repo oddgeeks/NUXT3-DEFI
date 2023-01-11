@@ -203,7 +203,7 @@ const onSubmit = handleSubmit(async () => {
           v-model="address"
         >
           <template #suffix>
-            <button @click="pasteAddress">
+            <button type="button" @click="pasteAddress">
               <ClipboardSVG />
             </button>
           </template>
