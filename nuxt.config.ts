@@ -5,7 +5,7 @@ import svgLoader from "vite-svg-loader";
 const meta = {
   title: "Avocado",
   description:
-    "The platform that makes web3 interaction easy by enabling network, gas and account abstraction allowing you to experience web3 more seamlessly.",
+    "The multi-network gas and account abstraction allowing you to experience web3 more seamlessly.",
   image:
     "https://user-images.githubusercontent.com/45617686/211059835-0ecbb1b9-f448-4bed-9c52-a9359c67cbe6.png",
 };
