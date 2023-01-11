@@ -65,6 +65,10 @@ watch(
 </script>
 <template>
   <div>
+    <div class="mb-5 flex gap-3 items-center">
+       <h1>Connected Dapps</h1>
+       <CommonButton class="!px-2.5" size="sm">Disconnect All</CommonButton>
+    </div>
     <div
       class="flex items-center relative gap-[15px]"
       v-if="wcStore.sessions.length"
