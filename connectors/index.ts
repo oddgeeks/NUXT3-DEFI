@@ -14,7 +14,7 @@ const POLLING_INTERVAL = 12000;
 
 function getLibrary(provider: any) {
 
-    let p = new Web3Provider(provider);
+    let p = new Web3Provider(provider, "any");
     p.pollingInterval = POLLING_INTERVAL;
     return p;
 }
