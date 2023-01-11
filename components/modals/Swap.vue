@@ -4,6 +4,7 @@ import { useField, useForm } from "vee-validate";
 import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
 import RefreshSVG from "~/assets/images/icons/refresh.svg?component";
 import * as yup from "yup";
+import { storeToRefs } from "pinia";
 
 interface ISwap {
   sellToken: {
@@ -31,8 +32,9 @@ const props = defineProps({
   },
 });
 
-const { tokenBalances, chainTokenBalances, sendTransactions } =
-  useAvocadoSafe();
+const { chainTokenBalances, sendTransactions } = useAvocadoSafe();
+
+const { tokens } = storeToRefs(useTokens())
 const { getNetworkByChainId } = useNetworks();
 const { account } = useWeb3();
 const { toWei, fromWei } = useBignumber();
@@ -48,9 +50,6 @@ const slippages = [
   { value: "3", label: "3%" },
 ];
 
-const availableTokens = computed(() => {
-  return tokenBalances.value.filter((t) => t.chainId === props.chainId);
-});
 
 const swap = ref({
   sellToken: {
@@ -62,11 +61,19 @@ const swap = ref({
   },
 });
 
-const availableBuyTokens = computed(() => {
-  const tokens = chainTokenBalances.value[props.chainId];
+const availableTokens = computed(() =>  tokens.value.filter((t) => t.chainId === props.chainId));
+const availableBuyTokens = computed(() => availableTokens.value.filter((t) => t.address !== sellToken.value.address));
 
-  return tokens.filter((t) => t.address !== sellToken.value.address);
-});
+const sellToken = computed(() => availableTokens.value.find(
+    (t) => t.address === swap.value.sellToken.tokenAddress
+  )!);
+
+const sellTokenBalance = computed(() => chainTokenBalances.value[props.chainId].find(
+  (t) => t.address === swap.value.sellToken.tokenAddress)?.balance || "0.00")
+
+const buyToken = computed(() => availableTokens.value.find(
+    (t) => t.address === swap.value.buyToken.tokenAddress
+  )!);
 
 const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
   useForm({
@@ -81,12 +88,9 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
         .required("Amount is required")
         .test("max-amount", "Insufficient balance", (value) => {
           if (!value) return true;
-          const sellToken = availableTokens.value.find(
-            (t) => t.address === swap.value.sellToken.tokenAddress
-          )!;
 
           const amount = toBN(value);
-          const balance = toBN(sellToken.balance);
+          const balance = toBN(sellTokenBalance.value);
 
           return amount.gt(0) && amount.lte(balance);
         }),
@@ -94,7 +98,7 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
       customSlippage: yup
         .string()
         .test("slippage", "Slippage must be between 0.1% and 3%", (value) => {
-          const slippage = toBN(value);
+          const slippage = toBN(value!);
 
           if (value) {
             return slippage.gte(0.1) && slippage.lte(3);
@@ -108,17 +112,6 @@ const { value: slippage } = useField<string>("slippage");
 const { value: customSlippage, meta: slippageMeta } =
   useField<string>("customSlippage");
 
-const sellToken = computed(() => {
-  return chainTokenBalances.value[props.chainId].find(
-    (t) => t.address === swap.value.sellToken.tokenAddress
-  )!;
-});
-
-const buyToken = computed(() => {
-  return chainTokenBalances.value[props.chainId].find(
-    (t) => t.address === swap.value.buyToken.tokenAddress
-  )!;
-});
 
 const sendingDisabled = computed(
   () => isSubmitting.value || pending.value || !meta.value.valid
@@ -301,11 +294,11 @@ onMounted(() => {
         <div class="flex justify-between items-center text-sm text-slate-400">
           <div v-if="pending && meta.valid" style="width:100px; height: 20px;" class="loading-box rounded-lg" />
           <span v-else>{{ formatUsd(sellTokenInUsd) }}</span>
-          <div class="flex items-center gap-2.5">
-            <span>{{ sellToken?.balance }} {{ sellToken?.symbol }}</span>
+          <div class="flex items-center gap-2.5 uppercase">
+            <span>{{ sellTokenBalance }} {{ sellToken?.symbol }}</span>
             <button
               type="button"
-              @click="amount = sellToken?.balance"
+              @click="amount = sellTokenBalance"
               class="text-blue-500"
             >
               MAX
