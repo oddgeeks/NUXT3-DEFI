@@ -16,6 +16,7 @@ const props = withDefaults(
     min?: string;
     transparent?: boolean;
     readonly?: boolean;
+    autofocus?: boolean;
   }>(),
   {
     placeholder: "",
@@ -25,6 +26,7 @@ const props = withDefaults(
     errorMessage: "",
     transparent: false,
     readonly: false,
+    autofocus: false,
   }
 );
 
@@ -63,6 +65,7 @@ const val = computed({
         :step="step"
         :inputmode="inputmode"
         :name="name"
+        v-focus="{ enabled: autofocus }"
         v-model="val"
         :min="min"
         class="placeholder-slate-400 placeholder:text-sm border-none shadow-none focus:ring-0 focus:border-none bg-inherit rounded-[inherit] px-0 py-[13px] w-full"

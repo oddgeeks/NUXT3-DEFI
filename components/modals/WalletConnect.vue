@@ -176,11 +176,13 @@ const connect = async () => {
 
     <CommonInput
       name="uri"
+      type="search"
+      autofocus
       :error-message="uriMeta.dirty ? errors['uri'] : ''"
       v-model="uri"
       placeholder="QR code or link"
     >
-      <template #suffix>
+      <template v-if="!uri" #suffix>
         <SVGQr />
       </template>
     </CommonInput>
