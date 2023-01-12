@@ -29,6 +29,7 @@ const headers = [
 ]
 
 const { data: transactions } = useAsyncData(
+  "transactions",
   async () => {
     const transactions: ITransactionResponse = await provider.send(
       "api_getTransactionsByOwner",
