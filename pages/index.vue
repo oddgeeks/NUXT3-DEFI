@@ -4,7 +4,7 @@ import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?component";
 const { safeAddress } = useAvocadoSafe();
 
-const [isHideZeroBalances, toggle] = useToggle();
+const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
 </script>
 
 <template>
@@ -32,21 +32,23 @@ const [isHideZeroBalances, toggle] = useToggle();
               <QuestionCircleSVG class="w-5 h-5" />
             </button>
           </h2>
-          <button
-          :class="{ 'dark:text-white text-slate-900': isHideZeroBalances }"
-            @click="toggle()"
-            class="text-sm text-slate-400 inline-flex gap-2.5 items-center"
-          >
-            Hide 0 Balances
+          <ClientOnly>
+            <button
+              :class="{ 'dark:text-white text-slate-900': isHideZeroBalances }"
+              @click="isHideZeroBalances = !isHideZeroBalances"
+              class="text-sm text-slate-400 inline-flex gap-2.5 items-center"
+            >
+              Hide 0 Balances
 
-            <CheckCircle
-             :class="[
-              { 'success-circle text-white': isHideZeroBalances },
-              { 'svg-circle darker': !isHideZeroBalances }
-             ]"
-              class="w-4 h-4"
-            />
-          </button>
+              <CheckCircle
+                :class="[
+                  { 'success-circle text-white': isHideZeroBalances },
+                  { 'svg-circle darker': !isHideZeroBalances },
+                ]"
+                class="w-4 h-4"
+              />
+            </button>
+          </ClientOnly>
         </div>
         <Balances :hideZeroBalances="isHideZeroBalances" />
       </div>

@@ -196,7 +196,7 @@ const onSubmit = handleSubmit(async () => {
     <div class="flex gap-4 flex-col">
       <h1 class="text-lg leading-5">Gas Balance</h1>
       <h2 class="text-xs text-slate-400 leading-5 font-medium">
-        Top up your gas balance to trigger transactions.
+        The gas top-up may take up to 2 minutes to reflect on your account.
       </h2>
       <a
         href="https://help.avocado.link/en/getting-started/topping-up-gas-on-avocado"
