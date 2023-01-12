@@ -169,12 +169,11 @@ const onSubmit = handleSubmit(async () => {
       chainId: chainId.value,
     });
 
-    console.log(transactionHash);
+    closeModal()
+
+    showPendingTransactionModal(transactionHash, chainId.value, 'topUpGas');
 
     resetForm();
-    closeModal()
-    
-    showPendingTransactionModal(transactionHash, chainId.value, 'topUpGas');
   } catch (e: any) {
     console.log(e);
     openSnackbar({
