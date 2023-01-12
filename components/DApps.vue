@@ -5,6 +5,7 @@ import ArrowLeft from "~/assets/images/icons/arrow-left.svg?component";
 import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
 import LinkSVG from "~/assets/images/icons/external-link.svg?component";
 import SVGWalletConnect from "~/assets/images/wallet/wallet-connect-lite.svg?component";
+import URLWalletConnect from "~/assets/images/wallet/wallet-connect.svg?url";
 const { safeAddress } = useAvocadoSafe();
 const wcStore = useWalletConnect();
 
@@ -49,6 +50,26 @@ const getSessionIconURL = (session: any) => {
   return null;
 };
 
+const disconnectAllConnections = () => {
+    
+  openDialogModal({
+    title: "Are you sure you want to disconnect all?",
+    type: "question",
+    headerIconUrl: URLWalletConnect,
+    isButtonVisible: true,
+    isCancelButtonVisible: true,
+    buttonText: "Disconnect All",
+    cancelButtonText: "Cancel",
+    cancelButtonProps: {
+      color: "white",
+    },
+    buttonProps: {
+      color: 'red'
+    },
+    callback: () =>  wcStore.disconnectAll(),
+  })
+}
+
 watch(
   [wcStore, containerRef],
   async () => {
@@ -64,10 +85,12 @@ watch(
 );
 </script>
 <template>
-  <div>
-    <div class="mb-5 flex gap-3 items-center">
-       <h1>Connected Dapps</h1>
-       <CommonButton class="!px-2.5" size="sm">Disconnect All</CommonButton>
+  <div class="flex flex-col items-baseline gap-[15px]">
+    <div v-if="wcStore.sessions.length" class="flex gap-3 items-center">
+      <h1>Connected Dapps</h1>
+      <CommonButton v-if="wcStore.sessions.length > 2" @click="disconnectAllConnections" color="white" class="hover:!bg-red-alert hover:!bg-opacity-10 hover:text-red-alert" size="sm">
+        Disconnect All
+      </CommonButton>
     </div>
     <div
       class="flex items-center relative gap-[15px]"

@@ -278,12 +278,19 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
     await connect(result.connector, result.storageId, result.chainId);
   };
 
+  const disconnectAll = async () => {
+    for (let connector of sessions.value) {
+      await disconnect(connector);
+    }
+  };
+
   return {
     sessions,
     disconnect,
     prepareConnection,
     connect,
     prepareAndConnect,
+    disconnectAll
   };
 });
 
