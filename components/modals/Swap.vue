@@ -278,7 +278,7 @@ onMounted(() => {
             name="amount"
             v-model="amount"
             class="flex-1"
-            input-classes="text-[26px] placeholder:text-xl"
+            input-classes="text-[26px] placeholder:text-[26px]"
             container-classes="!p-0"
           />
           <CommonSelect
