@@ -59,6 +59,7 @@ const val = computed({
     >
       <slot name="prefix" />
       <input
+        autocomplete="off"
         :readonly="readonly"
         :placeholder="placeholder"
         :type="type"
