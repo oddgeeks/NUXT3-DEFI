@@ -5,7 +5,7 @@
 		"avocado",
 		"defi"
 	],
-	"timestamp": "2023-01-03T10:56:43.267Z",
+	"timestamp": "2023-01-13T15:30:54.934Z",
 	"tokens": [
 		{
 			"chainId": 1,
@@ -104,6 +104,14 @@
 			"logoURI": "https://avocado.link/tokens/ageur.svg"
 		},
 		{
+			"chainId": 42161,
+			"address": "0xfa5ed56a203466cbbc2430a43c66b9d8723528e7",
+			"name": "agEUR",
+			"symbol": "ageur",
+			"decimals": 18,
+			"logoURI": "https://avocado.link/tokens/ageur.svg"
+		},
+		{
 			"chainId": 137,
 			"address": "0xe0b52e49357fd4daf2c15e02058dce6bc0057db4",
 			"name": "agEUR",
@@ -154,6 +162,14 @@
 		{
 			"chainId": 56,
 			"address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+			"name": "BNB",
+			"symbol": "bnb",
+			"decimals": 18,
+			"logoURI": "https://avocado.link/tokens/binancecoin.svg"
+		},
+		{
+			"chainId": 1,
+			"address": "0xb8c77482e45f1f44de1745f52c74426c631bdd52",
 			"name": "BNB",
 			"symbol": "bnb",
 			"decimals": 18,
@@ -541,7 +557,7 @@
 			"name": "Lido DAO",
 			"symbol": "ldo",
 			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/13573/large/Lido_DAO.png?1609873644"
+			"logoURI": "https://avocado.link/tokens/lido-dao.svg"
 		},
 		{
 			"chainId": 10,
@@ -549,7 +565,7 @@
 			"name": "Lido DAO",
 			"symbol": "ldo",
 			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/13573/large/Lido_DAO.png?1609873644"
+			"logoURI": "https://avocado.link/tokens/lido-dao.svg"
 		},
 		{
 			"chainId": 42161,
@@ -557,7 +573,7 @@
 			"name": "Lido DAO",
 			"symbol": "ldo",
 			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/13573/large/Lido_DAO.png?1609873644"
+			"logoURI": "https://avocado.link/tokens/lido-dao.svg"
 		},
 		{
 			"chainId": 137,
@@ -565,7 +581,7 @@
 			"name": "Lido DAO",
 			"symbol": "ldo",
 			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/13573/large/Lido_DAO.png?1609873644"
+			"logoURI": "https://avocado.link/tokens/lido-dao.svg"
 		},
 		{
 			"chainId": 1,
