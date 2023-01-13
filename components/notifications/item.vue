@@ -20,7 +20,7 @@ onMounted(() => deleteItem(props.item.id, props.item.duration));
     <NotificationsIcon :type="item.type" />
     <div>
       <h1 class="text-md text-slate-300">{{ item.title }}</h1>
-      <p class="text-sm text-slate-400">{{ item.message }}</p>
+      <div class="text-sm text-slate-400" v-html="item.message"></div>
     </div>
     <button
       class="flex h-7.5 w-7.5 items-center justify-center"

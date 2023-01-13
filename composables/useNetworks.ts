@@ -242,7 +242,7 @@ export function useNetworks() {
           type: "error",
           title: "Switch Network",
           message:
-            "Failed to switch network, please add avocado network manually then reconnect.",
+            "Failed to Switch Network, please add Avocado Network manually (<a class='underline text-slate-300 font-medium' target='_blank' href='https://help.avocado.link/en/getting-started/avo-s-rpc-url'>RPC details</a>).",
         });
         return Promise.reject(err);
       }
