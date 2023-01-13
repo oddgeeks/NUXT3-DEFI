@@ -65,15 +65,15 @@ const isProviderVisible = (provider: Provider) => {
             <button
               v-if="isProviderVisible(provider)"
               @click="connect(closeModal, provider)"
-              class="px-5 py-4 w-full dark:bg-gray-850 bg-slate-100 rounded-[40px] group transition-colors flex items-center gap-4"
+              class="px-5 py-[15px] w-full dark:bg-gray-850 bg-slate-100 rounded-[40px] group transition-colors flex items-center gap-4"
               :class="
                 provider.name === 'Metamask'
                   ? 'dark:hover:bg-[#282125] hover:bg-[#FEF1E8]'
                   : 'dark:hover:bg-[#15233C] hover:bg-[#EBF2FE]'
               "
             >
-              <div class="flex items-center flex-1 gap-5">
-                <component :is="provider.logo" />
+              <div class="flex items-center flex-1 gap-[15px]">
+                <component class="h-7.5 w-7.5" :is="provider.logo" />
 
                 <span class="text-[16px]">{{ provider.name }}</span>
               </div>
