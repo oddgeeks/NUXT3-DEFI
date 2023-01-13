@@ -4,6 +4,7 @@ import { parseWalletConnectUri } from "@walletconnect/utils";
 
 import * as yup from "yup";
 import SVGQr from "~/assets/images/icons/qr.svg?component";
+import { RPC_URLS } from "~~/connectors";
 
 const wcStore = useWalletConnect();
 
@@ -13,32 +14,12 @@ const { closeModal } = useModal();
 
 const [loading, toggle] = useToggle(false);
 
-const networks = [
-  {
-    chainId: 137,
-    name: "Polygon",
-  },
-  {
-    chainId: 1,
-    name: "Mainnet",
-  },
-  {
-    chainId: 10,
-    name: "Optimism",
-  },
-  {
-    chainId: 250,
-    name: "Fantom",
-  },
-  {
-    chainId: 43114,
-    name: "Avalanche",
-  },
-  {
-    chainId: 42161,
-    name: "Arbitrum",
-  },
-];
+const networks = computed(() => Object.keys(RPC_URLS).filter(i=> i !== '75').map((chainId) => {
+    return {
+        chainId,
+        name: chainIdToName(chainId),
+    }
+}));
 
 const { handleSubmit, errors, meta, resetForm } = useForm({
   validationSchema: yup.object({
