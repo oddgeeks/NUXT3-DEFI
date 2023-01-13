@@ -22,10 +22,6 @@ export default defineNuxtConfig({
       title: meta.title,
       meta: [
         {
-          name: "viewport",
-          content: "width=device-width, initial-scale=0", 
-        },
-        {
           name: "title",
           content: meta.title,
         },
