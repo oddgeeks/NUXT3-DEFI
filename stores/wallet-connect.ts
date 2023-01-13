@@ -122,19 +122,22 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
               } else if (
                 // signingMethods.includes(payload.method)
                 payload.method === "personal_sign"
-              ) { // broken code
+              ) {
+                // broken code
 
                 let params = payload.params;
 
                 params[1] = account.value;
 
-                const result = await library.value.send(payload.method, payload.params);
+                const result = await library.value.send(
+                  payload.method,
+                  payload.params
+                );
 
                 wc.approveRequest({
                   id: payload.id,
                   result,
                 });
-
               } else {
                 const { data } = await http.post(RPC_URLS[wc.chainId], payload);
 
@@ -258,16 +261,15 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
     let storageId = (connector as any)._sessionStorage.storageId;
     try {
       await connector.killSession();
-    } catch (error) { }
+    } catch (error) {}
 
     storage.value.keys[safe.safeAddress.value] = storage.value.keys[
       safe.safeAddress.value
     ].filter((key) => key !== storageId);
 
     try {
-      window.localStorage.removeItem(storageId)
-    } catch (error) {
-    }
+      window.localStorage.removeItem(storageId);
+    } catch (error) {}
   };
 
   const prepareAndConnect = async (uri: string) => {
@@ -278,10 +280,21 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
     await connect(result.connector, result.storageId, result.chainId);
   };
 
+  const clearWalletConnectStorage = () => {
+    window.localStorage.removeItem("wallet_connect");
+
+    Object.keys(window.localStorage).filter((key) => {
+      if (key.startsWith("wc_")) {
+        window.localStorage.removeItem(key);
+      }
+    });
+  };
+
   const disconnectAll = async () => {
     for (let connector of sessions.value) {
       await disconnect(connector);
     }
+    clearWalletConnectStorage();
   };
 
   return {
@@ -290,7 +303,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
     prepareConnection,
     connect,
     prepareAndConnect,
-    disconnectAll
+    disconnectAll,
   };
 });
 
