@@ -44,6 +44,7 @@ defineProps<{
       >
         {{ formatUsd(transaction.fee) }}</span
       >
+      <span class="text-center ml-6" v-else> - </span>
     </td>
     <td>
       <span> {{ useTimeAgo(transaction.created_at).value }}</span>
