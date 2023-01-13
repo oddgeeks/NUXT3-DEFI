@@ -52,7 +52,7 @@ const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
         </div>
         <Balances :hideZeroBalances="isHideZeroBalances" />
       </div>
-      <div class="flex flex-col md:shrink-0 md:basis-[213px] gap-5">
+      <div class="flex lg:flex-col md:shrink-0 md:basis-[213px] gap-5">
         <div class="w-full flex flex-col gap-5">
           <h2 class="font-semibold inline-flex gap-2.5">
             Your Wallet
