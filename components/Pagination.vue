@@ -2,6 +2,7 @@
 import ArrowLeft from "~/assets/images/icons/arrow-left.svg?component";
 import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
 
+const { $scrollToTop } = useNuxtApp()
 type INavigationType = "first" | "prev" | "next" | "last";
 
 const props = defineProps({
@@ -68,6 +69,8 @@ const navigate = (type: INavigationType) => {
       page,
     },
   });
+
+  $scrollToTop();
 }
 </script>
 

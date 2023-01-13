@@ -10,7 +10,7 @@ const router = useRoute();
 const provider = getRpcProvider(75);
 
 const limit = 20;
-const page = computed(() => parseInt(router.query.page) || 1) as Ref<number>;
+const page = computed(() => parseInt(String(router.query.page)) || 1) as Ref<number>;
 
 const defaultTransactions: ITransactionResponse = {
   data: [],
