@@ -157,7 +157,7 @@ const { data, error, pending } = useAsyncData(
           defaultSwapSlippage: 1,
           sort: "output",
           isContractCall: true,
-          excludeBridges: ['hyphen', 'anyswap-router-v4', 'stargate']
+          excludeBridges: ['hyphen', 'anyswap-router-v4', 'anyswap-router-v6', 'stargate']
         },
       }
     );
