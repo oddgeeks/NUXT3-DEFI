@@ -7,30 +7,24 @@ const [transaction] = (await Promise.all([
     .send("api_getTransactionByHash", [router.params.hash])
     .catch(() => null),
 ])) as [IAvocadoTransaction];
+
+const locale = computed(() => typeof window !== 'undefined' ? window.navigator.language : "en")
 </script>
 
 <template>
   <div class="container flex-1 md:pb-10">
     <h1 class="mb-5">Transaction Details</h1>
 
-    <div
-      v-if="transaction"
-      class="dark:bg-gray-850 bg-slate-50 rounded-5.5 text-sm font-medium py-6.5"
-    >
+    <div v-if="transaction" class="dark:bg-gray-850 bg-slate-50 rounded-5.5 text-sm font-medium py-6.5">
       <div class="flex flex-col gap-6.5 px-7.5">
         <div class="flex items-center">
           <div class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]">
             Transaction Hash
           </div>
           <div class="flex items-center space-x-2.5">
-            <a
-              class="text-blue-500"
-              :href="
-                getExplorerUrl(transaction.chain_id, `/tx/${transaction.hash}`)
-              "
-              target="_blank"
-              >{{ transaction.hash }}</a
-            >
+            <a class="text-blue-500" :href="
+              getExplorerUrl(transaction.chain_id, `/tx/${transaction.hash}`)
+            " target="_blank">{{ transaction.hash }}</a>
             <Copy :text="transaction.hash" />
           </div>
         </div>
@@ -40,16 +34,12 @@ const [transaction] = (await Promise.all([
             Broadcaster
           </div>
           <div class="flex items-center space-x-2.5">
-            <a
-              class="text-blue-500"
-              :href="
-                getExplorerUrl(
-                  transaction.chain_id,
-                  `/address/${transaction.from}`
-                )
-              "
-              target="_blank"
-            >
+            <a class="text-blue-500" :href="
+              getExplorerUrl(
+                transaction.chain_id,
+                `/address/${transaction.from}`
+              )
+            " target="_blank">
               {{ transaction.from }}
             </a>
             <Copy :text="transaction.from"></Copy>
@@ -65,7 +55,7 @@ const [transaction] = (await Promise.all([
           <div class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]">Timestamp</div>
           <div class="capitalize">
             {{ useTimeAgo(transaction.created_at).value }} ({{
-              new Date(transaction.created_at).toLocaleString()
+              new Date(transaction.created_at).toLocaleString(locale)
             }})
           </div>
         </div>
@@ -90,21 +80,13 @@ const [transaction] = (await Promise.all([
         <div class="flex items-center">
           <div class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]">Signer</div>
 
-          <div
-            v-if="transaction.metadata.signer"
-            class="flex items-center space-x-2.5"
-          >
-            <a
-              class="text-blue-500"
-              :href="
-                getExplorerUrl(
-                  transaction.chain_id,
-                  `/address/${transaction.metadata.signer}`
-                )
-              "
-              target="_blank"
-              >{{ transaction.metadata.signer }}</a
-            >
+          <div v-if="transaction.metadata.signer" class="flex items-center space-x-2.5">
+            <a class="text-blue-500" :href="
+              getExplorerUrl(
+                transaction.chain_id,
+                `/address/${transaction.metadata.signer}`
+              )
+            " target="_blank">{{ transaction.metadata.signer }}</a>
 
             <Copy :text="transaction.metadata.signer" />
           </div>
@@ -115,21 +97,13 @@ const [transaction] = (await Promise.all([
         <div class="flex items-center">
           <div class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]">Avocado Wallet</div>
 
-          <div
-            v-if="transaction.metadata.safe"
-            class="flex items-center space-x-2.5"
-          >
-            <a
-              class="text-blue-500"
-              :href="
-                getExplorerUrl(
-                  transaction.chain_id,
-                  `/address/${transaction.metadata.safe}`
-                )
-              "
-              target="_blank"
-              >{{ transaction.metadata.safe }}</a
-            >
+          <div v-if="transaction.metadata.safe" class="flex items-center space-x-2.5">
+            <a class="text-blue-500" :href="
+              getExplorerUrl(
+                transaction.chain_id,
+                `/address/${transaction.metadata.safe}`
+              )
+            " target="_blank">{{ transaction.metadata.safe }}</a>
 
             <Copy :text="transaction.metadata.safe" />
           </div>
@@ -155,10 +129,7 @@ const [transaction] = (await Promise.all([
       </div>
     </div>
 
-    <div
-      v-else
-      class="bg-gray-850 rounded-5.5 text-sm font-medium p-16 text-center"
-    >
+    <div v-else class="bg-gray-850 rounded-5.5 text-sm font-medium p-16 text-center">
       <p class="mb-2">Sorry, We are unable to locate this TxnHash:</p>
       <p>{{ $route.params.hash }}</p>
     </div>
