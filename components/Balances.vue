@@ -51,6 +51,7 @@ const filteredBalances =  computed(() => {
                 <BalanceRow
                   v-for="tokenBalance in filteredBalances"
                   :token-balance="tokenBalance"
+                  :key="`${tokenBalance.chainId}-${tokenBalance.symbol}`"
                 />
               </template>
 

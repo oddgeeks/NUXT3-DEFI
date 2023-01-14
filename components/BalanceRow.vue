@@ -118,7 +118,6 @@ const chartOptions = {
           v-if="tokenBalance.sparklinePrice7d.length"
           :data="chartData"
           :options="chartOptions"
-          :key="JSON.stringify({ ...chartData, ...chartOptions })"
         />
         <span v-else> - </span>
       </div>
