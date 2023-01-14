@@ -65,7 +65,7 @@ const [transaction] = (await Promise.all([
           <div class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]">Timestamp</div>
           <div class="capitalize">
             {{ useTimeAgo(transaction.created_at).value }} ({{
-              transaction.created_at
+              new Date(transaction.created_at).toLocaleString()
             }})
           </div>
         </div>
