@@ -32,7 +32,7 @@ const forwarderProxyContract = Forwarder__factory.connect(
     new ethers.providers.JsonRpcProvider(RPC_URLS[137]),
 );
 
-const whitelistedSymbols = ["ETH", "WETH", "USDC", "USDT", "DAI", "MATIC", "INST", "AVAX", "XDAI", "BNB"]
+const whitelistedSymbols = ["ETH", "USDC", "USDT", "DAI", "MATIC"]
 
 export const useSafe = defineStore("safe", () => {
     console.log("defineStore::safe");
@@ -156,12 +156,12 @@ export const useSafe = defineStore("safe", () => {
     }, { immediate: true });
 
     return {
-      chainTokenBalances,
-      gasBalance,
-      safeAddress,
-      tokenBalances,
-      totalBalance,
-      fetchGasBalance,
+        chainTokenBalances,
+        gasBalance,
+        safeAddress,
+        tokenBalances,
+        totalBalance,
+        fetchGasBalance,
     };
 });
 
