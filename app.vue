@@ -13,6 +13,7 @@ whenever(tried, () => {
 
 <template>
     <NuxtLayout>
+      <NuxtLoadingIndicator color="#3b82f6" height="2" />
       <NuxtPage />
     </NuxtLayout>
 
