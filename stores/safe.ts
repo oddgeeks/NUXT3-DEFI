@@ -33,6 +33,7 @@ const forwarderProxyContract = Forwarder__factory.connect(
 );
 
 const whitelistedSymbols = ["ETH", "USDC", "USDT", "DAI", "MATIC"]
+const whitelistedSymbolsChains = ["1", "137", "42161", "10"]
 
 export const useSafe = defineStore("safe", () => {
     console.log("defineStore::safe");
@@ -101,7 +102,7 @@ export const useSafe = defineStore("safe", () => {
                 let token = chunk[index] as IToken;
                 let balance = toBN(balances[index]).div(10 ** token.decimals)
 
-                if (balance.gt(0) || whitelistedSymbols.includes(token.symbol.toUpperCase())) {
+                if (balance.gt(0) || (whitelistedSymbols.includes(token.symbol.toUpperCase()) && whitelistedSymbolsChains.includes(chainId))) {
                     newBalances.push({
                         ...token,
                         balance: balance.toFixed(6, 1),
