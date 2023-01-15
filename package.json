@@ -44,6 +44,7 @@
     "tsx": "^3.12.1",
     "typechain": "^8.1.1",
     "unplugin-vue-components": "^0.22.12",
+    "unplugin-vue-inspector": "^0.0.2",
     "uuid": "^9.0.0",
     "uuidv4": "^6.2.13",
     "vite-svg-loader": "^3.6.0",

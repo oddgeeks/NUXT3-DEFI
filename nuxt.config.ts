@@ -122,6 +122,10 @@ export default defineNuxtConfig({
     "@instadapp/vue-web3-nuxt",
     "@vueuse/nuxt",
     "@pinia/nuxt",
+    ['unplugin-vue-inspector/nuxt', {
+      enabled: false,
+      toggleButtonVisibility: 'never',
+    }],
   ],
   colorMode: {
     preference: "dark",
