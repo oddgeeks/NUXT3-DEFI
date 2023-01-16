@@ -23,6 +23,9 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  toAddress: {
+    type: String,
+  },
   chainId: {
     type: String,
     required: true,
@@ -246,7 +249,8 @@ const onSubmit = handleSubmit(async () => {
 
 onMounted(() => {
   // set initial buy token
-  swap.value.buyToken.tokenAddress = availableBuyTokens.value[0].address;
+  
+  swap.value.buyToken.tokenAddress = props.toAddress || availableBuyTokens.value[0].address;
 });
 </script>
 

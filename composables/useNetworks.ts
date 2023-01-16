@@ -87,6 +87,11 @@ export function useNetworks() {
       icon: SVGMainnet,
       params: {
         rpcUrls: ["https://rpc.ankr.com/eth"],
+        nativeCurrency: {
+          name: "Ethereum",
+          symbol: "ETH",
+          decimals: 18,
+        }
       },
     },
     {
@@ -169,6 +174,11 @@ export function useNetworks() {
       icon: SVGPolygon,
       params: {
         chainName: "Binance Smart Chain",
+        nativeCurrency: {
+          name: "Binance Coin",
+          symbol: "BNB",
+          decimals: 18,
+        }
       },
     },
     {
@@ -177,6 +187,11 @@ export function useNetworks() {
       icon: SVGPolygon,
       params: {
         chainName: "Gnosis Safe",
+        nativeCurrency: {
+          name: "xdaistable",
+          symbol: "xDAI",
+          decimals: 18,
+        }
       },
     },
   ];
