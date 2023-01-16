@@ -8,7 +8,7 @@ const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
 </script>
 
 <template>
-  <div class="container flex flex-col gap-[30px] flex-1 md:pb-10">
+  <div class="container flex flex-col gap-[30px] flex-1 md:pb-2">
     <TotalBalance />
     <DApps />
     <div class="flex gap-5 lg:flex-row flex-col flex-1">

@@ -12,5 +12,6 @@ const { showTrackingBanner, showWelcomeBanner } = useBanner()
     <WarningsGasBalance />
     <WarningsSwitchNetwork />
     <slot />
+    <TheFooter />
   </div>
 </template>
