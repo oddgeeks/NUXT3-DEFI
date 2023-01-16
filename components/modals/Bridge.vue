@@ -233,19 +233,10 @@ const sendingDisabled = computed(
 );
 
 const handleSwapToken = () => {
-  const balancedToken = tokenBalances.value.find(
-    (t) =>
-      gt(t.balance, "0") &&
-      t.chainId == bridgeToChainId.value &&
-      t.symbol !== nativeCurrency.value?.symbol
-  )
-
-  const fallbackToken = tokens.value.find(i => i.chainId == bridgeToChainId.value);
-
   closeModal();
 
   openSwapModal(
-    balancedToken?.address! || fallbackToken?.address!,
+    props.address,
     bridgeToChainId.value,
     nativeCurrency.value?.address!
   )
