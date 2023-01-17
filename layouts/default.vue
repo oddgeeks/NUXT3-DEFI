@@ -1,5 +1,5 @@
-<script setup>
-const { showTrackingBanner, showWelcomeBanner } = useBanner()
+<script setup lang="ts">
+const { showTrackingBanner, showWelcomeBanner, showIncorrectNetworkBanner, showInsufficientGasBanner, showGasGiftBanner } = useBanner()
 </script>
 
 <template>
@@ -9,8 +9,11 @@ const { showTrackingBanner, showWelcomeBanner } = useBanner()
     <div class="py-8 px-10">
       <TheHeader />
     </div>
-    <WarningsGasBalance />
-    <WarningsSwitchNetwork />
+    <div class="container flex flex-col gap-4 banner-wrapper [&:not(:empty)]:mb-7.5">
+      <WarningsGasBalance v-if="showInsufficientGasBanner" />
+      <WarningsSwitchNetwork v-if="showIncorrectNetworkBanner" />
+      <BannerGift v-if="showGasGiftBanner" />
+    </div>
     <slot />
     <TheFooter />
   </div>
