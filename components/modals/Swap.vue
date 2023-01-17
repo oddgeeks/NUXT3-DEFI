@@ -89,7 +89,12 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
     validationSchema: yup.object({
       amount: yup
         .string()
-        .required("Amount is required")
+        .required("")
+        .test('min-amount', '', (value) => {
+          const amount = toBN(value);
+
+          return value ? amount.gt(0) : true;
+        })
         .test("max-amount", "Insufficient balance", (value) => {
           const amount = toBN(value);
           const balance = toBN(sellTokenBalance.value);

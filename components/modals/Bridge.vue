@@ -42,7 +42,12 @@ const { handleSubmit, errors, meta, resetForm, validate } = useForm({
   validationSchema: yup.object({
     amount: yup
       .string()
-      .required("Amount is required")
+      .required("")
+      .test('min-amount', '', (value) => {
+        const amount = toBN(value);
+
+        return value ? amount.gt(0) : true;
+      })
       .test("max-amount", "Insufficient balance", (value) => {
         const amount = toBN(value);
         const balance = toBN(token.value.balance);
