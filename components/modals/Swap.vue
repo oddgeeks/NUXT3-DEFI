@@ -91,12 +91,10 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
         .string()
         .required("Amount is required")
         .test("max-amount", "Insufficient balance", (value) => {
-          if (!value) return true;
-
           const amount = toBN(value);
           const balance = toBN(sellTokenBalance.value);
 
-          return amount.gt(0) && amount.lte(balance);
+          return amount.gt(0) ? amount.lte(balance) : true;
         }),
       slippage: yup.string().required(),
       customSlippage: yup
@@ -249,7 +247,7 @@ const onSubmit = handleSubmit(async () => {
 
 onMounted(() => {
   // set initial buy token
-  
+
   swap.value.buyToken.tokenAddress = props.toAddress || availableBuyTokens.value[0].address;
 });
 </script>
@@ -269,7 +267,7 @@ onMounted(() => {
     <div class="flex flex-col gap-4">
       <div class="py-4 px-5 relative dark:bg-slate-800 bg-slate-100 rounded-5 flex flex-col gap-4">
         <div class="flex">
-          <CommonInput transparent min="0.000001" step="0.000001" placeholder="0.0" name="amount" v-model="amount"
+          <CommonInput transparent type="numeric" min="0.000001" step="0.000001" placeholder="0.0" name="amount" v-model="amount"
             class="flex-1" input-classes="text-[26px] placeholder:text-[26px]" container-classes="!p-0" />
           <CommonSelect class="basis-40" v-model="swap.sellToken.tokenAddress" iconKey="logoURI" value-key="address"
             selected-label-classes="uppercase" item-text-classes="uppercase" label-key="symbol"
