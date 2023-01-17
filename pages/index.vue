@@ -4,6 +4,8 @@ import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?component";
 const { safeAddress } = useAvocadoSafe();
 
+useForceSingleSession()
+
 const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
 </script>
 
