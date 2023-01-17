@@ -76,7 +76,7 @@ export const chainIdToName = (chainId: string | number) => {
     case "634":
         return "Avocado";
     default:
-      throw new Error("Unknown chainId");
+      throw new Error(`Unknown chainId ${chainId}`);
   }
 };
 
