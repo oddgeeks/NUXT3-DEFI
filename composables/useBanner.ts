@@ -26,6 +26,9 @@ export const useBanner = () => {
     if (!account.value) return false;
     if (chainId.value !== 75) return false;
 
+    // this is a tricky way to make sure the gas balance is updated
+    gt(gasBalance.value, 0);
+
     const resp = await provider.send("api_hasAirdrop", [account.value]);
     if (!resp) return false;
 
