@@ -42,20 +42,17 @@ const { handleSubmit, errors, meta, resetForm, validate } = useForm({
   validationSchema: yup.object({
     amount: yup
       .string()
-      .required()
+      .required("Amount is required")
       .test("max-amount", "Insufficient balance", (value) => {
         const amount = toBN(value);
         const balance = toBN(token.value.balance);
 
-        return amount.gt(0) && amount.lte(balance);
+        return amount.gt(0) ? amount.lte(balance) : true;
       }),
   }),
 });
 
-const {
-  value: amount,
-  meta: amountMeta,
-} = useField<string>("amount");
+const { value: amount, meta: amountMeta } = useField<string>("amount");
 
 const toAmount = computed(() =>
   formatDecimal(
@@ -65,47 +62,72 @@ const toAmount = computed(() =>
 );
 
 const nativeCurrency = computed(() => {
-  const nativeTokenMeta = getNetworkByChainId(+bridgeToChainId.value).params
+  const nativeTokenMeta = getNetworkByChainId(+props.chainId).params
     .nativeCurrency;
 
   return tokens.value.find(
     (t) =>
-      t.chainId == bridgeToChainId.value &&
+      t.chainId == props.chainId &&
       t.symbol.toLowerCase() === nativeTokenMeta?.symbol?.toLowerCase()
   );
 });
 
-const nativeCurrencyBalance = computed(() => {
-  const nativeTokenMeta = getNetworkByChainId(+bridgeToChainId.value).params
-    .nativeCurrency;
-
-  return (
-    tokenBalances.value.find(
-      (t) =>
-        t.chainId == bridgeToChainId.value &&
-        t.symbol.toLowerCase() === nativeTokenMeta?.symbol?.toLowerCase()
-    )
-  );
-});
-
-const totalGasFeesAmount = computed(() => {
-  return  max(div(txRoute.value?.totalGasFeesInUsd || "0", nativeCurrencyBalance.value?.price || "0"), "0").toFixed(5);
-})
-
 const isGasBalanceSufficient = computed(() => {
   if (!txRoute.value) return true;
 
-  return toBN(nativeCurrencyBalance.value?.balanceInUSD || "0").gte(toBN(txRoute.value?.totalGasFeesInUsd || "0"));
+  const gasFee = fees.value.gasFee
+
+  const tokenBalance = tokenBalances.value.find(
+    (t) =>
+      t.chainId == props.chainId &&
+      t.symbol.toLowerCase() === gasFee.symbol?.toLowerCase()
+  );
+
+  let actualBalance = toBN(tokenBalance?.balance || "0")
+
+  const isSameToken = gasFee.symbol?.toLowerCase() === tokenBalance?.symbol?.toLowerCase()
+
+  // If the gas fee is in the same token as the token balance, we need to subtract the amount
+  if (isSameToken) {
+    actualBalance = actualBalance.minus(toBN(amount.value || "0"))
+  }
+
+  return actualBalance.gte(toBN(gasFee.amount || "0"));
 });
 
-const bridgeFee = computed(() =>
-  formatDecimal(
-    fromWei(
-      minus(txRoute.value?.fromAmount || "0", txRoute.value?.toAmount || "0"),
-      bridgeToToken?.value?.decimals
-    )
-  )
-);
+const fees = computed(() => {
+  if (!txRoute.value) {
+    return {
+     gasFee: {
+      amount:  "0",
+      amountInUsd: "0",
+      symbol: nativeCurrency.value?.symbol
+    },
+      bridgeFee: {
+      amount:  "0",
+      amountInUsd: "0",
+      symbol: nativeCurrency.value?.symbol
+      },
+    };
+  }
+
+  const [tx] = txRoute.value?.userTxs || [];
+
+  const bridgeFee = tx.steps[0]?.protocolFees || {};
+
+  return {
+    bridgeFee: {
+      amount: fromWei(bridgeFee.amount || "0", bridgeFee.asset.decimals).toFixed(),
+      amountInUsd: bridgeFee.feesInUsd || "0",
+      symbol: bridgeFee.asset.symbol
+    },
+    gasFee: {
+      amount: fromWei(tx.gasFees.gasAmount || "0", tx.gasFees.asset.decimals).toFixed(),
+      amountInUsd: tx.gasFees?.feesInUsd || "0",
+      symbol: tx.gasFees.asset.symbol
+    },
+  };
+});
 
 const setMax = () => {
   amount.value = token.value!.balance;
@@ -165,7 +187,10 @@ const { data: bridgeToTokens } = useAsyncData(
   }
 );
 
-const txRoute = computed(() => data.value?.result.routes[0] || null);
+const txRoute = computed(() => {
+  const [route] = data.value?.result.routes || [];
+   return route ?? null;
+});
 
 const { data, error, pending } = useAsyncData(
   "bridge-data",
@@ -229,18 +254,31 @@ const sendingDisabled = computed(
     loading.value ||
     pending.value ||
     !txRoute.value ||
-    !meta.value.valid
+    !meta.value.valid || 
+    !isGasBalanceSufficient.value
 );
 
 const handleSwapToken = () => {
+  const balancedToken = tokenBalances.value.find(
+    (t) =>
+      gt(t.balance, "0") &&
+      t.chainId == props.chainId &&
+      t.symbol !== nativeCurrency.value?.symbol
+  );
+
+  const fallbackToken = tokens.value.find((i) => i.chainId == props.chainId);
+  const isSameToken =
+    token.value?.symbol.toLowerCase() ===
+    nativeCurrency.value?.symbol.toLowerCase();
+
+  const fromAddress = !isSameToken
+    ? token.value?.address
+    : balancedToken?.address! || fallbackToken?.address!;
+
   closeModal();
 
-  openSwapModal(
-    props.address,
-    bridgeToChainId.value,
-    nativeCurrency.value?.address!
-  )
-}
+  openSwapModal(fromAddress, props.chainId, nativeCurrency.value?.address!);
+};
 
 const onSubmit = handleSubmit(async () => {
   if (!txRoute.value) {
@@ -347,10 +385,7 @@ const onSubmit = handleSubmit(async () => {
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <CommonInput
-            min="0.000001"
-            type="number"
-            step="0.000001"
-            inputmode="decimal"
+            type="numeric"
             :error-message="amountMeta.dirty ? errors['amount'] : ''"
             name="amount"
             placeholder="Enter amount"
@@ -428,18 +463,28 @@ const onSubmit = handleSubmit(async () => {
                 <span class="text-slate-400 text-sm font-semibold"
                   >Bridge Fee</span
                 >
-                <span class="text-slate-400 text-sm font-semibold text-right"
-                  >{{ bridgeFee }} USDC</span
+                <span
+                  class="text-slate-400  text-sm font-semibold text-right uppercase"
                 >
+                  {{ formatDecimal(fees.bridgeFee?.amount, 4) }}
+
+                  {{ fees.bridgeFee?.symbol }}
+
+                  ({{ formatUsd(fees.bridgeFee?.amountInUsd) }})
+                </span>
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-slate-400 text-sm font-semibold"
                   >Source Gas Fee</span
                 >
                 <span
-                  class="text-slate-400 text-sm font-semibold text-right uppercase"
-                  >{{ totalGasFeesAmount }} {{ nativeCurrency?.symbol }}</span
-                >
+                  class="text-slate-400 text-sm font-semibold text-right uppercase">
+                  {{ formatDecimal(fees.gasFee?.amount, 4) }} 
+                  {{ fees.gasFee.symbol }} 
+                  ({{
+                    formatUsd(fees.gasFee.amountInUsd)
+                  }})
+                </span>
               </div>
               <div
                 v-if="!isGasBalanceSufficient"
@@ -449,7 +494,7 @@ const onSubmit = handleSubmit(async () => {
                   <SVGInfo class="w-[18px] h-[18px]" />
                   <p class="text-sm">
                     Not enough
-                    <span class="uppercase">{{ nativeCurrency?.symbol }}</span>
+                    <span class="uppercase">{{ fees.gasFee.symbol }}</span>
                     balance
                   </p>
                 </div>
