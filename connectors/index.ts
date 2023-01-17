@@ -47,7 +47,7 @@ export const walletlink = new WalletLinkConnector({
 
 export const walletconnect = new WalletConnectConnector({
   rpc: RPC_URLS,
-  chainId: 75,
+  chainId: 634,
   qrcode: true,
 });
 
@@ -56,7 +56,7 @@ export const network = new NetworkConnector({
   defaultChainId: 56,
 });
 
-export const torus = new TorusConnector({ chainId: 75 });
+export const torus = new TorusConnector({ chainId: 634 });
 
 export const magic = (email: string) => {
   return new CustomMagicConnector({
