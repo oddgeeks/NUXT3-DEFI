@@ -56,7 +56,7 @@
     "avocado-safe": "^0.0.28",
     "vee-validate": "^4.7.3",
     "vue-gtag-next": "^1.14.0",
-    "yt-player": "^3.6.1",
+    "vue-lite-youtube-embed": "^1.1.2",
     "yup": "^0.32.11"
   }
 }
