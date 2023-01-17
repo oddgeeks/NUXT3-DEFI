@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RPC_URLS } from '~~/connectors';
 
-const supportedChains = computed(() => Object.keys(RPC_URLS).filter(i=> i !== '75').map((chainId) => {
+const supportedChains = computed(() => Object.keys(RPC_URLS).filter(i=> i !== '634').map((chainId) => {
     return {
         id: chainId,
         name: chainIdToName(chainId),

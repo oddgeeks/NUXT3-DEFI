@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const router = useRoute();
-const provider = getRpcProvider(75);
+const provider = getRpcProvider(634);
 
 const [transaction] = (await Promise.all([
   provider

@@ -28,7 +28,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export declare namespace IGaslessSmartWallet {
+export declare namespace IAvoWallet {
   export type ActionStruct = {
     target: PromiseOrValue<string>;
     data: PromiseOrValue<BytesLike>;
@@ -44,28 +44,50 @@ export declare namespace IGaslessSmartWallet {
 
 export interface ForwarderInterface extends utils.Interface {
   functions: {
+    "avoFactory()": FunctionFragment;
+    "avoSafeBytecode()": FunctionFragment;
+    "avoSafeNonce(address)": FunctionFragment;
+    "avoWalletVersion(address)": FunctionFragment;
+    "avoWalletVersionName(address)": FunctionFragment;
     "computeAddress(address)": FunctionFragment;
     "execute(address,(address,bytes,uint256)[],uint256,uint256,address,bytes,bytes)": FunctionFragment;
-    "gswFactory()": FunctionFragment;
-    "gswNonce(address)": FunctionFragment;
-    "gswVersion(address)": FunctionFragment;
-    "gswVersionName(address)": FunctionFragment;
     "initialize()": FunctionFragment;
     "verify(address,(address,bytes,uint256)[],uint256,uint256,address,bytes,bytes)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "avoFactory"
+      | "avoSafeBytecode"
+      | "avoSafeNonce"
+      | "avoWalletVersion"
+      | "avoWalletVersionName"
       | "computeAddress"
       | "execute"
-      | "gswFactory"
-      | "gswNonce"
-      | "gswVersion"
-      | "gswVersionName"
       | "initialize"
       | "verify"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "avoFactory",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "avoSafeBytecode",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "avoSafeNonce",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "avoWalletVersion",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "avoWalletVersionName",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "computeAddress",
     values: [PromiseOrValue<string>]
@@ -74,29 +96,13 @@ export interface ForwarderInterface extends utils.Interface {
     functionFragment: "execute",
     values: [
       PromiseOrValue<string>,
-      IGaslessSmartWallet.ActionStruct[],
+      IAvoWallet.ActionStruct[],
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<BytesLike>,
       PromiseOrValue<BytesLike>
     ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "gswFactory",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "gswNonce",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "gswVersion",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "gswVersionName",
-    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
@@ -106,7 +112,7 @@ export interface ForwarderInterface extends utils.Interface {
     functionFragment: "verify",
     values: [
       PromiseOrValue<string>,
-      IGaslessSmartWallet.ActionStruct[],
+      IAvoWallet.ActionStruct[],
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
@@ -115,18 +121,28 @@ export interface ForwarderInterface extends utils.Interface {
     ]
   ): string;
 
+  decodeFunctionResult(functionFragment: "avoFactory", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "avoSafeBytecode",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "avoSafeNonce",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "avoWalletVersion",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "avoWalletVersionName",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "computeAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "gswFactory", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "gswNonce", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "gswVersion", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "gswVersionName",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "verify", data: BytesLike): Result;
 
@@ -142,8 +158,8 @@ export interface ForwarderInterface extends utils.Interface {
 }
 
 export interface ExecuteFailedEventObject {
-  gswOwner: string;
-  gswAddress: string;
+  avoSafeOwner: string;
+  avoSafeAddress: string;
   source: string;
   metadata: string;
   reason: string;
@@ -156,8 +172,8 @@ export type ExecuteFailedEvent = TypedEvent<
 export type ExecuteFailedEventFilter = TypedEventFilter<ExecuteFailedEvent>;
 
 export interface ExecutedEventObject {
-  gswOwner: string;
-  gswAddress: string;
+  avoSafeOwner: string;
+  avoSafeAddress: string;
   source: string;
   metadata: string;
 }
@@ -202,6 +218,25 @@ export interface Forwarder extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    avoFactory(overrides?: CallOverrides): Promise<[string]>;
+
+    avoSafeBytecode(overrides?: CallOverrides): Promise<[string]>;
+
+    avoSafeNonce(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    avoWalletVersion(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    avoWalletVersionName(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     computeAddress(
       owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -209,7 +244,7 @@ export interface Forwarder extends BaseContract {
 
     execute(
       from_: PromiseOrValue<string>,
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       validUntil_: PromiseOrValue<BigNumberish>,
       gas_: PromiseOrValue<BigNumberish>,
       source_: PromiseOrValue<string>,
@@ -218,30 +253,13 @@ export interface Forwarder extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    gswFactory(overrides?: CallOverrides): Promise<[string]>;
-
-    gswNonce(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    gswVersion(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    gswVersionName(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     verify(
       from_: PromiseOrValue<string>,
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       validUntil_: PromiseOrValue<BigNumberish>,
       gas_: PromiseOrValue<BigNumberish>,
       source_: PromiseOrValue<string>,
@@ -251,6 +269,25 @@ export interface Forwarder extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  avoFactory(overrides?: CallOverrides): Promise<string>;
+
+  avoSafeBytecode(overrides?: CallOverrides): Promise<string>;
+
+  avoSafeNonce(
+    owner_: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  avoWalletVersion(
+    owner_: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  avoWalletVersionName(
+    owner_: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   computeAddress(
     owner_: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -258,7 +295,7 @@ export interface Forwarder extends BaseContract {
 
   execute(
     from_: PromiseOrValue<string>,
-    actions_: IGaslessSmartWallet.ActionStruct[],
+    actions_: IAvoWallet.ActionStruct[],
     validUntil_: PromiseOrValue<BigNumberish>,
     gas_: PromiseOrValue<BigNumberish>,
     source_: PromiseOrValue<string>,
@@ -267,30 +304,13 @@ export interface Forwarder extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  gswFactory(overrides?: CallOverrides): Promise<string>;
-
-  gswNonce(
-    owner_: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  gswVersion(
-    owner_: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  gswVersionName(
-    owner_: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   initialize(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   verify(
     from_: PromiseOrValue<string>,
-    actions_: IGaslessSmartWallet.ActionStruct[],
+    actions_: IAvoWallet.ActionStruct[],
     validUntil_: PromiseOrValue<BigNumberish>,
     gas_: PromiseOrValue<BigNumberish>,
     source_: PromiseOrValue<string>,
@@ -300,6 +320,25 @@ export interface Forwarder extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    avoFactory(overrides?: CallOverrides): Promise<string>;
+
+    avoSafeBytecode(overrides?: CallOverrides): Promise<string>;
+
+    avoSafeNonce(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    avoWalletVersion(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    avoWalletVersionName(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     computeAddress(
       owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -307,7 +346,7 @@ export interface Forwarder extends BaseContract {
 
     execute(
       from_: PromiseOrValue<string>,
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       validUntil_: PromiseOrValue<BigNumberish>,
       gas_: PromiseOrValue<BigNumberish>,
       source_: PromiseOrValue<string>,
@@ -316,28 +355,11 @@ export interface Forwarder extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    gswFactory(overrides?: CallOverrides): Promise<string>;
-
-    gswNonce(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    gswVersion(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    gswVersionName(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     initialize(overrides?: CallOverrides): Promise<void>;
 
     verify(
       from_: PromiseOrValue<string>,
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       validUntil_: PromiseOrValue<BigNumberish>,
       gas_: PromiseOrValue<BigNumberish>,
       source_: PromiseOrValue<string>,
@@ -349,29 +371,29 @@ export interface Forwarder extends BaseContract {
 
   filters: {
     "ExecuteFailed(address,address,address,bytes,string)"(
-      gswOwner?: PromiseOrValue<string> | null,
-      gswAddress?: PromiseOrValue<string> | null,
+      avoSafeOwner?: PromiseOrValue<string> | null,
+      avoSafeAddress?: PromiseOrValue<string> | null,
       source?: PromiseOrValue<string> | null,
       metadata?: null,
       reason?: null
     ): ExecuteFailedEventFilter;
     ExecuteFailed(
-      gswOwner?: PromiseOrValue<string> | null,
-      gswAddress?: PromiseOrValue<string> | null,
+      avoSafeOwner?: PromiseOrValue<string> | null,
+      avoSafeAddress?: PromiseOrValue<string> | null,
       source?: PromiseOrValue<string> | null,
       metadata?: null,
       reason?: null
     ): ExecuteFailedEventFilter;
 
     "Executed(address,address,address,bytes)"(
-      gswOwner?: PromiseOrValue<string> | null,
-      gswAddress?: PromiseOrValue<string> | null,
+      avoSafeOwner?: PromiseOrValue<string> | null,
+      avoSafeAddress?: PromiseOrValue<string> | null,
       source?: PromiseOrValue<string> | null,
       metadata?: null
     ): ExecutedEventFilter;
     Executed(
-      gswOwner?: PromiseOrValue<string> | null,
-      gswAddress?: PromiseOrValue<string> | null,
+      avoSafeOwner?: PromiseOrValue<string> | null,
+      avoSafeAddress?: PromiseOrValue<string> | null,
       source?: PromiseOrValue<string> | null,
       metadata?: null
     ): ExecutedEventFilter;
@@ -381,6 +403,25 @@ export interface Forwarder extends BaseContract {
   };
 
   estimateGas: {
+    avoFactory(overrides?: CallOverrides): Promise<BigNumber>;
+
+    avoSafeBytecode(overrides?: CallOverrides): Promise<BigNumber>;
+
+    avoSafeNonce(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    avoWalletVersion(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    avoWalletVersionName(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     computeAddress(
       owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -388,7 +429,7 @@ export interface Forwarder extends BaseContract {
 
     execute(
       from_: PromiseOrValue<string>,
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       validUntil_: PromiseOrValue<BigNumberish>,
       gas_: PromiseOrValue<BigNumberish>,
       source_: PromiseOrValue<string>,
@@ -397,30 +438,13 @@ export interface Forwarder extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    gswFactory(overrides?: CallOverrides): Promise<BigNumber>;
-
-    gswNonce(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    gswVersion(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    gswVersionName(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     verify(
       from_: PromiseOrValue<string>,
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       validUntil_: PromiseOrValue<BigNumberish>,
       gas_: PromiseOrValue<BigNumberish>,
       source_: PromiseOrValue<string>,
@@ -431,6 +455,25 @@ export interface Forwarder extends BaseContract {
   };
 
   populateTransaction: {
+    avoFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    avoSafeBytecode(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    avoSafeNonce(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    avoWalletVersion(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    avoWalletVersionName(
+      owner_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     computeAddress(
       owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -438,7 +481,7 @@ export interface Forwarder extends BaseContract {
 
     execute(
       from_: PromiseOrValue<string>,
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       validUntil_: PromiseOrValue<BigNumberish>,
       gas_: PromiseOrValue<BigNumberish>,
       source_: PromiseOrValue<string>,
@@ -447,30 +490,13 @@ export interface Forwarder extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    gswFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    gswNonce(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    gswVersion(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    gswVersionName(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     verify(
       from_: PromiseOrValue<string>,
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       validUntil_: PromiseOrValue<BigNumberish>,
       gas_: PromiseOrValue<BigNumberish>,
       source_: PromiseOrValue<string>,

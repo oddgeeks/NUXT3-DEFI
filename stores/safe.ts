@@ -26,7 +26,7 @@ const balanceResolverContracts = Object.keys(balanceResolverAddresses).reduce((a
     return acc
 }, {} as Record<string, BalanceResolver>)
 
-const forwarderProxyAddress = "0x52f30c01795e84e5c12fa29345f1274d517FB865"; // ForwarderProxy
+const forwarderProxyAddress = "0x375F6B0CD12b34Dc28e34C26853a37012C24dDE5"; // ForwarderProxy
 const forwarderProxyContract = Forwarder__factory.connect(
     forwarderProxyAddress,
     new ethers.providers.JsonRpcProvider(RPC_URLS[137]),
@@ -131,7 +131,7 @@ export const useSafe = defineStore("safe", () => {
         ])
     })
 
-    const avoProvider = getRpcProvider(75);
+    const avoProvider = getRpcProvider(634);
 
     const fetchGasBalance = async () => {
         if (!account.value) return;

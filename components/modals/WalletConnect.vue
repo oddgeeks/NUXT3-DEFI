@@ -19,11 +19,8 @@ const { closeModal } = useModal();
 
 const [loading, toggle] = useToggle(false);
 
-const networks = computed(() =>
-  Object.keys(RPC_URLS)
-    .filter((i) => i !== "75")
-    .map((chainId) => {
-      return {
+const networks = computed(() => Object.keys(RPC_URLS).filter(i=> i !== '634').map((chainId) => {
+    return {
         chainId,
         name: chainIdToName(chainId),
       };

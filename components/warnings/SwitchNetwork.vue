@@ -7,6 +7,6 @@ const { switchNetworkByChainId } = useNetworks()
         <span class="text-xs self-center">
             It seems you're connected to wrong network. Please switch to Avocado Network or add the network on Metamask.
         </span>
-        <CommonButton class="h-7.5 !px-4 flex items-center text-xs" @click="switchNetworkByChainId(75)">Switch Network</CommonButton>
+        <CommonButton class="h-7.5 !px-4 flex items-center text-xs" @click="switchNetworkByChainId(634)">Switch Network</CommonButton>
     </div>
 </template>

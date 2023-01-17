@@ -1,7 +1,7 @@
 import { storeToRefs } from "pinia";
 
 export const useBanner = () => {
-  const provider = getRpcProvider(75);
+  const provider = getRpcProvider(634);
   const { gasBalance } = storeToRefs(useSafe());
   const { account, chainId } = useWeb3();
 
@@ -15,16 +15,16 @@ export const useBanner = () => {
   });
 
   const showInsufficientGasBanner = computed(() => {
-    return account.value && chainId.value === 75 && lte(gasBalance.value, 0.1);
+    return account.value && chainId.value === 634 && lte(gasBalance.value, 0.1);
   });
 
   const showIncorrectNetworkBanner = computed(
-    () => account.value && chainId.value !== 75
+    () => account.value && chainId.value !== 634
   );
 
   const showGasGiftBanner = asyncComputed(async () => {
     if (!account.value) return false;
-    if (chainId.value !== 75) return false;
+    if (chainId.value !== 634) return false;
 
     // this is a tricky way to make sure the gas balance is updated
     gt(gasBalance.value, 0);

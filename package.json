@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@coinbase/wallet-sdk": "3.0.4",
-    "avocado-safe": "^0.0.28",
+    "avocado-safe": "^0.0.31",
     "vee-validate": "^4.7.3",
     "vue-gtag-next": "^1.14.0",
     "vue-lite-youtube-embed": "^1.1.2",
