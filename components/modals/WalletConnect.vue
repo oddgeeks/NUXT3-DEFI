@@ -8,18 +8,25 @@ import { RPC_URLS } from "~~/connectors";
 
 const wcStore = useWalletConnect();
 
+const isTutorialWatched = useLocalStorage("wallet-c-tutorial-watched", false);
+const isIframeVisible = ref(true);
+const tutorialRef = ref<HTMLDivElement | null>(null);
 const connection = shallowRef();
 const connectionChainId = shallowRef(137);
 const { closeModal } = useModal();
 
 const [loading, toggle] = useToggle(false);
 
-const networks = computed(() => Object.keys(RPC_URLS).filter(i=> i !== '75').map((chainId) => {
-    return {
+const networks = computed(() =>
+  Object.keys(RPC_URLS)
+    .filter((i) => i !== "75")
+    .map((chainId) => {
+      return {
         chainId,
         name: chainIdToName(chainId),
-    }
-}));
+      };
+    })
+);
 
 const { handleSubmit, errors, meta, resetForm } = useForm({
   validationSchema: yup.object({
@@ -103,6 +110,20 @@ const connect = async () => {
     toggle(false);
   }
 };
+
+onMounted(async () => {
+  if (isTutorialWatched.value)  return isIframeVisible.value = false;
+
+  // @ts-ignore
+  const YTPlayer = await (import('yt-player')).then(m => m.default)
+  const player = new YTPlayer(tutorialRef.value)
+
+  player.load('1CcLfV2rxjA')
+
+  player.on('playing', () => {
+    isTutorialWatched.value = true
+  })
+})
 </script>
 
 <template>
@@ -179,7 +200,14 @@ const connect = async () => {
     </CommonButton>
   </form>
 
-  <form tabindex="0" v-focus @keypress.enter="connect" @submit="connect" v-else class="space-y-8 focus:outline-none">
+  <form
+    tabindex="0"
+    v-focus
+    @keypress.enter="connect"
+    @submit="connect"
+    v-else
+    class="space-y-8 focus:outline-none"
+  >
     <div class="flex flex-col items-center space-y-8">
       <div class="w-10 h-10" v-if="connection.peerMeta.icons.length">
         <img
@@ -224,4 +252,7 @@ const connect = async () => {
       Approve
     </CommonButton>
   </form>
+   <div v-if="isIframeVisible" class="aspect-w-16 aspect-h-9 mt-6">
+      <div ref="tutorialRef"/>
+    </div>
 </template>
