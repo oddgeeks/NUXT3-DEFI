@@ -10,7 +10,7 @@ const props = withDefaults(
     containerClasses?: string;
     name: string;
     errorMessage?: string;
-    type?: "text" | "number" | "numeric";
+    type?: "text" | "number" | "numeric" | "password" | "email" | "tel" | "url" | "search";
     errorType?: "error" | "warning";
     step?: string;
     min?: string;
