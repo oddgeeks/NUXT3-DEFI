@@ -196,3 +196,9 @@ onMounted(async () => {
     <LiteYouTubeEmbed id="1CcLfV2rxjA" title="Connecting Avocado to Uniswap" />
   </div>
 </template>
+
+<style>
+.yt-lite {
+  border-radius: 15px;
+}
+</style>
