@@ -37,7 +37,7 @@ export const useAvocadoSafe = () => {
     const tx = await signer.value.sendTransaction({
       ...transaction,
       chainId: Number(transaction.chainId),
-    }, { source: '0x000000000000000000000000000000000000CAD0', ...options });
+    }, { source: '0x000000000000000000000000000000000000Cad0', ...options });
 
     return tx.hash!;
   };
@@ -56,7 +56,7 @@ export const useAvocadoSafe = () => {
     const tx = await signer.value.sendTransactions(
       transactions,
       Number(chainId),
-      { source: '0x000000000000000000000000000000000000CAD0', ...options },
+      { source: '0x000000000000000000000000000000000000Cad0', ...options },
     );
 
     return tx.hash!;
