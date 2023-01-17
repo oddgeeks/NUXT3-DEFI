@@ -73,6 +73,8 @@ export const chainIdToName = (chainId: string | number) => {
       return "BSC";
     case "250":
       return "Fantom";
+    case "634":
+        return "Avocado";
     default:
       throw new Error("Unknown chainId");
   }
