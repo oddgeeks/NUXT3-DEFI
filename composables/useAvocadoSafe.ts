@@ -28,7 +28,7 @@ export const useAvocadoSafe = () => {
     data?: string;
     chainId: number | string;
   }, options: { metadata?: string } = {}) => {
-    await switchNetworkByChainId(75);
+    await switchNetworkByChainId(634);
 
     if (!signer.value) {
       throw new Error("Safe not initialized");
@@ -47,7 +47,7 @@ export const useAvocadoSafe = () => {
     chainId: number | string,
     options: { metadata?: string } = {},
   ) => {
-    await switchNetworkByChainId(75);
+    await switchNetworkByChainId(634);
 
     if (!signer.value) {
       throw new Error("Safe not initialized");

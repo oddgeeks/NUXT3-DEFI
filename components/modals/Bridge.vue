@@ -74,7 +74,7 @@ const bridgeToChainId = ref(props.chainId === "137" ? "10" : "137");
 
 const selectableChains = computed(() =>
   networks.filter(
-    (c) => String(c.chainId) !== props.chainId && c.chainId !== 75
+    (c) => String(c.chainId) !== props.chainId && c.chainId !== 634
   )
 );
 
@@ -194,7 +194,7 @@ const onSubmit = handleSubmit(async () => {
 
   loading.value = true;
   try {
-    await switchNetworkByChainId(75);
+    await switchNetworkByChainId(634);
 
     const txs = [];
 

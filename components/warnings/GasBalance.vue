@@ -4,7 +4,7 @@ const { gasBalance } = storeToRefs(useSafe());
 const { account, chainId } = useWeb3()
 
 const isGasBalanceInsufficient = computed(() => {
-  return account.value && chainId.value === 75 && lte(gasBalance.value, 0.1);
+  return account.value && chainId.value === 634 && lte(gasBalance.value, 0.1);
 });
 
 </script>

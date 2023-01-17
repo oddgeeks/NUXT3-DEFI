@@ -86,7 +86,7 @@ const onSubmit = handleSubmit(async () => {
 
   loading.value = true;
   try {
-    await switchNetworkByChainId(75);
+    await switchNetworkByChainId(634);
 
     const transferAmount = toBN(amount.value)
       .times(10 ** token.value.decimals)

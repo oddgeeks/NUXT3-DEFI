@@ -35,7 +35,7 @@ const networks = Object.keys(chainUSDCAddresses).map((chainId) => ({
 
 
 const claimLoading = ref(false);
-const provider = getRpcProvider(75);
+const provider = getRpcProvider(634);
 
 const { data, execute } = useAsyncData('airDrop', async () => {
   const resp = await provider.send(
@@ -134,7 +134,7 @@ const onSubmit = handleSubmit(async () => {
 
   loading.value = true;
   try {
-    await switchNetworkByChainId(75);
+    await switchNetworkByChainId(634);
 
     const transferAmount = toBN(amount.value)
       .times(10 ** token.value.decimals)

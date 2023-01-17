@@ -131,7 +131,7 @@ export const useSafe = defineStore("safe", () => {
         ])
     })
 
-    const avoProvider = getRpcProvider(75);
+    const avoProvider = getRpcProvider(634);
 
     const fetchGasBalance = async () => {
         if (!account.value) return;
