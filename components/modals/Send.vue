@@ -186,7 +186,7 @@ const onSubmit = handleSubmit(async () => {
           v-model="amount"
         >
           <template #suffix>
-            <button class="text-blue-500 hover:text-blue-500" @click="setMax">
+            <button type="button" class="text-blue-500 hover:text-blue-500" @click="setMax">
               MAX
             </button>
           </template>
