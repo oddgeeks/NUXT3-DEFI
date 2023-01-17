@@ -16,7 +16,7 @@ const { closeModal } = useModal()
 
 const { gasBalance } = storeToRefs(useSafe());
 const { fetchGasBalance } = useSafe()
-const address = "0x6422F84a2bd26FaEd5ff4Ec37d836Bca2bC86056";
+const address = "0xE8385fB3A5F15dED06EB5E20E5A81BF43115eb8E";
 
 const chainUSDCAddresses: any = {
   137: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",

@@ -483,7 +483,7 @@ const _abi = [
     stateMutability: "payable",
     type: "receive",
   },
-];
+] as const;
 
 export class GaslessWallet__factory {
   static readonly abi = _abi;
