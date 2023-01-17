@@ -15,6 +15,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       googleAnalyticsId: process.env.GA_ID,
+      avocadoChainId: 634,
     },
   },
   app: {
@@ -122,10 +123,13 @@ export default defineNuxtConfig({
     "@instadapp/vue-web3-nuxt",
     "@vueuse/nuxt",
     "@pinia/nuxt",
-    ['unplugin-vue-inspector/nuxt', {
-      enabled: false,
-      toggleButtonVisibility: 'never',
-    }],
+    [
+      "unplugin-vue-inspector/nuxt",
+      {
+        enabled: false,
+        toggleButtonVisibility: "never",
+      },
+    ],
   ],
   colorMode: {
     preference: "dark",
