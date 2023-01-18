@@ -5,6 +5,18 @@ import { Erc20__factory } from "~~/contracts";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { storeToRefs } from "pinia";
+import type { IToken } from "~~/stores/tokens";
+
+type IFee = {
+  amount: string;
+  feesInUsd: string;
+  asset: IToken;
+}
+
+type IFees = {
+  bridge: IFee
+  gas: IFee
+}
 
 const props = defineProps({
   address: {
@@ -80,17 +92,17 @@ const nativeCurrency = computed(() => {
 const isGasBalanceSufficient = computed(() => {
   if (!txRoute.value) return true;
 
-  const gasFee = fees.value.gasFee
+  const gasFee = fees.value.gas
 
   const tokenBalance = tokenBalances.value.find(
     (t) =>
       t.chainId == props.chainId &&
-      t.symbol.toLowerCase() === gasFee.symbol?.toLowerCase()
+      t.symbol.toLowerCase() === gasFee.asset.symbol?.toLowerCase()
   );
 
   let actualBalance = toBN(tokenBalance?.balance || "0")
 
-  const isSameToken = gasFee.symbol?.toLowerCase() === tokenBalance?.symbol?.toLowerCase()
+  const isSameToken = gasFee.asset.symbol?.toLowerCase() === token.value.symbol?.toLowerCase()
 
   // If the gas fee is in the same token as the token balance, we need to subtract the amount
   if (isSameToken) {
@@ -100,38 +112,47 @@ const isGasBalanceSufficient = computed(() => {
   return actualBalance.gte(toBN(gasFee.amount || "0"));
 });
 
-const fees = computed(() => {
+const fees = computed<IFees>(() => {
+  const fallback: IFee = {
+    amount: "0",
+    feesInUsd: "0",
+    asset: nativeCurrency.value as IToken
+  }
+
   if (!txRoute.value) {
     return {
-     gasFee: {
-      amount:  "0",
-      amountInUsd: "0",
-      symbol: nativeCurrency.value?.symbol
-    },
-      bridgeFee: {
-      amount:  "0",
-      amountInUsd: "0",
-      symbol: nativeCurrency.value?.symbol
-      },
+      gas: fallback,
+      bridge: fallback,
     };
   }
 
-  const [tx] = txRoute.value?.userTxs || [];
+  const fees = txRoute.value?.userTxs.reduce((acc: IFees, tx: any) => {
+    const bridgeFee = tx.steps.reduce((acc: any, step: any) => {
+      return {
+        amount: fromWei(toBN(acc.amount || "0").plus(toBN(step.protocolFees.amount || "0")).toFixed(), step.protocolFees.asset.decimals).toFixed(),
+        feesInUsd: toBN(acc.feesInUsd || "0").plus(toBN(step.protocolFees.feesInUsd || "0")).toFixed(),
+        asset: step.protocolFees.asset
+      }
+    }, fallback)
 
-  const bridgeFee = tx.steps[0]?.protocolFees || {};
+    return {
+      gas: {
+        amount: fromWei(toBN(acc.gas.amount || "0").plus(toBN(tx.gasFees.gasAmount || "0")).toFixed(), tx.gasFees.asset.decimals).toFixed(),
+        feesInUsd: toBN(acc.gas.feesInUsd || "0").plus(toBN(tx.gasFees.feesInUsd || "0")).toFixed(),
+        asset: tx.gasFees.asset
+      },
+      bridge: {
+        amount: toBN(bridgeFee.amount).plus(toBN(acc.bridge.amount || "0")).toFixed(),
+        feesInUsd: toBN(bridgeFee.feesInUsd).plus(toBN(acc.bridge.feesInUsd || "0")).toFixed(),
+        asset: bridgeFee.asset
+      }
+    }
+  }, {
+    gas: fallback,
+    bridge: fallback
+  })
 
-  return {
-    bridgeFee: {
-      amount: fromWei(bridgeFee.amount || "0", bridgeFee.asset.decimals).toFixed(),
-      amountInUsd: bridgeFee.feesInUsd || "0",
-      symbol: bridgeFee.asset.symbol
-    },
-    gasFee: {
-      amount: fromWei(tx.gasFees.gasAmount || "0", tx.gasFees.asset.decimals).toFixed(),
-      amountInUsd: tx.gasFees?.feesInUsd || "0",
-      symbol: tx.gasFees.asset.symbol
-    },
-  };
+ return fees
 });
 
 const setMax = () => {
@@ -194,7 +215,7 @@ const { data: bridgeToTokens } = useAsyncData(
 
 const txRoute = computed(() => {
   const [route] = data.value?.result.routes || [];
-   return route ?? null;
+  return route ?? null;
 });
 
 const { data, error, pending } = useAsyncData(
@@ -259,7 +280,7 @@ const sendingDisabled = computed(
     loading.value ||
     pending.value ||
     !txRoute.value ||
-    !meta.value.valid || 
+    !meta.value.valid ||
     !isGasBalanceSufficient.value
 );
 
@@ -357,26 +378,18 @@ const onSubmit = handleSubmit(async () => {
 <template>
   <form @submit="onSubmit" class="flex gap-7.5 flex-col">
     <div class="flex justify-center flex-col items-center">
-      <img
-        width="40"
-        height="40"
-        class="h-10 w-10 mb-7.5"
+      <img width="40" height="40" class="h-10 w-10 mb-7.5"
         :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
-        onerror="this.onerror=null; this.remove();"
-      />
+        onerror="this.onerror=null; this.remove();" />
       <div class="flex flex-col gap-[14px]">
         <h2 class="text-lg leading-5 text-center">
           {{ token.name }}
           <span class="uppercase"> ({{ token.symbol }})</span>
         </h2>
 
-        <div
-          class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5"
-        >
+        <div class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5">
           <ChainLogo class="w-5 h-5" :chain="token.chainId" />
-          <span class="text-xs text-slate-400 leading-5"
-            >{{ chainIdToName(token.chainId) }} Network</span
-          >
+          <span class="text-xs text-slate-400 leading-5">{{ chainIdToName(token.chainId) }} Network</span>
         </div>
       </div>
     </div>
@@ -389,31 +402,20 @@ const onSubmit = handleSubmit(async () => {
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <CommonInput
-            type="numeric"
-            :error-message="amountMeta.dirty ? errors['amount'] : ''"
-            name="amount"
-            placeholder="Enter amount"
-            v-model="amount"
-          >
+          <CommonInput type="numeric" :error-message="amountMeta.dirty ? errors['amount'] : ''" name="amount"
+            placeholder="Enter amount" v-model="amount">
             <template #suffix>
-              <button
-                type="button"
-                class="absolute top-0 bottom-0 right-0 mr-5 text-sm text-blue-500 hover:text-blue-500"
-                @click="setMax"
-              >
+              <button type="button"
+                class="absolute top-0 bottom-0 right-0 mr-5 text-sm text-blue-500 hover:text-blue-500" @click="setMax">
                 MAX
               </button>
             </template>
           </CommonInput>
 
           <div
-            class="dark:bg-gray-850 bg-slate-50 px-3 max-w-full inline-flex items-center gap-2 rounded-2xl self-start h-[50px]"
-          >
+            class="dark:bg-gray-850 bg-slate-50 px-3 max-w-full inline-flex items-center gap-2 rounded-2xl self-start h-[50px]">
             <ChainLogo class="w-6 h-6" :chain="token.chainId" />
-            <span class="text-sm leading-5"
-              >{{ chainIdToName(token.chainId) }} Network</span
-            >
+            <span class="text-sm leading-5">{{ chainIdToName(token.chainId) }} Network</span>
           </div>
         </div>
       </div>
@@ -423,21 +425,13 @@ const onSubmit = handleSubmit(async () => {
         </div>
         <div class="px-5 pt-[14px] pb-5 dark:bg-gray-850 bg-slate-50 rounded-5">
           <div class="flex flex-col gap-5">
-            <div
-              class="grid items-center gap-4 grid-cols-1 md:grid-cols-2 md:gap-x-4 md:gap-y-5"
-            >
+            <div class="grid items-center gap-4 grid-cols-1 md:grid-cols-2 md:gap-x-4 md:gap-y-5">
               <div class="flex flex-col gap-2.5">
                 <span class="text-sm">Coin</span>
-                <div
-                  class="dark:bg-gray-800 bg-slate-100 w-full px-3 flex py-3 items-center gap-2.5 rounded-2xl"
-                >
-                  <img
-                    width="24"
-                    height="24"
-                    class="h-6 w-6"
+                <div class="dark:bg-gray-800 bg-slate-100 w-full px-3 flex py-3 items-center gap-2.5 rounded-2xl">
+                  <img width="24" height="24" class="h-6 w-6"
                     :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
-                    onerror="this.onerror=null; this.remove();"
-                  />
+                    onerror="this.onerror=null; this.remove();" />
                   <span class="text-sm leading-5">
                     {{ token.name }}
                     <span class="uppercase">({{ token.symbol }})</span>
@@ -447,12 +441,8 @@ const onSubmit = handleSubmit(async () => {
 
               <div class="flex flex-col gap-2.5">
                 <span class="text-sm">Network</span>
-                <CommonSelect
-                  v-model="bridgeToChainId"
-                  value-key="chainId"
-                  label-key="name"
-                  :options="selectableChains"
-                >
+                <CommonSelect v-model="bridgeToChainId" value-key="chainId" label-key="name"
+                  :options="selectableChains">
                   <template #button-prefix>
                     <ChainLogo class="w-6 h-6" :chain="bridgeToChainId" />
                   </template>
@@ -465,48 +455,37 @@ const onSubmit = handleSubmit(async () => {
 
             <div class="flex flex-col gap-2.5">
               <div class="flex justify-between items-center">
-                <span class="text-slate-400 text-sm font-semibold"
-                  >Bridge Fee</span
-                >
-                <span
-                  class="text-slate-400  text-sm font-semibold text-right uppercase"
-                >
-                  {{ formatDecimal(fees.bridgeFee?.amount, 4) }}
+                <span class="text-slate-400 text-sm font-semibold">Bridge Fee</span>
+                <span class="text-slate-400  text-sm font-semibold text-right uppercase">
+                  {{ formatDecimal(fees.bridge?.amount, 4) }}
 
-                  {{ fees.bridgeFee?.symbol }}
+                  {{ fees.bridge?.asset.symbol }}
 
-                  ({{ formatUsd(fees.bridgeFee?.amountInUsd) }})
+                  ({{ formatUsd(fees.bridge?.feesInUsd) }})
                 </span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-slate-400 text-sm font-semibold"
-                  >Source Gas Fee</span
-                >
-                <span
-                  class="text-slate-400 text-sm font-semibold text-right uppercase">
-                  {{ formatDecimal(fees.gasFee?.amount, 4) }} 
-                  {{ fees.gasFee.symbol }} 
+                <span class="text-slate-400 text-sm font-semibold">Source Gas Fee</span>
+                <span class="text-slate-400 text-sm font-semibold text-right uppercase">
+                  {{ formatDecimal(fees.gas?.amount, 4) }}
+                  {{ fees.gas.asset.symbol }}
                   ({{
-                    formatUsd(fees.gasFee.amountInUsd)
+                    formatUsd(fees.gas.feesInUsd)
                   }})
                 </span>
               </div>
-              <div
-                v-if="!isGasBalanceSufficient"
-                class="flex items-center justify-between bg-red-alert bg-opacity-10 rounded-7.5 text-red-alert py-2.5 px-[14px]"
-              >
+              <div v-if="!isGasBalanceSufficient"
+                class="flex items-center justify-between bg-red-alert bg-opacity-10 rounded-7.5 text-red-alert py-2.5 px-[14px]">
                 <div class="flex items-center gap-2.5">
                   <SVGInfo class="w-[18px] h-[18px]" />
                   <p class="text-sm">
                     Not enough
-                    <span class="uppercase">{{ fees.gasFee.symbol }}</span>
+                    <span class="uppercase">{{ fees.gas.asset.symbol }}</span>
                     balance
                   </p>
                 </div>
-                <CommonButton
-                  @click="handleSwapToken"
-                  class="h-7.5 flex gap-[6px] items-center justify-center text-sm px-[14px]"
-                >
+                <CommonButton @click="handleSwapToken"
+                  class="h-7.5 flex gap-[6px] items-center justify-center text-sm px-[14px]">
                   <RefreshSVG class="w-[14px] h-[14px]" />
                   Swap Token
                 </CommonButton>
@@ -516,13 +495,10 @@ const onSubmit = handleSubmit(async () => {
             <div class="divider" />
 
             <div class="flex justify-between items-center">
-              <span class="md:text-lg font-semibold !leading-5"
-                >You receive</span
-              >
-              <span
-                class="sm:text-2xl text-lg font-semibold text-right !leading-5 uppercase"
-                >{{ toAmount }} {{ token.symbol }}</span
-              >
+              <span class="md:text-lg font-semibold !leading-5">You receive</span>
+              <span class="sm:text-2xl text-lg font-semibold text-right !leading-5 uppercase">{{ toAmount }} {{
+                token.symbol
+              }}</span>
             </div>
           </div>
         </div>
@@ -530,31 +506,19 @@ const onSubmit = handleSubmit(async () => {
     </div>
 
     <div class="flex gap-4 flex-col">
-      <CommonButton
-        type="submit"
-        :disabled="sendingDisabled"
-        :loading="loading || pending"
-        class="justify-center w-full"
-        size="lg"
-      >
+      <CommonButton type="submit" :disabled="sendingDisabled" :loading="loading || pending"
+        class="justify-center w-full" size="lg">
         Bridge
       </CommonButton>
       <p class="text-xs text-center text-slate-400">
         Estimated processing time is 10-30m.
       </p>
 
-      <Transition
-        enter-active-class="duration-300 ease-out"
-        enter-from-class="transform opacity-0"
-        enter-to-class="opacity-100"
-        leave-active-class="duration-200 ease-in"
-        leave-from-class="opacity-100"
-        leave-to-class="transform opacity-0"
-      >
-        <div
-          v-if="error"
-          class="bg-orange-500 gap-[15px] w-full justify-center flex bg-opacity-10 text-orange-500 rounded-5 p-4 text-sm text-center"
-        >
+      <Transition enter-active-class="duration-300 ease-out" enter-from-class="transform opacity-0"
+        enter-to-class="opacity-100" leave-active-class="duration-200 ease-in" leave-from-class="opacity-100"
+        leave-to-class="transform opacity-0">
+        <div v-if="error"
+          class="bg-orange-500 gap-[15px] w-full justify-center flex bg-opacity-10 text-orange-500 rounded-5 p-4 text-sm text-center">
           <span class="text-xs self-center">
             {{ error }}
           </span>
