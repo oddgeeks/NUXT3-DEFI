@@ -45,6 +45,7 @@ const { data: transactions } = useAsyncData(
   {
     watch: [page],
     default: () => defaultTransactions,
+    immediate: true,
   }
 );
 </script>
