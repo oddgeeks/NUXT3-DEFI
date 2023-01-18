@@ -5,7 +5,7 @@
 		"avocado",
 		"defi"
 	],
-	"timestamp": "2023-01-13T15:30:54.934Z",
+	"timestamp": "2023-01-18T11:31:00.996Z",
 	"tokens": [
 		{
 			"chainId": 1,
@@ -130,6 +130,14 @@
 		{
 			"chainId": 1,
 			"address": "0xba100000625a3754423978a60c9317c58a424e3d",
+			"name": "Balancer",
+			"symbol": "bal",
+			"decimals": 18,
+			"logoURI": "https://avocado.link/tokens/balancer.svg"
+		},
+		{
+			"chainId": 100,
+			"address": "0x7ef541e2a22058048904fe5744f9c7e4c57af717",
 			"name": "Balancer",
 			"symbol": "bal",
 			"decimals": 18,
@@ -278,6 +286,46 @@
 			"symbol": "cbeth",
 			"decimals": 18,
 			"logoURI": "https://assets.coingecko.com/coins/images/27008/large/cbeth.png?1661390066"
+		},
+		{
+			"chainId": 1,
+			"address": "0xc00e94cb662c3520282e6f5717214004a7f26888",
+			"name": "Compound",
+			"symbol": "comp",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/10775/large/COMP.png?1592625425"
+		},
+		{
+			"chainId": 42161,
+			"address": "0x354a6da3fcde098f8389cad84b0182725c6c91de",
+			"name": "Compound",
+			"symbol": "comp",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/10775/large/COMP.png?1592625425"
+		},
+		{
+			"chainId": 56,
+			"address": "0x52ce071bd9b1c4b00a0b92d298c512478cad67e8",
+			"name": "Compound",
+			"symbol": "comp",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/10775/large/COMP.png?1592625425"
+		},
+		{
+			"chainId": 43114,
+			"address": "0xc3048e19e76cb9a3aa9d77d8c03c29fc906e2437",
+			"name": "Compound",
+			"symbol": "comp",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/10775/large/COMP.png?1592625425"
+		},
+		{
+			"chainId": 137,
+			"address": "0x8505b9d2254a7ae468c0e9dd10ccea3a837aef5c",
+			"name": "Compound",
+			"symbol": "comp",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/10775/large/COMP.png?1592625425"
 		},
 		{
 			"chainId": 1,
@@ -769,6 +817,38 @@
 		},
 		{
 			"chainId": 1,
+			"address": "0xeb4c2781e4eba804ce9a9803c67d0893436bb27d",
+			"name": "renBTC",
+			"symbol": "renbtc",
+			"decimals": 8,
+			"logoURI": "https://assets.coingecko.com/coins/images/11370/large/Bitcoin.jpg?1628072791"
+		},
+		{
+			"chainId": 137,
+			"address": "0xdbf31df14b66535af65aac99c32e9ea844e14501",
+			"name": "renBTC",
+			"symbol": "renbtc",
+			"decimals": 8,
+			"logoURI": "https://assets.coingecko.com/coins/images/11370/large/Bitcoin.jpg?1628072791"
+		},
+		{
+			"chainId": 56,
+			"address": "0xfce146bf3146100cfe5db4129cf6c82b0ef4ad8c",
+			"name": "renBTC",
+			"symbol": "renbtc",
+			"decimals": 8,
+			"logoURI": "https://assets.coingecko.com/coins/images/11370/large/Bitcoin.jpg?1628072791"
+		},
+		{
+			"chainId": 1,
+			"address": "0x408e41876cccdc0f92210600ef50372656052a38",
+			"name": "REN",
+			"symbol": "ren",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/3139/large/REN.png?1589985807"
+		},
+		{
+			"chainId": 1,
 			"address": "0x6123b0049f904d730db3c36a31167d9d4121fa6b",
 			"name": "Ribbon Finance",
 			"symbol": "rbn",
@@ -790,6 +870,22 @@
 			"symbol": "shib",
 			"decimals": 18,
 			"logoURI": "https://avocado.link/tokens/shiba-inu.svg"
+		},
+		{
+			"chainId": 43114,
+			"address": "0xaafd2577fb67366d3c89db0d627c49d769ee2e5d",
+			"name": "Stabilize USD",
+			"symbol": "susd",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/19754/large/SUSD_200.png?1635824557"
+		},
+		{
+			"chainId": 1,
+			"address": "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
+			"name": "Lido Staked Ether",
+			"symbol": "steth",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/13442/large/steth_logo.png?1608607546"
 		},
 		{
 			"chainId": 1,
