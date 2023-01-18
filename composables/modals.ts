@@ -48,12 +48,17 @@ export const openBridgeModal = (address: string, chainId: number | string) => {
   );
 };
 
-export const openSwapModal = (address: string, chainId: number | string) => {
+export const openSwapModal = (
+  address: string,
+  chainId: number | string,
+  toAddress?: string
+) => {
   openModal(
     Swap,
     {
       address,
       chainId,
+      toAddress,
     },
     {
       wrapperClass: "max-w-[600px]",

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BigNumber from "bignumber.js";
 import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
 
 const props = withDefaults(
@@ -9,8 +10,7 @@ const props = withDefaults(
     containerClasses?: string;
     name: string;
     errorMessage?: string;
-    type?: string;
-    inputmode?: "text" | "decimal" | "numeric";
+    type?: "text" | "number" | "numeric" | "password" | "email" | "tel" | "url" | "search";
     errorType?: "error" | "warning";
     step?: string;
     min?: string;
@@ -19,6 +19,7 @@ const props = withDefaults(
     autofocus?: boolean;
   }>(),
   {
+    modelValue: "",
     placeholder: "",
     name: "",
     type: "text",
@@ -30,16 +31,53 @@ const props = withDefaults(
   }
 );
 
+const seperator = ".";
 const emit = defineEmits(["update:modelValue"]);
 
-const val = computed({
-  get() {
-    return props.modelValue || "";
-  },
-  set(newValue) {
-    emit("update:modelValue", newValue);
-  },
+const htmlInputType = computed(() => {
+  if (props.type === "numeric") {
+    return "text";
+  }
+  return props.type;
 });
+
+const handleInput = (e: any) => {
+  let inputVal = e.target.value;
+
+  if (props.type === "numeric") {
+    inputVal = inputVal.replace(",", ".");
+  }
+
+  emit("update:modelValue", inputVal);
+};
+
+const handleBeforeInput = (e: any) => {
+  if (props.type === "numeric") {
+    let key = (e.data || "").replace(",", ".");
+    const computedValue = props.modelValue + (key || "");
+
+    const isValueEmpty = !props.modelValue;
+    const isSeperator = seperator === key;
+    const hasSeperator = String(props.modelValue).includes(seperator);
+
+    if (isSeperator && isValueEmpty) {
+      return e.preventDefault();
+    }
+
+    if (hasSeperator && isSeperator) {
+      return e.preventDefault();
+    }
+
+    // check key is number
+    if (key && toBN(key).isNaN() && key !== seperator) {
+      return e.preventDefault();
+    }
+
+    if (key && toBN(computedValue).isNaN()) {
+      return e.preventDefault();
+    }
+  }
+};
 </script>
 
 <template>
@@ -48,8 +86,8 @@ const val = computed({
       :class="[
         containerClasses,
         {
-          '!ring-red-alert !ring-2' : !!errorMessage && errorType === 'error',
-          '!ring-orange-500 !ring-2' : !!errorMessage && errorType === 'warning',
+          '!ring-red-alert !ring-2': !!errorMessage && errorType === 'error',
+          '!ring-orange-500 !ring-2': !!errorMessage && errorType === 'warning',
         },
         transparent
           ? 'bg-transparent'
@@ -61,15 +99,16 @@ const val = computed({
       <input
         autocomplete="off"
         :readonly="readonly"
+        :type="htmlInputType"
+        @beforeinput="handleBeforeInput"
+        @input="handleInput"
+        :value="modelValue"
         :placeholder="placeholder"
-        :type="type"
         :step="step"
-        :inputmode="inputmode"
         :name="name"
         v-focus="{ enabled: autofocus }"
-        v-model="val"
         :min="min"
-        class="placeholder-slate-400 placeholder:text-sm border-none shadow-none focus:ring-0 focus:border-none bg-inherit rounded-[inherit] px-0 py-[13px] w-full"
+        class="placeholder-slate-400 focus-visible:!outline-none placeholder:text-sm border-none shadow-none focus:ring-0 focus:border-none bg-inherit rounded-[inherit] px-0 py-[13px] w-full"
         :class="[inputClasses]"
       />
       <slot name="suffix" />

@@ -4,11 +4,13 @@ import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?component";
 const { safeAddress } = useAvocadoSafe();
 
+useForceSingleSession()
+
 const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
 </script>
 
 <template>
-  <div class="container flex flex-col gap-[30px] flex-1 md:pb-10">
+  <div class="container flex flex-col gap-[30px] flex-1 md:pb-2">
     <TotalBalance />
     <DApps />
     <div class="flex gap-5 lg:flex-row flex-col flex-1">
@@ -55,7 +57,7 @@ const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
       <div class="flex lg:flex-col md:shrink-0 md:basis-[213px] gap-5">
         <div class="w-full flex flex-col gap-5">
           <h2 class="font-semibold inline-flex gap-2.5">
-            Your Wallet
+            Your Avocado Wallet
             <button
               @click="
                 openDialogModal({

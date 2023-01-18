@@ -39,7 +39,7 @@ const filteredBalances =  computed(() => {
           <table class="table w-full">
             <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
               <tr class="border-b-0">
-                <td colspan="5" class="text-left pl-7.5 pr-10 py-6">
+                <td colspan="5" class="text-left pl-7.5 pr-10 py-6 sticky top-0 dark:bg-gray-850 bg-slate-50 z-10">
                   <CommonInput name="Token Search" v-model="searchQuery" type="search" placeholder="Search">
                     <template #prefix>
                       <SearchSVG class="shrink-0 mr-2"/>

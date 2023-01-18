@@ -36,12 +36,17 @@ const { handleSubmit, errors, meta, resetForm } = useForm({
   validationSchema: yup.object({
     amount: yup
       .string()
-      .required()
+      .required("")
+      .test('min-amount', '', (value) => {
+        const amount = toBN(value);
+
+        return value ? amount.gt(0) : true;
+      })
       .test("max-amount", "Insufficient balance", (value) => {
         const amount = toBN(value);
         const balance = toBN(token.value.balance);
 
-        return amount.gt(0) && amount.lte(balance);
+        return amount.gt(0) ? amount.lte(balance) : true;
       }),
     address: yup
       .string()
@@ -174,17 +179,14 @@ const onSubmit = handleSubmit(async () => {
           <span class="uppercase">{{ token.balance }} {{ token.symbol }}</span>
         </div>
         <CommonInput
-          min="0.000001"
-          type="number"
-          step="0.000001"
-          inputmode="decimal"
+          type="numeric"
           :error-message="amountMeta.dirty ? errors['amount'] : ''"
           name="amount"
           placeholder="Enter amount"
           v-model="amount"
         >
           <template #suffix>
-            <button class="text-blue-500 hover:text-blue-500" @click="setMax">
+            <button type="button" class="text-blue-500 hover:text-blue-500" @click="setMax">
               MAX
             </button>
           </template>

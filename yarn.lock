@@ -7684,7 +7684,7 @@ vue-chartjs@^5.1.0:
   resolved "https://registry.yarnpkg.com/vue-chartjs/-/vue-chartjs-5.1.0.tgz#54330db7d45b17274e9ca3a37e387848f25c929c"
   integrity sha512-O/VllsyZn1NzRJAYEbpgfbk/N+EB1nCHLsc/ullPNWuU2YRHxgF5SS8OwWc0K2IfVZNMw94Bp6HUqi2svDQzrQ==
 
-vue-demi@*:
+vue-demi@*, vue-demi@latest:
   version "0.13.11"
   resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.13.11.tgz#7d90369bdae8974d87b1973564ad390182410d99"
   integrity sha512-IR8HoEEGM65YY3ZJYAjMlKygDQn25D5ajNFNoKh9RSDMQtlzCxtfQjdQgv9jjK+m3377SsJXY8ysq8kLCZL25A==
@@ -7703,6 +7703,13 @@ vue-gtag-next@^1.14.0:
   version "1.14.0"
   resolved "https://registry.yarnpkg.com/vue-gtag-next/-/vue-gtag-next-1.14.0.tgz#793aef0b90dff4213b9f3a79827cd99b06e678dd"
   integrity sha512-iJl+cOG2GU5NuxqzSSIpt03WVOvZqyKB9TOy7d55KiuvRklcnb2nlqxW5B/a3/sbIt7fla+XEkRyMCcoz0zAHw==
+
+vue-lite-youtube-embed@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/vue-lite-youtube-embed/-/vue-lite-youtube-embed-1.1.2.tgz#4d53cf941f4be4639911528d3931d957c47701cf"
+  integrity sha512-howHJP/ZnrITAWLkthxwJzbhet2klhjTR7DIdPnXBvgH2s7F4RWARtiBbXBMjuyeGbF645uGaJCvRmf8KPyY8g==
+  dependencies:
+    vue-demi latest
 
 vue-router@^4.1.6:
   version "4.1.6"

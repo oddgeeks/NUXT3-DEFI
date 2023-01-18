@@ -52,12 +52,17 @@ const { handleSubmit, errors, meta, resetForm } = useForm({
   validationSchema: yup.object({
     amount: yup
       .string()
-      .required()
+      .required("")
+      .test('min-amount', '', (value) => {
+          const amount = toBN(value);
+
+          return value ? amount.gt(0) : true;
+      })
       .test("max-amount", "Insufficient balance", (value: any) => {
         const amount = toBN(value);
         const balance = toBN(token.value?.balance || 0);
 
-        return amount.gt(0) && amount.lte(balance);
+        return amount.gt(0) ? amount.lte(balance) : true;
       }),
     chainId: yup.number().integer().required(),
   }),
@@ -242,10 +247,7 @@ const onSubmit = handleSubmit(async () => {
           >
         </div>
         <CommonInput
-          min="0.000001"
-          type="number"
-          step="0.000001"
-          inputmode="decimal"
+          type="numeric"
           :error-message="amountMeta.dirty ? errors['amount'] : ''"
           name="amount"
           placeholder="Enter amount"
