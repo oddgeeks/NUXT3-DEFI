@@ -10,7 +10,7 @@ const { showTrackingBanner, showWelcomeBanner, showIncorrectNetworkBanner, showI
       <TheHeader />
     </div>
     <div class="container flex flex-col gap-4 banner-wrapper [&:not(:empty)]:mb-7.5">
-      <WarningsGasBalance v-if="showInsufficientGasBanner" />
+      <WarningsGasBalance v-if="showInsufficientGasBanner && !showGasGiftBanner" />
       <WarningsSwitchNetwork v-if="showIncorrectNetworkBanner" />
       <BannerGift v-if="showGasGiftBanner" />
     </div>
