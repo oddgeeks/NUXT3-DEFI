@@ -1,58 +1,62 @@
-import { $fetch } from "ohmyfetch"
-import { writeJson, existsSync } from "fs-extra"
-import { resolve } from "path"
-import { ethers } from 'ethers';
-import { StaticJsonRpcRetryProvider } from '@instadapp/utils';
-import dotenv from "dotenv"
-dotenv.config()
+import { $fetch } from "ohmyfetch";
+import { writeJson, existsSync } from "fs-extra";
+import { resolve } from "path";
+import { ethers } from "ethers";
+import { StaticJsonRpcRetryProvider } from "@instadapp/utils";
+import dotenv from "dotenv";
+dotenv.config();
 
-const COINGECKO_BASE_API = process.env.COINGECKO_KEY ? 'https://pro-api.coingecko.com/api/v3' : 'https://api.coingecko.com/api/v3'
+const COINGECKO_BASE_API = process.env.COINGECKO_KEY
+  ? "https://pro-api.coingecko.com/api/v3"
+  : "https://api.coingecko.com/api/v3";
 
 const RPC_URLS: { [chainId: number]: string } = {
-    1: 'https://rpc.ankr.com/eth',
-    137: 'https://rpc.ankr.com/polygon',
-    43114: 'https://rpc.ankr.com/avalanche',
-    250: 'https://rpc.ankr.com/fantom',
-    10: 'https://rpc.ankr.com/optimism',
-    42161: 'https://rpc.ankr.com/arbitrum',
-    634: 'https://rpc.avocado.link',
-    100: 'https://rpc.ankr.com/gnosis',
-    56: 'https://rpc.ankr.com/bsc',
+  1: "https://rpc.ankr.com/eth",
+  137: "https://rpc.ankr.com/polygon",
+  43114: "https://rpc.ankr.com/avalanche",
+  250: "https://rpc.ankr.com/fantom",
+  10: "https://rpc.ankr.com/optimism",
+  42161: "https://rpc.ankr.com/arbitrum",
+  634: "https://rpc.avocado.link",
+  100: "https://rpc.ankr.com/gnosis",
+  56: "https://rpc.ankr.com/bsc",
 };
 
 const nativeTokenIdChainIdsMapping: { [coinId: string]: number[] } = {
-    "ethereum": [1, 10, 42161],
-    "matic-network": [137],
-    "avalanche-2": [43114],
-    "fantom": [250],
-    "xdai": [100],
-    "binancecoin": [56],
-}
+  ethereum: [1, 10, 42161],
+  "matic-network": [137],
+  "avalanche-2": [43114],
+  fantom: [250],
+  xdai: [100],
+  binancecoin: [56],
+};
 
-const rpcInstances: Record<string, StaticJsonRpcRetryProvider> = {}
+const rpcInstances: Record<string, StaticJsonRpcRetryProvider> = {};
 
 const getRpcProvider = (chainId: number | string) => {
-    if (!rpcInstances[chainId]) {
-        rpcInstances[chainId] = new StaticJsonRpcRetryProvider(RPC_URLS[Number(chainId)])
-    }
+  if (!rpcInstances[chainId]) {
+    rpcInstances[chainId] = new StaticJsonRpcRetryProvider(
+      RPC_URLS[Number(chainId)]
+    );
+  }
 
-    return rpcInstances[chainId]
-}
+  return rpcInstances[chainId];
+};
 
 const platforms = [
-    { platformId: 'ethereum', chainId: 1, },
-    { platformId: 'polygon-pos', chainId: 137, },
-    { platformId: 'avalanche', chainId: 43114, },
-    { platformId: 'arbitrum-one', chainId: 42161, },
-    { platformId: 'optimistic-ethereum', chainId: 10, },
-    // { platformId: 'fantom', chainId: 250, },
-    { platformId: 'binance-smart-chain', chainId: 56, },
-    { platformId: 'xdai', chainId: 100 },
-]
+  { platformId: "ethereum", chainId: 1 },
+  { platformId: "polygon-pos", chainId: 137 },
+  { platformId: "avalanche", chainId: 43114 },
+  { platformId: "arbitrum-one", chainId: 42161 },
+  { platformId: "optimistic-ethereum", chainId: 10 },
+  // { platformId: 'fantom', chainId: 250, },
+  { platformId: "binance-smart-chain", chainId: 56 },
+  { platformId: "xdai", chainId: 100 },
+];
 const platformIdChainIdMap = platforms.reduce((acc, curr) => {
-    acc[curr.platformId] = curr.chainId
-    return acc
-}, {} as Record<string, number>)
+  acc[curr.platformId] = curr.chainId;
+  return acc;
+}, {} as Record<string, number>);
 
 const coinIds = [
   // native
@@ -111,112 +115,121 @@ const coinIds = [
   "instadapp-wbtc",
   "instadapp-usdc",
   "instadapp-dai",
+  "magic",
+  "illuvium",
 ];
 
 export type Token = {
-    chainId: number
-    address: string
-    name: string
-    symbol: string
-    decimals: number
-    logoURI: string
-}
-
+  chainId: number;
+  address: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  logoURI: string;
+};
 
 const getTokens = async () => {
-    let tokens: Token[] = []
+  let tokens: Token[] = [];
 
-    const coins: any[] = await $fetch(`${COINGECKO_BASE_API}/coins/list?include_platform=true`, {
-        params: { include_platform: true, x_cg_pro_api_key: process.env.COINGECKO_KEY }
-    }).then((cs) => cs.filter((c: any) => coinIds.includes(c.id)));
+  const coins: any[] = await $fetch(
+    `${COINGECKO_BASE_API}/coins/list?include_platform=true`,
+    {
+      params: {
+        include_platform: true,
+        x_cg_pro_api_key: process.env.COINGECKO_KEY,
+      },
+    }
+  ).then((cs) => cs.filter((c: any) => coinIds.includes(c.id)));
 
-    for (const coin of coins) {
-        let logoURI = ''
+  for (const coin of coins) {
+    let logoURI = "";
 
-        if (existsSync(resolve(__dirname, '../public/tokens/', `${coin.id}.svg`))) {
-            logoURI = `https://avocado.link/tokens/${coin.id}.svg`;
-        } else {
-            const coinData: any = await $fetch(`${COINGECKO_BASE_API}/coins/${coin.id}?tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false`, {
-                params: { include_platform: true, x_cg_pro_api_key: process.env.COINGECKO_KEY }
-            }).catch(() => null);
-            logoURI = coinData && coinData.image ? coinData.image.large : ''
+    if (existsSync(resolve(__dirname, "../public/tokens/", `${coin.id}.svg`))) {
+      logoURI = `https://avocado.link/tokens/${coin.id}.svg`;
+    } else {
+      const coinData: any = await $fetch(
+        `${COINGECKO_BASE_API}/coins/${coin.id}?tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false`,
+        {
+          params: {
+            include_platform: true,
+            x_cg_pro_api_key: process.env.COINGECKO_KEY,
+          },
         }
-
-        const nativeChainIds = nativeTokenIdChainIdsMapping[coin.id]
-
-        if (nativeChainIds) {
-            for (const chainId of nativeChainIds) {
-                tokens.push({
-                    chainId,
-                    address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-                    name: coin.name,
-                    symbol: coin.symbol,
-                    decimals: 18,
-                    logoURI,
-                })
-            }
-        }
-
-        for (const platformId in coin.platforms) {
-            try {
-                let chainId = platformIdChainIdMap[platformId];
-
-                if (!chainId) {
-                    continue
-                }
-
-                if(nativeChainIds && nativeChainIds.includes(chainId)) {
-                    continue
-                }
-
-                if (coin.platforms[platformId]) {
-                    let contract = new ethers.Contract(
-                        coin.platforms[platformId],
-                        [
-                            "function decimals() view returns (uint8)",
-                        ],
-                        getRpcProvider(chainId)
-                    );
-
-                    tokens.push({
-                        chainId,
-                        address: coin.platforms[platformId],
-                        name: coin.name,
-                        symbol: coin.symbol,
-                        decimals: await contract.decimals(),
-                        logoURI,
-                    })
-                }
-
-            } catch (error) {
-                console.log(error)
-            }
-        }
+      ).catch(() => null);
+      logoURI = coinData && coinData.image ? coinData.image.large : "";
     }
 
+    const nativeChainIds = nativeTokenIdChainIdsMapping[coin.id];
 
-    return tokens
-}
+    if (nativeChainIds) {
+      for (const chainId of nativeChainIds) {
+        tokens.push({
+          chainId,
+          address: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+          name: coin.name,
+          symbol: coin.symbol,
+          decimals: 18,
+          logoURI,
+        });
+      }
+    }
 
+    for (const platformId in coin.platforms) {
+      try {
+        let chainId = platformIdChainIdMap[platformId];
+
+        if (!chainId) {
+          continue;
+        }
+
+        if (nativeChainIds && nativeChainIds.includes(chainId)) {
+          continue;
+        }
+
+        if (coin.platforms[platformId]) {
+          let contract = new ethers.Contract(
+            coin.platforms[platformId],
+            ["function decimals() view returns (uint8)"],
+            getRpcProvider(chainId)
+          );
+
+          tokens.push({
+            chainId,
+            address: coin.platforms[platformId],
+            name: coin.name,
+            symbol: coin.symbol,
+            decimals: await contract.decimals(),
+            logoURI,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+
+  return tokens;
+};
 
 const gen = async () => {
-    await writeJson(resolve(__dirname, '../public/tokenlist.json'), {
-        "name": "Avocado",
-        "logoURI": "https://avocado.link/logo.svg",
-        "keywords": [
-            "avocado",
-            "defi"
-        ],
-        "timestamp": new Date().toISOString(),
-        "tokens": await getTokens(),
-        "version": {
-            "major": 1,
-            "minor": 0,
-            "patch": 0
-        }
-    }, {
-        spaces: '\t'
-    })
-}
+  await writeJson(
+    resolve(__dirname, "../public/tokenlist.json"),
+    {
+      name: "Avocado",
+      logoURI: "https://avocado.link/logo.svg",
+      keywords: ["avocado", "defi"],
+      timestamp: new Date().toISOString(),
+      tokens: await getTokens(),
+      version: {
+        major: 1,
+        minor: 0,
+        patch: 0,
+      },
+    },
+    {
+      spaces: "\t",
+    }
+  );
+};
 
 gen();
