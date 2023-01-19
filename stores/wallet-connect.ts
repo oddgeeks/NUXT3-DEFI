@@ -13,7 +13,6 @@ const clientMeta = {
 };
 
 export const useWalletConnect = defineStore("wallet_connect", () => {
-  const selfDisconnect = ref(false);
   const safe = useAvocadoSafe();
   const { library, account } = useWeb3();
   const storage = useLocalStorage<{ keys: Record<string, string[]> }>(
@@ -157,22 +156,6 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
             storage.value.keys[safe.safeAddress.value] = storage.value.keys[
               safe.safeAddress.value
             ].filter((key) => key !== id);
-
-            if (!selfDisconnect.value) {
-              openDialogModal({
-                title: "Connected Failed",
-                content: `This WalletConnect link is expired or timed out or this dapp cannot be connected! Try again with a new link!`,
-                type: "error",
-                buttonText: "Try Again",
-                callback: () => {
-                  setTimeout(() => {
-                    openWalletConnectModal();
-                  }, 10);
-                },
-              });
-            }
-
-            selfDisconnect.value = false;
           });
 
           return wc;
@@ -257,7 +240,6 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
   };
 
   const disconnect = async (connector: WalletConnect) => {
-    selfDisconnect.value = true;
     let storageId = (connector as any)._sessionStorage.storageId;
     try {
       await connector.killSession();

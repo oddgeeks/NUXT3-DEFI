@@ -74,7 +74,7 @@ export const chainIdToName = (chainId: string | number) => {
     case "250":
       return "Fantom";
     case "634":
-        return "Avocado";
+      return "Avocado";
     default:
       throw new Error(`Unknown chainId ${chainId}`);
   }
@@ -138,6 +138,18 @@ export function formatDecimal(value: any, fractionDigits = 6) {
 }
 
 export const http = axios.create();
+
+export function filterArray(array: any, filters: any) {
+  const filterKeys = Object.keys(filters);
+  return array.filter((item: any) => {
+    // validates all filter criteria
+    return filterKeys.every((key) => {
+      // ignores non-function predicates
+      if (typeof filters[key] !== "function") return true;
+      return filters[key](item[key], item);
+    });
+  });
+}
 
 axiosRetry(http, {
   retries: 3,
