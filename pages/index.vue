@@ -12,9 +12,7 @@ useForceSingleSession()
 const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
 const networkPreference = useLocalStorage("network-preference", "all");
 
-const availableNetworks = computed(() =>
-  [...new Set(tokenBalances.value.map((token) => token.chainId))]
-  .map(i => networks.find(n => n.chainId == i)))
+const availableNetworks = networks.filter((network) => network.chainId != 634)
 
 </script>
 
