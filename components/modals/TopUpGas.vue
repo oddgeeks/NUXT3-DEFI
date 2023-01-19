@@ -11,11 +11,12 @@ const { library, account } = useWeb3();
 const { switchNetworkByChainId } = useNetworks();
 const { sendTransaction } = useAvocadoSafe();
 const { tokenBalances } = useAvocadoSafe();
-const { parseTransactionError } = useErrorHandler()
-const { closeModal } = useModal()
+const { parseTransactionError } = useErrorHandler();
+const { closeModal } = useModal();
+const [isGiftActive, toggleGift] = useToggle(false);
 
 const { gasBalance } = storeToRefs(useSafe());
-const { fetchGasBalance } = useSafe()
+const { fetchGasBalance } = useSafe();
 const address = "0xE8385fB3A5F15dED06EB5E20E5A81BF43115eb8E";
 
 const chainUSDCAddresses: any = {
@@ -33,30 +34,30 @@ const networks = Object.keys(chainUSDCAddresses).map((chainId) => ({
   chainId,
 }));
 
-
 const claimLoading = ref(false);
 const provider = getRpcProvider(634);
 
-const { data, execute } = useAsyncData('airDrop', async () => {
-  const resp = await provider.send(
-      "api_hasAirdrop",
-      [account.value]
-  );
-  await fetchGasBalance()
-  return resp
-}, {
-  watch: [account]
-})
+const { data, execute } = useAsyncData(
+  "airDrop",
+  async () => {
+    const resp = await provider.send("api_hasAirdrop", [account.value]);
+    await fetchGasBalance();
+    return resp;
+  },
+  {
+    watch: [account],
+  }
+);
 
 const { handleSubmit, errors, meta, resetForm } = useForm({
   validationSchema: yup.object({
     amount: yup
       .string()
       .required("")
-      .test('min-amount', '', (value) => {
-          const amount = toBN(value);
+      .test("min-amount", "", (value) => {
+        const amount = toBN(value);
 
-          return value ? amount.gt(0) : true;
+        return value ? amount.gt(0) : true;
       })
       .test("max-amount", "Insufficient balance", (value: any) => {
         const amount = toBN(value);
@@ -103,20 +104,16 @@ const sendingDisabled = computed(
 const claim = async () => {
   try {
     claimLoading.value = true;
-    const data = await provider.send(
-      "api_claimAirdrop",
-      [account.value]
-    );
+    const data = await provider.send("api_claimAirdrop", [account.value]);
 
-    if(data) {
+    if (data) {
       openSnackbar({
-        message: 'Claimed successfully',
+        message: "Claimed successfully",
         type: "success",
       });
     }
 
-    execute()
-
+    execute();
   } catch (e: any) {
     console.log(e);
     openSnackbar({
@@ -174,9 +171,9 @@ const onSubmit = handleSubmit(async () => {
       chainId: chainId.value,
     });
 
-    closeModal()
+    closeModal();
 
-    showPendingTransactionModal(transactionHash, chainId.value, 'topUpGas');
+    showPendingTransactionModal(transactionHash, chainId.value, "topUpGas");
 
     resetForm();
   } catch (e: any) {
@@ -192,7 +189,7 @@ const onSubmit = handleSubmit(async () => {
 </script>
 
 <template>
-  <form @submit="onSubmit" class="space-y-7.5 text-center">
+  <div class="space-y-7.5 text-center">
     <div
       class="flex items-center mx-auto justify-center h-10 w-10 rounded-full dark:bg-slate-800 bg-slate-100"
     >
@@ -218,10 +215,15 @@ const onSubmit = handleSubmit(async () => {
     >
       {{ formatDecimal(gasBalance, 2) }} USDC
     </span>
-    <CommonButton :loading="claimLoading" @click="claim()" v-if="data?.id" class="flex text-sm items-center gap-2">
-       {{ data.message }}
+    <CommonButton
+      :loading="claimLoading"
+      @click="claim()"
+      v-if="data?.id"
+      class="flex text-sm items-center gap-2"
+    >
+      {{ data.message }}
     </CommonButton>
-    <div class="space-y-5">
+    <form v-if="!isGiftActive" @submit="onSubmit" class="space-y-5">
       <div class="flex flex-col gap-2.5">
         <span class="text-left leading-5">Network</span>
         <CommonSelect
@@ -264,16 +266,26 @@ const onSubmit = handleSubmit(async () => {
           </template>
         </CommonInput>
       </div>
-    </div>
+      <CommonButton
+        type="submit"
+        :disabled="sendingDisabled"
+        :loading="loading"
+        class="justify-center w-full"
+        size="lg"
+      >
+        Add Gas
+      </CommonButton>
+    </form>
 
-    <CommonButton
-      type="submit"
-      :disabled="sendingDisabled"
-      :loading="loading"
-      class="justify-center w-full"
-      size="lg"
+    <FormsGiftCode @close="toggleGift()" v-else/>
+
+    <button
+      v-if="!isGiftActive"
+      @click="toggleGift()"
+      type="button"
+      class="text-xs text-blue-500 !mt-3"
     >
-      Add Gas
-    </CommonButton>
-  </form>
+      Enter Promo Code
+    </button>
+  </div>
 </template>

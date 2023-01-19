@@ -101,6 +101,7 @@ const handleBeforeInput = (e: any) => {
         :readonly="readonly"
         :type="htmlInputType"
         @beforeinput="handleBeforeInput"
+        :id="'input-' + name"
         @input="handleInput"
         :value="modelValue"
         :placeholder="placeholder"
