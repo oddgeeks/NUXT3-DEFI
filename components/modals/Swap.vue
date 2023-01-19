@@ -264,7 +264,7 @@ onMounted(() => {
         <h2 class="text-lg leading-5 text-center">Swap</h2>
         <div class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5">
           <ChainLogo class="w-5 h-5" :chain="chainId" />
-          <span class="text-xs text-slate-400 leading-5">{{ chainIdToName(chainId) }} Network</span>
+          <span class="text-xs text-slate-400 leading-5">{{ chainIdToName(chainId) }}</span>
         </div>
       </div>
     </div>

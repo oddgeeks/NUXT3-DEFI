@@ -387,9 +387,9 @@ const onSubmit = handleSubmit(async () => {
           <span class="uppercase"> ({{ token.symbol }})</span>
         </h2>
 
-        <div class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5">
+        <div class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] self-center inline-flex justify-center items-center gap-2 rounded-5">
           <ChainLogo class="w-5 h-5" :chain="token.chainId" />
-          <span class="text-xs text-slate-400 leading-5">{{ chainIdToName(token.chainId) }} Network</span>
+          <span class="text-xs text-slate-400 leading-5 w-fit">{{ chainIdToName(token.chainId) }}</span>
         </div>
       </div>
     </div>
@@ -415,7 +415,7 @@ const onSubmit = handleSubmit(async () => {
           <div
             class="dark:bg-gray-850 bg-slate-50 px-3 max-w-full inline-flex items-center gap-2 rounded-2xl self-start h-[50px]">
             <ChainLogo class="w-6 h-6" :chain="token.chainId" />
-            <span class="text-sm leading-5">{{ chainIdToName(token.chainId) }} Network</span>
+            <span class="text-sm leading-5">{{ chainIdToName(token.chainId) }}</span>
           </div>
         </div>
       </div>

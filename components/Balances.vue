@@ -10,36 +10,36 @@ const props = defineProps({
   hideZeroBalances: {
     type: Boolean,
     default: false
+  },
+  networkPreference: {
+    type: String,
+    default: 'all'
   }
 })
 
-const filteredBalances =  computed(() => {
-  return tokenBalances.value.filter((token) => {
-    if (props.hideZeroBalances && isZero(token.balance)) {
-      return false
-    }
-
-    if (searchQuery.value) {
-      return token.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        token.symbol.toLowerCase().includes(searchQuery.value.toLowerCase())
-    }
-
-    return true
-  })
+const filteredBalances = computed(() => {
+  const filters = {
+    name: (name: string, token: any) =>
+      !!searchQuery.value ? name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      token.symbol.toLowerCase().includes(searchQuery.value.toLowerCase()) : true,
+    balance: (balance: any) => props.hideZeroBalances ? !isZero(balance) : true,
+    chainId: (chainId: string) => props.networkPreference === 'all' ? true : chainId == props.networkPreference
+  }
+  
+  return filterArray(tokenBalances.value, filters)
 })
 
 </script>
 <template>
     <div class="relative flex-1">
-      <div class="dark:bg-gray-850 bg-slate-50 rounded-5 h-full w-full">
+      <div class="dark:bg-gray-850 bg-slate-50 rounded-[25px] h-full w-full">
         <div
-          class="overflow-y-auto overflow-x-auto md:overflow-x-hidden min-h-full max-h-[530px] flex-1 scroll-style"
-          :class="{ blur: tokenBalances.length === 0 }"
-        >
+          class="overflow-y-auto overflow-x-auto rounded-[inherit] md:overflow-x-hidden min-h-full max-h-[530px] flex-1 scroll-style"
+          :class="{ blur: !account }" >
           <table class="table w-full">
             <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
-              <tr class="border-b-0">
-                <td colspan="5" class="text-left pl-7.5 pr-10 py-6 sticky top-0 dark:bg-gray-850 bg-slate-50 z-10">
+              <tr class="border-b-0 dark:divide-slate-800 divide-slate-150">
+                <td colspan="5" class="text-left pl-7.5 pr-5 py-6 sticky top-0 mt-1 dark:bg-gray-850 bg-slate-50 z-10">
                   <CommonInput name="Token Search" v-model="searchQuery" type="search" placeholder="Search">
                     <template #prefix>
                       <SearchSVG class="shrink-0 mr-2"/>
@@ -47,7 +47,12 @@ const filteredBalances =  computed(() => {
                     </CommonInput>
                 </td>
               </tr>
-              <template v-if="tokenBalances.length > 0">
+
+               <template v-if="!account || !tokenBalances.length">
+                <LoadingBalanceRow :loading="!!account && !tokenBalances.length" :key="i" v-for="i in 8"/>
+              </template>
+
+              <template v-else>
                 <BalanceRow
                   v-for="tokenBalance in filteredBalances"
                   :token-balance="tokenBalance"
@@ -55,14 +60,12 @@ const filteredBalances =  computed(() => {
                 />
               </template>
 
-              <template v-else>
-                <LoadingBalanceRow v-for="i in 8"/>
-              </template>
+             
             </tbody>
           </table>
         </div>
       </div>
-
+      
       <div
         v-if="!account"
         class="absolute inset-0 flex items-center justify-center"

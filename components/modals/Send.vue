@@ -167,7 +167,7 @@ const onSubmit = handleSubmit(async () => {
       >
         <ChainLogo class="w-5 h-5" :chain="token.chainId" />
         <span class="text-xs text-slate-400 leading-5"
-          >{{ chainIdToName(token.chainId) }} Network</span
+          >{{ chainIdToName(token.chainId) }}</span
         >
       </div>
     </div>
