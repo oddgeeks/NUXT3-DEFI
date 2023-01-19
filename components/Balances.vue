@@ -34,8 +34,7 @@ const filteredBalances =  computed(() => {
       <div class="dark:bg-gray-850 bg-slate-50 rounded-5 h-full w-full">
         <div
           class="overflow-y-auto overflow-x-auto md:overflow-x-hidden min-h-full max-h-[530px] flex-1 scroll-style"
-          :class="{ blur: tokenBalances.length === 0 }"
-        >
+          :class="{ blur: !account }" >
           <table class="table w-full">
             <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
               <tr class="border-b-0">
@@ -47,7 +46,12 @@ const filteredBalances =  computed(() => {
                     </CommonInput>
                 </td>
               </tr>
-              <template v-if="tokenBalances.length > 0">
+
+               <template v-if="!account || !tokenBalances.length">
+                <LoadingBalanceRow :loading="!!account && !tokenBalances.length" :key="i" v-for="i in 8"/>
+              </template>
+
+              <template v-else>
                 <BalanceRow
                   v-for="tokenBalance in filteredBalances"
                   :token-balance="tokenBalance"
@@ -55,14 +59,12 @@ const filteredBalances =  computed(() => {
                 />
               </template>
 
-              <template v-else>
-                <LoadingBalanceRow v-for="i in 8"/>
-              </template>
+             
             </tbody>
           </table>
         </div>
       </div>
-
+      
       <div
         v-if="!account"
         class="absolute inset-0 flex items-center justify-center"
