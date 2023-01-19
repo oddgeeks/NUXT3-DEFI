@@ -28,7 +28,7 @@ const defaultOptions = () =>
       open: false,
       type: "success",
       message: "",
-      timeout: 3000,
+      timeout: 6000,
     },
   } as Options);
 
@@ -68,7 +68,7 @@ const closeModal = async () => {
 
 export function openSnackbar({
   message,
-  timeout = 3000,
+  timeout = 6000,
   type = "success",
 }: SnackOptions) {
   options.value.snackOptions = {

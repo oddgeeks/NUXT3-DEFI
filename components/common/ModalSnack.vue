@@ -19,11 +19,11 @@ const { options } = useModal();
       >
         <SVGErrorCircle
           v-if="options.snackOptions.type === 'error'"
-          class="h-4 w-4 [&>rect]:fill-white [&>path]:stroke-red-alert"
+          class="h-4 w-4 shrink-0 [&>rect]:fill-white [&>path]:stroke-red-alert"
         />
         <SVGCheckCircle
           v-else
-          class="h-4 w-4 [&>rect]:fill-white [&>path]:stroke-green-400"
+          class="h-4 w-4 shrink-0 [&>rect]:fill-white [&>path]:stroke-green-400"
         />
         {{ options.snackOptions.message }}
       </p>
