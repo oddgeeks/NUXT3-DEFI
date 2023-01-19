@@ -1,7 +1,7 @@
 import { storeToRefs } from "pinia";
 
 export const useBanner = () => {
-  const { gasBalance } = storeToRefs(useSafe());
+  const { gasBalance, pending } = storeToRefs(useSafe());
   const { account, chainId } = useWeb3();
   const { airDrop } = useAvocadoSafe();
 
@@ -15,6 +15,8 @@ export const useBanner = () => {
   });
 
   const showInsufficientGasBanner = computed(() => {
+    if (pending.value.global) return false;
+
     return account.value && chainId.value === 634 && lte(gasBalance.value, 0.1);
   });
 
@@ -25,9 +27,7 @@ export const useBanner = () => {
   const showGasGiftBanner = computed(() => {
     if (!account.value) return false;
     if (chainId.value !== 634) return false;
-
-    // this is a tricky way to make sure the gas balance is updated
-    gt(gasBalance.value, 0);
+    if (pending.value.global) return false;
 
     if (!airDrop.value) return false;
 
