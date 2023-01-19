@@ -74,7 +74,7 @@ const chartOptions = {
 </script>
 <template>
   <tr>
-    <td class="text-left pl-7.5 pr-10 py-6">
+    <td class="text-left pl-7.5 py-6">
       <div class="flex items-center space-x-3">
         <div
           class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
@@ -85,6 +85,7 @@ const chartOptions = {
           />
 
           <ChainLogo
+            :stroke="true"
             class="w-5.5 h-5.5 absolute -left-1 -bottom-1"
             :chain="tokenBalance.chainId"
           />
@@ -92,7 +93,7 @@ const chartOptions = {
 
         <div>
           <div
-            class="text-lg font-semibold whitespace-nowrap pr-2 md:w-52 truncate"
+            class="text-lg font-semibold whitespace-nowrap pr-2 md:w-32 truncate"
           >
             {{ tokenBalance.name }}
           </div>
@@ -105,7 +106,7 @@ const chartOptions = {
         </div>
       </div>
     </td>
-    <td class="text-center font-semibold py-6 whitespace-nowrap">
+    <td  class="text-center font-semibold py-6 whitespace-nowrap">
       <span v-if="tokenBalance.balanceInUSD">
         $ {{ tokenBalance.balanceInUSD }}
       </span>
@@ -129,14 +130,8 @@ const chartOptions = {
 
       <span v-else> - </span>
     </td>
-    <td class="text-right px-7.5 py-6">
-      <div class="flex items-center space-x-3">
-        <!-- <CommonButton
-          :disabled="isZero(tokenBalance.balance)"
-          @click="openSendModal(tokenBalance.address, tokenBalance.chainId)"
-        >
-        </CommonButton> -->
-
+    <td class="text-right pl-7.5 py-6">
+      <div class="flex items-center gap-[15px] justify-center">
         <CommonButton
           v-tippy="{
             arrow: true,

@@ -28,6 +28,10 @@
 }
 
 @layer utilities {
+  .success-circle {
+    @apply text-white;
+  }
+
   .success-circle path:first-child {
     @apply fill-green-500 stroke-green-500;
   }

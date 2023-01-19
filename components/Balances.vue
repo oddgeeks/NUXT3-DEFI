@@ -10,22 +10,24 @@ const props = defineProps({
   hideZeroBalances: {
     type: Boolean,
     default: false
+  },
+  networkPreference: {
+    type: String,
+    default: 'all'
   }
 })
 
-const filteredBalances =  computed(() => {
-  return tokenBalances.value.filter((token) => {
-    if (props.hideZeroBalances && isZero(token.balance)) {
-      return false
-    }
+const filteredBalances = computed(() => {
+  const filters = {
+    name: (name: string, token: any) =>
+      !!searchQuery.value ? name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      token.symbol.toLowerCase().includes(searchQuery.value.toLowerCase()) : true,
 
-    if (searchQuery.value) {
-      return token.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        token.symbol.toLowerCase().includes(searchQuery.value.toLowerCase())
-    }
-
-    return true
-  })
+    balance: (balance: any) => props.hideZeroBalances ? !isZero(balance) : true,
+    chainId: (chainId: string) => props.networkPreference === 'all' ? true : chainId == props.networkPreference
+  }
+  
+  return filterArray(tokenBalances.value, filters)
 })
 
 </script>
@@ -38,7 +40,7 @@ const filteredBalances =  computed(() => {
           <table class="table w-full">
             <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
               <tr class="border-b-0">
-                <td colspan="5" class="text-left pl-7.5 pr-10 py-6 sticky top-0 dark:bg-gray-850 bg-slate-50 z-10">
+                <td colspan="5" class="text-left pl-7.5 pr-5 py-6 sticky top-0 dark:bg-gray-850 bg-slate-50 z-10">
                   <CommonInput name="Token Search" v-model="searchQuery" type="search" placeholder="Search">
                     <template #prefix>
                       <SearchSVG class="shrink-0 mr-2"/>
