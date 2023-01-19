@@ -85,7 +85,7 @@ const chartOptions = {
           />
 
           <ChainLogo
-            class="w-6 h-6 absolute -left-1 -bottom-1"
+            class="w-5.5 h-5.5 absolute -left-1 -bottom-1"
             :chain="tokenBalance.chainId"
           />
         </div>
