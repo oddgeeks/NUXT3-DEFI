@@ -3,11 +3,16 @@ import SVGX from "~/assets/images/icons/x.svg?component";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 
+const provider = getRpcProvider(634);
+
 const { account } = useWeb3();
-defineEmits(["close"]);
+const { openSnackbar } = useModal()
+const { fetchGasBalance } = useSafe();
+const emit = defineEmits(["close"]);
 
 const {
   handleSubmit,
+  isSubmitting,
   meta: formMeta,
   errors,
 } = useForm({
@@ -15,21 +20,35 @@ const {
     "gift-code": yup
       .string()
       .required("")
-      .test("is-valid", "Gift code is invalid", (value) => {
-        // TODO: check if gift code is valid
-        return value ? value.length === 6 : true;
-      }),
   }),
 });
 
-const { value, meta: valueMeta } = useField<string>("gift-code");
+const { value, meta: valueMeta, setErrors } = useField<string>("gift-code");
 
 const sendingDisabled = computed(
-  () => !account.value || !formMeta.value.valid
+  () => !account.value || !formMeta.value.valid || isSubmitting.value
 );
 
 const onSubmit = handleSubmit(async () => {
-  // TODO: send gift code
+  const success = await provider.send('api_claimGift', [
+    account.value,
+    value.value
+  ])
+
+  if (!success) {
+    setErrors("Invalid gift code.")
+  } else {
+    emit("close")
+
+    openSnackbar({
+      message: "Gift claimed successfully!",
+      type: "success",
+      timeout: 3000
+    })
+
+    fetchGasBalance()
+    
+  }
 });
 </script>
 
@@ -48,7 +67,7 @@ const onSubmit = handleSubmit(async () => {
         </button>
       </div>
       <CommonInput
-        v-model="value"
+        v-model.trim="value"
         :error-message="valueMeta.dirty ? errors['gift-code'] : ''"
         autofocus
         placeholder="Enter Gift Code"
@@ -57,6 +76,7 @@ const onSubmit = handleSubmit(async () => {
     </label>
     <CommonButton
       :disabled="sendingDisabled"
+      :loading="isSubmitting"
       type="submit"
       class="justify-center w-full"
       size="lg"
