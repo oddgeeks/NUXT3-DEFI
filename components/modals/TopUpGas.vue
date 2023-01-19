@@ -9,7 +9,7 @@ import { toChecksumAddress } from "@walletconnect/utils";
 
 const { library, account } = useWeb3();
 const { switchNetworkByChainId } = useNetworks();
-const { sendTransaction } = useAvocadoSafe();
+const { sendTransaction, airDrop, fetchAirDrop } = useAvocadoSafe();
 const { tokenBalances } = useAvocadoSafe();
 const { parseTransactionError } = useErrorHandler();
 const { closeModal } = useModal();
@@ -37,17 +37,6 @@ const networks = Object.keys(chainUSDCAddresses).map((chainId) => ({
 const claimLoading = ref(false);
 const provider = getRpcProvider(634);
 
-const { data, execute } = useAsyncData(
-  "airDrop",
-  async () => {
-    const resp = await provider.send("api_hasAirdrop", [account.value]);
-    await fetchGasBalance();
-    return resp;
-  },
-  {
-    watch: [account],
-  }
-);
 
 const { handleSubmit, errors, meta, resetForm } = useForm({
   validationSchema: yup.object({
@@ -113,7 +102,8 @@ const claim = async () => {
       });
     }
 
-    execute();
+    await fetchGasBalance();
+    await fetchAirDrop();
   } catch (e: any) {
     console.log(e);
     openSnackbar({
@@ -218,10 +208,10 @@ const onSubmit = handleSubmit(async () => {
     <CommonButton
       :loading="claimLoading"
       @click="claim()"
-      v-if="data?.id"
+      v-if="airDrop?.id"
       class="flex text-sm items-center gap-2"
     >
-      {{ data.message }}
+      {{ airDrop.message }}
     </CommonButton>
     <form v-if="!isGiftActive" @submit="onSubmit" class="space-y-5">
       <div class="flex flex-col gap-2.5">

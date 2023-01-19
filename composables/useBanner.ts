@@ -1,9 +1,9 @@
 import { storeToRefs } from "pinia";
 
 export const useBanner = () => {
-  const provider = getRpcProvider(634);
   const { gasBalance } = storeToRefs(useSafe());
   const { account, chainId } = useWeb3();
+  const { airDrop } = useAvocadoSafe();
 
   const { trackingAccount } = useAccountTrack();
   const isHideWelcomeBanner = useLocalStorage("hide-welcome-banner", false);
@@ -22,15 +22,14 @@ export const useBanner = () => {
     () => account.value && chainId.value !== 634
   );
 
-  const showGasGiftBanner = asyncComputed(async () => {
+  const showGasGiftBanner = computed(() => {
     if (!account.value) return false;
     if (chainId.value !== 634) return false;
 
     // this is a tricky way to make sure the gas balance is updated
     gt(gasBalance.value, 0);
 
-    const resp = await provider.send("api_hasAirdrop", [account.value]);
-    if (!resp) return false;
+    if (!airDrop.value) return false;
 
     return true;
   });
