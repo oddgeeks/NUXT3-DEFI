@@ -108,7 +108,7 @@ const chartOptions = {
     </td>
     <td  class="text-center font-semibold py-6 whitespace-nowrap">
       <span v-if="tokenBalance.balanceInUSD">
-        $ {{ tokenBalance.balanceInUSD }}
+        {{ formatUsd(tokenBalance.balanceInUSD) }}
       </span>
 
       <span v-else> - </span>
