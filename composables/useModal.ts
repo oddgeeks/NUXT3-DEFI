@@ -1,5 +1,7 @@
 const modals = ref<IModal[]>([]);
-const lastModal = computed(() => modals.value[modals.value.length - 1]);
+const lastModal = computed(
+  () => modals.value[Math.max(0, modals.value.length - 1)]
+);
 
 const defaultOptions = () =>
   ({
@@ -110,5 +112,6 @@ export function useModal() {
     modals: readonly(modals),
     openSnackbar,
     openModal,
+    lastModal,
   };
 }

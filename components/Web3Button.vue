@@ -80,7 +80,7 @@ const isProviderVisible = (provider: Provider) => {
       </button>
     </span>
   </div>
-  <Modal @destroy="toggleWeb3Modal(false)" :show="showWeb3Modal">
+  <Modal inline @destroy="toggleWeb3Modal(false)" :show="showWeb3Modal">
     <div class="relative ">
         <div class="flex flex-col items-center justify-center mb-7 gap-4">
           <span class="text-lg">Connect wallet</span>

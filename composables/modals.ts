@@ -5,6 +5,7 @@ import Send from "~~/components/modals/Send.vue";
 import TopUpGas from "~~/components/modals/TopUpGas.vue";
 import WalletConnect from "~~/components/modals/WalletConnect.vue";
 import WalletConnectDetails from "~~/components/modals/WalletConnectDetails.vue";
+import TokenSelection from "~~/components/modals/TokenSelection.vue";
 import Dialog from "~~/components/modals/Dialog.vue";
 
 const { openModal } = useModal();
@@ -97,6 +98,12 @@ export const openWalletDetailsModal = (session: any) => {
     componentProps: {
       session,
     },
+  });
+};
+
+export const openTokenSelectionModal = () => {
+  openModal({
+    component: TokenSelection,
   });
 };
 

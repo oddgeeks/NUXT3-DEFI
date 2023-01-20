@@ -275,9 +275,12 @@ onMounted(() => {
         <div class="flex">
           <CommonInput autofocus transparent type="numeric" min="0.000001" step="0.000001" placeholder="0.0" name="amount" v-model="amount"
             class="flex-1" input-classes="text-[26px] placeholder:text-[26px]" container-classes="!p-0" />
-          <CommonSelect class="basis-40" v-model="swap.sellToken.tokenAddress" iconKey="logoURI" value-key="address"
+            <button type="button" @click="openTokenSelectionModal()" class="relative flex items-center gap-2.5 max-h-12 rounded-2xl border-2 dark:border-slate-700 border-slate-150 bg-slate-50 dark:bg-gray-850 px-4 py-3 text-left">
+              TOKEN
+            </button>
+          <!-- <CommonSelect class="basis-40" v-model="swap.sellToken.tokenAddress" iconKey="logoURI" value-key="address"
             selected-label-classes="uppercase" item-text-classes="uppercase" label-key="symbol"
-            :options="availableTokens" />
+            :options="availableTokens" /> -->
         </div>
         <div class="flex justify-between items-center text-sm text-slate-400">
           <div v-if="pending && meta.valid" style="width:100px; height: 20px;" class="loading-box rounded-lg" />
