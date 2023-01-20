@@ -58,7 +58,7 @@ const platformIdChainIdMap = platforms.reduce((acc, curr) => {
   return acc;
 }, {} as Record<string, number>);
 
-const coinIds = [
+const coinIds = [... new Set([
   // native
   "ethereum",
   "matic-network",
@@ -117,7 +117,50 @@ const coinIds = [
   "instadapp-dai",
   "magic",
   "illuvium",
-];
+  "cronos",
+  "okb",
+  "apecoin",
+  "quant",
+  "the",
+  "bitdao",
+  "chiliz",
+  "axie",
+  "huobi-token",
+  "kucoin-shares",
+  "usdd",
+  "the",
+  "gemini-dollar",
+  "synthetix-network",
+  "pax-gold",
+  "nexo",
+  "immutablex",
+  "optimism",
+  "enjin",
+  "kava",
+  "rocket",
+  "basic-attention",
+  "holo",
+  "gala",
+  "woo",
+  "gnosis",
+  "singularitynet",
+  "chain",
+  "iotex",
+  "bone",
+  "swissborg",
+  "ankr",
+  "fetch-ai",
+  "jasmycoin",
+  "golem",
+  "dydx",
+  "terrausd",
+  "amp",
+  "ssv",
+  "mask-network",
+  "omg-network",
+  "threshold-network",
+  "dogelon-mars",
+])];
 
 export type Token = {
   chainId: number;
@@ -212,6 +255,10 @@ const getTokens = async () => {
 };
 
 const gen = async () => {
+  const tokens = await getTokens();
+
+  console.log(`generated (${tokens.length}) tokens`)
+
   await writeJson(
     resolve(__dirname, "../public/tokenlist.json"),
     {
@@ -219,7 +266,7 @@ const gen = async () => {
       logoURI: "https://avocado.link/logo.svg",
       keywords: ["avocado", "defi"],
       timestamp: new Date().toISOString(),
-      tokens: await getTokens(),
+      tokens,
       version: {
         major: 1,
         minor: 0,
