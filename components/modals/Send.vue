@@ -5,6 +5,8 @@ import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { isAddress } from "@ethersproject/address";
 
+const emit = defineEmits(["destroy"]);
+
 const props = defineProps({
   address: {
     type: String,
@@ -21,8 +23,6 @@ const { switchNetworkByChainId } = useNetworks();
 const { sendTransaction } = useAvocadoSafe();
 const { tokenBalances } = useAvocadoSafe();
 const { parseTransactionError } = useErrorHandler()
-const { closeModal } = useModal()
-
 
 const token = computed(
   () =>
@@ -129,7 +129,7 @@ const onSubmit = handleSubmit(async () => {
     console.log(transactionHash);
 
     resetForm();
-    closeModal()
+    emit("destroy")
 
     showPendingTransactionModal(transactionHash, props.chainId, 'send');
   } catch (e: any) {

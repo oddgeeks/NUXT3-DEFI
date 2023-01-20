@@ -7,12 +7,13 @@ import * as yup from "yup";
 import GasSVG from "~/assets/images/icons/gas.svg?component";
 import { toChecksumAddress } from "@walletconnect/utils";
 
+const emit = defineEmits(["destroy"]);
+
 const { library, account } = useWeb3();
 const { switchNetworkByChainId } = useNetworks();
 const { sendTransaction, airDrop, fetchAirDrop } = useAvocadoSafe();
 const { tokenBalances } = useAvocadoSafe();
 const { parseTransactionError } = useErrorHandler();
-const { closeModal } = useModal();
 const [isGiftActive, toggleGift] = useToggle(false);
 
 const { gasBalance } = storeToRefs(useSafe());
@@ -161,7 +162,7 @@ const onSubmit = handleSubmit(async () => {
       chainId: chainId.value,
     });
 
-    closeModal();
+    emit("destroy")
 
     showPendingTransactionModal(transactionHash, chainId.value, "topUpGas");
 

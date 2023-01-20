@@ -1,19 +1,41 @@
 <script setup lang="ts">
 import SVGX from "~/assets/images/icons/x.svg?component";
 
-const { modal, props, options, isOpen, closeModal } = useModal();
+const { modals } = useModal();
 
-const modalBoxRef = ref(null);
+const emit = defineEmits(["destroy", 'reject'])
 
-onClickOutside(modalBoxRef, () => {
-  options.value.clickToClose && closeModal();
-});
+const props = withDefaults(
+  defineProps<{
+    show?: boolean,
+    id?: string;
+    options?: any;
+    async?: boolean;
+  }>(),
+  {
+    id: "",
+    show: false,
+    async: false,
+    options: {},
+  }
+);
+
+const order = computed(() =>
+ props.id ? modals.value.findIndex((i) => i.id === props.id) : 0
+);
+
+const handleDestory = () => {
+  emit("destroy");
+
+  if (props.async) {
+     emit('reject')
+  }
+}
 </script>
 
 <template>
-  <component v-if="options.raw" :is="modal" v-bind="props" />
-  <TransitionRoot v-else as="template" :show="isOpen">
-    <Dialog @close="closeModal()">
+  <TransitionRoot as="template" :show="show">
+    <Dialog @close="handleDestory()">
       <DialogPanel>
         <div class="fixed inset-0 z-40 overflow-y-auto">
           <div
@@ -29,7 +51,12 @@ onClickOutside(modalBoxRef, () => {
               leave-to="opacity-0"
             >
               <div
-                class="fixed inset-0 transition-opacity bg-slate-200/20 backdrop-filter backdrop-blur-[4px]"
+                @click="handleDestory()"
+                :class="{
+                  'bg-slate-200/20 backdrop-filter backdrop-blur-[4px]':
+                    order === 0,
+                }"
+                class="fixed inset-0 transition-opacity"
               />
             </TransitionChild>
             <span
@@ -53,22 +80,19 @@ onClickOutside(modalBoxRef, () => {
                 aria-modal="true"
               >
                 <div
-                  ref="modalBoxRef"
                   :class="options.contentClass"
                   class="relative md:px-[50px] px-6 py-8 md:py-10 w-full"
                 >
                   <button
                     class="absolute h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100 top-0 right-0 m-6"
-                    @click="closeModal"
+                    @click="handleDestory"
                     aria-label="Close modal"
                   >
                     <SVGX />
                   </button>
-
-                  <component :is="modal" v-bind="props" />
+                  <slot />
                 </div>
-
-                <CommonModalSnack />
+                <CommonModalSnack v-bind="options.snackOptions" />
               </div>
             </TransitionChild>
           </div>

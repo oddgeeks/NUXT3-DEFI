@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import SVGCheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import SVGErrorCircle from "~/assets/images/icons/error-circle.svg?component";
-const { options } = useModal();
+
+defineProps<{
+  open?: boolean;
+  type?: "success" | "error";
+  message?: string;
+}>();
 </script>
 
 <template>
   <Transition mode="out-in" name="slide-up">
     <div
-      v-if="options.snackOptions.open"
-      :class="
-        options.snackOptions.type === 'error' ? 'bg-red-alert' : 'bg-green-400'
-      "
+      v-if="open"
+      :class="type === 'error' ? 'bg-red-alert' : 'bg-green-400'"
       class="absolute bottom-0 px-5 text-white rounded-b-7.5 min-h-[48px] flex-col w-full items-center justify-center flex gap-2 py-2"
     >
       <p
@@ -18,14 +21,14 @@ const { options } = useModal();
         class="text-xs flex gap-2 max-h-20 overflow-auto"
       >
         <SVGErrorCircle
-          v-if="options.snackOptions.type === 'error'"
+          v-if="type === 'error'"
           class="h-4 w-4 shrink-0 [&>rect]:fill-white [&>path]:stroke-red-alert"
         />
         <SVGCheckCircle
           v-else
           class="h-4 w-4 shrink-0 [&>rect]:fill-white [&>path]:stroke-green-400"
         />
-        {{ options.snackOptions.message }}
+        {{ message }}
       </p>
     </div>
   </Transition>

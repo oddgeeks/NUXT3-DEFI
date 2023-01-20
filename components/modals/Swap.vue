@@ -18,6 +18,8 @@ interface ISwap {
   slippage: number | string;
 }
 
+const emit = defineEmits(["destroy"]);
+
 const props = defineProps({
   address: {
     type: String,
@@ -43,7 +45,6 @@ const { getNetworkByChainId } = useNetworks();
 const { account } = useWeb3();
 const { toWei, fromWei } = useBignumber();
 const { formatPercent } = useFormatter();
-const { closeModal } = useModal();
 const { parseTransactionError } = useErrorHandler()
 
 const slippages = [
@@ -239,7 +240,7 @@ const onSubmit = handleSubmit(async () => {
     const transactionHash = await sendTransactions(txs, +props.chainId);
 
     resetForm();
-    closeModal();
+    emit("destroy")
 
     showPendingTransactionModal(transactionHash, props.chainId, 'swap');
   } catch (e: any) {
@@ -272,7 +273,7 @@ onMounted(() => {
     <div class="flex flex-col gap-4">
       <div class="py-4 px-5 relative dark:bg-slate-800 bg-slate-100 rounded-5 flex flex-col gap-4">
         <div class="flex">
-          <CommonInput transparent type="numeric" min="0.000001" step="0.000001" placeholder="0.0" name="amount" v-model="amount"
+          <CommonInput autofocus transparent type="numeric" min="0.000001" step="0.000001" placeholder="0.0" name="amount" v-model="amount"
             class="flex-1" input-classes="text-[26px] placeholder:text-[26px]" container-classes="!p-0" />
           <CommonSelect class="basis-40" v-model="swap.sellToken.tokenAddress" iconKey="logoURI" value-key="address"
             selected-label-classes="uppercase" item-text-classes="uppercase" label-key="symbol"

@@ -1,18 +1,22 @@
 <script setup lang="ts">
-const { props, closeModal } = useModal();
 const wcStore = useWalletConnect();
 const [loading, toggle] = useToggle(false)
 
+const emit = defineEmits(["destroy"]);
+const props = defineProps<{
+  session: any;
+}>();
+
 const icon = computed(() => {
-  const icons = props.value.session.peerMeta.icons;
+  const icons = props.session.peerMeta.icons;
   return icons.length ? icons[0] : "";
 });
 
 const disconnectWallet = async () => {
   toggle(true)
-  await wcStore.disconnect(props.value.session)
+  await wcStore.disconnect(props.session)
   toggle(false)
-  closeModal()
+  emit("destroy")
 };
 
 </script>

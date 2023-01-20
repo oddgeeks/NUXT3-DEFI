@@ -24,8 +24,8 @@ const setScrollAvaibility = async () => {
   x.value += 1;
 };
 
-const handleDisconnectWallet = (session: any) => {
-openDialogModal({
+const handleDisconnectWallet = async (session: any) => {
+  const { success } = await openDialogModal({
     title: "Are you sure you want to disconnect?",
     type: "question",
     headerIconUrl: getSessionIconURL(session),
@@ -37,11 +37,15 @@ openDialogModal({
       color: "white",
     },
     buttonProps: {
-      color: 'red'
+      color: "red",
     },
-    callback: () => wcStore.disconnect(session),
-  })
-}
+  });
+
+  if (success) {
+    wcStore.disconnect(session);
+  }
+
+};
 
 const getSessionIconURL = (session: any) => {
   if (session.peerMeta.icons && session.peerMeta.icons.length) {
@@ -51,7 +55,6 @@ const getSessionIconURL = (session: any) => {
 };
 
 const disconnectAllConnections = () => {
-    
   openDialogModal({
     title: "Are you sure you want to disconnect all?",
     type: "question",
@@ -64,11 +67,11 @@ const disconnectAllConnections = () => {
       color: "white",
     },
     buttonProps: {
-      color: 'red'
+      color: "red",
     },
-    callback: () =>  wcStore.disconnectAll(),
-  })
-}
+    callback: () => wcStore.disconnectAll(),
+  });
+};
 
 watch(
   [wcStore, containerRef],
@@ -88,7 +91,13 @@ watch(
   <div class="flex flex-col items-baseline gap-[15px]">
     <div v-if="wcStore.sessions.length" class="flex gap-3 items-center">
       <h1>Connected Dapps</h1>
-      <CommonButton v-if="wcStore.sessions.length > 2" @click="disconnectAllConnections" color="white" class="hover:!bg-red-alert hover:!bg-opacity-10 hover:text-red-alert" size="sm">
+      <CommonButton
+        v-if="wcStore.sessions.length > 2"
+        @click="disconnectAllConnections"
+        color="white"
+        class="hover:!bg-red-alert hover:!bg-opacity-10 hover:text-red-alert"
+        size="sm"
+      >
         Disconnect All
       </CommonButton>
     </div>
@@ -119,7 +128,10 @@ watch(
             v-if="session.peerMeta"
             class="flex flex-1 items-center gap-3 p-5 dark:bg-gray-850 bg-slate-50 rounded-5 py-2.5 pr-[14px] pl-4"
           >
-            <button @click="openWalletDetailsModal(session)" class="flex text-left gap-3 items-center">
+            <button
+              @click="openWalletDetailsModal(session)"
+              class="flex text-left gap-3 items-center"
+            >
               <div
                 class="relative inline-block h-7.5 w-7.5 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
               >
@@ -137,19 +149,22 @@ watch(
               </div>
 
               <div>
-                <h1 style="width: 118px" class="text-sm overflow-hidden whitespace-nowrap text-shadow">
+                <h1
+                  style="width: 118px"
+                  class="text-sm overflow-hidden whitespace-nowrap text-shadow"
+                >
                   {{ session.peerMeta.name }}
                 </h1>
                 <h2 class="text-xs text-blue-500 leading-5">Connected</h2>
               </div>
             </button>
-             <a
-                target="_blank"
-                rel="noopener noreferrer"
-                :href="session.peerMeta.url"
-              >
-                <LinkSVG class="text-blue-500" />
-              </a>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              :href="session.peerMeta.url"
+            >
+              <LinkSVG class="text-blue-500" />
+            </a>
             <button
               v-tippy="'Disconnect'"
               @click="handleDisconnectWallet(session)"
@@ -197,21 +212,22 @@ watch(
 }
 
 .text-shadow {
-background: linear-gradient(90deg, #0F172A 85.41%, rgba(15, 23, 42, 0) 100%);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-background-clip: text;
-text-fill-color: transparent;
+  background: linear-gradient(90deg, #0f172a 85.41%, rgba(15, 23, 42, 0) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
 }
 
 html.dark .text-shadow {
-  background: linear-gradient(90deg, #FFFFFF 85.41%, rgba(255, 255, 255, 0) 100%);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-background-clip: text;
-text-fill-color: transparent;
+  background: linear-gradient(
+    90deg,
+    #ffffff 85.41%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
 }
-
-
-
 </style>
