@@ -61,9 +61,9 @@ const availableNetworks = networks.filter((network) => network.chainId != 634)
           </ClientOnly>
          </div>
             <Menu as="div" class="relative z-20 flex gap-4 items-center">
-            <div v-if="networkPreference !== 'all' && tokenBalances.length" class="p-2.5 flex items-center gap-[6px] leading-[10px] text-xs dark:bg-slate-800 bg-slate-100 rounded-5">
+            <div v-if="networkPreference !== 'all' && tokenBalances.length" class="pl-2.5 flex items-center leading-[10px] text-xs dark:bg-slate-800 bg-slate-100 rounded-5">
                {{ getNetworkByChainId(networkPreference).name }}
-             <button @click="networkPreference = 'all'">
+             <button class="py-2.5 pr-2.5 pl-[6px]" @click="networkPreference = 'all'">
                <SVGX class="w-2.5 h-2.5 text-slate-400"/>
              </button>
             </div>
