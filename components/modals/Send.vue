@@ -211,9 +211,14 @@ const onSubmit = handleSubmit(async () => {
           </template>
         </CommonInput>
 
-        <p class="text-slate-400 mt-2.5 text-xs font-medium text-left">
-          Sending on the {{ chainIdToName(props.chainId) }} Network
-        </p>
+         <div
+        class="dark:bg-gray-850 bg-slate-50 px-3 py-2 flex space-x-2 rounded-[20px]"
+      >
+        <ChainLogo class="w-5 h-5" :chain="token.chainId" />
+        <span class="text-xs font-medium leading-5">
+          Sending on the {{ chainIdToName(token.chainId) }} network 
+        </span>
+      </div>
       </div>
     </div>
 
