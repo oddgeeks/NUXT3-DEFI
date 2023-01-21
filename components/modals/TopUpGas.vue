@@ -275,7 +275,7 @@ const onSubmit = handleSubmit(async () => {
       type="button"
       class="text-xs text-blue-500 !mt-3"
     >
-      Enter Promo Code
+      Redeem Code
     </button>
   </div>
 </template>
