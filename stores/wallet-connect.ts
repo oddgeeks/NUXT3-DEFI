@@ -120,7 +120,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                 });
               } else if (
                 // signingMethods.includes(payload.method)
-                payload.method === "personal_sign"
+                payload.method === "personal_signx"
               ) {
                 // broken code
 
