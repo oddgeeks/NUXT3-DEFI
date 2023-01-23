@@ -106,7 +106,7 @@ const availableNetworks = networks.filter((network) => network.chainId != 634)
               @click="
                 openDialogModal({
                   type: 'question',
-                  title: 'Your Wallet',
+                  title: 'Your Avocado Wallet',
                   isButtonVisible: false,
                   content: `Deposit or receive funds by scanning or copying your Avocado Wallet QR code. You can deposit or receive from any supported chains.
           <br><br>
