@@ -42,9 +42,6 @@ const forwarderProxyContract = Forwarder__factory.connect(
   new ethers.providers.JsonRpcProvider(RPC_URLS[137])
 );
 
-const whitelistedSymbols = ["ETH", "USDC", "USDT", "DAI", "MATIC"];
-const whitelistedSymbolsChains = ["1", "137", "42161", "10"];
-
 export const useSafe = defineStore("safe", () => {
   console.log("defineStore::safe");
   const safeAddress = ref();
@@ -128,12 +125,6 @@ export const useSafe = defineStore("safe", () => {
         for (let index = 0; index < balances.length; index++) {
           let token = chunk[index] as IToken;
           let balance = toBN(balances[index]).div(10 ** token.decimals);
-
-          if (
-            balance.gt(0) ||
-            (whitelistedSymbols.includes(token.symbol.toUpperCase()) &&
-              whitelistedSymbolsChains.includes(chainId))
-          ) {
             newBalances.push({
               ...token,
               balance: balance.toFixed(6, 1),
@@ -141,7 +132,6 @@ export const useSafe = defineStore("safe", () => {
                 ? balance.times(token.price).toFixed(2)
                 : null,
             });
-          }
         }
       })
     );
