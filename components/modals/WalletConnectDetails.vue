@@ -31,7 +31,7 @@ const disconnectWallet = async () => {
       >
         <ChainLogo class="w-5 h-5" :chain="props.session.chainId" />
         <span class="text-xs text-slate-400 leading-5"
-          >{{ chainIdToName(props.session.chainId) }} Network</span
+          >{{ chainIdToName(props.session.chainId) }}</span
         >
       </div>
       <p class="text-slate-400 text-xs text-center leading-5 font-medium">
