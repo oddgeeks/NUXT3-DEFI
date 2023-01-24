@@ -56,5 +56,8 @@
     "vue-lite-youtube-embed": "^1.2.0",
     "vue-tippy": "^6.0.0",
     "yup": "^0.32.11"
+  },
+  "dependencies": {
+    "vue-demi": "^0.13.11"
   }
 }
