@@ -120,3 +120,8 @@
 .-cbwsdk-css-reset body {
   background-color: transparent !important;
 }
+
+
+input[type="search" i]::-webkit-search-cancel-button {
+  cursor: pointer;
+}
