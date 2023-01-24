@@ -11,10 +11,11 @@
     "generate:tokenlist": "tsx scripts/token-list.ts"
   },
   "devDependencies": {
+    "@coinbase/wallet-sdk": "3.0.4",
     "@fontsource/source-code-pro": "^4.5.12",
     "@headlessui/vue": "^1.7.7",
     "@instadapp/utils": "^0.4.5",
-    "@instadapp/vue-web3-nuxt": "^0.9.8",
+    "@instadapp/vue-web3-nuxt": "^0.10.0",
     "@magic-ext/connect": "^3.1.0",
     "@nuxtjs/color-mode": "^3.2.0",
     "@nuxtjs/tailwindcss": "^6.2.0",
@@ -30,6 +31,7 @@
     "@web3-react/torus-connector": "^6.2.9",
     "@web3-react/walletconnect-connector": "^6.2.13",
     "@web3-react/walletlink-connector": "^6.2.14",
+    "avocado-safe": "^0.0.35",
     "axios": "^0.27.2",
     "axios-retry": "^3.3.1",
     "bignumber.js": "^9.1.1",
@@ -47,14 +49,12 @@
     "unplugin-vue-inspector": "^0.1.1",
     "uuid": "^9.0.0",
     "uuidv4": "^6.2.13",
+    "vee-validate": "^4.7.3",
     "vite-svg-loader": "^3.6.0",
     "vue-chartjs": "^5.2.0",
-    "vue-tippy": "^6.0.0",
-    "@coinbase/wallet-sdk": "3.0.4",
-    "avocado-safe": "^0.0.35",
-    "vee-validate": "^4.7.3",
     "vue-gtag-next": "^1.14.0",
     "vue-lite-youtube-embed": "^1.2.0",
+    "vue-tippy": "^6.0.0",
     "yup": "^0.32.11"
   }
 }
