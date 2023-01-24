@@ -514,7 +514,7 @@ const onSubmit = handleSubmit(async () => {
         Bridge
       </CommonButton>
       <p class="text-xs text-center text-slate-400">
-        Estimated processing time is 10-30m.
+        Estimated processing time is {{ txRoute ? `~${Math.round(txRoute.serviceTime / 60)}m` :'~10m' }}.
       </p>
 
       <Transition enter-active-class="duration-300 ease-out" enter-from-class="transform opacity-0"

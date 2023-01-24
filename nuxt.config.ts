@@ -146,6 +146,14 @@ export default defineNuxtConfig({
     dirs: ["./stores"],
   },
 
+  routeRules: {
+    '/site.webmanifest': {
+      headers: {
+        'Content-Type': 'application/manifest+json',
+      },
+    },
+  },
+  
   vite: {
     plugins: [
       ViteComponents({

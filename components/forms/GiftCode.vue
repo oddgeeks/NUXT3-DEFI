@@ -35,12 +35,12 @@ const onSubmit = handleSubmit(async () => {
   ])
 
   if (!success) {
-    setErrors("Invalid gift code.")
+    setErrors("Invalid redeem code.")
   } else {
     emit("close")
 
     openSnackbar({
-      message: "Gift claimed successfully!",
+      message: "Gas redeemed successfully!",
       type: "success",
       timeout: 3000
     })
@@ -55,7 +55,7 @@ const onSubmit = handleSubmit(async () => {
   <form @submit="onSubmit" class="flex flex-col gap-7.5">
     <label for="input-gift-code">
       <div class="flex justify-between mb-2.5">
-        <span class="text-sm">Gift code</span>
+        <span class="text-sm">Reedem code</span>
         <button
           @click="$emit('close')"
           type="button"
@@ -80,7 +80,7 @@ const onSubmit = handleSubmit(async () => {
       class="justify-center w-full"
       size="lg"
     >
-      Claim Gas
+      Redeem Gas
     </CommonButton>
   </form>
 </template>
