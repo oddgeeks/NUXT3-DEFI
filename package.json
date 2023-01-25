@@ -38,7 +38,7 @@
     "chart.js": "^4.2.0",
     "collect.js": "^4.34.3",
     "ethers": "^5.7.2",
-    "nuxt": "^3.1.0",
+    "nuxt": "npm:nuxt3@latest",
     "pinia": "^2.0.29",
     "qrcode.vue": "^3.3.3",
     "rimraf": "^3.0.2",
