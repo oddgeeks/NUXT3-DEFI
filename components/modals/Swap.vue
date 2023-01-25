@@ -504,7 +504,7 @@ onMounted(() => {
       </CommonButton>
     </div>
 
-    <EstimatedFee :loading="feePending" :data="fee" />
+    <EstimatedFee :chain-id="chainId" :loading="feePending" :data="fee" />
   </form>
 </template>
 

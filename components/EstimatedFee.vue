@@ -6,10 +6,38 @@ type Data = {
   multiplier: string;
 };
 
-const props = defineProps<{ data: Data, loading?: boolean }>();
+const minFee = {
+  "137": 0.01,
+  "10": 0.005,
+  "42161": 0.005,
+  "43114": 0.005,
+  "1": 0.005,
+  "100": 0.01,
+  "56": 0.01,
+};
 
-const amontInUSD = computed(() => {
-  return toBN(props.data?.fee || "0").dividedBy(10 ** 18).toFormat()
+const props = defineProps<{ data: Data; loading?: boolean; chainId: string }>();
+
+const formattedFee = computed(() => {
+  if (!props.data?.fee) return "0.00";
+
+  const fee = props.data?.fee || "0";
+  const multiplier = props.data?.multiplier || "0";
+
+  const minValue = minFee[props.chainId as keyof typeof minFee];
+
+  const maxVal = toBN(fee)
+    .dividedBy(10 ** 18)
+    .toFormat();
+
+  const minVal = toBN(fee)
+    .dividedBy(multiplier)
+    .dividedBy(10 ** 14)
+    .toFormat();
+
+  if (toBN(maxVal).lt(minValue)) return formatDecimal(minValue, 2);
+
+  return `${formatDecimal(minVal, 2)} - ${formatDecimal(maxVal, 2)}`;
 });
 </script>
 
@@ -22,6 +50,6 @@ const amontInUSD = computed(() => {
       Estimated transaction fees
     </span>
     <span class="loading-box rounded-5 w-12 h-5" v-if="loading"></span>
-    <span v-else class="text-xs">{{ formatUsd(amontInUSD) }}</span>
+    <span v-else class="text-xs">{{ formattedFee }} USDC</span>
   </div>
 </template>

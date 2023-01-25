@@ -265,6 +265,6 @@ Tx: ${transactionHash}`);
     >
       Send
     </CommonButton>
-    <EstimatedFee :loading="pending" :data="fee" />
+    <EstimatedFee :chain-id="chainId" :loading="pending" :data="fee" />
   </form>
 </template>
