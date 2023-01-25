@@ -33,7 +33,7 @@ const token = computed(
 );
 const loading = ref(false);
 
-const { handleSubmit, errors, meta, resetForm } = useForm({
+const { handleSubmit, errors, meta, resetForm, validate} = useForm({
   validationSchema: yup.object({
     amount: yup
       .string()
@@ -113,6 +113,9 @@ const getTx = async () => {
 const { data: fee, pending } = useAsyncData(
   "send-fee",
   async () => {
+    const { valid } = await validate()
+    if (!valid) return;
+
     const tx = await getTx();
 
     const message = await safe.value?.generateSignatureMessage(
@@ -265,6 +268,6 @@ Tx: ${transactionHash}`);
     >
       Send
     </CommonButton>
-    <EstimatedFee :chain-id="chainId" :loading="pending" :data="fee" />
+    <EstimatedFee :chain-id="chainId" :loading="meta.valid && pending" :data="fee" />
   </form>
 </template>

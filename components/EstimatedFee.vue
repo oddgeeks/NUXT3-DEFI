@@ -37,7 +37,12 @@ const formattedFee = computed(() => {
 
   if (toBN(maxVal).lt(minValue)) return formatDecimal(minValue, 2);
 
-  return `${formatDecimal(minVal, 2)} - ${formatDecimal(maxVal, 2)}`;
+  const avg = toBN(maxVal)
+    .plus(toBN(minVal))
+    .dividedBy(2)
+    .toFormat();
+
+  return `${formatDecimal(avg, 2)}`;
 });
 </script>
 
