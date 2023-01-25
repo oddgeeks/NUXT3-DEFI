@@ -13,6 +13,8 @@ interface ISwap {
   buyToken: IToken;
 }
 
+const provider = getRpcProvider(634);
+
 const emit = defineEmits(["destroy"]);
 
 const props = defineProps({
@@ -33,7 +35,7 @@ const props = defineProps({
   },
 });
 
-const { chainTokenBalances, sendTransactions, safeAddress } = useAvocadoSafe();
+const { chainTokenBalances, sendTransactions, safeAddress, safe } = useAvocadoSafe();
 
 const { getTokenByAddress } = useTokens();
 const { tokens } = storeToRefs(useTokens());
@@ -41,6 +43,7 @@ const { getNetworkByChainId } = useNetworks();
 const { toWei, fromWei } = useBignumber();
 const { formatPercent } = useFormatter();
 const { parseTransactionError } = useErrorHandler();
+const { account } = useWeb3()
 
 const slippages = [
   { value: "0.1", label: "0.1%" },
@@ -143,12 +146,7 @@ const { data: swapDetails, pending } = useAsyncData(
   },
   {
     server: false,
-    watch: [
-      amount,
-      swap.value,
-      slippage,
-      customSlippage,
-    ],
+    watch: [amount, swap.value, slippage, customSlippage],
   }
 );
 
@@ -197,35 +195,64 @@ const swapTokens = () => {
   swap.value.sellToken = buyTemp;
 };
 
-const onSubmit = handleSubmit(async () => {
-  const address = bestRoute.value?.data.to;
-  const txs = [];
+const { data: fee, pending: feePending } = useAsyncData(
+  "swap-fee",
+  async () => {
+    const txs = await getTxs();
 
-  if (!address) return;
+    const message = await safe.value?.generateSignatureMessage(
+      txs,
+      +props.chainId
+    );
+
+    return provider.send("txn_estimateFeeWithoutSignature", [
+      message,
+      account.value,
+      props.chainId,
+    ]);
+  },
+  {
+    server: false,
+    watch: [bestRoute],
+  }
+);
+
+const getTxs = async () => {
+  const address = bestRoute.value?.data.to;
+
+  if (!address) throw new Error("Route not found");
 
   const erc20 = Erc20__factory.connect(address, getRpcProvider(props.chainId));
 
-  try {
-    if (
-      swap.value.sellToken.address !==
-      "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
-    ) {
-      const { data } = await erc20.populateTransaction.approve(
-        bestRoute.value.data.allowanceSpender || address,
-        bestRoute.value.data.sellTokenAmount
-      );
+  const txs = [];
 
-      txs.push({
-        to: swap.value.sellToken.address,
-        data,
-      });
-    }
+  if (
+    swap.value.sellToken.address !==
+    "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+  ) {
+    const { data } = await erc20.populateTransaction.approve(
+      bestRoute.value.data.allowanceSpender || address,
+      bestRoute.value.data.sellTokenAmount
+    );
 
     txs.push({
-      to: address,
-      data: bestRoute.value?.data.calldata,
-      value: bestRoute.value?.data.value,
+      to: swap.value.sellToken.address,
+      data,
     });
+  }
+
+  txs.push({
+    to: address,
+    data: bestRoute.value?.data.calldata,
+    value: bestRoute.value?.data.value,
+  });
+
+  return txs;
+};
+
+const onSubmit = handleSubmit(async () => {
+  try {
+    const txs = await getTxs();
 
     const transactionHash = await sendTransactions(txs, +props.chainId);
 
@@ -476,6 +503,8 @@ onMounted(() => {
         Swap
       </CommonButton>
     </div>
+
+    <EstimatedFee :chain-id="chainId" :loading="feePending" :data="fee" />
   </form>
 </template>
 
