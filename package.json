@@ -57,5 +57,7 @@
     "vue-tippy": "^6.0.0",
     "yup": "^0.32.11"
   },
-  "dependencies": {}
+  "dependencies": {
+    "bn.js": "^5.2.1"
+  }
 }
