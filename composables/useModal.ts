@@ -1,22 +1,7 @@
-import { DefineComponent } from "vue";
-
-const modal = shallowRef<DefineComponent | null>(null);
-const props = ref<any>({});
-
-type SnackOptions = {
-  message: string;
-  type: "success" | "error";
-  open?: boolean;
-  timeout?: number;
-};
-
-type Options = {
-  raw: boolean;
-  clickToClose: boolean;
-  wrapperClass: string;
-  contentClass: string;
-  snackOptions: SnackOptions;
-};
+const modals = ref<IModal[]>([]);
+const lastModal = computed(
+  () => modals.value[Math.max(0, modals.value.length - 1)]
+);
 
 const defaultOptions = () =>
   ({
@@ -30,67 +15,103 @@ const defaultOptions = () =>
       message: "",
       timeout: 6000,
     },
-  } as Options);
-
-const options = ref<Options>(defaultOptions());
-
-const isOpen = ref(false);
-
-let timeout: any;
-
-const openModal = async (
-  component: DefineComponent | any,
-  componentProps: any = {},
-  modalOptions: Partial<Options> = {}
-) => {
-  timeout && clearTimeout(timeout);
-
-  if (modal.value) {
-    modal.value = null;
-    await nextTick();
-  }
-
-  props.value = componentProps;
-  modal.value = markRaw(component);
-  options.value = Object.assign({}, options.value, modalOptions);
-  isOpen.value = true;
-};
-
-const closeModal = async () => {
-  isOpen.value = false;
-  options.value = defaultOptions();
-
-  timeout = setTimeout(() => {
-    modal.value = null;
-    props.value = null;
-  }, 1000);
-};
+  } as IOptions);
 
 export function openSnackbar({
   message,
   timeout = 6000,
   type = "success",
-}: SnackOptions) {
-  options.value.snackOptions = {
-    open: true,
-    message,
-    timeout,
-    type,
+}: ISnackOptions) {
+  const modal = modals.value.find((m) => m.id === lastModal.value?.id);
+
+  if (!modal) throw new Error("No modal found");
+
+  modal.options = {
+    ...modal.options,
+    snackOptions: {
+      open: true,
+      message,
+      timeout,
+      type,
+    },
   };
 
   setTimeout(() => {
-    options.value.snackOptions = defaultOptions().snackOptions;
+    modal.options = {
+      ...modal.options,
+      snackOptions: defaultOptions().snackOptions,
+    };
   }, timeout);
+}
+
+async function openModal({
+  component = null,
+  componentProps = {},
+  options = defaultOptions(),
+  onReject = async () => {},
+  onResolve = async () => {},
+  async = false,
+  ...params
+}: Partial<IModal>): Promise<{
+  modal: IModal;
+  success: boolean;
+  payload: any;
+}> {
+  const id = Math.random().toString(36).substr(2, 9);
+
+  const destroy = () => {
+    modals.value = modals.value.filter((m) => m.id !== id);
+  };
+
+  const mergedOptions = Object.assign({}, defaultOptions(), options);
+
+  const modal: IModal = {
+    id,
+    component: markRaw(component),
+    componentProps,
+    destroy,
+    onReject,
+    onResolve,
+    async,
+    options: mergedOptions,
+    ...params,
+  };
+
+  modals.value.push(modal);
+
+  if (!modal.async)
+    return {
+      modal,
+      success: true,
+      payload: null,
+    };
+
+  return new Promise((resolve, reject) => {
+    modal.onResolve = async (success: boolean, payload) => {
+      destroy();
+      resolve({
+        modal,
+        success,
+        payload,
+      });
+    };
+
+    modal.onReject = async (success: boolean, payload) => {
+      destroy();
+      resolve({
+        modal,
+        success,
+        payload,
+      });
+    };
+  });
 }
 
 export function useModal() {
   return {
-    modal: readonly(modal),
-    props: readonly(props),
-    options: readonly(options),
-    isOpen: readonly(isOpen),
+    modals: readonly(modals),
     openSnackbar,
-    closeModal,
     openModal,
+    lastModal,
   };
 }
