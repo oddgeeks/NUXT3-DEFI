@@ -129,10 +129,13 @@ const fees = computed<IFees>(() => {
 
   const fees = txRoute.value?.userTxs.reduce((acc: IFees, tx: any) => {
     const bridgeFee = tx.steps.reduce((acc: any, step: any) => {
+
+      if(!step?.protocolFees) return acc
+
       return {
-        amount: fromWei(toBN(acc.amount || "0").plus(toBN(step.protocolFees.amount || "0")).toFixed(), step.protocolFees.asset.decimals).toFixed(),
-        feesInUsd: toBN(acc.feesInUsd || "0").plus(toBN(step.protocolFees.feesInUsd || "0")).toFixed(),
-        asset: step.protocolFees.asset
+        amount: fromWei(toBN(acc.amount || "0").plus(toBN(step?.protocolFees?.amount || "0")).toFixed(), step?.protocolFees?.asset?.decimals).toFixed(),
+        feesInUsd: toBN(acc.feesInUsd || "0").plus(toBN(step?.protocolFees?.feesInUsd || "0")).toFixed(),
+        asset: step?.protocolFees?.asset
       }
     }, fallback)
 
