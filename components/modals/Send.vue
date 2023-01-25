@@ -5,6 +5,8 @@ import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { isAddress } from "@ethersproject/address";
 
+const provider = getRpcProvider(634);
+
 const emit = defineEmits(["destroy"]);
 
 const props = defineProps({
@@ -20,9 +22,8 @@ const props = defineProps({
 
 const { library, account } = useWeb3();
 const { switchNetworkByChainId } = useNetworks();
-const { sendTransaction } = useAvocadoSafe();
-const { tokenBalances } = useAvocadoSafe();
-const { parseTransactionError } = useErrorHandler()
+const { sendTransaction, tokenBalances, safe } = useAvocadoSafe();
+const { parseTransactionError } = useErrorHandler();
 
 const token = computed(
   () =>
@@ -37,7 +38,7 @@ const { handleSubmit, errors, meta, resetForm } = useForm({
     amount: yup
       .string()
       .required("")
-      .test('min-amount', '', (value) => {
+      .test("min-amount", "", (value) => {
         const amount = toBN(value);
 
         return value ? amount.gt(0) : true;
@@ -80,6 +81,57 @@ const sendingDisabled = computed(
   () => !token.value || loading.value || !meta.value.valid
 );
 
+const getTx = async () => {
+  const transferAmount = toBN(amount.value)
+    .times(10 ** token.value.decimals)
+    .toFixed(0);
+
+  let tx = {
+    from: account.value,
+    to: address.value,
+    value: "0",
+    data: "0x",
+  };
+
+  if (token.value.address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE") {
+    tx.value = transferAmount;
+  } else {
+    const contract = Erc20__factory.connect(token.value.address, library.value);
+
+    const { data } = await contract.populateTransaction.transfer(
+      address.value,
+      transferAmount
+    );
+
+    tx.data = data!;
+    tx.to = token.value.address;
+  }
+
+  return tx;
+};
+
+const { data: fee, pending } = useAsyncData(
+  "send-fee",
+  async () => {
+    const tx = await getTx();
+
+    const message = await safe.value?.generateSignatureMessage(
+      [tx],
+      +props.chainId
+    );
+
+    return provider.send("txn_estimateFeeWithoutSignature", [
+      message,
+      account.value,
+      props.chainId,
+    ]);
+  },
+  {
+    server: false,
+    watch: [amount, address],
+  }
+);
+
 const onSubmit = handleSubmit(async () => {
   if (!token.value) {
     return;
@@ -93,33 +145,7 @@ const onSubmit = handleSubmit(async () => {
   try {
     await switchNetworkByChainId(634);
 
-    const transferAmount = toBN(amount.value)
-      .times(10 ** token.value.decimals)
-      .toFixed(0);
-
-    let tx = {
-      from: account.value,
-      to: address.value,
-      value: "0",
-      data: "0x",
-    };
-
-    if (token.value.address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE") {
-      tx.value = transferAmount;
-    } else {
-      const contract = Erc20__factory.connect(
-        token.value.address,
-        library.value
-      );
-
-      const { data } = await contract.populateTransaction.transfer(
-        address.value,
-        transferAmount
-      );
-
-      tx.data = data!;
-      tx.to = token.value.address;
-    }
+    const tx = await getTx();
 
     let transactionHash = await sendTransaction({
       ...tx,
@@ -128,16 +154,17 @@ const onSubmit = handleSubmit(async () => {
 
     console.log(transactionHash);
 
-    slack(`Sent ${amount.value} ${token.value?.symbol?.toUpperCase()} to ${address.value}
+    slack(`Sent ${amount.value} ${token.value?.symbol?.toUpperCase()} to ${
+      address.value
+    }
 User: ${account.value}
-Tx: ${transactionHash}`)
+Tx: ${transactionHash}`);
 
     resetForm();
-    emit("destroy")
+    emit("destroy");
 
-    showPendingTransactionModal(transactionHash, props.chainId, 'send');
+    showPendingTransactionModal(transactionHash, props.chainId, "send");
   } catch (e: any) {
-
     openSnackbar({
       message: parseTransactionError(e),
       type: "error",
@@ -150,22 +177,28 @@ Tx: ${transactionHash}`)
 
 <template>
   <form @submit="onSubmit" class="text-center flex gap-7.5 flex-col">
-    <div class="relative flex mx-auto h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0">
-      <img :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
-        onerror="this.onerror=null; this.remove();" />
+    <div
+      class="relative flex mx-auto h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
+    >
+      <img
+        :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
+        onerror="this.onerror=null; this.remove();"
+      />
     </div>
 
     <div class="flex flex-col justify-center gap-[15px] items-center">
-      <h2>{{ token.name }}
-        <span class="uppercase">
-          ({{ token.symbol }})
-        </span>
+      <h2>
+        {{ token.name }}
+        <span class="uppercase"> ({{ token.symbol }}) </span>
       </h2>
 
       <div
-        class="dark:bg-gray-850 bg-slate-50 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]">
+        class="dark:bg-gray-850 bg-slate-50 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]"
+      >
         <ChainLogo class="w-5 h-5" :chain="token.chainId" />
-        <span class="text-xs text-slate-400 leading-5">{{ chainIdToName(token.chainId) }}</span>
+        <span class="text-xs text-slate-400 leading-5">{{
+          chainIdToName(token.chainId)
+        }}</span>
       </div>
     </div>
 
@@ -175,10 +208,19 @@ Tx: ${transactionHash}`)
           <span>Amount</span>
           <span class="uppercase">{{ token.balance }} {{ token.symbol }}</span>
         </div>
-        <CommonInput type="numeric" :error-message="amountMeta.dirty ? errors['amount'] : ''" name="amount"
-          placeholder="Enter amount" v-model="amount">
+        <CommonInput
+          type="numeric"
+          :error-message="amountMeta.dirty ? errors['amount'] : ''"
+          name="amount"
+          placeholder="Enter amount"
+          v-model="amount"
+        >
           <template #suffix>
-            <button type="button" class="text-blue-500 hover:text-blue-500" @click="setMax">
+            <button
+              type="button"
+              class="text-blue-500 hover:text-blue-500"
+              @click="setMax"
+            >
               MAX
             </button>
           </template>
@@ -190,8 +232,12 @@ Tx: ${transactionHash}`)
           <span>Address To</span>
         </div>
 
-        <CommonInput :error-message="addressMeta.dirty ? errors['address'] : ''" name="address"
-          placeholder="Enter Address" v-model="address">
+        <CommonInput
+          :error-message="addressMeta.dirty ? errors['address'] : ''"
+          name="address"
+          placeholder="Enter Address"
+          v-model="address"
+        >
           <template #suffix>
             <button type="button" @click="pasteAddress">
               <ClipboardSVG />
@@ -199,19 +245,26 @@ Tx: ${transactionHash}`)
           </template>
         </CommonInput>
 
-         <div
-        class="dark:bg-gray-850 bg-slate-50 px-3 py-2 flex space-x-2 rounded-[20px]"
-      >
-        <ChainLogo class="w-5 h-5" :chain="token.chainId" />
-        <span class="text-xs font-medium leading-5">
-          Sending on the {{ chainIdToName(token.chainId) }} network 
-        </span>
-      </div>
+        <div
+          class="dark:bg-gray-850 bg-slate-50 px-3 py-2 flex space-x-2 rounded-[20px]"
+        >
+          <ChainLogo class="w-5 h-5" :chain="token.chainId" />
+          <span class="text-xs font-medium leading-5">
+            Sending on the {{ chainIdToName(token.chainId) }} network
+          </span>
+        </div>
       </div>
     </div>
 
-    <CommonButton type="submit" :disabled="sendingDisabled" :loading="loading" class="justify-center w-full" size="lg">
+    <CommonButton
+      type="submit"
+      :disabled="sendingDisabled"
+      :loading="loading"
+      class="justify-center w-full"
+      size="lg"
+    >
       Send
     </CommonButton>
+    <EstimatedFee :loading="pending" :data="fee" />
   </form>
 </template>
