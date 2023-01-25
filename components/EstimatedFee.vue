@@ -24,7 +24,7 @@ const formattedFee = computed(() => {
   const fee = props.data?.fee || "0";
   const multiplier = props.data?.multiplier || "0";
 
-  const minValue = minFee[props.chainId as keyof typeof minFee];
+  const minValue = minFee[String(props.chainId) as keyof typeof minFee];
 
   const maxVal = toBN(fee)
     .dividedBy(10 ** 18)
