@@ -9,10 +9,6 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Dialog: typeof import('@headlessui/vue')['Dialog']
     DialogPanel: typeof import('@headlessui/vue')['DialogPanel']
-    Listbox: typeof import('@headlessui/vue')['Listbox']
-    ListboxButton: typeof import('@headlessui/vue')['ListboxButton']
-    ListboxOption: typeof import('@headlessui/vue')['ListboxOption']
-    ListboxOptions: typeof import('@headlessui/vue')['ListboxOptions']
     Menu: typeof import('@headlessui/vue')['Menu']
     MenuButton: typeof import('@headlessui/vue')['MenuButton']
     MenuItem: typeof import('@headlessui/vue')['MenuItem']

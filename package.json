@@ -15,7 +15,7 @@
     "@fontsource/source-code-pro": "^4.5.12",
     "@headlessui/vue": "^1.7.7",
     "@instadapp/utils": "^0.4.5",
-    "@instadapp/vue-web3-nuxt": "^0.10.0",
+    "@instadapp/vue-web3-nuxt": "^0.10.1",
     "@magic-ext/connect": "^3.1.0",
     "@nuxtjs/color-mode": "^3.2.0",
     "@nuxtjs/tailwindcss": "^6.2.0",
@@ -57,7 +57,5 @@
     "vue-tippy": "^6.0.0",
     "yup": "^0.32.11"
   },
-  "dependencies": {
-    "vue-demi": "^0.13.11"
-  }
+  "dependencies": {}
 }
