@@ -18,6 +18,8 @@ type IFees = {
   gas: IFee
 }
 
+const emit = defineEmits(["destroy"]);
+
 const props = defineProps({
   address: {
     type: String,
@@ -38,7 +40,6 @@ const { switchNetworkByChainId, networks, getNetworkByChainId } = useNetworks();
 const { sendTransactions, safeAddress, tokenBalances } = useAvocadoSafe();
 const { fromWei } = useBignumber();
 const { parseTransactionError } = useErrorHandler();
-const { closeModal } = useModal();
 const { tokens } = storeToRefs(useTokens());
 
 const loading = ref(false);
@@ -128,10 +129,13 @@ const fees = computed<IFees>(() => {
 
   const fees = txRoute.value?.userTxs.reduce((acc: IFees, tx: any) => {
     const bridgeFee = tx.steps.reduce((acc: any, step: any) => {
+
+      if(!step?.protocolFees) return acc
+
       return {
-        amount: fromWei(toBN(acc.amount || "0").plus(toBN(step.protocolFees.amount || "0")).toFixed(), step.protocolFees.asset.decimals).toFixed(),
-        feesInUsd: toBN(acc.feesInUsd || "0").plus(toBN(step.protocolFees.feesInUsd || "0")).toFixed(),
-        asset: step.protocolFees.asset
+        amount: fromWei(toBN(acc.amount || "0").plus(toBN(step?.protocolFees?.amount || "0")).toFixed(), step?.protocolFees?.asset?.decimals).toFixed(),
+        feesInUsd: toBN(acc.feesInUsd || "0").plus(toBN(step?.protocolFees?.feesInUsd || "0")).toFixed(),
+        asset: step?.protocolFees?.asset
       }
     }, fallback)
 
@@ -301,7 +305,7 @@ const handleSwapToken = () => {
     ? token.value?.address
     : balancedToken?.address! || fallbackToken?.address!;
 
-  closeModal();
+  emit("destroy")
 
   openSwapModal(fromAddress, props.chainId, nativeCurrency.value?.address!);
 };
@@ -361,7 +365,7 @@ const onSubmit = handleSubmit(async () => {
     console.log(transactionHash);
 
     resetForm();
-    closeModal();
+    emit("destroy")
 
     showPendingTransactionModal(transactionHash, props.chainId, "bridge");
   } catch (e: any) {
@@ -373,6 +377,7 @@ const onSubmit = handleSubmit(async () => {
     loading.value = false;
   }
 });
+
 </script>
 
 <template>
@@ -386,6 +391,7 @@ const onSubmit = handleSubmit(async () => {
           {{ token.name }}
           <span class="uppercase"> ({{ token.symbol }})</span>
         </h2>
+
 
         <div class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] self-center inline-flex justify-center items-center gap-2 rounded-5">
           <ChainLogo class="w-5 h-5" :chain="token.chainId" />
