@@ -16,9 +16,7 @@ const {
   errors,
 } = useForm({
   validationSchema: yup.object({
-    "gift-code": yup
-      .string()
-      .required("")
+    "gift-code": yup.string().required(""),
   }),
 });
 
@@ -29,24 +27,26 @@ const sendingDisabled = computed(
 );
 
 const onSubmit = handleSubmit(async () => {
-  const success = await provider.send('api_claimGift', [
+  const success = await provider.send("api_claimGift", [
     account.value,
-    value.value
-  ])
+    value.value,
+  ]);
 
   if (!success) {
-    setErrors("Invalid redeem code.")
+    setErrors("Invalid redeem code.");
   } else {
-    emit("close")
+    slack(`Redeemed (${value.value})
+User: ${account.value}`);
+
+    emit("close");
 
     openSnackbar({
       message: "Gas redeemed successfully!",
       type: "success",
-      timeout: 3000
-    })
+      timeout: 3000,
+    });
 
-    fetchGasBalance()
-    
+    fetchGasBalance();
   }
 });
 </script>

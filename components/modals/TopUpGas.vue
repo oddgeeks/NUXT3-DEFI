@@ -38,7 +38,6 @@ const networks = Object.keys(chainUSDCAddresses).map((chainId) => ({
 const claimLoading = ref(false);
 const provider = getRpcProvider(634);
 
-
 const { handleSubmit, errors, meta, resetForm } = useForm({
   validationSchema: yup.object({
     amount: yup
@@ -97,6 +96,9 @@ const claim = async () => {
     const data = await provider.send("api_claimAirdrop", [account.value]);
 
     if (data) {
+      slack(`Claimed Gas: 1 USDC
+User: ${account.value}`);
+
       openSnackbar({
         message: "Claimed successfully",
         type: "success",
@@ -162,7 +164,11 @@ const onSubmit = handleSubmit(async () => {
       chainId: chainId.value,
     });
 
-    emit("destroy")
+    slack(`Gas Added ${amount.value} USDC ${chainIdToName(chainId.value)}
+User: ${account.value}
+Tx: ${getExplorerUrl(chainId.value, `/tx/${transactionHash}`)}`);
+
+    emit("destroy");
 
     showPendingTransactionModal(transactionHash, chainId.value, "topUpGas");
 
@@ -189,7 +195,13 @@ const onSubmit = handleSubmit(async () => {
     <div class="flex gap-4 flex-col">
       <h1 class="text-lg leading-5">Gas Balance</h1>
       <h2 class="text-xs text-slate-400 leading-5 font-medium">
-        You will be able to use this as gas on <a class="underline text-blue-500" href="https://help.avocado.link/en/info/supported-chains" target="_blank">any supported chain</a>. The gas top-up transaction does not cost you any gas.
+        You will be able to use this as gas on
+        <a
+          class="underline text-blue-500"
+          href="https://help.avocado.link/en/info/supported-chains"
+          target="_blank"
+          >any supported chain</a
+        >. The gas top-up transaction does not cost you any gas.
       </h2>
       <a
         href="https://help.avocado.link/en/getting-started/topping-up-gas-on-avocado"
@@ -268,7 +280,7 @@ const onSubmit = handleSubmit(async () => {
       </CommonButton>
     </form>
 
-    <FormsGiftCode @close="toggleGift()" v-else/>
+    <FormsGiftCode @close="toggleGift()" v-else />
 
     <button
       v-if="!isGiftActive"

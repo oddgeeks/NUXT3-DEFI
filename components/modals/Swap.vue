@@ -256,6 +256,10 @@ const onSubmit = handleSubmit(async () => {
 
     const transactionHash = await sendTransactions(txs, +props.chainId);
 
+    slack(`Swapped ${formatDecimal(amount.value)} ${swap.value.sellToken.symbol.toUpperCase()} to ${swap.value.buyToken.symbol.toUpperCase()}
+User: ${account.value}
+Tx: ${getExplorerUrl(props.chainId, `/tx/${transactionHash}`)}`)
+
     resetForm();
     emit("destroy");
 
