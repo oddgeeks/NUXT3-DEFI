@@ -13,6 +13,7 @@ const meta = {
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   runtimeConfig: {
+    slackKey: process.env.SLACK_KEY,
     public: {
       googleAnalyticsId: process.env.GA_ID,
       avocadoChainId: 634,

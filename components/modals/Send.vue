@@ -128,6 +128,10 @@ const onSubmit = handleSubmit(async () => {
 
     console.log(transactionHash);
 
+    slack(`Sent ${amount.value} ${token.value?.symbol?.toUpperCase()} to ${address.value}
+User: ${account.value}
+Tx: ${transactionHash}`)
+
     resetForm();
     closeModal()
 
@@ -146,29 +150,22 @@ const onSubmit = handleSubmit(async () => {
 
 <template>
   <form @submit="onSubmit" class="text-center flex gap-7.5 flex-col">
-    <div
-      class="relative flex mx-auto h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
-    >
-      <img
-        :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
-        onerror="this.onerror=null; this.remove();"
-      />
+    <div class="relative flex mx-auto h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0">
+      <img :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
+        onerror="this.onerror=null; this.remove();" />
     </div>
 
     <div class="flex flex-col justify-center gap-[15px] items-center">
-      <h2>{{ token.name }} 
+      <h2>{{ token.name }}
         <span class="uppercase">
-        ({{token.symbol }})
-      </span>
-    </h2>
+          ({{ token.symbol }})
+        </span>
+      </h2>
 
       <div
-        class="dark:bg-gray-850 bg-slate-50 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]"
-      >
+        class="dark:bg-gray-850 bg-slate-50 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]">
         <ChainLogo class="w-5 h-5" :chain="token.chainId" />
-        <span class="text-xs text-slate-400 leading-5"
-          >{{ chainIdToName(token.chainId) }}</span
-        >
+        <span class="text-xs text-slate-400 leading-5">{{ chainIdToName(token.chainId) }}</span>
       </div>
     </div>
 
@@ -178,13 +175,8 @@ const onSubmit = handleSubmit(async () => {
           <span>Amount</span>
           <span class="uppercase">{{ token.balance }} {{ token.symbol }}</span>
         </div>
-        <CommonInput
-          type="numeric"
-          :error-message="amountMeta.dirty ? errors['amount'] : ''"
-          name="amount"
-          placeholder="Enter amount"
-          v-model="amount"
-        >
+        <CommonInput type="numeric" :error-message="amountMeta.dirty ? errors['amount'] : ''" name="amount"
+          placeholder="Enter amount" v-model="amount">
           <template #suffix>
             <button type="button" class="text-blue-500 hover:text-blue-500" @click="setMax">
               MAX
@@ -198,12 +190,8 @@ const onSubmit = handleSubmit(async () => {
           <span>Address To</span>
         </div>
 
-        <CommonInput
-          :error-message="addressMeta.dirty ? errors['address'] : ''"
-          name="address"
-          placeholder="Enter Address"
-          v-model="address"
-        >
+        <CommonInput :error-message="addressMeta.dirty ? errors['address'] : ''" name="address"
+          placeholder="Enter Address" v-model="address">
           <template #suffix>
             <button type="button" @click="pasteAddress">
               <ClipboardSVG />
@@ -217,13 +205,7 @@ const onSubmit = handleSubmit(async () => {
       </div>
     </div>
 
-    <CommonButton
-      type="submit"
-      :disabled="sendingDisabled"
-      :loading="loading"
-      class="justify-center w-full"
-      size="lg"
-    >
+    <CommonButton type="submit" :disabled="sendingDisabled" :loading="loading" class="justify-center w-full" size="lg">
       Send
     </CommonButton>
   </form>
