@@ -49,7 +49,7 @@ const formattedFee = computed(() => {
       <GasSVG class="w-4" />
       Estimated transaction fees
     </span>
-    <span class="loading-box rounded-5 w-12 h-5" v-if="loading"></span>
+    <span class="loading-box rounded-5 w-24 h-5" v-if="loading"></span>
     <span v-else class="text-xs">{{ formattedFee }} USDC</span>
   </div>
 </template>
