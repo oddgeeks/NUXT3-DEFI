@@ -101,9 +101,17 @@ export const openWalletDetailsModal = (session: any) => {
   });
 };
 
-export const openTokenSelectionModal = () => {
-  openModal({
+export const openTokenSelectionModal = async (params: any) => {
+  return openModal({
     component: TokenSelection,
+    async: true,
+    componentProps: {
+      tokens: params?.tokens || [],
+      selectedToken: params?.selectedToken || null,
+    },
+    options: {
+      contentClass: "!px-2.5",
+    },
   });
 };
 
