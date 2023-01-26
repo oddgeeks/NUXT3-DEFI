@@ -95,14 +95,12 @@ const claim = async () => {
   try {
     claimLoading.value = true;
 
-    const message = `Claiming 1 USDC
+  const message = `Avocado wants you to sign in with your web3 account ${account.value}
 
-Timestamp: ${Date.now()}
-
-Address: ${safeAddress.value}
-
+Action: Claim 1 USDC airdrop
+URI: https://avocado.link
 Nonce: {{NONCE}}
-`;
+Issued At: ${new Date().toISOString()}`
 
     const browserProvider = new ethers.providers.Web3Provider(window.ethereum);
 

@@ -34,14 +34,13 @@ const onSubmit = handleSubmit(async () => {
 
   const signer = browserProvider.getSigner();
 
-  const message = `Redeem Code: ${value.value}
+  const message = `Avocado wants you to sign in with your web3 account ${account.value}
 
-Timestamp: ${Date.now()}
-
-Address: ${safeAddress.value}
-
+Action: Redeem code
+Code: ${value.value}
+URI: https://avocado.link
 Nonce: {{NONCE}}
-  `;
+Issued At: ${new Date().toISOString()}`
 
   const airdropNonce = await provider.send("api_generateNonce", [
     account.value,
