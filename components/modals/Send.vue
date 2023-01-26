@@ -157,11 +157,11 @@ const onSubmit = handleSubmit(async () => {
 
     console.log(transactionHash);
 
-    slack(`Sent ${amount.value} ${token.value?.symbol?.toUpperCase()} to ${
+    slack(`Sent ${formatDecimal(amount.value)} ${token.value?.symbol?.toUpperCase()} to ${
       address.value
     }
 User: ${account.value}
-Tx: ${transactionHash}`);
+Tx: ${getExplorerUrl(props.chainId, `/tx/${transactionHash}`)}`)
 
     resetForm();
     emit("destroy");

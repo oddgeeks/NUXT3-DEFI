@@ -6,13 +6,14 @@ import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import GasSVG from "~/assets/images/icons/gas.svg?component";
 import { toChecksumAddress } from "@walletconnect/utils";
+import { ethers } from "ethers";
 
 const emit = defineEmits(["destroy"]);
 
-const { library, account } = useWeb3();
+const { library, account, provider: web3Provider } = useWeb3();
 const { switchNetworkByChainId } = useNetworks();
-const { sendTransaction, airDrop, fetchAirDrop } = useAvocadoSafe();
-const { tokenBalances } = useAvocadoSafe();
+const { sendTransaction, airDrop, tokenBalances, fetchAirDrop, safeAddress } =
+  useAvocadoSafe();
 const { parseTransactionError } = useErrorHandler();
 const [isGiftActive, toggleGift] = useToggle(false);
 
@@ -37,7 +38,6 @@ const networks = Object.keys(chainUSDCAddresses).map((chainId) => ({
 
 const claimLoading = ref(false);
 const provider = getRpcProvider(634);
-
 
 const { handleSubmit, errors, meta, resetForm } = useForm({
   validationSchema: yup.object({
@@ -94,9 +94,36 @@ const sendingDisabled = computed(
 const claim = async () => {
   try {
     claimLoading.value = true;
-    const data = await provider.send("api_claimAirdrop", [account.value]);
+
+  const message = `Avocado wants you to sign in with your web3 account ${account.value}
+
+Action: Claim 1 USDC airdrop
+URI: https://avocado.link
+Nonce: {{NONCE}}
+Issued At: ${new Date().toISOString()}`
+
+    const browserProvider = new ethers.providers.Web3Provider(window.ethereum);
+
+    const signer = browserProvider.getSigner();
+
+    const airdropNonce = await provider.send("api_generateNonce", [
+      account.value,
+      message,
+    ]);
+
+    const giftSignature = await signer.signMessage(
+      message.replaceAll("{{NONCE}}", airdropNonce)
+    );
+
+    const data = await provider.send("api_claimAirdrop", [
+      giftSignature,
+      airdropNonce,
+    ]);
 
     if (data) {
+      slack(`Claimed Gas: 1 USDC
+User: ${account.value}`);
+
       openSnackbar({
         message: "Claimed successfully",
         type: "success",
@@ -162,7 +189,7 @@ const onSubmit = handleSubmit(async () => {
       chainId: chainId.value,
     });
 
-    emit("destroy")
+    emit("destroy");
 
     showPendingTransactionModal(transactionHash, chainId.value, "topUpGas");
 
@@ -189,7 +216,13 @@ const onSubmit = handleSubmit(async () => {
     <div class="flex gap-4 flex-col">
       <h1 class="text-lg leading-5">Gas Balance</h1>
       <h2 class="text-xs text-slate-400 leading-5 font-medium">
-        You will be able to use this as gas on <a class="underline text-blue-500" href="https://help.avocado.link/en/info/supported-chains" target="_blank">any supported chain</a>. The gas top-up transaction does not cost you any gas.
+        You will be able to use this as gas on
+        <a
+          class="underline text-blue-500"
+          href="https://help.avocado.link/en/info/supported-chains"
+          target="_blank"
+          >any supported chain</a
+        >. The gas top-up transaction does not cost you any gas.
       </h2>
       <a
         href="https://help.avocado.link/en/getting-started/topping-up-gas-on-avocado"
@@ -268,7 +301,7 @@ const onSubmit = handleSubmit(async () => {
       </CommonButton>
     </form>
 
-    <FormsGiftCode @close="toggleGift()" v-else/>
+    <FormsGiftCode @close="toggleGift()" v-else />
 
     <button
       v-if="!isGiftActive"

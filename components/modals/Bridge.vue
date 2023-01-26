@@ -392,7 +392,9 @@ const onSubmit = handleSubmit(async () => {
       metadata: "0x",
     });
 
-    console.log(transactionHash);
+    slack(`Bridged ${formatDecimal(amount.value)} ${token.value.symbol.toUpperCase()} from ${chainIdToName(token.value.chainId)} to ${chainIdToName(bridgeToChainId.value)}
+User: ${account.value}
+Tx: ${getExplorerUrl(props.chainId, `/tx/${transactionHash}`)}`)
 
     resetForm();
     emit("destroy")
