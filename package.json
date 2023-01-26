@@ -38,7 +38,7 @@
     "chart.js": "^4.2.0",
     "collect.js": "^4.34.3",
     "ethers": "^5.7.2",
-    "nuxt": "npm:nuxt3@latest",
+    "nuxt": "^3.1.1",
     "pinia": "^2.0.29",
     "qrcode.vue": "^3.3.3",
     "rimraf": "^3.0.2",
@@ -56,8 +56,5 @@
     "vue-lite-youtube-embed": "^1.2.0",
     "vue-tippy": "^6.0.0",
     "yup": "^0.32.11"
-  },
-  "dependencies": {
-    "bn.js": "^5.2.1"
   }
 }
