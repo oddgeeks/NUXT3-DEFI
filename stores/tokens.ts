@@ -73,6 +73,10 @@ export const useTokens = defineStore("tokens", () => {
         return tokenList
     };
 
+    const getTokenByAddress = (address: string, chainId: string | number) => {
+        return tokens.value.find((t) => String(t.chainId) === String(chainId) && t.address.toLowerCase() === address.toLowerCase())
+    };
+
     onMounted(fetchTokens)
 
     const fetchTokenPrices = async () => {
@@ -82,10 +86,13 @@ export const useTokens = defineStore("tokens", () => {
     useIntervalFn(fetchTokenPrices, 10000);
 
     return {
-        tokens,
-        fetchTokens,
-    }
+      tokens,
+      fetchTokens,
+      getTokenByAddress,
+    };
 });
+
+
 
 if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useTokens, import.meta.hot));

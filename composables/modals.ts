@@ -5,6 +5,7 @@ import Send from "~~/components/modals/Send.vue";
 import TopUpGas from "~~/components/modals/TopUpGas.vue";
 import WalletConnect from "~~/components/modals/WalletConnect.vue";
 import WalletConnectDetails from "~~/components/modals/WalletConnectDetails.vue";
+import TokenSelection from "~~/components/modals/TokenSelection.vue";
 import Dialog from "~~/components/modals/Dialog.vue";
 
 const { openModal } = useModal();
@@ -28,24 +29,27 @@ export const showPendingTransactionModal = (
   chainId: number | string,
   type: ITxType
 ) => {
-  openModal(PendingTransaction, {
-    hash,
-    chainId,
-    type,
+  openModal({
+    component: PendingTransaction,
+    componentProps: {
+      hash,
+      chainId,
+      type,
+    },
   });
 };
 
 export const openBridgeModal = (address: string, chainId: number | string) => {
-  openModal(
-    Bridge,
-    {
+  openModal({
+    component: Bridge,
+    componentProps: {
       address,
       chainId,
     },
-    {
+    options: {
       wrapperClass: "max-w-[600px]",
-    }
-  );
+    },
+  });
 };
 
 export const openSwapModal = (
@@ -53,41 +57,65 @@ export const openSwapModal = (
   chainId: number | string,
   toAddress?: string
 ) => {
-  openModal(
-    Swap,
-    {
+  openModal({
+    component: Swap,
+    componentProps: {
       address,
       chainId,
       toAddress,
     },
-    {
+    options: {
       wrapperClass: "max-w-[600px]",
-    }
-  );
+    },
+  });
 };
 
 export const openSendModal = (address: string, chainId: number | string) => {
-  openModal(Send, {
-    address,
-    chainId,
+  openModal({
+    component: Send,
+    componentProps: {
+      address,
+      chainId,
+    },
   });
 };
 
 export const openWalletConnectModal = () => {
-  openModal(WalletConnect, {});
-};
-
-export const openTopUpGasModal = () => {
-  openModal(TopUpGas, {});
-};
-
-export const openWalletDetailsModal = (session: any) => {
-  openModal(WalletConnectDetails, {
-    session,
+  openModal({
+    component: WalletConnect,
   });
 };
 
-export const openDialogModal = ({
+export const openTopUpGasModal = () => {
+  openModal({
+    component: TopUpGas,
+  });
+};
+
+export const openWalletDetailsModal = (session: any) => {
+  openModal({
+    component: WalletConnectDetails,
+    componentProps: {
+      session,
+    },
+  });
+};
+
+export const openTokenSelectionModal = async (params: any) => {
+  return openModal({
+    component: TokenSelection,
+    async: true,
+    componentProps: {
+      tokens: params?.tokens || [],
+      selectedToken: params?.selectedToken || null,
+    },
+    options: {
+      contentClass: "!px-2.5",
+    },
+  });
+};
+
+export const openDialogModal = async ({
   title = "",
   content = "",
   type = "success",
@@ -101,18 +129,22 @@ export const openDialogModal = ({
   cancelCallback = () => {},
   callback = () => {},
 }: DialogModalProps) => {
-  openModal(Dialog, {
-    title,
-    headerIconUrl,
-    content,
-    type,
-    buttonText,
-    isButtonVisible,
-    callback,
-    cancelCallback,
-    cancelButtonText,
-    isCancelButtonVisible,
-    buttonProps,
-    cancelButtonProps,
+  return await openModal({
+    async: true,
+    component: Dialog,
+    componentProps: {
+      title,
+      headerIconUrl,
+      content,
+      type,
+      buttonText,
+      isButtonVisible,
+      callback,
+      cancelCallback,
+      cancelButtonText,
+      isCancelButtonVisible,
+      buttonProps,
+      cancelButtonProps,
+    },
   });
 };

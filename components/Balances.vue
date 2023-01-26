@@ -4,13 +4,10 @@ import SearchSVG from "~/assets/images/icons/search.svg?component";
 const { tokenBalances } = useAvocadoSafe();
 const { account } = useWeb3();
 
-const whitelistedSymbols = ["ETH", "USDC", "USDT", "DAI", "MATIC"];
-const whitelistedSymbolsChains = ["1", "137", "42161", "10"];
+const whitelistedSymbols = ["ETH", "USDC", "USDT", "DAI", "MATIC", "AVAX", "XDAI", "BNB"];
 
 const tokensWithBalances = computed(() => tokenBalances.value.filter(tb => {
-  return toBN(tb.balance).gt(0) ||
-    (whitelistedSymbols.includes(tb.symbol.toUpperCase()) &&
-      whitelistedSymbolsChains.includes(tb.chainId))
+  return toBN(tb.balance).gt(0) || whitelistedSymbols.includes(tb.symbol.toUpperCase())
 }))
 
 const searchQuery = ref('')

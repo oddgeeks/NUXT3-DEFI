@@ -83,6 +83,7 @@ export const useAvocadoSafe = () => {
   );
 
   return {
+    safe,
     tokenBalances,
     totalBalance,
     safeAddress,

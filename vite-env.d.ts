@@ -213,3 +213,30 @@ interface ISwapResponse {
   data: IData;
   aggregators: IAggregator[];
 }
+// type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>
+
+interface IModal {
+  id: string;
+  component: DefineComponent | ConcreteComponent;
+  componentProps: any;
+  options?: IOptions;
+  destroy: () => void;
+  async: boolean;
+  onResolve: (success: boolean, payload?: any) => Promise<unknown>;
+  onReject: (success: boolean, payload?: any) => Promise<unknown>;
+}
+
+type ISnackOptions = {
+  message: string;
+  type: "success" | "error";
+  open?: boolean;
+  timeout?: number;
+};
+
+type IOptions = {
+  raw?: boolean;
+  clickToClose?: boolean;
+  wrapperClass?: string;
+  contentClass?: string;
+  snackOptions?: ISnackOptions;
+};

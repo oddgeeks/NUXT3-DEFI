@@ -6,7 +6,6 @@ import * as yup from "yup";
 const provider = getRpcProvider(634);
 
 const { account } = useWeb3();
-const { openSnackbar } = useModal()
 const { fetchGasBalance } = useSafe();
 const emit = defineEmits(["close"]);
 

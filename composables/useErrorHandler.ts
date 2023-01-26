@@ -5,6 +5,7 @@ export const errorMessages = {
 
 export function useErrorHandler() {
   const parseTransactionError = (error: any) => {
+    console.log(error);
     const errorMessage =
       error.error?.message || error?.reason || "Something went wrong";
 

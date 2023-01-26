@@ -18,6 +18,10 @@ type IFees = {
   gas: IFee
 }
 
+const provider = getRpcProvider(634);
+
+const emit = defineEmits(["destroy"]);
+
 const props = defineProps({
   address: {
     type: String,
@@ -35,10 +39,9 @@ const props = defineProps({
 
 const { account } = useWeb3();
 const { switchNetworkByChainId, networks, getNetworkByChainId } = useNetworks();
-const { sendTransactions, safeAddress, tokenBalances } = useAvocadoSafe();
+const { sendTransactions, safeAddress, tokenBalances, safe } = useAvocadoSafe();
 const { fromWei } = useBignumber();
 const { parseTransactionError } = useErrorHandler();
-const { closeModal } = useModal();
 const { tokens } = storeToRefs(useTokens());
 
 const loading = ref(false);
@@ -128,10 +131,13 @@ const fees = computed<IFees>(() => {
 
   const fees = txRoute.value?.userTxs.reduce((acc: IFees, tx: any) => {
     const bridgeFee = tx.steps.reduce((acc: any, step: any) => {
+
+      if(!step?.protocolFees) return acc
+
       return {
-        amount: fromWei(toBN(acc.amount || "0").plus(toBN(step.protocolFees.amount || "0")).toFixed(), step.protocolFees.asset.decimals).toFixed(),
-        feesInUsd: toBN(acc.feesInUsd || "0").plus(toBN(step.protocolFees.feesInUsd || "0")).toFixed(),
-        asset: step.protocolFees.asset
+        amount: fromWei(toBN(acc.amount || "0").plus(toBN(step?.protocolFees?.amount || "0")).toFixed(), step?.protocolFees?.asset?.decimals).toFixed(),
+        feesInUsd: toBN(acc.feesInUsd || "0").plus(toBN(step?.protocolFees?.feesInUsd || "0")).toFixed(),
+        asset: step?.protocolFees?.asset
       }
     }, fallback)
 
@@ -273,6 +279,28 @@ const { data, error, pending } = useAsyncData(
   }
 );
 
+const { data: fee, pending: feePending } = useAsyncData(
+  "bridge-fee",
+  async () => {
+    const txs = await getTxs();
+
+    const message = await safe.value?.generateSignatureMessage(
+      txs,
+      +props.chainId
+    );
+
+    return provider.send("txn_estimateFeeWithoutSignature", [
+      message,
+      account.value,
+      props.chainId,
+    ]);
+  },
+  {
+    server: false,
+    watch: [txRoute],
+  }
+);
+
 const sendingDisabled = computed(
   () =>
     !token.value ||
@@ -301,22 +329,13 @@ const handleSwapToken = () => {
     ? token.value?.address
     : balancedToken?.address! || fallbackToken?.address!;
 
-  closeModal();
+  emit("destroy")
 
   openSwapModal(fromAddress, props.chainId, nativeCurrency.value?.address!);
 };
 
-const onSubmit = handleSubmit(async () => {
-  if (!txRoute.value) {
-    return;
-  }
-  if (sendingDisabled.value) return;
-
-  loading.value = true;
-  try {
-    await switchNetworkByChainId(634);
-
-    const txs = [];
+const getTxs = async () => {
+  const txs = [];
 
     for (const userTx of txRoute.value.userTxs) {
       if (userTx.approvalData) {
@@ -354,6 +373,21 @@ const onSubmit = handleSubmit(async () => {
       value: buildTx.result.value,
     });
 
+    return txs;
+}
+
+const onSubmit = handleSubmit(async () => {
+  if (!txRoute.value) {
+    return;
+  }
+  if (sendingDisabled.value) return;
+
+  loading.value = true;
+  try {
+    await switchNetworkByChainId(634);
+
+    const txs = await getTxs();
+
     let transactionHash = await sendTransactions(txs, props.chainId, {
       metadata: "0x",
     });
@@ -361,7 +395,7 @@ const onSubmit = handleSubmit(async () => {
     console.log(transactionHash);
 
     resetForm();
-    closeModal();
+    emit("destroy")
 
     showPendingTransactionModal(transactionHash, props.chainId, "bridge");
   } catch (e: any) {
@@ -373,6 +407,7 @@ const onSubmit = handleSubmit(async () => {
     loading.value = false;
   }
 });
+
 </script>
 
 <template>
@@ -386,6 +421,7 @@ const onSubmit = handleSubmit(async () => {
           {{ token.name }}
           <span class="uppercase"> ({{ token.symbol }})</span>
         </h2>
+
 
         <div class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] self-center inline-flex justify-center items-center gap-2 rounded-5">
           <ChainLogo class="w-5 h-5" :chain="token.chainId" />
@@ -510,9 +546,13 @@ const onSubmit = handleSubmit(async () => {
         class="justify-center w-full" size="lg">
         Bridge
       </CommonButton>
+
+
       <p class="text-xs text-center text-slate-400">
         Estimated processing time is {{ txRoute ? `~${Math.round(txRoute.serviceTime / 60)}m` :'~10m' }}.
       </p>
+
+      <EstimatedFee :chain-id="chainId" :loading="feePending" :data="fee" />
 
       <Transition enter-active-class="duration-300 ease-out" enter-from-class="transform opacity-0"
         enter-to-class="opacity-100" leave-active-class="duration-200 ease-in" leave-from-class="opacity-100"
