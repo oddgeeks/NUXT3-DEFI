@@ -6,13 +6,14 @@ import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import GasSVG from "~/assets/images/icons/gas.svg?component";
 import { toChecksumAddress } from "@walletconnect/utils";
+import { ethers } from "ethers";
 
 const emit = defineEmits(["destroy"]);
 
-const { library, account } = useWeb3();
+const { library, account, provider: web3Provider } = useWeb3();
 const { switchNetworkByChainId } = useNetworks();
-const { sendTransaction, airDrop, fetchAirDrop } = useAvocadoSafe();
-const { tokenBalances } = useAvocadoSafe();
+const { sendTransaction, airDrop, tokenBalances, fetchAirDrop, safeAddress } =
+  useAvocadoSafe();
 const { parseTransactionError } = useErrorHandler();
 const [isGiftActive, toggleGift] = useToggle(false);
 
@@ -93,7 +94,33 @@ const sendingDisabled = computed(
 const claim = async () => {
   try {
     claimLoading.value = true;
-    const data = await provider.send("api_claimAirdrop", [account.value]);
+
+    const message = `Claiming 1 USDC
+
+Timestamp: ${Date.now()}
+
+Address: ${safeAddress.value}
+
+Nonce: {{NONCE}}
+`;
+
+    const browserProvider = new ethers.providers.Web3Provider(window.ethereum);
+
+    const signer = browserProvider.getSigner();
+
+    const airdropNonce = await provider.send("api_generateNonce", [
+      account.value,
+      message,
+    ]);
+
+    const giftSignature = await signer.signMessage(
+      message.replaceAll("{{NONCE}}", airdropNonce)
+    );
+
+    const data = await provider.send("api_claimAirdrop", [
+      giftSignature,
+      airdropNonce,
+    ]);
 
     if (data) {
       slack(`Claimed Gas: 1 USDC
@@ -163,10 +190,6 @@ const onSubmit = handleSubmit(async () => {
       ...tx,
       chainId: chainId.value,
     });
-
-    slack(`Gas Added ${amount.value} USDC ${chainIdToName(chainId.value)}
-User: ${account.value}
-Tx: ${getExplorerUrl(chainId.value, `/tx/${transactionHash}`)}`);
 
     emit("destroy");
 

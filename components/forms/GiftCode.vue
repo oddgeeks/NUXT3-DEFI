@@ -2,11 +2,14 @@
 import SVGX from "~/assets/images/icons/x.svg?component";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
+import { ethers } from "ethers";
+import { storeToRefs } from "pinia";
 
 const provider = getRpcProvider(634);
 
 const { account } = useWeb3();
 const { fetchGasBalance } = useSafe();
+const { safeAddress } = storeToRefs(useSafe())
 const emit = defineEmits(["close"]);
 
 const {
@@ -27,10 +30,33 @@ const sendingDisabled = computed(
 );
 
 const onSubmit = handleSubmit(async () => {
-  const success = await provider.send("api_claimGift", [
+  const browserProvider = new ethers.providers.Web3Provider(window.ethereum);
+
+  const signer = browserProvider.getSigner();
+
+  const message = `Redeem Code: ${value.value}
+
+Timestamp: ${Date.now()}
+
+Address: ${safeAddress.value}
+
+Nonce: {{NONCE}}
+  `;
+
+  const airdropNonce = await provider.send("api_generateNonce", [
     account.value,
-    value.value,
+    message,
   ]);
+
+  const redeemSignature = await signer.signMessage(
+    message.replaceAll("{{NONCE}}", airdropNonce)
+  );
+
+   const success = await provider.send("api_claimGift", [
+    value.value,
+    redeemSignature,
+    airdropNonce
+   ])
 
   if (!success) {
     setErrors("Invalid redeem code.");
