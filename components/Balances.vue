@@ -47,6 +47,7 @@ const filteredBalances = computed(() => {
   <div class="relative flex-1">
     <div class="dark:bg-gray-850 bg-slate-50 rounded-[25px] h-full w-full">
       <div
+        style="scrollbar-gutter: stable; overflow-y: overlay"
         class="overflow-y-auto overflow-x-auto rounded-[inherit] md:overflow-x-hidden min-h-full max-h-[530px] flex-1 scroll-style"
         :class="{ blur: !account }">
         <table class="table w-full">
