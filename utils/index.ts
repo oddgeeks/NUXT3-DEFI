@@ -156,13 +156,15 @@ axiosRetry(http, {
   retryDelay: axiosRetry.exponentialDelay,
 });
 
-
-export const slack = async (message: string, type: 'danger' | 'error' | 'success' | 'banner' = 'success') => {
-  await $fetch('/api/slack', {
-    method: 'POST',
+export const slack = async (
+  message: string,
+  type: ISlackMessageType = "success"
+) => {
+  await $fetch("/api/slack", {
+    method: "POST",
     body: {
       message,
-      type
-    }
-  })
-}
+      type,
+    },
+  });
+};

@@ -7,9 +7,10 @@ import { storeToRefs } from "pinia";
 
 const provider = getRpcProvider(634);
 
+const { parseTransactionError } = useErrorHandler();
 const { account } = useWeb3();
 const { fetchGasBalance } = useSafe();
-const { safeAddress } = storeToRefs(useSafe())
+const { safeAddress } = storeToRefs(useSafe());
 const emit = defineEmits(["close"]);
 
 const {
@@ -34,44 +35,71 @@ const onSubmit = handleSubmit(async () => {
 
   const signer = browserProvider.getSigner();
 
-  const message = `Avocado wants you to sign in with your web3 account ${account.value}
+  const message = `Avocado wants you to sign in with your web3 account ${
+    account.value
+  }
 
 Action: Redeem code
 Code: ${value.value}
 URI: https://avocado.link
 Nonce: {{NONCE}}
-Issued At: ${new Date().toISOString()}`
+Issued At: ${new Date().toISOString()}`;
 
-  const airdropNonce = await provider.send("api_generateNonce", [
-    account.value,
-    message,
-  ]);
+  try {
+    const airdropNonce = await provider.send("api_generateNonce", [
+      account.value,
+      message,
+    ]);
 
-  const redeemSignature = await signer.signMessage(
-    message.replaceAll("{{NONCE}}", airdropNonce)
-  );
+    const redeemSignature = await signer.signMessage(
+      message.replaceAll("{{NONCE}}", airdropNonce)
+    );
 
-   const success = await provider.send("api_claimGift", [
-    value.value,
-    redeemSignature,
-    airdropNonce
-   ])
+    const success = await provider.send("api_claimGift", [
+      value.value,
+      redeemSignature,
+      airdropNonce,
+    ]);
 
-  if (!success) {
-    setErrors("Invalid redeem code.");
-  } else {
-    slack(`Redeemed (${value.value})
-User: ${account.value}`);
+    if (!success) {
+      setErrors("Invalid redeem code.");
 
-    emit("close");
+      logActionToSlack({
+        message: `Invalid redeem code. (${value.value})`,
+        type: "error",
+        action: "reedem",
+        account: account.value,
+      });
+    } else {
+      logActionToSlack({
+        message: `(${value.value})`,
+        action: "reedem",
+        account: account.value,
+      });
 
+      emit("close");
+
+      openSnackbar({
+        message: "Gas redeemed successfully!",
+        type: "success",
+        timeout: 3000,
+      });
+
+      fetchGasBalance();
+    }
+  } catch (e) {
+    const err = parseTransactionError(e);
     openSnackbar({
-      message: "Gas redeemed successfully!",
-      type: "success",
-      timeout: 3000,
+      message: err,
+      type: "error",
     });
 
-    fetchGasBalance();
+    logActionToSlack({
+      message: err,
+      type: "error",
+      action: "reedem",
+      account: account.value,
+    });
   }
 });
 </script>

@@ -33,7 +33,7 @@ const token = computed(
 );
 const loading = ref(false);
 
-const { handleSubmit, errors, meta, resetForm, validate} = useForm({
+const { handleSubmit, errors, meta, resetForm, validate } = useForm({
   validationSchema: yup.object({
     amount: yup
       .string()
@@ -113,7 +113,7 @@ const getTx = async () => {
 const { data: fee, pending } = useAsyncData(
   "send-fee",
   async () => {
-    const { valid } = await validate()
+    const { valid } = await validate();
     if (!valid) return;
 
     const tx = await getTx();
@@ -157,20 +157,33 @@ const onSubmit = handleSubmit(async () => {
 
     console.log(transactionHash);
 
-    slack(`Sent ${formatDecimal(amount.value)} ${token.value?.symbol?.toUpperCase()} to ${
-      address.value
-    }
-User: ${account.value}
-Tx: ${getExplorerUrl(props.chainId, `/tx/${transactionHash}`)}`)
+    logActionToSlack({
+      message: `${formatDecimal(amount.value)} ${formatSymbol(
+        token.value?.symbol
+      )} to ${address.value}`,
+      action: "send",
+      txHash: transactionHash,
+      chainId: props.chainId,
+      account: account.value,
+    });
 
     resetForm();
     emit("destroy");
 
     showPendingTransactionModal(transactionHash, props.chainId, "send");
   } catch (e: any) {
+    const err = parseTransactionError(e);
+
     openSnackbar({
-      message: parseTransactionError(e),
+      message: err,
       type: "error",
+    });
+
+    logActionToSlack({
+      message: err,
+      action: "send",
+      type: "error",
+      account: account.value,
     });
   }
 
@@ -268,6 +281,10 @@ Tx: ${getExplorerUrl(props.chainId, `/tx/${transactionHash}`)}`)
     >
       Send
     </CommonButton>
-    <EstimatedFee :chain-id="chainId" :loading="meta.valid && pending" :data="fee" />
+    <EstimatedFee
+      :chain-id="chainId"
+      :loading="meta.valid && pending"
+      :data="fee"
+    />
   </form>
 </template>

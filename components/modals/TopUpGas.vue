@@ -95,12 +95,14 @@ const claim = async () => {
   try {
     claimLoading.value = true;
 
-  const message = `Avocado wants you to sign in with your web3 account ${account.value}
+    const message = `Avocado wants you to sign in with your web3 account ${
+      account.value
+    }
 
 Action: Claim 1 USDC airdrop
 URI: https://avocado.link
 Nonce: {{NONCE}}
-Issued At: ${new Date().toISOString()}`
+Issued At: ${new Date().toISOString()}`;
 
     const browserProvider = new ethers.providers.Web3Provider(window.ethereum);
 
@@ -121,8 +123,11 @@ Issued At: ${new Date().toISOString()}`
     ]);
 
     if (data) {
-      slack(`Claimed Gas: 1 USDC
-User: ${account.value}`);
+      logActionToSlack({
+        action: "claim",
+        account: account.value,
+        message: "1 USDC",
+      });
 
       openSnackbar({
         message: "Claimed successfully",
@@ -133,11 +138,20 @@ User: ${account.value}`);
     await fetchGasBalance();
     await fetchAirDrop();
   } catch (e: any) {
-    console.log(e);
+    const err = parseTransactionError(e);
+
     openSnackbar({
-      message: "Something went wrong",
+      message: err,
       type: "error",
     });
+
+     logActionToSlack({
+      message: err,
+      type: "error",
+      action: "claim",
+      account: account.value,
+    });
+
   } finally {
     claimLoading.value = false;
   }
@@ -189,6 +203,14 @@ const onSubmit = handleSubmit(async () => {
       chainId: chainId.value,
     });
 
+    logActionToSlack({
+      action: "topup",
+      message: `${amount.value} ${formatSymbol("usdc")}`,
+      account: account.value,
+      chainId: String(chainId.value),
+      txHash: transactionHash,
+    });
+
     emit("destroy");
 
     showPendingTransactionModal(transactionHash, chainId.value, "topUpGas");
@@ -196,9 +218,18 @@ const onSubmit = handleSubmit(async () => {
     resetForm();
   } catch (e: any) {
     console.log(e);
+
+    const err = parseTransactionError(e);
     openSnackbar({
-      message: parseTransactionError(e),
+      message: err,
       type: "error",
+    });
+
+    logActionToSlack({
+      message: err,
+      type: "error",
+      action: "topup",
+      account: account.value,
     });
   }
 
