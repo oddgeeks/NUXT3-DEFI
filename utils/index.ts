@@ -25,7 +25,7 @@ export const getRpcProvider = (chainId: number | string) => {
 };
 
 import { BigNumber } from "bignumber.js";
-import { BigNumber as BN } from "@ethersproject/bignumber";
+import { BigNumber as BN } from "ethers";
 
 export const toBN = (value: BigNumber.Value | BN) =>
   new BigNumber(BN.isBigNumber(value) ? value.toString() : value);

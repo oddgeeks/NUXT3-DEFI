@@ -18,6 +18,7 @@ const loading = ref<Record<string, boolean>>({});
 
 const [showWeb3Modal, toggleWeb3Modal] = useToggle(false);
 
+const ensName = ref()
 
 const connect = async (provider: any) => {
   try {
@@ -45,6 +46,10 @@ const isProviderVisible = (provider: Provider) => {
   return true
 }
 
+whenever(account, async () => {
+  ensName.value = await getRpcProvider(1).lookupAddress(account.value)
+}, { immediate: true })
+
 </script>
 
 <template>
@@ -70,7 +75,7 @@ const isProviderVisible = (provider: Provider) => {
       /></span>
     </button>
 
-    <span v-tippy="{ placement: 'bottom-end', content: trackingAccount? `Tracking: ${shortenHash(account)}` : shortenHash(account) }">
+    <span v-tippy="{ placement: 'bottom-end', content: trackingAccount? `Tracking: ${shortenHash(account)}` : (ensName || shortenHash(account)) }">
       <button
         @mouseenter="toggle(true)"
         @mouseleave="toggle(false)"
