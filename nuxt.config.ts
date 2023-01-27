@@ -14,6 +14,7 @@ const meta = {
 export default defineNuxtConfig({
   runtimeConfig: {
     slackKey: process.env.SLACK_KEY,
+    slackErrorKey: process.env.SLACK_ERROR_KEY,
     public: {
       googleAnalyticsId: process.env.GA_ID,
       avocadoChainId: 634,
@@ -148,13 +149,13 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    '/site.webmanifest': {
+    "/site.webmanifest": {
       headers: {
-        'Content-Type': 'application/manifest+json',
+        "Content-Type": "application/manifest+json",
       },
     },
   },
-  
+
   vite: {
     plugins: [
       ViteComponents({

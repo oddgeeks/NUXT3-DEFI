@@ -1,30 +1,39 @@
 import axios from "axios";
-const { slackKey } = useRuntimeConfig()
+const { slackKey, slackErrorKey } = useRuntimeConfig();
 
-const colors: Record<'danger' | 'error' | 'success' | 'banner', string> = {
-    danger: '#000000', // black
-    error: '#D50201', // red
-    success: '#2EA44E', // green
-    banner: '#EFC35C', // yellow
-}
+const colors: Record<"danger" | "error" | "success" | "banner", string> = {
+  danger: "#000000", // black
+  error: "#D50201", // red
+  success: "#2EA44E", // green
+  banner: "#EFC35C", // yellow
+};
 
 export default defineEventHandler(async (event) => {
-    if (!slackKey) {
-        return {}
-    }
+  if (!slackKey || !slackErrorKey) {
+    return {};
+  }
 
-    const { type = "success", message } = await readBody(event)
+  const { type = "success", message } = await readBody(event);
 
-    await axios
-        .post(`https://hooks.slack.com/services/${slackKey}`, JSON.stringify({
-            attachments: [
-                {
-                    text: message,
-                    color: colors[type as keyof typeof colors],
-                },
-            ],
-        }))
-        .catch(() => { });
+  let channelId = slackKey;
 
-    return {}
-})
+  if (type === "error") {
+    channelId = slackErrorKey;
+  }
+
+  await axios
+    .post(
+      `https://hooks.slack.com/services/${channelId}`,
+      JSON.stringify({
+        attachments: [
+          {
+            text: message,
+            color: colors[type as keyof typeof colors],
+          },
+        ],
+      })
+    )
+    .catch(() => {});
+
+  return {};
+});
