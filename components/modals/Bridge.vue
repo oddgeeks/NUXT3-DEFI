@@ -251,6 +251,7 @@ const { data, error, pending } = useAsyncData(
     const { valid } = await validate();
 
     if (!valid) return;
+    if(!bridgeToToken.value) return;
 
     const transferAmount = toBN(amount.value || "0")
       .times(10 ** bridgeToToken.value.decimals)
