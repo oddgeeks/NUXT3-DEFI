@@ -11,6 +11,15 @@
     box-shadow: inset 0 0 14px 14px #334155;
   }
 
+  details > summary {
+    list-style: none;
+  }
+
+  details > summary::marker, /* Latest Chrome, Edge, Firefox */ 
+  details > summary::-webkit-details-marker /* Safari */ {
+    display: none;
+  }
+
   /* Reset input number */
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
@@ -120,7 +129,6 @@
 .-cbwsdk-css-reset body {
   background-color: transparent !important;
 }
-
 
 input[type="search" i]::-webkit-search-cancel-button {
   cursor: pointer;

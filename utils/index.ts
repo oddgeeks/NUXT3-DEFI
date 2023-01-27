@@ -151,6 +151,22 @@ export function filterArray(array: any, filters: any) {
   });
 }
 
+export const injectFavicon = function (src: string) {
+  const head = document.querySelector("head")!;
+  const iconElement = document.createElement("link");
+  iconElement.type = "image/x-icon";
+  iconElement.rel = "icon";
+  iconElement.href = src;
+
+  const links = document.querySelectorAll('link[rel~="icon"]');
+
+  for (var i = 0; i < links.length; i++) {
+    head.removeChild(links[i]);
+  }
+
+  head.appendChild(iconElement);
+};
+
 axiosRetry(http, {
   retries: 3,
   retryDelay: axiosRetry.exponentialDelay,

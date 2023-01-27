@@ -81,22 +81,19 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                   result: [safe.safeAddress.value],
                 });
               } else if (payload.method === "eth_sendTransaction") {
-                try {
-                  let hash = await safe.sendTransaction({
-                    ...payload.params[0],
-                    chainId: wc.chainId,
-                  });
+                const { success, payload: msg } = await openWCTransactionModal({
+                  modalId: wc.peerId,
+                  chainId: String(wc.chainId),
+                  payload,
+                  wc,
+                });
 
-                  wc.approveRequest({
-                    id: payload.id,
-                    result: hash,
-                  });
-                } catch (error: any) {
+                if (!success) {
                   wc.rejectRequest({
                     id: payload.id,
                     error: {
                       code: -32603,
-                      message: error.message,
+                      message: msg,
                     },
                   });
                 }
