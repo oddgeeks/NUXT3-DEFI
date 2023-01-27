@@ -26,7 +26,7 @@ export const logActionToSlack = (slackMessage: ISlackMessage) => {
     account,
   } = slackMessage;
   const prefix = prefixes[action];
-  const explorerLink = chainId ? getExplorerUrl(chainId, `/tx/${txHash}`) : "";
+  const explorerLink = chainId ? `<${getExplorerUrl(chainId, `/tx/${txHash}`) }|${txHash}>`: "";
 
   let logMessage = `${prefix} ${message}\nUser: ${account}`;
 
