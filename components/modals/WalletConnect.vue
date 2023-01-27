@@ -248,6 +248,7 @@ onMounted(async () => {
       </CommonButton>
     </form>
     <div @click="isTutorialWatched = true" v-if="isIframeVisible" class="mt-6">
+      <h1 class="text-xs leading-5 mb-3 text-slate-400 text-center font-medium">Looking for step-by-step instructions? <br/>Watch this video.</h1>
       <LiteYouTubeEmbed
         id="1CcLfV2rxjA"
         title="Connecting Avocado to Uniswap"
