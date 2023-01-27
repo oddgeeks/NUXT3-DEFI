@@ -256,18 +256,30 @@ const onSubmit = handleSubmit(async () => {
 
     const transactionHash = await sendTransactions(txs, +props.chainId);
 
-    slack(`Swapped ${formatDecimal(amount.value)} ${swap.value.sellToken.symbol.toUpperCase()} to ${swap.value.buyToken.symbol.toUpperCase()}
-User: ${account.value}
-Tx: ${getExplorerUrl(props.chainId, `/tx/${transactionHash}`)}`)
+    logActionToSlack({
+      message: `${formatDecimal(amount.value)} ${formatSymbol(swap.value.sellToken.symbol)} to ${formatSymbol(swap.value.buyToken.symbol)}`,
+      action: "swap",
+      account: account.value,
+      chainId: props.chainId,
+      txHash: transactionHash,
+   })
 
     resetForm();
     emit("destroy");
 
     showPendingTransactionModal(transactionHash, props.chainId, "swap");
   } catch (e: any) {
+    const err = parseTransactionError(e);
     openSnackbar({
-      message: parseTransactionError(e),
+      message: err,
       type: "error",
+    });
+
+    logActionToSlack({
+      message: err,
+      type: "error",
+      action: "swap",
+      account: account.value,
     });
   }
 });

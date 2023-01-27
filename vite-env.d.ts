@@ -240,3 +240,7 @@ type IOptions = {
   contentClass?: string;
   snackOptions?: ISnackOptions;
 };
+
+type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim";
+
+type ISlackMessageType = "danger" | "error" | "success" | "banner";
