@@ -189,6 +189,10 @@ const onSubmit = handleSubmit(async () => {
       chainId: chainId.value,
     });
 
+    slack(`:fuelpump: Sent Gas: ${amount.value} USDC
+User: ${account.value}
+Tx: ${getExplorerUrl(chainId.value, `/tx/${transactionHash}`)}`)
+
     emit("destroy");
 
     showPendingTransactionModal(transactionHash, chainId.value, "topUpGas");
