@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import type WalletConnect from "@walletconnect/client";
-import { emit } from "process";
+import { storeToRefs } from "pinia";
 import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
 import ChevronDownSVG from "~/assets/images/icons/chevron-down.svg?component";
 
+const provider = getRpcProvider(634);
 const emit = defineEmits(["resolve", "reject"]);
 
 const props = defineProps<{
@@ -13,7 +14,39 @@ const props = defineProps<{
 }>();
 
 const { safe } = useAvocadoSafe();
+const { account } = useWeb3()
+const { gasBalance } = storeToRefs(useSafe());
 const [submitting, toggle] = useToggle()
+
+
+const { data: fee, pending } = useAsyncData(
+  "swap-fee",
+  async () => {
+    const message = await safe.value?.generateSignatureMessage(
+      props.payload?.params,
+      +props.chainId
+    );
+
+    return provider.send("txn_estimateFeeWithoutSignature", [
+      message,
+      account.value,
+      props.chainId,
+    ]);
+  },
+  {
+    server: false,
+    immediate: true,
+  }
+);
+
+const formattedFee = computed(() =>
+  calculateEstimatedFee({ chanId: props.chainId, ...fee.value })
+);
+
+// const exceedsGasBalance = computed(() => {
+//   if (pending.value) return false
+//   return  lt(gasBalance.value, formattedFee.value)
+// });
 
 onMounted(() => {
   document.title = "(1) Avocado";
@@ -94,7 +127,8 @@ const handleReject = () => {
         <div class="flex flex-col gap-2.5">
           <dl class="text-xs font-medium flex justify-between">
             <dt class="text-slate-400">Estimated transaction fee</dt>
-            <dd>2.86 USDC</dd>
+            <dd class="loading-box rounded-5 w-16 h-5" v-if="pending"></dd>
+            <dd v-else>{{ formattedFee }} USDC</dd>
           </dl>
           <dl class="text-xs font-medium flex justify-between">
             <dt class="text-slate-400">Transaction nonce</dt>

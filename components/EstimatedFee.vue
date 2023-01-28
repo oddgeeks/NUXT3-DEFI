@@ -6,44 +6,11 @@ type Data = {
   multiplier: string;
 };
 
-const minFee = {
-  "137": 0.01,
-  "10": 0.005,
-  "42161": 0.005,
-  "43114": 0.005,
-  "1": 0.005,
-  "100": 0.01,
-  "56": 0.01,
-};
-
 const props = defineProps<{ data: Data; loading?: boolean; chainId: string }>();
 
-const formattedFee = computed(() => {
-  if (!props.data?.fee) return "0.00";
-
-  const fee = props.data?.fee || "0";
-  const multiplier = props.data?.multiplier || "0";
-
-  const minValue = minFee[String(props.chainId) as keyof typeof minFee];
-
-  const maxVal = toBN(fee)
-    .dividedBy(10 ** 18)
-    .toFormat();
-
-  const minVal = toBN(fee)
-    .dividedBy(multiplier)
-    .dividedBy(10 ** 14)
-    .toFormat();
-
-  if (toBN(maxVal).lt(minValue)) return formatDecimal(minValue, 2);
-
-  const avg = toBN(maxVal)
-    .plus(toBN(minVal))
-    .dividedBy(2)
-    .toFormat();
-
-  return `${formatDecimal(avg, 2)}`;
-});
+const formattedFee = computed(() =>
+  calculateEstimatedFee({ chanId: props.chainId, ...props.data })
+);
 </script>
 
 <template>
