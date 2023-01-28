@@ -42,7 +42,7 @@
   }
 
   .success-circle path:first-child {
-    @apply fill-green-500 stroke-green-500;
+    @apply fill-green-400 stroke-green-400;
   }
 
   .svg-circle > path:first-child {
@@ -124,7 +124,7 @@
 }
 
 .success-circle path:first-child {
-  @apply fill-green-500 stroke-green-500;
+  @apply fill-green-400 stroke-green-400;
 }
 .-cbwsdk-css-reset body {
   background-color: transparent !important;

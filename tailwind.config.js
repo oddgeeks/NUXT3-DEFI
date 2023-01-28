@@ -52,6 +52,9 @@ module.exports = {
         yellow: {
           DEFAULT: "#F2C94C",
         },
+        green: {
+          400: "#89BA4F",
+        }
       },
       animation: {
         "reverse-spin": "reverse-spin 1s linear infinite",

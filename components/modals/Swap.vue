@@ -506,7 +506,7 @@ onMounted(() => {
                   style="width: 100px; height: 20px"
                   class="loading-box rounded-lg"
                 />
-                <span v-else class="text-green-500">
+                <span v-else class="text-green-400">
                   {{
                     formatPercent(
                       toBN(bestRoute?.data.priceImpact || 0).negated()

@@ -81,7 +81,7 @@ const selected = computed({
                   class="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full bg-opacity-10"
                 >
                   <CheckIcon
-                    class="w-3 h-3 text-green-500 check-icon"
+                    class="w-3 h-3 text-green-400 check-icon"
                     aria-hidden="true"
                   />
                 </span>

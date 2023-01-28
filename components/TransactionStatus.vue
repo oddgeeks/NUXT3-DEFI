@@ -10,7 +10,7 @@ const props = defineProps<{
 const statusColor = computed(() => {
   switch (props.status) {
     case "success":
-      return "text-green-500";
+      return "text-green-400";
     case "failed":
       return "text-red-500";
     default:
