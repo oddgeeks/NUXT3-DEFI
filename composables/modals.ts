@@ -64,7 +64,8 @@ export const openBridgeModal = (address: string, chainId: number | string) => {
 export const openSwapModal = (
   address: string,
   chainId: number | string,
-  toAddress?: string
+  toAddress?: string,
+  amount?: string
 ) => {
   openModal({
     component: Swap,
@@ -72,6 +73,7 @@ export const openSwapModal = (
       address,
       chainId,
       toAddress,
+      amount,
     },
     options: {
       wrapperClass: "max-w-[600px]",

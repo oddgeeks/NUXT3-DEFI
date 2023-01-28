@@ -251,7 +251,7 @@ const { data, error, pending } = useAsyncData(
     const { valid } = await validate();
 
     if (!valid) return;
-    if(!bridgeToToken.value) return;
+    if(!bridgeToToken.value) throw new Error("No bridge token found");
 
     const transferAmount = toBN(amount.value || "0")
       .times(10 ** bridgeToToken.value.decimals)
@@ -348,12 +348,16 @@ const handleSwapToken = () => {
     nativeCurrency.value?.symbol.toLowerCase();
 
   const fromAddress = !isSameToken
-    ? token.value?.address
-    : balancedToken?.address! || fallbackToken?.address!;
+    ? token.value
+    : balancedToken || fallbackToken;
 
   emit("destroy");
 
-  openSwapModal(fromAddress, props.chainId, nativeCurrency.value?.address!);
+  const fromAmount = toBN(fees.value.gas.amount).times(nativeCurrency.value?.price || "0").div(
+    fromAddress?.price || "0"
+  ).toFixed()
+
+  openSwapModal(fromAddress?.address!, props.chainId, nativeCurrency.value?.address!, fromAmount);
 };
 
 const getTxs = async () => {

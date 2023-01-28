@@ -33,6 +33,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  amount: {
+    type: String,
+    default: "",
+  },
 });
 
 const { chainTokenBalances, sendTransactions, safeAddress, safe } = useAvocadoSafe();
@@ -109,7 +113,7 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
     }),
   });
 
-const { value: amount, meta: amountMeta } = useField<string>("amount");
+const { value: amount, meta: amountMeta, setState } = useField<string>("amount");
 const { value: slippage } = useField<string>("slippage");
 const { value: customSlippage, meta: slippageMeta } =
   useField<string>("customSlippage");
@@ -290,6 +294,13 @@ onMounted(() => {
     props.toAddress || availableBuyTokens.value[0].address,
     props.chainId
   )!;
+
+  if (props.amount) {
+    setState({
+      value: props.amount,
+      touched: true,
+    })
+  }
 });
 </script>
 
