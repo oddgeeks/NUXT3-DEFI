@@ -339,9 +339,6 @@ onMounted(() => {
             container-classes="!p-0"
           />
           <TokenSelection v-model="swap.sellToken" :tokens="availableTokens" />
-          <!-- <CommonSelect class="basis-40" v-model="swap.sellToken.tokenAddress" iconKey="logoURI" value-key="address"
-            selected-label-classes="uppercase" item-text-classes="uppercase" label-key="symbol"
-            :options="availableTokens" /> -->
         </div>
         <div class="flex justify-between items-center text-sm text-slate-400">
           <div

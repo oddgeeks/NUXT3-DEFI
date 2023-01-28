@@ -116,24 +116,33 @@ export function formatUsd(value: any, fractionDigits = 2) {
   return formatter.format(value);
 }
 
-export function formatDecimal(value: any, fractionDigits = 6) {
-  let formatter;
-  if (lt(value, "0.000001") && gt(value, "0")) {
-    formatter = new Intl.NumberFormat(locale, {
-      style: "decimal",
-      notation: "scientific",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
+function getFractionDigits(value: string | number) {
+  const absoluteValue = toBN(value).abs();
+
+  if (isZero(absoluteValue)) {
+    return 2;
+  } else if (lt(absoluteValue, 0.01)) {
+    return 6;
+  } else if (lt(absoluteValue, 1)) {
+    return 4;
+  } else if (lt(absoluteValue, 10000)) {
+    return 2;
   } else {
-    formatter = new Intl.NumberFormat(locale, {
-      style: "decimal",
-      minimumFractionDigits: fractionDigits,
-      maximumFractionDigits: fractionDigits,
-    });
+    return 0;
+  }
+}
+
+export function formatDecimal(value: string, fractionDigits = getFractionDigits(value)) {
+  if (!value) {
+    value = "0";
   }
 
-  return formatter.format(value || 0);
+  const formatter = new Intl.NumberFormat(locale, {
+    style: "decimal",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: fractionDigits,
+  });
+  return formatter.format(toBN(value).toNumber());
 }
 
 export const http = axios.create();
