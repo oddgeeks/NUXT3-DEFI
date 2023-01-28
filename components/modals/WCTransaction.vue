@@ -17,6 +17,7 @@ const { safe } = useAvocadoSafe();
 const { account } = useWeb3()
 const { gasBalance } = storeToRefs(useSafe());
 const [submitting, toggle] = useToggle()
+const { switchNetworkByChainId } = useNetworks();
 
 
 const { data: fee, pending } = useAsyncData(
@@ -72,6 +73,8 @@ const rejectRequest = (message: string) => {
 
 const handleSubmit = async() => {
   try {
+    await switchNetworkByChainId(634);
+
     toggle(true)
     const params = props.payload?.params[0];
 
