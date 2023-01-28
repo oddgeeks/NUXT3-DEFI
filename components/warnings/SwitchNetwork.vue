@@ -3,7 +3,7 @@ const { switchNetworkByChainId } = useNetworks()
 
 </script>
 <template>
-     <div class="bg-orange-500 gap-[15px] w-full justify-center flex bg-opacity-10 text-orange-500 rounded-5 p-4 text-sm text-center">
+     <div class="bg-orange-400 gap-[15px] w-full justify-center flex bg-opacity-10 text-orange-400 rounded-5 p-4 text-sm text-center">
         <span class="text-xs self-center">
             It seems you're connected to wrong network. Please switch to Avocado Network or add the network on Metamask.
         </span>

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-orange-500 gap-[15px] w-full justify-center flex bg-opacity-10 text-orange-500 rounded-5 p-4 text-sm text-center">
+    class="bg-orange-400 gap-[15px] w-full justify-center flex bg-opacity-10 text-orange-400 rounded-5 p-4 text-sm text-center">
     <span class="text-xs self-center">
       Your gas balance is insufficient. Please top up to trigger transactions.
     </span>
