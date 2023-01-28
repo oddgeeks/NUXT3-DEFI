@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SVGCheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { wait } from '@instadapp/utils';
 
@@ -31,12 +32,9 @@ const txnInfos = computed(() => {
 <template>
   <div class="text-center flex flex-col gap-7.5">
     <div v-if="transaction" class="flex justify-center">
-      <svg v-if="transaction.status" width="40" height="40" viewBox="0 0 40 40" fill="none"
-        xmlns="http://www.w3.org/2000/svg">
-        <rect width="40" height="40" rx="20" fill="#22C55E" />
-        <path d="M26.6673 15L17.5007 24.1667L13.334 20" stroke="white" stroke-width="3" stroke-linecap="round"
-          stroke-linejoin="round" />
-      </svg>
+      <SVGCheckCircle
+      v-if="transaction.status"
+      class="text-white w-10 h-10 success-circle"/>
 
       <svg v-else width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
         <rect width="40" height="40" rx="20" fill="#EB5757" />
