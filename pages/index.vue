@@ -138,7 +138,7 @@ const handleOpenDialog = () => {
                   type: 'question',
                   title: 'Your Avocado Wallet',
                   isButtonVisible: false,
-                  content: `Deposit or receive funds by scanning or copying your Avocado Wallet QR code. You can deposit or receive from any supported chains.
+                  content: `Deposit or receive funds from <a class='text-blue-500' target='blank' rel='noopener noreferrer' href='https://help.avocado.link/en/info/supported-chains'>any supported chain</a> by scanning or copying your Avocado Wallet QR code.
           <br><br>
           <a href='https://help.avocado.link/en/getting-started/topping-up-your-avocado-account' target='blank' rel='noopener noreferrer' class='text-sm font-medium inline-flex gap-2.5 text-blue-500'>Learn more about how to deposit ${LinkSVG}</a>
           `,
