@@ -40,7 +40,8 @@ const props = defineProps({
   },
 });
 
-const { chainTokenBalances, sendTransactions, safeAddress, safe } = useAvocadoSafe();
+const { chainTokenBalances, sendTransactions, safeAddress, safe } =
+  useAvocadoSafe();
 
 const { getTokenByAddress } = useTokens();
 const { tokens } = storeToRefs(useTokens());
@@ -48,7 +49,7 @@ const { getNetworkByChainId } = useNetworks();
 const { toWei, fromWei } = useBignumber();
 const { formatPercent } = useFormatter();
 const { parseTransactionError } = useErrorHandler();
-const { account } = useWeb3()
+const { account } = useWeb3();
 
 const slippages = [
   { value: "0.1", label: "0.1%" },
@@ -114,7 +115,11 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
     }),
   });
 
-const { value: amount, meta: amountMeta, setState } = useField<string>("amount");
+const {
+  value: amount,
+  meta: amountMeta,
+  setState,
+} = useField<string>("amount");
 const { value: slippage } = useField<string>("slippage");
 const { value: customSlippage, meta: slippageMeta } =
   useField<string>("customSlippage");
@@ -262,12 +267,16 @@ const onSubmit = handleSubmit(async () => {
     const transactionHash = await sendTransactions(txs, +props.chainId);
 
     logActionToSlack({
-      message: `${formatDecimal(amount.value)} ${formatSymbol(swap.value.sellToken.symbol)} to ${formatSymbol(swap.value.buyToken.symbol)}`,
+      message: `${formatDecimal(amount.value)} ${formatSymbol(
+        swap.value.sellToken.symbol
+      )} to ${formatDecimal(buyTokenAmount.value.toFixed())} ${formatSymbol(
+        swap.value.buyToken.symbol
+      )}`,
       action: "swap",
       account: account.value,
       chainId: props.chainId,
       txHash: transactionHash,
-   })
+    });
 
     resetForm();
     emit("destroy");
@@ -300,7 +309,7 @@ onMounted(() => {
     setState({
       value: props.amount,
       touched: true,
-    })
+    });
   }
 });
 </script>
@@ -349,7 +358,9 @@ onMounted(() => {
           />
           <span v-else>{{ formatUsd(sellTokenInUsd) }}</span> -->
           <div class="flex items-center ml-auto gap-2.5 uppercase">
-            <span class="font-medium">{{ sellTokenBalance }} {{ swap.sellToken?.symbol }}</span>
+            <span class="font-medium"
+              >{{ sellTokenBalance }} {{ swap.sellToken?.symbol }}</span
+            >
             <button
               type="button"
               @click="amount = sellTokenBalance"
@@ -370,7 +381,7 @@ onMounted(() => {
           @click="swapTokens"
           class="flex justify-center items-center absolute bg-slate-150 dark:bg-slate-600 ring-[6px] ring-white dark:ring-gray-950 rounded-full h-10 w-10 -bottom-[26px] left-1/2 -translate-x-1/2"
         >
-         <ArrowLeft class="w-5 h-5 -rotate-90 text-slate-400" />
+          <ArrowLeft class="w-5 h-5 -rotate-90 text-slate-400" />
         </button>
       </div>
 
@@ -405,11 +416,10 @@ onMounted(() => {
           style="width: 100px; height: 20px"
           class="loading-box ml-auto rounded-lg"
         />
-        <div
-          v-else
-          class="flex ml-auto items-center text-sm text-slate-400"
-        >
-          <span class="font-medium">{{ formatUsd(buyTokenAmountInUsd, 6) }}</span>
+        <div v-else class="flex ml-auto items-center text-sm text-slate-400">
+          <span class="font-medium">{{
+            formatUsd(buyTokenAmountInUsd, 6)
+          }}</span>
         </div>
       </div>
     </div>
@@ -497,7 +507,9 @@ onMounted(() => {
                   {{ swap.sellToken?.symbol }}
                 </span>
               </div>
-              <div class="flex justify-between text-sm items-center font-medium">
+              <div
+                class="flex justify-between text-sm items-center font-medium"
+              >
                 <span>Price Impact</span>
                 <div
                   v-if="pending && meta.valid"
@@ -530,7 +542,6 @@ onMounted(() => {
         Swap
       </CommonButton>
     </div>
-
   </form>
 </template>
 
