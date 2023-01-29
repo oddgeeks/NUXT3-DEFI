@@ -46,6 +46,8 @@ const isProviderVisible = (provider: Provider) => {
   return true
 }
 
+const addressLabel = computed(() =>  trackingAccount.value? `Tracking: ${shortenHash(account.value, 4)}` : (ensName.value || shortenHash(account.value, 4)))
+
 whenever(account, async () => {
   ensName.value = await getRpcProvider(1).lookupAddress(account.value)
 }, { immediate: true })
@@ -75,17 +77,16 @@ whenever(account, async () => {
       /></span>
     </button>
 
-    <span v-tippy="{ placement: 'bottom-end', content: trackingAccount? `Tracking: ${shortenHash(account)}` : (ensName || shortenHash(account)) }">
       <button
         @mouseenter="toggle(true)"
         @mouseleave="toggle(false)"
         @click="closeConnection"
-        class="dark:bg-slate-800 bg-slate-100 py-[9px] h-[44px] w-[44px] relative flex text-white rounded-[30px] items-center justify-center px-4 gap-x-3"
+        class="dark:bg-slate-800 bg-slate-100 py-3 leading-5 justify-between pr-12 relative flex rounded-7.5 items-center px-4 gap-x-3"
       >
-        <PowerOffSVG v-if="hovered" class="absolute pointer-events-none" />
-        <PowerOnSVG v-else class="absolute pointer-events-none" />
+         {{ addressLabel }}
+        <PowerOffSVG v-if="hovered" class="pointer-events-none absolute right-0" />
+        <PowerOnSVG v-else class="pointer-events-none absolute right-0" />
       </button>
-    </span>
   </div>
   <Modal inline @destroy="toggleWeb3Modal(false)" :show="showWeb3Modal">
     <div class="relative ">
