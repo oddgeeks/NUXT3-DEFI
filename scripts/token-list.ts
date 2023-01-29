@@ -176,6 +176,7 @@ const coinIds = [
     "render-token",
     "celsius-network-token",
     "ecomi",
+    "gmx",
   ]),
 ];
 

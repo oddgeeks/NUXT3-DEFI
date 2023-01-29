@@ -5,7 +5,7 @@
 		"avocado",
 		"defi"
 	],
-	"timestamp": "2023-01-27T15:18:49.212Z",
+	"timestamp": "2023-01-29T12:48:33.889Z",
 	"tokens": [
 		{
 			"chainId": 1,
@@ -766,6 +766,22 @@
 			"symbol": "gusd",
 			"decimals": 2,
 			"logoURI": "https://assets.coingecko.com/coins/images/5992/large/gemini-dollar-gusd.png?1536745278"
+		},
+		{
+			"chainId": 42161,
+			"address": "0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
+			"name": "GMX",
+			"symbol": "gmx",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/18323/large/arbit.png?1631532468"
+		},
+		{
+			"chainId": 43114,
+			"address": "0x62edc0692bd897d2295872a9ffcac5425011c661",
+			"name": "GMX",
+			"symbol": "gmx",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/18323/large/arbit.png?1631532468"
 		},
 		{
 			"chainId": 1,
