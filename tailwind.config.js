@@ -49,9 +49,15 @@ module.exports = {
           150: "#E9EDF4",
           750: "#2A3850",
         },
+        orange: {
+          400: '#EC974F',
+        },
         yellow: {
           DEFAULT: "#F2C94C",
         },
+        green: {
+          400: "#89BA4F",
+        }
       },
       animation: {
         "reverse-spin": "reverse-spin 1s linear infinite",

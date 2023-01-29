@@ -33,6 +33,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  amount: {
+    type: String,
+    default: "",
+  },
 });
 
 const { chainTokenBalances, sendTransactions, safeAddress, safe } = useAvocadoSafe();
@@ -109,7 +113,7 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
     }),
   });
 
-const { value: amount, meta: amountMeta } = useField<string>("amount");
+const { value: amount, meta: amountMeta, setState } = useField<string>("amount");
 const { value: slippage } = useField<string>("slippage");
 const { value: customSlippage, meta: slippageMeta } =
   useField<string>("customSlippage");
@@ -290,6 +294,13 @@ onMounted(() => {
     props.toAddress || availableBuyTokens.value[0].address,
     props.chainId
   )!;
+
+  if (props.amount) {
+    setState({
+      value: props.amount,
+      touched: true,
+    })
+  }
 });
 </script>
 
@@ -328,9 +339,6 @@ onMounted(() => {
             container-classes="!p-0"
           />
           <TokenSelection v-model="swap.sellToken" :tokens="availableTokens" />
-          <!-- <CommonSelect class="basis-40" v-model="swap.sellToken.tokenAddress" iconKey="logoURI" value-key="address"
-            selected-label-classes="uppercase" item-text-classes="uppercase" label-key="symbol"
-            :options="availableTokens" /> -->
         </div>
         <div class="flex justify-between items-center text-sm text-slate-400">
           <div
@@ -495,7 +503,7 @@ onMounted(() => {
                   style="width: 100px; height: 20px"
                   class="loading-box rounded-lg"
                 />
-                <span v-else class="text-green-500">
+                <span v-else class="text-green-400">
                   {{
                     formatPercent(
                       toBN(bestRoute?.data.priceImpact || 0).negated()

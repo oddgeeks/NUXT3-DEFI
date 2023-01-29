@@ -11,6 +11,15 @@
     box-shadow: inset 0 0 14px 14px #334155;
   }
 
+  details > summary {
+    list-style: none;
+  }
+
+  details > summary::marker, /* Latest Chrome, Edge, Firefox */ 
+  details > summary::-webkit-details-marker /* Safari */ {
+    display: none;
+  }
+
   /* Reset input number */
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
@@ -33,7 +42,7 @@
   }
 
   .success-circle path:first-child {
-    @apply fill-green-500 stroke-green-500;
+    @apply fill-green-400 stroke-green-400;
   }
 
   .svg-circle > path:first-child {
@@ -115,12 +124,11 @@
 }
 
 .success-circle path:first-child {
-  @apply fill-green-500 stroke-green-500;
+  @apply fill-green-400 stroke-green-400;
 }
 .-cbwsdk-css-reset body {
   background-color: transparent !important;
 }
-
 
 input[type="search" i]::-webkit-search-cancel-button {
   cursor: pointer;

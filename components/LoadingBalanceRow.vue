@@ -31,13 +31,13 @@ const loadingClass = computed(() => ({
     <td class="py-6">
       <div :class="loadingClass" class="rounded-5 w-[120px] h-5"></div>
     </td>
-    <td class="px-10 py-6">
+    <td class=" py-6">
       <div :class="loadingClass" class="rounded-5 w-20 h-5"></div>
     </td>
     <td class="py-6">
       <div :class="loadingClass" class="rounded-5 w-[60px] h-5"></div>
     </td>
-    <td class="pl-7.5 py-6 flex justify-center items-center gap-[15px]">
+    <td class="py-6 flex justify-center items-center gap-[15px]">
       <div :class="loadingClass" class="rounded-5 w-9 h-9"></div>
       <div :class="loadingClass" class="rounded-5 w-9 h-9"></div>
       <div :class="loadingClass" class="rounded-5 w-9 h-9"></div>

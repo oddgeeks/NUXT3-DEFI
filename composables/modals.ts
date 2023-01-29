@@ -6,7 +6,9 @@ import TopUpGas from "~~/components/modals/TopUpGas.vue";
 import WalletConnect from "~~/components/modals/WalletConnect.vue";
 import WalletConnectDetails from "~~/components/modals/WalletConnectDetails.vue";
 import TokenSelection from "~~/components/modals/TokenSelection.vue";
+import WCTransaction from "~~/components/modals/WCTransaction.vue";
 import Dialog from "~~/components/modals/Dialog.vue";
+import type IWalletConnect from "@walletconnect/client";
 
 const { openModal } = useModal();
 interface DialogModalProps {
@@ -22,6 +24,13 @@ interface DialogModalProps {
   cancelCallback?: () => void;
   buttonProps?: any;
   cancelButtonProps?: any;
+}
+
+interface IWcTransactionModal {
+  payload: any;
+  chainId: string;
+  modalId: string;
+  wc: IWalletConnect;
 }
 
 export const showPendingTransactionModal = (
@@ -55,7 +64,8 @@ export const openBridgeModal = (address: string, chainId: number | string) => {
 export const openSwapModal = (
   address: string,
   chainId: number | string,
-  toAddress?: string
+  toAddress?: string,
+  amount?: string
 ) => {
   openModal({
     component: Swap,
@@ -63,6 +73,7 @@ export const openSwapModal = (
       address,
       chainId,
       toAddress,
+      amount,
     },
     options: {
       wrapperClass: "max-w-[600px]",
@@ -111,6 +122,19 @@ export const openTokenSelectionModal = async (params: any) => {
     },
     options: {
       contentClass: "!px-2.5",
+    },
+  });
+};
+
+export const openWCTransactionModal = async (params: IWcTransactionModal) => {
+  return openModal({
+    id: params.modalId,
+    component: WCTransaction,
+    async: true,
+    componentProps: {
+      payload: params.payload,
+      chainId: params.chainId,
+      wc: params.wc,
     },
   });
 };

@@ -33,7 +33,7 @@ const priceDiffColor = computed(() => {
     return "#EB5757";
   }
 
-  return "rgb(74 222 128)";
+  return "#89BA4F";
 });
 
 const chartData = computed(() => ({

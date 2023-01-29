@@ -57,7 +57,7 @@ async function openModal({
   success: boolean;
   payload: any;
 }> {
-  const id = Math.random().toString(36).substr(2, 9);
+  const id = params.id || Math.random().toString(36).substr(2, 9);
 
   const destroy = () => {
     modals.value = modals.value.filter((m) => m.id !== id);
