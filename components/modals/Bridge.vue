@@ -251,7 +251,7 @@ const { data, error, pending } = useAsyncData(
     const { valid } = await validate();
 
     if (!valid) return;
-    if(!bridgeToToken.value) throw new Error("No bridge token found");
+    if (!bridgeToToken.value) throw new Error("No bridge token found");
 
     const transferAmount = toBN(amount.value || "0")
       .times(10 ** bridgeToToken.value.decimals)
@@ -353,11 +353,17 @@ const handleSwapToken = () => {
 
   emit("destroy");
 
-  const fromAmount = toBN(fees.value.gas.amount).times(nativeCurrency.value?.price || "0").div(
-    fromAddress?.price || "0"
-  ).toFixed()
+  const fromAmount = toBN(fees.value.gas.amount)
+    .times(nativeCurrency.value?.price || "0")
+    .div(fromAddress?.price || "0")
+    .toFixed();
 
-  openSwapModal(fromAddress?.address!, props.chainId, nativeCurrency.value?.address!, fromAmount);
+  openSwapModal(
+    fromAddress?.address!,
+    props.chainId,
+    nativeCurrency.value?.address!,
+    fromAmount
+  );
 };
 
 const getTxs = async () => {
@@ -483,8 +489,8 @@ const onSubmit = handleSubmit(async () => {
     <div class="flex flex-col gap-5">
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
-          <h1>Transfer from</h1>
-          <span class="uppercase">{{ token.balance }} {{ token.symbol }}</span>
+          <h1 class="text-sm">Transfer from</h1>
+          <span class="uppercase text-sm">{{ token.balance }} {{ token.symbol }}</span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -518,7 +524,7 @@ const onSubmit = handleSubmit(async () => {
       </div>
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
-          <h1>Transfer to</h1>
+          <h1 class="text-sm">Transfer to</h1>
         </div>
         <div class="px-5 pt-[14px] pb-5 dark:bg-gray-850 bg-slate-50 rounded-5">
           <div class="flex flex-col gap-5">
@@ -537,7 +543,9 @@ const onSubmit = handleSubmit(async () => {
                     :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
                     onerror="this.onerror=null; this.remove();"
                   />
-                  <span class="text-sm w-full leading-5 text-shadow overflow-hidden whitespace-nowrap">
+                  <span
+                    class="text-sm w-full leading-5 text-shadow overflow-hidden whitespace-nowrap"
+                  >
                     {{ token.name }}
                     <span class="uppercase"> ({{ token.symbol }})</span>
                   </span>
@@ -564,11 +572,23 @@ const onSubmit = handleSubmit(async () => {
 
             <div class="flex flex-col gap-2.5">
               <div class="flex justify-between items-center">
-                <span class="text-slate-400 text-sm font-semibold"
+                <span class="text-sm text-slate-400 font-medium">
+                  Estimated processing time
+                </span>
+                <span class="text-slate-400 font-medium">
+                  {{
+                    txRoute
+                      ? `~${Math.round(txRoute.serviceTime / 60)}m`
+                      : "~10m"
+                  }}
+                </span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400 text-sm font-medium"
                   >Bridge Fee</span
                 >
                 <span
-                  class="text-slate-400 text-sm font-semibold text-right uppercase"
+                  class="text-slate-400 text-sm font-medium text-right uppercase"
                 >
                   {{ formatDecimal(fees.bridge?.amount, 4) }}
 
@@ -578,11 +598,11 @@ const onSubmit = handleSubmit(async () => {
                 </span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-slate-400 text-sm font-semibold"
+                <span class="text-slate-400 text-sm font-medium"
                   >Source Gas Fee</span
                 >
                 <span
-                  class="text-slate-400 text-sm font-semibold text-right uppercase"
+                  class="text-slate-400 text-sm font-medium text-right uppercase"
                 >
                   {{ formatDecimal(fees.gas?.amount, 4) }}
                   {{ fees.gas.asset.symbol }}
@@ -625,6 +645,7 @@ const onSubmit = handleSubmit(async () => {
           </div>
         </div>
       </div>
+      <EstimatedFee :chain-id="chainId" :loading="feePending" :data="fee" />
     </div>
 
     <div class="flex gap-4 flex-col">
@@ -637,13 +658,6 @@ const onSubmit = handleSubmit(async () => {
       >
         Bridge
       </CommonButton>
-
-      <p class="text-xs text-center text-slate-400">
-        Estimated processing time is
-        {{ txRoute ? `~${Math.round(txRoute.serviceTime / 60)}m` : "~10m" }}.
-      </p>
-
-      <EstimatedFee :chain-id="chainId" :loading="feePending" :data="fee" />
 
       <Transition
         enter-active-class="duration-300 ease-out"

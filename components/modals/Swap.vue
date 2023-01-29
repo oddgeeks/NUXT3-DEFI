@@ -4,6 +4,7 @@ import { Erc20__factory } from "~~/contracts";
 import { useField, useForm } from "vee-validate";
 import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
 import RefreshSVG from "~/assets/images/icons/refresh.svg?component";
+import ArrowLeft from "~/assets/images/icons/arrow-left.svg?component";
 import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?component";
 import * as yup from "yup";
 import { storeToRefs } from "pinia";
@@ -341,14 +342,14 @@ onMounted(() => {
           <TokenSelection v-model="swap.sellToken" :tokens="availableTokens" />
         </div>
         <div class="flex justify-between items-center text-sm text-slate-400">
-          <div
+          <!-- <div
             v-if="pending && meta.valid"
             style="width: 100px; height: 20px"
             class="loading-box rounded-lg"
           />
-          <span v-else>{{ formatUsd(sellTokenInUsd) }}</span>
-          <div class="flex items-center gap-2.5 uppercase">
-            <span>{{ sellTokenBalance }} {{ swap.sellToken?.symbol }}</span>
+          <span v-else>{{ formatUsd(sellTokenInUsd) }}</span> -->
+          <div class="flex items-center ml-auto gap-2.5 uppercase">
+            <span class="font-medium">{{ sellTokenBalance }} {{ swap.sellToken?.symbol }}</span>
             <button
               type="button"
               @click="amount = sellTokenBalance"
@@ -369,7 +370,7 @@ onMounted(() => {
           @click="swapTokens"
           class="flex justify-center items-center absolute bg-slate-150 dark:bg-slate-600 ring-[6px] ring-white dark:ring-gray-950 rounded-full h-10 w-10 -bottom-[26px] left-1/2 -translate-x-1/2"
         >
-          <RefreshSVG class="w-[18px] h-[18px]" />
+         <ArrowLeft class="w-5 h-5 -rotate-90 text-slate-400" />
         </button>
       </div>
 
@@ -402,13 +403,13 @@ onMounted(() => {
         <div
           v-if="pending && meta.valid"
           style="width: 100px; height: 20px"
-          class="loading-box rounded-lg"
+          class="loading-box ml-auto rounded-lg"
         />
         <div
           v-else
-          class="flex justify-between items-center text-sm text-slate-400"
+          class="flex ml-auto items-center text-sm text-slate-400"
         >
-          <span>{{ formatUsd(buyTokenAmountInUsd, 6) }}</span>
+          <span class="font-medium">{{ formatUsd(buyTokenAmountInUsd, 6) }}</span>
         </div>
       </div>
     </div>
@@ -473,7 +474,7 @@ onMounted(() => {
 
             <div class="flex flex-col gap-4">
               <div
-                class="flex text-slate-400 uppercase text-sm justify-between items-center"
+                class="flex text-slate-400 font-medium uppercase text-sm justify-between items-center"
               >
                 <div
                   v-if="pending && meta.valid"
@@ -496,7 +497,7 @@ onMounted(() => {
                   {{ swap.sellToken?.symbol }}
                 </span>
               </div>
-              <div class="flex justify-between text-sm items-center">
+              <div class="flex justify-between text-sm items-center font-medium">
                 <span>Price Impact</span>
                 <div
                   v-if="pending && meta.valid"
@@ -515,7 +516,9 @@ onMounted(() => {
           </div>
         </div>
       </div>
+      <EstimatedFee :chain-id="chainId" :loading="feePending" :data="fee" />
     </div>
+
     <div class="flex gap-4 flex-col">
       <CommonButton
         type="submit"
@@ -528,7 +531,6 @@ onMounted(() => {
       </CommonButton>
     </div>
 
-    <EstimatedFee :chain-id="chainId" :loading="feePending" :data="fee" />
   </form>
 </template>
 
