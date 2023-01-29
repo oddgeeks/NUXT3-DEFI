@@ -537,9 +537,9 @@ const onSubmit = handleSubmit(async () => {
                     :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
                     onerror="this.onerror=null; this.remove();"
                   />
-                  <span class="text-sm leading-5">
+                  <span class="text-sm w-full leading-5 text-shadow overflow-hidden whitespace-nowrap">
                     {{ token.name }}
-                    <span class="uppercase">({{ token.symbol }})</span>
+                    <span class="uppercase"> ({{ token.symbol }})</span>
                   </span>
                 </div>
               </div>

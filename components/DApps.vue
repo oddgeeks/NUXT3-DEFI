@@ -211,23 +211,5 @@ watch(
   @apply pointer-events-auto flex items-center justify-center h-7.5 w-7.5 bg-slate-150 dark:bg-slate-750 rounded-full;
 }
 
-.text-shadow {
-  background: linear-gradient(90deg, #0f172a 85.41%, rgba(15, 23, 42, 0) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-fill-color: transparent;
-}
 
-html.dark .text-shadow {
-  background: linear-gradient(
-    90deg,
-    #ffffff 85.41%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-fill-color: transparent;
-}
 </style>
