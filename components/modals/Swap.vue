@@ -479,7 +479,12 @@ onMounted(() => {
           />
         </div>
         <div class="flex justify-between items-center text-sm text-slate-400">
-          <span>{{ formatUsd(buyAmountInUsd) }}</span>
+          <div
+            v-if="pending && meta.valid"
+            style="width: 100px; height: 20px"
+            class="loading-box rounded-lg"
+          />
+          <span v-else>{{ formatUsd(buyAmountInUsd) }}</span>
           <div class="flex items-center ml-auto gap-2.5 uppercase">
             <span class="font-medium"
               >{{ buyTokenBalance }} {{ swap.buyToken?.symbol }}</span
