@@ -2528,10 +2528,10 @@ available-typed-arrays@^1.0.5:
   resolved "https://registry.yarnpkg.com/available-typed-arrays/-/available-typed-arrays-1.0.5.tgz#92f95616501069d07d10edb2fc37d3e1c65123b7"
   integrity sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==
 
-avocado-safe@^0.0.35:
-  version "0.0.35"
-  resolved "https://registry.yarnpkg.com/avocado-safe/-/avocado-safe-0.0.35.tgz#7a1a8e76069f870f689d667d7187850a0238629e"
-  integrity sha512-c5dDNfSBoWQRsBfi2CZWf+faECg1gyWKpuktZ88xZfTm/gePOjT+s9Yd7Rglx9v5gfmGPiUwi3maUBK8GgJn1Q==
+avocado-safe@^0.0.38:
+  version "0.0.38"
+  resolved "https://registry.yarnpkg.com/avocado-safe/-/avocado-safe-0.0.38.tgz#a0313f2eb592431dd0fe82ae78a9392a36db775d"
+  integrity sha512-8bE5fbqEkpb5z+3jpAXCAw0PFSavTs1lm7WACY9YSqfHsEGCMTYq0rilYP+MfWTy2hu389qlMO23Dg13LJvueg==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
