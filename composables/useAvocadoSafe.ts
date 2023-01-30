@@ -14,7 +14,7 @@ export const useAvocadoSafe = () => {
   const signer = computed(() => (safe.value ? safe.value.getSigner() : null));
 
   watch(
-    library,
+    [library, account],
     () => {
       safe.value = library.value
         ? createSafe(library.value.getSigner())

@@ -275,11 +275,17 @@ const { data: fee, pending: feePending } = useAsyncData(
   "swap-fee",
   async () => {
     const txs = await getTxs();
-
     const message = await safe.value?.generateSignatureMessage(
       txs,
       +props.chainId
     );
+
+    console.log([
+      txs,
+      message,
+      account.value,
+      +props.chainId,
+    ])
 
     return provider.send("txn_estimateFeeWithoutSignature", [
       message,
