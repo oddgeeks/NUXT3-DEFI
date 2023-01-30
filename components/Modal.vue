@@ -77,7 +77,7 @@ whenever(escape, () => {
         >
           <div
             :class="options.wrapperClass"
-            class="inline-block w-full dark:bg-gray-950 bg-white rounded-7.5 my-auto text-left align-middle transition-all transform max-w-[460px]"
+            class="md:max-h-[95vh] overflow-y-overlay scroll-style inline-block w-full dark:bg-gray-950 bg-white rounded-7.5 my-auto text-left align-middle transition-all transform max-w-[460px]"
             role="dialog"
             aria-modal="true"
           >

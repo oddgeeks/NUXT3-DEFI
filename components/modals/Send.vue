@@ -205,7 +205,7 @@ const onSubmit = handleSubmit(async () => {
     <div class="flex flex-col justify-center gap-[15px] items-center">
       <h2>
         {{ token.name }}
-        <span class="uppercase"> ({{ token.symbol }}) </span>
+        <span class="uppercase text-lg"> ({{ token.symbol }}) </span>
       </h2>
 
       <div
@@ -221,8 +221,8 @@ const onSubmit = handleSubmit(async () => {
     <div class="space-y-5">
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
-          <span>Amount</span>
-          <span class="uppercase">{{ token.balance }} {{ token.symbol }}</span>
+          <span class="text-sm">Amount</span>
+          <span class="uppercase text-sm">{{ token.balance }} {{ token.symbol }}</span>
         </div>
         <CommonInput
           type="numeric"
@@ -245,7 +245,7 @@ const onSubmit = handleSubmit(async () => {
 
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
-          <span>Address To</span>
+          <span class="text-sm">Address To</span>
         </div>
 
         <CommonInput
@@ -270,7 +270,14 @@ const onSubmit = handleSubmit(async () => {
           </span>
         </div>
       </div>
+
+      <EstimatedFee
+      :chain-id="chainId"
+      :loading="meta.valid && pending"
+      :data="fee"
+    />
     </div>
+
 
     <CommonButton
       type="submit"
@@ -281,10 +288,6 @@ const onSubmit = handleSubmit(async () => {
     >
       Send
     </CommonButton>
-    <EstimatedFee
-      :chain-id="chainId"
-      :loading="meta.valid && pending"
-      :data="fee"
-    />
+    
   </form>
 </template>

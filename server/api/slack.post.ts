@@ -13,13 +13,18 @@ export default defineEventHandler(async (event) => {
     return {};
   }
 
-  const { type = "success", message } = await readBody(event);
+  let { type = "success", message } = await readBody(event);
 
   let channelId = slackKey;
 
   if (type === "error") {
     channelId = slackErrorKey;
   }
+
+  if(process.env.NODE_ENV === 'development') {
+    message += `\n${"`Development`"}`
+  }
+
 
   await axios
     .post(
