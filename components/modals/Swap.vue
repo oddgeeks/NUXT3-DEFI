@@ -229,7 +229,7 @@ const { data: swapDetails, pending } = useAsyncData(
 
 const bestRoute = computed(() => swapDetails.value?.aggregators[0] || null);
 
-const sellTokenInUsd = computed(() => {
+const sellAmountInUsd = computed(() => {
   return toBN(
     fromWei(
       swapDetails.value?.data.sellTokenAmount || 0,
@@ -240,7 +240,7 @@ const sellTokenInUsd = computed(() => {
     .toFixed(2);
 });
 
-const buyTokenInUsd = computed(() => {
+const buyAmountInUsd = computed(() => {
   return toBN(
     fromWei(
       swapDetails.value?.data.buyTokenAmount || 0,
@@ -332,10 +332,20 @@ const onSubmit = handleSubmit(async () => {
 
     const transactionHash = await sendTransactions(txs, +props.chainId);
 
+    const buyAmt = fromWei(
+      swapDetails.value?.data.buyTokenAmount || 0,
+      swapDetails.value?.data.buyToken.decimals
+    ).toFixed();
+
+    const sellAmt = fromWei(
+      swapDetails.value?.data.sellTokenAmount || 0,
+      swapDetails.value?.data.sellToken.decimals
+    ).toFixed();
+
     logActionToSlack({
-      message: `${formatDecimal(sellAmount.value)} ${formatSymbol(
+      message: `${formatDecimal(sellAmt)} ${formatSymbol(
         swap.value.sellToken.symbol
-      )} to ${formatDecimal(buyAmount.value.toFixed())} ${formatSymbol(
+      )} to ${formatDecimal(buyAmt)} ${formatSymbol(
         swap.value.buyToken.symbol
       )}`,
       action: "swap",
@@ -421,7 +431,7 @@ onMounted(() => {
             style="width: 100px; height: 20px"
             class="loading-box rounded-lg"
           />
-          <span v-else>{{ formatUsd(sellTokenInUsd) }}</span>
+          <span v-else>{{ formatUsd(sellAmountInUsd) }}</span>
           <div class="flex items-center ml-auto gap-2.5 uppercase">
             <span class="font-medium"
               >{{ sellTokenBalance }} {{ swap.sellToken?.symbol }}</span
@@ -469,7 +479,7 @@ onMounted(() => {
           />
         </div>
         <div class="flex justify-between items-center text-sm text-slate-400">
-          <span>{{ formatUsd(buyTokenInUsd) }}</span>
+          <span>{{ formatUsd(buyAmountInUsd) }}</span>
           <div class="flex items-center ml-auto gap-2.5 uppercase">
             <span class="font-medium"
               >{{ buyTokenBalance }} {{ swap.buyToken?.symbol }}</span
