@@ -490,7 +490,9 @@ const onSubmit = handleSubmit(async () => {
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
           <h1 class="text-sm">Transfer from</h1>
-          <span class="uppercase text-sm">{{ token.balance }} {{ token.symbol }}</span>
+          <span class="uppercase text-sm"
+            >{{ token.balance }} {{ token.symbol }}</span
+          >
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -609,26 +611,6 @@ const onSubmit = handleSubmit(async () => {
                   ({{ formatUsd(fees.gas.feesInUsd) }})
                 </span>
               </div>
-              <div
-                v-if="!isGasBalanceSufficient"
-                class="flex items-center justify-between bg-red-alert bg-opacity-10 rounded-7.5 text-red-alert py-2.5 px-[14px]"
-              >
-                <div class="flex items-center gap-2.5">
-                  <SVGInfo class="w-[18px] h-[18px]" />
-                  <p class="text-sm">
-                    Not enough
-                    <span class="uppercase">{{ fees.gas.asset.symbol }}</span>
-                    balance
-                  </p>
-                </div>
-                <CommonButton
-                  @click="handleSwapToken"
-                  class="h-7.5 flex gap-[6px] items-center justify-center text-sm px-[14px]"
-                >
-                  <RefreshSVG class="w-[14px] h-[14px]" />
-                  Swap Token
-                </CommonButton>
-              </div>
             </div>
 
             <div class="divider" />
@@ -646,6 +628,22 @@ const onSubmit = handleSubmit(async () => {
         </div>
       </div>
       <EstimatedFee :chain-id="chainId" :loading="feePending" :data="fee" />
+      <CommonNotification
+        v-if="!isGasBalanceSufficient"
+        type="error"
+        :text="`Not enough ${fees.gas.asset.symbol.toUpperCase()} balance`"
+      >
+        <template #action>
+          <CommonButton
+            @click="handleSwapToken"
+            class="h-7.5 flex gap-[6px] items-center justify-center text-sm px-[14px]"
+          >
+            <RefreshSVG class="w-[14px] h-[14px]" />
+            Swap Token
+          </CommonButton>
+        </template>
+      </CommonNotification>
+      <CommonNotification v-if="error" type="warning" :text="error.message" />
     </div>
 
     <div class="flex gap-4 flex-col">
@@ -658,24 +656,6 @@ const onSubmit = handleSubmit(async () => {
       >
         Bridge
       </CommonButton>
-
-      <Transition
-        enter-active-class="duration-300 ease-out"
-        enter-from-class="transform opacity-0"
-        enter-to-class="opacity-100"
-        leave-active-class="duration-200 ease-in"
-        leave-from-class="opacity-100"
-        leave-to-class="transform opacity-0"
-      >
-        <div
-          v-if="error"
-          class="bg-orange-400 gap-[15px] w-full justify-center flex bg-opacity-10 text-orange-400 rounded-5 p-4 text-sm text-center"
-        >
-          <span class="text-xs self-center">
-            {{ error }}
-          </span>
-        </div>
-      </Transition>
     </div>
   </form>
 </template>

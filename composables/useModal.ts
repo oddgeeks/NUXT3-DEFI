@@ -61,6 +61,10 @@ async function openModal({
 
   const destroy = () => {
     modals.value = modals.value.filter((m) => m.id !== id);
+
+    if (!modals.value.length) {
+      document.body.classList.remove("overflow-hidden");
+    }
   };
 
   const mergedOptions = Object.assign({}, defaultOptions(), options);
@@ -76,6 +80,10 @@ async function openModal({
     options: mergedOptions,
     ...params,
   };
+
+  if (!modals.value.length) {
+    document.body.classList.add("overflow-hidden");
+  }
 
   modals.value.push(modal);
 
