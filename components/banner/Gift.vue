@@ -1,3 +1,5 @@
+<script setup lang="ts"></script>
+
 <template>
     <div class="bg-green-400 bg-opacity-10 rounded-5 py-[15px] items-center justify-center flex gap-[15px]">
         <span>🎁</span>
