@@ -3,7 +3,6 @@ import type { IToken } from "~~/stores/tokens";
 import { Erc20__factory } from "~~/contracts";
 import { useField, useForm } from "vee-validate";
 import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
-import RefreshSVG from "~/assets/images/icons/refresh.svg?component";
 import ArrowLeft from "~/assets/images/icons/arrow-left.svg?component";
 import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?component";
 import * as yup from "yup";
@@ -59,6 +58,9 @@ const slippages = [
   { value: "3", label: "3%" },
 ];
 
+const [swapped, toggleSwapped] = useToggle();
+const [isBuyAmountDirty, toggleDirty] = useToggle(false);
+
 const swap = ref<ISwap>({
   sellToken: getTokenByAddress(props.address, props.chainId)!,
   buyToken: getTokenByAddress(props.address, props.chainId)!,
@@ -80,28 +82,45 @@ const sellTokenBalance = computed(
     )?.balance || "0.00"
 );
 
+const buyTokenBalance = computed(
+  () =>
+    chainTokenBalances.value[String(props.chainId)].find(
+      (t) => t.address === swap.value.buyToken.address
+    )?.balance || "0.00"
+);
+
+watch([() => swap.value.sellToken, () => swap.value.buyToken], () => {
+  toggleSwapped();
+});
+
+const validateMinAmount = (value: any) => {
+  const amount = toBN(value);
+
+  return value ? amount.gt(0) : true;
+};
+
+const validateMaxAmount = (value: any, balance: string) => {
+  const amount = toBN(value);
+
+  return amount.gt(0) ? amount.lte(toBN(balance)) : true;
+};
+
 const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
   useForm({
     initialValues: {
-      amount: undefined,
+      "sell-amount": undefined,
+      "buy-amount": undefined,
       customSlippage: undefined,
       slippage: "2",
     },
     validationSchema: yup.object({
-      amount: yup
+      "sell-amount": yup
         .string()
         .required("")
-        .test("min-amount", "", (value) => {
-          const amount = toBN(value);
-
-          return value ? amount.gt(0) : true;
-        })
-        .test("max-amount", "Insufficient balance", (value) => {
-          const amount = toBN(value);
-          const balance = toBN(sellTokenBalance.value);
-
-          return amount.gt(0) ? amount.lte(balance) : true;
-        }),
+        .test("min-amount", "", validateMinAmount)
+        .test("max-amount", "Insufficient balance", (val: any) =>
+          validateMaxAmount(val, sellTokenBalance.value)
+        ),
       slippage: yup.string().required(),
       customSlippage: yup
         .string()
@@ -115,14 +134,50 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
     }),
   });
 
+const buyAmount = ref();
 const {
-  value: amount,
-  meta: amountMeta,
-  setState,
-} = useField<string>("amount");
+  value: sellAmount,
+  meta: sellAmountMeta,
+  setState: setSellAmount,
+} = useField<string>("sell-amount");
+
 const { value: slippage } = useField<string>("slippage");
 const { value: customSlippage, meta: slippageMeta } =
   useField<string>("customSlippage");
+
+const convertBuytoSellAmount = (val: string) => {
+  const sellTokenPrice = swap.value.sellToken.price;
+  const buyTokenPrice = swap.value.buyToken.price;
+
+  if (!sellTokenPrice || !buyTokenPrice) return;
+
+  const buyAmountInSellAmount = formatDecimal(
+    toBN(val).div(toBN(sellTokenPrice)).times(toBN(buyTokenPrice)).toFixed(),
+    6
+  );
+
+  setSellAmount({
+    touched: true,
+    value: buyAmountInSellAmount,
+  });
+};
+
+const handleBuyAmountInput = (e: any) => {
+  const val = e.target.value;
+
+  if (val) convertBuytoSellAmount(val);
+
+  toggleDirty(true);
+};
+
+const setMax = () => {
+  toggleDirty(false);
+  sellAmount.value = sellTokenBalance.value;
+};
+
+const handleSellAmountInput = () => {
+  toggleDirty(false);
+};
 
 const sendingDisabled = computed(
   () => isSubmitting.value || pending.value || !meta.value.valid
@@ -143,7 +198,7 @@ const { data: swapDetails, pending } = useAsyncData(
           ).name.toLowerCase(),
           buyToken: swap.value.buyToken.address,
           sellToken: swap.value.sellToken.address,
-          sellAmount: toWei(amount.value, swap.value.sellToken.decimals),
+          sellAmount: toWei(sellAmount.value, swap.value.sellToken.decimals),
           maxSlippage: customSlippage.value || slippage.value,
           slippage: slippage.value,
           user: safeAddress.value,
@@ -152,11 +207,23 @@ const { data: swapDetails, pending } = useAsyncData(
       }
     );
 
+    const bestRoute = data?.aggregators[0];
+
+    if (bestRoute && !isBuyAmountDirty.value) {
+      buyAmount.value = formatDecimal(
+        fromWei(
+          bestRoute.data.buyTokenAmount,
+          bestRoute.data.buyToken.decimals
+        ).toFixed(),
+        6
+      );
+    }
+
     return data;
   },
   {
     server: false,
-    watch: [amount, swap.value, slippage, customSlippage],
+    watch: [sellAmount, swapped, slippage, customSlippage],
   }
 );
 
@@ -173,28 +240,26 @@ const sellTokenInUsd = computed(() => {
     .toFixed(2);
 });
 
-const buyTokenAmount = computed(() => {
-  return fromWei(
-    swapDetails.value?.data.buyTokenAmount || 0,
-    swapDetails.value?.data.buyToken.decimals
-  );
+const buyTokenInUsd = computed(() => {
+  return toBN(
+    fromWei(
+      swapDetails.value?.data.buyTokenAmount || 0,
+      swapDetails.value?.data.buyToken.decimals
+    )
+  )
+    .times(swapDetails.value?.data.buyToken.price || 0)
+    .toFixed(2);
 });
 
 const buyTokenAmountPerSellToken = computed(() => {
-  if (!amount.value || !buyTokenAmount.value) return "0.00";
-  return formatDecimal(div(buyTokenAmount.value, amount.value));
+  if (!sellAmount.value || !buyAmount.value) return "0.00";
+  return formatDecimal(div(buyAmount.value, sellAmount.value).toFixed());
 });
 
 const sellTokenAmountPerBuyToken = computed(() => {
-  if (!amount.value || !buyTokenAmount.value) return "0.00";
+  if (!sellAmount.value || !buyAmount.value) return "0.00";
 
-  return formatDecimal(div(amount.value, buyTokenAmount.value));
-});
-
-const buyTokenAmountInUsd = computed(() => {
-  return toBN(buyTokenAmount.value).times(
-    swapDetails.value?.data.buyToken.price || 0
-  );
+  return formatDecimal(div(sellAmount.value, buyAmount.value).toFixed());
 });
 
 const swapTokens = () => {
@@ -203,6 +268,7 @@ const swapTokens = () => {
 
   swap.value.buyToken = sellTemp;
   swap.value.sellToken = buyTemp;
+  toggleSwapped();
 };
 
 const { data: fee, pending: feePending } = useAsyncData(
@@ -267,9 +333,9 @@ const onSubmit = handleSubmit(async () => {
     const transactionHash = await sendTransactions(txs, +props.chainId);
 
     logActionToSlack({
-      message: `${formatDecimal(amount.value)} ${formatSymbol(
+      message: `${formatDecimal(sellAmount.value)} ${formatSymbol(
         swap.value.sellToken.symbol
-      )} to ${formatDecimal(buyTokenAmount.value.toFixed())} ${formatSymbol(
+      )} to ${formatDecimal(buyAmount.value.toFixed())} ${formatSymbol(
         swap.value.buyToken.symbol
       )}`,
       action: "swap",
@@ -306,7 +372,7 @@ onMounted(() => {
   )!;
 
   if (props.amount) {
-    setState({
+    setSellAmount({
       value: props.amount,
       touched: true,
     });
@@ -338,43 +404,38 @@ onMounted(() => {
           <CommonInput
             autofocus
             transparent
-            type="numeric"
-            min="0.000001"
-            step="0.000001"
             placeholder="0.0"
-            name="amount"
-            v-model="amount"
+            name="sell-amount"
+            @input="handleSellAmountInput"
+            v-model="sellAmount"
+            type="numeric"
             class="flex-1"
-            input-classes="text-[26px] placeholder:text-[26px]"
-            container-classes="!p-0"
+            input-classes="text-[26px] placeholder:text-[26px] !p-0 leading-[48px] rounded-none"
+            container-classes="!px-0"
           />
           <TokenSelection v-model="swap.sellToken" :tokens="availableTokens" />
         </div>
         <div class="flex justify-between items-center text-sm text-slate-400">
-          <!-- <div
+          <div
             v-if="pending && meta.valid"
             style="width: 100px; height: 20px"
             class="loading-box rounded-lg"
           />
-          <span v-else>{{ formatUsd(sellTokenInUsd) }}</span> -->
+          <span v-else>{{ formatUsd(sellTokenInUsd) }}</span>
           <div class="flex items-center ml-auto gap-2.5 uppercase">
             <span class="font-medium"
               >{{ sellTokenBalance }} {{ swap.sellToken?.symbol }}</span
             >
-            <button
-              type="button"
-              @click="amount = sellTokenBalance"
-              class="text-blue-500"
-            >
+            <button type="button" @click="setMax" class="text-blue-500">
               MAX
             </button>
           </div>
         </div>
         <span
-          v-if="amountMeta.dirty && errors['amount']"
+          v-if="sellAmountMeta.dirty && errors['sell-amount']"
           class="text-xs flex gap-2 items-center text-left mt-2 text-red-alert"
         >
-          <SVGInfo /> {{ errors["amount"] }}
+          <SVGInfo /> {{ errors["sell-amount"] }}
         </span>
         <button
           type="button"
@@ -390,20 +451,16 @@ onMounted(() => {
       >
         <div class="flex">
           <div class="flex-1 flex items-center">
-            <div
-              v-if="pending && meta.valid"
-              style="width: 100px; height: 34px"
-              class="loading-box rounded-[10px]"
-            />
             <CommonInput
-              v-else
               transparent
-              readonly
+              type="numeric"
               placeholder="0.0"
-              name="buy-token"
-              :model-value="buyTokenAmount.toFixed(3)"
-              container-classes="!py-0 !p-0"
-              input-classes="!py-0 !p-0 text-[26px]"
+              name="buy-amount"
+              @input="handleBuyAmountInput"
+              v-model="buyAmount"
+              class="flex-1"
+              input-classes="text-[26px] placeholder:text-[26px] !p-0 leading-[48px] rounded-none"
+              container-classes="!px-0"
             />
           </div>
           <TokenSelection
@@ -411,15 +468,13 @@ onMounted(() => {
             :tokens="availableBuyTokens"
           />
         </div>
-        <div
-          v-if="pending && meta.valid"
-          style="width: 100px; height: 20px"
-          class="loading-box ml-auto rounded-lg"
-        />
-        <div v-else class="flex ml-auto items-center text-sm text-slate-400">
-          <span class="font-medium">{{
-            formatUsd(buyTokenAmountInUsd, 6)
-          }}</span>
+        <div class="flex justify-between items-center text-sm text-slate-400">
+          <span>{{ formatUsd(buyTokenInUsd) }}</span>
+          <div class="flex items-center ml-auto gap-2.5 uppercase">
+            <span class="font-medium"
+              >{{ buyTokenBalance }} {{ swap.buyToken?.symbol }}</span
+            >
+          </div>
         </div>
       </div>
     </div>
