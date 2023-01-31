@@ -2,6 +2,7 @@
 import type { IToken } from "~~/stores/tokens";
 import { Erc20__factory } from "~~/contracts";
 import { useField, useForm } from "vee-validate";
+import { formatBytes32String } from "@ethersproject/strings";
 import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
 import ArrowLeft from "~/assets/images/icons/arrow-left.svg?component";
 import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?component";
@@ -337,7 +338,19 @@ const onSubmit = handleSubmit(async () => {
   try {
     const txs = await getTxs();
 
-    const transactionHash = await sendTransactions(txs, +props.chainId);
+    const metadata = encodeSwapMetadata({
+      buyAmount: swapDetails.value?.data.buyTokenAmount!,
+      sellAmount: swapDetails.value?.data.sellTokenAmount!,
+      buyToken: swapDetails.value?.data.buyToken.address!,
+      sellToken: swap.value.sellToken.address,
+      receiver: account.value,
+      priceImpact: formatBytes32String(bestRoute.value?.data.priceImpact!),
+      slippage: formatBytes32String(customSlippage.value || slippage.value),
+    })
+
+    const transactionHash = await sendTransactions(txs, +props.chainId, {
+      metadata
+    });
 
     const buyAmt = fromWei(
       swapDetails.value?.data.buyTokenAmount || 0,

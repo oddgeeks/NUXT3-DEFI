@@ -246,13 +246,34 @@ type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim";
 type ISlackMessageType = "danger" | "error" | "success" | "banner";
 
 type MetadataProps = {
-  type: 'transfer' | 'bridge' | 'swap';
+  type: "transfer" | "bridge" | "swap";
   encodedData: string;
   version?: string;
-}
+};
 
 type SendMetadataProps = {
   token: string;
   amount: string;
-  reciever: string;
-}
+  receiver: string;
+};
+
+type BridgeMetadataProps = {
+  fromChainId: string;
+  toChainId: string;
+  amount: string;
+  receiver: string;
+  token: string;
+  bridgeFee: string;
+  nativeToken: string;
+  processingTime: string;
+};
+
+type SwapMetadataProps = {
+  sellToken: string;
+  buyToken: string;
+  sellAmount: string;
+  buyAmount: string;
+  receiver: string;
+  slippage: any;
+  priceImpact: any;
+};

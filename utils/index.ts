@@ -10,6 +10,25 @@ const metadataTypes = ["bytes32 type", "uint8 version", "bytes data"];
 
 const actionMetadataTypes = {
   transfer: ["address token", "uint256 amount", "address receiver"],
+  bridge: [
+    "uint256 fromChainId",
+    "uint256 toChainId",
+    "uint256 amount",
+    "address receiver",
+    "address token",
+    "uint256 bridgeFee",
+    "address nativeToken",
+    "uint256 processingTime",
+  ],
+  swap: [
+    "address sellToken",
+    "address buyToken",
+    "uint256 sellAmount",
+    "uint256 buyAmount",
+    "address receiver",
+    "bytes32 slippage",
+    "bytes32 priceImpact",
+  ],
 };
 
 export function shortenHash(hash: string, length: number = 4) {
@@ -244,11 +263,52 @@ export const calculateEstimatedFee = (params: FeeProps) => {
 export const encodeTransferMetadata = (params: SendMetadataProps) => {
   const encodedData = ethers.utils.defaultAbiCoder.encode(
     actionMetadataTypes.transfer,
-    [params.token, params.amount, params.reciever]
+    [params.token, params.amount, params.receiver]
   );
 
   return encodeMetadata({
     type: "transfer",
+    encodedData,
+  });
+};
+
+export const encodeSwapMetadata = (params: SwapMetadataProps) => {
+  const encodedData = ethers.utils.defaultAbiCoder.encode(
+    actionMetadataTypes.swap,
+    [
+      params.sellToken,
+      params.buyToken,
+      params.sellAmount,
+      params.buyAmount,
+      params.receiver,
+      params.slippage,
+      params.priceImpact,
+    ]
+  );
+
+  return encodeMetadata({
+    type: "swap",
+    encodedData,
+  });
+};
+
+export const encodeBridgeMetadata = (params: BridgeMetadataProps) => {
+  const encodedData = ethers.utils.defaultAbiCoder.encode(
+    actionMetadataTypes.bridge,
+    [
+      params.fromChainId,
+      params.toChainId,
+      params.amount,
+      params.receiver,
+      params.token,
+      params.bridgeFee,
+      params.nativeToken,
+      params.processingTime,
+    ]
+  );
+
+  return encodeMetadata({
+    type: "bridge",
     encodedData,
   });
 };
@@ -262,25 +322,63 @@ const encodeMetadata = (props: MetadataProps) => {
 };
 
 export const decodeMetadata = (data: string) => {
-  const iface = Forwarder__factory.createInterface();
-  const executeData = iface.decodeFunctionData("execute", data);
+  try {
+    const iface = Forwarder__factory.createInterface();
+    const executeData = iface.decodeFunctionData("execute", data);
 
-  if (executeData.metadata_ === "0x") return null;
+    if (executeData.metadata_ === "0x" || !executeData.metadata_) return null;
 
-  const decodedMetadata = ethers.utils.defaultAbiCoder.decode(
-    metadataTypes,
-    executeData.metadata_
-  );
+    const decodedMetadata = ethers.utils.defaultAbiCoder.decode(
+      metadataTypes,
+      executeData.metadata_
+    );
 
-  const type = ethers.utils.parseBytes32String(
-    decodedMetadata.type
-  ) as keyof typeof actionMetadataTypes;
+    const type = ethers.utils.parseBytes32String(
+      decodedMetadata.type
+    ) as keyof typeof actionMetadataTypes;
 
-  const decodedData = ethers.utils.defaultAbiCoder.decode(
-    actionMetadataTypes[type],
-    decodedMetadata.data
-  );
-  // Object.assign(decodedData, { type });
+    const decodedData = ethers.utils.defaultAbiCoder.decode(
+      actionMetadataTypes[type],
+      decodedMetadata.data
+    );
 
-  return decodedData;
+    switch (type) {
+      case "transfer":
+        return {
+          type,
+          token: decodedData.token,
+          amount: decodedData.amount,
+          receiver: decodedData.receiver,
+        };
+      case "bridge":
+        return {
+          type,
+          fromChainId: decodedData.fromChainId.toString(),
+          toChainId: decodedData.toChainId.toString(),
+          amount: decodedData.amount,
+          receiver: decodedData.receiver,
+          token: decodedData.token,
+          bridgeFee: decodedData.bridgeFee,
+          bridgeToken: decodedData.nativeToken,
+          processingTime: decodedData.processingTime,
+        };
+
+      case "swap":
+        return {
+          type,
+          buyAmount: decodedData.buyAmount,
+          sellAmount: decodedData.sellAmount,
+          buyToken: decodedData.buyToken,
+          sellToken: decodedData.sellToken,
+          priceImpact: decodedData.priceImpact,
+          receiver: decodedData.receiver,
+          slippage: decodedData.slippage,
+        };
+      default:
+        return null;
+    }
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
 };

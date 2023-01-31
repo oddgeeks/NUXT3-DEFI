@@ -154,7 +154,7 @@ const onSubmit = handleSubmit(async () => {
     const metadata = encodeTransferMetadata({
       token: token.value.address,
       amount: toWei(amount.value, token.value.decimals),
-      reciever: address.value,
+      receiver: address.value,
     });
 
     let transactionHash = await sendTransaction(

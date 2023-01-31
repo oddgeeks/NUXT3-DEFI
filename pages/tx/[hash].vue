@@ -8,18 +8,17 @@ const [transaction] = (await Promise.all([
     .catch(() => null),
 ])) as [IAvocadoTransaction];
 
-const metadata = decodeMetadata(transaction.data)
+const metadata = decodeMetadata(transaction.data);
 
 const locale = computed(() =>
   typeof window !== "undefined" ? window.navigator.language : "en"
 );
-
-
 </script>
 
 <template>
   <div class="container flex-1 md:pb-10">
     <h1 class="mb-5">Transaction Details</h1>
+
     <div
       v-if="transaction"
       class="dark:bg-gray-850 bg-slate-50 rounded-5.5 text-sm font-medium py-6.5"
@@ -167,7 +166,6 @@ const locale = computed(() =>
 
           <div v-else class="capitalize">-</div>
         </div>
-
       </div>
 
       <hr class="w-full dark:border-slate-800 border-slate-150" />
@@ -188,8 +186,31 @@ const locale = computed(() =>
         </div>
       </div>
 
-     <p>{{ metadata }}</p>
+      <div
+        v-if="metadata && metadata.type === 'bridge'"
+        class="flex flex-col pt-6.5 gap-6.5"
+      >
+        <hr class="w-full dark:border-slate-800 border-slate-150" />
 
+        <div class="flex items-center px-7.5">
+          <div
+            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]"
+          >
+            Bridge Transaction
+          </div>
+         <div class="flex items-center gap-2.5">
+           <a
+            class="text-blue-500"
+            :href="`https://socketscan.io/tx/${transaction.hash}`"
+            target="_blank"
+          >
+            {{ transaction.hash }}
+          </a>
+
+          <Copy :text="transaction.hash" />
+         </div>
+        </div>
+      </div>
     </div>
 
     <div
