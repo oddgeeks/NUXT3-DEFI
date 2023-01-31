@@ -252,14 +252,15 @@ const buyAmountInUsd = computed(() => {
 });
 
 const buyTokenAmountPerSellToken = computed(() => {
-  if (!sellAmount.value || !buyAmount.value) return "0.00";
-  return formatDecimal(div(buyAmount.value, sellAmount.value).toFixed());
+  const value = div(buyAmount.value, sellAmount.value)
+
+  return value.isFinite() ? formatDecimal(value.toFixed()) : "0.00" ;
 });
 
 const sellTokenAmountPerBuyToken = computed(() => {
-  if (!sellAmount.value || !buyAmount.value) return "0.00";
+  const value = div(sellAmount.value, buyAmount.value)
 
-  return formatDecimal(div(sellAmount.value, buyAmount.value).toFixed());
+  return value.isFinite() ? formatDecimal(value.toFixed()) : "0.00";
 });
 
 const swapTokens = () => {
