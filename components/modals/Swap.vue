@@ -296,7 +296,7 @@ const { data: fee, pending: feePending } = useAsyncData(
   },
   {
     server: false,
-    watch: [bestRoute, account],
+    watch: [bestRoute],
   }
 );
 
