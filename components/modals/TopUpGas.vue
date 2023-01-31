@@ -247,13 +247,7 @@ const onSubmit = handleSubmit(async () => {
     <div class="flex gap-4 flex-col">
       <h1 class="text-lg leading-5">Gas Balance</h1>
       <h2 class="text-xs text-slate-400 leading-5 font-medium">
-        You will be able to use this as gas on
-        <a
-          class="underline text-blue-500"
-          href="https://help.avocado.link/en/info/supported-chains"
-          target="_blank"
-          >any supported chain</a
-        >. The gas top-up transaction does not cost you any gas.
+        You will be able to use this as gas on any supported chain. Note that you need to have USDC in your Avocado wallet to add gas.
       </h2>
       <a
         href="https://help.avocado.link/en/getting-started/topping-up-gas-on-avocado"
