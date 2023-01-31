@@ -78,7 +78,7 @@ const handleSubmit = async() => {
     toggle(true)
     const params = props.payload?.params[0];
 
-    const hash = await safe.value?.sendTransaction({
+    const tx = await safe.value?.sendTransaction({
       ...params,
       chainId: props.chainId,
     });
@@ -86,7 +86,7 @@ const handleSubmit = async() => {
 
     props.wc.approveRequest({
       id:  props.payload.id,
-      result: hash,
+      result: tx!.hash,
     });
 
     emit("resolve");
