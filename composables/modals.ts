@@ -20,8 +20,6 @@ interface DialogModalProps {
   isCancelButtonVisible?: boolean;
   cancelButtonText?: string;
   buttonText?: string;
-  callback?: () => void;
-  cancelCallback?: () => void;
   buttonProps?: any;
   cancelButtonProps?: any;
 }
@@ -150,8 +148,6 @@ export const openDialogModal = async ({
   isCancelButtonVisible = false,
   buttonProps = {},
   cancelButtonProps = {},
-  cancelCallback = () => {},
-  callback = () => {},
 }: DialogModalProps) => {
   return await openModal({
     async: true,
@@ -163,8 +159,6 @@ export const openDialogModal = async ({
       type,
       buttonText,
       isButtonVisible,
-      callback,
-      cancelCallback,
       cancelButtonText,
       isCancelButtonVisible,
       buttonProps,
