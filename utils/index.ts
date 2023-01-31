@@ -3,7 +3,14 @@ import { BigNumber } from "bignumber.js";
 import { BigNumber as BN } from "ethers";
 import axios from "axios";
 import axiosRetry from "axios-retry";
+import { Forwarder__factory } from "@/contracts";
 import { RPC_URLS } from "~~/connectors";
+
+const metadataTypes = ["bytes32 type", "uint8 version", "bytes data"];
+
+const actionMetadataTypes = {
+  transfer: ["address token", "uint256 amount", "address receiver"],
+};
 
 export function shortenHash(hash: string, length: number = 4) {
   if (!hash) return;
@@ -132,7 +139,10 @@ function getFractionDigits(value: string | number) {
   }
 }
 
-export function formatDecimal(value: string, fractionDigits = getFractionDigits(value)) {
+export function formatDecimal(
+  value: string,
+  fractionDigits = getFractionDigits(value)
+) {
   if (!value) {
     value = "0";
   }
@@ -229,4 +239,48 @@ export const calculateEstimatedFee = (params: FeeProps) => {
   const avg = toBN(maxVal).plus(toBN(minVal)).dividedBy(2).toFormat();
 
   return `${formatDecimal(avg, 2)}`;
+};
+
+export const encodeTransferMetadata = (params: SendMetadataProps) => {
+  const encodedData = ethers.utils.defaultAbiCoder.encode(
+    actionMetadataTypes.transfer,
+    [params.token, params.amount, params.reciever]
+  );
+
+  return encodeMetadata({
+    type: "transfer",
+    encodedData,
+  });
+};
+
+const encodeMetadata = (props: MetadataProps) => {
+  return ethers.utils.defaultAbiCoder.encode(metadataTypes, [
+    ethers.utils.formatBytes32String(props.type),
+    props.version || "1",
+    props.encodedData,
+  ]);
+};
+
+export const decodeMetadata = (data: string) => {
+  const iface = Forwarder__factory.createInterface();
+  const executeData = iface.decodeFunctionData("execute", data);
+
+  if (executeData.metadata_ === "0x") return null;
+
+  const decodedMetadata = ethers.utils.defaultAbiCoder.decode(
+    metadataTypes,
+    executeData.metadata_
+  );
+
+  const type = ethers.utils.parseBytes32String(
+    decodedMetadata.type
+  ) as keyof typeof actionMetadataTypes;
+
+  const decodedData = ethers.utils.defaultAbiCoder.decode(
+    actionMetadataTypes[type],
+    decodedMetadata.data
+  );
+  // Object.assign(decodedData, { type });
+
+  return decodedData;
 };

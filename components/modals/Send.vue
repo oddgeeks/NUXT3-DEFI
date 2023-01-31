@@ -8,6 +8,7 @@ import { isAddress } from "@ethersproject/address";
 const provider = getRpcProvider(634);
 
 const emit = defineEmits(["destroy"]);
+const { toWei } = useBignumber();
 
 const props = defineProps({
   address: {
@@ -150,10 +151,21 @@ const onSubmit = handleSubmit(async () => {
 
     const tx = await getTx();
 
-    let transactionHash = await sendTransaction({
-      ...tx,
-      chainId: Number(props.chainId),
+    const metadata = encodeTransferMetadata({
+      token: token.value.address,
+      amount: toWei(amount.value, token.value.decimals),
+      reciever: address.value,
     });
+
+    let transactionHash = await sendTransaction(
+      {
+        ...tx,
+        chainId: Number(props.chainId),
+      },
+      {
+        metadata,
+      }
+    );
 
     console.log(transactionHash);
 
@@ -222,7 +234,9 @@ const onSubmit = handleSubmit(async () => {
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
           <span class="text-sm">Amount</span>
-          <span class="uppercase text-sm">{{ token.balance }} {{ token.symbol }}</span>
+          <span class="uppercase text-sm"
+            >{{ token.balance }} {{ token.symbol }}</span
+          >
         </div>
         <CommonInput
           type="numeric"
@@ -272,12 +286,11 @@ const onSubmit = handleSubmit(async () => {
       </div>
 
       <EstimatedFee
-      :chain-id="chainId"
-      :loading="meta.valid && pending"
-      :data="fee"
-    />
+        :chain-id="chainId"
+        :loading="meta.valid && pending"
+        :data="fee"
+      />
     </div>
-
 
     <CommonButton
       type="submit"
@@ -288,6 +301,5 @@ const onSubmit = handleSubmit(async () => {
     >
       Send
     </CommonButton>
-    
   </form>
 </template>
