@@ -12,6 +12,10 @@ const [transaction] = (await Promise.all([
 
 const metadata = decodeMetadata(transaction.data);
 
+onMounted(() => console.log({
+  metadata
+}))
+
 const locale = computed(() =>
   typeof window !== "undefined" ? window.navigator.language : "en"
 );
