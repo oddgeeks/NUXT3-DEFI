@@ -63,7 +63,7 @@ async function openModal({
     modals.value = modals.value.filter((m) => m.id !== id);
 
     if (!modals.value.length) {
-      document.body.classList.remove("overflow-hidden");
+      document.body.classList.remove("modal-open");
     }
   };
 
@@ -82,7 +82,7 @@ async function openModal({
   };
 
   if (!modals.value.length) {
-    document.body.classList.add("overflow-hidden");
+    document.body.classList.add("modal-open");
   }
 
   modals.value.push(modal);

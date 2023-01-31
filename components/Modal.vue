@@ -24,6 +24,8 @@ const props = withDefaults(
   }
 );
 
+const wrapperRef = ref<HTMLElement>();
+
 const handleDestory = () => {
   emit("destroy");
 
@@ -31,6 +33,15 @@ const handleDestory = () => {
     emit("reject");
   }
 };
+
+onClickOutside(wrapperRef, (event) => {
+  if(event.currentTarget) {
+    handleDestory()
+  }
+
+}, {
+  ignore:['.modal-content-wrapper']
+})
 
 whenever(escape, () => {
   if (props.inline && props.show) {
@@ -43,29 +54,10 @@ whenever(escape, () => {
 
 <template>
   <TransitionRoot appear as="template" :show="show">
-    <div class="fixed inset-0 z-40 overflow-y-auto">
+    <div class="fixed modal backrop-animation inset-0 z-40 overflow-y-auto bg-slate-200/20 backdrop-filter backdrop-blur-[4px]">
       <div
-        class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0"
+        class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0"
       >
-        <TransitionChild
-          as="template"
-          enter="ease-out duration-300"
-          enter-from="opacity-0"
-          enter-to="opacity-100"
-          leave="ease-in duration-200"
-          leave-from="opacity-100"
-          leave-to="opacity-0"
-        >
-          <div
-            @click="handleDestory()"
-            class="fixed inset-0 transition-opacity bg-slate-200/20 backdrop-filter backdrop-blur-[4px]"
-          />
-        </TransitionChild>
-        <span
-          class="hidden sm:inline-block sm:align-middle sm:h-screen"
-          aria-hidden="true"
-          >&#8203;</span
-        >
         <TransitionChild
           as="template"
           enter="ease-out duration-300"
@@ -77,13 +69,14 @@ whenever(escape, () => {
         >
           <div
             :class="options.wrapperClass"
-            class="md:max-h-[95vh] overflow-y-overlay scroll-style inline-block w-full dark:bg-gray-950 bg-white rounded-7.5 my-auto text-left align-middle transition-all transform max-w-[460px]"
+            class="inline-block w-full my-6 dark:bg-gray-950 bg-white rounded-7.5 text-left align-middle transition-all transform max-w-[460px]"
             role="dialog"
             aria-modal="true"
           >
             <div
+              ref="wrapperRef"
               :class="options.contentClass"
-              class="relative md:px-[50px] px-6 py-8 md:py-10 w-full"
+              class="modal-content-wrapper relative md:px-[50px] px-6 py-8 md:py-10 w-full"
             >
               <button
                 class="absolute h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100 top-0 right-0 m-6"
@@ -101,3 +94,19 @@ whenever(escape, () => {
     </div>
   </TransitionRoot>
 </template>
+
+<style scoped>
+.backrop-animation {
+  animation: backdrop-animation 300ms ease-out;
+}
+
+@keyframes backdrop-animation {
+  0% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+</style>
