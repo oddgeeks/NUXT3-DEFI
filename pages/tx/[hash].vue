@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
+
 const router = useRoute();
 const provider = getRpcProvider(634);
 
@@ -26,7 +28,7 @@ const locale = computed(() =>
       <div class="flex flex-col gap-6.5 px-7.5">
         <div class="flex items-center">
           <div
-            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]"
+            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
           >
             Transaction Hash
           </div>
@@ -45,7 +47,7 @@ const locale = computed(() =>
 
         <div class="flex items-center">
           <div
-            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]"
+            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
           >
             Broadcaster
           </div>
@@ -68,7 +70,7 @@ const locale = computed(() =>
 
         <div class="flex items-center">
           <div
-            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]"
+            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
           >
             Status
           </div>
@@ -77,7 +79,7 @@ const locale = computed(() =>
 
         <div class="flex items-center">
           <div
-            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]"
+            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
           >
             Timestamp
           </div>
@@ -94,7 +96,7 @@ const locale = computed(() =>
       <div class="px-7.5 py-6.5">
         <div class="flex items-center">
           <div
-            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]"
+            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
           >
             Network
           </div>
@@ -111,7 +113,7 @@ const locale = computed(() =>
       <div class="px-7.5 py-6.5 flex flex-col gap-6.5">
         <div class="flex items-center">
           <div
-            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]"
+            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
           >
             Signer
           </div>
@@ -140,7 +142,7 @@ const locale = computed(() =>
 
         <div class="flex items-center">
           <div
-            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]"
+            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
           >
             Avocado Wallet
           </div>
@@ -173,7 +175,7 @@ const locale = computed(() =>
       <div class="px-7.5 flex flex-col pt-6.5 gap-6.5">
         <div class="flex items-center">
           <div
-            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]"
+            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
           >
             Transaction Fee
           </div>
@@ -194,8 +196,10 @@ const locale = computed(() =>
 
         <div class="flex items-center px-7.5">
           <div
-            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[200px]"
+            class="dark:text-slate-400 gap-2.5 flex items-center text-slate-500 md:w-full md:max-w-[235px]"
           >
+           <SVGInfo  v-tippy="'This is a token bridging transaction. Click on the link to check the estimated time for the transaction to be processed.'" class="w-[18px] h-[18px] text-slate-600 shrink-0" />
+
             Bridge Transaction
           </div>
          <div class="flex items-center gap-2.5">
