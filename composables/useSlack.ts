@@ -17,7 +17,7 @@ const prefixes: Record<ISlackMessage["action"], string> = {
 };
 
 export const logActionToSlack = (slackMessage: ISlackMessage) => {
-  const {
+  let {
     type = "success",
     action,
     chainId,
@@ -29,9 +29,11 @@ export const logActionToSlack = (slackMessage: ISlackMessage) => {
   
   const explorerLink = chainId && txHash ? `<${getExplorerUrl(chainId, `/tx/${txHash}`)}|${shortenHash(txHash, 12)}>`: "";
   
-  const accountLink = chainId
-    ?  `<${getExplorerUrl(chainId, `/address/${account}`)}|${shortenHash(account, 12)}>`
-    : account;
+  const accountLink = `<https://avocado.link/?user=${account}|${shortenHash(account, 12)}>`
+
+  if (chainId) {
+    message += `\n${"`Network`"} :${chainIdToName(chainId)}:`;
+  }
 
   let logMessage = `${prefix} ${message}\n${"`User`"} ${accountLink}`;
 
