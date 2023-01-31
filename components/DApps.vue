@@ -54,8 +54,8 @@ const getSessionIconURL = (session: any) => {
   return null;
 };
 
-const disconnectAllConnections = () => {
-  openDialogModal({
+const disconnectAllConnections = async() => {
+  const { success } = await openDialogModal({
     title: "Are you sure you want to disconnect all?",
     type: "question",
     headerIconUrl: URLWalletConnect,
@@ -69,8 +69,11 @@ const disconnectAllConnections = () => {
     buttonProps: {
       color: "red",
     },
-    callback: () => wcStore.disconnectAll(),
   });
+
+  if (success) {
+    wcStore.disconnectAll()
+  }
 };
 
 watch(
