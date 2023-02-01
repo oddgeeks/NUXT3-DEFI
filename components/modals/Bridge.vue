@@ -251,7 +251,7 @@ const { data, error, pending } = useAsyncData(
     const { valid } = await validate();
 
     if (!valid) return;
-    if (!bridgeToToken.value) throw new Error("No bridge token found");
+    if (!bridgeToToken.value) throw new Error("Token not found on destination chain");
 
     const transferAmount = toBN(amount.value || "0")
       .times(10 ** bridgeToToken.value.decimals)
