@@ -2,7 +2,7 @@ interface Window {
   ethereum: any;
 }
 
-type ITxType = "send" | "swap" | "bridge" | "topUpGas";
+type ITxType = "send" | "swap" | "bridge" | "topUpGas" | "wc";
 interface Provider {
   id: string;
   name: string;
@@ -244,3 +244,9 @@ type IOptions = {
 type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim";
 
 type ISlackMessageType = "danger" | "error" | "success" | "banner";
+
+type CalculateFeeProps = {
+  fee: string;
+  multiplier: string;
+  chainId: string;
+};

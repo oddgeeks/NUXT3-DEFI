@@ -1,8 +1,8 @@
 <script lang="ts" setup>
+import GasSVG from "~/assets/images/icons/gas.svg?component";
+import NetworkSVG from "~/assets/images/icons/network.svg?component";
 import type WalletConnect from "@walletconnect/client";
 import { storeToRefs } from "pinia";
-import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
-import ChevronDownSVG from "~/assets/images/icons/chevron-down.svg?component";
 
 const provider = getRpcProvider(634);
 const emit = defineEmits(["resolve", "reject"]);
@@ -10,15 +10,15 @@ const emit = defineEmits(["resolve", "reject"]);
 const props = defineProps<{
   payload: any;
   chainId: string;
-  wc: WalletConnect
+  wc: WalletConnect;
 }>();
 
 const { safe } = useAvocadoSafe();
-const { account } = useWeb3()
+const { account } = useWeb3();
 const { gasBalance } = storeToRefs(useSafe());
-const [submitting, toggle] = useToggle()
+const [submitting, toggle] = useToggle();
 const { switchNetworkByChainId } = useNetworks();
-
+const { parseTransactionError } = useErrorHandler();
 
 const { data: fee, pending } = useAsyncData(
   "swap-fee",
@@ -28,26 +28,31 @@ const { data: fee, pending } = useAsyncData(
       +props.chainId
     );
 
-    return provider.send("txn_estimateFeeWithoutSignature", [
+    const data = await provider.send("txn_estimateFeeWithoutSignature", [
       message,
       account.value,
       props.chainId,
     ]);
+
+    return calculateEstimatedFee({ chainId: props.chainId, ...data });
   },
   {
     server: false,
     immediate: true,
+    default: () => ({
+      min: 0,
+      max: 0,
+      formatted: "$0.00",
+    }),
   }
 );
 
-const formattedFee = computed(() =>
-  calculateEstimatedFee({ chanId: props.chainId, ...fee.value })
-);
+const submitDisabled = computed(()=> submitting.value || pending.value || isBalaceNotEnough.value)
 
-// const exceedsGasBalance = computed(() => {
-//   if (pending.value) return false
-//   return  lt(gasBalance.value, formattedFee.value)
-// });
+const isBalaceNotEnough = computed(() => {
+  if (pending.value) return false;
+  return toBN(gasBalance.value).lt(fee.value?.max!);
+});
 
 onMounted(() => {
   document.title = "(1) Avocado";
@@ -62,20 +67,20 @@ onBeforeUnmount(() => {
 });
 
 const rejectRequest = (message: string) => {
-   props.wc.rejectRequest({
-      id:  props.payload.id,
-      error: {
-        code: -32603,
-        message: message,
-      },
-    });
-}
+  props.wc.rejectRequest({
+    id: props.payload.id,
+    error: {
+      code: -32603,
+      message: message,
+    },
+  });
+};
 
-const handleSubmit = async() => {
+const handleSubmit = async () => {
   try {
     await switchNetworkByChainId(634);
 
-    toggle(true)
+    toggle(true);
     const params = props.payload?.params[0];
 
     const tx = await safe.value?.sendTransaction({
@@ -83,95 +88,115 @@ const handleSubmit = async() => {
       chainId: props.chainId,
     });
 
-
     props.wc.approveRequest({
-      id:  props.payload.id,
-      result: tx!.hash,
+      id: props.payload.id,
+      result: tx?.hash,
+    });
+
+    logActionToSlack({
+      message: `Txn on ${props.wc.peerMeta?.url}`,
+      type: "success",
+      action: "wc",
+      txHash: tx?.hash,
+      chainId: props.chainId,
+      account: account.value,
     });
 
     emit("resolve");
-  } catch (error: any) {
-    rejectRequest(error.message)
+
+    showPendingTransactionModal(tx?.hash!, props.chainId, "wc");
+  } catch (e) {
+    const err = parseTransactionError(e);
+
+    openSnackbar({
+      message: err,
+      type: "error",
+    });
+
+    logActionToSlack({
+      message: props.wc.peerMeta?.url + ' ' + err,
+      type: "error",
+      action: "wc",
+      chainId: props.chainId,
+      account: account.value,
+    });
+     
   } finally {
-    toggle(false)
+    toggle(false);
   }
 };
 
 const handleReject = () => {
-  rejectRequest('Rejected')
+  rejectRequest("Rejected");
   emit("reject");
-}
-
+};
 </script>
 
 <template>
   <form @submit.prevent="handleSubmit" class="flex flex-col gap-7.5">
-    <audio src="/audio/alert.mp3" autoplay></audio>
-    <div class="text-center">
-      <div
-        class="w-10 h-10 mb-7.5 rounded-full bg-blue-500 flex items-center justify-center mx-auto"
-      >
-        <ArrowRight class="-rotate-45" />
-      </div>
-      <h1 class="mb-[14px] text-lg leading-5">Send Transaction</h1>
-      <div class="flex flex-col justify-center gap-[15px] items-center">
-        <div
-          class="dark:bg-gray-850 bg-slate-50 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]"
-        >
-          <ChainLogo class="w-5 h-5" :chain="chainId" />
-          <span class="text-xs text-slate-400 leading-5">{{
-            chainIdToName(chainId)
-          }}</span>
-        </div>
-      </div>
-    </div>
-    <div class="flex flex-col gap-4">
-      <div class="px-[18px] py-[14px] rounded-5 bg-slate-50 dark:bg-gray-850">
-        <div class="flex flex-col gap-2.5">
-          <dl class="text-xs font-medium flex justify-between">
-            <dt class="text-slate-400">Estimated transaction fee</dt>
-            <dd class="loading-box rounded-5 w-16 h-5" v-if="pending"></dd>
-            <dd v-else>{{ formattedFee }} USDC</dd>
-          </dl>
-          <dl class="text-xs font-medium flex justify-between">
-            <dt class="text-slate-400">Transaction nonce</dt>
-            <dd>91</dd>
-          </dl>
-        </div>
-        <details class="mt-4">
-          <summary class="w-full flex items-center justify-between">
-            <span class="text-xs">Advanced</span>
-            <ChevronDownSVG class="text-slate-400" />
-          </summary>
-          <dl class="text-xs font-medium flex justify-between mt-2.5">
-            <dt class="text-slate-400">Gas limit</dt>
-            <dd>13400000</dd>
-          </dl>
-        </details>
-      </div>
+    <div class="text-lg font-semibold leading-[30px]">Send Transaction</div>
 
-      <div class="px-[18px] py-[14px] rounded-5 bg-slate-50 dark:bg-gray-850">
-        <details>
-          <summary class="w-full flex items-center justify-between">
-            <span class="text-xs">Encoded Actions</span>
-            <ChevronDownSVG class="text-slate-400" />
-          </summary>
-          <div class="max-h-[180px] overflow-y-auto mt-2.5">
-            <pre class="text-xs text-slate-400">
-             {{ JSON.stringify(payload?.params, null, 2) }}
-          </pre
+    <div class="flex flex-col gap-2.5">
+      <div
+        class="dark:bg-gray-850 bg-slate-50 flex flex-col gap-4 rounded-[10px] py-[14px] px-5"
+      >
+        <div class="flex justify-between items-center">
+          <div class="text-slate-400 flex items-center gap-2.5">
+            <NetworkSVG />
+            <span class="text-xs leading-5 font-medium">Network</span>
+          </div>
+
+          <div class="flex items-center gap-2.5">
+            <span class="text-xs font-medium">
+              {{ chainIdToName(chainId) }}
+            </span>
+            <ChainLogo class="w-[18px] h-[18px]" :chain="chainId" />
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center">
+          <div class="text-slate-400 flex items-center gap-2.5">
+            <GasSVG class="w-4" />
+            <span class="text-xs leading-5 font-medium"
+              >Estimated gas fees</span
             >
           </div>
-        </details>
+
+          <div class="flex items-center gap-2.5">
+            <span v-if="pending" class="w-20 h-5 loading-box rounded-lg"></span>
+            <span v-else class="text-xs">{{ fee?.formatted }}</span>
+            <img
+              class="w-[18px] h-[18px]"
+              width="18"
+              height="18"
+              src="https://cdn.instadapp.io/icons/tokens/usdc.svg"
+            />
+          </div>
+        </div>
       </div>
+       <CommonNotification
+        v-if="isBalaceNotEnough"
+        type="error"
+        text="Not enough USDC gas"
+      >
+        <template #action>
+          <CommonButton @click="openTopUpGasModal()" size="sm"> Top-up </CommonButton>
+        </template>
+      </CommonNotification>
     </div>
-    <div class="flex gap-4">
-      <CommonButton @click="handleReject" class="flex-1 justify-center" size="lg" color="white"
-        >Reject</CommonButton
+    <div class="flex justify-between items-center gap-4">
+      <CommonButton
+        @click="handleReject"
+        color="white"
+        size="lg"
+        class="flex-1 justify-center items-center hover:!bg-red-alert hover:!bg-opacity-10 hover:text-red-alert"
       >
-      <CommonButton :disable="submitting" :loading="submitting" type="submit" class="flex-1 justify-center" size="lg"
-        >Submit</CommonButton
-      >
+        Reject
+      </CommonButton>
+
+      <CommonButton :loading="submitting" :disabled="submitDisabled" type="submit" class="flex-1 justify-center items-center" size="lg">
+        Submit
+      </CommonButton>
     </div>
   </form>
 </template>
