@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import { parseBytes32String } from "@ethersproject/strings";
 import { BigNumber } from "bignumber.js";
 import { BigNumber as BN } from "ethers";
 import axios from "axios";
@@ -355,12 +356,12 @@ export const decodeMetadata = (data: string) => {
           type,
           fromChainId: decodedData.fromChainId.toString(),
           toChainId: decodedData.toChainId.toString(),
+          processingTime: decodedData.processingTime.toString(),
           amount: decodedData.amount,
           receiver: decodedData.receiver,
           token: decodedData.token,
           bridgeFee: decodedData.bridgeFee,
           bridgeToken: decodedData.nativeToken,
-          processingTime: decodedData.processingTime,
         };
 
       case "swap":
@@ -370,9 +371,9 @@ export const decodeMetadata = (data: string) => {
           sellAmount: decodedData.sellAmount,
           buyToken: decodedData.buyToken,
           sellToken: decodedData.sellToken,
-          priceImpact: decodedData.priceImpact,
           receiver: decodedData.receiver,
-          slippage: decodedData.slippage,
+          priceImpact: parseBytes32String(decodedData.priceImpact),
+          slippage: parseBytes32String(decodedData.slippage),
         };
       default:
         return null;
