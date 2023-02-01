@@ -335,6 +335,7 @@ const sendingDisabled = computed(
     !account.value ||
     loading.value ||
     pending.value ||
+    feePending.value ||
     !txRoute.value ||
     !meta.value.valid ||
     !isGasBalanceSufficient.value
@@ -596,8 +597,11 @@ const onSubmit = handleSubmit(async () => {
       <CommonNotification v-if="!isGasBalanceSufficient" type="error"
         :text="`Not enough ${fees.gas.asset.symbol.toUpperCase()} balance`">
         <template #action>
-          <CommonButton @click="handleSwapToken"
-            class="h-7.5 flex gap-[6px] items-center justify-center text-sm px-[14px]">
+          <CommonButton
+            size="sm"
+            @click="handleSwapToken"
+            class="flex gap-[6px] items-center justify-center"
+          >
             <RefreshSVG class="w-[14px] h-[14px]" />
             Swap Token
           </CommonButton>
@@ -607,7 +611,7 @@ const onSubmit = handleSubmit(async () => {
     </div>
 
     <div class="flex gap-4 flex-col">
-      <CommonButton type="submit" :disabled="sendingDisabled" :loading="loading || pending"
+      <CommonButton type="submit" :disabled="sendingDisabled" :loading="loading || pending || feePending"
         class="justify-center w-full" size="lg">
         Bridge
       </CommonButton>

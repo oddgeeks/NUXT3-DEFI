@@ -34,9 +34,13 @@ const handleDestory = () => {
   }
 };
 
-onClickOutside(wrapperRef, (event) => {
-  if(event.currentTarget) {
-    handleDestory()
+onClickOutside(wrapperRef, (event: any) => {
+  if (event.currentTarget) {
+    const targetModalId = event.target?.dataset?.modalId
+
+    if (targetModalId === props.id) {
+      handleDestory()
+    }
   }
 
 }, {
@@ -54,8 +58,9 @@ whenever(escape, () => {
 
 <template>
   <TransitionRoot appear as="template" :show="show">
-    <div class="fixed modal backrop-animation inset-0 z-40 overflow-y-auto bg-slate-200/20 backdrop-filter backdrop-blur-[4px]">
+    <div :data-modal-id="id" class="fixed modal backrop-animation inset-0 z-40 overflow-y-auto bg-slate-200/20 backdrop-filter backdrop-blur-[4px]">
       <div
+        :data-modal-id="id"
         class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0"
       >
         <TransitionChild
