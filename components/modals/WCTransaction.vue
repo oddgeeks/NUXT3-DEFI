@@ -134,6 +134,7 @@ const handleReject = () => {
 
 <template>
   <form @submit.prevent="handleSubmit" class="flex flex-col gap-7.5">
+    <audio src="/audio/alert.mp3" autoplay></audio>
     <div class="text-lg font-semibold leading-[30px]">Send Transaction</div>
 
     <div class="flex flex-col gap-2.5">
