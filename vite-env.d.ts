@@ -246,7 +246,7 @@ type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim";
 type ISlackMessageType = "danger" | "error" | "success" | "banner";
 
 type MetadataProps = {
-  type: "transfer" | "bridge" | "swap";
+  type: "transfer" | "bridge" | "swap" | "multi";
   encodedData: string;
   version?: string;
 };

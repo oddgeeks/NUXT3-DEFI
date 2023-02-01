@@ -273,6 +273,21 @@ export const encodeTransferMetadata = (params: SendMetadataProps) => {
   });
 };
 
+export const encodeMultiMetadata = (actions: string[]) => {
+  return encodeMetadata({
+    type: "multi",
+    encodedData: ethers.utils.defaultAbiCoder.encode(
+      ["bytes"],
+      [
+        ethers.utils.defaultAbiCoder.encode(
+          ["(bytes32 type, uint8 version , bytes data)[]"],
+          [actions.map((encode) => encode)]
+        ),
+      ]
+    ),
+  });
+};
+
 export const encodeSwapMetadata = (params: SwapMetadataProps) => {
   const encodedData = ethers.utils.defaultAbiCoder.encode(
     actionMetadataTypes.swap,
@@ -383,3 +398,26 @@ export const decodeMetadata = (data: string) => {
     return null;
   }
 };
+
+// console.log(
+//   encodeMultiMetadata([
+//     encodeSwapMetadata({
+//       buyAmount: "1000",
+//       buyToken: "0x6b175474e89094c44da98b954eedeac495271d0f",
+//       priceImpact: "44",
+//       receiver: "0x0000000000000000000000000000000000000000",
+//       sellAmount: "1000000000000000000",
+//       sellToken: "0x0000000000000000000000000000000000000000",
+//       slippage: "0x",
+//     }),
+//     encodeSwapMetadata({
+//       buyAmount: "2000",
+//       buyToken: "0x6b175474e89094c44da98b954eedeac495271d0f",
+//       priceImpact: "52",
+//       receiver: "0x0000000000000000000000000000000000000000",
+//       sellAmount: "1000000000000000000",
+//       sellToken: "0x0000000000000000000000000000000000000000",
+//       slippage: "0x",
+//     }),
+//   ])
+// );

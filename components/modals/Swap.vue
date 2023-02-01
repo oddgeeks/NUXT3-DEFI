@@ -348,6 +348,8 @@ const onSubmit = handleSubmit(async () => {
       slippage: formatBytes32String(customSlippage.value || slippage.value),
     })
 
+    encodeMultiMetadata([metadata, metadata])
+
     const transactionHash = await sendTransactions(txs, +props.chainId, {
       metadata
     });
