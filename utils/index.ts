@@ -226,7 +226,14 @@ export const calculateEstimatedFee = (params: FeeProps) => {
 
   if (toBN(maxVal).lt(minValue)) return formatDecimal(minValue, 2);
 
-  return `${formatDecimal(minVal, 2)} - ${formatDecimal(maxVal, 2)}`;
+  const minValFormatted = formatDecimal(minVal, 2);
+  const maxValFormatted = formatDecimal(maxVal, 2);
+
+  if(minValFormatted === maxValFormatted) {
+    return maxValFormatted;
+  }
+  
+  return `${minValFormatted} - ${maxValFormatted}`;
 
   // const avg = toBN(maxVal).plus(toBN(minVal)).dividedBy(2).toFormat();
 
