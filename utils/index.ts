@@ -348,7 +348,7 @@ export const decodeMetadata = (data: string) => {
         return {
           type,
           token: decodedData.token,
-          amount: decodedData.amount,
+          amount: toBN(decodedData.amount).toFixed(),
           receiver: decodedData.receiver,
         };
       case "bridge":
@@ -357,18 +357,18 @@ export const decodeMetadata = (data: string) => {
           fromChainId: decodedData.fromChainId.toString(),
           toChainId: decodedData.toChainId.toString(),
           processingTime: decodedData.processingTime.toString(),
-          amount: decodedData.amount,
+          amount: toBN(decodedData.amount).toFixed(),
           receiver: decodedData.receiver,
           token: decodedData.token,
-          bridgeFee: decodedData.bridgeFee,
+          bridgeFee: toBN(decodedData.bridgeFee).toFixed(),
           bridgeToken: decodedData.nativeToken,
         };
 
       case "swap":
         return {
           type,
-          buyAmount: decodedData.buyAmount,
-          sellAmount: decodedData.sellAmount,
+          buyAmount: toBN(decodedData.buyAmount).toFixed(),
+          sellAmount: toBN(decodedData.sellAmount).toFixed(),
           buyToken: decodedData.buyToken,
           sellToken: decodedData.sellToken,
           receiver: decodedData.receiver,
