@@ -635,8 +635,9 @@ const onSubmit = handleSubmit(async () => {
       >
         <template #action>
           <CommonButton
+            size="sm"
             @click="handleSwapToken"
-            class="h-7.5 flex gap-[6px] items-center justify-center text-sm px-[14px]"
+            class="flex gap-[6px] items-center justify-center"
           >
             <RefreshSVG class="w-[14px] h-[14px]" />
             Swap Token

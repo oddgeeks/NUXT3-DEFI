@@ -165,7 +165,7 @@ const handleReject = () => {
 
           <div class="flex items-center gap-2.5">
             <span v-if="pending" class="w-20 h-5 loading-box rounded-lg"></span>
-            <span v-else class="text-xs">{{ fee?.formatted }}</span>
+            <span v-else :class="{ 'text-red-alert' : isBalaceNotEnough }" class="text-xs">{{ fee?.formatted }}</span>
             <img
               class="w-[18px] h-[18px]"
               width="18"
