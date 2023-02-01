@@ -180,7 +180,7 @@ const handleSellAmountInput = () => {
 };
 
 const sendingDisabled = computed(
-  () => isSubmitting.value || pending.value || !meta.value.valid
+  () => isSubmitting.value || pending.value || !meta.value.valid || feePending.value
 );
 
 const { data: swapDetails, pending } = useAsyncData(
@@ -612,7 +612,7 @@ onMounted(() => {
       <CommonButton
         type="submit"
         :disabled="sendingDisabled"
-        :loading="isSubmitting || pending"
+        :loading="isSubmitting || pending || feePending"
         class="justify-center w-full"
         size="lg"
       >

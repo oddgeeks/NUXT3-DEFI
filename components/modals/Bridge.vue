@@ -335,6 +335,7 @@ const sendingDisabled = computed(
     !account.value ||
     loading.value ||
     pending.value ||
+    feePending.value ||
     !txRoute.value ||
     !meta.value.valid ||
     !isGasBalanceSufficient.value
@@ -610,7 +611,7 @@ const onSubmit = handleSubmit(async () => {
     </div>
 
     <div class="flex gap-4 flex-col">
-      <CommonButton type="submit" :disabled="sendingDisabled" :loading="loading || pending"
+      <CommonButton type="submit" :disabled="sendingDisabled" :loading="loading || pending || feePending"
         class="justify-center w-full" size="lg">
         Bridge
       </CommonButton>
