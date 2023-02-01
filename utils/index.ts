@@ -211,12 +211,7 @@ export const calculateEstimatedFee = (params: CalculateFeeProps) => {
 
   const { fee, multiplier = "0" } = params;
 
-  if (!fee)
-    return {
-      min: 0,
-      max: 0,
-      formatted: "$0.0",
-    };
+  const minValue = String(minFee[String(chanId) as keyof typeof minFee] || 0.01);
 
   const maxVal = toBN(fee)
     .dividedBy(10 ** 18)
@@ -230,13 +225,16 @@ export const calculateEstimatedFee = (params: CalculateFeeProps) => {
   const actualMin = Math.max(minVal, minChainFee);
   const actualMax = Math.max(maxVal, minChainFee);
 
-  const isEqual = actualMin === actualMax;
+  const minValFormatted = formatDecimal(minVal, 2);
+  const maxValFormatted = formatDecimal(maxVal, 2);
 
-  return {
-    min: actualMin,
-    max: actualMax,
-    formatted: isEqual
-      ? formatUsd(actualMax)
-      : `${formatUsd(actualMin)} - ${formatUsd(actualMax)}`,
-  };
+  if(minValFormatted === maxValFormatted) {
+    return maxValFormatted;
+  }
+  
+  return `${minValFormatted} - ${maxValFormatted}`;
+
+  // const avg = toBN(maxVal).plus(toBN(minVal)).dividedBy(2).toFormat();
+
+  // return `${formatDecimal(avg, 2)}`;
 };
