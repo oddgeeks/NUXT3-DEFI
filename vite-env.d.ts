@@ -256,7 +256,9 @@ type SendMetadataProps = {
 type BridgeMetadataProps = {
   amount: string;
   receiver: string;
-  token: string;
+  fromToken: string;
+  toToken: string;
+  toChainId: string;
   bridgeFee: string;
   nativeToken: string;
 };
@@ -276,8 +278,8 @@ type CalculateFeeProps = {
 };
 
 interface BuildInfo {
-  version: string
-  commit: string
-  time: number
-  branch: string
+  version: string;
+  commit: string;
+  time: number;
+  branch: string;
 }
