@@ -39,7 +39,7 @@ const props = defineProps({
 const { account } = useWeb3();
 const { switchNetworkByChainId, networks, getNetworkByChainId } = useNetworks();
 const { sendTransactions, safeAddress, tokenBalances, safe } = useAvocadoSafe();
-const { fromWei } = useBignumber();
+const { fromWei, toWei } = useBignumber();
 const { parseTransactionError } = useErrorHandler();
 const { tokens } = storeToRefs(useTokens());
 
@@ -474,8 +474,16 @@ const onSubmit = handleSubmit(async () => {
 
     const txs = await getTxs();
 
+    const metadata = encodeBridgeMetadata({
+       amount: toWei(amount.value, token.value.decimals),
+       bridgeFee: toWei(fees.value.bridge.amount, fees.value.bridge.asset.decimals),
+       nativeToken:  fees.value.bridge.asset.address,
+       receiver: account.value,
+       token: token.value.address,
+    });
+
     let transactionHash = await sendTransactions(txs, props.chainId, {
-      metadata: "0x",
+      metadata,
     });
 
     logActionToSlack({

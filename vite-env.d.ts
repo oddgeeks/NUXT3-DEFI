@@ -57,9 +57,7 @@ interface IBridgeResponse {
 
 interface IBridgeResult {
   routes: Route[];
-  fromChainId: number;
   fromAsset: FromAsset2;
-  toChainId: number;
   toAsset: ToAsset3;
   bridgeRouteErrors: BridgeRouteErrors;
 }
@@ -70,7 +68,6 @@ interface IBridgeTokensResult {
   icon: string;
   decimals: number;
   symbol: string;
-  chainId: number;
   logoURI: string;
   chainAgnosticId: string;
 }
@@ -85,7 +82,6 @@ interface ISellToken {
   address: string;
   decimals: number;
   symbol: string;
-  chainId: string;
   price: number;
   verified: boolean;
   coingeckoId: string;
@@ -244,6 +240,34 @@ type IOptions = {
 type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim";
 
 type ISlackMessageType = "danger" | "error" | "success" | "banner";
+
+type MetadataProps = {
+  type: "transfer" | "bridge" | "swap" | "multi";
+  encodedData: string;
+  version?: string;
+};
+
+type SendMetadataProps = {
+  token: string;
+  amount: string;
+  receiver: string;
+};
+
+type BridgeMetadataProps = {
+  amount: string;
+  receiver: string;
+  token: string;
+  bridgeFee: string;
+  nativeToken: string;
+};
+
+type SwapMetadataProps = {
+  sellToken: string;
+  buyToken: string;
+  sellAmount: string;
+  buyAmount: string;
+  receiver: string;
+};
 
 type CalculateFeeProps = {
   fee?: string;

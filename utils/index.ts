@@ -1,9 +1,33 @@
 import { ethers } from "ethers";
+import { parseBytes32String } from "@ethersproject/strings";
 import { BigNumber } from "bignumber.js";
 import { BigNumber as BN } from "ethers";
 import axios from "axios";
 import axiosRetry from "axios-retry";
+import { Forwarder__factory } from "@/contracts";
 import { RPC_URLS } from "~~/connectors";
+
+const multiMetadataTypes = ["bytes[]"];
+
+const metadataTypes = ["bytes32 type", "uint8 version", "bytes data"];
+
+const actionMetadataTypes = {
+  transfer: ["address token", "uint256 amount", "address receiver"],
+  bridge: [
+    "uint256 amount",
+    "address receiver",
+    "address token",
+    "uint256 bridgeFee",
+    "address nativeToken",
+  ],
+  swap: [
+    "address sellToken",
+    "address buyToken",
+    "uint256 sellAmount",
+    "uint256 buyAmount",
+    "address receiver",
+  ],
+};
 
 export function shortenHash(hash: string, length: number = 4) {
   if (!hash) return;
@@ -239,4 +263,152 @@ export const calculateEstimatedFee = (params: CalculateFeeProps) => {
       ? formatUsd(actualMax)
       : `${formatUsd(actualMin)} - ${formatUsd(actualMax)}`,
   };
+};
+
+const encodeMetadata = (props: MetadataProps) => {
+  return ethers.utils.defaultAbiCoder.encode(metadataTypes, [
+    ethers.utils.formatBytes32String(props.type),
+    props.version || "1",
+    props.encodedData,
+  ]);
+};
+
+export const encodeTransferMetadata = (
+  params: SendMetadataProps,
+  single = true
+) => {
+  const encodedData = ethers.utils.defaultAbiCoder.encode(
+    actionMetadataTypes.transfer,
+    [params.token, params.amount, params.receiver]
+  );
+
+  const data = encodeMetadata({
+    type: "transfer",
+    encodedData,
+  });
+
+  return single ? encodeMultipleActions(data) : data;
+};
+
+export const encodeSwapMetadata = (
+  params: SwapMetadataProps,
+  single = true
+) => {
+  const encodedData = ethers.utils.defaultAbiCoder.encode(
+    actionMetadataTypes.swap,
+    [
+      params.sellToken,
+      params.buyToken,
+      params.sellAmount,
+      params.buyAmount,
+      params.receiver,
+    ]
+  );
+
+  const data = encodeMetadata({
+    type: "swap",
+    encodedData,
+  });
+
+  return single ? encodeMultipleActions(data) : data;
+};
+
+export const encodeBridgeMetadata = (
+  params: BridgeMetadataProps,
+  single = true
+) => {
+  const encodedData = ethers.utils.defaultAbiCoder.encode(
+    actionMetadataTypes.bridge,
+    [
+      params.amount,
+      params.receiver,
+      params.token,
+      params.bridgeFee,
+      params.nativeToken,
+    ]
+  );
+
+  const data = encodeMetadata({
+    type: "bridge",
+    encodedData,
+  });
+
+  return single ? encodeMultipleActions(data) : data;
+};
+
+export const encodeMultipleActions = (...actionData: string[]) => {
+  return ethers.utils.defaultAbiCoder.encode(multiMetadataTypes, [actionData]);
+};
+
+export const decodeMetadata = (data: string) => {
+  try {
+    const iface = Forwarder__factory.createInterface();
+    const executeData = iface.decodeFunctionData("execute", data);
+
+    if (executeData.metadata_ === "0x" || !executeData.metadata_) return null;
+
+    const metadataArr = [];
+
+    const [decodedMultiMetadata = []] =
+      (ethers.utils.defaultAbiCoder.decode(
+        multiMetadataTypes,
+        executeData.metadata_
+      ) as string[]) || [];
+
+    for (let metadata of decodedMultiMetadata) {
+      const decodedMetadata = ethers.utils.defaultAbiCoder.decode(
+        metadataTypes,
+        metadata
+      );
+
+      const type = ethers.utils.parseBytes32String(
+        decodedMetadata.type
+      ) as keyof typeof actionMetadataTypes;
+
+      const decodedData = ethers.utils.defaultAbiCoder.decode(
+        actionMetadataTypes[type],
+        decodedMetadata.data
+      );
+
+      let payload = {};
+
+      switch (type) {
+        case "transfer":
+          payload = {
+            type,
+            token: decodedData.token,
+            amount: toBN(decodedData.amount).toFixed(),
+            receiver: decodedData.receiver,
+          };
+          break;
+        case "bridge":
+          payload = {
+            type,
+            amount: toBN(decodedData.amount).toFixed(),
+            receiver: decodedData.receiver,
+            token: decodedData.token,
+            bridgeFee: toBN(decodedData.bridgeFee).toFixed(),
+            bridgeToken: decodedData.nativeToken,
+          };
+          break;
+        case "swap":
+          payload = {
+            type,
+            buyAmount: toBN(decodedData.buyAmount).toFixed(),
+            sellAmount: toBN(decodedData.sellAmount).toFixed(),
+            buyToken: decodedData.buyToken,
+            sellToken: decodedData.sellToken,
+            receiver: decodedData.receiver,
+          };
+          break;
+      }
+
+      metadataArr.push(payload);
+    }
+
+    return metadataArr;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
 };
