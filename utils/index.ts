@@ -220,42 +220,49 @@ export const slack = async (
   });
 };
 
-type FeeProps = {
-  fee: string;
-  multiplier: string;
-  chanId: string;
-};
+export const calculateEstimatedFee = (params: CalculateFeeProps) => {
+  const minFee = {
+    "137": 0.01,
+    "10": 0.005,
+    "42161": 0.005,
+    "43114": 0.005,
+    "1": 0.005,
+    "100": 0.01,
+    "56": 0.01,
+  };
 
-const minFee = {
-  "137": 0.01,
-  "10": 0.005,
-  "42161": 0.005,
-  "43114": 0.005,
-  "1": 0.005,
-  "100": 0.01,
-  "56": 0.01,
-};
+  const minChainFee = minFee[String(params.chainId) as keyof typeof minFee];
 
-export const calculateEstimatedFee = (params: FeeProps) => {
-  const { fee, multiplier = "0", chanId } = params;
-  if (!fee) return "0.00";
+  const { fee, multiplier = "0" } = params;
 
-  const minValue = minFee[String(chanId) as keyof typeof minFee];
+  if (!fee)
+    return {
+      min: 0,
+      max: 0,
+      formatted: "$0.0",
+    };
 
   const maxVal = toBN(fee)
     .dividedBy(10 ** 18)
-    .toFormat();
+    .toNumber();
 
   const minVal = toBN(fee)
     .dividedBy(multiplier)
     .dividedBy(10 ** 14)
-    .toFormat();
+    .toNumber();
 
-  if (toBN(maxVal).lt(minValue)) return formatDecimal(minValue, 2);
+  const actualMin = Math.max(minVal, minChainFee);
+  const actualMax = Math.max(maxVal, minChainFee);
 
-  const avg = toBN(maxVal).plus(toBN(minVal)).dividedBy(2).toFormat();
+  const isEqual = actualMin === actualMax;
 
-  return `${formatDecimal(avg, 2)}`;
+  return {
+    min: actualMin,
+    max: actualMax,
+    formatted: isEqual
+      ? formatUsd(actualMax)
+      : `${formatUsd(actualMin)} - ${formatUsd(actualMax)}`,
+  };
 };
 
 const encodeMetadata = (props: MetadataProps) => {

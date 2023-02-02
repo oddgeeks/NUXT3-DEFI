@@ -101,7 +101,7 @@ const chartOptions = {
           <div
             class="text-sm font-medium text-slate-400 max-w-[256px] uppercase"
           >
-            {{ toBN(tokenBalance.balance).toFormat(6) }}
+            {{ toBN(tokenBalance.balance).decimalPlaces(4).toFormat() }}
             {{ tokenBalance.symbol }}
           </div>
         </div>

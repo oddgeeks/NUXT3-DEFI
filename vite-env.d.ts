@@ -2,7 +2,7 @@ interface Window {
   ethereum: any;
 }
 
-type ITxType = "send" | "swap" | "bridge" | "topUpGas";
+type ITxType = "send" | "swap" | "bridge" | "topUpGas" | "wc";
 interface Provider {
   id: string;
   name: string;
@@ -267,4 +267,10 @@ type SwapMetadataProps = {
   sellAmount: string;
   buyAmount: string;
   receiver: string;
+};
+
+type CalculateFeeProps = {
+  fee?: string;
+  multiplier?: string;
+  chainId: string;
 };

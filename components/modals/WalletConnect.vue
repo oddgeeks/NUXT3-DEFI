@@ -225,7 +225,7 @@ onMounted(async () => {
         {{ connection.peerMeta.url }}
       </div>
 
-      <CommonSelect
+      <!-- <CommonSelect
         v-model="connectionChainId"
         labelKey="name"
         valueKey="chainId"
@@ -237,7 +237,7 @@ onMounted(async () => {
         <template #item-prefix="{ value }">
           <ChainLogo class="w-6 h-6" :chain="value" />
         </template>
-      </CommonSelect>
+      </CommonSelect> -->
       <CommonButton
         type="submit"
         :loading="loading"
