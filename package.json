@@ -44,6 +44,7 @@
     "pinia": "^2.0.29",
     "qrcode.vue": "^3.3.3",
     "rimraf": "^3.0.2",
+    "simple-git": "^3.16.0",
     "styled-qr-code": "^1.0.0",
     "tsx": "^3.12.2",
     "typechain": "^8.1.1",

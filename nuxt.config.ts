@@ -133,6 +133,7 @@ export default defineNuxtConfig({
       },
     ],
     "@nuxt/devtools-edge",
+    '~/modules/build-env',
   ],
   colorMode: {
     preference: "dark",

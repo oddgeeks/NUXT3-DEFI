@@ -274,3 +274,10 @@ type CalculateFeeProps = {
   multiplier?: string;
   chainId: string;
 };
+
+interface BuildInfo {
+  version: string
+  commit: string
+  time: number
+  branch: string
+}
