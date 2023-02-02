@@ -714,7 +714,6 @@ const onSubmit = handleSubmit(async () => {
     </div>
 
     <div class="flex gap-4 flex-col">
-      {{ feePending }}
       <CommonButton
         type="submit"
         :disabled="sendingDisabled"
