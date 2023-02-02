@@ -112,6 +112,25 @@ const locale = computed(() =>
         </div>
       </div>
 
+      <div v-if="metadata">
+        <hr class="w-full dark:border-slate-800 border-slate-150" />
+
+       <div class="px-7.5 py-6.5">
+        <div class="flex">
+          <div
+            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
+          >
+            Transaction Action
+          </div>
+          <div class="flex items-center text-xs">
+             <pre>
+              {{ metadata }}
+             </pre>
+          </div>
+        </div>
+      </div>
+      </div>
+
       <hr class="w-full dark:border-slate-800 border-slate-150" />
 
       <div class="px-7.5 py-6.5 flex flex-col gap-6.5">

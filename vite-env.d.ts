@@ -57,9 +57,7 @@ interface IBridgeResponse {
 
 interface IBridgeResult {
   routes: Route[];
-  fromChainId: number;
   fromAsset: FromAsset2;
-  toChainId: number;
   toAsset: ToAsset3;
   bridgeRouteErrors: BridgeRouteErrors;
 }
@@ -70,7 +68,6 @@ interface IBridgeTokensResult {
   icon: string;
   decimals: number;
   symbol: string;
-  chainId: number;
   logoURI: string;
   chainAgnosticId: string;
 }
@@ -85,7 +82,6 @@ interface ISellToken {
   address: string;
   decimals: number;
   symbol: string;
-  chainId: string;
   price: number;
   verified: boolean;
   coingeckoId: string;
@@ -252,15 +248,12 @@ type MetadataProps = {
 };
 
 type SendMetadataProps = {
-  chainId: string;
   token: string;
   amount: string;
   receiver: string;
 };
 
 type BridgeMetadataProps = {
-  fromChainId: string;
-  toChainId: string;
   amount: string;
   receiver: string;
   token: string;
@@ -269,11 +262,9 @@ type BridgeMetadataProps = {
 };
 
 type SwapMetadataProps = {
-  chainId: string;
   sellToken: string;
   buyToken: string;
   sellAmount: string;
   buyAmount: string;
   receiver: string;
-  slippage: any;
 };

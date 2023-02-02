@@ -338,14 +338,13 @@ const onSubmit = handleSubmit(async () => {
   try {
     const txs = await getTxs();
 
+
     const metadata = encodeSwapMetadata({
-      chainId: props.chainId,
       buyAmount: swapDetails.value?.data.buyTokenAmount!,
       sellAmount: swapDetails.value?.data.sellTokenAmount!,
       buyToken: swapDetails.value?.data.buyToken.address!,
       sellToken: swap.value.sellToken.address,
       receiver: account.value,
-      slippage: formatBytes32String(customSlippage.value || slippage.value),
     })
 
     const transactionHash = await sendTransactions(txs, +props.chainId, {

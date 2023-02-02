@@ -424,8 +424,6 @@ const onSubmit = handleSubmit(async () => {
        amount: toWei(amount.value, token.value.decimals),
        bridgeFee: toWei(fees.value.bridge.amount, fees.value.bridge.asset.decimals),
        nativeToken:  fees.value.bridge.asset.address,
-       fromChainId: props.chainId,
-       toChainId: bridgeToChainId.value,
        receiver: account.value,
        token: token.value.address,
     });
