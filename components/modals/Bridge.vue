@@ -68,9 +68,12 @@ const nativeFeeInUsd = computed(() =>
 );
 
 const isInsufficientBalance = computed(() => {
-  const nativeBalance = tokenBalances.value.find(
-    (t) => t.chainId == token.value.chainId && t.symbol === nativeCurrency.value?.symbol
-  )?.balance || "0";
+  const nativeBalance =
+    tokenBalances.value.find(
+      (t) =>
+        t.chainId == token.value.chainId &&
+        t.symbol === nativeCurrency.value?.symbol
+    )?.balance || "0";
 
   return toBN(nativeBalance).lt(nativeFee.value);
 });
@@ -384,10 +387,7 @@ const { data, error, pending } = useAsyncData(
   }
 );
 
-const {
-  data: fee,
-  pending: feePending,
-} = useAsyncData(
+const { data: fee, pending: feePending } = useAsyncData(
   "bridge-fee",
   async () => {
     if (!txRoute.value) return;
@@ -413,7 +413,6 @@ const {
   },
   {
     server: false,
-    immediate: false,
     watch: [txRoute],
   }
 );
@@ -475,11 +474,14 @@ const onSubmit = handleSubmit(async () => {
     const txs = await getTxs();
 
     const metadata = encodeBridgeMetadata({
-       amount: toWei(amount.value, token.value.decimals),
-       bridgeFee: toWei(fees.value.bridge.amount, fees.value.bridge.asset.decimals),
-       nativeToken:  fees.value.bridge.asset.address,
-       receiver: account.value,
-       token: token.value.address,
+      amount: toWei(amount.value, token.value.decimals),
+      bridgeFee: toWei(
+        fees.value.bridge.amount,
+        fees.value.bridge.asset.decimals
+      ),
+      nativeToken: fees.value.bridge.asset.address,
+      receiver: account.value,
+      token: token.value.address,
     });
 
     let transactionHash = await sendTransactions(txs, props.chainId, {
@@ -489,9 +491,10 @@ const onSubmit = handleSubmit(async () => {
     logActionToSlack({
       message: `${formatDecimal(amount.value)} ${formatSymbol(
         token.value.symbol
-      )} from ${formatSymbol(chainIdToName(token.value.chainId), false)} to ${formatSymbol(chainIdToName(
-        bridgeToChainId.value
-      ), false)}`,
+      )} from ${formatSymbol(
+        chainIdToName(token.value.chainId),
+        false
+      )} to ${formatSymbol(chainIdToName(bridgeToChainId.value), false)}`,
       action: "bridge",
       chainId: props.chainId,
       txHash: transactionHash,
