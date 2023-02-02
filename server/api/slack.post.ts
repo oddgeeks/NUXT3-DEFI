@@ -9,11 +9,15 @@ const colors: Record<"danger" | "error" | "success" | "banner", string> = {
 };
 
 export default defineEventHandler(async (event) => {
+  let { type = "success", message } = await readBody(event);
+
   if (!slackKey || !slackErrorKey) {
+    console.log({
+      type,
+      message
+    })
     return {};
   }
-
-  let { type = "success", message } = await readBody(event);
 
   let channelId = slackKey;
 

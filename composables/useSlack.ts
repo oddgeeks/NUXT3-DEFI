@@ -17,7 +17,10 @@ const prefixes: Record<ISlackMessage["action"], string> = {
   wc: `:walletconnect:`,
 };
 
+
 export const logActionToSlack = (slackMessage: ISlackMessage) => {
+  const build = useBuildInfo()
+
   let {
     type = "success",
     action,
@@ -31,9 +34,9 @@ export const logActionToSlack = (slackMessage: ISlackMessage) => {
   const explorerLink =
     chainId && txHash
       ? `<${getExplorerUrl(chainId, `/tx/${txHash}`)}|${shortenHash(
-          txHash,
-          12
-        )}>`
+        txHash,
+        12
+      )}>`
       : "";
 
   const accountLink = `<https://avocado.link/?user=${account}|${shortenHash(
@@ -50,6 +53,9 @@ export const logActionToSlack = (slackMessage: ISlackMessage) => {
   if (explorerLink) {
     logMessage += `\n${"`Tx`"} ${explorerLink}`;
   }
+
+  logMessage += `\n${"`Version`"} ${build.version}`;
+  logMessage += `\n${"`Commit`"} ${build.commit}`;
 
   slack(logMessage, type);
 };
