@@ -27,10 +27,19 @@ export const logActionToSlack = (slackMessage: ISlackMessage) => {
     account,
   } = slackMessage;
   const prefix = prefixes[action];
-  
-  const explorerLink = chainId && txHash ? `<${getExplorerUrl(chainId, `/tx/${txHash}`)}|${shortenHash(txHash, 12)}>`: "";
-  
-  const accountLink = `<https://avocado.link/?user=${account}|${shortenHash(account, 12)}>`
+
+  const explorerLink =
+    chainId && txHash
+      ? `<${getExplorerUrl(chainId, `/tx/${txHash}`)}|${shortenHash(
+          txHash,
+          12
+        )}>`
+      : "";
+
+  const accountLink = `<https://avocado.link/?user=${account}|${shortenHash(
+    account,
+    12
+  )}>`;
 
   if (chainId) {
     message += `\n${"`Network`"} :${chainIdToName(chainId)}:`;
@@ -45,7 +54,7 @@ export const logActionToSlack = (slackMessage: ISlackMessage) => {
   slack(logMessage, type);
 };
 
-export const formatSymbol = (symbol: string) => {
-  const upper = symbol.toUpperCase();
-  return `${upper} :${symbol}:`;
+export const formatSymbol = (str: string, isUpper = true) => {
+  const upper = isUpper ? str.toUpperCase() : str;
+  return `${upper} :${str}:`;
 };

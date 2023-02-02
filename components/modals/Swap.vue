@@ -13,6 +13,8 @@ interface ISwap {
   buyToken: IToken;
 }
 
+let abortController = ref<AbortController | null>(null);
+
 const provider = getRpcProvider(634);
 
 const emit = defineEmits(["destroy"]);
@@ -77,16 +79,16 @@ const availableBuyTokens = computed(() =>
 
 const sellTokenBalance = computed(
   () =>
-    chainTokenBalances.value[String(props.chainId)].find(
+    formatDecimal(chainTokenBalances.value[String(props.chainId)].find(
       (t) => t.address === swap.value.sellToken.address
-    )?.balance || "0.00"
+    )?.balance || "0.00") 
 );
 
 const buyTokenBalance = computed(
   () =>
-    chainTokenBalances.value[String(props.chainId)].find(
+    formatDecimal(chainTokenBalances.value[String(props.chainId)].find(
       (t) => t.address === swap.value.buyToken.address
-    )?.balance || "0.00"
+    )?.balance || "0.00")
 );
 
 watch([() => swap.value.sellToken, () => swap.value.buyToken], () => {
@@ -180,7 +182,8 @@ const handleSellAmountInput = () => {
 };
 
 const sendingDisabled = computed(
-  () => isSubmitting.value || pending.value || !meta.value.valid || feePending.value
+  () =>
+    isSubmitting.value || pending.value || !meta.value.valid || feePending.value
 );
 
 const { data: swapDetails, pending } = useAsyncData(
@@ -189,37 +192,52 @@ const { data: swapDetails, pending } = useAsyncData(
     const { valid } = await validate();
     if (!valid) return;
 
-    const { data }: { data: ISwapResponse } = await http.get(
-      "https://swap-aggregator.instadapp.io/swap",
-      {
-        params: {
-          network: getNetworkByChainId(
-            Number(props.chainId)
-          ).name.toLowerCase(),
-          buyToken: swap.value.buyToken.address,
-          sellToken: swap.value.sellToken.address,
-          sellAmount: toWei(sellAmount.value, swap.value.sellToken.decimals),
-          maxSlippage: customSlippage.value || slippage.value,
-          slippage: slippage.value,
-          user: safeAddress.value,
-          access_token: "hxBA1uxwaGWN0xcpPOncVJ3Tk7FdFxY7g3NX28R14C",
-        },
+    try {
+      if (abortController.value) {
+        abortController.value.abort();
       }
-    );
 
-    const bestRoute = data?.aggregators[0];
+      abortController.value = new AbortController();
 
-    if (bestRoute && !isBuyAmountDirty.value) {
-      buyAmount.value = formatDecimal(
-        fromWei(
-          bestRoute.data.buyTokenAmount,
-          bestRoute.data.buyToken.decimals
-        ).toFixed(),
-        6
+      const { data }: { data: ISwapResponse } = await http.get(
+        "https://swap-aggregator.instadapp.io/swap",
+        {
+          signal: abortController.value?.signal,
+          params: {
+            network: getNetworkByChainId(
+              Number(props.chainId)
+            ).name.toLowerCase(),
+            buyToken: swap.value.buyToken.address,
+            sellToken: swap.value.sellToken.address,
+            sellAmount: toWei(sellAmount.value, swap.value.sellToken.decimals),
+            maxSlippage: customSlippage.value || slippage.value,
+            slippage: slippage.value,
+            user: safeAddress.value,
+            access_token: "hxBA1uxwaGWN0xcpPOncVJ3Tk7FdFxY7g3NX28R14C",
+          },
+        }
       );
-    }
 
-    return data;
+      abortController.value = null;
+
+      const bestRoute = data?.aggregators[0];
+
+      if (bestRoute && !isBuyAmountDirty.value) {
+        buyAmount.value = formatDecimal(
+          fromWei(
+            bestRoute.data.buyTokenAmount,
+            bestRoute.data.buyToken.decimals
+          ).toFixed(),
+          6
+        );
+      }
+
+      return data;
+    } catch (e: any) { 
+      if (e?.code === 'ERR_CANCELED') return;
+
+      throw e;
+    }
   },
   {
     server: false,
@@ -252,13 +270,13 @@ const buyAmountInUsd = computed(() => {
 });
 
 const buyTokenAmountPerSellToken = computed(() => {
-  const value = div(buyAmount.value, sellAmount.value)
+  const value = div(buyAmount.value, sellAmount.value);
 
-  return value.isFinite() ? formatDecimal(value.toFixed()) : "0.00" ;
+  return value.isFinite() ? formatDecimal(value.toFixed()) : "0.00";
 });
 
 const sellTokenAmountPerBuyToken = computed(() => {
-  const value = div(sellAmount.value, buyAmount.value)
+  const value = div(sellAmount.value, buyAmount.value);
 
   return value.isFinite() ? formatDecimal(value.toFixed()) : "0.00";
 });
@@ -281,12 +299,7 @@ const { data: fee, pending: feePending } = useAsyncData(
       +props.chainId
     );
 
-    console.log([
-      txs,
-      message,
-      account.value,
-      +props.chainId,
-    ])
+    console.log([txs, message, account.value, +props.chainId]);
 
     return provider.send("txn_estimateFeeWithoutSignature", [
       message,

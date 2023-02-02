@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
 import RefreshSVG from "~/assets/images/icons/refresh.svg?component";
 import { Erc20__factory } from "~~/contracts";
 import { useField, useForm } from "vee-validate";
@@ -45,6 +44,9 @@ const { parseTransactionError } = useErrorHandler();
 const { tokens } = storeToRefs(useTokens());
 
 const loading = ref(false);
+const transactions = ref<any>([]);
+let abortController = ref<AbortController | null>(null);
+let quoteController = ref<AbortController | null>(null);
 
 const token = computed(
   () =>
@@ -52,6 +54,26 @@ const token = computed(
       (t) => t.chainId === props.chainId && t.address === props.address
     )!
 );
+
+const nativeFee = computed(() =>
+  transactions.value.reduce((acc: any, tx: any) => {
+    return toBN(acc)
+      .plus(fromWei(tx?.value || "0", nativeCurrency.value?.decimals))
+      .toFixed();
+  }, "0")
+);
+
+const nativeFeeInUsd = computed(() =>
+  times(nativeFee.value, nativeCurrency.value?.price || 0)
+);
+
+const isInsufficientBalance = computed(() => {
+  const nativeBalance = tokenBalances.value.find(
+    (t) => t.chainId == token.value.chainId && t.symbol === nativeCurrency.value?.symbol
+  )?.balance || "0";
+
+  return toBN(nativeBalance).lt(nativeFee.value);
+});
 
 const { handleSubmit, errors, meta, resetForm, validate } = useForm({
   validationSchema: yup.object({
@@ -76,10 +98,71 @@ const { value: amount, meta: amountMeta } = useField<string>("amount");
 
 const toAmount = computed(() =>
   formatDecimal(
-    fromWei(txRoute.value?.toAmount || "0", bridgeToToken?.value?.decimals),
-    6
+    fromWei(
+      txRoute.value?.toAmount || "0",
+      bridgeToToken?.value?.decimals
+    ).toFixed()
   )
 );
+
+const getTxs = async () => {
+  try {
+    const txs = [];
+
+    if (!txRoute.value) return [];
+
+    if (abortController.value) {
+      abortController.value.abort();
+    }
+
+    abortController.value = new AbortController();
+
+    for (const userTx of txRoute.value?.userTxs || []) {
+      if (userTx.approvalData) {
+        const erc20 = Erc20__factory.connect(
+          token.value.address,
+          getRpcProvider(props.chainId)
+        );
+        const { data } = await erc20.populateTransaction.approve(
+          userTx.approvalData.allowanceTarget,
+          userTx.approvalData.minimumApprovalAmount
+        );
+
+        txs.push({
+          to: token.value.address,
+          data,
+        });
+      }
+    }
+
+    const { data: buildTx } = await http.post(
+      "https://api.socket.tech/v2/build-tx",
+      {
+        route: txRoute.value,
+      },
+      {
+        signal: abortController.value.signal,
+        headers: {
+          "api-key": "645b2c8c-5825-4930-baf3-d9b997fcd88c",
+        },
+      }
+    );
+
+    abortController.value = null;
+
+    txs.push({
+      to: buildTx.result.txTarget,
+      data: buildTx.result.txData,
+      value: buildTx.result.value,
+    });
+
+    transactions.value = txs;
+
+    return txs;
+  } catch (e) {
+    console.log(e);
+  }
+};
 
 const nativeCurrency = computed(() => {
   const nativeTokenMeta = getNetworkByChainId(+props.chainId).params
@@ -90,30 +173,6 @@ const nativeCurrency = computed(() => {
       t.chainId == props.chainId &&
       t.symbol.toLowerCase() === nativeTokenMeta?.symbol?.toLowerCase()
   );
-});
-
-const isGasBalanceSufficient = computed(() => {
-  if (!txRoute.value) return true;
-
-  const gasFee = fees.value.gas;
-
-  const tokenBalance = tokenBalances.value.find(
-    (t) =>
-      t.chainId == props.chainId &&
-      t.symbol.toLowerCase() === gasFee.asset.symbol?.toLowerCase()
-  );
-
-  let actualBalance = toBN(tokenBalance?.balance || "0");
-
-  const isSameToken =
-    gasFee.asset.symbol?.toLowerCase() === token.value.symbol?.toLowerCase();
-
-  // If the gas fee is in the same token as the token balance, we need to subtract the amount
-  if (isSameToken) {
-    actualBalance = actualBalance.minus(toBN(amount.value || "0"));
-  }
-
-  return actualBalance.gte(toBN(gasFee.amount || "0"));
 });
 
 const fees = computed<IFees>(() => {
@@ -135,15 +194,20 @@ const fees = computed<IFees>(() => {
       const bridgeFee = tx.steps.reduce((acc: any, step: any) => {
         if (!step?.protocolFees) return acc;
 
+        const asset = step?.protocolFees?.asset;
+        const assetPrice = tokenBalances.value.find(
+          (i) => i.address.toLowerCase() === asset?.address.toLowerCase()
+        );
+
+        const amount = fromWei(
+          toBN(acc.amount || "0").plus(toBN(step?.protocolFees?.amount || "0")),
+          step?.protocolFees?.asset?.decimals
+        );
+
         return {
-          amount: fromWei(
-            toBN(acc.amount || "0")
-              .plus(toBN(step?.protocolFees?.amount || "0"))
-              .toFixed(),
-            step?.protocolFees?.asset?.decimals
-          ).toFixed(),
+          amount: amount.toFixed(),
           feesInUsd: toBN(acc.feesInUsd || "0")
-            .plus(toBN(step?.protocolFees?.feesInUsd || "0"))
+            .plus(amount.times(assetPrice?.price || 0))
             .toFixed(),
           asset: step?.protocolFees?.asset,
         };
@@ -219,19 +283,24 @@ const bridgeToToken = computed(() => {
 const { data: bridgeToTokens } = useAsyncData(
   "bridge-tokens",
   async () => {
-    const { data }: { data: IBridgeTokensResponse } = await http.get(
-      "https://api.socket.tech/v2/token-lists/to-token-list",
-      {
-        headers: {
-          "api-key": "645b2c8c-5825-4930-baf3-d9b997fcd88c",
-        },
-        params: {
-          fromChainId: props.chainId,
-          toChainId: bridgeToChainId.value,
-        },
-      }
-    );
-    return data;
+    try {
+      const { data }: { data: IBridgeTokensResponse } = await http.get(
+        "https://api.socket.tech/v2/token-lists/to-token-list",
+        {
+          headers: {
+            "api-key": "645b2c8c-5825-4930-baf3-d9b997fcd88c",
+          },
+          params: {
+            fromChainId: props.chainId,
+            toChainId: bridgeToChainId.value,
+          },
+        }
+      );
+
+      return data;
+    } catch (e) {
+      console.log(e);
+    }
   },
   {
     server: false,
@@ -251,20 +320,27 @@ const { data, error, pending } = useAsyncData(
     const { valid } = await validate();
 
     if (!valid) return;
-    if (!bridgeToToken.value) throw new Error("Token not found on destination chain");
+    if (!bridgeToToken.value)
+      throw new Error("Token not found on destination chain");
 
     const transferAmount = toBN(amount.value || "0")
       .times(10 ** bridgeToToken.value.decimals)
       .toFixed(0);
 
     try {
+      if (quoteController.value) {
+        quoteController.value.abort();
+      }
+
+      quoteController.value = new AbortController();
+
       const { data }: { data: IBridgeResponse } = await http.get(
         "https://api.socket.tech/v2/quote",
         {
           headers: {
             "api-key": "645b2c8c-5825-4930-baf3-d9b997fcd88c",
           },
-
+          signal: quoteController.value.signal,
           params: {
             fromTokenAddress: token.value.address,
             fromChainId: props.chainId,
@@ -288,6 +364,8 @@ const { data, error, pending } = useAsyncData(
         }
       );
 
+      quoteController.value = null;
+
       if (!data.result.routes.length) {
         throw new Error(
           "We could not find any routes for your desired transfer."
@@ -295,36 +373,47 @@ const { data, error, pending } = useAsyncData(
       }
 
       return data;
-    } catch (error) {
+    } catch (error) {}
 
-    }
-
-   throw new Error("Unexpected error, please try again later");
+    throw new Error("Unexpected error, please try again later");
   },
   {
     server: false,
+    immediate: false,
     watch: [amount, bridgeToToken],
   }
 );
 
-const { data: fee, pending: feePending } = useAsyncData(
+const {
+  data: fee,
+  pending: feePending,
+} = useAsyncData(
   "bridge-fee",
   async () => {
-    const txs = await getTxs();
+    if (!txRoute.value) return;
 
-    const message = await safe.value?.generateSignatureMessage(
-      txs,
-      +props.chainId
-    );
+    try {
+      const txs = await getTxs();
 
-    return provider.send("txn_estimateFeeWithoutSignature", [
-      message,
-      account.value,
-      props.chainId,
-    ]);
+      const message = await safe.value?.generateSignatureMessage(
+        txs,
+        +props.chainId
+      );
+
+      const resp = await provider.send("txn_estimateFeeWithoutSignature", [
+        message,
+        account.value,
+        props.chainId,
+      ]);
+
+      return resp;
+    } catch (e: any) {
+      throw new Error(e?.error?.message);
+    }
   },
   {
     server: false,
+    immediate: false,
     watch: [txRoute],
   }
 );
@@ -338,7 +427,7 @@ const sendingDisabled = computed(
     feePending.value ||
     !txRoute.value ||
     !meta.value.valid ||
-    !isGasBalanceSufficient.value
+    isInsufficientBalance.value
 );
 
 const handleSwapToken = () => {
@@ -373,48 +462,6 @@ const handleSwapToken = () => {
   );
 };
 
-const getTxs = async () => {
-  const txs = [];
-
-  for (const userTx of txRoute.value.userTxs) {
-    if (userTx.approvalData) {
-      const erc20 = Erc20__factory.connect(
-        token.value.address,
-        getRpcProvider(props.chainId)
-      );
-      const { data } = await erc20.populateTransaction.approve(
-        userTx.approvalData.allowanceTarget,
-        userTx.approvalData.minimumApprovalAmount
-      );
-
-      txs.push({
-        to: token.value.address,
-        data,
-      });
-    }
-  }
-
-  const { data: buildTx } = await http.post(
-    "https://api.socket.tech/v2/build-tx",
-    {
-      route: txRoute.value,
-    },
-    {
-      headers: {
-        "api-key": "645b2c8c-5825-4930-baf3-d9b997fcd88c",
-      },
-    }
-  );
-
-  txs.push({
-    to: buildTx.result.txTarget,
-    data: buildTx.result.txData,
-    value: buildTx.result.value,
-  });
-
-  return txs;
-};
-
 const onSubmit = handleSubmit(async () => {
   if (!txRoute.value) {
     return;
@@ -434,9 +481,9 @@ const onSubmit = handleSubmit(async () => {
     logActionToSlack({
       message: `${formatDecimal(amount.value)} ${formatSymbol(
         token.value.symbol
-      )} from ${chainIdToName(token.value.chainId)} to ${chainIdToName(
+      )} from ${formatSymbol(chainIdToName(token.value.chainId), false)} to ${formatSymbol(chainIdToName(
         bridgeToChainId.value
-      )}`,
+      ), false)}`,
       action: "bridge",
       chainId: props.chainId,
       txHash: transactionHash,
@@ -469,9 +516,13 @@ const onSubmit = handleSubmit(async () => {
 <template>
   <form @submit="onSubmit" class="flex gap-7.5 flex-col">
     <div class="flex justify-center flex-col items-center">
-      <img width="40" height="40" class="h-10 w-10 mb-7.5"
+      <img
+        width="40"
+        height="40"
+        class="h-10 w-10 mb-7.5"
         :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
-        onerror="this.onerror=null; this.remove();" />
+        onerror="this.onerror=null; this.remove();"
+      />
       <div class="flex flex-col gap-[14px]">
         <h2 class="text-lg leading-5 text-center">
           {{ token.name }}
@@ -479,7 +530,8 @@ const onSubmit = handleSubmit(async () => {
         </h2>
 
         <div
-          class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] self-center inline-flex justify-center items-center gap-2 rounded-5">
+          class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] self-center inline-flex justify-center items-center gap-2 rounded-5"
+        >
           <ChainLogo class="w-5 h-5" :chain="token.chainId" />
           <span class="text-xs text-slate-400 leading-5 w-fit">{{
             chainIdToName(token.chainId)
@@ -492,22 +544,33 @@ const onSubmit = handleSubmit(async () => {
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
           <h1 class="text-sm">Transfer from</h1>
-          <span class="uppercase text-sm">{{ token.balance }} {{ token.symbol }}</span>
+          <span class="uppercase text-sm"
+            >{{ token.balance }} {{ token.symbol }}</span
+          >
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <CommonInput type="numeric" :error-message="amountMeta.dirty ? errors['amount'] : ''" name="amount"
-            placeholder="Enter amount" v-model="amount">
+          <CommonInput
+            type="numeric"
+            :error-message="amountMeta.dirty ? errors['amount'] : ''"
+            name="amount"
+            placeholder="Enter amount"
+            v-model="amount"
+          >
             <template #suffix>
-              <button type="button"
-                class="absolute top-0 bottom-0 right-0 mr-5 text-sm text-blue-500 hover:text-blue-500" @click="setMax">
+              <button
+                type="button"
+                class="absolute top-0 bottom-0 right-0 mr-5 text-sm text-blue-500 hover:text-blue-500"
+                @click="setMax"
+              >
                 MAX
               </button>
             </template>
           </CommonInput>
 
           <div
-            class="dark:bg-gray-850 bg-slate-50 px-3 max-w-full inline-flex items-center gap-2 rounded-2xl self-start h-[50px]">
+            class="dark:bg-gray-850 bg-slate-50 px-3 max-w-full inline-flex items-center gap-2 rounded-2xl self-start h-[50px]"
+          >
             <ChainLogo class="w-6 h-6" :chain="token.chainId" />
             <span class="text-sm leading-5">{{
               chainIdToName(token.chainId)
@@ -521,14 +584,24 @@ const onSubmit = handleSubmit(async () => {
         </div>
         <div class="px-5 pt-[14px] pb-5 dark:bg-gray-850 bg-slate-50 rounded-5">
           <div class="flex flex-col gap-5">
-            <div class="grid items-center gap-4 grid-cols-1 md:grid-cols-2 md:gap-x-4 md:gap-y-5">
+            <div
+              class="grid items-center gap-4 grid-cols-1 md:grid-cols-2 md:gap-x-4 md:gap-y-5"
+            >
               <div class="flex flex-col gap-2.5">
                 <span class="text-sm">Coin</span>
-                <div class="dark:bg-gray-800 bg-slate-100 w-full px-3 flex py-3 items-center gap-2.5 rounded-2xl">
-                  <img width="24" height="24" class="h-6 w-6"
+                <div
+                  class="dark:bg-gray-800 bg-slate-100 w-full px-3 flex py-3 items-center gap-2.5 rounded-2xl"
+                >
+                  <img
+                    width="24"
+                    height="24"
+                    class="h-6 w-6"
                     :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
-                    onerror="this.onerror=null; this.remove();" />
-                  <span class="text-sm w-full leading-5 text-shadow overflow-hidden whitespace-nowrap">
+                    onerror="this.onerror=null; this.remove();"
+                  />
+                  <span
+                    class="text-sm w-full leading-5 text-shadow overflow-hidden whitespace-nowrap"
+                  >
                     {{ token.name }}
                     <span class="uppercase"> ({{ token.symbol }})</span>
                   </span>
@@ -537,8 +610,12 @@ const onSubmit = handleSubmit(async () => {
 
               <div class="flex flex-col gap-2.5">
                 <span class="text-sm">Network</span>
-                <CommonSelect v-model="bridgeToChainId" value-key="chainId" label-key="name"
-                  :options="selectableChains">
+                <CommonSelect
+                  v-model="bridgeToChainId"
+                  value-key="chainId"
+                  label-key="name"
+                  :options="selectableChains"
+                >
                   <template #button-prefix>
                     <ChainLogo class="w-6 h-6" :chain="bridgeToChainId" />
                   </template>
@@ -556,15 +633,19 @@ const onSubmit = handleSubmit(async () => {
                 </span>
                 <span class="text-slate-400 font-medium">
                   {{
-  txRoute
-  ? `~${Math.round(txRoute.serviceTime / 60)}m`
-                  : "~10m"
+                    txRoute
+                      ? `~${Math.round(txRoute.serviceTime / 60)}m`
+                      : "~10m"
                   }}
                 </span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-slate-400 text-sm font-medium">Bridge Fee</span>
-                <span class="text-slate-400 text-sm font-medium text-right uppercase">
+                <span class="text-slate-400 text-sm font-medium"
+                  >Bridge Fee</span
+                >
+                <span
+                  class="text-slate-400 text-sm font-medium text-right uppercase"
+                >
                   {{ formatDecimal(fees.bridge?.amount, 4) }}
 
                   {{ fees.bridge?.asset.symbol }}
@@ -573,11 +654,15 @@ const onSubmit = handleSubmit(async () => {
                 </span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-slate-400 text-sm font-medium">Source Gas Fee</span>
-                <span class="text-slate-400 text-sm font-medium text-right uppercase">
-                  {{ formatDecimal(fees.gas?.amount, 4) }}
-                  {{ fees.gas.asset.symbol }}
-                  ({{ formatUsd(fees.gas.feesInUsd) }})
+                <span class="text-slate-400 text-sm font-medium"
+                  >Bridge Fee In Native</span
+                >
+                <span
+                  class="text-slate-400 text-sm font-medium text-right uppercase"
+                >
+                  {{ formatDecimal(nativeFee) }}
+                  {{ nativeCurrency?.symbol }}
+                  ({{ formatUsd(nativeFeeInUsd) }})
                 </span>
               </div>
             </div>
@@ -585,17 +670,24 @@ const onSubmit = handleSubmit(async () => {
             <div class="divider" />
 
             <div class="flex justify-between items-center">
-              <span class="md:text-lg font-semibold !leading-5">You receive</span>
-              <span class="sm:text-2xl text-lg font-semibold text-right !leading-5 uppercase">{{ toAmount }} {{
-                token.symbol
-              }}</span>
+              <span class="md:text-lg font-semibold !leading-5"
+                >You receive</span
+              >
+              <span
+                class="sm:text-2xl text-lg font-semibold text-right !leading-5 uppercase"
+                >{{ toAmount }} {{ token.symbol }}</span
+              >
             </div>
           </div>
         </div>
       </div>
       <EstimatedFee :chain-id="chainId" :loading="feePending" :data="fee" />
-      <CommonNotification v-if="!isGasBalanceSufficient" type="error"
-        :text="`Not enough ${fees.gas.asset.symbol.toUpperCase()} balance`">
+
+      <CommonNotification
+        v-if="isInsufficientBalance"
+        type="error"
+        :text="`Not enough ${nativeCurrency?.symbol.toUpperCase()} balance`"
+      >
         <template #action>
           <CommonButton
             size="sm"
@@ -611,8 +703,13 @@ const onSubmit = handleSubmit(async () => {
     </div>
 
     <div class="flex gap-4 flex-col">
-      <CommonButton type="submit" :disabled="sendingDisabled" :loading="loading || pending || feePending"
-        class="justify-center w-full" size="lg">
+      <CommonButton
+        type="submit"
+        :disabled="sendingDisabled"
+        :loading="loading || pending || feePending"
+        class="justify-center w-full"
+        size="lg"
+      >
         Bridge
       </CommonButton>
     </div>

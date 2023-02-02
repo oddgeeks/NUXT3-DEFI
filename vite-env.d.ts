@@ -246,7 +246,7 @@ type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim";
 type ISlackMessageType = "danger" | "error" | "success" | "banner";
 
 type CalculateFeeProps = {
-  fee: string;
-  multiplier: string;
+  fee?: string;
+  multiplier?: string;
   chainId: string;
 };
