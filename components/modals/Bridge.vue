@@ -90,7 +90,10 @@ const { value: amount, meta: amountMeta } = useField<string>("amount");
 
 const toAmount = computed(() =>
   formatDecimal(
-    fromWei(txRoute.value?.toAmount || "0", bridgeToToken?.value?.decimals).toFixed()
+    fromWei(
+      txRoute.value?.toAmount || "0",
+      bridgeToToken?.value?.decimals
+    ).toFixed()
   )
 );
 
@@ -183,15 +186,20 @@ const fees = computed<IFees>(() => {
       const bridgeFee = tx.steps.reduce((acc: any, step: any) => {
         if (!step?.protocolFees) return acc;
 
+        const asset = step?.protocolFees?.asset;
+        const assetPrice = tokenBalances.value.find(
+          (i) => i.address.toLowerCase() === asset?.address.toLowerCase()
+        );
+
+        const amount = fromWei(
+          toBN(acc.amount || "0").plus(toBN(step?.protocolFees?.amount || "0")),
+          step?.protocolFees?.asset?.decimals
+        );
+
         return {
-          amount: fromWei(
-            toBN(acc.amount || "0")
-              .plus(toBN(step?.protocolFees?.amount || "0"))
-              .toFixed(),
-            step?.protocolFees?.asset?.decimals
-          ).toFixed(),
+          amount: amount.toFixed(),
           feesInUsd: toBN(acc.feesInUsd || "0")
-            .plus(toBN(step?.protocolFees?.feesInUsd || "0"))
+            .plus(amount.times(assetPrice?.price || 0))
             .toFixed(),
           asset: step?.protocolFees?.asset,
         };
@@ -312,8 +320,7 @@ const { data, error, pending } = useAsyncData(
       .toFixed(0);
 
     try {
-
-       if (quoteController.value) {
+      if (quoteController.value) {
         quoteController.value.abort();
       }
 
