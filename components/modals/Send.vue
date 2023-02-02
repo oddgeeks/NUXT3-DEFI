@@ -152,6 +152,7 @@ const onSubmit = handleSubmit(async () => {
     const tx = await getTx();
 
     const metadata = encodeTransferMetadata({
+      chainId: props.chainId,
       token: token.value.address,
       amount: toWei(amount.value, token.value.decimals),
       receiver: address.value,

@@ -339,16 +339,14 @@ const onSubmit = handleSubmit(async () => {
     const txs = await getTxs();
 
     const metadata = encodeSwapMetadata({
+      chainId: props.chainId,
       buyAmount: swapDetails.value?.data.buyTokenAmount!,
       sellAmount: swapDetails.value?.data.sellTokenAmount!,
       buyToken: swapDetails.value?.data.buyToken.address!,
       sellToken: swap.value.sellToken.address,
       receiver: account.value,
-      priceImpact: formatBytes32String(bestRoute.value?.data.priceImpact!),
       slippage: formatBytes32String(customSlippage.value || slippage.value),
     })
-
-    encodeMultiMetadata([metadata, metadata])
 
     const transactionHash = await sendTransactions(txs, +props.chainId, {
       metadata

@@ -252,6 +252,7 @@ type MetadataProps = {
 };
 
 type SendMetadataProps = {
+  chainId: string;
   token: string;
   amount: string;
   receiver: string;
@@ -265,15 +266,14 @@ type BridgeMetadataProps = {
   token: string;
   bridgeFee: string;
   nativeToken: string;
-  processingTime: string;
 };
 
 type SwapMetadataProps = {
+  chainId: string;
   sellToken: string;
   buyToken: string;
   sellAmount: string;
   buyAmount: string;
   receiver: string;
   slippage: any;
-  priceImpact: any;
 };

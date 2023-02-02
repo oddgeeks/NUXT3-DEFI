@@ -7,10 +7,17 @@ import axiosRetry from "axios-retry";
 import { Forwarder__factory } from "@/contracts";
 import { RPC_URLS } from "~~/connectors";
 
+const multiMetadataTypes = ["bytes[]"];
+
 const metadataTypes = ["bytes32 type", "uint8 version", "bytes data"];
 
 const actionMetadataTypes = {
-  transfer: ["address token", "uint256 amount", "address receiver"],
+  transfer: [
+    "uint256 chainId",
+    "address token",
+    "uint256 amount",
+    "address receiver",
+  ],
   bridge: [
     "uint256 fromChainId",
     "uint256 toChainId",
@@ -19,16 +26,15 @@ const actionMetadataTypes = {
     "address token",
     "uint256 bridgeFee",
     "address nativeToken",
-    "uint256 processingTime",
   ],
   swap: [
+    "uint256 chainId",
     "address sellToken",
     "address buyToken",
     "uint256 sellAmount",
     "uint256 buyAmount",
     "address receiver",
     "bytes32 slippage",
-    "bytes32 priceImpact",
   ],
 };
 
@@ -261,51 +267,53 @@ export const calculateEstimatedFee = (params: FeeProps) => {
   return `${formatDecimal(avg, 2)}`;
 };
 
+const encodeMetadata = (props: MetadataProps) => {
+  return ethers.utils.defaultAbiCoder.encode(metadataTypes, [
+    ethers.utils.formatBytes32String(props.type),
+    props.version || "1",
+    props.encodedData,
+  ]);
+};
+
 export const encodeTransferMetadata = (params: SendMetadataProps) => {
   const encodedData = ethers.utils.defaultAbiCoder.encode(
     actionMetadataTypes.transfer,
-    [params.token, params.amount, params.receiver]
+    [params.chainId, params.token, params.amount, params.receiver]
   );
 
   return encodeMetadata({
     type: "transfer",
     encodedData,
-  });
+  })
 };
 
-export const encodeMultiMetadata = (actions: string[]) => {
-  return encodeMetadata({
-    type: "multi",
-    encodedData: ethers.utils.defaultAbiCoder.encode(
-      ["bytes"],
-      [
-        ethers.utils.defaultAbiCoder.encode(
-          ["(bytes32 type, uint8 version , bytes data)[]"],
-          [actions.map((encode) => encode)]
-        ),
-      ]
-    ),
-  });
+export const encodeMultipleActions = (...actionData: string[]) => {
+  const encodedActions = ethers.utils.defaultAbiCoder.encode(
+    multiMetadataTypes,
+    actionData
+  );
+
+  return encodedActions;
 };
 
 export const encodeSwapMetadata = (params: SwapMetadataProps) => {
   const encodedData = ethers.utils.defaultAbiCoder.encode(
     actionMetadataTypes.swap,
     [
+      params.chainId,
       params.sellToken,
       params.buyToken,
       params.sellAmount,
       params.buyAmount,
       params.receiver,
       params.slippage,
-      params.priceImpact,
     ]
   );
 
   return encodeMetadata({
     type: "swap",
     encodedData,
-  });
+  })
 };
 
 export const encodeBridgeMetadata = (params: BridgeMetadataProps) => {
@@ -319,22 +327,13 @@ export const encodeBridgeMetadata = (params: BridgeMetadataProps) => {
       params.token,
       params.bridgeFee,
       params.nativeToken,
-      params.processingTime,
     ]
   );
 
   return encodeMetadata({
     type: "bridge",
     encodedData,
-  });
-};
-
-const encodeMetadata = (props: MetadataProps) => {
-  return ethers.utils.defaultAbiCoder.encode(metadataTypes, [
-    ethers.utils.formatBytes32String(props.type),
-    props.version || "1",
-    props.encodedData,
-  ]);
+  })
 };
 
 export const decodeMetadata = (data: string) => {
@@ -362,6 +361,7 @@ export const decodeMetadata = (data: string) => {
       case "transfer":
         return {
           type,
+          chainId: decodedData.chainId ? decodedData.chainId.toString() : null,
           token: decodedData.token,
           amount: toBN(decodedData.amount).toFixed(),
           receiver: decodedData.receiver,
@@ -371,7 +371,6 @@ export const decodeMetadata = (data: string) => {
           type,
           fromChainId: decodedData.fromChainId.toString(),
           toChainId: decodedData.toChainId.toString(),
-          processingTime: decodedData.processingTime.toString(),
           amount: toBN(decodedData.amount).toFixed(),
           receiver: decodedData.receiver,
           token: decodedData.token,
@@ -382,12 +381,12 @@ export const decodeMetadata = (data: string) => {
       case "swap":
         return {
           type,
+          chainId: decodedData?.chainId ? decodedData.chainId.toString() : null,
           buyAmount: toBN(decodedData.buyAmount).toFixed(),
           sellAmount: toBN(decodedData.sellAmount).toFixed(),
           buyToken: decodedData.buyToken,
           sellToken: decodedData.sellToken,
           receiver: decodedData.receiver,
-          priceImpact: parseBytes32String(decodedData.priceImpact),
           slippage: parseBytes32String(decodedData.slippage),
         };
       default:
@@ -398,26 +397,3 @@ export const decodeMetadata = (data: string) => {
     return null;
   }
 };
-
-// console.log(
-//   encodeMultiMetadata([
-//     encodeSwapMetadata({
-//       buyAmount: "1000",
-//       buyToken: "0x6b175474e89094c44da98b954eedeac495271d0f",
-//       priceImpact: "44",
-//       receiver: "0x0000000000000000000000000000000000000000",
-//       sellAmount: "1000000000000000000",
-//       sellToken: "0x0000000000000000000000000000000000000000",
-//       slippage: "0x",
-//     }),
-//     encodeSwapMetadata({
-//       buyAmount: "2000",
-//       buyToken: "0x6b175474e89094c44da98b954eedeac495271d0f",
-//       priceImpact: "52",
-//       receiver: "0x0000000000000000000000000000000000000000",
-//       sellAmount: "1000000000000000000",
-//       sellToken: "0x0000000000000000000000000000000000000000",
-//       slippage: "0x",
-//     }),
-//   ])
-// );

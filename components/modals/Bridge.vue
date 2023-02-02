@@ -426,7 +426,6 @@ const onSubmit = handleSubmit(async () => {
        nativeToken:  fees.value.bridge.asset.address,
        fromChainId: props.chainId,
        toChainId: bridgeToChainId.value,
-       processingTime: txRoute.value.serviceTime,
        receiver: account.value,
        token: token.value.address,
     });
