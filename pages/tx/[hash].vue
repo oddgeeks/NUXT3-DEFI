@@ -123,9 +123,7 @@ const locale = computed(() =>
             Transaction Action
           </div>
           <div class="flex items-center text-xs">
-             <pre>
-              {{ metadata }}
-             </pre>
+             <pre>{{ metadata }}</pre>
           </div>
         </div>
       </div>
