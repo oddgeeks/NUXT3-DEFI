@@ -67,6 +67,14 @@ const nativeFeeInUsd = computed(() =>
   times(nativeFee.value, nativeCurrency.value?.price || 0)
 );
 
+const isInsufficientBalance = computed(() => {
+  const nativeBalance = tokenBalances.value.find(
+    (t) => t.chainId == token.value.chainId && t.symbol === nativeCurrency.value?.symbol
+  )?.balance || "0";
+
+  return toBN(nativeBalance).lt(nativeFee.value);
+});
+
 const { handleSubmit, errors, meta, resetForm, validate } = useForm({
   validationSchema: yup.object({
     amount: yup
@@ -379,7 +387,6 @@ const { data, error, pending } = useAsyncData(
 const {
   data: fee,
   pending: feePending,
-  error: feeError,
 } = useAsyncData(
   "bridge-fee",
   async () => {
@@ -419,7 +426,8 @@ const sendingDisabled = computed(
     pending.value ||
     feePending.value ||
     !txRoute.value ||
-    !meta.value.valid
+    !meta.value.valid ||
+    isInsufficientBalance.value
 );
 
 const handleSwapToken = () => {
@@ -473,9 +481,9 @@ const onSubmit = handleSubmit(async () => {
     logActionToSlack({
       message: `${formatDecimal(amount.value)} ${formatSymbol(
         token.value.symbol
-      )} from ${chainIdToName(token.value.chainId)} to ${chainIdToName(
+      )} from ${formatSymbol(chainIdToName(token.value.chainId), false)} to ${formatSymbol(chainIdToName(
         bridgeToChainId.value
-      )}`,
+      ), false)}`,
       action: "bridge",
       chainId: props.chainId,
       txHash: transactionHash,
@@ -674,8 +682,9 @@ const onSubmit = handleSubmit(async () => {
         </div>
       </div>
       <EstimatedFee :chain-id="chainId" :loading="feePending" :data="fee" />
+
       <CommonNotification
-        v-if="feeError && feeError?.message === '0_AVO__INSUFFICIENT_VALUE'"
+        v-if="isInsufficientBalance"
         type="error"
         :text="`Not enough ${nativeCurrency?.symbol.toUpperCase()} balance`"
       >
