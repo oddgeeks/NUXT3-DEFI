@@ -2,7 +2,7 @@ import { defineNuxtModule } from '@nuxt/kit'
 import { version } from '../package.json'
 import Git from 'simple-git'
 
-const gitBranch = process.env.BRANCH
+const gitBranch = process.env.BRANCH || process.env.VERCEL_GIT_BRANCH
 const git = Git()
 
 const getGitInfo = async () => {
