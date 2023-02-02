@@ -7,7 +7,7 @@ type Data = {
   multiplier: string;
 };
 
-const props = defineProps<{ data: Data; loading?: boolean; chainId: string }>();
+const props = defineProps<{ data?: Data; loading?: boolean; chainId: string }>();
 
 const { gasBalance } = storeToRefs(useSafe());
 
