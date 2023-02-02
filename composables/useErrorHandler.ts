@@ -18,7 +18,7 @@ export function useErrorHandler() {
     }
 
     if (errorMessage.includes(errorMessages.quoteExpired)) {
-      return "Quote has expired. Please refresh the page and try again";
+      return "Quote has expired, please try again";
     }
 
     return errorMessage;
