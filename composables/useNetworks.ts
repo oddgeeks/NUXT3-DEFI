@@ -167,6 +167,9 @@ export function useNetworks() {
         },
         iconUrls: ["https://avocado.link/logo.svg"],
         rpcUrls: ["https://rpc.avocado.link/"],
+        blockExplorerUrls: [
+          "https://avocado.link"
+        ]
       },
     },
     {
