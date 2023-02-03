@@ -275,8 +275,16 @@ const onSubmit = handleSubmit(async () => {
           </template>
         </CommonInput>
 
+        <button
+          type="button"
+          @click="address = account"
+          class="rounded-7.5 h-8 font-medium items-center justify-center flex px-3 text-xs ring-1 ring-slate-200 dark:ring-slate-700"
+        >
+          Owner {{ shortenHash(account) }}
+        </button>
+
         <div
-          class="dark:bg-gray-850 bg-slate-50 px-3 py-2 flex space-x-2 rounded-[20px]"
+          class="dark:bg-gray-850 !mt-5 bg-slate-50 px-3 py-2 flex space-x-2 rounded-[20px]"
         >
           <ChainLogo class="w-5 h-5" :chain="token.chainId" />
           <span class="text-xs font-medium leading-5">
