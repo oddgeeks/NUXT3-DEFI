@@ -256,14 +256,15 @@ export const calculateEstimatedFee = (params: CalculateFeeProps) => {
   const actualMin = Math.max(minVal, minChainFee);
   const actualMax = Math.max(maxVal, minChainFee);
 
-  const isEqual = actualMin === actualMax;
+  const formattedMin = formatUsd(actualMin);
+  const formattedMax = formatUsd(actualMax);
+
+  const isEqual = formattedMin === formattedMax;
 
   return {
     min: actualMin,
     max: actualMax,
-    formatted: isEqual
-      ? formatUsd(actualMax)
-      : `${formatUsd(actualMin)} - ${formatUsd(actualMax)}`,
+    formatted: isEqual ? formattedMax : `${formattedMin} - ${formattedMax}`,
   };
 };
 
