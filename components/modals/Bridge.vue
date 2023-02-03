@@ -253,7 +253,7 @@ const fees = computed<IFees>(() => {
 });
 
 const setMax = () => {
-  amount.value = token.value!.balance;
+  amount.value = toBN(token.value!.balance).decimalPlaces(6, 1).toString();
 };
 
 const bridgeToChainId = ref(props.chainId === "137" ? "10" : "137");
@@ -562,7 +562,7 @@ onUnmounted(() => {
         <div class="flex justify-between items-center">
           <h1 class="text-sm">Transfer from</h1>
           <span class="uppercase text-sm"
-            >{{ token.balance }} {{ token.symbol }}</span
+            >{{ formatDecimal(token.balance) }} {{ token.symbol }}</span
           >
         </div>
 
