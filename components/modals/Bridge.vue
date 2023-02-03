@@ -532,7 +532,6 @@ onUnmounted(() => {
 
 <template>
   <form @submit="onSubmit" class="flex gap-7.5 flex-col">
-    {{ data }}
     <div class="flex justify-center flex-col items-center">
       <img
         width="40"
