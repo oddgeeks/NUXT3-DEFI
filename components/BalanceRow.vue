@@ -10,16 +10,23 @@ const props = defineProps<{
 }>();
 
 const priceDiff = computed(() => {
-  if (!props.tokenBalance.sparklinePrice7d.length) return null;
+  if (!props.tokenBalance.sparklinePrice7d.length) return 0;
+  let a = props.tokenBalance.sparklinePrice7d.at(-24)!;
+  let b = props.tokenBalance.sparklinePrice7d.at(-1)!;
+  return b - a;
+});
+
+const priceDiffInPercent = computed(() => {
+  if (!props.tokenBalance.sparklinePrice7d.length) return 0;
   let a = props.tokenBalance.sparklinePrice7d.at(-24)!;
   let b = props.tokenBalance.sparklinePrice7d.at(-1)!;
   return (100 * (b - a)) / a;
 });
 
 const priceDiffClass = computed(() => {
-  if (!priceDiff.value) return "text-slate-400";
+  if (!priceDiffInPercent.value) return "text-slate-400";
 
-  if (priceDiff.value < 0) {
+  if (priceDiffInPercent.value < 0) {
     return "text-[#EB5757]";
   }
 
@@ -27,9 +34,9 @@ const priceDiffClass = computed(() => {
 });
 
 const priceDiffColor = computed(() => {
-  if (!priceDiff.value) return "rgb(148 163 184)";
+  if (!priceDiffInPercent.value) return "rgb(148 163 184)";
 
-  if (priceDiff.value < 0) {
+  if (priceDiffInPercent.value < 0) {
     return "#EB5757";
   }
 
@@ -107,7 +114,7 @@ const chartOptions = {
         </div>
       </div>
     </td>
-    <td  class="text-center font-semibold py-6 whitespace-nowrap">
+    <td class="text-center font-semibold py-6 whitespace-nowrap">
       <span v-if="tokenBalance.balanceInUSD">
         {{ formatUsd(tokenBalance.balanceInUSD) }}
       </span>
@@ -124,11 +131,17 @@ const chartOptions = {
         <span v-else> - </span>
       </div>
     </td>
-    <td class="text-center font-semibold py-6">
-      <span v-if="priceDiff" :class="priceDiffClass">
-        {{ priceDiff.toFixed(2) }}%
-      </span>
-
+    <td class="font-semibold py-6 text-sm">
+      <div
+        class="flex gap-1 flex-col"
+        :class="priceDiffClass"
+        v-if="priceDiffInPercent"
+      >
+        <span> {{ priceDiffInPercent.toFixed(2) }}% </span>
+        <span>
+          {{ formatUsd(toBN(priceDiff).decimalPlaces(3)) }}
+        </span>
+      </div>
       <span v-else> - </span>
     </td>
     <td class="text-right pl-7.5 py-6">
