@@ -19,6 +19,7 @@ interface Network {
     chainName?: string;
     rpcUrls?: string[];
     blockExplorerUrls?: string[];
+    iconUrls?: string[];
     nativeCurrency?: {
       name: string;
       symbol: string;
