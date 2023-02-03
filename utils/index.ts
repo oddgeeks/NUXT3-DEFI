@@ -16,7 +16,9 @@ const actionMetadataTypes = {
   bridge: [
     "uint256 amount",
     "address receiver",
-    "address token",
+    "address fromToken",
+    "address toToken",
+    "uint256 toChainId",
     "uint256 bridgeFee",
     "address nativeToken",
   ],
@@ -254,14 +256,15 @@ export const calculateEstimatedFee = (params: CalculateFeeProps) => {
   const actualMin = Math.max(minVal, minChainFee);
   const actualMax = Math.max(maxVal, minChainFee);
 
-  const isEqual = actualMin === actualMax;
+  const formattedMin = formatUsd(actualMin);
+  const formattedMax = formatUsd(actualMax);
+
+  const isEqual = formattedMin === formattedMax;
 
   return {
     min: actualMin,
     max: actualMax,
-    formatted: isEqual
-      ? formatUsd(actualMax)
-      : `${formatUsd(actualMin)} - ${formatUsd(actualMax)}`,
+    formatted: isEqual ? formattedMax : `${formattedMin} - ${formattedMax}`,
   };
 };
 
@@ -322,7 +325,9 @@ export const encodeBridgeMetadata = (
     [
       params.amount,
       params.receiver,
-      params.token,
+      params.fromToken,
+      params.toToken,
+      params.toChainId,
       params.bridgeFee,
       params.nativeToken,
     ]
@@ -386,9 +391,12 @@ export const decodeMetadata = (data: string) => {
             type,
             amount: toBN(decodedData.amount).toFixed(),
             receiver: decodedData.receiver,
-            token: decodedData.token,
+            toToken: decodedData.toToken,
+            fromToken: decodedData.fromToken,
+            toChainId: decodedData.toChainId
+              ? decodedData.toChainId.toString()
+              : null,
             bridgeFee: toBN(decodedData.bridgeFee).toFixed(),
-            bridgeToken: decodedData.nativeToken,
           };
           break;
         case "swap":

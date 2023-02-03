@@ -12,9 +12,11 @@ const [transaction] = (await Promise.all([
 
 const metadata = decodeMetadata(transaction.data);
 
-onMounted(() => console.log({
-  metadata
-}))
+onMounted(() =>
+  console.log({
+    metadata,
+  })
+);
 
 const locale = computed(() =>
   typeof window !== "undefined" ? window.navigator.language : "en"
@@ -115,18 +117,18 @@ const locale = computed(() =>
       <div v-if="metadata">
         <hr class="w-full dark:border-slate-800 border-slate-150" />
 
-       <div class="px-7.5 py-6.5">
-        <div class="flex">
-          <div
-            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
-          >
-            Transaction Action
-          </div>
-          <div class="flex items-center text-xs">
-             <pre>{{ metadata }}</pre>
+        <div class="px-7.5 py-6.5">
+          <div class="flex">
+            <div
+              class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
+            >
+              Transaction Action
+            </div>
+            <div class="flex items-center text-xs">
+              <pre>{{ metadata }}</pre>
+            </div>
           </div>
         </div>
-      </div>
       </div>
 
       <hr class="w-full dark:border-slate-800 border-slate-150" />
@@ -196,8 +198,14 @@ const locale = computed(() =>
       <div class="px-7.5 flex flex-col pt-6.5 gap-6.5">
         <div class="flex items-center">
           <div
-            class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
+            class="dark:text-slate-400 gap-2.5 flex items-center text-slate-500 md:w-full md:max-w-[235px]"
           >
+            <SVGInfo
+              v-tippy="
+                'This includes the fee that will be paid to the relayer and the integrator.'
+              "
+              class="w-[18px] h-[18px] text-slate-600 shrink-0"
+            />
             Transaction Fee
           </div>
           <div class="capitalize">
@@ -210,7 +218,7 @@ const locale = computed(() =>
       </div>
 
       <div
-        v-if="metadata && metadata.type === 'bridge'"
+        v-if="metadata?.length && metadata.some((i) => i.type === 'bridge')"
         class="flex flex-col pt-6.5 gap-6.5"
       >
         <hr class="w-full dark:border-slate-800 border-slate-150" />
@@ -219,21 +227,26 @@ const locale = computed(() =>
           <div
             class="dark:text-slate-400 gap-2.5 flex items-center text-slate-500 md:w-full md:max-w-[235px]"
           >
-           <SVGInfo  v-tippy="'This is a token bridging transaction. Click on the link to check the estimated time for the transaction to be processed.'" class="w-[18px] h-[18px] text-slate-600 shrink-0" />
+            <SVGInfo
+              v-tippy="
+                'This is a token bridging transaction. Click on the link to check the estimated time for the transaction to be processed.'
+              "
+              class="w-[18px] h-[18px] text-slate-600 shrink-0"
+            />
 
             Bridge Transaction
           </div>
-         <div class="flex items-center gap-2.5">
-           <a
-            class="text-blue-500"
-            :href="`https://socketscan.io/tx/${transaction.hash}`"
-            target="_blank"
-          >
-            {{ transaction.hash }}
-          </a>
+          <div class="flex items-center gap-2.5">
+            <a
+              class="text-blue-500"
+              :href="`https://socketscan.io/tx/${transaction.hash}`"
+              target="_blank"
+            >
+              {{ transaction.hash }}
+            </a>
 
-          <Copy :text="transaction.hash" />
-         </div>
+            <Copy :text="transaction.hash" />
+          </div>
         </div>
       </div>
     </div>

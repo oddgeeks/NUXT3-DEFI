@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
 import RefreshSVG from "~/assets/images/icons/refresh.svg?component";
 import { Erc20__factory } from "~~/contracts";
 import { useField, useForm } from "vee-validate";
@@ -159,6 +160,8 @@ const getTxs = async () => {
       value: buildTx.result.value,
     });
 
+    console.log("selam");
+
     transactions.value = txs;
 
     return txs;
@@ -250,7 +253,7 @@ const fees = computed<IFees>(() => {
 });
 
 const setMax = () => {
-  amount.value = token.value!.balance;
+  amount.value = toBN(token.value!.balance).decimalPlaces(6, 1).toString();
 };
 
 const bridgeToChainId = ref(props.chainId === "137" ? "10" : "137");
@@ -284,7 +287,6 @@ const bridgeToToken = computed(() => {
 });
 
 const { data: bridgeToTokens } = useAsyncData(
-  "bridge-tokens",
   async () => {
     try {
       const { data }: { data: IBridgeTokensResponse } = await http.get(
@@ -318,7 +320,6 @@ const txRoute = computed(() => {
 });
 
 const { data, error, pending } = useAsyncData(
-  "bridge-data",
   async () => {
     const { valid } = await validate();
 
@@ -388,7 +389,6 @@ const { data, error, pending } = useAsyncData(
 );
 
 const { data: fee, pending: feePending } = useAsyncData(
-  "bridge-fee",
   async () => {
     if (!txRoute.value) return;
 
@@ -481,7 +481,9 @@ const onSubmit = handleSubmit(async () => {
       ),
       nativeToken: fees.value.bridge.asset.address,
       receiver: account.value,
-      token: token.value.address,
+      fromToken: token.value.address,
+      toToken: bridgeToToken.value.address,
+      toChainId: bridgeToChainId.value,
     });
 
     let transactionHash = await sendTransactions(txs, props.chainId, {
@@ -522,6 +524,10 @@ const onSubmit = handleSubmit(async () => {
     loading.value = false;
   }
 });
+
+onUnmounted(() => {
+  data.value = null;
+});
 </script>
 
 <template>
@@ -556,7 +562,7 @@ const onSubmit = handleSubmit(async () => {
         <div class="flex justify-between items-center">
           <h1 class="text-sm">Transfer from</h1>
           <span class="uppercase text-sm"
-            >{{ token.balance }} {{ token.symbol }}</span
+            >{{ formatDecimal(token.balance) }} {{ token.symbol }}</span
           >
         </div>
 
@@ -664,10 +670,20 @@ const onSubmit = handleSubmit(async () => {
                   ({{ formatUsd(fees.bridge?.feesInUsd) }})
                 </span>
               </div>
-              <div class="flex justify-between items-center">
-                <span class="text-slate-400 text-sm font-medium"
-                  >Bridge Fee In Native</span
-                >
+              <div
+                v-if="!isZero(nativeFee)"
+                class="flex justify-between items-center"
+              >
+                <span
+                  class="text-slate-400 inline-flex items-center gap-2 text-sm font-medium"
+                  >Source Gas Fee
+                  <SVGInfo
+                    v-tippy="
+                      'This fee is a requirement from the underlying bridge provider to cover the gas cost on target chain.'
+                    "
+                    class="text-blue-500"
+                  />
+                </span>
                 <span
                   class="text-slate-400 text-sm font-medium text-right uppercase"
                 >

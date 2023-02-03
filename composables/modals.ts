@@ -86,6 +86,9 @@ export const openSendModal = (address: string, chainId: number | string) => {
       address,
       chainId,
     },
+    options: {
+      wrapperClass: "max-w-[500px]",
+    },
   });
 };
 

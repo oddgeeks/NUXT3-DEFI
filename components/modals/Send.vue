@@ -52,9 +52,9 @@ const { handleSubmit, errors, meta, resetForm, validate } = useForm({
       }),
     address: yup
       .string()
-      .required()
+      .required("")
       .test("is-address", "Incorrect address", (value) => {
-        return isAddress(value);
+        return value ? isAddress(value) : true;
       }),
   }),
 });
@@ -63,7 +63,7 @@ const { value: amount, meta: amountMeta } = useField<string>("amount");
 const { value: address, meta: addressMeta } = useField<string>("address");
 
 const setMax = () => {
-  amount.value = token.value!.balance;
+  amount.value = toBN(token.value!.balance).decimalPlaces(6, 1).toString();
 };
 
 const pasteAddress = async () => {
@@ -235,7 +235,7 @@ const onSubmit = handleSubmit(async () => {
         <div class="flex justify-between items-center">
           <span class="text-sm">Amount</span>
           <span class="uppercase text-sm"
-            >{{ token.balance }} {{ token.symbol }}</span
+            >{{ formatDecimal(token.balance) }} {{ token.symbol }}</span
           >
         </div>
         <CommonInput
@@ -275,8 +275,16 @@ const onSubmit = handleSubmit(async () => {
           </template>
         </CommonInput>
 
+        <button
+          type="button"
+          @click="address = account"
+          class="rounded-7.5 h-8 font-medium items-center justify-center flex px-3 text-xs ring-1 ring-slate-200 dark:ring-slate-700"
+        >
+          Owner {{ shortenHash(account) }}
+        </button>
+
         <div
-          class="dark:bg-gray-850 bg-slate-50 px-3 py-2 flex space-x-2 rounded-[20px]"
+          class="dark:bg-gray-850 !mt-5 bg-slate-50 px-3 py-2 flex space-x-2 rounded-[20px]"
         >
           <ChainLogo class="w-5 h-5" :chain="token.chainId" />
           <span class="text-xs font-medium leading-5">
