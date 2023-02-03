@@ -17,7 +17,7 @@ export const useAvocadoSafe = () => {
     [library, account],
     () => {
       safe.value = library.value
-        ? createSafe(library.value.getSigner())
+        ? createSafe(library.value.getSigner().connectUnchecked())
         : undefined;
     },
     { immediate: true }
