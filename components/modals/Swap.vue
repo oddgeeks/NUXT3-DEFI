@@ -80,16 +80,16 @@ const availableBuyTokens = computed(() =>
 
 const sellTokenBalance = computed(
   () =>
-    formatDecimal(chainTokenBalances.value[String(props.chainId)].find(
+    chainTokenBalances.value[String(props.chainId)].find(
       (t) => t.address === swap.value.sellToken.address
-    )?.balance || "0.00") 
+    )?.balance || "0.00"
 );
 
 const buyTokenBalance = computed(
   () =>
-    formatDecimal(chainTokenBalances.value[String(props.chainId)].find(
+    chainTokenBalances.value[String(props.chainId)].find(
       (t) => t.address === swap.value.buyToken.address
-    )?.balance || "0.00")
+    )?.balance || "0.00"
 );
 
 watch([() => swap.value.sellToken, () => swap.value.buyToken], () => {
@@ -175,7 +175,9 @@ const handleBuyAmountInput = (e: any) => {
 
 const setMax = () => {
   toggleDirty(false);
-  sellAmount.value = sellTokenBalance.value;
+  sellAmount.value = toBN(sellTokenBalance.value)
+    .decimalPlaces(6, 1)
+    .toString();
 };
 
 const handleSellAmountInput = () => {
@@ -234,8 +236,8 @@ const { data: swapDetails, pending } = useAsyncData(
       }
 
       return data;
-    } catch (e: any) { 
-      if (e?.code === 'ERR_CANCELED') return;
+    } catch (e: any) {
+      if (e?.code === "ERR_CANCELED") return;
 
       throw e;
     }
@@ -351,17 +353,16 @@ const onSubmit = handleSubmit(async () => {
   try {
     const txs = await getTxs();
 
-
     const metadata = encodeSwapMetadata({
       buyAmount: swapDetails.value?.data.buyTokenAmount!,
       sellAmount: swapDetails.value?.data.sellTokenAmount!,
       buyToken: swapDetails.value?.data.buyToken.address!,
       sellToken: swap.value.sellToken.address,
       receiver: account.value,
-    })
+    });
 
     const transactionHash = await sendTransactions(txs, +props.chainId, {
-      metadata
+      metadata,
     });
 
     const buyAmt = fromWei(
@@ -466,7 +467,8 @@ onMounted(() => {
           <span v-else>{{ formatUsd(sellAmountInUsd) }}</span>
           <div class="flex items-center ml-auto gap-2.5 uppercase">
             <span class="font-medium"
-              >{{ sellTokenBalance }} {{ swap.sellToken?.symbol }}</span
+              >{{ formatDecimal(sellTokenBalance) }}
+              {{ swap.sellToken?.symbol }}</span
             >
             <button type="button" @click="setMax" class="text-blue-500">
               MAX
@@ -519,7 +521,8 @@ onMounted(() => {
           <span v-else>{{ formatUsd(buyAmountInUsd) }}</span>
           <div class="flex items-center ml-auto gap-2.5 uppercase">
             <span class="font-medium"
-              >{{ buyTokenBalance }} {{ swap.buyToken?.symbol }}</span
+              >{{ formatDecimal(buyTokenBalance) }}
+              {{ swap.buyToken?.symbol }}</span
             >
           </div>
         </div>
