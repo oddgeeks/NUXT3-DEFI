@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ChevronDownSVG from "~/assets/images/icons/chevron-down.svg?component";
 import type { IToken } from "~~/stores/tokens";
 import { Erc20__factory } from "~~/contracts";
 import { useField, useForm } from "vee-validate";
@@ -533,57 +534,68 @@ onMounted(() => {
       <div class="space-y-2.5">
         <div class="px-5 pt-[14px] pb-5 dark:bg-gray-850 bg-slate-50 rounded-5">
           <div class="flex flex-col gap-5">
-            <div class="flex flex-1 gap-4 items-end">
-              <div class="flex flex-col gap-2.5 flex-1">
-                <div class="text-sm font-semibold inline-flex gap-2.5">
+            <details class="group flex flex-col">
+              <summary
+                class="text-sm font-semibold flex justify-between cursor-pointer"
+              >
+                <span class="inline-flex gap-2.5">
                   Slippage
 
                   <button
+                    type="button"
                     v-tippy="
                       'Slippage is the difference between the expected price of an order and the price when the order actually executes. The slippage tolerance % lets you decide how much slippage you are willing to accept for a trade.'
                     "
                   >
                     <QuestionCircleSVG class="w-5 h-5" />
                   </button>
+                </span>
+                <ChevronDownSVG
+                  class="w-5 text-slate-400 group-open:rotate-180"
+                />
+              </summary>
+              <div class="flex flex-1 gap-4 items-end mt-4">
+                <div class="flex flex-col gap-2.5 flex-1">
+                  <CommonSelect
+                    v-model="slippage"
+                    value-key="value"
+                    label-key="label"
+                    :container-classes="
+                      !customSlippage ? '!border-blue-500' : ''
+                    "
+                    :options="slippages"
+                  >
+                    <template #button-prefix>
+                      <div
+                        :class="{ '!border-blue-500': !customSlippage }"
+                        class="radio !mr-0"
+                      ></div>
+                    </template>
+                  </CommonSelect>
                 </div>
-                <CommonSelect
-                  v-model="slippage"
-                  value-key="value"
-                  label-key="label"
-                  :container-classes="!customSlippage ? '!border-blue-500' : ''"
-                  :options="slippages"
+                <CommonInput
+                  name="slippage"
+                  placeholder="Custom"
+                  input-classes="!py-3"
+                  class="flex-1"
+                  :container-classes="customSlippage ? '!ring-blue-500' : ''"
+                  v-model="customSlippage"
                 >
-                  <template #button-prefix>
+                  <template #prefix>
                     <div
-                      :class="{ '!border-blue-500': !customSlippage }"
-                      class="radio !mr-0"
+                      :class="{ '!border-blue-500': customSlippage }"
+                      class="radio"
                     ></div>
                   </template>
-                </CommonSelect>
+                </CommonInput>
               </div>
-              <CommonInput
-                name="slippage"
-                placeholder="Custom"
-                input-classes="!py-3"
-                class="flex-1"
-                :container-classes="customSlippage ? '!ring-blue-500' : ''"
-                v-model="customSlippage"
+              <span
+                v-if="slippageMeta.dirty && errors['customSlippage']"
+                class="text-xs flex gap-2 items-center text-left mt-4 text-red-alert"
               >
-                <template #prefix>
-                  <div
-                    :class="{ '!border-blue-500': customSlippage }"
-                    class="radio"
-                  ></div>
-                </template>
-              </CommonInput>
-            </div>
-
-            <span
-              v-if="slippageMeta.dirty && errors['customSlippage']"
-              class="text-xs flex gap-2 items-center text-left mt-2 text-red-alert"
-            >
-              <SVGInfo /> {{ errors["customSlippage"] }}
-            </span>
+                <SVGInfo /> {{ errors["customSlippage"] }}
+              </span>
+            </details>
 
             <div class="divider" />
 
