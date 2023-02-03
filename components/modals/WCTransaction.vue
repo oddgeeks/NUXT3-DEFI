@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import GasSVG from "~/assets/images/icons/gas.svg?component";
 import NetworkSVG from "~/assets/images/icons/network.svg?component";
+import FlowersSVG from "~/assets/images/icons/flowers.svg?component";
 import type WalletConnect from "@walletconnect/client";
 import { storeToRefs } from "pinia";
 
@@ -47,7 +48,9 @@ const { data: fee, pending } = useAsyncData(
   }
 );
 
-const submitDisabled = computed(()=> submitting.value || pending.value || isBalaceNotEnough.value)
+const submitDisabled = computed(
+  () => submitting.value || pending.value || isBalaceNotEnough.value
+);
 
 const isBalaceNotEnough = computed(() => {
   if (pending.value) return false;
@@ -114,16 +117,19 @@ const handleSubmit = async () => {
     });
 
     logActionToSlack({
-      message: props.wc.peerMeta?.url + ' ' + err,
+      message: props.wc.peerMeta?.url + " " + err,
       type: "error",
       action: "wc",
       chainId: props.chainId,
       account: account.value,
     });
-     
   } finally {
     toggle(false);
   }
+};
+
+const formatURL = (url: string) => {
+  return new URL(url).hostname;
 };
 
 const handleReject = () => {
@@ -139,8 +145,25 @@ const handleReject = () => {
 
     <div class="flex flex-col gap-2.5">
       <div
-        class="dark:bg-gray-850 bg-slate-50 flex flex-col gap-4 rounded-[10px] py-[14px] px-5"
+        class="dark:bg-gray-850 bg-slate-50 flex flex-col gap-4 rounded-5 py-[14px] px-5"
       >
+        <div class="flex justify-between items-center">
+          <div class="text-slate-400 flex items-center gap-2.5">
+            <FlowersSVG />
+            <span class="text-xs leading-5 font-medium">App Name</span>
+          </div>
+
+          <div class="flex items-center gap-2.5">
+            <a
+              rel="noopener noreferrer"
+              target="_blank"
+              class="text-blue-500 text-sm"
+              :href="wc.peerMeta?.url"
+            >
+              {{ formatURL(wc.peerMeta?.url) }}
+            </a>
+          </div>
+        </div>
         <div class="flex justify-between items-center">
           <div class="text-slate-400 flex items-center gap-2.5">
             <NetworkSVG />
@@ -165,7 +188,12 @@ const handleReject = () => {
 
           <div class="flex items-center gap-2.5">
             <span v-if="pending" class="w-20 h-5 loading-box rounded-lg"></span>
-            <span v-else :class="{ 'text-red-alert' : isBalaceNotEnough }" class="text-xs">{{ fee?.formatted }}</span>
+            <span
+              v-else
+              :class="{ 'text-red-alert': isBalaceNotEnough }"
+              class="text-xs"
+              >{{ fee?.formatted }}</span
+            >
             <img
               class="w-[18px] h-[18px]"
               width="18"
@@ -175,13 +203,15 @@ const handleReject = () => {
           </div>
         </div>
       </div>
-       <CommonNotification
+      <CommonNotification
         v-if="isBalaceNotEnough"
         type="error"
         text="Not enough USDC gas"
       >
         <template #action>
-          <CommonButton @click="openTopUpGasModal()" size="sm"> Top-up </CommonButton>
+          <CommonButton @click="openTopUpGasModal()" size="sm">
+            Top-up
+          </CommonButton>
         </template>
       </CommonNotification>
     </div>
@@ -195,7 +225,13 @@ const handleReject = () => {
         Reject
       </CommonButton>
 
-      <CommonButton :loading="submitting" :disabled="submitDisabled" type="submit" class="flex-1 justify-center items-center" size="lg">
+      <CommonButton
+        :loading="submitting"
+        :disabled="submitDisabled"
+        type="submit"
+        class="flex-1 justify-center items-center"
+        size="lg"
+      >
         Submit
       </CommonButton>
     </div>

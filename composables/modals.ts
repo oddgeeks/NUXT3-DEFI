@@ -137,6 +137,9 @@ export const openWCTransactionModal = async (params: IWcTransactionModal) => {
       chainId: params.chainId,
       wc: params.wc,
     },
+    options: {
+      contentClass: "md:px-10 md:pt-[34px] md:pb-10",
+    },
   });
 };
 
