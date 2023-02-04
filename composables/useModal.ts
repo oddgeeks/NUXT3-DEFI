@@ -63,7 +63,7 @@ async function openModal({
     modals.value = modals.value.filter((m) => m.id !== id);
 
     if (!modals.value.length) {
-      document.body.classList.remove("modal-open");
+      repositionScroll();
     }
   };
 
@@ -82,7 +82,7 @@ async function openModal({
   };
 
   if (!modals.value.length) {
-    document.body.classList.add("modal-open");
+    adjustScroll();
   }
 
   modals.value.push(modal);
@@ -114,6 +114,18 @@ async function openModal({
     };
   });
 }
+
+const adjustScroll = () => {
+  const scrollBarWidth = window.innerWidth - document.body.clientWidth;
+
+  document.body.style.paddingRight = `${scrollBarWidth}px`;
+  document.body.classList.add("modal-open");
+};
+
+const repositionScroll = () => {
+  document.body.classList.remove("modal-open");
+  document.body.style.paddingRight = "";
+};
 
 export function useModal() {
   return {

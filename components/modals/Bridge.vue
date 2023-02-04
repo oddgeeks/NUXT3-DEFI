@@ -1,24 +1,6 @@
 <script setup lang="ts">
 import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
 import RefreshSVG from "~/assets/images/icons/refresh.svg?component";
-import { Erc20__factory } from "~~/contracts";
-import { useField, useForm } from "vee-validate";
-import * as yup from "yup";
-import { storeToRefs } from "pinia";
-import type { IToken } from "~~/stores/tokens";
-
-type IFee = {
-  amount: string;
-  feesInUsd: string;
-  asset: IToken;
-};
-
-type IFees = {
-  bridge: IFee;
-  gas: IFee;
-};
-
-const provider = getRpcProvider(634);
 
 const emit = defineEmits(["destroy"]);
 
@@ -38,457 +20,65 @@ const props = defineProps({
 });
 
 const { account } = useWeb3();
-const { switchNetworkByChainId, networks, getNetworkByChainId } = useNetworks();
-const { sendTransactions, safeAddress, tokenBalances, safe } = useAvocadoSafe();
-const { fromWei, toWei } = useBignumber();
+const { switchNetworkByChainId } = useNetworks();
+const { sendTransactions } = useAvocadoSafe();
+const { toWei } = useBignumber();
 const { parseTransactionError } = useErrorHandler();
-const { tokens } = storeToRefs(useTokens());
 
-const loading = ref(false);
-const transactions = ref<any>([]);
-let abortController = ref<AbortController | null>(null);
-let quoteController = ref<AbortController | null>(null);
-
-const token = computed(
-  () =>
-    tokenBalances.value.find(
-      (t) => t.chainId === props.chainId && t.address === props.address
-    )!
-);
-
-const nativeFee = computed(() =>
-  transactions.value.reduce((acc: any, tx: any) => {
-    return toBN(acc)
-      .plus(fromWei(tx?.value || "0", nativeCurrency.value?.decimals))
-      .toFixed();
-  }, "0")
-);
-
-const nativeFeeInUsd = computed(() =>
-  times(nativeFee.value, nativeCurrency.value?.price || 0)
-);
-
-const isInsufficientBalance = computed(() => {
-  const nativeBalance =
-    tokenBalances.value.find(
-      (t) =>
-        t.chainId == token.value.chainId &&
-        t.symbol === nativeCurrency.value?.symbol
-    )?.balance || "0";
-
-  return toBN(nativeBalance).lt(nativeFee.value);
-});
-
-const { handleSubmit, errors, meta, resetForm, validate } = useForm({
-  validationSchema: yup.object({
-    amount: yup
-      .string()
-      .required("")
-      .test("min-amount", "", (value) => {
-        const amount = toBN(value);
-
-        return value ? amount.gt(0) : true;
-      })
-      .test("max-amount", "Insufficient balance", (value) => {
-        const amount = toBN(value);
-        const balance = toBN(token.value.balance);
-
-        return amount.gt(0) ? amount.lte(balance) : true;
-      }),
-  }),
-});
-
-const { value: amount, meta: amountMeta } = useField<string>("amount");
-
-const toAmount = computed(() =>
-  formatDecimal(
-    fromWei(
-      txRoute.value?.toAmount || "0",
-      bridgeToToken?.value?.decimals
-    ).toFixed()
-  )
-);
-
-const getTxs = async () => {
-  try {
-    const txs = [];
-
-    if (!txRoute.value) return [];
-
-    if (abortController.value) {
-      abortController.value.abort();
-    }
-
-    abortController.value = new AbortController();
-
-    for (const userTx of txRoute.value?.userTxs || []) {
-      if (userTx.approvalData) {
-        const erc20 = Erc20__factory.connect(
-          token.value.address,
-          getRpcProvider(props.chainId)
-        );
-        const { data } = await erc20.populateTransaction.approve(
-          userTx.approvalData.allowanceTarget,
-          userTx.approvalData.minimumApprovalAmount
-        );
-
-        txs.push({
-          to: token.value.address,
-          data,
-        });
-      }
-    }
-
-    const { data: buildTx } = await http.post(
-      "https://api.socket.tech/v2/build-tx",
-      {
-        route: txRoute.value,
-      },
-      {
-        signal: abortController.value.signal,
-        headers: {
-          "api-key": "645b2c8c-5825-4930-baf3-d9b997fcd88c",
-        },
-      }
-    );
-
-    abortController.value = null;
-
-    txs.push({
-      to: buildTx.result.txTarget,
-      data: buildTx.result.txData,
-      value: buildTx.result.value,
-    });
-
-    console.log("selam");
-
-    transactions.value = txs;
-
-    return txs;
-  } catch (e) {
-    console.log(e);
-  }
-};
-
-const nativeCurrency = computed(() => {
-  const nativeTokenMeta = getNetworkByChainId(+props.chainId).params
-    .nativeCurrency;
-
-  return tokens.value.find(
-    (t) =>
-      t.chainId == props.chainId &&
-      t.symbol.toLowerCase() === nativeTokenMeta?.symbol?.toLowerCase()
-  );
-});
-
-const fees = computed<IFees>(() => {
-  const fallback: IFee = {
-    amount: "0",
-    feesInUsd: "0",
-    asset: nativeCurrency.value as IToken,
-  };
-
-  if (!txRoute.value) {
-    return {
-      gas: fallback,
-      bridge: fallback,
-    };
-  }
-
-  const fees = txRoute.value?.userTxs.reduce(
-    (acc: IFees, tx: any) => {
-      const bridgeFee = tx.steps.reduce((acc: any, step: any) => {
-        if (!step?.protocolFees) return acc;
-
-        const asset = step?.protocolFees?.asset;
-        const assetPrice = tokenBalances.value.find(
-          (i) => i.address.toLowerCase() === asset?.address.toLowerCase()
-        );
-
-        const amount = fromWei(
-          toBN(acc.amount || "0").plus(toBN(step?.protocolFees?.amount || "0")),
-          step?.protocolFees?.asset?.decimals
-        );
-
-        return {
-          amount: amount.toFixed(),
-          feesInUsd: toBN(acc.feesInUsd || "0")
-            .plus(amount.times(assetPrice?.price || 0))
-            .toFixed(),
-          asset: step?.protocolFees?.asset,
-        };
-      }, fallback);
-
-      return {
-        gas: {
-          amount: fromWei(
-            toBN(acc.gas.amount || "0")
-              .plus(toBN(tx.gasFees.gasAmount || "0"))
-              .toFixed(),
-            tx.gasFees.asset.decimals
-          ).toFixed(),
-          feesInUsd: toBN(acc.gas.feesInUsd || "0")
-            .plus(toBN(tx.gasFees.feesInUsd || "0"))
-            .toFixed(),
-          asset: tx.gasFees.asset,
-        },
-        bridge: {
-          amount: toBN(bridgeFee.amount)
-            .plus(toBN(acc.bridge.amount || "0"))
-            .toFixed(),
-          feesInUsd: toBN(bridgeFee.feesInUsd)
-            .plus(toBN(acc.bridge.feesInUsd || "0"))
-            .toFixed(),
-          asset: bridgeFee.asset,
-        },
-      };
-    },
-    {
-      gas: fallback,
-      bridge: fallback,
-    }
-  );
-
-  return fees;
+const {
+  txRoute,
+  toChainId,
+  token,
+  amount,
+  toAmount,
+  form,
+  nativeCurrency,
+  nativeFee,
+  nativeFeeInUsd,
+  isInsufficientBalance,
+  bridgeToToken,
+  disabled,
+  loading,
+  estimatedFee,
+  transactions,
+  routes,
+  bridgeFee,
+  selectableChains,
+  handleSwapToken,
+} = useBridge({
+  fromChainId: props.chainId,
+  tokenAddress: props.address,
 });
 
 const setMax = () => {
   amount.value = toBN(token.value!.balance).decimalPlaces(6, 1).toString();
 };
 
-const bridgeToChainId = ref(props.chainId === "137" ? "10" : "137");
-
-const selectableChains = computed(() =>
-  networks.filter(
-    (c) => String(c.chainId) !== props.chainId && c.chainId !== 634
-  )
-);
-
-watch(
-  () => [props.chainId],
-  async () => {
-    bridgeToChainId.value = props.chainId === "137" ? "10" : "137";
-  },
-  { immediate: true }
-);
-
-const bridgeToToken = computed(() => {
-  const t = bridgeToTokens.value?.result?.find(
-    (t: any) => t.symbol.toLowerCase() === token.value.symbol.toLowerCase()
-  );
-
-  if (t) {
-    return t;
-  }
-
-  return bridgeToTokens.value?.result?.find((t: any) =>
-    t.symbol.toLowerCase().includes(token.value.symbol.toLowerCase())
-  );
-});
-
-const { data: bridgeToTokens } = useAsyncData(
-  async () => {
-    try {
-      const { data }: { data: IBridgeTokensResponse } = await http.get(
-        "https://api.socket.tech/v2/token-lists/to-token-list",
-        {
-          headers: {
-            "api-key": "645b2c8c-5825-4930-baf3-d9b997fcd88c",
-          },
-          params: {
-            fromChainId: props.chainId,
-            toChainId: bridgeToChainId.value,
-          },
-        }
-      );
-
-      return data;
-    } catch (e) {
-      console.log(e);
-    }
-  },
-  {
-    server: false,
-    immediate: true,
-    watch: [bridgeToChainId],
-  }
-);
-
-const txRoute = computed(() => {
-  const [route] = data.value?.result.routes || [];
-  return route ?? null;
-});
-
-const { data, error, pending } = useAsyncData(
-  async () => {
-    const { valid } = await validate();
-
-    if (!valid) return;
-    if (!bridgeToToken.value)
-      throw new Error("Token not found on destination chain");
-
-    const transferAmount = toBN(amount.value || "0")
-      .times(10 ** bridgeToToken.value.decimals)
-      .toFixed(0);
-
-    try {
-      if (quoteController.value) {
-        quoteController.value.abort();
-      }
-
-      quoteController.value = new AbortController();
-
-      const { data }: { data: IBridgeResponse } = await http.get(
-        "https://api.socket.tech/v2/quote",
-        {
-          headers: {
-            "api-key": "645b2c8c-5825-4930-baf3-d9b997fcd88c",
-          },
-          signal: quoteController.value.signal,
-          params: {
-            fromTokenAddress: token.value.address,
-            fromChainId: props.chainId,
-            toTokenAddress: bridgeToToken.value.address,
-            toChainId: bridgeToChainId.value,
-            fromAmount: transferAmount,
-            userAddress: safeAddress.value,
-            recipient: safeAddress.value,
-            singleTxOnly: true,
-            bridgeWithGas: false,
-            defaultSwapSlippage: 1,
-            sort: "output",
-            isContractCall: true,
-            // excludeBridges: [
-            //   "hyphen",
-            //   "anyswap-router-v4",
-            //   "anyswap-router-v6",
-            //   "stargate",
-            // ],
-          },
-        }
-      );
-
-      quoteController.value = null;
-
-      if (!data.result.routes.length) {
-        throw new Error(
-          "We could not find any routes for your desired transfer."
-        );
-      }
-
-      return data;
-    } catch (error) {}
-
-    throw new Error("Unexpected error, please try again later");
-  },
-  {
-    server: false,
-    immediate: false,
-    watch: [amount, bridgeToToken],
-  }
-);
-
-const { data: fee, pending: feePending } = useAsyncData(
-  async () => {
-    if (!txRoute.value) return;
-
-    try {
-      const txs = await getTxs();
-
-      const message = await safe.value?.generateSignatureMessage(
-        txs,
-        +props.chainId
-      );
-
-      const resp = await provider.send("txn_estimateFeeWithoutSignature", [
-        message,
-        account.value,
-        props.chainId,
-      ]);
-
-      return resp;
-    } catch (e: any) {
-      throw new Error(e?.error?.message);
-    }
-  },
-  {
-    server: false,
-    watch: [txRoute],
-  }
-);
-
-const sendingDisabled = computed(
-  () =>
-    !token.value ||
-    !account.value ||
-    loading.value ||
-    pending.value ||
-    feePending.value ||
-    !txRoute.value ||
-    !meta.value.valid ||
-    isInsufficientBalance.value
-);
-
-const handleSwapToken = () => {
-  const balancedToken = tokenBalances.value.find(
-    (t) =>
-      gt(t.balance, "0") &&
-      t.chainId == props.chainId &&
-      t.symbol !== nativeCurrency.value?.symbol
-  );
-
-  const fallbackToken = tokens.value.find((i) => i.chainId == props.chainId);
-  const isSameToken =
-    token.value?.symbol.toLowerCase() ===
-    nativeCurrency.value?.symbol.toLowerCase();
-
-  const fromAddress = !isSameToken
-    ? token.value
-    : balancedToken || fallbackToken;
-
-  emit("destroy");
-
-  const fromAmount = toBN(fees.value.gas.amount)
-    .times(nativeCurrency.value?.price || "0")
-    .div(fromAddress?.price || "0")
-    .toFixed();
-
-  openSwapModal(
-    fromAddress?.address!,
-    props.chainId,
-    nativeCurrency.value?.address!,
-    fromAmount
-  );
-};
-
-const onSubmit = handleSubmit(async () => {
+const onSubmit = form.handleSubmit(async () => {
   if (!txRoute.value) {
     return;
   }
-  if (sendingDisabled.value) return;
 
-  loading.value = true;
   try {
     await switchNetworkByChainId(634);
 
-    const txs = await getTxs();
-
     const metadata = encodeBridgeMetadata({
       amount: toWei(amount.value, token.value.decimals),
-      bridgeFee: toWei(
-        fees.value.bridge.amount,
-        fees.value.bridge.asset.decimals
-      ),
-      nativeToken: fees.value.bridge.asset.address,
+      bridgeFee: toWei(bridgeFee.value.amount, bridgeFee.value.asset.decimals),
+      nativeToken: bridgeFee.value.asset.address,
       receiver: account.value,
       fromToken: token.value.address,
       toToken: bridgeToToken.value.address,
-      toChainId: bridgeToChainId.value,
+      toChainId: toChainId.value,
     });
 
-    let transactionHash = await sendTransactions(txs, props.chainId, {
-      metadata,
-    });
+    let transactionHash = await sendTransactions(
+      transactions.data.value!,
+      props.chainId,
+      {
+        metadata,
+      }
+    );
 
     logActionToSlack({
       message: `${formatDecimal(amount.value)} ${formatSymbol(
@@ -496,14 +86,14 @@ const onSubmit = handleSubmit(async () => {
       )} from ${formatSymbol(
         chainIdToName(token.value.chainId),
         false
-      )} to ${formatSymbol(chainIdToName(bridgeToChainId.value), false)}`,
+      )} to ${formatSymbol(chainIdToName(toChainId.value), false)}`,
       action: "bridge",
       chainId: props.chainId,
       txHash: transactionHash,
       account: account.value,
     });
 
-    resetForm();
+    form.resetForm();
     emit("destroy");
 
     showPendingTransactionModal(transactionHash, props.chainId, "bridge");
@@ -520,13 +110,7 @@ const onSubmit = handleSubmit(async () => {
       action: "bridge",
       account: account.value,
     });
-  } finally {
-    loading.value = false;
   }
-});
-
-onUnmounted(() => {
-  data.value = null;
 });
 </script>
 
@@ -569,7 +153,9 @@ onUnmounted(() => {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <CommonInput
             type="numeric"
-            :error-message="amountMeta.dirty ? errors['amount'] : ''"
+            :error-message="
+              form.meta.value.dirty ? form.errors.value['amount'] : ''
+            "
             name="amount"
             placeholder="Enter amount"
             v-model="amount"
@@ -628,13 +214,13 @@ onUnmounted(() => {
               <div class="flex flex-col gap-2.5">
                 <span class="text-sm">Network</span>
                 <CommonSelect
-                  v-model="bridgeToChainId"
+                  v-model="toChainId"
                   value-key="chainId"
                   label-key="name"
                   :options="selectableChains"
                 >
                   <template #button-prefix>
-                    <ChainLogo class="w-6 h-6" :chain="bridgeToChainId" />
+                    <ChainLogo class="w-6 h-6" :chain="toChainId" />
                   </template>
                   <template #item-prefix="{ value }">
                     <ChainLogo class="w-6 h-6" :chain="value" />
@@ -663,15 +249,15 @@ onUnmounted(() => {
                 <span
                   class="text-slate-400 text-sm font-medium text-right uppercase"
                 >
-                  {{ formatDecimal(fees.bridge?.amount, 4) }}
+                  {{ formatDecimal(bridgeFee.amount, 4) }}
 
-                  {{ fees.bridge?.asset.symbol }}
+                  {{ bridgeFee?.asset.symbol }}
 
-                  ({{ formatUsd(fees.bridge?.feesInUsd) }})
+                  ({{ formatUsd(bridgeFee?.feesInUsd) }})
                 </span>
               </div>
               <div
-                v-if="!isZero(nativeFee)"
+                v-if="!isZero(nativeFee!)"
                 class="flex justify-between items-center"
               >
                 <span
@@ -687,7 +273,7 @@ onUnmounted(() => {
                 <span
                   class="text-slate-400 text-sm font-medium text-right uppercase"
                 >
-                  {{ formatDecimal(nativeFee) }}
+                  {{ formatDecimal(nativeFee!) }}
                   {{ nativeCurrency?.symbol }}
                   ({{ formatUsd(nativeFeeInUsd) }})
                 </span>
@@ -702,14 +288,18 @@ onUnmounted(() => {
               >
               <span
                 class="sm:text-2xl text-lg font-semibold text-right !leading-5 uppercase"
-                >{{ toAmount }} {{ token.symbol }}</span
               >
+                {{ toAmount }} {{ token.symbol }}
+              </span>
             </div>
           </div>
         </div>
       </div>
-      <EstimatedFee :chain-id="chainId" :loading="feePending" :data="fee" />
-
+      <EstimatedFee
+        :chain-id="chainId"
+        :loading="estimatedFee.pending.value"
+        :data="estimatedFee.data.value"
+      />
       <CommonNotification
         v-if="isInsufficientBalance"
         type="error"
@@ -726,14 +316,18 @@ onUnmounted(() => {
           </CommonButton>
         </template>
       </CommonNotification>
-      <CommonNotification v-if="error" type="warning" :text="error.message" />
+      <CommonNotification
+        v-if="routes.error.value"
+        type="warning"
+        :text="routes.error.value?.message"
+      />
     </div>
 
     <div class="flex gap-4 flex-col">
       <CommonButton
         type="submit"
-        :disabled="sendingDisabled"
-        :loading="loading || pending || feePending"
+        :disabled="disabled"
+        :loading="loading"
         class="justify-center w-full"
         size="lg"
       >
