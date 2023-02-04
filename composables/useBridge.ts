@@ -265,10 +265,22 @@ export const useBridge = (props: IBridge) => {
     times(nativeFee.value!, nativeCurrency.value?.price || 0)
   );
 
+  const isInsufficientBalance = computed(() => {
+    const nativeBalance =
+      tokenBalances.value.find(
+        (t) =>
+          t.chainId == token.value.chainId &&
+          t.symbol === nativeCurrency.value?.symbol
+      )?.balance || "0";
+
+    return toBN(nativeBalance).lt(nativeFee.value!);
+  });
+
   const estimatedFee = useAsyncData(
     async () => {
       if (!txRoute.value) return;
       if (!transactions.data.value?.length) return;
+      if (isInsufficientBalance.value) return;
 
       console.log('running generateSignatureMessage')
 
@@ -291,7 +303,7 @@ export const useBridge = (props: IBridge) => {
     },
     {
       server: false,
-      watch: [txRoute, transactions.data],
+      watch: [txRoute, transactions.data, isInsufficientBalance],
     }
   );
 
@@ -375,16 +387,7 @@ export const useBridge = (props: IBridge) => {
     );
   };
 
-  const isInsufficientBalance = computed(() => {
-    const nativeBalance =
-      tokenBalances.value.find(
-        (t) =>
-          t.chainId == token.value.chainId &&
-          t.symbol === nativeCurrency.value?.symbol
-      )?.balance || "0";
-
-    return toBN(nativeBalance).lt(nativeFee.value!);
-  });
+  
 
   const selectableChains = computed(() =>
     networks.filter(
