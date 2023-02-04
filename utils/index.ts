@@ -1,7 +1,6 @@
 import { ethers } from "ethers";
 import { BigNumber } from "bignumber.js";
 import { BigNumber as BN } from "ethers";
-export { default as http } from "./http";
 import { Forwarder__factory } from "@/contracts";
 import { RPC_URLS } from "~~/connectors";
 
