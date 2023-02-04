@@ -3,7 +3,6 @@ import ChevronDownSVG from "~/assets/images/icons/chevron-down.svg?component";
 import type { IToken } from "~~/stores/tokens";
 import { Erc20__factory } from "~~/contracts";
 import { useField, useForm } from "vee-validate";
-import { formatBytes32String } from "@ethersproject/strings";
 import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
 import ArrowLeft from "~/assets/images/icons/arrow-left.svg?component";
 import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?component";
@@ -203,7 +202,7 @@ const { data: swapDetails, pending } = useAsyncData(
 
       abortController.value = new AbortController();
 
-      const { data }: { data: ISwapResponse } = await http.get(
+      const data: ISwapResponse = await http(
         "https://swap-aggregator.instadapp.io/swap",
         {
           signal: abortController.value?.signal,

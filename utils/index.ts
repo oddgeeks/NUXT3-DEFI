@@ -1,9 +1,7 @@
 import { ethers } from "ethers";
-import { parseBytes32String } from "@ethersproject/strings";
 import { BigNumber } from "bignumber.js";
 import { BigNumber as BN } from "ethers";
-import axios from "axios";
-import axiosRetry from "axios-retry";
+export { default as http } from "./http";
 import { Forwarder__factory } from "@/contracts";
 import { RPC_URLS } from "~~/connectors";
 
@@ -174,8 +172,6 @@ export function formatDecimal(
   return formatter.format(toBN(value).toNumber());
 }
 
-export const http = axios.create();
-
 export function filterArray(array: any, filters: any) {
   const filterKeys = Object.keys(filters);
   return array.filter((item: any) => {
@@ -203,11 +199,6 @@ export const injectFavicon = function (src: string) {
 
   head.appendChild(iconElement);
 };
-
-axiosRetry(http, {
-  retries: 3,
-  retryDelay: axiosRetry.exponentialDelay,
-});
 
 export const slack = async (
   message: string,

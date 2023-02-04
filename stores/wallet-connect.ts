@@ -135,11 +135,16 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                   result,
                 });
               } else {
-                const { data } = await http.post(RPC_URLS[wc.chainId], payload);
+                const resp = await http(RPC_URLS[wc.chainId], {
+                  method: "POST",
+                  body: {
+                    payload,
+                  },
+                });
 
                 wc.approveRequest({
                   id: payload.id,
-                  result: data.result,
+                  result: resp.result,
                 });
               }
             }
