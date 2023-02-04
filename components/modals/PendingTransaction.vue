@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SVGBridge from "~/assets/images/icons/bridge.svg?component";
+import SVGBridge from "~/assets/images/icons/bridge-2.svg?component";
 import SVGCheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { wait } from "@instadapp/utils";
@@ -18,17 +18,11 @@ onMounted(async () => {
   transaction.value = await provider.waitForTransaction(props.hash);
 });
 
-const txnInfos = computed(() => {
+const explorerURL = computed(() => {
   if (props.type === "bridge") {
-    return {
-      url: `https://socketscan.io/tx/${props.hash}`,
-      text: "View Bridge Explorer",
-    };
+    return `https://socketscan.io/tx/${props.hash}`
   } else {
-    return {
-      url: getExplorerUrl(props.chainId, `/tx/${props.hash}`),
-      text: `View Explorer`,
-    };
+    return getExplorerUrl(props.chainId, `/tx/${props.hash}`)
   }
 });
 </script>
@@ -115,20 +109,20 @@ const txnInfos = computed(() => {
     </div>
 
     <div
-      class="bg-slate-800 px-[18px] py-[14px] rounded-5 flex items-center justify-between"
+      class="dark:bg-slate-800 bg-slate-100 bg px-[18px] py-[14px] rounded-5 flex items-center justify-between"
     >
       <p v-if="type === 'bridge'" class="flex gap-3 items-center">
-        <div class="bg-blue-500 rounded-full">
-          <SVGBridge class="w-[26px] h-[26px]" />
+        <div class="bg-blue-500 items-center justify-center flex rounded-full w-[26px] h-[26px]">
+          <SVGBridge class="w-4" />
         </div>
-        <span class="text-sm text-slate-400">Bridge</span>
+        <span class="text-sm text-slate-400 font-medium">Bridge</span>
       </p>
       <p v-else class="flex gap-3 items-center">
         <ChainLogo class="w-[26px] h-[26px]" :chain="chainId" />
         <span class="text-sm text-slate-400">{{ chainIdToName(chainId) }}</span>
       </p>
-      <CommonButton as="a" :href="txnInfos.url" target="_blank" size="sm">
-        {{ txnInfos.text }}
+      <CommonButton as="a" :href="explorerURL" target="_blank" size="sm">
+        View Explorer
       </CommonButton>
     </div>
   </div>
