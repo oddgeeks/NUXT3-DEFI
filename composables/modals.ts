@@ -6,6 +6,7 @@ import TopUpGas from "~~/components/modals/TopUpGas.vue";
 import WalletConnect from "~~/components/modals/WalletConnect.vue";
 import WalletConnectDetails from "~~/components/modals/WalletConnectDetails.vue";
 import TokenSelection from "~~/components/modals/TokenSelection.vue";
+import ImportToken from "~~/components/modals/ImportToken.vue";
 import WCTransaction from "~~/components/modals/WCTransaction.vue";
 import Dialog from "~~/components/modals/Dialog.vue";
 import type IWalletConnect from "@walletconnect/client";
@@ -142,6 +143,12 @@ export const openWCTransactionModal = async (params: IWcTransactionModal) => {
     },
   });
 };
+
+export const openImportTokenModal = () => {
+  openModal({
+    component: ImportToken,
+  });
+}
 
 export const openDialogModal = async ({
   title = "",

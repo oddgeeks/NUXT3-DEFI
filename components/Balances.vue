@@ -75,6 +75,10 @@ const filteredBalances = computed(() => {
           </tbody>
         </table>
       </div>
+        <p class="text-xs leading-5 mt-5 text-right dark:text-slate-500 text-slate-400">
+          Don’t see your tokens? 
+         <button @click="openImportTokenModal()" class="text-blue-500">Import token</button>
+        </p>
     </div>
 
     <div v-if="!account" class="absolute inset-0 flex items-center justify-center">
