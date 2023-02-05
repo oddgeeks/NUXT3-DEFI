@@ -11,7 +11,7 @@ const { toggleWelcomeBanner } = useBanner()
       Welcome to Avocado! 🥑 Get started by following this simple guide
     </p>
     <a
-    class="text-blue-500"
+    class="text-primary"
       target="blank"
       rel="noopener noreferrer"
       href="https://help.avocado.link/en/getting-started/a-checklist-to-get-started-with-avocado"

@@ -44,7 +44,7 @@ const handleReject = () => {
       v-else-if="type === 'success'"
     />
     <SVGErrorCircle class="text-white w-10 h-10" v-else-if="type === 'error'" />
-    <SVGQuestionCircle class="w-10 h-10" v-else-if="type === 'question'" />
+    <SVGQuestionCircle class="w-10 h-10 text-primary" v-else-if="type === 'question'" />
 
     <div class="flex flex-col gap-[15px]">
       <h1 class="text-lg">{{ title }}</h1>

@@ -40,7 +40,7 @@ const locale = computed(() =>
           </div>
           <div class="flex items-center space-x-2.5">
             <a
-              class="text-blue-500"
+              class="text-primary"
               :href="
                 getExplorerUrl(transaction.chain_id, `/tx/${transaction.hash}`)
               "
@@ -59,7 +59,7 @@ const locale = computed(() =>
           </div>
           <div class="flex items-center space-x-2.5">
             <a
-              class="text-blue-500"
+              class="text-primary"
               :href="
                 getExplorerUrl(
                   transaction.chain_id,
@@ -146,7 +146,7 @@ const locale = computed(() =>
             class="flex items-center space-x-2.5"
           >
             <a
-              class="text-blue-500"
+              class="text-primary"
               :href="
                 getExplorerUrl(
                   transaction.chain_id,
@@ -175,7 +175,7 @@ const locale = computed(() =>
             class="flex items-center space-x-2.5"
           >
             <a
-              class="text-blue-500"
+              class="text-primary"
               :href="
                 getExplorerUrl(
                   transaction.chain_id,
@@ -238,7 +238,7 @@ const locale = computed(() =>
           </div>
           <div class="flex items-center gap-2.5">
             <a
-              class="text-blue-500"
+              class="text-primary"
               :href="`https://socketscan.io/tx/${transaction.hash}`"
               target="_blank"
             >

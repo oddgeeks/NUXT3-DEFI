@@ -91,7 +91,7 @@ const connect = async () => {
     emit("destroy");
     openDialogModal({
       title: "Connected Successfully",
-      content: `You can now use <a target='_blank' rel='noopener noreferrer' class='text-blue-500' href=${connection.value.peerMeta.url}>
+      content: `You can now use <a target='_blank' rel='noopener noreferrer' class='text-primary' href=${connection.value.peerMeta.url}>
         ${connection.value.peerMeta.name}
         </a> with your Avocado wallet.`,
       type: "success",
@@ -163,7 +163,7 @@ onMounted(async () => {
             target="blank"
             rel="noopener noreferrer"
             href="https://help.avocado.link/en/getting-started/connect-d-apps-on-avocado-using-wallet-connect"
-            class="inline-flex gap-2.5 text-blue-500"
+            class="inline-flex gap-2.5 text-primary"
             >guide</a
           >.
         </p>
@@ -221,7 +221,7 @@ onMounted(async () => {
         the tab.
       </p>
 
-      <div class="text-blue-500 text-sm text-center">
+      <div class="text-primary text-sm text-center">
         {{ connection.peerMeta.url }}
       </div>
 

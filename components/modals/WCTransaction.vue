@@ -157,7 +157,7 @@ const handleReject = () => {
             <a
               rel="noopener noreferrer"
               target="_blank"
-              class="text-blue-500 text-sm"
+              class="text-primary text-sm"
               :href="wc.peerMeta?.url"
             >
               {{ formatURL(wc.peerMeta?.url) }}

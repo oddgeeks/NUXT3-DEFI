@@ -163,7 +163,7 @@ const onSubmit = form.handleSubmit(async () => {
             <template #suffix>
               <button
                 type="button"
-                class="absolute top-0 bottom-0 right-0 mr-5 text-sm text-blue-500 hover:text-blue-500"
+                class="absolute top-0 bottom-0 right-0 mr-5 text-sm text-primary"
                 @click="setMax"
               >
                 MAX
@@ -267,7 +267,7 @@ const onSubmit = form.handleSubmit(async () => {
                     v-tippy="
                       'This fee is a requirement from the underlying bridge provider to cover the gas cost on target chain.'
                     "
-                    class="text-blue-500"
+                    class="text-primary"
                   />
                 </span>
                 <span

@@ -158,7 +158,7 @@ watch(
                 >
                   {{ session.peerMeta.name }}
                 </h1>
-                <h2 class="text-xs text-blue-500 leading-5">Connected</h2>
+                <h2 class="text-xs text-primary leading-5">Connected</h2>
               </div>
             </button>
             <a
@@ -166,7 +166,7 @@ watch(
               rel="noopener noreferrer"
               :href="session.peerMeta.url"
             >
-              <LinkSVG class="text-blue-500" />
+              <LinkSVG class="text-primary" />
             </a>
             <button
               v-tippy="'Disconnect'"

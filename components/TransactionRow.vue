@@ -13,7 +13,7 @@ defineProps<{
     }"
   >
     <td>
-      <NuxtLink :to="`/tx/${transaction.hash}`" class="text-blue-500">
+      <NuxtLink :to="`/tx/${transaction.hash}`" class="text-primary">
         <span> {{ shortenHash(transaction.hash) }}</span>
       </NuxtLink>
     </td>

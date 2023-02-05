@@ -470,7 +470,7 @@ onMounted(() => {
               >{{ formatDecimal(sellTokenBalance) }}
               {{ swap.sellToken?.symbol }}</span
             >
-            <button type="button" @click="setMax" class="text-blue-500">
+            <button type="button" @click="setMax" class="text-primary">
               MAX
             </button>
           </div>
@@ -546,7 +546,7 @@ onMounted(() => {
                       'Slippage is the difference between the expected price of an order and the price when the order actually executes. The slippage tolerance % lets you decide how much slippage you are willing to accept for a trade.'
                     "
                   >
-                    <QuestionCircleSVG class="w-5 h-5" />
+                    <QuestionCircleSVG class="w-5 h-5 text-primary" />
                   </button>
                 </span>
                 <ChevronDownSVG
@@ -560,13 +560,13 @@ onMounted(() => {
                     value-key="value"
                     label-key="label"
                     :container-classes="
-                      !customSlippage ? '!border-blue-500' : ''
+                      !customSlippage ? '!border-primary' : ''
                     "
                     :options="slippages"
                   >
                     <template #button-prefix>
                       <div
-                        :class="{ '!border-blue-500': !customSlippage }"
+                        :class="{ '!border-primary': !customSlippage }"
                         class="radio !mr-0"
                       ></div>
                     </template>
@@ -577,12 +577,12 @@ onMounted(() => {
                   placeholder="Custom"
                   input-classes="!py-3"
                   class="flex-1"
-                  :container-classes="customSlippage ? '!ring-blue-500' : ''"
+                  :container-classes="customSlippage ? '!ring-primary' : ''"
                   v-model="customSlippage"
                 >
                   <template #prefix>
                     <div
-                      :class="{ '!border-blue-500': customSlippage }"
+                      :class="{ '!border-primary': customSlippage }"
                       class="radio"
                     ></div>
                   </template>

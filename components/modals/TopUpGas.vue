@@ -253,7 +253,7 @@ const onSubmit = handleSubmit(async () => {
         href="https://help.avocado.link/en/getting-started/topping-up-gas-on-avocado"
         target="blank"
         rel="noopener noreferrer"
-        class="text-sm text-center justify-center font-medium inline-flex gap-2.5 text-blue-500"
+        class="text-sm text-center justify-center font-medium inline-flex gap-2.5 text-primary"
       >
         What’s happening here?
         <LinkSVG />
@@ -307,7 +307,7 @@ const onSubmit = handleSubmit(async () => {
           <template #suffix>
             <button
               type="button"
-              class="absolute top-0 bottom-0 right-0 mr-5 text-sm text-blue-500 hover:text-blue-500"
+              class="absolute top-0 bottom-0 right-0 mr-5 text-sm text-primary hover:text-primary"
               @click="setMax"
             >
               MAX
@@ -332,7 +332,7 @@ const onSubmit = handleSubmit(async () => {
       v-if="!isGiftActive"
       @click="toggleGift()"
       type="button"
-      class="text-xs text-blue-500 !mt-3"
+      class="text-xs text-primary !mt-3"
     >
       Redeem Code
     </button>
