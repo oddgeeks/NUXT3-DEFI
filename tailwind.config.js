@@ -2,7 +2,7 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 
 const colors = {
   primary: "#5ac369",
-  primaryHover: "#89DE87"
+  primaryHover: "#75C173"
 }
 
 module.exports = {
