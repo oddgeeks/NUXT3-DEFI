@@ -248,7 +248,7 @@ const onSubmit = handleSubmit(async () => {
           <template #suffix>
             <button
               type="button"
-              class="text-blue-500 hover:text-blue-500"
+              class="text-primary hover:text-primary"
               @click="setMax"
             >
               MAX

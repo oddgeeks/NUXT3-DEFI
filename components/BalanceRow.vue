@@ -27,10 +27,10 @@ const priceDiffClass = computed(() => {
   if (!priceDiffInPercent.value) return "text-slate-400";
 
   if (priceDiffInPercent.value < 0) {
-    return "text-[#EB5757]";
+    return "text-red-alert";
   }
 
-  return "text-green-400";
+  return "text-primary";
 });
 
 const priceDiffColor = computed(() => {
@@ -134,11 +134,10 @@ const chartOptions = {
     <td class="font-semibold py-6 text-sm">
       <div
         class="flex gap-1 flex-col"
-        :class="priceDiffClass"
         v-if="priceDiffInPercent"
       >
         <span> {{ priceDiffInPercent.toFixed(2) }}% </span>
-        <span>
+        <span :class="priceDiffClass">
           {{ formatUsd(toBN(priceDiff).decimalPlaces(3)) }}
         </span>
       </div>
