@@ -1,7 +1,7 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
 
 const colors = {
-  primary: "#75C173",
+  primary: "#5ac369",
   primaryHover: "#89DE87"
 }
 
