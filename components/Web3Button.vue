@@ -36,7 +36,7 @@ const connect = async (provider: any) => {
 const closeConnection = async () => {
   const { success } = await openDisconnectWalletModal()
 
-  if(success) {
+  if (success) {
     trackingAccount.value = null;
       setConnectorName(null);
       if (connector.value) {
