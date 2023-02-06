@@ -50,8 +50,7 @@ const chartData = computed(() => ({
       data: props.tokenBalance.sparklinePrice7d,
       fill: false,
       pointRadius: 0,
-      spanGaps: true,
-      tension: 0.2,
+      cubicInterpolationMode: "monotone",
     },
   ],
 }));
@@ -61,6 +60,7 @@ const chartOptions = {
   borderColor: priceDiffColor.value,
   borderWidth: 1.5,
   responsive: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: {
       display: false,
@@ -81,7 +81,7 @@ const chartOptions = {
 </script>
 <template>
   <tr>
-    <td class="text-left pl-7.5 py-6">
+    <td class="text-left py-6 pl-7.5 w-1/3">
       <div class="flex items-center space-x-3">
         <div
           class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
@@ -101,7 +101,7 @@ const chartOptions = {
 
         <div>
           <div
-            class="text-lg font-semibold whitespace-nowrap pr-2 md:w-32 truncate"
+            class="text-lg font-semibold whitespace-nowrap truncate"
           >
             {{ tokenBalance.name }}
           </div>
@@ -114,14 +114,14 @@ const chartOptions = {
         </div>
       </div>
     </td>
-    <td class="text-center font-semibold py-6 whitespace-nowrap">
+    <td class="font-semibold py-6 whitespace-nowrap">
       <span v-if="tokenBalance.balanceInUSD">
         {{ formatUsd(tokenBalance.balanceInUSD) }}
       </span>
 
       <span v-else> - </span>
     </td>
-    <td class="text-center font-semibold px-10 py-6">
+    <td class="text-center font-semibold py-6 px-6">
       <div class="w-20 h-8 mx-auto">
         <Line
           v-if="tokenBalance.sparklinePrice7d.length"
@@ -131,7 +131,7 @@ const chartOptions = {
         <span v-else> - </span>
       </div>
     </td>
-    <td class="font-semibold py-6 text-sm">
+    <td class="font-semibold py-6 text-sm pl-10">
       <div
         class="flex gap-1 flex-col"
         v-if="priceDiffInPercent"
@@ -143,7 +143,7 @@ const chartOptions = {
       </div>
       <span v-else> - </span>
     </td>
-    <td class="text-right pl-7.5 py-6">
+    <td class="text-right py-6">
       <div class="flex items-center gap-[15px] justify-center">
         <CommonButton
           v-tippy="{
