@@ -127,11 +127,11 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
       slippage: yup.string().required(),
       customSlippage: yup
         .string()
-        .test("slippage", "Slippage must be between 0.1% and 3%", (value) => {
+        .test("slippage", "Slippage must be between 0.1% and 100%", (value) => {
           const slippage = toBN(value!);
 
           if (value) {
-            return slippage.gte(0.1) && slippage.lte(3);
+            return slippage.gte(0.1) && slippage.lte(100);
           } else return true;
         }),
     }),
