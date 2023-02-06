@@ -164,6 +164,20 @@ const chartOptions = {
             arrow: true,
             arrowType: 'round',
             animation: 'fade',
+            content: 'Swap',
+          }"
+          :disabled="isZero(tokenBalance.balance)"
+          class="!h-9 !w-9 !p-0 items-center justify-center"
+          @click="openSwapModal(tokenBalance.address, tokenBalance.chainId)"
+        >
+          <RefreshSVG />
+        </CommonButton>
+
+        <CommonButton
+          v-tippy="{
+            arrow: true,
+            arrowType: 'round',
+            animation: 'fade',
             content: 'Bridge',
           }"
           :disabled="isZero(tokenBalance.balance)"
@@ -173,19 +187,7 @@ const chartOptions = {
           <BridgeSVG />
         </CommonButton>
 
-        <CommonButton
-          v-tippy="{
-            arrow: true,
-            arrowType: 'round',
-            animation: 'fade',
-            content: 'Swap',
-          }"
-          :disabled="isZero(tokenBalance.balance)"
-          class="!h-9 !w-9 !p-0 items-center justify-center"
-          @click="openSwapModal(tokenBalance.address, tokenBalance.chainId)"
-        >
-          <RefreshSVG />
-        </CommonButton>
+       
       </div>
     </td>
   </tr>
