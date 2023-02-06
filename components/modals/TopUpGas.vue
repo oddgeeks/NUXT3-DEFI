@@ -201,10 +201,18 @@ const onSubmit = handleSubmit(async () => {
       tx.data = data!;
       tx.to = token.value.address;
     }
+    
+    const metadata = encodeTopupMetadata({
+       amount: transferAmount,
+       token: token.value.address,
+       onBehalf: safeAddress.value,
+    });
 
     let transactionHash = await sendTransaction({
       ...tx,
       chainId: chainId.value,
+    }, {
+      metadata
     });
 
     logActionToSlack({
@@ -296,7 +304,7 @@ const onSubmit = handleSubmit(async () => {
             <div class="flex flex-col gap-1 mb-auto">
               <span>{{ label }}</span>
               <span class="text-sm text-gray-400 font-medium">
-                {{ formatDecimal(getUSDCByChainId(value).balance) }} USDC
+                {{ formatDecimal(getUSDCByChainId(value)?.balance) }} USDC
               </span>
             </div>
           </template>

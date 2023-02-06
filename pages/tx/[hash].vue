@@ -21,6 +21,14 @@ onMounted(() =>
 const locale = computed(() =>
   typeof window !== "undefined" ? window.navigator.language : "en"
 );
+
+const isBridge = metadata?.length && metadata?.some((i: any) => i.type === 'bridge')
+const isTopupGas = metadata?.length && metadata?.some((i: any) => i.type === 'gas-topup')
+
+const feeInfoText =  isTopupGas ?
+'Topping Up gas is a gas free transaction.'
+: 'This includes the fee that will be paid to the relayer and the integrator.'
+
 </script>
 
 <template>
@@ -201,9 +209,7 @@ const locale = computed(() =>
             class="dark:text-slate-400 gap-2.5 flex items-center text-slate-500 md:w-full md:max-w-[235px]"
           >
             <SVGInfo
-              v-tippy="
-                'This includes the fee that will be paid to the relayer and the integrator.'
-              "
+              v-tippy="feeInfoText"
               class="w-[18px] h-[18px] text-slate-600 shrink-0"
             />
             Transaction Fee
@@ -212,13 +218,15 @@ const locale = computed(() =>
             <span v-if="transaction.fee">
               {{ formatUsd(transaction.fee) }}
             </span>
-            <span v-else>-</span>
+            <span v-else>
+              -
+            </span>
           </div>
         </div>
       </div>
 
       <div
-        v-if="metadata?.length && metadata.some((i) => i.type === 'bridge')"
+        v-if="isBridge"
         class="flex flex-col pt-6.5 gap-6.5"
       >
         <hr class="w-full dark:border-slate-800 border-slate-150" />
