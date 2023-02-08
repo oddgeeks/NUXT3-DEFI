@@ -39,7 +39,7 @@ export const logActionToSlack = (slackMessage: ISlackMessage) => {
       )}>`
       : "";
 
-  const accountLink = `<https://avocado.link/?user=${account}|${shortenHash(
+  const accountLink = `<https://avocado.instadapp.io/?user=${account}|${shortenHash(
     account,
     12
   )}>`;

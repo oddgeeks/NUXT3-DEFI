@@ -165,10 +165,10 @@ export function useNetworks() {
           symbol: "USDC",
           decimals: 18,
         },
-        iconUrls: ["https://avocado.link/logo.svg"],
+        iconUrls: ["https://avocado.instadapp.io/logo.svg"],
         rpcUrls: ["https://rpc.avocado.link/"],
         blockExplorerUrls: [
-          "https://avocado.link"
+          "https://avocado.instadapp.io"
         ]
       },
     },
