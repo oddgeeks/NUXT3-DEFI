@@ -122,7 +122,7 @@ const onSubmit = form.handleSubmit(async () => {
         height="40"
         class="h-10 w-10 mb-7.5"
         :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
-        onerror="this.onerror=null; this.remove();"
+        :onerror="onImageError"
       />
       <div class="flex flex-col gap-[14px]">
         <h2 class="text-lg leading-5 text-center">
@@ -200,7 +200,7 @@ const onSubmit = form.handleSubmit(async () => {
                     height="24"
                     class="h-6 w-6"
                     :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
-                    onerror="this.onerror=null; this.remove();"
+                    :onerror="onImageError"
                   />
                   <span
                     class="text-sm w-full leading-5 text-shadow overflow-hidden whitespace-nowrap"

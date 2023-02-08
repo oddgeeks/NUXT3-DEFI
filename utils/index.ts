@@ -107,6 +107,16 @@ export const chainIdToName = (chainId: string | number) => {
   }
 };
 
+export function onImageError(this: HTMLImageElement) {
+  const parentElement = this.parentElement;
+  this.onerror=null;
+  this.remove();
+
+  if (parentElement) {
+    parentElement.classList.add('bg-gray-300');
+  }
+}
+
 export const getExplorerUrl = (
   chainId: string | number,
   suffix: `/${string}` = "/"
