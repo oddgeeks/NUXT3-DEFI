@@ -58,6 +58,7 @@ whenever(escape, () => {
 
 <template>
   <TransitionRoot appear as="template" :show="show">
+   <Teleport :disabled="!inline" to="body">
     <div :data-modal-id="id" class="fixed modal backrop-animation inset-0 z-40 overflow-y-auto bg-slate-200/20 backdrop-filter backdrop-blur-[4px]">
       <div
         :data-modal-id="id"
@@ -97,6 +98,7 @@ whenever(escape, () => {
         </TransitionChild>
       </div>
     </div>
+   </Teleport>
   </TransitionRoot>
 </template>
 
