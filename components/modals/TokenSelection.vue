@@ -65,7 +65,7 @@ const tokensWithBalance = computed(() => {
             <img
               :src="token.logoURI"
               class="h-10 w-10 rounded-full"
-              onerror="this.onerror=null; this.remove();"
+              :onerror="onImageError"
             />
 
             <ChainLogo
