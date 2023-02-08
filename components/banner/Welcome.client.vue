@@ -14,7 +14,7 @@ const { toggleWelcomeBanner } = useBanner()
     class="text-primary"
       target="blank"
       rel="noopener noreferrer"
-      href="https://help.avocado.link/en/getting-started/a-checklist-to-get-started-with-avocado"
+      href="https://help.avocado.instadapp.io/en/getting-started/a-checklist-to-get-started-with-avocado"
       >Take me in!</a
     >
    <button @click="toggleWelcomeBanner(false)" class="absolute right-10">

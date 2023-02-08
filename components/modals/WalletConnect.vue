@@ -162,7 +162,7 @@ onMounted(async () => {
           <a
             target="blank"
             rel="noopener noreferrer"
-            href="https://help.avocado.link/en/getting-started/connect-d-apps-on-avocado-using-wallet-connect"
+            href="https://help.avocado.instadapp.io/en/getting-started/connect-d-apps-on-avocado-using-wallet-connect"
             class="inline-flex gap-2.5 text-primary"
             >guide</a
           >.
