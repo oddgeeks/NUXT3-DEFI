@@ -77,11 +77,12 @@ const filteredBalances = computed(() => {
       <div
         style="scrollbar-gutter: stable; overflow-y: overlay"
         class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden min-h-full max-h-[530px] flex-1 scroll-style"
-        :class="{ blur: !account }"
       >
         <table class="table w-full">
           <thead>
-            <tr class="text-left text-sm text-gray-400 font-medium border-b border-slate-150 dark:border-slate-800">
+            <tr
+              class="text-left text-sm text-gray-400 font-medium border-b border-slate-150 dark:border-slate-800"
+            >
               <th class="text-left py-6 pl-7.5">Token</th>
               <th class="py-5">Balance</th>
               <th class="py-5 text-center">Last 7d</th>
@@ -106,21 +107,6 @@ const filteredBalances = computed(() => {
             </template>
           </tbody>
         </table>
-      </div>
-    </div>
-
-    <div
-      v-if="!account"
-      class="absolute inset-0 flex items-center justify-center"
-    >
-      <div class="flex flex-col items-center justify-center gap-6">
-        <p class="font-semibold text-lg">
-          Connect your wallet to see the balances
-        </p>
-
-        <div class="w-28">
-          <Web3Button />
-        </div>
       </div>
     </div>
   </div>
