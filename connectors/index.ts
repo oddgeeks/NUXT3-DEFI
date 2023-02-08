@@ -39,7 +39,7 @@ export const injected = new InjectedConnector({
 
 export const walletlink = new WalletLinkConnector({
   appName: "Avocado",
-  url: "https://avocado.link",
+  url: "https://avocado.instadapp.io",
   appLogoUrl:
     "https://raw.githubusercontent.com/InstaDApp/brand/master/instadapp%20logo%20only%20filled.svg",
   darkMode: false,

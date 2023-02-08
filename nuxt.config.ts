@@ -47,7 +47,7 @@ export default defineNuxtConfig({
         },
         {
           property: "og:url",
-          content: "https://avocado.link",
+          content: "https://avocado.instadapp.io",
         },
         {
           property: "og:image",

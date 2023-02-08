@@ -1,6 +1,6 @@
 {
 	"name": "Avocado",
-	"logoURI": "https://avocado.link/logo.svg",
+	"logoURI": "https://avocado.instadapp.io/logo.svg",
 	"keywords": [
 		"avocado",
 		"defi"
@@ -13,7 +13,7 @@
 			"name": "0x",
 			"symbol": "zrx",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/0x.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/0x.svg"
 		},
 		{
 			"chainId": 43114,
@@ -21,7 +21,7 @@
 			"name": "0x",
 			"symbol": "zrx",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/0x.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/0x.svg"
 		},
 		{
 			"chainId": 1,
@@ -29,7 +29,7 @@
 			"name": "1inch",
 			"symbol": "1inch",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/1inch.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/1inch.svg"
 		},
 		{
 			"chainId": 43114,
@@ -37,7 +37,7 @@
 			"name": "1inch",
 			"symbol": "1inch",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/1inch.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/1inch.svg"
 		},
 		{
 			"chainId": 137,
@@ -45,7 +45,7 @@
 			"name": "1inch",
 			"symbol": "1inch",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/1inch.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/1inch.svg"
 		},
 		{
 			"chainId": 56,
@@ -53,7 +53,7 @@
 			"name": "1inch",
 			"symbol": "1inch",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/1inch.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/1inch.svg"
 		},
 		{
 			"chainId": 1,
@@ -61,7 +61,7 @@
 			"name": "Aave",
 			"symbol": "aave",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/aave.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/aave.svg"
 		},
 		{
 			"chainId": 10,
@@ -69,7 +69,7 @@
 			"name": "Aave",
 			"symbol": "aave",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/aave.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/aave.svg"
 		},
 		{
 			"chainId": 56,
@@ -77,7 +77,7 @@
 			"name": "Aave",
 			"symbol": "aave",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/aave.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/aave.svg"
 		},
 		{
 			"chainId": 43114,
@@ -85,7 +85,7 @@
 			"name": "Aave",
 			"symbol": "aave",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/aave.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/aave.svg"
 		},
 		{
 			"chainId": 137,
@@ -93,7 +93,7 @@
 			"name": "Aave",
 			"symbol": "aave",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/aave.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/aave.svg"
 		},
 		{
 			"chainId": 1,
@@ -101,7 +101,7 @@
 			"name": "agEUR",
 			"symbol": "ageur",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/ageur.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/ageur.svg"
 		},
 		{
 			"chainId": 42161,
@@ -109,7 +109,7 @@
 			"name": "agEUR",
 			"symbol": "ageur",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/ageur.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/ageur.svg"
 		},
 		{
 			"chainId": 137,
@@ -117,7 +117,7 @@
 			"name": "agEUR",
 			"symbol": "ageur",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/ageur.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/ageur.svg"
 		},
 		{
 			"chainId": 1,
@@ -181,7 +181,7 @@
 			"name": "Avalanche",
 			"symbol": "avax",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/avalanche-2.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/avalanche-2.svg"
 		},
 		{
 			"chainId": 1,
@@ -189,7 +189,7 @@
 			"name": "Balancer",
 			"symbol": "bal",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/balancer.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/balancer.svg"
 		},
 		{
 			"chainId": 100,
@@ -197,7 +197,7 @@
 			"name": "Balancer",
 			"symbol": "bal",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/balancer.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/balancer.svg"
 		},
 		{
 			"chainId": 10,
@@ -205,7 +205,7 @@
 			"name": "Balancer",
 			"symbol": "bal",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/balancer.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/balancer.svg"
 		},
 		{
 			"chainId": 42161,
@@ -213,7 +213,7 @@
 			"name": "Balancer",
 			"symbol": "bal",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/balancer.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/balancer.svg"
 		},
 		{
 			"chainId": 137,
@@ -221,7 +221,7 @@
 			"name": "Balancer",
 			"symbol": "bal",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/balancer.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/balancer.svg"
 		},
 		{
 			"chainId": 56,
@@ -229,7 +229,7 @@
 			"name": "BNB",
 			"symbol": "bnb",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/binancecoin.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/binancecoin.svg"
 		},
 		{
 			"chainId": 1,
@@ -237,7 +237,7 @@
 			"name": "BNB",
 			"symbol": "bnb",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/binancecoin.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/binancecoin.svg"
 		},
 		{
 			"chainId": 1,
@@ -245,7 +245,7 @@
 			"name": "Binance USD",
 			"symbol": "busd",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/binance-usd.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/binance-usd.svg"
 		},
 		{
 			"chainId": 137,
@@ -253,7 +253,7 @@
 			"name": "Binance USD",
 			"symbol": "busd",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/binance-usd.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/binance-usd.svg"
 		},
 		{
 			"chainId": 43114,
@@ -261,7 +261,7 @@
 			"name": "Binance USD",
 			"symbol": "busd",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/binance-usd.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/binance-usd.svg"
 		},
 		{
 			"chainId": 100,
@@ -269,7 +269,7 @@
 			"name": "Binance USD",
 			"symbol": "busd",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/binance-usd.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/binance-usd.svg"
 		},
 		{
 			"chainId": 56,
@@ -277,7 +277,7 @@
 			"name": "Binance USD",
 			"symbol": "busd",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/binance-usd.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/binance-usd.svg"
 		},
 		{
 			"chainId": 1,
@@ -309,7 +309,7 @@
 			"name": "Chainlink",
 			"symbol": "link",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/chainlink.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/chainlink.svg"
 		},
 		{
 			"chainId": 42161,
@@ -317,7 +317,7 @@
 			"name": "Chainlink",
 			"symbol": "link",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/chainlink.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/chainlink.svg"
 		},
 		{
 			"chainId": 43114,
@@ -325,7 +325,7 @@
 			"name": "Chainlink",
 			"symbol": "link",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/chainlink.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/chainlink.svg"
 		},
 		{
 			"chainId": 10,
@@ -333,7 +333,7 @@
 			"name": "Chainlink",
 			"symbol": "link",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/chainlink.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/chainlink.svg"
 		},
 		{
 			"chainId": 137,
@@ -341,7 +341,7 @@
 			"name": "Chainlink",
 			"symbol": "link",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/chainlink.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/chainlink.svg"
 		},
 		{
 			"chainId": 56,
@@ -349,7 +349,7 @@
 			"name": "Chainlink",
 			"symbol": "link",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/chainlink.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/chainlink.svg"
 		},
 		{
 			"chainId": 100,
@@ -357,7 +357,7 @@
 			"name": "Chainlink",
 			"symbol": "link",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/chainlink.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/chainlink.svg"
 		},
 		{
 			"chainId": 1,
@@ -477,7 +477,7 @@
 			"name": "Dai",
 			"symbol": "dai",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/dai.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/dai.svg"
 		},
 		{
 			"chainId": 100,
@@ -485,7 +485,7 @@
 			"name": "Dai",
 			"symbol": "dai",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/dai.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/dai.svg"
 		},
 		{
 			"chainId": 42161,
@@ -493,7 +493,7 @@
 			"name": "Dai",
 			"symbol": "dai",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/dai.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/dai.svg"
 		},
 		{
 			"chainId": 43114,
@@ -501,7 +501,7 @@
 			"name": "Dai",
 			"symbol": "dai",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/dai.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/dai.svg"
 		},
 		{
 			"chainId": 10,
@@ -509,7 +509,7 @@
 			"name": "Dai",
 			"symbol": "dai",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/dai.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/dai.svg"
 		},
 		{
 			"chainId": 56,
@@ -517,7 +517,7 @@
 			"name": "Dai",
 			"symbol": "dai",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/dai.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/dai.svg"
 		},
 		{
 			"chainId": 137,
@@ -525,7 +525,7 @@
 			"name": "Dai",
 			"symbol": "dai",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/dai.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/dai.svg"
 		},
 		{
 			"chainId": 1,
@@ -533,7 +533,7 @@
 			"name": "Decentraland",
 			"symbol": "mana",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/decentraland.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/decentraland.svg"
 		},
 		{
 			"chainId": 137,
@@ -541,7 +541,7 @@
 			"name": "Decentraland",
 			"symbol": "mana",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/decentraland.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/decentraland.svg"
 		},
 		{
 			"chainId": 1,
@@ -589,7 +589,7 @@
 			"name": "Ethereum",
 			"symbol": "eth",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/ethereum.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/ethereum.svg"
 		},
 		{
 			"chainId": 10,
@@ -597,7 +597,7 @@
 			"name": "Ethereum",
 			"symbol": "eth",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/ethereum.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/ethereum.svg"
 		},
 		{
 			"chainId": 42161,
@@ -605,7 +605,7 @@
 			"name": "Ethereum",
 			"symbol": "eth",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/ethereum.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/ethereum.svg"
 		},
 		{
 			"chainId": 1,
@@ -613,7 +613,7 @@
 			"name": "Ethereum Name Service",
 			"symbol": "ens",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/ethereum-name-service.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/ethereum-name-service.svg"
 		},
 		{
 			"chainId": 1,
@@ -621,7 +621,7 @@
 			"name": "Euler",
 			"symbol": "eul",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/euler.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/euler.svg"
 		},
 		{
 			"chainId": 1,
@@ -629,7 +629,7 @@
 			"name": "Euro Coin",
 			"symbol": "euroc",
 			"decimals": 6,
-			"logoURI": "https://avocado.link/tokens/euro-coin.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/euro-coin.svg"
 		},
 		{
 			"chainId": 250,
@@ -637,7 +637,7 @@
 			"name": "Fantom",
 			"symbol": "ftm",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/fantom.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/fantom.svg"
 		},
 		{
 			"chainId": 1,
@@ -669,7 +669,7 @@
 			"name": "Frax",
 			"symbol": "frax",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/frax.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/frax.svg"
 		},
 		{
 			"chainId": 10,
@@ -677,7 +677,7 @@
 			"name": "Frax",
 			"symbol": "frax",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/frax.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/frax.svg"
 		},
 		{
 			"chainId": 42161,
@@ -685,7 +685,7 @@
 			"name": "Frax",
 			"symbol": "frax",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/frax.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/frax.svg"
 		},
 		{
 			"chainId": 137,
@@ -693,7 +693,7 @@
 			"name": "Frax",
 			"symbol": "frax",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/frax.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/frax.svg"
 		},
 		{
 			"chainId": 43114,
@@ -701,7 +701,7 @@
 			"name": "Frax",
 			"symbol": "frax",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/frax.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/frax.svg"
 		},
 		{
 			"chainId": 56,
@@ -709,7 +709,7 @@
 			"name": "Frax",
 			"symbol": "frax",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/frax.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/frax.svg"
 		},
 		{
 			"chainId": 1,
@@ -837,7 +837,7 @@
 			"name": "Instadapp",
 			"symbol": "inst",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/instadapp.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/instadapp.svg"
 		},
 		{
 			"chainId": 137,
@@ -845,7 +845,7 @@
 			"name": "Instadapp",
 			"symbol": "inst",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/instadapp.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/instadapp.svg"
 		},
 		{
 			"chainId": 1,
@@ -853,7 +853,7 @@
 			"name": "Instadapp DAI",
 			"symbol": "idai",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/instadapp-dai.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/instadapp-dai.svg"
 		},
 		{
 			"chainId": 1,
@@ -861,7 +861,7 @@
 			"name": "Instadapp ETH",
 			"symbol": "ieth",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/instadapp-eth.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/instadapp-eth.svg"
 		},
 		{
 			"chainId": 1,
@@ -869,7 +869,7 @@
 			"name": "Instadapp USDC",
 			"symbol": "iusdc",
 			"decimals": 6,
-			"logoURI": "https://avocado.link/tokens/instadapp-usdc.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/instadapp-usdc.svg"
 		},
 		{
 			"chainId": 1,
@@ -877,7 +877,7 @@
 			"name": "Instadapp WBTC",
 			"symbol": "iwbtc",
 			"decimals": 8,
-			"logoURI": "https://avocado.link/tokens/instadapp-wbtc.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/instadapp-wbtc.svg"
 		},
 		{
 			"chainId": 1,
@@ -909,7 +909,7 @@
 			"name": "Lido DAO",
 			"symbol": "ldo",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/lido-dao.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/lido-dao.svg"
 		},
 		{
 			"chainId": 10,
@@ -917,7 +917,7 @@
 			"name": "Lido DAO",
 			"symbol": "ldo",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/lido-dao.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/lido-dao.svg"
 		},
 		{
 			"chainId": 42161,
@@ -925,7 +925,7 @@
 			"name": "Lido DAO",
 			"symbol": "ldo",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/lido-dao.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/lido-dao.svg"
 		},
 		{
 			"chainId": 137,
@@ -933,7 +933,7 @@
 			"name": "Lido DAO",
 			"symbol": "ldo",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/lido-dao.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/lido-dao.svg"
 		},
 		{
 			"chainId": 1,
@@ -941,7 +941,7 @@
 			"name": "Liquity",
 			"symbol": "lqty",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/liquity.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/liquity.svg"
 		},
 		{
 			"chainId": 1,
@@ -949,7 +949,7 @@
 			"name": "Liquity USD",
 			"symbol": "lusd",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/liquity-usd.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/liquity-usd.svg"
 		},
 		{
 			"chainId": 10,
@@ -957,7 +957,7 @@
 			"name": "Liquity USD",
 			"symbol": "lusd",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/liquity-usd.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/liquity-usd.svg"
 		},
 		{
 			"chainId": 137,
@@ -965,7 +965,7 @@
 			"name": "Liquity USD",
 			"symbol": "lusd",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/liquity-usd.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/liquity-usd.svg"
 		},
 		{
 			"chainId": 1,
@@ -1005,7 +1005,7 @@
 			"name": "Maker",
 			"symbol": "mkr",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/maker.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/maker.svg"
 		},
 		{
 			"chainId": 137,
@@ -1013,7 +1013,7 @@
 			"name": "Maker",
 			"symbol": "mkr",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/maker.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/maker.svg"
 		},
 		{
 			"chainId": 42161,
@@ -1021,7 +1021,7 @@
 			"name": "Maker",
 			"symbol": "mkr",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/maker.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/maker.svg"
 		},
 		{
 			"chainId": 43114,
@@ -1029,7 +1029,7 @@
 			"name": "Maker",
 			"symbol": "mkr",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/maker.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/maker.svg"
 		},
 		{
 			"chainId": 1,
@@ -1061,7 +1061,7 @@
 			"name": "Polygon",
 			"symbol": "matic",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/matic-network.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/matic-network.svg"
 		},
 		{
 			"chainId": 1,
@@ -1069,7 +1069,7 @@
 			"name": "Polygon",
 			"symbol": "matic",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/matic-network.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/matic-network.svg"
 		},
 		{
 			"chainId": 56,
@@ -1077,7 +1077,7 @@
 			"name": "Polygon",
 			"symbol": "matic",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/matic-network.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/matic-network.svg"
 		},
 		{
 			"chainId": 1,
@@ -1133,7 +1133,7 @@
 			"name": "Perpetual Protocol",
 			"symbol": "perp",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/perpetual-protocol.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/perpetual-protocol.svg"
 		},
 		{
 			"chainId": 42161,
@@ -1141,7 +1141,7 @@
 			"name": "Perpetual Protocol",
 			"symbol": "perp",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/perpetual-protocol.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/perpetual-protocol.svg"
 		},
 		{
 			"chainId": 100,
@@ -1149,7 +1149,7 @@
 			"name": "Perpetual Protocol",
 			"symbol": "perp",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/perpetual-protocol.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/perpetual-protocol.svg"
 		},
 		{
 			"chainId": 56,
@@ -1157,7 +1157,7 @@
 			"name": "Perpetual Protocol",
 			"symbol": "perp",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/perpetual-protocol.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/perpetual-protocol.svg"
 		},
 		{
 			"chainId": 10,
@@ -1165,7 +1165,7 @@
 			"name": "Perpetual Protocol",
 			"symbol": "perp",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/perpetual-protocol.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/perpetual-protocol.svg"
 		},
 		{
 			"chainId": 1,
@@ -1173,7 +1173,7 @@
 			"name": "Rai Reflex Index",
 			"symbol": "rai",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/rai.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/rai.svg"
 		},
 		{
 			"chainId": 10,
@@ -1181,7 +1181,7 @@
 			"name": "Rai Reflex Index",
 			"symbol": "rai",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/rai.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/rai.svg"
 		},
 		{
 			"chainId": 43114,
@@ -1189,7 +1189,7 @@
 			"name": "Rai Reflex Index",
 			"symbol": "rai",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/rai.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/rai.svg"
 		},
 		{
 			"chainId": 137,
@@ -1197,7 +1197,7 @@
 			"name": "Rai Reflex Index",
 			"symbol": "rai",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/rai.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/rai.svg"
 		},
 		{
 			"chainId": 1,
@@ -1253,7 +1253,7 @@
 			"name": "Ribbon Finance",
 			"symbol": "rbn",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/ribbon-finance.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/ribbon-finance.svg"
 		},
 		{
 			"chainId": 1,
@@ -1261,7 +1261,7 @@
 			"name": "sBTC",
 			"symbol": "sbtc",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/sbtc.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/sbtc.svg"
 		},
 		{
 			"chainId": 1,
@@ -1269,7 +1269,7 @@
 			"name": "Shiba Inu",
 			"symbol": "shib",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/shiba-inu.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/shiba-inu.svg"
 		},
 		{
 			"chainId": 1,
@@ -1301,7 +1301,7 @@
 			"name": "Sushi",
 			"symbol": "sushi",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/sushi.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/sushi.svg"
 		},
 		{
 			"chainId": 42161,
@@ -1309,7 +1309,7 @@
 			"name": "Sushi",
 			"symbol": "sushi",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/sushi.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/sushi.svg"
 		},
 		{
 			"chainId": 43114,
@@ -1317,7 +1317,7 @@
 			"name": "Sushi",
 			"symbol": "sushi",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/sushi.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/sushi.svg"
 		},
 		{
 			"chainId": 56,
@@ -1325,7 +1325,7 @@
 			"name": "Sushi",
 			"symbol": "sushi",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/sushi.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/sushi.svg"
 		},
 		{
 			"chainId": 137,
@@ -1333,7 +1333,7 @@
 			"name": "Sushi",
 			"symbol": "sushi",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/sushi.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/sushi.svg"
 		},
 		{
 			"chainId": 1,
@@ -1349,7 +1349,7 @@
 			"name": "Tether",
 			"symbol": "usdt",
 			"decimals": 6,
-			"logoURI": "https://avocado.link/tokens/tether.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/tether.svg"
 		},
 		{
 			"chainId": 100,
@@ -1357,7 +1357,7 @@
 			"name": "Tether",
 			"symbol": "usdt",
 			"decimals": 6,
-			"logoURI": "https://avocado.link/tokens/tether.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/tether.svg"
 		},
 		{
 			"chainId": 43114,
@@ -1365,7 +1365,7 @@
 			"name": "Tether",
 			"symbol": "usdt",
 			"decimals": 6,
-			"logoURI": "https://avocado.link/tokens/tether.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/tether.svg"
 		},
 		{
 			"chainId": 10,
@@ -1373,7 +1373,7 @@
 			"name": "Tether",
 			"symbol": "usdt",
 			"decimals": 6,
-			"logoURI": "https://avocado.link/tokens/tether.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/tether.svg"
 		},
 		{
 			"chainId": 42161,
@@ -1381,7 +1381,7 @@
 			"name": "Tether",
 			"symbol": "usdt",
 			"decimals": 6,
-			"logoURI": "https://avocado.link/tokens/tether.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/tether.svg"
 		},
 		{
 			"chainId": 56,
@@ -1389,7 +1389,7 @@
 			"name": "Tether",
 			"symbol": "usdt",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/tether.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/tether.svg"
 		},
 		{
 			"chainId": 137,
@@ -1397,7 +1397,7 @@
 			"name": "Tether",
 			"symbol": "usdt",
 			"decimals": 6,
-			"logoURI": "https://avocado.link/tokens/tether.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/tether.svg"
 		},
 		{
 			"chainId": 1,
@@ -1421,7 +1421,7 @@
 			"name": "TrueUSD",
 			"symbol": "tusd",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/true-usd.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/true-usd.svg"
 		},
 		{
 			"chainId": 42161,
@@ -1429,7 +1429,7 @@
 			"name": "TrueUSD",
 			"symbol": "tusd",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/true-usd.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/true-usd.svg"
 		},
 		{
 			"chainId": 137,
@@ -1437,7 +1437,7 @@
 			"name": "TrueUSD",
 			"symbol": "tusd",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/true-usd.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/true-usd.svg"
 		},
 		{
 			"chainId": 43114,
@@ -1445,7 +1445,7 @@
 			"name": "TrueUSD",
 			"symbol": "tusd",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/true-usd.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/true-usd.svg"
 		},
 		{
 			"chainId": 56,
@@ -1453,7 +1453,7 @@
 			"name": "TrueUSD",
 			"symbol": "tusd",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/true-usd.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/true-usd.svg"
 		},
 		{
 			"chainId": 1,
@@ -1461,7 +1461,7 @@
 			"name": "Uniswap",
 			"symbol": "uni",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/uniswap.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/uniswap.svg"
 		},
 		{
 			"chainId": 42161,
@@ -1469,7 +1469,7 @@
 			"name": "Uniswap",
 			"symbol": "uni",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/uniswap.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/uniswap.svg"
 		},
 		{
 			"chainId": 10,
@@ -1477,7 +1477,7 @@
 			"name": "Uniswap",
 			"symbol": "uni",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/uniswap.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/uniswap.svg"
 		},
 		{
 			"chainId": 43114,
@@ -1485,7 +1485,7 @@
 			"name": "Uniswap",
 			"symbol": "uni",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/uniswap.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/uniswap.svg"
 		},
 		{
 			"chainId": 137,
@@ -1493,7 +1493,7 @@
 			"name": "Uniswap",
 			"symbol": "uni",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/uniswap.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/uniswap.svg"
 		},
 		{
 			"chainId": 56,
@@ -1501,7 +1501,7 @@
 			"name": "Uniswap",
 			"symbol": "uni",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/uniswap.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/uniswap.svg"
 		},
 		{
 			"chainId": 100,
@@ -1509,7 +1509,7 @@
 			"name": "Uniswap",
 			"symbol": "uni",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/uniswap.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/uniswap.svg"
 		},
 		{
 			"chainId": 1,
@@ -1517,7 +1517,7 @@
 			"name": "USD Coin",
 			"symbol": "usdc",
 			"decimals": 6,
-			"logoURI": "https://avocado.link/tokens/usd-coin.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/usd-coin.svg"
 		},
 		{
 			"chainId": 43114,
@@ -1525,7 +1525,7 @@
 			"name": "USD Coin",
 			"symbol": "usdc",
 			"decimals": 6,
-			"logoURI": "https://avocado.link/tokens/usd-coin.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/usd-coin.svg"
 		},
 		{
 			"chainId": 10,
@@ -1533,7 +1533,7 @@
 			"name": "USD Coin",
 			"symbol": "usdc",
 			"decimals": 6,
-			"logoURI": "https://avocado.link/tokens/usd-coin.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/usd-coin.svg"
 		},
 		{
 			"chainId": 42161,
@@ -1541,7 +1541,7 @@
 			"name": "USD Coin",
 			"symbol": "usdc",
 			"decimals": 6,
-			"logoURI": "https://avocado.link/tokens/usd-coin.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/usd-coin.svg"
 		},
 		{
 			"chainId": 56,
@@ -1549,7 +1549,7 @@
 			"name": "USD Coin",
 			"symbol": "usdc",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/usd-coin.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/usd-coin.svg"
 		},
 		{
 			"chainId": 137,
@@ -1557,7 +1557,7 @@
 			"name": "USD Coin",
 			"symbol": "usdc",
 			"decimals": 6,
-			"logoURI": "https://avocado.link/tokens/usd-coin.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/usd-coin.svg"
 		},
 		{
 			"chainId": 100,
@@ -1565,7 +1565,7 @@
 			"name": "USD Coin",
 			"symbol": "usdc",
 			"decimals": 6,
-			"logoURI": "https://avocado.link/tokens/usd-coin.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/usd-coin.svg"
 		},
 		{
 			"chainId": 42161,
@@ -1605,7 +1605,7 @@
 			"name": "WETH",
 			"symbol": "weth",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/weth.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/weth.svg"
 		},
 		{
 			"chainId": 56,
@@ -1613,7 +1613,7 @@
 			"name": "WETH",
 			"symbol": "weth",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/weth.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/weth.svg"
 		},
 		{
 			"chainId": 10,
@@ -1621,7 +1621,7 @@
 			"name": "WETH",
 			"symbol": "weth",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/weth.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/weth.svg"
 		},
 		{
 			"chainId": 42161,
@@ -1629,7 +1629,7 @@
 			"name": "WETH",
 			"symbol": "weth",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/weth.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/weth.svg"
 		},
 		{
 			"chainId": 43114,
@@ -1637,7 +1637,7 @@
 			"name": "WETH",
 			"symbol": "weth",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/weth.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/weth.svg"
 		},
 		{
 			"chainId": 137,
@@ -1645,7 +1645,7 @@
 			"name": "WETH",
 			"symbol": "weth",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/weth.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/weth.svg"
 		},
 		{
 			"chainId": 100,
@@ -1653,7 +1653,7 @@
 			"name": "WETH",
 			"symbol": "weth",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/weth.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/weth.svg"
 		},
 		{
 			"chainId": 1,
@@ -1661,7 +1661,7 @@
 			"name": "Wrapped Bitcoin",
 			"symbol": "wbtc",
 			"decimals": 8,
-			"logoURI": "https://avocado.link/tokens/wrapped-bitcoin.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/wrapped-bitcoin.svg"
 		},
 		{
 			"chainId": 42161,
@@ -1669,7 +1669,7 @@
 			"name": "Wrapped Bitcoin",
 			"symbol": "wbtc",
 			"decimals": 8,
-			"logoURI": "https://avocado.link/tokens/wrapped-bitcoin.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/wrapped-bitcoin.svg"
 		},
 		{
 			"chainId": 100,
@@ -1677,7 +1677,7 @@
 			"name": "Wrapped Bitcoin",
 			"symbol": "wbtc",
 			"decimals": 8,
-			"logoURI": "https://avocado.link/tokens/wrapped-bitcoin.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/wrapped-bitcoin.svg"
 		},
 		{
 			"chainId": 10,
@@ -1685,7 +1685,7 @@
 			"name": "Wrapped Bitcoin",
 			"symbol": "wbtc",
 			"decimals": 8,
-			"logoURI": "https://avocado.link/tokens/wrapped-bitcoin.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/wrapped-bitcoin.svg"
 		},
 		{
 			"chainId": 43114,
@@ -1693,7 +1693,7 @@
 			"name": "Wrapped Bitcoin",
 			"symbol": "wbtc",
 			"decimals": 8,
-			"logoURI": "https://avocado.link/tokens/wrapped-bitcoin.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/wrapped-bitcoin.svg"
 		},
 		{
 			"chainId": 137,
@@ -1701,7 +1701,7 @@
 			"name": "Wrapped Bitcoin",
 			"symbol": "wbtc",
 			"decimals": 8,
-			"logoURI": "https://avocado.link/tokens/wrapped-bitcoin.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/wrapped-bitcoin.svg"
 		},
 		{
 			"chainId": 1,
@@ -1709,7 +1709,7 @@
 			"name": "Wrapped stETH",
 			"symbol": "wsteth",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/wrapped-steth.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/wrapped-steth.svg"
 		},
 		{
 			"chainId": 10,
@@ -1717,7 +1717,7 @@
 			"name": "Wrapped stETH",
 			"symbol": "wsteth",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/wrapped-steth.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/wrapped-steth.svg"
 		},
 		{
 			"chainId": 42161,
@@ -1725,7 +1725,7 @@
 			"name": "Wrapped stETH",
 			"symbol": "wsteth",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/wrapped-steth.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/wrapped-steth.svg"
 		},
 		{
 			"chainId": 100,
@@ -1741,7 +1741,7 @@
 			"name": "yearn.finance",
 			"symbol": "yfi",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/yearn-finance.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/yearn-finance.svg"
 		},
 		{
 			"chainId": 42161,
@@ -1749,7 +1749,7 @@
 			"name": "yearn.finance",
 			"symbol": "yfi",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/yearn-finance.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/yearn-finance.svg"
 		},
 		{
 			"chainId": 43114,
@@ -1757,7 +1757,7 @@
 			"name": "yearn.finance",
 			"symbol": "yfi",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/yearn-finance.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/yearn-finance.svg"
 		},
 		{
 			"chainId": 137,
@@ -1765,7 +1765,7 @@
 			"name": "yearn.finance",
 			"symbol": "yfi",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/yearn-finance.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/yearn-finance.svg"
 		},
 		{
 			"chainId": 100,
@@ -1773,7 +1773,7 @@
 			"name": "yearn.finance",
 			"symbol": "yfi",
 			"decimals": 18,
-			"logoURI": "https://avocado.link/tokens/yearn-finance.svg"
+			"logoURI": "https://avocado.instadapp.io/tokens/yearn-finance.svg"
 		}
 	],
 	"version": {
