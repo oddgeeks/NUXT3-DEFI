@@ -9,7 +9,7 @@ const tokenStore = useTokens();
             <span v-if="tokenBalances.length > 0 && tokenBalances.length > tokenStore.tokens.length / 2">
                 $ {{ totalBalance.toFormat(2) }}
             </span>
-            <div v-else class="loading-box rounded-5 w-40 h-8"></div>
+            <div v-else class="loading-box rounded-5 w-40 h-8 my-2"></div>
         </div>
     </div>
 </template>
