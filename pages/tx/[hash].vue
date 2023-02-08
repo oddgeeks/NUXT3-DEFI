@@ -23,11 +23,6 @@ const locale = computed(() =>
 );
 
 const isBridge = metadata?.length && metadata?.some((i: any) => i.type === 'bridge')
-const isTopupGas = metadata?.length && metadata?.some((i: any) => i.type === 'gas-topup')
-
-const feeInfoText =  isTopupGas ?
-'Topping Up gas is a gas free transaction.'
-: 'This includes the fee that will be paid to the relayer and the integrator.'
 
 </script>
 
@@ -209,7 +204,7 @@ const feeInfoText =  isTopupGas ?
             class="dark:text-slate-400 gap-2.5 flex items-center text-slate-500 md:w-full md:max-w-[235px]"
           >
             <SVGInfo
-              v-tippy="feeInfoText"
+              v-tippy="'This includes the fee that will be paid to the relayer and the integrator.'"
               class="w-[18px] h-[18px] text-slate-600 shrink-0"
             />
             Transaction Fee

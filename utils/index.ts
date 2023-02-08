@@ -423,6 +423,7 @@ export const decodeMetadata = (data: string) => {
             sellToken: decodedData.sellToken,
             receiver: decodedData.receiver,
           };
+          break;
         case "gas-topup":
           payload = {
             type,
