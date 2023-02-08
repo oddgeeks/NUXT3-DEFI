@@ -1,8 +1,4 @@
 <script setup>
-const info = useBuildInfo()
-console.log({
-  info: { ...info}
-})
 onMounted(() => {
   window.wc = useWalletConnect()
 })

@@ -43,7 +43,6 @@ const forwarderProxyContract = Forwarder__factory.connect(
 );
 
 export const useSafe = defineStore("safe", () => {
-  console.log("defineStore::safe");
   const safeAddress = ref();
 
   const { account } = useWeb3();

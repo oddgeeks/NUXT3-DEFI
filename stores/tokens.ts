@@ -14,8 +14,6 @@ export interface IToken {
 }
 
 export const useTokens = defineStore("tokens", () => {
-    console.log("defineStore::tokens");
-
     const tokens = useLocalStorage<IToken[]>("tokens", []);
 
     const fetchTokens = async () => {

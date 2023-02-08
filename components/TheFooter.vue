@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import InstadappSVG from "~/assets/images/logo/instadapp.svg?component";
+
+const info = useBuildInfo()
+
+console.log(`Avocado v${ info.version } (${ info.commit.slice(0, 8) })`)
 </script>
 
 <template>
