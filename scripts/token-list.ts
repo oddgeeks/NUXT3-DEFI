@@ -17,7 +17,7 @@ const RPC_URLS: { [chainId: number]: string } = {
   250: "https://rpc.ankr.com/fantom",
   10: "https://rpc.ankr.com/optimism",
   42161: "https://rpc.ankr.com/arbitrum",
-  634: "https://rpc.avocado.link",
+  634: "https://rpc.avocado.instadapp.io",
   100: "https://rpc.ankr.com/gnosis",
   56: "https://rpc.ankr.com/bsc",
 };
