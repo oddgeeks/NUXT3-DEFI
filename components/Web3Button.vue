@@ -33,12 +33,17 @@ const connect = async (provider: any) => {
   }
 };
 
-const closeConnection = () => {
-  trackingAccount.value = null;
-  setConnectorName(null);
-  if (connector) {
-    deactivate();
+const closeConnection = async () => {
+  const { success } = await openDisconnectWalletModal()
+
+  if (success) {
+    trackingAccount.value = null;
+      setConnectorName(null);
+      if (connector.value) {
+        deactivate();
+    }
   }
+  
 };
 
 const isProviderVisible = (provider: Provider) => {

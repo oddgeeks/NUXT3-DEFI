@@ -69,13 +69,17 @@ const { value: chainId } = useField<number>(
 // TODO:
 const token = computed(
   () =>
-    tokenBalances.value.find(
-      (t) =>
-        t.chainId === String(chainId.value) &&
-        toChecksumAddress(t.address) ===
-          toChecksumAddress(chainUSDCAddresses[chainId.value])
-    )!
+  getUSDCByChainId(String(chainId.value))
 );
+
+const getUSDCByChainId = (chainId: string) => {
+  return tokenBalances.value.find(
+      (t) =>
+        t.chainId === chainId &&
+        toChecksumAddress(t.address) ===
+          toChecksumAddress(chainUSDCAddresses[chainId])
+    )!
+}
 
 const setMax = () => {
   amount.value = token.value!.balance;
@@ -197,10 +201,18 @@ const onSubmit = handleSubmit(async () => {
       tx.data = data!;
       tx.to = token.value.address;
     }
+    
+    const metadata = encodeTopupMetadata({
+       amount: transferAmount,
+       token: token.value.address,
+       onBehalf: safeAddress.value,
+    });
 
     let transactionHash = await sendTransaction({
       ...tx,
       chainId: chainId.value,
+    }, {
+      metadata
     });
 
     logActionToSlack({
@@ -279,6 +291,7 @@ const onSubmit = handleSubmit(async () => {
           v-model="chainId"
           labelKey="name"
           valueKey="chainId"
+          itemWrapperClasses="!items-baseline"
           :options="networks"
         >
           <template #button-prefix>
@@ -287,6 +300,14 @@ const onSubmit = handleSubmit(async () => {
           <template #item-prefix="{ value }">
             <ChainLogo class="w-6 h-6" :chain="value" />
           </template>
+          <template #item="{ label, value }">
+            <div class="flex flex-col gap-1 mb-auto">
+              <span>{{ label }}</span>
+              <span class="text-sm text-gray-400 font-medium">
+                {{ formatDecimal(getUSDCByChainId(value)?.balance) }} USDC
+              </span>
+            </div>
+          </template>
         </CommonSelect>
       </div>
 
@@ -294,7 +315,7 @@ const onSubmit = handleSubmit(async () => {
         <div class="flex justify-between items-center leading-5">
           <span>Amount</span>
           <span class="uppercase"
-            >{{ token?.balance }} {{ token?.symbol }}</span
+            >{{ formatDecimal(token?.balance) }} {{ token?.symbol }}</span
           >
         </div>
         <CommonInput

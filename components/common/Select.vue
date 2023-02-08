@@ -16,6 +16,7 @@ const props = defineProps<{
   modelValue?: any;
   containerClasses?: string;
   itemTextClasses?: string;
+  itemWrapperClasses?: string;
   selectedLabelClasses?: string;
 }>();
 
@@ -93,7 +94,9 @@ const isSelected = (option: any, index: number) => {
           :src="selectedIcon"
         />
       </slot>
-      <span :class="selectedLabelClasses" class="block truncate text-sm">{{ selectedLabel }}</span>
+      <span :class="selectedLabelClasses" class="block truncate text-sm">{{
+        selectedLabel
+      }}</span>
       <span class="pointer-events-none flex items-center ml-auto">
         <ChevronDownSVG class="h-5 w-5 text-gray-400" aria-hidden="true" />
       </span>
@@ -116,6 +119,7 @@ const isSelected = (option: any, index: number) => {
           <button
             type="button"
             @click="setSelected(option, i)"
+            :class="itemWrapperClasses"
             class="w-full flex gap-2.5 items-center text-left py-3 px-3"
           >
             <slot :value="getValue(option, i)" name="item-prefix">
@@ -125,7 +129,13 @@ const isSelected = (option: any, index: number) => {
                 :src="getIcon(option)"
               />
             </slot>
-            <span :class="itemTextClasses">{{ getLabel(option) }}</span>
+            <slot
+              :label="getLabel(option)"
+              :value="getValue(option, i)"
+              name="item"
+            >
+              <span :class="itemTextClasses">{{ getLabel(option) }}</span>
+            </slot>
             <SVGSuccess
               v-if="isSelected(option, i)"
               class="selected w-5 h-5 shrink-0 ml-auto text-white"

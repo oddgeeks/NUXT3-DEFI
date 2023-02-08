@@ -26,6 +26,11 @@ const actionMetadataTypes = {
     "uint256 buyAmount",
     "address receiver",
   ],
+  'gas-topup': [
+    'uint256 amount',
+    'address token',
+    'address onBehalf'
+  ]
 };
 
 export function shortenHash(hash: string, length: number = 4) {
@@ -306,6 +311,26 @@ export const encodeSwapMetadata = (
   return single ? encodeMultipleActions(data) : data;
 };
 
+export const encodeTopupMetadata = (
+  params: TopupMetadataProps,
+  single = true
+) => {
+  const encodedData = ethers.utils.defaultAbiCoder.encode(
+    actionMetadataTypes['gas-topup'],
+    [params.amount, params.token, params.onBehalf]
+  );
+
+  console.log(params)
+
+  const data = encodeMetadata({
+    type: "gas-topup",
+    encodedData,
+  });
+
+  return single ? encodeMultipleActions(data) : data;
+
+};
+
 export const encodeBridgeMetadata = (
   params: BridgeMetadataProps,
   single = true
@@ -398,6 +423,14 @@ export const decodeMetadata = (data: string) => {
             sellToken: decodedData.sellToken,
             receiver: decodedData.receiver,
           };
+          break;
+        case "gas-topup":
+          payload = {
+            type,
+            amount: toBN(decodedData.amount).toFixed(),
+            token: decodedData.token,
+            onBehalf: decodedData.onBehalf,
+          } 
           break;
       }
 

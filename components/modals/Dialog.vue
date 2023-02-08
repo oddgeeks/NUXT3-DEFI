@@ -11,6 +11,7 @@ defineProps<{
   content: string;
   type: "success" | "error" | "question";
   headerIconUrl?: string;
+  headerIconComponent?: any;
   isButtonVisible?: boolean;
   isCancelButtonVisible?: boolean;
   buttonText?: string;
@@ -32,8 +33,9 @@ const handleReject = () => {
   <div
     class="inline-flex gap-7.5 flex-col items-center justify-center text-center w-full"
   >
+  <component v-if="headerIconComponent" :is="headerIconComponent"/>
     <img
-      v-if="headerIconUrl"
+      v-else-if="headerIconUrl"
       class="w-10 h-10"
       width="40"
       height="40"
@@ -43,12 +45,13 @@ const handleReject = () => {
       class="text-white success-circle"
       v-else-if="type === 'success'"
     />
-    <SVGErrorCircle class="text-white w-10 h-10" v-else-if="type === 'error'" />
+    <SVGErrorCircle class="text-white w-10 h-10 fill-primary" v-else-if="type === 'error'" />
     <SVGQuestionCircle class="w-10 h-10 text-primary" v-else-if="type === 'question'" />
 
     <div class="flex flex-col gap-[15px]">
-      <h1 class="text-lg">{{ title }}</h1>
+      <h1 v-if="title" class="text-lg font-semibold">{{ title }}</h1>
       <p
+        v-if="content"
         v-html="content"
         class="text-slate-400 text-xs text-center leading-5 font-medium"
       />
