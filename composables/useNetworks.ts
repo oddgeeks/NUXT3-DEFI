@@ -269,7 +269,7 @@ export function useNetworks() {
     await nextTick();
   };
 
-  const getNetworkByChainId = (chainId: number) => {
+  const getNetworkByChainId = (chainId: number | string) => {
     return networks.find((i) => i.chainId === Number(chainId))!;
   };
 
