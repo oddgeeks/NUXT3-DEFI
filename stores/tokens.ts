@@ -16,7 +16,7 @@ export interface IToken {
 export const useTokens = defineStore("tokens", () => {
     console.log("defineStore::tokens");
 
-    const tokens = ref<IToken[]>([]);
+    const tokens = useLocalStorage<IToken[]>("tokens", []);
 
     const fetchTokens = async () => {
         try {
@@ -39,31 +39,31 @@ export const useTokens = defineStore("tokens", () => {
         }
     };
 
-    const getTokenPrices = async (_tokenList: Token[]) => {
+    const getTokenPrices = async (_tokenList: IToken[]) => {
         const tokenList = [..._tokenList]
-        const chainTokens = collect(tokenList).mapToGroups((item: any) => [item.chainId, item]).all()
+        const chainTokens: Record<string, IToken[]> = collect(tokenList).mapToGroups((item: any) => [item.chainId, item]).all() as any;
 
         await Promise.allSettled(Object.keys(chainTokens).map(async (cid) => {
             const ts = chainTokens[cid]
 
-            const prices = await $fetch(`https://prices.instadapp.io/${cid}/tokens`, {
+            const prices: IToken[] = await $fetch(`https://prices.instadapp.io/${cid}/tokens`, {
                 params: {
                     addresses: ts.map(t => t.address)
                 }
             })
 
-            for(const tokenPrice of prices) {
-                const token = tokenList.find((t) => t.chainId === String(cid) && t.address.toLowerCase() === tokenPrice.address.toLowerCase() )
+            for (const tokenPrice of prices) {
+                const token = tokenList.find((t) => t.chainId === String(cid) && t.address.toLowerCase() === tokenPrice.address.toLowerCase())
 
-                if(token) {
+                if (token) {
                     token.price = tokenPrice.price
                     token.sparklinePrice7d = tokenPrice.sparklinePrice7d || []
-                }else {
+                } else {
                     console.log(
-                        t.chainId === String(cid) && t.address.toLowerCase() === tokenPrice.address.toLowerCase(),
-                        t.chainId,
+                        tokenPrice.chainId === String(cid) && tokenPrice.address.toLowerCase() === tokenPrice.address.toLowerCase(),
+                        tokenPrice.chainId,
                         cid,
-                        t.address,
+                        tokenPrice.address,
                         tokenPrice.address,
                     )
                 }
@@ -86,9 +86,9 @@ export const useTokens = defineStore("tokens", () => {
     useIntervalFn(fetchTokenPrices, 10000);
 
     return {
-      tokens,
-      fetchTokens,
-      getTokenByAddress,
+        tokens,
+        fetchTokens,
+        getTokenByAddress,
     };
 });
 

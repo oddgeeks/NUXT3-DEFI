@@ -48,6 +48,8 @@ export const useSafe = defineStore("safe", () => {
 
   const { account } = useWeb3();
   const { tokens } = storeToRefs(useTokens());
+  const cachedTokens = useLocalStorage<IToken[]>("tokens", tokens.value);
+
   const gasBalance = ref();
   const pending = ref<Record<string, boolean>>({
     gasBalance: false,
@@ -56,13 +58,41 @@ export const useSafe = defineStore("safe", () => {
   });
 
   const chainTokenBalances = ref<Record<string, IBalance[]>>({
-    "137": [],
-    "42161": [],
-    "43114": [],
-    "10": [],
-    "1": [],
-    "100": [],
-    "56": [],
+    "137": cachedTokens.value.filter(t => t.chainId === '137').map((t) => ({
+      ...t,
+      balance: '0',
+      balanceInUSD: null,
+    })),
+    "42161": cachedTokens.value.filter(t => t.chainId === '42161').map((t) => ({
+      ...t,
+      balance: '0',
+      balanceInUSD: null,
+    })),
+    "43114": cachedTokens.value.filter(t => t.chainId === '43114').map((t) => ({
+      ...t,
+      balance: '0',
+      balanceInUSD: null,
+    })),
+    "10": cachedTokens.value.filter(t => t.chainId === '10').map((t) => ({
+      ...t,
+      balance: '0',
+      balanceInUSD: null,
+    })),
+    "1": cachedTokens.value.filter(t => t.chainId === '1').map((t) => ({
+      ...t,
+      balance: '0',
+      balanceInUSD: null,
+    })),
+    "100": cachedTokens.value.filter(t => t.chainId === '100').map((t) => ({
+      ...t,
+      balance: '0',
+      balanceInUSD: null,
+    })),
+    "56": cachedTokens.value.filter(t => t.chainId === '56').map((t) => ({
+      ...t,
+      balance: '0',
+      balanceInUSD: null,
+    })),
   });
 
   const tokenBalances = computed(() => {
@@ -125,13 +155,13 @@ export const useSafe = defineStore("safe", () => {
         for (let index = 0; index < balances.length; index++) {
           let token = chunk[index] as IToken;
           let balance = toBN(balances[index]).div(10 ** token.decimals);
-            newBalances.push({
-              ...token,
-              balance: balance.toFixed(6, 1),
-              balanceInUSD: token.price
-                ? balance.times(token.price).toFixed(2)
-                : null,
-            });
+          newBalances.push({
+            ...token,
+            balance: balance.toFixed(6, 1),
+            balanceInUSD: token.price
+              ? balance.times(token.price).toFixed(2)
+              : null,
+          });
         }
       })
     );
