@@ -166,7 +166,7 @@ export function useNetworks() {
           decimals: 18,
         },
         iconUrls: ["https://avocado.instadapp.io/logo.svg"],
-        rpcUrls: ["https://rpc.avocado.link/"],
+        rpcUrls: ["https://rpc.avocado.instadapp.io"],
         blockExplorerUrls: [
           "https://avocado.instadapp.io"
         ]
