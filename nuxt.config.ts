@@ -133,7 +133,6 @@ export default defineNuxtConfig({
         toggleButtonVisibility: "never",
       },
     ],
-    "@nuxt/devtools-edge",
     '~/modules/build-env',
   ],
   colorMode: {

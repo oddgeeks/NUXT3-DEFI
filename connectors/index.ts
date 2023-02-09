@@ -5,8 +5,6 @@ import { setWeb3LibraryCallback } from "@instadapp/vue-web3";
 import { Web3Provider } from "@ethersproject/providers";
 import { ethers } from "ethers";
 import { TorusConnector } from "@web3-react/torus-connector";
-import { MagicConnector } from "@web3-react/magic-connector";
-import { CustomMagicConnector } from "./custom/magic";
 import { WalletLinkConnector } from "./custom/walletlink";
 // const { networks } = useNetworks();
 
@@ -58,16 +56,6 @@ export const network = new NetworkConnector({
 
 export const torus = new TorusConnector({ chainId: 634 });
 
-export const magic = (email: string) => {
-  return new CustomMagicConnector({
-    network: {
-      chainId: 137, // 75,
-      rpcUrl: "https://rpc.ankr.com/polygon", // "https://rpc.avocado.link"
-    },
-    apiKey: "pk_live_40A3A59B53603988",
-    email,
-  });
-};
 
 export const changeMetamaskNetwork = async (network: Network) => {
   const { library, chainId } = useWeb3();
