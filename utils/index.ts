@@ -246,7 +246,7 @@ export const calculateEstimatedFee = (params: CalculateFeeProps) => {
     return {
       min: 0,
       max: 0,
-      formatted: "$0.0",
+      formatted: "0.00",
     };
 
   const maxVal = toBN(fee)
@@ -261,8 +261,8 @@ export const calculateEstimatedFee = (params: CalculateFeeProps) => {
   const actualMin = Math.max(minVal, minChainFee);
   const actualMax = Math.max(maxVal, minChainFee);
 
-  const formattedMin = formatUsd(actualMin);
-  const formattedMax = formatUsd(actualMax);
+  const formattedMin = formatDecimal(String(actualMin), 2);
+  const formattedMax = formatDecimal(String(actualMax), 2);
 
   const isEqual = formattedMin === formattedMax;
 

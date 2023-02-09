@@ -79,7 +79,7 @@ const pasteAddress = async () => {
 };
 
 const sendingDisabled = computed(
-  () => !token.value || loading.value || !meta.value.valid
+  () => !token.value || loading.value || !meta.value.valid || pending.value
 );
 
 const getTx = async () => {
@@ -303,7 +303,7 @@ const onSubmit = handleSubmit(async () => {
     <CommonButton
       type="submit"
       :disabled="sendingDisabled"
-      :loading="loading"
+      :loading="loading || pending"
       class="justify-center w-full"
       size="lg"
     >
