@@ -6,7 +6,7 @@ const { account } = useWeb3()
 <template>
   <header class="flex justify-between items-center">
     <NuxtLink to="/">
-      <Logo class="w-[134px] h-full" />
+      <Logo />
     </NuxtLink>
 
     <nav class="flex items-center gap-7.5">
