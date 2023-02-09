@@ -10,6 +10,7 @@ import WCTransaction from "~~/components/modals/WCTransaction.vue";
 import PowerOffSVG from "~/assets/images/icons/power-off-bg.svg?component";
 import Dialog from "~~/components/modals/Dialog.vue";
 import type IWalletConnect from "@walletconnect/client";
+import CustomTx from "~~/components/modals/CustomTx.vue";
 
 const { openModal } = useModal();
 interface DialogModalProps {
@@ -193,3 +194,12 @@ export const openDialogModal = async ({
     },
   });
 };
+
+export const openCustomTxModal = () => {
+  openModal({
+    component: CustomTx,
+  });
+};
+
+//@ts-ignore
+globalThis.openCustomTxModal = openCustomTxModal
