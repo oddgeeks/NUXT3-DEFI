@@ -1,5 +1,5 @@
 import { storeToRefs } from "pinia";
-import { createSafe } from "avocado-safe";
+import { createSafe } from "@instadapp/avocado";
 
 export const useAvocadoSafe = () => {
   const provider = getRpcProvider(634);

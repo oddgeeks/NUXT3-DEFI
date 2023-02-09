@@ -1003,6 +1003,21 @@
   resolved "https://registry.yarnpkg.com/@headlessui/vue/-/vue-1.7.8.tgz#57dd6bb388b8d54ca13e2f4795e716dde3257fa0"
   integrity sha512-J83kAz3drFjndXz/AOoxmgzVo/MtSNFFn/K9qhSSJ8EGhmRfwdJLhZ0W4NSrw6A10JxhXDlkjoV0UxOiBLr5iQ==
 
+"@instadapp/avocado@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.1.0.tgz#516dcb0e4ae0d10d7842bd8284b203075dd7810b"
+  integrity sha512-IRLqdtMSYoDcTcAk+FC6d9nDjwqsNp/4RLrwYVZYJnU5+/UXjcg4qTsAZQNlJCT3RJjvIrnVw65m1fAxVLM7fw==
+  dependencies:
+    "@ethersproject/abi" "^5.7.0"
+    "@ethersproject/providers" "^5.7.2"
+    "@ethersproject/solidity" "^5.7.0"
+    "@vue/runtime-dom" "^3.2.45"
+    "@web3-react/abstract-connector" "^6.0.7"
+    ethers "^5.7.2"
+    events "^3.3.0"
+    mitt "^3.0.0"
+    tiny-warning "^1.0.3"
+
 "@instadapp/utils@^0.4.5":
   version "0.4.5"
   resolved "https://registry.yarnpkg.com/@instadapp/utils/-/utils-0.4.5.tgz#bf272c228386df32a3c43da00f849adc9a5a708f"
@@ -2509,21 +2524,6 @@ available-typed-arrays@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/available-typed-arrays/-/available-typed-arrays-1.0.5.tgz#92f95616501069d07d10edb2fc37d3e1c65123b7"
   integrity sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==
-
-avocado-safe@^0.0.49:
-  version "0.0.49"
-  resolved "https://registry.yarnpkg.com/avocado-safe/-/avocado-safe-0.0.49.tgz#df8224f21b42fd2c89a9b0b5418b927be00c378c"
-  integrity sha512-nmst+tDj6FURIXJkBPCXM00/h7+qvgNGFyYJJq4P6jZJewjCf4jlmN2Ku0K2vAQEv0Vri5IG6rHc4wxc3zSw5A==
-  dependencies:
-    "@ethersproject/abi" "^5.7.0"
-    "@ethersproject/providers" "^5.7.2"
-    "@ethersproject/solidity" "^5.7.0"
-    "@vue/runtime-dom" "^3.2.45"
-    "@web3-react/abstract-connector" "^6.0.7"
-    ethers "^5.7.2"
-    events "^3.3.0"
-    mitt "^3.0.0"
-    tiny-warning "^1.0.3"
 
 axios-retry@^3.3.1:
   version "3.4.0"
