@@ -409,8 +409,13 @@ const onSubmit = handleSubmit(async () => {
 
 onMounted(() => {
   // set initial buy token
+  const eth = availableBuyTokens.value.find(i=> i.symbol.includes('eth'))
+  const usdc = availableBuyTokens.value.find(i=> i.symbol === 'usdc')
+
+  const isEth = swap.value.sellToken.symbol.includes('eth');
+
   swap.value.buyToken = getTokenByAddress(
-    props.toAddress || availableBuyTokens.value[0].address,
+    props.toAddress || (isEth ? usdc?.address : eth?.address) || availableBuyTokens.value[0].address,
     props.chainId
   )!;
 
@@ -453,7 +458,7 @@ onMounted(() => {
             v-model="sellAmount"
             type="numeric"
             class="flex-1"
-            input-classes="text-[26px] placeholder:text-[26px] !p-0 leading-[48px] rounded-none"
+            input-classes="text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
             container-classes="!px-0"
           />
           <TokenSelection v-model="swap.sellToken" :tokens="availableTokens" />
@@ -503,7 +508,7 @@ onMounted(() => {
               @input="handleBuyAmountInput"
               v-model="buyAmount"
               class="flex-1"
-              input-classes="text-[26px] placeholder:text-[26px] !p-0 leading-[48px] rounded-none"
+              input-classes="text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
               container-classes="!px-0"
             />
           </div>
