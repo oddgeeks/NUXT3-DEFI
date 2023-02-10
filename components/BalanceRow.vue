@@ -101,7 +101,7 @@ const chartOptions = {
 
         <div>
           <div
-            class="text-lg font-semibold whitespace-nowrap truncate"
+            class="text-lg font-semibold whitespace-nowrap w-[256px] truncate"
           >
             {{ tokenBalance.name }}
           </div>
