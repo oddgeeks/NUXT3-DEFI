@@ -190,7 +190,7 @@ const sendingDisabled = computed(
     pending.value ||
     !meta.value.valid ||
     feePending.value ||
-    isPriceImpactHigh
+    isPriceImpactHigh.value
 );
 
 const { data: swapDetails, pending } = useAsyncData(
@@ -686,7 +686,6 @@ watch(slippage, () => {
       </div>
       <EstimatedFee :chain-id="chainId" :loading="feePending" :data="fee" />
       <CommonNotification
-        v-if="isPriceImpactHigh"
         type="warning"
         text="Slippage value should be greater than price impact.  "
       />
