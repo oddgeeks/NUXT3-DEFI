@@ -147,6 +147,15 @@ export const useSafe = defineStore("safe", () => {
   );
 
   watch(
+    [tokens],
+    async () => {
+      await fetchAllBalances();
+      await updateSafeBalances();
+    },
+    { immediate: true }
+  );
+
+  watch(
     [account],
     async () => {
       try {
