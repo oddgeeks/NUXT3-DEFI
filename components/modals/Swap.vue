@@ -92,10 +92,6 @@ const buyTokenBalance = computed(
     )?.balance || "0.00"
 );
 
-watch([() => swap.value.sellToken, () => swap.value.buyToken], () => {
-  toggleSwapped();
-});
-
 const validateMinAmount = (value: any) => {
   const amount = toBN(value);
 
@@ -154,10 +150,11 @@ const convertBuytoSellAmount = (val: string) => {
 
   if (!sellTokenPrice || !buyTokenPrice) return;
 
-  const buyAmountInSellAmount = formatDecimal(
-    toBN(val).div(toBN(sellTokenPrice)).times(toBN(buyTokenPrice)).toFixed(),
-    6
-  );
+  const buyAmountInSellAmount = toBN(val)
+    .div(toBN(sellTokenPrice))
+    .times(toBN(buyTokenPrice))
+    .decimalPlaces(4)
+    .toFixed();
 
   setSellAmount({
     touched: true,
@@ -409,13 +406,15 @@ const onSubmit = handleSubmit(async () => {
 
 onMounted(() => {
   // set initial buy token
-  const eth = availableBuyTokens.value.find(i=> i.symbol.includes('eth'))
-  const usdc = availableBuyTokens.value.find(i=> i.symbol === 'usdc')
+  const eth = availableBuyTokens.value.find((i) => i.symbol.includes("eth"));
+  const usdc = availableBuyTokens.value.find((i) => i.symbol === "usdc");
 
-  const isEth = swap.value.sellToken.symbol.includes('eth');
+  const isEth = swap.value.sellToken.symbol.includes("eth");
 
   swap.value.buyToken = getTokenByAddress(
-    props.toAddress || (isEth ? usdc?.address : eth?.address) || availableBuyTokens.value[0].address,
+    props.toAddress ||
+      (isEth ? usdc?.address : eth?.address) ||
+      availableBuyTokens.value[0].address,
     props.chainId
   )!;
 
@@ -424,6 +423,16 @@ onMounted(() => {
       value: props.amount,
       touched: true,
     });
+  }
+});
+
+watch([() => swap.value.sellToken, () => swap.value.buyToken], () => {
+  toggleSwapped();
+});
+
+watch(sellAmount, () => {
+  if (!sellAmount.value) {
+    buyAmount.value = "";
   }
 });
 </script>
