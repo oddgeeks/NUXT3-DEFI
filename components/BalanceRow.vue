@@ -99,9 +99,9 @@ const chartOptions = {
           />
         </div>
 
-        <div>
+        <div class="max-w-[220px] w-full">
           <div
-            class="text-lg font-semibold whitespace-nowrap truncate"
+            class="text-lg font-semibold text-shadow-2 whitespace-nowrap w-full bg-black overflow-hidden"
           >
             {{ tokenBalance.name }}
           </div>
