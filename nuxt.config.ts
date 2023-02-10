@@ -3,7 +3,7 @@ import { HeadlessUiResolver } from "unplugin-vue-components/resolvers";
 import svgLoader from "vite-svg-loader";
 
 const meta = {
-  title: "Instadapp Avocado",
+  title: "Avocado",
   description:
     "The multi-network gas and account abstraction allowing you to experience web3 more seamlessly.",
   image: "https://avocado.instadapp.io/logo.png",
@@ -132,7 +132,7 @@ export default defineNuxtConfig({
         toggleButtonVisibility: "never",
       },
     ],
-    '~/modules/build-env',
+    "~/modules/build-env",
   ],
   colorMode: {
     preference: "dark",
