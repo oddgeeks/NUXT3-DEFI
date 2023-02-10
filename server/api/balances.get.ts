@@ -28,6 +28,7 @@ const { debankAccessKey } = useRuntimeConfig()
 export default defineEventHandler<IBalance[]>(async (event) => {
     const { address } = getQuery(event)
     let balances : any[]= await $fetch("https://pro-openapi.debank.com/v1/user/all_token_list", {
+        retry: 3,
         params: {
             id: address,
             is_all: false,
