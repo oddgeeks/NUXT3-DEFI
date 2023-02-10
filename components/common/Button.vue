@@ -1,8 +1,6 @@
 <script setup lang="ts">
-
-
 type ButtonProps = {
-  color?: "blue" | "red" | "white";
+  color?: "blue" | "red" | "white" | "orange";
   size?: "md" | "lg" | "sm";
   loading?: boolean;
   as?: "button" | "a" | "NuxtLink";
@@ -13,14 +11,12 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   size: "md",
   loading: false,
   as: "button",
-})
+});
 
 const componentToShow = computed(() => {
-  if (props.as === 'NuxtLink') return resolveComponent('NuxtLink')
-  return props.as
-})
-
-
+  if (props.as === "NuxtLink") return resolveComponent("NuxtLink");
+  return props.as;
+});
 </script>
 
 <template>
@@ -28,9 +24,13 @@ const componentToShow = computed(() => {
     :is="componentToShow"
     :type="as === 'button' ? 'button' : undefined"
     :class="[
-  {
-        'bg-[#EB5757] text-white hover:bg-red-500 disabled:bg-slate-800 disabled:text-slate-500':
+      {
+        'bg-red-alert text-white hover:bg-red-500 disabled:bg-slate-800 disabled:text-slate-500':
           color === 'red',
+      },
+      {
+        'bg-orange text-white hover:bg-orange-400 disabled:bg-slate-800 disabled:text-slate-500':
+          color === 'orange',
       },
       {
         'bg-primary text-white hover:bg-primary-hover dark:disabled:bg-slate-800 dark:disabled:text-slate-500 disabled:text-slate-400 disabled:bg-slate-200':
@@ -56,7 +56,7 @@ const componentToShow = computed(() => {
     <slot name="prefix" />
     <slot v-if="!loading" />
     <div v-else class="dot-flashing my-1.5"></div>
-     <slot name="suffix" />
+    <slot name="suffix" />
   </component>
 </template>
 
