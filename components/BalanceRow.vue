@@ -101,7 +101,7 @@ const chartOptions = {
 
         <div>
           <div
-            class="text-lg font-semibold whitespace-nowrap w-[256px] truncate"
+            class="text-lg text-shadow-2 font-semibold whitespace-nowrap w-[256px] overflow-hidden"
           >
             {{ tokenBalance.name }}
           </div>

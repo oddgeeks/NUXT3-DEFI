@@ -40,6 +40,10 @@ const props = defineProps({
 const filteredBalances = computed(() => {
   let tokens = tokenBalances.value;
 
+  if (!searchQuery.value || searchQuery.value.trim().length === 0) {
+    tokens = tokensWithBalances.value;
+  }
+
   const filters = {
     name: (name: string, token: any) =>
       !!searchQuery.value
