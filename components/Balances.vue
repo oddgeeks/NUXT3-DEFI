@@ -60,13 +60,23 @@ const filteredBalances = computed(() => {
 
   return filterArray(tokens, filters);
 });
+
+const debounce = ref<NodeJS.Timeout>();
+const search = (event: Event) => {
+  if (debounce.value) {
+    clearTimeout(debounce.value);
+  }
+  debounce.value = setTimeout(() => {
+    searchQuery.value = (<HTMLInputElement>event.target).value;
+  }, 200);
+};
 </script>
 <template>
   <div class="relative flex-1">
     <div class="h-full w-full flex flex-col gap-5">
       <CommonInput
         name="Token Search"
-        v-model="searchQuery"
+        @input="search"
         type="search"
         placeholder="Search"
       >
