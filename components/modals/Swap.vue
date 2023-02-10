@@ -441,7 +441,7 @@ onMounted(() => {
 
     <div class="flex flex-col gap-4">
       <div
-        class="py-4 px-5 relative dark:bg-slate-800 bg-slate-100 rounded-5 flex flex-col gap-4"
+        class="py-4 px-5 relative dark:bg-slate-800 bg-slate-100 focus-within:bg-slate-50 border-2 border-transparent focus-within:dark:border-slate-800 focus-within:border-slate-150 focus-within:dark:bg-gray-850 rounded-5 flex flex-col gap-4"
       >
         <div class="flex">
           <CommonInput
@@ -491,7 +491,7 @@ onMounted(() => {
       </div>
 
       <div
-        class="py-4 px-5 dark:bg-slate-800 bg-slate-100 rounded-5 flex flex-col gap-4"
+        class="py-4 px-5 dark:bg-slate-800 bg-slate-100 focus-within:bg-slate-50 border-2 border-transparent focus-within:dark:border-slate-800 focus-within:border-slate-150 focus-within:dark:bg-gray-850 rounded-5 flex flex-col gap-4"
       >
         <div class="flex">
           <div class="flex-1 flex items-center">

@@ -34,7 +34,7 @@ const handleTokenSelection = async () => {
   <button
     type="button"
     @click="handleTokenSelection"
-    class="dark:bg-gray-850 text-sm uppercase h-fit inline-flex gap-2.5 items-center rounded-2xl pl-[14px] pr-3 py-3"
+    class="dark:bg-gray-900 bg-white text-sm uppercase h-fit inline-flex gap-2.5 items-center rounded-2xl pl-[14px] pr-3 py-3"
   >
     <img :src="selectedToken?.logoURI" class="h-6 w-6 rounded-full" />
     <span class="inline-flex items-center gap-[6px]">
