@@ -1,40 +1,16 @@
 import { ethers } from "ethers";
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
 import {
-  BalanceResolver,
-  BalanceResolver__factory,
   Forwarder__factory,
 } from "~/contracts";
 import { RPC_URLS } from "~~/connectors";
 import { IToken } from "./tokens";
-import { collect } from "collect.js";
 import { wait } from "@instadapp/utils";
 
 export interface IBalance extends IToken {
   balance: string;
   balanceInUSD: string | null;
 }
-
-const balanceResolverAddresses: Record<string, string> = {
-  "137": "0x58632D23120b20650262b8A629a14e4F4043E0D9",
-  "42161": "0xca5f37e6D8bB24c5A7958d5eccE7Bd9Aacc944f2",
-  "43114": "0x63009f31D054E0ac9F321Cf0D642375236A4Bf1E",
-  "10": "0xca5f37e6D8bB24c5A7958d5eccE7Bd9Aacc944f2",
-  "1": "0x5b7D61b389D12e1f5873d0cCEe7E675915AB5F43",
-  "56": "0xb808cff38706e267067b0af427726aa099f69f89",
-  "100": "0xfaa244e276b1597f663975ed007ee4ff70d27849",
-};
-
-const balanceResolverContracts = Object.keys(balanceResolverAddresses).reduce(
-  (acc, curr) => {
-    acc[curr] = BalanceResolver__factory.connect(
-      balanceResolverAddresses[curr],
-      getRpcProvider(curr)
-    );
-    return acc;
-  },
-  {} as Record<string, BalanceResolver>
-);
 
 const forwarderProxyAddress = "0x375F6B0CD12b34Dc28e34C26853a37012C24dDE5"; // ForwarderProxy
 const forwarderProxyContract = Forwarder__factory.connect(
@@ -47,7 +23,6 @@ export const useSafe = defineStore("safe", () => {
 
   const { account } = useWeb3();
   const { tokens } = storeToRefs(useTokens());
-  const cachedTokens = useLocalStorage<IToken[]>("tokens", tokens.value);
 
   const gasBalance = ref();
   const pending = ref<Record<string, boolean>>({
@@ -56,66 +31,13 @@ export const useSafe = defineStore("safe", () => {
     global: false,
   });
 
-  const chainTokenBalances = ref<Record<string, IBalance[]>>({
-    "137": cachedTokens.value.filter(t => t.chainId === '137').map((t) => ({
-      ...t,
-      balance: '0',
-      balanceInUSD: null,
-    })),
-    "42161": cachedTokens.value.filter(t => t.chainId === '42161').map((t) => ({
-      ...t,
-      balance: '0',
-      balanceInUSD: null,
-    })),
-    "43114": cachedTokens.value.filter(t => t.chainId === '43114').map((t) => ({
-      ...t,
-      balance: '0',
-      balanceInUSD: null,
-    })),
-    "10": cachedTokens.value.filter(t => t.chainId === '10').map((t) => ({
-      ...t,
-      balance: '0',
-      balanceInUSD: null,
-    })),
-    "1": cachedTokens.value.filter(t => t.chainId === '1').map((t) => ({
-      ...t,
-      balance: '0',
-      balanceInUSD: null,
-    })),
-    "100": cachedTokens.value.filter(t => t.chainId === '100').map((t) => ({
-      ...t,
-      balance: '0',
-      balanceInUSD: null,
-    })),
-    "56": cachedTokens.value.filter(t => t.chainId === '56').map((t) => ({
-      ...t,
-      balance: '0',
-      balanceInUSD: null,
-    })),
-  });
-
-  const tokenBalances = computed(() => {
-    return Object.keys(chainTokenBalances.value)
-      .reduce((acc, curr) => {
-        const balances = chainTokenBalances.value[curr];
-
-        return [...acc, ...balances];
-      }, [] as IBalance[])
-      .sort()
-      .sort((a, b) => (toBN(a.balance).isGreaterThan(b.balance) ? -1 : 1))
-      .sort((a, b) =>
-        a.balanceInUSD && b.balanceInUSD
-          ? toBN(a.balanceInUSD).isGreaterThan(b.balanceInUSD)
-            ? -1
-            : 1
-          : 1
-      );
-  });
+  const tokenBalances = ref<IBalance[]>([])
+  const apiBalances = ref<any[]>([])
 
   const totalBalance = computed(() =>
-    tokenBalances.value.reduce(
+    tokenBalances.value?.reduce(
       (acc, curr) => acc.plus(curr.balanceInUSD || "0"),
-      toBN(0)
+      toBN(0) || toBN(0)
     )
   );
 
@@ -129,55 +51,54 @@ export const useSafe = defineStore("safe", () => {
       account.value
     );
   };
-
-  const fetchBalances = async (chainId: string) => {
-    if (!safeAddress.value) {
-      return [];
-    }
-
-    let newBalances: IBalance[] = [];
-
-    const chainTokens = collect(
-      tokens.value.filter((t) => t.chainId === chainId)
-    );
-    const chunkedTokens = chainTokens.chunk(chainId === "42161" ? 5 : 20).all();
-
-    await Promise.allSettled(
-      chunkedTokens.map(async (chunk: any[]) => {
-        chunk = (chunk as any).all();
-
-        const balances = await balanceResolverContracts[chainId].getBalances(
-          safeAddress.value,
-          chunk.map((t) => t.address)
-        );
-
-        for (let index = 0; index < balances.length; index++) {
-          let token = chunk[index] as IToken;
-          let balance = toBN(balances[index]).div(10 ** token.decimals);
-          newBalances.push({
-            ...token,
-            balance: balance.toFixed(6, 1),
-            balanceInUSD: token.price
-              ? balance.times(token.price).toFixed(2)
-              : null,
-          });
-        }
-      })
-    );
-
-    return newBalances;
-  };
-
   const fetchAllBalances = async () => {
     try {
+      if (!safeAddress.value) {
+        return
+      }
+
+      apiBalances.value = await $fetch("/api/balances", {
+        params: {
+          address: safeAddress.value
+        }
+      })
+    } finally {
+    }
+  };
+
+  const updateSafeBalances = async () => {
+    try {
+      if (!safeAddress.value) {
+        return
+      }
+
+      if (!tokens.value) {
+        return
+      }
+
+      if (!tokens.value.length) {
+        return
+      }
+
       pending.value.balances = true;
-      await Promise.allSettled(
-        Object.keys(chainTokenBalances.value).map((chainId) =>
-          fetchBalances(chainId).then(
-            (r) => (chainTokenBalances.value[chainId] = r)
-          )
-        )
-      );
+
+      tokenBalances.value = tokens.value.map((tb) => {
+        const tokenBalance: IBalance = {
+          ...tb,
+          balance: '0',
+          balanceInUSD: '0'
+        }
+        const balance = apiBalances.value.find(b => b.address.toLowerCase() === tb.address.toLowerCase() && tb.chainId === b.chainId);
+
+        if (balance) {
+          tokenBalance.balance = balance.balance
+          tokenBalance.balanceInUSD = balance.balanceInUSD
+        }
+
+        return tokenBalance
+      })
+        .filter(b => b.price !== 0)
+        .sort((a, b) => toBN(b.balanceInUSD || 0).minus(a.balanceInUSD || 0).toNumber());
     } finally {
       pending.value.balances = false;
     }
@@ -208,9 +129,22 @@ export const useSafe = defineStore("safe", () => {
     immediate: true,
   });
 
-  useIntervalFn(fetchAllBalances, 10000, {
+  useIntervalFn(fetchAllBalances, 15000, {
     immediate: true,
   });
+
+  useIntervalFn(updateSafeBalances, 10000, {
+    immediate: true,
+  });
+
+  watch(
+    [safeAddress],
+    async () => {
+      await fetchAllBalances();
+      await updateSafeBalances();
+    },
+    { immediate: true }
+  );
 
   watch(
     [account],
@@ -229,7 +163,6 @@ export const useSafe = defineStore("safe", () => {
   );
 
   return {
-    chainTokenBalances,
     gasBalance,
     safeAddress,
     tokenBalances,

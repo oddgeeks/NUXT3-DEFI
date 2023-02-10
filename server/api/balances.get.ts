@@ -1,20 +1,34 @@
 import { BigNumber } from "bignumber.js"
+import { getAddress } from "ethers/lib/utils"
+
+interface IBalance {
+    name: string
+    address: string
+    decimals: number
+    symbol: string
+    chainId: string
+    logoURI: string
+    price: number | null
+    balanceRaw: string
+    balance: string
+    balanceInUSD: string
+}
 
 const networks = [
-    { chain: "arb", chain_id: 42161 },
-    { chain: "bsc", chain_id: 56 },
-    { chain: "matic", chain_id: 137 },
-    { chain: "eth", chain_id: 1 },
-    { chain: "xdai", chain_id: 100 },
-    { chain: "avax", chain_id: 43114 },
-    { chain: "op", chain_id: 10 },
+    { chain: "arb", chain_id: String(42161) },
+    { chain: "bsc", chain_id: String(56) },
+    { chain: "matic", chain_id: String(137) },
+    { chain: "eth", chain_id: String(1) },
+    { chain: "xdai", chain_id: String(100) },
+    { chain: "avax", chain_id: String(43114) },
+    { chain: "op", chain_id: String(10) },
 ]
 
 const { debankAccessKey } = useRuntimeConfig()
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler<IBalance[]>(async (event) => {
     const { address } = getQuery(event)
-    let balances: any[] = await $fetch("https://pro-openapi.debank.com/v1/user/all_token_list", {
+    let balances : any[]= await $fetch("https://pro-openapi.debank.com/v1/user/all_token_list", {
         params: {
             id: address,
             is_all: false,
@@ -29,7 +43,7 @@ export default defineEventHandler(async (event) => {
 
         return {
             name: token.name,
-            address: token.id.startsWith('0x') ? token.id : "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+            address: token.id.startsWith('0x') ? getAddress(token.id) : "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
             decimals: token.decimals,
             symbol: token.symbol,
             chainId: networks.find(n => n.chain === token.chain)?.chain_id || null,
