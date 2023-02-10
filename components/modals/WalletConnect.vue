@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import SVGX from "~/assets/images/icons/x.svg?component";
+import SVGAlert from "~/assets/images/icons/exclamation-octagon.svg?component";
+import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
 import { useField, useForm } from "vee-validate";
 import { parseWalletConnectUri } from "@walletconnect/utils";
 import LiteYouTubeEmbed from "vue-lite-youtube-embed";
@@ -18,6 +21,9 @@ const connection = shallowRef();
 const connectionChainId = shallowRef(137);
 
 const [loading, toggle] = useToggle(false);
+
+const isExpertMode = ref(false);
+const detailsRef = ref<HTMLDialogElement>();
 
 const networks = computed(() =>
   Object.keys(RPC_URLS)
@@ -111,6 +117,20 @@ const connect = async () => {
   } finally {
     toggle(false);
   }
+};
+
+const cancelExpertMode = () => {
+  if (detailsRef.value) detailsRef.value.open = false;
+};
+
+const confirmExpertMode = () => {
+  if (detailsRef.value) detailsRef.value.open = false;
+  isExpertMode.value = true;
+};
+
+const exitExpertMode = () => {
+  connectionChainId.value = 1;
+  isExpertMode.value = false;
 };
 
 onMounted(async () => {
@@ -215,29 +235,82 @@ onMounted(async () => {
         <span> {{ connection.peerMeta.name }} Wants to Connect </span>
       </div>
 
-      <p class="text-slate-400 text-xs text-center">
-        You need the Avocado web app to be open to popup transactions. You will
-        not receive transaction requests when it is not open. Please don't close
-        the tab.
-      </p>
+      <div class="flex flex-col gap-7.5">
+        <p class="text-slate-400 text-xs text-center font-medium">
+          You need the Avocado web app to be open to popup transactions. You
+          will not receive transaction requests when it is not open. Please
+          don't close the tab.
+        </p>
 
-      <div class="text-primary text-sm text-center">
-        {{ connection.peerMeta.url }}
+        <div class="text-primary text-sm text-center">
+          {{ connection.peerMeta.url }}
+        </div>
+        <details v-show="!isExpertMode" ref="detailsRef">
+          <summary
+            class="text-xs text-slate-600 flex items-center mx-auto gap-[6px] w-fit cursor-pointer"
+          >
+            Expert mode
+            <SVGAlert />
+          </summary>
+          <div
+            class="rounded-5 bg-orange-400 bg-opacity-10 mt-5 p-4 flex justify-center items-center flex-col"
+          >
+            <SVGInfo class="w-6 text-orange mb-2.5" />
+            <p
+              class="text-orange text-xs leading-5 font-medium text-center mb-4"
+            >
+              Would you like to activate expert mode, even though it could
+              potentially cause incompatibility issues with
+              {{ connection.peerMeta.name }}?
+            </p>
+            <div class="flex w-full gap-4">
+              <CommonButton
+                @click="cancelExpertMode"
+                class="flex-1 justify-center"
+              >
+                Cancel
+              </CommonButton>
+              <CommonButton
+                @click="confirmExpertMode"
+                color="orange"
+                class="flex-1 justify-center items-center gap-2"
+              >
+                <SVGAlert />
+                Yes
+              </CommonButton>
+            </div>
+          </div>
+        </details>
       </div>
 
-      <!-- <CommonSelect
-        v-model="connectionChainId"
-        labelKey="name"
-        valueKey="chainId"
-        :options="networks"
-      >
-        <template #button-prefix>
-          <ChainLogo class="w-6 h-6" :chain="connectionChainId" />
-        </template>
-        <template #item-prefix="{ value }">
-          <ChainLogo class="w-6 h-6" :chain="value" />
-        </template>
-      </CommonSelect> -->
+      <div v-if="isExpertMode">
+        <div class="mb-2.5 flex items-center justify-between">
+          <p class="text-orange text-sm flex items-center gap-2">
+            Network
+            <SVGInfo />
+          </p>
+          <button
+            @click="exitExpertMode"
+            type="button"
+            class="flex dark:bg-slate-800 items-center justify-center w-5 h-5 rounded-full"
+          >
+            <SVGX class="w-2.5 h-2.5" />
+          </button>
+        </div>
+        <CommonSelect
+          v-model="connectionChainId"
+          labelKey="name"
+          valueKey="chainId"
+          :options="networks"
+        >
+          <template #button-prefix>
+            <ChainLogo class="w-6 h-6" :chain="connectionChainId" />
+          </template>
+          <template #item-prefix="{ value }">
+            <ChainLogo class="w-6 h-6" :chain="value" />
+          </template>
+        </CommonSelect>
+      </div>
       <CommonButton
         type="submit"
         :loading="loading"
@@ -248,7 +321,9 @@ onMounted(async () => {
       </CommonButton>
     </form>
     <div @click="isTutorialWatched = true" v-if="isIframeVisible" class="mt-6">
-      <h1 class="text-xs leading-5 mb-3 text-slate-400 text-center font-medium">Looking for step-by-step instructions? <br/>Watch this video.</h1>
+      <h1 class="text-xs leading-5 mb-3 text-slate-400 text-center font-medium">
+        Looking for step-by-step instructions? <br />Watch this video.
+      </h1>
       <LiteYouTubeEmbed
         id="1CcLfV2rxjA"
         title="Connecting Avocado to Uniswap"
