@@ -75,6 +75,7 @@ const filteredBalances = computed(() => {
         </template>
       </CommonInput>
       <div
+        v-if="filteredBalances.length > 0"
         style="scrollbar-gutter: stable; overflow-y: overlay"
         class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden min-h-full max-h-[530px] flex-1 scroll-style"
       >
@@ -107,6 +108,12 @@ const filteredBalances = computed(() => {
             </template>
           </tbody>
         </table>
+      </div>
+      <div class="dark:bg-gray-850 bg-slate-50 rounded-[25px] flex flex-col space-y-4 items-center py-32" v-else>
+        <p class="text-slate-400">Nothing could be found</p>
+        <CommonButton color="white" size="lg">
+          Reach out to us
+        </CommonButton>
       </div>
     </div>
   </div>
