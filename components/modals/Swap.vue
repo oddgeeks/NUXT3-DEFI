@@ -475,7 +475,7 @@ watch(sellAmount, () => {
         <div class="flex justify-between items-center text-sm text-slate-400">
           <div
             v-if="pending && meta.valid"
-            style="width: 100px; height: 20px"
+            style="width: 60px; height: 20px"
             class="loading-box rounded-lg"
           />
           <span v-else>{{ formatUsd(sellAmountInUsd) }}</span>
@@ -509,7 +509,13 @@ watch(sellAmount, () => {
       >
         <div class="flex">
           <div class="flex-1 flex items-center">
+            <div
+              v-if="pending && meta.valid"
+              style="width: 100px; height: 28px"
+              class="loading-box rounded-lg"
+            />
             <CommonInput
+              v-else
               transparent
               type="numeric"
               placeholder="0.0"
@@ -529,7 +535,7 @@ watch(sellAmount, () => {
         <div class="flex justify-between items-center text-sm text-slate-400">
           <div
             v-if="pending && meta.valid"
-            style="width: 100px; height: 20px"
+            style="width: 60px; height: 20px"
             class="loading-box rounded-lg"
           />
           <span v-else>{{ formatUsd(buyAmountInUsd) }}</span>
