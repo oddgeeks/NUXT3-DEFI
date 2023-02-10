@@ -9,7 +9,7 @@ const props = defineProps<{
   tokenBalance: IBalance;
 }>();
 
-const DECIMAL_PLACES = 6;
+const DECIMAL_PLACES = 5;
 
 const interactable = computed(() => toBN(props.tokenBalance.balance).decimalPlaces(DECIMAL_PLACES).gt(0))
 
