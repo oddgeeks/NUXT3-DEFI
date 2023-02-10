@@ -686,6 +686,7 @@ watch(slippage, () => {
       </div>
       <EstimatedFee :chain-id="chainId" :loading="feePending" :data="fee" />
       <CommonNotification
+        v-if="isPriceImpactHigh"
         type="warning"
         text="Slippage value should be greater than price impact.  "
       />
