@@ -22,8 +22,8 @@ const locale = computed(() =>
   typeof window !== "undefined" ? window.navigator.language : "en"
 );
 
-const isBridge = metadata?.length && metadata?.some((i: any) => i.type === 'bridge')
-
+const isBridge =
+  metadata?.length && metadata?.some((i: any) => i.type === "bridge");
 </script>
 
 <template>
@@ -127,8 +127,12 @@ const isBridge = metadata?.length && metadata?.some((i: any) => i.type === 'brid
             >
               Transaction Action
             </div>
-            <div class="flex items-center text-xs">
-              <pre>{{ metadata }}</pre>
+            <div class="flex items-center flex-col gap-6">
+              <ActionMetadata
+                :metadata="item"
+                :key="i"
+                v-for="(item, i) of metadata"
+              />
             </div>
           </div>
         </div>
@@ -204,7 +208,9 @@ const isBridge = metadata?.length && metadata?.some((i: any) => i.type === 'brid
             class="dark:text-slate-400 gap-2.5 flex items-center text-slate-500 md:w-full md:max-w-[235px]"
           >
             <SVGInfo
-              v-tippy="'This includes the fee that will be paid to the relayer and the integrator.'"
+              v-tippy="
+                'This includes the fee that will be paid to the relayer and the integrator.'
+              "
               class="w-[18px] h-[18px] text-slate-600 shrink-0"
             />
             Transaction Fee
@@ -213,17 +219,12 @@ const isBridge = metadata?.length && metadata?.some((i: any) => i.type === 'brid
             <span v-if="transaction.fee">
               {{ formatUsd(transaction.fee) }}
             </span>
-            <span v-else>
-              -
-            </span>
+            <span v-else> - </span>
           </div>
         </div>
       </div>
 
-      <div
-        v-if="isBridge"
-        class="flex flex-col pt-6.5 gap-6.5"
-      >
+      <div v-if="isBridge" class="flex flex-col pt-6.5 gap-6.5">
         <hr class="w-full dark:border-slate-800 border-slate-150" />
 
         <div class="flex items-center px-7.5">

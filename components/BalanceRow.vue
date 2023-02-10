@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { Line } from "vue-chartjs";
 import { IBalance } from "~/stores/safe";
 import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
@@ -84,12 +84,12 @@ const chartOptions = {
     <td class="text-left py-6 pl-7.5 w-1/3">
       <div class="flex items-center space-x-3">
         <div
-          class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
+          class="relative inline-block h-10 w-10 rounded-full flex-shrink-0"
         >
           <img
             :src="tokenBalance.logoURI"
             class="h-10 w-10 rounded-full"
-            onerror="this.onerror=null; this.remove();"
+            :onerror="onImageError"
           />
 
           <ChainLogo

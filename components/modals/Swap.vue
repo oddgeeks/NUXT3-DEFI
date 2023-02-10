@@ -92,10 +92,6 @@ const buyTokenBalance = computed(
     )?.balance || "0.00"
 );
 
-watch([() => swap.value.sellToken, () => swap.value.buyToken], () => {
-  toggleSwapped();
-});
-
 const validateMinAmount = (value: any) => {
   const amount = toBN(value);
 
@@ -154,10 +150,11 @@ const convertBuytoSellAmount = (val: string) => {
 
   if (!sellTokenPrice || !buyTokenPrice) return;
 
-  const buyAmountInSellAmount = formatDecimal(
-    toBN(val).div(toBN(sellTokenPrice)).times(toBN(buyTokenPrice)).toFixed(),
-    6
-  );
+  const buyAmountInSellAmount = toBN(val)
+    .div(toBN(sellTokenPrice))
+    .times(toBN(buyTokenPrice))
+    .decimalPlaces(4)
+    .toFixed();
 
   setSellAmount({
     touched: true,
@@ -409,8 +406,15 @@ const onSubmit = handleSubmit(async () => {
 
 onMounted(() => {
   // set initial buy token
+  const eth = availableBuyTokens.value.find((i) => i.symbol.includes("eth"));
+  const usdc = availableBuyTokens.value.find((i) => i.symbol === "usdc");
+
+  const isEth = swap.value.sellToken.symbol.includes("eth");
+
   swap.value.buyToken = getTokenByAddress(
-    props.toAddress || availableBuyTokens.value[0].address,
+    props.toAddress ||
+      (isEth ? usdc?.address : eth?.address) ||
+      availableBuyTokens.value[0].address,
     props.chainId
   )!;
 
@@ -419,6 +423,16 @@ onMounted(() => {
       value: props.amount,
       touched: true,
     });
+  }
+});
+
+watch([() => swap.value.sellToken, () => swap.value.buyToken], () => {
+  toggleSwapped();
+});
+
+watch(sellAmount, () => {
+  if (!sellAmount.value) {
+    buyAmount.value = "";
   }
 });
 </script>
@@ -453,7 +467,7 @@ onMounted(() => {
             v-model="sellAmount"
             type="numeric"
             class="flex-1"
-            input-classes="text-[26px] placeholder:text-[26px] !p-0 leading-[48px] rounded-none"
+            input-classes="text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
             container-classes="!px-0"
           />
           <TokenSelection v-model="swap.sellToken" :tokens="availableTokens" />
@@ -461,7 +475,7 @@ onMounted(() => {
         <div class="flex justify-between items-center text-sm text-slate-400">
           <div
             v-if="pending && meta.valid"
-            style="width: 100px; height: 20px"
+            style="width: 60px; height: 20px"
             class="loading-box rounded-lg"
           />
           <span v-else>{{ formatUsd(sellAmountInUsd) }}</span>
@@ -495,7 +509,13 @@ onMounted(() => {
       >
         <div class="flex">
           <div class="flex-1 flex items-center">
+            <div
+              v-if="pending && meta.valid"
+              style="width: 100px; height: 28px"
+              class="loading-box rounded-lg"
+            />
             <CommonInput
+              v-else
               transparent
               type="numeric"
               placeholder="0.0"
@@ -503,7 +523,7 @@ onMounted(() => {
               @input="handleBuyAmountInput"
               v-model="buyAmount"
               class="flex-1"
-              input-classes="text-[26px] placeholder:text-[26px] !p-0 leading-[48px] rounded-none"
+              input-classes="text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
               container-classes="!px-0"
             />
           </div>
@@ -515,7 +535,7 @@ onMounted(() => {
         <div class="flex justify-between items-center text-sm text-slate-400">
           <div
             v-if="pending && meta.valid"
-            style="width: 100px; height: 20px"
+            style="width: 60px; height: 20px"
             class="loading-box rounded-lg"
           />
           <span v-else>{{ formatUsd(buyAmountInUsd) }}</span>
