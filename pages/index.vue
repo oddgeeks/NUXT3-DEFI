@@ -145,7 +145,7 @@ const handleOpenDialog = () => {
           </div>
         </div>
       </div>
-      <div class="flex lg:flex-col md:shrink-0 md:basis-[213px] gap-5">
+      <div class="flex lg:flex-col md:shrink-0 md:basis-[213px] lg:mt-0 mt-16 gap-5">
         <div class="w-full flex flex-col gap-5">
           <h2 class="font-semibold inline-flex gap-2.5">
             Your Avo Wallet
