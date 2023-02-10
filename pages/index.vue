@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import LinkSVG from "~/assets/images/icons/external-link.svg?raw";
-import SVGX from "~/assets/images/icons/x.svg?component";
 import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import ChevronDownSVG from "~/assets/images/icons/chevron-down.svg?component";
 import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?component";
@@ -68,6 +67,7 @@ const handleOpenDialog = () => {
                 <ChainLogo
                   v-for="network in networkPreference"
                   style="width: 22px; height: 22px"
+                  class="[&:not(:first-child)]:-ml-2"
                   :chain="network"
                 />
               </div>
