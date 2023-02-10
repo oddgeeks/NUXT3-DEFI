@@ -21,6 +21,11 @@ export default defineNuxtConfig({
       avocadoChainId: 634,
     },
   },
+  nitro: {
+    routeRules: {
+      '/api/balances': { cache: { maxAge: 20 } },
+    }
+  },
   app: {
     head: {
       title: meta.title,
