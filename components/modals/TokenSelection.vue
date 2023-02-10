@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { string } from "yup";
 import SVGSuccess from "~/assets/images/icons/check-circle.svg?component";
 import SearchSVG from "~/assets/images/icons/search.svg?component";
 import type { IToken } from "~~/stores/tokens";
@@ -13,12 +14,13 @@ const props = defineProps<{
 const { tokenBalances } = useAvocadoSafe();
 const search = ref("");
 
-const getTokenBalance = (address: string) => {
-  return (
-    tokenBalances.value.find(
-      (t) => t.address.toLocaleLowerCase() === address.toLocaleLowerCase()
-    )?.balance || "0"
+const getTokenBalance = (address: string, chainId: string) => {
+  const token = tokenBalances.value.find(
+    (t) =>
+      t.chainId == chainId &&
+      t.address.toLocaleLowerCase() === address.toLocaleLowerCase()
   );
+  return token ? token.balance : "0";
 };
 
 const tokensWithBalance = computed(() => {
@@ -26,7 +28,7 @@ const tokensWithBalance = computed(() => {
     .map((i) => {
       return {
         ...i,
-        balance: getTokenBalance(i.address),
+        balance: getTokenBalance(i.address, i.chainId),
       };
     })
     .sort((a, b) => toBN(b.balance).minus(toBN(a.balance)).toNumber())
@@ -77,7 +79,7 @@ const tokensWithBalance = computed(() => {
           <div class="flex flex-col">
             <span> {{ token.name }} </span>
             <span>
-              {{ getTokenBalance(token.address) }}
+              {{ formatDecimal(token.balance) }}
               <span class="uppercase"> {{ token.symbol }}</span>
             </span>
           </div>
