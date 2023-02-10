@@ -10,10 +10,10 @@ const { account } = useWeb3();
 
 useForceSingleSession();
 
-const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
-const networkPreference = useLocalStorage("network-preference", "all");
-
 const availableNetworks = networks.filter((network) => network.chainId != 634);
+
+const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
+const networkPreference = useLocalStorage<Set<number>>("network-preference", new Set(availableNetworks.map(el => el.chainId)));
 
 const handleOpenDialog = () => {
   openDialogModal({
@@ -64,18 +64,18 @@ const handleOpenDialog = () => {
               </ClientOnly>
             </div>
             <Menu as="div" class="relative z-20 flex gap-4 items-center">
-              <div
-                v-if="networkPreference !== 'all' && tokenBalances.length"
+              <!-- <div
+                v-if="networkPreference.length < availableNetworks.length && tokenBalances.length"
                 class="pl-2.5 flex items-center leading-[10px] text-xs dark:bg-slate-800 bg-slate-100 rounded-5"
               >
                 {{ getNetworkByChainId(networkPreference).name }}
                 <button
                   class="py-2.5 pr-2.5 pl-[6px]"
-                  @click="networkPreference = 'all'"
+                  @click="networkPreference.length === availableNetworks.length"
                 >
                   <SVGX class="w-2.5 h-2.5 text-slate-400" />
                 </button>
-              </div>
+              </div> -->
               <MenuButton class="text-sm flex items-center gap-2 h-7.5">
                 All Networks
                 <ChevronDownSVG class="text-slate-400 w-[14px] h-[14px]" />
@@ -93,20 +93,20 @@ const handleOpenDialog = () => {
                   class="absolute w-[220px] left-1/2 border-2 rounded-5 p-[6px] -translate-x-1/2 bg-slate-50 dark:bg-gray-850 top-8 border-slate-150 dark:border-slate-700"
                 >
                   <MenuItem
-                    @click="networkPreference = 'all'"
-                    class="flex items-center gap-2.5 hover:bg-slate-150 hover:dark:bg-slate-800 cursor-pointer text-sm py-2.5 px-3 rounded-[14px]"
+                    class="flex items-center justify-between gap-2.5 text-sm py-1 px-3 rounded-[14px]"
                     as="li"
                   >
-                    <ChainLogo style="width: 22px; height: 22px" />
-                    All Networks
-                    <CheckCircle
-                      v-if="networkPreference == 'all'"
-                      class="success-circle w-5 ml-auto"
-                    />
+                    <span class="text-slate-400">Networks</span>
+                    <div
+                      @click="networkPreference = new Set(availableNetworks.map(el => el.chainId))"
+                      class="text-green-600 cursor-pointer"
+                    >
+                      All
+                    </div>
                   </MenuItem>
 
                   <MenuItem
-                    @click="networkPreference = String(network.chainId)"
+                    @click="networkPreference.has(network.chainId) ? networkPreference.delete(network.chainId) : networkPreference.add(network.chainId)"
                     class="flex items-center gap-2.5 hover:bg-slate-150 hover:dark:bg-slate-800 cursor-pointer text-sm py-2.5 px-3 rounded-[14px]"
                     as="li"
                     v-for="network in availableNetworks"
@@ -117,8 +117,12 @@ const handleOpenDialog = () => {
                     />
                     {{ network.name }}
                     <CheckCircle
-                      v-if="networkPreference == String(network.chainId)"
+                      v-if="networkPreference.has(network.chainId)"
                       class="success-circle w-5 ml-auto"
+                    />
+                    <CheckCircle
+                      v-else="networkPreference.has(network.chainId)"
+                      class="svg-circle darker w-5 ml-auto"
                     />
                   </MenuItem>
                 </MenuItems>

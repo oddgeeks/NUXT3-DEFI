@@ -3,6 +3,9 @@ import SearchSVG from "~/assets/images/icons/search.svg?component";
 
 const { tokenBalances } = useAvocadoSafe();
 const { account } = useWeb3();
+const { networks } = useNetworks();
+
+const availableNetworks = networks.filter((network) => network.chainId != 634);
 
 const whitelistedSymbols = [
   "ETH",
@@ -32,8 +35,8 @@ const props = defineProps({
     default: false,
   },
   networkPreference: {
-    type: String,
-    default: "all",
+    type: Set<Number>,
+    default: new Set(),
   },
 });
 
@@ -53,9 +56,9 @@ const filteredBalances = computed(() => {
     balance: (balance: any) =>
       props.hideZeroBalances ? !isZero(balance) : true,
     chainId: (chainId: string) =>
-      props.networkPreference === "all"
+      props.networkPreference.size === availableNetworks.length
         ? true
-        : chainId == props.networkPreference,
+        : props.networkPreference.has(parseInt(chainId)),
   };
 
   return filterArray(tokens, filters);
