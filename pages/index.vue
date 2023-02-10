@@ -67,7 +67,7 @@ const handleOpenDialog = () => {
                 <ChainLogo
                   v-for="network in networkPreference"
                   style="width: 22px; height: 22px"
-                  class="[&:not(:first-child)]:-ml-2"
+                  class="-ml-2 first:ml-0"
                   :chain="network"
                 />
               </div>
@@ -112,7 +112,7 @@ const handleOpenDialog = () => {
                       {{ network.name }}
                       <CheckCircle
                         v-if="networkPreference.has(network.chainId)"
-                        class="success-circle w-5 ml-auto"
+                        class="success-circle cursor-pointer w-5 ml-auto"
                       />
                       <CheckCircle
                         v-else
