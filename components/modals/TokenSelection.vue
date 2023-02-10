@@ -78,7 +78,7 @@ const tokensWithBalance = computed(() => {
           </div>
           <div class="flex flex-col">
             <span> {{ token.name }} </span>
-            <span>
+            <span class="text-slate-400 font-medium text-sm">
               {{ formatDecimal(token.balance) }}
               <span class="uppercase"> {{ token.symbol }}</span>
             </span>
