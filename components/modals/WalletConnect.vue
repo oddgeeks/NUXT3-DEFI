@@ -259,8 +259,9 @@ onMounted(async () => {
             <p
               class="text-orange text-xs leading-5 font-medium text-center mb-4"
             >
-              The expert mod is not stable and is at the testing stage. Are you
-              sure you want to activate it?
+              Would you like to activate expert mode, even though it could
+              potentially cause incompatibility issues with
+              {{ connection.peerMeta.name }}?
             </p>
             <div class="flex w-full gap-4">
               <CommonButton
