@@ -1,5 +1,4 @@
 import { BigNumber } from "bignumber.js"
-import { getAddress } from "ethers/lib/utils"
 
 interface IBalance {
     name: string
@@ -43,7 +42,7 @@ export default defineEventHandler<IBalance[]>(async (event) => {
 
         return {
             name: token.name,
-            address: token.id.startsWith('0x') ? getAddress(token.id) : "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+            address: token.id.startsWith('0x') ? token.id : "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
             decimals: token.decimals,
             symbol: token.symbol,
             chainId: networks.find(n => n.chain === token.chain)?.chain_id || null,
