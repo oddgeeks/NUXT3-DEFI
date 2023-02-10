@@ -9,6 +9,10 @@ const props = defineProps<{
   tokenBalance: IBalance;
 }>();
 
+const DECIMAL_PLACES = 5;
+
+const interactable = computed(() => toBN(props.tokenBalance.balance).decimalPlaces(DECIMAL_PLACES).gt(0))
+
 const priceDiff = computed(() => {
   if (!props.tokenBalance.sparklinePrice7d.length) return 0;
   let a = props.tokenBalance.sparklinePrice7d.at(-24)!;
@@ -108,7 +112,7 @@ const chartOptions = {
           <div
             class="text-sm font-medium text-slate-400 max-w-[256px] uppercase"
           >
-            {{ toBN(tokenBalance.balance).decimalPlaces(4).toFormat() }}
+            {{ toBN(tokenBalance.balance).decimalPlaces(DECIMAL_PLACES).toFormat() }}
             {{ tokenBalance.symbol }}
           </div>
         </div>
@@ -152,7 +156,7 @@ const chartOptions = {
             animation: 'fade',
             content: 'Send',
           }"
-          :disabled="isZero(tokenBalance.balance)"
+          :disabled="!interactable"
           class="!h-9 !w-9 !p-0 items-center justify-center"
           @click="openSendModal(tokenBalance.address, tokenBalance.chainId)"
         >
@@ -166,7 +170,7 @@ const chartOptions = {
             animation: 'fade',
             content: 'Swap',
           }"
-          :disabled="isZero(tokenBalance.balance)"
+          :disabled="!interactable"
           class="!h-9 !w-9 !p-0 items-center justify-center"
           @click="openSwapModal(tokenBalance.address, tokenBalance.chainId)"
         >
@@ -180,7 +184,7 @@ const chartOptions = {
             animation: 'fade',
             content: 'Bridge',
           }"
-          :disabled="isZero(tokenBalance.balance)"
+          :disabled="!interactable"
           class="!h-9 !w-9 !p-0 items-center justify-center"
           @click="openBridgeModal(tokenBalance.address, tokenBalance.chainId)"
         >

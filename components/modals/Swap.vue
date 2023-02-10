@@ -42,7 +42,7 @@ const props = defineProps({
   },
 });
 
-const { chainTokenBalances, sendTransactions, safeAddress, safe } =
+const { tokenBalances, sendTransactions, safeAddress, safe } =
   useAvocadoSafe();
 
 const { getTokenByAddress } = useTokens();
@@ -80,15 +80,15 @@ const availableBuyTokens = computed(() =>
 
 const sellTokenBalance = computed(
   () =>
-    chainTokenBalances.value[String(props.chainId)].find(
-      (t) => t.address === swap.value.sellToken.address
+    tokenBalances.value.find(
+      (t) => t.address === swap.value.sellToken.address && t.chainId === String(props.chainId)
     )?.balance || "0.00"
 );
 
 const buyTokenBalance = computed(
   () =>
-    chainTokenBalances.value[String(props.chainId)].find(
-      (t) => t.address === swap.value.buyToken.address
+    tokenBalances.value.find(
+      (t) => t.address === swap.value.buyToken.address && t.chainId === String(props.chainId)
     )?.balance || "0.00"
 );
 
