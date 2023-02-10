@@ -55,7 +55,7 @@ const tokensWithBalance = computed(() => {
         <SearchSVG class="text-slate-400 mr-2" />
       </template>
     </CommonInput>
-    <ul class="overflow-auto h-96">
+    <ul class="overflow-auto scroll-style h-96">
       <li v-for="token in tokensWithBalance">
         <button
           @click="$emit('resolve', true, token)"
