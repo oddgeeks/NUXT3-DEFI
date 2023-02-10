@@ -61,15 +61,9 @@ const filteredBalances = computed(() => {
   return filterArray(tokens, filters);
 });
 
-const debounce = ref<NodeJS.Timeout>();
-const search = (event: Event) => {
-  if (debounce.value) {
-    clearTimeout(debounce.value);
-  }
-  debounce.value = setTimeout(() => {
-    searchQuery.value = (<HTMLInputElement>event.target).value;
-  }, 200);
-};
+const search = useDebounceFn((event: Event) => {
+  searchQuery.value = (<HTMLInputElement>event.target).value;
+}, 200);
 </script>
 <template>
   <div class="relative flex-1">
