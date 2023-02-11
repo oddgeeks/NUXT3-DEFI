@@ -6,7 +6,7 @@ export function useEagerConnect() {
 
   const tried = ref(false);
 
-  onMounted(() => {
+  onNuxtReady(() => {
     let connector = getConnector()
     connector &&  activate(connector, undefined, true).catch(() => {
       tried.value = true;
@@ -28,7 +28,7 @@ export function useEagerConnect() {
     if (!tried.value && active.value) {
       tried.value = true;
     }
-  });
+  }, { immediate: true});
 
   return {
     tried
