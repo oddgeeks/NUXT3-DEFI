@@ -112,6 +112,14 @@ const search = useDebounceFn((event: Event) => {
           </tbody>
         </table>
       </div>
+      <p
+        class="text-xs leading-5 text-right dark:text-slate-500 text-slate-400"
+      >
+        Don’t see your tokens?
+        <button @click="openImportTokenModal()" class="text-primary">
+          Import token
+        </button>
+      </p>
     </div>
   </div>
 </template>

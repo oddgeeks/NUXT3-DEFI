@@ -70,18 +70,21 @@
   .loading-box {
     background: linear-gradient(-45deg, #e2e8f0, #cbd5e1, #cbd5e1);
     background-size: 400% 400%;
-    animation: gradient 1.6s linear infinite;
+    animation: gradient 1.5s ease-in-out 0.1s infinite;
   }
 
   @keyframes gradient {
     0% {
       background-position: 0% 50%;
+      opacity: 1;
     }
     50% {
       background-position: 100% 50%;
+      opacity: 0.6;
     }
     100% {
       background-position: 0% 50%;
+      opacity: 1;
     }
   }
 }

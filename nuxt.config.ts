@@ -23,8 +23,13 @@ export default defineNuxtConfig({
   },
   nitro: {
     routeRules: {
-      '/api/balances': { cache: { maxAge: 15 } },
-    }
+      "/api/balances": { cache: { maxAge: 15 } },
+      "/api/tokens": {
+        cache: {
+          maxAge: 86400, // 1 day
+        },
+      },
+    },
   },
   app: {
     head: {
