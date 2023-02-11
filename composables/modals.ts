@@ -108,16 +108,16 @@ export const openDisconnectWalletModal = async () => {
     type: "question",
     cancelButtonText: "Cancel",
     isCancelButtonVisible: true,
-    headerIconComponent:  h(PowerOffSVG),
+    headerIconComponent: h(PowerOffSVG),
     buttonText: "Disconnect",
     buttonProps: {
-      color:'red',
+      color: "red",
     },
     cancelButtonProps: {
       color: "white",
-    }
-  })
-}
+    },
+  });
+};
 
 export const openTopUpGasModal = () => {
   openModal({
@@ -167,8 +167,11 @@ export const openWCTransactionModal = async (params: IWcTransactionModal) => {
 export const openImportTokenModal = () => {
   openModal({
     component: ImportToken,
+    options: {
+      contentClass: "!px-2.5 !pb-0",
+    },
   });
-}
+};
 
 export const openDialogModal = async ({
   title = "",
@@ -209,4 +212,4 @@ export const openCustomTxModal = () => {
 };
 
 //@ts-ignore
-globalThis.openCustomTxModal = openCustomTxModal
+globalThis.openCustomTxModal = openCustomTxModal;
