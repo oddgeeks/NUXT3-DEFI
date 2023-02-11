@@ -80,7 +80,7 @@ const search = useDebounceFn((event: Event) => {
       </CommonInput>
       <div
         style="scrollbar-gutter: stable; overflow-y: overlay"
-        class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden min-h-full max-h-[530px] flex-1 scroll-style"
+        class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] flex-1 scroll-style"
       >
         <table class="table w-full">
           <thead>
