@@ -157,14 +157,6 @@ html.dark .scroll-style {
   color: transparent;
 }
 
-.text-shadow-2 {
-  background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 70%, rgba(22,30,45,1) 92%, rgba(22,30,45,1) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
-}
-
 .overflow-y-overlay {
   overflow-y: auto;
 }
