@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const clientMeta = {
   description: "Instadapp Avocado - Safe",
-  url: "https://avocado.link",
+  url: "https://avocado.instadapp.io",
   icons: ["https://walletconnect.org/walletconnect-logo.png"],
   name: "Instadapp Avocado",
 };

@@ -15,7 +15,7 @@ const loadingClass = computed(() => ({
 
 <template>
   <tr>
-    <td class="pl-7.5 py-6">
+    <td class="text-left py-6 pl-7.5 w-1/3">
       <div class="flex space-x-3">
        <div :class="loadingClass" class="w-10 h-10 rounded-full flex items-center justify-center">
           <ChainLogo />
@@ -31,10 +31,10 @@ const loadingClass = computed(() => ({
     <td class="py-6">
       <div :class="loadingClass" class="rounded-5 w-[120px] h-5"></div>
     </td>
-    <td class=" py-6">
-      <div :class="loadingClass" class="rounded-5 w-20 h-5"></div>
-    </td>
     <td class="py-6">
+      <div :class="loadingClass" class="rounded-5 w-20 h-5 mx-auto"></div>
+    </td>
+    <td class="py-6 pl-10">
       <div :class="loadingClass" class="rounded-5 w-[60px] h-5"></div>
     </td>
     <td class="py-6 flex justify-center items-center gap-[15px]">

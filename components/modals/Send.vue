@@ -79,7 +79,7 @@ const pasteAddress = async () => {
 };
 
 const sendingDisabled = computed(
-  () => !token.value || loading.value || !meta.value.valid
+  () => !token.value || loading.value || !meta.value.valid || pending.value
 );
 
 const getTx = async () => {
@@ -206,11 +206,11 @@ const onSubmit = handleSubmit(async () => {
 <template>
   <form @submit="onSubmit" class="text-center flex gap-7.5 flex-col">
     <div
-      class="relative flex mx-auto h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
+      class="relative flex mx-auto h-10 w-10 rounded-full flex-shrink-0"
     >
       <img
         :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
-        onerror="this.onerror=null; this.remove();"
+        :onerror="onImageError"
       />
     </div>
 
@@ -248,7 +248,7 @@ const onSubmit = handleSubmit(async () => {
           <template #suffix>
             <button
               type="button"
-              class="text-blue-500 hover:text-blue-500"
+              class="text-primary hover:text-primary"
               @click="setMax"
             >
               MAX
@@ -303,7 +303,7 @@ const onSubmit = handleSubmit(async () => {
     <CommonButton
       type="submit"
       :disabled="sendingDisabled"
-      :loading="loading"
+      :loading="loading || pending"
       class="justify-center w-full"
       size="lg"
     >

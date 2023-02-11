@@ -6,20 +6,25 @@ const meta = {
   title: "Avocado",
   description:
     "The multi-network gas and account abstraction allowing you to experience web3 more seamlessly.",
-  image:
-    "https://user-images.githubusercontent.com/45617686/211059835-0ecbb1b9-f448-4bed-9c52-a9359c67cbe6.png",
+  image: "https://avocado.instadapp.io/logo.png",
 };
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   runtimeConfig: {
     socketApiKey: process.env.SOCKET_API_KEY,
+    debankAccessKey: process.env.DEBANK_ACCESS_KEY,
     slackKey: process.env.SLACK_KEY,
     slackErrorKey: process.env.SLACK_ERROR_KEY,
     public: {
       googleAnalyticsId: process.env.GA_ID,
       avocadoChainId: 634,
     },
+  },
+  nitro: {
+    routeRules: {
+      '/api/balances': { cache: { maxAge: 15 } },
+    }
   },
   app: {
     head: {
@@ -47,7 +52,7 @@ export default defineNuxtConfig({
         },
         {
           property: "og:url",
-          content: "https://avocado.link",
+          content: "https://avocado.instadapp.io",
         },
         {
           property: "og:image",
@@ -133,8 +138,7 @@ export default defineNuxtConfig({
         toggleButtonVisibility: "never",
       },
     ],
-    "@nuxt/devtools-edge",
-    '~/modules/build-env',
+    "~/modules/build-env",
   ],
   colorMode: {
     preference: "dark",

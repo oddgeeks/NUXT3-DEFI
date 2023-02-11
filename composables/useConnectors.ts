@@ -1,10 +1,9 @@
-import { network, torus, injected, walletconnect, magic, walletlink } from "~~/connectors";
+import { network, torus, injected, walletconnect, walletlink } from "~~/connectors";
 
 const providers = {
   // network,
   // torus,
   injected,
-  // magic,
   walletconnect,
   walletlink,
 }

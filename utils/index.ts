@@ -26,6 +26,11 @@ const actionMetadataTypes = {
     "uint256 buyAmount",
     "address receiver",
   ],
+  'gas-topup': [
+    'uint256 amount',
+    'address token',
+    'address onBehalf'
+  ]
 };
 
 export function shortenHash(hash: string, length: number = 4) {
@@ -101,6 +106,16 @@ export const chainIdToName = (chainId: string | number) => {
       throw new Error(`Unknown chainId ${chainId}`);
   }
 };
+
+export function onImageError(this: HTMLImageElement) {
+  const parentElement = this.parentElement;
+  this.onerror=null;
+  this.remove();
+
+  if (parentElement) {
+    parentElement.classList.add('bg-gray-300');
+  }
+}
 
 export const getExplorerUrl = (
   chainId: string | number,
@@ -231,7 +246,7 @@ export const calculateEstimatedFee = (params: CalculateFeeProps) => {
     return {
       min: 0,
       max: 0,
-      formatted: "$0.0",
+      formatted: "0.00",
     };
 
   const maxVal = toBN(fee)
@@ -246,8 +261,8 @@ export const calculateEstimatedFee = (params: CalculateFeeProps) => {
   const actualMin = Math.max(minVal, minChainFee);
   const actualMax = Math.max(maxVal, minChainFee);
 
-  const formattedMin = formatUsd(actualMin);
-  const formattedMax = formatUsd(actualMax);
+  const formattedMin = formatDecimal(String(actualMin), 2);
+  const formattedMax = formatDecimal(String(actualMax), 2);
 
   const isEqual = formattedMin === formattedMax;
 
@@ -304,6 +319,26 @@ export const encodeSwapMetadata = (
   });
 
   return single ? encodeMultipleActions(data) : data;
+};
+
+export const encodeTopupMetadata = (
+  params: TopupMetadataProps,
+  single = true
+) => {
+  const encodedData = ethers.utils.defaultAbiCoder.encode(
+    actionMetadataTypes['gas-topup'],
+    [params.amount, params.token, params.onBehalf]
+  );
+
+  console.log(params)
+
+  const data = encodeMetadata({
+    type: "gas-topup",
+    encodedData,
+  });
+
+  return single ? encodeMultipleActions(data) : data;
+
 };
 
 export const encodeBridgeMetadata = (
@@ -398,6 +433,14 @@ export const decodeMetadata = (data: string) => {
             sellToken: decodedData.sellToken,
             receiver: decodedData.receiver,
           };
+          break;
+        case "gas-topup":
+          payload = {
+            type,
+            amount: toBN(decodedData.amount).toFixed(),
+            token: decodedData.token,
+            onBehalf: decodedData.onBehalf,
+          } 
           break;
       }
 

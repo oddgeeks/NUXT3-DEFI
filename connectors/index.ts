@@ -5,8 +5,6 @@ import { setWeb3LibraryCallback } from "@instadapp/vue-web3";
 import { Web3Provider } from "@ethersproject/providers";
 import { ethers } from "ethers";
 import { TorusConnector } from "@web3-react/torus-connector";
-import { MagicConnector } from "@web3-react/magic-connector";
-import { CustomMagicConnector } from "./custom/magic";
 import { WalletLinkConnector } from "./custom/walletlink";
 // const { networks } = useNetworks();
 
@@ -27,7 +25,7 @@ export const RPC_URLS: { [chainId: number]: string } = {
   // 250: 'https://rpc.ankr.com/fantom',
   10: "https://rpc.ankr.com/optimism",
   42161: "https://rpc.ankr.com/arbitrum",
-  634: "https://rpc.avocado.link",
+  634: "https://rpc.avocado.instadapp.io",
   100: "https://rpc.ankr.com/gnosis",
   56: "https://rpc.ankr.com/bsc",
   // 250: 'https://rpc.ankr.com/fantom',
@@ -39,7 +37,7 @@ export const injected = new InjectedConnector({
 
 export const walletlink = new WalletLinkConnector({
   appName: "Avocado",
-  url: "https://avocado.link",
+  url: "https://avocado.instadapp.io",
   appLogoUrl:
     "https://raw.githubusercontent.com/InstaDApp/brand/master/instadapp%20logo%20only%20filled.svg",
   darkMode: false,
@@ -58,16 +56,6 @@ export const network = new NetworkConnector({
 
 export const torus = new TorusConnector({ chainId: 634 });
 
-export const magic = (email: string) => {
-  return new CustomMagicConnector({
-    network: {
-      chainId: 137, // 75,
-      rpcUrl: "https://rpc.ankr.com/polygon", // "https://rpc.avocado.link"
-    },
-    apiKey: "pk_live_40A3A59B53603988",
-    email,
-  });
-};
 
 export const changeMetamaskNetwork = async (network: Network) => {
   const { library, chainId } = useWeb3();

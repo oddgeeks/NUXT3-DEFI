@@ -33,12 +33,17 @@ const connect = async (provider: any) => {
   }
 };
 
-const closeConnection = () => {
-  trackingAccount.value = null;
-  setConnectorName(null);
-  if (connector) {
-    deactivate();
+const closeConnection = async () => {
+  const { success } = await openDisconnectWalletModal()
+
+  if (success) {
+    trackingAccount.value = null;
+      setConnectorName(null);
+      if (connector.value) {
+        deactivate();
+    }
   }
+  
 };
 
 const isProviderVisible = (provider: Provider) => {
@@ -72,7 +77,7 @@ whenever(account, async () => {
       <div v-else class="loading-box rounded-5 w-20 h-5"></div>
 
       <span
-        class="h-[26px] w-[26px] flex items-center justify-center bg-blue-500 rounded-full text-white"
+        class="h-[26px] w-[26px] flex items-center justify-center bg-primary rounded-full text-white"
         ><PlusSVG
       /></span>
     </button>
@@ -117,7 +122,7 @@ whenever(account, async () => {
                   :class="
                     provider.name === 'Metamask'
                       ? 'text-orange-500'
-                      : 'text-blue-500'
+                      : 'text-primary'
                   "
                   class="animate-spin -ml-1 mr-3 h-5 w-5"
                   xmlns="http://www.w3.org/2000/svg"
@@ -145,7 +150,7 @@ whenever(account, async () => {
                   :class="
                     provider.name === 'Metamask'
                       ? 'group-hover:text-orange-500'
-                      : 'group-hover:text-blue-500'
+                      : 'group-hover:text-primary'
                   "
                   width="18"
                   height="18"

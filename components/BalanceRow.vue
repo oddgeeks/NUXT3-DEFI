@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { Line } from "vue-chartjs";
 import { IBalance } from "~/stores/safe";
 import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
@@ -8,6 +8,10 @@ import RefreshSVG from "~/assets/images/icons/refresh.svg?component";
 const props = defineProps<{
   tokenBalance: IBalance;
 }>();
+
+const DECIMAL_PLACES = 5;
+
+const interactable = computed(() => toBN(props.tokenBalance.balance).decimalPlaces(DECIMAL_PLACES).gt(0))
 
 const priceDiff = computed(() => {
   if (!props.tokenBalance.sparklinePrice7d.length) return 0;
@@ -27,10 +31,10 @@ const priceDiffClass = computed(() => {
   if (!priceDiffInPercent.value) return "text-slate-400";
 
   if (priceDiffInPercent.value < 0) {
-    return "text-[#EB5757]";
+    return "text-red-alert";
   }
 
-  return "text-green-400";
+  return "text-primary";
 });
 
 const priceDiffColor = computed(() => {
@@ -40,7 +44,7 @@ const priceDiffColor = computed(() => {
     return "#EB5757";
   }
 
-  return "#89BA4F";
+  return "#16A34A";
 });
 
 const chartData = computed(() => ({
@@ -50,8 +54,7 @@ const chartData = computed(() => ({
       data: props.tokenBalance.sparklinePrice7d,
       fill: false,
       pointRadius: 0,
-      spanGaps: true,
-      tension: 0.2,
+      cubicInterpolationMode: "monotone",
     },
   ],
 }));
@@ -61,6 +64,7 @@ const chartOptions = {
   borderColor: priceDiffColor.value,
   borderWidth: 1.5,
   responsive: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: {
       display: false,
@@ -81,15 +85,15 @@ const chartOptions = {
 </script>
 <template>
   <tr>
-    <td class="text-left pl-7.5 py-6">
+    <td class="text-left py-6 pl-7.5 w-1/3">
       <div class="flex items-center space-x-3">
         <div
-          class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
+          class="relative inline-block h-10 w-10 rounded-full flex-shrink-0"
         >
           <img
             :src="tokenBalance.logoURI"
             class="h-10 w-10 rounded-full"
-            onerror="this.onerror=null; this.remove();"
+            :onerror="onImageError"
           />
 
           <ChainLogo
@@ -99,29 +103,29 @@ const chartOptions = {
           />
         </div>
 
-        <div>
+        <div class="max-w-[220px] w-full">
           <div
-            class="text-lg font-semibold whitespace-nowrap pr-2 md:w-32 truncate"
+            class="text-lg font-semibold text-shadow-2 whitespace-nowrap w-full bg-black overflow-hidden"
           >
             {{ tokenBalance.name }}
           </div>
           <div
             class="text-sm font-medium text-slate-400 max-w-[256px] uppercase"
           >
-            {{ toBN(tokenBalance.balance).decimalPlaces(4).toFormat() }}
+            {{ toBN(tokenBalance.balance).decimalPlaces(DECIMAL_PLACES).toFormat() }}
             {{ tokenBalance.symbol }}
           </div>
         </div>
       </div>
     </td>
-    <td class="text-center font-semibold py-6 whitespace-nowrap">
+    <td class="font-semibold py-6 whitespace-nowrap">
       <span v-if="tokenBalance.balanceInUSD">
         {{ formatUsd(tokenBalance.balanceInUSD) }}
       </span>
 
       <span v-else> - </span>
     </td>
-    <td class="text-center font-semibold px-10 py-6">
+    <td class="text-center font-semibold py-6 px-6">
       <div class="w-20 h-8 mx-auto">
         <Line
           v-if="tokenBalance.sparklinePrice7d.length"
@@ -131,20 +135,19 @@ const chartOptions = {
         <span v-else> - </span>
       </div>
     </td>
-    <td class="font-semibold py-6 text-sm">
+    <td class="font-semibold py-6 text-sm pl-10">
       <div
         class="flex gap-1 flex-col"
-        :class="priceDiffClass"
         v-if="priceDiffInPercent"
       >
         <span> {{ priceDiffInPercent.toFixed(2) }}% </span>
-        <span>
+        <span :class="priceDiffClass">
           {{ formatUsd(toBN(priceDiff).decimalPlaces(3)) }}
         </span>
       </div>
       <span v-else> - </span>
     </td>
-    <td class="text-right pl-7.5 py-6">
+    <td class="text-right py-6">
       <div class="flex items-center gap-[15px] justify-center">
         <CommonButton
           v-tippy="{
@@ -153,7 +156,7 @@ const chartOptions = {
             animation: 'fade',
             content: 'Send',
           }"
-          :disabled="isZero(tokenBalance.balance)"
+          :disabled="!interactable"
           class="!h-9 !w-9 !p-0 items-center justify-center"
           @click="openSendModal(tokenBalance.address, tokenBalance.chainId)"
         >
@@ -165,13 +168,13 @@ const chartOptions = {
             arrow: true,
             arrowType: 'round',
             animation: 'fade',
-            content: 'Bridge',
+            content: 'Swap',
           }"
-          :disabled="isZero(tokenBalance.balance)"
+          :disabled="!interactable"
           class="!h-9 !w-9 !p-0 items-center justify-center"
-          @click="openBridgeModal(tokenBalance.address, tokenBalance.chainId)"
+          @click="openSwapModal(tokenBalance.address, tokenBalance.chainId)"
         >
-          <BridgeSVG />
+          <RefreshSVG />
         </CommonButton>
 
         <CommonButton
@@ -179,14 +182,16 @@ const chartOptions = {
             arrow: true,
             arrowType: 'round',
             animation: 'fade',
-            content: 'Swap',
+            content: 'Bridge',
           }"
-          :disabled="isZero(tokenBalance.balance)"
+          :disabled="!interactable"
           class="!h-9 !w-9 !p-0 items-center justify-center"
-          @click="openSwapModal(tokenBalance.address, tokenBalance.chainId)"
+          @click="openBridgeModal(tokenBalance.address, tokenBalance.chainId)"
         >
-          <RefreshSVG />
+          <BridgeSVG />
         </CommonButton>
+
+       
       </div>
     </td>
   </tr>

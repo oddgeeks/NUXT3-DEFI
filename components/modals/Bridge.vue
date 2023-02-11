@@ -122,7 +122,7 @@ const onSubmit = form.handleSubmit(async () => {
         height="40"
         class="h-10 w-10 mb-7.5"
         :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
-        onerror="this.onerror=null; this.remove();"
+        :onerror="onImageError"
       />
       <div class="flex flex-col gap-[14px]">
         <h2 class="text-lg leading-5 text-center">
@@ -163,7 +163,7 @@ const onSubmit = form.handleSubmit(async () => {
             <template #suffix>
               <button
                 type="button"
-                class="absolute top-0 bottom-0 right-0 mr-5 text-sm text-blue-500 hover:text-blue-500"
+                class="absolute top-0 bottom-0 right-0 mr-5 text-sm text-primary"
                 @click="setMax"
               >
                 MAX
@@ -200,7 +200,7 @@ const onSubmit = form.handleSubmit(async () => {
                     height="24"
                     class="h-6 w-6"
                     :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
-                    onerror="this.onerror=null; this.remove();"
+                    :onerror="onImageError"
                   />
                   <span
                     class="text-sm w-full leading-5 text-shadow overflow-hidden whitespace-nowrap"
@@ -267,7 +267,7 @@ const onSubmit = form.handleSubmit(async () => {
                     v-tippy="
                       'This fee is a requirement from the underlying bridge provider to cover the gas cost on target chain.'
                     "
-                    class="text-blue-500"
+                    class="text-primary"
                   />
                 </span>
                 <span

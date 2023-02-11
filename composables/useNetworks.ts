@@ -165,10 +165,10 @@ export function useNetworks() {
           symbol: "USDC",
           decimals: 18,
         },
-        iconUrls: ["https://avocado.link/logo.svg"],
-        rpcUrls: ["https://rpc.avocado.link/"],
+        iconUrls: ["https://avocado.instadapp.io/logo.svg"],
+        rpcUrls: ["https://rpc.avocado.instadapp.io"],
         blockExplorerUrls: [
-          "https://avocado.link"
+          "https://avocado.instadapp.io"
         ]
       },
     },
@@ -261,7 +261,7 @@ export function useNetworks() {
           type: "error",
           title: "Switch Network",
           message:
-            "Failed to Switch Network, please add Avocado Network manually (<a class='underline text-slate-300 font-medium' target='_blank' href='https://help.avocado.link/en/getting-started/avo-s-rpc-url'>RPC details</a>).",
+            "Failed to Switch Network, please add Avocado Network manually (<a class='underline text-slate-300 font-medium' target='_blank' href='https://help.avocado.instadapp.io/en/getting-started/avo-s-rpc-url'>RPC details</a>).",
         });
         return Promise.reject(err);
       }
@@ -269,7 +269,7 @@ export function useNetworks() {
     await nextTick();
   };
 
-  const getNetworkByChainId = (chainId: number) => {
+  const getNetworkByChainId = (chainId: number | string) => {
     return networks.find((i) => i.chainId === Number(chainId))!;
   };
 

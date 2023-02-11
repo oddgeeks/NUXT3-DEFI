@@ -17,7 +17,7 @@ const RPC_URLS: { [chainId: number]: string } = {
   250: "https://rpc.ankr.com/fantom",
   10: "https://rpc.ankr.com/optimism",
   42161: "https://rpc.ankr.com/arbitrum",
-  634: "https://rpc.avocado.link",
+  634: "https://rpc.avocado.instadapp.io",
   100: "https://rpc.ankr.com/gnosis",
   56: "https://rpc.ankr.com/bsc",
 };
@@ -206,7 +206,7 @@ const getTokens = async () => {
     let logoURI = "";
 
     if (existsSync(resolve(__dirname, "../public/tokens/", `${coin.id}.svg`))) {
-      logoURI = `https://avocado.link/tokens/${coin.id}.svg`;
+      logoURI = `https://avocado.instadapp.io/tokens/${coin.id}.svg`;
     } else {
       const coinData: any = await $fetch(
         `${COINGECKO_BASE_API}/coins/${coin.id}?tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false`,
@@ -281,7 +281,7 @@ const gen = async () => {
     resolve(__dirname, "../public/tokenlist.json"),
     {
       name: "Avocado",
-      logoURI: "https://avocado.link/logo.svg",
+      logoURI: "https://avocado.instadapp.io/logo.svg",
       keywords: ["avocado", "defi"],
       timestamp: new Date().toISOString(),
       tokens,

@@ -41,7 +41,7 @@ const onSubmit = handleSubmit(async () => {
 
 Action: Redeem code
 Code: ${value.value}
-URI: https://avocado.link
+URI: https://avocado.instadapp.io
 Nonce: {{NONCE}}
 Issued At: ${new Date().toISOString()}`;
 

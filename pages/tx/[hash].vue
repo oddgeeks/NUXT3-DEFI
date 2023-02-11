@@ -21,6 +21,9 @@ onMounted(() =>
 const locale = computed(() =>
   typeof window !== "undefined" ? window.navigator.language : "en"
 );
+
+const isBridge =
+  metadata?.length && metadata?.some((i: any) => i.type === "bridge");
 </script>
 
 <template>
@@ -40,7 +43,7 @@ const locale = computed(() =>
           </div>
           <div class="flex items-center space-x-2.5">
             <a
-              class="text-blue-500"
+              class="text-primary"
               :href="
                 getExplorerUrl(transaction.chain_id, `/tx/${transaction.hash}`)
               "
@@ -59,7 +62,7 @@ const locale = computed(() =>
           </div>
           <div class="flex items-center space-x-2.5">
             <a
-              class="text-blue-500"
+              class="text-primary"
               :href="
                 getExplorerUrl(
                   transaction.chain_id,
@@ -124,8 +127,12 @@ const locale = computed(() =>
             >
               Transaction Action
             </div>
-            <div class="flex items-center text-xs">
-              <pre>{{ metadata }}</pre>
+            <div class="flex items-center flex-col gap-6">
+              <ActionMetadata
+                :metadata="item"
+                :key="i"
+                v-for="(item, i) of metadata"
+              />
             </div>
           </div>
         </div>
@@ -146,7 +153,7 @@ const locale = computed(() =>
             class="flex items-center space-x-2.5"
           >
             <a
-              class="text-blue-500"
+              class="text-primary"
               :href="
                 getExplorerUrl(
                   transaction.chain_id,
@@ -175,7 +182,7 @@ const locale = computed(() =>
             class="flex items-center space-x-2.5"
           >
             <a
-              class="text-blue-500"
+              class="text-primary"
               :href="
                 getExplorerUrl(
                   transaction.chain_id,
@@ -212,15 +219,12 @@ const locale = computed(() =>
             <span v-if="transaction.fee">
               {{ formatUsd(transaction.fee) }}
             </span>
-            <span v-else>-</span>
+            <span v-else> - </span>
           </div>
         </div>
       </div>
 
-      <div
-        v-if="metadata?.length && metadata.some((i) => i.type === 'bridge')"
-        class="flex flex-col pt-6.5 gap-6.5"
-      >
+      <div v-if="isBridge" class="flex flex-col pt-6.5 gap-6.5">
         <hr class="w-full dark:border-slate-800 border-slate-150" />
 
         <div class="flex items-center px-7.5">
@@ -238,7 +242,7 @@ const locale = computed(() =>
           </div>
           <div class="flex items-center gap-2.5">
             <a
-              class="text-blue-500"
+              class="text-primary"
               :href="`https://socketscan.io/tx/${transaction.hash}`"
               target="_blank"
             >

@@ -1,5 +1,10 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
 
+const colors = {
+  primary: "#16A34A",
+  primaryHover: "#1ABD56",
+};
+
 module.exports = {
   darkMode: "class",
   theme: {
@@ -50,14 +55,20 @@ module.exports = {
           750: "#2A3850",
         },
         orange: {
-          400: '#EC974F',
+          DEFAULT: "#F2994A",
+          400: "#EC974F",
         },
         yellow: {
           DEFAULT: "#F2C94C",
         },
         green: {
-          400: "#89BA4F",
-        }
+          300: colors.primaryHover,
+          400: colors.primary,
+        },
+        primary: {
+          hover: colors.primaryHover,
+          DEFAULT: colors.primary,
+        },
       },
       animation: {
         "reverse-spin": "reverse-spin 1s linear infinite",

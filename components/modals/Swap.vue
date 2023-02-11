@@ -42,7 +42,7 @@ const props = defineProps({
   },
 });
 
-const { chainTokenBalances, sendTransactions, safeAddress, safe } =
+const { tokenBalances, sendTransactions, safeAddress, safe } =
   useAvocadoSafe();
 
 const { getTokenByAddress } = useTokens();
@@ -80,21 +80,17 @@ const availableBuyTokens = computed(() =>
 
 const sellTokenBalance = computed(
   () =>
-    chainTokenBalances.value[String(props.chainId)].find(
-      (t) => t.address === swap.value.sellToken.address
+    tokenBalances.value.find(
+      (t) => t.address === swap.value.sellToken.address && t.chainId === String(props.chainId)
     )?.balance || "0.00"
 );
 
 const buyTokenBalance = computed(
   () =>
-    chainTokenBalances.value[String(props.chainId)].find(
-      (t) => t.address === swap.value.buyToken.address
+    tokenBalances.value.find(
+      (t) => t.address === swap.value.buyToken.address && t.chainId === String(props.chainId)
     )?.balance || "0.00"
 );
-
-watch([() => swap.value.sellToken, () => swap.value.buyToken], () => {
-  toggleSwapped();
-});
 
 const validateMinAmount = (value: any) => {
   const amount = toBN(value);
@@ -127,11 +123,11 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
       slippage: yup.string().required(),
       customSlippage: yup
         .string()
-        .test("slippage", "Slippage must be between 0.1% and 3%", (value) => {
+        .test("slippage", "Slippage must be between 0.1% and 100%", (value) => {
           const slippage = toBN(value!);
 
           if (value) {
-            return slippage.gte(0.1) && slippage.lte(3);
+            return slippage.gte(0.1) && slippage.lte(100);
           } else return true;
         }),
     }),
@@ -145,8 +141,11 @@ const {
 } = useField<string>("sell-amount");
 
 const { value: slippage } = useField<string>("slippage");
-const { value: customSlippage, meta: slippageMeta } =
-  useField<string>("customSlippage");
+const {
+  value: customSlippage,
+  meta: slippageMeta,
+  setState: setCustomSlippage,
+} = useField<string>("customSlippage");
 
 const convertBuytoSellAmount = (val: string) => {
   const sellTokenPrice = swap.value.sellToken.price;
@@ -154,10 +153,11 @@ const convertBuytoSellAmount = (val: string) => {
 
   if (!sellTokenPrice || !buyTokenPrice) return;
 
-  const buyAmountInSellAmount = formatDecimal(
-    toBN(val).div(toBN(sellTokenPrice)).times(toBN(buyTokenPrice)).toFixed(),
-    6
-  );
+  const buyAmountInSellAmount = toBN(val)
+    .div(toBN(sellTokenPrice))
+    .times(toBN(buyTokenPrice))
+    .decimalPlaces(4)
+    .toFixed();
 
   setSellAmount({
     touched: true,
@@ -186,7 +186,11 @@ const handleSellAmountInput = () => {
 
 const sendingDisabled = computed(
   () =>
-    isSubmitting.value || pending.value || !meta.value.valid || feePending.value
+    isSubmitting.value ||
+    pending.value ||
+    !meta.value.valid ||
+    feePending.value ||
+    isPriceImpactHigh.value
 );
 
 const { data: swapDetails, pending } = useAsyncData(
@@ -249,6 +253,15 @@ const { data: swapDetails, pending } = useAsyncData(
 );
 
 const bestRoute = computed(() => swapDetails.value?.aggregators[0] || null);
+
+const isPriceImpactHigh = computed(() => {
+  if (!bestRoute.value) return false;
+
+  const actualSlippage = customSlippage.value || slippage.value;
+  const priceImpact = bestRoute.value?.data.priceImpact;
+
+  return toBN(priceImpact).gt(actualSlippage);
+});
 
 const sellAmountInUsd = computed(() => {
   return toBN(
@@ -409,8 +422,15 @@ const onSubmit = handleSubmit(async () => {
 
 onMounted(() => {
   // set initial buy token
+  const eth = availableBuyTokens.value.find((i) => i.symbol.includes("eth"));
+  const usdc = availableBuyTokens.value.find((i) => i.symbol === "usdc");
+
+  const isEth = swap.value.sellToken.symbol.includes("eth");
+
   swap.value.buyToken = getTokenByAddress(
-    props.toAddress || availableBuyTokens.value[0].address,
+    props.toAddress ||
+      (isEth ? usdc?.address : eth?.address) ||
+      availableBuyTokens.value[0].address,
     props.chainId
   )!;
 
@@ -420,6 +440,22 @@ onMounted(() => {
       touched: true,
     });
   }
+});
+
+watch([() => swap.value.sellToken, () => swap.value.buyToken], () => {
+  toggleSwapped();
+});
+
+watch(sellAmount, () => {
+  if (!sellAmount.value) {
+    buyAmount.value = "";
+  }
+});
+
+watch(slippage, () => {
+  setCustomSlippage({
+    value: undefined,
+  });
 });
 </script>
 
@@ -441,7 +477,7 @@ onMounted(() => {
 
     <div class="flex flex-col gap-4">
       <div
-        class="py-4 px-5 relative dark:bg-slate-800 bg-slate-100 rounded-5 flex flex-col gap-4"
+        class="py-4 px-5 relative dark:bg-slate-800 bg-slate-100 focus-within:bg-slate-50 border-2 border-transparent focus-within:dark:border-slate-800 focus-within:border-slate-150 focus-within:dark:bg-gray-850 rounded-5 flex flex-col gap-4"
       >
         <div class="flex">
           <CommonInput
@@ -453,7 +489,7 @@ onMounted(() => {
             v-model="sellAmount"
             type="numeric"
             class="flex-1"
-            input-classes="text-[26px] placeholder:text-[26px] !p-0 leading-[48px] rounded-none"
+            input-classes="text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
             container-classes="!px-0"
           />
           <TokenSelection v-model="swap.sellToken" :tokens="availableTokens" />
@@ -461,7 +497,7 @@ onMounted(() => {
         <div class="flex justify-between items-center text-sm text-slate-400">
           <div
             v-if="pending && meta.valid"
-            style="width: 100px; height: 20px"
+            style="width: 60px; height: 20px"
             class="loading-box rounded-lg"
           />
           <span v-else>{{ formatUsd(sellAmountInUsd) }}</span>
@@ -470,7 +506,7 @@ onMounted(() => {
               >{{ formatDecimal(sellTokenBalance) }}
               {{ swap.sellToken?.symbol }}</span
             >
-            <button type="button" @click="setMax" class="text-blue-500">
+            <button type="button" @click="setMax" class="text-primary">
               MAX
             </button>
           </div>
@@ -491,11 +527,17 @@ onMounted(() => {
       </div>
 
       <div
-        class="py-4 px-5 dark:bg-slate-800 bg-slate-100 rounded-5 flex flex-col gap-4"
+        class="py-4 px-5 dark:bg-slate-800 bg-slate-100 focus-within:bg-slate-50 border-2 border-transparent focus-within:dark:border-slate-800 focus-within:border-slate-150 focus-within:dark:bg-gray-850 rounded-5 flex flex-col gap-4"
       >
         <div class="flex">
           <div class="flex-1 flex items-center">
+            <div
+              v-if="pending && meta.valid"
+              style="width: 100px; height: 28px"
+              class="loading-box rounded-lg"
+            />
             <CommonInput
+              v-else
               transparent
               type="numeric"
               placeholder="0.0"
@@ -503,7 +545,7 @@ onMounted(() => {
               @input="handleBuyAmountInput"
               v-model="buyAmount"
               class="flex-1"
-              input-classes="text-[26px] placeholder:text-[26px] !p-0 leading-[48px] rounded-none"
+              input-classes="text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
               container-classes="!px-0"
             />
           </div>
@@ -515,7 +557,7 @@ onMounted(() => {
         <div class="flex justify-between items-center text-sm text-slate-400">
           <div
             v-if="pending && meta.valid"
-            style="width: 100px; height: 20px"
+            style="width: 60px; height: 20px"
             class="loading-box rounded-lg"
           />
           <span v-else>{{ formatUsd(buyAmountInUsd) }}</span>
@@ -546,7 +588,7 @@ onMounted(() => {
                       'Slippage is the difference between the expected price of an order and the price when the order actually executes. The slippage tolerance % lets you decide how much slippage you are willing to accept for a trade.'
                     "
                   >
-                    <QuestionCircleSVG class="w-5 h-5" />
+                    <QuestionCircleSVG class="w-5 h-5 text-primary" />
                   </button>
                 </span>
                 <ChevronDownSVG
@@ -560,13 +602,13 @@ onMounted(() => {
                     value-key="value"
                     label-key="label"
                     :container-classes="
-                      !customSlippage ? '!border-blue-500' : ''
+                      !customSlippage ? '!border-primary' : ''
                     "
                     :options="slippages"
                   >
                     <template #button-prefix>
                       <div
-                        :class="{ '!border-blue-500': !customSlippage }"
+                        :class="{ '!border-primary': !customSlippage }"
                         class="radio !mr-0"
                       ></div>
                     </template>
@@ -577,12 +619,12 @@ onMounted(() => {
                   placeholder="Custom"
                   input-classes="!py-3"
                   class="flex-1"
-                  :container-classes="customSlippage ? '!ring-blue-500' : ''"
+                  :container-classes="customSlippage ? '!ring-primary' : ''"
                   v-model="customSlippage"
                 >
                   <template #prefix>
                     <div
-                      :class="{ '!border-blue-500': customSlippage }"
+                      :class="{ '!border-primary': customSlippage }"
                       class="radio"
                     ></div>
                   </template>
@@ -634,9 +676,7 @@ onMounted(() => {
                 />
                 <span v-else class="text-green-400">
                   {{
-                    formatPercent(
-                      toBN(bestRoute?.data.priceImpact || 0).negated()
-                    )
+                    formatPercent(toBN(bestRoute?.data.priceImpact || 0))
                   }}</span
                 >
               </div>
@@ -645,6 +685,11 @@ onMounted(() => {
         </div>
       </div>
       <EstimatedFee :chain-id="chainId" :loading="feePending" :data="fee" />
+      <CommonNotification
+        v-if="isPriceImpactHigh"
+        type="warning"
+        text="Slippage value should be greater than price impact.  "
+      />
     </div>
 
     <div class="flex gap-4 flex-col">

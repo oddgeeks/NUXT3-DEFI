@@ -1,5 +1,5 @@
 import { storeToRefs } from "pinia";
-import { createSafe } from "avocado-safe";
+import { createSafe } from "@instadapp/avocado";
 
 export const useAvocadoSafe = () => {
   const provider = getRpcProvider(634);
@@ -7,7 +7,7 @@ export const useAvocadoSafe = () => {
   const { library, account } = useWeb3();
 
   // check if we have a cached safe address
-  const { safeAddress, tokenBalances, totalBalance, chainTokenBalances } =
+  const { safeAddress, tokenBalances, totalBalance } =
     storeToRefs(useSafe());
 
   const safe = shallowRef<ReturnType<typeof createSafe>>();
@@ -89,7 +89,6 @@ export const useAvocadoSafe = () => {
     safeAddress,
     sendTransaction,
     sendTransactions,
-    chainTokenBalances,
     airDrop,
     fetchAirDrop: execute,
   };

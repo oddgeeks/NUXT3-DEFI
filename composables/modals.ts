@@ -8,17 +8,20 @@ import WalletConnectDetails from "~~/components/modals/WalletConnectDetails.vue"
 import TokenSelection from "~~/components/modals/TokenSelection.vue";
 import ImportToken from "~~/components/modals/ImportToken.vue";
 import WCTransaction from "~~/components/modals/WCTransaction.vue";
+import PowerOffSVG from "~/assets/images/icons/power-off-bg.svg?component";
 import Dialog from "~~/components/modals/Dialog.vue";
 import type IWalletConnect from "@walletconnect/client";
+import CustomTx from "~~/components/modals/CustomTx.vue";
 
 const { openModal } = useModal();
 interface DialogModalProps {
   title?: string;
   content?: string;
-  type?: "success" | "error" | "question";
+  type: "success" | "error" | "question";
   headerIconUrl?: string;
   isButtonVisible?: boolean;
   isCancelButtonVisible?: boolean;
+  headerIconComponent?: any;
   cancelButtonText?: string;
   buttonText?: string;
   buttonProps?: any;
@@ -99,6 +102,23 @@ export const openWalletConnectModal = () => {
   });
 };
 
+export const openDisconnectWalletModal = async () => {
+  return openDialogModal({
+    title: "Are you sure you want to Log Out?",
+    type: "question",
+    cancelButtonText: "Cancel",
+    isCancelButtonVisible: true,
+    headerIconComponent:  h(PowerOffSVG),
+    buttonText: "Disconnect",
+    buttonProps: {
+      color:'red',
+    },
+    cancelButtonProps: {
+      color: "white",
+    }
+  })
+}
+
 export const openTopUpGasModal = () => {
   openModal({
     component: TopUpGas,
@@ -159,6 +179,7 @@ export const openDialogModal = async ({
   isButtonVisible = true,
   cancelButtonText = "Cancel",
   isCancelButtonVisible = false,
+  headerIconComponent = null,
   buttonProps = {},
   cancelButtonProps = {},
 }: DialogModalProps) => {
@@ -171,6 +192,7 @@ export const openDialogModal = async ({
       content,
       type,
       buttonText,
+      headerIconComponent,
       isButtonVisible,
       cancelButtonText,
       isCancelButtonVisible,
@@ -179,3 +201,12 @@ export const openDialogModal = async ({
     },
   });
 };
+
+export const openCustomTxModal = () => {
+  openModal({
+    component: CustomTx,
+  });
+};
+
+//@ts-ignore
+globalThis.openCustomTxModal = openCustomTxModal

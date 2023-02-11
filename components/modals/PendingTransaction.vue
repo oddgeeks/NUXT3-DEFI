@@ -112,7 +112,7 @@ const explorerURL = computed(() => {
       class="dark:bg-slate-800 bg-slate-100 bg px-[18px] py-[14px] rounded-5 flex items-center justify-between"
     >
       <p v-if="type === 'bridge'" class="flex gap-3 items-center">
-        <div class="bg-blue-500 items-center justify-center flex rounded-full w-[26px] h-[26px]">
+        <div class="bg-primary items-center justify-center flex rounded-full w-[26px] h-[26px]">
           <SVGBridge class="w-4" />
         </div>
         <span class="text-sm text-slate-400 font-medium">Bridge</span>
