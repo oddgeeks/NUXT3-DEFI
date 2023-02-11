@@ -168,7 +168,7 @@ export const openImportTokenModal = () => {
   openModal({
     component: ImportToken,
     options: {
-      contentClass: "!px-2.5 !pb-0",
+      contentClass: "!px-2.5 !pb-0 overflow-hidden",
     },
   });
 };
