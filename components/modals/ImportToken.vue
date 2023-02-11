@@ -52,7 +52,7 @@ const filteredTokens = computed(() => {
 const { list, containerProps, wrapperProps, scrollTo } = useVirtualList(
   filteredTokens,
   {
-    itemHeight: 44,
+    itemHeight: 72,
   }
 );
 
@@ -116,7 +116,7 @@ const search = (event: Event) => {
       class="max-h-[550px] h-[550px] scroll-style overflow-auto py-5 relative overflow-y-auto"
     >
       <ul class="flex gap-2 flex-col" v-if="pending">
-        <li class="py-[14px] px-3" v-for="i in 10">
+        <li :key="i" class="py-[14px] px-3" v-for="i in 10">
           <div class="flex gap-3 items-center">
             <ChainLogo class="w-10 h-10" />
             <div class="flex flex-col gap-1">
@@ -135,8 +135,8 @@ const search = (event: Event) => {
       <ul v-else v-bind="wrapperProps" class="flex gap-2 flex-col">
         <li
           class="py-[14px] px-3 flex justify-between items-center hover:dark:bg-slate-800 rounded-[24px] w-full"
-          v-for="(token, i) in list"
-          :key="i"
+          v-for="token in list"
+          :key="`${token.data.chainId}-${token.data.address}`"
         >
           <div class="flex gap-3 items-center">
             <div
@@ -184,6 +184,7 @@ const search = (event: Event) => {
             Add
           </CommonButton>
         </li>
+        <li class="pointer-events-none opacity-0">placeholder</li>
       </ul>
       <div
         class="text-slate-400 absolute whitespace-nowrap top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
