@@ -16,7 +16,7 @@ export interface IToken {
 }
 
 export const useTokens = defineStore("tokens", () => {
-  const tokens = ref<IToken[]>([]);
+  const tokens = useStorageAsync<IToken[]>("tokens", []);
   const customTokens = useStorageAsync<IToken[]>("custom-tokens", []);
 
   const fetchTokens = async () => {
