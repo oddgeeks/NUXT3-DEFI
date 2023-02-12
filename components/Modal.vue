@@ -34,18 +34,21 @@ const handleDestory = () => {
   }
 };
 
-onClickOutside(wrapperRef, (event: any) => {
-  if (event.currentTarget) {
-    const targetModalId = event.target?.dataset?.modalId
+onClickOutside(
+  wrapperRef,
+  (event: any) => {
+    if (event.currentTarget) {
+      const targetModalId = event.target?.dataset?.modalId;
 
-    if (targetModalId === props.id) {
-      handleDestory()
+      if (targetModalId === props.id) {
+        handleDestory();
+      }
     }
+  },
+  {
+    ignore: [".modal-content-wrapper"],
   }
-
-}, {
-  ignore:['.modal-content-wrapper']
-})
+);
 
 whenever(escape, () => {
   if (props.inline && props.show) {
@@ -58,47 +61,50 @@ whenever(escape, () => {
 
 <template>
   <TransitionRoot appear as="template" :show="show">
-   <Teleport :disabled="!inline" to="body">
-    <div :data-modal-id="id" class="fixed modal backrop-animation inset-0 z-40 overflow-y-auto bg-slate-200/20 backdrop-filter backdrop-blur-[4px]">
+    <Teleport :disabled="!inline" to="body">
       <div
         :data-modal-id="id"
-        class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0"
+        class="fixed modal backrop-animation inset-0 z-40 overflow-y-auto bg-slate-200/20 backdrop-filter backdrop-blur-[4px]"
       >
-        <TransitionChild
-          as="template"
-          enter="ease-out duration-300"
-          enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          enter-to="opacity-100 translate-y-0 sm:scale-100"
-          leave="ease-in duration-200"
-          leave-from="opacity-100 translate-y-0 sm:scale-100"
-          leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+        <div
+          :data-modal-id="id"
+          class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0"
         >
-          <div
-            :class="options.wrapperClass"
-            class="inline-block w-full my-6 dark:bg-gray-950 bg-white rounded-7.5 text-left align-middle transition-all transform max-w-[460px]"
-            role="dialog"
-            aria-modal="true"
+          <TransitionChild
+            as="template"
+            enter="ease-out duration-300"
+            enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            enter-to="opacity-100 translate-y-0 sm:scale-100"
+            leave="ease-in duration-200"
+            leave-from="opacity-100 translate-y-0 sm:scale-100"
+            leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div
-              ref="wrapperRef"
-              :class="options.contentClass"
-              class="modal-content-wrapper relative md:px-[50px] px-6 py-8 md:py-10 w-full"
+              :class="options.wrapperClass"
+              class="inline-block w-full my-6 dark:bg-gray-950 bg-white rounded-7.5 text-left align-middle transition-all transform max-w-[460px]"
+              role="dialog"
+              aria-modal="true"
             >
-              <button
-                class="absolute h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100 top-0 right-0 m-6"
-                @click="handleDestory"
-                aria-label="Close modal"
+              <div
+                ref="wrapperRef"
+                :class="options.contentClass"
+                class="modal-content-wrapper rounded-[inherit] relative md:px-[50px] px-6 py-8 md:py-10 w-full"
               >
-                <SVGX />
-              </button>
-              <slot />
+                <button
+                  class="absolute h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100 top-0 right-0 m-6"
+                  @click="handleDestory"
+                  aria-label="Close modal"
+                >
+                  <SVGX />
+                </button>
+                <slot />
+              </div>
+              <CommonModalSnack v-bind="options.snackOptions" />
             </div>
-            <CommonModalSnack v-bind="options.snackOptions" />
-          </div>
-        </TransitionChild>
+          </TransitionChild>
+        </div>
       </div>
-    </div>
-   </Teleport>
+    </Teleport>
   </TransitionRoot>
 </template>
 

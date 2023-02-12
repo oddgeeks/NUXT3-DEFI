@@ -28,12 +28,15 @@ const handleOpenDialog = () => {
 </script>
 
 <template>
-  <div class="container flex flex-col gap-[30px] flex-1 md:pb-2">
+  <div class="container flex flex-col gap-[30px] flex-1">
     <TotalBalance />
     <DApps />
     <div class="flex gap-5 lg:flex-row flex-col flex-1">
       <div class="flex relative flex-col w-full gap-5">
-        <div :class="{ 'blur pointer-events-none': !account }" class="flex flex-col gap-5">
+        <div
+          :class="{ 'blur pointer-events-none': !account }"
+          class="flex flex-col gap-5"
+        >
           <div class="flex justify-between pr-7.5">
             <div class="flex gap-7.5">
               <h2 class="font-semibold inline-flex gap-2.5 items-center">
@@ -144,7 +147,9 @@ const handleOpenDialog = () => {
           </div>
         </div>
       </div>
-      <div class="flex lg:flex-col md:shrink-0 md:basis-[213px] gap-5">
+      <div
+        class="flex lg:flex-col md:shrink-0 md:basis-[213px] lg:mt-0 mt-16 gap-5"
+      >
         <div class="w-full flex flex-col gap-5">
           <h2 class="font-semibold inline-flex gap-2.5">
             Your Avo Wallet
