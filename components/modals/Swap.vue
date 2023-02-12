@@ -544,6 +544,9 @@ watch(sellAmount, () => {
               >{{ formatDecimal(buyTokenBalance) }}
               {{ swap.buyToken?.symbol }}</span
             >
+            <button type="button" @click="setMax" class="text-primary">
+              MAX
+            </button>
           </div>
         </div>
       </div>
