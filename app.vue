@@ -4,11 +4,10 @@ onMounted(() => {
 })
 useTokens()
 useSafe()
-const { tried } = useEagerConnect();
 
-whenever(tried, () => {
-  useAccountTrack();
-})
+useAccountTrack(null, () => {
+  useEagerConnect();
+});
 
 onMounted(() => {
   const hideAllTooltipsOnScroll = useThrottleFn(() => {

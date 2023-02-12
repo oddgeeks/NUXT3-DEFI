@@ -42,7 +42,7 @@ const props = defineProps({
   },
 });
 
-const { chainTokenBalances, sendTransactions, safeAddress, safe } =
+const { tokenBalances, sendTransactions, safeAddress, safe } =
   useAvocadoSafe();
 
 const { getTokenByAddress } = useTokens();
@@ -80,15 +80,15 @@ const availableBuyTokens = computed(() =>
 
 const sellTokenBalance = computed(
   () =>
-    chainTokenBalances.value[String(props.chainId)].find(
-      (t) => t.address === swap.value.sellToken.address
+    tokenBalances.value.find(
+      (t) => t.address === swap.value.sellToken.address && t.chainId === String(props.chainId)
     )?.balance || "0.00"
 );
 
 const buyTokenBalance = computed(
   () =>
-    chainTokenBalances.value[String(props.chainId)].find(
-      (t) => t.address === swap.value.buyToken.address
+    tokenBalances.value.find(
+      (t) => t.address === swap.value.buyToken.address && t.chainId === String(props.chainId)
     )?.balance || "0.00"
 );
 
@@ -141,8 +141,11 @@ const {
 } = useField<string>("sell-amount");
 
 const { value: slippage } = useField<string>("slippage");
-const { value: customSlippage, meta: slippageMeta } =
-  useField<string>("customSlippage");
+const {
+  value: customSlippage,
+  meta: slippageMeta,
+  setState: setCustomSlippage,
+} = useField<string>("customSlippage");
 
 const convertBuytoSellAmount = (val: string) => {
   const sellTokenPrice = swap.value.sellToken.price;
@@ -183,7 +186,11 @@ const handleSellAmountInput = () => {
 
 const sendingDisabled = computed(
   () =>
-    isSubmitting.value || pending.value || !meta.value.valid || feePending.value
+    isSubmitting.value ||
+    pending.value ||
+    !meta.value.valid ||
+    feePending.value ||
+    isPriceImpactHigh.value
 );
 
 const { data: swapDetails, pending } = useAsyncData(
@@ -246,6 +253,15 @@ const { data: swapDetails, pending } = useAsyncData(
 );
 
 const bestRoute = computed(() => swapDetails.value?.aggregators[0] || null);
+
+const isPriceImpactHigh = computed(() => {
+  if (!bestRoute.value) return false;
+
+  const actualSlippage = customSlippage.value || slippage.value;
+  const priceImpact = bestRoute.value?.data.priceImpact;
+
+  return toBN(priceImpact).gt(actualSlippage);
+});
 
 const sellAmountInUsd = computed(() => {
   return toBN(
@@ -434,6 +450,12 @@ watch(sellAmount, () => {
   if (!sellAmount.value) {
     buyAmount.value = "";
   }
+});
+
+watch(slippage, () => {
+  setCustomSlippage({
+    value: undefined,
+  });
 });
 </script>
 
@@ -657,9 +679,7 @@ watch(sellAmount, () => {
                 />
                 <span v-else class="text-green-400">
                   {{
-                    formatPercent(
-                      toBN(bestRoute?.data.priceImpact || 0).negated()
-                    )
+                    formatPercent(toBN(bestRoute?.data.priceImpact || 0))
                   }}</span
                 >
               </div>
@@ -668,6 +688,11 @@ watch(sellAmount, () => {
         </div>
       </div>
       <EstimatedFee :chain-id="chainId" :loading="feePending" :data="fee" />
+      <CommonNotification
+        v-if="isPriceImpactHigh"
+        type="warning"
+        text="Slippage value should be greater than price impact.  "
+      />
     </div>
 
     <div class="flex gap-4 flex-col">

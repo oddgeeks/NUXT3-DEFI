@@ -63,13 +63,17 @@ const filteredBalances = computed(() => {
 
   return filterArray(tokens, filters);
 });
+
+const search = useDebounceFn((event: Event) => {
+  searchQuery.value = (<HTMLInputElement>event.target).value;
+}, 200);
 </script>
 <template>
   <div class="relative flex-1">
     <div class="h-full w-full flex flex-col gap-5">
       <CommonInput
         name="Token Search"
-        v-model="searchQuery"
+        @input="search"
         type="search"
         placeholder="Search"
       >
@@ -86,7 +90,7 @@ const filteredBalances = computed(() => {
       <div
         v-else
         style="scrollbar-gutter: stable; overflow-y: overlay"
-        class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden min-h-full max-h-[530px] flex-1 scroll-style"
+        class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] flex-1 scroll-style"
       >
         <table class="table w-full">
           <thead>
@@ -118,6 +122,14 @@ const filteredBalances = computed(() => {
           </tbody>
         </table>
       </div>
+      <p
+        class="text-xs leading-5 text-right dark:text-slate-500 text-slate-400"
+      >
+        Don’t see your tokens?
+        <button @click="openImportTokenModal()" class="text-primary">
+          Import token
+        </button>
+      </p>
     </div>
   </div>
 </template>

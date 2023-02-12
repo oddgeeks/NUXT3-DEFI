@@ -1,7 +1,5 @@
-import { network } from "~~/connectors";
-
-export function useAccountTrack() {
-  const { account, library, activate } = useWeb3();
+export function useAccountTrack(onSuccess?: () => void, onFailure?: () => void) {
+  const { account, library } = useWeb3();
   const trackingAccount = useLocalStorage<string>("trackAccount", null);
   const route = useRoute();
   const router = useRouter();
@@ -13,13 +11,13 @@ export function useAccountTrack() {
     }
     if (trackingAccount.value) {
       account.value = trackingAccount.value;
-      await until(library).changed();
-      // Set account after web3 library is loaded
-      account.value = trackingAccount.value;
+      onSuccess?.()
+    }else{
+      onFailure?.()
     }
   };
 
-  tryOnMounted(init);
+  onNuxtReady(init);
 
   return {
     trackingAccount,

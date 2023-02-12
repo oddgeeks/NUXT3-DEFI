@@ -3,7 +3,7 @@ import { HeadlessUiResolver } from "unplugin-vue-components/resolvers";
 import svgLoader from "vite-svg-loader";
 
 const meta = {
-  title: "Instadapp Avocado",
+  title: "Avocado",
   description:
     "The multi-network gas and account abstraction allowing you to experience web3 more seamlessly.",
   image: "https://avocado.instadapp.io/logo.png",
@@ -13,11 +13,22 @@ const meta = {
 export default defineNuxtConfig({
   runtimeConfig: {
     socketApiKey: process.env.SOCKET_API_KEY,
+    debankAccessKey: process.env.DEBANK_ACCESS_KEY,
     slackKey: process.env.SLACK_KEY,
     slackErrorKey: process.env.SLACK_ERROR_KEY,
     public: {
       googleAnalyticsId: process.env.GA_ID,
       avocadoChainId: 634,
+    },
+  },
+  nitro: {
+    routeRules: {
+      "/api/balances": { cache: { maxAge: 15 } },
+      "/api/tokens": {
+        cache: {
+          maxAge: 86400, // 1 day
+        },
+      },
     },
   },
   app: {
@@ -132,7 +143,7 @@ export default defineNuxtConfig({
         toggleButtonVisibility: "never",
       },
     ],
-    '~/modules/build-env',
+    "~/modules/build-env",
   ],
   colorMode: {
     preference: "dark",
