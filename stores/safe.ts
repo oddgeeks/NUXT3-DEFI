@@ -23,6 +23,7 @@ export const useSafe = defineStore("safe", () => {
 
   const { account } = useWeb3();
   const { tokens } = storeToRefs(useTokens());
+  const focused = useWindowFocus()
 
   const gasBalance = ref();
   const pending = ref<Record<string, boolean>>({
@@ -53,6 +54,10 @@ export const useSafe = defineStore("safe", () => {
   };
   const fetchAllBalances = async () => {
     try {
+      if(!focused.value){
+        return
+      }
+      
       if (!safeAddress.value) {
         return
       }
