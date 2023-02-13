@@ -77,7 +77,7 @@ const handleOpenDialog = () => {
                 <div
                   v-if="networkPreference.size > 3"
                   style="width: 22px; height: 22px"
-                  class="bg-green-500 rounded-full text-xs flex items-center justify-center -ml-2 border border-2 border-slate-900"
+                  class="bg-green-500 rounded-full text-xs flex items-center justify-center -ml-2 border border-2 dark:border-slate-900 border-gray-50"
                 >
                   {{ networkPreference.size }}
                 </div>
