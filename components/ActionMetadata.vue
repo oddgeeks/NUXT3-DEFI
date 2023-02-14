@@ -9,8 +9,9 @@ const { tokens } = storeToRefs(useTokens());
 const props = defineProps({
   metadata: {
     type: Object,
-    required: true,
+    required: true
   },
+  transaction: Object
 });
 
 const { fromWei } = useBignumber();
@@ -60,7 +61,7 @@ const bridgeAmountFormatted = computed(() =>
       {{ formattedAmount }}
       <span class="uppercase">{{ token?.symbol }}</span>
       <ArrowRight class="w-4 h-4 text-slate-400 mx-2" />
-      <span>{{ shortenHash(metadata.receiver) }}</span>
+      <a class="text-primary" :href="getExplorerUrl(transaction?.chain_id, `/address/${metadata.receiver}`)">{{ shortenHash(metadata.receiver) }}</a>
     </span>
   </div>
   <div class="flex gap-5" v-if="metadata.type === 'gas-topup'">
