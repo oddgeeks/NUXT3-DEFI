@@ -54,7 +54,7 @@ const filteredBalances = computed(() => {
           token.symbol.toLowerCase().includes(searchQuery.value.toLowerCase())
         : true,
     balance: (balance: any) =>
-      props.hideZeroBalances ? !isZero(balance) : true,
+      props.hideZeroBalances ? toBN(balance).decimalPlaces(5).gt(0) : true,
     chainId: (chainId: string) =>
       props.networkPreference.size === availableNetworks.length
         ? true
