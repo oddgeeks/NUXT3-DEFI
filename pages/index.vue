@@ -106,10 +106,10 @@ const handleOpenDialog = () => {
                     >
                       <span class="text-slate-400">Networks</span>
                       <div
-                        @click="networkPreference = new Set(availableNetworks.map(el => el.chainId))"
-                        class="text-green-600 cursor-pointer"
+                        @click="networkPreference = availableNetworks.length === networkPreference.size ? new Set() : new Set(availableNetworks.map(el => el.chainId))"
+                        class="text-green-600 cursor-pointer select-none"
                       >
-                        All
+                        {{ availableNetworks.length === networkPreference.size ? 'None': 'All' }}
                       </div>
                     </li>
 
