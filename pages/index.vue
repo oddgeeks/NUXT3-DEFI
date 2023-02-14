@@ -71,7 +71,7 @@ const handleOpenDialog = () => {
                   v-for="network in Array.from(networkPreference).slice(0, 3)"
                   style="width: 22px; height: 22px"
                   class="-ml-2 first:ml-0"
-                  stroke="2"
+                  stroke
                   :chain="network"
                 />
                 <div
