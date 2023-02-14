@@ -51,6 +51,13 @@ const bridgeAmountFormatted = computed(() =>
   )
 );
 
+const formatProtocol = (protocol: string) => {
+return new Map([
+    ['1inch-v5', '1inch'],
+    ['0x-v1', '0x'],
+    ['paraswap-v5', 'Paraswap'],
+  ]).get(protocol);
+};
 
 </script>
 
@@ -86,8 +93,8 @@ const bridgeAmountFormatted = computed(() =>
       {{ buyAmountFormatted }}
       <span class="uppercase">{{ buyToken?.symbol }}</span>
       <span class="capitalize flex items-center gap-2.5" v-if="metadata.protocol">
-        <ProtocolLogo class="w-5 h-5" :name="metadata.protocol"/>
-        On {{  metadata.protocol }}
+        On <ProtocolLogo class="w-5 h-5" :name="metadata.protocol"/> 
+        {{  formatProtocol(metadata.protocol) }}
       </span>
     </span>
   </div>
