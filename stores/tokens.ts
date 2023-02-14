@@ -95,7 +95,12 @@ export const useTokens = defineStore("tokens", () => {
     );
   };
 
-  onMounted(fetchTokens);
+  onMounted(async () => {
+    await fetchTokens()
+
+    // preload at custom tokens
+    await $fetch('/api/tokens')
+  });
 
   const fetchTokenPrices = async () => {
     tokens.value = await getTokenPrices(tokens.value);
