@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers, utils } from "ethers";
 import { BigNumber } from "bignumber.js";
 import { BigNumber as BN } from "ethers";
 import { Forwarder__factory } from "@/contracts";
@@ -25,12 +25,9 @@ const actionMetadataTypes = {
     "uint256 sellAmount",
     "uint256 buyAmount",
     "address receiver",
+    "bytes32 protocol",
   ],
-  'gas-topup': [
-    'uint256 amount',
-    'address token',
-    'address onBehalf'
-  ]
+  "gas-topup": ["uint256 amount", "address token", "address onBehalf"],
 };
 
 export function shortenHash(hash: string, length: number = 4) {
@@ -109,11 +106,11 @@ export const chainIdToName = (chainId: string | number) => {
 
 export function onImageError(this: HTMLImageElement) {
   const parentElement = this.parentElement;
-  this.onerror=null;
+  this.onerror = null;
   this.remove();
 
   if (parentElement) {
-    parentElement.classList.add('bg-gray-300');
+    parentElement.classList.add("bg-gray-300");
   }
 }
 
@@ -310,6 +307,7 @@ export const encodeSwapMetadata = (
       params.sellAmount,
       params.buyAmount,
       params.receiver,
+      params.protocol,
     ]
   );
 
@@ -326,11 +324,11 @@ export const encodeTopupMetadata = (
   single = true
 ) => {
   const encodedData = ethers.utils.defaultAbiCoder.encode(
-    actionMetadataTypes['gas-topup'],
+    actionMetadataTypes["gas-topup"],
     [params.amount, params.token, params.onBehalf]
   );
 
-  console.log(params)
+  console.log(params);
 
   const data = encodeMetadata({
     type: "gas-topup",
@@ -338,7 +336,6 @@ export const encodeTopupMetadata = (
   });
 
   return single ? encodeMultipleActions(data) : data;
-
 };
 
 export const encodeBridgeMetadata = (
@@ -432,6 +429,7 @@ export const decodeMetadata = (data: string) => {
             buyToken: decodedData.buyToken,
             sellToken: decodedData.sellToken,
             receiver: decodedData.receiver,
+            protocol: utils.parseBytes32String(decodedData?.protocol || ""),
           };
           break;
         case "gas-topup":
@@ -440,7 +438,7 @@ export const decodeMetadata = (data: string) => {
             amount: toBN(decodedData.amount).toFixed(),
             token: decodedData.token,
             onBehalf: decodedData.onBehalf,
-          } 
+          };
           break;
       }
 
