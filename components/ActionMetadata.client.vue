@@ -50,6 +50,8 @@ const bridgeAmountFormatted = computed(() =>
     fromWei(props.metadata?.amount, toToken?.value?.decimals).toFixed()
   )
 );
+
+
 </script>
 
 <template>
@@ -83,6 +85,10 @@ const bridgeAmountFormatted = computed(() =>
       <img width="20" height="20" class="w-5 h-5" :src="buyToken?.logoURI" />
       {{ buyAmountFormatted }}
       <span class="uppercase">{{ buyToken?.symbol }}</span>
+      <span class="capitalize flex items-center gap-2.5" v-if="metadata.protocol">
+        <ProtocolLogo class="w-5 h-5" :name="metadata.protocol"/>
+        On {{  metadata.protocol }}
+      </span>
     </span>
   </div>
   <div class="flex gap-5 items-center" v-if="metadata.type === 'bridge'">

@@ -243,7 +243,7 @@ type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim";
 type ISlackMessageType = "danger" | "error" | "success" | "banner";
 
 type MetadataProps = {
-  type: "transfer" | "bridge" | "swap" | "multi" | 'gas-topup';
+  type: "transfer" | "bridge" | "swap" | "multi" | "gas-topup";
   encodedData: string;
   version?: string;
 };
@@ -258,7 +258,7 @@ type TopupMetadataProps = {
   amount: string;
   token: string;
   onBehalf: string;
-}
+};
 
 type BridgeMetadataProps = {
   amount: string;
@@ -276,6 +276,7 @@ type SwapMetadataProps = {
   sellAmount: string;
   buyAmount: string;
   receiver: string;
+  protocol?: string;
 };
 
 type CalculateFeeProps = {

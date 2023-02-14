@@ -8,6 +8,7 @@ import ArrowLeft from "~/assets/images/icons/arrow-left.svg?component";
 import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?component";
 import * as yup from "yup";
 import { storeToRefs } from "pinia";
+import { utils } from "ethers";
 
 interface ISwap {
   sellToken: IToken;
@@ -372,6 +373,7 @@ const onSubmit = handleSubmit(async () => {
       buyToken: swapDetails.value?.data.buyToken.address!,
       sellToken: swap.value.sellToken.address,
       receiver: account.value,
+      protocol: utils.formatBytes32String(bestRoute?.value?.name || ""),
     });
 
     const transactionHash = await sendTransactions(txs, +props.chainId, {
