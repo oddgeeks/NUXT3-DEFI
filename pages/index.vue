@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import LinkSVG from "~/assets/images/icons/external-link.svg?raw";
-import SVGX from "~/assets/images/icons/x.svg?component";
 import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import ChevronDownSVG from "~/assets/images/icons/chevron-down.svg?component";
 import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?component";
@@ -10,10 +9,10 @@ const { account } = useWeb3();
 
 useForceSingleSession();
 
-const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
-const networkPreference = useLocalStorage("network-preference", "all");
-
 const availableNetworks = networks.filter((network) => network.chainId != 634);
+
+const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
+const networkPreference = useLocalStorage<Set<number>>("preference-networks", new Set(availableNetworks.map(el => el.chainId)));
 
 const handleOpenDialog = () => {
   openDialogModal({
@@ -66,67 +65,75 @@ const handleOpenDialog = () => {
                 </button>
               </ClientOnly>
             </div>
-            <Menu as="div" class="relative z-20 flex gap-4 items-center">
-              <div
-                v-if="networkPreference !== 'all' && tokenBalances.length"
-                class="pl-2.5 flex items-center leading-[10px] text-xs dark:bg-slate-800 bg-slate-100 rounded-5"
-              >
-                {{ getNetworkByChainId(networkPreference).name }}
-                <button
-                  class="py-2.5 pr-2.5 pl-[6px]"
-                  @click="networkPreference = 'all'"
+            <div class="flex items-center space-x-4">
+              <div class="flex align-self-end items-center" v-if="networkPreference.size > 0">
+                <ChainLogo
+                  v-for="network in Array.from(networkPreference).slice(0, 3)"
+                  style="width: 22px; height: 22px"
+                  class="-ml-2 first:ml-0"
+                  stroke="2"
+                  :chain="network"
+                />
+                <div
+                  v-if="networkPreference.size > 3"
+                  style="width: 22px; height: 22px"
+                  class="bg-green-500 rounded-full text-xs flex items-center justify-center -ml-2 border border-2 dark:border-slate-900 border-gray-50"
                 >
-                  <SVGX class="w-2.5 h-2.5 text-slate-400" />
-                </button>
+                  {{ networkPreference.size - 3 }}
+                </div>
               </div>
-              <MenuButton class="text-sm flex items-center gap-2 h-7.5">
-                All Networks
-                <ChevronDownSVG class="text-slate-400 w-[14px] h-[14px]" />
-              </MenuButton>
-              <transition
-                enter-active-class="transition duration-100 ease-out"
-                enter-from-class="transform scale-95 opacity-0"
-                enter-to-class="transform scale-100 opacity-100"
-                leave-active-class="transition duration-75 ease-out"
-                leave-from-class="transform scale-100 opacity-100"
-                leave-to-class="transform scale-95 opacity-0"
-              >
-                <MenuItems
-                  as="ul"
-                  class="absolute w-[220px] left-1/2 border-2 rounded-5 p-[6px] -translate-x-1/2 bg-slate-50 dark:bg-gray-850 top-8 border-slate-150 dark:border-slate-700"
+              <Popover as="div" class="relative z-20 flex gap-4 items-center">
+                <PopoverButton class="text-sm flex items-center gap-2 h-7.5">
+                  All Networks
+                  <ChevronDownSVG class="text-slate-400 w-[14px] h-[14px]" />
+                </PopoverButton>
+                <transition
+                  enter-active-class="transition duration-100 ease-out"
+                  enter-from-class="transform scale-95 opacity-0"
+                  enter-to-class="transform scale-100 opacity-100"
+                  leave-active-class="transition duration-75 ease-out"
+                  leave-from-class="transform scale-100 opacity-100"
+                  leave-to-class="transform scale-95 opacity-0"
                 >
-                  <MenuItem
-                    @click="networkPreference = 'all'"
-                    class="flex items-center gap-2.5 hover:bg-slate-150 hover:dark:bg-slate-800 cursor-pointer text-sm py-2.5 px-3 rounded-[14px]"
-                    as="li"
+                  <PopoverPanel
+                    as="ul"
+                    class="absolute w-[220px] left-1/2 border-2 rounded-5 p-[6px] -translate-x-1/2 bg-slate-50 dark:bg-gray-850 top-8 border-slate-150 dark:border-slate-700"
                   >
-                    <ChainLogo style="width: 22px; height: 22px" />
-                    All Networks
-                    <CheckCircle
-                      v-if="networkPreference == 'all'"
-                      class="success-circle w-5 ml-auto"
-                    />
-                  </MenuItem>
+                    <li
+                      class="flex items-center justify-between gap-2.5 text-sm py-1 px-3 rounded-[14px]"
+                    >
+                      <span class="text-slate-400">Networks</span>
+                      <div
+                        @click="networkPreference = new Set(availableNetworks.map(el => el.chainId))"
+                        class="text-green-600 cursor-pointer"
+                      >
+                        All
+                      </div>
+                    </li>
 
-                  <MenuItem
-                    @click="networkPreference = String(network.chainId)"
-                    class="flex items-center gap-2.5 hover:bg-slate-150 hover:dark:bg-slate-800 cursor-pointer text-sm py-2.5 px-3 rounded-[14px]"
-                    as="li"
-                    v-for="network in availableNetworks"
-                  >
-                    <ChainLogo
-                      style="width: 22px; height: 22px"
-                      :chain="network.chainId"
-                    />
-                    {{ network.name }}
-                    <CheckCircle
-                      v-if="networkPreference == String(network.chainId)"
-                      class="success-circle w-5 ml-auto"
-                    />
-                  </MenuItem>
-                </MenuItems>
-              </transition>
-            </Menu>
+                    <li
+                      @click="networkPreference.has(network.chainId) ? networkPreference.delete(network.chainId) : networkPreference.add(network.chainId)"
+                      class="flex items-center gap-2.5 hover:bg-slate-150 hover:dark:bg-slate-800 cursor-pointer text-sm py-2.5 px-3 rounded-[14px]"
+                      v-for="network in availableNetworks"
+                    >
+                      <ChainLogo
+                        style="width: 22px; height: 22px"
+                        :chain="network.chainId"
+                      />
+                      {{ network.name }}
+                      <CheckCircle
+                        v-if="networkPreference.has(network.chainId)"
+                        class="success-circle cursor-pointer w-5 ml-auto"
+                      />
+                      <CheckCircle
+                        v-else
+                        class="svg-circle darker cursor-pointer w-5 ml-auto"
+                      />
+                    </li>
+                  </PopoverPanel>
+                </transition>
+              </Popover>
+            </div>
           </div>
           <Balances
             :networkPreference="networkPreference"

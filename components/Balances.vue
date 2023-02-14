@@ -3,6 +3,9 @@ import SearchSVG from "~/assets/images/icons/search.svg?component";
 
 const { tokenBalances } = useAvocadoSafe();
 const { account } = useWeb3();
+const { networks } = useNetworks();
+
+const availableNetworks = networks.filter((network) => network.chainId != 634);
 
 const whitelistedSymbols = [
   "ETH",
@@ -32,8 +35,8 @@ const props = defineProps({
     default: false,
   },
   networkPreference: {
-    type: String,
-    default: "all",
+    type: Set<Number>,
+    default: new Set(),
   },
 });
 
@@ -53,9 +56,9 @@ const filteredBalances = computed(() => {
     balance: (balance: any) =>
       props.hideZeroBalances ? !isZero(balance) : true,
     chainId: (chainId: string) =>
-      props.networkPreference === "all"
+      props.networkPreference.size === availableNetworks.length
         ? true
-        : chainId == props.networkPreference,
+        : props.networkPreference.has(parseInt(chainId)),
   };
 
   return filterArray(tokens, filters);
@@ -78,7 +81,14 @@ const search = useDebounceFn((event: Event) => {
           <SearchSVG class="shrink-0 mr-2" />
         </template>
       </CommonInput>
+      <div v-if="!!account && tokenBalances.length && filteredBalances.length === 0" class="dark:bg-gray-850 bg-slate-50 rounded-[25px] flex flex-col space-y-4 items-center py-32">
+        <p class="text-slate-400">Nothing could be found</p>
+        <CommonButton color="white" size="lg" as="NuxtLink" href="mailto:info@instadapp.io?subject=Instadapp Avocado: New Token">
+          Reach out to us
+        </CommonButton>
+      </div>
       <div
+        v-else
         style="scrollbar-gutter: stable; overflow-y: overlay"
         class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] flex-1 scroll-style"
       >

@@ -11,11 +11,11 @@ const { toggleWelcomeBanner } = useBanner()
       Welcome to Avocado! 🥑 Get started by following this simple guide
     </p>
     <a
-    class="text-primary"
+      class="text-primary underline-offset-4"
       target="blank"
       rel="noopener noreferrer"
       href="https://help.avocado.instadapp.io/en/getting-started/a-checklist-to-get-started-with-avocado"
-      >Take me in!</a
+      >(<u>Take me in!</u>)</a
     >
    <button @click="toggleWelcomeBanner(false)" class="absolute right-10">
      <SVGX class="text-slate-500"/>
