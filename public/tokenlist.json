@@ -5,7 +5,7 @@
 		"avocado",
 		"defi"
 	],
-	"timestamp": "2023-01-29T12:48:33.889Z",
+	"timestamp": "2023-02-15T18:22:11.391Z",
 	"tokens": [
 		{
 			"chainId": 1,
@@ -365,7 +365,7 @@
 			"name": "Chiliz",
 			"symbol": "chz",
 			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/8834/large/Chiliz.png?1561970540"
+			"logoURI": "https://assets.coingecko.com/coins/images/8834/large/CHZ_Token_updated.png?1675848257"
 		},
 		{
 			"chainId": 1,
