@@ -12,7 +12,7 @@ useForceSingleSession();
 const availableNetworks = networks.filter((network) => network.chainId != 634);
 
 const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
-const networkPreference = useLocalStorage<Set<number>>("preference-networks", new Set(availableNetworks.map(el => el.chainId)));
+const networkPreference = ref(new Set(availableNetworks.map(el => el.chainId)));
 
 const handleOpenDialog = () => {
   openDialogModal({
@@ -66,22 +66,24 @@ const handleOpenDialog = () => {
               </ClientOnly>
             </div>
             <div class="flex items-center space-x-4">
-              <div class="flex align-self-end items-center" v-if="networkPreference.size > 0">
-                <ChainLogo
-                  v-for="network in Array.from(networkPreference).slice(0, 3)"
-                  style="width: 22px; height: 22px"
-                  class="-ml-2 first:ml-0"
-                  stroke
-                  :chain="network"
-                />
-                <div
-                  v-if="networkPreference.size > 3"
-                  style="width: 22px; height: 22px"
-                  class="bg-green-500 rounded-full text-xs flex items-center justify-center -ml-2 border border-2 dark:border-slate-900 border-gray-50"
-                >
-                  {{ networkPreference.size - 3 }}
+              <ClientOnly>
+                <div class="flex align-self-end items-center" v-if="networkPreference.size > 0">
+                  <ChainLogo
+                    v-for="network in Array.from(networkPreference).slice(0, 3)"
+                    style="width: 22px; height: 22px"
+                    class="-ml-2 first:ml-0"
+                    stroke
+                    :chain="network"
+                  />
+                  <div
+                    v-if="networkPreference.size > 3"
+                    style="width: 22px; height: 22px"
+                    class="bg-green-500 rounded-full text-xs flex items-center justify-center -ml-2 border border-2 dark:border-slate-900 border-gray-50"
+                  >
+                    {{ networkPreference.size - 3 }}
+                  </div>
                 </div>
-              </div>
+              </ClientOnly>
               <Popover as="div" class="relative z-20 flex gap-4 items-center">
                 <PopoverButton class="text-sm flex items-center gap-2 h-7.5">
                   All Networks
@@ -102,12 +104,12 @@ const handleOpenDialog = () => {
                     <li
                       class="flex items-center justify-between gap-2.5 text-sm py-1 px-3 rounded-[14px]"
                     >
-                      <span class="text-slate-400">Networks</span>
+                      <span class="text-slate-400 text-[11px]">Networks</span>
                       <div
-                        @click="networkPreference = new Set(availableNetworks.map(el => el.chainId))"
-                        class="text-green-600 cursor-pointer"
+                        @click="networkPreference = availableNetworks.length === networkPreference.size ? new Set() : new Set(availableNetworks.map(el => el.chainId))"
+                        class="text-green-600 cursor-pointer select-none text-[11px]"
                       >
-                        All
+                        {{ availableNetworks.length === networkPreference.size ? 'Deselect all': 'Select all' }}
                       </div>
                     </li>
 

@@ -131,6 +131,7 @@ const isBridge =
               <ActionMetadata
                 :metadata="item"
                 :key="i"
+                :transaction="transaction"
                 v-for="(item, i) of metadata"
               />
             </div>
