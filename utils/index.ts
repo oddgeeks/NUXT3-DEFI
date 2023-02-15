@@ -167,6 +167,12 @@ function getFractionDigits(value: string | number) {
   }
 }
 
+export function signedNumber(numb: string | number) {
+  return new Intl.NumberFormat("en-US", {
+    signDisplay: "exceptZero",
+  }).format(toBN(numb).toNumber());
+}
+
 export function formatDecimal(
   value: string,
   fractionDigits = getFractionDigits(value)

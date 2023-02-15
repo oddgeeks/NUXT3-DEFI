@@ -15,12 +15,7 @@ const interactable = computed(() =>
   toBN(props.tokenBalance.balance).decimalPlaces(DECIMAL_PLACES).gt(0)
 );
 
-const priceDiff = computed(() => {
-  if (!props.tokenBalance.sparklinePrice7d.length) return 0;
-  let a = props.tokenBalance.sparklinePrice7d.at(-24)!;
-  let b = props.tokenBalance.sparklinePrice7d.at(-1)!;
-  return b - a;
-});
+
 
 const priceDiffInPercent = computed(() => {
   if (!props.tokenBalance.sparklinePrice7d.length) return 0;
@@ -141,10 +136,10 @@ const chartOptions = {
     </td>
     <td class="font-semibold py-6 text-sm pl-10">
       <div class="flex gap-1 flex-col" v-if="priceDiffInPercent">
-        <span> {{ priceDiffInPercent.toFixed(2) }}% </span>
-        <span :class="priceDiffClass">
-          {{ formatUsd(toBN(priceDiff).decimalPlaces(3)) }}
+         <span>
+          {{ formatUsd(toBN(tokenBalance.price || "0").decimalPlaces(2)) }}
         </span>
+        <span :class="priceDiffClass"> {{ signedNumber(toBN(priceDiffInPercent).toFixed(2)) }}% </span>
       </div>
       <span v-else> - </span>
     </td>
