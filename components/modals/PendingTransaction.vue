@@ -4,6 +4,8 @@ import SVGCheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { wait } from "@instadapp/utils";
 
+const encodedEvent = '0xacb5341cc21d71a005bd22634cec7391a7fd11ff2b563a7b301cac795f7a6a56'
+
 const props = defineProps<{
   hash: string;
   chainId: number | string;
@@ -25,13 +27,22 @@ const explorerURL = computed(() => {
     return getExplorerUrl(props.chainId, `/tx/${props.hash}`)
   }
 });
+
+const isSuccess = computed(() => {
+  if (!transaction.value?.status) return false;
+
+  if (transaction.value.logs.some(i => i.topics.length && i.topics[0] === encodedEvent)) return true;
+
+  return false;
+})
+
 </script>
 
 <template>
   <div class="text-center flex flex-col gap-7.5">
     <div v-if="transaction" class="flex justify-center">
       <SVGCheckCircle
-        v-if="transaction.status"
+        v-if="isSuccess"
         class="text-white w-10 h-10 success-circle"
       />
 
@@ -89,7 +100,7 @@ const explorerURL = computed(() => {
         Transaction
         {{
           transaction
-            ? transaction.status
+            ? isSuccess
               ? "Confirmed"
               : "Failed"
             : "Pending"
@@ -101,7 +112,7 @@ const explorerURL = computed(() => {
       </p>
 
       <p
-        v-if="transaction && !transaction.status"
+        v-if="transaction && !isSuccess"
         class="text-slate-400 text-xs"
       >
         Try again or return to the home page.
