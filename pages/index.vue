@@ -12,7 +12,7 @@ useForceSingleSession();
 const availableNetworks = networks.filter((network) => network.chainId != 634);
 
 const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
-const networkPreference = useLocalStorage<Set<number>>("preference-networks", new Set(availableNetworks.map(el => el.chainId)));
+const networkPreference = ref(new Set(availableNetworks.map(el => el.chainId)));
 
 const handleOpenDialog = () => {
   openDialogModal({
