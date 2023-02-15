@@ -104,12 +104,12 @@ const handleOpenDialog = () => {
                     <li
                       class="flex items-center justify-between gap-2.5 text-sm py-1 px-3 rounded-[14px]"
                     >
-                      <span class="text-slate-400">Networks</span>
+                      <span class="text-slate-400 text-[11px]">Networks</span>
                       <div
                         @click="networkPreference = availableNetworks.length === networkPreference.size ? new Set() : new Set(availableNetworks.map(el => el.chainId))"
-                        class="text-green-600 cursor-pointer select-none"
+                        class="text-green-600 cursor-pointer select-none text-[11px]"
                       >
-                        {{ availableNetworks.length === networkPreference.size ? 'None': 'All' }}
+                        {{ availableNetworks.length === networkPreference.size ? 'Deselect all': 'Select all' }}
                       </div>
                     </li>
 
