@@ -208,13 +208,13 @@ const isBridge =
           <div
             class="dark:text-slate-400 gap-2.5 flex items-center text-slate-500 md:w-full md:max-w-[235px]"
           >
-            <SVGInfo
+            Transaction Fee
+             <SVGInfo
               v-tippy="
                 'This includes the fee that will be paid to the relayer and the integrator.'
               "
               class="w-[18px] h-[18px] text-slate-600 shrink-0"
             />
-            Transaction Fee
           </div>
           <div class="capitalize">
             <span v-if="transaction.fee">
