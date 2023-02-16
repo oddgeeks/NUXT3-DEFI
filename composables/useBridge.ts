@@ -377,7 +377,7 @@ export const useBridge = (props: IBridge) => {
     const fromAmount = toBN(nativeFee.value)
       .times(nativeCurrency.value?.price || "0")
       .div(fromAddress?.price || "0")
-      .toFixed();
+      .toFixed(5);
 
     openSwapModal(
       fromAddress?.address!,
