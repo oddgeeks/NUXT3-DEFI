@@ -31,7 +31,7 @@ export default defineEventHandler<IBalance[]>(async (event) => {
         retry: 3,
         params: {
             id: address,
-            is_all: false,
+            is_all: true,
         },
         headers: {
             AccessKey: debankAccessKey
