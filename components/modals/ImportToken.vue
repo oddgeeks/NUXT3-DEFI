@@ -98,12 +98,12 @@ const search = (event: Event) => {
 
 <template>
   <div>
-    <h1 class="text-lg text-center leading-5 mb-5">Import Token</h1>
+    <h1 class="text-lg text-center leading-5 mb-5">Add custom token</h1>
     <CommonInput
       autofocus
       @input="search"
       name="token-search"
-      class="px-5"
+      class="px-5 pb-4"
       placeholder="Search name, symbol, or address"
       type="search"
     >
@@ -113,7 +113,7 @@ const search = (event: Event) => {
     </CommonInput>
     <div
       v-bind="containerProps"
-      class="max-h-[550px] h-[550px] scroll-style overflow-auto py-5 relative overflow-y-auto"
+      class="max-h-[550px] h-[550px] scroll-style overflow-auto relative overflow-y-auto"
     >
       <ul class="flex gap-2 flex-col" v-if="pending">
         <li :key="i" class="py-[14px] px-3" v-for="i in 10">
@@ -132,7 +132,7 @@ const search = (event: Event) => {
           </div>
         </li>
       </ul>
-      <ul v-else v-bind="wrapperProps" class="flex gap-2 flex-col">
+      <ul v-else v-bind="wrapperProps" class="flex gap-2 flex-col pl-3">
         <li
           class="py-[14px] px-3 flex justify-between items-center hover:dark:bg-slate-800 rounded-[24px] w-full"
           v-for="token in list"
