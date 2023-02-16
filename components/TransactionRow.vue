@@ -6,7 +6,6 @@ defineProps<{
 
 <template>
   <tr
-    @click="navigateTo(`/tx/${transaction.hash}`)"
     class="transaction-row text-sm relative cursor-pointer"
     :class="{
       'text-slate-500': transaction.status === 'failed',
@@ -18,52 +17,57 @@ defineProps<{
       </NuxtLink>
     </td>
     <td>
-      <div class="capitalize flex items-center">
+      <NuxtLink :to="`/tx/${transaction.hash}`" class="capitalize flex items-center">
         <ChainLogo class="w-5 h-5 mr-2.5" :chain="transaction.chain_id" />
 
         <span>{{ chainIdToName(transaction.chain_id) }}</span>
-      </div>
+      </NuxtLink>
     </td>
     <td>
-      <span v-if="transaction.metadata.signer">
-        {{ shortenHash(transaction.metadata.signer) }}</span
+      <NuxtLink :to="`/tx/${transaction.hash}`" v-if="transaction.metadata.signer">
+        {{ shortenHash(transaction.metadata.signer) }}
+        </NuxtLink
       >
     </td>
     <td>
-      <span v-if="transaction.metadata.safe">
-        {{ shortenHash(transaction.metadata.safe) }}</span
+      <NuxtLink :to="`/tx/${transaction.hash}`" v-if="transaction.metadata.safe">
+        {{ shortenHash(transaction.metadata.safe) }}</NuxtLink
       >
     </td>
     <td>
-      <TransactionStatus :status="transaction.status" />
+      <NuxtLink :to="`/tx/${transaction.hash}`">
+        <TransactionStatus :status="transaction.status" />
+      </NuxtLink>
     </td>
     <td>
-      <span
+      <NuxtLink class="block" :to="`/tx/${transaction.hash}`">
+        <span
         v-if="transaction.fee"
         class="dark:bg-slate-750 bg-slate-200 px-2.5 py-2 text-xs rounded-5"
       >
         {{ formatUsd(transaction.fee) }}</span
       >
       <span class="text-center ml-6" v-else> - </span>
+      </NuxtLink>
     </td>
     <td>
-      <span> {{ useTimeAgo(transaction.created_at).value }}</span>
+      <NuxtLink :to="`/tx/${transaction.hash}`"> {{ useTimeAgo(transaction.created_at).value }}</NuxtLink>
     </td>
   </tr>
 </template>
 
 
 <style scoped>
-.transaction-row > td {
-  @apply py-2;
+.transaction-row > td > a {
+  @apply py-2 w-full inline-flex;
 }
 
 .transaction-row > td:first-child {
   @apply pl-7.5;
 }
 
-.transaction-row > td {
-  @apply py-6 relative;
+.transaction-row > td > a {
+  @apply py-[18.5px] relative;
 }
 
 .transaction-row > td {

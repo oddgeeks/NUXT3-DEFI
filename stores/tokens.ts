@@ -23,7 +23,7 @@ export const useTokens = defineStore("tokens", () => {
     try {
       const data: any = await $fetch("/tokenlist.json");
 
-      tokens.value = await getTokenPrices([
+      tokens.value = await fetchTokenPrices([
         ...data.tokens.map((t: any) => ({
           name: t.name,
           address: t.address,
@@ -40,9 +40,10 @@ export const useTokens = defineStore("tokens", () => {
     } catch (error) {}
   };
 
-  const getTokenPrices = async (_tokenList: IToken[]) => {
-    const tokenList = [..._tokenList];
-    const chainTokens: Record<string, IToken[]> = collect(tokenList)
+  const fetchTokenPrices = async (list: IToken[]) => {
+    const _tokenList = cloneDeep(toRaw(list));
+
+    const chainTokens: Record<string, IToken[]> = collect(_tokenList)
       .mapToGroups((item: any) => [item.chainId, item])
       .all() as any;
 
@@ -60,7 +61,7 @@ export const useTokens = defineStore("tokens", () => {
         );
 
         for (const tokenPrice of prices) {
-          const token = tokenList.find(
+          const token = _tokenList.find(
             (t) =>
               t.chainId === String(cid) &&
               t.address.toLowerCase() === tokenPrice.address.toLowerCase()
@@ -84,7 +85,7 @@ export const useTokens = defineStore("tokens", () => {
       })
     );
 
-    return tokenList;
+    return _tokenList;
   };
 
   const getTokenByAddress = (address: string, chainId: string | number) => {
@@ -96,17 +97,17 @@ export const useTokens = defineStore("tokens", () => {
   };
 
   onMounted(async () => {
-    await fetchTokens()
+    await fetchTokens();
 
     // preload at custom tokens
-    await $fetch('/api/tokens')
+    await $fetch("/api/tokens");
   });
 
-  const fetchTokenPrices = async () => {
-    tokens.value = await getTokenPrices(tokens.value);
+  const handleTokenPrices = async () => {
+    tokens.value = await fetchTokenPrices(tokens.value);
   };
 
-  useIntervalFn(fetchTokenPrices, 10000);
+  useIntervalFn(handleTokenPrices, 10000);
 
   return {
     tokens,

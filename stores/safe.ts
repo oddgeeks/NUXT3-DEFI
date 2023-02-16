@@ -1,8 +1,6 @@
 import { ethers } from "ethers";
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
-import {
-  Forwarder__factory,
-} from "~/contracts";
+import { Forwarder__factory } from "~/contracts";
 import { RPC_URLS } from "~~/connectors";
 import { IToken } from "./tokens";
 import { wait } from "@instadapp/utils";
@@ -19,11 +17,13 @@ const forwarderProxyContract = Forwarder__factory.connect(
 );
 
 export const useSafe = defineStore("safe", () => {
+  // balance aborter
+  const balanceAborter = ref<AbortController>();
   const safeAddress = ref();
 
   const { account } = useWeb3();
   const { tokens } = storeToRefs(useTokens());
-  const focused = useWindowFocus()
+  const documentVisibility = useDocumentVisibility();
 
   const gasBalance = ref();
   const pending = ref<Record<string, boolean>>({
@@ -31,9 +31,6 @@ export const useSafe = defineStore("safe", () => {
     balances: false,
     global: false,
   });
-
-  const tokenBalances = ref<IBalance[]>([])
-  const apiBalances = ref<any[]>([])
 
   const totalBalance = computed(() =>
     tokenBalances.value?.reduce(
@@ -52,67 +49,81 @@ export const useSafe = defineStore("safe", () => {
       account.value
     );
   };
-  const fetchAllBalances = async () => {
-    try {
-      if(!focused.value){
-        return
-      }
-      
+
+  const { data: apiBalances, refresh: refreshApiBalances } = useAsyncData(
+    "api-balances",
+    async (context) => {
       if (!safeAddress.value) {
-        return
+        return;
       }
 
-      apiBalances.value = await $fetch("/api/balances", {
+      if (documentVisibility.value === "hidden") {
+        const memory = context?.payload.data["api-balances"];
+        return memory;
+      }
+
+      if (balanceAborter.value) {
+        balanceAborter.value.abort();
+      }
+
+      balanceAborter.value = new AbortController();
+
+      const balances = (await $fetch("/api/balances", {
+        signal: balanceAborter.value?.signal,
         params: {
-          address: safeAddress.value
-        }
-      })
-    } finally {
+          address: safeAddress.value,
+        },
+      })) as any[];
+
+      balanceAborter.value = undefined;
+
+      return balances;
+    },
+    {
+      default: () => [],
+      server: false,
+      immediate: true,
+      watch: [safeAddress, account, tokens],
     }
-  };
+  );
 
-  const updateSafeBalances = async () => {
-    try {
-      if (!safeAddress.value) {
-        return
-      }
+  const tokenBalances = computed(() => {
+    if (!safeAddress.value || !tokens.value?.length) {
+      return [];
+    }
 
-      if (!tokens.value) {
-        return
-      }
-
-      if (!tokens.value.length) {
-        return
-      }
-
-      pending.value.balances = true;
-
-      tokenBalances.value = tokens.value.map((tb) => {
+    return cloneDeep(tokens.value)
+      .map((tb) => {
         const tokenBalance: IBalance = {
           ...tb,
-          balance: '0',
-          balanceInUSD: '0'
-        }
-        const balance = apiBalances.value.find(b => b.address.toLowerCase() === tb.address.toLowerCase() && tb.chainId === b.chainId);
+          balance: "0",
+          balanceInUSD: "0",
+        };
+        const balance = apiBalances.value?.find(
+          (b: any) =>
+            b.address.toLowerCase() === tb.address.toLowerCase() &&
+            tb.chainId === b.chainId
+        );
 
         if (balance) {
-          tokenBalance.balance = balance.balance
-          tokenBalance.balanceInUSD = balance.balanceInUSD
+          tokenBalance.balance = balance.balance;
+          tokenBalance.balanceInUSD = balance.balanceInUSD;
         }
 
-        return tokenBalance
+        return tokenBalance;
       })
-        .filter(b => b.price !== 0)
-        .sort((a, b) => toBN(b.balanceInUSD || 0).minus(a.balanceInUSD || 0).toNumber());
-    } finally {
-      pending.value.balances = false;
-    }
-  };
+      .filter((b) => b.price !== 0)
+      .sort((a, b) =>
+        toBN(b.balanceInUSD || 0)
+          .minus(a.balanceInUSD || 0)
+          .toNumber()
+      );
+  });
 
   onMounted(async () => {
     await wait(1000);
 
-    await Promise.allSettled([fetchGasBalance(), fetchAllBalances()]);
+    await fetchGasBalance();
   });
 
   const avoProvider = getRpcProvider(634);
@@ -134,31 +145,7 @@ export const useSafe = defineStore("safe", () => {
     immediate: true,
   });
 
-  useIntervalFn(fetchAllBalances, 15000, {
-    immediate: true,
-  });
-
-  useIntervalFn(updateSafeBalances, 10000, {
-    immediate: true,
-  });
-
-  watch(
-    [safeAddress],
-    async () => {
-      await fetchAllBalances();
-      await updateSafeBalances();
-    },
-    { immediate: true }
-  );
-
-  watch(
-    [tokens],
-    async () => {
-      await fetchAllBalances();
-      await updateSafeBalances();
-    },
-    { immediate: true }
-  );
+  useIntervalFn(refreshApiBalances, 15000);
 
   watch(
     [account],
@@ -168,7 +155,6 @@ export const useSafe = defineStore("safe", () => {
         safeAddress.value = undefined;
         fetchGasBalance();
         await fetchSafeddress();
-        await fetchAllBalances();
       } finally {
         pending.value.global = false;
       }
