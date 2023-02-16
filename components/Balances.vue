@@ -16,7 +16,6 @@ const whitelistedSymbols = [
   "AVAX",
   "XDAI",
   "BNB",
-  "STETH"
 ];
 
 const tokensWithBalances = computed(() =>
