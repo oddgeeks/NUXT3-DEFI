@@ -98,7 +98,7 @@ const search = (event: Event) => {
 
 <template>
   <div>
-    <h1 class="text-lg text-center leading-5 mb-5">Import Token</h1>
+    <h1 class="text-lg text-center leading-5 mb-5">Add custom token</h1>
     <CommonInput
       autofocus
       @input="search"
