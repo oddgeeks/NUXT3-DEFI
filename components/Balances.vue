@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import SearchSVG from "~/assets/images/icons/search.svg?component";
+import PlusSVG from "~/assets/images/icons/plus.svg?component";
 
 const { tokenBalances } = useAvocadoSafe();
 const { account } = useWeb3();
@@ -83,9 +84,15 @@ const search = useDebounceFn((event: Event) => {
       </CommonInput>
       <div v-if="!!account && tokenBalances.length && filteredBalances.length === 0" class="dark:bg-gray-850 bg-slate-50 rounded-[25px] flex flex-col space-y-4 items-center py-32">
         <p class="text-slate-400">Nothing could be found</p>
-        <CommonButton color="white" size="lg" as="NuxtLink" href="mailto:info@instadapp.io?subject=Instadapp Avocado: New Token">
-          Reach out to us
-        </CommonButton>
+        <div class="flex items-center space-x-4">
+          <CommonButton color="white" size="lg" as="NuxtLink" href="mailto:info@instadapp.io?subject=Instadapp Avocado: New Token">
+            Reach out to us
+          </CommonButton>
+          <CommonButton size="lg" @click="openImportTokenModal()" class="flex items-center space-x-2">
+            <PlusSVG />
+            <span>Custom token</span>
+          </CommonButton>
+        </div>
       </div>
       <div
         v-else
