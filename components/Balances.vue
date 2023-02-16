@@ -37,7 +37,7 @@ const priorityRest = ['USDC', 'USDT', 'DAI', 'XDAI', ...whitelistedSymbols];
 const tokensWithBalances = computed(() =>
   tokenBalances.value.filter((tb) => {
     return (
-      toBN(tb.balance).decimalPlaces(5).gt(0) ||
+      toBN(tb.balance).gt(0) ||
       whitelistedSymbols.includes(tb.symbol.toUpperCase())
     );
   })
@@ -93,7 +93,7 @@ const sortedBalances = computed(() => {
     return aIdx - bIdx;
   });
   return [
-    ...tokensWithBalances.value,
+    ...balances.filter((el: IBalance) => toBN(el.balance).decimalPlaces(5).gt(0)),
     ...orderedPriority,
     ...non.sort((a: IBalance, b: IBalance) => priorityRest.indexOf(a.symbol.toUpperCase()) - priorityRest.indexOf(b.symbol.toUpperCase()))
   ];
