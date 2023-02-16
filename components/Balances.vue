@@ -83,7 +83,7 @@ const filteredBalances = computed(() => {
 const sortedBalances = computed(() => {
   const balances = filteredBalances.value;
   const priority = balances.filter((el: IBalance) => {
-    if (toBN(el.balance).gt(0)) return false;
+    if (toBN(el.balance).decimalPlaces(5).gt(0)) return false;
     return priorityTokens.some(p => p.chainId == el.chainId && p.symbol.toLowerCase() == el.symbol);
   });
   const non = balances.filter((el: IBalance) => toBN(el.balance).eq(0) && !priorityTokens.some(p => p.chainId == el.chainId && p.symbol.toLowerCase() == el.symbol));
@@ -93,7 +93,7 @@ const sortedBalances = computed(() => {
     return aIdx - bIdx;
   });
   return [
-    ...balances.filter((el: IBalance) => toBN(el.balance).gt(0)),
+    ...tokensWithBalances.value,
     ...orderedPriority,
     ...non.sort((a: IBalance, b: IBalance) => priorityRest.indexOf(a.symbol.toUpperCase()) - priorityRest.indexOf(b.symbol.toUpperCase()))
   ];
