@@ -93,30 +93,29 @@ const sortedBalances = computed(() => {
 
   const nonPriority = balances.filter((el: IBalance) => !priorityTokens.includes(el) && !withBalances.includes(el));
   const stable: IBalance[] = nonPriority
-    .filter((el: IBalance) => priorityStable.includes(el.symbol.toUpperCase()))
-    .sort((a: IBalance, b: IBalance) => priorityStable.indexOf(a.symbol.toUpperCase()) - priorityStable.indexOf(b.symbol.toUpperCase()));
+    .filter((el: IBalance) => priorityStable.includes(el.symbol.toUpperCase()));
 
   const coins = new Map<string, IBalance[]>();
   for (const coin of stable) {
-    const existing = coins.get(coin.symbol);
+    const existing = coins.get(coin.chainId);
     if (existing) {
-      coins.set(coin.symbol, [...existing, coin])
+      coins.set(coin.chainId, [...existing, coin])
     } else {
-      coins.set(coin.symbol, [coin])
+      coins.set(coin.chainId, [coin])
     }
   }
 
-  let sortedStable: IBalance[] = [];
-  const networks = [...props.networkPreference];
   for (const coin of coins) {
-    sortedStable = sortedStable.concat(coin[1].sort((a: IBalance, b: IBalance) => networks.indexOf(parseInt(a.chainId)) - networks.indexOf(parseInt(b.chainId))));
+    coins.set(coin[0], coin[1].sort((a: IBalance, b: IBalance) => priorityStable.indexOf(a.symbol.toUpperCase()) - priorityStable.indexOf(b.symbol.toUpperCase())));
   }
-  
+
+  const networks = [...props.networkPreference];
+  const sortedCoins = new Map([...coins].sort((a, b) => networks.indexOf(parseInt(a[0])) - networks.indexOf(parseInt(b[0]))));
   const rest = balances.filter((el: IBalance) => !priorityTokens.includes(el) && !withBalances.includes(el) && !stable.includes(el));
   return [
     ...withBalances,
     ...orderedPriority,
-    ...sortedStable,
+    ...[...sortedCoins].flat(2).filter(el => typeof el !== 'string'),
     ...rest
   ];
 });
