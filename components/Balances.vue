@@ -32,7 +32,7 @@ const priorityTokens = [
   { symbol: 'GNO', chainId: '100' }
 ];
 
-const priorityRest = ['USDC', 'USDT', 'DAI', 'XDAI', 'ETH', 'MATIC', 'BNB', 'OP', 'GNO', 'AVAX'];
+const priorityRest = ['USDC', 'USDT', 'DAI', 'XDAI', ...whitelistedSymbols];
 
 const tokensWithBalances = computed(() =>
   tokenBalances.value.filter((tb) => {
@@ -83,17 +83,17 @@ const filteredBalances = computed(() => {
 const sortedBalances = computed(() => {
   const balances = filteredBalances.value;
   const priority = balances.filter((el: IBalance) => {
-    if (el.balance !== '0') return false;
+    if (toBN(el.balance).gt(0)) return false;
     return priorityTokens.some(p => p.chainId == el.chainId && p.symbol.toLowerCase() == el.symbol);
   });
-  const non = balances.filter((el: IBalance) => el.balance === '0' && !priorityTokens.some(p => p.chainId == el.chainId && p.symbol.toLowerCase() == el.symbol));
+  const non = balances.filter((el: IBalance) => toBN(el.balance).eq(0) && !priorityTokens.some(p => p.chainId == el.chainId && p.symbol.toLowerCase() == el.symbol));
   const orderedPriority = priority.sort((a: IBalance, b: IBalance) => {
     const aIdx = priorityTokens.findIndex(p => p.chainId === a.chainId && p.symbol.toLowerCase() === a.symbol);
     const bIdx = priorityTokens.findIndex(p => p.chainId === b.chainId && p.symbol.toLowerCase() === b.symbol);
     return aIdx - bIdx;
   });
   return [
-    ...balances.filter((el: IBalance) => el.balance !== '0'),
+    ...balances.filter((el: IBalance) => toBN(el.balance).gt(0)),
     ...orderedPriority,
     ...non.sort((a: IBalance, b: IBalance) => priorityRest.indexOf(a.symbol.toUpperCase()) - priorityRest.indexOf(b.symbol.toUpperCase()))
   ];
