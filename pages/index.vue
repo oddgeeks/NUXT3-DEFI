@@ -86,7 +86,7 @@ const handleOpenDialog = () => {
               </ClientOnly>
               <Popover as="div" class="relative z-20 flex gap-4 items-center">
                 <PopoverButton class="text-sm flex items-center gap-2 h-7.5">
-                  All Networks
+                  Networks
                   <ChevronDownSVG class="text-slate-400 w-[14px] h-[14px]" />
                 </PopoverButton>
                 <transition
