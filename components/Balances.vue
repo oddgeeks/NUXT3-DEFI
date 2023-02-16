@@ -22,17 +22,16 @@ const whitelistedSymbols = [
   "GNO"
 ];
 
-const priorityTokens = [
-  { symbol: 'ETH', chainId: '1' },
-  { symbol: 'MATIC', chainId: '137' },
-  { symbol: 'ETH', chainId: '42161' },
-  { symbol: 'OP', chainId: '10' },
-  { symbol: 'AVAX', chainId: '43114' },
-  { symbol: 'BNB', chainId: '56' },
-  { symbol: 'GNO', chainId: '100' }
-];
-
-const priorityRest = ['USDC', 'USDT', 'DAI', 'XDAI', ...whitelistedSymbols];
+const priority = {
+  1: 'ETH',
+  137: 'MATIC',
+  42161: 'ETH',
+  10: 'ETH',
+  43114: 'AVAX',
+  56: 'BNB',
+  100: 'XDAI'
+};
+const priorityStable = ['USDC', 'USDT', 'DAI', 'XDAI'];
 
 const tokensWithBalances = computed(() =>
   tokenBalances.value.filter((tb) => {
@@ -82,20 +81,43 @@ const filteredBalances = computed(() => {
 
 const sortedBalances = computed(() => {
   const balances = filteredBalances.value;
-  const priority = balances.filter((el: IBalance) => {
+  const withBalances = balances.filter((el: IBalance) => toBN(el.balance).decimalPlaces(5).gt(0));
+
+  const priorityTokens = balances.filter((el: IBalance) => {
     if (toBN(el.balance).decimalPlaces(5).gt(0)) return false;
-    return priorityTokens.some(p => p.chainId == el.chainId && p.symbol.toLowerCase() == el.symbol);
+    if (el.address !== '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') return false;
+    return Object.values(priority).includes(el.symbol.toUpperCase());
   });
-  const non = balances.filter((el: IBalance) => toBN(el.balance).eq(0) && !priorityTokens.some(p => p.chainId == el.chainId && p.symbol.toLowerCase() == el.symbol));
-  const orderedPriority = priority.sort((a: IBalance, b: IBalance) => {
-    const aIdx = priorityTokens.findIndex(p => p.chainId === a.chainId && p.symbol.toLowerCase() === a.symbol);
-    const bIdx = priorityTokens.findIndex(p => p.chainId === b.chainId && p.symbol.toLowerCase() === b.symbol);
-    return aIdx - bIdx;
-  });
+  const orderedPriority = priorityTokens
+    .sort((a: IBalance, b: IBalance) => Object.keys(priority).indexOf(a.chainId) - Object.keys(priority).indexOf(b.chainId));
+
+  const nonPriority = balances.filter((el: IBalance) => !priorityTokens.includes(el) && !withBalances.includes(el));
+  const stable: IBalance[] = nonPriority
+    .filter((el: IBalance) => priorityStable.includes(el.symbol.toUpperCase()))
+    .sort((a: IBalance, b: IBalance) => priorityStable.indexOf(a.symbol.toUpperCase()) - priorityStable.indexOf(b.symbol.toUpperCase()));
+
+  const coins = new Map<string, IBalance[]>();
+  for (const coin of stable) {
+    const existing = coins.get(coin.symbol);
+    if (existing) {
+      coins.set(coin.symbol, [...existing, coin])
+    } else {
+      coins.set(coin.symbol, [coin])
+    }
+  }
+
+  let sortedStable: IBalance[] = [];
+  const networks = [...props.networkPreference];
+  for (const coin of coins) {
+    sortedStable = sortedStable.concat(coin[1].sort((a: IBalance, b: IBalance) => networks.indexOf(parseInt(a.chainId)) - networks.indexOf(parseInt(b.chainId))));
+  }
+  
+  const rest = balances.filter((el: IBalance) => !priorityTokens.includes(el) && !withBalances.includes(el) && !stable.includes(el));
   return [
-    ...balances.filter((el: IBalance) => toBN(el.balance).decimalPlaces(5).gt(0)),
+    ...withBalances,
     ...orderedPriority,
-    ...non.sort((a: IBalance, b: IBalance) => priorityRest.indexOf(a.symbol.toUpperCase()) - priorityRest.indexOf(b.symbol.toUpperCase()))
+    ...sortedStable,
+    ...rest
   ];
 });
 
