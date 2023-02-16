@@ -37,7 +37,7 @@ const priorityRest = ['USDC', 'USDT', 'DAI', 'XDAI', ...whitelistedSymbols];
 const tokensWithBalances = computed(() =>
   tokenBalances.value.filter((tb) => {
     return (
-      toBN(tb.balance).gt(0) ||
+      toBN(tb.balance).decimalPlaces(5).gt(0) ||
       whitelistedSymbols.includes(tb.symbol.toUpperCase())
     );
   })
