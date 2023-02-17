@@ -28,7 +28,7 @@ const headers = [
   "Timestamp",
 ]
 
-const { data: transactions } = useAsyncData(
+const { data: transactions, refresh } = useAsyncData(
   "transactions",
   async () => {
     const transactions: ITransactionResponse = await provider.send(
@@ -48,6 +48,12 @@ const { data: transactions } = useAsyncData(
     immediate: true,
   }
 );
+
+const { pause } = useIntervalFn(refresh, 5000)
+
+onUnmounted(() => {
+  pause();
+});
 </script>
 
 <template>
