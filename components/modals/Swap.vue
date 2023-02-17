@@ -255,14 +255,16 @@ const { data: swapDetails, pending } = useAsyncData(
 
 const bestRoute = computed(() => swapDetails.value?.aggregators[0] || null);
 
+const priceImpact = computed(() => toBN(bestRoute?.value?.data?.priceImpact || 0).abs().toFixed())
+
 const isPriceImpactHigh = computed(() => {
   if (!bestRoute.value) return false;
 
   const actualSlippage = customSlippage.value || slippage.value;
-  const priceImpact = bestRoute.value?.data.priceImpact;
 
-  return toBN(priceImpact).gt(actualSlippage);
+  return toBN(priceImpact.value).gt(actualSlippage);
 });
+
 
 const sellAmountInUsd = computed(() => {
   return toBN(
@@ -670,15 +672,15 @@ watch(slippage, () => {
               <div
                 class="flex justify-between text-sm items-center font-medium"
               >
-                <span>Price Impact</span>
+                <span :class="{ '!text-red-alert': gt(priceImpact, 0.04)}">Price Impact</span>
                 <div
                   v-if="pending && meta.valid"
                   style="width: 100px; height: 20px"
                   class="loading-box rounded-lg"
                 />
-                <span v-else class="text-green-400">
+                <span v-else :class="{ '!text-red-alert': gt(priceImpact, 0.04)  }" class="text-green-400">
                   {{
-                    formatPercent(toBN(bestRoute?.data.priceImpact || 0))
+                    formatPercent(priceImpact)
                   }}</span
                 >
               </div>
