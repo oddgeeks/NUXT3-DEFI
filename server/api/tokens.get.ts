@@ -63,10 +63,10 @@ export default defineEventHandler<IToken[]>(async (event) => {
       url: 'https://bridge.arbitrum.io/token-list-42161.json',
     },
     // Avalanche
-    {
-      name: 'Pangolin',
-      url: 'https://raw.githubusercontent.com/pangolindex/tokenlists/main/pangolin.tokenlist.json',
-    },
+    // {
+    //   name: 'Pangolin',
+    //   url: 'https://raw.githubusercontent.com/pangolindex/tokenlists/main/pangolin.tokenlist.json',
+    // },
     // Gnosis
   ];
 
