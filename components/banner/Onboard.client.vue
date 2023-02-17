@@ -22,7 +22,7 @@ watch(account, async () => {
 }, { immediate: true });
 </script>
 <template>
-  <div class="fixed bottom-12 w-full z-50">
+  <div class="fixed bottom-12 w-full z-40">
     <div
       class="w-full max-w-[832px] mx-auto text-xs relative bg-[#16A34A] py-2 px-6 rounded-5 backdrop-blur bg-opacity-20 shrink-0 flex justify-between items-center gap-[15px]"
       v-if="balances.length > 0"  
