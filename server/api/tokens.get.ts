@@ -29,6 +29,7 @@ const formatIPFS = (ipfs: string) => {
 
 export default defineEventHandler<IToken[]>(async (event) => {
   const providers = [
+    // Mainnet
     {
       name: "Uniswap Labs List",
       url: "https://tokens.uniswap.org/",
@@ -37,6 +38,7 @@ export default defineEventHandler<IToken[]>(async (event) => {
       name: "Coinmarketcap",
       url: "https://api.coinmarketcap.com/data-api/v3/uniswap/all.json",
     },
+    // Polygon
     {
       name: "Comethswap",
       url: "https://unpkg.com/@cometh-game/default-token-list@1.0.40/build/comethswap-default.tokenlist.json"
@@ -45,6 +47,27 @@ export default defineEventHandler<IToken[]>(async (event) => {
       name: "Quickswap",
       url: "https://unpkg.com/quickswap-default-token-list@1.2.65/build/quickswap-default.tokenlist.json"
     },
+    // BSC
+    {
+      name: 'PancakeSwap',
+      url: 'https://tokens.pancakeswap.finance/pancakeswap-extended.json',
+    },
+    // Optimism
+    {
+      name: 'Optimism',
+      url: 'https://static.optimism.io/optimism.tokenlist.json',
+    },
+    // Arbitrum
+    {
+      name: 'Arbitrum',
+      url: 'https://bridge.arbitrum.io/token-list-42161.json',
+    },
+    // Avalanche
+    {
+      name: 'Pangolin',
+      url: 'https://raw.githubusercontent.com/pangolindex/tokenlists/main/pangolin.tokenlist.json',
+    },
+    // Gnosis
   ];
 
   const results = await Promise.allSettled(
