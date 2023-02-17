@@ -16,18 +16,19 @@ const props = defineProps({
 
 const { fromWei } = useBignumber();
 
-const getTokenByAddress = (address: string) => {
+const getTokenByAddress = (address: string, chainId = props.transaction?.chain_id) => {
   return tokens.value.find(
     (i) =>
       i.address.toLocaleLowerCase() === (address && address.toLocaleLowerCase()) &&
-      i.chainId == props.transaction?.chain_id
+      i.chainId == chainId
   );
 };
+
 
 const token = computed(() => getTokenByAddress(props.metadata?.token));
 const buyToken = computed(() => getTokenByAddress(props.metadata?.buyToken));
 const sellToken = computed(() => getTokenByAddress(props.metadata?.sellToken));
-const toToken = computed(() => getTokenByAddress(props.metadata?.toToken));
+const toToken = computed(() => getTokenByAddress(props.metadata?.toToken, props.metadata?.toChainId));
 
 const sellAmountFormatted = computed(() =>
   formatDecimal(
