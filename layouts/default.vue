@@ -6,6 +6,7 @@ const {
   showIncorrectNetworkBanner,
   showInsufficientGasBanner,
   showGasGiftBanner,
+  showOnboardBanner
 } = useBanner();
 </script>
 
@@ -13,6 +14,7 @@ const {
   <div class="flex flex-col h-full">
     <BannerAccountTracking v-if="showTrackingBanner" />
     <BannerWelcome v-if="showWelcomeBanner" />
+    <BannerOnboard v-if="showOnboardBanner" />
     <div class="py-8 px-10">
       <TheHeader />
     </div>
