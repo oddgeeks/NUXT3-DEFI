@@ -26,7 +26,7 @@ export default defineNuxtConfig({
       "/api/balances": { cache: { maxAge: 5 } },
       "/api/tokens": {
         cache: {
-          maxAge: 86400, // 1 day
+          maxAge: 3600, // 1 hour
         },
       },
     },

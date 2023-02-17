@@ -37,6 +37,14 @@ export default defineEventHandler<IToken[]>(async (event) => {
       name: "Coinmarketcap",
       url: "https://api.coinmarketcap.com/data-api/v3/uniswap/all.json",
     },
+    {
+      name: "Comethswap",
+      url: "https://unpkg.com/@cometh-game/default-token-list@1.0.40/build/comethswap-default.tokenlist.json"
+    },
+    {
+      name: "Quickswap",
+      url: "https://unpkg.com/quickswap-default-token-list@1.2.65/build/quickswap-default.tokenlist.json"
+    },
   ];
 
   const results = await Promise.allSettled(
