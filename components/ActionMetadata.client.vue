@@ -19,7 +19,8 @@ const { fromWei } = useBignumber();
 const getTokenByAddress = (address: string) => {
   return tokens.value.find(
     (i) =>
-      i.address.toLocaleLowerCase() === (address && address.toLocaleLowerCase())
+      i.address.toLocaleLowerCase() === (address && address.toLocaleLowerCase()) &&
+      i.chainId == props.transaction?.chain_id
   );
 };
 
