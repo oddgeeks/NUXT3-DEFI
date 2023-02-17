@@ -2,7 +2,7 @@
 import SVGX from "~/assets/images/icons/x.svg?component";
 import WaveSVG from "~/assets/images/icons/wave.svg?component";
 
-const { toggleOnboardBanner } = useBanner();
+const { hideOnboardBanner } = useBanner();
 const { account } = useWeb3();
 const { tokens } = useTokens();
 
@@ -38,7 +38,7 @@ watch(account, async () => {
         <CommonButton as="NuxtLink" href="https://onboard.avocado.instadapp.io/" target="_blank" size="sm">
           Import
         </CommonButton>
-        <button @click="toggleOnboardBanner(false)">
+        <button @click="hideOnboardBanner()">
           <SVGX class="text-slate-500" />
         </button>
       </div>
