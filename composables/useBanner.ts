@@ -8,7 +8,7 @@ export const useBanner = () => {
   const { trackingAccount } = useAccountTrack();
   const isHideWelcomeBanner = useLocalStorage("hide-welcome-banner", false);
   const isHideOnboardBanner = useLocalStorage("hide-onboard-banner", false);
-  const isOnboardHidden = useLocalStorage("onboard-hidden", {});
+  const isOnboardHidden = computed(() => useStatefulCookie(`hide-onboard-${account.value}`));
 
   const showWelcomeBanner = computed(() => {
     if (!account.value) return false;
@@ -38,10 +38,7 @@ export const useBanner = () => {
 
   const showOnboardBanner = computed(() => {
     if (!account.value) return false;
-    if (Object.keys(isOnboardHidden.value).includes(account.value) 
-      && isOnboardHidden.value[account.value] > Math.floor(Date.now() / 1000)) {
-      return false
-    };
+    if (isOnboardHidden.value.value) return false;
     return true;
   });
 
@@ -53,10 +50,6 @@ export const useBanner = () => {
     showOnboardBanner,
     showTrackingBanner: computed(() => !!trackingAccount.value),
     toggleWelcomeBanner: (val: boolean) => (isHideWelcomeBanner.value = !val),
-    hideOnboardBanner: () => {
-      if (account.value) {
-        isOnboardHidden.value[account.value] = Math.floor(Date.now() / 1000) + 60 * 60 * 24;
-      }
-    }
+    hideOnboardBanner: () => isOnboardHidden.value.value = true
   };
 };

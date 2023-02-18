@@ -10,7 +10,7 @@ const balances = ref([]);
 
 const totalWithBalance = computed(() => balances.value.filter(el => toBN(el.balance).decimalPlaces(5).gt(0)));
 const totalUSD = computed(() => totalWithBalance.value.reduce((sum, cur) => sum += parseFloat(cur.balanceInUSD), 0));
-const totalChains = computed(() => new Set(totalWithBalance.value.map(el => el.chainId)).size)
+const totalChains = computed(() => new Set(totalWithBalance.value.map(el => el.chainId)).size);
 
 watch(account, async () => {
   const res = await $fetch("/api/balances", {
