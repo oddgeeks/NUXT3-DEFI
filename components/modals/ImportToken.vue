@@ -302,6 +302,7 @@ const manuelImport = async (address: string) => {
           </template>
         </CommonSelect>
         <CommonButton
+          class="!px-10"
           :loading="loading"
           @click="manuelImport(searchQuery)"
           size="lg"
