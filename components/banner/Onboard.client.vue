@@ -2,7 +2,7 @@
 import SVGX from "~/assets/images/icons/x.svg?component";
 import WaveSVG from "~/assets/images/icons/wave.svg?component";
 
-const { toggleOnboardBanner } = useBanner();
+const { hideOnboardBanner } = useBanner();
 const { account } = useWeb3();
 const { tokens } = useTokens();
 
@@ -10,7 +10,7 @@ const balances = ref([]);
 
 const totalWithBalance = computed(() => balances.value.filter(el => toBN(el.balance).decimalPlaces(5).gt(0)));
 const totalUSD = computed(() => totalWithBalance.value.reduce((sum, cur) => sum += parseFloat(cur.balanceInUSD), 0));
-const totalChains = computed(() => new Set(totalWithBalance.value.map(el => el.chainId)).size)
+const totalChains = computed(() => new Set(totalWithBalance.value.map(el => el.chainId)).size);
 
 watch(account, async () => {
   const res = await $fetch("/api/balances", {
@@ -22,7 +22,7 @@ watch(account, async () => {
 }, { immediate: true });
 </script>
 <template>
-  <div class="fixed bottom-12 w-full z-50">
+  <div class="fixed bottom-12 w-full z-40">
     <div
       class="w-full max-w-[832px] mx-auto text-xs relative bg-[#16A34A] py-2 px-6 rounded-5 backdrop-blur bg-opacity-20 shrink-0 flex justify-between items-center gap-[15px]"
       v-if="balances.length > 0"  
@@ -38,7 +38,7 @@ watch(account, async () => {
         <CommonButton as="NuxtLink" href="https://onboard.avocado.instadapp.io/" target="_blank" size="sm">
           Import
         </CommonButton>
-        <button @click="toggleOnboardBanner(false)">
+        <button @click="hideOnboardBanner()">
           <SVGX class="text-slate-500" />
         </button>
       </div>
