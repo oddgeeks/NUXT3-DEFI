@@ -162,7 +162,7 @@ const manuelImport = async (address: string) => {
     refreshNuxtData("custom-tokens");
   } catch (e: any) {
     openSnackbar({
-      message: e?.message || "Something went wrong. Try changing the network.",
+      message: "Something went wrong. Try changing the network.",
       type: "error",
       timeout: 5000,
     });
