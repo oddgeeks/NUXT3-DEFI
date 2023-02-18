@@ -30,13 +30,21 @@ const { data, pending, error } = useAsyncData(
     clearTimeout(timeoutId);
 
     const filtered = resp.filter((token: IToken) => {
-      return !tokens.value.some((t) => {
-        return (
-          t.address.toLowerCase() === token.address.toLowerCase() &&
-          t.chainId == token.chainId &&
-          !t.isCustomToken
-        );
-      });
+      return (
+        !tokens.value.some((t) => {
+          return (
+            t.address.toLowerCase() === token.address.toLowerCase() &&
+            t.chainId == token.chainId &&
+            !t.isCustomToken
+          );
+        }) &&
+        !customTokens.value.some((t) => {
+          return (
+            t.address.toLowerCase() === token.address.toLowerCase() &&
+            t.chainId == token.chainId
+          );
+        })
+      );
     }) as IToken[];
 
     return [...customTokens.value, ...filtered];
