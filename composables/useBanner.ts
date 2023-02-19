@@ -23,7 +23,7 @@ export const useBanner = () => {
   });
 
   const showIncorrectNetworkBanner = computed(
-    () => account.value && chainId.value !== 634
+    () => !trackingAccount.value && account.value && chainId.value !== 634
   );
 
   const showGasGiftBanner = computed(() => {
