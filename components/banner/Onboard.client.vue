@@ -9,7 +9,7 @@ const { tokens } = useTokens();
 const balances = ref([]);
 
 const totalWithBalance = computed(() => balances.value.filter(el => toBN(el.balance).decimalPlaces(5).gt(0)));
-const totalUSD = computed(() => totalWithBalance.value.reduce((sum, cur) => sum += parseFloat(cur.balanceInUSD), 0));
+const totalUSD = computed(() => totalWithBalance.value.reduce((sum, cur) => sum.plus(cur.balanceInUSD || "0"), toBN(0)));
 const totalChains = computed(() => new Set(totalWithBalance.value.map(el => el.chainId)).size);
 
 watch(account, async () => {
@@ -30,7 +30,7 @@ watch(account, async () => {
       <div class="flex space-x-[25px] items-center">
         <WaveSVG class="w-12 h-12" />
         <p class="text-green-400">
-          Welcome to Avocado 🥑 You have ${{ totalUSD.toFixed(2) }} of assets spread across {{ totalChains }} networks on your wallet (EOA). Import the assets
+          Welcome to Avocado 🥑 You have ${{ totalUSD.toFormat(2) }} of assets spread across {{ totalChains }} networks on your wallet (EOA). Import the assets
           to your Avocado wallet to begin transacting.
         </p>
       </div>
