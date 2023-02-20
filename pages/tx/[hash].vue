@@ -4,18 +4,31 @@ import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
 const router = useRoute();
 const provider = getRpcProvider(634);
 
-const [transaction] = (await Promise.all([
-  provider
-    .send("api_getTransactionByHash", [router.params.hash])
-    .catch(() => null),
-])) as [IAvocadoTransaction];
+const {
+  data: transaction,
+  refresh,
+  pending,
+  error,
+} = useAsyncData(
+  router.params.hash as string,
+  async () => {
+    const data = (await provider.send("api_getTransactionByHash", [
+      router.params.hash,
+    ])) as Promise<IAvocadoTransaction>;
 
-const metadata = decodeMetadata(transaction.data);
+    if (!data) {
+      throw new Error("Transaction not found");
+    }
 
-onMounted(() =>
-  console.log({
-    metadata,
-  })
+    return data;
+  },
+  {
+    server: true,
+  }
+);
+
+const metadata = computed(() =>
+  transaction.value?.data ? decodeMetadata(transaction.value?.data!) : undefined
 );
 
 const locale = computed(() =>
@@ -23,12 +36,40 @@ const locale = computed(() =>
 );
 
 const isBridge =
-  metadata?.length && metadata?.some((i: any) => i.type === "bridge");
+  metadata.value?.length &&
+  metadata.value?.some((i: any) => i.type === "bridge");
+
+const handleRefresh = () => {
+  if (!error.value) {
+    refresh();
+  }
+};
+
+const { pause } = useIntervalFn(handleRefresh, 3000, {
+  immediate: true,
+});
+
+onMounted(() =>
+  console.log({
+    metadata,
+  })
+);
+
+onUnmounted(() => {
+  pause();
+  refreshNuxtData(router.params.hash);
+  clearNuxtData(router.params.hash);
+});
 </script>
 
 <template>
   <div class="container flex-1 md:pb-10">
     <h1 class="mb-5">Transaction Details</h1>
+
+    <div
+      class="dark:bg-gray-850 bg-slate-50 rounded-5.5 text-sm font-medium py-6.5 min-h-[548px] blur"
+      v-if="!transaction && pending"
+    />
 
     <div
       v-if="transaction"
@@ -209,7 +250,7 @@ const isBridge =
             class="dark:text-slate-400 gap-2.5 flex items-center text-slate-500 md:w-full md:max-w-[235px]"
           >
             Transaction Fee
-             <SVGInfo
+            <SVGInfo
               v-tippy="
                 'This includes the fee that will be paid to the relayer and the integrator.'
               "
@@ -257,7 +298,7 @@ const isBridge =
     </div>
 
     <div
-      v-else
+      v-else-if="!transaction && !pending"
       class="bg-gray-850 rounded-5.5 text-sm font-medium p-16 text-center"
     >
       <p class="mb-2">Sorry, We are unable to locate this TxnHash:</p>
