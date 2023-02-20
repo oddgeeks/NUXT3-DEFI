@@ -21,8 +21,8 @@ const {
     <div
       class="container flex flex-col gap-4 banner-wrapper [&:not(:empty)]:mb-7.5"
     >
-      <BannerGift v-if="showGasGiftBanner" />
-      <WarningsGasBalance v-else-if="showInsufficientGasBanner" />
+      <!-- <BannerGift v-if="showGasGiftBanner" /> -->
+      <WarningsGasBalance v-if="showInsufficientGasBanner" />
       <WarningsSwitchNetwork v-if="showIncorrectNetworkBanner" />
     </div>
     <slot />
