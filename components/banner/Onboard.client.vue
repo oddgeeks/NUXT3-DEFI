@@ -24,7 +24,7 @@ watch(account, async () => {
 <template>
   <div class="fixed bottom-12 w-full z-40">
     <div
-      class="w-full max-w-[832px] mx-auto text-xs relative bg-[#4CA054A6] py-2 px-6 rounded-5 backdrop-blur shrink-0 flex justify-between items-center gap-[15px]"
+      class="w-full max-w-[832px] mx-auto text-xs relative bg-[#4CA054] bg-opacity-70 py-2 px-6 rounded-5 backdrop-blur shrink-0 flex justify-between items-center gap-[15px]"
       v-if="balances.length > 0"  
     >
       <div class="flex space-x-[25px] items-center">
