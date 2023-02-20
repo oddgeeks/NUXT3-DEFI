@@ -7,6 +7,7 @@ import type { IToken } from "~~/stores/tokens";
 
 const { tokens, customTokens } = storeToRefs(useTokens());
 const { fetchTokens } = useTokens();
+const { account } = useWeb3();
 
 const searchQuery = ref("");
 const controller = new AbortController();
@@ -76,6 +77,17 @@ const handleAddToken = (token: IToken) => {
   token.isCustomToken = true;
   customTokens.value.push(token);
   fetchTokens();
+
+  const url = `<${getExplorerUrl(
+    token.chainId,
+    `/token/${token.address}`
+  )}|${shortenHash(token.address, 12)}>`;
+
+  logActionToSlack({
+    action: "add-token",
+    message: `${token.name} :${chainIdToName(token.chainId)}: ${url}`,
+    account: account.value,
+  });
 };
 
 const handleDeleteToken = (token: IToken) => {

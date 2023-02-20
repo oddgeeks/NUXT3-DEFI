@@ -1,6 +1,6 @@
 interface ISlackMessage {
   message: string;
-  action: IWeb3Action | "wc";
+  action: IWeb3Action | "wc" | "add-token";
   account: string;
   type?: ISlackMessageType;
   txHash?: string;
@@ -15,11 +15,11 @@ const prefixes: Record<ISlackMessage["action"], string> = {
   reedem: `🔑 🎁 Reedemed:`,
   claim: `🎁 Claimed:`,
   wc: `:walletconnect:`,
+  "add-token": `🆕 Added Token:`,
 };
 
-
 export const logActionToSlack = (slackMessage: ISlackMessage) => {
-  const build = useBuildInfo()
+  const build = useBuildInfo();
 
   let {
     type = "success",
@@ -34,9 +34,9 @@ export const logActionToSlack = (slackMessage: ISlackMessage) => {
   const explorerLink =
     chainId && txHash
       ? `<${getExplorerUrl(chainId, `/tx/${txHash}`)}|${shortenHash(
-        txHash,
-        12
-      )}>`
+          txHash,
+          12
+        )}>`
       : "";
 
   const accountLink = `<https://avocado.instadapp.io/?user=${account}|${shortenHash(
