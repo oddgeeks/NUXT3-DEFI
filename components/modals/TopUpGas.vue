@@ -276,14 +276,14 @@ const onSubmit = handleSubmit(async () => {
     >
       {{ formatDecimal(gasBalance, 2) }} USDC
     </span>
-    <CommonButton
+    <!-- <CommonButton
       :loading="claimLoading"
       @click="claim()"
       v-if="airDrop?.id"
       class="flex text-sm items-center gap-2"
     >
       {{ airDrop.message }}
-    </CommonButton>
+    </CommonButton> -->
     <form v-if="!isGiftActive" @submit="onSubmit" class="space-y-5">
       <div class="flex flex-col gap-2.5">
         <span class="text-left leading-5">Network</span>
