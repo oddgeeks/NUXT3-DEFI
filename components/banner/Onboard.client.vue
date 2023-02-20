@@ -30,7 +30,7 @@ watch(account, async () => {
       <div class="flex space-x-[25px] items-center">
         <WaveSVG class="w-12 h-12" />
         <p class="text-white">
-          Welcome to Avocado 🥑 You have ${{ totalUSD.toFixed(2) }} of assets spread across {{ totalChains }} networks on your wallet (EOA). Import the assets
+          Welcome to Avocado 🥑 You have ${{ totalUSD.toFormat(2) }} of assets spread across {{ totalChains }} networks on your wallet (EOA). Import the assets
           to your Avocado wallet to begin transacting.
         </p>
       </div>
