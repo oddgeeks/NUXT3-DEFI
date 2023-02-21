@@ -248,14 +248,22 @@ export const useBridge = (props: IBridge) => {
     }
   );
 
-  const nativeFee = computed(
-    () =>
+  const nativeFee = computed(() => {
+    let v =
       transactions.data.value?.reduce((acc: any, tx: any) => {
         return toBN(acc)
           .plus(fromWei(tx?.value || "0", nativeCurrency.value?.decimals))
           .toFixed();
-      }, "0") || "0"
-  );
+      }, "0") || "0";
+
+    if (token.value.address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE") {
+      v = toBN(v)
+        .minus(amount.value || "0")
+        .toFixed(0);
+    }
+
+    return v;
+  });
 
   const nativeFeeInUsd = computed(() =>
     times(nativeFee.value!, nativeCurrency.value?.price || 0)
