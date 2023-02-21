@@ -18,8 +18,8 @@ interface IBridge {
 
 export const useBridge = (props: IBridge) => {
   let txController: AbortController | null = null;
-  let tokensController  : AbortController | null = null;
-  let routesController  : AbortController | null = null;
+  let tokensController: AbortController | null = null;
+  let routesController: AbortController | null = null;
 
   const provider = getRpcProvider(634);
 
@@ -124,7 +124,7 @@ export const useBridge = (props: IBridge) => {
     {
       server: false,
       immediate: true,
-      default:() => [],
+      default: () => [],
       watch: [toChainId],
     }
   );
@@ -222,7 +222,7 @@ export const useBridge = (props: IBridge) => {
         }
       }
 
-      if(txController) {
+      if (txController) {
         txController.abort();
       }
 
@@ -253,13 +253,21 @@ export const useBridge = (props: IBridge) => {
   );
 
   const nativeFee = computed(
-    () =>
-      transactions.data.value?.reduce((acc: any, tx: any) => {
+    () => {
+      let v = transactions.data.value?.reduce((acc: any, tx: any) => {
         return toBN(acc)
           .plus(fromWei(tx?.value || "0", nativeCurrency.value?.decimals))
           .toFixed();
-      }, "0") || "0"
-  );
+      }, "0") || "0";
+
+      if (token.value.address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE") {
+        v = toBN(v)
+          .minus(amount.value || "0" )
+          .toFixed(0)
+      }
+
+      return v;
+    });
 
   const nativeFeeInUsd = computed(() =>
     times(nativeFee.value!, nativeCurrency.value?.price || 0)
@@ -387,7 +395,7 @@ export const useBridge = (props: IBridge) => {
     );
   };
 
-  
+
 
   const selectableChains = computed(() =>
     networks.filter(
