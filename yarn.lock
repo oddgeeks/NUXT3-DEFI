@@ -985,10 +985,10 @@
   resolved "https://registry.yarnpkg.com/@headlessui/vue/-/vue-1.7.10.tgz#dc79fbbe97924647eb3fe475cdba892db7fe4157"
   integrity sha512-qAov7JULOBBes5CU+MiGpwMKoXxLHXS703WEZkOPxYjPD2p7f286ozlFxw7JjA2MmVgbnis2Wvgg/4hT7nRFIg==
 
-"@instadapp/avocado@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.1.0.tgz#516dcb0e4ae0d10d7842bd8284b203075dd7810b"
-  integrity sha512-IRLqdtMSYoDcTcAk+FC6d9nDjwqsNp/4RLrwYVZYJnU5+/UXjcg4qTsAZQNlJCT3RJjvIrnVw65m1fAxVLM7fw==
+"@instadapp/avocado@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.1.4.tgz#242fdbe671a2da9c5c611927525902a6a99d5ffb"
+  integrity sha512-PZ5HlI97eO0ukNOhB51z+SWgFlhBXm0KSOgidgHBxrRoFdOYP0zs5ij1GdVu7wZyOSOkBRhrvaz3q7+vWzsB7w==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
@@ -998,6 +998,7 @@
     ethers "^5.7.2"
     events "^3.3.0"
     mitt "^3.0.0"
+    semver "^7.3.8"
     tiny-warning "^1.0.3"
 
 "@instadapp/utils@^0.4.5":
