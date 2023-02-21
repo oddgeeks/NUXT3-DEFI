@@ -62,6 +62,7 @@ const bridgeStatus = computedAsync(async () => {
         },
       }
     );
+    if (res.result.sourceTxStatus === 'FAILED') return 'failed';
     return res.result.destinationTxStatus.toLowerCase();
   }
 });
