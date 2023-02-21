@@ -23,6 +23,8 @@ const loading = ref(false);
 
 const to = ref('')
 const value = ref('0')
+const operation = ref('0')
+const id = ref('0')
 const data = ref('0x')
 const chainId = ref('137')
 
@@ -48,7 +50,10 @@ const onSubmit = async () => {
         data: data.value,
         value: value.value,
         chainId: Number(chainId.value),
-      },
+        operation: operation.value
+      },{
+        id: id.value
+      }
     );
 
     console.log(transactionHash);
@@ -117,6 +122,24 @@ const onSubmit = async () => {
         </div>
         <CommonInput type="numeric" name="value"
           placeholder="Enter value" v-model="value">
+        </CommonInput>
+      </div>
+
+      <div class="space-y-2.5">
+        <div class="flex justify-between items-center">
+          <span class="text-sm">Operation</span>
+        </div>
+        <CommonInput type="numeric" name="operation"
+          placeholder="Enter operation" v-model="operation">
+        </CommonInput>
+      </div>
+
+      <div class="space-y-2.5">
+        <div class="flex justify-between items-center">
+          <span class="text-sm">ID</span>
+        </div>
+        <CommonInput type="numeric" name="id"
+          placeholder="Enter id" v-model="id">
         </CommonInput>
       </div>
 

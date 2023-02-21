@@ -29,8 +29,9 @@ export const useAvocadoSafe = () => {
       value?: string;
       data?: string;
       chainId: number | string;
+      operation: string;
     },
-    options: { metadata?: string } = {}
+    options: { metadata?: string,  id?: string  } = {}
   ) => {
     await switchNetworkByChainId(634);
 
