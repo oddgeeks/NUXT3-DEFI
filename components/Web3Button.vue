@@ -42,7 +42,7 @@ const closeConnection = async () => {
   const { success } = await openDisconnectWalletModal();
 
   if (success) {
-    trackingAccount.value = null;
+    trackingAccount.value = "";
     setConnectorName(null);
     if (connector.value) {
       deactivate();
