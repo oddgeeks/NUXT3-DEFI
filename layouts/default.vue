@@ -26,7 +26,6 @@ const {
     >
       <!-- <BannerGift v-if="showGasGiftBanner" /> -->
       <WarningsGasBalance v-if="showInsufficientGasBanner" />
-      <!-- <WarningsSwitchNetwork v-if="showIncorrectNetworkBanner" /> -->
     </div>
     <slot />
     <TheFooter />
