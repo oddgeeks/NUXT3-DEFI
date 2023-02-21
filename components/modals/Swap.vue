@@ -43,8 +43,7 @@ const props = defineProps({
   },
 });
 
-const { tokenBalances, sendTransactions, safeAddress, safe } =
-  useAvocadoSafe();
+const { tokenBalances, sendTransactions, safeAddress, safe } = useAvocadoSafe();
 
 const { getTokenByAddress } = useTokens();
 const { tokens } = storeToRefs(useTokens());
@@ -82,14 +81,18 @@ const availableBuyTokens = computed(() =>
 const sellTokenBalance = computed(
   () =>
     tokenBalances.value.find(
-      (t) => t.address === swap.value.sellToken.address && t.chainId === String(props.chainId)
+      (t) =>
+        t.address === swap.value.sellToken.address &&
+        t.chainId === String(props.chainId)
     )?.balance || "0.00"
 );
 
 const buyTokenBalance = computed(
   () =>
     tokenBalances.value.find(
-      (t) => t.address === swap.value.buyToken.address && t.chainId === String(props.chainId)
+      (t) =>
+        t.address === swap.value.buyToken.address &&
+        t.chainId === String(props.chainId)
     )?.balance || "0.00"
 );
 
@@ -219,7 +222,7 @@ const { data: swapDetails, pending } = useAsyncData(
             sellToken: swap.value.sellToken.address,
             sellAmount: toWei(sellAmount.value, swap.value.sellToken.decimals),
             maxSlippage: customSlippage.value || slippage.value,
-            slippage: slippage.value,
+            slippage: customSlippage.value || slippage.value,
             user: safeAddress.value,
             access_token: "hxBA1uxwaGWN0xcpPOncVJ3Tk7FdFxY7g3NX28R14C",
           },
@@ -255,7 +258,11 @@ const { data: swapDetails, pending } = useAsyncData(
 
 const bestRoute = computed(() => swapDetails.value?.aggregators[0] || null);
 
-const priceImpact = computed(() => toBN(bestRoute?.value?.data?.priceImpact || 0).abs().toFixed())
+const priceImpact = computed(() =>
+  toBN(bestRoute?.value?.data?.priceImpact || 0)
+    .abs()
+    .toFixed()
+);
 
 const isPriceImpactHigh = computed(() => {
   if (!bestRoute.value) return false;
@@ -264,7 +271,6 @@ const isPriceImpactHigh = computed(() => {
 
   return toBN(priceImpact.value).gt(actualSlippage);
 });
-
 
 const sellAmountInUsd = computed(() => {
   return toBN(
@@ -672,16 +678,20 @@ watch(slippage, () => {
               <div
                 class="flex justify-between text-sm items-center font-medium"
               >
-                <span :class="{ '!text-red-alert': gt(priceImpact, 0.04)}">Price Impact</span>
+                <span :class="{ '!text-red-alert': gt(priceImpact, 0.04) }"
+                  >Price Impact</span
+                >
                 <div
                   v-if="pending && meta.valid"
                   style="width: 100px; height: 20px"
                   class="loading-box rounded-lg"
                 />
-                <span v-else :class="{ '!text-red-alert': gt(priceImpact, 0.04)  }" class="text-green-400">
-                  {{
-                    formatPercent(priceImpact)
-                  }}</span
+                <span
+                  v-else
+                  :class="{ '!text-red-alert': gt(priceImpact, 0.04) }"
+                  class="text-green-400"
+                >
+                  {{ formatPercent(priceImpact) }}</span
                 >
               </div>
             </div>
