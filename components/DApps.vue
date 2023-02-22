@@ -105,7 +105,7 @@ watch(
       </CommonButton>
     </div>
     <div
-      class="flex items-center relative gap-[15px]"
+      class="flex items-center relative gap-[15px] max-w-full"
       v-if="wcStore.sessions.length"
     >
       <CommonButton

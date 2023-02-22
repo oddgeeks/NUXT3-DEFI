@@ -16,7 +16,10 @@ const route = useRoute();
   <div class="flex flex-col h-full">
     <BannerAccountTracking v-if="showTrackingBanner" />
     <BannerWelcome v-if="showWelcomeBanner && route.name !== 'claims-ens-drop'" />
-    <BannerOnboard v-if="showOnboardBanner && route.name !== 'claims-ens-drop'" />
+    <div class="fixed bottom-12 w-full z-40">
+      <BannerSwitchNetwork v-if="showIncorrectNetworkBanner" />
+      <BannerOnboard v-else-if="showOnboardBanner && route.name !== 'claims-ens-drop'" />
+    </div>
     <div class="py-8 px-10">
       <TheHeader />
     </div>
@@ -25,7 +28,6 @@ const route = useRoute();
     >
       <!-- <BannerGift v-if="showGasGiftBanner" /> -->
       <WarningsGasBalance v-if="showInsufficientGasBanner" />
-      <WarningsSwitchNetwork v-if="showIncorrectNetworkBanner" />
     </div>
     <slot />
     <TheFooter />

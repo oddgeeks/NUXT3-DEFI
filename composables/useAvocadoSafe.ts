@@ -29,8 +29,9 @@ export const useAvocadoSafe = () => {
       value?: string;
       data?: string;
       chainId: number | string;
+      operation?: string;
     },
-    options: { metadata?: string } = {}
+    options: { metadata?: string,  id?: string  } = {}
   ) => {
     await switchNetworkByChainId(634);
 
@@ -50,9 +51,9 @@ export const useAvocadoSafe = () => {
   };
 
   const sendTransactions = async (
-    transactions: { to: string; value?: string; data?: string }[],
+    transactions: { to: string; value?: string; data?: string,  operation?: string; }[],
     chainId: number | string,
-    options: { metadata?: string } = {}
+    options: { metadata?: string, id?: string } = {}
   ) => {
     await switchNetworkByChainId(634);
 
