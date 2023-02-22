@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { lt } from "semver";
-import { GaslessWallet__factory } from "@/contracts";
+import { GaslessWallet__factory, Forwarder__factory } from "@/contracts";
 const { networks } = useNetworks();
 const availableNetworks = networks.filter((network) => network.chainId != 634);
 
@@ -9,7 +9,7 @@ const avoWalletLatestImplementationAddress =
   "0x3718f4bf9140f333bca79cb279f09f0bb8e6ddee";
 
 const { safeAddress, safe } = useAvocadoSafe();
-const { forwarderProxyContract } = useSafe();
+const { forwarderProxyAddress } = useSafe();
 
 const { data: allNetworks, pending } = useAsyncData(
   "allNetworkVersions",
@@ -23,6 +23,11 @@ const { data: allNetworks, pending } = useAsyncData(
         } as NetworkVersion;
         const wallet = GaslessWallet__factory.connect(
           safeAddress.value,
+          getRpcProvider(network.chainId)
+        );
+
+        const forwarderProxyContract = Forwarder__factory.connect(
+          forwarderProxyAddress,
           getRpcProvider(network.chainId)
         );
 

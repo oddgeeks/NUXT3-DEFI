@@ -169,7 +169,7 @@ export const useSafe = defineStore("safe", () => {
     fetchGasBalance,
     pending,
     apiBalances,
-    forwarderProxyContract,
+    forwarderProxyAddress,
   };
 });
 
