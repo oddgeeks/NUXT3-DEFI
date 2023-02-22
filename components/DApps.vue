@@ -6,10 +6,10 @@ import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
 import LinkSVG from "~/assets/images/icons/external-link.svg?component";
 import SVGWalletConnect from "~/assets/images/wallet/wallet-connect-lite.svg?component";
 import URLWalletConnect from "~/assets/images/wallet/wallet-connect.svg?url";
-const { safeAddress } = useAvocadoSafe();
+const { safeAddress, account } = useAvocadoSafe();
 const wcStore = useWalletConnect();
 
-const containerRef = ref(null);
+const containerRef = ref<any>(null);
 const hasScroll = ref(false);
 
 const { x, arrivedState } = useScroll(containerRef, {
@@ -91,7 +91,7 @@ watch(
 );
 </script>
 <template>
-  <div class="flex flex-col items-baseline gap-[15px]">
+  <div class="flex flex-col items-baseline gap-[15px]" :class="{ 'blur pointer-events-none': !account }">
     <div v-if="wcStore.sessions.length" class="flex gap-3 items-center">
       <h1>Connected Dapps</h1>
       <CommonButton
@@ -105,7 +105,7 @@ watch(
       </CommonButton>
     </div>
     <div
-      class="flex items-center relative gap-[15px]"
+      class="flex items-center relative gap-[15px] max-w-full"
       v-if="wcStore.sessions.length"
     >
       <CommonButton

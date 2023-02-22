@@ -107,13 +107,13 @@ const isSuccess = computed(() => {
         }}
       </h2>
 
-      <p v-if="!transaction" class="text-slate-400 text-xs leading-5">
+      <p v-if="!transaction" class="text-slate-400 text-xs leading-5 mt-2">
         The transaction has been sent to be processed.
       </p>
 
       <p
         v-if="transaction && !isSuccess"
-        class="text-slate-400 text-xs"
+        class="text-slate-400 text-xs mt-2"
       >
         Try again or return to the home page.
       </p>

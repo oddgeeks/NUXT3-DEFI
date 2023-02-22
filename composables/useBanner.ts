@@ -8,6 +8,7 @@ export const useBanner = () => {
   const { trackingAccount } = useAccountTrack();
   const isHideWelcomeBanner = useLocalStorage("hide-welcome-banner", false);
   const isHideOnboardBanner = useLocalStorage("hide-onboard-banner", false);
+  const isOnboardHidden = computed(() => useStatefulCookie(`hide-onboard-${account.value}`));
 
   const showWelcomeBanner = computed(() => {
     if (!account.value) return false;
@@ -22,7 +23,7 @@ export const useBanner = () => {
   });
 
   const showIncorrectNetworkBanner = computed(
-    () => account.value && chainId.value !== 634
+    () => !trackingAccount.value && account.value && chainId.value !== 634
   );
 
   const showGasGiftBanner = computed(() => {
@@ -37,7 +38,7 @@ export const useBanner = () => {
 
   const showOnboardBanner = computed(() => {
     if (!account.value) return false;
-    if (isHideOnboardBanner.value) return false;
+    if (isOnboardHidden.value.value) return false;
     return true;
   });
 
@@ -49,6 +50,6 @@ export const useBanner = () => {
     showOnboardBanner,
     showTrackingBanner: computed(() => !!trackingAccount.value),
     toggleWelcomeBanner: (val: boolean) => (isHideWelcomeBanner.value = !val),
-    toggleOnboardBanner: (val: boolean) => (isHideOnboardBanner.value = !val)
+    hideOnboardBanner: () => isOnboardHidden.value.value = true
   };
 };

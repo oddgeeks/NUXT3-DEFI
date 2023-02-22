@@ -80,7 +80,6 @@ export const useSafe = defineStore("safe", () => {
       return balances;
     },
     {
-      default: () => [],
       server: false,
       immediate: true,
       watch: [safeAddress, account, tokens],
@@ -169,6 +168,7 @@ export const useSafe = defineStore("safe", () => {
     totalBalance,
     fetchGasBalance,
     pending,
+    apiBalances,
   };
 });
 

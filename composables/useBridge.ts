@@ -18,13 +18,13 @@ interface IBridge {
 
 export const useBridge = (props: IBridge) => {
   let txController: AbortController | null = null;
-  let tokensController  : AbortController | null = null;
-  let routesController  : AbortController | null = null;
+  let tokensController: AbortController | null = null;
+  let routesController: AbortController | null = null;
 
   const provider = getRpcProvider(634);
 
   const { account } = useWeb3();
-  const { fromWei } = useBignumber();
+  const { fromWei, toWei } = useBignumber();
   const { tokenBalances, safeAddress, safe } = useAvocadoSafe();
   const { getNetworkByChainId, networks } = useNetworks();
   const { tokens } = storeToRefs(useTokens());
@@ -97,7 +97,6 @@ export const useBridge = (props: IBridge) => {
   const bridgeTokens = useAsyncData(
     async () => {
       try {
-
         if (tokensController) {
           tokensController.abort();
         }
@@ -124,7 +123,7 @@ export const useBridge = (props: IBridge) => {
     {
       server: false,
       immediate: true,
-      default:() => [],
+      default: () => [],
       watch: [toChainId],
     }
   );
@@ -134,14 +133,11 @@ export const useBridge = (props: IBridge) => {
       const { valid } = await form.validate();
 
       if (!valid) return;
-      if (!bridgeToToken.value) return
+      if (!bridgeToToken.value) return;
 
-      const transferAmount = toBN(amount.value || "0")
-        .times(10 ** bridgeToToken.value.decimals)
-        .toFixed(0);
+      const transferAmount = toWei(amount.value || "0", token.value.decimals);
 
       try {
-
         if (routesController) {
           routesController.abort();
         }
@@ -222,7 +218,7 @@ export const useBridge = (props: IBridge) => {
         }
       }
 
-      if(txController) {
+      if (txController) {
         txController.abort();
       }
 
@@ -252,14 +248,22 @@ export const useBridge = (props: IBridge) => {
     }
   );
 
-  const nativeFee = computed(
-    () =>
+  const nativeFee = computed(() => {
+    let v =
       transactions.data.value?.reduce((acc: any, tx: any) => {
         return toBN(acc)
           .plus(fromWei(tx?.value || "0", nativeCurrency.value?.decimals))
           .toFixed();
-      }, "0") || "0"
-  );
+      }, "0") || "0";
+
+    if (token.value.address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE") {
+      v = toBN(v)
+        .minus(amount.value || "0")
+        .toFixed(0);
+    }
+
+    return v;
+  });
 
   const nativeFeeInUsd = computed(() =>
     times(nativeFee.value!, nativeCurrency.value?.price || 0)
@@ -282,7 +286,7 @@ export const useBridge = (props: IBridge) => {
       if (!transactions.data.value?.length) return;
       if (isInsufficientBalance.value) return;
 
-      console.log('running generateSignatureMessage')
+      console.log("running generateSignatureMessage");
 
       try {
         const message = await safe.value?.generateSignatureMessage(
@@ -386,8 +390,6 @@ export const useBridge = (props: IBridge) => {
       fromAmount
     );
   };
-
-  
 
   const selectableChains = computed(() =>
     networks.filter(

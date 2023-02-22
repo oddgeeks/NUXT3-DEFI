@@ -14,16 +14,18 @@ const {
   <div class="flex flex-col h-full">
     <BannerAccountTracking v-if="showTrackingBanner" />
     <BannerWelcome v-if="showWelcomeBanner" />
-    <BannerOnboard v-if="showOnboardBanner" />
+    <div class="fixed bottom-12 w-full z-40">
+      <BannerSwitchNetwork v-if="showIncorrectNetworkBanner" />
+      <BannerOnboard v-else-if="showOnboardBanner" />
+    </div>
     <div class="py-8 px-10">
       <TheHeader />
     </div>
     <div
       class="container flex flex-col gap-4 banner-wrapper [&:not(:empty)]:mb-7.5"
     >
-      <BannerGift v-if="showGasGiftBanner" />
-      <WarningsGasBalance v-else-if="showInsufficientGasBanner" />
-      <WarningsSwitchNetwork v-if="showIncorrectNetworkBanner" />
+      <!-- <BannerGift v-if="showGasGiftBanner" /> -->
+      <WarningsGasBalance v-if="showInsufficientGasBanner" />
     </div>
     <slot />
     <TheFooter />

@@ -1,13 +1,30 @@
 <script setup lang="ts">
-import { RPC_URLS } from '~~/connectors';
 const { safeAddress } = useAvocadoSafe()
 
-const supportedChains = computed(() => Object.keys(RPC_URLS).filter(i => i !== '634').map((chainId) => {
-  return {
-    id: chainId,
-    name: chainIdToName(chainId),
-  }
-}));
+const supportedChains = [
+  { "id": "1", "name": "Mainnet" },
+  {
+    "id": "137",
+    "name": "Polygon"
+  },
+  {
+    "id": "42161",
+    "name": "Arbitrum"
+  },
+  {
+    "id": "10",
+    "name": "Optimism"
+  },
+  {
+    "id": "56",
+    "name": "BSC"
+  },
+  { "id": "43114", "name": "Avalanche" },
+  {
+    "id": "100",
+    "name": "Gnosis"
+  },
+]
 
 </script>
 

@@ -3,12 +3,8 @@
 @tailwind utilities;
 
 @layer base {
-  html {
-    @apply overflow-y-scroll;
-  }
-
   body {
-    @apply h-screen dark:bg-gray-950 bg-white dark:text-white text-slate-900 font-semibold;
+    @apply h-screen dark:bg-gray-950 bg-white dark:text-white text-slate-900 font-semibold overflow-y-overlay;
   }
 
   html.dark {
