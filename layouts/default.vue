@@ -14,7 +14,10 @@ const {
   <div class="flex flex-col h-full">
     <BannerAccountTracking v-if="showTrackingBanner" />
     <BannerWelcome v-if="showWelcomeBanner" />
-    <BannerOnboard v-if="showOnboardBanner" />
+    <div class="fixed bottom-12 w-full z-40">
+      <BannerSwitchNetwork v-if="showIncorrectNetworkBanner" />
+      <BannerOnboard v-else-if="showOnboardBanner" />
+    </div>
     <div class="py-8 px-10">
       <TheHeader />
     </div>
@@ -23,7 +26,6 @@ const {
     >
       <!-- <BannerGift v-if="showGasGiftBanner" /> -->
       <WarningsGasBalance v-if="showInsufficientGasBanner" />
-      <WarningsSwitchNetwork v-if="showIncorrectNetworkBanner" />
     </div>
     <slot />
     <TheFooter />
