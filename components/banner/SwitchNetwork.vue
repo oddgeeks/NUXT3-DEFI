@@ -5,7 +5,7 @@ const { switchNetworkByChainId } = useNetworks();
 
 <template>
   <div
-    class="w-full max-w-[832px] mx-auto text-xs relative bg-[#EC974F] bg-opacity-[14%] dark:bg-opacity-20 py-[15px] px-5 rounded-5 backdrop-blur shrink-0 flex justify-between items-center gap-[15px]"
+    class="w-full max-w-[832px] mx-auto text-xs relative bg-[#EC974F] bg-opacity-60 py-[15px] px-5 rounded-5 backdrop-blur shrink-0 flex justify-between items-center gap-[15px]"
   >
     <div class="flex space-x-[12px] items-center">
       <GloveSVG class="w-8 h-8" />
