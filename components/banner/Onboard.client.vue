@@ -37,8 +37,8 @@ watch(account, async () => {
       <CommonButton as="NuxtLink" href="https://onboard.avocado.instadapp.io/" target="_blank" size="sm">
         Import
       </CommonButton>
-      <button @click="hideOnboardBanner()" class="w-5 h-5 rounded-full flex items-center justify-center bg-[#94A3B8] text-slate-400 bg-opacity-20">
-        <SVGX />
+      <button @click="hideOnboardBanner()" class="w-5 h-5 rounded-full flex items-center justify-center bg-white bg-opacity-20">
+        <SVGX class="dark:text-white text-slate-500" />
       </button>
     </div>
   </div>
