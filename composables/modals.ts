@@ -38,10 +38,12 @@ interface IWcTransactionModal {
 export const showPendingTransactionModal = (
   hash: string,
   chainId: number | string,
-  type: ITxType
+  type: ITxType,
+  async: boolean = false
 ) => {
-  openModal({
+  return openModal({
     component: PendingTransaction,
+    async,
     componentProps: {
       hash,
       chainId,

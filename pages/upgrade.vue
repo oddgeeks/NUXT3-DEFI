@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { lt } from "semver";
-import { GaslessWallet__factory, Forwarder__factory } from "@/contracts";
+import {
+  GaslessWallet__factory,
+  Forwarder__factory,
+  AvoFactoryProxy__factory,
+} from "@/contracts";
 const { networks } = useNetworks();
 const availableNetworks = networks.filter((network) => network.chainId != 634);
-
-// Latest Implementation Version: 2.0.0
-const avoWalletLatestImplementationAddress =
-  "0x3718f4bf9140f333bca79cb279f09f0bb8e6ddee";
 
 const { safeAddress, safe } = useAvocadoSafe();
 const { forwarderProxyAddress } = useSafe();
@@ -70,33 +70,6 @@ const { data: allNetworks, pending } = useAsyncData(
     watch: [safeAddress],
   }
 );
-
-const upgradeAvailable = (currentVersion: string, latestVersion: string) => {
-  return lt(currentVersion, latestVersion);
-};
-
-const handleUpgrade = async (network: NetworkVersion) => {
-  try {
-    const wallet = GaslessWallet__factory.connect(
-      safeAddress.value,
-      getRpcProvider(network.chainId)
-    );
-
-    const { data } = await wallet.populateTransaction.upgradeTo(
-      avoWalletLatestImplementationAddress
-    );
-
-    const tx = await safe.value?.sendTransaction({
-      to: safeAddress.value,
-      data,
-      chainId: network.chainId,
-    });
-
-    console.log(tx);
-  } catch (e) {
-    console.log(e);
-  }
-};
 </script>
 
 <template>
@@ -124,47 +97,11 @@ const handleUpgrade = async (network: NetworkVersion) => {
           </tr>
         </thead>
         <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
-          <tr :key="network.chainId" v-for="network in allNetworks">
-            <td class="py-[26px] pl-7.5">
-              <div class="flex gap-3 items-center">
-                <ChainLogo class="w-11 h-11" :chain="network.chainId" />
-                <div class="flex flex-col gap-1">
-                  <span>
-                    {{ network.name }}
-                  </span>
-                  <span class="text-slate-400 font-medium text-sm">
-                    {{ network.currentVersion }}
-                  </span>
-                </div>
-              </div>
-            </td>
-            <td>
-              <span>
-                {{ network.latestVersion }}
-              </span>
-            </td>
-            <td class="pr-7.5 w-[221px]">
-              <CommonButton
-                v-if="
-                  upgradeAvailable(
-                    network.currentVersion || '0.0.0',
-                    network.latestVersion || '0.0.0'
-                  )
-                "
-                @click="handleUpgrade(network)"
-                class="w-full text-center justify-center"
-              >
-                Update Now
-              </CommonButton>
-              <CommonButton
-                v-else
-                class="!px-[19px] w-full items-center justify-center"
-                :disabled="true"
-              >
-                Already up to date
-              </CommonButton>
-            </td>
-          </tr>
+          <NetworkUpgradeRow
+            :network="network"
+            :key="network.chainId"
+            v-for="network in allNetworks"
+          />
         </tbody>
       </table>
     </div>
