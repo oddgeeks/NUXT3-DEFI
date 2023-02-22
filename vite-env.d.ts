@@ -28,6 +28,11 @@ interface Network {
   };
 }
 
+interface NetworkVersion extends Network {
+  latestVersion: string;
+  currentVersion: string;
+}
+
 interface IAvocadoTransaction {
   id: number;
   chain_id: string;

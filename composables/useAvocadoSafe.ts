@@ -7,8 +7,7 @@ export const useAvocadoSafe = () => {
   const { library, account } = useWeb3();
 
   // check if we have a cached safe address
-  const { safeAddress, tokenBalances, totalBalance } =
-    storeToRefs(useSafe());
+  const { safeAddress, tokenBalances, totalBalance } = storeToRefs(useSafe());
 
   const safe = shallowRef<ReturnType<typeof createSafe>>();
   const signer = computed(() => (safe.value ? safe.value.getSigner() : null));
@@ -31,7 +30,7 @@ export const useAvocadoSafe = () => {
       chainId: number | string;
       operation?: string;
     },
-    options: { metadata?: string,  id?: string  } = {}
+    options: { metadata?: string; id?: string } = {}
   ) => {
     await switchNetworkByChainId(634);
 
@@ -51,9 +50,14 @@ export const useAvocadoSafe = () => {
   };
 
   const sendTransactions = async (
-    transactions: { to: string; value?: string; data?: string,  operation?: string; }[],
+    transactions: {
+      to: string;
+      value?: string;
+      data?: string;
+      operation?: string;
+    }[],
     chainId: number | string,
-    options: { metadata?: string, id?: string } = {}
+    options: { metadata?: string; id?: string } = {}
   ) => {
     await switchNetworkByChainId(634);
 
