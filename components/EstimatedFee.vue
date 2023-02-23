@@ -30,7 +30,7 @@ const isBalaceNotEnough = computed(() => {
         class="text-xs text-slate-400 font-medium gap-2 inline-flex items-center"
       >
         <GasSVG class="w-4" />
-        Estimated gas fees
+        Gas fees
       </span>
       <span class="loading-box rounded-5 w-24 h-5" v-if="loading"></span>
       <span v-else :class="{ 'text-red-alert' : isBalaceNotEnough }" class="text-xs inline-flex items-center gap-2.5">

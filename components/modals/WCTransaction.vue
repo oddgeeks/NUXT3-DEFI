@@ -182,7 +182,7 @@ const handleReject = () => {
           <div class="text-slate-400 flex items-center gap-2.5">
             <GasSVG class="w-4" />
             <span class="text-xs leading-5 font-medium"
-              >Estimated gas fees</span
+              >Gas fees</span
             >
           </div>
 
