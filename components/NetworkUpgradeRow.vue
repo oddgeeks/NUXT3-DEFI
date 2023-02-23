@@ -12,6 +12,7 @@ defineProps<{
 
 const { forwarderProxyAddress } = useSafe();
 const { safeAddress, safe } = useAvocadoSafe();
+const { parseTransactionError } = useErrorHandler();
 
 const pending = ref(false);
 
@@ -41,11 +42,15 @@ const handleUpgrade = async (network: NetworkVersion) => {
 
     const avoWalletImpl = await avoFactoryProxyContract.avoWalletImpl();
 
-    const { data } = await wallet.populateTransaction.upgradeTo(avoWalletImpl);
+    const txData = await wallet.populateTransaction.upgradeTo(avoWalletImpl);
+
+    const { success } = await openUpgradeModal(network.chainId, txData);
+
+    if (!success) return;
 
     const tx = await safe.value?.sendTransaction({
       to: safeAddress.value,
-      data,
+      data: txData.data,
       chainId: network.chainId,
     });
 
@@ -57,10 +62,12 @@ const handleUpgrade = async (network: NetworkVersion) => {
     );
 
     refreshNuxtData("allNetworkVersions");
-
-    console.log(tx);
   } catch (e) {
     console.log(e);
+    notify({
+      type: "error",
+      message: parseTransactionError(e),
+    });
   } finally {
     pending.value = false;
   }

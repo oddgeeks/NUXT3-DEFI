@@ -11,7 +11,9 @@ import WCTransaction from "~~/components/modals/WCTransaction.vue";
 import PowerOffSVG from "~/assets/images/icons/power-off-bg.svg?component";
 import Dialog from "~~/components/modals/Dialog.vue";
 import type IWalletConnect from "@walletconnect/client";
+import type { PopulatedTransaction } from "ethers";
 import CustomTx from "~~/components/modals/CustomTx.vue";
+import UpgradeVersion from "~~/components/modals/UpgradeVersion.vue";
 
 const { openModal } = useModal();
 interface DialogModalProps {
@@ -203,6 +205,20 @@ export const openDialogModal = async ({
       isCancelButtonVisible,
       buttonProps,
       cancelButtonProps,
+    },
+  });
+};
+
+export const openUpgradeModal = async (
+  chainId: number,
+  tx: PopulatedTransaction
+) => {
+  return openModal({
+    component: UpgradeVersion,
+    async: true,
+    componentProps: {
+      chainId,
+      tx,
     },
   });
 };
