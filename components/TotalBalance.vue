@@ -3,7 +3,6 @@ import { storeToRefs } from "pinia";
 
 const { apiBalances } = storeToRefs(useSafe());
 const { totalBalance, account } = useAvocadoSafe();
-const tokenStore = useTokens();
 </script>
 <template>
   <div :class="{ 'blur pointer-events-none': !account }">
@@ -12,7 +11,7 @@ const tokenStore = useTokens();
       <div v-if="!apiBalances" class="h-10 w-40 flex items-center">
         <div class="loading-box rounded-5 w-full h-8"></div>
       </div>
-      <div v-else>{{ formatUsd(totalBalance.toFormat(2)) }}</div>
+      <div v-else>{{ formatUsd(totalBalance.toNumber()) }}</div>
     </div>
   </div>
 </template>
