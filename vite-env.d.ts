@@ -259,6 +259,11 @@ type SendMetadataProps = {
   receiver: string;
 };
 
+type UpgradeMetadataProps = {
+  version: string;
+  walletImpl: string;
+};
+
 type TopupMetadataProps = {
   amount: string;
   token: string;

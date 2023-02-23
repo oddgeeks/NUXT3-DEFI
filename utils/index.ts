@@ -28,6 +28,7 @@ const actionMetadataTypes = {
     "bytes32 protocol",
   ],
   "gas-topup": ["uint256 amount", "address token", "address onBehalf"],
+  upgrade: ["bytes32 version", "address walletImpl"],
 };
 
 export function shortenHash(hash: string, length: number = 4) {
@@ -305,6 +306,23 @@ export const encodeTransferMetadata = (
   return single ? encodeMultipleActions(data) : data;
 };
 
+export const encodeUpgradeMetadata = (
+  params: UpgradeMetadataProps,
+  single = true
+) => {
+  const encodedData = ethers.utils.defaultAbiCoder.encode(
+    actionMetadataTypes.upgrade,
+    [params.version, params.walletImpl]
+  );
+
+  const data = encodeMetadata({
+    type: "transfer",
+    encodedData,
+  });
+
+  return single ? encodeMultipleActions(data) : data;
+};
+
 export const encodeSwapMetadata = (
   params: SwapMetadataProps,
   single = true
@@ -377,7 +395,6 @@ export const encodeMultipleActions = (...actionData: string[]) => {
   return ethers.utils.defaultAbiCoder.encode(multiMetadataTypes, [actionData]);
 };
 
-
 export const decodeMetadata = (data: string) => {
   try {
     const iface = Forwarder__factory.createInterface();
@@ -388,14 +405,17 @@ export const decodeMetadata = (data: string) => {
       if (executeData.metadata_ === "0x" || !executeData.metadata_) {
         return null;
       } else {
-        metadata = executeData.metadata_
+        metadata = executeData.metadata_;
       }
     } else {
       const executeDataV2 = iface.decodeFunctionData("executeV2", data);
-      if (executeDataV2.params_.metadata === "0x" || !executeDataV2.params_.metadata) {
+      if (
+        executeDataV2.params_.metadata === "0x" ||
+        !executeDataV2.params_.metadata
+      ) {
         return null;
       } else {
-        metadata = executeDataV2.params_.metadata
+        metadata = executeDataV2.params_.metadata;
       }
     }
 
@@ -455,6 +475,13 @@ export const decodeMetadata = (data: string) => {
             sellToken: decodedData.sellToken,
             receiver: decodedData.receiver,
             protocol: utils.parseBytes32String(decodedData?.protocol || ""),
+          };
+          break;
+        case "upgrade":
+          payload = {
+            type,
+            version: utils.parseBytes32String(decodedData?.version || ""),
+            walletImpl: decodedData?.walletImpl,
           };
           break;
         case "gas-topup":
