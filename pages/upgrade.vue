@@ -1,6 +1,13 @@
 <script setup lang="ts">
+import { gt } from "semver";
 const { account } = useWeb3();
 const { data } = useNuxtData("allNetworkVersions");
+
+const sortByVersion = computed(() => {
+  return data.value?.sort((a: NetworkVersion, b: NetworkVersion) => {
+    return gt(a.latestVersion, b.latestVersion) ? -1 : 1;
+  });
+});
 </script>
 
 <template>
@@ -35,7 +42,7 @@ const { data } = useNuxtData("allNetworkVersions");
             <NetworkUpgradeRow
               :network="network"
               :key="network.chainId"
-              v-for="network in data"
+              v-for="network in sortByVersion"
             />
           </tbody>
         </table>

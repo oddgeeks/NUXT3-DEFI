@@ -134,10 +134,11 @@ export const useSafe = defineStore("safe", () => {
       if (!safeAddress.value) return;
 
       const promises = availableNetworks.map(async (network) => {
+        const obj = {
+          ...network,
+        } as NetworkVersion;
+
         try {
-          const obj = {
-            ...network,
-          } as NetworkVersion;
           const wallet = GaslessWallet__factory.connect(
             safeAddress.value,
             getRpcProvider(network.chainId)
@@ -167,6 +168,10 @@ export const useSafe = defineStore("safe", () => {
           return obj;
         } catch (e) {
           console.log(e);
+
+          obj.latestVersion = "0.0.0";
+          obj.currentVersion = "0.0.0";
+          return obj;
         }
       });
 

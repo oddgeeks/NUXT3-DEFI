@@ -124,7 +124,8 @@ const handleUpgrade = async (network: NetworkVersion) => {
         :disabled="true"
         class="!px-[19px] w-full items-center justify-center"
       >
-        Already up to date
+        <span v-if="network.currentVersion === '0.0.0'">Not deployed yet</span>
+        <span v-else>Already up to date</span>
       </CommonButton>
     </td>
   </tr>
