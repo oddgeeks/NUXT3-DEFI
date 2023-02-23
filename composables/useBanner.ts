@@ -1,6 +1,8 @@
 import { storeToRefs } from "pinia";
 import { gt } from "semver";
 
+const isVersionUpdateBannerHidden = ref(false);
+
 export const useBanner = () => {
   const { gasBalance, pending, safeAddress } = storeToRefs(useSafe());
   const { account, chainId } = useWeb3();
@@ -10,10 +12,6 @@ export const useBanner = () => {
   const isHideWelcomeBanner = useLocalStorage("hide-welcome-banner", false);
   const isOnboardHidden = computed(() =>
     useStatefulCookie(`hide-onboard-${account.value}`)
-  );
-
-  const isVersionUpdateBannerHidden = computed(() =>
-    useStatefulCookie(`version-update-${safeAddress.value}`)
   );
 
   const allNetworkVersions = useNuxtData("allNetworkVersions");
@@ -54,7 +52,7 @@ export const useBanner = () => {
     if (!account.value) return false;
     const allVersions = allNetworkVersions.data.value as NetworkVersion[];
     if (!allVersions?.length) return false;
-    if (isVersionUpdateBannerHidden.value?.value) return false;
+    if (isVersionUpdateBannerHidden.value) return false;
 
     return allVersions.some((network) =>
       gt(network.latestVersion, network.currentVersion)
@@ -72,7 +70,6 @@ export const useBanner = () => {
     showTrackingBanner: computed(() => !!trackingAccount.value),
     toggleWelcomeBanner: (val: boolean) => (isHideWelcomeBanner.value = !val),
     hideOnboardBanner: () => (isOnboardHidden.value.value = true),
-    hideVersionUpdateBanner: () =>
-      (isVersionUpdateBannerHidden.value.value = true),
+    hideVersionUpdateBanner: () => (isVersionUpdateBannerHidden.value = true),
   };
 };

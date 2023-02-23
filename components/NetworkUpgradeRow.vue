@@ -10,9 +10,11 @@ defineProps<{
   network: NetworkVersion;
 }>();
 
+const { account } = useWeb3();
 const { forwarderProxyAddress } = useSafe();
 const { safeAddress, safe } = useAvocadoSafe();
 const { parseTransactionError } = useErrorHandler();
+const { switchNetworkByChainId } = useNetworks();
 
 const pending = ref(false);
 
@@ -22,6 +24,8 @@ const upgradeAvailable = (currentVersion: string, latestVersion: string) => {
 
 const handleUpgrade = async (network: NetworkVersion) => {
   try {
+    await switchNetworkByChainId(634);
+
     pending.value = true;
     const wallet = GaslessWallet__factory.connect(
       safeAddress.value,
@@ -62,6 +66,13 @@ const handleUpgrade = async (network: NetworkVersion) => {
     );
 
     refreshNuxtData("allNetworkVersions");
+
+    logActionToSlack({
+      action: "upgrade",
+      chainId: String(network.chainId),
+      account: account.value,
+      message: `Upgraded to ${network.latestVersion}`,
+    });
   } catch (e) {
     console.log(e);
     notify({

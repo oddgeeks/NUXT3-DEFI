@@ -6,7 +6,7 @@ const { data } = useNuxtData("allNetworkVersions");
   <div class="mx-auto max-w-[880px] w-full flex-1">
     <div class="mb-7.5 max-w-[796px] w-full">
       <h1 class="text-3xl font-bold leading-10 mb-2.5">
-        Upgrade Avocado’s Smart Contracts 🧠
+        Upgrade Avocado’s Smart Contracts
       </h1>
       <h2 class="text-slate-400 font-medium text-sm">
         Avocado wallet is a Smart Contract wallet, it is recommended that you
