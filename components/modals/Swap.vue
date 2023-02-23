@@ -151,6 +151,8 @@ const {
   setState: setCustomSlippage,
 } = useField<string>("customSlippage");
 
+const actualSlippage = computed(() => customSlippage.value || slippage.value);
+
 const convertBuytoSellAmount = (val: string) => {
   const sellTokenPrice = swap.value.sellToken.price;
   const buyTokenPrice = swap.value.buyToken.price;
@@ -197,13 +199,19 @@ const sendingDisabled = computed(
     isPriceImpactHigh.value
 );
 
-const { data: swapDetails, pending } = useAsyncData(
+const {
+  data: swapDetails,
+  pending,
+  refresh,
+} = useAsyncData(
   "swap-details",
-  async () => {
+  async (cb) => {
     const { valid } = await validate();
     if (!valid) return;
 
     try {
+      pause();
+
       if (abortController.value) {
         abortController.value.abort();
       }
@@ -221,8 +229,8 @@ const { data: swapDetails, pending } = useAsyncData(
             buyToken: swap.value.buyToken.address,
             sellToken: swap.value.sellToken.address,
             sellAmount: toWei(sellAmount.value, swap.value.sellToken.decimals),
-            maxSlippage: customSlippage.value || slippage.value,
-            slippage: customSlippage.value || slippage.value,
+            maxSlippage: actualSlippage.value,
+            slippage: actualSlippage.value,
             user: safeAddress.value,
             access_token: "hxBA1uxwaGWN0xcpPOncVJ3Tk7FdFxY7g3NX28R14C",
           },
@@ -256,6 +264,10 @@ const { data: swapDetails, pending } = useAsyncData(
   }
 );
 
+const { pause, resume } = useIntervalFn(refresh, 5000, {
+  immediate: true,
+});
+
 const bestRoute = computed(() => swapDetails.value?.aggregators[0] || null);
 
 const priceImpact = computed(() =>
@@ -267,9 +279,7 @@ const priceImpact = computed(() =>
 const isPriceImpactHigh = computed(() => {
   if (!bestRoute.value) return false;
 
-  const actualSlippage = customSlippage.value || slippage.value;
-
-  return toBN(priceImpact.value).gt(actualSlippage);
+  return toBN(priceImpact.value).gt(actualSlippage.value);
 });
 
 const sellAmountInUsd = computed(() => {
@@ -292,6 +302,15 @@ const buyAmountInUsd = computed(() => {
   )
     .times(swapDetails.value?.data.buyToken.price || 0)
     .toFixed(2);
+});
+
+const minRecievedAfterSlippage = computed(() => {
+  return fromWei(
+    swapDetails.value?.data.buyTokenAmount || 0,
+    swap.value.buyToken.decimals
+  )
+    .div(toBN(1).plus(toBN(actualSlippage.value).div(100)))
+    .decimalPlaces(5);
 });
 
 const buyTokenAmountPerSellToken = computed(() => {
@@ -318,19 +337,24 @@ const swapTokens = () => {
 const { data: fee, pending: feePending } = useAsyncData(
   "swap-fee",
   async () => {
-    const txs = await getTxs();
-    const message = await safe.value?.generateSignatureMessage(
-      txs,
-      +props.chainId
-    );
+    try {
+      pause();
+      const txs = await getTxs();
+      const message = await safe.value?.generateSignatureMessage(
+        txs,
+        +props.chainId
+      );
 
-    console.log([txs, message, account.value, +props.chainId]);
+      const data = await provider.send("txn_estimateFeeWithoutSignature", [
+        message,
+        account.value,
+        props.chainId,
+      ]);
 
-    return provider.send("txn_estimateFeeWithoutSignature", [
-      message,
-      account.value,
-      props.chainId,
-    ]);
+      return data;
+    } finally {
+      resume();
+    }
   },
   {
     server: false,
@@ -466,6 +490,10 @@ watch(slippage, () => {
   setCustomSlippage({
     value: undefined,
   });
+});
+
+onUnmounted(() => {
+  pause();
 });
 </script>
 
@@ -673,6 +701,22 @@ watch(slippage, () => {
                   1 {{ swap.buyToken?.symbol }} =
                   {{ sellTokenAmountPerBuyToken }}
                   {{ swap.sellToken?.symbol }}
+                </span>
+              </div>
+              <div
+                class="flex text-slate-400 font-medium text-sm justify-between items-center"
+              >
+                <span>
+                  Minimum Received after slippage ({{ actualSlippage }}%)
+                </span>
+                <div
+                  v-if="pending && meta.valid"
+                  style="width: 140px; height: 20px"
+                  class="loading-box rounded-lg"
+                />
+                <span class="uppercase" v-else>
+                  {{ minRecievedAfterSlippage }}
+                  {{ swap.buyToken.symbol }}
                 </span>
               </div>
               <div
