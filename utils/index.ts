@@ -316,7 +316,7 @@ export const encodeUpgradeMetadata = (
   );
 
   const data = encodeMetadata({
-    type: "transfer",
+    type: "upgrade",
     encodedData,
   });
 
