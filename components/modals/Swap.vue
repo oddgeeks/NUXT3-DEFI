@@ -63,6 +63,7 @@ const slippages = [
 
 const [swapped, toggleSwapped] = useToggle();
 const [isBuyAmountDirty, toggleDirty] = useToggle(false);
+const refreshing = ref(false);
 
 const swap = ref<ISwap>({
   sellToken: getTokenByAddress(props.address, props.chainId)!,
@@ -199,6 +200,10 @@ const sendingDisabled = computed(
     isPriceImpactHigh.value
 );
 
+const isLoading = computed(
+  () => pending.value && meta.value.valid && !refreshing.value
+);
+
 const {
   data: swapDetails,
   pending,
@@ -264,9 +269,16 @@ const {
   }
 );
 
-const { pause, resume } = useIntervalFn(refresh, 5000, {
-  immediate: true,
-});
+const { pause, resume } = useIntervalFn(
+  () => {
+    refresh();
+    refreshing.value = true;
+  },
+  5000,
+  {
+    immediate: true,
+  }
+);
 
 const bestRoute = computed(() => swapDetails.value?.aggregators[0] || null);
 
@@ -354,6 +366,7 @@ const { data: fee, pending: feePending } = useAsyncData(
       return data;
     } finally {
       resume();
+      refreshing.value = false;
     }
   },
   {
@@ -534,7 +547,7 @@ onUnmounted(() => {
         </div>
         <div class="flex justify-between items-center text-sm text-slate-400">
           <div
-            v-if="pending && meta.valid"
+            v-if="isLoading"
             style="width: 60px; height: 20px"
             class="loading-box rounded-lg"
           />
@@ -570,7 +583,7 @@ onUnmounted(() => {
         <div class="flex">
           <div class="flex-1 flex items-center">
             <div
-              v-if="pending && meta.valid"
+              v-if="isLoading"
               style="width: 100px; height: 28px"
               class="loading-box rounded-lg"
             />
@@ -594,7 +607,7 @@ onUnmounted(() => {
         </div>
         <div class="flex justify-between items-center text-sm text-slate-400">
           <div
-            v-if="pending && meta.valid"
+            v-if="isLoading"
             style="width: 60px; height: 20px"
             class="loading-box rounded-lg"
           />
@@ -683,7 +696,7 @@ onUnmounted(() => {
                 class="flex text-slate-400 font-medium uppercase text-sm justify-between items-center"
               >
                 <div
-                  v-if="pending && meta.valid"
+                  v-if="isLoading"
                   style="width: 140px; height: 20px"
                   class="loading-box rounded-lg"
                 />
@@ -693,7 +706,7 @@ onUnmounted(() => {
                   {{ swap.buyToken?.symbol }}
                 </span>
                 <div
-                  v-if="pending && meta.valid"
+                  v-if="isLoading"
                   style="width: 140px; height: 20px"
                   class="loading-box rounded-lg"
                 />
@@ -710,7 +723,7 @@ onUnmounted(() => {
                   Minimum Received after slippage ({{ actualSlippage }}%)
                 </span>
                 <div
-                  v-if="pending && meta.valid"
+                  v-if="isLoading"
                   style="width: 140px; height: 20px"
                   class="loading-box rounded-lg"
                 />
@@ -726,14 +739,13 @@ onUnmounted(() => {
                   >Price Impact</span
                 >
                 <div
-                  v-if="pending && meta.valid"
+                  v-if="isLoading"
                   style="width: 100px; height: 20px"
                   class="loading-box rounded-lg"
                 />
                 <span
                   v-else
                   :class="{ '!text-red-alert': gt(priceImpact, 0.04) }"
-                  class="text-green-400"
                 >
                   {{ formatPercent(priceImpact) }}</span
                 >
