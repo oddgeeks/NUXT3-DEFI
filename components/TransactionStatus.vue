@@ -14,6 +14,7 @@ const statusColor = computed(() => {
     case "ready":
       return "text-green-400";
     case "failed":
+    case "dropped":
       return "text-red-500";
     default:
       return "text-yellow";
@@ -32,7 +33,7 @@ const statusColor = computed(() => {
     />
     <SVGErrorCircle
       class="text-white w-4 h-4"
-      v-else-if="status === 'failed'"
+      v-else-if="status === 'failed' || status === 'dropped'"
     />
     <SVGClockCircle v-else class="w-4 h-4" />
     {{ status }}
