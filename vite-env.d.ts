@@ -42,7 +42,7 @@ interface IAvocadoTransaction {
   data: string;
   fee: string;
   confirmations: number;
-  status: "pending" | "confirming" | "success" | "failed";
+  status: "pending" | "confirming" | "success" | "failed" | "dropped";
   gas_limit: string;
   gas_price: string;
   value: string;

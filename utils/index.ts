@@ -377,19 +377,34 @@ export const encodeMultipleActions = (...actionData: string[]) => {
   return ethers.utils.defaultAbiCoder.encode(multiMetadataTypes, [actionData]);
 };
 
+
 export const decodeMetadata = (data: string) => {
   try {
     const iface = Forwarder__factory.createInterface();
-    const executeData = iface.decodeFunctionData("execute", data);
+    let metadata = "0x";
 
-    if (executeData.metadata_ === "0x" || !executeData.metadata_) return null;
+    if (data.startsWith("0x18e7f485")) {
+      const executeData = iface.decodeFunctionData("execute", data);
+      if (executeData.metadata_ === "0x" || !executeData.metadata_) {
+        return null;
+      } else {
+        metadata = executeData.metadata_
+      }
+    } else {
+      const executeDataV2 = iface.decodeFunctionData("executeV2", data);
+      if (executeDataV2.params_.metadata === "0x" || !executeDataV2.params_.metadata) {
+        return null;
+      } else {
+        metadata = executeDataV2.params_.metadata
+      }
+    }
 
     const metadataArr = [];
 
     const [decodedMultiMetadata = []] =
       (ethers.utils.defaultAbiCoder.decode(
         multiMetadataTypes,
-        executeData.metadata_
+        metadata
       ) as string[]) || [];
 
     for (let metadata of decodedMultiMetadata) {
