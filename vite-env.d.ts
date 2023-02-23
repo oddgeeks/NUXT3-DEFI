@@ -38,6 +38,7 @@ interface IAvocadoTransaction {
   fee: string;
   confirmations: number;
   status: "pending" | "confirming" | "success" | "failed" | "dropped";
+  revert_reason?: string;
   gas_limit: string;
   gas_price: string;
   value: string;
