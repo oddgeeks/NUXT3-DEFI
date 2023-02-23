@@ -2,7 +2,7 @@ interface Window {
   ethereum: any;
 }
 
-type ITxType = "send" | "swap" | "bridge" | "topUpGas" | "wc";
+type ITxType = "send" | "swap" | "bridge" | "topUpGas" | "wc" | "upgrade";
 interface Provider {
   id: string;
   name: string;
@@ -26,6 +26,11 @@ interface Network {
       decimals: number;
     };
   };
+}
+
+interface NetworkVersion extends Network {
+  latestVersion: string;
+  currentVersion: string;
 }
 
 interface IAvocadoTransaction {
@@ -244,7 +249,7 @@ type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim";
 type ISlackMessageType = "danger" | "error" | "success" | "banner";
 
 type MetadataProps = {
-  type: "transfer" | "bridge" | "swap" | "multi" | "gas-topup";
+  type: "transfer" | "bridge" | "swap" | "multi" | "gas-topup" | "upgrade";
   encodedData: string;
   version?: string;
 };
@@ -253,6 +258,11 @@ type SendMetadataProps = {
   token: string;
   amount: string;
   receiver: string;
+};
+
+type UpgradeMetadataProps = {
+  version: string;
+  walletImpl: string;
 };
 
 type TopupMetadataProps = {

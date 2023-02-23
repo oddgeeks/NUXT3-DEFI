@@ -1,6 +1,6 @@
 interface ISlackMessage {
   message: string;
-  action: IWeb3Action | "wc" | "add-token";
+  action: IWeb3Action | "wc" | "add-token" | "upgrade";
   account: string;
   type?: ISlackMessageType;
   txHash?: string;
@@ -16,6 +16,7 @@ const prefixes: Record<ISlackMessage["action"], string> = {
   claim: `🎁 Claimed:`,
   wc: `:walletconnect:`,
   "add-token": `🆕 Added Token:`,
+  upgrade: `🆙`,
 };
 
 export const logActionToSlack = (slackMessage: ISlackMessage) => {

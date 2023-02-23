@@ -9,26 +9,30 @@ const { tokens } = storeToRefs(useTokens());
 const props = defineProps({
   metadata: {
     type: Object,
-    required: true
+    required: true,
   },
-  transaction: Object
+  transaction: Object,
 });
 
 const { fromWei } = useBignumber();
 
-const getTokenByAddress = (address: string, chainId = props.transaction?.chain_id) => {
+const getTokenByAddress = (
+  address: string,
+  chainId = props.transaction?.chain_id
+) => {
   return tokens.value.find(
     (i) =>
-      i.address.toLocaleLowerCase() === (address && address.toLocaleLowerCase()) &&
-      i.chainId == chainId
+      i.address.toLocaleLowerCase() ===
+        (address && address.toLocaleLowerCase()) && i.chainId == chainId
   );
 };
-
 
 const token = computed(() => getTokenByAddress(props.metadata?.token));
 const buyToken = computed(() => getTokenByAddress(props.metadata?.buyToken));
 const sellToken = computed(() => getTokenByAddress(props.metadata?.sellToken));
-const toToken = computed(() => getTokenByAddress(props.metadata?.toToken, props.metadata?.toChainId));
+const toToken = computed(() =>
+  getTokenByAddress(props.metadata?.toToken, props.metadata?.toChainId)
+);
 
 const sellAmountFormatted = computed(() =>
   formatDecimal(
@@ -55,13 +59,12 @@ const bridgeAmountFormatted = computed(() =>
 );
 
 const formatProtocol = (protocol: string) => {
-return new Map([
-    ['1inch-v5', '1inch'],
-    ['0x-v1', '0x'],
-    ['paraswap-v5', 'Paraswap'],
+  return new Map([
+    ["1inch-v5", "1inch"],
+    ["0x-v1", "0x"],
+    ["paraswap-v5", "Paraswap"],
   ]).get(protocol);
 };
-
 </script>
 
 <template>
@@ -72,7 +75,13 @@ return new Map([
       {{ formattedAmount }}
       <span class="uppercase">{{ token?.symbol }}</span>
       <ArrowRight class="w-4 h-4 text-slate-400 mx-2" />
-      <a class="text-primary" :href="getExplorerUrl(transaction?.chain_id, `/address/${metadata.receiver}`)">{{ shortenHash(metadata.receiver) }}</a>
+      <a
+        class="text-primary"
+        :href="
+          getExplorerUrl(transaction?.chain_id, `/address/${metadata.receiver}`)
+        "
+        >{{ shortenHash(metadata.receiver) }}</a
+      >
     </span>
   </div>
   <div class="flex gap-5" v-if="metadata.type === 'gas-topup'">
@@ -95,9 +104,12 @@ return new Map([
       <img width="20" height="20" class="w-5 h-5" :src="buyToken?.logoURI" />
       {{ buyAmountFormatted }}
       <span class="uppercase">{{ buyToken?.symbol }}</span>
-      <span class="capitalize flex items-center gap-2.5" v-if="metadata.protocol">
-        On <ProtocolLogo class="w-5 h-5" :name="metadata.protocol"/> 
-        {{  formatProtocol(metadata.protocol) }}
+      <span
+        class="capitalize flex items-center gap-2.5"
+        v-if="metadata.protocol"
+      >
+        On <ProtocolLogo class="w-5 h-5" :name="metadata.protocol" />
+        {{ formatProtocol(metadata.protocol) }}
       </span>
     </span>
   </div>
@@ -113,5 +125,8 @@ return new Map([
         <span>{{ chainIdToName(metadata.toChainId) }}</span>
       </span>
     </span>
+  </div>
+  <div v-if="metadata.type === 'upgrade'" class="self-start">
+    Safe upgraded to {{ metadata?.version }}
   </div>
 </template>

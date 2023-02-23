@@ -1,6 +1,10 @@
 import { ethers } from "ethers";
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
-import { Forwarder__factory } from "~/contracts";
+import {
+  GaslessWallet__factory,
+  Forwarder__factory,
+  AvoFactoryProxy__factory,
+} from "~/contracts";
 import { RPC_URLS } from "~~/connectors";
 import { IToken } from "./tokens";
 import { wait } from "@instadapp/utils";
@@ -24,6 +28,11 @@ export const useSafe = defineStore("safe", () => {
   const { account } = useWeb3();
   const { tokens } = storeToRefs(useTokens());
   const documentVisibility = useDocumentVisibility();
+  const { networks } = useNetworks();
+
+  const availableNetworks = networks.filter(
+    (network) => network.chainId != 634
+  );
 
   const gasBalance = ref();
   const pending = ref<Record<string, boolean>>({
@@ -119,6 +128,64 @@ export const useSafe = defineStore("safe", () => {
       );
   });
 
+  useAsyncData(
+    "allNetworkVersions",
+    async () => {
+      if (!safeAddress.value) return;
+
+      const promises = availableNetworks.map(async (network) => {
+        const obj = {
+          ...network,
+        } as NetworkVersion;
+
+        try {
+          const wallet = GaslessWallet__factory.connect(
+            safeAddress.value,
+            getRpcProvider(network.chainId)
+          );
+
+          const forwarderProxyContract = Forwarder__factory.connect(
+            forwarderProxyAddress,
+            getRpcProvider(network.chainId)
+          );
+
+          const latestVersion = await forwarderProxyContract.avoWalletVersion(
+            "0x0000000000000000000000000000000000000001"
+          );
+
+          const currentVersion = await wallet.DOMAIN_SEPARATOR_VERSION();
+
+          obj.latestVersion = latestVersion;
+          obj.currentVersion = currentVersion;
+
+          return obj;
+        } catch (e) {
+          // console.log(e);
+
+          obj.latestVersion = "0.0.0";
+          obj.currentVersion = "0.0.0";
+          return obj;
+        }
+      });
+
+      const results = await Promise.allSettled(promises);
+
+      const arr = results
+        .map((result) => {
+          if (result.status === "fulfilled") {
+            return result.value;
+          }
+        })
+        .filter(Boolean);
+
+      return arr as NetworkVersion[];
+    },
+    {
+      immediate: true,
+      watch: [safeAddress],
+    }
+  );
+
   onMounted(async () => {
     await wait(1000);
 
@@ -169,6 +236,7 @@ export const useSafe = defineStore("safe", () => {
     fetchGasBalance,
     pending,
     apiBalances,
+    forwarderProxyAddress,
   };
 });
 
