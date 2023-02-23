@@ -211,7 +211,8 @@ export const openDialogModal = async ({
 
 export const openUpgradeModal = async (
   chainId: number,
-  tx: PopulatedTransaction
+  tx: PopulatedTransaction,
+  version: { currentVersion: string; latestVersion: string }
 ) => {
   return openModal({
     component: UpgradeVersion,
@@ -219,6 +220,7 @@ export const openUpgradeModal = async (
     componentProps: {
       chainId,
       tx,
+      version,
     },
   });
 };

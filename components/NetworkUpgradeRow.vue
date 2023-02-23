@@ -6,7 +6,6 @@ import {
   Forwarder__factory,
   AvoFactoryProxy__factory,
 } from "@/contracts";
-import { storeToRefs } from "pinia";
 
 const props = defineProps<{
   network: NetworkVersion;
@@ -14,7 +13,6 @@ const props = defineProps<{
 
 const { account } = useWeb3();
 const { forwarderProxyAddress } = useSafe();
-const { gasBalance } = storeToRefs(useSafe());
 const { safeAddress, safe, sendTransaction } = useAvocadoSafe();
 const { parseTransactionError } = useErrorHandler();
 const { switchNetworkByChainId } = useNetworks();
@@ -52,7 +50,10 @@ const handleUpgrade = async (network: NetworkVersion) => {
 
     const txData = await wallet.populateTransaction.upgradeTo(avoWalletImpl);
 
-    const { success } = await openUpgradeModal(network.chainId, txData);
+    const { success } = await openUpgradeModal(network.chainId, txData, {
+      currentVersion: network.currentVersion,
+      latestVersion: network.latestVersion,
+    });
 
     if (!success) return;
 
