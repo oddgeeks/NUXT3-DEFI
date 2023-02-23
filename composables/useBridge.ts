@@ -165,7 +165,7 @@ export const useBridge = (props: IBridge) => {
 
         if (!data.result.routes.length) {
           throw new Error(
-            "Our bridge provider do not have routes for your desired transfer",
+            "Our bridge provider does not have routes for your desired transfer",
             {
               cause: "no-routes",
             }
