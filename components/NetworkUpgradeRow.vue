@@ -5,48 +5,84 @@ import {
   Forwarder__factory,
   AvoFactoryProxy__factory,
 } from "@/contracts";
+import { storeToRefs } from "pinia";
 
-defineProps<{
+const props = defineProps<{
   network: NetworkVersion;
 }>();
 
 const { account } = useWeb3();
 const { forwarderProxyAddress } = useSafe();
+const { gasBalance } = storeToRefs(useSafe());
 const { safeAddress, safe } = useAvocadoSafe();
 const { parseTransactionError } = useErrorHandler();
 const { switchNetworkByChainId } = useNetworks();
 
+const provider = getRpcProvider(634);
+
 const pending = ref(false);
 
-const upgradeAvailable = (currentVersion: string, latestVersion: string) => {
-  return lt(currentVersion, latestVersion);
+const isUpgradeAvailable = computed(() =>
+  lt(props.network.currentVersion, props.network.latestVersion)
+);
+
+const isBalaceNotEnough = computed(() => {
+  if (!estimatedFee.value) return false;
+  return toBN(gasBalance.value).lt(estimatedFee.value?.max!);
+});
+
+const getTx = async () => {
+  const wallet = GaslessWallet__factory.connect(
+    safeAddress.value,
+    getRpcProvider(props.network.chainId)
+  );
+
+  const forwarderProxyContract = Forwarder__factory.connect(
+    forwarderProxyAddress,
+    getRpcProvider(props.network.chainId)
+  );
+
+  const avoFactory = await forwarderProxyContract.avoFactory();
+
+  const avoFactoryProxyContract = AvoFactoryProxy__factory.connect(
+    avoFactory,
+    getRpcProvider(props.network.chainId)
+  );
+
+  const avoWalletImpl = await avoFactoryProxyContract.avoWalletImpl();
+
+  return wallet.populateTransaction.upgradeTo(avoWalletImpl);
 };
+
+const estimatedFee = asyncComputed(async () => {
+  if (!isUpgradeAvailable.value) return;
+
+  const txData = await getTx();
+
+  const message = await safe.value?.generateSignatureMessage(
+    [txData],
+    +props.network.chainId
+  );
+
+  const feeData = await provider.send("txn_estimateFeeWithoutSignature", [
+    message,
+    account.value,
+    props.network.chainId,
+  ]);
+
+  return calculateEstimatedFee({
+    chainId: props.network.chainId,
+    ...feeData,
+  });
+});
 
 const handleUpgrade = async (network: NetworkVersion) => {
   try {
     await switchNetworkByChainId(634);
 
     pending.value = true;
-    const wallet = GaslessWallet__factory.connect(
-      safeAddress.value,
-      getRpcProvider(network.chainId)
-    );
 
-    const forwarderProxyContract = Forwarder__factory.connect(
-      forwarderProxyAddress,
-      getRpcProvider(network.chainId)
-    );
-
-    const avoFactory = await forwarderProxyContract.avoFactory();
-
-    const avoFactoryProxyContract = AvoFactoryProxy__factory.connect(
-      avoFactory,
-      getRpcProvider(network.chainId)
-    );
-
-    const avoWalletImpl = await avoFactoryProxyContract.avoWalletImpl();
-
-    const txData = await wallet.populateTransaction.upgradeTo(avoWalletImpl);
+    const txData = await getTx();
 
     const { success } = await openUpgradeModal(network.chainId, txData);
 
@@ -107,12 +143,7 @@ const handleUpgrade = async (network: NetworkVersion) => {
     </td>
     <td class="pr-7.5 w-[221px]">
       <CommonButton
-        v-if="
-          upgradeAvailable(
-            network.currentVersion || '0.0.0',
-            network.latestVersion || '0.0.0'
-          )
-        "
+        v-if="isUpgradeAvailable"
         :loading="pending"
         @click="handleUpgrade(network)"
         class="w-full text-center justify-center"
@@ -127,6 +158,18 @@ const handleUpgrade = async (network: NetworkVersion) => {
         <span v-if="network.currentVersion === '0.0.0'">Not deployed yet</span>
         <span v-else>Already up to date</span>
       </CommonButton>
+      <div
+        v-if="!estimatedFee && isUpgradeAvailable"
+        class="loading-box w-24 mt-2 h-4 mx-auto rounded-lg"
+      ></div>
+      <div class="flex mt-2 text-slate-400" v-else-if="estimatedFee">
+        <span
+          :class="{ 'text-red-alert': isBalaceNotEnough }"
+          class="text-xs inline-flex items-center gap-2.5"
+        >
+          Txn Fees: {{ estimatedFee.formatted }} USDC
+        </span>
+      </div>
     </td>
   </tr>
 </template>
