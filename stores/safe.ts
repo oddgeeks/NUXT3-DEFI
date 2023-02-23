@@ -155,19 +155,12 @@ export const useSafe = defineStore("safe", () => {
 
           const currentVersion = await wallet.DOMAIN_SEPARATOR_VERSION();
 
-          console.log({
-            latestVersion: latestVersion,
-            currentVersion: currentVersion,
-            chain: network.chainId,
-            name: network.name,
-          });
-
           obj.latestVersion = latestVersion;
           obj.currentVersion = currentVersion;
 
           return obj;
         } catch (e) {
-          console.log(e);
+          // console.log(e);
 
           obj.latestVersion = "0.0.0";
           obj.currentVersion = "0.0.0";
