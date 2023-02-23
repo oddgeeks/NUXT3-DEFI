@@ -145,7 +145,7 @@ onUnmounted(() => {
           </div>
           <TransactionStatus :status="transaction.status" />
 
-          <span v-if="transaction.revert_reason" class="ml-2 text-xs text-red-300">
+          <span v-if="transaction.revert_reason" class="ml-2 text-xs text-red-400">
             ({{ transaction.revert_reason }})
           </span>
         </div>
