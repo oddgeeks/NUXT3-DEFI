@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
 const provider = getRpcProvider(634);
 
 defineEmits(["destroy"]);
@@ -10,6 +11,10 @@ const props = defineProps({
   },
   chainId: {
     type: [String, Number],
+    required: true,
+  },
+  version: {
+    type: Object,
     required: true,
   },
 });
@@ -43,17 +48,25 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="text-center flex gap-7.5 flex-col">
-    <div class="flex flex-col justify-center gap-[15px] items-center">
-      <div
-        class="dark:bg-gray-850 bg-slate-50 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]"
+    <div class="flex flex-col justify-center gap-7.5 items-center">
+      <ChainLogo class="w-10 h-10" :chain="chainId" />
+      <span class="text-lg leading-5"
+        >{{ chainIdToName(chainId) }} Upgrade</span
       >
-        <ChainLogo class="w-5 h-5" :chain="chainId" />
-        <span class="text-xs text-slate-400 leading-5">{{
-          chainIdToName(chainId)
-        }}</span>
-      </div>
     </div>
-
+    <div class="flex items-center justify-center gap-3">
+      <span
+        class="bg-slate-800 py-2 px-4 rounded-5 items-center justify-center flex text-sm"
+      >
+        v{{ version.currentVersion }}
+      </span>
+      <ArrowRight class="w-[18px] h-[18px] text-slate-400" />
+      <span
+        class="bg-slate-800 py-2 px-4 rounded-5 items-center justify-center flex text-sm"
+      >
+        v{{ version.latestVersion }}
+      </span>
+    </div>
     <EstimatedFee :chain-id="String(chainId)" :loading="pending" :data="fee" />
     <CommonButton
       :loading="pending"
