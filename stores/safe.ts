@@ -1,6 +1,10 @@
 import { ethers } from "ethers";
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
-import { Forwarder__factory } from "~/contracts";
+import {
+  GaslessWallet__factory,
+  Forwarder__factory,
+  AvoFactoryProxy__factory,
+} from "~/contracts";
 import { RPC_URLS } from "~~/connectors";
 import { IToken } from "./tokens";
 import { wait } from "@instadapp/utils";
@@ -24,6 +28,11 @@ export const useSafe = defineStore("safe", () => {
   const { account } = useWeb3();
   const { tokens } = storeToRefs(useTokens());
   const documentVisibility = useDocumentVisibility();
+  const { networks } = useNetworks();
+
+  const availableNetworks = networks.filter(
+    (network) => network.chainId != 634
+  );
 
   const gasBalance = ref();
   const pending = ref<Record<string, boolean>>({
@@ -118,6 +127,66 @@ export const useSafe = defineStore("safe", () => {
           .toNumber()
       );
   });
+
+  useAsyncData(
+    "allNetworkVersions",
+    async () => {
+      if (!safeAddress.value) return;
+
+      const promises = availableNetworks.map(async (network) => {
+        try {
+          const obj = {
+            ...network,
+          } as NetworkVersion;
+          const wallet = GaslessWallet__factory.connect(
+            safeAddress.value,
+            getRpcProvider(network.chainId)
+          );
+
+          const forwarderProxyContract = Forwarder__factory.connect(
+            forwarderProxyAddress,
+            getRpcProvider(network.chainId)
+          );
+
+          const latestVersion = await forwarderProxyContract.avoWalletVersion(
+            "0x0000000000000000000000000000000000000001"
+          );
+
+          const currentVersion = await wallet.DOMAIN_SEPARATOR_VERSION();
+
+          console.log({
+            latestVersion: latestVersion,
+            currentVersion: currentVersion,
+            chain: network.chainId,
+            name: network.name,
+          });
+
+          obj.latestVersion = latestVersion;
+          obj.currentVersion = currentVersion;
+
+          return obj;
+        } catch (e) {
+          console.log(e);
+        }
+      });
+
+      const results = await Promise.allSettled(promises);
+
+      const arr = results
+        .map((result) => {
+          if (result.status === "fulfilled") {
+            return result.value;
+          }
+        })
+        .filter(Boolean);
+
+      return arr as NetworkVersion[];
+    },
+    {
+      immediate: true,
+      watch: [safeAddress],
+    }
+  );
 
   onMounted(async () => {
     await wait(1000);

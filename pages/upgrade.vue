@@ -1,75 +1,5 @@
 <script setup lang="ts">
-import { lt } from "semver";
-import {
-  GaslessWallet__factory,
-  Forwarder__factory,
-  AvoFactoryProxy__factory,
-} from "@/contracts";
-const { networks } = useNetworks();
-const availableNetworks = networks.filter((network) => network.chainId != 634);
-
-const { safeAddress, safe } = useAvocadoSafe();
-const { forwarderProxyAddress } = useSafe();
-
-const { data: allNetworks, pending } = useAsyncData(
-  "allNetworkVersions",
-  async () => {
-    if (!safeAddress.value) return;
-
-    const promises = availableNetworks.map(async (network) => {
-      try {
-        const obj = {
-          ...network,
-        } as NetworkVersion;
-        const wallet = GaslessWallet__factory.connect(
-          safeAddress.value,
-          getRpcProvider(network.chainId)
-        );
-
-        const forwarderProxyContract = Forwarder__factory.connect(
-          forwarderProxyAddress,
-          getRpcProvider(network.chainId)
-        );
-
-        const latestVersion = await forwarderProxyContract.avoWalletVersion(
-          "0x0000000000000000000000000000000000000001"
-        );
-
-        const currentVersion = await wallet.DOMAIN_SEPARATOR_VERSION();
-
-        console.log({
-          latestVersion: latestVersion,
-          currentVersion: currentVersion,
-          chain: network.chainId,
-          name: network.name,
-        });
-
-        obj.latestVersion = latestVersion;
-        obj.currentVersion = currentVersion;
-
-        return obj;
-      } catch (e) {
-        console.log(e);
-      }
-    });
-
-    const results = await Promise.allSettled(promises);
-
-    const arr = results
-      .map((result) => {
-        if (result.status === "fulfilled") {
-          return result.value;
-        }
-      })
-      .filter(Boolean);
-
-    return arr as NetworkVersion[];
-  },
-  {
-    immediate: true,
-    watch: [safeAddress],
-  }
-);
+const { data } = useNuxtData("allNetworkVersions");
 </script>
 
 <template>
@@ -100,7 +30,7 @@ const { data: allNetworks, pending } = useAsyncData(
           <NetworkUpgradeRow
             :network="network"
             :key="network.chainId"
-            v-for="network in allNetworks"
+            v-for="network in data"
           />
         </tbody>
       </table>
