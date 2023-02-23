@@ -117,7 +117,7 @@ const handleUpgrade = async (network: NetworkVersion) => {
         @click="handleUpgrade(network)"
         class="w-full text-center justify-center"
       >
-        Update Now
+        Upgrade Now
       </CommonButton>
       <CommonButton
         v-else
