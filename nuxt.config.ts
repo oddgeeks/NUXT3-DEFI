@@ -23,6 +23,13 @@ export default defineNuxtConfig({
   },
   nitro: {
     routeRules: {
+      "/tokenlist.json": {
+        cors: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        cache: { maxAge: 86400 } 
+      },
       "/api/balances": { cache: { maxAge: 5 } },
       "/api/tokens": {
         cache: {
