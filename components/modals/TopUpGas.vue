@@ -31,10 +31,15 @@ const chainUSDCAddresses: any = {
   56: "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
 };
 
-const networks = Object.keys(chainUSDCAddresses).map((chainId) => ({
-  name: chainIdToName(chainId),
-  chainId,
-}));
+const networks = computed(() =>
+  Object.keys(chainUSDCAddresses)
+    .map((chainId) => ({
+      name: chainIdToName(chainId),
+      chainId,
+      balance: getUSDCByChainId(chainId)?.balance,
+    }))
+    .sort((a, b) => toBN(b.balance).minus(a.balance).toNumber())
+);
 
 const claimLoading = ref(false);
 const provider = getRpcProvider(634);
@@ -60,26 +65,23 @@ const { handleSubmit, errors, meta, resetForm } = useForm({
 });
 
 const { value: amount, meta: amountMeta } = useField<string>("amount");
-const { value: chainId } = useField<number>(
+const { value: chainId, setValue } = useField<number>(
   "chainId",
   {},
   { initialValue: 137 }
 );
 
 // TODO:
-const token = computed(
-  () =>
-  getUSDCByChainId(String(chainId.value))
-);
+const token = computed(() => getUSDCByChainId(String(chainId.value)));
 
 const getUSDCByChainId = (chainId: string) => {
   return tokenBalances.value.find(
-      (t) =>
-        t.chainId === chainId &&
-        toChecksumAddress(t.address) ===
-          toChecksumAddress(chainUSDCAddresses[chainId])
-    )!
-}
+    (t) =>
+      t.chainId === chainId &&
+      toChecksumAddress(t.address) ===
+        toChecksumAddress(chainUSDCAddresses[chainId])
+  )!;
+};
 
 const setMax = () => {
   amount.value = token.value!.balance;
@@ -149,13 +151,12 @@ Issued At: ${new Date().toISOString()}`;
       type: "error",
     });
 
-     logActionToSlack({
+    logActionToSlack({
       message: err,
       type: "error",
       action: "claim",
       account: account.value,
     });
-
   } finally {
     claimLoading.value = false;
   }
@@ -201,19 +202,22 @@ const onSubmit = handleSubmit(async () => {
       tx.data = data!;
       tx.to = token.value.address;
     }
-    
+
     const metadata = encodeTopupMetadata({
-       amount: transferAmount,
-       token: token.value.address,
-       onBehalf: safeAddress.value,
+      amount: transferAmount,
+      token: token.value.address,
+      onBehalf: safeAddress.value,
     });
 
-    let transactionHash = await sendTransaction({
-      ...tx,
-      chainId: chainId.value,
-    }, {
-      metadata
-    });
+    let transactionHash = await sendTransaction(
+      {
+        ...tx,
+        chainId: chainId.value,
+      },
+      {
+        metadata,
+      }
+    );
 
     logActionToSlack({
       action: "topup",
@@ -247,6 +251,13 @@ const onSubmit = handleSubmit(async () => {
 
   loading.value = false;
 });
+
+onMounted(() => {
+  const mostBalancedChain = networks.value[0]?.chainId;
+  if (mostBalancedChain) {
+    setValue(Number(mostBalancedChain));
+  }
+});
 </script>
 
 <template>
@@ -259,7 +270,8 @@ const onSubmit = handleSubmit(async () => {
     <div class="flex gap-4 flex-col">
       <h1 class="text-lg leading-5">Gas Balance</h1>
       <h2 class="text-xs text-slate-400 leading-5 font-medium">
-        You will be able to use this as gas on any supported chain. Note that you need to have USDC in your Avocado wallet to add gas.
+        You will be able to use this as gas on any supported chain. Note that
+        you need to have USDC in your Avocado wallet to add gas.
       </h2>
       <a
         href="https://help.avocado.instadapp.io/en/getting-started/topping-up-gas-on-avocado"
@@ -276,14 +288,6 @@ const onSubmit = handleSubmit(async () => {
     >
       {{ formatDecimal(gasBalance, 2) }} USDC
     </span>
-    <!-- <CommonButton
-      :loading="claimLoading"
-      @click="claim()"
-      v-if="airDrop?.id"
-      class="flex text-sm items-center gap-2"
-    >
-      {{ airDrop.message }}
-    </CommonButton> -->
     <form v-if="!isGiftActive" @submit="onSubmit" class="space-y-5">
       <div class="flex flex-col gap-2.5">
         <span class="text-left leading-5">Network</span>
@@ -300,11 +304,11 @@ const onSubmit = handleSubmit(async () => {
           <template #item-prefix="{ value }">
             <ChainLogo class="w-6 h-6" :chain="value" />
           </template>
-          <template #item="{ label, value }">
+          <template #item="{ label, item }">
             <div class="flex flex-col gap-1 mb-auto">
               <span>{{ label }}</span>
               <span class="text-sm text-gray-400 font-medium">
-                {{ formatDecimal(getUSDCByChainId(value)?.balance) }} USDC
+                {{ formatDecimal(item.balance) }} USDC
               </span>
             </div>
           </template>
