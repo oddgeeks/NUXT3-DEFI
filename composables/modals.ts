@@ -209,18 +209,12 @@ export const openDialogModal = async ({
   });
 };
 
-export const openUpgradeModal = async (
-  chainId: number,
-  tx: PopulatedTransaction,
-  version: { currentVersion: string; latestVersion: string }
-) => {
+export const openUpgradeModal = async (network: NetworkVersion) => {
   return openModal({
     component: UpgradeVersion,
     async: true,
     componentProps: {
-      chainId,
-      tx,
-      version,
+      network,
     },
   });
 };
