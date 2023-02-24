@@ -513,7 +513,7 @@ onUnmounted(() => {
 <template>
   <form @submit="onSubmit" novalidate class="flex gap-7.5 flex-col">
     <div class="flex justify-center flex-col items-center">
-      <div class="flex flex-col gap-[14px]">
+      <div class="flex flex-col gap-[15px]">
         <h2 class="text-lg leading-5 text-center">Swap</h2>
         <div
           class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5"

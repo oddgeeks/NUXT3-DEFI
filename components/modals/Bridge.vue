@@ -116,15 +116,18 @@ const onSubmit = form.handleSubmit(async () => {
 
 <template>
   <form @submit="onSubmit" class="flex gap-7.5 flex-col">
-    <div class="flex justify-center flex-col items-center">
-      <img
-        width="40"
-        height="40"
-        class="h-10 w-10 mb-7.5"
-        :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
-        :onerror="onImageError"
-      />
-      <div class="flex flex-col gap-[14px]">
+    <div class="flex justify-center flex-col gap-7.5 items-center">
+      <div class="relative flex mx-auto h-10 w-10 rounded-full flex-shrink-0">
+        <img
+          width="40"
+          height="40"
+          class="h-10 w-10 rounded-[inherit]"
+          :src="token.logoURI"
+          :onerror="onImageError"
+        />
+      </div>
+
+      <div class="flex flex-col gap-[15px]">
         <h2 class="text-lg leading-5 text-center">
           {{ token.name }}
           <span class="uppercase"> ({{ token.symbol }})</span>
