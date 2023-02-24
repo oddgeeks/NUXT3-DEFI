@@ -189,6 +189,6 @@ export default defineNuxtConfig({
     ],
   },
   experimental: {
-    emitRouteChunkError: "reload",
+    // emitRouteChunkError: "reload",
   },
 });
