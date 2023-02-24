@@ -20,14 +20,6 @@ onMounted(async () => {
   transaction.value = await provider.waitForTransaction(props.hash);
 });
 
-const explorerURL = computed(() => {
-  if (props.type === "bridge") {
-    return `https://socketscan.io/tx/${props.hash}`
-  } else {
-    return getExplorerUrl(props.chainId, `/tx/${props.hash}`)
-  }
-});
-
 const isSuccess = computed(() => {
   if (!transaction.value?.status) return false;
 
@@ -132,7 +124,7 @@ const isSuccess = computed(() => {
         <ChainLogo class="w-[26px] h-[26px]" :chain="chainId" />
         <span class="text-sm text-slate-400">{{ chainIdToName(chainId) }}</span>
       </p>
-      <CommonButton as="a" :href="explorerURL" target="_blank" size="sm">
+      <CommonButton as="a" :href="`/tx/${hash}`" size="sm">
         View Explorer
       </CommonButton>
     </div>

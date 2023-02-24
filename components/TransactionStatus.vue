@@ -17,7 +17,7 @@ const statusColor = computed(() => {
     case "failed":
       return "text-red-500";
     case "dropped":
-      return "text-gray-500";
+      return "text-[inherit]";
     default:
       return "text-yellow";
   }
@@ -25,11 +25,24 @@ const statusColor = computed(() => {
 </script>
 
 <template>
-  <span :class="statusColor" class="inline-flex gap-2.5 items-center capitalize">
-    <SVGCheckCircle class="text-white w-4 h-4 success-circle"
-      v-if="status === 'success' || status === 'completed' || status === 'ready'" />
-    <SVGInfoCircle class="text-gray-400 w-4 h-" v-else-if="status === 'dropped'" />
-    <SVGErrorCircle class="text-white w-4 h-4" v-else-if="status === 'failed'" />
+  <span
+    :class="statusColor"
+    class="inline-flex gap-2.5 items-center capitalize"
+  >
+    <SVGCheckCircle
+      class="text-white w-4 h-4 success-circle"
+      v-if="
+        status === 'success' || status === 'completed' || status === 'ready'
+      "
+    />
+    <SVGInfoCircle
+      class="text-slate-600 w-4 h-4"
+      v-else-if="status === 'dropped'"
+    />
+    <SVGErrorCircle
+      class="text-white w-4 h-4"
+      v-else-if="status === 'failed'"
+    />
     <SVGClockCircle v-else class="w-4 h-4" />
     {{ status }}
     <slot />

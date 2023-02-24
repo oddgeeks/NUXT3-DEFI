@@ -132,6 +132,7 @@ const isSelected = (option: any, index: number) => {
             <slot
               :label="getLabel(option)"
               :value="getValue(option, i)"
+              :item="option"
               name="item"
             >
               <span :class="itemTextClasses">{{ getLabel(option) }}</span>
