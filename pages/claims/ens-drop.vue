@@ -80,7 +80,7 @@ const fire = (particleRatio: any, opts: any, count: number = 200) => {
 };
 
 const claimAirdrop = async () => {
-  const avocadoProvider = new ethers.providers.JsonRpcProvider("https://rpc.avocado.link")
+  const avocadoProvider = getRpcProvider(634);
 
   const signer = library.value.getSigner();
 
