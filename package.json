@@ -61,12 +61,8 @@
     "yup": "^0.32.11"
   },
   "dependencies": {
-<<<<<<< HEAD
     "canvas-confetti": "^1.6.0",
-    "fuse.js": "^6.6.2"
-=======
     "fuse.js": "^6.6.2",
     "semver": "^7.3.8"
->>>>>>> master
   }
 }
