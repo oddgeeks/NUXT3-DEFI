@@ -1,6 +1,7 @@
 import { defineNuxtModule } from '@nuxt/kit'
 import { version } from '../package.json'
 import Git from 'simple-git'
+import { isDevelopment } from 'std-env'
 
 const gitBranch = process.env.BRANCH || process.env.VERCEL_GIT_BRANCH
 const git = Git()
@@ -18,11 +19,18 @@ export default defineNuxtModule({
   },
   async setup(_options, nuxt) {
     const {  commit, branch } = await getGitInfo()
+    const env = isDevelopment
+    ? 'dev'
+    :  branch === 'master'
+        ? 'canary'
+        : 'release'
+
     const buildInfo: BuildInfo = {
       version,
       time: +Date.now(),
       commit,
       branch,
+      env,
     }
 
     nuxt.options.appConfig = nuxt.options.appConfig || {}

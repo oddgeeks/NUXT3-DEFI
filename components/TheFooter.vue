@@ -6,8 +6,8 @@ const info = useBuildInfo();
 onMounted(() => {
   console.clear()
   console.log(
-    `%cAvocado v${info.version} (${info.commit.slice(0, 8)})`,
-    "color: white; background: #16a34a; font-size: 70px;padding: 10px;text-shadow: 2px 2px black;"
+    `%cAvocado v${info.version} (${info.commit.slice(0, 8)}.${info.env})`,
+    "color: white; background: #16a34a; font-size: 32px;padding: 8px;text-shadow: 2px 2px black;"
   );
 });
 </script>
