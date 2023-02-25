@@ -197,7 +197,8 @@ const sendingDisabled = computed(
     pending.value ||
     !meta.value.valid ||
     feePending.value ||
-    isPriceImpactHigh.value
+    isPriceImpactHigh.value ||
+    !!error.value
 );
 
 const isLoading = computed(
@@ -208,6 +209,7 @@ const {
   data: swapDetails,
   pending,
   refresh,
+  error
 } = useAsyncData(
   "swap-details",
   async (cb) => {
@@ -246,6 +248,10 @@ const {
 
       const bestRoute = data?.aggregators[0];
 
+      if (!bestRoute) {
+        throw new Error("No route found, please try again later");
+      }
+
       if (bestRoute && !isBuyAmountDirty.value) {
         buyAmount.value = formatDecimal(
           fromWei(
@@ -258,9 +264,10 @@ const {
 
       return data;
     } catch (e: any) {
+      console.log(e)
       if (e?.code === "ERR_CANCELED") return;
 
-      throw e;
+      throw new Error("No route found, please try again later");
     }
   },
   {
@@ -410,6 +417,7 @@ const getTxs = async () => {
 
 const onSubmit = handleSubmit(async () => {
   try {
+    pause()
     const txs = await getTxs();
 
     const metadata = encodeSwapMetadata({
@@ -464,6 +472,8 @@ const onSubmit = handleSubmit(async () => {
       action: "swap",
       account: account.value,
     });
+  } finally {
+    resume();
   }
 });
 
@@ -755,6 +765,11 @@ onUnmounted(() => {
         </div>
       </div>
       <EstimatedFee :chain-id="chainId" :loading="feePending" :data="fee" />
+      <CommonNotification
+        v-if="error"
+        type="error"
+        :text="error.message"
+      />
       <CommonNotification
         v-if="isPriceImpactHigh"
         type="warning"
