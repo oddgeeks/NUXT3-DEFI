@@ -120,7 +120,6 @@ export const useSafe = defineStore("safe", () => {
 
         return tokenBalance;
       })
-      .filter((b) => b.price !== 0)
       .sort((a, b) =>
         toBN(b.balanceInUSD || 0)
           .minus(a.balanceInUSD || 0)

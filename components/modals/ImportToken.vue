@@ -1,24 +1,21 @@
 <script setup lang="ts">
-import { isValidAddress } from "@walletconnect/utils";
-import { RPC_URLS } from "~~/connectors";
-import { Erc20__factory } from "~~/contracts";
+import PlusSVG from "~/assets/images/icons/plus.svg?component";
 import Fuse from "fuse.js";
 import { storeToRefs } from "pinia";
-import PlusSVG from "~/assets/images/icons/plus.svg?component";
 import SearchSVG from "~/assets/images/icons/search.svg?component";
-import type { IToken } from "~~/stores/tokens";
+import { IToken } from "~~/stores/tokens";
+import { isAddress } from "@ethersproject/address";
 
 const { tokens, customTokens } = storeToRefs(useTokens());
-const { fetchTokens } = useTokens();
-const { account } = useWeb3();
-const { openSnackbar } = useModal();
+const { handleAddToken } = useTokens();
 
 const searchQuery = ref("");
-const chainId = ref("1");
 const loading = ref(false);
 const controller = new AbortController();
 
-const { data, pending, error } = useAsyncData(
+const emit = defineEmits(["destroy"]);
+
+const { data, pending } = useAsyncData(
   "custom-tokens",
   async () => {
     const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -55,17 +52,6 @@ const { data, pending, error } = useAsyncData(
   }
 );
 
-const supportedChains = computed(() =>
-  Object.keys(RPC_URLS)
-    .filter((i) => i !== "634")
-    .map((chainId) => {
-      return {
-        id: chainId,
-        name: chainIdToName(chainId),
-      };
-    })
-);
-
 const filteredTokens = computed(() => {
   if (!searchQuery.value) return data.value || [];
 
@@ -100,23 +86,6 @@ const getToken = (address: string, chainId: string) => {
   return token;
 };
 
-const handleAddToken = (token: IToken) => {
-  token.isCustomToken = true;
-  customTokens.value.push(token);
-  fetchTokens();
-
-  const url = `<${getExplorerUrl(
-    token.chainId,
-    `/token/${token.address}`
-  )}|${shortenHash(token.address, 12)}>`;
-
-  logActionToSlack({
-    action: "add-token",
-    message: `${token.name} :${chainIdToName(token.chainId)}: ${url}`,
-    account: account.value,
-  });
-};
-
 const handleDeleteToken = (token: IToken) => {
   const index = customTokens.value.findIndex(
     (t) =>
@@ -134,55 +103,18 @@ const search = (event: Event) => {
   scrollTo(0);
 };
 
-const manuelImport = async (address: string) => {
-  try {
-    loading.value = true;
-    const contract = Erc20__factory.connect(
-      address,
-      getRpcProvider(chainId.value)
-    );
+const handleCustomToken = () => {
+  emit("destroy");
 
-    const symbol = await contract.symbol();
-    const name = await contract.name();
-    const decimals = await contract.decimals();
+  const address = isAddress(searchQuery.value) ? searchQuery.value : "";
 
-    const token: IToken = {
-      address,
-      chainId: chainId.value,
-      symbol,
-      name,
-      decimals,
-      coingeckoId: "",
-      logoURI: "",
-      price: 0,
-      sparklinePrice7d: [],
-    };
-
-    handleAddToken(token);
-
-    openSnackbar({
-      message: `${token.name} added successfully.`,
-      type: "success",
-      timeout: 5000,
-    });
-
-    searchQuery.value = "";
-    refreshNuxtData("custom-tokens");
-  } catch (e: any) {
-    openSnackbar({
-      message: "Something went wrong. Try changing the network.",
-      type: "error",
-      timeout: 5000,
-    });
-  } finally {
-    loading.value = false;
-  }
+  openCustomTokenModal(address);
 };
 </script>
 
 <template>
   <div>
-    <h1 class="text-lg text-center leading-5 mb-5">Add custom token</h1>
+    <h1 class="text-lg text-center leading-5 mb-5">Import Token</h1>
     <CommonInput
       autofocus
       @input="search"
@@ -273,54 +205,19 @@ const manuelImport = async (address: string) => {
       </ul>
 
       <div
-        class="flex flex-col gap-4 items-center justify-center mt-5"
-        v-if="!list.length && searchQuery && isValidAddress(searchQuery)"
+        v-if="!pending && !filteredTokens.length"
+        class="text-slate-400 absolute flex items-center justify-center flex-col gap-[26px] whitespace-nowrap top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
       >
-        <ChainLogo class="w-12 h-12 shrink-0" chain="unknown" />
-        <p class="text-sm text-white text-center">
-          Unkown token, please select the chain <br />
-          where you want to add it
-        </p>
-        <a
-          class="text-xs max-w-[250px] text-primary text-center mx-auto truncate"
-          :href="getExplorerUrl(chainId, `/token/${searchQuery}`)"
-        >
-          {{ getExplorerUrl(chainId, `/token/${searchQuery}`) }}
-        </a>
-        <CommonSelect
-          class="w-[200px]"
-          v-model="chainId"
-          value-key="id"
-          label-key="name"
-          :options="supportedChains"
-        >
-          <template #button-prefix>
-            <ChainLogo class="w-6 h-6 shrink-0" :chain="chainId" />
-          </template>
-          <template #item-prefix="{ value }">
-            <ChainLogo class="w-6 h-6 shrink-0" :chain="value" />
-          </template>
-        </CommonSelect>
+        <p>Nothing could be found</p>
         <CommonButton
-          class="!px-10"
+          class="items-center gap-2"
           :loading="loading"
-          @click="manuelImport(searchQuery)"
+          @click="handleCustomToken"
           size="lg"
         >
-          Import
+          <PlusSVG class="shrink-0" />
+          Custom Token
         </CommonButton>
-      </div>
-      <div
-        v-else
-        class="text-slate-400 absolute whitespace-nowrap top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-      >
-        <span v-if="error">
-          {{ error.message }}
-        </span>
-
-        <span v-else-if="!pending && !filteredTokens.length">
-          Nothing could be found
-        </span>
       </div>
     </div>
   </div>

@@ -7,6 +7,7 @@ import WalletConnect from "~~/components/modals/WalletConnect.vue";
 import WalletConnectDetails from "~~/components/modals/WalletConnectDetails.vue";
 import TokenSelection from "~~/components/modals/TokenSelection.vue";
 import ImportToken from "~~/components/modals/ImportToken.vue";
+import CustomToken from "~~/components/modals/CustomToken.vue";
 import WCTransaction from "~~/components/modals/WCTransaction.vue";
 import PowerOffSVG from "~/assets/images/icons/power-off-bg.svg?component";
 import Dialog from "~~/components/modals/Dialog.vue";
@@ -173,6 +174,15 @@ export const openImportTokenModal = () => {
     component: ImportToken,
     options: {
       contentClass: "!px-2.5 !pb-0 overflow-hidden",
+    },
+  });
+};
+
+export const openCustomTokenModal = (address?: string) => {
+  return openModal({
+    component: CustomToken,
+    componentProps: {
+      address,
     },
   });
 };

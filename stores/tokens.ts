@@ -18,6 +18,7 @@ export interface IToken {
 export const useTokens = defineStore("tokens", () => {
   const tokens = useStorageAsync<IToken[]>("tokens", []);
   const customTokens = useStorageAsync<IToken[]>("custom-tokens", []);
+  const { account } = useWeb3();
 
   const fetchTokens = async () => {
     try {
@@ -107,6 +108,23 @@ export const useTokens = defineStore("tokens", () => {
     tokens.value = await fetchTokenPrices(tokens.value);
   };
 
+  const handleAddToken = (token: IToken) => {
+    token.isCustomToken = true;
+    customTokens.value.push(token);
+    fetchTokens();
+
+    const url = `<${getExplorerUrl(
+      token.chainId,
+      `/token/${token.address}`
+    )}|${shortenHash(token.address, 12)}>`;
+
+    logActionToSlack({
+      action: "add-token",
+      message: `${token.name} :${chainIdToName(token.chainId)}: ${url}`,
+      account: account.value,
+    });
+  };
+
   useIntervalFn(handleTokenPrices, 10000);
 
   return {
@@ -114,6 +132,7 @@ export const useTokens = defineStore("tokens", () => {
     fetchTokens,
     getTokenByAddress,
     customTokens,
+    handleAddToken,
   };
 });
 
