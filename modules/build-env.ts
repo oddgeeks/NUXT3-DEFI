@@ -12,6 +12,10 @@ const getGitInfo = async () => {
   return { branch, commit }
 }
 
+console.log({
+  "env": process.env
+})
+
 
 export default defineNuxtModule({
   meta: {
@@ -22,8 +26,8 @@ export default defineNuxtModule({
     const env = isDevelopment
     ? 'dev'
     :  branch === 'master'
-        ? 'canary'
-        : 'release'
+        ? 'master'
+        : 'staging'
 
     const buildInfo: BuildInfo = {
       version,
