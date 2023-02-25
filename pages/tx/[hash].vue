@@ -348,8 +348,7 @@ onUnmounted(() => {
       v-else-if="!transaction && !pending"
       class="bg-gray-850 rounded-5.5 text-sm font-medium p-16 text-center"
     >
-      <p class="mb-2">Sorry, We are unable to locate this TxnHash:</p>
-      <p>{{ $route.params.hash }}</p>
+      <p class="mb-2">Sorry, We are unable to locate this TxnHash</p>
     </div>
   </div>
 </template>
