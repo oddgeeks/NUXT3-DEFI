@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { serializeError } from 'serialize-error'
 import ChevronDownSVG from "~/assets/images/icons/chevron-down.svg?component";
 import type { IToken } from "~~/stores/tokens";
 import { Erc20__factory } from "~~/contracts";
@@ -61,6 +62,11 @@ const slippages = [
   { value: "3", label: "3%" },
 ];
 
+const swapDetails = ref({
+  data: null as  ISwapResponse | null,
+  error: '',
+  pending: false,
+})
 const [swapped, toggleSwapped] = useToggle();
 const [isBuyAmountDirty, toggleDirty] = useToggle(false);
 const refreshing = ref(false);
@@ -174,7 +180,6 @@ const convertBuytoSellAmount = (val: string) => {
 
 const handleBuyAmountInput = (e: any) => {
   const val = e.target.value;
-
   if (val) convertBuytoSellAmount(val);
 
   toggleDirty(true);
@@ -194,24 +199,20 @@ const handleSellAmountInput = () => {
 const sendingDisabled = computed(
   () =>
     isSubmitting.value ||
-    pending.value ||
+    swapDetails.value.pending ||
     !meta.value.valid ||
     feePending.value ||
-    isPriceImpactHigh.value
+    isPriceImpactHigh.value ||
+    !!swapDetails.value.error
 );
 
 const isLoading = computed(
-  () => pending.value && meta.value.valid && !refreshing.value
+  () => swapDetails.value.pending && meta.value.valid && !refreshing.value
 );
 
-const {
-  data: swapDetails,
-  pending,
-  refresh,
-} = useAsyncData(
-  "swap-details",
-  async (cb) => {
-    const { valid } = await validate();
+const fetchSwapDetails = async () => {
+  const { valid } = await validate();
+
     if (!valid) return;
 
     try {
@@ -222,6 +223,8 @@ const {
       }
 
       abortController.value = new AbortController();
+
+      swapDetails.value.pending = true;
 
       const data: ISwapResponse = await http(
         "https://swap-aggregator.instadapp.io/swap",
@@ -244,34 +247,39 @@ const {
 
       abortController.value = null;
 
-      const bestRoute = data?.aggregators[0];
+      const best = data?.aggregators[0];
 
-      if (bestRoute && !isBuyAmountDirty.value) {
+      if (!best) {
+        swapDetails.value.error = "No route found, please try again later";
+        return;
+      }
+
+      if (best && !isBuyAmountDirty.value) {
         buyAmount.value = formatDecimal(
           fromWei(
-            bestRoute.data.buyTokenAmount,
-            bestRoute.data.buyToken.decimals
+            best.data.buyTokenAmount,
+            best.data.buyToken.decimals
           ).toFixed(),
           6
         );
       }
 
-      return data;
+      swapDetails.value.data = data;
+      swapDetails.value.pending = false;
+      swapDetails.value.error = '';
     } catch (e: any) {
-      if (e?.code === "ERR_CANCELED") return;
+      const error = serializeError(e)
 
-      throw e;
-    }
-  },
-  {
-    server: false,
-    watch: [sellAmount, swapped, slippage, customSlippage],
-  }
-);
+      if (error?.message.includes('aborted')) return;
+
+      swapDetails.value.pending = false;
+      swapDetails.value.error = "No route found, please try again later.";
+    } 
+}
 
 const { pause, resume } = useIntervalFn(
   () => {
-    refresh();
+    fetchSwapDetails()
     refreshing.value = true;
   },
   10000,
@@ -280,7 +288,7 @@ const { pause, resume } = useIntervalFn(
   }
 );
 
-const bestRoute = computed(() => swapDetails.value?.aggregators[0] || null);
+const bestRoute = computed(() => swapDetails.value?.data?.aggregators[0] || null);
 
 const priceImpact = computed(() =>
   toBN(bestRoute?.value?.data?.priceImpact || 0)
@@ -297,28 +305,28 @@ const isPriceImpactHigh = computed(() => {
 const sellAmountInUsd = computed(() => {
   return toBN(
     fromWei(
-      swapDetails.value?.data.sellTokenAmount || 0,
-      swapDetails.value?.data.sellToken.decimals
+      swapDetails.value?.data?.data.sellTokenAmount || 0,
+      swapDetails.value?.data?.data.sellToken.decimals
     )
   )
-    .times(swapDetails.value?.data.sellToken.price || 0)
+    .times( swapDetails.value?.data?.data.sellToken.price || 0)
     .toFixed(2);
 });
 
 const buyAmountInUsd = computed(() => {
   return toBN(
     fromWei(
-      swapDetails.value?.data.buyTokenAmount || 0,
-      swapDetails.value?.data.buyToken.decimals
+      swapDetails.value?.data?.data.buyTokenAmount || 0,
+      swapDetails.value?.data?.data.buyToken.decimals
     )
   )
-    .times(swapDetails.value?.data.buyToken.price || 0)
+    .times( swapDetails.value?.data?.data.buyToken.price || 0)
     .toFixed(2);
 });
 
 const minRecievedAfterSlippage = computed(() => {
   return fromWei(
-    swapDetails.value?.data.buyTokenAmount || 0,
+    swapDetails.value?.data?.data.buyTokenAmount || 0,
     swap.value.buyToken.decimals
   )
     .div(toBN(1).plus(toBN(actualSlippage.value).div(100)))
@@ -410,12 +418,13 @@ const getTxs = async () => {
 
 const onSubmit = handleSubmit(async () => {
   try {
+    pause()
     const txs = await getTxs();
 
     const metadata = encodeSwapMetadata({
-      buyAmount: swapDetails.value?.data.buyTokenAmount!,
-      sellAmount: swapDetails.value?.data.sellTokenAmount!,
-      buyToken: swapDetails.value?.data.buyToken.address!,
+      buyAmount:  swapDetails.value?.data?.data.buyTokenAmount!,
+      sellAmount:  swapDetails.value?.data?.data.sellTokenAmount!,
+      buyToken:  swapDetails.value?.data?.data.buyToken.address!,
       sellToken: swap.value.sellToken.address,
       receiver: account.value,
       protocol: utils.formatBytes32String(bestRoute?.value?.name || ""),
@@ -426,13 +435,13 @@ const onSubmit = handleSubmit(async () => {
     });
 
     const buyAmt = fromWei(
-      swapDetails.value?.data.buyTokenAmount || 0,
-      swapDetails.value?.data.buyToken.decimals
+      swapDetails.value?.data?.data.buyTokenAmount || 0,
+      swapDetails.value?.data?.data.buyToken.decimals
     ).toFixed();
 
     const sellAmt = fromWei(
-      swapDetails.value?.data.sellTokenAmount || 0,
-      swapDetails.value?.data.sellToken.decimals
+      swapDetails.value?.data?.data.sellTokenAmount || 0,
+      swapDetails.value?.data?.data.sellToken.decimals
     ).toFixed();
 
     logActionToSlack({
@@ -464,6 +473,8 @@ const onSubmit = handleSubmit(async () => {
       action: "swap",
       account: account.value,
     });
+  } finally {
+    resume();
   }
 });
 
@@ -505,7 +516,12 @@ watch(slippage, () => {
   });
 });
 
+watch([sellAmount, swapped, slippage, customSlippage], () => {
+  fetchSwapDetails()
+})
+
 onUnmounted(() => {
+  abortController.value?.abort();
   pause();
 });
 </script>
@@ -756,6 +772,11 @@ onUnmounted(() => {
       </div>
       <EstimatedFee :chain-id="chainId" :loading="feePending" :data="fee" />
       <CommonNotification
+        v-if="swapDetails.error"
+        type="error"
+        :text="swapDetails.error"
+      />
+      <CommonNotification
         v-if="isPriceImpactHigh"
         type="warning"
         text="Slippage value should be greater than price impact.  "
@@ -766,7 +787,7 @@ onUnmounted(() => {
       <CommonButton
         type="submit"
         :disabled="sendingDisabled"
-        :loading="isSubmitting || pending || feePending"
+        :loading="isSubmitting || swapDetails.pending || feePending"
         class="justify-center w-full"
         size="lg"
       >
