@@ -175,17 +175,22 @@ useForceSingleSession();
         <span class="text-center w-full">Back</span>
       </CommonButton>
     </div>
-    <div v-else class="flex flex-col gap-7.5 bg-slate-50 dark:bg-gray-850 p-12 rounded-5">
-      <span class="text-left text-lg">What you can do on Avocado with your claimed gas</span>
-      <div class="flex flex-col gap-5">
-        <div 
-          v-for="ability in ['Deposit tokens to your avo wallet first', 'Connect your favorite dapps and making txns using USDC', 'Swap tokens', 'Bridge tokens']"
-          class="flex items-center gap-2"
-        >
-          <CheckCircle class="text-white w-4 h-4 success-circle"/>
-          <span>{{ ability }}</span>
+    <div v-else class="flex flex-col items-center space-y-5">
+      <div class="flex flex-col gap-7.5 bg-slate-50 dark:bg-gray-850 p-12 rounded-5">
+        <span class="text-left text-lg">What you can do on Avocado with your claimed gas</span>
+        <div class="flex flex-col gap-5">
+          <div 
+            v-for="ability in ['Deposit tokens to your avo wallet first', 'Connect your favorite dapps and making txns using USDC', 'Swap tokens', 'Bridge tokens']"
+            class="flex items-center gap-2"
+          >
+            <CheckCircle class="text-white w-4 h-4 success-circle"/>
+            <span>{{ ability }}</span>
+          </div>
         </div>
       </div>
+      <CommonButton as="NuxtLink" href="/" size="lg" class="max-w-[196px] flex justify-center">
+        Get started
+      </CommonButton>
     </div>
   </div>
 </template>
