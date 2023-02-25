@@ -3,7 +3,7 @@ import { version } from '../package.json'
 import Git from 'simple-git'
 import { isDevelopment } from 'std-env'
 
-const gitBranch = process.env.BRANCH || process.env.VERCEL_GIT_BRANCH
+const gitBranch = process.env.BRANCH || process.env.VERCEL_GIT_COMMIT_REF
 const git = Git()
 
 const getGitInfo = async () => {
