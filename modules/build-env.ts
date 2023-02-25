@@ -12,11 +12,6 @@ const getGitInfo = async () => {
   return { branch, commit }
 }
 
-console.log({
-  "env": process.env
-})
-
-
 export default defineNuxtModule({
   meta: {
     name: 'avocado:build-env',
