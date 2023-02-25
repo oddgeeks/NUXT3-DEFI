@@ -21,7 +21,7 @@ export default defineNuxtModule({
     const env = isDevelopment
     ? 'dev'
     :  branch === 'master'
-        ? 'master'
+        ? 'release'
         : 'staging'
 
     const buildInfo: BuildInfo = {
