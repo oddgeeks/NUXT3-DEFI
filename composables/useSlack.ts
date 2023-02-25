@@ -55,8 +55,8 @@ export const logActionToSlack = (slackMessage: ISlackMessage) => {
     logMessage += `\n${"`Tx`"} ${explorerLink}`;
   }
 
-  logMessage += `\n${"`Version`"} ${build.version}`;
   logMessage += `\n${"`Commit`"} ${build.commit}`;
+  logMessage += `\n${"`Env`"} ${build.env}`;
 
   slack(logMessage, type);
 };

@@ -301,4 +301,5 @@ interface BuildInfo {
   commit: string;
   time: number;
   branch: string;
+  env: string;
 }

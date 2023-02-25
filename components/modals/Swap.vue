@@ -282,7 +282,7 @@ const { pause, resume } = useIntervalFn(
     fetchSwapDetails()
     refreshing.value = true;
   },
-  5000,
+  10000,
   {
     immediate: true,
   }
