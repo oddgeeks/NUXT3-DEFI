@@ -274,7 +274,7 @@ const { pause, resume } = useIntervalFn(
     refresh();
     refreshing.value = true;
   },
-  5000,
+  10000,
   {
     immediate: true,
   }
