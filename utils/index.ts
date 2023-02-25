@@ -28,6 +28,7 @@ const actionMetadataTypes = {
     "bytes32 protocol",
   ],
   "gas-topup": ["uint256 amount", "address token", "address onBehalf"],
+  upgrade: ["bytes32 version", "address walletImpl"],
 };
 
 export function shortenHash(hash: string, length: number = 4) {
@@ -305,6 +306,23 @@ export const encodeTransferMetadata = (
   return single ? encodeMultipleActions(data) : data;
 };
 
+export const encodeUpgradeMetadata = (
+  params: UpgradeMetadataProps,
+  single = true
+) => {
+  const encodedData = ethers.utils.defaultAbiCoder.encode(
+    actionMetadataTypes.upgrade,
+    [params.version, params.walletImpl]
+  );
+
+  const data = encodeMetadata({
+    type: "upgrade",
+    encodedData,
+  });
+
+  return single ? encodeMultipleActions(data) : data;
+};
+
 export const encodeSwapMetadata = (
   params: SwapMetadataProps,
   single = true
@@ -380,16 +398,33 @@ export const encodeMultipleActions = (...actionData: string[]) => {
 export const decodeMetadata = (data: string) => {
   try {
     const iface = Forwarder__factory.createInterface();
-    const executeData = iface.decodeFunctionData("execute", data);
+    let metadata = "0x";
 
-    if (executeData.metadata_ === "0x" || !executeData.metadata_) return null;
+    if (data.startsWith("0x18e7f485")) {
+      const executeData = iface.decodeFunctionData("execute", data);
+      if (executeData.metadata_ === "0x" || !executeData.metadata_) {
+        return null;
+      } else {
+        metadata = executeData.metadata_;
+      }
+    } else {
+      const executeDataV2 = iface.decodeFunctionData("executeV2", data);
+      if (
+        executeDataV2.params_.metadata === "0x" ||
+        !executeDataV2.params_.metadata
+      ) {
+        return null;
+      } else {
+        metadata = executeDataV2.params_.metadata;
+      }
+    }
 
     const metadataArr = [];
 
     const [decodedMultiMetadata = []] =
       (ethers.utils.defaultAbiCoder.decode(
         multiMetadataTypes,
-        executeData.metadata_
+        metadata
       ) as string[]) || [];
 
     for (let metadata of decodedMultiMetadata) {
@@ -440,6 +475,13 @@ export const decodeMetadata = (data: string) => {
             sellToken: decodedData.sellToken,
             receiver: decodedData.receiver,
             protocol: utils.parseBytes32String(decodedData?.protocol || ""),
+          };
+          break;
+        case "upgrade":
+          payload = {
+            type,
+            version: utils.parseBytes32String(decodedData?.version || ""),
+            walletImpl: decodedData?.walletImpl,
           };
           break;
         case "gas-topup":

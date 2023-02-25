@@ -133,7 +133,15 @@ export const useBridge = (props: IBridge) => {
       const { valid } = await form.validate();
 
       if (!valid) return;
-      if (!bridgeToToken.value) return;
+
+      if (!bridgeToToken.value)  {
+        if(bridgeTokens.data.value?.length) {
+          throw new Error("No bridge token found", {
+            cause: "no-bridge-token",
+          });
+        } else return
+      }
+
 
       const transferAmount = toWei(amount.value || "0", token.value.decimals);
 
@@ -165,7 +173,7 @@ export const useBridge = (props: IBridge) => {
 
         if (!data.result.routes.length) {
           throw new Error(
-            "Our bridge provider do not have routes for your desired transfer",
+            "Our bridge provider does not have routes for your desired transfer",
             {
               cause: "no-routes",
             }
@@ -174,6 +182,7 @@ export const useBridge = (props: IBridge) => {
 
         return data;
       } catch (error: any) {
+        console.log(error);
         throw new Error(
           error.cause
             ? error.message

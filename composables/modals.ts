@@ -7,11 +7,14 @@ import WalletConnect from "~~/components/modals/WalletConnect.vue";
 import WalletConnectDetails from "~~/components/modals/WalletConnectDetails.vue";
 import TokenSelection from "~~/components/modals/TokenSelection.vue";
 import ImportToken from "~~/components/modals/ImportToken.vue";
+import CustomToken from "~~/components/modals/CustomToken.vue";
 import WCTransaction from "~~/components/modals/WCTransaction.vue";
 import PowerOffSVG from "~/assets/images/icons/power-off-bg.svg?component";
 import Dialog from "~~/components/modals/Dialog.vue";
 import type IWalletConnect from "@walletconnect/client";
+import type { PopulatedTransaction } from "ethers";
 import CustomTx from "~~/components/modals/CustomTx.vue";
+import UpgradeVersion from "~~/components/modals/UpgradeVersion.vue";
 
 const { openModal } = useModal();
 interface DialogModalProps {
@@ -38,10 +41,12 @@ interface IWcTransactionModal {
 export const showPendingTransactionModal = (
   hash: string,
   chainId: number | string,
-  type: ITxType
+  type: ITxType,
+  async: boolean = false
 ) => {
-  openModal({
+  return openModal({
     component: PendingTransaction,
+    async,
     componentProps: {
       hash,
       chainId,
@@ -173,6 +178,15 @@ export const openImportTokenModal = () => {
   });
 };
 
+export const openCustomTokenModal = (address?: string) => {
+  return openModal({
+    component: CustomToken,
+    componentProps: {
+      address,
+    },
+  });
+};
+
 export const openDialogModal = async ({
   title = "",
   content = "",
@@ -201,6 +215,16 @@ export const openDialogModal = async ({
       isCancelButtonVisible,
       buttonProps,
       cancelButtonProps,
+    },
+  });
+};
+
+export const openUpgradeModal = async (network: NetworkVersion) => {
+  return openModal({
+    component: UpgradeVersion,
+    async: true,
+    componentProps: {
+      network,
     },
   });
 };

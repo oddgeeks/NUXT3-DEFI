@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-const { account } = useWeb3()
-
+const { account } = useWeb3();
+const { showVersionUpdateBanner } = useBanner();
 </script>
 
 <template>
@@ -9,7 +9,7 @@ const { account } = useWeb3()
       <Logo />
     </NuxtLink>
 
-    <nav class="flex items-center gap-7.5">
+    <nav class="flex items-center gap-7.5 relative">
       <div class="flex text-sm">
         <NuxtLink
           active-class="dark:text-white text-slate-900"
@@ -33,6 +33,25 @@ const { account } = useWeb3()
         <ColorModeSwitcher />
         <Web3Button />
       </div>
+      <Transition name="slide-fade">
+        <WarningsVersionUpdate v-if="showVersionUpdateBanner" />
+      </Transition>
     </nav>
   </header>
 </template>
+
+<style scoped>
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}
+</style>

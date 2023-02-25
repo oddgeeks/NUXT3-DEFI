@@ -205,11 +205,12 @@ const onSubmit = handleSubmit(async () => {
 
 <template>
   <form @submit="onSubmit" class="text-center flex gap-7.5 flex-col">
-    <div
-      class="relative flex mx-auto h-10 w-10 rounded-full flex-shrink-0"
-    >
+    <div class="relative flex mx-auto h-10 w-10 rounded-full flex-shrink-0">
       <img
-        :src="`https://cdn.instadapp.io/icons/tokens/${token.symbol.toLowerCase()}.svg`"
+        width="40"
+        height="40"
+        class="h-10 w-10 rounded-[inherit]"
+        :src="token.logoURI"
         :onerror="onImageError"
       />
     </div>

@@ -6,7 +6,7 @@ const {
   showIncorrectNetworkBanner,
   showInsufficientGasBanner,
   showGasGiftBanner,
-  showOnboardBanner
+  showOnboardBanner,
 } = useBanner();
 
 const route = useRoute();
@@ -15,7 +15,7 @@ const route = useRoute();
 <template>
   <div class="flex flex-col h-full">
     <BannerAccountTracking v-if="showTrackingBanner" />
-    <BannerWelcome v-if="showWelcomeBanner && route.name !== 'claims-ens-drop'" />
+    <!-- <BannerWelcome v-if="showWelcomeBanner" /> -->
     <div class="fixed bottom-12 w-full z-40">
       <BannerSwitchNetwork v-if="showIncorrectNetworkBanner" />
       <BannerOnboard v-else-if="showOnboardBanner && route.name !== 'claims-ens-drop'" />
@@ -31,7 +31,14 @@ const route = useRoute();
     </div>
     <slot />
     <TheFooter />
-    <Modal @destroy="modal.destroy" @reject="modal.onReject" :key="modal.id" v-bind="modal" :show="true" v-for="modal in modals">
+    <Modal
+      @destroy="modal.destroy"
+      @reject="modal.onReject"
+      :key="modal.id"
+      v-bind="modal"
+      :show="true"
+      v-for="modal in modals"
+    >
       <component
         :is="modal.component"
         @destroy="modal.destroy"

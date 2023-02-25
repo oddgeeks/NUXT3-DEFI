@@ -2,7 +2,7 @@ interface Window {
   ethereum: any;
 }
 
-type ITxType = "send" | "swap" | "bridge" | "topUpGas" | "wc";
+type ITxType = "send" | "swap" | "bridge" | "topUpGas" | "wc" | "upgrade";
 interface Provider {
   id: string;
   name: string;
@@ -28,6 +28,11 @@ interface Network {
   };
 }
 
+interface NetworkVersion extends Network {
+  latestVersion: string;
+  currentVersion: string;
+}
+
 interface IAvocadoTransaction {
   id: number;
   chain_id: string;
@@ -37,7 +42,8 @@ interface IAvocadoTransaction {
   data: string;
   fee: string;
   confirmations: number;
-  status: "pending" | "confirming" | "success" | "failed";
+  status: "pending" | "confirming" | "success" | "failed" | "dropped";
+  revert_reason?: string;
   gas_limit: string;
   gas_price: string;
   value: string;
@@ -243,7 +249,7 @@ type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim";
 type ISlackMessageType = "danger" | "error" | "success" | "banner";
 
 type MetadataProps = {
-  type: "transfer" | "bridge" | "swap" | "multi" | "gas-topup";
+  type: "transfer" | "bridge" | "swap" | "multi" | "gas-topup" | "upgrade";
   encodedData: string;
   version?: string;
 };
@@ -252,6 +258,11 @@ type SendMetadataProps = {
   token: string;
   amount: string;
   receiver: string;
+};
+
+type UpgradeMetadataProps = {
+  version: string;
+  walletImpl: string;
 };
 
 type TopupMetadataProps = {
@@ -290,4 +301,5 @@ interface BuildInfo {
   commit: string;
   time: number;
   branch: string;
+  env: string;
 }

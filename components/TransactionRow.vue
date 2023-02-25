@@ -8,7 +8,7 @@ defineProps<{
   <tr
     class="transaction-row text-sm relative cursor-pointer"
     :class="{
-      'text-slate-500': transaction.status === 'failed',
+      'text-slate-500': ['failed', 'dropped'].includes(transaction.status),
     }"
   >
     <td>

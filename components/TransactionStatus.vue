@@ -2,17 +2,22 @@
 import SVGCheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import SVGErrorCircle from "~/assets/images/icons/error-circle.svg?component";
 import SVGClockCircle from "~/assets/images/icons/clock-circle.svg?component";
+import SVGInfoCircle from "~/assets/images/icons/exclamation-circle.svg?component";
 
 const props = defineProps<{
-  status: IAvocadoTransaction["status"];
+  status: IAvocadoTransaction["status"] | "ready" | "completed";
 }>();
 
 const statusColor = computed(() => {
   switch (props.status) {
     case "success":
+    case "completed":
+    case "ready":
       return "text-green-400";
     case "failed":
       return "text-red-500";
+    case "dropped":
+      return "text-[inherit]";
     default:
       return "text-yellow";
   }
@@ -26,7 +31,13 @@ const statusColor = computed(() => {
   >
     <SVGCheckCircle
       class="text-white w-4 h-4 success-circle"
-      v-if="status === 'success'"
+      v-if="
+        status === 'success' || status === 'completed' || status === 'ready'
+      "
+    />
+    <SVGInfoCircle
+      class="text-slate-600 w-4 h-4"
+      v-else-if="status === 'dropped'"
     />
     <SVGErrorCircle
       class="text-white w-4 h-4"
@@ -34,5 +45,6 @@ const statusColor = computed(() => {
     />
     <SVGClockCircle v-else class="w-4 h-4" />
     {{ status }}
+    <slot />
   </span>
 </template>
