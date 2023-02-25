@@ -154,7 +154,7 @@ useForceSingleSession();
 <template>
   <div class="container flex flex-col items-center justify-center gap-[30px] flex-1">
     <div class="flex flex-col items-center space-y-6 max-w-md text-center" v-if="!account">
-      <p class="leading-8">Connect your wallet to check if you're eligible for the ENS gas airdrop.</p>
+      <p class="leading-8">Connect your wallet to check your eligibility</p>
       <div class="w-48">
         <Web3Button />
       </div>
