@@ -2,6 +2,7 @@ export const errorMessages = {
   metamaskUserDeniedSignature: "user rejected signing",
   estimateGasError: "cannot estimate gas",
   quoteExpired: "quote has expired",
+  quoteExpired2: "0_K",
 };
 
 export function useErrorHandler() {
@@ -19,6 +20,10 @@ export function useErrorHandler() {
 
     if (errorMessage.includes(errorMessages.quoteExpired)) {
       return "Quote has expired, please try again";
+    }
+
+    if(errorMessage.includes(errorMessages.quoteExpired2)) {
+      return `${errorMessage} (swap quote expired)`;
     }
 
     return errorMessage;
