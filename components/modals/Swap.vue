@@ -77,7 +77,7 @@ const swap = ref<ISwap>({
 });
 
 const availableTokens = computed(() =>
-  tokens.value.filter((t) => t.chainId === props.chainId)
+  tokens.value.filter((t) => t.chainId === props.chainId && t.address !== swap.value.buyToken.address)
 );
 const availableBuyTokens = computed(() =>
   availableTokens.value.filter(
