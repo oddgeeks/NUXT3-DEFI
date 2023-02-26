@@ -23,7 +23,7 @@ export function useErrorHandler() {
     }
 
     if(errorMessage.includes(errorMessages.quoteExpired2)) {
-      return `${errorMessage} (swap quote expired)`;
+      return `${errorMessage} (Quote has expired, please try again)`;
     }
 
     return errorMessage;
