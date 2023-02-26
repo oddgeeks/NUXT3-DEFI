@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import LinkSVG from "~/assets/images/icons/external-link.svg?component";
 import SVGBridge from "~/assets/images/icons/bridge.svg?component";
 import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
 import RefreshSVG from "~/assets/images/icons/refresh.svg?component";
@@ -128,5 +129,9 @@ const formatProtocol = (protocol: string) => {
   </div>
   <div v-if="metadata.type === 'upgrade'" class="self-start">
     Safe upgraded to {{ metadata?.version }}
+  </div>
+  <div v-if="metadata.type === 'dapp'" class="self-start flex items-center gap-2 text-primary">
+   <a :href="metadata?.url" target="_blank" rel="noopener noreferrer">{{ metadata?.name }}</a>
+   <LinkSVG />
   </div>
 </template>

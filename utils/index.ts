@@ -29,6 +29,7 @@ const actionMetadataTypes = {
   ],
   "gas-topup": ["uint256 amount", "address token", "address onBehalf"],
   upgrade: ["bytes32 version", "address walletImpl"],
+  dapp: ['string name', 'string url'],
 };
 
 export function shortenHash(hash: string, length: number = 4) {
@@ -289,6 +290,23 @@ const encodeMetadata = (props: MetadataProps) => {
   ]);
 };
 
+export const encodeDappMetadata = (
+  params: DappMetadataProps,
+  single = true
+) => {
+  const encodedData = ethers.utils.defaultAbiCoder.encode(
+    actionMetadataTypes.dapp,
+    [params.name, params.url]
+  );
+
+  const data = encodeMetadata({
+    type: "dapp",
+    encodedData,
+  });
+
+  return single ? encodeMultipleActions(data) : data;
+};
+
 export const encodeTransferMetadata = (
   params: SendMetadataProps,
   single = true
@@ -490,6 +508,13 @@ export const decodeMetadata = (data: string) => {
             amount: toBN(decodedData.amount).toFixed(),
             token: decodedData.token,
             onBehalf: decodedData.onBehalf,
+          };
+          break;
+          case "dapp":
+          payload = {
+            type,
+            name: decodedData?.name,
+            url:  decodedData?.url,
           };
           break;
       }

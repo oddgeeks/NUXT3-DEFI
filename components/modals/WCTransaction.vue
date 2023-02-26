@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { utils } from "ethers";
 import GasSVG from "~/assets/images/icons/gas.svg?component";
 import NetworkSVG from "~/assets/images/icons/network.svg?component";
 import FlowersSVG from "~/assets/images/icons/flowers.svg?component";
@@ -14,7 +15,7 @@ const props = defineProps<{
   wc: WalletConnect;
 }>();
 
-const { safe } = useAvocadoSafe();
+const { safe, sendTransaction } = useAvocadoSafe();
 const { account } = useWeb3();
 const { gasBalance } = storeToRefs(useSafe());
 const [submitting, toggle] = useToggle();
@@ -92,28 +93,38 @@ const handleSubmit = async () => {
     toggle(true);
     const params = props.payload?.params[0];
 
-    const tx = await safe.value?.sendTransaction({
-      ...params,
-      chainId: props.chainId,
-    });
+    const metadata = encodeDappMetadata({
+      name: props.wc.peerMeta?.name!,
+      url: props.wc.peerMeta?.url!,
+    })
+
+    const transactionHash = await sendTransaction(
+      {
+        ...params,
+        chainId: props.chainId,
+      },
+      {
+        metadata,
+      }
+    );
 
     props.wc.approveRequest({
       id: props.payload.id,
-      result: tx?.hash,
+      result: transactionHash,
     });
 
     logActionToSlack({
       message: `Txn on ${props.wc.peerMeta?.url}`,
       type: "success",
       action: "wc",
-      txHash: tx?.hash,
+      txHash: transactionHash,
       chainId: props.chainId,
       account: account.value,
     });
 
     emit("resolve");
 
-    showPendingTransactionModal(tx?.hash!, props.chainId, "wc");
+    showPendingTransactionModal(transactionHash, props.chainId, "wc");
   } catch (e) {
     const err = parseTransactionError(e);
 
@@ -166,7 +177,7 @@ const handleReject = () => {
               class="text-primary text-sm"
               :href="wc.peerMeta?.url"
             >
-              {{ formatURL(wc.peerMeta?.url) }}
+              {{ formatURL(wc.peerMeta?.url!) }}
             </a>
           </div>
         </div>
