@@ -21,10 +21,11 @@ const [submitting, toggle] = useToggle();
 const { switchNetworkByChainId } = useNetworks();
 const { parseTransactionError } = useErrorHandler();
 
-const { data: fee, pending } = useAsyncData(
+const { data: fee, pending, error } = useAsyncData(
   "swap-fee",
   async () => {
-    const message = await safe.value?.generateSignatureMessage(
+    try {
+      const message = await safe.value?.generateSignatureMessage(
       props.payload?.params,
       +props.chainId
     );
@@ -35,7 +36,12 @@ const { data: fee, pending } = useAsyncData(
       props.chainId,
     ]);
 
+    if(!data?.fee || !data.multiplier) throw new Error('Failed to estimate gas fee.')
+
     return calculateEstimatedFee({ chainId: props.chainId, ...data });
+    } catch(e) {
+      throw new Error('Failed to estimate gas fee.')
+    }
   },
   {
     server: false,
@@ -49,7 +55,7 @@ const { data: fee, pending } = useAsyncData(
 );
 
 const submitDisabled = computed(
-  () => submitting.value || pending.value || isBalaceNotEnough.value
+  () => submitting.value || pending.value || isBalaceNotEnough.value || error.value
 );
 
 const isBalaceNotEnough = computed(() => {
@@ -203,8 +209,13 @@ const handleReject = () => {
           </div>
         </div>
       </div>
+
       <CommonNotification
-        v-if="isBalaceNotEnough"
+        v-if="error"
+        type="error"
+        :text="error.message"/>
+      <CommonNotification
+        v-else-if="isBalaceNotEnough"
         type="error"
         text="Not enough USDC gas"
       >
