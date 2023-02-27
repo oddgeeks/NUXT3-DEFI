@@ -3,6 +3,7 @@ import confetti from "canvas-confetti";
 import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import GiftSVG from "~/assets/images/icons/gift.svg?component";
 import SVGX from "~/assets/images/icons/x.svg?component";
+import GasEmoji from "~/assets/images/icons/gas-emoji.svg?component";
 import { openClaimedGasModal } from "~~/composables/modals";
 
 const router = useRouter();
@@ -196,7 +197,7 @@ useForceSingleSession();
       <div class="flex flex-col py-10 gap-10 px-[50px] w-full">
         <div class="flex flex-col gap-5">
           <p class="leading-8 text-xl">Check Eligibility</p>
-          <p class="text-sm font-medium text-slate-400">Connect your wallet or enter your ENS</p>
+          <p class="text-sm font-medium text-slate-400">Connect your wallet to check your eligibility</p>
         </div>
         <CommonButton size="lg" class="w-full flex justify-center" @click="openWeb3Modal">
           Connect Wallet
@@ -208,10 +209,10 @@ useForceSingleSession();
       class="flex flex-col items-center gap-7.5"
     >
       <span class="text-[46px]">✨ Congratulations! ✨</span>
-      <div class="flex flex-col">
-        <span class="text-center text-slate-400">You are eligible! You have received</span>
+      <div class="flex flex-col items-center">
+        <span class="max-w-2xl text-center text-slate-400 leading-7">You are eligible for free gas to make transactions on up to 7 different networks all using only USDC. You have received:</span>
         <div class="flex items-center gap-6.5">
-          <img width="70" height="70" src="https://avocado.instadapp.io/tokens/usd-coin.svg" />
+          <GasEmoji />
           <span class="text-[80px] font-bold">50 USDC</span>
         </div>
       </div>
