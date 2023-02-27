@@ -2,6 +2,8 @@
 import confetti from "canvas-confetti";
 import { ethers } from "ethers";
 import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
+import GiftSVG from "~/assets/images/icons/gift.svg?component";
+import SVGX from "~/assets/images/icons/x.svg?component";
 
 const { parseTransactionError } = useErrorHandler();
 const { account, library } = useWeb3();
@@ -152,7 +154,42 @@ useForceSingleSession();
 </script>
 
 <template>
-  <div class="container flex flex-col items-center justify-center gap-[30px] flex-1">
+  <div class="container flex flex-col items-center justify-center gap-20 flex-1">
+    <div class="flex items-center gap-20 relative">
+      <div class="flex flex-col items-center gap-4">
+        <div class="w-[46px] h-[46px] rounded-full bg-green-500 flex items-center justify-center">
+          1
+        </div>
+        <span>Enter Address</span>
+      </div>
+
+      <div class="flex flex-col items-center gap-4">
+        <div
+          class="w-[46px] h-[46px] rounded-full bg-green-500 flex items-center justify-center"
+          :class="{ 'bg-opacity-20 text-green-400': !eligible }"
+        >
+          2
+        </div>
+        <span :class="{ 'text-slate-600': !eligible }">Claim Airdrop</span>
+      </div>
+
+      <div class="absolute top-5 left-24 flex items-center gap-1">
+        <div
+          class="w-3 rounded-full bg-green-500 h-1"
+          :class="{ 'bg-opacity-20': !account, '!bg-[#EB5757] !bg-opacity-20': account && !eligible }"
+          v-for="i in 9"
+          :key="i"
+        >
+        </div>
+      </div>
+
+      <div
+        class="absolute top-2.5 left-[155px] bg-[#EB5757] flex items-center justify-center w-6 h-6 rounded-full"
+        :class="{ '!hidden': !account || eligible }"
+      >
+        <SVGX />
+      </div>
+    </div>
     <div class="flex flex-col items-center space-y-6 max-w-md text-center" v-if="!account">
       <p class="leading-8">Connect your wallet to check your eligibility</p>
       <div class="w-48">
@@ -161,18 +198,28 @@ useForceSingleSession();
     </div>
     <div 
       v-else-if="eligible && !claimed"
-      class="flex flex-col items-center gap-7.5 bg-slate-50 dark:bg-gray-850 p-12 rounded-5"
+      class="flex flex-col items-center gap-7.5"
     >
-      <span class="w-[320px] text-center text-slate-400">You are eligible! You have received</span>
-      <span class="text-6xl">50 USDC</span>
+      <span class="text-[46px]">✨ Congratulations! ✨</span>
+      <div class="flex flex-col">
+        <span class="text-center text-slate-400">You are eligible! You have received</span>
+        <div class="flex items-center gap-6.5">
+          <img width="70" height="70" src="https://avocado.instadapp.io/tokens/usd-coin.svg" />
+          <span class="text-[80px] font-bold">50 USDC</span>
+        </div>
+      </div>
       <CommonButton size="lg" class="flex items-center gap-2 px-32" @click="claimAirdrop">
         Claim
+        <GiftSVG />
       </CommonButton>
     </div>
-    <div v-else-if="!claimed" class="flex flex-col items-center gap-7.5 bg-slate-50 dark:bg-gray-850 p-12 rounded-5">
-      <span class="w-[360px] text-center">You are not eligible! or Try again with another ENS.</span>
-      <CommonButton size="lg">
-        <span class="text-center w-full">Back</span>
+    <div v-else-if="!claimed" class="flex flex-col items-center gap-10 bg-slate-50 dark:bg-gray-850 py-10 px-[50px] rounded-5">
+      <div class="flex flex-col gap-5 items-center">
+        <span class="text-xl">This address is not eligible</span>
+        <span class="text-slate-400 text-sm w-[269px] text-center">Connect to a different wallet or enter another address</span>
+      </div>
+      <CommonButton size="lg" class="flex w-full justify-center">
+        Try again
       </CommonButton>
     </div>
     <div v-else class="flex flex-col items-center space-y-5">
