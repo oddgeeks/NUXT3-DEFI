@@ -202,12 +202,6 @@ useForceSingleSession();
           Connect Wallet
         </CommonButton>
       </div>
-      <div class="flex items-center gap-2.5 w-full py-10 px-[50px] border-t border-slate-150 dark:border-slate-800">
-        <CommonInput placeholder="Enter your Address or ENS" class="w-full" />
-        <CommonButton size="lg">
-          Submit
-        </CommonButton>
-      </div>
     </div>
     <div 
       v-else-if="eligible && !claimed"
