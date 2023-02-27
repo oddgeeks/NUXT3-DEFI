@@ -196,7 +196,7 @@ useForceSingleSession();
           <p class="leading-8 text-xl">Check Eligibility</p>
           <p class="text-sm font-medium text-slate-400">Connect your wallet or enter your ENS</p>
         </div>
-        <CommonButton size="lg" class="w-full flex justify-center">
+        <CommonButton size="lg" class="w-full flex justify-center" @click="openWeb3Modal">
           Connect Wallet
         </CommonButton>
       </div>
