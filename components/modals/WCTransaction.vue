@@ -22,41 +22,18 @@ const [submitting, toggle] = useToggle();
 const { switchNetworkByChainId } = useNetworks();
 const { parseTransactionError } = useErrorHandler();
 
-const { data: fee, pending, error } = useAsyncData(
-  "swap-fee",
-  async () => {
-    try {
-      const message = await safe.value?.generateSignatureMessage(
-      props.payload?.params,
-      +props.chainId
-    );
-
-    const data = await provider.send("txn_estimateFeeWithoutSignature", [
-      message,
-      account.value,
-      props.chainId,
-    ]);
-
-    if(!data?.fee || !data.multiplier) throw new Error('Failed to estimate gas fee.')
-
-    return calculateEstimatedFee({ chainId: props.chainId, ...data });
-    } catch(e) {
-      throw new Error('Failed to estimate gas fee.')
-    }
-  },
-  {
-    server: false,
-    immediate: true,
-    default: () => ({
-      min: 0,
-      max: 0,
-      formatted: "$0.00",
-    }),
-  }
-);
+const {
+  data: fee,
+  pending,
+  error,
+} = useEstimatedFee(ref(props.payload.params), {
+  chainId: props.chainId,
+  immediate: true,
+});
 
 const submitDisabled = computed(
-  () => submitting.value || pending.value || isBalaceNotEnough.value || error.value
+  () =>
+    submitting.value || pending.value || isBalaceNotEnough.value || error.value
 );
 
 const isBalaceNotEnough = computed(() => {
@@ -96,7 +73,7 @@ const handleSubmit = async () => {
     const metadata = encodeDappMetadata({
       name: props.wc.peerMeta?.name!,
       url: props.wc.peerMeta?.url!,
-    })
+    });
 
     const transactionHash = await sendTransaction(
       {
@@ -194,13 +171,10 @@ const handleReject = () => {
             <ChainLogo class="w-[18px] h-[18px]" :chain="chainId" />
           </div>
         </div>
-
         <div class="flex justify-between items-center">
           <div class="text-slate-400 flex items-center gap-2.5">
             <GasSVG class="w-4" />
-            <span class="text-xs leading-5 font-medium"
-              >Gas fees</span
-            >
+            <span class="text-xs leading-5 font-medium">Gas fees</span>
           </div>
 
           <div class="flex items-center gap-2.5">
@@ -221,16 +195,8 @@ const handleReject = () => {
         </div>
       </div>
 
-      <CommonNotification
-        v-if="error"
-        type="error"
-        :text="error.message"/>
-      <CommonNotification
-        v-else-if="isBalaceNotEnough"
-        type="error"
-        text="Not enough USDC gas"
-      >
-        <template #action>
+      <CommonNotification v-if="error" type="error" :text="error">
+        <template v-if="error.includes('gas')" #action>
           <CommonButton @click="openTopUpGasModal()" size="sm">
             Top-up
           </CommonButton>

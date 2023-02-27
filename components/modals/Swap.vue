@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { serializeError } from 'serialize-error'
+import { serializeError } from "serialize-error";
 import ChevronDownSVG from "~/assets/images/icons/chevron-down.svg?component";
 import type { IToken } from "~~/stores/tokens";
 import { Erc20__factory } from "~~/contracts";
@@ -17,8 +17,6 @@ interface ISwap {
 }
 
 let abortController = ref<AbortController | null>(null);
-
-const provider = getRpcProvider(634);
 
 const emit = defineEmits(["destroy"]);
 
@@ -44,7 +42,7 @@ const props = defineProps({
   },
 });
 
-const { tokenBalances, sendTransactions, safeAddress, safe } = useAvocadoSafe();
+const { tokenBalances, sendTransactions, safeAddress } = useAvocadoSafe();
 
 const { getTokenByAddress } = useTokens();
 const { tokens } = storeToRefs(useTokens());
@@ -63,10 +61,10 @@ const slippages = [
 ];
 
 const swapDetails = ref({
-  data: null as  ISwapResponse | null,
-  error: '',
+  data: null as ISwapResponse | null,
+  error: "",
   pending: false,
-})
+});
 const [swapped, toggleSwapped] = useToggle();
 const [isBuyAmountDirty, toggleDirty] = useToggle(false);
 const refreshing = ref(false);
@@ -77,7 +75,10 @@ const swap = ref<ISwap>({
 });
 
 const availableTokens = computed(() =>
-  tokens.value.filter((t) => t.chainId === props.chainId && t.address !== swap.value.buyToken.address)
+  tokens.value.filter(
+    (t) =>
+      t.chainId === props.chainId && t.address !== swap.value.buyToken.address
+  )
 );
 const availableBuyTokens = computed(() =>
   availableTokens.value.filter(
@@ -203,92 +204,82 @@ const sendingDisabled = computed(
     !meta.value.valid ||
     feePending.value ||
     isPriceImpactHigh.value ||
-    !!swapDetails.value.error
+    !!swapDetails.value.error ||
+    !!error.value
 );
 
 const isLoading = computed(
   () => swapDetails.value.pending && meta.value.valid && !refreshing.value
 );
-
 const fetchSwapDetails = async () => {
   const { valid } = await validate();
+  if (!valid) return;
 
-    if (!valid) return;
+  pause();
 
-    try {
-      pause();
+  try {
+    if (abortController.value) {
+      abortController.value.abort();
+    }
 
-      if (abortController.value) {
-        abortController.value.abort();
+    abortController.value = new AbortController();
+
+    swapDetails.value.pending = true;
+
+    const data: ISwapResponse = await http(
+      "https://swap-aggregator.instadapp.io/swap",
+      {
+        signal: abortController.value?.signal,
+        params: {
+          network: getNetworkByChainId(
+            Number(props.chainId)
+          ).name.toLowerCase(),
+          buyToken: swap.value.buyToken.address,
+          sellToken: swap.value.sellToken.address,
+          sellAmount: toWei(sellAmount.value, swap.value.sellToken.decimals),
+          maxSlippage: actualSlippage.value,
+          slippage: actualSlippage.value,
+          user: safeAddress.value,
+          access_token: "hxBA1uxwaGWN0xcpPOncVJ3Tk7FdFxY7g3NX28R14C",
+        },
       }
+    );
 
-      abortController.value = new AbortController();
+    abortController.value = null;
 
-      swapDetails.value.pending = true;
+    const best = data?.aggregators[0];
 
-      const data: ISwapResponse = await http(
-        "https://swap-aggregator.instadapp.io/swap",
-        {
-          signal: abortController.value?.signal,
-          params: {
-            network: getNetworkByChainId(
-              Number(props.chainId)
-            ).name.toLowerCase(),
-            buyToken: swap.value.buyToken.address,
-            sellToken: swap.value.sellToken.address,
-            sellAmount: toWei(sellAmount.value, swap.value.sellToken.decimals),
-            maxSlippage: actualSlippage.value,
-            slippage: actualSlippage.value,
-            user: safeAddress.value,
-            access_token: "hxBA1uxwaGWN0xcpPOncVJ3Tk7FdFxY7g3NX28R14C",
-          },
-        }
+    if (!best) {
+      swapDetails.value.error = "No route found, please try again later";
+      return;
+    }
+
+    if (best && !isBuyAmountDirty.value) {
+      buyAmount.value = formatDecimal(
+        fromWei(
+          best.data.buyTokenAmount,
+          best.data.buyToken.decimals
+        ).toFixed(),
+        6
       );
+    }
 
-      abortController.value = null;
+    swapDetails.value.data = data;
+    swapDetails.value.pending = false;
+    swapDetails.value.error = "";
+  } catch (e: any) {
+    const error = serializeError(e);
 
-      const best = data?.aggregators[0];
+    if (error?.message.includes("aborted")) return;
 
-      if (!best) {
-        swapDetails.value.error = "No route found, please try again later";
-        return;
-      }
-
-      if (best && !isBuyAmountDirty.value) {
-        buyAmount.value = formatDecimal(
-          fromWei(
-            best.data.buyTokenAmount,
-            best.data.buyToken.decimals
-          ).toFixed(),
-          6
-        );
-      }
-
-      swapDetails.value.data = data;
-      swapDetails.value.pending = false;
-      swapDetails.value.error = '';
-    } catch (e: any) {
-      const error = serializeError(e)
-
-      if (error?.message.includes('aborted')) return;
-
-      swapDetails.value.pending = false;
-      swapDetails.value.error = "No route found, please try again later.";
-    } 
-}
-
-const { pause, resume } = useIntervalFn(
-  () => {
-    fetchSwapDetails()
-    refreshing.value = true;
-  },
-  10000,
-  {
-    immediate: true,
+    swapDetails.value.pending = false;
+    swapDetails.value.error = "No route found, please try again later.";
   }
-);
+};
 
-const bestRoute = computed(() => swapDetails.value?.data?.aggregators[0] || null);
+const bestRoute = computed(
+  () => swapDetails.value?.data?.aggregators[0] || null
+);
 
 const priceImpact = computed(() =>
   toBN(bestRoute?.value?.data?.priceImpact || 0)
@@ -309,7 +300,7 @@ const sellAmountInUsd = computed(() => {
       swapDetails.value?.data?.data.sellToken.decimals
     )
   )
-    .times( swapDetails.value?.data?.data.sellToken.price || 0)
+    .times(swapDetails.value?.data?.data.sellToken.price || 0)
     .toFixed(2);
 });
 
@@ -320,7 +311,7 @@ const buyAmountInUsd = computed(() => {
       swapDetails.value?.data?.data.buyToken.decimals
     )
   )
-    .times( swapDetails.value?.data?.data.buyToken.price || 0)
+    .times(swapDetails.value?.data?.data.buyToken.price || 0)
     .toFixed(2);
 });
 
@@ -354,83 +345,78 @@ const swapTokens = () => {
   toggleSwapped();
 };
 
-const { data: fee, pending: feePending } = useAsyncData(
-  "swap-fee",
+const { data: txs } = useAsyncData(
   async () => {
-    try {
-      pause();
-      const txs = await getTxs();
-      const message = await safe.value?.generateSignatureMessage(
-        txs,
-        +props.chainId
+    const { valid } = await validate();
+
+    if (!valid) return;
+    if (!bestRoute.value) throw new Error("Route not found");
+
+    pause();
+
+    const address = bestRoute.value?.data.to;
+
+    const erc20 = Erc20__factory.connect(
+      address,
+      getRpcProvider(props.chainId)
+    );
+
+    const txs = [];
+
+    if (
+      swap.value.sellToken.address !==
+      "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+    ) {
+      const { data } = await erc20.populateTransaction.approve(
+        bestRoute.value.data.allowanceSpender || address,
+        bestRoute.value.data.sellTokenAmount
       );
 
-      const data = await provider.send("txn_estimateFeeWithoutSignature", [
-        message,
-        account.value,
-        props.chainId,
-      ]);
-
-      return data;
-    } finally {
-      resume();
-      refreshing.value = false;
+      txs.push({
+        to: swap.value.sellToken.address,
+        data,
+      });
     }
+
+    txs.push({
+      to: address,
+      data: bestRoute.value?.data.calldata,
+      value: bestRoute.value?.data.value,
+    });
+
+    return txs;
   },
   {
-    server: false,
     watch: [bestRoute],
+    server: false,
   }
 );
 
-const getTxs = async () => {
-  const address = bestRoute.value?.data.to;
-
-  if (!address) throw new Error("Route not found");
-
-  const erc20 = Erc20__factory.connect(address, getRpcProvider(props.chainId));
-
-  const txs = [];
-
-  if (
-    swap.value.sellToken.address !==
-    "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
-  ) {
-    const { data } = await erc20.populateTransaction.approve(
-      bestRoute.value.data.allowanceSpender || address,
-      bestRoute.value.data.sellTokenAmount
-    );
-
-    txs.push({
-      to: swap.value.sellToken.address,
-      data,
-    });
-  }
-
-  txs.push({
-    to: address,
-    data: bestRoute.value?.data.calldata,
-    value: bestRoute.value?.data.value,
-  });
-
-  return txs;
-};
+const {
+  data,
+  pending: feePending,
+  error,
+} = useEstimatedFee(txs, {
+  chainId: props.chainId,
+  cb: () => {
+    resume();
+    refreshing.value = false;
+  },
+});
 
 const onSubmit = handleSubmit(async () => {
   try {
-    pause()
-    const txs = await getTxs();
-
+    pause();
     const metadata = encodeSwapMetadata({
-      buyAmount:  swapDetails.value?.data?.data.buyTokenAmount!,
-      sellAmount:  swapDetails.value?.data?.data.sellTokenAmount!,
-      buyToken:  swapDetails.value?.data?.data.buyToken.address!,
+      buyAmount: swapDetails.value?.data?.data.buyTokenAmount!,
+      sellAmount: swapDetails.value?.data?.data.sellTokenAmount!,
+      buyToken: swapDetails.value?.data?.data.buyToken.address!,
       sellToken: swap.value.sellToken.address,
       receiver: account.value,
       protocol: utils.formatBytes32String(bestRoute?.value?.name || ""),
     });
 
-    const transactionHash = await sendTransactions(txs, +props.chainId, {
+    const transactionHash = await sendTransactions(txs.value!, +props.chainId, {
       metadata,
     });
 
@@ -478,6 +464,14 @@ const onSubmit = handleSubmit(async () => {
   }
 });
 
+const { pause, resume } = useInterval(10000, {
+  controls: true,
+  callback: () => {
+    refreshing.value = true;
+    fetchSwapDetails();
+  },
+});
+
 onMounted(() => {
   // set initial buy token
   const eth = availableBuyTokens.value.find((i) => i.symbol.includes("eth"));
@@ -517,12 +511,11 @@ watch(slippage, () => {
 });
 
 watch([sellAmount, swapped, slippage, customSlippage], () => {
-  fetchSwapDetails()
-})
+  fetchSwapDetails();
+});
 
 onUnmounted(() => {
   abortController.value?.abort();
-  pause();
 });
 </script>
 
@@ -770,7 +763,12 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
-      <EstimatedFee :chain-id="chainId" :loading="feePending" :data="fee" />
+      <EstimatedFee
+        :chain-id="chainId"
+        :loading="feePending"
+        :data="data"
+        :error="error"
+      />
       <CommonNotification
         v-if="swapDetails.error"
         type="error"

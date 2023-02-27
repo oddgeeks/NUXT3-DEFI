@@ -39,7 +39,6 @@ const {
   bridgeToToken,
   disabled,
   loading,
-  estimatedFee,
   transactions,
   routes,
   bridgeFee,
@@ -48,6 +47,11 @@ const {
 } = useBridge({
   fromChainId: props.chainId,
   tokenAddress: props.address,
+});
+
+const { pending, error, data } = useEstimatedFee(transactions.data, {
+  chainId: props.chainId,
+  disabled: () => isInsufficientBalance.value
 });
 
 const setMax = () => {
@@ -259,6 +263,7 @@ const onSubmit = form.handleSubmit(async () => {
                   ({{ formatUsd(bridgeFee?.feesInUsd) }})
                 </span>
               </div>
+
               <div
                 v-if="!isZero(nativeFee!)"
                 class="flex justify-between items-center"
@@ -298,12 +303,16 @@ const onSubmit = form.handleSubmit(async () => {
           </div>
         </div>
       </div>
-      <EstimatedFee
-        :chain-id="chainId"
-        :loading="estimatedFee.pending.value"
-        :data="estimatedFee.data.value"
-      />
+
+      <EstimatedFee :loading="pending" :data="data" :error="error" />
       <CommonNotification
+        v-if="transactions.error.value"
+        type="error"
+        :text="transactions.error.value?.message"
+      >
+        
+      </CommonNotification>
+       <CommonNotification
         v-if="isInsufficientBalance"
         type="error"
         :text="`Not enough ${nativeCurrency?.symbol.toUpperCase()} balance`"
@@ -329,8 +338,8 @@ const onSubmit = form.handleSubmit(async () => {
     <div class="flex gap-4 flex-col">
       <CommonButton
         type="submit"
-        :disabled="disabled"
-        :loading="loading"
+        :disabled="disabled || pending || !!error"
+        :loading="loading || pending"
         class="justify-center w-full"
         size="lg"
       >
