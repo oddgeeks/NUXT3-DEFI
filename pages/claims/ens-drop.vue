@@ -157,7 +157,7 @@ useForceSingleSession();
   <div class="container flex flex-col items-center justify-center gap-20 flex-1">
     <div class="flex items-center gap-20 relative">
       <div class="flex flex-col items-center gap-4">
-        <div class="w-[46px] h-[46px] rounded-full bg-green-500 flex items-center justify-center">
+        <div class="w-[46px] h-[46px] rounded-full bg-green-500 text-white flex items-center justify-center">
           1
         </div>
         <span>Enter Address</span>
@@ -165,15 +165,15 @@ useForceSingleSession();
 
       <div class="flex flex-col items-center gap-4">
         <div
-          class="w-[46px] h-[46px] rounded-full bg-green-500 flex items-center justify-center"
-          :class="{ 'bg-opacity-20 text-green-400': !eligible }"
+          class="w-[46px] h-[46px] rounded-full bg-green-500 text-white flex items-center justify-center font-medium"
+          :class="{ 'bg-opacity-20 !text-green-400': !eligible }"
         >
           2
         </div>
-        <span :class="{ 'text-slate-600': !eligible }">Claim Airdrop</span>
+        <span :class="{ 'text-slate-300 dark:text-slate-600': !eligible }">Claim Airdrop</span>
       </div>
 
-      <div class="absolute top-5 left-24 flex items-center gap-1">
+      <div class="absolute top-5 left-24 flex items-center gap-1 font-medium">
         <div
           class="w-3 rounded-full bg-green-500 h-1"
           :class="{ 'bg-opacity-20': !account, '!bg-[#EB5757] !bg-opacity-20': account && !eligible }"
@@ -190,10 +190,21 @@ useForceSingleSession();
         <SVGX />
       </div>
     </div>
-    <div class="flex flex-col items-center space-y-6 max-w-md text-center" v-if="!account">
-      <p class="leading-8">Connect your wallet to check your eligibility</p>
-      <div class="w-48">
-        <Web3Button />
+    <div class="flex flex-col items-center rounded-7.5 bg-slate-50 dark:bg-gray-850 max-w-lg w-full text-center" v-if="!account">
+      <div class="flex flex-col py-10 gap-10 px-[50px] w-full">
+        <div class="flex flex-col gap-5">
+          <p class="leading-8 text-xl">Check Eligibility</p>
+          <p class="text-sm font-medium text-slate-400">Connect your wallet or enter your ENS</p>
+        </div>
+        <CommonButton size="lg" class="w-full flex justify-center">
+          Connect Wallet
+        </CommonButton>
+      </div>
+      <div class="flex items-center gap-2.5 w-full py-10 px-[50px] border-t border-slate-150 dark:border-slate-800">
+        <CommonInput placeholder="Enter your Address or ENS" class="w-full" />
+        <CommonButton size="lg">
+          Submit
+        </CommonButton>
       </div>
     </div>
     <div 
