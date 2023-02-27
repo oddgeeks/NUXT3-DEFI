@@ -331,7 +331,7 @@ onUnmounted(() => {
               v-tippy="
                 'This includes the fee that will be paid to the relayer and the integrator.'
               "
-              class="w-[18px] h-[18px] text-slate-600 shrink-0"
+              class="w-[18px] h-[18px] text-slate-600 shrink-0 rotate-180"
             />
           </div>
           <div class="capitalize">

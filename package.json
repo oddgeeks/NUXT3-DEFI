@@ -63,6 +63,7 @@
   "dependencies": {
     "canvas-confetti": "^1.6.0",
     "fuse.js": "^6.6.2",
-    "semver": "^7.3.8"
+    "semver": "^7.3.8",
+    "serialize-error": "^11.0.0"
   }
 }
