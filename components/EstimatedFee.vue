@@ -1,24 +1,11 @@
 <script lang="ts" setup>
-import { storeToRefs } from "pinia";
 import GasSVG from "~/assets/images/icons/gas.svg?component";
 
-type Data = {
-  fee: string;
-  multiplier: string;
-};
-
-const props = defineProps<{ data?: Data; loading?: boolean; chainId: string }>();
-
-const { gasBalance } = storeToRefs(useSafe());
-
-const fee = computed(() =>
-  calculateEstimatedFee({ chainId: props.chainId, ...props.data })
-);
-
-const isBalaceNotEnough = computed(() => {
-  if (props.loading) return false;
-  return toBN(gasBalance.value).lt(fee.value?.max!);
-});
+defineProps<{
+  data: any;
+  loading?: boolean;
+  error?: string;
+}>();
 </script>
 
 <template>
@@ -33,22 +20,22 @@ const isBalaceNotEnough = computed(() => {
         Gas fees
       </span>
       <span class="loading-box rounded-5 w-24 h-5" v-if="loading"></span>
-      <span v-else :class="{ 'text-red-alert' : isBalaceNotEnough }" class="text-xs inline-flex items-center gap-2.5">
+      <span
+        v-else-if="data"
+        :class="{ 'text-red-alert': error }"
+        class="text-xs inline-flex items-center gap-2.5"
+      >
         <img
           class="w-[18px] h-[18px]"
           width="18"
           height="18"
           src="https://cdn.instadapp.io/icons/tokens/usdc.svg"
         />
-        {{ fee.formatted }} USDC</span
+        {{ data?.formatted }} USDC</span
       >
     </div>
-    <CommonNotification
-      v-if="isBalaceNotEnough"
-      type="error"
-      text="Not enough USDC gas"
-    >
-      <template #action>
+    <CommonNotification v-if="error" type="error" :text="error">
+      <template v-if="error.includes('gas')" #action>
         <CommonButton @click="openTopUpGasModal()" size="sm">
           Top-up
         </CommonButton>

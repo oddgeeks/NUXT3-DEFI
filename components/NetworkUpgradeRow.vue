@@ -39,6 +39,7 @@ const handleUpgrade = async (network: NetworkVersion) => {
       </span>
     </td>
     <td class="pr-7.5 w-[221px]">
+      <button @click="handleUpgrade(network)"> set that up</button>
       <CommonButton
         v-if="isUpgradeAvailable"
         @click="handleUpgrade(network)"

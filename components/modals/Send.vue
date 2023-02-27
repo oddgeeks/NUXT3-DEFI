@@ -5,8 +5,6 @@ import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { isAddress } from "@ethersproject/address";
 
-const provider = getRpcProvider(634);
-
 const emit = defineEmits(["destroy"]);
 const { toWei } = useBignumber();
 
@@ -79,62 +77,57 @@ const pasteAddress = async () => {
 };
 
 const sendingDisabled = computed(
-  () => !token.value || loading.value || !meta.value.valid || pending.value
+  () =>
+    !token.value ||
+    loading.value ||
+    !meta.value.valid ||
+    pending.value ||
+    !!error.value
 );
 
-const getTx = async () => {
-  const transferAmount = toBN(amount.value)
-    .times(10 ** token.value.decimals)
-    .toFixed(0);
-
-  let tx = {
-    from: account.value,
-    to: address.value,
-    value: "0",
-    data: "0x",
-  };
-
-  if (token.value.address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE") {
-    tx.value = transferAmount;
-  } else {
-    const contract = Erc20__factory.connect(token.value.address, library.value);
-
-    const { data } = await contract.populateTransaction.transfer(
-      address.value,
-      transferAmount
-    );
-
-    tx.data = data!;
-    tx.to = token.value.address;
-  }
-
-  return tx;
-};
-
-const { data: fee, pending } = useAsyncData(
-  "send-fee",
+const { data: tx } = useAsyncData(
   async () => {
     const { valid } = await validate();
     if (!valid) return;
 
-    const tx = await getTx();
+    const transferAmount = toBN(amount.value)
+      .times(10 ** token.value.decimals)
+      .toFixed(0);
 
-    const message = await safe.value?.generateSignatureMessage(
-      [tx],
-      +props.chainId
-    );
+    let tx = {
+      from: account.value,
+      to: address.value,
+      value: "0",
+      data: "0x",
+    };
 
-    return provider.send("txn_estimateFeeWithoutSignature", [
-      message,
-      account.value,
-      props.chainId,
-    ]);
+    if (token.value.address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE") {
+      tx.value = transferAmount;
+    } else {
+      const contract = Erc20__factory.connect(
+        token.value.address,
+        library.value
+      );
+
+      const { data } = await contract.populateTransaction.transfer(
+        address.value,
+        transferAmount
+      );
+
+      tx.data = data!;
+      tx.to = token.value.address;
+    }
+
+    return tx;
   },
   {
-    server: false,
     watch: [amount, address],
   }
 );
+
+const { data, pending, error } = useEstimatedFee(tx, {
+  chainId: props.chainId,
+});
 
 const onSubmit = handleSubmit(async () => {
   if (!token.value) {
@@ -149,8 +142,6 @@ const onSubmit = handleSubmit(async () => {
   try {
     await switchNetworkByChainId(634);
 
-    const tx = await getTx();
-
     const metadata = encodeTransferMetadata({
       token: token.value.address,
       amount: toWei(amount.value, token.value.decimals),
@@ -159,7 +150,7 @@ const onSubmit = handleSubmit(async () => {
 
     let transactionHash = await sendTransaction(
       {
-        ...tx,
+        ...(tx.value as any),
         chainId: Number(props.chainId),
       },
       {
@@ -296,8 +287,9 @@ const onSubmit = handleSubmit(async () => {
 
       <EstimatedFee
         :chain-id="chainId"
-        :loading="meta.valid && pending"
-        :data="fee"
+        :loading="pending"
+        :data="data"
+        :error="error"
       />
     </div>
 

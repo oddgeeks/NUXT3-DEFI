@@ -6,7 +6,6 @@ import {
   AvoFactoryProxy__factory,
 } from "@/contracts";
 import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
-const provider = getRpcProvider(634);
 
 const emit = defineEmits(["destroy"]);
 
@@ -19,11 +18,9 @@ const props = defineProps<{
 }>();
 
 const { account } = useWeb3();
-const { safe } = useAvocadoSafe();
 const submitting = ref(false);
 
 const avoWalletImpAddress = ref("");
-const txData = ref();
 
 const fetchAvowalletImpl = async () => {
   const forwarderProxyContract = Forwarder__factory.connect(
@@ -44,46 +41,30 @@ const fetchAvowalletImpl = async () => {
   return avoWalletImpl;
 };
 
-const fetchTxData = async () => {
-  const wallet = GaslessWallet__factory.connect(
-    safeAddress.value,
-    getRpcProvider(props.network.chainId)
-  );
-
-  const data = await wallet.populateTransaction.upgradeTo(
-    avoWalletImpAddress.value
-  );
-
-  txData.value = data;
-  return data;
-};
-
-const {
-  data: fee,
-  pending,
-  error,
-} = useAsyncData(
-  "version-fee",
+const { data: txData } = useAsyncData(
+  "upgrade-tx",
   async () => {
     await fetchAvowalletImpl();
-    await fetchTxData();
 
-    const message = await safe.value?.generateSignatureMessage(
-      [txData.value],
-      +props.network.chainId
+    const wallet = GaslessWallet__factory.connect(
+      safeAddress.value,
+      getRpcProvider(props.network.chainId)
     );
 
-    return provider.send("txn_estimateFeeWithoutSignature", [
-      message,
-      account.value,
-      props.network.chainId,
-    ]);
+    const data = await wallet.populateTransaction.upgradeTo(
+      avoWalletImpAddress.value
+    );
+
+    return data;
   },
   {
-    server: false,
     immediate: true,
   }
 );
+
+const { pending, data, error } = useEstimatedFee(txData, {
+  chainId: String(props.network.chainId),
+});
 
 const handleSubmit = async () => {
   try {
@@ -96,7 +77,7 @@ const handleSubmit = async () => {
 
     const transactionHash = await sendTransaction(
       {
-        data: txData.value.data,
+        data: txData.value?.data,
         chainId: props.network.chainId,
         to: safeAddress.value,
       },
@@ -140,8 +121,8 @@ const handleSubmit = async () => {
   }
 };
 
-onBeforeUnmount(() => {
-  clearNuxtData("version-fee");
+onUnmounted(() => {
+  clearNuxtData("upgrade-tx");
 });
 </script>
 
@@ -169,11 +150,12 @@ onBeforeUnmount(() => {
     <EstimatedFee
       :chain-id="String(network.chainId)"
       :loading="pending"
-      :data="fee"
+      :data="data"
+      :error="error"
     />
     <CommonButton
       :loading="pending || submitting"
-      :disabled="pending || submitting"
+      :disabled="pending || submitting || error"
       @click="handleSubmit"
       class="justify-center w-full"
       size="lg"
