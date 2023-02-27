@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import confetti from "canvas-confetti";
-import { ethers } from "ethers";
 import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import GiftSVG from "~/assets/images/icons/gift.svg?component";
 import SVGX from "~/assets/images/icons/x.svg?component";
+import { openClaimedGasModal } from "~~/composables/modals";
 
+const router = useRouter();
 const { parseTransactionError } = useErrorHandler();
 const { account, library } = useWeb3();
 const eligible = ref(false);
@@ -109,7 +110,8 @@ const claimAirdrop = async () => {
     ]);
 
     claimedConfetti();
-    claimed.value = true;
+    openClaimedGasModal();
+    router.push("/");
     
     if (success) {
       fire(0.25, {

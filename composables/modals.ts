@@ -16,6 +16,7 @@ import type { PopulatedTransaction } from "ethers";
 import CustomTx from "~~/components/modals/CustomTx.vue";
 import UpgradeVersion from "~~/components/modals/UpgradeVersion.vue";
 import Web3 from "~/components/modals/Web3.vue";
+import ClaimedGas from "~/components/modals/ClaimedGas.vue";
 
 const { openModal } = useModal();
 interface DialogModalProps {
@@ -191,6 +192,18 @@ export const openCustomTokenModal = (address?: string) => {
 export const openWeb3Modal = () => {
   return openModal({
     component: Web3,
+    componentProps: {
+      closeable: false
+    }
+  });
+};
+
+export const openClaimedGasModal = () => {
+  return openModal({
+    component: ClaimedGas,
+    options: {
+      wrapperClass: "max-w-[460px]",
+    },
   });
 };
 
