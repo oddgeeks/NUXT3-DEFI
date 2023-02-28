@@ -128,7 +128,7 @@ const formatProtocol = (protocol: string) => {
     </span>
   </div>
   <div v-if="metadata.type === 'upgrade'" class="self-start">
-    Safe upgraded to {{ metadata?.version }}
+    Wallet upgraded to {{ metadata?.version }}
   </div>
   <div v-if="metadata.type === 'dapp'" class="self-start flex items-center gap-2 text-primary">
    <a :href="metadata?.url" target="_blank" rel="noopener noreferrer">{{ metadata?.name }}</a>
