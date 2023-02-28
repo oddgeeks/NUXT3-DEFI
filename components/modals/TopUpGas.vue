@@ -87,12 +87,6 @@ const setMax = () => {
   amount.value = token.value!.balance;
 };
 
-const amountInWei = computed(() =>
-  toBN(amount.value)
-    .times(10 ** token.value.decimals)
-    .toFixed(0)
-);
-
 const sendingDisabled = computed(
   () =>
     !token.value ||
@@ -175,6 +169,10 @@ const { data: tx } = useAsyncData(
     const { valid } = await validate();
     if (!valid) return;
 
+    const amountInWei = toBN(amount.value)
+    .times(10 ** token.value?.decimals || 0)
+    .toFixed(0)
+
     let tx = {
       from: account.value,
       to: address,
@@ -183,7 +181,7 @@ const { data: tx } = useAsyncData(
     };
 
     if (token.value.address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE") {
-      tx.value = amountInWei.value;
+      tx.value = amountInWei;
     } else {
       const contract = Erc20__factory.connect(
         token.value.address,
@@ -192,7 +190,7 @@ const { data: tx } = useAsyncData(
 
       const { data } = await contract.populateTransaction.transfer(
         address,
-        amountInWei.value
+        amountInWei
       );
 
       tx.data = data!;
@@ -204,7 +202,8 @@ const { data: tx } = useAsyncData(
   {
     server: false,
     immediate: false,
-    watch: [amountInWei, chainId],
+    lazy: true,
+    watch: [amount, chainId],
   }
 );
 
@@ -216,8 +215,12 @@ const onSubmit = handleSubmit(async () => {
   try {
     await switchNetworkByChainId(634);
 
+    const amountInWei = toBN(amount.value)
+    .times(10 ** token.value?.decimals || 0)
+    .toFixed(0)
+
     const metadata = encodeTopupMetadata({
-      amount: amountInWei.value,
+      amount: amountInWei,
       token: token.value.address,
       onBehalf: safeAddress.value,
     });
