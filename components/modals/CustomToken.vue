@@ -14,6 +14,7 @@ const props = defineProps<{
 
 const { handleAddToken } = useTokens();
 const { tokens } = storeToRefs(useTokens());
+const { fetchBalances } = useSafe()
 
 const balance = ref("0");
 
@@ -83,9 +84,9 @@ const {
       const name = await contract.name();
       const decimals = await contract.decimals();
 
-      const { data } = await useNuxtData("api-balances");
+      const data = await fetchBalances()
 
-      const tokenBalance = data.value.find(
+      const tokenBalance = data?.find(
         (i: IToken) =>
           i.address.toLowerCase() === address.value.toLowerCase() &&
           i.chainId == chainId.value
