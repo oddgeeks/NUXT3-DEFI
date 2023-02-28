@@ -5,7 +5,6 @@ import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
 import RefreshSVG from "~/assets/images/icons/refresh.svg?component";
 import GasSVG from "~/assets/images/icons/gas.svg?component";
 import { storeToRefs } from "pinia";
-const { tokens } = storeToRefs(useTokens());
 
 const props = defineProps({
   metadata: {
@@ -16,6 +15,8 @@ const props = defineProps({
 });
 
 const { fromWei } = useBignumber();
+
+const { tokens } = storeToRefs(useTokens());
 
 const getTokenByAddress = (
   address: string,
@@ -69,7 +70,8 @@ const formatProtocol = (protocol: string) => {
 </script>
 
 <template>
-  <div class="flex gap-5" v-if="metadata.type === 'transfer'">
+  <div>
+    <div class="flex gap-5" v-if="metadata.type === 'transfer' && token">
     <span class="capitalize text-sm">{{ metadata.type }}</span>
     <span class="inline-flex gap-2.5 items-center">
       <img width="20" height="20" class="w-5 h-5" :src="token?.logoURI" />
@@ -85,7 +87,7 @@ const formatProtocol = (protocol: string) => {
       >
     </span>
   </div>
-  <div class="flex gap-5" v-if="metadata.type === 'gas-topup'">
+  <div class="flex gap-5" v-if="metadata.type === 'gas-topup' && token">
     <span class="capitalize text-sm">{{ metadata.type }}</span>
     <span class="inline-flex gap-2.5 items-center">
       <img width="20" height="20" class="w-5 h-5" :src="token?.logoURI" />
@@ -95,7 +97,7 @@ const formatProtocol = (protocol: string) => {
       <span>{{ shortenHash(metadata.onBehalf) }}</span>
     </span>
   </div>
-  <div class="flex gap-5" v-if="metadata.type === 'swap'">
+  <div class="flex gap-5" v-if="metadata.type === 'swap' && sellToken && buyToken">
     <span class="capitalize text-sm">{{ metadata.type }}</span>
     <span class="inline-flex gap-2.5 items-center">
       <img width="20" height="20" class="w-5 h-5" :src="sellToken?.logoURI" />
@@ -114,10 +116,10 @@ const formatProtocol = (protocol: string) => {
       </span>
     </span>
   </div>
-  <div class="flex gap-5 items-center" v-if="metadata.type === 'bridge'">
+  <div class="flex gap-5 items-center" v-if="metadata.type === 'bridge' && toToken">
     <span class="capitalize text-sm">{{ metadata.type }}</span>
     <span class="inline-flex gap-2.5 items-center">
-      <img width="20" height="20" class="w-5 h-5" :src="toToken?.logoURI" />
+      <img width="20" height="20" class="w-5 h-5" :src="toToken.logoURI" />
       {{ bridgeAmountFormatted }}
       <span class="uppercase">{{ toToken?.symbol }}</span>
       <SVGBridge class="text-slate-400 w-5 h-5" />
@@ -133,5 +135,6 @@ const formatProtocol = (protocol: string) => {
   <div v-if="metadata.type === 'dapp'" class="self-start flex items-center gap-2 text-primary">
    <a :href="metadata?.url" target="_blank" rel="noopener noreferrer">{{ metadata?.name }}</a>
    <LinkSVG />
+  </div>
   </div>
 </template>

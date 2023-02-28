@@ -1,9 +1,17 @@
 <script setup lang="ts">
 import LinkSVG from "~/assets/images/icons/external-link.svg?component";
 import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
+import { serializeError } from "serialize-error";
 
 const router = useRoute();
 const provider = getRpcProvider(634);
+
+interface Transaction extends IAvocadoTransaction {
+  decodedMetadata?: any;
+  isBridge?: boolean;
+}
+
+let abortController = ref<AbortController | null>(null);
 
 const {
   data: transaction,
@@ -15,11 +23,20 @@ const {
   async () => {
     const data = (await provider.send("api_getTransactionByHash", [
       router.params.hash,
-    ])) as Promise<IAvocadoTransaction>;
+    ])) as Transaction;
 
     if (!data) {
       throw new Error("Transaction not found");
     }
+
+    data.decodedMetadata = decodeMetadata(data?.data!);
+    data.isBridge =
+      data.decodedMetadata &&
+      data.decodedMetadata?.some((i: any) => i.type === "bridge");
+
+    console.log({
+      metadata: data.decodedMetadata,
+    });
 
     return data;
   },
@@ -28,76 +45,87 @@ const {
   }
 );
 
-const metadata = computed(() =>
-  transaction.value?.data ? decodeMetadata(transaction.value?.data!) : undefined
-);
-
 const locale = computed(() =>
   typeof window !== "undefined" ? window.navigator.language : "en"
-);
-
-const isBridge = computed(
-  () =>
-    metadata.value?.length &&
-    metadata.value?.some((i: any) => i.type === "bridge")
-);
-
-const isBridgeMetaExist = computed(
-  () => isBridge.value && metadata.value && metadata.value?.length > 0
 );
 
 const handleRefresh = () => {
   if (!error.value) {
     refresh();
-    refreshBridgeStatus();
   }
 };
 
-const { pause } = useIntervalFn(handleRefresh, 3000, {
+const { pause, resume } = useIntervalFn(handleRefresh, 3000, {
   immediate: true,
 });
 
-const {
-  data: bridgeStatus,
-  pending: bridgeStatusPending,
-  refresh: refreshBridgeStatus,
-} = useAsyncData(
-  "bridgeStatus",
+const { data: bridgeStatus, pending: bridgeStatusPending, error: bridgeStatusError } = useAsyncData(
+  "bridge-status",
   async () => {
-    if (isBridgeMetaExist.value) {
-      const bridgeMeta = metadata.value?.find(
-        (i: any) => i.type === "bridge"
-      ) as any;
+    if (transaction.value?.isBridge) {
+      try {
+        const bridgeMeta = transaction.value?.decodedMetadata?.find(
+          (i: any) => i.type === "bridge"
+        ) as any;
 
-      const res: any = await http("/api/socket/v2/bridge-status", {
-        params: {
-          transactionHash: transaction.value?.hash,
-          fromChainId: transaction.value?.chain_id,
-          toChainId: bridgeMeta?.toChainId!,
-        },
-      });
-      if (res.result.sourceTxStatus === "FAILED") return "failed";
-      return res.result.destinationTxStatus.toLowerCase();
+        if (!bridgeMeta) return;
+
+        pause();
+
+        if (abortController.value) {
+          abortController.value.abort();
+        }
+
+        abortController.value = new AbortController();
+
+        const res: any = await Promise.race([
+          http("/api/socket/v2/bridge-status", {
+            signal: abortController.value.signal,
+            params: {
+              transactionHash: transaction.value?.hash,
+              fromChainId: transaction.value?.chain_id,
+              toChainId: bridgeMeta?.toChainId!,
+            },
+          }),
+          new Promise((_, reject) => {
+            setTimeout(() => {
+              reject(
+                new Error(
+                  "Timeout error: Fetch request took too long to complete."
+                )
+              );
+            }, 3000);
+          }),
+        ]);
+
+        abortController.value = null;
+        resume();
+
+        if (res.result.sourceTxStatus === "FAILED") return "failed";
+        return res.result.destinationTxStatus.toLowerCase();
+      } catch (e) {
+        pause();
+
+        const serialized = serializeError(e)
+        if (serialized.message?.includes('user aborted')) return;
+
+        throw new Error("Something went wrong");
+      }
     }
   },
   {
     server: false,
-    immediate: true,
-    watch: [isBridgeMetaExist],
+    immediate: false,
+    lazy: true,
+    watch: [transaction],
   }
-);
-
-onMounted(() =>
-  console.log({
-    metadata,
-  })
 );
 
 onUnmounted(() => {
   pause();
   refreshNuxtData(router.params.hash);
   clearNuxtData(router.params.hash);
-  clearNuxtData("bridgeStatus");
+  clearNuxtData("bridge-status");
 });
 </script>
 
@@ -205,7 +233,7 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <div v-if="metadata">
+      <div v-if="transaction.decodedMetadata">
         <hr class="w-full dark:border-slate-800 border-slate-150" />
 
         <div class="px-7.5 py-6.5 flex gap-6.5 flex-col">
@@ -220,12 +248,12 @@ onUnmounted(() => {
                 :metadata="item"
                 :key="i"
                 :transaction="transaction"
-                v-for="(item, i) of metadata"
+                v-for="(item, i) of transaction.decodedMetadata"
               />
             </div>
           </div>
 
-          <div v-if="isBridge" class="flex items-center">
+          <div v-if="transaction?.isBridge" class="flex items-center">
             <div
               class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px] flex items-center gap-2"
             >
@@ -238,8 +266,10 @@ onUnmounted(() => {
                 class="w-[18px] h-[18px] text-slate-600 shrink-0"
               />
             </div>
+            <TransactionStatus v-if="bridgeStatusError" status="failed" />
+
             <div
-              v-if="bridgeStatusPending && !bridgeStatus"
+              v-else-if="bridgeStatusPending && !bridgeStatus"
               class="rounded-5 w-24 h-4 loading-box"
             />
             <a
@@ -252,7 +282,6 @@ onUnmounted(() => {
                 <LinkSVG class="w-4" />
               </TransactionStatus>
             </a>
-            <TransactionStatus v-else status="failed" />
           </div>
         </div>
       </div>
@@ -346,7 +375,7 @@ onUnmounted(() => {
 
     <div
       v-else-if="!transaction && !pending"
-      class="bg-gray-850 rounded-5.5 text-sm font-medium p-16 text-center"
+      class="dark:bg-gray-850 bg-slate-50 rounded-5.5 text-sm font-medium p-16 text-center"
     >
       <p class="mb-2">Sorry, We are unable to locate this TxnHash</p>
     </div>
