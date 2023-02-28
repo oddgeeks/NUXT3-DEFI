@@ -187,6 +187,10 @@ const onSubmit = form.handleSubmit(async () => {
             }}</span>
           </div>
         </div>
+
+        <div class="flex text-sm text-slate-400">
+          {{ formatUsd(toBN((token.price || 0) * (amount || 0)).decimalPlaces(2)) }}
+        </div>
       </div>
       <div class="space-y-2.5">
         <div class="flex justify-between items-center">
