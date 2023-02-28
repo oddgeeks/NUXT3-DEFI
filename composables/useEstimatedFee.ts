@@ -16,72 +16,79 @@ export function useEstimatedFee(txData: Ref, params: EstimatedFeeParams) {
 
   const immediate = !!params.immediate;
 
+  const raw = ref({
+    data: ref<any>(undefined),
+    pending: false,
+    error: undefined as Error | undefined,
+  });
+
   const data = computed(() =>
-    calculateEstimatedFee({ chainId: params.chainId, ...rawData.value })
+    calculateEstimatedFee({ chainId: params.chainId, ...raw.value.data })
   );
 
   const err = computed(() => {
     const message = "Something went wrong. Please try again!";
-    if (pending.value) return;
-    if (error.value) return message;
+    if (raw.value.pending) return;
+    if (raw.value.error) return message;
 
-    if (rawData.value && (!rawData.value?.fee || !rawData.value?.multiplier))
+    if (raw.value.data && (!raw.value.data?.fee || !raw.value.data?.multiplier))
       return message;
 
     if (toBN(gasBalance.value).lt(data.value?.max!))
       return "Not enough USDC gas";
   });
 
-  const {
-    data: rawData,
-    error,
-    pending,
-  } = useAsyncData(
-    "estimated-fee",
-    async () => {
-      try {
-        const disabled = params.disabled?.();
-        if (disabled) return;
+  const fetchEstimatedFee = async () => {
+    try {
+      const disabled = params.disabled?.();
+      if (disabled) return;
 
-        if (!txData.value) return;
+      if (!txData.value) return;
 
-        const isArr = isArray(txData.value);
+      raw.value.pending = true;
 
-        if (isArr && txData.value.length === 0) return;
+      const isArr = isArray(txData.value);
 
-        const actualTx = isArray(txData.value) ? txData.value : [txData.value];
+      if (isArr && txData.value.length === 0) return;
 
-        const message = await safe.value?.generateSignatureMessage(
-          actualTx,
-          +params.chainId
-        );
+      const actualTx = isArray(txData.value) ? txData.value : [txData.value];
 
-        const data = await provider.send("txn_estimateFeeWithoutSignature", [
-          message,
-          account.value,
-          params.chainId,
-        ]);
+      const message = await safe.value?.generateSignatureMessage(
+        actualTx,
+        +params.chainId
+      );
 
-        return data;
-      } finally {
-        params.cb?.();
-      }
+      const data = await provider.send("txn_estimateFeeWithoutSignature", [
+        message,
+        account.value,
+        params.chainId,
+      ]);
+
+      raw.value.data = data;
+      raw.value.error = undefined;
+    } catch (e: any) {
+      console.error(e);
+      raw.value.error = e;
+      raw.value.data = undefined;
+    } finally {
+      params.cb?.();
+      raw.value.pending = false;
+    }
+  };
+
+  watch(
+    txData,
+    () => {
+      fetchEstimatedFee();
     },
     {
-      server: false,
-      immediate,
-      watch: [txData],
+      immediate: immediate,
     }
   );
 
-  onUnmounted(() => {
-    clearNuxtData("estimated-fee");
-  });
-
   return {
     data,
-    rawData,
     error: err,
-    pending,
+    pending: computed(() => raw.value.pending),
   };
 }
