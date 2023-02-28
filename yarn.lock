@@ -985,10 +985,10 @@
   resolved "https://registry.yarnpkg.com/@headlessui/vue/-/vue-1.7.10.tgz#dc79fbbe97924647eb3fe475cdba892db7fe4157"
   integrity sha512-qAov7JULOBBes5CU+MiGpwMKoXxLHXS703WEZkOPxYjPD2p7f286ozlFxw7JjA2MmVgbnis2Wvgg/4hT7nRFIg==
 
-"@instadapp/avocado@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.1.4.tgz#242fdbe671a2da9c5c611927525902a6a99d5ffb"
-  integrity sha512-PZ5HlI97eO0ukNOhB51z+SWgFlhBXm0KSOgidgHBxrRoFdOYP0zs5ij1GdVu7wZyOSOkBRhrvaz3q7+vWzsB7w==
+"@instadapp/avocado@^0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.1.6.tgz#6751c43fa85e56083d55c4299aabb91c21d9191b"
+  integrity sha512-4zJP6EBITjVtQWqfVdcZkdUGjdUh9bHVbtamDoTEQilx2fKEfgptZWz6squVglhRdbGXDZ6EuQJl2qtuwxCVuQ==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
