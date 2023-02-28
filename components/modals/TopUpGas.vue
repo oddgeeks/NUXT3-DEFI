@@ -44,7 +44,7 @@ const networks = computed(() =>
 const claimLoading = ref(false);
 const provider = getRpcProvider(634);
 
-const { handleSubmit, errors, meta, resetForm, validate, isSubmitting } = useForm({
+const { handleSubmit, errors, meta, resetForm } = useForm({
   validationSchema: yup.object({
     amount: yup
       .string()
@@ -87,17 +87,15 @@ const setMax = () => {
   amount.value = token.value!.balance;
 };
 
+const loading = ref(false);
 const sendingDisabled = computed(
   () =>
     !token.value ||
     !address ||
     !account.value ||
     loading.value ||
-    !meta.value.valid || 
-    loading.value
+    !meta.value.valid
 );
-
-const loading = computed(() => isSubmitting.value || pending.value)
 
 const claim = async () => {
   try {
@@ -164,14 +162,22 @@ Issued At: ${new Date().toISOString()}`;
   }
 };
 
-const { data: tx } = useAsyncData(
-  async () => {
-    const { valid } = await validate();
-    if (!valid) return;
+const onSubmit = handleSubmit(async () => {
+  if (!token.value) {
+    return;
+  }
 
-    const amountInWei = toBN(amount.value)
-    .times(10 ** token.value?.decimals || 0)
-    .toFixed(0)
+  loading.value = false;
+
+  if (sendingDisabled.value) return;
+
+  loading.value = true;
+  try {
+    await switchNetworkByChainId(634);
+
+    const transferAmount = toBN(amount.value)
+      .times(10 ** token.value.decimals)
+      .toFixed(0);
 
     let tx = {
       from: account.value,
@@ -181,7 +187,7 @@ const { data: tx } = useAsyncData(
     };
 
     if (token.value.address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE") {
-      tx.value = amountInWei;
+      tx.value = transferAmount;
     } else {
       const contract = Erc20__factory.connect(
         token.value.address,
@@ -190,44 +196,22 @@ const { data: tx } = useAsyncData(
 
       const { data } = await contract.populateTransaction.transfer(
         address,
-        amountInWei
+        transferAmount
       );
 
       tx.data = data!;
       tx.to = token.value.address;
-
-      return tx
     }
-  },
-  {
-    server: false,
-    immediate: false,
-    lazy: true,
-    watch: [amount, chainId],
-  }
-);
-
-const { data, pending, error } = useEstimatedFee(tx, {
-  chainId: String(chainId.value),
-})
-
-const onSubmit = handleSubmit(async () => {
-  try {
-    await switchNetworkByChainId(634);
-
-    const amountInWei = toBN(amount.value)
-    .times(10 ** token.value?.decimals || 0)
-    .toFixed(0)
 
     const metadata = encodeTopupMetadata({
-      amount: amountInWei,
+      amount: transferAmount,
       token: token.value.address,
       onBehalf: safeAddress.value,
     });
 
     let transactionHash = await sendTransaction(
       {
-        ...tx.value as any,
+        ...tx,
         chainId: chainId.value,
       },
       {
@@ -264,6 +248,8 @@ const onSubmit = handleSubmit(async () => {
       account: account.value,
     });
   }
+
+  loading.value = false;
 });
 
 onMounted(() => {
@@ -354,12 +340,6 @@ onMounted(() => {
           </template>
         </CommonInput>
       </div>
-     <EstimatedFee
-        :chain-id="chainId"
-        :loading="pending"
-        :data="data"
-        :error="error"
-      />
       <CommonButton
         type="submit"
         :disabled="sendingDisabled"
