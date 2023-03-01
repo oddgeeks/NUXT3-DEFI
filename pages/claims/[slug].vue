@@ -276,7 +276,7 @@ useForceSingleSession();
     <div v-else-if="claimed" class="flex flex-col items-center gap-10 bg-slate-50 dark:bg-gray-850 py-10 px-[50px] rounded-5">
       <div class="flex flex-col gap-5 items-center">
         <span class="text-xl">You've already claimed this promo</span>
-        <span class="text-slate-400 text-sm w-[269px] text-center">Connect to a different wallet or enter another address</span>
+        <span class="text-slate-400 text-sm w-[269px] text-center">Connect to a different wallet</span>
       </div>
       <CommonButton @click="deactivate" size="lg" class="flex w-full justify-center">
         Try again
@@ -285,7 +285,7 @@ useForceSingleSession();
     <div v-else-if="!claimSuccess" class="flex flex-col items-center gap-10 bg-slate-50 dark:bg-gray-850 py-10 px-[50px] rounded-5">
       <div class="flex flex-col gap-5 items-center">
         <span class="text-xl">This address is not eligible</span>
-        <span class="text-slate-400 text-sm w-[269px] text-center">Connect to a different wallet or enter another address</span>
+        <span class="text-slate-400 text-sm w-[269px] text-center">Connect to a different wallet</span>
       </div>
       <CommonButton @click="deactivate" size="lg" class="flex w-full justify-center">
         Try again
