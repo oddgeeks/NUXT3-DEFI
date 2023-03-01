@@ -4,7 +4,6 @@ import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import GiftSVG from "~/assets/images/icons/gift.svg?component";
 import SVGX from "~/assets/images/icons/x.svg?component";
 import GasEmoji from "~/assets/images/icons/gas-emoji.svg?component";
-import { openClaimedGasModal } from "~~/composables/modals";
 import { IPromo } from "~/server/data/promos";
 
 definePageMeta({
@@ -14,11 +13,11 @@ definePageMeta({
 const route = useRoute();
 const router = useRouter();
 const { parseTransactionError } = useErrorHandler();
-const { account, library, deactivate } = useWeb3();
+const { account, library } = useWeb3();
 const eligible = ref(false);
 const claimed = ref(false);
 const claimSuccess = ref(false);
-const claiming = ref(false);
+const claiming = ref(false); 
 const promo = ref<{ code: string, amount: number }>();
 const avocadoProvider = getRpcProvider(634);
 
@@ -161,7 +160,6 @@ const claimAirdrop = async () => {
       });
 
       claimedConfetti();
-      openClaimedGasModal();
       router.push("/");
     }
   } catch (e) {
@@ -185,28 +183,28 @@ useForceSingleSession();
 
 <template>
   <div class="container flex flex-col items-center justify-center gap-20 flex-1">
-    <div class="flex items-center gap-20 relative">
+    <div class="flex items-center gap-24 relative">
       <div class="flex flex-col items-center gap-4">
         <div class="w-[46px] h-[46px] rounded-full bg-green-500 text-white flex items-center justify-center">
           1
         </div>
-        <span>Enter Address</span>
+        <span>Connect Wallet</span>
       </div>
 
       <div class="flex flex-col items-center gap-4">
         <div
           class="w-[46px] h-[46px] rounded-full bg-green-500 text-white flex items-center justify-center font-medium"
-          :class="{ '!bg-opacity-20 !bg-[#EB5757] !text-[#EB5757]': !eligible || claimed, '!bg-green-500 !text-green-400': !account }"
+          :class="{ '!bg-opacity-20 !bg-[#EB5757] !text-[#EB5757]': !eligible || claimed, '!bg-green-500 !text-green-400': !account ||  account && !promo?.code }"
         >
           2
         </div>
-        <span :class="{ 'text-slate-300 dark:text-slate-600': !eligible || claimed }">Claim Airdrop</span>
+        <span :class="{ 'text-slate-300 dark:text-slate-600': !eligible || claimed }">Claim Gas</span>
       </div>
 
-      <div class="absolute top-5 left-24 flex items-center gap-1 font-medium">
+      <div class="absolute top-5 left-[102px] flex items-center gap-1 font-medium">
         <div
           class="w-3 rounded-full bg-green-500 h-1"
-          :class="{ 'bg-opacity-20': !account, '!bg-[#EB5757] !bg-opacity-20': account && !eligible || claimed }"
+          :class="{ 'bg-opacity-20': !account, '!bg-[#EB5757] !bg-opacity-20': (account && !eligible) || claimed, '!bg-green-500' : account && !promo?.code }"
           v-for="i in 9"
           :key="i"
         >
@@ -214,8 +212,8 @@ useForceSingleSession();
       </div>
 
       <div
-        class="absolute top-2.5 left-[155px] bg-[#EB5757] flex items-center justify-center w-6 h-6 rounded-full"
-        :class="{ '!hidden': !account || eligible && !claimed }"
+        class="absolute top-2.5 left-[160px] bg-[#EB5757] flex items-center justify-center w-6 h-6 rounded-full"
+        :class="{ '!hidden': !account || eligible && !claimed || account && !promo?.code }"
       >
         <SVGX />
       </div>
@@ -278,18 +276,12 @@ useForceSingleSession();
         <span class="text-xl">You've already claimed this promo</span>
         <span class="text-slate-400 text-sm w-[269px] text-center">Connect to a different wallet</span>
       </div>
-      <CommonButton @click="deactivate" size="lg" class="flex w-full justify-center">
-        Try again
-      </CommonButton>
     </div>
     <div v-else-if="!claimSuccess" class="flex flex-col items-center gap-10 bg-slate-50 dark:bg-gray-850 py-10 px-[50px] rounded-5">
       <div class="flex flex-col gap-5 items-center">
         <span class="text-xl">This address is not eligible</span>
         <span class="text-slate-400 text-sm w-[269px] text-center">Connect to a different wallet</span>
       </div>
-      <CommonButton @click="deactivate" size="lg" class="flex w-full justify-center">
-        Try again
-      </CommonButton>
     </div>
     <div v-else class="flex flex-col items-center space-y-5">
       <div class="flex flex-col gap-7.5 bg-slate-50 dark:bg-gray-850 p-12 rounded-5">
