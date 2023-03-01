@@ -261,7 +261,7 @@ const onSubmit = handleSubmit(async () => {
           v-model="address"
         >
           <template #suffix>
-            <button type="button" @click="pasteAddress">
+            <button v-tippy="{ content: 'Paste from clipboard', trigger: 'mouseenter' }" type="button" @click="pasteAddress">
               <ClipboardSVG />
             </button>
           </template>
