@@ -78,7 +78,6 @@ watch(eligible, eligible => {
 
 watch(account, async account => {
   if (!account) return;
-  // Check here if eligible
 
   const signer = library.value.getSigner();
   const address = await signer.getAddress();
@@ -115,10 +114,10 @@ const claimAirdrop = async () => {
 
   const message = `Avocado wants you to sign in with your web3 account ${account.value}
 
-  Action: Claim ${toBN(promo.value.amount).toFixed(2)} USDC Airdrop
-  URI: https://avocado.instadapp.io
-  Nonce: {{NONCE}}
-  Issued At: ${new Date().toISOString()}`;
+Action: Claim ${toBN(promo.value.amount).toFixed(2)} USDC Airdrop
+URI: https://avocado.instadapp.io
+Nonce: {{NONCE}}
+Issued At: ${new Date().toISOString()}`;
 
   try {
     const airdropNonce = await avocadoProvider.send("api_generateNonce", [
@@ -136,6 +135,8 @@ const claimAirdrop = async () => {
     ]);
     
     if (success) {
+      claiming.value = false;
+
       fire(0.25, {
         spread: 26,
         startVelocity: 55,
@@ -164,10 +165,7 @@ const claimAirdrop = async () => {
     }
   } catch (e) {
     const err = parseTransactionError(e);
-    openSnackbar({
-      message: err,
-      type: "error",
-    });
+    claiming.value = false;
     logActionToSlack({
       message: err,
       type: "error",
@@ -175,7 +173,6 @@ const claimAirdrop = async () => {
       account: account.value,
     });
   }
-  claiming.value = false;
 };
 
 useForceSingleSession();
@@ -266,7 +263,7 @@ useForceSingleSession();
           <span class="text-[80px] font-bold">{{ promo && toBN(promo.amount).decimalPlaces(2) }} USDC</span>
         </div>
       </div>
-      <CommonButton :loading="claiming" size="lg" class="flex items-center gap-2 px-32" @click="claimAirdrop">
+      <CommonButton :loading="claiming" size="lg" class="flex items-center gap-2 px-32 min-w-[128px] justify-center" @click="claimAirdrop">
         Claim
         <GiftSVG />
       </CommonButton>
