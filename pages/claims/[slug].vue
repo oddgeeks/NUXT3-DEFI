@@ -256,7 +256,7 @@ useForceSingleSession();
     >
       <span class="text-[46px]">✨ Congratulations! ✨</span>
       <div class="flex flex-col items-center">
-        <span class="max-w-2xl text-center text-slate-400 leading-7">You are eligible for free gas to make transactions on up to 7 different networks all using only USDC. You have received:</span>
+        <span class="max-w-2xl text-center text-slate-400 leading-7">You are eligible for free gas to make transactions on all supported networks all using only USDC. You have received:</span>
         <div class="flex items-center gap-6.5">
           <div class="relative">
             <GasEmoji />
