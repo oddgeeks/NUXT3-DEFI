@@ -2,6 +2,7 @@
 interface IPromo {
     title: string
     slug: string
+    promo: string
     amount: string
     description?: string
     content?: string
@@ -9,8 +10,9 @@ interface IPromo {
 
 export const promos: IPromo[] = [
     {
-        title: "Promo 420",
-        slug: "promo420",
+        title: "ENS Internal Team",
+        slug: "ens-team",
+        promo: "ENS-test-v1.0.0",
         amount: "50",
     }
 ];
