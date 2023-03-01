@@ -268,7 +268,7 @@ onMounted(() => {
       <GasSVG class="text-slate-900 dark:text-white" />
     </div>
     <div class="flex gap-4 flex-col">
-      <h1 class="text-lg leading-5">Gas Balance</h1>
+      <h1 class="text-lg leading-5">Gas Reserve</h1>
       <h2 class="text-xs text-slate-400 leading-5 font-medium">
         You will be able to use this as gas on any supported chain. Note that
         you need to have USDC in your Avocado wallet to add gas.

@@ -31,7 +31,19 @@ const tokensWithBalance = computed(() => {
         balance: getTokenBalance(i.address, i.chainId),
       };
     })
-    .sort((a, b) => toBN(b.balance).minus(toBN(a.balance)).toNumber())
+    .sort((a, b) => {
+      const populars = ["eth", "usdc", "usdt", "dai", "wbtc", "matic"];
+
+      if (toBN(b.balance).gt(toBN(a.balance))) return 1
+      if (toBN(b.balance).lt(toBN(a.balance))) return -1
+
+      const aIndex = populars.indexOf(a.symbol.toLowerCase());
+      const bIndex = populars.indexOf(b.symbol.toLowerCase());
+      if (aIndex === -1 && bIndex === -1) return 0;
+      if (aIndex === -1) return 1;
+      if (bIndex === -1) return -1;
+      return aIndex - bIndex;
+    })
     .filter((i) =>
       !!search.value
         ? i.name.toLowerCase().includes(search.value.toLowerCase()) ||

@@ -95,6 +95,7 @@ export const useBridge = (props: IBridge) => {
   );
 
   const bridgeTokens = useAsyncData(
+    "bridge-tokens",
     async () => {
       try {
         if (tokensController) {
@@ -129,19 +130,19 @@ export const useBridge = (props: IBridge) => {
   );
 
   const routes = useAsyncData(
+    "bridge-routes",
     async () => {
       const { valid } = await form.validate();
 
       if (!valid) return;
 
-      if (!bridgeToToken.value)  {
-        if(bridgeTokens.data.value?.length) {
+      if (!bridgeToToken.value) {
+        if (bridgeTokens.data.value?.length) {
           throw new Error("No bridge token found", {
             cause: "no-bridge-token",
           });
-        } else return
+        } else return;
       }
-
 
       const transferAmount = toWei(amount.value || "0", token.value.decimals);
 
@@ -204,10 +205,11 @@ export const useBridge = (props: IBridge) => {
   });
 
   const transactions = useAsyncData(
+    "bridge-transactions",
     async () => {
       const txs = [];
 
-      if (!txRoute.value) return [];
+      if (!txRoute.value) return;
 
       for (const userTx of txRoute.value?.userTxs || []) {
         if (userTx.approvalData) {
@@ -252,7 +254,6 @@ export const useBridge = (props: IBridge) => {
       return txs;
     },
     {
-      default: () => [],
       watch: [txRoute],
     }
   );
@@ -288,37 +289,6 @@ export const useBridge = (props: IBridge) => {
 
     return toBN(nativeBalance).lt(nativeFee.value!);
   });
-
-  const estimatedFee = useAsyncData(
-    async () => {
-      if (!txRoute.value) return;
-      if (!transactions.data.value?.length) return;
-      if (isInsufficientBalance.value) return;
-
-      console.log("running generateSignatureMessage");
-
-      try {
-        const message = await safe.value?.generateSignatureMessage(
-          transactions.data.value!,
-          +fromChainId.value
-        );
-
-        const resp = await provider.send("txn_estimateFeeWithoutSignature", [
-          message,
-          account.value,
-          fromChainId.value,
-        ]);
-
-        return resp;
-      } catch (e: any) {
-        throw new Error(e?.error?.message);
-      }
-    },
-    {
-      server: false,
-      watch: [txRoute, transactions.data, isInsufficientBalance],
-    }
-  );
 
   const bridgeFee = computed<IFee>(() => {
     const fallback: IFee = {
@@ -413,25 +383,23 @@ export const useBridge = (props: IBridge) => {
       bridgeTokens.pending.value ||
       !txRoute.value ||
       !form.meta.value.valid ||
-      isInsufficientBalance.value ||
-      loading.value
+      !!transactions.error.value ||
+      loading.value ||
+      isInsufficientBalance.value
   );
 
   const loading = computed(
     () =>
       form.isSubmitting.value ||
       routes.pending.value ||
-      estimatedFee.pending.value ||
-      transactions.pending.value
+      transactions.pending.value ||
+      bridgeTokens.pending.value
   );
 
   onUnmounted(() => {
-    transactions.data.value = [];
-    bridgeTokens.data.value = [];
-    routes.data.value = undefined;
-    routes.error.value = null;
-    bridgeTokens.error.value = null;
-    transactions.error.value = null;
+    clearNuxtData("bridge-transactions");
+    clearNuxtData("bridge-tokens");
+    clearNuxtData("bridge-routes");
   });
 
   return {
@@ -444,7 +412,6 @@ export const useBridge = (props: IBridge) => {
     token,
     txRoute,
     form,
-    estimatedFee,
     bridgeFee,
     disabled,
     loading,

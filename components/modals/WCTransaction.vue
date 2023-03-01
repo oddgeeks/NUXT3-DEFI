@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { utils } from "ethers";
 import GasSVG from "~/assets/images/icons/gas.svg?component";
 import NetworkSVG from "~/assets/images/icons/network.svg?component";
 import FlowersSVG from "~/assets/images/icons/flowers.svg?component";
@@ -14,42 +15,25 @@ const props = defineProps<{
   wc: WalletConnect;
 }>();
 
-const { safe } = useAvocadoSafe();
+const { safe, sendTransaction } = useAvocadoSafe();
 const { account } = useWeb3();
 const { gasBalance } = storeToRefs(useSafe());
 const [submitting, toggle] = useToggle();
 const { switchNetworkByChainId } = useNetworks();
 const { parseTransactionError } = useErrorHandler();
 
-const { data: fee, pending } = useAsyncData(
-  "swap-fee",
-  async () => {
-    const message = await safe.value?.generateSignatureMessage(
-      props.payload?.params,
-      +props.chainId
-    );
-
-    const data = await provider.send("txn_estimateFeeWithoutSignature", [
-      message,
-      account.value,
-      props.chainId,
-    ]);
-
-    return calculateEstimatedFee({ chainId: props.chainId, ...data });
-  },
-  {
-    server: false,
-    immediate: true,
-    default: () => ({
-      min: 0,
-      max: 0,
-      formatted: "$0.00",
-    }),
-  }
-);
+const {
+  data: fee,
+  pending,
+  error,
+} = useEstimatedFee(ref(props.payload.params), {
+  chainId: props.chainId,
+  immediate: true,
+});
 
 const submitDisabled = computed(
-  () => submitting.value || pending.value || isBalaceNotEnough.value
+  () =>
+    submitting.value || pending.value || isBalaceNotEnough.value || error.value
 );
 
 const isBalaceNotEnough = computed(() => {
@@ -86,28 +70,38 @@ const handleSubmit = async () => {
     toggle(true);
     const params = props.payload?.params[0];
 
-    const tx = await safe.value?.sendTransaction({
-      ...params,
-      chainId: props.chainId,
+    const metadata = encodeDappMetadata({
+      name: props.wc.peerMeta?.name!,
+      url: props.wc.peerMeta?.url!,
     });
+
+    const transactionHash = await sendTransaction(
+      {
+        ...params,
+        chainId: props.chainId,
+      },
+      {
+        metadata,
+      }
+    );
 
     props.wc.approveRequest({
       id: props.payload.id,
-      result: tx?.hash,
+      result: transactionHash,
     });
 
     logActionToSlack({
       message: `Txn on ${props.wc.peerMeta?.url}`,
       type: "success",
       action: "wc",
-      txHash: tx?.hash,
+      txHash: transactionHash,
       chainId: props.chainId,
       account: account.value,
     });
 
     emit("resolve");
 
-    showPendingTransactionModal(tx?.hash!, props.chainId, "wc");
+    showPendingTransactionModal(transactionHash, props.chainId, "wc");
   } catch (e) {
     const err = parseTransactionError(e);
 
@@ -160,7 +154,7 @@ const handleReject = () => {
               class="text-primary text-sm"
               :href="wc.peerMeta?.url"
             >
-              {{ formatURL(wc.peerMeta?.url) }}
+              {{ formatURL(wc.peerMeta?.url!) }}
             </a>
           </div>
         </div>
@@ -177,13 +171,10 @@ const handleReject = () => {
             <ChainLogo class="w-[18px] h-[18px]" :chain="chainId" />
           </div>
         </div>
-
         <div class="flex justify-between items-center">
           <div class="text-slate-400 flex items-center gap-2.5">
             <GasSVG class="w-4" />
-            <span class="text-xs leading-5 font-medium"
-              >Gas fees</span
-            >
+            <span class="text-xs leading-5 font-medium">Gas fees</span>
           </div>
 
           <div class="flex items-center gap-2.5">
@@ -203,12 +194,9 @@ const handleReject = () => {
           </div>
         </div>
       </div>
-      <CommonNotification
-        v-if="isBalaceNotEnough"
-        type="error"
-        text="Not enough USDC gas"
-      >
-        <template #action>
+
+      <CommonNotification v-if="error" type="error" :text="error">
+        <template v-if="error.includes('gas')" #action>
           <CommonButton @click="openTopUpGasModal()" size="sm">
             Top-up
           </CommonButton>

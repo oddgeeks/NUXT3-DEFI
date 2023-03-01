@@ -1,10 +1,7 @@
 import { ethers } from "ethers";
+import { serializeError } from "serialize-error";
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
-import {
-  GaslessWallet__factory,
-  Forwarder__factory,
-  AvoFactoryProxy__factory,
-} from "~/contracts";
+import { GaslessWallet__factory, Forwarder__factory } from "~/contracts";
 import { RPC_URLS } from "~~/connectors";
 import { IToken } from "./tokens";
 import { wait } from "@instadapp/utils";
@@ -34,10 +31,15 @@ export const useSafe = defineStore("safe", () => {
     (network) => network.chainId != 634
   );
 
+  const balances = ref({
+    data: undefined as IBalance[] | undefined,
+    loading: false,
+    error: null as Error | null,
+  });
+
   const gasBalance = ref();
   const pending = ref<Record<string, boolean>>({
     gasBalance: false,
-    balances: false,
     global: false,
   });
 
@@ -59,42 +61,6 @@ export const useSafe = defineStore("safe", () => {
     );
   };
 
-  const { data: apiBalances, refresh: refreshApiBalances } = useAsyncData(
-    "api-balances",
-    async (context) => {
-      if (!safeAddress.value) {
-        return;
-      }
-
-      if (documentVisibility.value === "hidden") {
-        const memory = context?.payload.data["api-balances"];
-        return memory;
-      }
-
-      if (balanceAborter.value) {
-        balanceAborter.value.abort();
-      }
-
-      balanceAborter.value = new AbortController();
-
-      const balances = (await $fetch("/api/balances", {
-        signal: balanceAborter.value?.signal,
-        params: {
-          address: safeAddress.value,
-        },
-      })) as any[];
-
-      balanceAborter.value = undefined;
-
-      return balances;
-    },
-    {
-      server: false,
-      immediate: true,
-      watch: [safeAddress, account, tokens],
-    }
-  );
-
   const tokenBalances = computed(() => {
     if (!safeAddress.value || !tokens.value?.length) {
       return [];
@@ -107,7 +73,7 @@ export const useSafe = defineStore("safe", () => {
           balance: "0",
           balanceInUSD: "0",
         };
-        const balance = apiBalances.value?.find(
+        const balance = balances.value.data?.find(
           (b: any) =>
             b.address.toLowerCase() === tb.address.toLowerCase() &&
             tb.chainId === b.chainId
@@ -191,6 +157,38 @@ export const useSafe = defineStore("safe", () => {
     await fetchGasBalance();
   });
 
+  const fetchBalances = async () => {
+    if (!safeAddress.value) return;
+    if (documentVisibility.value === "hidden") return;
+    if (balanceAborter.value) balanceAborter.value.abort();
+
+    try {
+      balances.value.loading = true;
+      balanceAborter.value = new AbortController();
+
+      const resp = (await $fetch("/api/balances", {
+        signal: balanceAborter.value?.signal,
+        params: {
+          address: safeAddress.value,
+        },
+      })) as any[];
+
+      balanceAborter.value = undefined;
+
+      balances.value.data = resp;
+      balances.value.error = null;
+      return resp;
+    } catch (e: any) {
+      const serialized = serializeError(e);
+      if (serialized?.message?.includes("abort")) return;
+
+      balances.value.error = e;
+      throw e;
+    } finally {
+      balances.value.loading = false;
+    }
+  };
+
   const avoProvider = getRpcProvider(634);
 
   const fetchGasBalance = async () => {
@@ -210,7 +208,7 @@ export const useSafe = defineStore("safe", () => {
     immediate: true,
   });
 
-  useIntervalFn(refreshApiBalances, 15000);
+  useIntervalFn(fetchBalances, 15000);
 
   watch(
     [account],
@@ -227,6 +225,10 @@ export const useSafe = defineStore("safe", () => {
     { immediate: true }
   );
 
+  watch([safeAddress, account, tokens], () => {
+    fetchBalances();
+  });
+
   return {
     gasBalance,
     safeAddress,
@@ -234,7 +236,8 @@ export const useSafe = defineStore("safe", () => {
     totalBalance,
     fetchGasBalance,
     pending,
-    apiBalances,
+    balances,
+    fetchBalances,
     forwarderProxyAddress,
   };
 });

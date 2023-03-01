@@ -249,10 +249,15 @@ type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim";
 type ISlackMessageType = "danger" | "error" | "success" | "banner";
 
 type MetadataProps = {
-  type: "transfer" | "bridge" | "swap" | "multi" | "gas-topup" | "upgrade";
+  type: "transfer" | "bridge" | "swap" | "multi" | "gas-topup" | "upgrade" | 'dapp';
   encodedData: string;
   version?: string;
 };
+
+type DappMetadataProps = {
+  name: string;
+  url: string;
+}
 
 type SendMetadataProps = {
   token: string;
