@@ -5,12 +5,21 @@ import GiftSVG from "~/assets/images/icons/gift.svg?component";
 import SVGX from "~/assets/images/icons/x.svg?component";
 import GasEmoji from "~/assets/images/icons/gas-emoji.svg?component";
 import { openClaimedGasModal } from "~~/composables/modals";
+import { IPromo } from "~/server/data/promos";
 
+definePageMeta({
+  middleware: 'claims'
+});
+
+const route = useRoute();
 const router = useRouter();
 const { parseTransactionError } = useErrorHandler();
-const { account, library } = useWeb3();
+const { account, library, deactivate } = useWeb3();
 const eligible = ref(false);
 const claimed = ref(false);
+const claimSuccess = ref(false);
+const promo = ref<{ code: string, amount: number }>();
+const avocadoProvider = getRpcProvider(634);
 
 const claimedConfetti = () => {
   fire(1, {
@@ -67,10 +76,26 @@ watch(eligible, eligible => {
   eligibleConfetti();
 });
 
-watch(account, account => {
+watch(account, async account => {
   if (!account) return;
   // Check here if eligible
-  eligible.value = true;
+
+  const signer = library.value.getSigner();
+  const address = await signer.getAddress();
+
+  const res = await $fetch<IPromo>(`/api/promos/${route.params.slug}`);
+  const r1 = await avocadoProvider.send("api_promoUserInfo", [
+    address,
+    res.promo,
+  ]);
+
+  promo.value = {
+    code: res.promo,
+    amount: r1.amount
+  };
+
+  eligible.value = r1.eligible;
+  claimed.value = r1.claimed;
 });
 
 const defaults = {
@@ -84,13 +109,12 @@ const fire = (particleRatio: any, opts: any, count: number = 200) => {
 };
 
 const claimAirdrop = async () => {
-  const avocadoProvider = getRpcProvider(634);
-
+  if (!promo.value) return;
   const signer = library.value.getSigner();
 
   const message = `Avocado wants you to sign in with your web3 account ${account.value}
 
-  Action: Claim 100 USDC Airdrop
+  Action: Claim ${toBN(promo.value.amount).toFixed(2)} USDC Airdrop
   URI: https://avocado.instadapp.io
   Nonce: {{NONCE}}
   Issued At: ${new Date().toISOString()}`;
@@ -104,15 +128,11 @@ const claimAirdrop = async () => {
       message.replaceAll("{{NONCE}}", airdropNonce)
     );
 
-    const success = await avocadoProvider.send("api_claimGift", [
-      `${account.value.toLowerCase()}-100-1.0.0`,
+    const success = await avocadoProvider.send("api_promoClaim", [
+      promo.value.code,
       redeemSignature,
       airdropNonce,
     ]);
-
-    claimedConfetti();
-    openClaimedGasModal();
-    router.push("/");
     
     if (success) {
       fire(0.25, {
@@ -137,6 +157,10 @@ const claimAirdrop = async () => {
         spread: 120,
         startVelocity: 45,
       });
+
+      claimedConfetti();
+      openClaimedGasModal();
+      router.push("/");
     }
   } catch (e) {
     const err = parseTransactionError(e);
@@ -169,17 +193,17 @@ useForceSingleSession();
       <div class="flex flex-col items-center gap-4">
         <div
           class="w-[46px] h-[46px] rounded-full bg-green-500 text-white flex items-center justify-center font-medium"
-          :class="{ 'bg-opacity-20 !text-green-400': !eligible }"
+          :class="{ '!bg-opacity-20 !bg-[#EB5757] !text-[#EB5757]': !eligible || claimed, '!bg-green-500 !text-green-400': !account }"
         >
           2
         </div>
-        <span :class="{ 'text-slate-300 dark:text-slate-600': !eligible }">Claim Airdrop</span>
+        <span :class="{ 'text-slate-300 dark:text-slate-600': !eligible || claimed }">Claim Airdrop</span>
       </div>
 
       <div class="absolute top-5 left-24 flex items-center gap-1 font-medium">
         <div
           class="w-3 rounded-full bg-green-500 h-1"
-          :class="{ 'bg-opacity-20': !account, '!bg-[#EB5757] !bg-opacity-20': account && !eligible }"
+          :class="{ 'bg-opacity-20': !account, '!bg-[#EB5757] !bg-opacity-20': account && !eligible || claimed }"
           v-for="i in 9"
           :key="i"
         >
@@ -188,7 +212,7 @@ useForceSingleSession();
 
       <div
         class="absolute top-2.5 left-[155px] bg-[#EB5757] flex items-center justify-center w-6 h-6 rounded-full"
-        :class="{ '!hidden': !account || eligible }"
+        :class="{ '!hidden': !account || eligible && !claimed }"
       >
         <SVGX />
       </div>
@@ -204,8 +228,30 @@ useForceSingleSession();
         </CommonButton>
       </div>
     </div>
+    <div v-else-if="!promo" class="flex justify-center items-center py-32">
+      <svg
+        class="animate-spin h-10 w-10 text-green-500"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"
+        ></circle>
+        <path
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          stroke-linecap="round"
+        ></path>
+      </svg>
+    </div>
     <div 
-      v-else-if="eligible && !claimed"
+      v-else-if="eligible && !claimSuccess && !claimed"
       class="flex flex-col items-center gap-7.5"
     >
       <span class="text-[46px]">✨ Congratulations! ✨</span>
@@ -216,7 +262,7 @@ useForceSingleSession();
             <GasEmoji />
             <img src="https://avocado.instadapp.io/tokens/usd-coin.svg" class="absolute -left-2 -bottom-2 border-4 border-white dark:border-[#111827] rounded-full" width="30" height="30" />
           </div>
-          <span class="text-[80px] font-bold">50 USDC</span>
+          <span class="text-[80px] font-bold">{{ promo && toBN(promo.amount).decimalPlaces(2) }} USDC</span>
         </div>
       </div>
       <CommonButton size="lg" class="flex items-center gap-2 px-32" @click="claimAirdrop">
@@ -224,12 +270,21 @@ useForceSingleSession();
         <GiftSVG />
       </CommonButton>
     </div>
-    <div v-else-if="!claimed" class="flex flex-col items-center gap-10 bg-slate-50 dark:bg-gray-850 py-10 px-[50px] rounded-5">
+    <div v-else-if="claimed" class="flex flex-col items-center gap-10 bg-slate-50 dark:bg-gray-850 py-10 px-[50px] rounded-5">
+      <div class="flex flex-col gap-5 items-center">
+        <span class="text-xl">You've already claimed this promo</span>
+        <span class="text-slate-400 text-sm w-[269px] text-center">Connect to a different wallet or enter another address</span>
+      </div>
+      <CommonButton @click="deactivate" size="lg" class="flex w-full justify-center">
+        Try again
+      </CommonButton>
+    </div>
+    <div v-else-if="!claimSuccess" class="flex flex-col items-center gap-10 bg-slate-50 dark:bg-gray-850 py-10 px-[50px] rounded-5">
       <div class="flex flex-col gap-5 items-center">
         <span class="text-xl">This address is not eligible</span>
         <span class="text-slate-400 text-sm w-[269px] text-center">Connect to a different wallet or enter another address</span>
       </div>
-      <CommonButton size="lg" class="flex w-full justify-center">
+      <CommonButton @click="deactivate" size="lg" class="flex w-full justify-center">
         Try again
       </CommonButton>
     </div>
