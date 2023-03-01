@@ -18,6 +18,7 @@ const { account, library, deactivate } = useWeb3();
 const eligible = ref(false);
 const claimed = ref(false);
 const claimSuccess = ref(false);
+const claiming = ref(false);
 const promo = ref<{ code: string, amount: number }>();
 const avocadoProvider = getRpcProvider(634);
 
@@ -72,7 +73,7 @@ const eligibleConfetti = () => {
 };
 
 watch(eligible, eligible => {
-  if (!eligible) return;
+  if (!eligible || claimed) return;
   eligibleConfetti();
 });
 
@@ -110,6 +111,7 @@ const fire = (particleRatio: any, opts: any, count: number = 200) => {
 
 const claimAirdrop = async () => {
   if (!promo.value) return;
+  claiming.value = true;
   const signer = library.value.getSigner();
 
   const message = `Avocado wants you to sign in with your web3 account ${account.value}
@@ -175,6 +177,7 @@ const claimAirdrop = async () => {
       account: account.value,
     });
   }
+  claiming.value = false;
 };
 
 useForceSingleSession();
@@ -265,7 +268,7 @@ useForceSingleSession();
           <span class="text-[80px] font-bold">{{ promo && toBN(promo.amount).decimalPlaces(2) }} USDC</span>
         </div>
       </div>
-      <CommonButton size="lg" class="flex items-center gap-2 px-32" @click="claimAirdrop">
+      <CommonButton :loading="claiming" size="lg" class="flex items-center gap-2 px-32" @click="claimAirdrop">
         Claim
         <GiftSVG />
       </CommonButton>
