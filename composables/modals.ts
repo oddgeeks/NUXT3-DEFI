@@ -12,9 +12,9 @@ import WCTransaction from "~~/components/modals/WCTransaction.vue";
 import PowerOffSVG from "~/assets/images/icons/power-off-bg.svg?component";
 import Dialog from "~~/components/modals/Dialog.vue";
 import type IWalletConnect from "@walletconnect/client";
-import type { PopulatedTransaction } from "ethers";
 import CustomTx from "~~/components/modals/CustomTx.vue";
 import UpgradeVersion from "~~/components/modals/UpgradeVersion.vue";
+import Web3 from "~/components/modals/Web3.vue";
 
 const { openModal } = useModal();
 interface DialogModalProps {
@@ -184,6 +184,15 @@ export const openCustomTokenModal = (address?: string) => {
     componentProps: {
       address,
     },
+  });
+};
+
+export const openWeb3Modal = () => {
+  return openModal({
+    component: Web3,
+    componentProps: {
+      closeable: false
+    }
   });
 };
 
