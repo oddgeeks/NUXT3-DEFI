@@ -9,14 +9,15 @@ const providers = {
 }
 
 export function useConnectors() {
-  const cachedProviderName = useLocalStorage<string | null>("cachedProviderName", null);
-
   function setConnectorName(name: string | null) {
-    cachedProviderName.value = name
+    if (!process.client || !name) return;
+    localStorage.setItem('cachedProviderName', name);
   }
 
   function getConnector(): any {
-    return cachedProviderName.value ? (providers as any)[cachedProviderName.value as any] : null
+    if (!process.client) return;
+    const provider = localStorage.getItem('cachedProviderName');
+    return provider ? (providers as any)[provider] : null;
   }
 
   return {
