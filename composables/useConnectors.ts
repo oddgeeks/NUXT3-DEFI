@@ -10,8 +10,9 @@ const providers = {
 
 export function useConnectors() {
   function setConnectorName(name: string | null) {
-    if (!process.client || !name) return;
-    localStorage.setItem('cachedProviderName', name);
+    if (!process.client) return;
+    if (name) localStorage.setItem('cachedProviderName', name);
+    else localStorage.removeItem('cachedProviderName');
   }
 
   function getConnector(): any {
