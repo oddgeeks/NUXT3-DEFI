@@ -8,6 +8,8 @@ const {
   showGasGiftBanner,
   showOnboardBanner,
 } = useBanner();
+
+const route = useRoute();
 </script>
 
 <template>
@@ -16,7 +18,7 @@ const {
     <!-- <BannerWelcome v-if="showWelcomeBanner" /> -->
     <div class="fixed bottom-12 w-full z-40">
       <BannerSwitchNetwork v-if="showIncorrectNetworkBanner" />
-      <BannerOnboard v-else-if="showOnboardBanner" />
+      <BannerOnboard v-else-if="showOnboardBanner && route.name !== 'claims-ens-drop'" />
     </div>
     <div class="py-8 px-10">
       <TheHeader />

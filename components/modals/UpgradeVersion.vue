@@ -155,7 +155,7 @@ onUnmounted(() => {
     />
     <CommonButton
       :loading="pending || submitting"
-      :disabled="pending || submitting || error"
+      :disabled="pending || submitting || error || !txData"
       @click="handleSubmit"
       class="justify-center w-full"
       size="lg"

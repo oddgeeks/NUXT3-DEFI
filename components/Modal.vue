@@ -14,6 +14,7 @@ const props = withDefaults(
     options?: any;
     inline?: boolean;
     async?: boolean;
+    closeable?: boolean;
   }>(),
   {
     id: "",
@@ -21,6 +22,7 @@ const props = withDefaults(
     async: false,
     inline: false,
     options: {},
+    closeable: true
   }
 );
 
@@ -92,6 +94,7 @@ whenever(escape, () => {
               >
                 <button
                   class="absolute h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100 top-0 right-0 m-6"
+                  v-if="closeable"
                   @click="handleDestory"
                   aria-label="Close modal"
                 >
