@@ -6,6 +6,7 @@ import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?compone
 const { networks, getNetworkByChainId } = useNetworks();
 const { tokenBalances } = useAvocadoSafe();
 const { account } = useWeb3();
+const { unstableDappNetworks } = useBanner()
 
 useForceSingleSession();
 
@@ -137,6 +138,7 @@ const handleOpenDialog = () => {
               </Popover>
             </div>
           </div>
+          <WarningsUnstableDappVersion v-if="unstableDappNetworks.length" />
           <Balances
             :networkPreference="networkPreference"
             :hideZeroBalances="isHideZeroBalances"

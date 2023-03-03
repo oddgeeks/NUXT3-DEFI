@@ -8,6 +8,12 @@ const sortByVersion = computed(() => {
     return gt(a.latestVersion, b.latestVersion) ? -1 : 1;
   });
 });
+
+const mostRecentVersion = computed(() => {
+  return data.value?.sort((a: NetworkVersion, b: NetworkVersion) => {
+    return gt(a.latestVersion, b.latestVersion) ? -1 : 1;
+  })[0]?.latestVersion;
+});
 </script>
 
 <template>
@@ -42,6 +48,7 @@ const sortByVersion = computed(() => {
             <NetworkUpgradeRow
               :network="network"
               :key="network.chainId"
+              :recent-version="mostRecentVersion"
               v-for="network in sortByVersion"
             />
           </tbody>
