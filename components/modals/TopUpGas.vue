@@ -274,7 +274,7 @@ onMounted(() => {
         you need to have USDC in your Avocado wallet to add gas.
       </h2>
       <a
-        href="https://help.avocado.instadapp.io/en/getting-started/topping-up-gas-on-avocado"
+        href="https://help.avocado.instadapp.io/en/articles/7038872-topping-up-gas-on-avocado"
         target="blank"
         rel="noopener noreferrer"
         class="text-sm text-center justify-center font-medium inline-flex gap-2.5 text-primary"

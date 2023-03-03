@@ -22,7 +22,7 @@ const handleOpenDialog = () => {
     isButtonVisible: false,
     content: `These are your Avocado Wallet Balances, not your EOA balances. Deposit funds into your Avocado Wallet to begin using Avocado.
           <br><br>
-          <a href='https://help.avocado.instadapp.io/en/getting-started/topping-up-your-avocado-account' target='blank' rel='noopener noreferrer' class='text-sm font-medium inline-flex gap-2.5 text-primary'>Learn more about how to deposit ${LinkSVG}</a>
+          <a href='https://help.avocado.instadapp.io/en/articles/7038878-depositing-funds-to-your-avocado-account' target='blank' rel='noopener noreferrer' class='text-sm font-medium inline-flex gap-2.5 text-primary'>Learn more about how to deposit ${LinkSVG}</a>
           `,
   });
 };
@@ -173,7 +173,7 @@ const handleOpenDialog = () => {
                   isButtonVisible: false,
                   content: `Deposit or receive funds by scanning or copying your Avocado Wallet QR code. Your Avocado wallet is fundamentally linked to your wallet address making (EOA) you the true owner of it.
           <br><br>
-          <a href='https://help.avocado.instadapp.io/en/getting-started/topping-up-your-avocado-account' target='blank' rel='noopener noreferrer' class='text-sm font-medium inline-flex gap-2.5 text-primary'>Learn more about how to deposit ${LinkSVG}</a>
+          <a href='https://help.avocado.instadapp.io/en/articles/7038878-depositing-funds-to-your-avocado-account' target='blank' rel='noopener noreferrer' class='text-sm font-medium inline-flex gap-2.5 text-primary'>Learn more about how to deposit ${LinkSVG}</a>
           `,
                 })
               "
