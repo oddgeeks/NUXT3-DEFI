@@ -93,7 +93,7 @@ export const useSafe = defineStore("safe", () => {
       );
   });
 
-  useAsyncData(
+  const networkVersions = useAsyncData(
     "allNetworkVersions",
     async () => {
       if (!safeAddress.value) return;
@@ -126,6 +126,7 @@ export const useSafe = defineStore("safe", () => {
           return obj;
         } catch (e) {
           // console.log(e);
+          obj.notdeployed = true;
 
           obj.latestVersion = "0.0.0";
           obj.currentVersion = "0.0.0";
@@ -239,6 +240,7 @@ export const useSafe = defineStore("safe", () => {
     balances,
     fetchBalances,
     forwarderProxyAddress,
+    networkVersions,
   };
 });
 

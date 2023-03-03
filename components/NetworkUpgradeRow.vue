@@ -3,6 +3,7 @@ import { lt } from "semver";
 
 const props = defineProps<{
   network: NetworkVersion;
+  recentVersion: string;
 }>();
 
 const { switchNetworkByChainId } = useNetworks();
@@ -34,7 +35,10 @@ const handleUpgrade = async (network: NetworkVersion) => {
       </div>
     </td>
     <td>
-      <span>
+      <span v-if="network.notdeployed">
+        {{ recentVersion }}
+      </span>
+      <span v-else>
         {{ network.latestVersion }}
       </span>
     </td>
@@ -51,7 +55,7 @@ const handleUpgrade = async (network: NetworkVersion) => {
         :disabled="true"
         class="!px-[19px] w-full items-center justify-center"
       >
-        <span v-if="network.currentVersion === '0.0.0'">Not deployed yet</span>
+        <span v-if="network.notdeployed">Not deployed yet</span>
         <span v-else>Already up to date</span>
       </CommonButton>
     </td>

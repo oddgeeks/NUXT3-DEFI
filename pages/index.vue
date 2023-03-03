@@ -6,6 +6,7 @@ import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?compone
 const { networks, getNetworkByChainId } = useNetworks();
 const { tokenBalances } = useAvocadoSafe();
 const { account } = useWeb3();
+const { unstableDappNetworks } = useBanner()
 
 useForceSingleSession();
 
@@ -37,6 +38,7 @@ const handleOpenDialog = () => {
           :class="{ 'blur pointer-events-none': !account }"
           class="flex flex-col gap-5"
         >
+        <WarningsUnstableDappVersion v-if="unstableDappNetworks.length" />
           <div class="flex justify-between pr-7.5">
             <div class="flex gap-7.5">
               <h2 class="font-semibold inline-flex gap-2.5 items-center">

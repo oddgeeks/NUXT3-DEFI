@@ -29,7 +29,7 @@ const actionMetadataTypes = {
   ],
   "gas-topup": ["uint256 amount", "address token", "address onBehalf"],
   upgrade: ["bytes32 version", "address walletImpl"],
-  dapp: ['string name', 'string url'],
+  dapp: ["string name", "string url"],
 };
 
 export function shortenHash(hash: string, length: number = 4) {
@@ -179,20 +179,12 @@ export function signedNumber(numb: string | number) {
   }).format(toBN(numb).toNumber());
 }
 
-export function formatDecimal(
-  value: string,
-  fractionDigits = getFractionDigits(value)
-) {
+export function formatDecimal(value: string, decimalPlaces = 5) {
   if (!value) {
     value = "0";
   }
 
-  const formatter = new Intl.NumberFormat(locale, {
-    style: "decimal",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: fractionDigits,
-  });
-  return formatter.format(toBN(value).toNumber());
+  return toBN(value).decimalPlaces(decimalPlaces).toFormat();
 }
 
 export function filterArray(array: any, filters: any) {
@@ -510,11 +502,11 @@ export const decodeMetadata = (data: string) => {
             onBehalf: decodedData.onBehalf,
           };
           break;
-          case "dapp":
+        case "dapp":
           payload = {
             type,
             name: decodedData?.name,
-            url:  decodedData?.url,
+            url: decodedData?.url,
           };
           break;
       }
