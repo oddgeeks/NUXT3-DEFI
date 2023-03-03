@@ -263,7 +263,12 @@ useForceSingleSession();
           <span class="text-[80px] font-bold">{{ promo && toBN(promo.amount).decimalPlaces(2) }} USDC</span>
         </div>
       </div>
-      <CommonButton :loading="claiming" size="lg" class="flex items-center gap-2 px-32 min-w-[128px] justify-center" @click="claimAirdrop">
+      <CommonButton
+        :loading="claiming"
+        size="lg"
+        class="flex items-center gap-2 sm:!px-14 sm:!text-xl sm:!py-3 justify-center"
+        @click="claimAirdrop"
+      >
         Claim
         <GiftSVG />
       </CommonButton>

@@ -4,9 +4,10 @@ import { gt } from "semver";
 const isVersionUpdateBannerHidden = ref(false);
 
 export const useBanner = () => {
-  const { gasBalance, pending, safeAddress } = storeToRefs(useSafe());
+  const { gasBalance, pending } = storeToRefs(useSafe());
   const { account, chainId } = useWeb3();
   const { airDrop } = useAvocadoSafe();
+  const wcStore = useWalletConnect();
 
   const { trackingAccount } = useAccountTrack();
   const isHideWelcomeBanner = useLocalStorage("hide-welcome-banner", false);
@@ -59,6 +60,19 @@ export const useBanner = () => {
     );
   });
 
+  const unstableDappNetworks = computed(() => {
+    if (!wcStore.sessions?.length) return [];
+    if (!allNetworkVersions.data.value?.length) return [];
+
+    return wcStore.sessions.filter((session) => {
+      const version = allNetworkVersions.data.value.find(
+        (network) => network.chainId === session.chainId
+      );
+      if (!version) return false;
+      return version?.notdeployed;
+    });
+  });
+
   return {
     showWelcomeBanner,
     showInsufficientGasBanner,
@@ -67,6 +81,7 @@ export const useBanner = () => {
     showOnboardBanner,
     isVersionUpdateBannerHidden,
     showVersionUpdateBanner,
+    unstableDappNetworks,
     showTrackingBanner: computed(() => !!trackingAccount.value),
     toggleWelcomeBanner: (val: boolean) => (isHideWelcomeBanner.value = !val),
     hideOnboardBanner: () => (isOnboardHidden.value.value = true),

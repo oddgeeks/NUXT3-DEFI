@@ -58,6 +58,6 @@ export default defineEventHandler<IBalance[]>(async (event) => {
     balances = balances.filter(b => b.chainId !== null)
 
     return balances
-        .filter(b => b.price !== '0')
+        // .filter(b => b.price !== '0')
         .sort((a, b) => new BigNumber(b.balanceInUSD).minus(a.balanceInUSD).toNumber());
 })

@@ -299,9 +299,10 @@ const onSubmit = form.handleSubmit(async () => {
                 >You receive</span
               >
               <span
-                class="sm:text-2xl text-lg font-semibold text-right !leading-5 uppercase"
+                class="sm:text-2xl text-lg font-semibold text-right !leading-5 uppercase inline-flex gap-2.5"
               >
-                {{ toAmount }} {{ token.symbol }}
+                <span>{{ toAmount }} {{ token.symbol }}</span>
+                <span class="text-slate-400 text-sm">({{ formatUsd(toBN(token.price || 0).times(toAmount || 0).decimalPlaces(2)) }})</span>
               </span>
             </div>
           </div>

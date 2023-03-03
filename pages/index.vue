@@ -6,6 +6,7 @@ import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?compone
 const { networks, getNetworkByChainId } = useNetworks();
 const { tokenBalances } = useAvocadoSafe();
 const { account } = useWeb3();
+const { unstableDappNetworks } = useBanner()
 
 useForceSingleSession();
 
@@ -21,7 +22,7 @@ const handleOpenDialog = () => {
     isButtonVisible: false,
     content: `These are your Avocado Wallet Balances, not your EOA balances. Deposit funds into your Avocado Wallet to begin using Avocado.
           <br><br>
-          <a href='https://help.avocado.instadapp.io/en/getting-started/topping-up-your-avocado-account' target='blank' rel='noopener noreferrer' class='text-sm font-medium inline-flex gap-2.5 text-primary'>Learn more about how to deposit ${LinkSVG}</a>
+          <a href='https://help.avocado.instadapp.io/en/articles/7038878-depositing-funds-to-your-avocado-account' target='blank' rel='noopener noreferrer' class='text-sm font-medium inline-flex gap-2.5 text-primary'>Learn more about how to deposit ${LinkSVG}</a>
           `,
   });
 };
@@ -37,6 +38,7 @@ const handleOpenDialog = () => {
           :class="{ 'blur pointer-events-none': !account }"
           class="flex flex-col gap-5"
         >
+        <WarningsUnstableDappVersion v-if="unstableDappNetworks.length" />
           <div class="flex justify-between pr-7.5">
             <div class="flex gap-7.5">
               <h2 class="font-semibold inline-flex gap-2.5 items-center">
@@ -169,9 +171,9 @@ const handleOpenDialog = () => {
                   type: 'question',
                   title: 'Your Avocado Wallet',
                   isButtonVisible: false,
-                  content: `Deposit or receive funds from <a class='text-primary' target='blank' rel='noopener noreferrer' href='https://help.avocado.instadapp.io/en/info/supported-chains'>any supported chain</a> by scanning or copying your Avocado Wallet QR code.
+                  content: `Deposit or receive funds by scanning or copying your Avocado Wallet QR code. Your Avocado wallet is fundamentally linked to your wallet address making (EOA) you the true owner of it.
           <br><br>
-          <a href='https://help.avocado.instadapp.io/en/getting-started/topping-up-your-avocado-account' target='blank' rel='noopener noreferrer' class='text-sm font-medium inline-flex gap-2.5 text-primary'>Learn more about how to deposit ${LinkSVG}</a>
+          <a href='https://help.avocado.instadapp.io/en/articles/7038878-depositing-funds-to-your-avocado-account' target='blank' rel='noopener noreferrer' class='text-sm font-medium inline-flex gap-2.5 text-primary'>Learn more about how to deposit ${LinkSVG}</a>
           `,
                 })
               "
