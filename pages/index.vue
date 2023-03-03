@@ -169,7 +169,7 @@ const handleOpenDialog = () => {
                   type: 'question',
                   title: 'Your Avocado Wallet',
                   isButtonVisible: false,
-                  content: `Deposit or receive funds from <a class='text-primary' target='blank' rel='noopener noreferrer' href='https://help.avocado.instadapp.io/en/info/supported-chains'>any supported chain</a> by scanning or copying your Avocado Wallet QR code. Your Avocado wallet is fundamentally linked to your wallet address making (EOA) you the true owner of it.
+                  content: `Deposit or receive funds by scanning or copying your Avocado Wallet QR code. Your Avocado wallet is fundamentally linked to your wallet address making (EOA) you the true owner of it.
           <br><br>
           <a href='https://help.avocado.instadapp.io/en/getting-started/topping-up-your-avocado-account' target='blank' rel='noopener noreferrer' class='text-sm font-medium inline-flex gap-2.5 text-primary'>Learn more about how to deposit ${LinkSVG}</a>
           `,
