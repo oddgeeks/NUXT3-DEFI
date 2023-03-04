@@ -61,6 +61,8 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
               rpcUrl: RPC_URLS[wc.chainId],
               accounts: [safe.safeAddress.value],
             });
+
+            triggerRef(sessions)
           });
 
           wc.on("call_request", async (error, payload) => {
@@ -115,6 +117,8 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                   id: payload.id,
                   result: payload.params[0].chainId,
                 });
+
+                triggerRef(sessions)
               } else if (
                 // signingMethods.includes(payload.method)
                 payload.method === "personal_signx"
