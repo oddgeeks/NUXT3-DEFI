@@ -19,6 +19,9 @@ module.exports = {
       },
     },
     extend: {
+      transitionTimingFunction: {
+        outExpo: "cubic-bezier(0.16, 1, 0.3, 1)",
+      },
       backgroundImage: {
         "dashed-pattern": `linear-gradient( to right, #E9EDF4 33%, rgba(255, 255, 255, 0) 0%);`,
         "dashed-pattern-dark": `linear-gradient( to right, #1e293b 33%, rgba(255, 255, 255, 0) 0%);`,

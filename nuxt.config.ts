@@ -26,9 +26,9 @@ export default defineNuxtConfig({
       "/tokenlist.json": {
         cors: true,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        cache: { maxAge: 86400 } 
+        cache: { maxAge: 86400 },
       },
       "/api/balances": { cache: { maxAge: 5 } },
       "/api/tokens": {
@@ -42,10 +42,6 @@ export default defineNuxtConfig({
     head: {
       title: meta.title,
       meta: [
-        {
-          name: "viewport",
-          content: "false",
-        },
         {
           name: "title",
           content: meta.title,

@@ -10,19 +10,17 @@ const { escape } = useMagicKeys();
 const props = withDefaults(
   defineProps<{
     show?: boolean;
-    id?: string;
+    modalId?: string;
     options?: any;
     inline?: boolean;
-    async?: boolean;
-    closeable?: boolean;
+    isAsync?: boolean;
   }>(),
   {
-    id: "",
+    modalId: "",
     show: false,
-    async: false,
+    isAsync: false,
     inline: false,
     options: {},
-    closeable: true
   }
 );
 
@@ -31,7 +29,7 @@ const wrapperRef = ref<HTMLElement>();
 const handleDestory = () => {
   emit("destroy");
 
-  if (props.async) {
+  if (props.isAsync) {
     emit("reject");
   }
 };
@@ -42,7 +40,7 @@ onClickOutside(
     if (event.currentTarget) {
       const targetModalId = event.target?.dataset?.modalId;
 
-      if (targetModalId === props.id) {
+      if (targetModalId === props.modalId) {
         handleDestory();
       }
     }
@@ -55,65 +53,62 @@ onClickOutside(
 whenever(escape, () => {
   if (props.inline && props.show) {
     handleDestory();
-  } else if (props.show && lastModal.value.id === props.id) {
+  } else if (props.show && lastModal.value.id === props.modalId) {
     handleDestory();
   }
 });
 </script>
 
 <template>
-  <TransitionRoot appear as="template" :show="show">
-    <Teleport :disabled="!inline" to="body">
+  <div
+    :data-modal-id="modalId"
+    class="fixed modal backrop-animation inset-0 z-40 overflow-y-auto bg-slate-200/20 backdrop-filter backdrop-blur-[4px]"
+  >
+    <div
+      :data-modal-id="modalId"
+      class="flex md:items-center justify-center h-full min-h-screen text-center sm:p-0 modal-inner"
+    >
       <div
-        :data-modal-id="id"
-        class="fixed modal backrop-animation inset-0 z-40 overflow-y-auto bg-slate-200/20 backdrop-filter backdrop-blur-[4px]"
+        :class="options.wrapperClass"
+        class="inline-block w-full mt-auto md:my-6 dark:bg-gray-950 bg-white rounded-t-7.5 md:rounded-7.5 text-left align-middle transition-all transform max-w-[460px]"
+        role="dialog"
+        aria-modal="true"
       >
         <div
-          :data-modal-id="id"
-          class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0"
+          ref="wrapperRef"
+          :class="options.contentClass"
+          class="modal-content-wrapper rounded-[inherit] relative md:px-[50px] px-6 pb-8 md:py-10 w-full"
         >
-          <TransitionChild
-            as="template"
-            enter="ease-out duration-300"
-            enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            enter-to="opacity-100 translate-y-0 sm:scale-100"
-            leave="ease-in duration-200"
-            leave-from="opacity-100 translate-y-0 sm:scale-100"
-            leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+          <button
+            @touchmove="handleDestory"
+            @mousedown="handleDestory"
+            type="button"
+            class="w-full justify-center h-9 flex md:hidden"
           >
             <div
-              :class="options.wrapperClass"
-              class="inline-block w-full my-6 dark:bg-gray-950 bg-white rounded-7.5 text-left align-middle transition-all transform max-w-[460px]"
-              role="dialog"
-              aria-modal="true"
+              class="h-1 w-9 dark:bg-slate-600 rounded-[10px] mt-2 bg-slate-300"
             >
-              <div
-                ref="wrapperRef"
-                :class="options.contentClass"
-                class="modal-content-wrapper rounded-[inherit] relative md:px-[50px] px-6 py-8 md:py-10 w-full"
-              >
-                <button
-                  class="absolute h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100 top-0 right-0 m-6"
-                  v-if="closeable"
-                  @click="handleDestory"
-                  aria-label="Close modal"
-                >
-                  <SVGX />
-                </button>
-                <slot />
-              </div>
-              <CommonModalSnack v-bind="options.snackOptions" />
+              <span class="sr-only"> Pull to close </span>
             </div>
-          </TransitionChild>
+          </button>
+          <button
+            class="absolute h-7.5 w-7.5 rounded-full items-center justify-center hidden md:flex dark:bg-slate-800 bg-slate-100 top-0 right-0 m-6"
+            @click="handleDestory"
+            aria-label="Close modal"
+          >
+            <SVGX />
+          </button>
+          <slot />
         </div>
+        <CommonModalSnack v-bind="options.snackOptions" />
       </div>
-    </Teleport>
-  </TransitionRoot>
+    </div>
+  </div>
 </template>
 
 <style scoped>
 .backrop-animation {
-  animation: backdrop-animation 300ms ease-out;
+  animation: backdrop-animation 150ms ease-in-out;
 }
 
 @keyframes backdrop-animation {
