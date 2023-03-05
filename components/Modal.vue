@@ -71,25 +71,32 @@ whenever(escape, () => {
       <div
         :class="[
           {
-            'mt-auto': options.sheetPosition === 'bottom',
-            'mb-auto': options.sheetPosition === 'top',
+            'mt-auto rounded-t-7.5': options.sheetPosition === 'bottom',
+            'mb-auto rounded-b-7.5': options.sheetPosition === 'top',
           },
           options.wrapperClass,
         ]"
         :data-sheet-position="options.sheetPosition"
-        class="inline-block modal-inner w-full sm:my-6 dark:bg-gray-950 bg-white rounded-t-7.5 sm:rounded-7.5 text-left align-middle max-w-[460px]"
+        class="inline-block modal-inner w-full sm:my-6 dark:bg-gray-950 bg-white sm:rounded-7.5 text-left align-middle max-w-[460px]"
         role="dialog"
         aria-modal="true"
       >
         <div
           ref="wrapperRef"
-          :class="options.contentClass"
-          class="modal-content-wrapper rounded-[inherit] relative sm:px-[50px] px-6 pb-8 sm:py-10 w-full"
+          :class="[
+            {
+              'pb-8': options.sheetPosition === 'bottom',
+              'py-8': options.sheetPosition === 'top',
+            },
+            options.contentClass,
+          ]"
+          class="modal-content-wrapper rounded-[inherit] relative sm:px-[50px] px-6 sm:py-10 w-full"
         >
           <button
             @touchmove.passive="handleDestory"
             @mousedown="handleDestory"
             type="button"
+            v-if="options.sheetPosition === 'bottom'"
             class="w-full justify-center h-9 flex sm:hidden"
           >
             <div
