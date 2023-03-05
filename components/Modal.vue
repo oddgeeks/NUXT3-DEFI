@@ -108,7 +108,7 @@ whenever(escape, () => {
 
 <style scoped>
 .backrop-animation {
-  animation: backdrop-animation 150ms ease-in-out;
+  animation: backdrop-animation 200ms ease-out;
 }
 
 @keyframes backdrop-animation {

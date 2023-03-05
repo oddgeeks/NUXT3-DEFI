@@ -29,16 +29,21 @@ const { modals } = useModal();
 </template>
 
 <style>
-.modals-enter-active .modal-inner {
-  @apply ease-outExpo md:ease-in md:duration-100 duration-500;
+.modals-enter .modal-inner {
+  @apply ease-out duration-300 sm:duration-200;
 }
 
+.modals-enter-active .modal-inner,
 .modals-leave-active .modal-inner {
-  @apply ease-outExpo md:ease-out md:duration-100 duration-500;
+  @apply ease-in duration-300 sm:duration-200;
+}
+
+.modals.leave-from .modal-inner {
+  @apply opacity-100 translate-y-0 sm:scale-100;
 }
 
 .modals-enter-from .modal-inner,
 .modals-leave-to .modal-inner {
-  @apply opacity-0 translate-y-96 md:translate-y-0 md:scale-95;
+  @apply opacity-0 translate-y-96 sm:translate-y-0 sm:scale-95;
 }
 </style>
