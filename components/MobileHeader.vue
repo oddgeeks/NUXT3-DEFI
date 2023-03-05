@@ -2,35 +2,10 @@
 import Avocado from '@/assets/images/icons/avocado.svg?component';
 import Hamburger from '@/assets/images/icons/hamburger.svg?component';
 import InstadappSVG from '@/assets/images/logo/instadapp.svg?component';
-import PowerOnSVG from '@/assets/images/icons/power-on.svg?component';
-import PowerOffSVG from '@/assets/images/icons/power-off.svg?component';
 import Calendar from '@/assets/images/icons/calendar.svg?component';
 
-const { active, account, connector, deactivate } = useWeb3();
-const ensName = ref();
-const { trackingAccount } = useAccountTrack();
-const [hovered, toggle] = useToggle(false);
+const { active, account } = useWeb3();
 const opened = ref(false);
-const { setConnectorName } = useConnectors();
-
-const addressLabel = computed(() => trackingAccount.value ? `Tracking: ${shortenHash(account.value, 4)}` : (ensName.value || shortenHash(account.value, 4)))
-
-whenever(account, async () => {
-  ensName.value = await getRpcProvider(1).lookupAddress(account.value)
-}, { immediate: true });
-
-const closeConnection = async () => {
-  opened.value = false;
-  const { success } = await openDisconnectWalletModal();
-
-  if (success) {
-    trackingAccount.value = null;
-    setConnectorName(null);
-    if (connector.value) {
-      deactivate();
-    }
-  }
-};
 
 watch(opened, val => {
   if (val) {
@@ -66,7 +41,7 @@ onClickOutside(
         <span class="ml-2" v-if="!active">Avocado</span>
       </NuxtLink>
 
-      <GasButton v-if="active" />
+      <Web3Button v-if="active" :hideEOA="true" />
 
       <div v-if="active" role="button" tabindex="0" @click="opened = !opened">
         <Hamburger />
@@ -115,12 +90,7 @@ onClickOutside(
                         <ColorModeSwitcher />
                       </div>
 
-                      <button @mouseenter="toggle(true)" @mouseleave="toggle(false)" @click="closeConnection"
-                        class="dark:bg-slate-800 bg-slate-100 py-3 leading-5 justify-between pr-12 relative flex rounded-7.5 items-center px-4 gap-x-3">
-                        {{ addressLabel }}
-                        <PowerOffSVG v-if="hovered" class="pointer-events-none absolute right-0" />
-                        <PowerOnSVG v-else class="pointer-events-none absolute right-0" />
-                      </button>
+                      <Web3Button :hideGas="true" />
 
                       <NuxtLink role="button" tabindex="0"
                         class="bg-slate-100 dark:bg-slate-800 w-11 h-11 flex justify-center items-center rounded-full"
@@ -137,14 +107,10 @@ onClickOutside(
                       <span class="ml-2" v-if="!active">Avocado</span>
                     </NuxtLink>
 
-                    <GasButton v-if="active" />
+                    <Web3Button :hideEOA="true" v-if="active" />
 
                     <div v-if="active" role="button" tabindex="0" @click="opened = !opened">
                       <Hamburger />
-                    </div>
-
-                    <div v-if="!active">
-                      <Web3Button @click="opened = false" />
                     </div>
                   </div>
                 </div>
