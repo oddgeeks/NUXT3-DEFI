@@ -15,6 +15,7 @@ import type IWalletConnect from "@walletconnect/client";
 import CustomTx from "~~/components/modals/CustomTx.vue";
 import UpgradeVersion from "~~/components/modals/UpgradeVersion.vue";
 import Web3 from "~/components/modals/Web3.vue";
+import MobileHeader from "~/components/modals/MobileHeader.vue";
 
 const { openModal } = useModal();
 interface DialogModalProps {
@@ -238,6 +239,15 @@ export const openUpgradeModal = async (network: NetworkVersion) => {
 export const openCustomTxModal = () => {
   openModal({
     component: CustomTx,
+  });
+};
+
+export const openMobileHeader = () => {
+  openModal({
+    component: MobileHeader,
+    options: {
+      sheetPosition: "top",
+    },
   });
 };
 

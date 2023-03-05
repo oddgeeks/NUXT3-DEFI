@@ -62,15 +62,22 @@ whenever(escape, () => {
 <template>
   <div
     :data-modal-id="modalId"
-    class="fixed modal backrop-animation inset-0 z-40 overflow-y-auto bg-slate-200/20 backdrop-filter backdrop-blur-[4px]"
+    class="fixed modal inset-0 z-50 overflow-y-auto bg-slate-200/20 backdrop-filter backdrop-blur-[4px]"
   >
     <div
       :data-modal-id="modalId"
-      class="flex sm:items-center justify-center h-full min-h-screen text-center sm:p-0 modal-inner"
+      class="flex sm:items-center justify-center h-full min-h-screen text-center sm:p-0"
     >
       <div
-        :class="options.wrapperClass"
-        class="inline-block w-full mt-auto sm:my-6 dark:bg-gray-950 bg-white rounded-t-7.5 sm:rounded-7.5 text-left align-middle transition-all transform max-w-[460px]"
+        :class="[
+          {
+            'mt-auto': options.sheetPosition === 'bottom',
+            'mb-auto': options.sheetPosition === 'top',
+          },
+          options.wrapperClass,
+        ]"
+        :data-sheet-position="options.sheetPosition"
+        class="inline-block modal-inner w-full sm:my-6 dark:bg-gray-950 bg-white rounded-t-7.5 sm:rounded-7.5 text-left align-middle max-w-[460px]"
         role="dialog"
         aria-modal="true"
       >
