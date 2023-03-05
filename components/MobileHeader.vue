@@ -52,45 +52,6 @@ onClickOutside(
 
 <template>
   <header class="flex flex-col transition-transform">
-    <div v-show="active && opened" class="flex flex-col items-center mb-7.5">
-      <figure
-        class="flex gap-3 items-center border-2 border-slate-100 dark:border-slate-800 rounded-full py-2 px-4">
-        <figcaption class="text-xs text-slate-400">
-          Built by
-        </figcaption>
-        <a target="_blank" href="https://instadapp.io/">
-          <InstadappSVG />
-        </a>
-      </figure>
-
-      <nav class="flex gap-10 text-xs text-slate-400 mt-5">
-        <a target="_blank" href="https://help.avocado.instadapp.io">Help</a>
-        <a href="mailto:info@instadapp.io">Email</a>
-        <a rel="noopener noreferrer" target="_blank" href="https://twitter.com/instadapp">Twitter</a>
-        <a rel="noopener noreferrer" target="_blank" href="https://discord.com/invite/C76CeZc">Discord</a>
-      </nav>
-
-      <div v-show="active" class="flex w-full justify-between items-center mt-7.5">
-        <div role="button" tabindex="0"
-          class="bg-slate-100 dark:bg-slate-800 w-11 h-11 flex justify-center items-center rounded-full">
-          <ColorModeSwitcher />
-        </div>
-
-        <button @mouseenter="toggle(true)" @mouseleave="toggle(false)" @click="closeConnection"
-          class="dark:bg-slate-800 bg-slate-100 py-3 leading-5 justify-between pr-12 relative flex rounded-7.5 items-center px-4 gap-x-3">
-          {{ addressLabel }}
-          <PowerOffSVG v-if="hovered" class="pointer-events-none absolute right-0" />
-          <PowerOnSVG v-else class="pointer-events-none absolute right-0" />
-        </button>
-
-        <NuxtLink role="button" tabindex="0"
-          class="bg-slate-100 dark:bg-slate-800 w-11 h-11 flex justify-center items-center rounded-full" :to="{
-            path: `/address/${account}`,
-          }">
-          <Calendar color="blue" />
-        </NuxtLink>
-      </div>
-    </div>
     <div class="flex justify-between items-center">
       <NuxtLink to="/" class="flex items-center">
         <Avocado />
@@ -108,7 +69,7 @@ onClickOutside(
       </div>
     </div>
     <TransitionRoot appear as="template" :show="opened">
-      <Teleport :disabled="false" to="body">
+      <Teleport to="body">
         <div data-modal-id="nav"
           class="fixed modal backrop-animation inset-0 z-40 overflow-y-auto bg-slate-200/20 backdrop-filter backdrop-blur-[4px]">
           <div data-modal-id="nav" class="flex items-start sm:items-center justify-center min-h-screen text-center">
