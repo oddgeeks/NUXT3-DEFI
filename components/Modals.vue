@@ -30,11 +30,11 @@ const { modals } = useModal();
 
 <style>
 .modals-enter-active .modal-inner {
-  @apply ease-outExpo md:ease-in md:duration-100 duration-500;
+  @apply ease-outExpo md:ease-in md:duration-100 duration-200;
 }
 
 .modals-leave-active .modal-inner {
-  @apply ease-outExpo md:ease-out md:duration-100 duration-500;
+  @apply ease-outExpo md:ease-out md:duration-100 duration-200;
 }
 
 .modals-enter-from .modal-inner,
