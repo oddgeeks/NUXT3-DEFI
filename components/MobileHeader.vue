@@ -82,10 +82,10 @@ onClickOutside(
           class="fixed modal backrop-animation inset-0 z-40 overflow-y-hidden bg-slate-200/20 backdrop-filter backdrop-blur-[4px]">
           <div data-modal-id="nav" class="flex items-start sm:items-center justify-center text-center">
             <TransitionChild as="template" enter="ease-out duration-300"
-              enter-from="opacity-0 -translate-y-96 sm:translate-y-0 sm:scale-95"
+              enter-from="opacity-0 -translate-y-32 sm:translate-y-0 sm:scale-95"
               enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-300"
               leave-from="opacity-100 translate-y-0 sm:scale-100"
-              leave-to="opacity-0 -translate-y-96 sm:translate-y-0 sm:scale-95">
+              leave-to="opacity-0 -translate-y-32 sm:translate-y-0 sm:scale-95">
               <div
                 class="inline-block relative w-full sm:my-6 dark:bg-gray-850 bg-white rounded-b-7.5 sm:rounded-7.5 text-left align-middle transition-all transform sm:max-w-[460px]"
                 role="dialog" aria-modal="true">
