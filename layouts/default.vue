@@ -20,8 +20,11 @@ const route = useRoute();
       <BannerSwitchNetwork v-if="showIncorrectNetworkBanner" />
       <BannerOnboard v-else-if="showOnboardBanner && route.name !== 'claims-ens-drop'" />
     </div>
-    <div class="py-8 px-10">
+    <div class="py-8 px-10 hidden sm:block">
       <TheHeader />
+    </div>
+    <div class="fixed py-8 px-10 bg-gray-50 dark:bg-gray-850 z-40 rounded-b-7.5 w-full sm:hidden transition-transform">
+      <MobileHeader />
     </div>
     <div
       class="container flex flex-col gap-4 banner-wrapper [&:not(:empty)]:mb-7.5"
@@ -29,7 +32,9 @@ const route = useRoute();
       <!-- <BannerGift v-if="showGasGiftBanner" /> -->
       <WarningsGasBalance v-if="showInsufficientGasBanner" />
     </div>
-    <slot />
+    <div class="mt-36 sm:mt-0">
+      <slot />
+    </div>
     <TheFooter />
     <Modal
       @destroy="modal.destroy"

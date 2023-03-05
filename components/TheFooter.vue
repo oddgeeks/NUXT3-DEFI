@@ -13,7 +13,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <footer class="py-8 mt-24 px-10 flex items-center justify-between">
+  <footer class="py-8 mt-24 px-10 hidden sm:flex items-center justify-between">
     <figure class="flex gap-3 items-center">
       <figcaption class="text-xs text-slate-400">
         Built by
