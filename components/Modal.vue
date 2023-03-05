@@ -80,7 +80,7 @@ whenever(escape, () => {
           class="modal-content-wrapper rounded-[inherit] relative md:px-[50px] px-6 pb-8 md:py-10 w-full"
         >
           <button
-            @touchmove="handleDestory"
+            @touchmove.passive="handleDestory"
             @mousedown="handleDestory"
             type="button"
             class="w-full justify-center h-9 flex md:hidden"
