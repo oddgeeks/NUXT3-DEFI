@@ -247,6 +247,7 @@ export const openMobileHeader = () => {
     component: MobileHeader,
     options: {
       sheetPosition: "top",
+      contentClass: "!px-5 !py-5",
     },
   });
 };

@@ -44,7 +44,7 @@ defineEmits(["destroy"]);
       <div
         role="button"
         tabindex="0"
-        class="bg-slate-100 dark:bg-slate-800 w-11 h-11 flex justify-center items-center rounded-full"
+        class="bg-slate-100 dark:bg-slate-800 w-[50px] h-[50px] flex justify-center items-center rounded-full"
       >
         <ColorModeSwitcher />
       </div>
@@ -52,9 +52,7 @@ defineEmits(["destroy"]);
       <Web3Button :hideGas="true" />
 
       <NuxtLink
-        role="button"
-        tabindex="0"
-        class="bg-slate-100 dark:bg-slate-800 w-11 h-11 flex justify-center items-center rounded-full"
+        class="bg-slate-100 dark:bg-slate-800 w-[50px] h-[50px] flex justify-center items-center rounded-full"
         :to="{
           path: `/address/${account}`,
         }"
@@ -64,8 +62,8 @@ defineEmits(["destroy"]);
       </NuxtLink>
     </div>
   </div>
-  <div class="flex justify-between items-center px-4">
-    <NuxtLink to="/" class="flex items-center">
+  <div class="flex justify-between items-center">
+    <NuxtLink @click="$emit('destroy')" to="/" class="flex items-center">
       <Avocado />
       <span class="ml-2" v-if="!active">Avocado</span>
     </NuxtLink>

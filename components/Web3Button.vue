@@ -7,7 +7,7 @@ import PowerOffSVG from "~/assets/images/icons/power-off.svg?component";
 
 defineProps({
   hideGas: Boolean,
-  hideEOA: Boolean
+  hideEOA: Boolean,
 });
 
 const { active, deactivate, account, connector } = useWeb3();
