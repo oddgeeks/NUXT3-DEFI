@@ -21,7 +21,7 @@ const { parseRequestError } = useErrorHandler()
          <h1 class="mb-10 text-[120px] sm:text-[260px] leading-[100px] sm:leading-[250px]">404</h1>
          <div class="flex flex-col gap-2.5 sm:gap-[26px] mb-10">
           <h1 class="text-[18px] sm:text-[40px] leading-7.5">{{ parseRequestError(error).statusMessage }}</h1>
-          <h2 class="text-slate-400 leading-6 sm:leading-7.5 text-xs sm:text-base">{{ parseRequestError(error).message }}</h2>
+          <h2 class="text-slate-400 leading-6 sm:leading-7.5 text-xs sm:text-base font-medium sm:font-semibold">{{ parseRequestError(error).message }}</h2>
          </div>
          <CommonButton class="!px-7.5 w-full justify-center sm:w-fit" as="NuxtLink" to="/" size="lg">
             Back to Home
