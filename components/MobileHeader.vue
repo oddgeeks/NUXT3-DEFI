@@ -32,6 +32,14 @@ const closeConnection = async () => {
   }
 };
 
+watch(opened, val => {
+  if (val) {
+    document.body.classList.add('modal-open');
+  } else {
+    document.body.classList.remove('modal-open');
+  }
+});
+
 const wrapperRef = ref<HTMLElement>();
 onClickOutside(
   wrapperRef,
@@ -118,9 +126,7 @@ onClickOutside(
                         class="bg-slate-100 dark:bg-slate-800 w-11 h-11 flex justify-center items-center rounded-full"
                         :to="{
                           path: `/address/${account}`,
-                        }"
-                        @click="opened = false"
-                      >
+                        }" @click="opened = false">
                         <Calendar color="blue" />
                       </NuxtLink>
                     </div>
