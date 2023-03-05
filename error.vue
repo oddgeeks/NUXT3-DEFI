@@ -18,12 +18,12 @@ const { parseRequestError } = useErrorHandler()
     <main class="h-full flex flex-col">
       <div class="container relative flex-1 flex justify-center">
         <div class="flex flex-col justify-center items-center text-center max-w-3xl mx-auto">
-         <h1 style="font-size: 260px;line-height: 250px;" class="leading-none mb-10">404</h1>
+         <h1 class="mb-10 text-[120px] sm:text-[260px] leading-[100px] sm:leading-[250px]">404</h1>
          <div class="flex flex-col gap-[26px] mb-10">
-          <h1 class="text-[40px] leading-10">{{ parseRequestError(error).statusMessage }}</h1>
-          <h2 class="text-slate-400 leading-[30px]">{{ parseRequestError(error).message }}</h2>
+          <h1 class="text-[18px] sm:text-[40px] leading-10">{{ parseRequestError(error).statusMessage }}</h1>
+          <h2 class="text-slate-400 leading-[30px] text-xs sm:text-base">{{ parseRequestError(error).message }}</h2>
          </div>
-         <CommonButton class="!px-7.5" as="NuxtLink" to="/" size="lg">
+         <CommonButton class="!px-7.5 w-full justify-center sm:w-fit" as="NuxtLink" to="/" size="lg">
             Back to Home
          </CommonButton>
         </div>

@@ -43,10 +43,6 @@ export default defineNuxtConfig({
       title: meta.title,
       meta: [
         {
-          name: "viewport",
-          content: "false",
-        },
-        {
           name: "title",
           content: meta.title,
         },
