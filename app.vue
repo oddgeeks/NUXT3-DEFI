@@ -1,9 +1,9 @@
 <script setup>
 onMounted(() => {
-  window.wc = useWalletConnect()
-})
-useTokens()
-useSafe()
+  window.wc = useWalletConnect();
+});
+useTokens();
+useSafe();
 
 useAccountTrack(null, () => {
   useEagerConnect();
@@ -11,13 +11,15 @@ useAccountTrack(null, () => {
 
 onMounted(() => {
   const hideAllTooltipsOnScroll = useThrottleFn(() => {
-    [...document.querySelectorAll("[data-tippy-root]")].forEach((e) => e._tippy?.hide())
-  }, 1000)
+    [...document.querySelectorAll("[data-tippy-root]")].forEach((e) =>
+      e._tippy?.hide()
+    );
+  }, 1000);
 
-  document.addEventListener("scroll", hideAllTooltipsOnScroll, true)
+  document.addEventListener("scroll", hideAllTooltipsOnScroll, true);
 
-  return () => document.removeEventListener("scroll", hideAllTooltipsOnScroll)
-})
+  return () => document.removeEventListener("scroll", hideAllTooltipsOnScroll);
+});
 </script>
 
 <template>
@@ -26,10 +28,9 @@ onMounted(() => {
     <NuxtPage />
   </NuxtLayout>
 
-  <Modal />
   <Notifications />
+  <Modals />
 </template>
-
 
 <style>
 #__nuxt {
