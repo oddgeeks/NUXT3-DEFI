@@ -79,7 +79,7 @@ onClickOutside(
     <TransitionRoot appear as="template" :show="opened">
       <Teleport to="body">
         <div data-modal-id="nav"
-          class="fixed modal backrop-animation inset-0 z-40 overflow-y-auto bg-slate-200/20 backdrop-filter backdrop-blur-[4px]">
+          class="fixed overflow-hidden modal backrop-animation inset-0 z-40 overflow-y-auto bg-slate-200/20 backdrop-filter backdrop-blur-[4px]">
           <div data-modal-id="nav" class="flex items-start sm:items-center justify-center min-h-screen text-center">
             <TransitionChild as="template" enter="ease-out duration-300"
               enter-from="opacity-0 -translate-y-96 sm:translate-y-0 sm:scale-95"
