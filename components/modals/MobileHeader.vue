@@ -5,6 +5,8 @@ import Hamburger from "@/assets/images/icons/hamburger.svg?component";
 import Avocado from "@/assets/images/icons/avocado.svg?component";
 
 const { active, account } = useWeb3();
+
+defineEmits(["destroy"]);
 </script>
 
 <template>
@@ -56,6 +58,7 @@ const { active, account } = useWeb3();
         :to="{
           path: `/address/${account}`,
         }"
+        @click="$emit('destroy')"
       >
         <Calendar color="blue" />
       </NuxtLink>
@@ -69,8 +72,8 @@ const { active, account } = useWeb3();
 
     <Web3Button :hideEOA="true" v-if="active" />
 
-    <div v-if="active" role="button" tabindex="0">
+    <button @click="$emit('destroy')" v-if="active">
       <Hamburger />
-    </div>
+    </button>
   </div>
 </template>
