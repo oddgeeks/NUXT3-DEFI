@@ -16,6 +16,8 @@ import CustomTx from "~~/components/modals/CustomTx.vue";
 import UpgradeVersion from "~~/components/modals/UpgradeVersion.vue";
 import Web3 from "~/components/modals/Web3.vue";
 import MobileHeader from "~/components/modals/MobileHeader.vue";
+import Deploy from "~/components/modals/Deploy.vue";
+import DeployNetwork from "~/components/modals/DeployNetwork.vue";
 
 const { openModal } = useModal();
 interface DialogModalProps {
@@ -248,6 +250,24 @@ export const openMobileHeader = () => {
     options: {
       sheetPosition: "top",
       contentClass: "!px-5 !py-5",
+    }
+  });
+};
+
+export const openDeployNetworkModal = (network: Network) => {
+  openModal({
+    component: DeployNetwork,
+    componentProps: {
+      network,
+    },
+  });
+};
+
+export const openDeployModal = () => {
+  openModal({
+    component: Deploy,
+    options: {
+      wrapperClass: "max-w-[600px]",
     },
   });
 };
