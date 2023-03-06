@@ -190,9 +190,6 @@ export const openCustomTokenModal = (address?: string) => {
 export const openWeb3Modal = () => {
   return openModal({
     component: Web3,
-    componentProps: {
-      closeable: false
-    }
   });
 };
 
