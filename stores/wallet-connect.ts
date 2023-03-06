@@ -142,8 +142,8 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                     eip712Data.message.details.amount,
                     eip712Data.message.details.expiration,
                   ])
-                  const actions = [ // Actions to approve a hash
-                    {
+                  const actions = [
+                    { // Permit2 Allowance
                       to: eip712Data.domain.verifyingContract.toLowerCase(),
                       data: approvePermit2Calldata,
                       operation: "0",
