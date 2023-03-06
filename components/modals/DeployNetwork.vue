@@ -1,0 +1,87 @@
+<script setup lang="ts">
+import { parseTransaction } from "ethers/lib/utils";
+
+const props = defineProps<{
+  network: Network;
+}>();
+
+const emit = defineEmits(["destroy"]);
+
+const { safeAddress, sendTransaction } = useAvocadoSafe();
+const { parseTransactionError } = useErrorHandler();
+const { account } = useWeb3();
+
+const submitting = ref(false);
+
+const transaction = computed(() => ({
+  to: safeAddress.value,
+  data: "0x",
+  value: "0",
+  chainId: Number(props.network.chainId),
+  operation: "0",
+}));
+
+const { data, pending, error } = useEstimatedFee(transaction, {
+  chainId: String(props.network.chainId),
+  immediate: true,
+});
+
+const handleDeploy = async () => {
+  try {
+    submitting.value = true;
+    const transactionHash = await sendTransaction(transaction.value);
+
+    logActionToSlack({
+      message: ` ${props.network.name}`,
+      action: "deploy",
+      txHash: transactionHash,
+      chainId: String(props.network.chainId),
+      account: account.value,
+    });
+
+    emit("destroy");
+
+    showPendingTransactionModal(transactionHash, props.network.chainId, "send");
+  } catch (e) {
+    const err = parseTransactionError(e);
+
+    openSnackbar({
+      message: err,
+      type: "error",
+    });
+
+    logActionToSlack({
+      message: err,
+      action: "deploy",
+      type: "error",
+      account: account.value,
+    });
+  } finally {
+    submitting.value = false;
+  }
+};
+</script>
+
+<template>
+  <div class="flex gap-7.5 flex-col">
+    <ChainLogo class="w-10 h-10 mx-auto" :chain="network.chainId" />
+    <div>
+      <h1 class="font-lg text-center leading-5 mb-3">{{ network.name }}</h1>
+      <h2 class="font-medium text-xs text-slate-400 leading-5 text-center">
+        In order to interact with dapps on your requested network, please deploy
+        (activate) your wallet. Wallet deployment happens on first transaction
+        on each chain. <a class="text-primary">Learn more</a>
+      </h2>
+    </div>
+    <EstimatedFee :data="data" :loading="pending" :error="error" />
+    <CommonButton
+      size="lg"
+      class="w-full justify-center"
+      :loading="submitting"
+      :disabled="pending || error || submitting"
+      @click="handleDeploy"
+    >
+      Deploy
+    </CommonButton>
+  </div>
+</template>
