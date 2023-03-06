@@ -66,7 +66,7 @@ whenever(escape, () => {
   >
     <div
       :data-modal-id="modalId"
-      class="flex sm:items-center justify-center h-full min-h-screen text-center sm:p-0"
+      class="flex sm:items-center justify-center h-full sm:min-h-screen text-center sm:p-0"
     >
       <div
         :class="[
