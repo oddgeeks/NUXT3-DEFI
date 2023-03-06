@@ -4,6 +4,7 @@ import { IClientMeta } from "@walletconnect/types";
 import { signingMethods } from "@walletconnect/utils";
 import { RPC_URLS } from "~~/connectors";
 import { v4 as uuidv4 } from "uuid";
+import { ethers } from "ethers";
 
 const clientMeta = {
   description: "Instadapp Avocado - Safe",
@@ -15,6 +16,8 @@ const clientMeta = {
 export const useWalletConnect = defineStore("wallet_connect", () => {
   const safe = useAvocadoSafe();
   const { library, account } = useWeb3();
+  const { parseTransactionError } = useErrorHandler();
+  const { switchNetworkByChainId } = useNetworks();
   const storage = useLocalStorage<{ keys: Record<string, string[]> }>(
     "wallet_connect",
     {
@@ -120,24 +123,86 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
 
                 triggerRef(sessions)
               } else if (
-                // signingMethods.includes(payload.method)
-                payload.method === "personal_signx"
+                payload.method === "eth_signTypedData_v4" &&
+                String(payload.params[0]).toLowerCase() === String(safe.safeAddress.value).toLowerCase()
               ) {
-                // broken code
+                await switchNetworkByChainId(634);
+
+                const params = payload.params;
+
+                const eip712Data = JSON.parse(params[1])
+                delete eip712Data.types.EIP712Domain;
+
+                const hash = ethers.utils._TypedDataEncoder.hash(eip712Data.domain, eip712Data.types, eip712Data.message)
+
+                console.log("Hash to Approve: ", hash)
+
+                const avoSafeABI = [
+                  "function approveHash(bytes32 _hash) public"
+                ]
+
+                const approveHashCalldata = (new ethers.utils.Interface(avoSafeABI)).encodeFunctionData("approveHash", [hash])
+
+                const actions = [ // Actions to approve a hash
+                  {
+                    to: safe.safeAddress.value,
+                    data: approveHashCalldata,
+                    operation: "0",
+                    value: "0"
+                  }
+                ]
+
+                try {
+                  const tx = await safe.sendTransactions(actions, wc.chainId)
+
+                  console.log("tx: ", hash)
+
+                  wc.approveRequest({
+                    id: payload.id,
+                    result: tx,
+                  });
+                } catch (error: any) {
+
+                  const err = parseTransactionError(error);
+
+                  wc.rejectRequest({
+                    id: payload.id,
+                    error: {
+                      code: error.code || -32603,
+                      message: error
+                    },
+                  });
+                }
+
+
+              } else if (
+                signingMethods.includes(payload.method)
+                // payload.method === "personal_signx"
+              ) {
+                await switchNetworkByChainId(wc.chainId);
 
                 let params = payload.params;
 
-                params[1] = account.value;
+                try {
+                  const result = await library.value.send(
+                    payload.method,
+                    params
+                  );
 
-                const result = await library.value.send(
-                  payload.method,
-                  payload.params
-                );
+                  wc.approveRequest({
+                    id: payload.id,
+                    result,
+                  });
+                } catch (error: any) {
+                  wc.rejectRequest({
+                    id: payload.id,
+                    error: {
+                      code: error.code || -32603,
+                      message: error.message
+                    },
+                  });
+                }
 
-                wc.approveRequest({
-                  id: payload.id,
-                  result,
-                });
               } else {
                 const resp = await http(RPC_URLS[wc.chainId], {
                   method: "POST",
@@ -249,7 +314,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
     let storageId = (connector as any)._sessionStorage.storageId;
     try {
       await connector.killSession();
-    } catch (error) {}
+    } catch (error) { }
 
     storage.value.keys[safe.safeAddress.value] = storage.value.keys[
       safe.safeAddress.value
@@ -257,7 +322,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
 
     try {
       window.localStorage.removeItem(storageId);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const prepareAndConnect = async (uri: string) => {
