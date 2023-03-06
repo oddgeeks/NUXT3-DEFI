@@ -30,6 +30,7 @@ const { data, pending } = useAsyncData(
   },
   {
     default: () => availableNetworks as NetworkDeployments[],
+    watch:[safeAddress]
   }
 );
 
