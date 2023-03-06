@@ -18,7 +18,7 @@ const mostRecentVersion = computed(() => {
 
 <template>
   <div class="px-5 sm:mx-auto max-w-[880px] w-full flex-1 mt-3">
-    <div class="mb-7.5 max-w-[796px] w-full">
+    <div class="mb-5 sm:mb-7.5 max-w-[796px] w-full">
       <h1 class="text-xl sm:text-3xl font-bold leading-7.5 mb-2.5">
         Upgrade your Avocado Wallet
       </h1>
