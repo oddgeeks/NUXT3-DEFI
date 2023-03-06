@@ -5,6 +5,11 @@ import PlusSVG from "~/assets/images/icons/plus.svg?component";
 import PowerOnSVG from "~/assets/images/icons/power-on.svg?component";
 import PowerOffSVG from "~/assets/images/icons/power-off.svg?component";
 
+defineProps({
+  hideGas: Boolean,
+  hideEOA: Boolean,
+});
+
 const { active, deactivate, account, connector } = useWeb3();
 const { trackingAccount } = useAccountTrack();
 const { gasBalance } = storeToRefs(useSafe());
@@ -50,6 +55,7 @@ whenever(
   </CommonButton>
   <div v-show="isActualActive" class="flex items-center gap-[14px]">
     <button
+      v-if="!hideGas"
       class="px-4 py-[9px] flex items-center justify-between rounded-5 dark:bg-slate-800 bg-slate-100 gap-2"
       @click="openTopUpGasModal()"
     >
@@ -68,6 +74,7 @@ whenever(
     </button>
 
     <button
+      v-if="!hideEOA"
       @mouseenter="toggle(true)"
       @mouseleave="toggle(false)"
       @click="closeConnection"

@@ -47,6 +47,10 @@ export default defineNuxtConfig({
           content: meta.title,
         },
         {
+          name: "theme-color",
+          content: "transparent"
+        },
+        {
           name: "description",
           content: meta.description,
         },
