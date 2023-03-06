@@ -77,7 +77,7 @@ whenever(escape, () => {
           options.wrapperClass,
         ]"
         :data-sheet-position="options.sheetPosition"
-        class="inline-block modal-inner w-full sm:my-6 dark:bg-gray-950 bg-white sm:rounded-7.5 text-left align-middle max-w-[460px]"
+        class="inline-block relative modal-inner w-full sm:my-6 dark:bg-gray-950 bg-white sm:rounded-7.5 text-left align-middle max-w-[460px]"
         role="dialog"
         aria-modal="true"
       >

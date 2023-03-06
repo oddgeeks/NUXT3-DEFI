@@ -30,6 +30,7 @@ const actionMetadataTypes = {
   "gas-topup": ["uint256 amount", "address token", "address onBehalf"],
   upgrade: ["bytes32 version", "address walletImpl"],
   dapp: ["string name", "string url"],
+  deploy: [],
 };
 
 export function shortenHash(hash: string, length: number = 4) {
@@ -316,6 +317,15 @@ export const encodeTransferMetadata = (
   return single ? encodeMultipleActions(data) : data;
 };
 
+export const encodeDeployMetadata = (single = true) => {
+  const data = encodeMetadata({
+    type: "deploy",
+    encodedData: "0x",
+  });
+
+  return single ? encodeMultipleActions(data) : data;
+};
+
 export const encodeUpgradeMetadata = (
   params: UpgradeMetadataProps,
   single = true
@@ -508,6 +518,12 @@ export const decodeMetadata = (data: string) => {
             name: decodedData?.name,
             url: decodedData?.url,
           };
+          break;
+        case "deploy":
+          payload = {
+            type,
+          };
+
           break;
       }
 
