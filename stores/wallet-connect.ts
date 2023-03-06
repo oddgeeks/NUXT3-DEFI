@@ -137,7 +137,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                   const permit2ABI = [
                     "function approve(address token, address spender, uint160 amount, uint48 expiration) external"
                   ]
-                  const approvePermit2Calldata = (new ethers.utils.Interface(avoSafeABI)).encodeFunctionData("approveHash", [
+                  const approvePermit2Calldata = (new ethers.utils.Interface(permit2ABI)).encodeFunctionData("approveHash", [
                     eip712Data.message.details.token,
                     eip712Data.message.spender,
                     eip712Data.message.details.amount,
