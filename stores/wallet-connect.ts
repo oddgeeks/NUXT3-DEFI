@@ -126,10 +126,10 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                 payload.method === "eth_signTypedData_v4" &&
                 String(payload.params[0]).toLowerCase() === String(safe.safeAddress.value).toLowerCase()
               ) {
+                const params = payload.params;
                 const eip712Data = JSON.parse(params[1])
                 if (eip712Data.domain.verifyingContract.toLowerCase() === "0x000000000022d473030f116ddee9f6b43ac78ba3") {
                   await switchNetworkByChainId(634);
-                  const params = payload.params;
                   delete eip712Data.types.EIP712Domain;
   
                   const hash = ethers.utils._TypedDataEncoder.hash(eip712Data.domain, eip712Data.types, eip712Data.message)
