@@ -126,55 +126,57 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                 payload.method === "eth_signTypedData_v4" &&
                 String(payload.params[0]).toLowerCase() === String(safe.safeAddress.value).toLowerCase()
               ) {
-                await switchNetworkByChainId(634);
-
-                const params = payload.params;
-
                 const eip712Data = JSON.parse(params[1])
-                delete eip712Data.types.EIP712Domain;
+                if (eip712Data.domain.verifyingContract.toLowerCase() === "0x000000000022d473030f116ddee9f6b43ac78ba3") {
+                  await switchNetworkByChainId(634);
+                  const params = payload.params;
+                  delete eip712Data.types.EIP712Domain;
+  
+                  const hash = ethers.utils._TypedDataEncoder.hash(eip712Data.domain, eip712Data.types, eip712Data.message)
 
-                const hash = ethers.utils._TypedDataEncoder.hash(eip712Data.domain, eip712Data.types, eip712Data.message)
+                  const permit2ABI = [
+                    "function approve(address token, address spender, uint160 amount, uint48 expiration) external"
+                  ]
+                  const approvePermit2Calldata = (new ethers.utils.Interface(avoSafeABI)).encodeFunctionData("approveHash", [
+                    eip712Data.message.details.token,
+                    eip712Data.message.spender,
+                    eip712Data.message.details.amount,
+                    eip712Data.message.details.expiration,
+                  ])
+                  const actions = [ // Actions to approve a hash
+                    {
+                      to: eip712Data.domain.verifyingContract.toLowerCase(),
+                      data: approvePermit2Calldata,
+                      operation: "0",
+                      value: "0"
+                    }
+                  ]
 
-                console.log("Hash to Approve: ", hash)
-
-                const avoSafeABI = [
-                  "function approveHash(bytes32 _hash) public"
-                ]
-
-                const approveHashCalldata = (new ethers.utils.Interface(avoSafeABI)).encodeFunctionData("approveHash", [hash])
-
-                const actions = [ // Actions to approve a hash
-                  {
-                    to: safe.safeAddress.value,
-                    data: approveHashCalldata,
-                    operation: "0",
-                    value: "0"
+                  try {
+                    const tx = await safe.sendTransactions(actions, wc.chainId)
+  
+                    console.log("tx: ", hash)
+  
+                    wc.approveRequest({
+                      id: payload.id,
+                      result: tx,
+                    });
+                  } catch (error: any) {
+  
+                    const err = parseTransactionError(error);
+  
+                    wc.rejectRequest({
+                      id: payload.id,
+                      error: {
+                        code: error.code || -32603,
+                        message: error
+                      },
+                    });
                   }
-                ]
+                } else {
+                  // throw not allowed
 
-                try {
-                  const tx = await safe.sendTransactions(actions, wc.chainId)
-
-                  console.log("tx: ", hash)
-
-                  wc.approveRequest({
-                    id: payload.id,
-                    result: tx,
-                  });
-                } catch (error: any) {
-
-                  const err = parseTransactionError(error);
-
-                  wc.rejectRequest({
-                    id: payload.id,
-                    error: {
-                      code: error.code || -32603,
-                      message: error
-                    },
-                  });
                 }
-
-
               } else if (
                 signingMethods.includes(payload.method)
                 // payload.method === "personal_signx"
