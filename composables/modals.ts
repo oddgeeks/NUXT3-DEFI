@@ -15,6 +15,9 @@ import type IWalletConnect from "@walletconnect/client";
 import CustomTx from "~~/components/modals/CustomTx.vue";
 import UpgradeVersion from "~~/components/modals/UpgradeVersion.vue";
 import Web3 from "~/components/modals/Web3.vue";
+import MobileHeader from "~/components/modals/MobileHeader.vue";
+import Deploy from "~/components/modals/Deploy.vue";
+import DeployNetwork from "~/components/modals/DeployNetwork.vue";
 
 const { openModal } = useModal();
 interface DialogModalProps {
@@ -190,9 +193,6 @@ export const openCustomTokenModal = (address?: string) => {
 export const openWeb3Modal = () => {
   return openModal({
     component: Web3,
-    componentProps: {
-      closeable: false
-    }
   });
 };
 
@@ -241,6 +241,34 @@ export const openUpgradeModal = async (network: NetworkVersion) => {
 export const openCustomTxModal = () => {
   openModal({
     component: CustomTx,
+  });
+};
+
+export const openMobileHeader = () => {
+  openModal({
+    component: MobileHeader,
+    options: {
+      sheetPosition: "top",
+      contentClass: "!px-5 !py-5",
+    }
+  });
+};
+
+export const openDeployNetworkModal = (network: Network) => {
+  openModal({
+    component: DeployNetwork,
+    componentProps: {
+      network,
+    },
+  });
+};
+
+export const openDeployModal = () => {
+  openModal({
+    component: Deploy,
+    options: {
+      wrapperClass: "max-w-[600px]",
+    },
   });
 };
 

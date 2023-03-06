@@ -238,8 +238,7 @@ onMounted(async () => {
       <div class="flex flex-col gap-7.5">
         <p class="text-slate-400 text-xs text-center font-medium">
           You need the Avocado web app to be open to popup transactions. You
-          will not receive transaction requests when it is not open. Please
-          don't close the tab.
+          will not receive transaction requests when it is not open.
         </p>
 
         <div class="text-primary text-sm text-center">
@@ -311,14 +310,27 @@ onMounted(async () => {
           </template>
         </CommonSelect>
       </div>
-      <CommonButton
-        type="submit"
-        :loading="loading"
-        class="w-full justify-center"
-        size="lg"
-      >
-        Approve
-      </CommonButton>
+      <div class="flex flex-col gap-3">
+        <div
+          v-if="connection.peerMeta.name === 'Uniswap Interface'"
+          class="bg-orange-400 rounded-5 flex gap-2.5 bg-opacity-10 p-[14px]"
+        >
+          <p class="text-orange text-xs leading-5 font-medium">
+            Avocado is currently not compliant with Uniswap App due to
+            incompatibility issue with Permit2 dependency. You might face issues
+            while transacting on Uniswap. We are working on releasing a fix
+            soon.
+          </p>
+        </div>
+        <CommonButton
+          type="submit"
+          :loading="loading"
+          class="w-full justify-center"
+          size="lg"
+        >
+          Approve
+        </CommonButton>
+      </div>
     </form>
     <div @click="isTutorialWatched = true" v-if="isIframeVisible" class="mt-6">
       <h1 class="text-xs leading-5 mb-3 text-slate-400 text-center font-medium">

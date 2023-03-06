@@ -136,5 +136,8 @@ const formatProtocol = (protocol: string) => {
    <a :href="metadata?.url" target="_blank" rel="noopener noreferrer">{{ metadata?.name }}</a>
    <LinkSVG />
   </div>
+   <div v-if="metadata.type === 'deploy'" class="self-start capitalize">
+     {{ metadata?.type }}
+  </div>
   </div>
 </template>

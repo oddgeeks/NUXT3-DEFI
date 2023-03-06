@@ -243,6 +243,7 @@ type IOptions = {
   wrapperClass?: string;
   contentClass?: string;
   snackOptions?: ISnackOptions;
+  sheetPosition?: "top" | "bottom";
 };
 
 type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim";
@@ -257,7 +258,8 @@ type MetadataProps = {
     | "multi"
     | "gas-topup"
     | "upgrade"
-    | "dapp";
+    | "dapp"
+    | "deploy";
   encodedData: string;
   version?: string;
 };
