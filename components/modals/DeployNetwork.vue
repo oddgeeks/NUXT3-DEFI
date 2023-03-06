@@ -29,7 +29,12 @@ const { data, pending, error } = useEstimatedFee(transaction, {
 const handleDeploy = async () => {
   try {
     submitting.value = true;
-    const transactionHash = await sendTransaction(transaction.value);
+
+    const metadata = encodeDeployMetadata()
+
+    const transactionHash = await sendTransaction(transaction.value, {
+      metadata
+    });
 
     logActionToSlack({
       message: ` ${props.network.name}`,

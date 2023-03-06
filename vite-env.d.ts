@@ -258,7 +258,8 @@ type MetadataProps = {
     | "multi"
     | "gas-topup"
     | "upgrade"
-    | "dapp";
+    | "dapp"
+    | "deploy";
   encodedData: string;
   version?: string;
 };
