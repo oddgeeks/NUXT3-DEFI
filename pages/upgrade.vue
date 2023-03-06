@@ -30,7 +30,7 @@ const mostRecentVersion = computed(() => {
     <div class="h-full relative mb-7.5 sm:mb-0">
       <div
         :class="{ 'blur h-full': !account || !data }"
-        class="dark:bg-gray-850 bg-slate-50 rounded-[25px] flex-1 relative"
+        class="dark:bg-gray-850 bg-slate-50 rounded-5 sm:rounded-[25px] flex-1 relative"
       >
         <table class="table w-full">
           <thead>
