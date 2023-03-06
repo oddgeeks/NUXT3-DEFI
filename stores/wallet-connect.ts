@@ -132,7 +132,6 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                   await switchNetworkByChainId(634);
                   delete eip712Data.types.EIP712Domain;
   
-                  const hash = ethers.utils._TypedDataEncoder.hash(eip712Data.domain, eip712Data.types, eip712Data.message)
 
                   const permit2ABI = [
                     "function approve(address token, address spender, uint160 amount, uint48 expiration) external"
@@ -155,7 +154,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                   try {
                     const tx = await safe.sendTransactions(actions, wc.chainId)
   
-                    console.log("tx: ", hash)
+                    console.log("tx: ", tx)
   
                     wc.approveRequest({
                       id: payload.id,
