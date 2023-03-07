@@ -260,7 +260,7 @@ type MetadataProps = {
     | "upgrade"
     | "dapp"
     | "deploy"
-    | "dapp-sign";
+    | "permit2";
   encodedData: string;
   version?: string;
 };

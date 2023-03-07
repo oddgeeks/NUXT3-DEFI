@@ -31,7 +31,7 @@ const actionMetadataTypes = {
   upgrade: ["bytes32 version", "address walletImpl"],
   dapp: ["string name", "string url"],
   deploy: [],
-  "dapp-sign": [
+  permit2: [
     "address token",
     "address spender",
     "uint160 amount",
@@ -337,12 +337,12 @@ export const encodeWCSignMetadata = (
   single = true
 ) => {
   const encodedData = ethers.utils.defaultAbiCoder.encode(
-    actionMetadataTypes["dapp-sign"],
+    actionMetadataTypes["permit2"],
     [params.token, params.spender, params.amount, params.expiration]
   );
 
   const data = encodeMetadata({
-    type: "dapp-sign",
+    type: "permit2",
     encodedData,
   });
 
@@ -547,7 +547,7 @@ export const decodeMetadata = (data: string) => {
             type,
           };
 
-        case "dapp-sign":
+        case "permit2":
           payload = {
             type,
             token: decodedData.token,

@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { utils } from "ethers";
-import pretty from 'pretty-ms';
 import GasSVG from "~/assets/images/icons/gas.svg?component";
 import NetworkSVG from "~/assets/images/icons/network.svg?component";
 import FlowersSVG from "~/assets/images/icons/flowers.svg?component";
@@ -69,6 +67,10 @@ const rejectRequest = (message: string) => {
   });
 };
 
+const calculateDate = (timestamp: number) => {
+  return new Date(timestamp * 1000).toLocaleString();
+};
+
 const handleSubmit = async () => {
   try {
     await switchNetworkByChainId(634);
@@ -92,7 +94,7 @@ const handleSubmit = async () => {
     });
 
     logActionToSlack({
-      message: `${props.isSign ? "Sign" : "Txn"} on ${props.wc.peerMeta?.url}`,
+      message: `${props.isSign ? "Permit2" : "Txn"} on ${props.wc.peerMeta?.url}`,
       type: "success",
       action: "wc",
       txHash: transactionHash,
@@ -112,7 +114,7 @@ const handleSubmit = async () => {
     });
 
     logActionToSlack({
-      message: `${props.isSign ? "Sign" : "Txn"} ${props.wc.peerMeta?.url} ${err}`,
+      message: `${props.isSign ? "Permit2" : "Txn"} ${props.wc.peerMeta?.url} ${err}`,
       type: "error",
       action: "wc",
       chainId: props.chainId,
@@ -198,11 +200,11 @@ const handleReject = () => {
         <div class="flex justify-between items-center">
           <div class="text-slate-400 flex items-center gap-2.5">
             <SVGClockCircle class="w-4" />
-            <span class="text-xs leading-5 font-medium">Exprires in</span>
+            <span class="text-xs leading-5 font-medium">Exprires at</span>
           </div>
 
           <div class="flex items-center gap-2.5 text-sm">
-            {{ pretty(toBN(signMessageDetails.expiration).toNumber()) }}
+            {{ calculateDate(signMessageDetails.expiration) }}
           </div>
         </div>
         </template>
