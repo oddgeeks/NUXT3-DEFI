@@ -65,7 +65,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
               accounts: [safe.safeAddress.value],
             });
 
-            triggerRef(sessions)
+            triggerRef(sessions);
           });
 
           wc.on("call_request", async (error, payload) => {
@@ -121,60 +121,85 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                   result: payload.params[0].chainId,
                 });
 
-                triggerRef(sessions)
+                triggerRef(sessions);
               } else if (
                 payload.method === "eth_signTypedData_v4" &&
-                String(payload.params[0]).toLowerCase() === String(safe.safeAddress.value).toLowerCase()
+                String(payload.params[0]).toLowerCase() ===
+                  String(safe.safeAddress.value).toLowerCase()
               ) {
                 const params = payload.params;
-                const eip712Data = JSON.parse(params[1])
-                if (eip712Data.domain.verifyingContract.toLowerCase() === "0x000000000022d473030f116ddee9f6b43ac78ba3") {
+                const eip712Data = JSON.parse(params[1]);
+                if (
+                  eip712Data.domain.verifyingContract.toLowerCase() ===
+                  "0x000000000022d473030f116ddee9f6b43ac78ba3"
+                ) {
                   await switchNetworkByChainId(634);
                   delete eip712Data.types.EIP712Domain;
-  
 
                   const permit2ABI = [
-                    "function approve(address token, address spender, uint160 amount, uint48 expiration) external"
-                  ]
-                  const approvePermit2Calldata = (new ethers.utils.Interface(permit2ABI)).encodeFunctionData("approve", [
+                    "function approve(address token, address spender, uint160 amount, uint48 expiration) external",
+                  ];
+                  const approvePermit2Calldata = new ethers.utils.Interface(
+                    permit2ABI
+                  ).encodeFunctionData("approve", [
                     eip712Data.message.details.token,
                     eip712Data.message.spender,
                     eip712Data.message.details.amount,
                     eip712Data.message.details.expiration,
-                  ])
+                  ]);
                   const actions = [
-                    { // Permit2 Allowance
+                    {
+                      // Permit2 Allowance
                       to: eip712Data.domain.verifyingContract.toLowerCase(),
                       data: approvePermit2Calldata,
                       operation: "0",
-                      value: "0"
-                    }
-                  ]
+                      value: "0",
+                    },
+                  ];
 
                   try {
-                    const tx = await safe.sendTransactions(actions, wc.chainId)
-  
-                    console.log("tx: ", tx)
-  
+                    const metadata = encodeWCSignMetadata();
+
+                    const tx = await safe.sendTransactions(
+                      actions,
+                      wc.chainId,
+                      {
+                        metadata,
+                      }
+                    );
+
+                    console.log("tx: ", tx);
+
                     wc.approveRequest({
                       id: payload.id,
                       result: tx,
                     });
+
+                    logActionToSlack({
+                      txHash: tx,
+                      account: account.value,
+                      action: "wc-sign",
+                      chainId: String(wc.chainId),
+                      message: "",
+                    });
                   } catch (error: any) {
-  
                     const err = parseTransactionError(error);
-  
+
                     wc.rejectRequest({
                       id: payload.id,
                       error: {
                         code: error.code || -32603,
-                        message: error
+                        message: error,
                       },
+                    });
+
+                    notify({
+                      type: "error",
+                      title: "Transaction sign failed",
                     });
                   }
                 } else {
                   // throw not allowed
-
                 }
               } else if (
                 signingMethods.includes(payload.method)
@@ -199,11 +224,10 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                     id: payload.id,
                     error: {
                       code: error.code || -32603,
-                      message: error.message
+                      message: error.message,
                     },
                   });
                 }
-
               } else {
                 const resp = await http(RPC_URLS[wc.chainId], {
                   method: "POST",
@@ -315,7 +339,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
     let storageId = (connector as any)._sessionStorage.storageId;
     try {
       await connector.killSession();
-    } catch (error) { }
+    } catch (error) {}
 
     storage.value.keys[safe.safeAddress.value] = storage.value.keys[
       safe.safeAddress.value
@@ -323,7 +347,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
 
     try {
       window.localStorage.removeItem(storageId);
-    } catch (error) { }
+    } catch (error) {}
   };
 
   const prepareAndConnect = async (uri: string) => {

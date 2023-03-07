@@ -31,6 +31,7 @@ const actionMetadataTypes = {
   upgrade: ["bytes32 version", "address walletImpl"],
   dapp: ["string name", "string url"],
   deploy: [],
+  "wc-sign": [],
 };
 
 export function shortenHash(hash: string, length: number = 4) {
@@ -326,6 +327,15 @@ export const encodeDeployMetadata = (single = true) => {
   return single ? encodeMultipleActions(data) : data;
 };
 
+export const encodeWCSignMetadata = (single = true) => {
+  const data = encodeMetadata({
+    type: "wc-sign",
+    encodedData: "0x",
+  });
+
+  return single ? encodeMultipleActions(data) : data;
+};
+
 export const encodeUpgradeMetadata = (
   params: UpgradeMetadataProps,
   single = true
@@ -520,6 +530,11 @@ export const decodeMetadata = (data: string) => {
           };
           break;
         case "deploy":
+          payload = {
+            type,
+          };
+
+        case "wc-sign":
           payload = {
             type,
           };
