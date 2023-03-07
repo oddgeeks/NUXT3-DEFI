@@ -31,7 +31,10 @@ const handleOpenDialog = () => {
 <template>
   <div class="container flex flex-col gap-[30px] flex-1">
     <TotalBalance />
-    <DApps />
+    <div class="flex flex-col gap-3.5">
+      <DApps />
+      <YourWallet />
+    </div>
     <div class="flex gap-5 lg:flex-row flex-col flex-1">
       <div class="flex relative flex-col w-full gap-5">
         <div
@@ -53,7 +56,7 @@ const handleOpenDialog = () => {
                     'dark:text-white text-slate-900': isHideZeroBalances,
                   }"
                   @click="isHideZeroBalances = !isHideZeroBalances"
-                  class="text-sm text-slate-400 inline-flex gap-2.5 items-center"
+                  class="text-sm text-slate-400 hidden sm:inline-flex gap-2.5 items-center"
                 >
                   Hide 0 Balances
 
@@ -160,7 +163,7 @@ const handleOpenDialog = () => {
         </div>
       </div>
       <div
-        class="flex lg:flex-col md:shrink-0 md:basis-[213px] lg:mt-0 mt-16 gap-5"
+        class="hidden sm:flex lg:flex-col md:shrink-0 md:basis-[213px] lg:mt-0 mt-16 gap-5"
       >
         <div class="w-full flex flex-col gap-5">
           <h2 class="font-semibold inline-flex gap-2.5">

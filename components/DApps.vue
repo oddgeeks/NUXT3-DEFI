@@ -190,7 +190,7 @@ watch(
       v-else
       :disabled="!safeAddress"
       size="lg"
-      class="flex items-center gap-2 px-5"
+      class="flex items-center justify-center gap-2 px-5 w-full sm:w-fit"
       @click="openWalletConnectModal()"
     >
       <PlusSVG />
@@ -213,6 +213,4 @@ watch(
 .arrow-btn {
   @apply pointer-events-auto flex items-center justify-center h-7.5 w-7.5 bg-slate-150 dark:bg-slate-750 rounded-full;
 }
-
-
 </style>

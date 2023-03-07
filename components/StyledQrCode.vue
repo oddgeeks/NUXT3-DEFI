@@ -3,7 +3,10 @@ const props = defineProps({
     data: {
         type: String,
         required: true
-    }
+    },
+    size: Number,
+    margin: Number,
+    mini: Boolean
 })
 const canvas = ref<HTMLCanvasElement>()
 
@@ -11,11 +14,11 @@ onMounted(async () => {
     const QRCodeStyling = await import("styled-qr-code")
 
     const qrCode = new QRCodeStyling.default({
-        "width": 140,
-        "height": 140,
+        "width": props.size,
+        "height": props.size,
         type: "svg",
         "data": props.data,
-        "margin": 7,
+        "margin": props.margin,
         "qrOptions": { "typeNumber": 0, "mode": "Byte", "errorCorrectionLevel": "M" },
         "dotsOptions": { "type": "dots", "color": "#000000" },
         "backgroundOptions": { "color": "#ffffff" },
@@ -27,5 +30,5 @@ onMounted(async () => {
 })
 </script>
 <template>
-    <div class="w-[140px] h-[140px]" ref="canvas" />
+    <div :class="`w-[${props.size}px] h-[${props.size}px]`" ref="canvas" />
 </template>

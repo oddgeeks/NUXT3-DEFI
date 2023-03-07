@@ -18,6 +18,7 @@ import Web3 from "~/components/modals/Web3.vue";
 import MobileHeader from "~/components/modals/MobileHeader.vue";
 import Deploy from "~/components/modals/Deploy.vue";
 import DeployNetwork from "~/components/modals/DeployNetwork.vue";
+import YourWallet from "~/components/modals/YourWallet.vue";
 
 const { openModal } = useModal();
 interface DialogModalProps {
@@ -266,6 +267,12 @@ export const openDeployNetworkModal = (network: Network) => {
     componentProps: {
       network,
     },
+  });
+};
+
+export const openYourWalletModal = () => {
+  openModal({
+    component: YourWallet
   });
 };
 

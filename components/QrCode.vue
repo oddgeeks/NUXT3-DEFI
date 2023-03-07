@@ -14,6 +14,8 @@ const shortenAddress = () => {
     >
       <StyledQrCode
         class="rounded-5 mx-auto bg-white overflow-hidden"
+        :size="140"
+        :margin="7"
         :data="account"
         :key="account"
       />
