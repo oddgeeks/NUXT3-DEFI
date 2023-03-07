@@ -157,7 +157,7 @@ const formatProtocol = (protocol: string) => {
     <div v-if="metadata.type === 'deploy'" class="self-start capitalize">
       {{ metadata?.type }}
     </div>
-    <div class="inline-flex items-center gap-2" v-if="metadata.type === 'permit2'">
+    <div class="inline-flex items-center gap-2 flex-wrap" v-if="metadata.type === 'permit2'">
       <span>Permit2 Allowance: </span>
       <img width="20" height="20" class="w-5 h-5" :src="token?.logoURI" />
       <span class="capitalize">{{ token?.symbol }}</span>
