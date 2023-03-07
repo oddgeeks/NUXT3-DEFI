@@ -270,9 +270,12 @@ export const openDeployNetworkModal = (network: Network) => {
   });
 };
 
-export const openYourWalletModal = () => {
+export const openYourWalletModal = (address: string) => {
   openModal({
-    component: YourWallet
+    component: YourWallet,
+    componentProps: {
+      address,
+    }
   });
 };
 

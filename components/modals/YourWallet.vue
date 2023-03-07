@@ -1,25 +1,22 @@
 <script setup lang="ts">
+defineProps({
+  address: String
+});
+
 const { networks } = useNetworks();
-const { safeAddress } = useAvocadoSafe();
-const account = computed(() => safeAddress.value || "0x000000000000000");
-
 const availableNetworks = networks.filter((network) => network.chainId != 634);
-
-const shortenAddress = () => {
-  return account.value.substr(0, 6) + "..." + account.value.substr(-4);
-};
 </script>
 
 <template>
   <div class="flex flex-col items-center gap-7.5">
     <span class="text-lg">Your Avocado Wallet</span>
 
-    <StyledQrCode :size="220" :margin="16" class="rounded-5 mx-auto bg-white overflow-hidden" :data="account"
-      :key="account" />
+    <StyledQrCode :size="220" :margin="16" class="rounded-5 mx-auto bg-white overflow-hidden" :data="address"
+      :key="address" />
 
-    <Copy class="mt-5 text-xl" :text="account">
+    <Copy class="mt-5 text-xl" :text="address" v-if="address">
       <template #content>
-        {{ shortenAddress() }}
+        {{ address.substr(0, 6) + "..." + address.substr(-4) }}
       </template>
     </Copy>
 
