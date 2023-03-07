@@ -60,6 +60,10 @@ const bridgeAmountFormatted = computed(() =>
   )
 );
 
+const calculateDate = (timestamp: number) => {
+  return new Date(timestamp * 1000).toLocaleString();
+};
+
 const formatProtocol = (protocol: string) => {
   return new Map([
     ["1inch-v5", "1inch"],
@@ -71,73 +75,109 @@ const formatProtocol = (protocol: string) => {
 
 <template>
   <div>
-    <div class="flex gap-5" v-if="metadata.type === 'transfer' && token">
-    <span class="capitalize text-sm">{{ metadata.type }}</span>
-    <span class="inline-flex gap-2.5 items-center">
+    <div class="flex items-center gap-5" v-if="metadata.type === 'transfer' && token">
+      <span class="capitalize text-xs sm:text-sm">{{ metadata.type }}</span>
+      <span class="inline-flex gap-2.5 items-center">
+        <img width="20" height="20" class="w-5 h-5" :src="token?.logoURI" />
+        {{ formattedAmount }}
+        <span class="uppercase">{{ token?.symbol }}</span>
+        <ArrowRight class="w-4 h-4 text-slate-400 mx-2" />
+        <a
+          class="text-primary"
+          :href="
+            getExplorerUrl(
+              transaction?.chain_id,
+              `/address/${metadata.receiver}`
+            )
+          "
+          >{{ shortenHash(metadata.receiver) }}</a
+        >
+      </span>
+    </div>
+    <div class="flex items-center gap-5" v-if="metadata.type === 'gas-topup' && token">
+      <span class="capitalize text-xs sm:text-sm">{{ metadata.type }}</span>
+      <span class="inline-flex gap-2.5 items-center">
+        <img width="20" height="20" class="w-5 h-5" :src="token?.logoURI" />
+        {{ formattedAmount }}
+        <span class="uppercase">{{ token?.symbol }}</span>
+        <GasSVG class="w-4 h-4 text-slate-400 mx-2" />
+        <span>{{ shortenHash(metadata.onBehalf) }}</span>
+      </span>
+    </div>
+    <div
+      class="flex items-center gap-5"
+      v-if="metadata.type === 'swap' && sellToken && buyToken"
+    >
+      <span class="capitalize text-xs sm:text-sm">{{ metadata.type }}</span>
+      <span class="inline-flex gap-2.5 items-center">
+        <img width="20" height="20" class="w-5 h-5" :src="sellToken?.logoURI" />
+        {{ sellAmountFormatted }}
+        <span class="uppercase">{{ sellToken?.symbol }}</span>
+        <RefreshSVG class="w-4 h-4 text-slate-400 mx-2" />
+        <img width="20" height="20" class="w-5 h-5" :src="buyToken?.logoURI" />
+        {{ buyAmountFormatted }}
+        <span class="uppercase">{{ buyToken?.symbol }}</span>
+        <span
+          class="capitalize hidden sm:flex items-center gap-2.5"
+          v-if="metadata.protocol"
+        >
+          On <ProtocolLogo class="w-5 h-5" :name="metadata.protocol" />
+          {{ formatProtocol(metadata.protocol) }}
+        </span>
+      </span>
+    </div>
+    <div
+      class="flex gap-5 items-center"
+      v-if="metadata.type === 'bridge' && toToken"
+    >
+      <span class="capitalize text-xs sm:text-sm">{{ metadata.type }}</span>
+      <span class="inline-flex gap-2.5 items-center">
+        <img width="20" height="20" class="w-5 h-5" :src="toToken.logoURI" />
+        {{ bridgeAmountFormatted }}
+        <span class="uppercase">{{ toToken?.symbol }}</span>
+        <SVGBridge class="text-slate-400 w-5 h-5" />
+        <span class="flex items-center gap-2.5">
+          <ChainLogo class="w-5" :chain="metadata.toChainId" />
+          <span>{{ chainIdToName(metadata.toChainId) }}</span>
+        </span>
+      </span>
+    </div>
+    <div v-if="metadata.type === 'upgrade'" class="self-start">
+      Wallet upgraded to {{ metadata?.version }}
+    </div>
+    <div
+      v-if="metadata.type === 'dapp'"
+      class="self-start flex items-center gap-2 text-primary"
+    >
+      <a :href="metadata?.url" target="_blank" rel="noopener noreferrer">{{
+        metadata?.name
+      }}</a>
+      <LinkSVG />
+    </div>
+    <div v-if="metadata.type === 'deploy'" class="self-start capitalize">
+      {{ metadata?.type }}
+    </div>
+    <div class="inline-flex items-center gap-2 flex-wrap" v-if="metadata.type === 'permit2'">
+      <span>Permit2 Allowance: </span>
       <img width="20" height="20" class="w-5 h-5" :src="token?.logoURI" />
-      {{ formattedAmount }}
-      <span class="uppercase">{{ token?.symbol }}</span>
-      <ArrowRight class="w-4 h-4 text-slate-400 mx-2" />
-      <a
+      <span class="capitalize">{{ token?.symbol }}</span>
+      to 
+      <NuxtLink
         class="text-primary"
-        :href="
-          getExplorerUrl(transaction?.chain_id, `/address/${metadata.receiver}`)
-        "
-        >{{ shortenHash(metadata.receiver) }}</a
-      >
-    </span>
-  </div>
-  <div class="flex gap-5" v-if="metadata.type === 'gas-topup' && token">
-    <span class="capitalize text-sm">{{ metadata.type }}</span>
-    <span class="inline-flex gap-2.5 items-center">
-      <img width="20" height="20" class="w-5 h-5" :src="token?.logoURI" />
-      {{ formattedAmount }}
-      <span class="uppercase">{{ token?.symbol }}</span>
-      <GasSVG class="w-4 h-4 text-slate-400 mx-2" />
-      <span>{{ shortenHash(metadata.onBehalf) }}</span>
-    </span>
-  </div>
-  <div class="flex gap-5" v-if="metadata.type === 'swap' && sellToken && buyToken">
-    <span class="capitalize text-sm">{{ metadata.type }}</span>
-    <span class="inline-flex gap-2.5 items-center">
-      <img width="20" height="20" class="w-5 h-5" :src="sellToken?.logoURI" />
-      {{ sellAmountFormatted }}
-      <span class="uppercase">{{ sellToken?.symbol }}</span>
-      <RefreshSVG class="w-4 h-4 text-slate-400 mx-2" />
-      <img width="20" height="20" class="w-5 h-5" :src="buyToken?.logoURI" />
-      {{ buyAmountFormatted }}
-      <span class="uppercase">{{ buyToken?.symbol }}</span>
-      <span
-        class="capitalize flex items-center gap-2.5"
-        v-if="metadata.protocol"
-      >
-        On <ProtocolLogo class="w-5 h-5" :name="metadata.protocol" />
-        {{ formatProtocol(metadata.protocol) }}
-      </span>
-    </span>
-  </div>
-  <div class="flex gap-5 items-center" v-if="metadata.type === 'bridge' && toToken">
-    <span class="capitalize text-sm">{{ metadata.type }}</span>
-    <span class="inline-flex gap-2.5 items-center">
-      <img width="20" height="20" class="w-5 h-5" :src="toToken.logoURI" />
-      {{ bridgeAmountFormatted }}
-      <span class="uppercase">{{ toToken?.symbol }}</span>
-      <SVGBridge class="text-slate-400 w-5 h-5" />
-      <span class="flex items-center gap-2.5">
-        <ChainLogo class="w-5" :chain="metadata.toChainId" />
-        <span>{{ chainIdToName(metadata.toChainId) }}</span>
-      </span>
-    </span>
-  </div>
-  <div v-if="metadata.type === 'upgrade'" class="self-start">
-    Wallet upgraded to {{ metadata?.version }}
-  </div>
-  <div v-if="metadata.type === 'dapp'" class="self-start flex items-center gap-2 text-primary">
-   <a :href="metadata?.url" target="_blank" rel="noopener noreferrer">{{ metadata?.name }}</a>
-   <LinkSVG />
-  </div>
-   <div v-if="metadata.type === 'deploy'" class="self-start capitalize">
-     {{ metadata?.type }}
-  </div>
+          :href="
+            getExplorerUrl(
+              transaction?.chain_id,
+              `/address/${metadata.spender}`
+            )
+          "
+          target="_blank"
+          external
+        >
+          {{ shortenHash(metadata.spender) }}
+          </NuxtLink
+        >
+      |
+      <span> Expiration date at  {{ calculateDate(metadata?.expiration) }}</span>
+    </div>
   </div>
 </template>

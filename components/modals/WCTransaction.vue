@@ -1,35 +1,29 @@
 <script lang="ts" setup>
-import { utils } from "ethers";
 import GasSVG from "~/assets/images/icons/gas.svg?component";
 import NetworkSVG from "~/assets/images/icons/network.svg?component";
 import FlowersSVG from "~/assets/images/icons/flowers.svg?component";
+import SVGClockCircle from "~/assets/images/icons/clock-circle.svg?component";
 import type WalletConnect from "@walletconnect/client";
 import { storeToRefs } from "pinia";
 
-const provider = getRpcProvider(634);
 const emit = defineEmits(["resolve", "reject"]);
 
 const props = defineProps<{
   payload: any;
   chainId: string;
   wc: WalletConnect;
+  metadata: string;
+  isSign?: boolean;
+  signMessageDetails?: any;
 }>();
 
-const { safe, sendTransaction } = useAvocadoSafe();
+const { safe, sendTransactions } = useAvocadoSafe();
 const { account } = useWeb3();
 const { gasBalance } = storeToRefs(useSafe());
 const [submitting, toggle] = useToggle();
 const { switchNetworkByChainId } = useNetworks();
 const { parseTransactionError } = useErrorHandler();
-
-const {
-  data: fee,
-  pending,
-  error,
-} = useEstimatedFee(ref(props.payload.params), {
-  chainId: props.chainId,
-  immediate: true,
-});
+const { getTokenByAddress } = useTokens()
 
 const submitDisabled = computed(
   () =>
@@ -63,25 +57,45 @@ const rejectRequest = (message: string) => {
   });
 };
 
+const calculateDate = (timestamp: number) => {
+  return new Date(timestamp * 1000).toLocaleString();
+};
+
+const transactions = computed(() => {
+  const [transactionOrTransactions] = props.payload.params
+
+  return Array.isArray(transactionOrTransactions) ? transactionOrTransactions : [transactionOrTransactions]
+})
+
+const options = computed(() => {
+  const [transactionOrTransactions, chainId, options] = props.payload.params
+
+  return options || {}
+})
+
+const {
+  data: fee,
+  pending,
+  error,
+} = useEstimatedFee(transactions, {
+  chainId: props.chainId,
+  immediate: true,
+  options: options.value,
+});
+
 const handleSubmit = async () => {
   try {
     await switchNetworkByChainId(634);
 
     toggle(true);
-    const params = props.payload?.params[0];
+  
 
-    const metadata = encodeDappMetadata({
-      name: props.wc.peerMeta?.name!,
-      url: props.wc.peerMeta?.url!,
-    });
-
-    const transactionHash = await sendTransaction(
+    const transactionHash = await sendTransactions(
+      transactions.value,
+      props.chainId,
       {
-        ...params,
-        chainId: props.chainId,
-      },
-      {
-        metadata,
+        metadata: props.metadata,
+        ...options.value
       }
     );
 
@@ -91,7 +105,7 @@ const handleSubmit = async () => {
     });
 
     logActionToSlack({
-      message: `Txn on ${props.wc.peerMeta?.url}`,
+      message: `${props.isSign ? "Permit2 Approval" : "Txn"} on ${props.wc.peerMeta?.url}`,
       type: "success",
       action: "wc",
       txHash: transactionHash,
@@ -111,7 +125,7 @@ const handleSubmit = async () => {
     });
 
     logActionToSlack({
-      message: props.wc.peerMeta?.url + " " + err,
+      message: `${props.isSign ? "Permit2 Approval" : "Txn"} ${props.wc.peerMeta?.url} ${err}`,
       type: "error",
       action: "wc",
       chainId: props.chainId,
@@ -135,12 +149,13 @@ const handleReject = () => {
 <template>
   <form @submit.prevent="handleSubmit" class="flex flex-col gap-7.5">
     <audio src="/audio/alert.mp3" autoplay></audio>
-    <div class="text-lg font-semibold leading-[30px]">Send Transaction</div>
+    <div class="font-semibold leading-[30px]">
+      <span v-if="isSign">Send Transaction: Permit2 Approval</span>
+      <span v-else>Send Transaction</span>
+    </div>
 
     <div class="flex flex-col gap-2.5">
-      <div
-        class="dark:bg-gray-850 bg-slate-50 flex flex-col gap-4 rounded-5 py-[14px] px-5"
-      >
+      <div class="dark:bg-gray-850 bg-slate-50 flex flex-col gap-4 rounded-5 py-[14px] px-5">
         <div class="flex justify-between items-center">
           <div class="text-slate-400 flex items-center gap-2.5">
             <FlowersSVG />
@@ -148,12 +163,7 @@ const handleReject = () => {
           </div>
 
           <div class="flex items-center gap-2.5">
-            <a
-              rel="noopener noreferrer"
-              target="_blank"
-              class="text-primary text-sm"
-              :href="wc.peerMeta?.url"
-            >
+            <a rel="noopener noreferrer" target="_blank" class="text-primary text-sm" :href="wc.peerMeta?.url">
               {{ formatURL(wc.peerMeta?.url!) }}
             </a>
           </div>
@@ -179,20 +189,22 @@ const handleReject = () => {
 
           <div class="flex items-center gap-2.5">
             <span v-if="pending" class="w-20 h-5 loading-box rounded-lg"></span>
-            <span
-              v-else
-              :class="{ 'text-red-alert': isBalaceNotEnough }"
-              class="text-xs"
-              >{{ fee?.formatted }}</span
-            >
-            <img
-              class="w-[18px] h-[18px]"
-              width="18"
-              height="18"
-              src="https://cdn.instadapp.io/icons/tokens/usdc.svg"
-            />
+            <span v-else :class="{ 'text-red-alert': isBalaceNotEnough }" class="text-xs">{{ fee?.formatted }}</span>
+            <img class="w-[18px] h-[18px]" width="18" height="18" src="https://cdn.instadapp.io/icons/tokens/usdc.svg" />
           </div>
         </div>
+        <template v-if="isSign && signMessageDetails">
+        <div class="flex justify-between items-center">
+          <div class="text-slate-400 flex items-center gap-2.5">
+            <SVGClockCircle class="w-4" />
+            <span class="text-xs leading-5 font-medium">Exprires at</span>
+          </div>
+
+          <div class="flex items-center gap-2.5 text-sm">
+            {{ calculateDate(signMessageDetails.expiration) }}
+          </div>
+        </div>
+        </template>
       </div>
 
       <CommonNotification v-if="error" type="error" :text="error">
@@ -204,22 +216,13 @@ const handleReject = () => {
       </CommonNotification>
     </div>
     <div class="flex justify-between items-center gap-4">
-      <CommonButton
-        @click="handleReject"
-        color="white"
-        size="lg"
-        class="flex-1 justify-center items-center hover:!bg-red-alert hover:!bg-opacity-10 hover:text-red-alert"
-      >
+      <CommonButton @click="handleReject" color="white" size="lg"
+        class="flex-1 justify-center items-center hover:!bg-red-alert hover:!bg-opacity-10 hover:text-red-alert">
         Reject
       </CommonButton>
 
-      <CommonButton
-        :loading="submitting"
-        :disabled="submitDisabled"
-        type="submit"
-        class="flex-1 justify-center items-center"
-        size="lg"
-      >
+      <CommonButton :loading="submitting" :disabled="submitDisabled" type="submit"
+        class="flex-1 justify-center items-center" size="lg">
         Submit
       </CommonButton>
     </div>

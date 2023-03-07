@@ -258,9 +258,7 @@ onMounted(async () => {
             <p
               class="text-orange text-xs leading-5 font-medium text-center mb-4"
             >
-              Would you like to activate expert mode, even though it could
-              potentially cause incompatibility issues with
-              {{ connection.peerMeta.name }}?
+              Would you like to manually switch Network? Some things may not behave as expected.
             </p>
             <div class="flex w-full gap-4">
               <CommonButton
@@ -310,27 +308,14 @@ onMounted(async () => {
           </template>
         </CommonSelect>
       </div>
-      <div class="flex flex-col gap-3">
-        <div
-          v-if="connection.peerMeta.name === 'Uniswap Interface'"
-          class="bg-orange-400 rounded-5 flex gap-2.5 bg-opacity-10 p-[14px]"
-        >
-          <p class="text-orange text-xs leading-5 font-medium">
-            Avocado is currently not compliant with Uniswap App due to
-            incompatibility issue with Permit2 dependency. You might face issues
-            while transacting on Uniswap. We are working on releasing a fix
-            soon.
-          </p>
-        </div>
-        <CommonButton
+      <CommonButton
           type="submit"
           :loading="loading"
           class="w-full justify-center"
           size="lg"
         >
-          Approve
-        </CommonButton>
-      </div>
+        Approve
+      </CommonButton>
     </form>
     <div @click="isTutorialWatched = true" v-if="isIframeVisible" class="mt-6">
       <h1 class="text-xs leading-5 mb-3 text-slate-400 text-center font-medium">

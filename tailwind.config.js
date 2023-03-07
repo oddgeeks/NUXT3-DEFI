@@ -31,6 +31,7 @@ module.exports = {
         "navigation-pattern-dark-left": `linear-gradient(90deg, #111827 0%, rgba(17, 24, 39, 0) 100%);`,
       },
       spacing: {
+        4.5: "18px",
         5.5: "25px", // wrong? 22px
         6.25: "25px",
         6.5: "26px",

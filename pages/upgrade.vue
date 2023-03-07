@@ -17,25 +17,25 @@ const mostRecentVersion = computed(() => {
 </script>
 
 <template>
-  <div class="mx-auto max-w-[880px] w-full flex-1 mt-3">
-    <div class="mb-7.5 max-w-[796px] w-full">
-      <h1 class="text-3xl font-bold leading-10 mb-2.5">
+  <div class="px-5 sm:mx-auto max-w-[880px] w-full flex-1 mt-3">
+    <div class="mb-5 sm:mb-7.5 max-w-[796px] w-full">
+      <h1 class="text-xl sm:text-3xl font-bold leading-7.5 mb-2.5">
         Upgrade your Avocado Wallet
       </h1>
-      <h2 class="text-slate-400 font-medium text-sm">
+      <h2 class="text-slate-400 leading-6 font-medium text-xs sm:text-sm">
         Avocado wallet is a Smart Contract wallet, it is recommended that you
         keep your Smart Contract upgraded to make the most of Avocado.
       </h2>
     </div>
-    <div class="h-full relative">
+    <div class="h-full relative mb-7.5 sm:mb-0">
       <div
         :class="{ 'blur h-full': !account || !data }"
-        class="dark:bg-gray-850 bg-slate-50 rounded-[25px] flex-1 relative"
+        class="dark:bg-gray-850 bg-slate-50 rounded-5 sm:rounded-[25px] flex-1 relative"
       >
         <table class="table w-full">
           <thead>
             <tr
-              class="text-left text-sm text-gray-400 font-medium border-b border-slate-150 dark:border-slate-800"
+              class="hidden sm:table-row text-left text-sm text-gray-400 font-medium border-b border-slate-150 dark:border-slate-800"
             >
               <th class="text-left py-6 pl-7.5">Network</th>
               <th class="py-5">Latest version</th>
@@ -56,7 +56,7 @@ const mostRecentVersion = computed(() => {
       </div>
       <div
         v-if="!account"
-        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 sm:-translate-y-1/2 flex items-center justify-center"
       >
         <div class="flex flex-col items-center justify-center gap-6">
           <p class="font-semibold text-lg whitespace-nowrap">

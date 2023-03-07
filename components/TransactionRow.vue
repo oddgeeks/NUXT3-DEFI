@@ -6,7 +6,7 @@ defineProps<{
 
 <template>
   <tr
-    class="transaction-row text-sm relative cursor-pointer"
+    class="transaction-row text-sm relative cursor-pointer hidden sm:table-row"
     :class="{
       'text-slate-500': ['failed', 'dropped'].includes(transaction.status),
     }"
