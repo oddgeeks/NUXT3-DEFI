@@ -39,7 +39,14 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
           let wc = new WalletConnect({
             storageId: id,
             session: JSON.parse(localStorage.getItem(id)!),
-            signingMethods: [...signingMethods, "eth_getBalance"],
+            signingMethods: [
+              ...signingMethods,
+              "eth_sendAvocadoTransaction",
+              "eth_sendAvocadoTransactions",
+              "eth_getBalance",
+              "avocado_sendTransaction",
+              "avocado_sendTransactions",
+            ],
           });
 
           wc.networkId = wc.chainId;
@@ -85,6 +92,49 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                   id: payload.id,
                   result: [safe.safeAddress.value],
                 });
+              } else if (
+                [
+                  "eth_sendAvocadoTransaction",
+                  "eth_sendAvocadoTransactions",
+                  "avocado_sendTransaction",
+                  "avocado_sendTransactions",
+                ].includes(payload.method)
+              ) {
+                try {
+                  const metadata = encodeDappMetadata({
+                    name: wc.peerMeta?.name!,
+                    url: wc.peerMeta?.url!,
+                  });
+
+                  const { success, payload: msg } =
+                    await openWCTransactionModal({
+                      modalId: wc.peerId,
+                      chainId: String(wc.chainId),
+                      payload,
+                      wc,
+                      metadata,
+                    });
+
+                  if (!success) {
+                    wc.rejectRequest({
+                      id: payload.id,
+                      error: {
+                        code: -32603,
+                        message: msg,
+                      },
+                    });
+                  }
+                } catch (error: any) {
+                  const err = parseTransactionError(error);
+
+                  wc.rejectRequest({
+                    id: payload.id,
+                    error: {
+                      code: error.code || -32603,
+                      message: err,
+                    },
+                  });
+                }
               } else if (payload.method === "eth_sendTransaction") {
                 const metadata = encodeDappMetadata({
                   name: wc.peerMeta?.name!,
@@ -303,7 +353,14 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
           uri: uri,
           clientMeta,
           storageId,
-          signingMethods: [...signingMethods, "eth_getBalance"],
+          signingMethods: [
+            ...signingMethods,
+            "eth_sendAvocadoTransaction",
+            "eth_sendAvocadoTransactions",
+            "eth_getBalance",
+            "avocado_sendTransaction",
+            "avocado_sendTransactions",
+          ],
         });
 
         connector.on("session_request", (error, payload) => {
