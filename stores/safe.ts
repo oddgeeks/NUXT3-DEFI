@@ -31,6 +31,8 @@ export const useSafe = defineStore("safe", () => {
     (network) => network.chainId != 634
   );
 
+  const networkPreference = ref(new Set(availableNetworks.map(el => el.chainId)));
+
   const balances = ref({
     data: undefined as IBalance[] | undefined,
     loading: false,
@@ -241,6 +243,7 @@ export const useSafe = defineStore("safe", () => {
     fetchBalances,
     forwarderProxyAddress,
     networkVersions,
+    networkPreference,
   };
 });
 

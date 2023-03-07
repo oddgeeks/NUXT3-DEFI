@@ -3,17 +3,17 @@ import LinkSVG from "~/assets/images/icons/external-link.svg?raw";
 import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import ChevronDownSVG from "~/assets/images/icons/chevron-down.svg?component";
 import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?component";
-const { networks, getNetworkByChainId } = useNetworks();
-const { tokenBalances } = useAvocadoSafe();
+import { storeToRefs } from "pinia";
+const { networks } = useNetworks();
 const { account } = useWeb3();
-const { unstableDappNetworks } = useBanner()
+const { unstableDappNetworks } = useBanner();
+const { networkPreference } = storeToRefs(useSafe());
 
 useForceSingleSession();
 
 const availableNetworks = networks.filter((network) => network.chainId != 634);
 
 const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
-const networkPreference = ref(new Set(availableNetworks.map(el => el.chainId)));
 
 const handleOpenDialog = () => {
   openDialogModal({
@@ -42,7 +42,7 @@ const handleOpenDialog = () => {
           class="flex flex-col gap-5"
         >
         <WarningsUnstableDappVersion v-if="unstableDappNetworks.length" />
-          <div class="flex justify-between pr-7.5">
+          <div class="flex justify-between sm:pr-7.5">
             <div class="flex gap-7.5">
               <h2 class="font-semibold inline-flex gap-2.5 items-center">
                 Balances
@@ -89,7 +89,11 @@ const handleOpenDialog = () => {
                   </div>
                 </div>
               </ClientOnly>
-              <Popover as="div" class="relative z-20 flex gap-4 items-center">
+              <button class="text-sm inline-flex sm:hidden items-center gap-2">
+                Filters
+                <ChevronDownSVG class="text-slate-400 w-[14px] h-[14px] -rotate-90" />
+              </button>
+              <Popover as="div" class="relative z-20 hidden sm:flex gap-4 items-center">
                 <PopoverButton class="text-sm flex items-center gap-2 h-7.5">
                   Networks
                   <ChevronDownSVG class="text-slate-400 w-[14px] h-[14px]" />
