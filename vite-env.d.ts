@@ -259,9 +259,17 @@ type MetadataProps = {
     | "gas-topup"
     | "upgrade"
     | "dapp"
-    | "deploy";
+    | "deploy"
+    | "permit2";
   encodedData: string;
   version?: string;
+};
+
+type SignMetadataProps = {
+  token: string;
+  spender: string;
+  amount: string;
+  expiration: string;
 };
 
 type DappMetadataProps = {

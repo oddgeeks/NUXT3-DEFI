@@ -31,6 +31,12 @@ const actionMetadataTypes = {
   upgrade: ["bytes32 version", "address walletImpl"],
   dapp: ["string name", "string url"],
   deploy: [],
+  permit2: [
+    "address token",
+    "address spender",
+    "uint160 amount",
+    "uint48 expiration",
+  ],
 };
 
 export function shortenHash(hash: string, length: number = 4) {
@@ -326,6 +332,23 @@ export const encodeDeployMetadata = (single = true) => {
   return single ? encodeMultipleActions(data) : data;
 };
 
+export const encodeWCSignMetadata = (
+  params: SignMetadataProps,
+  single = true
+) => {
+  const encodedData = ethers.utils.defaultAbiCoder.encode(
+    actionMetadataTypes["permit2"],
+    [params.token, params.spender, params.amount, params.expiration]
+  );
+
+  const data = encodeMetadata({
+    type: "permit2",
+    encodedData,
+  });
+
+  return single ? encodeMultipleActions(data) : data;
+};
+
 export const encodeUpgradeMetadata = (
   params: UpgradeMetadataProps,
   single = true
@@ -522,6 +545,15 @@ export const decodeMetadata = (data: string) => {
         case "deploy":
           payload = {
             type,
+          };
+
+        case "permit2":
+          payload = {
+            type,
+            token: decodedData.token,
+            spender: decodedData.spender,
+            amount: toBN(decodedData.amount).toFixed(),
+            expiration: decodedData.expiration,
           };
 
           break;
