@@ -136,8 +136,11 @@ const formatProtocol = (protocol: string) => {
    <a :href="metadata?.url" target="_blank" rel="noopener noreferrer">{{ metadata?.name }}</a>
    <LinkSVG />
   </div>
-   <div v-if="metadata.type === 'deploy'" class="self-start capitalize">
+  <div v-if="metadata.type === 'deploy'" class="self-start capitalize">
      {{ metadata?.type }}
+  </div>
+   <div v-if="metadata.type === 'wc-sign'" class="self-start capitalize">
+     WalletConnect Sign
   </div>
   </div>
 </template>
