@@ -37,7 +37,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
           let wc = new WalletConnect({
             storageId: id,
             session: JSON.parse(localStorage.getItem(id)!),
-            signingMethods: [...signingMethods, "eth_sendAvocadoTransaction", "eth_sendAvocadoTransactions", "eth_getBalance"],
+            signingMethods: [...signingMethods, "eth_sendAvocadoTransaction", "eth_sendAvocadoTransactions", "eth_getBalance", "avocado_sendTransaction", "avocado_sendTransactions"],
           });
 
           wc.networkId = wc.chainId;
@@ -83,7 +83,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                   id: payload.id,
                   result: [safe.safeAddress.value],
                 });
-              } else if (payload.method === "eth_sendAvocadoTransaction" || payload.method === "eth_sendAvocadoTransactions") {
+              } else if (["eth_sendAvocadoTransaction", "eth_sendAvocadoTransactions", "avocado_sendTransaction", "avocado_sendTransactions"].includes(payload.method)) {
 
                 const [transactionOrTransactions, chainId, options] = payload.params
 
@@ -227,7 +227,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
           uri: uri,
           clientMeta,
           storageId,
-          signingMethods: [...signingMethods, "eth_sendAvocadoTransaction", "eth_sendAvocadoTransactions", "eth_getBalance"],
+          signingMethods: [...signingMethods, "eth_sendAvocadoTransaction", "eth_sendAvocadoTransactions", "eth_getBalance", "avocado_sendTransaction", "avocado_sendTransactions"],
         });
 
         connector.on("session_request", (error, payload) => {
