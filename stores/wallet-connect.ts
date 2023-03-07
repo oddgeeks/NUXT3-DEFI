@@ -37,7 +37,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
           let wc = new WalletConnect({
             storageId: id,
             session: JSON.parse(localStorage.getItem(id)!),
-            signingMethods: [...signingMethods, "eth_getBalance"],
+            signingMethods: [...signingMethods, "eth_sendAvocadoTransaction", "eth_sendAvocadoTransactions", "eth_getBalance"],
           });
 
           wc.networkId = wc.chainId;
@@ -84,10 +84,10 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                   result: [safe.safeAddress.value],
                 });
               } else if (payload.method === "eth_sendAvocadoTransaction" || payload.method === "eth_sendAvocadoTransactions") {
-                
+
                 const [transactionOrTransactions, chainId, options] = payload.params
 
-                const txs = Array.isArray(transactionOrTransactions) ?  transactionOrTransactions : [transactionOrTransactions] 
+                const txs = Array.isArray(transactionOrTransactions) ? transactionOrTransactions : [transactionOrTransactions]
 
                 try {
                   const tx = await safe.sendTransactions(txs, chainId || wc.chainId, options || {})
@@ -227,7 +227,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
           uri: uri,
           clientMeta,
           storageId,
-          signingMethods: [...signingMethods, "eth_getBalance"],
+          signingMethods: [...signingMethods, "eth_sendAvocadoTransaction", "eth_sendAvocadoTransactions", "eth_getBalance"],
         });
 
         connector.on("session_request", (error, payload) => {
@@ -274,7 +274,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
     let storageId = (connector as any)._sessionStorage.storageId;
     try {
       await connector.killSession();
-    } catch (error) {}
+    } catch (error) { }
 
     storage.value.keys[safe.safeAddress.value] = storage.value.keys[
       safe.safeAddress.value
@@ -282,7 +282,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
 
     try {
       window.localStorage.removeItem(storageId);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const prepareAndConnect = async (uri: string) => {
