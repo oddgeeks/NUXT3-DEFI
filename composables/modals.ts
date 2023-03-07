@@ -19,6 +19,7 @@ import MobileHeader from "~/components/modals/MobileHeader.vue";
 import Deploy from "~/components/modals/Deploy.vue";
 import DeployNetwork from "~/components/modals/DeployNetwork.vue";
 import YourWallet from "~/components/modals/YourWallet.vue";
+import Networks from "~/components/modals/Networks.vue";
 
 const { openModal } = useModal();
 interface DialogModalProps {
@@ -285,6 +286,12 @@ export const openDeployModal = () => {
     options: {
       wrapperClass: "max-w-[600px]",
     },
+  });
+};
+
+export const openNetworksModal = () => {
+  openModal({
+    component: Networks
   });
 };
 

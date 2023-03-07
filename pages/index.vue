@@ -89,7 +89,7 @@ const handleOpenDialog = () => {
                   </div>
                 </div>
               </ClientOnly>
-              <button class="text-sm inline-flex sm:hidden items-center gap-2">
+              <button @click="openNetworksModal" class="text-sm inline-flex sm:hidden items-center gap-2">
                 Filters
                 <ChevronDownSVG class="text-slate-400 w-[14px] h-[14px] -rotate-90" />
               </button>
