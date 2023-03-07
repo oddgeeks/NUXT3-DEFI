@@ -94,7 +94,7 @@ const handleSubmit = async () => {
     });
 
     logActionToSlack({
-      message: `${props.isSign ? "Permit2" : "Txn"} on ${props.wc.peerMeta?.url}`,
+      message: `${props.isSign ? "Permit2 Approval" : "Txn"} on ${props.wc.peerMeta?.url}`,
       type: "success",
       action: "wc",
       txHash: transactionHash,
@@ -114,7 +114,7 @@ const handleSubmit = async () => {
     });
 
     logActionToSlack({
-      message: `${props.isSign ? "Permit2" : "Txn"} ${props.wc.peerMeta?.url} ${err}`,
+      message: `${props.isSign ? "Permit2 Approval" : "Txn"} ${props.wc.peerMeta?.url} ${err}`,
       type: "error",
       action: "wc",
       chainId: props.chainId,
@@ -138,7 +138,10 @@ const handleReject = () => {
 <template>
   <form @submit.prevent="handleSubmit" class="flex flex-col gap-7.5">
     <audio src="/audio/alert.mp3" autoplay></audio>
-    <div class="text-lg font-semibold leading-[30px]">Send Transaction</div>
+    <div class="font-semibold leading-[30px]">
+      <span v-if="isSign">Send Transaction: Permit2 Approval</span>
+      <span v-else>Send Transaction</span>
+    </div>
 
     <div class="flex flex-col gap-2.5">
       <div
