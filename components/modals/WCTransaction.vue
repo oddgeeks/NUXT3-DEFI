@@ -25,15 +25,6 @@ const { switchNetworkByChainId } = useNetworks();
 const { parseTransactionError } = useErrorHandler();
 const { getTokenByAddress } = useTokens()
 
-const {
-  data: fee,
-  pending,
-  error,
-} = useEstimatedFee(ref(props.payload.params[0]), {
-  chainId: props.chainId,
-  immediate: true,
-});
-
 const submitDisabled = computed(
   () =>
     submitting.value || pending.value || isBalaceNotEnough.value || error.value
@@ -70,27 +61,41 @@ const calculateDate = (timestamp: number) => {
   return new Date(timestamp * 1000).toLocaleString();
 };
 
+const transactions = computed(() => {
+  const [transactionOrTransactions] = props.payload.params
+
+  return Array.isArray(transactionOrTransactions) ? transactionOrTransactions : [transactionOrTransactions]
+})
+
+const options = computed(() => {
+  const [transactionOrTransactions, chainId, options] = props.payload.params
+
+  return options || {}
+})
+
+const {
+  data: fee,
+  pending,
+  error,
+} = useEstimatedFee(transactions, {
+  chainId: props.chainId,
+  immediate: true,
+  options: options.value,
+});
+
 const handleSubmit = async () => {
   try {
     await switchNetworkByChainId(634);
 
     toggle(true);
-    const [transactionOrTransactions, chainId, options] = props.payload.params
-
-    const txs = Array.isArray(transactionOrTransactions) ? transactionOrTransactions : [transactionOrTransactions]
-
-
-    const metadata = encodeDappMetadata({
-      name: props.wc.peerMeta?.name!,
-      url: props.wc.peerMeta?.url!,
-    });
+  
 
     const transactionHash = await sendTransactions(
-      txs,
-      chainId || props.chainId,
+      transactions.value,
+      props.chainId,
       {
         metadata: props.metadata,
-        ...options
+        ...options.value
       }
     );
 

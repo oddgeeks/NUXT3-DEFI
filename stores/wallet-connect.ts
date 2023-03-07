@@ -17,7 +17,6 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
   const safe = useAvocadoSafe();
   const { library, account } = useWeb3();
   const { parseTransactionError } = useErrorHandler();
-  const { parseTransactionError } = useErrorHandler();
   const { switchNetworkByChainId } = useNetworks();
   const storage = useLocalStorage<{ keys: Record<string, string[]> }>(
     "wallet_connect",
@@ -101,24 +100,30 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                   "avocado_sendTransactions",
                 ].includes(payload.method)
               ) {
-                const [transactionOrTransactions, chainId, options] =
-                  payload.params;
-
-                const txs = Array.isArray(transactionOrTransactions)
-                  ? transactionOrTransactions
-                  : [transactionOrTransactions];
-
                 try {
-                  const tx = await safe.sendTransactions(
-                    txs,
-                    chainId || wc.chainId,
-                    options || {}
-                  );
-
-                  wc.approveRequest({
-                    id: payload.id,
-                    result: tx,
+                  const metadata = encodeDappMetadata({
+                    name: wc.peerMeta?.name!,
+                    url: wc.peerMeta?.url!,
                   });
+
+                  const { success, payload: msg } =
+                    await openWCTransactionModal({
+                      modalId: wc.peerId,
+                      chainId: String(wc.chainId),
+                      payload,
+                      wc,
+                      metadata,
+                    });
+
+                  if (!success) {
+                    wc.rejectRequest({
+                      id: payload.id,
+                      error: {
+                        code: -32603,
+                        message: msg,
+                      },
+                    });
+                  }
                 } catch (error: any) {
                   const err = parseTransactionError(error);
 
