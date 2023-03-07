@@ -39,6 +39,9 @@ interface IWcTransactionModal {
   chainId: string;
   modalId: string;
   wc: IWalletConnect;
+  metadata: string;
+  isSign?: boolean;
+  signMessageDetails?: any;
 }
 
 export const showPendingTransactionModal = (
@@ -165,6 +168,9 @@ export const openWCTransactionModal = async (params: IWcTransactionModal) => {
       payload: params.payload,
       chainId: params.chainId,
       wc: params.wc,
+      metadata: params.metadata,
+      isSign: params.isSign,
+      signMessageDetails: params?.signMessageDetails,
     },
     options: {
       contentClass: "md:px-10 md:pt-[34px] md:pb-10",
@@ -250,7 +256,7 @@ export const openMobileHeader = () => {
     options: {
       sheetPosition: "top",
       contentClass: "!px-5 !py-5",
-    }
+    },
   });
 };
 
