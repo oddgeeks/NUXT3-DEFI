@@ -6,7 +6,6 @@ import FlowersSVG from "~/assets/images/icons/flowers.svg?component";
 import type WalletConnect from "@walletconnect/client";
 import { storeToRefs } from "pinia";
 
-const provider = getRpcProvider(634);
 const emit = defineEmits(["resolve", "reject"]);
 
 const props = defineProps<{
@@ -15,7 +14,7 @@ const props = defineProps<{
   wc: WalletConnect;
 }>();
 
-const { safe, sendTransaction } = useAvocadoSafe();
+const { safe, sendTransactions } = useAvocadoSafe();
 const { account } = useWeb3();
 const { gasBalance } = storeToRefs(useSafe());
 const [submitting, toggle] = useToggle();
@@ -26,7 +25,7 @@ const {
   data: fee,
   pending,
   error,
-} = useEstimatedFee(ref(props.payload.params), {
+} = useEstimatedFee(ref(props.payload.params[0]), {
   chainId: props.chainId,
   immediate: true,
 });
@@ -68,20 +67,22 @@ const handleSubmit = async () => {
     await switchNetworkByChainId(634);
 
     toggle(true);
-    const params = props.payload?.params[0];
+    const [transactionOrTransactions, chainId, options] = props.payload.params
+
+    const txs = Array.isArray(transactionOrTransactions) ? transactionOrTransactions : [transactionOrTransactions]
+
 
     const metadata = encodeDappMetadata({
       name: props.wc.peerMeta?.name!,
       url: props.wc.peerMeta?.url!,
     });
 
-    const transactionHash = await sendTransaction(
-      {
-        ...params,
-        chainId: props.chainId,
-      },
+    const transactionHash = await sendTransactions(
+      txs,
+      chainId || props.chainId,
       {
         metadata,
+        ...options
       }
     );
 
@@ -138,9 +139,7 @@ const handleReject = () => {
     <div class="text-lg font-semibold leading-[30px]">Send Transaction</div>
 
     <div class="flex flex-col gap-2.5">
-      <div
-        class="dark:bg-gray-850 bg-slate-50 flex flex-col gap-4 rounded-5 py-[14px] px-5"
-      >
+      <div class="dark:bg-gray-850 bg-slate-50 flex flex-col gap-4 rounded-5 py-[14px] px-5">
         <div class="flex justify-between items-center">
           <div class="text-slate-400 flex items-center gap-2.5">
             <FlowersSVG />
@@ -148,12 +147,7 @@ const handleReject = () => {
           </div>
 
           <div class="flex items-center gap-2.5">
-            <a
-              rel="noopener noreferrer"
-              target="_blank"
-              class="text-primary text-sm"
-              :href="wc.peerMeta?.url"
-            >
+            <a rel="noopener noreferrer" target="_blank" class="text-primary text-sm" :href="wc.peerMeta?.url">
               {{ formatURL(wc.peerMeta?.url!) }}
             </a>
           </div>
@@ -179,18 +173,8 @@ const handleReject = () => {
 
           <div class="flex items-center gap-2.5">
             <span v-if="pending" class="w-20 h-5 loading-box rounded-lg"></span>
-            <span
-              v-else
-              :class="{ 'text-red-alert': isBalaceNotEnough }"
-              class="text-xs"
-              >{{ fee?.formatted }}</span
-            >
-            <img
-              class="w-[18px] h-[18px]"
-              width="18"
-              height="18"
-              src="https://cdn.instadapp.io/icons/tokens/usdc.svg"
-            />
+            <span v-else :class="{ 'text-red-alert': isBalaceNotEnough }" class="text-xs">{{ fee?.formatted }}</span>
+            <img class="w-[18px] h-[18px]" width="18" height="18" src="https://cdn.instadapp.io/icons/tokens/usdc.svg" />
           </div>
         </div>
       </div>
@@ -204,22 +188,13 @@ const handleReject = () => {
       </CommonNotification>
     </div>
     <div class="flex justify-between items-center gap-4">
-      <CommonButton
-        @click="handleReject"
-        color="white"
-        size="lg"
-        class="flex-1 justify-center items-center hover:!bg-red-alert hover:!bg-opacity-10 hover:text-red-alert"
-      >
+      <CommonButton @click="handleReject" color="white" size="lg"
+        class="flex-1 justify-center items-center hover:!bg-red-alert hover:!bg-opacity-10 hover:text-red-alert">
         Reject
       </CommonButton>
 
-      <CommonButton
-        :loading="submitting"
-        :disabled="submitDisabled"
-        type="submit"
-        class="flex-1 justify-center items-center"
-        size="lg"
-      >
+      <CommonButton :loading="submitting" :disabled="submitDisabled" type="submit"
+        class="flex-1 justify-center items-center" size="lg">
         Submit
       </CommonButton>
     </div>
