@@ -75,21 +75,24 @@ const navigate = (type: INavigationType) => {
 </script>
 
 <template>
-  <nav class="py-6 px-7.5 flex justify-between">
-    <div class="px-5 py-2 dark:bg-slate-800 bg-slate-150 text-sm rounded-7.5 w-fit">
+  <nav class="sm:py-6 sm:px-7.5 flex justify-between w-full">
+    <div class="px-5 py-2 dark:bg-slate-800 bg-slate-150 text-sm rounded-7.5 w-fit hidden sm:inline">
       Showing {{ start }} to {{ end }} of {{ total }} results
     </div>
-    <div class="flex gap-4 items-center">
-      <CommonButton @click="navigate('first')" :disabled="disabled.prev" size="md" class="!px-4">
+    <div class="flex gap-4 items-center w-full sm:w-fit">
+      <CommonButton @click="navigate('first')" :disabled="disabled.prev" size="md" class="!px-4 hidden sm:inline">
         First
       </CommonButton>
        <CommonButton @click="navigate('prev')"  :disabled="disabled.prev" size="md" class="!px-2 !py-2">
         <ArrowLeft class="w-5 h-5" />
       </CommonButton>
-        <CommonButton @click="navigate('next')" :disabled="disabled.next" size="md" class="!px-2 !py-2">
+      <div class="px-5 py-3 text-slate-400 dark:bg-slate-800 text-center bg-slate-150 text-xs rounded-7.5 w-full sm:hidden">
+        {{ start }} - {{ end }} of {{ total }} results
+      </div>
+      <CommonButton @click="navigate('next')" :disabled="disabled.next" size="md" class="!px-2 !py-2">
         <ArrowRight class="w-5 h-5" />
       </CommonButton>
-      <CommonButton @click="navigate('last')" :disabled="disabled.next" size="md" class="!px-4">
+      <CommonButton @click="navigate('last')" :disabled="disabled.next" size="md" class="!px-4 hidden sm:inline">
         Last
       </CommonButton>
     </div>
