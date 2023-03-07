@@ -6,6 +6,7 @@ interface EstimatedFeeParams {
   immediate?: boolean;
   cb?: () => void;
   disabled?: () => boolean;
+  options?: any;
 }
 
 export function useEstimatedFee(txData: Ref, params: EstimatedFeeParams) {
@@ -53,7 +54,8 @@ export function useEstimatedFee(txData: Ref, params: EstimatedFeeParams) {
 
         const message = await safe.value?.generateSignatureMessage(
           actualTx,
-          +params.chainId
+          +params.chainId,
+          params.options
         );
 
         const data = await provider.send("txn_estimateFeeWithoutSignature", [
