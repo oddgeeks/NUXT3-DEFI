@@ -6,6 +6,7 @@ import SVGInfoCircle from "~/assets/images/icons/exclamation-circle.svg?componen
 
 const props = defineProps<{
   status: IAvocadoTransaction["status"] | "ready" | "completed";
+  hideText: boolean;
 }>();
 
 const statusColor = computed(() => {
@@ -27,24 +28,24 @@ const statusColor = computed(() => {
 <template>
   <span
     :class="statusColor"
-    class="inline-flex gap-2.5 items-center capitalize"
+    class="inline-flex sm:px-2.5 sm:py-3 sm:p-0 rounded-[14px] dark:bg-gray-850 bg-slate-50 sm:!bg-transparent gap-2.5 items-center capitalize"
   >
     <SVGCheckCircle
-      class="text-white w-4 h-4 success-circle"
+      class="text-white w-5 h-5 sm:w-4 sm:h-4 success-circle"
       v-if="
         status === 'success' || status === 'completed' || status === 'ready'
       "
     />
     <SVGInfoCircle
-      class="text-slate-600 w-4 h-4"
+      class="text-slate-600 w-5 h-5 sm:w-4 sm:h-4"
       v-else-if="status === 'dropped'"
     />
     <SVGErrorCircle
-      class="text-white w-4 h-4"
+      class="text-white w-5 h-5 sm:w-4 sm:h-4"
       v-else-if="status === 'failed'"
     />
-    <SVGClockCircle v-else class="w-4 h-4" />
-    {{ status }}
+    <SVGClockCircle v-else class="w-5 h-5 sm:w-4 sm:h-4" />
+    <span v-if="!hideText">{{ status }}</span>
     <slot />
   </span>
 </template>

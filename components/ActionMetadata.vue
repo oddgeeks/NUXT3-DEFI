@@ -75,8 +75,8 @@ const formatProtocol = (protocol: string) => {
 
 <template>
   <div>
-    <div class="flex gap-5" v-if="metadata.type === 'transfer' && token">
-      <span class="capitalize text-sm">{{ metadata.type }}</span>
+    <div class="flex items-center gap-5" v-if="metadata.type === 'transfer' && token">
+      <span class="capitalize text-xs sm:text-sm">{{ metadata.type }}</span>
       <span class="inline-flex gap-2.5 items-center">
         <img width="20" height="20" class="w-5 h-5" :src="token?.logoURI" />
         {{ formattedAmount }}
@@ -94,8 +94,8 @@ const formatProtocol = (protocol: string) => {
         >
       </span>
     </div>
-    <div class="flex gap-5" v-if="metadata.type === 'gas-topup' && token">
-      <span class="capitalize text-sm">{{ metadata.type }}</span>
+    <div class="flex items-center gap-5" v-if="metadata.type === 'gas-topup' && token">
+      <span class="capitalize text-xs sm:text-sm">{{ metadata.type }}</span>
       <span class="inline-flex gap-2.5 items-center">
         <img width="20" height="20" class="w-5 h-5" :src="token?.logoURI" />
         {{ formattedAmount }}
@@ -105,10 +105,10 @@ const formatProtocol = (protocol: string) => {
       </span>
     </div>
     <div
-      class="flex gap-5"
+      class="flex items-center gap-5"
       v-if="metadata.type === 'swap' && sellToken && buyToken"
     >
-      <span class="capitalize text-sm">{{ metadata.type }}</span>
+      <span class="capitalize text-xs sm:text-sm">{{ metadata.type }}</span>
       <span class="inline-flex gap-2.5 items-center">
         <img width="20" height="20" class="w-5 h-5" :src="sellToken?.logoURI" />
         {{ sellAmountFormatted }}
@@ -118,7 +118,7 @@ const formatProtocol = (protocol: string) => {
         {{ buyAmountFormatted }}
         <span class="uppercase">{{ buyToken?.symbol }}</span>
         <span
-          class="capitalize flex items-center gap-2.5"
+          class="capitalize hidden sm:flex items-center gap-2.5"
           v-if="metadata.protocol"
         >
           On <ProtocolLogo class="w-5 h-5" :name="metadata.protocol" />
@@ -130,7 +130,7 @@ const formatProtocol = (protocol: string) => {
       class="flex gap-5 items-center"
       v-if="metadata.type === 'bridge' && toToken"
     >
-      <span class="capitalize text-sm">{{ metadata.type }}</span>
+      <span class="capitalize text-xs sm:text-sm">{{ metadata.type }}</span>
       <span class="inline-flex gap-2.5 items-center">
         <img width="20" height="20" class="w-5 h-5" :src="toToken.logoURI" />
         {{ bridgeAmountFormatted }}

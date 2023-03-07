@@ -130,28 +130,28 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="container flex-1 md:pb-10">
-    <h1 class="mb-5">Transaction Details</h1>
+  <div class="container flex-1 pb-10">
+    <h1 class="mb-5 hidden sm:inline">Transaction Details</h1>
 
     <div
-      class="dark:bg-gray-850 bg-slate-50 rounded-5.5 text-sm font-medium py-6.5 min-h-[548px] blur"
+      class="dark:bg-gray-850 bg-slate-50 rounded-5.5 sm:text-sm text-xs font-medium py-5 sm:py-6.5 min-h-[548px] blur"
       v-if="!transaction && pending"
     />
 
     <div
       v-if="transaction"
-      class="dark:bg-gray-850 bg-slate-50 rounded-5.5 text-sm font-medium py-6.5"
+      class="sm:dark:bg-gray-850 sm:bg-slate-50 rounded-5.5 sm:text-sm text-xs font-medium sm:py-6.5"
     >
-      <div class="flex flex-col gap-6.5 px-7.5">
-        <div class="flex items-center">
+      <div class="flex flex-col gap-4 sm:gap-6.5 sm:px-7.5">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0">
           <div
             class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
           >
             Transaction Hash
           </div>
-          <div class="flex items-center space-x-2.5">
+          <div class="flex items-start sm:items-center space-x-2.5 py-2.5 px-3 sm:p-0 dark:bg-gray-850 bg-slate-50 rounded-[14px]">
             <a
-              class="text-primary"
+              class="text-primary break-all"
               :href="
                 getExplorerUrl(transaction.chain_id, `/tx/${transaction.hash}`)
               "
@@ -162,15 +162,15 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="flex items-center">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0">
           <div
             class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
           >
             Broadcaster
           </div>
-          <div v-if="transaction.from" class="flex items-center space-x-2.5">
+          <div v-if="transaction.from" class="flex items-start sm:items-center space-x-2.5 py-2.5 px-3 sm:p-0 dark:bg-gray-850 bg-slate-50 rounded-[14px]">
             <a
-              class="text-primary"
+              class="text-primary break-all"
               :href="
                 getExplorerUrl(
                   transaction.chain_id,
@@ -186,7 +186,7 @@ onUnmounted(() => {
           <span v-else>-</span>
         </div>
 
-        <div class="flex items-center">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0">
           <div
             class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
           >
@@ -202,7 +202,7 @@ onUnmounted(() => {
           </span>
         </div>
 
-        <div class="flex items-center">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0">
           <div
             class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
           >
@@ -216,16 +216,16 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <hr class="w-full dark:border-slate-800 border-slate-150 mt-6.5" />
+      <hr class="w-full dark:border-slate-800 border-slate-150 mt-5 sm:mt-6.5" />
 
-      <div class="px-7.5 py-6.5">
-        <div class="flex items-center">
+      <div class="sm:px-7.5 py-5 sm:py-6.5">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0">
           <div
             class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
           >
             Network
           </div>
-          <div class="capitalize flex items-center">
+          <div class="capitalize flex items-center py-2.5 px-3 sm:p-0 dark:bg-gray-850 bg-slate-50 rounded-[14px]">
             <ChainLogo class="w-5 h-5 mr-2.5" :chain="transaction.chain_id" />
 
             <span>{{ chainIdToName(transaction.chain_id) }}</span>
@@ -236,8 +236,8 @@ onUnmounted(() => {
       <div v-if="transaction.decodedMetadata">
         <hr class="w-full dark:border-slate-800 border-slate-150" />
 
-        <div class="px-7.5 py-6.5 flex gap-6.5 flex-col">
-          <div class="flex">
+        <div class="sm:px-7.5 py-5 sm:py-6.5 flex gap-6.5 flex-col">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0">
             <div
               class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
             >
@@ -253,7 +253,7 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <div v-if="transaction?.isBridge" class="flex items-center">
+          <div v-if="transaction?.isBridge" class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0">
             <div
               class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px] flex items-center gap-2"
             >
@@ -288,8 +288,8 @@ onUnmounted(() => {
 
       <hr class="w-full dark:border-slate-800 border-slate-150" />
 
-      <div class="px-7.5 py-6.5 flex flex-col gap-6.5">
-        <div class="flex items-center">
+      <div class="sm:px-7.5 py-5 sm:py-6.5 flex flex-col gap-6.5">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0">
           <div
             class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
           >
@@ -298,10 +298,10 @@ onUnmounted(() => {
 
           <div
             v-if="transaction.metadata.signer"
-            class="flex items-center space-x-2.5"
+            class="flex items-start sm:items-center space-x-2.5 py-2.5 px-3 sm:p-0 dark:bg-gray-850 bg-slate-50 rounded-[14px]"
           >
             <a
-              class="text-primary"
+              class="text-primary break-all"
               :href="
                 getExplorerUrl(
                   transaction.chain_id,
@@ -318,7 +318,7 @@ onUnmounted(() => {
           <div v-else class="capitalize">-</div>
         </div>
 
-        <div class="flex items-center">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0">
           <div
             class="dark:text-slate-400 text-slate-500 md:w-full md:max-w-[235px]"
           >
@@ -327,10 +327,10 @@ onUnmounted(() => {
 
           <div
             v-if="transaction.metadata.safe"
-            class="flex items-center space-x-2.5"
+            class="flex items-start sm:items-center space-x-2.5 py-2.5 px-3 sm:p-0 dark:bg-gray-850 bg-slate-50 rounded-[14px]"
           >
             <a
-              class="text-primary"
+              class="text-primary break-all"
               :href="
                 getExplorerUrl(
                   transaction.chain_id,
@@ -350,8 +350,8 @@ onUnmounted(() => {
 
       <hr class="w-full dark:border-slate-800 border-slate-150" />
 
-      <div class="px-7.5 flex flex-col pt-6.5 gap-6.5">
-        <div class="flex items-center">
+      <div class="sm:px-7.5 flex flex-col pt-5 sm:pt-6.5 gap-6.5">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0">
           <div
             class="dark:text-slate-400 gap-2.5 flex items-center text-slate-500 md:w-full md:max-w-[235px]"
           >

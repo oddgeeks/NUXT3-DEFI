@@ -20,8 +20,8 @@ const handleUpgrade = async (network: NetworkVersion) => {
 </script>
 
 <template>
-  <tr>
-    <td class="py-[26px] pl-7.5">
+  <tr class="flex flex-col sm:table-row">
+    <td class="pt-5 sm:py-[26px] pb-4 sm:pl-7.5 pl-4.5">
       <div class="flex gap-3 items-center">
         <ChainLogo class="w-11 h-11" :chain="network.chainId" />
         <div class="flex flex-col gap-1">
@@ -34,7 +34,7 @@ const handleUpgrade = async (network: NetworkVersion) => {
         </div>
       </div>
     </td>
-    <td>
+    <td class="hidden sm:table-cell">
       <span v-if="network.notdeployed">
         {{ recentVersion }}
       </span>
@@ -42,7 +42,7 @@ const handleUpgrade = async (network: NetworkVersion) => {
         {{ network.latestVersion }}
       </span>
     </td>
-    <td class="pr-7.5 w-[221px]">
+    <td class="px-4.5 pb-6.5 sm:pr-7.5 sm:pb-0 sm:pl-0 sm:w-[221px]">
       <CommonButton
         v-if="isUpgradeAvailable"
         @click="handleUpgrade(network)"

@@ -58,9 +58,18 @@ onUnmounted(() => {
 
 <template>
   <div class="container flex flex-col gap-5 flex-1 md:pb-10">
-    <h1>Transactions</h1>
+    <h1 class="hidden sm:inline">Transactions</h1>
 
-    <div class="relative flex-1">
+    <div class="flex sm:hidden">
+      <Pagination
+        :url-prefix="$route.path"
+        :total="transactions?.total || 0"
+        :current="page"
+        :limit="limit"
+      />
+    </div>
+
+    <div class="relative hidden sm:block">
       <div class="overflow-hidden">
         <div
           class="overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-5.5 flex-1 scroll-style relative"
@@ -98,6 +107,12 @@ onUnmounted(() => {
           </table>
         </div>
       </div>
+    </div>
+    <div class="flex sm:hidden !h-[20px] flex-col gap-2.5" v-if="transactions?.data && transactions.data.length > 0">
+      <MobileTransactionRow :transaction="transaction" :key="transaction.id" v-for="transaction in transactions?.data" />
+    </div>
+    <div class="flex justify-center items-center h-full text-slate-400" v-else>
+      No Transactions
     </div>
   </div>
 </template>
