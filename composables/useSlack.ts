@@ -18,7 +18,7 @@ const prefixes: Record<ISlackMessage["action"], string> = {
   "add-token": `🆕 Added Token:`,
   upgrade: `🆙`,
   deploy: `⬆️ Deployed:`,
-  "wc-sign": `:walletconnect: Signed`,
+  "wc-sign": `✍️ :walletconnect: Signed`,
 };
 
 export const logActionToSlack = (slackMessage: ISlackMessage) => {
