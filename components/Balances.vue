@@ -135,7 +135,7 @@ const search = useDebounceFn((event: Event) => {
       <div v-if="!!account && tokenBalances.length && filteredBalances.length === 0"
         class="dark:bg-gray-850 bg-slate-50 rounded-[25px] flex flex-col space-y-4 items-center py-32">
         <p class="text-slate-400">Nothing could be found</p>
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center flex-col space-y-4 sm:space-y-0 sm:flex-row sm:space-x-4">
           <CommonButton color="white" size="lg" as="NuxtLink"
             href="mailto:info@instadapp.io?subject=Instadapp Avocado: New Token">
             Reach out to us
@@ -147,7 +147,7 @@ const search = useDebounceFn((event: Event) => {
         </div>
       </div>
       <div v-else style="scrollbar-gutter: stable; overflow-y: overlay"
-        class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] flex-1 scroll-style">
+        class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] hidden sm:flex scroll-style">
         <table class="table w-full">
           <thead>
             <tr class="text-left text-sm text-gray-400 font-medium border-b border-slate-150 dark:border-slate-800">
@@ -169,7 +169,11 @@ const search = useDebounceFn((event: Event) => {
           </tbody>
         </table>
       </div>
-      <p class="text-xs leading-5 text-right dark:text-slate-500 text-slate-400">
+      <div class="flex flex-col space-y-4 sm:hidden">
+        <MobileBalanceRow v-for="tokenBalance in sortedBalances" :token-balance="tokenBalance"
+          :key="`${tokenBalance.chainId}-${tokenBalance.symbol}`" />
+      </div>
+      <p class="text-xs leading-5 text-center mb-5 sm:mb-0 sm:text-right dark:text-slate-500 text-slate-400">
         Don’t see your tokens?
         <button @click="openImportTokenModal()" class="text-primary">
           Add token
