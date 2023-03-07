@@ -86,11 +86,17 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                   result: [safe.safeAddress.value],
                 });
               } else if (payload.method === "eth_sendTransaction") {
+                const metadata = encodeDappMetadata({
+                  name: wc.peerMeta?.name!,
+                  url: wc.peerMeta?.url!,
+                });
+
                 const { success, payload: msg } = await openWCTransactionModal({
                   modalId: wc.peerId,
                   chainId: String(wc.chainId),
                   payload,
                   wc,
+                  metadata,
                 });
 
                 if (!success) {
@@ -158,30 +164,35 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                   ];
 
                   try {
-                    const metadata = encodeWCSignMetadata();
+                    const metadata = encodeWCSignMetadata({
+                      amount: eip712Data.message.details.amount,
+                      token: eip712Data.message.details.token,
+                      spender: eip712Data.message.spender,
+                      expiration: eip712Data.message.details.expiration,
+                    });
 
-                    const tx = await safe.sendTransactions(
-                      actions,
-                      wc.chainId,
-                      {
+                    payload.params = actions;
+
+                    const { success, payload: msg } =
+                      await openWCTransactionModal({
+                        modalId: wc.peerId,
+                        chainId: String(wc.chainId),
+                        payload,
+                        wc,
                         metadata,
-                      }
-                    );
+                        isSign: true,
+                        signMessageDetails: eip712Data.message.details,
+                      });
 
-                    console.log("tx: ", tx);
-
-                    wc.approveRequest({
-                      id: payload.id,
-                      result: tx,
-                    });
-
-                    logActionToSlack({
-                      txHash: tx,
-                      account: account.value,
-                      action: "wc-sign",
-                      chainId: String(wc.chainId),
-                      message: "",
-                    });
+                    if (!success) {
+                      wc.rejectRequest({
+                        id: payload.id,
+                        error: {
+                          code: -32603,
+                          message: msg,
+                        },
+                      });
+                    }
                   } catch (error: any) {
                     const err = parseTransactionError(error);
 

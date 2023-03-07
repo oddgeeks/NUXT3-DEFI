@@ -260,9 +260,16 @@ type MetadataProps = {
     | "upgrade"
     | "dapp"
     | "deploy"
-    | "wc-sign";
+    | "dapp-sign";
   encodedData: string;
   version?: string;
+};
+
+type SignMetadataProps = {
+  token: string;
+  spender: string;
+  amount: string;
+  expiration: string;
 };
 
 type DappMetadataProps = {

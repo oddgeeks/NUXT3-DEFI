@@ -31,7 +31,12 @@ const actionMetadataTypes = {
   upgrade: ["bytes32 version", "address walletImpl"],
   dapp: ["string name", "string url"],
   deploy: [],
-  "wc-sign": [],
+  "dapp-sign": [
+    "address token",
+    "address spender",
+    "uint160 amount",
+    "uint48 expiration",
+  ],
 };
 
 export function shortenHash(hash: string, length: number = 4) {
@@ -327,10 +332,18 @@ export const encodeDeployMetadata = (single = true) => {
   return single ? encodeMultipleActions(data) : data;
 };
 
-export const encodeWCSignMetadata = (single = true) => {
+export const encodeWCSignMetadata = (
+  params: SignMetadataProps,
+  single = true
+) => {
+  const encodedData = ethers.utils.defaultAbiCoder.encode(
+    actionMetadataTypes["dapp-sign"],
+    [params.token, params.spender, params.amount, params.expiration]
+  );
+
   const data = encodeMetadata({
-    type: "wc-sign",
-    encodedData: "0x",
+    type: "dapp-sign",
+    encodedData,
   });
 
   return single ? encodeMultipleActions(data) : data;
@@ -534,9 +547,13 @@ export const decodeMetadata = (data: string) => {
             type,
           };
 
-        case "wc-sign":
+        case "dapp-sign":
           payload = {
             type,
+            token: decodedData.token,
+            spender: decodedData.spender,
+            amount: toBN(decodedData.amount).toFixed(),
+            expiration: decodedData.expiration,
           };
 
           break;

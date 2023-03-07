@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import pretty from 'pretty-ms';
 import LinkSVG from "~/assets/images/icons/external-link.svg?component";
 import SVGBridge from "~/assets/images/icons/bridge.svg?component";
 import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
@@ -139,8 +140,11 @@ const formatProtocol = (protocol: string) => {
   <div v-if="metadata.type === 'deploy'" class="self-start capitalize">
      {{ metadata?.type }}
   </div>
-   <div v-if="metadata.type === 'wc-sign'" class="self-start capitalize">
-     WalletConnect Sign
+   <div v-if="metadata.type === 'dapp-sign'" class="self-start capitalize flex items-center gap-2">
+      <img width="20" height="20" class="w-5 h-5" :src="token?.logoURI" />
+     Sign {{ token?.symbol }}
+     |
+     Exprires in {{ pretty(metadata?.expiration) }}
   </div>
   </div>
 </template>

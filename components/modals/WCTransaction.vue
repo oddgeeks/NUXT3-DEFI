@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { utils } from "ethers";
+import pretty from 'pretty-ms';
 import GasSVG from "~/assets/images/icons/gas.svg?component";
 import NetworkSVG from "~/assets/images/icons/network.svg?component";
 import FlowersSVG from "~/assets/images/icons/flowers.svg?component";
+import SVGClockCircle from "~/assets/images/icons/clock-circle.svg?component";
 import type WalletConnect from "@walletconnect/client";
 import { storeToRefs } from "pinia";
 
@@ -13,6 +15,9 @@ const props = defineProps<{
   payload: any;
   chainId: string;
   wc: WalletConnect;
+  metadata: string;
+  isSign?: boolean;
+  signMessageDetails?: any;
 }>();
 
 const { safe, sendTransaction } = useAvocadoSafe();
@@ -21,6 +26,7 @@ const { gasBalance } = storeToRefs(useSafe());
 const [submitting, toggle] = useToggle();
 const { switchNetworkByChainId } = useNetworks();
 const { parseTransactionError } = useErrorHandler();
+const { getTokenByAddress } = useTokens()
 
 const {
   data: fee,
@@ -70,18 +76,13 @@ const handleSubmit = async () => {
     toggle(true);
     const params = props.payload?.params[0];
 
-    const metadata = encodeDappMetadata({
-      name: props.wc.peerMeta?.name!,
-      url: props.wc.peerMeta?.url!,
-    });
-
     const transactionHash = await sendTransaction(
       {
         ...params,
         chainId: props.chainId,
       },
       {
-        metadata,
+        metadata: props.metadata,
       }
     );
 
@@ -91,7 +92,7 @@ const handleSubmit = async () => {
     });
 
     logActionToSlack({
-      message: `Txn on ${props.wc.peerMeta?.url}`,
+      message: `${props.isSign ? "Sign" : "Txn"} on ${props.wc.peerMeta?.url}`,
       type: "success",
       action: "wc",
       txHash: transactionHash,
@@ -111,7 +112,7 @@ const handleSubmit = async () => {
     });
 
     logActionToSlack({
-      message: props.wc.peerMeta?.url + " " + err,
+      message: `${props.isSign ? "Sign" : "Txn"} ${props.wc.peerMeta?.url} ${err}`,
       type: "error",
       action: "wc",
       chainId: props.chainId,
@@ -193,6 +194,18 @@ const handleReject = () => {
             />
           </div>
         </div>
+        <template v-if="isSign && signMessageDetails">
+        <div class="flex justify-between items-center">
+          <div class="text-slate-400 flex items-center gap-2.5">
+            <SVGClockCircle class="w-4" />
+            <span class="text-xs leading-5 font-medium">Exprires in</span>
+          </div>
+
+          <div class="flex items-center gap-2.5 text-sm">
+            {{ pretty(toBN(signMessageDetails.expiration).toNumber()) }}
+          </div>
+        </div>
+        </template>
       </div>
 
       <CommonNotification v-if="error" type="error" :text="error">
