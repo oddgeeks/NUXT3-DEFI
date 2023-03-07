@@ -15,6 +15,7 @@ const clientMeta = {
 export const useWalletConnect = defineStore("wallet_connect", () => {
   const safe = useAvocadoSafe();
   const { library, account } = useWeb3();
+  const { parseTransactionError } = useErrorHandler();
   const storage = useLocalStorage<{ keys: Record<string, string[]> }>(
     "wallet_connect",
     {
@@ -82,6 +83,30 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                   id: payload.id,
                   result: [safe.safeAddress.value],
                 });
+              } else if (payload.method === "eth_sendAvocadoTransaction" || payload.method === "eth_sendAvocadoTransactions") {
+                
+                const [transactionOrTransactions, chainId, options] = payload.params
+
+                const txs = Array.isArray(transactionOrTransactions) ?  transactionOrTransactions : [transactionOrTransactions] 
+
+                try {
+                  const tx = await safe.sendTransactions(txs, chainId || wc.chainId, options || {})
+
+                  wc.approveRequest({
+                    id: payload.id,
+                    result: tx,
+                  });
+                } catch (error: any) {
+                  const err = parseTransactionError(error);
+
+                  wc.rejectRequest({
+                    id: payload.id,
+                    error: {
+                      code: error.code || -32603,
+                      message: err
+                    },
+                  });
+                }
               } else if (payload.method === "eth_sendTransaction") {
                 const { success, payload: msg } = await openWCTransactionModal({
                   modalId: wc.peerId,
