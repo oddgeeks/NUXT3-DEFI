@@ -259,7 +259,8 @@ type MetadataProps = {
     | "gas-topup"
     | "upgrade"
     | "dapp"
-    | "deploy";
+    | "deploy"
+    | "wc-sign";
   encodedData: string;
   version?: string;
 };
