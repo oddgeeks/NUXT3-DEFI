@@ -14,7 +14,7 @@ const availableNetworks = networks.filter((network) => network.chainId != 634);
     <StyledQrCode :size="220" :margin="16" class="rounded-5 mx-auto bg-white overflow-hidden" :data="address"
       :key="address" />
 
-    <Copy class="mt-5 text-xl" :text="address" v-if="address">
+    <Copy class="text-xl" :text="address" v-if="address">
       <template #content>
         {{ address.substr(0, 6) + "..." + address.substr(-4) }}
       </template>
