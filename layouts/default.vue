@@ -25,11 +25,11 @@ const route = useRoute();
       <MobileHeader />
     </div>
     <div
-      class="container flex flex-col gap-4 banner-wrapper [&:not(:empty)]:mb-7.5"
+      class="container flex flex-col gap-4 banner-wrapper mt-36 sm:mt-0 [&:not(:empty)]:mb-7.5"
     >
       <WarningsGasBalance v-if="showInsufficientGasBanner" />
     </div>
-    <div class="mt-36 sm:mt-0">
+    <div class="sm:mt-0">
       <slot />
     </div>
     <TheFooter />
