@@ -96,7 +96,7 @@ async function openModal({
     };
 
   return new Promise((resolve, reject) => {
-    modal.onResolve = async (success: boolean, payload) => {
+    modal.onResolve = async (success = true, payload) => {
       destroy();
       resolve({
         modal,
