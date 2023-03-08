@@ -5,10 +5,6 @@ onMounted(() => {
 useTokens();
 useSafe();
 
-useAccountTrack(null, () => {
-  useEagerConnect();
-});
-
 onMounted(() => {
   const hideAllTooltipsOnScroll = useThrottleFn(() => {
     [...document.querySelectorAll("[data-tippy-root]")].forEach((e) =>
