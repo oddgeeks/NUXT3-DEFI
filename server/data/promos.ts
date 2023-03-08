@@ -18,5 +18,10 @@ export const promos: IPromo[] = [
         title: "CryptoTesters",
         slug: "crypto-testers",
         promo: "Crypto-Testers-v1.0.0",
+    },
+    {
+        title: "ENS Drop",
+        slug: "ens-drop",
+        promo: "ENS-Tweet-Drop-v1.0.0",
     }
 ];
