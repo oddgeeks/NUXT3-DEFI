@@ -153,10 +153,10 @@ const handleOpenDialog = () => {
         </div>
         <div
           v-if="!account"
-          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"
+          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center w-full"
         >
           <div class="flex flex-col items-center justify-center gap-6">
-            <p class="font-semibold text-lg whitespace-nowrap">
+            <p class="font-semibold text-lg sm:whitespace-nowrap text-center">
               Connect your wallet to see the balances
             </p>
 

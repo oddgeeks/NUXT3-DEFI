@@ -22,7 +22,7 @@ const openModal = () => {
       </div>
       <div class="flex flex-col space-y-1">
         <span>Your Avo Wallet</span>
-        <span v-if="account !== '0x000000000000000'" class="text-slate-400 font-[14px]">{{ account.substr(0, 6) + "..." + account.substr(-4) }}</span>
+        <span v-if="account !== '0x000000000000000'" class="text-slate-400 font-[14px]">{{ shortenHash(account) }}</span>
         <svg v-else width="120" height="20" viewBox="0 0 120 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect width="120" height="20" rx="8" class="dark:fill-slate-800 fill-slate-200" />
         </svg>

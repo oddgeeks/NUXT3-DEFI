@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import LinkSVG from "~/assets/images/icons/external-link.svg?component";
+
 defineProps({
   address: String
 });
@@ -16,7 +18,7 @@ const availableNetworks = networks.filter((network) => network.chainId != 634);
 
     <Copy class="text-xl" :text="address" v-if="address">
       <template #content>
-        {{ address.substr(0, 6) + "..." + address.substr(-4) }}
+        {{ shortenHash(address) }}
       </template>
     </Copy>
 
@@ -35,5 +37,10 @@ const availableNetworks = networks.filter((network) => network.chainId != 634);
       Deposit or receive funds by scanning or copying your AvoSafe QR code. You can deposit or receive from any
       supported chains.
     </div>
+
+    <a href='https://help.avocado.instadapp.io/en/articles/7038878-depositing-funds-to-your-avocado-account' target='blank' rel='noopener noreferrer' class='text-xs font-medium inline-flex items-center gap-2.5 text-primary'>
+      Learn more about how to deposit
+      <LinkSVG class="w-4 h-4" />
+    </a>
   </div>
 </template>

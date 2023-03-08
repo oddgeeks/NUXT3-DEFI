@@ -3,6 +3,7 @@ import { Line } from "vue-chartjs";
 import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
 import BridgeSVG from "~/assets/images/icons/bridge.svg?component";
 import RefreshSVG from "~/assets/images/icons/refresh.svg?component";
+import { IBalance } from "~/stores/safe";
 
 const props = defineProps({
   balance: {
@@ -11,48 +12,7 @@ const props = defineProps({
   }
 });
 
-const interactable = computed(() =>
-  toBN(props.balance.balance).decimalPlaces(5).gt(0)
-);
-
-const priceDiffColor = computed(() => {
-  if (!priceDiffInPercent.value) return "rgb(148 163 184)";
-
-  if (priceDiffInPercent.value < 0) {
-    return "#EB5757";
-  }
-
-  return "#16A34A";
-});
-
-const priceDiffInPercent = computed(() => {
-  if (!props.balance.sparklinePrice7d.length) return 0;
-  let a = props.balance.sparklinePrice7d.at(-24)!;
-  let b = props.balance.sparklinePrice7d.at(-1)!;
-  return (100 * (b - a)) / a;
-});
-
-const priceDiffClass = computed(() => {
-  if (!priceDiffInPercent.value) return "text-slate-400";
-
-  if (priceDiffInPercent.value < 0) {
-    return "text-red-alert";
-  }
-
-  return "text-primary";
-});
-
-const chartData = computed(() => ({
-  labels: props.balance.sparklinePrice7d,
-  datasets: [
-    {
-      data: props.balance.sparklinePrice7d,
-      fill: false,
-      pointRadius: 0,
-      cubicInterpolationMode: "monotone",
-    },
-  ],
-}));
+const { priceDiffColor, interactable, priceDiffClass, priceDiffInPercent, chartData } = useGraph(props.balance as IBalance);
 
 const chartOptions = {
   events: [],
