@@ -23,18 +23,18 @@ watch(account, async () => {
 </script>
 <template>
   <div
-    class="w-full max-w-[832px] mx-auto text-xs relative bg-[#4CA054] bg-opacity-60 py-[15px] px-5 rounded-5 backdrop-blur shrink-0 flex justify-between items-center gap-[15px]"
+    class="w-full max-w-[832px] mx-auto text-xs relative bg-[#4CA054] bg-opacity-60 py-[15px] px-5 sm:rounded-5 backdrop-blur shrink-0 flex flex-col sm:flex-row justify-between items-center gap-[15px]"
     v-if="balances.length > 0"  
   >
-    <div class="flex space-x-[25px] items-center">
+    <div class="flex space-x-[25px] items-start sm:items-center">
       <WaveSVG class="w-12 h-12" />
       <p class="leading-5">
         Welcome to Avocado 🥑 You have ${{ totalUSD.toFormat(2) }} of assets spread across {{ totalChains }} networks on your wallet (EOA). Import the assets
         to your Avocado wallet to begin transacting.
       </p>
     </div>
-    <div class="flex space-x-5 items-center">
-      <CommonButton as="NuxtLink" href="https://onboard.avocado.instadapp.io/" target="_blank" size="sm">
+    <div class="flex space-x-5 items-center w-full sm:w-fit">
+      <CommonButton as="NuxtLink" href="https://onboard.avocado.instadapp.io/" target="_blank" size="sm" class="w-full sm:w-fit justify-center">
         Import
       </CommonButton>
       <button @click="hideOnboardBanner()" class="w-5 h-5 rounded-full flex items-center justify-center bg-white bg-opacity-20">

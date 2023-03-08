@@ -12,7 +12,7 @@ const route = useRoute();
 <template>
   <div class="flex flex-col h-full">
     <BannerAccountTracking v-if="showTrackingBanner" />
-    <div class="fixed bottom-12 w-full z-40">
+    <div class="fixed bottom-0 sm:bottom-12 w-full z-40">
       <BannerSwitchNetwork v-if="showIncorrectNetworkBanner" />
       <BannerOnboard
         v-else-if="showOnboardBanner && route.name !== 'claims-ens-drop'"
