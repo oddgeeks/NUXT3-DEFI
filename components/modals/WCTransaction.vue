@@ -113,7 +113,7 @@ const handleSubmit = async () => {
       account: account.value,
     });
 
-    emit("resolve");
+    emit("resolve", true);
 
     showPendingTransactionModal(transactionHash, props.chainId, "wc");
   } catch (e) {
