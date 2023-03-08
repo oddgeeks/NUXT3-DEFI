@@ -97,6 +97,18 @@ const sendingDisabled = computed(
     !meta.value.valid
 );
 
+const { data, execute } = useAsyncData('airDrop', async () => {
+  const resp = await provider.send(
+      "api_hasAirdrop",
+      [account.value]
+  );
+  await fetchGasBalance()
+  return resp
+}, {
+  watch: [account]
+})
+
+
 const claim = async () => {
   try {
     claimLoading.value = true;
@@ -288,6 +300,9 @@ onMounted(() => {
     >
       {{ formatDecimal(gasBalance, 2) }} USDC
     </span>
+    <CommonButton :loading="claimLoading" @click="claim()" v-if="data?.id" class="flex text-sm items-center gap-2">
+       {{ data.message }}
+    </CommonButton>
     <form v-if="!isGiftActive" @submit="onSubmit" class="space-y-5">
       <div class="flex flex-col gap-2.5">
         <span class="text-left leading-5">Network</span>
