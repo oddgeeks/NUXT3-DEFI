@@ -27,14 +27,14 @@ watch(account, async () => {
     v-if="balances.length > 0"  
   >
     <div class="flex space-x-[25px] items-start sm:items-center">
-      <WaveSVG class="w-12 h-12" />
-      <p class="leading-5">
+      <WaveSVG class="w-8 h-8" />
+      <p class="leading-5 w-5/6 sm:w-fit">
         Welcome to Avocado 🥑 You have ${{ totalUSD.toFormat(2) }} of assets spread across {{ totalChains }} networks on your wallet (EOA). Import the assets
         to your Avocado wallet to begin transacting.
       </p>
     </div>
     <div class="flex space-x-5 items-center w-full sm:w-fit">
-      <CommonButton as="NuxtLink" href="https://onboard.avocado.instadapp.io/" target="_blank" size="sm" class="w-full sm:w-fit justify-center">
+      <CommonButton as="NuxtLink" href="https://onboard.avocado.instadapp.io/" target="_blank" size="sm" class="w-full sm:w-fit h-7.5 sm:h-fit justify-center">
         Import
       </CommonButton>
       <button @click="hideOnboardBanner()" class="w-5 h-5 rounded-full flex items-center justify-center bg-white bg-opacity-20">
