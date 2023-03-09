@@ -174,8 +174,6 @@ Issued At: ${new Date().toISOString()}`;
     });
   }
 };
-
-useForceSingleSession();
 </script>
 
 <template>
