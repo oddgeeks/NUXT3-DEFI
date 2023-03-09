@@ -53,9 +53,9 @@ function handleDeploy(network: Network) {
         <a class="text-primary">Learn more</a>
       </h2>
     </div>
-    <ul class="grid grid-cols-2 gap-4">
+    <ul class="grid sm:grid-cols-2 gap-4">
       <li
-        class="dark:bg-gray-850 flex items-center justify-between bg-slate-50 rounded-7.5 px-4 py-2.5"
+        class="dark:bg-gray-850 flex items-center justify-between bg-slate-50 rounded-7.5 px-4 py-3 sm:py-2.5"
         :key="network.chainId"
         v-for="network in data"
       >
@@ -72,7 +72,7 @@ function handleDeploy(network: Network) {
           @click="handleDeploy(network)"
           :disabled="!network.notdeployed"
           v-else
-          class="h-[30px] items-center px-[18px]"
+          class="h-[30px] items-center px-[18px] w-[80px] sm:w-fit justify-center"
           size="sm"
         >
           <span v-if="network.notdeployed"> Deploy </span>
