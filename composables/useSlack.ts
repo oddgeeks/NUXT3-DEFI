@@ -20,6 +20,8 @@ const prefixes: Record<ISlackMessage["action"], string> = {
   deploy: `⬆️ Deployed:`,
 };
 
+const ignoredMessages = ["Signing rejected", "Transaction rejected"];
+
 export const logActionToSlack = (slackMessage: ISlackMessage) => {
   const build = useBuildInfo();
 
@@ -31,6 +33,9 @@ export const logActionToSlack = (slackMessage: ISlackMessage) => {
     message,
     account,
   } = slackMessage;
+
+  if (ignoredMessages.some((i) => message && message.includes(i))) return;
+
   const prefix = prefixes[action];
 
   const explorerLink =
