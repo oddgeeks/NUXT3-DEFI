@@ -121,31 +121,16 @@ const onSubmit = form.handleSubmit(async () => {
 <template>
   <form @submit="onSubmit" class="flex gap-7.5 flex-col">
     <div class="flex justify-center flex-col gap-7.5 items-center">
-      <div class="relative flex mx-auto h-10 w-10 rounded-full flex-shrink-0">
-        <img
-          width="40"
-          height="40"
-          class="h-10 w-10 rounded-[inherit]"
-          :src="token.logoURI"
-          :onerror="onImageError"
-        />
+      <div class="relative inline-block h-10 w-10 rounded-full flex-shrink-0">
+        <img :src="token.logoURI" class="h-10 w-10 rounded-full" :onerror="onImageError" />
+
+        <ChainLogo :stroke="true" class="w-5.5 h-5.5 absolute -left-1 -bottom-1" :chain="token.chainId" />
       </div>
 
-      <div class="flex flex-col gap-[15px]">
-        <h2 class="text-lg leading-5 text-center">
-          {{ token.name }}
-          <span class="uppercase"> ({{ token.symbol }})</span>
-        </h2>
-
-        <div
-          class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] self-center inline-flex justify-center items-center gap-2 rounded-5"
-        >
-          <ChainLogo class="w-5 h-5" :chain="token.chainId" />
-          <span class="text-xs text-slate-400 leading-5 w-fit">{{
-            chainIdToName(token.chainId)
-          }}</span>
-        </div>
-      </div>
+      <h2 class="text-lg leading-5 text-center">
+        {{ token.name }}
+        <span class="uppercase"> ({{ token.symbol }})</span>
+      </h2>
     </div>
 
     <div class="flex flex-col gap-5">
