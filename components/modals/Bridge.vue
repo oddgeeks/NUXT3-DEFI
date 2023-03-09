@@ -179,7 +179,7 @@ const onSubmit = form.handleSubmit(async () => {
           </CommonInput>
 
           <div
-            class="dark:bg-gray-850 bg-slate-50 px-3 max-w-full inline-flex items-center gap-2 rounded-2xl self-start h-[50px]"
+            class="dark:bg-gray-850 bg-slate-50 px-3 max-w-full hidden sm:inline-flex items-center gap-2 rounded-2xl self-start h-[50px]"
           >
             <ChainLogo class="w-6 h-6" :chain="token.chainId" />
             <span class="text-sm leading-5">{{
@@ -196,12 +196,27 @@ const onSubmit = form.handleSubmit(async () => {
         <div class="flex justify-between items-center">
           <h1 class="text-sm">Transfer to</h1>
         </div>
-        <div class="px-5 pt-[14px] pb-5 dark:bg-gray-850 bg-slate-50 rounded-5">
+        <div class="flex sm:hidden flex-col gap-2.5 pb-5">
+          <CommonSelect
+            v-model="toChainId"
+            value-key="chainId"
+            label-key="name"
+            :options="selectableChains"
+          >
+            <template #button-prefix>
+              <ChainLogo class="w-6 h-6" :chain="toChainId" />
+            </template>
+            <template #item-prefix="{ value }">
+              <ChainLogo class="w-6 h-6" :chain="value" />
+            </template>
+          </CommonSelect>
+        </div>
+        <div class="px-5 sm:pt-[14px] pb-5 dark:bg-gray-850 bg-slate-50 rounded-5">
           <div class="flex flex-col gap-5">
             <div
               class="grid items-center gap-4 grid-cols-1 md:grid-cols-2 md:gap-x-4 md:gap-y-5"
             >
-              <div class="flex flex-col gap-2.5">
+              <div class="hidden sm:flex flex-col gap-2.5">
                 <span class="text-sm">Coin</span>
                 <div
                   class="dark:bg-gray-800 bg-slate-100 w-full px-3 flex py-3 items-center gap-2.5 rounded-2xl"
@@ -222,7 +237,7 @@ const onSubmit = form.handleSubmit(async () => {
                 </div>
               </div>
 
-              <div class="flex flex-col gap-2.5">
+              <div class="hidden sm:flex flex-col gap-2.5">
                 <span class="text-sm">Network</span>
                 <CommonSelect
                   v-model="toChainId"
