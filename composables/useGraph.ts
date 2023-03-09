@@ -1,9 +1,8 @@
+import type { ChartData } from "chart.js";
 import { IBalance } from "~~/stores/safe";
 
-export const useGraph = (balance: IBalance) => {
-  const interactable = computed(() =>
-    toBN(balance.balance).decimalPlaces(5).gt(0)
-  );
+export const useGraph = (balance: Ref<IBalance>) => {
+  const interactable = computed(() => toBN(balance.value.balance).gt(0));
 
   const priceDiffColor = computed(() => {
     if (!priceDiffInPercent.value) return "rgb(148 163 184)";
@@ -16,9 +15,9 @@ export const useGraph = (balance: IBalance) => {
   });
 
   const priceDiffInPercent = computed(() => {
-    if (!balance.sparklinePrice7d.length) return 0;
-    let a = balance.sparklinePrice7d.at(-24)!;
-    let b = balance.sparklinePrice7d.at(-1)!;
+    if (!balance.value.sparklinePrice7d.length) return 0;
+    let a = balance.value.sparklinePrice7d.at(-24)!;
+    let b = balance.value.sparklinePrice7d.at(-1)!;
     return (100 * (b - a)) / a;
   });
 
@@ -32,23 +31,26 @@ export const useGraph = (balance: IBalance) => {
     return "text-primary";
   });
 
-  const chartData = computed(() => ({
-    labels: balance.sparklinePrice7d,
-    datasets: [
-      {
-        data: balance.sparklinePrice7d,
-        fill: false,
-        pointRadius: 0,
-        cubicInterpolationMode: "monotone",
-      },
-    ],
-  }));
+  const chartData = computed(
+    () =>
+      ({
+        labels: balance.value.sparklinePrice7d,
+        datasets: [
+          {
+            data: balance.value.sparklinePrice7d,
+            fill: false,
+            pointRadius: 0,
+            cubicInterpolationMode: "monotone",
+          },
+        ],
+      } as ChartData<"line">)
+  );
 
   return {
     interactable,
     priceDiffColor,
     priceDiffInPercent,
     priceDiffClass,
-    chartData
+    chartData,
   };
 };
