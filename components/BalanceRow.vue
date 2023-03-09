@@ -11,50 +11,7 @@ const props = defineProps<{
 
 const DECIMAL_PLACES = 5;
 
-const interactable = computed(() =>
-  toBN(props.tokenBalance.balance).decimalPlaces(DECIMAL_PLACES).gt(0)
-);
-
-
-
-const priceDiffInPercent = computed(() => {
-  if (!props.tokenBalance.sparklinePrice7d.length) return 0;
-  let a = props.tokenBalance.sparklinePrice7d.at(-24)!;
-  let b = props.tokenBalance.sparklinePrice7d.at(-1)!;
-  return (100 * (b - a)) / a;
-});
-
-const priceDiffClass = computed(() => {
-  if (!priceDiffInPercent.value) return "text-slate-400";
-
-  if (priceDiffInPercent.value < 0) {
-    return "text-red-alert";
-  }
-
-  return "text-primary";
-});
-
-const priceDiffColor = computed(() => {
-  if (!priceDiffInPercent.value) return "rgb(148 163 184)";
-
-  if (priceDiffInPercent.value < 0) {
-    return "#EB5757";
-  }
-
-  return "#16A34A";
-});
-
-const chartData = computed(() => ({
-  labels: props.tokenBalance.sparklinePrice7d,
-  datasets: [
-    {
-      data: props.tokenBalance.sparklinePrice7d,
-      fill: false,
-      pointRadius: 0,
-      cubicInterpolationMode: "monotone",
-    },
-  ],
-}));
+const { priceDiffColor, interactable, priceDiffClass, priceDiffInPercent, chartData } = useGraph(props.tokenBalance as IBalance);
 
 const chartOptions = {
   events: [],

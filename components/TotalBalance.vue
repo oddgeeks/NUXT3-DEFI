@@ -5,7 +5,7 @@ const { balances } = storeToRefs(useSafe());
 const { totalBalance, account } = useAvocadoSafe();
 </script>
 <template>
-  <div :class="{ 'blur pointer-events-none': !account }">
+  <div :class="{ 'sm:blur pointer-events-none': !account }">
     <h2 class="text-slate-400 text-sm font-semibold mb-2.5">Total balance</h2>
     <div class="font-semibold text-[40px] leading-10">
       <div v-if="!balances.data" class="h-10 w-40 flex items-center">
