@@ -11,7 +11,9 @@ const props = defineProps<{
 
 const DECIMAL_PLACES = 5;
 
-const { priceDiffColor, interactable, priceDiffClass, priceDiffInPercent, chartData } = useGraph(props.tokenBalance as IBalance);
+const balance = computed(() => props.tokenBalance as IBalance)
+
+const { priceDiffColor, interactable, priceDiffClass, priceDiffInPercent, chartData } = useGraph(balance);
 
 const chartOptions = {
   events: [],
