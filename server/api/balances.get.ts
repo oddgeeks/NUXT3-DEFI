@@ -63,7 +63,7 @@ const getFromDebank = async (address: string) => {
             symbol: token.symbol,
             chainId: networks.find(n => n.chain === token.chain)?.chain_id || null,
             logoURI: token.logo_url,
-            price: new BigNumber(price).toFixed(0),
+            price: new BigNumber(price).toFixed(),
             balanceRaw: new BigNumber(token.raw_amount).toFixed(0),
             balance: new BigNumber(token.raw_amount).div(10 ** token.decimals).toFixed(),
             balanceInUSD: new BigNumber(token.raw_amount).div(10 ** token.decimals).times(price).toFixed(),
