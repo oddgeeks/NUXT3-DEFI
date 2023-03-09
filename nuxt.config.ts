@@ -14,6 +14,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     socketApiKey: process.env.SOCKET_API_KEY,
     debankAccessKey: process.env.DEBANK_ACCESS_KEY,
+    ankrApiKey: process.env.ANKR_API_KEY,
     slackKey: process.env.SLACK_KEY,
     slackErrorKey: process.env.SLACK_ERROR_KEY,
     public: {

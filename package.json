@@ -11,6 +11,7 @@
     "generate:tokenlist": "tsx scripts/token-list.ts"
   },
   "devDependencies": {
+    "@ankr.com/ankr.js": "^0.3.1",
     "@coinbase/wallet-sdk": "3.0.4",
     "@fontsource/source-code-pro": "^4.5.12",
     "@headlessui/vue": "^1.7.9",
