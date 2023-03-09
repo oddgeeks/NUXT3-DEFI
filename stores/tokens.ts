@@ -118,11 +118,11 @@ export const useTokens = defineStore("tokens", () => {
       `/token/${token.address}`
     )}|${shortenHash(token.address, 12)}>`;
 
-    logActionToSlack({
-      action: "add-token",
-      message: `${token.name} :${chainIdToName(token.chainId)}: ${url}`,
-      account: account.value,
-    });
+    // logActionToSlack({
+    //   action: "add-token",
+    //   message: `${token.name} :${chainIdToName(token.chainId)}: ${url}`,
+    //   account: account.value,
+    // });
   };
 
   useIntervalFn(handleTokenPrices, 10000);
