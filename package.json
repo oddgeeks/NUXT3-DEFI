@@ -11,6 +11,7 @@
     "generate:tokenlist": "tsx scripts/token-list.ts"
   },
   "devDependencies": {
+    "@ankr.com/ankr.js": "^0.3.1",
     "@coinbase/wallet-sdk": "3.0.4",
     "@fontsource/source-code-pro": "^4.5.12",
     "@headlessui/vue": "^1.7.9",
@@ -25,6 +26,7 @@
     "@typechain/ethers-v5": "^10.2.0",
     "@types/canvas-confetti": "^1.6.0",
     "@types/semver": "^7.3.13",
+    "@vercel/analytics": "^0.1.11",
     "@vueuse/nuxt": "^9.13.0",
     "@walletconnect/client": "^1.8.0",
     "@web3-react/injected-connector": "^6.0.7",
