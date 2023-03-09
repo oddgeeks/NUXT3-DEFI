@@ -13,6 +13,16 @@ interface IBalance {
     balanceInUSD: string
 }
 
+const ankrNetworks: Record<string, string> = {
+    "arbitrum": String(42161),
+    "bsc": String(56),
+    "polygon": String(137),
+    "eth": String(1),
+    "gnosis": String(100),
+    "avalanche": String(43114),
+    "optimism": String(10),
+}
+
 const networks = [
     { chain: "arb", chain_id: String(42161) },
     { chain: "bsc", chain_id: String(56) },
@@ -23,11 +33,16 @@ const networks = [
     { chain: "op", chain_id: String(10) },
 ]
 
-const { debankAccessKey } = useRuntimeConfig()
+const { debankAccessKey, ankrApiKey } = useRuntimeConfig()
 
-export default defineEventHandler<IBalance[]>(async (event) => {
-    const { address } = getQuery(event)
-    let balances : any[]= await $fetch("https://pro-openapi.debank.com/v1/user/all_token_list", {
+import { AnkrProvider } from '@ankr.com/ankr.js';
+
+// Setup provider AnkrProvider
+const ankrProvider = new AnkrProvider(ankrApiKey)
+
+const getFromDebank = async (address: string) => {
+
+    let balances: any[] = await $fetch("https://pro-openapi.debank.com/v1/user/all_token_list", {
         retry: 3,
         params: {
             id: address,
@@ -57,7 +72,43 @@ export default defineEventHandler<IBalance[]>(async (event) => {
 
     balances = balances.filter(b => b.chainId !== null)
 
-    return balances
-        // .filter(b => b.price !== '0')
-        .sort((a, b) => new BigNumber(b.balanceInUSD).minus(a.balanceInUSD).toNumber());
+    return balances.sort((a, b) => new BigNumber(b.balanceInUSD).minus(a.balanceInUSD).toNumber());
+}
+
+const getFromAnkr = async (address: string): Promise<IBalance[]> => {
+    const ankrBalances = await ankrProvider.getAccountBalance({
+        blockchain: [],
+        walletAddress: address,
+    });
+
+    let balances = ankrBalances.assets.map((asset) => ({
+        name: asset.tokenName,
+        address: asset.tokenType === "NATIVE" ? "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" : asset.contractAddress!,
+        decimals: asset.tokenDecimals,
+        symbol: asset.tokenSymbol,
+        chainId: ankrNetworks[asset.blockchain as any] || null,
+        logoURI: asset.thumbnail,
+        price: asset.tokenPrice,
+        balanceRaw: asset.balanceRawInteger,
+        balance: asset.balance,
+        balanceInUSD: asset.balanceUsd,
+    }));
+
+    balances = balances.filter(b => b.chainId !== null)
+
+    balances = balances.sort((a, b) => new BigNumber(b.balanceInUSD).minus(a.balanceInUSD).toNumber());
+
+    return balances as any;
+}
+
+export default defineEventHandler<IBalance[]>(async (event) => {
+    const { address } = getQuery(event)
+
+    try {
+        throw Error("testing")
+
+        return await getFromDebank(String(address))
+    } catch (error) {
+        return await getFromAnkr(String(address))
+    }
 })
