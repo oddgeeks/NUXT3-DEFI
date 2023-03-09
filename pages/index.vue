@@ -3,17 +3,17 @@ import LinkSVG from "~/assets/images/icons/external-link.svg?raw";
 import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import ChevronDownSVG from "~/assets/images/icons/chevron-down.svg?component";
 import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?component";
-const { networks, getNetworkByChainId } = useNetworks();
-const { tokenBalances } = useAvocadoSafe();
+import { storeToRefs } from "pinia";
+const { networks } = useNetworks();
 const { account } = useWeb3();
-const { unstableDappNetworks } = useBanner()
+const { unstableDappNetworks } = useBanner();
+const { networkPreference } = storeToRefs(useSafe());
 
 useForceSingleSession();
 
 const availableNetworks = networks.filter((network) => network.chainId != 634);
 
 const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
-const networkPreference = ref(new Set(availableNetworks.map(el => el.chainId)));
 
 const handleOpenDialog = () => {
   openDialogModal({
@@ -31,7 +31,10 @@ const handleOpenDialog = () => {
 <template>
   <div class="container flex flex-col gap-[30px] flex-1">
     <TotalBalance />
-    <DApps />
+    <div class="flex flex-col gap-3.5">
+      <DApps />
+      <YourWallet />
+    </div>
     <div class="flex gap-5 lg:flex-row flex-col flex-1">
       <div class="flex relative flex-col w-full gap-5">
         <div
@@ -39,7 +42,7 @@ const handleOpenDialog = () => {
           class="flex flex-col gap-5"
         >
         <WarningsUnstableDappVersion v-if="unstableDappNetworks.length" />
-          <div class="flex justify-between pr-7.5">
+          <div class="flex justify-between sm:pr-7.5">
             <div class="flex gap-7.5">
               <h2 class="font-semibold inline-flex gap-2.5 items-center">
                 Balances
@@ -53,7 +56,7 @@ const handleOpenDialog = () => {
                     'dark:text-white text-slate-900': isHideZeroBalances,
                   }"
                   @click="isHideZeroBalances = !isHideZeroBalances"
-                  class="text-sm text-slate-400 inline-flex gap-2.5 items-center"
+                  class="text-sm text-slate-400 hidden sm:inline-flex gap-2.5 items-center"
                 >
                   Hide 0 Balances
 
@@ -86,7 +89,11 @@ const handleOpenDialog = () => {
                   </div>
                 </div>
               </ClientOnly>
-              <Popover as="div" class="relative z-20 flex gap-4 items-center">
+              <button @click="openNetworksModal" class="text-sm inline-flex sm:hidden items-center gap-2">
+                Filters
+                <ChevronDownSVG class="text-slate-400 w-[14px] h-[14px] -rotate-90" />
+              </button>
+              <Popover as="div" class="relative z-20 hidden sm:flex gap-4 items-center">
                 <PopoverButton class="text-sm flex items-center gap-2 h-7.5">
                   Networks
                   <ChevronDownSVG class="text-slate-400 w-[14px] h-[14px]" />
@@ -146,10 +153,10 @@ const handleOpenDialog = () => {
         </div>
         <div
           v-if="!account"
-          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"
+          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center w-full"
         >
           <div class="flex flex-col items-center justify-center gap-6">
-            <p class="font-semibold text-lg whitespace-nowrap">
+            <p class="font-semibold text-lg sm:whitespace-nowrap text-center">
               Connect your wallet to see the balances
             </p>
 
@@ -160,7 +167,7 @@ const handleOpenDialog = () => {
         </div>
       </div>
       <div
-        class="flex lg:flex-col md:shrink-0 md:basis-[213px] lg:mt-0 mt-16 gap-5"
+        class="hidden sm:flex lg:flex-col md:shrink-0 md:basis-[213px] lg:mt-0 mt-16 gap-5"
       >
         <div class="w-full flex flex-col gap-5">
           <h2 class="font-semibold inline-flex gap-2.5">

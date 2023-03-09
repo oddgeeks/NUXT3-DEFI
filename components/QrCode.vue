@@ -1,10 +1,6 @@
 <script setup>
 const { safeAddress } = useAvocadoSafe();
 const account = computed(() => safeAddress.value || "0x000000000000000");
-
-const shortenAddress = () => {
-  return account.value.substr(0, 6) + "..." + account.value.substr(-4);
-};
 </script>
 <template>
   <div>
@@ -14,13 +10,15 @@ const shortenAddress = () => {
     >
       <StyledQrCode
         class="rounded-5 mx-auto bg-white overflow-hidden"
+        :size="140"
+        :margin="7"
         :data="account"
         :key="account"
       />
 
       <Copy class="mt-5" :text="account">
         <template #content>
-          {{ shortenAddress() }}
+          {{ shortenHash(account) }}
         </template>
       </Copy>
     </div>
