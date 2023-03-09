@@ -9,7 +9,10 @@ const { account } = useWeb3();
 const { unstableDappNetworks } = useBanner();
 const { networkPreference } = storeToRefs(useSafe());
 
-useForceSingleSession();
+useAccountTrack(undefined, () => {
+  useEagerConnect();
+});
+
 
 const availableNetworks = networks.filter((network) => network.chainId != 634);
 
