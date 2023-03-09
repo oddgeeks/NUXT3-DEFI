@@ -105,8 +105,6 @@ export default defineEventHandler<IBalance[]>(async (event) => {
     const { address } = getQuery(event)
 
     try {
-        throw Error("testing")
-
         return await getFromDebank(String(address))
     } catch (error) {
         return await getFromAnkr(String(address))
