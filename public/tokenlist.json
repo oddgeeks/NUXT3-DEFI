@@ -5,7 +5,7 @@
 		"avocado",
 		"defi"
 	],
-	"timestamp": "2023-02-15T18:22:11.391Z",
+	"timestamp": "2023-03-09T11:56:36.139Z",
 	"tokens": [
 		{
 			"chainId": 1,
@@ -242,6 +242,14 @@
 		{
 			"chainId": 1,
 			"address": "0x4fabb145d64652a948d72533023f6e7a623c7c53",
+			"name": "Binance USD",
+			"symbol": "busd",
+			"decimals": 18,
+			"logoURI": "https://avocado.instadapp.io/tokens/binance-usd.svg"
+		},
+		{
+			"chainId": 10,
+			"address": "0x9c9e5fd8bbc25984b178fdce6117defa39d2db39",
 			"name": "Binance USD",
 			"symbol": "busd",
 			"decimals": 18,
@@ -984,16 +992,16 @@
 			"logoURI": "https://assets.coingecko.com/coins/images/913/large/LRC.png?1572852344"
 		},
 		{
-			"chainId": 1,
-			"address": "0xb0c7a3ba49c7a6eaba6cd4a96c55a1391070ac9a",
+			"chainId": 42161,
+			"address": "0x539bde0d7dbd336b79148aa742883198bbf60342",
 			"name": "Magic",
 			"symbol": "magic",
 			"decimals": 18,
 			"logoURI": "https://assets.coingecko.com/coins/images/18623/large/magic.png?1656052146"
 		},
 		{
-			"chainId": 42161,
-			"address": "0x539bde0d7dbd336b79148aa742883198bbf60342",
+			"chainId": 1,
+			"address": "0xb0c7a3ba49c7a6eaba6cd4a96c55a1391070ac9a",
 			"name": "Magic",
 			"symbol": "magic",
 			"decimals": 18,
@@ -1278,14 +1286,6 @@
 			"symbol": "agix",
 			"decimals": 8,
 			"logoURI": "https://assets.coingecko.com/coins/images/2138/large/singularitynet.png?1548609559"
-		},
-		{
-			"chainId": 43114,
-			"address": "0xaafd2577fb67366d3c89db0d627c49d769ee2e5d",
-			"name": "Stabilize USD",
-			"symbol": "susd",
-			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/19754/large/SUSD_200.png?1635824557"
 		},
 		{
 			"chainId": 1,
@@ -1726,6 +1726,14 @@
 			"symbol": "wsteth",
 			"decimals": 18,
 			"logoURI": "https://avocado.instadapp.io/tokens/wrapped-steth.svg"
+		},
+		{
+			"chainId": 100,
+			"address": "0xe91d153e0b41518a2ce8dd3d7944fa863463a97d",
+			"name": "Wrapped XDAI",
+			"symbol": "wxdai",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/14584/large/wrapped-xdai-logo.png?1641888881"
 		},
 		{
 			"chainId": 100,

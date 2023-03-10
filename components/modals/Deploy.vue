@@ -50,12 +50,14 @@ function handleDeploy(network: Network) {
       <h2 class="text-slate-400 text-xs font-medium leading-5 text-center">
         Some dapps might not work as expected if your wallet is not deployed.
         Wallet deployment happens on first transaction on each chain.
-        <a class="text-primary">Learn more</a>
+        <NuxtLink href="https://help.avocado.instadapp.io/en/articles/7046928-how-to-deploy-wallet-for-first-time-users" external target="_blank" class="text-primary">
+          Learn more
+        </NuxtLink>
       </h2>
     </div>
-    <ul class="grid grid-cols-2 gap-4">
+    <ul class="grid sm:grid-cols-2 gap-4">
       <li
-        class="dark:bg-gray-850 flex items-center justify-between bg-slate-50 rounded-7.5 px-4 py-2.5"
+        class="dark:bg-gray-850 flex items-center justify-between bg-slate-50 rounded-7.5 px-4 py-3 sm:py-2.5"
         :key="network.chainId"
         v-for="network in data"
       >
@@ -72,7 +74,7 @@ function handleDeploy(network: Network) {
           @click="handleDeploy(network)"
           :disabled="!network.notdeployed"
           v-else
-          class="h-[30px] items-center px-[18px]"
+          class="h-[30px] items-center px-[18px] w-[80px] sm:w-fit justify-center"
           size="sm"
         >
           <span v-if="network.notdeployed"> Deploy </span>

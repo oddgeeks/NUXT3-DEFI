@@ -21,14 +21,14 @@ const formatted = computed(() => {
 </script>
 
 <template>
-  <div class="flex items-center gap-2">
-    <p class="text-xs text-orange-400 leading-5 inline-flex gap-2">
+  <div class="flex items-start gap-2">
       <SVGInfo class="text-orange-400 w-5 h-5 shrink-0" />
+    <p class="text-xs text-orange-400 leading-5">
       Your Avocado wallet is not yet deployed on {{ formatted }} - some dapp
       connections might break.
-    </p>
-    <button @click="openDeployModal" class="text-primary text-xs">
+      <button @click="openDeployModal" class="text-primary text-xs">
       Deploy Now
     </button>
+    </p>
   </div>
 </template>
