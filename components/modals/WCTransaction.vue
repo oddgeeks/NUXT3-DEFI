@@ -149,7 +149,7 @@ const handleReject = () => {
 <template>
   <form @submit.prevent="handleSubmit" class="flex flex-col gap-7.5">
     <audio src="/audio/alert.mp3" autoplay></audio>
-    <div class="font-semibold leading-[30px]">
+    <div class="font-semibold leading-[30px] text-center sm:text-left">
       <span v-if="isSign">Send Transaction: Permit2 Approval</span>
       <span v-else>Send Transaction</span>
     </div>
