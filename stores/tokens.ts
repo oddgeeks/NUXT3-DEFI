@@ -16,7 +16,7 @@ export interface IToken {
 }
 
 export const useTokens = defineStore("tokens", () => {
-  const tokens = useStorageAsync<IToken[]>("tokens", []);
+  const tokens = ref<IToken[]>([]);
   const customTokens = useStorageAsync<IToken[]>("custom-tokens", []);
   const { account } = useWeb3();
 
