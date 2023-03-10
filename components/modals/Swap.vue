@@ -702,31 +702,31 @@ onUnmounted(() => {
 
             <div class="flex flex-col gap-4">
               <div
-                class="flex text-slate-400 font-medium uppercase text-sm justify-between items-center"
+                class="flex flex-col sm:flex-row text-slate-400 font-medium uppercase text-sm justify-between items-center"
               >
                 <div
                   v-if="isLoading"
                   style="width: 140px; height: 20px"
                   class="loading-box rounded-lg"
                 />
-                <span v-else>
-                  1 {{ swap.sellToken?.symbol }} =
-                  {{ buyTokenAmountPerSellToken }}
-                  {{ swap.buyToken?.symbol }}
-                </span>
+                <div class="flex items-center justify-between sm:justify-start sm:gap-2 w-full" v-else>
+                  <span>1 {{ swap.sellToken?.symbol }}</span>
+                  <span> = </span>
+                  <span>{{ buyTokenAmountPerSellToken }} {{ swap.buyToken?.symbol }}</span>
+                </div>
                 <div
                   v-if="isLoading"
                   style="width: 140px; height: 20px"
                   class="loading-box rounded-lg"
                 />
-                <span v-else>
-                  1 {{ swap.buyToken?.symbol }} =
-                  {{ sellTokenAmountPerBuyToken }}
-                  {{ swap.sellToken?.symbol }}
-                </span>
+                <div v-else class="flex items-center justify-between sm:justify-end sm:gap-2 w-full">
+                  <span>1 {{ swap.buyToken?.symbol }}</span>
+                  <span> = </span>
+                  <span>{{ sellTokenAmountPerBuyToken }} {{ swap.sellToken?.symbol }}</span>
+                </div>
               </div>
               <div
-                class="flex text-slate-400 font-medium text-sm justify-between items-center"
+                class="hidden sm:flex text-slate-400 font-medium text-sm justify-between items-center"
               >
                 <span>
                   Minimum Received after slippage ({{ actualSlippage }}%)
