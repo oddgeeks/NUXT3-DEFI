@@ -97,7 +97,6 @@ const sendingDisabled = computed(
     !meta.value.valid
 );
 
-
 const claim = async () => {
   try {
     claimLoading.value = true;
@@ -289,9 +288,6 @@ onMounted(() => {
     >
       {{ formatDecimal(gasBalance, 2) }} USDC
     </span>
-    <CommonButton :loading="claimLoading" @click="claim()" v-if="airDrop?.id" class="flex text-sm items-center gap-2">
-       {{ airDrop.message }}
-    </CommonButton>
     <form v-if="!isGiftActive" @submit="onSubmit" class="space-y-5">
       <div class="flex flex-col gap-2.5">
         <span class="text-left leading-5">Network</span>
