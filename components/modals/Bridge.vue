@@ -294,12 +294,12 @@ const onSubmit = form.handleSubmit(async () => {
 
             <div class="divider" />
 
-            <div class="flex justify-between items-center">
+            <div class="flex justify-between items-start sm:items-center whitespace-nowrap">
               <span class="md:text-lg font-semibold !leading-5"
                 >You receive</span
               >
               <span
-                class="sm:text-2xl text-lg font-semibold text-right !leading-5 uppercase inline-flex gap-2.5"
+                class="sm:text-2xl font-semibold text-right !leading-5 uppercase inline-flex flex-col sm:flex-row sm:gap-2.5"
               >
                 <span>{{ toAmount }} {{ token.symbol }}</span>
                 <span class="text-slate-400 text-sm">({{ formatUsd(toBN(token.price || 0).times(toAmount || 0).decimalPlaces(2)) }})</span>
