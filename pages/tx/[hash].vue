@@ -131,7 +131,7 @@ onUnmounted(() => {
 
 <template>
   <div class="container flex-1 pb-10">
-    <h1 class="mb-5 hidden sm:inline">Transaction Details</h1>
+    <h1 class="mb-5 hidden sm:block">Transaction Details</h1>
 
     <div
       class="dark:bg-gray-850 bg-slate-50 rounded-5.5 sm:text-sm text-xs font-medium py-5 sm:py-6.5 min-h-[548px] blur"
