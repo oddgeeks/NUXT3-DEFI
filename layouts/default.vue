@@ -1,11 +1,9 @@
 <script setup lang="ts">
-
 const {
   showTrackingBanner,
   showIncorrectNetworkBanner,
   showInsufficientGasBanner,
   showOnboardBanner,
-  showGasGiftBanner
 } = useBanner();
 
 const route = useRoute();
@@ -33,8 +31,7 @@ const route = useRoute();
       class="container flex flex-col gap-4 banner-wrapper mt-36 sm:mt-0 [&:not(:empty)]:mb-7.5"
       :class="{ 'mt-44': showTrackingBanner }"
     >
-      <BannerGift v-if="showGasGiftBanner" />
-      <WarningsGasBalance v-else-if="showInsufficientGasBanner" />
+      <WarningsGasBalance v-if="showInsufficientGasBanner" />
     </div>
     <div class="sm:mt-0">
       <slot />

@@ -10,7 +10,7 @@ const { switchNetworkByChainId } = useNetworks();
     <div class="flex space-x-[12px] items-start sm:items-center">
       <GloveSVG class="w-8 h-8" />
       <p class="leading-5 w-5/6 sm:w-full">
-        It seems you’re connected to wrong network. Please switch to Avocado Network or add the network on your wallet provider.
+        You're connected to the wrong network. Please switch to Avocado Network.
       </p>
     </div>
     <CommonButton @click="switchNetworkByChainId(634)" class="whitespace-nowrap w-full h-7.5 sm:h-fit sm:w-fit justify-center" target="_blank" size="sm">

@@ -97,7 +97,6 @@ const sendingDisabled = computed(
     !meta.value.valid
 );
 
-
 const claim = async () => {
   try {
     claimLoading.value = true;
@@ -289,12 +288,9 @@ onMounted(() => {
     >
       {{ formatDecimal(gasBalance, 2) }} USDC
     </span>
-    <CommonButton :loading="claimLoading" @click="claim()" v-if="airDrop?.id" class="flex text-sm items-center gap-2">
-       {{ airDrop.message }}
-    </CommonButton>
     <form v-if="!isGiftActive" @submit="onSubmit" class="space-y-5">
       <div class="flex flex-col gap-2.5">
-        <span class="text-left leading-5">Network</span>
+        <span class="text-left leading-5 text-sm sm:text-base">Network</span>
         <CommonSelect
           v-model="chainId"
           labelKey="name"
@@ -309,7 +305,7 @@ onMounted(() => {
             <ChainLogo class="w-6 h-6" :chain="value" />
           </template>
           <template #item="{ label, item }">
-            <div class="flex flex-col gap-1 mb-auto">
+            <div class="flex flex-col gap-1 mb-auto text-sm sm:text-base">
               <span>{{ label }}</span>
               <span class="text-sm text-gray-400 font-medium">
                 {{ formatDecimal(item.balance) }} USDC
@@ -320,7 +316,7 @@ onMounted(() => {
       </div>
 
       <div class="space-y-2.5">
-        <div class="flex justify-between items-center leading-5">
+        <div class="flex justify-between items-center leading-5 text-sm sm:text-base">
           <span>Amount</span>
           <span class="uppercase"
             >{{ formatDecimal(token?.balance) }} {{ token?.symbol }}</span

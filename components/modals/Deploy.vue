@@ -50,7 +50,9 @@ function handleDeploy(network: Network) {
       <h2 class="text-slate-400 text-xs font-medium leading-5 text-center">
         Some dapps might not work as expected if your wallet is not deployed.
         Wallet deployment happens on first transaction on each chain.
-        <a class="text-primary">Learn more</a>
+        <NuxtLink href="https://help.avocado.instadapp.io/en/articles/7046928-how-to-deploy-wallet-for-first-time-users" external target="_blank" class="text-primary">
+          Learn more
+        </NuxtLink>
       </h2>
     </div>
     <ul class="grid sm:grid-cols-2 gap-4">

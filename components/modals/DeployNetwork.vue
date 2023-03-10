@@ -74,8 +74,7 @@ const handleDeploy = async () => {
       <h1 class="font-lg text-center leading-5 mb-3">{{ network.name }}</h1>
       <h2 class="font-medium text-xs text-slate-400 leading-5 text-center">
         In order to interact with dapps on your requested network, please deploy
-        (activate) your wallet. Wallet deployment happens on first transaction
-        on each chain. <a class="text-primary">Learn more</a>
+        (activate) your wallet.
       </h2>
     </div>
     <EstimatedFee :data="data" :loading="pending" :error="error" />
