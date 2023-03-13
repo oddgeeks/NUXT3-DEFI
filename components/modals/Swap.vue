@@ -711,7 +711,7 @@ onUnmounted(() => {
                 />
                 <div class="flex items-center justify-between sm:justify-start sm:gap-2 w-full" v-else>
                   <span>1 {{ swap.sellToken?.symbol }}</span>
-                  <span> = </span>
+                  <span class="sm:block hidden"> = </span>
                   <span>{{ buyTokenAmountPerSellToken }} {{ swap.buyToken?.symbol }}</span>
                 </div>
                 <div
@@ -721,7 +721,7 @@ onUnmounted(() => {
                 />
                 <div v-else class="flex items-center justify-between sm:justify-end sm:gap-2 w-full">
                   <span>1 {{ swap.buyToken?.symbol }}</span>
-                  <span> = </span>
+                  <span  class="sm:block hidden"> = </span>
                   <span>{{ sellTokenAmountPerBuyToken }} {{ swap.sellToken?.symbol }}</span>
                 </div>
               </div>
