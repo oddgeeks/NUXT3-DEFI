@@ -30,9 +30,9 @@ const token = computed(
       (t) => t.chainId === props.chainId && t.address === props.address
     )!
 );
-const loading = ref(false);
+const actualAddress = ref('');
 
-const { handleSubmit, errors, meta, resetForm, validate } = useForm({
+const { handleSubmit, errors, meta, resetForm, validate, isSubmitting } = useForm({
   validationSchema: yup.object({
     amount: yup
       .string()
@@ -51,8 +51,25 @@ const { handleSubmit, errors, meta, resetForm, validate } = useForm({
     address: yup
       .string()
       .required("")
-      .test("is-address", "Incorrect address", (value) => {
-        return value ? value.endsWith(".eth") || isAddress(value) : true;
+      .test("is-address", "Incorrect address", async (value) => {
+        if (!value) return true
+
+        const resolvedAddress = value.endsWith('.eth') ? await getRpcProvider(1).resolveName(value) : null
+
+        if (resolvedAddress) {
+          actualAddress.value = resolvedAddress
+          return true
+        }
+
+        if (isAddress(value)) {
+          actualAddress.value = value
+          return true
+        }
+
+        actualAddress.value = ''
+
+        return false
+
       }),
   }),
 });
@@ -79,7 +96,7 @@ const pasteAddress = async () => {
 const sendingDisabled = computed(
   () =>
     !token.value ||
-    loading.value ||
+    isSubmitting.value ||
     !meta.value.valid ||
     pending.value ||
     !!error.value
@@ -94,15 +111,9 @@ const { data: tx } = useAsyncData(
       .times(10 ** token.value.decimals)
       .toFixed(0);
 
-    const resolvedAddress = await getRpcProvider(1).resolveName(address.value)
-
-    if(! resolvedAddress) {
-      throw new InvalidENSError()
-    }
-
     let tx = {
       from: account.value,
-      to: resolvedAddress,
+      to: actualAddress.value,
       value: "0",
       data: "0x",
     };
@@ -116,7 +127,7 @@ const { data: tx } = useAsyncData(
       );
 
       const { data } = await contract.populateTransaction.transfer(
-        resolvedAddress,
+        actualAddress.value,
         transferAmount
       );
 
@@ -140,24 +151,13 @@ const onSubmit = handleSubmit(async () => {
     return;
   }
 
-  loading.value = false;
-
-  if (sendingDisabled.value) return;
-
-  loading.value = true;
   try {
     await switchNetworkByChainId(634);
-
-    const resolvedAddress = await getRpcProvider(1).resolveName(address.value)
-
-    if(! resolvedAddress) {
-       throw new InvalidENSError()
-    }
 
     const metadata = encodeTransferMetadata({
       token: token.value.address,
       amount: toWei(amount.value, token.value.decimals),
-      receiver: resolvedAddress,
+      receiver: actualAddress.value,
     });
 
     let transactionHash = await sendTransaction(
@@ -175,7 +175,7 @@ const onSubmit = handleSubmit(async () => {
     logActionToSlack({
       message: `${formatDecimal(amount.value)} ${formatSymbol(
         token.value?.symbol
-      )} to ${resolvedAddress}`,
+      )} to ${actualAddress.value}`,
       action: "send",
       txHash: transactionHash,
       chainId: props.chainId,
@@ -202,7 +202,6 @@ const onSubmit = handleSubmit(async () => {
     });
   }
 
-  loading.value = false;
 });
 </script>
 
@@ -308,7 +307,7 @@ const onSubmit = handleSubmit(async () => {
     <CommonButton
       type="submit"
       :disabled="sendingDisabled"
-      :loading="loading || pending"
+      :loading="isSubmitting || pending"
       class="justify-center w-full"
       size="lg"
     >
