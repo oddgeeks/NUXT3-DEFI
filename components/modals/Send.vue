@@ -52,7 +52,7 @@ const { handleSubmit, errors, meta, resetForm, validate } = useForm({
       .string()
       .required("")
       .test("is-address", "Incorrect address", (value) => {
-        return value ? isAddress(value) : true;
+        return value ? value.endsWith(".eth") || isAddress(value) : true;
       }),
   }),
 });
@@ -94,9 +94,15 @@ const { data: tx } = useAsyncData(
       .times(10 ** token.value.decimals)
       .toFixed(0);
 
+    const resolvedAddress = await getRpcProvider(1).resolveName(address.value)
+
+    if(! resolvedAddress) {
+      throw new InvalidENSError()
+    }
+
     let tx = {
       from: account.value,
-      to: address.value,
+      to: resolvedAddress,
       value: "0",
       data: "0x",
     };
@@ -110,7 +116,7 @@ const { data: tx } = useAsyncData(
       );
 
       const { data } = await contract.populateTransaction.transfer(
-        address.value,
+        resolvedAddress,
         transferAmount
       );
 
@@ -142,10 +148,16 @@ const onSubmit = handleSubmit(async () => {
   try {
     await switchNetworkByChainId(634);
 
+    const resolvedAddress = await getRpcProvider(1).resolveName(address.value)
+
+    if(! resolvedAddress) {
+       throw new InvalidENSError()
+    }
+
     const metadata = encodeTransferMetadata({
       token: token.value.address,
       amount: toWei(amount.value, token.value.decimals),
-      receiver: address.value,
+      receiver: resolvedAddress,
     });
 
     let transactionHash = await sendTransaction(
@@ -163,7 +175,7 @@ const onSubmit = handleSubmit(async () => {
     logActionToSlack({
       message: `${formatDecimal(amount.value)} ${formatSymbol(
         token.value?.symbol
-      )} to ${address.value}`,
+      )} to ${resolvedAddress}`,
       action: "send",
       txHash: transactionHash,
       chainId: props.chainId,
