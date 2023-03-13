@@ -1,13 +1,35 @@
 import { BigNumber } from "bignumber.js"
+import tokenlist from "~/public/tokenlist.json"
+import { AnkrProvider } from '@ankr.com/ankr.js';
+import { BalanceResolver, BalanceResolver__factory } from "~~/contracts";
+import collect from "collect.js";
+import { IToken } from "~~/stores/tokens";
+import { getRpcProvider, toBN } from "~~/utils";
 
-interface IBalance {
-    name: string
-    address: string
-    decimals: number
-    symbol: string
-    chainId: string
-    logoURI: string
-    price: number | null
+const tokens = tokenlist.tokens;
+
+const balanceResolverAddresses: Record<string, string> = {
+    "137": "0x58632D23120b20650262b8A629a14e4F4043E0D9",
+    "42161": "0xca5f37e6D8bB24c5A7958d5eccE7Bd9Aacc944f2",
+    "43114": "0x63009f31D054E0ac9F321Cf0D642375236A4Bf1E",
+    "10": "0xca5f37e6D8bB24c5A7958d5eccE7Bd9Aacc944f2",
+    "1": "0x5b7D61b389D12e1f5873d0cCEe7E675915AB5F43",
+    "56": "0xb808cff38706e267067b0af427726aa099f69f89",
+    "100": "0xfaa244e276b1597f663975ed007ee4ff70d27849",
+};
+
+const balanceResolverContracts = Object.keys(balanceResolverAddresses).reduce(
+    (acc, curr) => {
+        acc[curr] = BalanceResolver__factory.connect(
+            balanceResolverAddresses[curr],
+            getRpcProvider(curr)
+        );
+        return acc;
+    },
+    {} as Record<string, BalanceResolver>
+);
+
+interface IBalance extends IToken {
     balanceRaw: string
     balance: string
     balanceInUSD: string
@@ -34,8 +56,6 @@ const networks = [
 ]
 
 const { debankAccessKey, ankrApiKey } = useRuntimeConfig()
-
-import { AnkrProvider } from '@ankr.com/ankr.js';
 
 // Setup provider AnkrProvider
 const ankrProvider = new AnkrProvider(ankrApiKey)
@@ -101,12 +121,67 @@ const getFromAnkr = async (address: string): Promise<IBalance[]> => {
     return balances as any;
 }
 
+const getChainBalances = async (chainId: string, address: string) => {
+    let newBalances: IBalance[] = [];
+
+    const chainTokens = collect(
+        tokens.filter((t) => String(t.chainId) === chainId)
+    );
+
+    const chunkedTokens = chainTokens.chunk(chainId === "42161" ? 5 : 20).all();
+
+    await Promise.allSettled(
+        chunkedTokens.map(async (chunk: any[]) => {
+            chunk = (chunk as any).all();
+
+            const [balances, prices] = await Promise.all([
+                balanceResolverContracts[chainId].getBalances(
+                    address,
+                    chunk.map((t) => t.address)
+                ),
+                $fetch<IToken[]>(
+                    `https://prices.instadapp.io/${chainId}/tokens`,
+                    {
+                        params: {
+                            addresses: chunk.map((t) => t.address)
+                        },
+                    }
+                )
+            ])
+
+            for (let index = 0; index < balances.length; index++) {
+                let token = chunk[index] as IToken;
+                let balance = toBN(balances[index]).div(10 ** token.decimals);
+                let tokenPrice = prices.find((p) => token.address.toLowerCase() === token.address.toLowerCase())
+                console.log(tokenPrice)
+                if (!tokenPrice || !tokenPrice.price) {
+                    continue;
+                }
+
+                if (balance.gt(0)) {
+                    newBalances.push({
+                        ...token,
+                        price: tokenPrice.price,
+                        balanceRaw: balances[index].toString(),
+                        balance: balance.toFixed(6, 1),
+                        balanceInUSD: balance.times(tokenPrice.price).toFixed(2),
+                    });
+                }
+            }
+        })
+    );
+
+    return newBalances;
+};
+
 export default defineEventHandler<IBalance[]>(async (event) => {
     const { address } = getQuery(event)
-
     try {
-        return await getFromDebank(String(address))
+        return await Promise.all([
+            getFromAnkr(String(address)),
+            getChainBalances("100", String(address)),
+        ]).then(r => r.flat())
     } catch (error) {
-        return await getFromAnkr(String(address))
+        return await getFromDebank(String(address))
     }
 })
