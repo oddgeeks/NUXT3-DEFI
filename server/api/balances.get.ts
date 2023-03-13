@@ -161,7 +161,8 @@ const getChainBalances = async (chainId: string, address: string) => {
                 if (balance.gt(0)) {
                     newBalances.push({
                         ...token,
-                        price: tokenPrice.price,
+                        chainId: String(chainId),
+                        price: String(tokenPrice.price || 0) as any,
                         balanceRaw: balances[index].toString(),
                         balance: balance.toFixed(6, 1),
                         balanceInUSD: balance.times(tokenPrice.price).toFixed(2),
