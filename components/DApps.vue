@@ -61,7 +61,7 @@ const disconnectAllConnections = async() => {
     headerIconUrl: URLWalletConnect,
     isButtonVisible: true,
     isCancelButtonVisible: true,
-    buttonText: "Disconnect All",
+    buttonText: "Disconnect",
     cancelButtonText: "Cancel",
     cancelButtonProps: {
       color: "white",
