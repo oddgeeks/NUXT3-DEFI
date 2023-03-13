@@ -121,31 +121,16 @@ const onSubmit = form.handleSubmit(async () => {
 <template>
   <form @submit="onSubmit" class="flex gap-7.5 flex-col">
     <div class="flex justify-center flex-col gap-7.5 items-center">
-      <div class="relative flex mx-auto h-10 w-10 rounded-full flex-shrink-0">
-        <img
-          width="40"
-          height="40"
-          class="h-10 w-10 rounded-[inherit]"
-          :src="token.logoURI"
-          :onerror="onImageError"
-        />
+      <div class="relative inline-block h-10 w-10 rounded-full flex-shrink-0">
+        <img :src="token.logoURI" class="h-10 w-10 rounded-full" :onerror="onImageError" />
+
+        <ChainLogo :stroke="true" class="w-5.5 h-5.5 absolute -left-1 -bottom-1" :chain="token.chainId" />
       </div>
 
-      <div class="flex flex-col gap-[15px]">
-        <h2 class="text-lg leading-5 text-center">
-          {{ token.name }}
-          <span class="uppercase"> ({{ token.symbol }})</span>
-        </h2>
-
-        <div
-          class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] self-center inline-flex justify-center items-center gap-2 rounded-5"
-        >
-          <ChainLogo class="w-5 h-5" :chain="token.chainId" />
-          <span class="text-xs text-slate-400 leading-5 w-fit">{{
-            chainIdToName(token.chainId)
-          }}</span>
-        </div>
-      </div>
+      <h2 class="text-lg leading-5 text-center">
+        {{ token.name }}
+        <span class="uppercase"> ({{ token.symbol }})</span>
+      </h2>
     </div>
 
     <div class="flex flex-col gap-5">
@@ -179,7 +164,7 @@ const onSubmit = form.handleSubmit(async () => {
           </CommonInput>
 
           <div
-            class="dark:bg-gray-850 bg-slate-50 px-3 max-w-full inline-flex items-center gap-2 rounded-2xl self-start h-[50px]"
+            class="dark:bg-gray-850 bg-slate-50 px-3 max-w-full hidden sm:inline-flex items-center gap-2 rounded-2xl self-start h-[50px]"
           >
             <ChainLogo class="w-6 h-6" :chain="token.chainId" />
             <span class="text-sm leading-5">{{
@@ -196,12 +181,27 @@ const onSubmit = form.handleSubmit(async () => {
         <div class="flex justify-between items-center">
           <h1 class="text-sm">Transfer to</h1>
         </div>
-        <div class="px-5 pt-[14px] pb-5 dark:bg-gray-850 bg-slate-50 rounded-5">
+        <div class="flex sm:hidden flex-col gap-2.5 pb-5">
+          <CommonSelect
+            v-model="toChainId"
+            value-key="chainId"
+            label-key="name"
+            :options="selectableChains"
+          >
+            <template #button-prefix>
+              <ChainLogo class="w-6 h-6" :chain="toChainId" />
+            </template>
+            <template #item-prefix="{ value }">
+              <ChainLogo class="w-6 h-6" :chain="value" />
+            </template>
+          </CommonSelect>
+        </div>
+        <div class="px-5 sm:pt-[14px] pb-5 dark:bg-gray-850 bg-slate-50 rounded-5">
           <div class="flex flex-col gap-5">
             <div
               class="grid items-center gap-4 grid-cols-1 md:grid-cols-2 md:gap-x-4 md:gap-y-5"
             >
-              <div class="flex flex-col gap-2.5">
+              <div class="hidden sm:flex flex-col gap-2.5">
                 <span class="text-sm">Coin</span>
                 <div
                   class="dark:bg-gray-800 bg-slate-100 w-full px-3 flex py-3 items-center gap-2.5 rounded-2xl"
@@ -222,7 +222,7 @@ const onSubmit = form.handleSubmit(async () => {
                 </div>
               </div>
 
-              <div class="flex flex-col gap-2.5">
+              <div class="hidden sm:flex flex-col gap-2.5">
                 <span class="text-sm">Network</span>
                 <CommonSelect
                   v-model="toChainId"
@@ -294,12 +294,12 @@ const onSubmit = form.handleSubmit(async () => {
 
             <div class="divider" />
 
-            <div class="flex justify-between items-center">
+            <div class="flex justify-between items-start sm:items-center whitespace-nowrap">
               <span class="md:text-lg font-semibold !leading-5"
                 >You receive</span
               >
               <span
-                class="sm:text-2xl text-lg font-semibold text-right !leading-5 uppercase inline-flex gap-2.5"
+                class="sm:text-2xl text-sm font-semibold text-right !leading-5 uppercase inline-flex flex-wrap gap-2 sm:gap-2.5 justify-end"
               >
                 <span>{{ toAmount }} {{ token.symbol }}</span>
                 <span class="text-slate-400 text-sm">({{ formatUsd(toBN(token.price || 0).times(toAmount || 0).decimalPlaces(2)) }})</span>

@@ -174,7 +174,7 @@ onMounted(async () => {
           </defs>
         </svg>
 
-        <div class="text-lg mt-8 mb-4">Connect with WalletConnect</div>
+        <div class="text-lg mt-5 sm:mt-7.5 mb-4">Connect with WalletConnect</div>
 
         <p class="text-slate-400 text-xs text-center leading-5 font-medium">
           Do not close this window while connecting.<br />
