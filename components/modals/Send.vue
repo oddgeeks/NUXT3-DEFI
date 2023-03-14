@@ -54,7 +54,7 @@ const { handleSubmit, errors, meta, resetForm, validate, isSubmitting } = useFor
       .test("is-address", "Incorrect address", async (value) => {
         if (!value) return true
 
-        const resolvedAddress = value.endsWith('.eth') ? await getRpcProvider(1).resolveName(value) : null
+        const resolvedAddress = value.endsWith('.eth') && props.chainId === '1' ? await getRpcProvider(1).resolveName(value) : null
 
         if (resolvedAddress) {
           actualAddress.value = resolvedAddress
