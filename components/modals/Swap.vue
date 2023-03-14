@@ -54,6 +54,7 @@ const { account } = useWeb3();
 
 const slippages = [
   { value: "0.1", label: "0.1%" },
+  { value: "0.3", label: "0.3%" },
   { value: "0.5", label: "0.5%" },
   { value: "1", label: "1%" },
   { value: "2", label: "2%" },
@@ -122,7 +123,7 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
       "sell-amount": undefined,
       "buy-amount": undefined,
       customSlippage: undefined,
-      slippage: "2",
+      slippage: "0.3",
     },
     validationSchema: yup.object({
       "sell-amount": yup

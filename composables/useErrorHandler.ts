@@ -5,9 +5,16 @@ export const errorMessages = {
   quoteExpired2: "0_K",
 };
 
+export class InvalidENSError extends Error {}
+
 export function useErrorHandler() {
   const parseTransactionError = (error: any) => {
     console.log(error);
+
+    if(error instanceof InvalidENSError) {
+      return "Invalid ENS Name"
+    }
+
     const errorMessage =
       error.error?.message || error?.reason || "Something went wrong";
 

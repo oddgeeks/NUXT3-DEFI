@@ -14,11 +14,11 @@ export const promos: IPromo[] = [
         slug: "ens-team",
         promo: "ENS-Team-v1.0.0",
     },
-    {
-        title: "CryptoTesters",
-        slug: "crypto-testers",
-        promo: "Crypto-Testers-v1.0.0",
-    },
+    // {
+    //     title: "CryptoTesters",
+    //     slug: "crypto-testers",
+    //     promo: "Crypto-Testers-v1.0.0",
+    // },
     {
         title: "ENS Drop",
         slug: "ens-drop",
