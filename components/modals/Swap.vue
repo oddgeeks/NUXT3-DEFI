@@ -122,7 +122,7 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
       "sell-amount": undefined,
       "buy-amount": undefined,
       customSlippage: undefined,
-      slippage: "3",
+      slippage: "0.3",
     },
     validationSchema: yup.object({
       "sell-amount": yup
