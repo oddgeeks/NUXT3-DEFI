@@ -3,6 +3,8 @@ import { gt } from "semver";
 const { account } = useWeb3();
 const { data } = useNuxtData("allNetworkVersions");
 
+useEagerConnect();
+
 const sortByVersion = computed(() => {
   return data.value?.sort((a: NetworkVersion, b: NetworkVersion) => {
     return gt(a.latestVersion, b.latestVersion) ? -1 : 1;
