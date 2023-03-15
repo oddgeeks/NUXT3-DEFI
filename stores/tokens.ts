@@ -56,6 +56,7 @@ export const useTokens = defineStore("tokens", () => {
           `https://prices.instadapp.io/${cid}/tokens`,
           {
             params: {
+              includeSparklinePrice7d: true,
               addresses: ts.map((t) => t.address),
             },
           }

@@ -143,6 +143,7 @@ const getChainBalances = async (chainId: string, address: string) => {
                     `https://prices.instadapp.io/${chainId}/tokens`,
                     {
                         params: {
+                            includeSparklinePrice7d: true,
                             addresses: chunk.map((t) => t.address)
                         },
                     }
