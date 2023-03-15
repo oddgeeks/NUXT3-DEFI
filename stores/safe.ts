@@ -85,7 +85,9 @@ export const useSafe = defineStore("safe", () => {
 
         if (balance) {
           tokenBalance.balance = balance.balance;
-          tokenBalance.balanceInUSD = balance.balanceInUSD;
+          tokenBalance.balanceInUSD = toBN(tb.price || 0).gt(0)
+            ? toBN(balance.balance).times(tb.price || 0).toFixed(2)
+            : balance.balanceInUSD;
         }
 
         return tokenBalance;
