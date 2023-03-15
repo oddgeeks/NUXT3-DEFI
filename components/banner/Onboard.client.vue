@@ -13,7 +13,7 @@ const totalUSD = computed(() => totalWithBalance.value.reduce((sum, cur) => sum.
 const totalChains = computed(() => new Set(totalWithBalance.value.map(el => el.chainId)).size);
 
 watch(account, async () => {
-  const res = await $fetch("/api/balances", {
+  const res = await http("/api/balances", {
     params: {
       address: account.value,
     },

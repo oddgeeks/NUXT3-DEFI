@@ -31,7 +31,9 @@ export const useSafe = defineStore("safe", () => {
     (network) => network.chainId != 634
   );
 
-  const networkPreference = ref(new Set(availableNetworks.map(el => el.chainId)));
+  const networkPreference = ref(
+    new Set(availableNetworks.map((el) => el.chainId))
+  );
 
   const balances = ref({
     data: undefined as IBalance[] | undefined,
@@ -169,7 +171,7 @@ export const useSafe = defineStore("safe", () => {
       balances.value.loading = true;
       balanceAborter.value = new AbortController();
 
-      const resp = (await $fetch("/api/balances", {
+      const resp = (await http("/api/balances", {
         signal: balanceAborter.value?.signal,
         params: {
           address: safeAddress.value,
