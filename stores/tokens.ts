@@ -52,7 +52,7 @@ export const useTokens = defineStore("tokens", () => {
       Object.keys(chainTokens).map(async (cid) => {
         const ts = chainTokens[cid];
 
-        const prices: IToken[] = await $fetch(
+        const prices: IToken[] = await http(
           `https://prices.instadapp.io/${cid}/tokens`,
           {
             params: {
@@ -101,7 +101,7 @@ export const useTokens = defineStore("tokens", () => {
     await fetchTokens();
 
     // preload at custom tokens
-    await $fetch("/api/tokens");
+    await http("/api/tokens");
   });
 
   const handleTokenPrices = async () => {
