@@ -51,13 +51,20 @@ const handleUpgrade = async (network: NetworkVersion) => {
         Upgrade Now
       </CommonButton>
       <CommonButton
-        v-else
-        :disabled="true"
+        v-else-if="network.notdeployed"
+        @click="openDeployNetworkModal(network)"
         class="!px-[19px] w-full items-center justify-center"
       >
-        <span v-if="network.notdeployed">Not deployed yet</span>
-        <span v-else>Already up to date</span>
+       Deploy
       </CommonButton>
+      <CommonButton
+        v-else
+        disabled
+        class="!px-[19px] w-full items-center justify-center"
+      >
+       Already up to date
+      </CommonButton>
+
     </td>
   </tr>
 </template>

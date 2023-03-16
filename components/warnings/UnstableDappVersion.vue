@@ -26,9 +26,9 @@ const formatted = computed(() => {
     <p class="text-xs text-orange-400 leading-5">
       Your Avocado wallet is not yet deployed on {{ formatted }} - some dapp
       connections might break.
-      <button @click="openDeployModal" class="text-primary text-xs">
+      <NuxtLink to="/upgrade" class="text-primary text-xs">
       Deploy Now
-    </button>
+    </NuxtLink>
     </p>
   </div>
 </template>

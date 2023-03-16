@@ -82,7 +82,7 @@ watch(account, async account => {
   const signer = library.value.getSigner();
   const address = await signer.getAddress();
 
-  const res = await $fetch<IPromo>(`/api/promos/${route.params.slug}`);
+  const res = await http<IPromo>(`/api/promos/${route.params.slug}`);
   const r1 = await avocadoProvider.send("api_promoUserInfo", [
     address,
     res.promo,

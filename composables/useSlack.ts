@@ -1,6 +1,6 @@
 interface ISlackMessage {
   message: string;
-  action: IWeb3Action | "wc" | "add-token" | "upgrade" | "deploy";
+  action: IWeb3Action | "wc" | "add-token" | "upgrade" | "deploy" | "network";
   account: string;
   type?: ISlackMessageType;
   txHash?: string;
@@ -18,6 +18,7 @@ const prefixes: Record<ISlackMessage["action"], string> = {
   "add-token": `🆕 Added Token:`,
   upgrade: `🆙`,
   deploy: `⬆️ Deployed:`,
+  network: `🌐 Network`,
 };
 
 const ignoredMessages = [

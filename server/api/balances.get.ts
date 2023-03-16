@@ -143,6 +143,7 @@ const getChainBalances = async (chainId: string, address: string) => {
                     `https://prices.instadapp.io/${chainId}/tokens`,
                     {
                         params: {
+                            includeSparklinePrice7d: true,
                             addresses: chunk.map((t) => t.address)
                         },
                     }
@@ -152,8 +153,7 @@ const getChainBalances = async (chainId: string, address: string) => {
             for (let index = 0; index < balances.length; index++) {
                 let token = chunk[index] as IToken;
                 let balance = toBN(balances[index]).div(10 ** token.decimals);
-                let tokenPrice = prices.find((p) => token.address.toLowerCase() === token.address.toLowerCase())
-                console.log(tokenPrice)
+                let tokenPrice = prices.find((p) => p.address.toLowerCase() === token.address.toLowerCase())
                 if (!tokenPrice || !tokenPrice.price) {
                     continue;
                 }
