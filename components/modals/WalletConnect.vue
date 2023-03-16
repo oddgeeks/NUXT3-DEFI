@@ -140,7 +140,7 @@ onMounted(async () => {
 
 <template>
   <div>
-    <form @submit="prepareAndConnect" v-if="!connection" class="space-y-8">
+    <form @submit.prevent="prepareAndConnect" v-if="!connection" class="space-y-8">
       <div class="flex flex-col items-center">
         <svg
           width="40"
@@ -217,7 +217,7 @@ onMounted(async () => {
       tabindex="0"
       v-focus
       @keypress.enter="connect"
-      @submit="connect"
+      @submit.prevent="connect"
       v-else
       class="space-y-8 focus:outline-none"
     >
