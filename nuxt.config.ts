@@ -160,6 +160,7 @@ export default defineNuxtConfig({
     contentSecurityPolicy: {
       value: {
         'frame-ancestors': ["'none'"],
+        'img-src': ["'self'", 'data:', 'https://avocado.instadapp.io']
       },
       route: '/**'
     }
