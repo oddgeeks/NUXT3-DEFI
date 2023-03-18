@@ -24,6 +24,11 @@ export default defineNuxtConfig({
   },
   nitro: {
     routeRules: {
+      "/**": {
+        headers: {
+          "Content-Security-Policy": "frame-ancestors 'none'"
+        }
+      },
       "/tokenlist.json": {
         cors: true,
         headers: {
@@ -139,7 +144,6 @@ export default defineNuxtConfig({
   },
   //@ts-ignore
   modules: [
-    "nuxt-security",
     "@nuxtjs/color-mode",
     "@vueuse/nuxt",
     "@nuxtjs/tailwindcss",
@@ -155,16 +159,6 @@ export default defineNuxtConfig({
     ],
     "~/modules/build-env",
   ],
-
-  security: {
-    contentSecurityPolicy: {
-      value: {
-        'frame-ancestors': ["'none'"],
-        'img-src': ["'self'", 'data:', 'https://avocado.instadapp.io']
-      },
-      route: '/**'
-    }
-  },
 
   colorMode: {
     preference: "dark",
