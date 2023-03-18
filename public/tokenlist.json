@@ -5,7 +5,7 @@
 		"avocado",
 		"defi"
 	],
-	"timestamp": "2023-03-18T11:10:41.463Z",
+	"timestamp": "2023-03-18T20:10:45.934Z",
 	"tokens": [
 		{
 			"chainId": 1,
@@ -1406,6 +1406,14 @@
 			"symbol": "usdt",
 			"decimals": 6,
 			"logoURI": "https://avocado.instadapp.io/tokens/tether.svg"
+		},
+		{
+			"chainId": 43114,
+			"address": "0xc7198437980c041c805a1edcba50c1ce5db95118",
+			"name": "Tether Avalanche Bridged (USDT.e)",
+			"symbol": "usdte",
+			"decimals": 6,
+			"logoURI": "https://assets.coingecko.com/coins/images/24189/large/Usdt.e.png?1646819144"
 		},
 		{
 			"chainId": 1,
