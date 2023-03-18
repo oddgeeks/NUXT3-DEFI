@@ -137,7 +137,9 @@ export default defineNuxtConfig({
       ],
     },
   },
+  //@ts-ignore
   modules: [
+    "nuxt-security",
     "@nuxtjs/color-mode",
     "@vueuse/nuxt",
     "@nuxtjs/tailwindcss",
@@ -153,6 +155,16 @@ export default defineNuxtConfig({
     ],
     "~/modules/build-env",
   ],
+
+  security: {
+    contentSecurityPolicy: {
+      value: {
+        'frame-ancestors': ["'none'"],
+      },
+      route: '/**'
+    }
+  },
+
   colorMode: {
     preference: "dark",
     classSuffix: "",
