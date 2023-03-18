@@ -14,11 +14,8 @@ const openModal = () => {
   <div @click="openModal"
     class="flex items-center justify-between px-4.5 py-4 bg-slate-50 dark:bg-gray-850 sm:hidden rounded-5">
     <div class="flex space-x-[17px] items-center">
-      <div :class="{
-        'p-1 bg-white rounded-[8px] flex justify-center items-center': true,
-        'blur-sm': account === '0x000000000000000'
-      }">
-        <StyledQrCode class="mx-auto bg-white overflow-hidden" :size="32" :margin="0" :data="account" :key="account" />
+      <div class="p-1 bg-white rounded-[8px] flex justify-center items-center">
+        <StyledQrCode class="mx-auto overflow-hidden" :class="{ 'blur-sm': account === '0x000000000000000' }" :size="32" :margin="0" :data="account" :key="account" />
       </div>
       <div class="flex flex-col space-y-1">
         <span>Your Avo Wallet</span>
