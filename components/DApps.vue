@@ -91,7 +91,7 @@ watch(
 );
 </script>
 <template>
-  <div class="flex flex-col items-baseline gap-[15px]" :class="{ 'sm:blur pointer-events-none': !account }">
+  <div class="flex flex-col items-baseline gap-[15px]">
     <div v-if="wcStore.sessions.length" class="flex gap-3 items-center">
       <h1>Connected Dapps</h1>
       <CommonButton

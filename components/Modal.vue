@@ -90,23 +90,10 @@ whenever(escape, () => {
             },
             options.contentClass,
           ]"
-          class="modal-content-wrapper rounded-[inherit] relative sm:px-[50px] px-6 sm:py-10 w-full"
+          class="modal-content-wrapper rounded-[inherit] relative sm:px-[50px] px-6 py-10 w-full"
         >
           <button
-            @touchmove.passive="handleDestory"
-            @mousedown="handleDestory"
-            type="button"
-            v-if="options.sheetPosition === 'bottom'"
-            class="w-full justify-center h-9 flex sm:hidden"
-          >
-            <div
-              class="h-1 w-9 dark:bg-slate-600 rounded-[10px] mt-2 bg-slate-300"
-            >
-              <span class="sr-only"> Pull to close </span>
-            </div>
-          </button>
-          <button
-            class="absolute h-7.5 w-7.5 rounded-full items-center justify-center hidden sm:flex dark:bg-slate-800 bg-slate-100 top-0 right-0 m-6"
+            class="absolute h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100 top-0 right-0 m-6"
             @click="handleDestory"
             aria-label="Close modal"
           >
