@@ -11,11 +11,11 @@ const { switchNetworkByChainId } = useNetworks();
 const { sendTransaction, safe } = useAvocadoSafe();
 const { parseTransactionError } = useErrorHandler();
 
-const { networks } = useNetworks();
+const { networks, avocadoChainId } = useNetworks();
 
 const selectableChains = computed(() =>
   networks.filter(
-    (c) => c.chainId !== 634
+    (c) => c.chainId !== avocadoChainId
   )
 );
 

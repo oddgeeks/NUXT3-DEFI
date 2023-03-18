@@ -2,9 +2,8 @@
 import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import { storeToRefs } from 'pinia';
 
-const { networks } = useNetworks();
+const { networks, availableNetworks } = useNetworks();
 const { networkPreference } = storeToRefs(useSafe());
-const availableNetworks = networks.filter((network) => network.chainId != 634);
 const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
 </script>
 

@@ -12,6 +12,7 @@ import { ethers } from "ethers";
 export function useNetworks() {
   const { chainId, provider, library } = useWeb3();
   const { setConnectorName } = useConnectors();
+  const config = useRuntimeConfig();
 
   const providers: Provider[] = [
     {
@@ -91,7 +92,7 @@ export function useNetworks() {
           name: "Ethereum",
           symbol: "ETH",
           decimals: 18,
-        }
+        },
       },
     },
     {
@@ -167,9 +168,7 @@ export function useNetworks() {
         },
         iconUrls: ["https://avocado.instadapp.io/logo.svg"],
         rpcUrls: ["https://rpc.avocado.instadapp.io"],
-        blockExplorerUrls: [
-          "https://avocado.instadapp.io"
-        ]
+        blockExplorerUrls: ["https://avocado.instadapp.io"],
       },
     },
     {
@@ -182,7 +181,7 @@ export function useNetworks() {
           name: "Binance Coin",
           symbol: "BNB",
           decimals: 18,
-        }
+        },
       },
     },
     {
@@ -195,7 +194,7 @@ export function useNetworks() {
           name: "xdaistable",
           symbol: "xDAI",
           decimals: 18,
-        }
+        },
       },
     },
   ];
@@ -273,11 +272,17 @@ export function useNetworks() {
     return networks.find((i) => i.chainId === Number(chainId))!;
   };
 
+  const availableNetworks = networks.filter(
+    (network) => network.chainId != config.public.avocadoChainId
+  );
+
   return {
     networks,
     providers,
     currentNetwork,
     switchNetworkByChainId,
     getNetworkByChainId,
+    availableNetworks,
+    avocadoChainId: config.public.avocadoChainId,
   };
 }
