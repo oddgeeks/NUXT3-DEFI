@@ -5,7 +5,7 @@
 		"avocado",
 		"defi"
 	],
-	"timestamp": "2023-03-09T11:56:36.139Z",
+	"timestamp": "2023-03-18T11:10:41.463Z",
 	"tokens": [
 		{
 			"chainId": 1,
@@ -960,6 +960,14 @@
 			"logoURI": "https://avocado.instadapp.io/tokens/liquity-usd.svg"
 		},
 		{
+			"chainId": 42161,
+			"address": "0x93b346b6bc2548da6a1e7d98e9a421b42541425b",
+			"name": "Liquity USD",
+			"symbol": "lusd",
+			"decimals": 18,
+			"logoURI": "https://avocado.instadapp.io/tokens/liquity-usd.svg"
+		},
+		{
 			"chainId": 10,
 			"address": "0xc40f949f8a4e094d1b49a23ea9241d289b7b2819",
 			"name": "Liquity USD",
@@ -1566,6 +1574,14 @@
 			"symbol": "usdc",
 			"decimals": 6,
 			"logoURI": "https://avocado.instadapp.io/tokens/usd-coin.svg"
+		},
+		{
+			"chainId": 43114,
+			"address": "0xa7d7079b0fead91f3e65f86e8915cb59c1a4c664",
+			"name": "USD Coin Avalanche Bridged (USDC.e)",
+			"symbol": "usdc",
+			"decimals": 6,
+			"logoURI": "https://assets.coingecko.com/coins/images/23263/large/3408.png?1643362756"
 		},
 		{
 			"chainId": 42161,
