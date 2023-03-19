@@ -18,7 +18,7 @@ const { parseTransactionError } = useErrorHandler();
 const [isGiftActive, toggleGift] = useToggle(false);
 
 const { gasBalance } = storeToRefs(useSafe());
-const { fetchGasBalance } = useSafe();
+const { fetchGasBalance, avoProvider } = useSafe();
 const address = "0xE8385fB3A5F15dED06EB5E20E5A81BF43115eb8E";
 
 const chainUSDCAddresses: any = {
@@ -42,7 +42,6 @@ const networks = computed(() =>
 );
 
 const claimLoading = ref(false);
-const provider = getRpcProvider(634);
 
 const { handleSubmit, errors, meta, resetForm } = useForm({
   validationSchema: yup.object({
@@ -114,7 +113,7 @@ Issued At: ${new Date().toISOString()}`;
 
     const signer = browserProvider.getSigner();
 
-    const airdropNonce = await provider.send("api_generateNonce", [
+    const airdropNonce = await avoProvider.send("api_generateNonce", [
       account.value,
       message,
     ]);
@@ -123,7 +122,7 @@ Issued At: ${new Date().toISOString()}`;
       message.replaceAll("{{NONCE}}", airdropNonce)
     );
 
-    const data = await provider.send("api_claimAirdrop", [
+    const data = await avoProvider.send("api_claimAirdrop", [
       giftSignature,
       airdropNonce,
     ]);
@@ -173,8 +172,6 @@ const onSubmit = handleSubmit(async () => {
 
   loading.value = true;
   try {
-    await switchNetworkByChainId(634);
-
     const transferAmount = toBN(amount.value)
       .times(10 ** token.value.decimals)
       .toFixed(0);

@@ -7,6 +7,7 @@ import SVGMetamask from "~/assets/images/wallet/metamask.svg?component";
 import SVGWalletConnect from "~/assets/images/wallet/wallet-connect.svg?component";
 import SVGMagicConnect from "~/assets/images/wallet/magic.svg?component";
 import SVGWalletlink from "~/assets/images/wallet/walletlink.svg?component";
+import { RPC_URLS } from "~~/connectors";
 import { ethers } from "ethers";
 
 export function useNetworks() {
@@ -157,7 +158,7 @@ export function useNetworks() {
     },
     {
       name: "Avocado",
-      chainId: 634,
+      chainId: config.public.avocadoChainId,
       icon: SVGPolygon,
       params: {
         chainName: "Avocado",
@@ -167,7 +168,7 @@ export function useNetworks() {
           decimals: 18,
         },
         iconUrls: ["https://avocado.instadapp.io/logo.svg"],
-        rpcUrls: ["https://rpc.avocado.instadapp.io"],
+        rpcUrls: [RPC_URLS[config.public.avocadoChainId]],
         blockExplorerUrls: ["https://avocado.instadapp.io"],
       },
     },
@@ -276,6 +277,10 @@ export function useNetworks() {
     (network) => network.chainId != config.public.avocadoChainId
   );
 
+  const switchToAvocadoNetwork = () => {
+    return switchNetworkByChainId(config.public.avocadoChainId);
+  };
+
   return {
     networks,
     providers,
@@ -283,6 +288,7 @@ export function useNetworks() {
     switchNetworkByChainId,
     getNetworkByChainId,
     availableNetworks,
+    switchToAvocadoNetwork,
     avocadoChainId: config.public.avocadoChainId,
   };
 }

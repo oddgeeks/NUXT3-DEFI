@@ -2,9 +2,9 @@ import { storeToRefs } from "pinia";
 import { createSafe } from "@instadapp/avocado";
 
 export const useAvocadoSafe = () => {
-  const provider = getRpcProvider(634);
-  const { switchNetworkByChainId } = useNetworks();
+  const { switchToAvocadoNetwork } = useNetworks();
   const { library, account } = useWeb3();
+  const { avoProvider } = useSafe();
 
   // check if we have a cached safe address
   const { safeAddress, tokenBalances, totalBalance } = storeToRefs(useSafe());
@@ -32,7 +32,7 @@ export const useAvocadoSafe = () => {
     },
     options: { metadata?: string; id?: string } = {}
   ) => {
-    await switchNetworkByChainId(634);
+    await switchToAvocadoNetwork();
 
     if (!signer.value) {
       throw new Error("Safe not initialized");
@@ -59,7 +59,7 @@ export const useAvocadoSafe = () => {
     chainId: number | string,
     options: { metadata?: string; id?: string } = {}
   ) => {
-    await switchNetworkByChainId(634);
+    await switchToAvocadoNetwork();
 
     if (!signer.value) {
       throw new Error("Safe not initialized");
@@ -77,7 +77,7 @@ export const useAvocadoSafe = () => {
   const { data: airDrop, execute } = useAsyncData(
     "airDrop",
     async () => {
-      const resp = await provider.send("api_hasAirdrop", [account.value]);
+      const resp = await avoProvider.send("api_hasAirdrop", [account.value]);
 
       return resp;
     },

@@ -15,6 +15,7 @@ const emit = defineEmits(["destroy"]);
 
 const wcStore = useWalletConnect();
 
+const config = useRuntimeConfig()
 const isTutorialWatched = useLocalStorage("wallet-c-tutorial-watched", false);
 const isIframeVisible = ref(true);
 const connection = shallowRef();
@@ -27,7 +28,7 @@ const detailsRef = ref<HTMLDialogElement>();
 
 const networks = computed(() =>
   Object.keys(RPC_URLS)
-    .filter((i) => i !== "634")
+    .filter((i) => i !== String(config.public.avocadoChainId))
     .map((chainId) => {
       return {
         chainId,

@@ -16,13 +16,6 @@ function getLibrary(provider: any) {
   return p;
 }
 
-function getAvoChainId() {
-  if (process.client) {
-    // useRuntimeConfig is not available for non setup files
-    return window?.__NUXT__?.config?.public?.avocadoChainId;
-  }
-}
-
 setWeb3LibraryCallback(getLibrary);
 
 export const RPC_URLS: { [chainId: number]: string } = {
@@ -33,6 +26,7 @@ export const RPC_URLS: { [chainId: number]: string } = {
   10: "https://rpc.ankr.com/optimism",
   42161: "https://rpc.ankr.com/arbitrum",
   634: "https://rpc.avocado.instadapp.io",
+  63400: "https://rpc.avocado.instad.app",
   100: "https://rpc.ankr.com/gnosis",
   56: "https://rpc.ankr.com/bsc",
   // 250: 'https://rpc.ankr.com/fantom',
@@ -52,7 +46,7 @@ export const walletlink = new WalletLinkConnector({
 
 export const walletconnect = new WalletConnectConnector({
   rpc: RPC_URLS,
-  chainId: getAvoChainId(),
+  chainId: parseInt(import.meta.env.VITE_AVO_CHAIN_ID as any),
   qrcode: true,
 });
 
@@ -61,7 +55,9 @@ export const network = new NetworkConnector({
   defaultChainId: 56,
 });
 
-export const torus = new TorusConnector({ chainId: 634 });
+export const torus = new TorusConnector({
+  chainId: parseInt(import.meta.env.VITE_AVO_CHAIN_ID as any),
+});
 
 export const changeMetamaskNetwork = async (network: Network) => {
   const { library, chainId } = useWeb3();

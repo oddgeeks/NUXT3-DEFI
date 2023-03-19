@@ -41,8 +41,6 @@ const onSubmit = async () => {
 
   loading.value = true;
   try {
-    await switchNetworkByChainId(634);
-
 
     let transactionHash = await sendTransaction(
       {

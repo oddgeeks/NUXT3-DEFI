@@ -1,8 +1,6 @@
 import { ConnectorUpdate } from "@web3-react/types";
 import { AbstractConnector } from "@web3-react/abstract-connector";
 
-const CHAIN_ID = 634;
-
 interface WalletLinkConnectorArguments {
   url: string;
   appName: string;
@@ -55,7 +53,10 @@ export class WalletLinkConnector extends AbstractConnector {
         darkMode: this.darkMode,
         ...(this.appLogoUrl ? { appLogoUrl: this.appLogoUrl } : {}),
       });
-      this.provider = this.walletLink.makeWeb3Provider(this.url, CHAIN_ID);
+      this.provider = this.walletLink.makeWeb3Provider(
+        this.url,
+        import.meta.env.VITE_AVO_CHAIN_ID as any
+      );
     }
 
     const accounts = await this.provider.request({

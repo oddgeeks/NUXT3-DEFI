@@ -4,7 +4,7 @@ import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
 import { serializeError } from "serialize-error";
 
 const router = useRoute();
-const provider = getRpcProvider(634);
+const { avoProvider } = useSafe()
 
 interface Transaction extends IAvocadoTransaction {
   decodedMetadata?: any;
@@ -21,7 +21,7 @@ const {
 } = useAsyncData(
   router.params.hash as string,
   async () => {
-    const data = (await provider.send("api_getTransactionByHash", [
+    const data = (await avoProvider.send("api_getTransactionByHash", [
       router.params.hash,
     ])) as Transaction;
 

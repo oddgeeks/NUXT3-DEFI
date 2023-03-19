@@ -4,7 +4,7 @@ import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import ChevronDownSVG from "~/assets/images/icons/chevron-down.svg?component";
 import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?component";
 import { storeToRefs } from "pinia";
-const { networks } = useNetworks();
+const { availableNetworks } = useNetworks();
 const { account } = useWeb3();
 const { unstableDappNetworks } = useBanner();
 const { networkPreference } = storeToRefs(useSafe());
@@ -12,9 +12,6 @@ const { networkPreference } = storeToRefs(useSafe());
 useAccountTrack(undefined, () => {
   useEagerConnect();
 });
-
-
-const availableNetworks = networks.filter((network) => network.chainId != 634);
 
 const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
 

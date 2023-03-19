@@ -10,7 +10,7 @@ interface EstimatedFeeParams {
 }
 
 export function useEstimatedFee(txData: Ref, params: EstimatedFeeParams) {
-  const provider = getRpcProvider(634);
+  const { avoProvider } = useSafe();
   const { account } = useWeb3();
   const { safe } = useAvocadoSafe();
   const { gasBalance } = storeToRefs(useSafe());
@@ -58,7 +58,7 @@ export function useEstimatedFee(txData: Ref, params: EstimatedFeeParams) {
           params.options
         );
 
-        const data = await provider.send("txn_estimateFeeWithoutSignature", [
+        const data = await avoProvider.send("txn_estimateFeeWithoutSignature", [
           message,
           account.value,
           params.chainId,

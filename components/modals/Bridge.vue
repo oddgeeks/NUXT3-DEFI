@@ -64,7 +64,6 @@ const onSubmit = form.handleSubmit(async () => {
   }
 
   try {
-    await switchNetworkByChainId(634);
 
     const metadata = encodeBridgeMetadata({
       amount: toWei(amount.value, token.value.decimals),

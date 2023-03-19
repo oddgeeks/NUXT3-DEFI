@@ -106,7 +106,7 @@ export const chainIdToName = (chainId: string | number) => {
       return "BSC";
     case "250":
       return "Fantom";
-    case "634":
+    case import.meta.env.VITE_AVO_CHAIN_ID:
       return "Avocado";
     default:
       throw new Error(`Unknown chainId ${chainId}`);

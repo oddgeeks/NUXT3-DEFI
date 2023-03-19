@@ -5,11 +5,10 @@ import * as yup from "yup";
 import { ethers } from "ethers";
 import { storeToRefs } from "pinia";
 
-const provider = getRpcProvider(634);
 
 const { parseTransactionError } = useErrorHandler();
 const { account } = useWeb3();
-const { fetchGasBalance } = useSafe();
+const { fetchGasBalance, avoProvider } = useSafe();
 const { safeAddress } = storeToRefs(useSafe());
 const emit = defineEmits(["close"]);
 
@@ -46,7 +45,7 @@ Nonce: {{NONCE}}
 Issued At: ${new Date().toISOString()}`;
 
   try {
-    const airdropNonce = await provider.send("api_generateNonce", [
+    const airdropNonce = await avoProvider.send("api_generateNonce", [
       account.value,
       message,
     ]);
@@ -55,7 +54,7 @@ Issued At: ${new Date().toISOString()}`;
       message.replaceAll("{{NONCE}}", airdropNonce)
     );
 
-    const success = await provider.send("api_claimGift", [
+    const success = await avoProvider.send("api_claimGift", [
       value.value,
       redeemSignature,
       airdropNonce,

@@ -12,6 +12,7 @@ const props = defineProps<{
   address: string;
 }>();
 
+const config = useRuntimeConfig()
 const { handleAddToken } = useTokens();
 const { tokens } = storeToRefs(useTokens());
 const { fetchBalances } = useSafe()
@@ -56,7 +57,7 @@ const {
 
 const supportedChains = computed(() =>
   Object.keys(RPC_URLS)
-    .filter((i) => i !== "634")
+    .filter((i) => i !== String(config.public.avocadoChainId))
     .map((chainId) => {
       return {
         id: chainId,
