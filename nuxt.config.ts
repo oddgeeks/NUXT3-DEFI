@@ -24,6 +24,11 @@ export default defineNuxtConfig({
   },
   nitro: {
     routeRules: {
+      "/**": {
+        headers: {
+          "Content-Security-Policy": "frame-ancestors 'none'"
+        }
+      },
       "/tokenlist.json": {
         cors: true,
         headers: {
@@ -137,6 +142,7 @@ export default defineNuxtConfig({
       ],
     },
   },
+  //@ts-ignore
   modules: [
     "@nuxtjs/color-mode",
     "@vueuse/nuxt",
@@ -153,6 +159,7 @@ export default defineNuxtConfig({
     ],
     "~/modules/build-env",
   ],
+
   colorMode: {
     preference: "dark",
     classSuffix: "",

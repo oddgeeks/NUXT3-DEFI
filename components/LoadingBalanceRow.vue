@@ -18,7 +18,7 @@ const loadingClass = computed(() => ({
     <td class="text-left py-6 pl-7.5 w-1/3">
       <div class="flex space-x-3">
        <div :class="loadingClass" class="w-10 h-10 rounded-full flex items-center justify-center">
-          <ChainLogo />
+          
         </div>
 
         <div class="space-y-1">
