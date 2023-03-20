@@ -3,6 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { BigNumber as BN } from "ethers";
 import { Forwarder__factory } from "@/contracts";
 import { RPC_URLS } from "~~/connectors";
+import { AVO_PROD_CHAIN_ID, AVO_STAGING_CHAIN_ID } from "./avocado";
 
 const multiMetadataTypes = ["bytes[]"];
 
@@ -106,8 +107,8 @@ export const chainIdToName = (chainId: string | number) => {
       return "BSC";
     case "250":
       return "Fantom";
-    case "634":
-    case "63400":
+    case String(AVO_PROD_CHAIN_ID):
+    case String(AVO_STAGING_CHAIN_ID):
       return "Avocado";
     default:
       throw new Error(`Unknown chainId ${chainId}`);
