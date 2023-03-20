@@ -46,7 +46,7 @@ export const walletlink = new WalletLinkConnector({
 
 export const walletconnect = new WalletConnectConnector({
   rpc: RPC_URLS,
-  chainId: parseInt(import.meta.env.VITE_AVO_CHAIN_ID as any),
+  chainId: avoChainId,
   qrcode: true,
 });
 
@@ -56,7 +56,7 @@ export const network = new NetworkConnector({
 });
 
 export const torus = new TorusConnector({
-  chainId: parseInt(import.meta.env.VITE_AVO_CHAIN_ID as any),
+  chainId: avoChainId,
 });
 
 export const changeMetamaskNetwork = async (network: Network) => {

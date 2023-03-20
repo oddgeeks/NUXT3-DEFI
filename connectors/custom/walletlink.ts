@@ -55,7 +55,7 @@ export class WalletLinkConnector extends AbstractConnector {
       });
       this.provider = this.walletLink.makeWeb3Provider(
         this.url,
-        import.meta.env.VITE_AVO_CHAIN_ID as any
+        avoChainId as any
       );
     }
 
