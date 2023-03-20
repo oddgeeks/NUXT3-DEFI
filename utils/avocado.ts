@@ -1,9 +1,7 @@
 import * as Avocado from "@instadapp/avocado";
 import * as AvocadoDev from "@instadapp/avocado-dev";
 
-console.log(import.meta.env.VITE_VERCEL_ENV);
-
-const isProd = import.meta.env.VITE_VERCEL_ENV === "production";
+const isProd = globalThis?.__NUXT__?.config?.public?.env === "release";
 
 export default isProd ? Avocado : AvocadoDev;
 

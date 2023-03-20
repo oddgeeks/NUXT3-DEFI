@@ -160,7 +160,7 @@ export function useNetworks() {
       chainId: avoChainId,
       icon: SVGPolygon,
       params: {
-        chainName: "Avocado",
+        chainName: avoChainName,
         nativeCurrency: {
           name: "Avocado",
           symbol: "USDC",
