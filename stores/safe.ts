@@ -19,31 +19,17 @@ export const useSafe = defineStore("safe", () => {
   const { tokens } = storeToRefs(useTokens());
   const documentVisibility = useDocumentVisibility();
   const { networks } = useNetworks();
-  const config = useRuntimeConfig();
 
-  const getForwarderProxyAddress = () => {
-    switch (config.public.avocadoChainId) {
-      case 634:
-        return "0x375F6B0CD12b34Dc28e34C26853a37012C24dDE5";
-      case 63400:
-        return "0x3760C57787f5d5A8904a6D1818a7d1cA86fAf40D";
-      default:
-        throw new Error("Invalid Avocado Chain ID");
-    }
-  };
-
-  const forwarderProxyAddress = getForwarderProxyAddress();
-  console.log(forwarderProxyAddress);
   const forwarderProxyContract = Forwarder__factory.connect(
     forwarderProxyAddress,
     new ethers.providers.JsonRpcProvider(RPC_URLS[137])
   );
 
   const availableNetworks = networks.filter(
-    (network) => network.chainId != config.public.avocadoChainId
+    (network) => network.chainId != avoChainId
   );
 
-  const avoProvider = getRpcProvider(config.public.avocadoChainId);
+  const avoProvider = getRpcProvider(avoChainId);
 
   const networkPreference = ref(
     new Set(availableNetworks.map((el) => el.chainId))

@@ -1,5 +1,4 @@
 import { storeToRefs } from "pinia";
-import { createSafe } from "@instadapp/avocado";
 
 export const useAvocadoSafe = () => {
   const { switchToAvocadoNetwork } = useNetworks();
@@ -9,14 +8,14 @@ export const useAvocadoSafe = () => {
   // check if we have a cached safe address
   const { safeAddress, tokenBalances, totalBalance } = storeToRefs(useSafe());
 
-  const safe = shallowRef<ReturnType<typeof createSafe>>();
+  const safe = shallowRef<ReturnType<typeof avocado.createSafe>>();
   const signer = computed(() => (safe.value ? safe.value.getSigner() : null));
 
   watch(
     [library, account],
     () => {
       safe.value = library.value
-        ? createSafe(library.value.getSigner().connectUnchecked())
+        ? avocado.createSafe(library.value.getSigner().connectUnchecked())
         : undefined;
     },
     { immediate: true }

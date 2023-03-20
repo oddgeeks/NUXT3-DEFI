@@ -1103,6 +1103,22 @@
   resolved "https://registry.yarnpkg.com/@headlessui/vue/-/vue-1.7.12.tgz#963b2eb2f548278c49f2d1e67f0a4a84f54078da"
   integrity sha512-IV0k1I2I8Bj37HljFF231Y9cpldfiucf+inMCxA/VPoQT6UTxo0N/rb78CrogBxXNfsPxKmz3y/nlv+eRz6zvg==
 
+"@instadapp/avocado-dev@npm:@instadapp/avocado@dev":
+  version "0.0.0-dev.643c183"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.643c183.tgz#e4cb9cddb66217b12a602696f2e329b6521f7362"
+  integrity sha512-+UHgnPMk+J80brIfWUwZWMZ7FT0akdy/GjBcfPfUKKPU+6oKU5wUZtZjes74t/4Qh4Jyz1AhYZTLhfTP8skz1A==
+  dependencies:
+    "@ethersproject/abi" "^5.7.0"
+    "@ethersproject/providers" "^5.7.2"
+    "@ethersproject/solidity" "^5.7.0"
+    "@vue/runtime-dom" "^3.2.45"
+    "@web3-react/abstract-connector" "^6.0.7"
+    ethers "^5.7.2"
+    events "^3.3.0"
+    mitt "^3.0.0"
+    semver "^7.3.8"
+    tiny-warning "^1.0.3"
+
 "@instadapp/avocado@^0.1.9":
   version "0.1.9"
   resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.1.9.tgz#50bb6f3834bb3a488e6a4273073373ce686b77cc"

@@ -19,7 +19,6 @@ export default defineNuxtConfig({
     slackErrorKey: process.env.SLACK_ERROR_KEY,
     public: {
       googleAnalyticsId: process.env.GA_ID,
-      avocadoChainId: parseInt(process.env.VITE_AVO_CHAIN_ID as any),
     },
   },
   nitro: {

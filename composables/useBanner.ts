@@ -7,7 +7,6 @@ export const useBanner = () => {
   const { gasBalance, pending } = storeToRefs(useSafe());
   const { account, chainId } = useWeb3();
   const { airDrop } = useAvocadoSafe();
-  const { avocadoChainId } = useNetworks();
 
   const wcStore = useWalletConnect();
 
@@ -30,21 +29,19 @@ export const useBanner = () => {
 
     return (
       account.value &&
-      chainId.value === avocadoChainId &&
+      chainId.value === avoChainId &&
       lte(gasBalance.value, 0.1)
     );
   });
 
   const showIncorrectNetworkBanner = computed(
     () =>
-      !trackingAccount.value &&
-      account.value &&
-      chainId.value !== avocadoChainId
+      !trackingAccount.value && account.value && chainId.value !== avoChainId
   );
 
   const showGasGiftBanner = computed(() => {
     if (!account.value) return false;
-    if (chainId.value !== avocadoChainId) return false;
+    if (chainId.value !== avoChainId) return false;
     if (pending.value.global) return false;
 
     if (!airDrop.value) return false;

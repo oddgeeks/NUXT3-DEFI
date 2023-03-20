@@ -13,7 +13,6 @@ import { ethers } from "ethers";
 export function useNetworks() {
   const { chainId, provider, library } = useWeb3();
   const { setConnectorName } = useConnectors();
-  const config = useRuntimeConfig();
 
   const providers: Provider[] = [
     {
@@ -157,8 +156,8 @@ export function useNetworks() {
       },
     },
     {
-      name: "Avocado",
-      chainId: config.public.avocadoChainId,
+      name: avoChainName,
+      chainId: avoChainId,
       icon: SVGPolygon,
       params: {
         chainName: "Avocado",
@@ -168,7 +167,7 @@ export function useNetworks() {
           decimals: 18,
         },
         iconUrls: ["https://avocado.instadapp.io/logo.svg"],
-        rpcUrls: [RPC_URLS[config.public.avocadoChainId]],
+        rpcUrls: [RPC_URLS[avoChainId]],
         blockExplorerUrls: ["https://avocado.instadapp.io"],
       },
     },
@@ -274,11 +273,11 @@ export function useNetworks() {
   };
 
   const availableNetworks = networks.filter(
-    (network) => network.chainId != config.public.avocadoChainId
+    (network) => network.chainId != avoChainId
   );
 
   const switchToAvocadoNetwork = () => {
-    return switchNetworkByChainId(config.public.avocadoChainId);
+    return switchNetworkByChainId(avoChainId);
   };
 
   return {
@@ -289,6 +288,5 @@ export function useNetworks() {
     getNetworkByChainId,
     availableNetworks,
     switchToAvocadoNetwork,
-    avocadoChainId: config.public.avocadoChainId,
   };
 }
