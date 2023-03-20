@@ -237,7 +237,7 @@ onMounted(async () => {
 
       <div class="flex flex-col gap-7.5">
         <p class="text-slate-400 text-xs text-center font-medium">
-          You need the Avocado web app to be open to popup transactions. You
+          You need the Avocado web app to be open to initiate transactions. You
           will not receive transaction requests when it is not open.
         </p>
 
