@@ -1,5 +1,6 @@
 import { ConnectorUpdate } from "@web3-react/types";
 import { AbstractConnector } from "@web3-react/abstract-connector";
+import { avoChainId } from "../../utils/avocado";
 
 interface WalletLinkConnectorArguments {
   url: string;

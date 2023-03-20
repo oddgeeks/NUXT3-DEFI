@@ -5,6 +5,10 @@ const isProd = globalThis?.__NUXT__?.config?.public?.env === "release";
 
 export default isProd ? Avocado : AvocadoDev;
 
+console.log(import.meta.env.VITE_COMMIT_REF, "selam");
+
+console.log(import.meta.env.VITE_VERCEL_GIT_COMMIT_REF, "vite");
+
 export const avoChainId = isProd ? 634 : 63400;
 export const avoChainName = isProd ? "Avocado" : "Avocado Testnet";
 export const forwarderProxyAddress = isProd
