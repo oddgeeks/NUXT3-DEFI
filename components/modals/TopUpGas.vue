@@ -363,5 +363,8 @@ onMounted(() => {
     >
       Redeem Code
     </button>
+    <p class="w-full text-xs text-orange-400 leading-5">
+      Deposited gas cannot be withdrawn at this time. Withdrawals will be enabled in a future update.
+    </p>
   </div>
 </template>
