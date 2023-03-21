@@ -17,6 +17,7 @@ export default defineNuxtConfig({
     ankrApiKey: process.env.ANKR_API_KEY,
     slackKey: process.env.SLACK_KEY,
     slackErrorKey: process.env.SLACK_ERROR_KEY,
+    slackStagingKey: process.env.SLACK_STAGING_KEY,
     public: {
       googleAnalyticsId: process.env.GA_ID,
     },
