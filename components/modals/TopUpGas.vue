@@ -19,7 +19,6 @@ const [isGiftActive, toggleGift] = useToggle(false);
 
 const { gasBalance } = storeToRefs(useSafe());
 const { fetchGasBalance, avoProvider } = useSafe();
-const address = "0xE8385fB3A5F15dED06EB5E20E5A81BF43115eb8E";
 
 const chainUSDCAddresses: any = {
   137: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
@@ -90,7 +89,6 @@ const loading = ref(false);
 const sendingDisabled = computed(
   () =>
     !token.value ||
-    !address ||
     !account.value ||
     loading.value ||
     !meta.value.valid
@@ -178,7 +176,7 @@ const onSubmit = handleSubmit(async () => {
 
     let tx = {
       from: account.value,
-      to: address,
+      to: avoDepositAddress,
       value: "0",
       data: "0x",
     };
@@ -192,7 +190,7 @@ const onSubmit = handleSubmit(async () => {
       );
 
       const { data } = await contract.populateTransaction.transfer(
-        address,
+        avoDepositAddress,
         transferAmount
       );
 
