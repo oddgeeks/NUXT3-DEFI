@@ -1,4 +1,6 @@
 import type { IToken } from "~~/stores/tokens";
+import { serialize } from "error-serializer";
+import axios from "axios";
 
 type IProviderToken = {
   chainId: number;
@@ -20,7 +22,7 @@ interface IProviderResponse {
   tokens: IProviderToken[];
 }
 
-const SUPPORTED_CHAIN_IDS = ["137", "10", "42161", "1", "43114", "100", "56"]
+const SUPPORTED_CHAIN_IDS = ["137", "10", "42161", "1", "43114", "100", "56"];
 
 const formatIPFS = (ipfs: string) => {
   if (ipfs.startsWith("ipfs") || ipfs.startsWith("ipfs://")) {
@@ -43,26 +45,26 @@ export default defineEventHandler<IToken[]>(async (event) => {
     // Polygon
     {
       name: "Comethswap",
-      url: "https://unpkg.com/@cometh-game/default-token-list@1.0.40/build/comethswap-default.tokenlist.json"
+      url: "https://unpkg.com/@cometh-game/default-token-list@1.0.40/build/comethswap-default.tokenlist.json",
     },
     {
       name: "Quickswap",
-      url: "https://unpkg.com/quickswap-default-token-list@1.2.65/build/quickswap-default.tokenlist.json"
+      url: "https://unpkg.com/quickswap-default-token-list@1.2.65/build/quickswap-default.tokenlist.json",
     },
     // BSC
     {
-      name: 'PancakeSwap',
-      url: 'https://tokens.pancakeswap.finance/pancakeswap-extended.json',
+      name: "PancakeSwap",
+      url: "https://tokens.pancakeswap.finance/pancakeswap-extended.json",
     },
     // Optimism
     {
-      name: 'Optimism',
-      url: 'https://static.optimism.io/optimism.tokenlist.json',
+      name: "Optimism",
+      url: "https://static.optimism.io/optimism.tokenlist.json",
     },
     // Arbitrum
     {
-      name: 'Arbitrum',
-      url: 'https://bridge.arbitrum.io/token-list-42161.json',
+      name: "Arbitrum",
+      url: "https://bridge.arbitrum.io/token-list-42161.json",
     },
     // Avalanche
     // {
@@ -73,12 +75,16 @@ export default defineEventHandler<IToken[]>(async (event) => {
   ];
 
   const results = await Promise.allSettled(
-    providers.map((provider) => $fetch(provider.url))
+    providers.map((provider) =>
+      axios.get(provider.url, {
+        timeout: 5000,
+      })
+    )
   );
 
   const tokens = results.reduce((acc: any, result) => {
     if (result.status === "fulfilled") {
-      const value = result.value as IProviderResponse;
+      const value = result.value.data as IProviderResponse;
 
       const tokens: IToken[] = value.tokens
         .map((token) => {
@@ -94,8 +100,8 @@ export default defineEventHandler<IToken[]>(async (event) => {
             sparklinePrice7d: [],
           };
         })
-        .filter(t => {
-          return SUPPORTED_CHAIN_IDS.includes(t.chainId)
+        .filter((t) => {
+          return SUPPORTED_CHAIN_IDS.includes(t.chainId);
         })
         .filter(
           (token) =>
@@ -107,6 +113,11 @@ export default defineEventHandler<IToken[]>(async (event) => {
         );
 
       return [...acc, ...tokens];
+    } else {
+      console.log({
+        url: serialize(result.reason)?.config?.url,
+        message: serialize(result.reason)?.message,
+      });
     }
     return acc;
   }, []);

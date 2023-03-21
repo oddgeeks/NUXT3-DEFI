@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { serializeError } from "serialize-error";
 import ChevronDownSVG from "~/assets/images/icons/chevron-down.svg?component";
 import type { IToken } from "~~/stores/tokens";
 import { Erc20__factory } from "~~/contracts";
@@ -269,9 +268,9 @@ const fetchSwapDetails = async () => {
     swapDetails.value.pending = false;
     swapDetails.value.error = "";
   } catch (e: any) {
-    const error = serializeError(e);
+    const err = parseTransactionError(e);
 
-    if (error?.message.includes("aborted")) return;
+    if (err.parsed?.includes("aborted")) return;
 
     swapDetails.value.pending = false;
     swapDetails.value.error = "No route found, please try again later.";
@@ -450,15 +449,16 @@ const onSubmit = handleSubmit(async () => {
   } catch (e: any) {
     const err = parseTransactionError(e);
     openSnackbar({
-      message: err,
+      message: err.formatted,
       type: "error",
     });
 
     logActionToSlack({
-      message: err,
+      message: err.formatted,
       type: "error",
       action: "swap",
       account: account.value,
+      errorDetails: err.parsed
     });
   } finally {
     resume();

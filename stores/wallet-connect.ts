@@ -131,7 +131,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                     id: payload.id,
                     error: {
                       code: error.code || -32603,
-                      message: err,
+                      message: err.parsed,
                     },
                   });
                 }
@@ -250,7 +250,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                       id: payload.id,
                       error: {
                         code: error.code || -32603,
-                        message: error,
+                        message: err.parsed,
                       },
                     });
 

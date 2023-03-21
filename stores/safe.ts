@@ -1,5 +1,4 @@
 import { ethers } from "ethers";
-import { serializeError } from "serialize-error";
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
 import { GaslessWallet__factory, Forwarder__factory } from "~/contracts";
 import { RPC_URLS } from "~~/connectors";
@@ -26,6 +25,7 @@ export const useSafe = defineStore("safe", () => {
   const { tokens } = storeToRefs(useTokens());
   const documentVisibility = useDocumentVisibility();
   const { networks } = useNetworks();
+  const { parseTransactionError } = useErrorHandler();
 
   const availableNetworks = networks.filter(
     (network) => network.chainId != 634
@@ -86,7 +86,9 @@ export const useSafe = defineStore("safe", () => {
         if (balance) {
           tokenBalance.balance = balance.balance;
           tokenBalance.balanceInUSD = toBN(tb.price || 0).gt(0)
-            ? toBN(balance.balance).times(tb.price || 0).toFixed(2)
+            ? toBN(balance.balance)
+                .times(tb.price || 0)
+                .toFixed(2)
             : balance.balanceInUSD;
         }
 
@@ -186,8 +188,8 @@ export const useSafe = defineStore("safe", () => {
       balances.value.error = null;
       return resp;
     } catch (e: any) {
-      const serialized = serializeError(e);
-      if (serialized?.message?.includes("abort")) return;
+      const err = parseTransactionError(e);
+      if (err?.parsed.includes("abort")) return;
 
       balances.value.error = e;
       throw e;

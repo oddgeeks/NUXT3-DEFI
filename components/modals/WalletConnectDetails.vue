@@ -39,7 +39,7 @@ const disconnectWallet = async () => {
         >
       </div>
       <p class="text-slate-400 text-xs text-center leading-5 font-medium">
-        You need the Avocado web app to be open to popup transactions. Please
+        You need the Avocado web app to be open to initiate transactions. Please
         don't close the tab.
       </p>
       <a rel="noopener noreferrer" target="_blank" :href="props.session.peerMeta.url" class="text-primary text-sm">

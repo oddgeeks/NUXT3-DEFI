@@ -51,7 +51,13 @@ const chartOptions = {
 
         <div class="max-w-[220px] w-full">
           <div class="font-semibold w-44 text-shadow whitespace-nowrap overflow-hidden">
-            {{ tokenBalance.name }}
+            <span v-if="tokenBalance.name.length > 15" v-tippy="tokenBalance.name">
+              {{ tokenBalance.name }}
+            </span>
+            
+            <span v-else>
+              {{ tokenBalance.name }}
+            </span>
           </div>
           <div class="text-sm font-medium text-slate-400 max-w-[256px] uppercase">
             {{

@@ -5,6 +5,7 @@ interface ISlackMessage {
   type?: ISlackMessageType;
   txHash?: string;
   chainId?: string;
+  errorDetails?: string;
 }
 
 const prefixes: Record<ISlackMessage["action"], string> = {
@@ -38,6 +39,7 @@ export const logActionToSlack = (slackMessage: ISlackMessage) => {
     txHash,
     message,
     account,
+    errorDetails,
   } = slackMessage;
 
   if (ignoredMessages.some((i) => message && message.includes(i))) return;
@@ -69,6 +71,10 @@ export const logActionToSlack = (slackMessage: ISlackMessage) => {
 
   logMessage += `\n${"`Commit`"} ${build.commit}`;
   logMessage += `\n${"`Env`"} ${build.env}`;
+
+  if (errorDetails) {
+    logMessage += `\n${"`Error details`"} ${errorDetails}`;
+  }
 
   slack(logMessage, type);
 };
