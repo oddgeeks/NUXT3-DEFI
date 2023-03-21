@@ -11,6 +11,8 @@ const props = defineProps<{
   selectedToken: IToken;
 }>();
 
+const tokens = toRef(props, 'tokens');
+
 const { tokenBalances } = useAvocadoSafe();
 const search = ref("");
 
@@ -24,7 +26,7 @@ const getTokenBalance = (address: string, chainId: string) => {
 };
 
 const tokensWithBalance = computed(() => {
-  return props.tokens
+  return tokens.value
     .map((i) => {
       return {
         ...i,
