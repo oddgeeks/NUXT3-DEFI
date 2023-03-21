@@ -163,14 +163,15 @@ Issued At: ${new Date().toISOString()}`;
       claimedConfetti();
       router.push("/");
     }
-  } catch (e) {
+  } catch (e: any) {
     const err = parseTransactionError(e);
     claiming.value = false;
     logActionToSlack({
-      message: err,
+      message: err.formatted,
       type: "error",
       action: "reedem",
       account: account.value,
+      errorDetails: err.parsed
     });
   }
 };

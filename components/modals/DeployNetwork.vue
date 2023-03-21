@@ -47,19 +47,20 @@ const handleDeploy = async () => {
     emit("destroy");
 
     showPendingTransactionModal(transactionHash, props.network.chainId, "send");
-  } catch (e) {
+  } catch (e: any) {
     const err = parseTransactionError(e);
 
     openSnackbar({
-      message: err,
+      message: err.formatted,
       type: "error",
     });
 
     logActionToSlack({
-      message: err,
+      message: err.formatted,
       action: "deploy",
       type: "error",
       account: account.value,
+      errorDetails: err.parsed,
     });
   } finally {
     submitting.value = false;

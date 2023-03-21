@@ -1,3 +1,5 @@
+import { serialize } from "error-serializer";
+
 export const errorMessages = {
   metamaskUserDeniedSignature: "user rejected signing",
   estimateGasError: "cannot estimate gas",
@@ -8,32 +10,33 @@ export const errorMessages = {
 export class InvalidENSError extends Error {}
 
 export function useErrorHandler() {
-  const parseTransactionError = (error: any) => {
-    console.log(error);
+  const parseTransactionError = (error: Error) => {
+    const parsedError = serialize(error);
 
-    if(error instanceof InvalidENSError) {
-      return "Invalid ENS Name"
+    const errorMessage = parsedError.message || "";
+
+    let formatted = parsedError.message || "";
+
+    if (error instanceof InvalidENSError) {
+      formatted = "Invalid ENS name";
     }
-
-    const errorMessage =
-      error.error?.message || error?.reason || "Something went wrong";
 
     if (errorMessage.includes(errorMessages.metamaskUserDeniedSignature)) {
-      return "Signing rejected";
+      formatted = "Signing rejected";
     }
     if (errorMessage.includes(errorMessages.estimateGasError)) {
-      return "Cannot estimate gas. Transaction may fail or may require manual gas limit";
+      formatted =
+        "Cannot estimate gas. Transaction may fail or may require manual gas limit";
     }
 
     if (errorMessage.includes(errorMessages.quoteExpired)) {
-      return "Quote has expired, please try again";
+      formatted = "Quote has expired, please try again";
     }
 
-    if(errorMessage.includes(errorMessages.quoteExpired2)) {
-      return `${errorMessage} (Quote has expired, please try again)`;
-    }
-
-    return errorMessage;
+    return {
+      formatted,
+      parsed: parsedError?.message,
+    };
   };
 
   function parseRequestError(error: any) {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import LinkSVG from "~/assets/images/icons/external-link.svg?component";
 import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
-import { serializeError } from "serialize-error";
+import { serialize } from "error-serializer";
 
 const router = useRoute();
 const provider = getRpcProvider(634);
@@ -106,7 +106,7 @@ const { data: bridgeStatus, pending: bridgeStatusPending, error: bridgeStatusErr
       } catch (e) {
         pause();
 
-        const serialized = serializeError(e)
+        const serialized = serialize(e)
         if (serialized.message?.includes('user aborted')) return;
 
         throw new Error("Something went wrong");
