@@ -103,9 +103,11 @@ const handleSubmit = async () => {
       account: account.value,
       message: `Upgraded to ${props.network.latestVersion}`,
     });
-  } catch (e) {
+  } catch (e: any) {
+    const err = parseTransactionError(e);
+
     openSnackbar({
-      message: parseTransactionError(e),
+      message: err.formatted,
       type: "error",
     });
 
@@ -114,7 +116,7 @@ const handleSubmit = async () => {
       action: "upgrade",
       chainId: String(props.network.chainId),
       account: account.value,
-      message: parseTransactionError(e),
+      message: err.parsed,
     });
   } finally {
     submitting.value = false;

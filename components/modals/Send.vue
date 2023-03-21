@@ -196,15 +196,16 @@ const onSubmit = handleSubmit(async () => {
     const err = parseTransactionError(e);
 
     openSnackbar({
-      message: err,
+      message: err.formatted,
       type: "error",
     });
 
     logActionToSlack({
-      message: err,
+      message: err.formatted,
       action: "send",
       type: "error",
       account: account.value,
+      errorDetails: err.parsed
     });
   }
 
