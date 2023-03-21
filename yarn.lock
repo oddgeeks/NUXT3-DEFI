@@ -1104,9 +1104,9 @@
   integrity sha512-IV0k1I2I8Bj37HljFF231Y9cpldfiucf+inMCxA/VPoQT6UTxo0N/rb78CrogBxXNfsPxKmz3y/nlv+eRz6zvg==
 
 "@instadapp/avocado-dev@npm:@instadapp/avocado@dev":
-  version "0.0.0-dev.643c183"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.643c183.tgz#e4cb9cddb66217b12a602696f2e329b6521f7362"
-  integrity sha512-+UHgnPMk+J80brIfWUwZWMZ7FT0akdy/GjBcfPfUKKPU+6oKU5wUZtZjes74t/4Qh4Jyz1AhYZTLhfTP8skz1A==
+  version "0.0.0-dev.94711d4"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.94711d4.tgz#ae4c72ffa8e7ae4a985489fd7a95bee30abb04a0"
+  integrity sha512-Wt7tIdwhb7yP+8b3Jy7COAady1AF3oQtXkXIBwKln+686jgn3wbEL0vF/z3WdVKV3S3LKuKnm0vIe3L0JHAD+A==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
