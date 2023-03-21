@@ -116,11 +116,11 @@ const handleSubmit = async () => {
     emit("resolve", true);
 
     showPendingTransactionModal(transactionHash, props.chainId, "wc");
-  } catch (e) {
+  } catch (e: any) {
     const err = parseTransactionError(e);
 
     openSnackbar({
-      message: err,
+      message: err.formatted,
       type: "error",
     });
 
@@ -130,6 +130,7 @@ const handleSubmit = async () => {
       action: "wc",
       chainId: props.chainId,
       account: account.value,
+      errorDetails: err.parsed
     });
   } finally {
     toggle(false);

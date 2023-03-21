@@ -87,18 +87,19 @@ Issued At: ${new Date().toISOString()}`;
 
       fetchGasBalance();
     }
-  } catch (e) {
+  } catch (e: any) {
     const err = parseTransactionError(e);
     openSnackbar({
-      message: err,
+      message: err.formatted,
       type: "error",
     });
 
     logActionToSlack({
-      message: err,
+      message: err.formatted,
       type: "error",
       action: "reedem",
       account: account.value,
+      errorDetails: err.parsed
     });
   }
 });

@@ -147,15 +147,16 @@ Issued At: ${new Date().toISOString()}`;
     const err = parseTransactionError(e);
 
     openSnackbar({
-      message: err,
+      message: err.formatted,
       type: "error",
     });
 
     logActionToSlack({
-      message: err,
+      message: err.formatted,
       type: "error",
       action: "claim",
       account: account.value,
+      errorDetails: err.parsed
     });
   } finally {
     claimLoading.value = false;
@@ -237,15 +238,16 @@ const onSubmit = handleSubmit(async () => {
 
     const err = parseTransactionError(e);
     openSnackbar({
-      message: err,
+      message: err.formatted,
       type: "error",
     });
 
     logActionToSlack({
-      message: err,
+      message: err.formatted,
       type: "error",
       action: "topup",
       account: account.value,
+      errorDetails: err.parsed
     });
   }
 
@@ -361,5 +363,8 @@ onMounted(() => {
     >
       Redeem Code
     </button>
+    <p class="w-full text-xs text-orange-400 leading-5">
+      Deposited gas cannot be withdrawn at this time. Withdrawals will be enabled in a future update.
+    </p>
   </div>
 </template>
