@@ -11,6 +11,8 @@ const props = defineProps<{
   selectedToken: IToken;
 }>();
 
+const tokens = toRef(props, 'tokens');
+
 const { tokenBalances } = useAvocadoSafe();
 const search = ref("");
 
@@ -24,7 +26,7 @@ const getTokenBalance = (address: string, chainId: string) => {
 };
 
 const tokensWithBalance = computed(() => {
-  return props.tokens
+  return tokens.value
     .map((i) => {
       return {
         ...i,
@@ -67,7 +69,7 @@ const tokensWithBalance = computed(() => {
         <SearchSVG class="text-slate-400 mr-2" />
       </template>
     </CommonInput>
-    <ul class="overflow-auto scroll-style h-96">
+    <ul class="overflow-auto scroll-style h-96" v-if="tokensWithBalance.length && tokensWithBalance.length > 0">
       <li v-for="token in tokensWithBalance">
         <button
           @click="$emit('resolve', true, token)"
@@ -102,6 +104,20 @@ const tokensWithBalance = computed(() => {
         </button>
       </li>
     </ul>
+    <div v-else
+      class="flex flex-col space-y-8 items-center justify-center h-96">
+      <p class="text-slate-400">Nothing could be found</p>
+      <div class="flex items-center flex-col space-y-4">
+        <CommonButton color="white" size="lg" as="NuxtLink"
+          href="mailto:info@instadapp.io?subject=Instadapp Avocado: New Token">
+          Reach out to us
+        </CommonButton>
+        <CommonButton size="lg" @click="openImportTokenModal()" class="flex items-center space-x-2">
+          <PlusSVG />
+          <span>Custom token</span>
+        </CommonButton>
+      </div>
+    </div>
   </div>
 </template>
 

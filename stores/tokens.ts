@@ -126,6 +126,19 @@ export const useTokens = defineStore("tokens", () => {
     // });
   };
 
+  const handleDeleteToken = (token: IToken) => {
+    const index = customTokens.value.findIndex(
+      (t) =>
+        t.address.toLowerCase() === token.address.toLowerCase() &&
+        t.chainId == token.chainId
+    );
+  
+    if (index > -1) {
+      customTokens.value.splice(index, 1);
+      fetchTokens();
+    }
+  };
+
   useIntervalFn(handleTokenPrices, 10000);
 
   return {
@@ -134,6 +147,7 @@ export const useTokens = defineStore("tokens", () => {
     getTokenByAddress,
     customTokens,
     handleAddToken,
+    handleDeleteToken,
   };
 });
 

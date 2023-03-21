@@ -9,6 +9,8 @@ const props = defineProps<{
   modelValue: IToken;
 }>();
 
+const tokens = toRef(props, 'tokens');
+
 const selectedToken = computed({
   get() {
     return props.modelValue;
@@ -20,7 +22,7 @@ const selectedToken = computed({
 
 const handleTokenSelection = async () => {
   const result = await openTokenSelectionModal({
-    tokens: props.tokens,
+    tokens: tokens,
     selectedToken: selectedToken.value,
   });
 
