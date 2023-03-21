@@ -30,6 +30,12 @@ const token = computed(
       (t) => t.chainId === props.chainId && t.address === props.address
     )!
 );
+
+const amountInUsd = computed(() => {
+  if (!token.value) return "0";
+  return toBN(token.value.price || 0).times(amount.value || "0").toFixed()
+});
+
 const actualAddress = ref('');
 
 const { handleSubmit, errors, meta, resetForm, validate, isSubmitting } = useForm({
@@ -234,7 +240,7 @@ const onSubmit = handleSubmit(async () => {
     </div>
 
     <div class="space-y-5">
-      <div class="space-y-2.5">
+      <div class="space-y-2.5 flex flex-col">
         <div class="flex justify-between items-center">
           <span class="text-sm">Amount</span>
           <span class="uppercase text-sm"
@@ -258,6 +264,7 @@ const onSubmit = handleSubmit(async () => {
             </button>
           </template>
         </CommonInput>
+         <span class="text-slate-400 text-sm text-left font-semibold"> {{ formatUsd(amountInUsd) }}</span>
       </div>
 
       <div class="space-y-2.5">

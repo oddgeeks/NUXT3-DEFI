@@ -41,7 +41,6 @@ const handleOpenDialog = () => {
     <div class="flex gap-5 lg:flex-row flex-col flex-1">
       <div class="flex relative flex-col w-full gap-5">
         <div
-          :class="{ 'blur pointer-events-none': !account }"
           class="flex flex-col gap-5"
         >
         <WarningsUnstableDappVersion v-if="unstableDappNetworks.length" />
@@ -49,11 +48,11 @@ const handleOpenDialog = () => {
             <div class="flex gap-7.5">
               <h2 class="font-semibold inline-flex gap-2.5 items-center">
                 Balances
-                <button @click="handleOpenDialog">
+                <button @click="handleOpenDialog" v-if="account">
                   <QuestionCircleSVG class="w-5 h-5 text-primary" />
                 </button>
               </h2>
-              <ClientOnly>
+              <ClientOnly v-if="account">
                 <button
                   :class="{
                     'dark:text-white text-slate-900': isHideZeroBalances,
@@ -73,7 +72,7 @@ const handleOpenDialog = () => {
                 </button>
               </ClientOnly>
             </div>
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-4" v-if="account">
               <ClientOnly>
                 <div class="flex align-self-end items-center" v-if="networkPreference.size > 0">
                   <ChainLogo
@@ -156,10 +155,10 @@ const handleOpenDialog = () => {
         </div>
         <div
           v-if="!account"
-          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center w-full"
+          class="absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-1/2 sm:-translate-y-1/2 flex items-center justify-center w-full"
         >
           <div class="flex flex-col items-center justify-center gap-6">
-            <p class="font-semibold text-lg sm:whitespace-nowrap text-center">
+            <p class="font-semibold leading-[30px] text-slate-400 sm:text-white sm:text-lg sm:whitespace-nowrap text-center">
               Connect your wallet to see the balances
             </p>
 
@@ -188,7 +187,7 @@ const handleOpenDialog = () => {
                 })
               "
             >
-              <QuestionCircleSVG class="w-5 h-5 text-primary" />
+              <QuestionCircleSVG v-if="account" class="w-5 h-5 text-primary" />
             </button>
           </h2>
           <QrCode />

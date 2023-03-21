@@ -178,6 +178,9 @@ const coinIds = [
     "ecomi",
     "gmx",
     "wrapped-xdai",
+    "usd-coin-avalanche-bridged-usdc-e",
+    "wbtc-plenty-bridge",
+    "tether-avalanche-bridged-usdt-e",
   ]),
 ];
 

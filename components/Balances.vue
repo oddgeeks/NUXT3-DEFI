@@ -127,7 +127,7 @@ const search = useDebounceFn((event: Event) => {
 <template>
   <div class="relative flex-1">
     <div class="h-full w-full flex flex-col gap-5">
-      <CommonInput name="Token Search" @input="search" type="search" placeholder="Search">
+      <CommonInput v-if="account" name="Token Search" @input="search" type="search" placeholder="Search">
         <template #prefix>
           <SearchSVG class="shrink-0 mr-2" />
         </template>
@@ -147,9 +147,10 @@ const search = useDebounceFn((event: Event) => {
         </div>
       </div>
       <div v-else style="scrollbar-gutter: stable; overflow-y: overlay"
-        class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] hidden sm:flex scroll-style">
-        <table class="table w-full">
-          <thead>
+        class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] hidden sm:flex scroll-style"
+        :class="{ '!overflow-hidden': !account }">
+        <table class="table w-full" :class="{ 'blur pointer-events-none': !account }">
+          <thead v-if="account">
             <tr class="text-left text-sm text-gray-400 font-medium border-b border-slate-150 dark:border-slate-800">
               <th class="text-left py-6 pl-7.5">Token</th>
               <th class="py-5">Balance</th>
@@ -173,7 +174,7 @@ const search = useDebounceFn((event: Event) => {
         <MobileBalanceRow v-for="tokenBalance in sortedBalances" :token-balance="tokenBalance"
           :key="`${tokenBalance.chainId}-${tokenBalance.symbol}`" />
       </div>
-      <p class="text-xs leading-5 text-center mb-5 sm:mb-0 sm:text-right dark:text-slate-500 text-slate-400">
+      <p class="text-xs leading-5 text-center mb-5 sm:mb-0 sm:text-right dark:text-slate-500 text-slate-400" v-if="account">
         Don’t see your tokens?
         <button @click="openImportTokenModal()" class="text-primary">
           Add token

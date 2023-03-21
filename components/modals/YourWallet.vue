@@ -27,20 +27,21 @@ const availableNetworks = networks.filter((network) => network.chainId != 634);
       <div class="flex gap-2 justify-center flex-wrap ">
         <div v-for="network in availableNetworks"
           class="flex items-center gap-2 text-[10px] p-1.5 bg-slate-50 dark:bg-gray-850 rounded-full">
-          <ChainLogo style="width: 22px; height: 22px" :chain="network.chainId" />
+          <ChainLogo style="width: 14px; height: 14px" :chain="network.chainId" />
           <span>{{ network.name }}</span>
         </div>
       </div>
     </div>
 
-    <div class="bg-[#4CA05433] text-green-400 font-semibold text-xs leading-6 px-4 py-2.5 rounded-5 text-center">
-      Deposit or receive funds by scanning or copying your AvoSafe QR code. You can deposit or receive from any
-      supported chains.
-    </div>
+    <div class="flex flex-col gap-2.5 items-center">
+      <div class="font-semibold text-xs leading-6 text-center">
+        Send funds to your Avocado wallet using the details above on any supported chain
+      </div>
 
-    <a href='https://help.avocado.instadapp.io/en/articles/7038878-depositing-funds-to-your-avocado-account' target='blank' rel='noopener noreferrer' class='text-xs font-medium inline-flex items-center gap-2.5 text-primary'>
-      Learn more about how to deposit
-      <LinkSVG class="w-4 h-4" />
-    </a>
+      <a href='https://help.avocado.instadapp.io/en/articles/7038878-depositing-funds-to-your-avocado-account' target='blank' rel='noopener noreferrer' class='text-xs font-medium inline-flex items-center gap-2.5 text-primary'>
+        <span class="underline underline-offset-4">Learn more about how to deposit</span>
+        <LinkSVG class="w-4 h-4" />
+      </a>
+    </div>
   </div>
 </template>

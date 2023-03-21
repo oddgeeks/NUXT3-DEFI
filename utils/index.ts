@@ -226,7 +226,7 @@ export const slack = async (
   message: string,
   type: ISlackMessageType = "success"
 ) => {
-  await $fetch("/api/slack", {
+  await http("/api/slack", {
     method: "POST",
     body: {
       message,

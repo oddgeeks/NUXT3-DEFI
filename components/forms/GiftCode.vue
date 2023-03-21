@@ -64,12 +64,12 @@ Issued At: ${new Date().toISOString()}`;
     if (!success) {
       setErrors("Invalid redeem code.");
 
-      logActionToSlack({
-        message: `Invalid redeem code. (${value.value})`,
-        type: "error",
-        action: "reedem",
-        account: account.value,
-      });
+      // logActionToSlack({
+      //   message: `Invalid redeem code. (${value.value})`,
+      //   type: "error",
+      //   action: "reedem",
+      //   account: account.value,
+      // });
     } else {
       logActionToSlack({
         message: `(${value.value})`,
