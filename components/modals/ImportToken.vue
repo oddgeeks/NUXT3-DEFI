@@ -7,7 +7,7 @@ import { IToken } from "~~/stores/tokens";
 import { isAddress } from "@ethersproject/address";
 
 const { tokens, customTokens } = storeToRefs(useTokens());
-const { handleAddToken } = useTokens();
+const { handleAddToken, handleDeleteToken } = useTokens();
 
 const searchQuery = ref("");
 const loading = ref(false);
@@ -84,18 +84,6 @@ const getToken = (address: string, chainId: string) => {
   );
 
   return token;
-};
-
-const handleDeleteToken = (token: IToken) => {
-  const index = customTokens.value.findIndex(
-    (t) =>
-      t.address.toLowerCase() === token.address.toLowerCase() &&
-      t.chainId == token.chainId
-  );
-
-  if (index > -1) {
-    customTokens.value.splice(index, 1);
-  }
 };
 
 const search = (event: Event) => {
