@@ -17,7 +17,7 @@ export const AVO_STAGING_CHAIN_NAME = "Avocado Testnet";
 export const AVO_PROD_FORWARDER_ADDR =
   "0x375F6B0CD12b34Dc28e34C26853a37012C24dDE5";
 export const AVO_STAGING_FORWARDER_ADDR =
-  "0x3760C57787f5d5A8904a6D1818a7d1cA86fAf40D";
+  "0x8CDaAC0371a443985c6Faf07938dDAa7A5818674";
 
 export default prod ? Avocado : AvocadoDev;
 
