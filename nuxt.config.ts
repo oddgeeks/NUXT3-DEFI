@@ -17,17 +17,17 @@ export default defineNuxtConfig({
     ankrApiKey: process.env.ANKR_API_KEY,
     slackKey: process.env.SLACK_KEY,
     slackErrorKey: process.env.SLACK_ERROR_KEY,
+    slackStagingKey: process.env.SLACK_STAGING_KEY,
     public: {
       googleAnalyticsId: process.env.GA_ID,
-      avocadoChainId: 634,
     },
   },
   nitro: {
     routeRules: {
       "/**": {
         headers: {
-          "Content-Security-Policy": "frame-ancestors 'none'"
-        }
+          "Content-Security-Policy": "frame-ancestors 'none'",
+        },
       },
       "/tokenlist.json": {
         cors: true,
@@ -54,7 +54,7 @@ export default defineNuxtConfig({
         },
         {
           name: "theme-color",
-          content: "transparent"
+          content: "transparent",
         },
         {
           name: "description",

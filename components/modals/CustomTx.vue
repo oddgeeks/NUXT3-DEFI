@@ -15,7 +15,7 @@ const { networks } = useNetworks();
 
 const selectableChains = computed(() =>
   networks.filter(
-    (c) => c.chainId !== 634
+    (c) => c.chainId !== avoChainId
   )
 );
 
@@ -41,8 +41,6 @@ const onSubmit = async () => {
 
   loading.value = true;
   try {
-    await switchNetworkByChainId(634);
-
 
     let transactionHash = await sendTransaction(
       {

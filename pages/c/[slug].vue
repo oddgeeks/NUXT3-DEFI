@@ -14,12 +14,13 @@ const route = useRoute();
 const router = useRouter();
 const { parseTransactionError } = useErrorHandler();
 const { account, library } = useWeb3();
+const { avoProvider } = useSafe()
+
 const eligible = ref(false);
 const claimed = ref(false);
 const claimSuccess = ref(false);
 const claiming = ref(false); 
 const promo = ref<{ code: string, amount: number }>();
-const avocadoProvider = getRpcProvider(634);
 
 const claimedConfetti = () => {
   fire(1, {
@@ -83,7 +84,7 @@ watch(account, async account => {
   const address = await signer.getAddress();
 
   const res = await http<IPromo>(`/api/promos/${route.params.slug}`);
-  const r1 = await avocadoProvider.send("api_promoUserInfo", [
+  const r1 = await avoProvider.send("api_promoUserInfo", [
     address,
     res.promo,
   ]);
@@ -120,7 +121,7 @@ Nonce: {{NONCE}}
 Issued At: ${new Date().toISOString()}`;
 
   try {
-    const airdropNonce = await avocadoProvider.send("api_generateNonce", [
+    const airdropNonce = await avoProvider.send("api_generateNonce", [
       account.value,
       message,
     ]);
@@ -128,7 +129,7 @@ Issued At: ${new Date().toISOString()}`;
       message.replaceAll("{{NONCE}}", airdropNonce)
     );
 
-    const success = await avocadoProvider.send("api_promoClaim", [
+    const success = await avoProvider.send("api_promoClaim", [
       promo.value.code,
       redeemSignature,
       airdropNonce,

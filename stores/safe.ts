@@ -9,13 +9,6 @@ export interface IBalance extends IToken {
   balance: string;
   balanceInUSD: string | null;
 }
-
-const forwarderProxyAddress = "0x375F6B0CD12b34Dc28e34C26853a37012C24dDE5"; // ForwarderProxy
-const forwarderProxyContract = Forwarder__factory.connect(
-  forwarderProxyAddress,
-  new ethers.providers.JsonRpcProvider(RPC_URLS[137])
-);
-
 export const useSafe = defineStore("safe", () => {
   // balance aborter
   const balanceAborter = ref<AbortController>();
@@ -27,9 +20,16 @@ export const useSafe = defineStore("safe", () => {
   const { networks } = useNetworks();
   const { parseTransactionError } = useErrorHandler();
 
-  const availableNetworks = networks.filter(
-    (network) => network.chainId != 634
+  const forwarderProxyContract = Forwarder__factory.connect(
+    forwarderProxyAddress,
+    new ethers.providers.JsonRpcProvider(RPC_URLS[137])
   );
+
+  const availableNetworks = networks.filter(
+    (network) => network.chainId != avoChainId
+  );
+
+  const avoProvider = getRpcProvider(avoChainId);
 
   const networkPreference = ref(
     new Set(availableNetworks.map((el) => el.chainId))
@@ -198,8 +198,6 @@ export const useSafe = defineStore("safe", () => {
     }
   };
 
-  const avoProvider = getRpcProvider(634);
-
   const fetchGasBalance = async () => {
     if (!account.value) return;
 
@@ -250,6 +248,7 @@ export const useSafe = defineStore("safe", () => {
     forwarderProxyAddress,
     networkVersions,
     networkPreference,
+    avoProvider,
   };
 });
 
