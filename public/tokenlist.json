@@ -5,7 +5,7 @@
 		"avocado",
 		"defi"
 	],
-	"timestamp": "2023-03-18T20:10:45.934Z",
+	"timestamp": "2023-03-22T23:21:45.224Z",
 	"tokens": [
 		{
 			"chainId": 1,
@@ -166,6 +166,14 @@
 			"symbol": "ape",
 			"decimals": 18,
 			"logoURI": "https://assets.coingecko.com/coins/images/24383/large/apecoin.jpg?1647476455"
+		},
+		{
+			"chainId": 42161,
+			"address": "0x912ce59144191c1204e64559fe8253a0e49e6548",
+			"name": "Arbitrum",
+			"symbol": "arb",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/16547/large/arbitrium.png?1624418103"
 		},
 		{
 			"chainId": 1,
