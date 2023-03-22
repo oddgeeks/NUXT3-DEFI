@@ -27,7 +27,7 @@ const detailsRef = ref<HTMLDialogElement>();
 
 const networks = computed(() =>
   Object.keys(RPC_URLS)
-    .filter((i) => i !== "634")
+    .filter((i) => i !== String(avoChainId))
     .map((chainId) => {
       return {
         chainId,

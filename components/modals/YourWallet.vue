@@ -5,8 +5,7 @@ defineProps({
   address: String
 });
 
-const { networks } = useNetworks();
-const availableNetworks = networks.filter((network) => network.chainId != 634);
+const { availableNetworks } = useNetworks();
 </script>
 
 <template>

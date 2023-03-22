@@ -7,6 +7,7 @@ import SVGMetamask from "~/assets/images/wallet/metamask.svg?component";
 import SVGWalletConnect from "~/assets/images/wallet/wallet-connect.svg?component";
 import SVGMagicConnect from "~/assets/images/wallet/magic.svg?component";
 import SVGWalletlink from "~/assets/images/wallet/walletlink.svg?component";
+import { RPC_URLS } from "~~/connectors";
 import { ethers } from "ethers";
 
 export function useNetworks() {
@@ -91,7 +92,7 @@ export function useNetworks() {
           name: "Ethereum",
           symbol: "ETH",
           decimals: 18,
-        }
+        },
       },
     },
     {
@@ -155,21 +156,19 @@ export function useNetworks() {
       },
     },
     {
-      name: "Avocado",
-      chainId: 634,
+      name: avoChainName,
+      chainId: avoChainId,
       icon: SVGPolygon,
       params: {
-        chainName: "Avocado",
+        chainName: avoChainName,
         nativeCurrency: {
           name: "Avocado",
           symbol: "USDC",
           decimals: 18,
         },
         iconUrls: ["https://avocado.instadapp.io/logo.svg"],
-        rpcUrls: ["https://rpc.avocado.instadapp.io"],
-        blockExplorerUrls: [
-          "https://avocado.instadapp.io"
-        ]
+        rpcUrls: [RPC_URLS[avoChainId]],
+        blockExplorerUrls: ["https://avocado.instadapp.io"],
       },
     },
     {
@@ -182,7 +181,7 @@ export function useNetworks() {
           name: "Binance Coin",
           symbol: "BNB",
           decimals: 18,
-        }
+        },
       },
     },
     {
@@ -195,7 +194,7 @@ export function useNetworks() {
           name: "xdaistable",
           symbol: "xDAI",
           decimals: 18,
-        }
+        },
       },
     },
   ];
@@ -273,11 +272,21 @@ export function useNetworks() {
     return networks.find((i) => i.chainId === Number(chainId))!;
   };
 
+  const availableNetworks = networks.filter(
+    (network) => network.chainId != avoChainId
+  );
+
+  const switchToAvocadoNetwork = () => {
+    return switchNetworkByChainId(avoChainId);
+  };
+
   return {
     networks,
     providers,
     currentNetwork,
     switchNetworkByChainId,
     getNetworkByChainId,
+    availableNetworks,
+    switchToAvocadoNetwork,
   };
 }

@@ -16,6 +16,7 @@
     "@fontsource/source-code-pro": "^4.5.12",
     "@headlessui/vue": "^1.7.12",
     "@instadapp/avocado": "^0.1.9",
+    "@instadapp/avocado-dev": "npm:@instadapp/avocado@dev",
     "@instadapp/utils": "^0.4.6",
     "@instadapp/vue-web3-nuxt": "^0.10.1",
     "@nuxtjs/color-mode": "^3.2.0",

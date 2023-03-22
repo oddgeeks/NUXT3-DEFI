@@ -6,14 +6,14 @@ const props = defineProps<{
   recentVersion: string;
 }>();
 
-const { switchNetworkByChainId } = useNetworks();
+const { switchToAvocadoNetwork } = useNetworks();
 
 const isUpgradeAvailable = computed(() =>
   lt(props.network.currentVersion, props.network.latestVersion)
 );
 
 const handleUpgrade = async (network: NetworkVersion) => {
-  await switchNetworkByChainId(634);
+  await switchToAvocadoNetwork();
 
   openUpgradeModal(network);
 };

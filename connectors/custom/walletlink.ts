@@ -1,7 +1,6 @@
 import { ConnectorUpdate } from "@web3-react/types";
 import { AbstractConnector } from "@web3-react/abstract-connector";
-
-const CHAIN_ID = 634;
+import { avoChainId } from "../../utils/avocado";
 
 interface WalletLinkConnectorArguments {
   url: string;
@@ -55,7 +54,10 @@ export class WalletLinkConnector extends AbstractConnector {
         darkMode: this.darkMode,
         ...(this.appLogoUrl ? { appLogoUrl: this.appLogoUrl } : {}),
       });
-      this.provider = this.walletLink.makeWeb3Provider(this.url, CHAIN_ID);
+      this.provider = this.walletLink.makeWeb3Provider(
+        this.url,
+        avoChainId as any
+      );
     }
 
     const accounts = await this.provider.request({

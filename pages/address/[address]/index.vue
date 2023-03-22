@@ -7,7 +7,7 @@ type ITransactionResponse = {
 };
 
 const router = useRoute();
-const provider = getRpcProvider(634);
+const { avoProvider } = useSafe()
 
 const limit = 20;
 const page = computed(() => parseInt(String(router.query.page)) || 1) as Ref<number>;
@@ -31,7 +31,7 @@ const headers = [
 const { data: transactions, refresh } = useAsyncData(
   "transactions",
   async () => {
-    const transactions: ITransactionResponse = await provider.send(
+    const transactions: ITransactionResponse = await avoProvider.send(
       "api_getTransactionsByOwner",
       [router.params.address, { page: page.value, limit }]
     );
