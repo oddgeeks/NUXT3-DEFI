@@ -49,6 +49,10 @@ watch(chainId, async () => {
     });
   } catch (e) {
     console.log(e);
+    openSnackbar({
+      message: "Failed to change network",
+      type: "error",
+    });
   }
 });
 </script>
@@ -56,28 +60,27 @@ watch(chainId, async () => {
 <template>
   <div class="flex flex-col gap-9">
     <div class="inline-flex flex-col items-center">
-      <img
-        referrerpolicy="no-referrer"
-        height="40"
-        width="40"
-        class="w-10 h-10"
-        :src="icon"
-      />
+      <div
+        class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
+      >
+        <img
+          referrerpolicy="no-referrer"
+          height="40"
+          width="40"
+          class="w-full h-full object-fit rounded-[inherit]"
+          :src="icon"
+        />
+
+        <ChainLogo
+          class="w-5 h-5 absolute -left-1 -bottom-1"
+          :chain="String(session.chainId)"
+        />
+      </div>
 
       <div class="text-lg text-center my-4">
         {{ props.session.peerMeta.name }}
-        <span class="text-green-400">Connected</span>
       </div>
       <div class="flex flex-col gap-5 justify-center items-center">
-        <div
-          class="dark:bg-gray-850 bg-slate-50 px-2 pr-3 py-[5px] inline-flex justify-center items-center space-x-2 rounded-[20px]"
-        >
-          <ChainLogo class="w-5 h-5" :chain="chainId" />
-          <span class="text-xs text-slate-400 leading-5">{{
-            chainIdToName(chainId)
-          }}</span>
-        </div>
-
         <p class="text-slate-400 text-xs text-center leading-5 font-medium">
           You need the Avocado web app to be open to initiate transactions.
           Please don't close the tab.
