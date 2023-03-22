@@ -92,6 +92,16 @@ export const useBridge = (props: IBridge) => {
     )
   );
 
+  const recivedValueInUsd = computed(() =>
+    !txRoute?.value ? 0 : max(txRoute?.value.outputValueInUsd, 0)
+  );
+
+  const recievedAmount = computed(() =>
+    toBN(recivedValueInUsd.value)
+      .div(token.value.price ?? 1)
+      .toFixed()
+  );
+
   const bridgeTokens = useAsyncData(
     "bridge-tokens",
     async () => {
@@ -420,5 +430,7 @@ export const useBridge = (props: IBridge) => {
     isInsufficientBalance,
     selectableChains,
     handleSwapToken,
+    recivedValueInUsd,
+    recievedAmount,
   };
 };
