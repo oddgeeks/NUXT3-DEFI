@@ -444,6 +444,9 @@ export const decodeMetadata = (data: string) => {
   try {
     const iface = Forwarder__factory.createInterface();
     let metadata = "0x";
+    let payload = {};
+
+    if (!data) return payload;
 
     if (data.startsWith("0x18e7f485")) {
       const executeData = iface.decodeFunctionData("execute", data);
@@ -486,8 +489,6 @@ export const decodeMetadata = (data: string) => {
         actionMetadataTypes[type],
         decodedMetadata.data
       );
-
-      let payload = {};
 
       switch (type) {
         case "transfer":
