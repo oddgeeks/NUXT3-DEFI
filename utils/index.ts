@@ -238,18 +238,6 @@ export const slack = async (
 };
 
 export const calculateEstimatedFee = (params: CalculateFeeProps) => {
-  const minFee = {
-    "137": 0.01,
-    "10": 0.005,
-    "42161": 0.005,
-    "43114": 0.005,
-    "1": 0.005,
-    "100": 0.01,
-    "56": 0.01,
-  };
-
-  const minChainFee = minFee[String(params.chainId) as keyof typeof minFee];
-
   const { fee, multiplier = "0" } = params;
 
   if (!fee)
@@ -268,8 +256,8 @@ export const calculateEstimatedFee = (params: CalculateFeeProps) => {
     .dividedBy(10 ** 14)
     .toNumber();
 
-  const actualMin = Math.max(minVal, minChainFee);
-  const actualMax = Math.max(maxVal, minChainFee);
+  const actualMin = Math.max(minVal, 0.01);
+  const actualMax = Math.max(maxVal, 0.01);
 
   const formattedMin = formatDecimal(String(actualMin), 2);
   const formattedMax = formatDecimal(String(actualMax), 2);
