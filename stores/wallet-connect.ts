@@ -443,6 +443,8 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
     clearWalletConnectStorage();
   };
 
+  const refreshSessions = () => triggerRef(sessions);
+
   return {
     sessions,
     disconnect,
@@ -450,6 +452,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
     connect,
     prepareAndConnect,
     disconnectAll,
+    refreshSessions,
   };
 });
 

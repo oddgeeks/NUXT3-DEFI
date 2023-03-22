@@ -44,7 +44,6 @@ const handleDisconnectWallet = async (session: any) => {
   if (success) {
     wcStore.disconnect(session);
   }
-
 };
 
 const getSessionIconURL = (session: any) => {
@@ -54,7 +53,7 @@ const getSessionIconURL = (session: any) => {
   return null;
 };
 
-const disconnectAllConnections = async() => {
+const disconnectAllConnections = async () => {
   const { success } = await openDialogModal({
     title: "Are you sure you want to disconnect all?",
     type: "question",
@@ -72,7 +71,7 @@ const disconnectAllConnections = async() => {
   });
 
   if (success) {
-    wcStore.disconnectAll()
+    wcStore.disconnectAll();
   }
 };
 
@@ -95,7 +94,7 @@ watch(
     <div v-if="wcStore.sessions.length" class="flex gap-3 items-center">
       <h1>Connected Dapps</h1>
       <CommonButton
-        v-if="wcStore.sessions.length > 2"
+        v-if="wcStore.sessions.length > 0"
         @click="disconnectAllConnections"
         color="white"
         class="hover:!bg-red-alert hover:!bg-opacity-10 hover:text-red-alert"
