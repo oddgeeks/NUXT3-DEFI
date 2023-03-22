@@ -300,6 +300,7 @@ onMounted(() => {
       {{ formatDecimal(gasBalance, 2) }} USDC
     </span>
     <div
+      v-if="pendingGasAmount.gt(0)"
       class="leading-5 text-xs gap-2 text-orange-400 items-center justify-center flex"
     >
       <SvgSpinner />
