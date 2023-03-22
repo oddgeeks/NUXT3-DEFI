@@ -94,7 +94,7 @@ watch(
     <div v-if="wcStore.sessions.length" class="flex gap-3 items-center">
       <h1>Connected Dapps</h1>
       <CommonButton
-        v-if="wcStore.sessions.length > 1"
+        v-if="wcStore.sessions.length > 0"
         @click="disconnectAllConnections"
         color="white"
         class="hover:!bg-red-alert hover:!bg-opacity-10 hover:text-red-alert"
