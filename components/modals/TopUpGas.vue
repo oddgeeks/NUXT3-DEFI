@@ -10,10 +10,10 @@ import { ethers } from "ethers";
 
 const emit = defineEmits(["destroy"]);
 
-const { library, account, provider: web3Provider } = useWeb3();
-const { switchNetworkByChainId } = useNetworks();
+const { library, account } = useWeb3();
 const { sendTransaction, airDrop, tokenBalances, fetchAirDrop, safeAddress } =
   useAvocadoSafe();
+const { fromWei } = useBignumber();
 const { parseTransactionError } = useErrorHandler();
 const [isGiftActive, toggleGift] = useToggle(false);
 
@@ -29,6 +29,24 @@ const chainUSDCAddresses: any = {
   100: "0xddafbb505ad214d7b80b1f830fccc89b60fb7a83",
   56: "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
 };
+
+const { refresh, data } = useAsyncData(
+  async () => {
+    return avoProvider.send("eth_getBalance", [
+      account.value,
+      "pending-deposit",
+    ]);
+  },
+  {
+    immediate: true,
+    server: false,
+    watch: [account],
+  }
+);
+
+useIntervalFn(refresh, 1000);
+
+const pendingGasAmount = computed(() => fromWei(data.value || "0", 18));
 
 const networks = computed(() =>
   Object.keys(chainUSDCAddresses)
@@ -87,11 +105,7 @@ const setMax = () => {
 
 const loading = ref(false);
 const sendingDisabled = computed(
-  () =>
-    !token.value ||
-    !account.value ||
-    loading.value ||
-    !meta.value.valid
+  () => !token.value || !account.value || loading.value || !meta.value.valid
 );
 
 const claim = async () => {
@@ -153,7 +167,7 @@ Issued At: ${new Date().toISOString()}`;
       type: "error",
       action: "claim",
       account: account.value,
-      errorDetails: err.parsed
+      errorDetails: err.parsed,
     });
   } finally {
     claimLoading.value = false;
@@ -242,7 +256,7 @@ const onSubmit = handleSubmit(async () => {
       type: "error",
       action: "topup",
       account: account.value,
-      errorDetails: err.parsed
+      errorDetails: err.parsed,
     });
   }
 
@@ -285,6 +299,13 @@ onMounted(() => {
     >
       {{ formatDecimal(gasBalance, 2) }} USDC
     </span>
+    <div
+      class="leading-5 text-xs gap-2 text-orange-400 items-center justify-center flex"
+    >
+      <SvgSpinner />
+      {{ formatUsd(pendingGasAmount.toFixed()) }}
+      gas is pending block confirmation
+    </div>
     <form v-if="!isGiftActive" @submit="onSubmit" class="space-y-5">
       <div class="flex flex-col gap-2.5">
         <span class="text-left leading-5 text-sm sm:text-base">Network</span>
@@ -313,7 +334,9 @@ onMounted(() => {
       </div>
 
       <div class="space-y-2.5">
-        <div class="flex justify-between items-center leading-5 text-sm sm:text-base">
+        <div
+          class="flex justify-between items-center leading-5 text-sm sm:text-base"
+        >
           <span>Amount</span>
           <span class="uppercase"
             >{{ formatDecimal(token?.balance) }} {{ token?.symbol }}</span
@@ -359,7 +382,8 @@ onMounted(() => {
       Redeem Code
     </button>
     <p class="w-full text-xs text-orange-400 leading-5">
-      Deposited gas cannot be withdrawn at this time. Withdrawals will be enabled in a future update.
+      Deposited gas cannot be withdrawn at this time. Withdrawals will be
+      enabled in a future update.
     </p>
   </div>
 </template>
