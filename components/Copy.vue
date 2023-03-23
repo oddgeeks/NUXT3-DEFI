@@ -12,12 +12,12 @@ defineProps<{
 
 <template>
   <button
-    class="text-slate-400 font-semibold inline-flex items-center gap-2.5"
+    class="flex text-slate-400 font-semibold inline-flex items-center gap-2.5"
     @click="copy(text)"
   >
     <Transition mode="out-in" name="slide-left">
       <span v-if="copied"> Copied </span>
-      <span v-else-if="slots.content">
+      <span v-else-if="slots.content" class="text-wrap flex-1">
         <slot name="content" />
       </span>
     </Transition>
