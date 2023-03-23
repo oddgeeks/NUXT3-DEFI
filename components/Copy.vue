@@ -3,7 +3,7 @@ import CopySVG from "~/assets/images/icons/copy.svg?component";
 import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
 
 const { copy, copied } = useClipboard();
-const slots = useSlots()
+const slots = useSlots();
 
 defineProps<{
   text: string;
@@ -12,12 +12,12 @@ defineProps<{
 
 <template>
   <button
-    class="flex text-slate-400 font-semibold inline-flex items-center gap-2.5"
+    class="flex text-slate-400 font-semibold items-center gap-2.5"
     @click="copy(text)"
   >
     <Transition mode="out-in" name="slide-left">
       <span v-if="copied"> Copied </span>
-      <span v-else-if="slots.content" class="text-wrap flex-1">
+      <span v-else-if="slots.content">
         <slot name="content" />
       </span>
     </Transition>

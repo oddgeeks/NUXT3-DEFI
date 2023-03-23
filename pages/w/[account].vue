@@ -26,19 +26,19 @@ if (!isAddress(account)) {
           />
         </div>
         <div class="flex flex-col space-y-5">
-          <div class="font-semibold inline-flex gap-2.5">
+          <div class="font-semibold inline-flex gap-2.5 items-center">
             <ExclamationCircleSVG class="w-4 h-4 text-primary" />
-            <span class="flex-1 text-xs leading-5">
+            <span class="flex-1 text-xs leading-5 font-medium">
               Please use the following details to send me funds!
             </span>
           </div>
 
           <Copy
-            class="px-4 py-[9px] flex items-center justify-between rounded-5 dark:bg-slate-800 bg-slate-100 gap-2 text-left"
+            class="px-4 py-3 flex items-center text-xs text-wrap justify-between rounded-5 dark:bg-slate-800 bg-slate-100 gap-2 text-left"
             :text="account"
           >
             <template #content>
-              <span class="text-xs">{{ account }}</span>
+              {{ account }}
             </template>
           </Copy>
 
