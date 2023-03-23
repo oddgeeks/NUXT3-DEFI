@@ -12,7 +12,7 @@ defineProps<{
 
 <template>
   <button
-    class="flex text-slate-400 font-semibold items-center gap-2.5"
+    class="text-slate-400 font-semibold inline-flex items-center gap-2.5"
     @click="copy(text)"
   >
     <Transition mode="out-in" name="slide-left">
