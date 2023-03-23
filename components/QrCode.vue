@@ -1,4 +1,6 @@
 <script setup>
+import ExternalLinkSVG from "~/assets/images/icons/external-link.svg?component";
+
 const { safeAddress } = useAvocadoSafe();
 const account = computed(() => safeAddress.value || "0x000000000000000");
 </script>
@@ -21,6 +23,13 @@ const account = computed(() => safeAddress.value || "0x000000000000000");
           {{ shortenHash(account) }}
         </template>
       </Copy>
+      <a
+        :href="`/w/${account}`"
+        class="inline-flex text-primary items-center space-x-2 mt-3"
+      >
+        <span>Payment Link</span>
+        <ExternalLinkSVG />
+      </a>
     </div>
   </div>
 </template>

@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const { safeAddress } = useAvocadoSafe()
+const props = defineProps({
+  account: String,
+});
 
 const supportedChains = [
   { "id": "1", "name": "Mainnet" },
@@ -25,7 +27,6 @@ const supportedChains = [
     "name": "Gnosis"
   },
 ]
-
 </script>
 
 <template>
@@ -37,7 +38,7 @@ const supportedChains = [
         animation: 'fade',
         content: chain.name,
       }" :key="chain.id" v-for="chain in supportedChains">
-        <a v-if="safeAddress" target="_blank" :href="getExplorerUrl(chain.id, `/address/${safeAddress}`)">
+        <a v-if="props.account" target="_blank" :href="getExplorerUrl(chain.id, `/address/${props.account}`)">
           <ChainLogo :stroke="false" class="w-[26px] h-[26px]" :chain="chain.id" />
         </a>
 
