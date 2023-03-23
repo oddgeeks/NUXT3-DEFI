@@ -1,6 +1,29 @@
 <script lang="ts" setup>
 const { account } = useWeb3();
 const { showVersionUpdateBanner } = useBanner();
+const { avoProvider } = useSafe();
+const { fromWei } = useBignumber();
+
+const { refresh } = useAsyncData(
+  "pending-deposit",
+  async () => {
+    if (!account.value) return "0";
+
+    const amountInWei = await avoProvider.send("eth_getBalance", [
+      account.value,
+      "pending-deposit",
+    ]);
+
+    return fromWei(amountInWei || "0", 18).toFixed();
+  },
+  {
+    immediate: true,
+    server: false,
+    watch: [account],
+  }
+);
+
+useIntervalFn(refresh, 1000);
 </script>
 
 <template>

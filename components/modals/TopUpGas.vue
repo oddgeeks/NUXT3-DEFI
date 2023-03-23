@@ -13,7 +13,6 @@ const emit = defineEmits(["destroy"]);
 const { library, account } = useWeb3();
 const { sendTransaction, airDrop, tokenBalances, fetchAirDrop, safeAddress } =
   useAvocadoSafe();
-const { fromWei } = useBignumber();
 const { parseTransactionError } = useErrorHandler();
 const [isGiftActive, toggleGift] = useToggle(false);
 
@@ -30,23 +29,7 @@ const chainUSDCAddresses: any = {
   56: "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
 };
 
-const { refresh, data } = useAsyncData(
-  async () => {
-    return avoProvider.send("eth_getBalance", [
-      account.value,
-      "pending-deposit",
-    ]);
-  },
-  {
-    immediate: true,
-    server: false,
-    watch: [account],
-  }
-);
-
-useIntervalFn(refresh, 1000);
-
-const pendingGasAmount = computed(() => fromWei(data.value || "0", 18));
+const pendingGasAmount = useNuxtData("pending-deposit");
 
 const networks = computed(() =>
   Object.keys(chainUSDCAddresses)
@@ -300,11 +283,11 @@ onMounted(() => {
       {{ formatDecimal(gasBalance, 2) }} USDC
     </span>
     <div
-      v-if="pendingGasAmount.gt(0)"
+      v-if="toBN(pendingGasAmount.data.value).gt('0')"
       class="leading-5 text-xs gap-2 text-orange-400 items-center justify-center flex"
     >
       <SvgSpinner />
-      {{ formatUsd(pendingGasAmount.toFixed()) }}
+      {{ formatUsd(pendingGasAmount.data.value) }}
       gas is pending block confirmation
     </div>
     <form v-if="!isGiftActive" @submit="onSubmit" class="space-y-5">
