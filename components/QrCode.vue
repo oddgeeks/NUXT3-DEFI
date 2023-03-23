@@ -8,7 +8,7 @@ const account = computed(() => safeAddress.value || "0x000000000000000");
   <div>
     <div
       class="pt-7.5 pb-6.25 px-7.5 bg-slate-50 dark:bg-gray-850 rounded-5.5 flex flex-col justify-center items-center"
-      :class="{ blur: !safeAddress }"
+      :class="{ 'blur pointer-events-none': !safeAddress }"
     >
       <StyledQrCode
         class="rounded-5 mx-auto bg-white overflow-hidden"
@@ -23,13 +23,15 @@ const account = computed(() => safeAddress.value || "0x000000000000000");
           {{ shortenHash(account) }}
         </template>
       </Copy>
-      <a
+      <NuxtLink
         :href="`/w/${account}`"
+        external
+        target="_blank"
         class="inline-flex text-primary text-sm items-center space-x-2 mt-3"
       >
         <span>Payment Link</span>
         <ExternalLinkSVG />
-      </a>
+      </NuxtLink>
     </div>
   </div>
 </template>
