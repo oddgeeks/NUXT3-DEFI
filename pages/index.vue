@@ -192,7 +192,7 @@ const handleOpenDialog = () => {
         </div>
         <div class="w-full flex flex-col gap-5">
           <h2 class="font-semibold inline-flex gap-2.5">Supported Chains</h2>
-          <SupportedChains :account="safeAddress" />
+          <SupportedChains :account="safeAddress" class="p-5 dark:bg-gray-850 bg-slate-50 rounded-5.5" />
         </div>
       </div>
     </div>
