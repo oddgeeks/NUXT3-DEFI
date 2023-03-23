@@ -26,8 +26,8 @@ if (!isAddress(account)) {
           />
         </div>
         <div class="flex flex-col space-y-5">
-          <div class="font-semibold inline-flex gap-2.5 items-center">
-            <ExclamationCircleSVG class="w-4 h-4 text-primary" />
+          <div class="font-semibold inline-flex gap-2.5 sm:items-center">
+            <ExclamationCircleSVG class="w-4 h-4 text-primary mt-1 sm:mt-0" />
             <span class="flex-1 text-xs leading-5 font-medium">
               Please use the following details to send me funds!
             </span>
