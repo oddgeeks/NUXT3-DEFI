@@ -8,6 +8,7 @@ const { availableNetworks } = useNetworks();
 const { account } = useWeb3();
 const { unstableDappNetworks } = useBanner();
 const { networkPreference } = storeToRefs(useSafe());
+const { safeAddress } = useAvocadoSafe();
 
 useAccountTrack(undefined, () => {
   useEagerConnect();
@@ -40,7 +41,7 @@ const handleOpenDialog = () => {
         <div
           class="flex flex-col gap-5"
         >
-        <WarningsUnstableDappVersion v-if="unstableDappNetworks.length" />
+          <WarningsUnstableDappVersion v-if="unstableDappNetworks.length" />
           <div class="flex justify-between sm:pr-7.5">
             <div class="flex gap-7.5">
               <h2 class="font-semibold inline-flex gap-2.5 items-center">
@@ -191,7 +192,7 @@ const handleOpenDialog = () => {
         </div>
         <div class="w-full flex flex-col gap-5">
           <h2 class="font-semibold inline-flex gap-2.5">Supported Chains</h2>
-          <SupportedChains />
+          <SupportedChains :account="safeAddress" class="p-5 dark:bg-gray-850 bg-slate-50 rounded-5.5" />
         </div>
       </div>
     </div>
