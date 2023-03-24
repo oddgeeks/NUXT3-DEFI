@@ -108,7 +108,6 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
 
                   const { success, payload: msg } =
                     await openWCTransactionModal({
-                      modalId: wc.peerId,
                       chainId: String(wc.chainId),
                       payload,
                       wc,
@@ -142,7 +141,6 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                 });
 
                 const { success, payload: msg } = await openWCTransactionModal({
-                  modalId: wc.peerId,
                   chainId: String(wc.chainId),
                   payload,
                   wc,
@@ -225,7 +223,6 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
 
                     const { success, payload: msg } =
                       await openWCTransactionModal({
-                        modalId: wc.peerId,
                         chainId: String(wc.chainId),
                         payload,
                         wc,
