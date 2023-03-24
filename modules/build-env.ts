@@ -29,7 +29,7 @@ export default defineNuxtModule({
       time: +Date.now(),
       commit,
       branch,
-      env,
+      env: "release",
     };
 
     nuxt.options.appConfig = nuxt.options.appConfig || {};
