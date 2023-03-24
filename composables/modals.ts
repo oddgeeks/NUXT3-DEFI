@@ -39,7 +39,6 @@ interface DialogModalProps {
 interface IWcTransactionModal {
   payload: any;
   chainId: string;
-  modalId: string;
   wc: IWalletConnect;
   metadata: string;
   isSign?: boolean;
@@ -161,24 +160,26 @@ export const openTokenSelectionModal = async (params: any) => {
   });
 };
 
-export const openWCTransactionModal = async (params: IWcTransactionModal) => {
-  return openModal({
-    id: params.modalId,
-    component: WCTransaction,
-    async: true,
-    componentProps: {
-      payload: params.payload,
-      chainId: params.chainId,
-      wc: params.wc,
-      metadata: params.metadata,
-      isSign: params.isSign,
-      signMessageDetails: params?.signMessageDetails,
-    },
-    options: {
-      contentClass: "md:px-10 md:pt-[34px] md:pb-10",
-    },
-  });
-};
+export const openWCTransactionModal = useThrottleFn(
+  async (params: IWcTransactionModal) => {
+    return openModal({
+      component: WCTransaction,
+      async: true,
+      componentProps: {
+        payload: params.payload,
+        chainId: params.chainId,
+        wc: params.wc,
+        metadata: params.metadata,
+        isSign: params.isSign,
+        signMessageDetails: params?.signMessageDetails,
+      },
+      options: {
+        contentClass: "md:px-10 md:pt-[34px] md:pb-10",
+      },
+    });
+  },
+  1000
+);
 
 export const openImportTokenModal = () => {
   openModal({
