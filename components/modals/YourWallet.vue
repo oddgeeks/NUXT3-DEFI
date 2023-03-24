@@ -32,10 +32,9 @@ const { availableNetworks } = useNetworks();
         :href="`/w/${address}`"
         external
         target="_blank"
-        class="inline-flex text-primary items-center space-x-2"
+        class="absolute top-0 left-0 m-6 inline-flex text-primary items-center space-x-2"
       >
-        <span>Payment Link</span>
-        <ExternalLinkSVG />
+        <ExternalLinkSVG class="w-6.5 h-6.5 text-slate-400" />
       </NuxtLink>
     </div>
 

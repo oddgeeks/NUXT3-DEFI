@@ -7,7 +7,7 @@ const account = computed(() => safeAddress.value || "0x000000000000000");
 <template>
   <div>
     <div
-      class="pt-7.5 pb-6.25 px-7.5 bg-slate-50 dark:bg-gray-850 rounded-5.5 flex flex-col justify-center items-center"
+      class="relative pt-7.5 pb-6.25 px-7.5 bg-slate-50 dark:bg-gray-850 rounded-5.5 flex flex-col justify-center items-center"
       :class="{ 'blur pointer-events-none': !safeAddress }"
     >
       <StyledQrCode
@@ -27,10 +27,9 @@ const account = computed(() => safeAddress.value || "0x000000000000000");
         :href="`/w/${account}`"
         external
         target="_blank"
-        class="inline-flex text-primary text-sm items-center space-x-2 mt-3"
+        class="absolute top-0 right-0 m-3.5 inline-flex text-primary text-sm items-center space-x-2"
       >
-        <span>Payment Link</span>
-        <ExternalLinkSVG />
+        <ExternalLinkSVG class="w-4 h-4 text-slate-400" />
       </NuxtLink>
     </div>
   </div>
