@@ -34,7 +34,7 @@ const { availableNetworks } = useNetworks();
         target="_blank"
         class="absolute top-0 left-0 m-6 inline-flex text-primary items-center space-x-2"
       >
-        <ExternalLinkSVG class="w-7.5 h-7.5 text-slate-400" />
+        <ExternalLinkSVG class="w-6.5 h-6.5 text-slate-400" />
       </NuxtLink>
     </div>
 
