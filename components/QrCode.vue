@@ -27,9 +27,9 @@ const account = computed(() => safeAddress.value || "0x000000000000000");
         :href="`/w/${account}`"
         external
         target="_blank"
-        class="absolute top-1 right-3 inline-flex text-primary text-sm items-center space-x-2 mt-3"
+        class="absolute top-0 right-0 m-3.5 inline-flex text-primary text-sm items-center space-x-2"
       >
-        <ExternalLinkSVG />
+        <ExternalLinkSVG class="w-4 h-4 text-slate-400" />
       </NuxtLink>
     </div>
   </div>
