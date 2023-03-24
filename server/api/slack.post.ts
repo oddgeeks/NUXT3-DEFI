@@ -1,5 +1,4 @@
 import axios from "axios";
-import config from "#build/app.config.mjs";
 
 const colors: Record<"danger" | "error" | "success" | "banner", string> = {
   danger: "#000000", // black
@@ -9,7 +8,12 @@ const colors: Record<"danger" | "error" | "success" | "banner", string> = {
 };
 
 export default defineEventHandler(async (event) => {
-  const { slackKey, slackErrorKey, slackStagingKey } = useRuntimeConfig();
+  const {
+    slackKey,
+    slackErrorKey,
+    slackStagingKey,
+    public: publicConfig,
+  } = useRuntimeConfig();
 
   let { type = "success", message } = await readBody(event);
 
@@ -21,7 +25,9 @@ export default defineEventHandler(async (event) => {
     return {};
   }
 
-  const staging = config.buildInfo.env !== "release";
+  const staging = publicConfig?.env !== "release";
+
+  console.log(publicConfig?.env, staging);
 
   let channelId = slackKey;
 
