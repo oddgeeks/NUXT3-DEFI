@@ -1,5 +1,7 @@
 <script setup lang="ts">
-const { safeAddress } = useAvocadoSafe()
+const props = defineProps({
+  account: String,
+});
 
 const supportedChains = [
   { "id": "1", "name": "Mainnet" },
@@ -25,24 +27,21 @@ const supportedChains = [
     "name": "Gnosis"
   },
 ]
-
 </script>
 
 <template>
-  <div class="p-5 dark:bg-gray-850 bg-slate-50 rounded-5.5">
-    <ul class="grid grid-cols-4 gap-5">
-      <li v-tippy="{
-        arrow: true,
-        arrowType: 'round',
-        animation: 'fade',
-        content: chain.name,
-      }" :key="chain.id" v-for="chain in supportedChains">
-        <a v-if="safeAddress" target="_blank" :href="getExplorerUrl(chain.id, `/address/${safeAddress}`)">
-          <ChainLogo :stroke="false" class="w-[26px] h-[26px]" :chain="chain.id" />
-        </a>
+  <ul class="grid grid-cols-4 gap-5">
+    <li v-tippy="{
+      arrow: true,
+      arrowType: 'round',
+      animation: 'fade',
+      content: chain.name,
+    }" :key="chain.id" v-for="chain in supportedChains">
+      <a v-if="props.account" target="_blank" :href="getExplorerUrl(chain.id, `/address/${props.account}`)">
+        <ChainLogo :stroke="false" class="w-[26px] h-[26px]" :chain="chain.id" />
+      </a>
 
-        <ChainLogo v-else :stroke="false" class="w-[26px] h-[26px]" :chain="chain.id" />
-      </li>
-    </ul>
-  </div>
+      <ChainLogo v-else :stroke="false" class="w-[26px] h-[26px]" :chain="chain.id" />
+    </li>
+  </ul>
 </template>

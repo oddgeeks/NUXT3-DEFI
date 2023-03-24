@@ -21,7 +21,6 @@ const { safe, sendTransactions } = useAvocadoSafe();
 const { account } = useWeb3();
 const { gasBalance } = storeToRefs(useSafe());
 const [submitting, toggle] = useToggle();
-const { switchNetworkByChainId } = useNetworks();
 const { parseTransactionError } = useErrorHandler();
 const { getTokenByAddress } = useTokens()
 
@@ -85,11 +84,8 @@ const {
 
 const handleSubmit = async () => {
   try {
-    await switchNetworkByChainId(634);
-
     toggle(true);
   
-
     const transactionHash = await sendTransactions(
       transactions.value,
       props.chainId,

@@ -6,6 +6,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import { ethers } from "ethers";
 import { TorusConnector } from "@web3-react/torus-connector";
 import { WalletLinkConnector } from "./custom/walletlink";
+import { avoChainId } from "../utils/avocado";
 // const { networks } = useNetworks();
 
 const POLLING_INTERVAL = 12000;
@@ -26,6 +27,7 @@ export const RPC_URLS: { [chainId: number]: string } = {
   10: "https://rpc.ankr.com/optimism",
   42161: "https://rpc.ankr.com/arbitrum",
   634: "https://rpc.avocado.instadapp.io",
+  63400: "https://rpc.avocado.instad.app",
   100: "https://rpc.ankr.com/gnosis",
   56: "https://rpc.ankr.com/bsc",
   // 250: 'https://rpc.ankr.com/fantom',
@@ -45,7 +47,7 @@ export const walletlink = new WalletLinkConnector({
 
 export const walletconnect = new WalletConnectConnector({
   rpc: RPC_URLS,
-  chainId: 634,
+  chainId: avoChainId,
   qrcode: true,
 });
 
@@ -54,8 +56,9 @@ export const network = new NetworkConnector({
   defaultChainId: 56,
 });
 
-export const torus = new TorusConnector({ chainId: 634 });
-
+export const torus = new TorusConnector({
+  chainId: avoChainId,
+});
 
 export const changeMetamaskNetwork = async (network: Network) => {
   const { library, chainId } = useWeb3();

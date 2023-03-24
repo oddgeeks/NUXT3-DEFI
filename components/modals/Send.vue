@@ -158,8 +158,6 @@ const onSubmit = handleSubmit(async () => {
   }
 
   try {
-    await switchNetworkByChainId(634);
-
     const metadata = encodeTransferMetadata({
       token: token.value.address,
       amount: toWei(amount.value, token.value.decimals),

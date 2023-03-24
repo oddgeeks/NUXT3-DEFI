@@ -3,7 +3,7 @@ import CopySVG from "~/assets/images/icons/copy.svg?component";
 import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
 
 const { copy, copied } = useClipboard();
-const slots = useSlots()
+const slots = useSlots();
 
 defineProps<{
   text: string;

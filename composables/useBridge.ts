@@ -21,11 +21,9 @@ export const useBridge = (props: IBridge) => {
   let tokensController: AbortController | null = null;
   let routesController: AbortController | null = null;
 
-  const provider = getRpcProvider(634);
-
   const { account } = useWeb3();
   const { fromWei, toWei } = useBignumber();
-  const { tokenBalances, safeAddress, safe } = useAvocadoSafe();
+  const { tokenBalances, safeAddress } = useAvocadoSafe();
   const { getNetworkByChainId, networks } = useNetworks();
   const { tokens } = storeToRefs(useTokens());
 
@@ -92,6 +90,16 @@ export const useBridge = (props: IBridge) => {
         bridgeToToken?.value?.decimals
       ).toFixed()
     )
+  );
+
+  const recivedValueInUsd = computed(() =>
+    !txRoute?.value ? 0 : max(txRoute?.value.outputValueInUsd, 0)
+  );
+
+  const recievedAmount = computed(() =>
+    toBN(recivedValueInUsd.value)
+      .div(token.value.price ?? 1)
+      .toFixed()
   );
 
   const bridgeTokens = useAsyncData(
@@ -372,7 +380,7 @@ export const useBridge = (props: IBridge) => {
 
   const selectableChains = computed(() =>
     networks.filter(
-      (c) => String(c.chainId) !== fromChainId.value && c.chainId !== 634
+      (c) => String(c.chainId) !== fromChainId.value && c.chainId !== avoChainId
     )
   );
 
@@ -422,5 +430,7 @@ export const useBridge = (props: IBridge) => {
     isInsufficientBalance,
     selectableChains,
     handleSwapToken,
+    recivedValueInUsd,
+    recievedAmount,
   };
 };

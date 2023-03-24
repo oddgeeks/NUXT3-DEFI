@@ -18,6 +18,7 @@ const RPC_URLS: { [chainId: number]: string } = {
   10: "https://rpc.ankr.com/optimism",
   42161: "https://rpc.ankr.com/arbitrum",
   634: "https://rpc.avocado.instadapp.io",
+  63400: "https://rpc.avocado.instad.app",
   100: "https://rpc.ankr.com/gnosis",
   56: "https://rpc.ankr.com/bsc",
 };
@@ -181,6 +182,7 @@ const coinIds = [
     "usd-coin-avalanche-bridged-usdc-e",
     "wbtc-plenty-bridge",
     "tether-avalanche-bridged-usdt-e",
+    "arbitrum",
   ]),
 ];
 

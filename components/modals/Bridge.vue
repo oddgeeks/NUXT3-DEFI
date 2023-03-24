@@ -31,6 +31,8 @@ const {
   token,
   amount,
   toAmount,
+  recivedValueInUsd,
+  recievedAmount,
   form,
   nativeCurrency,
   nativeFee,
@@ -51,7 +53,7 @@ const {
 
 const { pending, error, data } = useEstimatedFee(transactions.data, {
   chainId: props.chainId,
-  disabled: () => isInsufficientBalance.value
+  disabled: () => isInsufficientBalance.value,
 });
 
 const setMax = () => {
@@ -64,8 +66,6 @@ const onSubmit = form.handleSubmit(async () => {
   }
 
   try {
-    await switchNetworkByChainId(634);
-
     const metadata = encodeBridgeMetadata({
       amount: toWei(amount.value, token.value.decimals),
       bridgeFee: toWei(bridgeFee.value.amount, bridgeFee.value.asset.decimals),
@@ -113,7 +113,7 @@ const onSubmit = form.handleSubmit(async () => {
       type: "error",
       action: "bridge",
       account: account.value,
-      errorDetails: err.parsed
+      errorDetails: err.parsed,
     });
   }
 });
@@ -123,9 +123,17 @@ const onSubmit = form.handleSubmit(async () => {
   <form @submit="onSubmit" class="flex gap-7.5 flex-col">
     <div class="flex justify-center flex-col gap-7.5 items-center">
       <div class="relative inline-block h-10 w-10 rounded-full flex-shrink-0">
-        <img :src="token.logoURI" class="h-10 w-10 rounded-full" :onerror="onImageError" />
+        <img
+          :src="token.logoURI"
+          class="h-10 w-10 rounded-full"
+          :onerror="onImageError"
+        />
 
-        <ChainLogo :stroke="true" class="w-5.5 h-5.5 absolute -left-1 -bottom-1" :chain="token.chainId" />
+        <ChainLogo
+          :stroke="true"
+          class="w-5.5 h-5.5 absolute -left-1 -bottom-1"
+          :chain="token.chainId"
+        />
       </div>
 
       <h2 class="text-lg leading-5 text-center">
@@ -175,7 +183,13 @@ const onSubmit = form.handleSubmit(async () => {
         </div>
 
         <div class="flex text-sm text-slate-400">
-          {{ formatUsd(toBN(token.price || 0).times(amount || 0).decimalPlaces(2)) }}
+          {{
+            formatUsd(
+              toBN(token.price || 0)
+                .times(amount || 0)
+                .decimalPlaces(2)
+            )
+          }}
         </div>
       </div>
       <div class="space-y-2.5">
@@ -197,7 +211,9 @@ const onSubmit = form.handleSubmit(async () => {
             </template>
           </CommonSelect>
         </div>
-        <div class="px-5 sm:pt-[14px] pb-5 dark:bg-gray-850 bg-slate-50 rounded-5">
+        <div
+          class="px-5 sm:pt-[14px] pb-5 dark:bg-gray-850 bg-slate-50 rounded-5"
+        >
           <div class="flex flex-col gap-5">
             <div
               class="grid items-center gap-4 grid-cols-1 md:grid-cols-2 md:gap-x-4 md:gap-y-5"
@@ -295,15 +311,23 @@ const onSubmit = form.handleSubmit(async () => {
 
             <div class="divider" />
 
-            <div class="flex justify-between items-start sm:items-center whitespace-nowrap">
+            <div
+              class="flex justify-between items-start sm:items-center whitespace-nowrap"
+            >
               <span class="md:text-lg font-semibold !leading-5"
                 >You receive</span
               >
               <span
                 class="sm:text-2xl text-sm font-semibold text-right !leading-5 uppercase inline-flex flex-wrap gap-2 sm:gap-2.5 justify-end"
               >
-                <span>{{ toAmount }} {{ token.symbol }}</span>
-                <span class="text-slate-400 text-sm">({{ formatUsd(toBN(token.price || 0).times(toAmount || 0).decimalPlaces(2)) }})</span>
+                <span
+                  >{{ formatDecimal(recievedAmount) }} {{ token.symbol }}</span
+                >
+
+                {{}}
+                <span class="text-slate-400 text-sm"
+                  >({{ formatUsd(recivedValueInUsd) }})</span
+                >
               </span>
             </div>
           </div>
@@ -316,9 +340,8 @@ const onSubmit = form.handleSubmit(async () => {
         type="error"
         :text="transactions.error.value?.message"
       >
-        
       </CommonNotification>
-       <CommonNotification
+      <CommonNotification
         v-if="isInsufficientBalance"
         type="error"
         :text="`Not enough ${nativeCurrency?.symbol.toUpperCase()} balance`"

@@ -17,7 +17,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
   const safe = useAvocadoSafe();
   const { library, account } = useWeb3();
   const { parseTransactionError } = useErrorHandler();
-  const { switchNetworkByChainId } = useNetworks();
+  const { switchToAvocadoNetwork, switchNetworkByChainId } = useNetworks();
   const storage = useLocalStorage<{ keys: Record<string, string[]> }>(
     "wallet_connect",
     {
@@ -108,7 +108,6 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
 
                   const { success, payload: msg } =
                     await openWCTransactionModal({
-                      modalId: wc.peerId,
                       chainId: String(wc.chainId),
                       payload,
                       wc,
@@ -142,7 +141,6 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                 });
 
                 const { success, payload: msg } = await openWCTransactionModal({
-                  modalId: wc.peerId,
                   chainId: String(wc.chainId),
                   payload,
                   wc,
@@ -189,7 +187,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                   eip712Data.domain.verifyingContract.toLowerCase() ===
                   "0x000000000022d473030f116ddee9f6b43ac78ba3"
                 ) {
-                  await switchNetworkByChainId(634);
+                  await switchToAvocadoNetwork();
                   delete eip712Data.types.EIP712Domain;
 
                   const permit2ABI = [
@@ -225,7 +223,6 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
 
                     const { success, payload: msg } =
                       await openWCTransactionModal({
-                        modalId: wc.peerId,
                         chainId: String(wc.chainId),
                         payload,
                         wc,
@@ -443,6 +440,8 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
     clearWalletConnectStorage();
   };
 
+  const refreshSessions = () => triggerRef(sessions);
+
   return {
     sessions,
     disconnect,
@@ -450,6 +449,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
     connect,
     prepareAndConnect,
     disconnectAll,
+    refreshSessions,
   };
 });
 

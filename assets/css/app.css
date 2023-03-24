@@ -185,3 +185,7 @@ html.dark .text-shadow {
 input[type="search" i]::-webkit-search-cancel-button {
   cursor: pointer;
 }
+
+.text-wrap {
+  overflow-wrap: anywhere;
+}

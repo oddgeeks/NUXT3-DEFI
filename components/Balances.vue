@@ -5,9 +5,7 @@ import { IBalance } from "~~/stores/safe";
 
 const { tokenBalances } = useAvocadoSafe();
 const { account } = useWeb3();
-const { networks } = useNetworks();
-
-const availableNetworks = networks.filter((network) => network.chainId != 634);
+const { networks, availableNetworks } = useNetworks();
 
 const whitelistedSymbols = [
   "ETH",
@@ -24,7 +22,7 @@ const whitelistedSymbols = [
 ];
 
 const priorityChainIds = [1, 137, 42161, 10, 43114, 56, 100];
-const priorityTokenKeys = ["ETH", "MATIC", "AVAX", 'INST', "BNB", "XDAI"];
+const priorityTokenKeys = ["ETH", "MATIC", "AVAX", "INST", "BNB", "XDAI"];
 const priorityStable = ["USDC", "USDT", "DAI", "XDAI"];
 
 const tokensWithBalances = computed(() =>
@@ -75,8 +73,14 @@ const filteredBalances = computed(() => {
 
 const sortedBalances = computed(() => {
   return sortByMany<IBalance>(filteredBalances.value, [
-    (a, b) => toBN(b?.balanceInUSD || 0).minus(a?.balanceInUSD || 0).toNumber(),
-    (a, b) => toBN(b?.balance || 0).minus(a?.balance || 0).toNumber(),
+    (a, b) =>
+      toBN(b?.balanceInUSD || 0)
+        .minus(a?.balanceInUSD || 0)
+        .toNumber(),
+    (a, b) =>
+      toBN(b?.balance || 0)
+        .minus(a?.balance || 0)
+        .toNumber(),
     (a, b) => {
       const aIndex = priorityTokenKeys.indexOf(a.symbol.toUpperCase());
       const bIndex = priorityTokenKeys.indexOf(b.symbol.toUpperCase());
@@ -98,7 +102,6 @@ const sortedBalances = computed(() => {
 const search = useDebounceFn((event: Event) => {
   searchQuery.value = (<HTMLInputElement>event.target).value;
 }, 200);
-
 </script>
 <template>
   <div class="relative flex-1">
@@ -177,7 +180,7 @@ const search = useDebounceFn((event: Event) => {
                   ? filteredBalances
                   : sortedBalances"
                 :token-balance="tokenBalance"
-                :key="`${tokenBalance.chainId}-${tokenBalance.symbol}`"
+                :key="`${tokenBalance.chainId}-${tokenBalance.name}`"
               />
             </template>
           </tbody>
@@ -187,7 +190,7 @@ const search = useDebounceFn((event: Event) => {
         <MobileBalanceRow
           v-for="tokenBalance in sortedBalances"
           :token-balance="tokenBalance"
-          :key="`${tokenBalance.chainId}-${tokenBalance.symbol}`"
+          :key="`${tokenBalance.chainId}-${tokenBalance.name}`"
         />
       </div>
       <p

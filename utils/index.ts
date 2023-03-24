@@ -3,6 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { BigNumber as BN } from "ethers";
 import { Forwarder__factory } from "@/contracts";
 import { RPC_URLS } from "~~/connectors";
+import { AVO_PROD_CHAIN_ID, AVO_STAGING_CHAIN_ID } from "./avocado";
 
 const multiMetadataTypes = ["bytes[]"];
 
@@ -106,7 +107,8 @@ export const chainIdToName = (chainId: string | number) => {
       return "BSC";
     case "250":
       return "Fantom";
-    case "634":
+    case String(AVO_PROD_CHAIN_ID):
+    case String(AVO_STAGING_CHAIN_ID):
       return "Avocado";
     default:
       throw new Error(`Unknown chainId ${chainId}`);
@@ -236,18 +238,6 @@ export const slack = async (
 };
 
 export const calculateEstimatedFee = (params: CalculateFeeProps) => {
-  const minFee = {
-    "137": 0.01,
-    "10": 0.005,
-    "42161": 0.005,
-    "43114": 0.005,
-    "1": 0.005,
-    "100": 0.01,
-    "56": 0.01,
-  };
-
-  const minChainFee = minFee[String(params.chainId) as keyof typeof minFee];
-
   const { fee, multiplier = "0" } = params;
 
   if (!fee)
@@ -266,8 +256,8 @@ export const calculateEstimatedFee = (params: CalculateFeeProps) => {
     .dividedBy(10 ** 14)
     .toNumber();
 
-  const actualMin = Math.max(minVal, minChainFee);
-  const actualMax = Math.max(maxVal, minChainFee);
+  const actualMin = Math.max(minVal, 0.01);
+  const actualMax = Math.max(maxVal, 0.01);
 
   const formattedMin = formatDecimal(String(actualMin), 2);
   const formattedMax = formatDecimal(String(actualMax), 2);
@@ -442,6 +432,9 @@ export const decodeMetadata = (data: string) => {
   try {
     const iface = Forwarder__factory.createInterface();
     let metadata = "0x";
+    let payload = {};
+
+    if (!data) return payload;
 
     if (data.startsWith("0x18e7f485")) {
       const executeData = iface.decodeFunctionData("execute", data);
@@ -484,8 +477,6 @@ export const decodeMetadata = (data: string) => {
         actionMetadataTypes[type],
         decodedMetadata.data
       );
-
-      let payload = {};
 
       switch (type) {
         case "transfer":
