@@ -326,3 +326,27 @@ interface BuildInfo {
   branch: string;
   env: string;
 }
+
+interface ISimulation {
+  balanceChange: BalanceChange;
+  transaction: Transaction;
+}
+
+interface BalanceChange {
+  approveTokens: SimulationToken[];
+  sendTokens: SimulationToken[];
+  receiveTokens: SimulationToken[];
+}
+
+interface SimulationToken {
+  token: string;
+  from: string;
+  to: string;
+  amount: string;
+}
+
+interface Transaction {
+  simulationId: string;
+  gasLimit: number;
+  status: boolean;
+}

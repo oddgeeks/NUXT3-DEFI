@@ -3,6 +3,7 @@ import GasSVG from "~/assets/images/icons/gas.svg?component";
 import NetworkSVG from "~/assets/images/icons/network.svg?component";
 import FlowersSVG from "~/assets/images/icons/flowers.svg?component";
 import SVGClockCircle from "~/assets/images/icons/clock-circle.svg?component";
+
 import type WalletConnect from "@walletconnect/client";
 import { storeToRefs } from "pinia";
 
@@ -17,12 +18,11 @@ const props = defineProps<{
   signMessageDetails?: any;
 }>();
 
-const { safe, sendTransactions } = useAvocadoSafe();
+const { safe, sendTransactions, safeAddress } = useAvocadoSafe();
 const { account } = useWeb3();
 const { gasBalance } = storeToRefs(useSafe());
 const [submitting, toggle] = useToggle();
 const { parseTransactionError } = useErrorHandler();
-const { getTokenByAddress } = useTokens()
 
 const submitDisabled = computed(
   () =>
@@ -34,7 +34,7 @@ const isBalaceNotEnough = computed(() => {
   return toBN(gasBalance.value).lt(fee.value?.max!);
 });
 
-onMounted(() => {
+onMounted(async () => {
   document.title = "(1) Avocado";
 
   injectFavicon("/icons/favicon-alert.ico");
@@ -61,16 +61,18 @@ const calculateDate = (timestamp: number) => {
 };
 
 const transactions = computed(() => {
-  const [transactionOrTransactions] = props.payload.params
+  const [transactionOrTransactions] = props.payload.params;
 
-  return Array.isArray(transactionOrTransactions) ? transactionOrTransactions : [transactionOrTransactions]
-})
+  return Array.isArray(transactionOrTransactions)
+    ? transactionOrTransactions
+    : [transactionOrTransactions];
+});
 
 const options = computed(() => {
-  const [transactionOrTransactions, chainId, options] = props.payload.params
+  const [transactionOrTransactions, chainId, options] = props.payload.params;
 
-  return options || {}
-})
+  return options || {};
+});
 
 const {
   data: fee,
@@ -85,13 +87,13 @@ const {
 const handleSubmit = async () => {
   try {
     toggle(true);
-  
+
     const transactionHash = await sendTransactions(
       transactions.value,
       props.chainId,
       {
         metadata: props.metadata,
-        ...options.value
+        ...options.value,
       }
     );
 
@@ -101,7 +103,9 @@ const handleSubmit = async () => {
     });
 
     logActionToSlack({
-      message: `${props.isSign ? "Permit2 Approval" : "Txn"} on ${props.wc.peerMeta?.url}`,
+      message: `${props.isSign ? "Permit2 Approval" : "Txn"} on ${
+        props.wc.peerMeta?.url
+      }`,
       type: "success",
       action: "wc",
       txHash: transactionHash,
@@ -121,17 +125,44 @@ const handleSubmit = async () => {
     });
 
     logActionToSlack({
-      message: `${props.isSign ? "Permit2 Approval" : "Txn"} ${props.wc.peerMeta?.url} ${err}`,
+      message: `${props.isSign ? "Permit2 Approval" : "Txn"} ${
+        props.wc.peerMeta?.url
+      } ${err}`,
       type: "error",
       action: "wc",
       chainId: props.chainId,
       account: account.value,
-      errorDetails: err.parsed
+      errorDetails: err.parsed,
     });
   } finally {
     toggle(false);
   }
 };
+
+const { data: simulationDetails } = useAsyncData(
+  "simulationDetails",
+  () => {
+    return http("/api/simulate", {
+      method: "POST",
+      body: {
+        actions: transactions.value.map((i) => {
+          return {
+            target: i.to,
+            data: i.data,
+            value: i.value,
+            operation: "0",
+          };
+        }),
+        avocadoSafe: safeAddress.value,
+        chainId: props.chainId,
+      },
+    }) as Promise<ISimulation>;
+  },
+  {
+    immediate: true,
+    server: false,
+  }
+);
 
 const formatURL = (url: string) => {
   return new URL(url).hostname;
@@ -141,6 +172,10 @@ const handleReject = () => {
   rejectRequest("Rejected");
   emit("reject");
 };
+
+onUnmounted(() => {
+  clearNuxtData("simulationDetails");
+});
 </script>
 
 <template>
@@ -150,9 +185,10 @@ const handleReject = () => {
       <span v-if="isSign">Send Transaction: Permit2 Approval</span>
       <span v-else>Send Transaction</span>
     </div>
-
     <div class="flex flex-col gap-2.5">
-      <div class="dark:bg-gray-850 bg-slate-50 flex flex-col gap-4 rounded-5 py-[14px] px-5">
+      <div
+        class="dark:bg-gray-850 bg-slate-50 flex flex-col gap-4 rounded-5 py-[14px] px-5"
+      >
         <div class="flex justify-between items-center">
           <div class="text-slate-400 flex items-center gap-2.5">
             <FlowersSVG />
@@ -160,7 +196,12 @@ const handleReject = () => {
           </div>
 
           <div class="flex items-center gap-2.5">
-            <a rel="noopener noreferrer" target="_blank" class="text-primary text-sm" :href="wc.peerMeta?.url">
+            <a
+              rel="noopener noreferrer"
+              target="_blank"
+              class="text-primary text-sm"
+              :href="wc.peerMeta?.url"
+            >
               {{ formatURL(wc.peerMeta?.url!) }}
             </a>
           </div>
@@ -186,21 +227,31 @@ const handleReject = () => {
 
           <div class="flex items-center gap-2.5">
             <span v-if="pending" class="w-20 h-5 loading-box rounded-lg"></span>
-            <span v-else :class="{ 'text-red-alert': isBalaceNotEnough }" class="text-xs">{{ fee?.formatted }}</span>
-            <img class="w-[18px] h-[18px]" width="18" height="18" src="https://cdn.instadapp.io/icons/tokens/usdc.svg" />
+            <span
+              v-else
+              :class="{ 'text-red-alert': isBalaceNotEnough }"
+              class="text-xs"
+              >{{ fee?.formatted }}</span
+            >
+            <img
+              class="w-[18px] h-[18px]"
+              width="18"
+              height="18"
+              src="https://cdn.instadapp.io/icons/tokens/usdc.svg"
+            />
           </div>
         </div>
         <template v-if="isSign && signMessageDetails">
-        <div class="flex justify-between items-center">
-          <div class="text-slate-400 flex items-center gap-2.5">
-            <SVGClockCircle class="w-4" />
-            <span class="text-xs leading-5 font-medium">Exprires at</span>
-          </div>
+          <div class="flex justify-between items-center">
+            <div class="text-slate-400 flex items-center gap-2.5">
+              <SVGClockCircle class="w-4" />
+              <span class="text-xs leading-5 font-medium">Exprires at</span>
+            </div>
 
-          <div class="flex items-center gap-2.5 text-sm">
-            {{ calculateDate(signMessageDetails.expiration) }}
+            <div class="flex items-center gap-2.5 text-sm">
+              {{ calculateDate(signMessageDetails.expiration) }}
+            </div>
           </div>
-        </div>
         </template>
       </div>
 
@@ -213,15 +264,29 @@ const handleReject = () => {
       </CommonNotification>
     </div>
     <div class="flex justify-between items-center gap-4">
-      <CommonButton @click="handleReject" color="white" size="lg"
-        class="flex-1 justify-center items-center hover:!bg-red-alert hover:!bg-opacity-10 hover:text-red-alert">
+      <CommonButton
+        @click="handleReject"
+        color="white"
+        size="lg"
+        class="flex-1 justify-center items-center hover:!bg-red-alert hover:!bg-opacity-10 hover:text-red-alert"
+      >
         Reject
       </CommonButton>
 
-      <CommonButton :loading="submitting" :disabled="submitDisabled" type="submit"
-        class="flex-1 justify-center items-center" size="lg">
+      <CommonButton
+        :loading="submitting"
+        :disabled="submitDisabled"
+        type="submit"
+        class="flex-1 justify-center items-center"
+        size="lg"
+      >
         Submit
       </CommonButton>
     </div>
+    <SimulationDetails
+      v-if="simulationDetails"
+      :chainId="chainId"
+      :details="simulationDetails"
+    />
   </form>
 </template>
