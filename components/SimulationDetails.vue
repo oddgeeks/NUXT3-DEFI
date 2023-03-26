@@ -9,14 +9,14 @@ defineProps<{
 </script>
 
 <template>
-  <details>
+  <details class="group">
     <summary>
       <div
         class="text-xs justify-center text-center text-orange-400 flex items-center gap-[6px]"
       >
         <SVGInfoCircle />
         Token Transfer & Approval Detected
-        <ChevronDownSVG class="w-4" />
+        <ChevronDownSVG class="w-4 group-open:rotate-180" />
       </div>
     </summary>
 
