@@ -20,7 +20,7 @@ defineProps<{
       </div>
     </summary>
 
-    <ul class="grid grid-cols-2 gap-x-[10px] gap-y-5 mt-5">
+    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-[10px] gap-y-5 mt-5">
       <li :key="k" v-for="(item, k) in details.balanceChange.approveTokens">
         <SimulationTokenCard
           type="approve"
