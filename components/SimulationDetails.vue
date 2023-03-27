@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import SVGInfoCircle from "~/assets/images/icons/exclamation-circle.svg?component";
 import ChevronDownSVG from "~/assets/images/icons/chevron-down.svg?component";
 
 defineProps<{
@@ -14,7 +13,6 @@ defineProps<{
       <div
         class="text-xs justify-center text-center text-orange-400 flex items-center gap-[6px]"
       >
-        <SVGInfoCircle />
         Token Transfer & Approval Detected
         <ChevronDownSVG class="w-4 group-open:rotate-180" />
       </div>
