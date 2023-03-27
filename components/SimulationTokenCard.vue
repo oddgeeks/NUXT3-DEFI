@@ -27,6 +27,12 @@ const amount = computed(() => {
   return fromWei(props.payload.amount, token.value?.decimals).decimalPlaces(5);
 });
 
+const priceInUSD = computed(() => {
+  if (!token.value || amount.value === "∞") return;
+
+  return times(amount.value, token.value?.price || 0).toFixed();
+});
+
 const actualType = computed(() => {
   switch (props.type) {
     case "approve":
@@ -53,6 +59,9 @@ const out = computed(() => {
         <span class="text-xs uppercase">
           {{ amount }}
           {{ token?.symbol }}
+        </span>
+        <span v-if="priceInUSD" class="text-xs font-normal">
+          ({{ formatUsd(priceInUSD) }})
         </span>
       </p>
       <p class="text-[10px] font-medium text-slate-400 leading-4">
