@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import ChevronDownSVG from "~/assets/images/icons/chevron-down.svg?component";
-
 defineProps<{
   details: ISimulation;
   chainId: string;
@@ -8,17 +6,14 @@ defineProps<{
 </script>
 
 <template>
-  <details class="group">
-    <summary class="cursor-pointer">
-      <div
-        class="text-xs justify-center text-center text-orange-400 flex items-center gap-[6px]"
-      >
-        Token Transfer & Approval Detected
-        <ChevronDownSVG class="w-4 group-open:rotate-180" />
-      </div>
-    </summary>
+  <div class="flex gap-5 flex-col">
+    <h1
+      class="text-xs justify-center text-center text-orange-400 flex items-center"
+    >
+      Token Transfer & Approval Detected
+    </h1>
 
-    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-[10px] gap-y-5 mt-5">
+    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-[10px] gap-y-5">
       <li :key="k" v-for="(item, k) in details.balanceChange.approveTokens">
         <SimulationTokenCard
           type="approve"
@@ -37,5 +32,5 @@ defineProps<{
         <SimulationTokenCard type="send" :chainId="chainId" :payload="item" />
       </li>
     </ul>
-  </details>
+  </div>
 </template>
