@@ -51,19 +51,21 @@ const out = computed(() => {
 
 <template>
   <div
-    class="dark:bg-gray-850 rounded-2xl flex justify-between items-start py-2.5 px-[14px] bg-slate-50"
+    class="dark:bg-gray-850 rounded-2xl flex justify-between items-start gap-2 py-2.5 px-[14px] bg-slate-50"
   >
     <div class="flex flex-col gap-[2px]">
-      <p class="flex gap-1.5 items-center">
+      <d class="flex gap-1.5 items-center">
         <img width="14" height="14" :src="token?.logoURI" />
-        <span class="text-xs uppercase">
-          {{ amount }}
-          {{ token?.symbol }}
-        </span>
-        <span v-if="priceInUSD" class="text-xs font-normal">
-          ({{ formatUsd(priceInUSD) }})
-        </span>
-      </p>
+        <p class="inline leading-4">
+          <span class="text-xs uppercase">
+            {{ amount }}
+            {{ token?.symbol }}
+          </span>
+          <span v-if="priceInUSD" class="text-xs font-normal">
+            ({{ formatUsd(priceInUSD) }})
+          </span>
+        </p>
+      </d>
       <p class="text-[10px] font-medium text-slate-400 leading-4">
         <span v-if="actualType === 'In'">
           From: {{ shortenHash(payload.from) }}</span
