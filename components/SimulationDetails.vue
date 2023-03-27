@@ -10,7 +10,7 @@ defineProps<{
 
 <template>
   <details class="group">
-    <summary>
+    <summary class="cursor-pointer">
       <div
         class="text-xs justify-center text-center text-orange-400 flex items-center gap-[6px]"
       >

@@ -24,7 +24,7 @@ const amount = computed(() => {
   if (props.payload.amount.startsWith("115792089237316195423570985008687"))
     return "∞";
 
-  return fromWei(props.payload.amount, token.value?.decimals).decimalPlaces(2);
+  return fromWei(props.payload.amount, token.value?.decimals).decimalPlaces(5);
 });
 
 const actualType = computed(() => {
