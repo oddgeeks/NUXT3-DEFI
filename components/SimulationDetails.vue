@@ -10,7 +10,7 @@ defineProps<{
     <h1
       class="text-xs justify-center text-center text-orange-400 flex items-center"
     >
-      Token Transfer Approval Detected
+      Transaction Breakdown
     </h1>
 
     <ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-[10px] gap-y-5">
