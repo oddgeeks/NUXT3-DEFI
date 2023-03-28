@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     const ankrProvider = new AnkrProvider(ankrApiKey);
     const params = await readBody(event);
 
-    async function transformTokenToNFT(token: SimulationToken) {
+    async function transformToken(token: SimulationToken) {
       const nft = await ankrProvider.getNFTMetadata({
         blockchain: blockchain(parsed.chainId) as any,
         contractAddress: token.token,
@@ -17,8 +17,14 @@ export default defineEventHandler(async (event) => {
         forceFetch: true,
       });
       if (nft.metadata?.collectionName) {
-        token.type = "nft";
+        token.type = "NFT";
         token.nftMetadata = nft.attributes as any;
+      } else {
+        token.type = token.from.startsWith("0x0000")
+          ? "Mint"
+          : token.to.startsWith("0x0000")
+          ? "Burn"
+          : null;
       }
 
       return token;
@@ -48,8 +54,8 @@ export default defineEventHandler(async (event) => {
     const data = resp.data as ISimulation;
 
     await Promise.all([
-      ...data.balanceChange.sendTokens.map(transformTokenToNFT),
-      ...data.balanceChange.receiveTokens.map(transformTokenToNFT),
+      ...data.balanceChange.sendTokens.map(transformToken),
+      ...data.balanceChange.receiveTokens.map(transformToken),
     ]);
 
     return data;

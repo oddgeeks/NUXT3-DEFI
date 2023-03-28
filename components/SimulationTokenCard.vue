@@ -50,52 +50,63 @@ const out = computed(() => {
 </script>
 
 <template>
-  <div
-    class="dark:bg-gray-850 rounded-2xl flex justify-between items-start gap-2 py-2.5 px-[14px] bg-slate-50"
+  <li
+    :class="{ hidden: !token && payload.type !== 'NFT' }"
+    class="dark:bg-gray-850 rounded-2xl flex flex-col justify-between items-start gap-2 py-2.5 px-3 bg-slate-50"
   >
-    <div class="flex flex-col gap-[2px]">
-      <div v-if="payload.type === 'nft'" class="flex gap-1.5 items-center">
-        <img
-          width="14"
-          height="14"
-          class="rounded-full"
-          :src="payload.nftMetadata?.imageUrl"
-        />
-        <p class="inline leading-4">
-          <span class="text-xs uppercase">
-            {{ payload.nftMetadata?.name }}
-          </span>
+    <div class="flex gap-2 justify-between w-full">
+      <div
+        v-if="payload.type === 'NFT'"
+        class="flex gap-1.5 items-center flex-1"
+      >
+        <img width="26" height="26" :src="payload.nftMetadata?.imageUrl" />
+        <p class="inline leading-4 text-xs uppercase">
+          {{ payload.nftMetadata?.name }}
         </p>
       </div>
       <div v-else class="flex gap-1.5 items-center">
-        <img v-if="token" width="14" height="14" :src="token?.logoURI" />
-        <p class="inline leading-4">
-          <span class="text-xs uppercase">
+        <img v-if="token" width="26" height="26" :src="token?.logoURI" />
+        <p class="flex flex-col">
+          <span class="text-xs uppercase leading-4">
             {{ amount }}
             {{ token?.symbol }}
           </span>
-          <span v-if="priceInUSD" class="text-xs font-normal">
-            ({{ formatUsd(priceInUSD) }})
+          <span
+            v-if="priceInUSD"
+            class="text-[10px] text-slate-400 leading-4 font-medium"
+          >
+            {{ formatUsd(priceInUSD) }}
           </span>
         </p>
       </div>
-      <p class="text-[10px] font-medium text-slate-400 leading-4">
-        <span v-if="actualType === 'In'">
+      <div
+        :class="out ? 'text-red-alert' : 'text-green-400'"
+        class="rounded-[14px] flex items-center gap-1 w-fit h-4"
+      >
+        <ArrowRight
+          :class="out ? '-rotate-90' : 'rotate-90'"
+          class="w-3 [&>path]:stroke-[3px]"
+        />
+        <span class="text-[10px] leading-4">
+          {{ actualType }}
+        </span>
+      </div>
+    </div>
+    <div class="flex justify-between w-full">
+      <div
+        class="text-[10px] font-medium w-fit text-slate-400 dark:bg-slate-800 py-1 px-2.5 bg-slate-150 rounded-10"
+      >
+        <span class="leading-4" v-if="actualType === 'In'">
           From: {{ shortenHash(payload.from) }}</span
         >
-        <span v-else> To: {{ shortenHash(payload.to) }}</span>
-      </p>
+        <span class="leading-4" v-else> To: {{ shortenHash(payload.to) }}</span>
+      </div>
+      <div
+        v-if="payload.type"
+        class="text-[10px] font-medium w-fit text-slate-400 dark:bg-slate-800 py-1 px-2.5 bg-slate-150 rounded-10"
+      >
+        {{ payload.type }}
+      </div>
     </div>
-    <div
-      :class="
-        out ? 'bg-red-alert text-red-alert' : 'bg-green-400 text-green-400'
-      "
-      class="rounded-[14px] bg-opacity-10 flex items-center gap-1 w-fit px-[6px] py-[2px]"
-    >
-      <ArrowRight :class="out ? '-rotate-90' : 'rotate-90'" class="w-3" />
-      <span class="text-[10px]">
-        {{ actualType }}
-      </span>
-    </div>
-  </div>
+  </li>
 </template>
