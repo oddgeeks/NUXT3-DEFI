@@ -343,6 +343,15 @@ interface SimulationToken {
   from: string;
   to: string;
   amount: string;
+  type?: "nft" | "token";
+  nftMetadata?: {
+    tokenUrl: string;
+    imageUrl: string;
+    name: string;
+    description: string;
+    traits: any[];
+    contractType: string;
+  };
 }
 
 interface Transaction {

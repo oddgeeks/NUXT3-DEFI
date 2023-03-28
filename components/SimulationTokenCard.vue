@@ -54,8 +54,21 @@ const out = computed(() => {
     class="dark:bg-gray-850 rounded-2xl flex justify-between items-start gap-2 py-2.5 px-[14px] bg-slate-50"
   >
     <div class="flex flex-col gap-[2px]">
-      <d class="flex gap-1.5 items-center">
-        <img width="14" height="14" :src="token?.logoURI" />
+      <div v-if="payload.type === 'nft'" class="flex gap-1.5 items-center">
+        <img
+          width="14"
+          height="14"
+          class="rounded-full"
+          :src="payload.nftMetadata?.imageUrl"
+        />
+        <p class="inline leading-4">
+          <span class="text-xs uppercase">
+            {{ payload.nftMetadata?.name }}
+          </span>
+        </p>
+      </div>
+      <div v-else class="flex gap-1.5 items-center">
+        <img v-if="token" width="14" height="14" :src="token?.logoURI" />
         <p class="inline leading-4">
           <span class="text-xs uppercase">
             {{ amount }}
@@ -65,7 +78,7 @@ const out = computed(() => {
             ({{ formatUsd(priceInUSD) }})
           </span>
         </p>
-      </d>
+      </div>
       <p class="text-[10px] font-medium text-slate-400 leading-4">
         <span v-if="actualType === 'In'">
           From: {{ shortenHash(payload.from) }}</span

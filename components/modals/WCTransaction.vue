@@ -149,7 +149,7 @@ const { data: simulationDetails } = useAsyncData(
           return {
             target: i.to,
             data: i.data,
-            value: i.value,
+            value: i?.value || "0",
             operation: "0",
           };
         }),
