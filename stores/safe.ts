@@ -15,7 +15,7 @@ export const useSafe = defineStore("safe", () => {
   const safeAddress = ref();
 
   const { account } = useWeb3();
-  const { tokens } = storeToRefs(useTokens());
+  const { tokens, customTokens } = storeToRefs(useTokens());
   const documentVisibility = useDocumentVisibility();
   const { networks } = useNetworks();
   const { parseTransactionError } = useErrorHandler();
@@ -87,8 +87,8 @@ export const useSafe = defineStore("safe", () => {
           tokenBalance.balance = balance.balance;
           tokenBalance.balanceInUSD = toBN(tb.price || 0).gt(0)
             ? toBN(balance.balance)
-                .times(tb.price || 0)
-                .toFixed(2)
+              .times(tb.price || 0)
+              .toFixed(2)
             : balance.balanceInUSD;
         }
 
@@ -179,6 +179,7 @@ export const useSafe = defineStore("safe", () => {
         signal: balanceAborter.value?.signal,
         params: {
           address: safeAddress.value,
+          "customTokens[100]": customTokens.value.filter(t => t.chainId === '100').map(t => t.address),
         },
       })) as any[];
 
