@@ -65,7 +65,12 @@ const out = computed(() => {
         </p>
       </div>
       <div v-else class="flex gap-1.5 items-center">
-        <img v-if="token" width="26" height="26" :src="token?.logoURI" />
+        <img
+          v-if="token?.logoURI"
+          width="26"
+          height="26"
+          :src="token?.logoURI"
+        />
         <p class="flex flex-col">
           <span class="text-xs uppercase leading-4">
             {{ amount }}
