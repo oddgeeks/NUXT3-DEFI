@@ -2,6 +2,8 @@ import axios from "axios";
 import { AnkrProvider } from "@ankr.com/ankr.js";
 import { object, array, string } from "yup";
 
+const flashloanAddress = "0x8d8B52e9354E2595425D00644178E2bA2257f42a";
+
 export default defineEventHandler(async (event) => {
   try {
     const { ankrApiKey } = useRuntimeConfig();
@@ -20,11 +22,15 @@ export default defineEventHandler(async (event) => {
         token.type = "NFT";
         token.nftMetadata = nft.attributes as any;
       } else {
-        token.type = token.from.startsWith("0x0000")
-          ? "Mint"
-          : token.to.startsWith("0x0000")
-          ? "Burn"
-          : null;
+        token.type =
+          token.from.toLowerCase() === flashloanAddress.toLowerCase() ||
+          token.to.toLowerCase() === flashloanAddress.toLowerCase()
+            ? "Flashloan"
+            : token.from.startsWith("0x0000")
+            ? "Mint"
+            : token.to.startsWith("0x0000")
+            ? "Burn"
+            : null;
       }
 
       return token;

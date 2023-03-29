@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
+import SVGInfoCircle from "~/assets/images/icons/exclamation-circle.svg?component";
 
 const props = defineProps<{
   payload: SimulationToken;
@@ -108,9 +109,16 @@ const out = computed(() => {
       </div>
       <div
         v-if="payload.type"
-        class="text-[10px] font-medium w-fit text-slate-400 dark:bg-slate-800 py-1 px-2.5 bg-slate-150 rounded-10"
+        class="text-[10px] flex items-center gap-[7px] font-medium w-fit text-slate-400 dark:bg-slate-800 py-1 px-2.5 bg-slate-150 rounded-10"
       >
         {{ payload.type }}
+        <SVGInfoCircle
+          v-if="payload.type === 'Flashloan'"
+          v-tippy="
+            'This transfer involves taking a flashloan using the Instadapp Flashloan Aggregator'
+          "
+          class="text-primary w-3"
+        />
       </div>
     </div>
   </li>

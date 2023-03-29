@@ -343,7 +343,7 @@ interface SimulationToken {
   from: string;
   to: string;
   amount: string;
-  type?: "NFT" | "Burn" | "Mint" | null;
+  type?: "NFT" | "Burn" | "Mint" | "Flashloan" | null;
   nftMetadata?: {
     tokenUrl: string;
     imageUrl: string;
