@@ -326,3 +326,36 @@ interface BuildInfo {
   branch: string;
   env: string;
 }
+
+interface ISimulation {
+  balanceChange: BalanceChange;
+  transaction: Transaction;
+}
+
+interface BalanceChange {
+  approveTokens: SimulationToken[];
+  sendTokens: SimulationToken[];
+  receiveTokens: SimulationToken[];
+}
+
+interface SimulationToken {
+  token: string;
+  from: string;
+  to: string;
+  amount: string;
+  type?: "NFT" | "Burn" | "Mint" | "Flashloan" | null;
+  nftMetadata?: {
+    tokenUrl: string;
+    imageUrl: string;
+    name: string;
+    description: string;
+    traits: any[];
+    contractType: string;
+  };
+}
+
+interface Transaction {
+  simulationId: string;
+  gasLimit: number;
+  status: boolean;
+}

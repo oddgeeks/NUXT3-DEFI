@@ -258,6 +258,13 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
                   }
                 } else {
                   // throw not allowed
+                  wc.rejectRequest({
+                    id: payload.id,
+                    error: {
+                      code: -32603,
+                      message: "Not allowed",
+                    },
+                  });
                 }
               } else if (
                 signingMethods.includes(payload.method)
