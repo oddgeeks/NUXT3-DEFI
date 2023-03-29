@@ -36,7 +36,9 @@ const priceInUSD = computed(() => {
 const actualType = computed(() => {
   switch (props.type) {
     case "approve":
-      return "Approve";
+      return toBN(props.payload.amount).eq("0")
+        ? "Revoked Allowance"
+        : "Approve";
     case "recieve":
       return "In";
     case "send":
