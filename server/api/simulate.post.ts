@@ -59,6 +59,14 @@ export default defineEventHandler(async (event) => {
 
     const data = resp.data as ISimulation;
 
+    if (!data?.balanceChange) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: "Bad Request",
+        message: "No balance change",
+      });
+    }
+
     await Promise.all([
       ...data.balanceChange.sendTokens.map(transformToken),
       ...data.balanceChange.receiveTokens.map(transformToken),
