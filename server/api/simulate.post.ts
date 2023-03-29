@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
 
     const schema = object().shape({
       actions: array().required(),
-      id: string().default("1"),
+      id: string().default("21"),
       avocadoSafe: string().required(),
       chainId: string().required(),
     });
