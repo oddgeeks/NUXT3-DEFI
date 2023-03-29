@@ -146,15 +146,17 @@ const { data: simulationDetails } = useAsyncData(
       method: "POST",
       body: {
         actions: transactions.value.map((i) => {
+          console.log(i);
           return {
             target: i.to,
             data: i.data,
             value: i?.value || "0",
-            operation: "0",
+            operation: i?.operation || "0",
           };
         }),
         avocadoSafe: safeAddress.value,
         chainId: props.chainId,
+        id: options.value?.id,
       },
     }) as Promise<ISimulation>;
   },
