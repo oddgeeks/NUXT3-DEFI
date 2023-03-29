@@ -164,6 +164,13 @@ const { data: simulationDetails } = useAsyncData(
   }
 );
 
+const hasSimulationDetails = computed(() => {
+  if (!simulationDetails.value) return false;
+  return Object.values(simulationDetails.value.balanceChange).some(
+    (i: any[]) => i?.length > 0
+  );
+});
+
 const formatURL = (url: string) => {
   return new URL(url).hostname;
 };
@@ -284,7 +291,7 @@ onUnmounted(() => {
       </CommonButton>
     </div>
     <SimulationDetails
-      v-if="simulationDetails"
+      v-if="hasSimulationDetails"
       :chainId="chainId"
       :details="simulationDetails"
     />
