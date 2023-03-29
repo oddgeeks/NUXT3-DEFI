@@ -90,6 +90,15 @@ export const useTokens = defineStore("tokens", () => {
     return _tokenList;
   };
 
+  const fetchTokenByAddress = async (addresses: string[], chainId: string) => {
+    return http(`https://prices.instadapp.io/${chainId}/tokens`, {
+      params: {
+        includeSparklinePrice7d: false,
+        addresses,
+      },
+    }) as Promise<IToken[]>;
+  };
+
   const getTokenByAddress = (address: string, chainId: string | number) => {
     return tokens.value.find(
       (t) =>
@@ -132,7 +141,7 @@ export const useTokens = defineStore("tokens", () => {
         t.address.toLowerCase() === token.address.toLowerCase() &&
         t.chainId == token.chainId
     );
-  
+
     if (index > -1) {
       customTokens.value.splice(index, 1);
       fetchTokens();
@@ -148,6 +157,7 @@ export const useTokens = defineStore("tokens", () => {
     customTokens,
     handleAddToken,
     handleDeleteToken,
+    fetchTokenByAddress,
   };
 });
 

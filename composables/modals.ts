@@ -175,6 +175,7 @@ export const openWCTransactionModal = useThrottleFn(
       },
       options: {
         contentClass: "md:px-10 md:pt-[34px] md:pb-10",
+        wrapperClass: "!max-w-[600px]",
       },
     });
   },
