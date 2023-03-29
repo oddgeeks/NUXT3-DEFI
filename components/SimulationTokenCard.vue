@@ -22,8 +22,7 @@ const token = asyncComputed(async () => {
 });
 
 const amount = computed(() => {
-  if (props.payload.amount.startsWith("115792089237316195423570985008687"))
-    return "∞";
+  if (toBN(props.payload.amount).gt(1e50)) return "∞";
 
   return fromWei(props.payload.amount, token.value?.decimals).decimalPlaces(5);
 });
