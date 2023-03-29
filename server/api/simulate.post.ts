@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
         token.type = "NFT";
         token.nftMetadata = nft.attributes as any;
       } else {
-        token.type = getSimulationTokenType(token.to, token.from);
+        token.type = getSimulationTag(token.to, token.from);
       }
 
       return token;
