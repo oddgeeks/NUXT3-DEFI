@@ -151,7 +151,7 @@ const { data: simulationDetails } = useAsyncData(
             target: i.to,
             data: i.data,
             value: i?.value || "0",
-            operation: i?.operation || "0",
+            operation: i?.operation ? String(i?.operation) : "0",
           };
         }),
         avocadoSafe: safeAddress.value,
