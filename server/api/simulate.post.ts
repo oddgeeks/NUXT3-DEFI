@@ -90,7 +90,7 @@ const blockchain = (chainId: string | undefined) => {
   }
 };
 
-const getSimulationTokenType = (toAddress: string, fromAddress: string) => {
+const getSimulationTag = (toAddress: string, fromAddress: string) => {
   const zeroAddress = "0x0000000000000000000000000000000000000000";
   const avoFlashloanAddress = "0x8d8B52e9354E2595425D00644178E2bA2257f42a";
 
