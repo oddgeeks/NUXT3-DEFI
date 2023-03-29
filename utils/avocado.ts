@@ -1,8 +1,11 @@
 import * as Avocado from "@instadapp/avocado";
 import * as AvocadoDev from "@instadapp/avocado-dev";
 import config from "#build/app.config.mjs";
+import { isFunction } from "@vueuse/shared";
 
-const prod = config.buildInfo.env === "release";
+const actualConfig = isFunction(config) ? config() : config;
+
+const prod = actualConfig.buildInfo.env === "release";
 
 console.log({
   prod,
