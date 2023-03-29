@@ -48,10 +48,10 @@ const { handleSubmit, errors, meta, resetForm } = useForm({
     amount: yup
       .string()
       .required("")
-      .test("min-amount", "", (value) => {
+      .test("min-amount", "Amount must be greater than 0.01", (value) => {
         const amount = toBN(value);
 
-        return value ? amount.gt(0) : true;
+        return value ? amount.gt("0.01") : true;
       })
       .test("max-amount", "Insufficient balance", (value: any) => {
         const amount = toBN(value);
