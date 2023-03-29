@@ -34,6 +34,8 @@ const closeConnection = async () => {
   }
 };
 
+const pendingGasAmount = useNuxtData("pending-deposit");
+
 const addressLabel = computed(() =>
   trackingAccount.value
     ? `Tracking: ${shortenHash(account.value, 4)}`
@@ -59,9 +61,22 @@ whenever(
       class="px-4 py-[9px] flex items-center justify-between rounded-5 dark:bg-slate-800 bg-slate-100 gap-2"
       @click="openTopUpGasModal()"
     >
-      <GasSVG class="text-slate-400" />
+      <GasSVG
+        class="transition-colors"
+        :class="
+          toBN(pendingGasAmount.data.value).gt('0')
+            ? 'text-orange-400'
+            : 'text-slate-400'
+        "
+      />
 
-      <span v-if="gasBalance" class="whitespace-nowrap leading-5">
+      <span
+        v-if="gasBalance"
+        :class="{
+          'text-orange-400': toBN(pendingGasAmount.data.value).gt('0'),
+        }"
+        class="whitespace-nowrap transition-colors leading-5"
+      >
         {{ formatDecimal(gasBalance, 2) }} USDC</span
       >
 
