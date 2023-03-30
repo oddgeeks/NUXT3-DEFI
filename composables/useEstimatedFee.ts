@@ -17,9 +17,21 @@ export function useEstimatedFee(txData: Ref, params: EstimatedFeeParams) {
 
   const immediate = !!params.immediate;
 
-  const data = computed(() =>
-    calculateEstimatedFee({ chainId: params.chainId, ...rawData.value })
-  );
+  const data = computed(() => {
+    const discount = params.chainId == "42161" ? 0.8 : undefined;
+
+    const discountDetails: DiscountDetails = {
+      name: "Arbitrum Gas Discount",
+      discount: discount,
+      tooltip: `Avocado users are granted a gas discount on the Arbitrum Network for a limited time. <a href='/'> Learn more </a>`,
+    };
+
+    return calculateEstimatedFee({
+      chainId: params.chainId,
+      ...rawData.value,
+      discountDetails,
+    });
+  });
 
   const err = computed(() => {
     const message = "Something went wrong. Please try again!";

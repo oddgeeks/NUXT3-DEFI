@@ -188,7 +188,7 @@ export function signedNumber(numb: string | number) {
   }).format(toBN(numb).toNumber());
 }
 
-export function formatDecimal(value: string, decimalPlaces = 5) {
+export function formatDecimal(value: string | number, decimalPlaces = 5) {
   if (!value) {
     value = "0";
   }
@@ -237,15 +237,25 @@ export const slack = async (
   });
 };
 
-export const calculateEstimatedFee = (params: CalculateFeeProps) => {
-  const { fee, multiplier = "0" } = params;
+export const calculateEstimatedFee = (params: CalculateFeeProps) :ICalculatedFee => {
+  const { fee, multiplier = "0", discountDetails } = params;
+
 
   if (!fee)
     return {
+      discountDetails: {
+        discount: 0,
+        name: "",
+        tooltip: "",
+      },
+      discountAmount: 0,
+      amountAfterDiscount: 0,
       min: 0,
       max: 0,
       formatted: "0.00",
     };
+
+  const discount = discountDetails?.discount;
 
   const maxVal = toBN(fee)
     .dividedBy(10 ** 18)
@@ -262,9 +272,15 @@ export const calculateEstimatedFee = (params: CalculateFeeProps) => {
   const formattedMin = formatDecimal(String(actualMin), 2);
   const formattedMax = formatDecimal(String(actualMax), 2);
 
+  const discountAmount = discount ? actualMax * discount : 0;
+  const amountAfterDiscount = discount ? actualMax - discountAmount : actualMax;
+
   const isEqual = formattedMin === formattedMax;
 
   return {
+    discountDetails,
+    discountAmount,
+    amountAfterDiscount,
     min: actualMin,
     max: actualMax,
     formatted: isEqual ? formattedMax : `${formattedMin} - ${formattedMax}`,

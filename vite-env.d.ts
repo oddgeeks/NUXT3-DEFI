@@ -368,7 +368,7 @@ interface Transaction {
 }
 
 interface ICalculatedFee {
-  discountDetails: DiscountDetails;
+  discountDetails?: DiscountDetails;
   discountAmount: number;
   amountAfterDiscount: number;
   min: number;
