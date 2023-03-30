@@ -18,11 +18,11 @@ export function useEstimatedFee(txData: Ref, params: EstimatedFeeParams) {
   const immediate = !!params.immediate;
 
   const data = computed(() => {
-    const discount = params.chainId == "42161" ? 0.8 : undefined;
+    const isArbitrumChain = params.chainId == "42161"
 
     const discountDetails: DiscountDetails = {
       name: "Arbitrum Gas Discount",
-      discount: discount,
+      discount: isArbitrumChain ? 0.8 : undefined,
       tooltip: `Avocado users are granted a gas discount on the Arbitrum Network for a limited time. <a href='/'> Learn more </a>`,
     };
 
