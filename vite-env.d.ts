@@ -317,6 +317,7 @@ type DiscountDetails = {
   discount?: number;
   name: string;
   tooltip: string;
+  iconURL: string;
 };
 
 type CalculateFeeProps = {

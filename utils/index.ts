@@ -237,9 +237,10 @@ export const slack = async (
   });
 };
 
-export const calculateEstimatedFee = (params: CalculateFeeProps) :ICalculatedFee => {
+export const calculateEstimatedFee = (
+  params: CalculateFeeProps
+): ICalculatedFee => {
   const { fee, multiplier = "0", discountDetails } = params;
-
 
   if (!fee)
     return {
@@ -247,6 +248,7 @@ export const calculateEstimatedFee = (params: CalculateFeeProps) :ICalculatedFee
         discount: 0,
         name: "",
         tooltip: "",
+        iconURL: "",
       },
       discountAmount: 0,
       amountAfterDiscount: 0,

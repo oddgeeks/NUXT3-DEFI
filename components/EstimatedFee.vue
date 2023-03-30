@@ -11,7 +11,9 @@ const props = defineProps<{
 
 const { formatPercent } = useFormatter();
 
-const discountAvailable = computed(() => toBN(props.data?.discountAmount).gt(0));
+const discountAvailable = computed(() =>
+  toBN(props.data?.discountAmount).gt(0)
+);
 </script>
 
 <template>
@@ -51,20 +53,28 @@ const discountAvailable = computed(() => toBN(props.data?.discountAmount).gt(0))
         <div
           class="text-xs font-medium text-slate-400 leading-5 flex justify-between items-center w-full"
         >
-          <p class="ml-6 flex items-center gap-2">
-            {{ data.discountDetails?.name }} ({{
-              formatPercent(data.discountDetails?.discount, 0)
-            }})
-
-            <QuestionCircleSVG
-              :content="data.discountDetails?.tooltip"
-              v-tippy="{
-                interactive: true,
-                allowHTML: true,
-              }"
-              class="w-4 h-4 text-primary"
+          <div class="flex items-center gap-1.5">
+            <img
+              class="w-[18px] h-[18px]"
+              width="18"
+              height="18"
+              :src="data.discountDetails?.iconURL"
             />
-          </p>
+            <p class="flex items-center gap-2">
+              {{ data.discountDetails?.name }} ({{
+                formatPercent(data.discountDetails?.discount, 0)
+              }})
+
+              <QuestionCircleSVG
+                :content="data.discountDetails?.tooltip"
+                v-tippy="{
+                  interactive: true,
+                  allowHTML: true,
+                }"
+                class="w-4 h-4 text-primary"
+              />
+            </p>
+          </div>
           <p>
             {{ formatDecimal(toBN(data.discountAmount).times(-1).toFixed()) }}
             USDC
