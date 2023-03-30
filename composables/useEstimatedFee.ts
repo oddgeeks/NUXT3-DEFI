@@ -41,7 +41,7 @@ export function useEstimatedFee(txData: Ref, params: EstimatedFeeParams) {
     if (rawData.value && (!rawData.value?.fee || !rawData.value?.multiplier))
       return message;
 
-    if (toBN(gasBalance.value).lt(data.value?.max!))
+    if (toBN(gasBalance.value).lt(data.value?.amountAfterDiscount!))
       return "Not enough USDC gas";
   });
 
