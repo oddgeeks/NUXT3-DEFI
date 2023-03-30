@@ -6,6 +6,7 @@ const props = defineProps<{
   data: ICalculatedFee;
   loading?: boolean;
   error?: string;
+  wrapperClass?: string;
 }>();
 
 const { formatPercent } = useFormatter();
@@ -16,6 +17,7 @@ const discountAvailable = computed(() => toBN(props.data?.discountAmount).gt(0))
 <template>
   <div class="flex flex-col gap-2.5">
     <div
+      :class="wrapperClass"
       class="flex flex-col gap-3 items-center min-h-12 justify-between bg-slate-50 dark:bg-gray-850 px-5 py-[15px] rounded-5"
     >
       <div class="flex justify-between w-full">

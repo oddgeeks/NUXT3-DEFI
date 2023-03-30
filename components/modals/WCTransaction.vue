@@ -228,28 +228,8 @@ onUnmounted(() => {
             <ChainLogo class="w-[18px] h-[18px]" :chain="chainId" />
           </div>
         </div>
-        <div class="flex justify-between items-center">
-          <div class="text-slate-400 flex items-center gap-2.5">
-            <GasSVG class="w-4" />
-            <span class="text-xs leading-5 font-medium">Gas fees</span>
-          </div>
-
-          <div class="flex items-center gap-2.5">
-            <span v-if="pending" class="w-20 h-5 loading-box rounded-lg"></span>
-            <span
-              v-else
-              :class="{ 'text-red-alert': isBalaceNotEnough }"
-              class="text-xs"
-              >{{ fee?.formatted }}</span
-            >
-            <img
-              class="w-[18px] h-[18px]"
-              width="18"
-              height="18"
-              src="https://cdn.instadapp.io/icons/tokens/usdc.svg"
-            />
-          </div>
-        </div>
+        <EstimatedFee wrapperClass="!p-0" :loading="pending" :data="fee" :error="error" />
+       
         <template v-if="isSign && signMessageDetails">
           <div class="flex justify-between items-center">
             <div class="text-slate-400 flex items-center gap-2.5">
