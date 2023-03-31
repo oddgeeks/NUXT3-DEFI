@@ -5,7 +5,7 @@
 		"avocado",
 		"defi"
 	],
-	"timestamp": "2023-03-22T23:21:45.224Z",
+	"timestamp": "2023-03-31T11:17:39.224Z",
 	"tokens": [
 		{
 			"chainId": 1,
@@ -173,7 +173,15 @@
 			"name": "Arbitrum",
 			"symbol": "arb",
 			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/16547/large/arbitrium.png?1624418103"
+			"logoURI": "https://assets.coingecko.com/coins/images/16547/large/photo_2023-03-29_21.47.00.jpeg?1680097630"
+		},
+		{
+			"chainId": 1,
+			"address": "0xb50721bcf8d664c30412cfbc6cf7a15145234ad1",
+			"name": "Arbitrum",
+			"symbol": "arb",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/16547/large/photo_2023-03-29_21.47.00.jpeg?1680097630"
 		},
 		{
 			"chainId": 1,
@@ -733,7 +741,7 @@
 			"name": "Frax Share",
 			"symbol": "fxs",
 			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/ethCanonicalFXS.png?1669276861"
+			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/Frax_Shares_icon.png?1679886947"
 		},
 		{
 			"chainId": 42161,
@@ -741,7 +749,7 @@
 			"name": "Frax Share",
 			"symbol": "fxs",
 			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/ethCanonicalFXS.png?1669276861"
+			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/Frax_Shares_icon.png?1679886947"
 		},
 		{
 			"chainId": 43114,
@@ -749,7 +757,7 @@
 			"name": "Frax Share",
 			"symbol": "fxs",
 			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/ethCanonicalFXS.png?1669276861"
+			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/Frax_Shares_icon.png?1679886947"
 		},
 		{
 			"chainId": 137,
@@ -757,7 +765,7 @@
 			"name": "Frax Share",
 			"symbol": "fxs",
 			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/ethCanonicalFXS.png?1669276861"
+			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/Frax_Shares_icon.png?1679886947"
 		},
 		{
 			"chainId": 56,
@@ -765,7 +773,7 @@
 			"name": "Frax Share",
 			"symbol": "fxs",
 			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/ethCanonicalFXS.png?1669276861"
+			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/Frax_Shares_icon.png?1679886947"
 		},
 		{
 			"chainId": 1,
@@ -830,6 +838,46 @@
 			"symbol": "glm",
 			"decimals": 18,
 			"logoURI": "https://assets.coingecko.com/coins/images/542/large/Golem_Submark_Positive_RGB.png?1606392013"
+		},
+		{
+			"chainId": 1,
+			"address": "0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc",
+			"name": "Hop Protocol",
+			"symbol": "hop",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/25445/large/hop.png?1665541677"
+		},
+		{
+			"chainId": 137,
+			"address": "0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc",
+			"name": "Hop Protocol",
+			"symbol": "hop",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/25445/large/hop.png?1665541677"
+		},
+		{
+			"chainId": 100,
+			"address": "0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc",
+			"name": "Hop Protocol",
+			"symbol": "hop",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/25445/large/hop.png?1665541677"
+		},
+		{
+			"chainId": 42161,
+			"address": "0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc",
+			"name": "Hop Protocol",
+			"symbol": "hop",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/25445/large/hop.png?1665541677"
+		},
+		{
+			"chainId": 10,
+			"address": "0xc5102fe9359fd9a28f877a67e36b0f050d81a3cc",
+			"name": "Hop Protocol",
+			"symbol": "hop",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/25445/large/hop.png?1665541677"
 		},
 		{
 			"chainId": 1,
