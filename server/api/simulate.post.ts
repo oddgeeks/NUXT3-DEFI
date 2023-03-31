@@ -10,13 +10,18 @@ export default defineEventHandler(async (event) => {
     const params = await readBody(event);
 
     async function transformToken(token: SimulationToken) {
-      const nft = await ankrProvider.getNFTMetadata({
-        blockchain: blockchain(parsed.chainId) as any,
-        contractAddress: token.token,
-        tokenId: "1", // passed randomly
-        forceFetch: true,
-      });
-      if (nft.metadata?.collectionName) {
+      const chainName = blockchain(parsed.chainId) as any;
+
+      const nft = chainName
+        ? await ankrProvider.getNFTMetadata({
+            blockchain: blockchain(parsed.chainId) as any,
+            contractAddress: token.token,
+            tokenId: "1", // passed randomly
+            forceFetch: true,
+          })
+        : null;
+
+      if (nft?.metadata?.collectionName) {
         token.type = "NFT";
         token.nftMetadata = nft.attributes as any;
       } else {
