@@ -1,11 +1,12 @@
 import * as Avocado from "@instadapp/avocado";
 import * as AvocadoDev from "@instadapp/avocado-dev";
-import config from "#build/app.config.mjs";
-import { isFunction } from "@vueuse/shared";
+import { _getAppConfig } from "nuxt/app";
 
-export const actualConfig = isFunction(config) ? config() : config;
+const config = _getAppConfig();
 
-const prod = actualConfig.buildInfo.env === "release";
+const prod = config.buildInfo.env === "release";
+
+console.log(config.buildInfo.env, config.buildInfo);
 
 console.log({
   prod,

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { actualConfig } from "../../utils/avocado";
+import { _getAppConfig } from "nuxt/app";
 
 const colors: Record<"danger" | "error" | "success" | "banner", string> = {
   danger: "#000000", // black
@@ -11,6 +11,8 @@ const colors: Record<"danger" | "error" | "success" | "banner", string> = {
 export default defineEventHandler(async (event) => {
   const { slackKey, slackErrorKey, slackStagingKey } = useRuntimeConfig();
 
+  const config = _getAppConfig();
+
   let { type = "success", message } = await readBody(event);
 
   if (!slackKey || !slackErrorKey || !slackStagingKey) {
@@ -21,9 +23,9 @@ export default defineEventHandler(async (event) => {
     return {};
   }
 
-  const prod = actualConfig.buildInfo.env === "release";
+  const prod = config.buildInfo.env === "release";
 
-  console.log(actualConfig.buildInfo.env);
+  console.log(config.buildInfo.env, prod);
 
   let channelId = slackKey;
 
