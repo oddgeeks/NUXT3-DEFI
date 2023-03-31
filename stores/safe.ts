@@ -1,7 +1,6 @@
 import { ethers } from "ethers";
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
 import { GaslessWallet__factory, Forwarder__factory } from "~/contracts";
-import { RPC_URLS } from "~~/connectors";
 import { IToken } from "./tokens";
 import { wait } from "@instadapp/utils";
 
@@ -17,16 +16,11 @@ export const useSafe = defineStore("safe", () => {
   const { account } = useWeb3();
   const { tokens } = storeToRefs(useTokens());
   const documentVisibility = useDocumentVisibility();
-  const { networks } = useNetworks();
   const { parseTransactionError } = useErrorHandler();
 
   const forwarderProxyContract = Forwarder__factory.connect(
     forwarderProxyAddress,
-    new ethers.providers.JsonRpcProvider(RPC_URLS[137])
-  );
-
-  const availableNetworks = networks.filter(
-    (network) => network.chainId != avoChainId
+    new ethers.providers.JsonRpcProvider(getRpcURLByChainId(137))
   );
 
   const avoProvider = getRpcProvider(avoChainId);

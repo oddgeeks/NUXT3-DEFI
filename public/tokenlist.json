@@ -5,7 +5,7 @@
 		"avocado",
 		"defi"
 	],
-	"timestamp": "2023-03-22T23:21:45.224Z",
+	"timestamp": "2023-03-31T11:39:11.456Z",
 	"tokens": [
 		{
 			"chainId": 1,
@@ -173,7 +173,15 @@
 			"name": "Arbitrum",
 			"symbol": "arb",
 			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/16547/large/arbitrium.png?1624418103"
+			"logoURI": "https://assets.coingecko.com/coins/images/16547/large/photo_2023-03-29_21.47.00.jpeg?1680097630"
+		},
+		{
+			"chainId": 1,
+			"address": "0xb50721bcf8d664c30412cfbc6cf7a15145234ad1",
+			"name": "Arbitrum",
+			"symbol": "arb",
+			"decimals": 18,
+			"logoURI": "https://assets.coingecko.com/coins/images/16547/large/photo_2023-03-29_21.47.00.jpeg?1680097630"
 		},
 		{
 			"chainId": 1,
@@ -733,7 +741,7 @@
 			"name": "Frax Share",
 			"symbol": "fxs",
 			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/ethCanonicalFXS.png?1669276861"
+			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/Frax_Shares_icon.png?1679886947"
 		},
 		{
 			"chainId": 42161,
@@ -741,7 +749,7 @@
 			"name": "Frax Share",
 			"symbol": "fxs",
 			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/ethCanonicalFXS.png?1669276861"
+			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/Frax_Shares_icon.png?1679886947"
 		},
 		{
 			"chainId": 43114,
@@ -749,7 +757,7 @@
 			"name": "Frax Share",
 			"symbol": "fxs",
 			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/ethCanonicalFXS.png?1669276861"
+			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/Frax_Shares_icon.png?1679886947"
 		},
 		{
 			"chainId": 137,
@@ -757,7 +765,7 @@
 			"name": "Frax Share",
 			"symbol": "fxs",
 			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/ethCanonicalFXS.png?1669276861"
+			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/Frax_Shares_icon.png?1679886947"
 		},
 		{
 			"chainId": 56,
@@ -765,7 +773,7 @@
 			"name": "Frax Share",
 			"symbol": "fxs",
 			"decimals": 18,
-			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/ethCanonicalFXS.png?1669276861"
+			"logoURI": "https://assets.coingecko.com/coins/images/13423/large/Frax_Shares_icon.png?1679886947"
 		},
 		{
 			"chainId": 1,

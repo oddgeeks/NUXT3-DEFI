@@ -9,7 +9,6 @@ import "vue-lite-youtube-embed/style.css";
 
 import * as yup from "yup";
 import SVGQr from "~/assets/images/icons/qr.svg?component";
-import { RPC_URLS } from "~~/connectors";
 
 const emit = defineEmits(["destroy"]);
 
@@ -24,17 +23,6 @@ const [loading, toggle] = useToggle(false);
 
 const isExpertMode = ref(false);
 const detailsRef = ref<HTMLDialogElement>();
-
-const networks = computed(() =>
-  Object.keys(RPC_URLS)
-    .filter((i) => i !== String(avoChainId))
-    .map((chainId) => {
-      return {
-        chainId,
-        name: chainIdToName(chainId),
-      };
-    })
-);
 
 const { handleSubmit, errors, meta, resetForm } = useForm({
   validationSchema: yup.object({
@@ -140,7 +128,11 @@ onMounted(async () => {
 
 <template>
   <div>
-    <form @submit.prevent="prepareAndConnect" v-if="!connection" class="space-y-8">
+    <form
+      @submit.prevent="prepareAndConnect"
+      v-if="!connection"
+      class="space-y-8"
+    >
       <div class="flex flex-col items-center">
         <svg
           width="40"
@@ -174,7 +166,9 @@ onMounted(async () => {
           </defs>
         </svg>
 
-        <div class="text-lg mt-5 sm:mt-7.5 mb-4">Connect with WalletConnect</div>
+        <div class="text-lg mt-5 sm:mt-7.5 mb-4">
+          Connect with WalletConnect
+        </div>
 
         <p class="text-slate-400 text-xs text-center leading-5 font-medium">
           Do not close this window while connecting.<br />
@@ -258,7 +252,8 @@ onMounted(async () => {
             <p
               class="text-orange text-xs leading-5 font-medium text-center mb-4"
             >
-              Would you like to manually switch Network? Some things may not behave as expected.
+              Would you like to manually switch Network? Some things may not
+              behave as expected.
             </p>
             <div class="flex w-full gap-4">
               <CommonButton
@@ -298,7 +293,7 @@ onMounted(async () => {
           v-model="connectionChainId"
           labelKey="name"
           valueKey="chainId"
-          :options="networks"
+          :options="availableNetworks"
         >
           <template #button-prefix>
             <ChainLogo class="w-6 h-6" :chain="connectionChainId" />
@@ -309,11 +304,11 @@ onMounted(async () => {
         </CommonSelect>
       </div>
       <CommonButton
-          type="submit"
-          :loading="loading"
-          class="w-full justify-center"
-          size="lg"
-        >
+        type="submit"
+        :loading="loading"
+        class="w-full justify-center"
+        size="lg"
+      >
         Approve
       </CommonButton>
     </form>

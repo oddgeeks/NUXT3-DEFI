@@ -8,7 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "generate:tokenlist": "tsx scripts/token-list.ts"
+    "generate:tokenlist": "tsx --tsconfig ./.nuxt/tsconfig.json scripts/token-list.ts"
   },
   "devDependencies": {
     "@ankr.com/ankr.js": "^0.3.1",

@@ -379,7 +379,7 @@ export const useBridge = (props: IBridge) => {
   };
 
   const selectableChains = computed(() =>
-    networks.filter(
+    availableNetworks.filter(
       (c) => String(c.chainId) !== fromChainId.value && c.chainId !== avoChainId
     )
   );

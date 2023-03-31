@@ -20,7 +20,6 @@ const props = defineProps({
 });
 
 const { account } = useWeb3();
-const { switchNetworkByChainId } = useNetworks();
 const { sendTransactions } = useAvocadoSafe();
 const { toWei } = useBignumber();
 const { parseTransactionError } = useErrorHandler();

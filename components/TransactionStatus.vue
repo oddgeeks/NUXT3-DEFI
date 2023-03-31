@@ -6,7 +6,7 @@ import SVGInfoCircle from "~/assets/images/icons/exclamation-circle.svg?componen
 
 const props = defineProps<{
   status: IAvocadoTransaction["status"] | "ready" | "completed";
-  hideText: boolean;
+  hideText?: boolean;
 }>();
 
 const statusColor = computed(() => {

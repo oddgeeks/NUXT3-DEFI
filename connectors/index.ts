@@ -7,6 +7,7 @@ import { ethers } from "ethers";
 import { TorusConnector } from "@web3-react/torus-connector";
 import { WalletLinkConnector } from "./custom/walletlink";
 import { avoChainId } from "../utils/avocado";
+import { RPCMap, networkIds, getRpcURLByChainId } from "../utils/network";
 // const { networks } = useNetworks();
 
 const POLLING_INTERVAL = 12000;
@@ -18,20 +19,6 @@ function getLibrary(provider: any) {
 }
 
 setWeb3LibraryCallback(getLibrary);
-
-export const RPC_URLS: { [chainId: number]: string } = {
-  1: "https://rpc.ankr.com/eth",
-  137: "https://rpc.ankr.com/polygon",
-  43114: "https://rpc.ankr.com/avalanche",
-  // 250: 'https://rpc.ankr.com/fantom',
-  10: "https://rpc.ankr.com/optimism",
-  42161: "https://rpc.ankr.com/arbitrum",
-  634: "https://rpc.avocado.instadapp.io",
-  63400: "https://rpc.avocado.instad.app",
-  100: "https://rpc.ankr.com/gnosis",
-  56: "https://rpc.ankr.com/bsc",
-  // 250: 'https://rpc.ankr.com/fantom',
-};
 
 export const injected = new InjectedConnector({
   // supportedChainIds: [1, 3, 4, 5, 42, 56, 137]
@@ -46,13 +33,13 @@ export const walletlink = new WalletLinkConnector({
 });
 
 export const walletconnect = new WalletConnectConnector({
-  rpc: RPC_URLS,
+  rpc: RPCMap,
   chainId: avoChainId,
   qrcode: true,
 });
 
 export const network = new NetworkConnector({
-  urls: RPC_URLS,
+  urls: RPCMap,
   defaultChainId: 56,
 });
 
@@ -91,8 +78,8 @@ export const changeNetworkWalletConnect = (network?: Network) => {
   let chainId = network ? network.chainId : 137;
 
   return new WalletConnectConnector({
-    supportedChainIds: Object.keys(RPC_URLS).map(Number),
-    rpc: RPC_URLS[chainId],
+    supportedChainIds: networkIds,
+    rpc: getRpcURLByChainId(chainId),
     chainId: chainId,
     bridge: "https://bridge.walletconnect.org",
     qrcode: true,
