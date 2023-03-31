@@ -375,4 +375,5 @@ interface ICalculatedFee {
   min: number;
   max: number;
   formatted: string;
+  formattedAmountAfterDiscount: string;
 }

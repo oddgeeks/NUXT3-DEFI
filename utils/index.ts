@@ -254,6 +254,7 @@ export const calculateEstimatedFee = (
       amountAfterDiscount: 0,
       min: 0,
       max: 0,
+      formattedAmountAfterDiscount: "0.00",
       formatted: "0.00",
     };
 
@@ -274,18 +275,37 @@ export const calculateEstimatedFee = (
   const formattedMin = formatDecimal(String(actualMin), 2);
   const formattedMax = formatDecimal(String(actualMax), 2);
 
+  const discountAmountMin = discount ? actualMin * discount : 0;
   const discountAmount = discount ? actualMax * discount : 0;
-  const amountAfterDiscount = discount ? actualMax - discountAmount : actualMax;
+
+  const maxAmountAfterDiscount = discount
+    ? actualMax - discountAmount
+    : actualMax;
+  const minAmountAfterDiscount = discount
+    ? actualMin - discountAmountMin
+    : actualMin;
+
+  const formattedDiscountedAmountMin = formatDecimal(minAmountAfterDiscount, 2);
+  const formattedDiscountedAmount = formatDecimal(maxAmountAfterDiscount, 2);
 
   const isEqual = formattedMin === formattedMax;
+
+  const formatted = isEqual
+    ? formattedMax
+    : `${formattedMin} - ${formattedMax}`;
+
+  const formattedAmountAfterDiscount = isEqual
+    ? formattedDiscountedAmount
+    : `${formattedDiscountedAmountMin} - ${formattedDiscountedAmount}`;
 
   return {
     discountDetails,
     discountAmount,
-    amountAfterDiscount,
     min: actualMin,
     max: actualMax,
-    formatted: isEqual ? formattedMax : `${formattedMin} - ${formattedMax}`,
+    formatted,
+    amountAfterDiscount: maxAmountAfterDiscount,
+    formattedAmountAfterDiscount,
   };
 };
 

@@ -76,7 +76,9 @@ const discountAvailable = computed(() =>
             </p>
           </div>
           <p>
-            {{ formatDecimal(toBN(data.discountAmount).times(-1).toFixed()) }}
+            {{
+              formatDecimal(toBN(data.discountAmount).times(-1).toFixed(), 2)
+            }}
             USDC
           </p>
         </div>
@@ -90,7 +92,8 @@ const discountAvailable = computed(() =>
               height="18"
               src="https://cdn.instadapp.io/icons/tokens/usdc.svg"
             />
-            {{ formatDecimal(data?.amountAfterDiscount) }} USDC
+
+            {{ data?.formattedAmountAfterDiscount }} USDC
           </p>
         </div>
       </template>
