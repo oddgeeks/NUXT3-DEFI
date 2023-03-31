@@ -25,13 +25,11 @@ export default defineEventHandler(async (event) => {
     return {};
   }
 
-  const staging = publicConfig?.env !== "release";
-
-  console.log(publicConfig?.env, staging);
+  const prod = publicConfig?.env === "release";
 
   let channelId = slackKey;
 
-  if (staging) {
+  if (!prod) {
     channelId = slackStagingKey;
   } else if (type === "error") {
     channelId = slackErrorKey;
