@@ -135,13 +135,17 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
       slippage: yup.string().required(),
       customSlippage: yup
         .string()
-        .test("slippage", "Slippage must be between 0.1% and 100%", (value) => {
-          const slippage = toBN(value!);
+        .test(
+          "slippage",
+          "Slippage must be between 0.0001% and 100%",
+          (value) => {
+            const slippage = toBN(value!);
 
-          if (value) {
-            return slippage.gte(0.1) && slippage.lte(100);
-          } else return true;
-        }),
+            if (value) {
+              return slippage.gte(0.0001) && slippage.lte(100);
+            } else return true;
+          }
+        ),
     }),
   });
 
@@ -458,7 +462,7 @@ const onSubmit = handleSubmit(async () => {
       type: "error",
       action: "swap",
       account: account.value,
-      errorDetails: err.parsed
+      errorDetails: err.parsed,
     });
   } finally {
     resume();
@@ -722,7 +726,7 @@ onUnmounted(() => {
                 />
                 <div v-else class="flex items-center justify-between sm:justify-end sm:gap-2 w-full">
                   <span>1 {{ swap.buyToken?.symbol }}</span>
-                  <span  class="sm:block hidden"> = </span>
+                  <span class="sm:block hidden"> = </span>
                   <span>{{ sellTokenAmountPerBuyToken }} {{ swap.sellToken?.symbol }}</span>
                 </div>
               </div>
