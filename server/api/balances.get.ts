@@ -17,6 +17,7 @@ const balanceResolverAddresses: Record<string, string> = {
   "1": "0x5b7D61b389D12e1f5873d0cCEe7E675915AB5F43",
   "56": "0xb808cff38706e267067b0af427726aa099f69f89",
   "100": "0xfaa244e276b1597f663975ed007ee4ff70d27849",
+  "1101": "0x48D1Fa5Ee6691a1E0B45d2B515650997BEA27a01",
 };
 
 const balanceResolverContracts = Object.keys(balanceResolverAddresses).reduce(
@@ -197,6 +198,7 @@ export default defineEventHandler<IBalance[]>(async (event) => {
     return await Promise.all([
       getFromAnkr(String(address)),
       getChainBalances("100", String(address)),
+      getChainBalances("1101", String(address)),
     ]).then((r) => r.flat());
   } catch (error) {
     return await getFromDebank(String(address));
