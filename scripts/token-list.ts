@@ -18,13 +18,14 @@ const RPC_URLS: { [chainId: number]: string } = {
   10: "https://rpc.ankr.com/optimism",
   42161: "https://rpc.ankr.com/arbitrum",
   634: "https://rpc.avocado.instadapp.io",
+  1101: "https://rpc.ankr.com/polygon_zkevm",
   63400: "https://rpc.avocado.instad.app",
   100: "https://rpc.ankr.com/gnosis",
   56: "https://rpc.ankr.com/bsc",
 };
 
 const nativeTokenIdChainIdsMapping: { [coinId: string]: number[] } = {
-  ethereum: [1, 10, 42161],
+  ethereum: [1, 10, 42161, 1101],
   "matic-network": [137],
   "avalanche-2": [43114],
   fantom: [250],
@@ -50,6 +51,7 @@ const platforms = [
   { platformId: "avalanche", chainId: 43114 },
   { platformId: "arbitrum-one", chainId: 42161 },
   { platformId: "optimistic-ethereum", chainId: 10 },
+  { platformId: "polygon-zkevm", chainId: 1101 },
   // { platformId: 'fantom', chainId: 250, },
   { platformId: "binance-smart-chain", chainId: 56 },
   { platformId: "xdai", chainId: 100 },

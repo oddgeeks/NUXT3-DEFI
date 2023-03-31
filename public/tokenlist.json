@@ -5,7 +5,7 @@
 		"avocado",
 		"defi"
 	],
-	"timestamp": "2023-03-31T11:39:11.456Z",
+	"timestamp": "2023-03-31T12:05:13.979Z",
 	"tokens": [
 		{
 			"chainId": 1,
@@ -625,6 +625,14 @@
 		},
 		{
 			"chainId": 42161,
+			"address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+			"name": "Ethereum",
+			"symbol": "eth",
+			"decimals": 18,
+			"logoURI": "https://avocado.instadapp.io/tokens/ethereum.svg"
+		},
+		{
+			"chainId": 1101,
 			"address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
 			"name": "Ethereum",
 			"symbol": "eth",
@@ -1376,6 +1384,14 @@
 			"logoURI": "https://avocado.instadapp.io/tokens/tether.svg"
 		},
 		{
+			"chainId": 1101,
+			"address": "0x1e4a5963abfd975d8c9021ce480b42188849d41d",
+			"name": "Tether",
+			"symbol": "usdt",
+			"decimals": 6,
+			"logoURI": "https://avocado.instadapp.io/tokens/tether.svg"
+		},
+		{
 			"chainId": 100,
 			"address": "0x4ecaba5870353805a9f068101a40e0f32ed605c6",
 			"name": "Tether",
@@ -1552,6 +1568,14 @@
 			"logoURI": "https://avocado.instadapp.io/tokens/usd-coin.svg"
 		},
 		{
+			"chainId": 1101,
+			"address": "0xa8ce8aee21bc2a48a5ef670afcc9274c7bbbc035",
+			"name": "USD Coin",
+			"symbol": "usdc",
+			"decimals": 6,
+			"logoURI": "https://avocado.instadapp.io/tokens/usd-coin.svg"
+		},
+		{
 			"chainId": 43114,
 			"address": "0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
 			"name": "USD Coin",
@@ -1642,6 +1666,14 @@
 		{
 			"chainId": 1,
 			"address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+			"name": "WETH",
+			"symbol": "weth",
+			"decimals": 18,
+			"logoURI": "https://avocado.instadapp.io/tokens/weth.svg"
+		},
+		{
+			"chainId": 1101,
+			"address": "0x4f9a0e7fd2bf6067db6994cf12e4495df938e6e9",
 			"name": "WETH",
 			"symbol": "weth",
 			"decimals": 18,
