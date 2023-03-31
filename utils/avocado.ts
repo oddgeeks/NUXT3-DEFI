@@ -3,7 +3,7 @@ import * as AvocadoDev from "@instadapp/avocado-dev";
 import config from "#build/app.config.mjs";
 import { isFunction } from "@vueuse/shared";
 
-const actualConfig = isFunction(config) ? config() : config;
+export const actualConfig = isFunction(config) ? config() : config;
 
 const prod = actualConfig.buildInfo.env === "release";
 

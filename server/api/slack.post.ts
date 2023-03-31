@@ -1,4 +1,5 @@
 import axios from "axios";
+import { actualConfig } from "../../utils/avocado";
 
 const colors: Record<"danger" | "error" | "success" | "banner", string> = {
   danger: "#000000", // black
@@ -8,12 +9,7 @@ const colors: Record<"danger" | "error" | "success" | "banner", string> = {
 };
 
 export default defineEventHandler(async (event) => {
-  const {
-    slackKey,
-    slackErrorKey,
-    slackStagingKey,
-    public: publicConfig,
-  } = useRuntimeConfig();
+  const { slackKey, slackErrorKey, slackStagingKey } = useRuntimeConfig();
 
   let { type = "success", message } = await readBody(event);
 
@@ -25,7 +21,9 @@ export default defineEventHandler(async (event) => {
     return {};
   }
 
-  const prod = publicConfig?.env === "release";
+  const prod = actualConfig.buildInfo.env === "release";
+
+  console.log(actualConfig.buildInfo.env);
 
   let channelId = slackKey;
 
