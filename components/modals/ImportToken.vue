@@ -66,7 +66,7 @@ const filteredTokens = computed(() => {
 const { list, containerProps, wrapperProps, scrollTo } = useVirtualList(
   filteredTokens,
   {
-    itemHeight: 72,
+    itemHeight: 88,
   }
 );
 
@@ -118,87 +118,90 @@ const handleCustomToken = () => {
     </CommonInput>
     <div
       v-bind="containerProps"
-      class="max-h-[550px] h-[550px] scroll-style overflow-auto relative overflow-y-auto"
+      class="max-h-[550px] h-[550px] scroll-style overflow-auto relative overflow-y-auto flex flex-col"
     >
-      <ul class="flex gap-2 flex-col" v-if="pending">
-        <li :key="i" class="py-[14px] px-3" v-for="i in 10">
-          <div class="flex gap-3 items-center">
-            <ChainLogo class="w-10 h-10" />
-            <div class="flex flex-col gap-1">
-              <span
-                style="width: 80px; height: 20px"
-                class="loading-box rounded-lg"
-              />
-              <span
-                style="width: 143px; height: 20px"
-                class="loading-box rounded-lg"
-              />
+      <div>
+        <ul class="flex gap-2 flex-col" v-if="pending">
+          <li :key="i" class="py-[14px] px-3" v-for="i in 10">
+            <div class="flex gap-3 items-center">
+              <ChainLogo class="w-10 h-10" />
+              <div class="flex flex-col gap-1">
+                <span
+                  style="width: 80px; height: 20px"
+                  class="loading-box rounded-lg"
+                />
+                <span
+                  style="width: 143px; height: 20px"
+                  class="loading-box rounded-lg"
+                />
+              </div>
             </div>
-          </div>
-        </li>
-      </ul>
-      <ul v-else v-bind="wrapperProps" class="flex gap-2 flex-col pl-3">
-        <li
-          class="py-[14px] px-3 flex justify-between items-center hover:dark:bg-slate-800 rounded-[24px] w-full"
-          v-for="token in list"
-          :key="`${token.data.chainId}-${token.data.address}`"
-        >
-          <div class="flex gap-3 items-center">
-            <div
-              class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
+          </li>
+        </ul>
+        <ul v-else v-bind="wrapperProps" class="flex gap-2 flex-col pl-3">
+          <li
+            class="py-[14px] px-3 flex justify-between items-center hover:dark:bg-slate-800 rounded-[24px] w-full"
+            v-for="token in list"
+            :key="`${token.data.chainId}-${token.data.address}`"
+          >
+            <div class="flex gap-3 items-center">
+              <div
+                class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
+              >
+                <img
+                  :src="token.data.logoURI"
+                  loading="lazy"
+                  class="h-10 w-10 rounded-full"
+                  :onerror="onImageError"
+                />
+
+                <ChainLogo
+                  :stroke="true"
+                  class="w-5.5 h-5.5 absolute -left-1 -bottom-1"
+                  :chain="token.data.chainId"
+                />
+              </div>
+              <div class="flex flex-col gap-1">
+                <span
+                  class="leading-5 w-[160px] sm:w-[231px] whitespace-nowrap overflow-hidden text-shadow text-sm sm:text-base"
+                >
+                  {{ token.data.name }}
+                </span>
+                <span
+                  class="text-slate-400 font-medium leading-5 text-xs sm:text-base"
+                >
+                  {{ shortenHash(token.data.address) }}</span
+                >
+              </div>
+            </div>
+            <CommonButton
+              color="red"
+              class="h-fit !px-[18px]"
+              @click="handleDeleteToken(token.data)"
+              v-if="isTokenAlreadyAdded(token.data.address, token.data.chainId)"
             >
-              <img
-                :src="token.data.logoURI"
-                loading="lazy"
-                class="h-10 w-10 rounded-full"
-                :onerror="onImageError"
-              />
-
-              <ChainLogo
-                :stroke="true"
-                class="w-5.5 h-5.5 absolute -left-1 -bottom-1"
-                :chain="token.data.chainId"
-              />
-            </div>
-            <div class="flex flex-col gap-1">
-              <span
-                class="leading-5 w-[160px] sm:w-[231px] whitespace-nowrap overflow-hidden text-shadow text-sm sm:text-base"
-              >
-                {{ token.data.name }}
-              </span>
-              <span class="text-slate-400 font-medium leading-5 text-xs sm:text-base">
-                {{ shortenHash(token.data.address) }}</span
-              >
-            </div>
-          </div>
-          <CommonButton
-            color="red"
-            class="h-fit !px-[18px]"
-            @click="handleDeleteToken(token.data)"
-            v-if="isTokenAlreadyAdded(token.data.address, token.data.chainId)"
-          >
-            Delete
-          </CommonButton>
-          <CommonButton
-            v-else
-            type="button"
-            @click="handleAddToken(token.data)"
-            class="h-fit px-[18px] flex gap-2 items-center !text-primary bg-opacity-10 hover:bg-opacity-100 hover:!text-white"
-          >
-            <PlusSVG class="w-2.5" />
-            Add
-          </CommonButton>
-        </li>
-        <li class="pointer-events-none opacity-0">placeholder</li>
-      </ul>
-
+              Delete
+            </CommonButton>
+            <CommonButton
+              v-else
+              type="button"
+              @click="handleAddToken(token.data)"
+              class="h-fit px-[18px] flex gap-2 items-center !text-primary bg-opacity-10 hover:bg-opacity-100 hover:!text-white"
+            >
+              <PlusSVG class="w-2.5" />
+              Add
+            </CommonButton>
+          </li>
+          <li class="pointer-events-none opacity-0">placeholder</li>
+        </ul>
+      </div>
       <div
-        v-if="!pending && !filteredTokens.length"
-        class="text-slate-400 absolute flex items-center justify-center flex-col gap-[26px] whitespace-nowrap top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        v-if="!pending"
+        class="text-slate-400 flex items-center justify-center flex-col gap-[26px] whitespace-nowrap my-auto"
       >
-        <p>Nothing could be found</p>
+        <p v-if="!filteredTokens.length">Nothing could be found</p>
         <CommonButton
-          class="items-center gap-2"
+          class="items-center gap-2 mb-4"
           :loading="loading"
           @click="handleCustomToken"
           size="lg"

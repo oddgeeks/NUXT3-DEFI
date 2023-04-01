@@ -183,6 +183,7 @@ const coinIds = [
     "wbtc-plenty-bridge",
     "tether-avalanche-bridged-usdt-e",
     "arbitrum",
+    "hop-protocol",
   ]),
 ];
 

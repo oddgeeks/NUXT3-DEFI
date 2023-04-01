@@ -29,7 +29,7 @@ const balanceResolverContracts = Object.keys(balanceResolverAddresses).reduce(
     {} as Record<string, BalanceResolver>
 );
 
-interface IBalance extends IToken {
+interface IBalance extends Partial<IToken> {
     balanceRaw: string
     balance: string
     balanceInUSD: string
@@ -121,51 +121,54 @@ const getFromAnkr = async (address: string): Promise<IBalance[]> => {
     return balances as any;
 }
 
-const getChainBalances = async (chainId: string, address: string) => {
+const getChainBalances = async (chainId: string, address: string, customTokenAddresses: string[] = []) => {
     let newBalances: IBalance[] = [];
 
-    const chainTokens = collect(
-        tokens.filter((t) => String(t.chainId) === chainId)
-    );
+    const chainTokenAddresses = collect([
+        ...tokens.filter((t) => String(t.chainId) === chainId).map(t => t.address),
+        ...customTokenAddresses
+    ]).chunk(chainId === "42161" ? 5 : 20).all();
 
-    const chunkedTokens = chainTokens.chunk(chainId === "42161" ? 5 : 20).all();
-
-    await Promise.allSettled(
-        chunkedTokens.map(async (chunk: any[]) => {
-            chunk = (chunk as any).all();
+    await Promise.all(
+        chainTokenAddresses.map(async (chunk: any[]) => {
+            const addresses = (chunk as any).all();
 
             const [balances, prices] = await Promise.all([
                 balanceResolverContracts[chainId].getBalances(
                     address,
-                    chunk.map((t) => t.address)
+                    addresses,
                 ),
                 $fetch<IToken[]>(
                     `https://prices.instadapp.io/${chainId}/tokens`,
                     {
                         params: {
-                            includeSparklinePrice7d: true,
-                            addresses: chunk.map((t) => t.address)
+                            includeSparklinePrice7d: false,
+                            addresses
                         },
                     }
                 )
             ])
 
             for (let index = 0; index < balances.length; index++) {
-                let token = chunk[index] as IToken;
-                let balance = toBN(balances[index]).div(10 ** token.decimals);
-                let tokenPrice = prices.find((p) => p.address.toLowerCase() === token.address.toLowerCase())
-                if (!tokenPrice || !tokenPrice.price) {
-                    continue;
-                }
+                let tokenAddress = addresses[index];
+                let tokenPrice = prices.find((p) => p.address.toLowerCase() === tokenAddress.toLowerCase())
+                if (!tokenPrice) continue;
+
+                let balance = toBN(balances[index]).div(10 ** tokenPrice.decimals);
+
 
                 if (balance.gt(0)) {
                     newBalances.push({
-                        ...token,
+                        name: tokenPrice.name,
+                        address: tokenPrice.address,
+                        decimals: tokenPrice.decimals,
+                        symbol: tokenPrice.symbol,
+                        logoURI: tokenPrice.logoURI,
                         chainId: String(chainId),
-                        price: String(tokenPrice.price || 0) as any,
+                        price: String(tokenPrice?.price || 0) as any,
                         balanceRaw: balances[index].toString(),
                         balance: balance.toFixed(6, 1),
-                        balanceInUSD: balance.times(tokenPrice.price).toFixed(2),
+                        balanceInUSD: balance.times(tokenPrice?.price || 0).toFixed(2),
                     });
                 }
             }
@@ -176,13 +179,21 @@ const getChainBalances = async (chainId: string, address: string) => {
 };
 
 export default defineEventHandler<IBalance[]>(async (event) => {
-    const { address } = getQuery(event)
+    let query = getQuery(event)
+
+    const gnosisTokens = query['customTokens[100]'] ?
+        Array.isArray(query['customTokens[100]'])
+            ? query['customTokens[100]']
+            : [query['customTokens[100]']] : undefined
     try {
         return await Promise.all([
-            getFromAnkr(String(address)),
-            getChainBalances("100", String(address)),
+            getFromAnkr(String(query.address)),
+            getChainBalances("100",
+                String(query.address),
+                gnosisTokens
+            ),
         ]).then(r => r.flat())
     } catch (error) {
-        return await getFromDebank(String(address))
+        return await getFromDebank(String(query.address))
     }
 })
