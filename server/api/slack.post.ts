@@ -1,5 +1,4 @@
 import axios from "axios";
-import { _getAppConfig } from "nuxt/app";
 
 const colors: Record<"danger" | "error" | "success" | "banner", string> = {
   danger: "#000000", // black
@@ -9,9 +8,12 @@ const colors: Record<"danger" | "error" | "success" | "banner", string> = {
 };
 
 export default defineEventHandler(async (event) => {
-  const { slackKey, slackErrorKey, slackStagingKey } = useRuntimeConfig();
-
-  const config = _getAppConfig();
+  const {
+    slackKey,
+    slackErrorKey,
+    slackStagingKey,
+    public: publicConfig,
+  } = useRuntimeConfig();
 
   let { type = "success", message } = await readBody(event);
 
@@ -23,9 +25,9 @@ export default defineEventHandler(async (event) => {
     return {};
   }
 
-  const prod = config.buildInfo.env === "release";
+  const prod = publicConfig.env === "release";
 
-  console.log(config.buildInfo.env, prod);
+  console.log(prod, publicConfig.env, "Config");
 
   let channelId = slackKey;
 
