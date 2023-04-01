@@ -27,7 +27,9 @@ export default defineEventHandler(async (event) => {
 
   const prod = publicConfig.env === "release";
 
-  console.log(prod, publicConfig.env, "Config");
+  console.log({
+    prod,
+  });
 
   let channelId = slackKey;
 
