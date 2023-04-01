@@ -71,6 +71,7 @@ export const logActionToSlack = (slackMessage: ISlackMessage) => {
 
   logMessage += `\n${"`Commit`"} ${build.commit}`;
   logMessage += `\n${"`Env`"} ${build.env}`;
+  logMessage += `\n${"`Branch`"} ${build.branch}`;
 
   if (errorDetails) {
     logMessage += `\n${"`Error details`"} ${errorDetails}`;
