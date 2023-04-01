@@ -53,10 +53,8 @@ defineEmits(["destroy"]);
 
       <NuxtLink
         class="bg-slate-100 dark:bg-slate-800 w-[50px] h-[50px] flex justify-center items-center rounded-full"
-        :to="{
-          path: `/address/${account}`,
-        }"
-        @click="$emit('destroy')"
+        external
+        :to="`${avoExplorerURL}/address/${account}`"
       >
         <Calendar color="blue" />
       </NuxtLink>

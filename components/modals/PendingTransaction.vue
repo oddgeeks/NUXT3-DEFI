@@ -124,7 +124,7 @@ const isSuccess = computed(() => {
         <ChainLogo class="w-[26px] h-[26px]" :chain="chainId" />
         <span class="text-sm text-slate-400">{{ chainIdToName(chainId) }}</span>
       </p>
-      <CommonButton as="a" target="_blank" :href="`/tx/${hash}`" size="sm">
+     <CommonButton as="a" target="_blank" :href="`${avoExplorerURL}/tx/${hash}`" size="sm">
         View Explorer
       </CommonButton>
     </div>

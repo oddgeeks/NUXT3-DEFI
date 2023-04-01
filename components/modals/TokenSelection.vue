@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { string } from "yup";
+import PlusSVG from "~/assets/images/icons/plus.svg?component";
 import SVGSuccess from "~/assets/images/icons/check-circle.svg?component";
 import SearchSVG from "~/assets/images/icons/search.svg?component";
 import type { IToken } from "~~/stores/tokens";
@@ -11,7 +11,7 @@ const props = defineProps<{
   selectedToken: IToken;
 }>();
 
-const tokens = toRef(props, 'tokens');
+const tokens = toRef(props, "tokens");
 
 const { tokenBalances } = useAvocadoSafe();
 const search = ref("");
@@ -36,8 +36,8 @@ const tokensWithBalance = computed(() => {
     .sort((a, b) => {
       const populars = ["eth", "usdc", "usdt", "dai", "wbtc", "matic"];
 
-      if (toBN(b.balance).gt(toBN(a.balance))) return 1
-      if (toBN(b.balance).lt(toBN(a.balance))) return -1
+      if (toBN(b.balance).gt(toBN(a.balance))) return 1;
+      if (toBN(b.balance).lt(toBN(a.balance))) return -1;
 
       const aIndex = populars.indexOf(a.symbol.toLowerCase());
       const bIndex = populars.indexOf(b.symbol.toLowerCase());
@@ -69,7 +69,10 @@ const tokensWithBalance = computed(() => {
         <SearchSVG class="text-slate-400 mr-2" />
       </template>
     </CommonInput>
-    <ul class="overflow-auto scroll-style h-96" v-if="tokensWithBalance.length && tokensWithBalance.length > 0">
+    <ul
+      class="overflow-auto scroll-style h-96"
+      v-if="tokensWithBalance.length && tokensWithBalance.length > 0"
+    >
       <li v-for="token in tokensWithBalance">
         <button
           @click="$emit('resolve', true, token)"
@@ -104,15 +107,25 @@ const tokensWithBalance = computed(() => {
         </button>
       </li>
     </ul>
-    <div v-else
-      class="flex flex-col space-y-8 items-center justify-center h-96">
+    <div
+      v-else
+      class="flex flex-col space-y-8 items-center justify-center h-96"
+    >
       <p class="text-slate-400">Nothing could be found</p>
       <div class="flex items-center flex-col space-y-4">
-        <CommonButton color="white" size="lg" as="NuxtLink"
-          href="mailto:info@instadapp.io?subject=Instadapp Avocado: New Token">
+        <CommonButton
+          color="white"
+          size="lg"
+          as="NuxtLink"
+          href="mailto:info@instadapp.io?subject=Instadapp Avocado: New Token"
+        >
           Reach out to us
         </CommonButton>
-        <CommonButton size="lg" @click="openImportTokenModal()" class="flex items-center space-x-2">
+        <CommonButton
+          size="lg"
+          @click="openImportTokenModal()"
+          class="flex items-center space-x-2"
+        >
           <PlusSVG />
           <span>Custom token</span>
         </CommonButton>
