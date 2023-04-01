@@ -6,8 +6,6 @@ const config = _getAppConfig();
 
 const prod = config.buildInfo.env === "release";
 
-console.log(config.buildInfo.env, config.buildInfo);
-
 console.log({
   prod,
 });
