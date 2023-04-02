@@ -1,11 +1,9 @@
 <script lang="ts" setup>
-import GasSVG from "~/assets/images/icons/gas.svg?component";
 import NetworkSVG from "~/assets/images/icons/network.svg?component";
 import FlowersSVG from "~/assets/images/icons/flowers.svg?component";
 import SVGClockCircle from "~/assets/images/icons/clock-circle.svg?component";
 
 import type WalletConnect from "@walletconnect/client";
-import { storeToRefs } from "pinia";
 
 const emit = defineEmits(["resolve", "reject"]);
 
@@ -18,21 +16,14 @@ const props = defineProps<{
   signMessageDetails?: any;
 }>();
 
-const { safe, sendTransactions, safeAddress } = useAvocadoSafe();
+const { sendTransactions, safeAddress } = useAvocadoSafe();
 const { account } = useWeb3();
-const { gasBalance } = storeToRefs(useSafe());
 const [submitting, toggle] = useToggle();
 const { parseTransactionError } = useErrorHandler();
 
 const submitDisabled = computed(
-  () =>
-    submitting.value || pending.value || isBalaceNotEnough.value || error.value
+  () => submitting.value || pending.value || !!error.value
 );
-
-const isBalaceNotEnough = computed(() => {
-  if (pending.value) return false;
-  return toBN(gasBalance.value).lt(fee.value?.max!);
-});
 
 onMounted(async () => {
   document.title = "(1) Avocado";
@@ -228,8 +219,13 @@ onUnmounted(() => {
             <ChainLogo class="w-[18px] h-[18px]" :chain="chainId" />
           </div>
         </div>
-        <EstimatedFee wrapperClass="!p-0" :loading="pending" :data="fee" :error="error" />
-       
+        <EstimatedFee
+          wrapperClass="!p-0"
+          :loading="pending"
+          :data="fee"
+          :error="error"
+        />
+
         <template v-if="isSign && signMessageDetails">
           <div class="flex justify-between items-center">
             <div class="text-slate-400 flex items-center gap-2.5">
@@ -243,14 +239,6 @@ onUnmounted(() => {
           </div>
         </template>
       </div>
-
-      <CommonNotification v-if="error" type="error" :text="error">
-        <template v-if="error.includes('gas')" #action>
-          <CommonButton @click="openTopUpGasModal()" size="sm">
-            Top-up
-          </CommonButton>
-        </template>
-      </CommonNotification>
     </div>
     <div class="flex justify-between items-center gap-4">
       <CommonButton

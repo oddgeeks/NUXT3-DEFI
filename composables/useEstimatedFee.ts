@@ -19,7 +19,7 @@ export function useEstimatedFee(txData: Ref, params: EstimatedFeeParams) {
   const immediate = !!params.immediate;
 
   const data = computed(() => {
-    const isArbitrumChain = params.chainId == "42161"
+    const isArbitrumChain = params.chainId == "42161";
 
     const discountDetails: DiscountDetails = {
       name: "Gas Discount",
