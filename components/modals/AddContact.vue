@@ -14,6 +14,27 @@ const props = defineProps<{
 const { contacts } = useContacts();
 const { safeAddress } = useAvocadoSafe();
 
+const {
+  handleSubmit,
+  isSubmitting,
+  errors,
+  meta,
+  resetForm,
+  validate,
+  values,
+} = useForm({
+  validationSchema: yup.object({
+    contactName: yup.string().required(""),
+    // chainId: yup.string().required(""),
+    // address: yup
+    //   .string()
+    //   .required("")
+    //   .test("is-valid-address", "Incorrect address", (value) => {
+    //     return value ? isAddress(value || "") : true;
+    //   }),
+  }),
+});
+
 const { value: chainId } = useField<string>("chainId", undefined, {
   initialValue: "1",
 });
@@ -27,20 +48,6 @@ const {
   meta: addressMeta,
   setValue: setAddress,
 } = useField<string>("address");
-
-const { handleSubmit, isSubmitting, errors, meta, resetForm, validate } =
-  useForm({
-    validationSchema: yup.object({
-      contactName: yup.string().required(""),
-      // chainId: yup.string().required(""),
-      // address: yup
-      //   .string()
-      //   .required("")
-      //   .test("is-valid-address", "Incorrect address", (value) => {
-      //     return value ? isAddress(value || "") : true;
-      //   }),
-    }),
-  });
 
 const supportedChains = computed(() =>
   Object.keys(RPC_URLS)
@@ -93,6 +100,8 @@ onMounted(() => {
 
 <template>
   <form @submit="onSubmit">
+    {{ errors }}
+    {{ values }}
     <h1 class="text-lg text-center leading-5 mb-7.5">Create Contact</h1>
     <div class="flex flex-col gap-5 mb-7.5">
       <div>
