@@ -105,7 +105,7 @@ const filteredContacts = computed(() => {
                   <span>{{ shortenHash(contact.address) }}</span>
                 </div>
                 <button @click="deleteContact(contact)">
-                  <SVGX />
+                  <SVGX class="text-slate-400" />
                 </button>
               </td>
             </tr>

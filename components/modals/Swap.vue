@@ -557,7 +557,11 @@ onUnmounted(() => {
             input-classes="text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
             container-classes="!px-0"
           />
-          <TokenSelection v-model="swap.sellToken" :tokens="availableTokens" />
+          <TokenSelection
+            v-model="swap.sellToken"
+            :tokens="availableTokens"
+            class="dark:bg-gray-900 bg-white"
+          />
         </div>
         <div class="flex justify-between items-center text-sm text-slate-400">
           <div
@@ -617,6 +621,7 @@ onUnmounted(() => {
           <TokenSelection
             v-model="swap.buyToken"
             :tokens="availableBuyTokens"
+            class="dark:bg-gray-900 bg-white"
           />
         </div>
         <div class="flex justify-between items-center text-sm text-slate-400">

@@ -180,16 +180,20 @@ const onSubmit = handleSubmit(async () => {
 <template>
   <form @submit="onSubmit" class="text-center flex gap-7.5 flex-col">
     <div
-      class="flex flex-col border-b-[1px] border-b-slate-800 -mx-[50px] px-[50px] pb-7.5 gap-7.5"
+      class="flex flex-col border-b-[1px] dark:border-b-slate-800 border-b-slate-100 -mx-[50px] px-[50px] pb-7.5 gap-7.5"
     >
       <h2 class="text-lg font-semibold">
         {{ props.name }}
       </h2>
-      <div class="flex items-center gap-3 rounded-5 p-5 bg-gray-800">
+      <div
+        class="flex items-center gap-3 rounded-5 p-5 dark:bg-gray-800 bg-slate-50"
+      >
         <ChainLogo :stroke="false" class="w-7 h-7" :chain="props.chainId" />
         <Copy :text="props.address">
           <template #content>
-            <span class="text-white">{{ shortenHash(props.address) }}</span>
+            <span class="dark:text-white text-slate-900">{{
+              shortenHash(props.address)
+            }}</span>
           </template>
         </Copy>
       </div>
@@ -201,7 +205,7 @@ const onSubmit = handleSubmit(async () => {
         <TokenSelection
           v-model="token"
           :tokens="availableTokens"
-          class="rounded-2xl border-2 border-slate-700 justify-between"
+          class="rounded-2xl border-2 dark:bg-gray-800 bg-slate-50 dark:border-slate-700 border-slate-100 justify-between"
         />
       </div>
       <div class="space-y-2.5 flex flex-col">
