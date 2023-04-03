@@ -7,8 +7,7 @@
     "generate:contracts": "rimraf contracts && typechain --target=ethers-v5 'abi/*.json' --out-dir 'contracts'",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
-    "generate:tokenlist": "tsx scripts/token-list.ts"
+    "postinstall": "nuxt prepare"
   },
   "devDependencies": {
     "@ankr.com/ankr.js": "^0.3.1",
