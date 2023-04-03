@@ -15,7 +15,10 @@ export function useErrorHandler() {
 
     const errorMessage = parsedError.message || "";
 
-    let formatted = parsedError.message || "";
+    let formatted =
+      parsedError?.error?.message ||
+      parsedError.message ||
+      "Something went wrong";
 
     if (error instanceof InvalidENSError) {
       formatted = "Invalid ENS name";
