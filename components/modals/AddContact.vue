@@ -11,9 +11,8 @@ const props = defineProps<{
   name: string;
 }>();
 
+const { contacts } = useContacts();
 const { safeAddress } = useAvocadoSafe();
-
-const contacts = useLocalStorage("contacts", {});
 
 const { value: chainId } = useField<string>("chainId", undefined, {
   initialValue: "1",
