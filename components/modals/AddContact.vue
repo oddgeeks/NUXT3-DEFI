@@ -31,6 +31,7 @@ const {
 const { handleSubmit, isSubmitting, errors, meta, resetForm, validate } =
   useForm({
     validationSchema: yup.object({
+      contactName: yup.string().required(""),
       // chainId: yup.string().required(""),
       // address: yup
       //   .string()
@@ -68,7 +69,7 @@ const onSubmit = handleSubmit(() => {
     contacts.value[safeAddress.value] = [_contact];
   }
 
-  // emit("destroy");
+  emit("destroy");
 });
 
 const pasteAddress = async () => {
