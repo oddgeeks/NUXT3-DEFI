@@ -14,7 +14,7 @@ const props = defineProps<{
 
 const { handleAddToken } = useTokens();
 const { tokens } = storeToRefs(useTokens());
-const { fetchBalances } = useSafe()
+const { fetchBalances } = useSafe();
 
 const balance = ref("0");
 
@@ -84,7 +84,7 @@ const {
       const name = await contract.name();
       const decimals = await contract.decimals();
 
-      const data = await fetchBalances()
+      const data = await fetchBalances();
 
       const tokenBalance = data?.find(
         (i: IToken) =>
@@ -193,7 +193,7 @@ onUnmounted(() => {
           :error-message="addressMeta.dirty ? errors['address'] : ''"
           name="address"
           placeholder="Enter Address"
-          v-model="address"
+          v-model.trim="address"
         >
           <template #suffix>
             <button type="button" @click="pasteAddress">
