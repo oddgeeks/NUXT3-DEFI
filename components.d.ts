@@ -9,6 +9,10 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    Listbox: typeof import('@headlessui/vue')['Listbox']
+    ListboxButton: typeof import('@headlessui/vue')['ListboxButton']
+    ListboxOption: typeof import('@headlessui/vue')['ListboxOption']
+    ListboxOptions: typeof import('@headlessui/vue')['ListboxOptions']
     Popover: typeof import('@headlessui/vue')['Popover']
     PopoverButton: typeof import('@headlessui/vue')['PopoverButton']
     PopoverPanel: typeof import('@headlessui/vue')['PopoverPanel']
