@@ -5,7 +5,8 @@ import { AnkrProvider } from '@ankr.com/ankr.js';
 import { BalanceResolver, BalanceResolver__factory } from "~~/contracts";
 import collect from "collect.js";
 import { IToken } from "~~/stores/tokens";
-import { getRpcProvider, toBN } from "~~/utils";
+import { toBN } from "~~/utils";
+import { getServerRpcProvider } from "~~/server/utils";
 
 const tokens = tokenlist.tokens;
 
@@ -23,7 +24,7 @@ const balanceResolverContracts = Object.keys(balanceResolverAddresses).reduce(
     (acc, curr) => {
         acc[curr] = BalanceResolver__factory.connect(
             balanceResolverAddresses[curr],
-            getRpcProvider(curr)
+            getServerRpcProvider(curr)
         );
         return acc;
     },
