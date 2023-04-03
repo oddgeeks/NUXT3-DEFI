@@ -25,13 +25,26 @@ const {
 } = useForm({
   validationSchema: yup.object({
     contactName: yup.string().required(""),
-    // chainId: yup.string().required(""),
-    // address: yup
-    //   .string()
-    //   .required("")
-    //   .test("is-valid-address", "Incorrect address", (value) => {
-    //     return value ? isAddress(value || "") : true;
-    //   }),
+    chainId: yup.string().required(""),
+    address: yup
+      .string()
+      .required("")
+      .test("is-valid-address", "Incorrect address", (value) => {
+        return value ? isAddress(value || "") : true;
+      })
+      .test(
+        "duplicate-address",
+        "Contact already added",
+        (value, { parent }) => {
+          if (!isAddress(value || "")) return true;
+          if (!contacts.value[safeAddress.value]) return true;
+          return !contacts.value[safeAddress.value].some(
+            (contact) =>
+              contact.address.toLowerCase() === value?.toLowerCase() &&
+              contact.chainId == parent.chainId
+          );
+        }
+      ),
   }),
 });
 
@@ -63,8 +76,6 @@ const supportedChains = computed(() =>
 const disabled = computed(() => !meta.value.valid || isSubmitting.value);
 
 const onSubmit = handleSubmit(() => {
-  console.log(addressMeta.dirty, errors);
-
   const _contact = {
     name: contactName.value,
     chainId: chainId.value,
@@ -100,8 +111,6 @@ onMounted(() => {
 
 <template>
   <form @submit="onSubmit">
-    {{ errors }}
-    {{ values }}
     <h1 class="text-lg text-center leading-5 mb-7.5">Create Contact</h1>
     <div class="flex flex-col gap-5 mb-7.5">
       <div>

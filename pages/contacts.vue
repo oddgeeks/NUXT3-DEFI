@@ -5,7 +5,7 @@ import SVGX from "~/assets/images/icons/x.svg?component";
 
 const { account } = useWeb3();
 const { safeAddress } = useAvocadoSafe();
-const { contacts } = useContacts();
+const { contacts, deleteContact } = useContacts();
 
 const searchQuery = ref("");
 
@@ -97,7 +97,9 @@ const filteredContacts = computed(() => {
                   />
                   <span>{{ shortenHash(contact.address) }}</span>
                 </div>
-                <SVGX />
+                <button @click="deleteContact(contact)">
+                  <SVGX />
+                </button>
               </td>
             </tr>
           </tbody>
