@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js"
+import { H3Event } from "h3"
 import tokenlist from "~/public/tokenlist.json"
 import { AnkrProvider } from '@ankr.com/ankr.js';
 import { BalanceResolver, BalanceResolver__factory } from "~~/contracts";
@@ -178,22 +179,38 @@ const getChainBalances = async (chainId: string, address: string, customTokenAdd
     return newBalances;
 };
 
+const getQueryCustomTokens = (event: H3Event, chainId: string) => {
+    const query = getQuery(event)
+
+    return query[`customTokens[${chainId}]`] ?
+        Array.isArray(query[`customTokens[${chainId}]`])
+            ? query[`customTokens[${chainId}]`] as string[]
+            : [query[`customTokens[${chainId}]`] as string] : []
+}
+
+const SUPPORTED_CHAIN_IDS = ["137", "10", "42161", "1", "43114", "100", "56"]
+
 export default defineEventHandler<IBalance[]>(async (event) => {
     let query = getQuery(event)
 
-    const gnosisTokens = query['customTokens[100]'] ?
-        Array.isArray(query['customTokens[100]'])
-            ? query['customTokens[100]']
-            : [query['customTokens[100]']] : undefined
     try {
-        return await Promise.all([
-            getFromAnkr(String(query.address)),
-            getChainBalances("100",
+        return await Promise.all(
+            SUPPORTED_CHAIN_IDS.map(async (chainId) => await getChainBalances(chainId,
                 String(query.address),
-                gnosisTokens
-            ),
-        ]).then(r => r.flat())
+                getQueryCustomTokens(event, chainId)
+            ))).then(r => r.flat()
+        )
     } catch (error) {
-        return await getFromDebank(String(query.address))
+        try {
+            return await Promise.all([
+                getFromAnkr(String(query.address)),
+                getChainBalances("100",
+                    String(query.address),
+                    getQueryCustomTokens(event, "100")
+                ),
+            ]).then(r => r.flat())
+        } catch (error) {
+            return await getFromDebank(String(query.address))
+        }
     }
 })
