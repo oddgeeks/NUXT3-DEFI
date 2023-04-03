@@ -46,6 +46,7 @@ useIntervalFn(refresh, 1000);
           active-class="dark:text-white text-slate-900"
           class="text-slate-400 py-3 px-5"
           external
+          target="_blank"
           :to="`${avoExplorerURL}/address/${account}`"
         >
           History
