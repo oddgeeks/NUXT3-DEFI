@@ -211,6 +211,7 @@ export default defineEventHandler<IBalance[]>(async (event) => {
     return await Promise.all([
       getFromAnkr(String(query.address)),
       getChainBalances("100", String(query.address), gnosisTokens),
+      getChainBalances("1101", String(query.address)),
     ]).then((r) => r.flat());
   } catch (error) {
     return await getFromDebank(String(query.address));
