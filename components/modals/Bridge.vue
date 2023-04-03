@@ -29,7 +29,8 @@ const {
   toChainId,
   token,
   amount,
-  toAmount,
+  toTokenAddress,
+  selectableToTokens,
   recivedValueInUsd,
   recievedAmount,
   form,
@@ -219,7 +220,18 @@ const onSubmit = form.handleSubmit(async () => {
             >
               <div class="hidden sm:flex flex-col gap-2.5">
                 <span class="text-sm">Coin</span>
+
+                <CommonSelect
+                  v-if="selectableToTokens.length"
+                  v-model="toTokenAddress"
+                  iconKey="logoURI"
+                  value-key="address"
+                  label-key="name"
+                  :options="selectableToTokens"
+                >
+                </CommonSelect>
                 <div
+                  v-else
                   class="dark:bg-gray-800 bg-slate-100 w-full px-3 flex py-3 items-center gap-2.5 rounded-2xl"
                 >
                   <img
@@ -320,7 +332,8 @@ const onSubmit = form.handleSubmit(async () => {
                 class="sm:text-2xl text-sm font-semibold text-right !leading-5 uppercase inline-flex flex-wrap gap-2 sm:gap-2.5 justify-end"
               >
                 <span
-                  >{{ formatDecimal(recievedAmount) }} {{ token.symbol }}</span
+                  >{{ formatDecimal(recievedAmount) }}
+                  {{ bridgeToToken?.symbol || token.symbol }}</span
                 >
 
                 {{}}

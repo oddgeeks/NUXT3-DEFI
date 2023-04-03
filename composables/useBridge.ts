@@ -30,6 +30,7 @@ export const useBridge = (props: IBridge) => {
   const fromChainId = ref(props.fromChainId);
   const toChainId = ref(props.fromChainId === "137" ? "10" : "137");
   const tokenAddress = ref(props.tokenAddress);
+  const toTokenAddress = ref();
 
   const form = useForm({
     validationSchema: yup.object({
@@ -60,6 +61,31 @@ export const useBridge = (props: IBridge) => {
       )!
   );
 
+  const selectableToTokens = computed(() => {
+    // allow to users to select eth and weth in case of bridging to mainnet
+    if (toChainId.value == "1" && token.value.symbol === "weth") {
+      const availableTokens = tokens.value.filter(
+        (i) =>
+          (i.symbol === "eth" || i.symbol === "weth") &&
+          i.chainId == toChainId.value
+      );
+
+      if (!toTokenAddress.value) {
+        const eth = tokens.value.find(
+          (i) => i.symbol === "eth" && i.chainId == toChainId.value
+        );
+
+        toTokenAddress.value = eth?.address;
+      }
+
+      return availableTokens;
+    } else {
+      toTokenAddress.value = undefined;
+    }
+
+    return [];
+  });
+
   const nativeCurrency = computed(() => {
     const nativeTokenMeta = getNetworkByChainId(+fromChainId.value).params
       .nativeCurrency;
@@ -72,14 +98,20 @@ export const useBridge = (props: IBridge) => {
   });
 
   const bridgeToToken = computed(() => {
+    const toToken = tokens.value.find(
+      (i) => i.address === toTokenAddress.value && i.chainId == toChainId.value
+    );
+
+    const actual = toToken || token.value;
+
     const t = bridgeTokens.data.value?.find(
-      (t: any) => t.symbol.toLowerCase() === token.value.symbol.toLowerCase()
+      (t: any) => t.symbol.toLowerCase() === actual.symbol.toLowerCase()
     );
 
     if (t) return t;
 
     return bridgeTokens.data.value?.find((t: any) =>
-      t.symbol.toLowerCase().includes(token.value.symbol.toLowerCase())
+      t.symbol.toLowerCase().includes(actual.symbol.toLowerCase())
     );
   });
 
@@ -432,5 +464,7 @@ export const useBridge = (props: IBridge) => {
     handleSwapToken,
     recivedValueInUsd,
     recievedAmount,
+    toTokenAddress,
+    selectableToTokens,
   };
 };

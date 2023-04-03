@@ -2,6 +2,19 @@
 import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
 import SVGInfoCircle from "~/assets/images/icons/exclamation-circle.svg?component";
 
+enum Types {
+  Approve = "approve",
+  Recieve = "recieve",
+  Send = "send",
+}
+
+enum TypeTitles {
+  Approve = "Approve",
+  In = "In",
+  Out = "Out",
+  RevokedAllowance = "Revoked Allowance",
+}
+
 const props = defineProps<{
   payload: SimulationToken;
   type: "approve" | "recieve" | "send";
@@ -22,10 +35,15 @@ const token = asyncComputed(async () => {
 });
 
 const amount = computed(() => {
-  if (props.payload.amount.startsWith("115792089237316195423570985008687"))
-    return "∞";
+  if (toBN(props.payload.amount).gt(1e50)) return "∞";
 
   return fromWei(props.payload.amount, token.value?.decimals).decimalPlaces(5);
+});
+
+const formattedAmount = computed(() => {
+  if (amount.value === "∞") return amount.value;
+
+  return amount.value.toFormat();
 });
 
 const priceInUSD = computed(() => {
@@ -36,17 +54,19 @@ const priceInUSD = computed(() => {
 
 const actualType = computed(() => {
   switch (props.type) {
-    case "approve":
-      return "Approve";
-    case "recieve":
-      return "In";
-    case "send":
-      return "Out";
+    case Types.Approve:
+      return toBN(props.payload.amount).eq("0")
+        ? TypeTitles.RevokedAllowance
+        : TypeTitles.Approve;
+    case Types.Recieve:
+      return TypeTitles.In;
+    case Types.Send:
+      return TypeTitles.Out;
   }
 });
 
 const out = computed(() => {
-  return props.type === "send" || props.type === "approve";
+  return props.type === Types.Send || props.type === Types.Approve;
 });
 </script>
 
@@ -74,7 +94,7 @@ const out = computed(() => {
         />
         <p class="flex flex-col">
           <span class="text-xs uppercase leading-4">
-            {{ amount }}
+            {{ formattedAmount }}
             {{ token?.symbol }}
           </span>
           <span
@@ -86,6 +106,16 @@ const out = computed(() => {
         </p>
       </div>
       <div
+        v-if="actualType === TypeTitles.RevokedAllowance"
+        class="rounded-[14px] flex items-center gap-1 w-fit text-primary h-4"
+      >
+        <div class="h-1 w-1 rounded-full bg-primary" />
+        <span class="text-[10px] leading-4 whitespace-nowrap">
+          {{ actualType }}
+        </span>
+      </div>
+      <div
+        v-else
         :class="out ? 'text-red-alert' : 'text-green-400'"
         class="rounded-[14px] flex items-center gap-1 w-fit h-4"
       >
@@ -102,7 +132,7 @@ const out = computed(() => {
       <div
         class="text-[10px] font-medium w-fit text-slate-400 dark:bg-slate-800 py-1 px-2.5 bg-slate-150 rounded-10"
       >
-        <span class="leading-4" v-if="actualType === 'In'">
+        <span class="leading-4" v-if="actualType === TypeTitles.In">
           From: {{ shortenHash(payload.from) }}</span
         >
         <span class="leading-4" v-else> To: {{ shortenHash(payload.to) }}</span>

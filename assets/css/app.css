@@ -41,6 +41,27 @@
 }
 
 @layer utilities {
+  .ticket-divider {
+    @apply bg-dashed-pattern dark:bg-dashed-pattern-dark;
+    background-position: bottom;
+    background-size: 21px 2px;
+    background-repeat: repeat-x;
+    border: 0;
+    height: 2px;
+    position: relative;
+  }
+
+  .ticket-divider:after {
+    @apply w-5 h-5 rounded-full absolute top-1/2 -right-10 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-950 bg-white;
+    content: "";
+    display: block;
+  }
+
+  .ticket-divider:before {
+    @apply w-5 h-5 rounded-full absolute top-1/2 -left-5 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-950 bg-white;
+    content: "";
+    display: block;
+  }
   .success-circle {
     @apply text-white;
   }
