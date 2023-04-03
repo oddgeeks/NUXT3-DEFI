@@ -4,6 +4,7 @@ import ClipboardSVG from "~/assets/images/icons/clipboard.svg?component";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { isAddress } from "@ethersproject/address";
+import { storeToRefs } from "pinia";
 
 const emit = defineEmits(["destroy"]);
 const { toWei } = useBignumber();
@@ -23,6 +24,7 @@ const { library, account } = useWeb3();
 const { switchNetworkByChainId } = useNetworks();
 const { sendTransaction, tokenBalances, safe } = useAvocadoSafe();
 const { parseTransactionError } = useErrorHandler();
+const { tokens } = storeToRefs(useTokens());
 
 const token = computed(
   () =>
@@ -31,54 +33,63 @@ const token = computed(
     )!
 );
 
+const availableTokens = computed(() =>
+  tokens.value.filter((t) => t.chainId !== props.chainId)
+);
+
 const amountInUsd = computed(() => {
   if (!token.value) return "0";
-  return toBN(token.value.price || 0).times(amount.value || "0").toFixed()
+  return toBN(token.value.price || 0)
+    .times(amount.value || "0")
+    .toFixed();
 });
 
-const actualAddress = ref('');
+const actualAddress = ref("");
 
-const { handleSubmit, errors, meta, resetForm, validate, isSubmitting } = useForm({
-  validationSchema: yup.object({
-    amount: yup
-      .string()
-      .required("")
-      .test("min-amount", "", (value) => {
-        const amount = toBN(value);
+const { handleSubmit, errors, meta, resetForm, validate, isSubmitting } =
+  useForm({
+    validationSchema: yup.object({
+      amount: yup
+        .string()
+        .required("")
+        .test("min-amount", "", (value) => {
+          const amount = toBN(value);
 
-        return value ? amount.gt(0) : true;
-      })
-      .test("max-amount", "Insufficient balance", (value) => {
-        const amount = toBN(value);
-        const balance = toBN(token.value.balance);
+          return value ? amount.gt(0) : true;
+        })
+        .test("max-amount", "Insufficient balance", (value) => {
+          const amount = toBN(value);
+          const balance = toBN(token.value.balance);
 
-        return amount.gt(0) ? amount.lte(balance) : true;
-      }),
-    address: yup
-      .string()
-      .required("")
-      .test("is-address", "Incorrect address", async (value) => {
-        if (!value) return true
+          return amount.gt(0) ? amount.lte(balance) : true;
+        }),
+      address: yup
+        .string()
+        .required("")
+        .test("is-address", "Incorrect address", async (value) => {
+          if (!value) return true;
 
-        const resolvedAddress = value.endsWith('.eth') && props.chainId === '1' ? await getRpcProvider(1).resolveName(value) : null
+          const resolvedAddress =
+            value.endsWith(".eth") && props.chainId === "1"
+              ? await getRpcProvider(1).resolveName(value)
+              : null;
 
-        if (resolvedAddress) {
-          actualAddress.value = resolvedAddress
-          return true
-        }
+          if (resolvedAddress) {
+            actualAddress.value = resolvedAddress;
+            return true;
+          }
 
-        if (isAddress(value)) {
-          actualAddress.value = value
-          return true
-        }
+          if (isAddress(value)) {
+            actualAddress.value = value;
+            return true;
+          }
 
-        actualAddress.value = ''
+          actualAddress.value = "";
 
-        return false
-
-      }),
-  }),
-});
+          return false;
+        }),
+    }),
+  });
 
 const { value: amount, meta: amountMeta } = useField<string>("amount");
 const { value: address, meta: addressMeta } = useField<string>("address");
@@ -203,46 +214,46 @@ const onSubmit = handleSubmit(async () => {
       action: "send",
       type: "error",
       account: account.value,
-      errorDetails: err.parsed
+      errorDetails: err.parsed,
     });
   }
-
 });
 </script>
 
 <template>
   <form @submit="onSubmit" class="text-center flex gap-7.5 flex-col">
-    <div class="relative flex mx-auto h-10 w-10 rounded-full flex-shrink-0">
-      <img
-        width="40"
-        height="40"
-        class="h-10 w-10 rounded-[inherit]"
-        :src="token.logoURI"
-        :onerror="onImageError"
-      />
-    </div>
-
     <div class="flex flex-col justify-center gap-[15px] items-center">
-      <h2>
-        {{ token.name }}
-        <span class="uppercase text-lg"> ({{ token.symbol }}) </span>
-      </h2>
-
-      <div
-        class="dark:bg-gray-850 bg-slate-50 px-2 pr-3 py-1 inline-flex justify-center items-center space-x-2 rounded-[20px]"
-      >
-        <ChainLogo class="w-5 h-5" :chain="token.chainId" />
-        <span class="text-xs text-slate-400 leading-5">{{
-          chainIdToName(token.chainId)
-        }}</span>
-      </div>
+      <h2>Send</h2>
     </div>
-
+    <div>
+      <!-- start token select -->
+      <div class="space-y-2.5 flex flex-col">
+        <div class="flex items-center justify-between">
+          <span class="text-sm">Token</span>
+        </div>
+        <CommonSelect
+          v-model="token.chainId"
+          value-key="chainId"
+          label-key="name"
+          :options="availableTokens"
+        >
+          <template #button-prefix>
+            <ChainLogo class="w-6 h-6" :chain="token.chainId" />
+            <p>{{ chainIdToName(token.chainId) }}</p>
+          </template>
+          <template #item-prefix="{ value }">
+            <ChainLogo class="w-6 h-6" :chain="value" />
+            <p>{{ chainIdToName(value) }}</p>
+          </template>
+        </CommonSelect>
+      </div>
+      <!-- end token select -->
+    </div>
     <div class="space-y-5">
       <div class="space-y-2.5 flex flex-col">
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <span class="text-sm">Amount</span>
-          <span class="uppercase text-sm"
+          <span class="text-sm uppercase"
             >{{ formatDecimal(token.balance) }} {{ token.symbol }}</span
           >
         </div>
@@ -263,11 +274,13 @@ const onSubmit = handleSubmit(async () => {
             </button>
           </template>
         </CommonInput>
-         <span class="text-slate-400 text-sm text-left font-semibold"> {{ formatUsd(amountInUsd) }}</span>
+        <span class="text-sm font-semibold text-left text-slate-400">
+          {{ formatUsd(amountInUsd) }}</span
+        >
       </div>
 
       <div class="space-y-2.5">
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <span class="text-sm">Address To</span>
         </div>
 
@@ -278,7 +291,14 @@ const onSubmit = handleSubmit(async () => {
           v-model="address"
         >
           <template #suffix>
-            <button v-tippy="{ content: 'Paste from clipboard', trigger: 'mouseenter' }" type="button" @click="pasteAddress">
+            <button
+              v-tippy="{
+                content: 'Paste from clipboard',
+                trigger: 'mouseenter',
+              }"
+              type="button"
+              @click="pasteAddress"
+            >
               <ClipboardSVG />
             </button>
           </template>
