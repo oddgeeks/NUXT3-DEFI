@@ -21,6 +21,7 @@ import YourWallet from "~/components/modals/YourWallet.vue";
 import Networks from "~/components/modals/Networks.vue";
 import Balance from "~/components/modals/Balance.vue";
 import AddContact from "~/components/modals/AddContact.vue";
+import SendToContact from "~/components/modals/SendToContact.vue";
 
 const { openModal } = useModal();
 interface DialogModalProps {
@@ -303,6 +304,24 @@ export const openAddContactModal = (name?: string) => {
     component: AddContact,
     componentProps: {
       name,
+    },
+  });
+};
+
+export const openSendToContactModal = (
+  name: string,
+  address: string,
+  chainId: number | string
+) => {
+  openModal({
+    component: SendToContact,
+    componentProps: {
+      name,
+      address,
+      chainId,
+    },
+    options: {
+      wrapperClass: "max-w-[500px]",
     },
   });
 };

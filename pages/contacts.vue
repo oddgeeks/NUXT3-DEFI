@@ -86,6 +86,13 @@ const filteredContacts = computed(() => {
             <tr
               v-for="contact in filteredContacts"
               class="contact-row text-sm font-semibold cursor-pointer"
+              @click="
+                openSendToContactModal(
+                  contact.name,
+                  contact.address,
+                  contact.chainId
+                )
+              "
             >
               <td class="pl-7.5 text-sm">{{ contact.name }}</td>
               <td class="flex items-center justify-between pr-10 py-6">
