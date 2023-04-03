@@ -27,7 +27,7 @@ const positionClasses: any = {
 
 <template>
   <Teleport to="body">
-    <div class="z-50 flex flex-col gap-2.5 relative">
+    <div class="z-[999999] flex flex-col gap-2.5 relative">
       <TransitionGroup name="list">
         <div
           v-for="(notifications, position) in positionedNotifications"
