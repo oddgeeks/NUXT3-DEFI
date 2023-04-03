@@ -20,6 +20,7 @@ import DeployNetwork from "~/components/modals/DeployNetwork.vue";
 import YourWallet from "~/components/modals/YourWallet.vue";
 import Networks from "~/components/modals/Networks.vue";
 import Balance from "~/components/modals/Balance.vue";
+import AddContact from "~/components/modals/AddContact.vue";
 
 const { openModal } = useModal();
 interface DialogModalProps {
@@ -293,6 +294,15 @@ export const openBalanceModal = (balance: any) => {
     component: Balance,
     componentProps: {
       balance,
+    },
+  });
+};
+
+export const openAddContactModal = (name?: string) => {
+  openModal({
+    component: AddContact,
+    componentProps: {
+      name,
     },
   });
 };
