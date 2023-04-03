@@ -48,10 +48,16 @@ const { handleSubmit, errors, meta, resetForm } = useForm({
     amount: yup
       .string()
       .required("")
-      .test("min-amount", "Amount must be greater than 0.01", (value) => {
+      .test("min-amount", "", (value, { createError }) => {
         const amount = toBN(value);
+        const minAmount = String(chainId.value) == "1" ? "5" : "0.01";
 
-        return value ? amount.gt("0.01") : true;
+        return amount.gt(minAmount) || !value
+          ? true
+          : createError({
+              path: "amount",
+              message: `Amount must be greater than ${minAmount} USDC`,
+            });
       })
       .test("max-amount", "Insufficient balance", (value: any) => {
         const amount = toBN(value);
