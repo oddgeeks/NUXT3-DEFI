@@ -2,8 +2,6 @@ import axios from "axios";
 import { AnkrProvider } from "@ankr.com/ankr.js";
 import { object, array, string } from "yup";
 
-const flashloanAddress = "0x8d8B52e9354E2595425D00644178E2bA2257f42a";
-
 export default defineEventHandler(async (event) => {
   try {
     const { ankrApiKey } = useRuntimeConfig();
@@ -12,25 +10,22 @@ export default defineEventHandler(async (event) => {
     const params = await readBody(event);
 
     async function transformToken(token: SimulationToken) {
-      const nft = await ankrProvider.getNFTMetadata({
-        blockchain: blockchain(parsed.chainId) as any,
-        contractAddress: token.token,
-        tokenId: "1", // passed randomly
-        forceFetch: true,
-      });
-      if (nft.metadata?.collectionName) {
+      const chainName = blockchain(parsed.chainId) as any;
+
+      const nft = chainName
+        ? await ankrProvider.getNFTMetadata({
+            blockchain: blockchain(parsed.chainId) as any,
+            contractAddress: token.token,
+            tokenId: "1", // passed randomly
+            forceFetch: true,
+          })
+        : null;
+
+      if (nft?.metadata?.collectionName) {
         token.type = "NFT";
         token.nftMetadata = nft.attributes as any;
       } else {
-        token.type =
-          token.from.toLowerCase() === flashloanAddress.toLowerCase() ||
-          token.to.toLowerCase() === flashloanAddress.toLowerCase()
-            ? "Flashloan"
-            : token.from.startsWith("0x0000")
-            ? "Mint"
-            : token.to.startsWith("0x0000")
-            ? "Burn"
-            : null;
+        token.type = getSimulationTag(token.to, token.from);
       }
 
       return token;
@@ -98,4 +93,26 @@ const blockchain = (chainId: string | undefined) => {
     case "43114":
       return "avalanche";
   }
+};
+
+const getSimulationTag = (toAddress: string, fromAddress: string) => {
+  const zeroAddress = "0x0000000000000000000000000000000000000000";
+  const avoFlashloanAddress = "0x8d8B52e9354E2595425D00644178E2bA2257f42a";
+
+  if (
+    fromAddress.toLowerCase() === avoFlashloanAddress.toLowerCase() ||
+    toAddress.toLowerCase() === avoFlashloanAddress.toLowerCase()
+  ) {
+    return "Flashloan";
+  }
+
+  if (fromAddress.toLowerCase() === zeroAddress.toLowerCase()) {
+    return "Mint";
+  }
+
+  if (toAddress.toLowerCase() === zeroAddress.toLowerCase()) {
+    return "Burn";
+  }
+
+  return null;
 };
