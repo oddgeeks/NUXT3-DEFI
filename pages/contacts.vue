@@ -36,13 +36,15 @@ const filteredContacts = computed(() => {
 <template>
   <div class="container flex flex-col gap-[30px] flex-1">
     <div class="flex gap-5 flex-col flex-1">
-      <h2 class="font-semibold inline-flex items-center">Contacts</h2>
+      <h2 class="sm:text-base text-sm font-semibold inline-flex items-center">
+        Contacts
+      </h2>
       <div
-        class="flex items-center gap-5"
+        class="flex sm:flex-row flex-col-reverse items-center gap-x-5 gap-y-7.5"
         :class="{ 'blur pointer-events-none': !account }"
       >
         <CommonInput
-          class="flex-1"
+          class="sm:flex-1 w-full"
           name="Contact Search"
           @input="search"
           type="search"
@@ -64,7 +66,7 @@ const filteredContacts = computed(() => {
       </div>
       <div
         style="scrollbar-gutter: stable; overflow-y: overlay"
-        class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden h-[530px] max-h-[530px] hidden sm:flex scroll-style flex flex-col"
+        class="overflow-y-auto overflow-x-auto dark:sm:bg-gray-850 sm:bg-slate-50 sm:rounded-[25px] md:overflow-x-hidden h-[530px] max-h-[530px] scroll-style flex flex-col gap-4"
         :class="{ '!overflow-hidden blur pointer-events-none': !account }"
       >
         <div
@@ -73,44 +75,96 @@ const filteredContacts = computed(() => {
         >
           No contacts
         </div>
-        <table v-else class="table w-full">
-          <thead>
-            <tr
-              class="text-left text-sm text-gray-400 font-medium border-b border-slate-150 dark:border-slate-800"
+        <template v-else>
+          <table class="hidden sm:table w-full">
+            <thead>
+              <tr
+                class="text-left text-sm text-gray-400 font-medium border-b border-slate-150 dark:border-slate-800"
+              >
+                <th class="text-left py-6 pl-7.5">Name</th>
+                <th class="pr-10">Address</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
+              <tr
+                v-for="contact in filteredContacts"
+                class="contact-row text-sm font-semibold cursor-pointer"
+                @click="
+                  openSendToContactModal(
+                    contact.name,
+                    contact.address,
+                    contact.chainId
+                  )
+                "
+              >
+                <td class="pl-7.5 text-sm">{{ contact.name }}</td>
+                <td class="flex items-center justify-between pr-10 py-6">
+                  <div class="flex items-center gap-2.5">
+                    <ChainLogo
+                      :stroke="false"
+                      class="w-[22px] h-[22px]"
+                      :chain="contact.chainId"
+                    />
+                    <span>{{ shortenHash(contact.address) }}</span>
+                  </div>
+                  <button @click="deleteContact(contact)">
+                    <SVGX class="text-slate-400" />
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div
+            class="flex flex-col sm:hidden dark:bg-gray-850 bg-slate-50 px-5 pt-4 pb-4.5 rounded-[20px] gap-5"
+            v-for="contact in filteredContacts"
+          >
+            <div class="flex justify-between">
+              <span class="text-sm font-semibold text-slate-400">{{
+                contact.name
+              }}</span>
+              <button @click="deleteContact(contact)">
+                <SVGX class="text-slate-400 w-4 h-4" />
+              </button>
+            </div>
+            <div
+              class="flex items-center gap-3 rounded-7.5 px-4.5 py-3 border-2 dark:border-slate-700"
             >
-              <th class="text-left py-6 pl-7.5">Name</th>
-              <th class="pr-10">Address</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
-            <tr
-              v-for="contact in filteredContacts"
-              class="contact-row text-sm font-semibold cursor-pointer"
-              @click="
-                openSendToContactModal(
-                  contact.name,
-                  contact.address,
-                  contact.chainId
-                )
-              "
-            >
-              <td class="pl-7.5 text-sm">{{ contact.name }}</td>
-              <td class="flex items-center justify-between pr-10 py-6">
-                <div class="flex items-center gap-2.5">
-                  <ChainLogo
-                    :stroke="false"
-                    class="w-[22px] h-[22px]"
-                    :chain="contact.chainId"
-                  />
-                  <span>{{ shortenHash(contact.address) }}</span>
-                </div>
-                <button @click="deleteContact(contact)">
-                  <SVGX class="text-slate-400" />
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              <ChainLogo
+                :stroke="false"
+                class="w-6.5 h-6.5"
+                :chain="contact.chainId"
+              />
+              <Copy :text="contact.address" class="flex-1 justify-between">
+                <template #content>
+                  <span class="dark:text-white text-slate-900">{{
+                    shortenHash(contact.address)
+                  }}</span>
+                </template>
+              </Copy>
+            </div>
+            <div class="flex gap-2.5">
+              <CommonButton
+                color="white"
+                class="flex-1 justify-center"
+                @click="openAddContactModal(searchQuery)"
+              >
+                Edit
+              </CommonButton>
+              <CommonButton
+                class="flex-1 justify-center"
+                @click="
+                  openSendToContactModal(
+                    contact.name,
+                    contact.address,
+                    contact.chainId
+                  )
+                "
+              >
+                Send
+              </CommonButton>
+            </div>
+          </div>
+        </template>
       </div>
     </div>
   </div>
