@@ -5,7 +5,7 @@ import ClipboardSVG from "~/assets/images/icons/clipboard.svg?component";
 import { RPC_URLS } from "~~/connectors";
 import { useField, useForm } from "vee-validate";
 
-const emit = defineEmits(["destroy", "reject"]);
+const emit = defineEmits(["destroy"]);
 
 const props = defineProps<{
   name: string;
@@ -17,7 +17,11 @@ const { safeAddress } = useAvocadoSafe();
 const { value: chainId } = useField<string>("chainId", undefined, {
   initialValue: "1",
 });
-const { value: name, setValue: setName } = useField<string>("name");
+const {
+  value: contactName,
+  meta: contactNameMeta,
+  setValue: setContactName,
+} = useField<string>("contactName");
 const {
   value: address,
   meta: addressMeta,
@@ -27,7 +31,6 @@ const {
 const { handleSubmit, isSubmitting, errors, meta, resetForm, validate } =
   useForm({
     validationSchema: yup.object({
-      // name: yup.string().required(""),
       // chainId: yup.string().required(""),
       // address: yup
       //   .string()
@@ -35,21 +38,6 @@ const { handleSubmit, isSubmitting, errors, meta, resetForm, validate } =
       //   .test("is-valid-address", "Incorrect address", (value) => {
       //     return value ? isAddress(value || "") : true;
       //   }),
-      // .test(
-      //   "duplicate-address",
-      //   "Contact already added",
-      //   (value, { parent }) => {
-      //     if (!isAddress(value || "")) return true;
-      //     return true;
-      //     // if (!contacts.value[chainId]) return true;
-      //     // return (
-      //     //   contacts.value[chainId].findIndex(
-      //     //     (contact) =>
-      //     //       contact.address.toLowerCase() === value.toLowerCase()
-      //     //   ) === -1
-      //     // );
-      //   }
-      // ),
     }),
   });
 
@@ -67,23 +55,20 @@ const supportedChains = computed(() =>
 const disabled = computed(() => !meta.value.valid || isSubmitting.value);
 
 const onSubmit = handleSubmit(() => {
+  console.log(addressMeta.dirty, errors);
+
+  const _contact = {
+    name: contactName.value,
+    chainId: chainId.value,
+    address: address.value,
+  };
   if (contacts.value[safeAddress.value]) {
-    contacts.value[safeAddress.value].push({
-      name: name.value,
-      chainId: chainId.value,
-      address: address.value,
-    });
+    contacts.value[safeAddress.value].push(_contact);
   } else {
-    contacts.value[safeAddress.value] = [
-      {
-        name: name.value,
-        chainId: chainId.value,
-        address: address.value,
-      },
-    ];
+    contacts.value[safeAddress.value] = [_contact];
   }
 
-  emit("destroy");
+  // emit("destroy");
 });
 
 const pasteAddress = async () => {
@@ -100,7 +85,7 @@ const pasteAddress = async () => {
 
 onMounted(() => {
   if (props.name) {
-    setName(props.name);
+    setContactName(props.name);
   }
 });
 </script>
@@ -113,9 +98,9 @@ onMounted(() => {
         <p class="mb-2.5 text-sm">Name</p>
         <CommonInput
           autofocus
-          name="name"
+          name="contactName"
           placeholder="Enter Name"
-          v-model="name"
+          v-model="contactName"
         />
       </div>
       <div>

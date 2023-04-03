@@ -5,10 +5,31 @@ import SVGX from "~/assets/images/icons/x.svg?component";
 
 const { account } = useWeb3();
 const { safeAddress } = useAvocadoSafe();
-const contacts = useLocalStorage("contacts", {});
+const { contacts } = useContacts();
+
+const searchQuery = ref("");
 
 useAccountTrack(undefined, () => {
   useEagerConnect();
+});
+
+const search = useDebounceFn((event: Event) => {
+  searchQuery.value = (<HTMLInputElement>event.target).value;
+}, 200);
+
+const filteredContacts = computed(() => {
+  const _contacts = contacts.value[safeAddress.value];
+  if (!_contacts) {
+    return [];
+  }
+
+  if (!searchQuery.value || searchQuery.value.trim().length === 0) {
+    return _contacts;
+  }
+
+  return _contacts.filter((contact) =>
+    contact.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
 });
 </script>
 
@@ -16,10 +37,12 @@ useAccountTrack(undefined, () => {
   <div class="container flex flex-col gap-[30px] flex-1">
     <div class="flex gap-5 flex-col flex-1">
       <h2 class="font-semibold inline-flex items-center">Contacts</h2>
-      <div class="flex items-center gap-5">
+      <div
+        class="flex items-center gap-5"
+        :class="{ 'blur pointer-events-none': !account }"
+      >
         <CommonInput
           class="flex-1"
-          v-if="account"
           name="Contact Search"
           @input="search"
           type="search"
@@ -33,7 +56,7 @@ useAccountTrack(undefined, () => {
           :disabled="!safeAddress"
           size="lg"
           class="flex items-center justify-center gap-2 px-5 w-full sm:w-fit"
-          @click="openAddContactModal()"
+          @click="openAddContactModal(searchQuery)"
         >
           <PlusSVG />
           Create Contract
@@ -41,13 +64,16 @@ useAccountTrack(undefined, () => {
       </div>
       <div
         style="scrollbar-gutter: stable; overflow-y: overlay"
-        class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] hidden sm:flex scroll-style"
-        :class="{ '!overflow-hidden': !account }"
+        class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden h-[530px] max-h-[530px] hidden sm:flex scroll-style flex flex-col"
+        :class="{ '!overflow-hidden blur pointer-events-none': !account }"
       >
-        <table
-          class="table w-full"
-          :class="{ 'blur pointer-events-none': !account }"
+        <div
+          v-if="account && filteredContacts.length === 0"
+          class="w-full h-full flex items-center justify-center"
         >
+          No contacts
+        </div>
+        <table v-else class="table w-full">
           <thead>
             <tr
               class="text-left text-sm text-gray-400 font-medium border-b border-slate-150 dark:border-slate-800"
@@ -58,7 +84,7 @@ useAccountTrack(undefined, () => {
           </thead>
           <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
             <tr
-              v-for="contact in contacts[safeAddress]"
+              v-for="contact in filteredContacts"
               class="contact-row text-sm font-semibold cursor-pointer"
             >
               <td class="pl-7.5 text-sm">{{ contact.name }}</td>
@@ -71,7 +97,6 @@ useAccountTrack(undefined, () => {
                   />
                   <span>{{ shortenHash(contact.address) }}</span>
                 </div>
-
                 <SVGX />
               </td>
             </tr>

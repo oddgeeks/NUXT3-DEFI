@@ -50,13 +50,6 @@ useIntervalFn(refresh, 1000);
         >
           History
         </NuxtLink>
-        <NuxtLink
-          active-class="dark:text-white text-slate-900"
-          class="text-slate-400 py-3 px-5"
-          to="/contacts"
-        >
-          Contacts
-        </NuxtLink>
       </div>
       <div class="flex items-center gap-5">
         <ColorModeSwitcher />
