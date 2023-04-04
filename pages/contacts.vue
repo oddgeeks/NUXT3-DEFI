@@ -44,7 +44,19 @@ const filteredContacts = computed(() => {
         :class="{ 'blur pointer-events-none': !account }"
       >
         <CommonInput
-          class="sm:flex-1 w-full"
+          class="hidden sm:block flex-1 w-full"
+          name="Contact Search"
+          @input="search"
+          type="search"
+          placeholder="Search name"
+        >
+          <template #prefix>
+            <SearchSVG class="shrink-0 mr-2" />
+          </template>
+        </CommonInput>
+        <CommonInput
+          class="sm:hidden w-full"
+          v-if="contacts[safeAddress] && contacts[safeAddress].length !== 0"
           name="Contact Search"
           @input="search"
           type="search"
