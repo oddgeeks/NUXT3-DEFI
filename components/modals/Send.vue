@@ -237,15 +237,9 @@ const onSubmit = handleSubmit(async () => {
           v-model="tokenAddress"
           value-key="address"
           label-key="name"
-          iconKey="address"
+          icon-key="logoURI"
           :options="availableTokens"
         >
-          <template #button-prefix>
-            <ChainLogo class="w-6 h-6" :chain="chainId" />
-          </template>
-          <template #item-prefix="{ value }">
-            <ChainLogo class="w-6 h-6" :chain="value.chain" />
-          </template>
         </CommonSelect>
       </div>
       <!-- end token select -->
