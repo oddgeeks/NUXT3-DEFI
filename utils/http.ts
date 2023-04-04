@@ -13,6 +13,11 @@ const logError = useThrottleFn((error) => {
   Status: ${error?.response?._data?.statusCode}`,
     type: "error",
   });
+
+  notify({
+    message: message || "Something went wrong",
+    type: "error",
+  });
 }, 1000);
 
 export default ofetch.create({

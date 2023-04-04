@@ -181,7 +181,7 @@ onUnmounted(() => {
           :error-message="addressMeta.dirty ? errors['address'] : ''"
           name="address"
           placeholder="Enter Address"
-          v-model="address"
+          v-model.trim="address"
         >
           <template #suffix>
             <button type="button" @click="pasteAddress">

@@ -169,12 +169,17 @@ export const useSafe = defineStore("safe", () => {
       balances.value.loading = true;
       balanceAborter.value = new AbortController();
 
+      const params: any = {
+        address: safeAddress.value,
+      }
+
+      for (const chainId of ["137", "10", "42161", "1", "43114", "100", "56"]) {
+        params[`customTokens[${chainId}]`] = customTokens.value.filter(t => t.chainId === chainId).map(t => t.address)
+      }
+
       const resp = (await http("/api/balances", {
         signal: balanceAborter.value?.signal,
-        params: {
-          address: safeAddress.value,
-          "customTokens[100]": customTokens.value.filter(t => t.chainId === '100').map(t => t.address),
-        },
+        params,
       })) as any[];
 
       balanceAborter.value = undefined;
