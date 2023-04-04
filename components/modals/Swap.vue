@@ -51,7 +51,7 @@ const { formatPercent } = useFormatter();
 const { parseTransactionError } = useErrorHandler();
 const { account } = useWeb3();
 const toChainId = ref<string>(props.chainId);
-const tokenAddress = ref<string>(props.address);
+const tokenAddress = ref<string>(props.chainId);
 const networks = availableNetworks;
 
 const slippages = [
@@ -73,8 +73,8 @@ const [isBuyAmountDirty, toggleDirty] = useToggle(false);
 const refreshing = ref(false);
 
 const swap = ref<ISwap>({
-  sellToken: getTokenByAddress(tokenAddress.value, toChainId.value)!,
-  buyToken: getTokenByAddress(tokenAddress.value, toChainId.value)!,
+  sellToken: getTokenByAddress(props.address, toChainId.value)!,
+  buyToken: getTokenByAddress(props.address, toChainId.value)!,
 });
 
 const availableTokens = computed(() =>
@@ -540,14 +540,14 @@ onUnmounted(() => {
           class="px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5"
         >
           <CommonSelect
-            v-model="toChainId"
+            v-model="tokenAddress"
             value-key="chainId"
             label-key="name"
             icon-key="icon"
             :options="networks"
           >
             <template #button-prefix>
-              <ChainLogo class="w-6 h-6" :chain="toChainId" />
+              <ChainLogo class="w-6 h-6" :chain="tokenAddress" />
             </template>
             <template #item-prefix="{ value }">
               <ChainLogo class="w-6 h-6" :chain="value" />
