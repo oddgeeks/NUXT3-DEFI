@@ -44,7 +44,11 @@ const filteredContacts = computed(() => {
         :class="{ 'blur pointer-events-none': !account }"
       >
         <CommonInput
-          class="hidden sm:block flex-1 w-full"
+          class="flex-1 w-full"
+          :class="{
+            'hidden sm:block':
+              !contacts[safeAddress] || contacts[safeAddress].length === 0,
+          }"
           name="Contact Search"
           @input="search"
           type="search"
@@ -54,18 +58,7 @@ const filteredContacts = computed(() => {
             <SearchSVG class="shrink-0 mr-2" />
           </template>
         </CommonInput>
-        <CommonInput
-          class="sm:hidden w-full"
-          v-show="contacts[safeAddress] && contacts[safeAddress].length !== 0"
-          name="Contact Search"
-          @input="search"
-          type="search"
-          placeholder="Search name"
-        >
-          <template #prefix>
-            <SearchSVG class="shrink-0 mr-2" />
-          </template>
-        </CommonInput>
+
         <CommonButton
           :disabled="!safeAddress"
           size="lg"
@@ -101,11 +94,18 @@ const filteredContacts = computed(() => {
               <tr
                 v-for="contact in filteredContacts"
                 class="contact-row text-sm font-semibold cursor-pointer"
-                @click="openSendToContactModal(contact)"
               >
-                <td class="pl-7.5 text-sm">{{ contact.name }}</td>
-                <td class="flex items-center justify-between pr-10 py-6">
-                  <div class="flex items-center gap-2.5">
+                <td
+                  class="pl-7.5 text-sm"
+                  @click="openSendToContactModal(contact)"
+                >
+                  {{ contact.name }}
+                </td>
+                <td class="flex items-center justify-between pr-10 py-6 gap-10">
+                  <div
+                    class="flex flex-1 items-center gap-2.5"
+                    @click="openSendToContactModal(contact)"
+                  >
                     <ChainLogo
                       :stroke="false"
                       class="w-[22px] h-[22px]"
