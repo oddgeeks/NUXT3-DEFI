@@ -197,6 +197,7 @@ export default defineEventHandler<IBalance[]>(async (event) => {
     if (!lastUpdateTokens || Date.now() - lastUpdateTokens > 10_000_000) {
         const data: any = await $fetch("https://cdn.instadapp.io/avocado/tokenlist.json");
         tokens = data.tokens
+        lastUpdateTokens = Date.now()
     }
 
     try {
