@@ -86,32 +86,6 @@ export function onImageError(this: HTMLImageElement) {
   }
 }
 
-export const getExplorerUrl = (
-  chainId: string | number,
-  suffix: `/${string}` = "/"
-) => {
-  switch (String(chainId)) {
-    case "1":
-      return "https://etherscan.io" + suffix;
-    case "137":
-      return "https://polygonscan.com" + suffix;
-    case "43114":
-      return "https://snowtrace.io" + suffix;
-    case "10":
-      return "https://optimistic.etherscan.io" + suffix;
-    case "42161":
-      return "https://arbiscan.io" + suffix;
-    case "250":
-      return "https://ftmscan.com" + suffix;
-    case "56":
-      return "https://bscscan.com" + suffix;
-    case "1101":
-      return "https://zkevm.polygonscan.com" + suffix;
-    case "100":
-      return "https://gnosisscan.io" + suffix;
-  }
-};
-
 const locale = "en-US";
 
 export function formatUsd(value: any, fractionDigits = 2) {
