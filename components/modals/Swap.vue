@@ -45,12 +45,14 @@ const { tokenBalances, sendTransactions, safeAddress } = useAvocadoSafe();
 
 const { getTokenByAddress } = useTokens();
 const { tokens } = storeToRefs(useTokens());
+const { getNetworkByChainId, availableNetworks } = useNetworks();
 const { toWei, fromWei } = useBignumber();
 const { formatPercent } = useFormatter();
 const { parseTransactionError } = useErrorHandler();
 const { account } = useWeb3();
 const toChainId = ref<string>(props.chainId);
 const tokenAddress = ref<string>(props.address);
+const networks = availableNetworks;
 
 const slippages = [
   { value: "0.1", label: "0.1%" },
@@ -537,20 +539,15 @@ onUnmounted(() => {
         <div
           class="px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5"
         >
-          <!-- <ChainLogo class="w-5 h-5" :chain="chainId" />
-          <span class="text-xs leading-5 text-slate-400">{{
-            chainIdToName(chainId)
-          }}</span> -->
-
           <CommonSelect
-            v-model="tokenAddress"
-            value-key="address"
+            v-model="toChainId"
+            value-key="chainId"
             label-key="name"
-            iconKey="chainId"
-            :options="availableTokens"
+            icon-key="icon"
+            :options="networks"
           >
             <template #button-prefix>
-              <ChainLogo class="w-6 h-6" :chain="address" />
+              <ChainLogo class="w-6 h-6" :chain="toChainId" />
             </template>
             <template #item-prefix="{ value }">
               <ChainLogo class="w-6 h-6" :chain="value" />
