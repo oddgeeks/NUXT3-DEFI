@@ -8,6 +8,8 @@ import {
   AVO_STAGING_CHAIN_ID,
 } from "./avocado";
 
+export const bridgeDisabledNetworks = [1101];
+
 export const networks: Network[] = [
   {
     name: "Mainnet",
