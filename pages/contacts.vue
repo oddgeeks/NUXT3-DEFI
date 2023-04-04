@@ -89,13 +89,7 @@ const filteredContacts = computed(() => {
               <tr
                 v-for="contact in filteredContacts"
                 class="contact-row text-sm font-semibold cursor-pointer"
-                @click="
-                  openSendToContactModal(
-                    contact.name,
-                    contact.address,
-                    contact.chainId
-                  )
-                "
+                @click="openSendToContactModal(contact)"
               >
                 <td class="pl-7.5 text-sm">{{ contact.name }}</td>
                 <td class="flex items-center justify-between pr-10 py-6">
@@ -146,19 +140,20 @@ const filteredContacts = computed(() => {
               <CommonButton
                 color="white"
                 class="flex-1 justify-center"
-                @click="openAddContactModal(searchQuery)"
+                @click="
+                  openAddContactModal(
+                    contact.name,
+                    contact.address,
+                    contact.chainId,
+                    true
+                  )
+                "
               >
                 Edit
               </CommonButton>
               <CommonButton
                 class="flex-1 justify-center"
-                @click="
-                  openSendToContactModal(
-                    contact.name,
-                    contact.address,
-                    contact.chainId
-                  )
-                "
+                @click="openSendToContactModal(contact)"
               >
                 Send
               </CommonButton>

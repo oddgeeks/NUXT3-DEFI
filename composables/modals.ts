@@ -22,6 +22,7 @@ import Networks from "~/components/modals/Networks.vue";
 import Balance from "~/components/modals/Balance.vue";
 import AddContact from "~/components/modals/AddContact.vue";
 import SendToContact from "~/components/modals/SendToContact.vue";
+import { IContact } from "./useContact";
 
 const { openModal } = useModal();
 interface DialogModalProps {
@@ -299,26 +300,29 @@ export const openBalanceModal = (balance: any) => {
   });
 };
 
-export const openAddContactModal = (name?: string) => {
-  openModal({
-    component: AddContact,
-    componentProps: {
-      name,
-    },
-  });
-};
-
-export const openSendToContactModal = (
-  name: string,
-  address: string,
-  chainId: number | string
+export const openAddContactModal = (
+  name?: string,
+  address?: string,
+  chainId?: number | string,
+  isEdit?: boolean
 ) => {
-  openModal({
-    component: SendToContact,
+  return openModal({
+    component: AddContact,
+    async: true,
     componentProps: {
       name,
       address,
       chainId,
+      isEdit,
+    },
+  });
+};
+
+export const openSendToContactModal = (contact: IContact) => {
+  openModal({
+    component: SendToContact,
+    componentProps: {
+      contact,
     },
     options: {
       wrapperClass: "max-w-[500px]",

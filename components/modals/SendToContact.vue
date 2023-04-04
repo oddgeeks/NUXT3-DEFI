@@ -10,16 +10,8 @@ const emit = defineEmits(["destroy"]);
 const { toWei } = useBignumber();
 
 const props = defineProps({
-  name: {
-    type: String,
-    required: true,
-  },
-  address: {
-    type: String,
-    required: true,
-  },
-  chainId: {
-    type: String,
+  contact: {
+    type: Object,
     required: true,
   },
 });
@@ -28,10 +20,12 @@ const { library, account } = useWeb3();
 const { sendTransaction } = useAvocadoSafe();
 const { parseTransactionError } = useErrorHandler();
 
+const contact = ref<IContact>(props.contact);
+
 const { tokens } = storeToRefs(useTokens());
 
 const availableTokens = computed(
-  () => tokens.value.filter((t) => t.chainId === props.chainId)!
+  () => tokens.value.filter((t) => t.chainId === contact.value.chainId)!
 );
 
 const token = ref<IToken>(availableTokens.value[0]);
@@ -89,7 +83,7 @@ const { data: tx } = useAsyncData(
 
     let tx = {
       from: account.value,
-      to: props.address,
+      to: contact.value.address,
       value: "0",
       data: "0x",
     };
@@ -103,7 +97,7 @@ const { data: tx } = useAsyncData(
       );
 
       const { data } = await contract.populateTransaction.transfer(
-        props.address,
+        contact.value.address,
         transferAmount
       );
 
@@ -119,7 +113,7 @@ const { data: tx } = useAsyncData(
 );
 
 const { data, pending, error } = useEstimatedFee(tx, {
-  chainId: props.chainId,
+  chainId: contact.value.chainId,
 });
 
 const onSubmit = handleSubmit(async () => {
@@ -131,13 +125,13 @@ const onSubmit = handleSubmit(async () => {
     const metadata = encodeTransferMetadata({
       token: token.value.address,
       amount: toWei(amount.value, token.value.decimals),
-      receiver: props.address,
+      receiver: contact.value.address,
     });
 
     let transactionHash = await sendTransaction(
       {
         ...(tx.value as any),
-        chainId: Number(props.chainId),
+        chainId: Number(contact.value.chainId),
       },
       {
         metadata,
@@ -147,17 +141,17 @@ const onSubmit = handleSubmit(async () => {
     logActionToSlack({
       message: `${formatDecimal(amount.value)} ${formatSymbol(
         token.value?.symbol
-      )} to ${props.address}`,
+      )} to ${contact.value.address}`,
       action: "send",
       txHash: transactionHash,
-      chainId: props.chainId,
+      chainId: contact.value.chainId,
       account: account.value,
     });
 
     resetForm();
     emit("destroy");
 
-    showPendingTransactionModal(transactionHash, props.chainId, "send");
+    showPendingTransactionModal(transactionHash, contact.value.chainId, "send");
   } catch (e: any) {
     const err = parseTransactionError(e);
 
@@ -175,6 +169,24 @@ const onSubmit = handleSubmit(async () => {
     });
   }
 });
+
+const handleEdit = async () => {
+  const result = await openAddContactModal(
+    contact.value.name,
+    contact.value.address,
+    contact.value.chainId,
+    true
+  );
+
+  if (result.success) {
+    contact.value = result.payload as IContact;
+
+    availableTokens.value = tokens.value.filter(
+      (t) => t.chainId === contact.value.chainId
+    )!;
+    token.value = availableTokens.value[0];
+  }
+};
 </script>
 
 <template>
@@ -183,19 +195,28 @@ const onSubmit = handleSubmit(async () => {
       class="flex flex-col border-b-[1px] dark:border-b-slate-800 border-b-slate-100 -mx-[50px] px-[50px] pb-7.5 gap-7.5"
     >
       <h2 class="text-lg font-semibold">
-        {{ props.name }}
+        {{ contact.name }}
       </h2>
       <div
-        class="flex items-center gap-3 rounded-5 p-5 dark:bg-gray-800 bg-slate-50"
+        class="flex items-center rounded-5 pl-5 pr-4 py-5 dark:bg-gray-850 bg-slate-50 justify-between"
       >
-        <ChainLogo :stroke="false" class="w-7 h-7" :chain="props.chainId" />
-        <Copy :text="props.address">
-          <template #content>
-            <span class="dark:text-white text-slate-900">{{
-              shortenHash(props.address)
-            }}</span>
-          </template>
-        </Copy>
+        <div class="flex items-center gap-3">
+          <ChainLogo :stroke="false" class="w-7 h-7" :chain="contact.chainId" />
+          <Copy :text="contact.address">
+            <template #content>
+              <span class="dark:text-white text-slate-900">{{
+                shortenHash(contact.address)
+              }}</span>
+            </template>
+          </Copy>
+        </div>
+        <CommonButton
+          color="white"
+          class="justify-center bg-slate-800 !px-4"
+          @click="handleEdit()"
+        >
+          Edit
+        </CommonButton>
       </div>
     </div>
 

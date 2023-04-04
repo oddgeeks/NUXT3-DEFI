@@ -5,13 +5,16 @@ import ClipboardSVG from "~/assets/images/icons/clipboard.svg?component";
 import { RPC_URLS } from "~~/connectors";
 import { useField, useForm } from "vee-validate";
 
-const emit = defineEmits(["destroy"]);
+const emit = defineEmits(["resolve", "reject"]);
 
 const props = defineProps<{
   name: string;
+  address: string;
+  chainId: string;
+  isEdit: Boolean;
 }>();
 
-const { contacts } = useContacts();
+const { contacts, addContact, editContact } = useContacts();
 const { safeAddress } = useAvocadoSafe();
 
 const {
@@ -36,6 +39,12 @@ const {
         "duplicate-address",
         "Contact already added",
         (value, { parent }) => {
+          if (
+            props.isEdit &&
+            value?.toLowerCase() === props.address.toLowerCase() &&
+            parent.chainId === props.chainId
+          )
+            return true;
           if (!isAddress(value || "")) return true;
           if (!contacts.value[safeAddress.value]) return true;
           return !contacts.value[safeAddress.value].some(
@@ -48,9 +57,13 @@ const {
   }),
 });
 
-const { value: chainId } = useField<string>("chainId", undefined, {
-  initialValue: "1",
-});
+const { value: chainId, setValue: setChainId } = useField<string>(
+  "chainId",
+  undefined,
+  {
+    initialValue: "1",
+  }
+);
 const {
   value: contactName,
   meta: contactNameMeta,
@@ -81,13 +94,20 @@ const onSubmit = handleSubmit(() => {
     chainId: chainId.value,
     address: address.value,
   };
-  if (contacts.value[safeAddress.value]) {
-    contacts.value[safeAddress.value].push(_contact);
+  if (props.isEdit) {
+    editContact(
+      {
+        name: props.name,
+        address: props.address,
+        chainId: props.chainId,
+      },
+      _contact
+    );
   } else {
-    contacts.value[safeAddress.value] = [_contact];
+    addContact(_contact);
   }
 
-  emit("destroy");
+  emit("resolve", true, _contact);
 });
 
 const pasteAddress = async () => {
@@ -106,12 +126,20 @@ onMounted(() => {
   if (props.name) {
     setContactName(props.name);
   }
+  if (props.chainId) {
+    setChainId(props.chainId);
+  }
+  if (props.address) {
+    setAddress(props.address);
+  }
 });
 </script>
 
 <template>
   <form @submit="onSubmit">
-    <h1 class="text-lg text-center leading-5 mb-7.5">Create Contact</h1>
+    <h1 class="text-lg text-center leading-5 mb-7.5">
+      {{ props.isEdit ? "Edit" : "Create" }} Contact
+    </h1>
     <div class="flex flex-col gap-5 mb-7.5">
       <div>
         <p class="mb-2.5 text-sm">Name</p>
