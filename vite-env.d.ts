@@ -313,10 +313,18 @@ type SwapMetadataProps = {
   protocol?: string;
 };
 
+type DiscountDetails = {
+  discount?: number;
+  name: string;
+  tooltip: string;
+  iconURL: string;
+};
+
 type CalculateFeeProps = {
   fee?: string;
   multiplier?: string;
   chainId: string;
+  discountDetails?: DiscountDetails;
 };
 
 interface BuildInfo {
@@ -358,4 +366,14 @@ interface Transaction {
   simulationId: string;
   gasLimit: number;
   status: boolean;
+}
+
+interface ICalculatedFee {
+  discountDetails?: DiscountDetails;
+  discountAmount: number;
+  amountAfterDiscount: number;
+  min: number;
+  max: number;
+  formatted: string;
+  formattedAmountAfterDiscount: string;
 }
