@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { isAddress } from "@ethersproject/address";
 import ExclamationCircleSVG from "~/assets/images/icons/exclamation-circle.svg?component";
+
+const { isSafeAddress } = useAvocadoSafe();
 
 const router = useRoute();
 const account = router.params.account as string;
 
-if (!isAddress(account)) {
+if (!(await isSafeAddress(account))) {
   throw { statusCode: 404, message: "Invalid address" };
 }
 </script>
