@@ -104,7 +104,7 @@ export const networks: Network[] = [
     },
   },
   {
-    name: "zkEVM",
+    name: "Polygon zkEVM",
     chainId: 1101,
     params: {
       chainName: "polygon zkEVM",

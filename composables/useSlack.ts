@@ -60,7 +60,7 @@ export const logActionToSlack = (slackMessage: ISlackMessage) => {
   )}>`;
 
   if (chainId) {
-    message += `\n${"`Network`"} :${chainIdToName(chainId)}:`;
+    message += `\n${"`Network`"} :${formatChainName(chainId)}:`;
   }
 
   let logMessage = `${prefix} ${message}\n${"`User`"} ${accountLink}`;
@@ -83,4 +83,9 @@ export const logActionToSlack = (slackMessage: ISlackMessage) => {
 export const formatSymbol = (str: string, isUpper = true) => {
   const upper = isUpper ? str.toUpperCase() : str;
   return `${upper} :${str}:`;
+};
+
+export const formatChainName = (chainId: string) => {
+  const name = chainIdToName(chainId);
+  return name.toLowerCase().replace(" ", "-");
 };
