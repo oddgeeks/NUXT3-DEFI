@@ -25,16 +25,18 @@ const { switchNetworkByChainId } = useNetworks();
 const { sendTransaction, tokenBalances, safe } = useAvocadoSafe();
 const { parseTransactionError } = useErrorHandler();
 const { tokens } = storeToRefs(useTokens());
+const tochainId = ref<string>(props.chainId);
+const tokenAddress = ref<string>(props.address);
 
 const token = computed(
   () =>
     tokenBalances.value.find(
-      (t) => t.chainId === props.chainId && t.address === props.address
+      (t) => t.chainId === tochainId.value && t.address === tokenAddress.value
     )!
 );
 
 const availableTokens = computed(() =>
-  tokens.value.filter((t) => t.chainId !== props.chainId)
+  tokens.value.filter((t) => t.chainId === tochainId.value)
 );
 
 const amountInUsd = computed(() => {
@@ -70,7 +72,7 @@ const { handleSubmit, errors, meta, resetForm, validate, isSubmitting } =
           if (!value) return true;
 
           const resolvedAddress =
-            value.endsWith(".eth") && props.chainId === "1"
+            value.endsWith(".eth") && tochainId.value === "1"
               ? await getRpcProvider(1).resolveName(value)
               : null;
 
@@ -160,7 +162,7 @@ const { data: tx } = useAsyncData(
 );
 
 const { data, pending, error } = useEstimatedFee(tx, {
-  chainId: props.chainId,
+  chainId: tochainId.value,
 });
 
 const onSubmit = handleSubmit(async () => {
@@ -178,7 +180,7 @@ const onSubmit = handleSubmit(async () => {
     let transactionHash = await sendTransaction(
       {
         ...(tx.value as any),
-        chainId: Number(props.chainId),
+        chainId: Number(tochainId.value),
       },
       {
         metadata,
@@ -193,14 +195,14 @@ const onSubmit = handleSubmit(async () => {
       )} to ${actualAddress.value}`,
       action: "send",
       txHash: transactionHash,
-      chainId: props.chainId,
+      chainId: tochainId.value,
       account: account.value,
     });
 
     resetForm();
     emit("destroy");
 
-    showPendingTransactionModal(transactionHash, props.chainId, "send");
+    showPendingTransactionModal(transactionHash, tochainId.value, "send");
   } catch (e: any) {
     const err = parseTransactionError(e);
 
@@ -232,18 +234,17 @@ const onSubmit = handleSubmit(async () => {
           <span class="text-sm">Token</span>
         </div>
         <CommonSelect
-          v-model="token.chainId"
-          value-key="chainId"
+          v-model="tokenAddress"
+          value-key="address"
           label-key="name"
+          iconKey="address"
           :options="availableTokens"
         >
           <template #button-prefix>
-            <ChainLogo class="w-6 h-6" :chain="token.chainId" />
-            <p>{{ chainIdToName(token.chainId) }}</p>
+            <ChainLogo class="w-6 h-6" :chain="chainId" />
           </template>
           <template #item-prefix="{ value }">
-            <ChainLogo class="w-6 h-6" :chain="value" />
-            <p>{{ chainIdToName(value) }}</p>
+            <ChainLogo class="w-6 h-6" :chain="value.chain" />
           </template>
         </CommonSelect>
       </div>
