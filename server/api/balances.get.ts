@@ -210,7 +210,16 @@ const getQueryCustomTokens = (event: H3Event, chainId: string) => {
     : [];
 };
 
-const SUPPORTED_CHAIN_IDS = ["137", "10", "42161", "1", "43114", "100", "56"];
+const SUPPORTED_CHAIN_IDS = [
+  "137",
+  "10",
+  "42161",
+  "1",
+  "43114",
+  "100",
+  "56",
+  "1101",
+];
 
 export default defineEventHandler<IBalance[]>(async (event) => {
   let query = getQuery(event);
