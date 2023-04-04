@@ -56,7 +56,7 @@ const filteredContacts = computed(() => {
         </CommonInput>
         <CommonInput
           class="sm:hidden w-full"
-          v-if="contacts[safeAddress] && contacts[safeAddress].length !== 0"
+          v-show="contacts[safeAddress] && contacts[safeAddress].length !== 0"
           name="Contact Search"
           @input="search"
           type="search"
