@@ -1,6 +1,5 @@
 import { BigNumber } from "bignumber.js"
 import { H3Event } from "h3"
-import tokenlist from "~/public/tokenlist.json"
 import { AnkrProvider } from '@ankr.com/ankr.js';
 import { BalanceResolver, BalanceResolver__factory } from "~~/contracts";
 import collect from "collect.js";
@@ -8,7 +7,8 @@ import { IToken } from "~~/stores/tokens";
 import { toBN } from "~~/utils";
 import { getServerRpcProvider } from "~~/server/utils";
 
-const tokens = tokenlist.tokens;
+let tokens = []
+let lastUpdateTokens: number = 0;
 
 const balanceResolverAddresses: Record<string, string> = {
     "137": "0x58632D23120b20650262b8A629a14e4F4043E0D9",
@@ -194,13 +194,19 @@ const SUPPORTED_CHAIN_IDS = ["137", "10", "42161", "1", "43114", "100", "56"]
 export default defineEventHandler<IBalance[]>(async (event) => {
     let query = getQuery(event)
 
+    if (!lastUpdateTokens || Date.now() - lastUpdateTokens > 10_000_000) {
+        const data: any = await $fetch("https://cdn.instadapp.io/avocado/tokenlist.json");
+        tokens = data.tokens
+        lastUpdateTokens = Date.now()
+    }
+
     try {
         return await Promise.all(
             SUPPORTED_CHAIN_IDS.map(async (chainId) => await getChainBalances(chainId,
                 String(query.address),
                 getQueryCustomTokens(event, chainId)
             ))).then(r => r.flat()
-        )
+            )
     } catch (error) {
         try {
             return await Promise.all([
