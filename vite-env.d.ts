@@ -384,3 +384,7 @@ interface NFTData {
   name: string;
   chainId: number;
 }
+
+interface NFTParams {
+  pageSize: number;
+}

@@ -20,7 +20,9 @@ const { data, pending } = useAsyncData(
     if (!safeAddress.value) return;
     const nft = new NFT(safeAddress.value);
 
-    return nft.getNFTs();
+    return nft.getNFTs({
+      pageSize: 50,
+    });
   },
   {
     server: false,

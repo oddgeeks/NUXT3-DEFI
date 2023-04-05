@@ -2,22 +2,28 @@ import { AnkrProvider } from "@ankr.com/ankr.js";
 
 export const useNft = () => {
   class NFT {
-    userAddress: string;
+    owner: string;
 
-    constructor(userAddress: string) {
-      this.userAddress = userAddress;
+    constructor(owner: string) {
+      this.owner = owner;
     }
 
-    async getNFTs(): Promise<NFTData[]> {
-      return this.fetchAnkrNFTData();
+    async getNFTs(params: NFTParams): Promise<NFTData[]> {
+      return this.fetchAnkrNFTData([1, 56, 137], params);
     }
 
-    private async fetchAnkrNFTData(): Promise<NFTData[]> {
+    // private async fetchAlchemyNFTData(chainIds: number[], params: NFTParams): Promise<NFTData[]> {
+    // }
+
+    private async fetchAnkrNFTData(
+      chainIds: number[],
+      params: NFTParams
+    ): Promise<NFTData[]> {
       const provider = new AnkrProvider();
 
       const nfts = await provider.getNFTsByOwner({
-        walletAddress: this.userAddress,
-        pageSize: 50,
+        walletAddress: this.owner,
+        pageSize: params.pageSize,
       });
 
       return nfts.assets.reduce((acc, nft) => {
