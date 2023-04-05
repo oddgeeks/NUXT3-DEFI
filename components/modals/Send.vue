@@ -230,7 +230,7 @@ const onSubmit = handleSubmit(async () => {
       <!-- start token select -->
       <div class="space-y-2.5 flex flex-col">
         <div class="flex items-center justify-between">
-          <span class="text-sm">Token</span>
+          <span class="text-sm">Coin</span>
         </div>
         <CommonSelect
           v-model="tokenAddress"
