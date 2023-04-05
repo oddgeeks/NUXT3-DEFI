@@ -28,15 +28,30 @@ const { tokens } = storeToRefs(useTokens());
 
 const tochainId = ref<string>(props.chainId);
 const tokenAddress = ref<string>(props.address);
-const networks = availableNetworks;
 
 const token = computed(
-  () => tokenBalances.value.find((t) => t.address === tokenAddress.value)!
+  () => tokenBalances.value.find((t) => t.chainId === tochainId.value)!
 );
 
 const availableTokens = computed(() =>
-  tokens.value.filter((t) => t.chainId === props.chainId)
+  tokens.value.filter((t) => t.chainId === tochainId.value)
 );
+
+watch(
+  () => availableTokens.value,
+  (newTokens) => {
+    if (newTokens.length > 0) {
+      tokenAddress.value = newTokens[0].address;
+    }
+  }
+);
+
+const networks = availableNetworks.map((network) => {
+  return {
+    ...network,
+    chainId: network.chainId.toString(),
+  };
+});
 
 const amountInUsd = computed(() => {
   if (!token.value) return "0";
@@ -226,9 +241,9 @@ const onSubmit = handleSubmit(async () => {
     <div class="flex flex-col justify-center gap-[15px] items-center">
       <h2>Send</h2>
     </div>
-    <div class="flex justify-between">
+    <div class="flex gap-x-4">
       <!-- start token select -->
-      <div class="space-y-2.5 flex flex-col">
+      <div class="space-y-2.5 flex flex-col w-full">
         <div class="flex items-center justify-between">
           <span class="text-sm">Coin</span>
         </div>
@@ -243,7 +258,7 @@ const onSubmit = handleSubmit(async () => {
       </div>
       <!-- end token select -->
       <!-- start network select -->
-      <div class="space-y-2.5 flex flex-col">
+      <div class="space-y-2.5 flex flex-col w-full">
         <div class="flex items-center justify-between">
           <span class="text-sm">Network</span>
         </div>
