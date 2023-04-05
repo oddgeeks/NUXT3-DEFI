@@ -377,3 +377,10 @@ interface ICalculatedFee {
   formatted: string;
   formattedAmountAfterDiscount: string;
 }
+
+interface NFTData {
+  imageUrl: string;
+  collectionName: string;
+  name: string;
+  chainId: number;
+}

@@ -597,3 +597,23 @@ export const decodeMetadata = (data: string) => {
     return null;
   }
 };
+
+export const nameToChainId = (chainId: string | undefined) => {
+  switch (chainId) {
+    case "eth":
+    case "ethereum":
+      return 1;
+    case "optimism":
+      return 10;
+    case "bsc":
+      return 56;
+    case "polygon":
+      return 137;
+    case "arbitrum":
+      return 42161;
+    case "avalanche":
+      return 43114;
+    default:
+      return null;
+  }
+};

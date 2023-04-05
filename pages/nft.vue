@@ -1,23 +1,26 @@
 <script setup lang="ts">
-import { AnkrProvider } from "@ankr.com/ankr.js";
+import Fuse from "fuse.js";
+import { storeToRefs } from "pinia";
+import SearchSVG from "~/assets/images/icons/search.svg?component";
+
+const searchQuery = ref();
 
 const { account } = useWeb3();
 const { safeAddress } = useAvocadoSafe();
+const { networkPreference } = storeToRefs(useSafe());
 
-const provider = new AnkrProvider();
+const { NFT } = useNft();
 
 useAccountTrack(undefined, () => {
   useEagerConnect();
 });
 
-const { data } = useAsyncData(
+const { data, pending } = useAsyncData(
   async () => {
-    const nfts = await provider.getNFTsByOwner({
-      walletAddress: "0x2e8ABfE042886E4938201101A63730D04F160A82",
-      pageSize: 50,
-    });
+    if (!safeAddress.value) return;
+    const nft = new NFT(safeAddress.value);
 
-    return nfts;
+    return nft.getNFTs();
   },
   {
     server: false,
@@ -26,25 +29,51 @@ const { data } = useAsyncData(
   }
 );
 
-const handleError = (e) => {
-  // delete the image url
-  e.target.src = "";
-};
+const filteredAssets = computed(() => {
+  const items = data.value?.filter((item) =>
+    networkPreference.value.has(item.chainId)
+  );
+
+  if (!searchQuery.value) return items;
+
+  const fuse = new Fuse(items || [], {
+    keys: ["collectionName", "name"],
+    threshold: 0.2,
+  });
+
+  return fuse.search(searchQuery.value).map((result) => result.item);
+});
 </script>
 
 <template>
-  <div class="flex-1 container">
-    <div class="w-full flex items-center justify-between">
-      <h1>Your NFTs (12)</h1>
+  <div class="flex-1 container relative">
+    <div class="w-full flex items-center justify-between mb-5">
+      <h1>Your NFTs ({{ data?.length }})</h1>
       <MultipleNetworkFilter v-if="account" />
     </div>
-    <div
-      class="p-5 rounded-[25px] dark:bg-gray-850 bg-slate-50 sm:max-h-screen sm:overflow-auto scroll-style"
+    <CommonInput
+      placeholder="Search NFTs"
+      name="search-nft"
+      v-model="searchQuery"
+      type="search"
+      class="mb-5"
     >
-      <ul class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-5">
+      <template #prefix>
+        <SearchSVG class="shrink-0 mr-2" />
+      </template>
+    </CommonInput>
+    <div
+      :class="{
+        blur: pending,
+      }"
+      class="p-5 rounded-[25px] w-full h-full sm:absolute dark:bg-gray-850 bg-slate-50 max-h-full sm:overflow-auto scroll-style"
+    >
+      <ul
+        class="grid grid-cols-1 sm:grid-cols-3 w-full h-full md:grid-cols-5 gap-5 content-baseline"
+      >
         <NFTCard
           :key="asset.name"
-          v-for="asset in data?.assets"
+          v-for="asset in filteredAssets"
           :asset="asset"
         />
       </ul>
