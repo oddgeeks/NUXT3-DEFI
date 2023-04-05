@@ -41,10 +41,10 @@ const availableTokens = computed(() =>
 );
 
 watch(
-  () => availableTokens.value,
-  (newTokens) => {
-    if (newTokens.length > 0) {
-      tokenAddress.value = newTokens[0].address;
+  () => tochainId.value,
+  () => {
+    if (availableTokens.value.length > 0) {
+      tokenAddress.value = availableTokens.value[0].address;
     }
   }
 );
