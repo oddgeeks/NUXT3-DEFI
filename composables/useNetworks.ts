@@ -129,7 +129,6 @@ export function useNetworks() {
     providers,
     currentNetwork,
     switchNetworkByChainId,
-    getNetworkByChainId,
     availableNetworks,
     switchToAvocadoNetwork,
   };

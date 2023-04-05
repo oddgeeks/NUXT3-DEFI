@@ -33,52 +33,57 @@ const token = computed(
 
 const amountInUsd = computed(() => {
   if (!token.value) return "0";
-  return toBN(token.value.price || 0).times(amount.value || "0").toFixed()
+  return toBN(token.value.price || 0)
+    .times(amount.value || "0")
+    .toFixed();
 });
 
-const actualAddress = ref('');
+const actualAddress = ref("");
 
-const { handleSubmit, errors, meta, resetForm, validate, isSubmitting } = useForm({
-  validationSchema: yup.object({
-    amount: yup
-      .string()
-      .required("")
-      .test("min-amount", "", (value) => {
-        const amount = toBN(value);
+const { handleSubmit, errors, meta, resetForm, validate, isSubmitting } =
+  useForm({
+    validationSchema: yup.object({
+      amount: yup
+        .string()
+        .required("")
+        .test("min-amount", "", (value) => {
+          const amount = toBN(value);
 
-        return value ? amount.gt(0) : true;
-      })
-      .test("max-amount", "Insufficient balance", (value) => {
-        const amount = toBN(value);
-        const balance = toBN(token.value.balance);
+          return value ? amount.gt(0) : true;
+        })
+        .test("max-amount", "Insufficient balance", (value) => {
+          const amount = toBN(value);
+          const balance = toBN(token.value.balance);
 
-        return amount.gt(0) ? amount.lte(balance) : true;
-      }),
-    address: yup
-      .string()
-      .required("")
-      .test("is-address", "Incorrect address", async (value) => {
-        if (!value) return true
+          return amount.gt(0) ? amount.lte(balance) : true;
+        }),
+      address: yup
+        .string()
+        .required("")
+        .test("is-address", "Incorrect address", async (value) => {
+          if (!value) return true;
 
-        const resolvedAddress = value.endsWith('.eth') && props.chainId === '1' ? await getRpcProvider(1).resolveName(value) : null
+          const resolvedAddress =
+            value.endsWith(".eth") && props.chainId === "1"
+              ? await getRpcProvider(1).resolveName(value)
+              : null;
 
-        if (resolvedAddress) {
-          actualAddress.value = resolvedAddress
-          return true
-        }
+          if (resolvedAddress) {
+            actualAddress.value = resolvedAddress;
+            return true;
+          }
 
-        if (isAddress(value)) {
-          actualAddress.value = value
-          return true
-        }
+          if (isAddress(value)) {
+            actualAddress.value = value;
+            return true;
+          }
 
-        actualAddress.value = ''
+          actualAddress.value = "";
 
-        return false
-
-      }),
-  }),
-});
+          return false;
+        }),
+    }),
+  });
 
 const { value: amount, meta: amountMeta } = useField<string>("amount");
 const { value: address, meta: addressMeta } = useField<string>("address");
@@ -203,10 +208,9 @@ const onSubmit = handleSubmit(async () => {
       action: "send",
       type: "error",
       account: account.value,
-      errorDetails: err.parsed
+      errorDetails: err.parsed,
     });
   }
-
 });
 </script>
 
@@ -263,7 +267,9 @@ const onSubmit = handleSubmit(async () => {
             </button>
           </template>
         </CommonInput>
-         <span class="text-slate-400 text-sm text-left font-semibold"> {{ formatUsd(amountInUsd) }}</span>
+        <span class="text-slate-400 text-sm text-left font-semibold">
+          {{ formatUsd(amountInUsd) }}</span
+        >
       </div>
 
       <div class="space-y-2.5">
@@ -278,7 +284,14 @@ const onSubmit = handleSubmit(async () => {
           v-model="address"
         >
           <template #suffix>
-            <button v-tippy="{ content: 'Paste from clipboard', trigger: 'mouseenter' }" type="button" @click="pasteAddress">
+            <button
+              v-tippy="{
+                content: 'Paste from clipboard',
+                trigger: 'mouseenter',
+              }"
+              type="button"
+              @click="pasteAddress"
+            >
               <ClipboardSVG />
             </button>
           </template>

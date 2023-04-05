@@ -1103,6 +1103,13 @@
   resolved "https://registry.yarnpkg.com/@headlessui/vue/-/vue-1.7.12.tgz#963b2eb2f548278c49f2d1e67f0a4a84f54078da"
   integrity sha512-IV0k1I2I8Bj37HljFF231Y9cpldfiucf+inMCxA/VPoQT6UTxo0N/rb78CrogBxXNfsPxKmz3y/nlv+eRz6zvg==
 
+"@instadapp/avocado-base@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado-base/-/avocado-base-0.0.1.tgz#1f58ad2f892094bd29b6804497a239ff39d043fd"
+  integrity sha512-+rxYdvbraDm5e0kI3fDRD3Ku+JAovnMWqlWUztZ6nz3ikVXyByF0qEg3N94hgGEo8sOKSX6vhfOZpXYmzPxijw==
+  dependencies:
+    ethers "^5.7.2"
+
 "@instadapp/avocado-dev@npm:@instadapp/avocado@dev":
   version "0.0.0-dev.6f5b1a4"
   resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.6f5b1a4.tgz#d8675f11601b47303168ee2e0a2a7d3e0938def5"

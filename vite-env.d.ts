@@ -14,22 +14,6 @@ interface Provider {
   switchNetwork: (network: Network) => Promise<any>;
 }
 
-interface Network {
-  name: string;
-  chainId: ChainId;
-  params: {
-    chainName?: string;
-    rpcUrls: string[];
-    blockExplorerUrls?: string[];
-    iconUrls?: string[];
-    nativeCurrency?: {
-      name: string;
-      symbol: string;
-      decimals: number;
-    };
-  };
-}
-
 interface NetworkVersion extends Network {
   latestVersion: string;
   currentVersion: string;
