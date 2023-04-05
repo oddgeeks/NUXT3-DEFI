@@ -21,22 +21,21 @@ const props = defineProps({
 });
 
 const { library, account } = useWeb3();
-const { switchNetworkByChainId } = useNetworks();
+const { switchNetworkByChainId, availableNetworks } = useNetworks();
 const { sendTransaction, tokenBalances, safe } = useAvocadoSafe();
 const { parseTransactionError } = useErrorHandler();
 const { tokens } = storeToRefs(useTokens());
+
 const tochainId = ref<string>(props.chainId);
 const tokenAddress = ref<string>(props.address);
+const networks = availableNetworks;
 
 const token = computed(
-  () =>
-    tokenBalances.value.find(
-      (t) => t.chainId === tochainId.value && t.address === tokenAddress.value
-    )!
+  () => tokenBalances.value.find((t) => t.address === tokenAddress.value)!
 );
 
 const availableTokens = computed(() =>
-  tokens.value.filter((t) => t.chainId === tochainId.value)
+  tokens.value.filter((t) => t.chainId === props.chainId)
 );
 
 const amountInUsd = computed(() => {
@@ -227,7 +226,7 @@ const onSubmit = handleSubmit(async () => {
     <div class="flex flex-col justify-center gap-[15px] items-center">
       <h2>Send</h2>
     </div>
-    <div>
+    <div class="flex justify-between">
       <!-- start token select -->
       <div class="space-y-2.5 flex flex-col">
         <div class="flex items-center justify-between">
@@ -243,14 +242,44 @@ const onSubmit = handleSubmit(async () => {
         </CommonSelect>
       </div>
       <!-- end token select -->
+      <!-- start network select -->
+      <div class="space-y-2.5 flex flex-col">
+        <div class="flex items-center justify-between">
+          <span class="text-sm">Network</span>
+        </div>
+        <CommonSelect
+          v-model="tochainId"
+          value-key="chainId"
+          label-key="name"
+          icon-key="icon"
+          :options="networks"
+        >
+          <template #button-prefix>
+            <ChainLogo class="w-6 h-6" :chain="tochainId" />
+          </template>
+          <template #item-prefix="{ value }">
+            <ChainLogo class="w-6 h-6" :chain="value" />
+          </template>
+        </CommonSelect>
+      </div>
+      <!-- end network select -->
     </div>
     <div class="space-y-5">
       <div class="space-y-2.5 flex flex-col">
         <div class="flex items-center justify-between">
-          <span class="text-sm">Amount</span>
-          <span class="text-sm uppercase"
-            >{{ formatDecimal(token.balance) }} {{ token.symbol }}</span
-          >
+          <div>
+            <span class="text-sm">Amount</span>
+          </div>
+          <div class="flex text-sm uppercase gap-x-3">
+            <span>{{ formatDecimal(token.balance) }} {{ token.symbol }}</span>
+            <button
+              type="button"
+              class="text-primary hover:text-primary"
+              @click="setMax"
+            >
+              MAX
+            </button>
+          </div>
         </div>
         <CommonInput
           type="numeric"
@@ -259,15 +288,6 @@ const onSubmit = handleSubmit(async () => {
           placeholder="Enter amount"
           v-model="amount"
         >
-          <template #suffix>
-            <button
-              type="button"
-              class="text-primary hover:text-primary"
-              @click="setMax"
-            >
-              MAX
-            </button>
-          </template>
         </CommonInput>
         <span class="text-sm font-semibold text-left text-slate-400">
           {{ formatUsd(amountInUsd) }}</span
@@ -306,19 +326,10 @@ const onSubmit = handleSubmit(async () => {
         >
           Owner {{ shortenHash(account) }}
         </button>
-
-        <div
-          class="dark:bg-gray-850 !mt-5 bg-slate-50 px-3 py-2 flex space-x-2 rounded-[20px]"
-        >
-          <ChainLogo class="w-5 h-5" :chain="token.chainId" />
-          <span class="text-xs font-medium leading-5">
-            Sending on the {{ chainIdToName(token.chainId) }} network
-          </span>
-        </div>
       </div>
 
       <EstimatedFee
-        :chain-id="chainId"
+        :chain-id="tochainId"
         :loading="pending"
         :data="data"
         :error="error"
