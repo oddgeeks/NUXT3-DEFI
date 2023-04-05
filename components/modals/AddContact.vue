@@ -64,11 +64,8 @@ const { value: chainId, setValue: setChainId } = useField<string>(
     initialValue: "1",
   }
 );
-const {
-  value: contactName,
-  meta: contactNameMeta,
-  setValue: setContactName,
-} = useField<string>("contactName");
+const { value: contactName, setValue: setContactName } =
+  useField<string>("contactName");
 const {
   value: address,
   meta: addressMeta,
@@ -182,15 +179,11 @@ onMounted(() => {
           </template>
         </CommonSelect>
       </div>
-      <!-- <CommonNotification
-        v-if="error"
-        type="warning"
-        text="Contact already exists"
-      /> -->
     </div>
     <CommonButton
       type="submit"
       size="lg"
+      :disabled="disabled"
       class="w-full items-center justify-center"
     >
       Save
