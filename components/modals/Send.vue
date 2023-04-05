@@ -30,7 +30,10 @@ const tochainId = ref<string>(props.chainId);
 const tokenAddress = ref<string>(props.address);
 
 const token = computed(
-  () => tokenBalances.value.find((t) => t.chainId === tochainId.value)!
+  () =>
+    tokenBalances.value.find(
+      (t) => t.chainId === tochainId.value && t.address === tokenAddress.value
+    )!
 );
 
 const availableTokens = computed(() =>
