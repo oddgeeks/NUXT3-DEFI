@@ -13,7 +13,7 @@ useAccountTrack(undefined, () => {
 const { data } = useAsyncData(
   async () => {
     const nfts = await provider.getNFTsByOwner({
-      walletAddress: "0x32b271D89178724141a644a6efD7fF5512Cd900a",
+      walletAddress: "0x2e8ABfE042886E4938201101A63730D04F160A82",
       pageSize: 50,
     });
 
@@ -25,6 +25,11 @@ const { data } = useAsyncData(
     watch: [safeAddress],
   }
 );
+
+const handleError = (e) => {
+  // delete the image url
+  e.target.src = "";
+};
 </script>
 
 <template>
@@ -33,28 +38,15 @@ const { data } = useAsyncData(
       <h1>Your NFTs (12)</h1>
       <MultipleNetworkFilter v-if="account" />
     </div>
-    <div class="p-5 rounded-[25px] dark:bg-gray-850 bg-slate-50">
-      <ul class="grid grid-cols-5 gap-5">
-        <template :key="asset.name" v-for="asset in data?.assets">
-          <li
-            class="dark:bg-slate-800 bg-slate-150 p-2.5 rounded-5"
-            v-if="asset?.imageUrl"
-          >
-            <figure>
-              <img
-                class="rounded-[14px]"
-                width="168"
-                height="160"
-                :src="asset.imageUrl"
-                :alt="asset.collectionName"
-              />
-              <figcaption>
-                <span class="text-xs font-bold"> {{ asset.name }}</span>
-                <span></span>
-              </figcaption>
-            </figure>
-          </li>
-        </template>
+    <div
+      class="p-5 rounded-[25px] dark:bg-gray-850 bg-slate-50 sm:max-h-screen sm:overflow-auto scroll-style"
+    >
+      <ul class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-5">
+        <NFTCard
+          :key="asset.name"
+          v-for="asset in data?.assets"
+          :asset="asset"
+        />
       </ul>
     </div>
   </div>
