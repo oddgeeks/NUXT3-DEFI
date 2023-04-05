@@ -4,6 +4,8 @@ import { IBalance } from "~~/stores/safe";
 export const useGraph = (balance: Ref<IBalance>) => {
   const interactable = computed(() => toBN(balance.value.balance).gt(0));
 
+  const temporaryDisabled = computed(() => balance.value.chainId == "1101");
+
   const priceDiffColor = computed(() => {
     if (!priceDiffInPercent.value) return "rgb(148 163 184)";
 
@@ -52,5 +54,6 @@ export const useGraph = (balance: Ref<IBalance>) => {
     priceDiffInPercent,
     priceDiffClass,
     chartData,
+    temporaryDisabled,
   };
 };

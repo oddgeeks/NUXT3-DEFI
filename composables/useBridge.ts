@@ -24,7 +24,7 @@ export const useBridge = (props: IBridge) => {
   const { account } = useWeb3();
   const { fromWei, toWei } = useBignumber();
   const { tokenBalances, safeAddress } = useAvocadoSafe();
-  const { getNetworkByChainId, networks } = useNetworks();
+  const { getNetworkByChainId } = useNetworks();
   const { tokens } = storeToRefs(useTokens());
 
   const fromChainId = ref(props.fromChainId);
@@ -411,8 +411,11 @@ export const useBridge = (props: IBridge) => {
   };
 
   const selectableChains = computed(() =>
-    networks.filter(
-      (c) => String(c.chainId) !== fromChainId.value && c.chainId !== avoChainId
+    availableNetworks.filter(
+      (c) =>
+        String(c.chainId) !== fromChainId.value &&
+        c.chainId !== avoChainId &&
+        !bridgeDisabledNetworks.includes(c.chainId)
     )
   );
 

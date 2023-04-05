@@ -1,18 +1,16 @@
-import SVGMainnet from "~/assets/images/logo/mainnet.svg?component";
-import SVGPolygon from "~/assets/images/logo/polygon.svg?component";
-import SVGArbitrum from "~/assets/images/logo/arbitrum.svg?component";
-import SVGOptimism from "~/assets/images/logo/optimism.svg?component";
-import SVGAvalanche from "~/assets/images/logo/avalanche.svg?component";
+import {
+  changeMetamaskNetwork,
+  injected,
+  walletlink,
+  changeNetworkWalletConnect,
+} from "~~/connectors";
+import SVGWalletlink from "~/assets/images/wallet/walletlink.svg?component";
 import SVGMetamask from "~/assets/images/wallet/metamask.svg?component";
 import SVGWalletConnect from "~/assets/images/wallet/wallet-connect.svg?component";
-import SVGMagicConnect from "~/assets/images/wallet/magic.svg?component";
-import SVGWalletlink from "~/assets/images/wallet/walletlink.svg?component";
-import { RPC_URLS } from "~~/connectors";
 import { ethers } from "ethers";
 
 export function useNetworks() {
   const { chainId, provider, library } = useWeb3();
-  const { setConnectorName } = useConnectors();
 
   const providers: Provider[] = [
     {
@@ -20,11 +18,9 @@ export function useNetworks() {
       id: "injected",
       logo: SVGMetamask,
       switchNetwork: async (network: Network) => {
-        const { changeMetamaskNetwork } = await import("~/connectors");
         return await changeMetamaskNetwork(network);
       },
       connect: async () => {
-        const { injected } = await import("~/connectors");
         return injected;
       },
     },
@@ -33,11 +29,9 @@ export function useNetworks() {
       id: "walletlink",
       logo: SVGWalletlink,
       switchNetwork: async (network: Network) => {
-        const { changeMetamaskNetwork } = await import("~/connectors");
         return await changeMetamaskNetwork(network);
       },
       connect: async () => {
-        const { walletlink } = await import("~/connectors");
         return walletlink;
       },
     },
@@ -46,155 +40,13 @@ export function useNetworks() {
       id: "walletconnect",
       logo: SVGWalletConnect,
       switchNetwork: async (network: Network) => {
-        const { changeNetworkWalletConnect } = await import("~/connectors");
         return await changeNetworkWalletConnect(network);
       },
       connect: async () => {
-        const { changeNetworkWalletConnect } = await import("~/connectors");
-
         //@ts-ignore
         window.wc = changeNetworkWalletConnect();
 
         return changeNetworkWalletConnect();
-      },
-    },
-    // {
-    //     name: "Torus",
-    //     logo: SVGMetamask,
-    //     switchNetwork: async (network: Network) => {
-    //     },
-    //     connect: async () => {
-    //         const { torus } = await import("~/connectors");
-    //         return torus;
-    //     },
-    // },
-    // {
-    //   name: "Magic",
-    //   id: "magic",
-    //   logo: SVGMagicConnect,
-    //   switchNetwork: async (network: Network) => {},
-    //   connect: async () => {
-    //     const { magic } = await import("~/connectors");
-
-    //     return magic("georges.kabbouchi@gmail.com");
-    //   },
-    // },
-  ];
-
-  const networks: Network[] = [
-    {
-      name: "Mainnet",
-      chainId: 1,
-      icon: SVGMainnet,
-      params: {
-        rpcUrls: ["https://rpc.ankr.com/eth"],
-        nativeCurrency: {
-          name: "Ethereum",
-          symbol: "ETH",
-          decimals: 18,
-        },
-      },
-    },
-    {
-      name: "Polygon",
-      chainId: 137,
-      icon: SVGPolygon,
-      params: {
-        chainName: "Matic(Polygon) Mainnet",
-        nativeCurrency: {
-          name: "Matic",
-          symbol: "MATIC",
-          decimals: 18,
-        },
-        rpcUrls: ["https://polygon-rpc.com"],
-        blockExplorerUrls: ["https://polygonscan.com/"],
-      },
-    },
-    {
-      name: "Arbitrum",
-      chainId: 42161,
-      icon: SVGArbitrum,
-      params: {
-        chainName: "Arbitrum One",
-        nativeCurrency: {
-          name: "Ethereum",
-          symbol: "ETH",
-          decimals: 18,
-        },
-        rpcUrls: ["https://arb1.arbitrum.io/rpc"],
-        blockExplorerUrls: ["https://arbiscan.io"],
-      },
-    },
-    {
-      name: "Optimism",
-      chainId: 10,
-      icon: SVGOptimism,
-      params: {
-        chainName: "Optimistic Ethereum",
-        nativeCurrency: {
-          name: "Ethereum",
-          symbol: "ETH",
-          decimals: 18,
-        },
-        rpcUrls: ["https://mainnet.optimism.io"],
-        blockExplorerUrls: ["https://optimistic.etherscan.io"],
-      },
-    },
-    {
-      name: "Avalanche",
-      chainId: 43114,
-      icon: SVGAvalanche,
-      params: {
-        chainName: "Avalanche Network",
-        nativeCurrency: {
-          name: "Avalanche",
-          symbol: "AVAX",
-          decimals: 18,
-        },
-        rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
-        blockExplorerUrls: ["https://snowtrace.io/"],
-      },
-    },
-    {
-      name: avoChainName,
-      chainId: avoChainId,
-      icon: SVGPolygon,
-      params: {
-        chainName: avoChainName,
-        nativeCurrency: {
-          name: "Avocado",
-          symbol: "USDC",
-          decimals: 18,
-        },
-        iconUrls: ["https://avocado.instadapp.io/logo.svg"],
-        rpcUrls: [RPC_URLS[avoChainId]],
-        blockExplorerUrls: ["https://avocado.instadapp.io"],
-      },
-    },
-    {
-      name: "BSC",
-      chainId: 56,
-      icon: SVGPolygon,
-      params: {
-        chainName: "Binance Smart Chain",
-        nativeCurrency: {
-          name: "Binance Coin",
-          symbol: "BNB",
-          decimals: 18,
-        },
-      },
-    },
-    {
-      name: "Gnosis",
-      chainId: 100,
-      icon: SVGPolygon,
-      params: {
-        chainName: "Gnosis Safe",
-        nativeCurrency: {
-          name: "xdaistable",
-          symbol: "xDAI",
-          decimals: 18,
-        },
       },
     },
   ];
@@ -267,14 +119,6 @@ export function useNetworks() {
     }
     await nextTick();
   };
-
-  const getNetworkByChainId = (chainId: number | string) => {
-    return networks.find((i) => i.chainId === Number(chainId))!;
-  };
-
-  const availableNetworks = networks.filter(
-    (network) => network.chainId != avoChainId
-  );
 
   const switchToAvocadoNetwork = () => {
     return switchNetworkByChainId(avoChainId);

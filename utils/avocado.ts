@@ -29,6 +29,10 @@ export const AVO_PROD_DEPOSIT_ADDRESS =
 export const AVO_STAGING_DEPOSIT_ADDRESS =
   "0x853e991d800Dfd6bC1F83AED3310e859482323dc";
 
+export const AVO_PROD_RPC_URL = "https://rpc.avocado.instadapp.io";
+
+export const AVO_STAGING_RPC_URL = "https://rpc.avocado.instad.app";
+
 export default prod ? Avocado : AvocadoDev;
 
 export const avoChainId = prod ? AVO_PROD_CHAIN_ID : AVO_STAGING_CHAIN_ID;
