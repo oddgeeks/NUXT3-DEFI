@@ -1,4 +1,5 @@
 import { storeToRefs } from "pinia";
+import { isAddress } from "@ethersproject/address";
 
 export const useAvocadoSafe = () => {
   const { switchToAvocadoNetwork } = useNetworks();
@@ -86,6 +87,19 @@ export const useAvocadoSafe = () => {
     }
   );
 
+  const isSafeAddress = async (
+    safeAddressToCheck: string
+  ): Promise<boolean> => {
+    if (!isAddress(safeAddressToCheck)) return false;
+
+    const resp = await avoProvider.send("api_getSafe", [safeAddressToCheck]);
+
+    return (
+      resp &&
+      resp.safe_address.toLowerCase() === safeAddressToCheck.toLowerCase()
+    );
+  };
+
   return {
     safe,
     tokenBalances,
@@ -96,5 +110,6 @@ export const useAvocadoSafe = () => {
     sendTransactions,
     airDrop,
     fetchAirDrop: execute,
+    isSafeAddress,
   };
 };

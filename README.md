@@ -2,10 +2,6 @@
 
 An interface for Avocado platform that makes web3 interaction easy by enabling network, gas and account abstraction allowing you to experience web3 more seamlessly.
 
-## Adding Tokenlist
-
-Add the token id in `coinIds` array at [scripts/token-list.ts](https://github.com/Instadapp/avocado/blob/master/scripts/token-list.ts) and run `yarn generate:tokenlist`. The script will take a few minutes tio fetch decimals and logo URI. Please make sure the token id is outsourced from Coingecko.
-
 ## Setup
 
 Make sure to install the dependencies:

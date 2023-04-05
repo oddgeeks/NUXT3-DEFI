@@ -22,7 +22,7 @@ export const useTokens = defineStore("tokens", () => {
 
   const fetchTokens = async () => {
     try {
-      const data: any = await $fetch("/tokenlist.json");
+      const data: any = await $fetch("https://cdn.instadapp.io/avocado/tokenlist.json");
 
       tokens.value = await fetchTokenPrices([
         ...data.tokens.map((t: any) => ({
