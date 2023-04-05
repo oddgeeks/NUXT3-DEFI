@@ -173,7 +173,7 @@ export const getExplorerUrl = (
       return "https://zkevm.polygonscan.com" + suffix;
     case "100":
       return "https://gnosisscan.io" + suffix;
-    case "1102":
+    case "1101":
       return "https://zkevm.polygonscan.com" + suffix;
   }
 };
