@@ -1103,10 +1103,10 @@
   resolved "https://registry.yarnpkg.com/@headlessui/vue/-/vue-1.7.12.tgz#963b2eb2f548278c49f2d1e67f0a4a84f54078da"
   integrity sha512-IV0k1I2I8Bj37HljFF231Y9cpldfiucf+inMCxA/VPoQT6UTxo0N/rb78CrogBxXNfsPxKmz3y/nlv+eRz6zvg==
 
-"@instadapp/avocado-base@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado-base/-/avocado-base-0.0.2.tgz#8ee55762a982b1d8899e9952531a3d64027a24cc"
-  integrity sha512-fyK4zlO+oGQEISP0FvzpQMMcBGz1v++HPeBcyTmhGg5/+7l2IF6IW7/xVxcD3KZ/gW1CjovP/CilY4bLrcMyEQ==
+"@instadapp/avocado-base@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado-base/-/avocado-base-0.0.4.tgz#dd1ca01d8cf8a70d4e22f887138a9914272c3b42"
+  integrity sha512-0cGYFCwvnTCrvwzykla2rM/7aAH9XbWG79MgS8gG6qEj3CzF6IQyyhAgB8gkvUs0IdcCJ6Rcsr9RMB8BD1Ipxw==
   dependencies:
     bignumber.js "^9.1.1"
     ethers "^5.7.2"

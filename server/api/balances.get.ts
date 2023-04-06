@@ -4,7 +4,6 @@ import { AnkrProvider } from "@ankr.com/ankr.js";
 import { BalanceResolver, BalanceResolver__factory } from "~~/contracts";
 import collect from "collect.js";
 import { IToken } from "~~/stores/tokens";
-import { toBN } from "~~/utils";
 
 let tokens = [];
 let lastUpdateTokens: number = 0;
