@@ -3,6 +3,9 @@ interface Window {
 }
 
 type ITxType = "send" | "swap" | "bridge" | "topUpGas" | "wc" | "upgrade";
+
+type ChainId = 1 | 137 | 42161 | 10 | 56 | 43114 | 100 | 1101 | 634 | 63400;
+
 interface Provider {
   id: string;
   name: string;
@@ -13,11 +16,10 @@ interface Provider {
 
 interface Network {
   name: string;
-  chainId: number;
-  icon: any;
+  chainId: ChainId;
   params: {
     chainName?: string;
-    rpcUrls?: string[];
+    rpcUrls: string[];
     blockExplorerUrls?: string[];
     iconUrls?: string[];
     nativeCurrency?: {
@@ -313,10 +315,18 @@ type SwapMetadataProps = {
   protocol?: string;
 };
 
+type DiscountDetails = {
+  discount?: number;
+  name: string;
+  tooltip: string;
+  iconURL: string;
+};
+
 type CalculateFeeProps = {
   fee?: string;
   multiplier?: string;
   chainId: string;
+  discountDetails?: DiscountDetails;
 };
 
 interface BuildInfo {
@@ -358,4 +368,14 @@ interface Transaction {
   simulationId: string;
   gasLimit: number;
   status: boolean;
+}
+
+interface ICalculatedFee {
+  discountDetails?: DiscountDetails;
+  discountAmount: number;
+  amountAfterDiscount: number;
+  min: number;
+  max: number;
+  formatted: string;
+  formattedAmountAfterDiscount: string;
 }

@@ -258,7 +258,7 @@ Issued At: ${new Date().toISOString()}`;
         <div class="flex items-center gap-6.5">
           <div class="relative">
             <GasEmoji />
-            <img src="https://avocado.instadapp.io/tokens/usd-coin.svg" class="absolute -left-2 -bottom-2 border-4 border-white dark:border-[#111827] rounded-full" width="30" height="30" />
+            <img src="https://cdn.instadapp.io/avocado/tokens/usd-coin.svg" class="absolute -left-2 -bottom-2 border-4 border-white dark:border-[#111827] rounded-full" width="30" height="30" />
           </div>
           <span class="text-[80px] font-bold">{{ promo && toBN(promo.amount).decimalPlaces(2) }} USDC</span>
         </div>

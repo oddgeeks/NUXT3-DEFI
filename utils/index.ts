@@ -2,8 +2,6 @@ import { ethers, utils } from "ethers";
 import { BigNumber } from "bignumber.js";
 import { BigNumber as BN } from "ethers";
 import { Forwarder__factory } from "@/contracts";
-import { RPC_URLS } from "~~/connectors";
-import { AVO_PROD_CHAIN_ID, AVO_STAGING_CHAIN_ID } from "./avocado";
 
 const multiMetadataTypes = ["bytes[]"];
 
@@ -49,18 +47,6 @@ export function shortenHash(hash: string, length: number = 4) {
   return shortened;
 }
 
-const rpcInstances: Record<string, ethers.providers.JsonRpcProvider> = {};
-
-export const getRpcProvider = (chainId: number | string) => {
-  if (!rpcInstances[chainId]) {
-    rpcInstances[chainId] = new ethers.providers.JsonRpcProvider(
-      RPC_URLS[Number(chainId)]
-    );
-  }
-
-  return rpcInstances[chainId];
-};
-
 export const toBN = (value: BigNumber.Value | BN) =>
   new BigNumber(BN.isBigNumber(value) ? value.toString() : value);
 export const isZero = (value: BigNumber.Value | BN) => toBN(value).isZero();
@@ -89,31 +75,6 @@ export const ensureValue = (value: any) => {
 export const max = (...args: BigNumber.Value[]) => {
   return BigNumber.max(...args);
 };
-export const chainIdToName = (chainId: string | number) => {
-  switch (String(chainId)) {
-    case "1":
-      return "Mainnet";
-    case "137":
-      return "Polygon";
-    case "10":
-      return "Optimism";
-    case "42161":
-      return "Arbitrum";
-    case "43114":
-      return "Avalanche";
-    case "100":
-      return "Gnosis";
-    case "56":
-      return "BSC";
-    case "250":
-      return "Fantom";
-    case String(AVO_PROD_CHAIN_ID):
-    case String(AVO_STAGING_CHAIN_ID):
-      return "Avocado";
-    default:
-      throw new Error(`Unknown chainId ${chainId}`);
-  }
-};
 
 export function onImageError(this: HTMLImageElement) {
   const parentElement = this.parentElement;
@@ -124,30 +85,6 @@ export function onImageError(this: HTMLImageElement) {
     parentElement.classList.add("bg-gray-300");
   }
 }
-
-export const getExplorerUrl = (
-  chainId: string | number,
-  suffix: `/${string}` = "/"
-) => {
-  switch (String(chainId)) {
-    case "1":
-      return "https://etherscan.io" + suffix;
-    case "137":
-      return "https://polygonscan.com" + suffix;
-    case "43114":
-      return "https://snowtrace.io" + suffix;
-    case "10":
-      return "https://optimistic.etherscan.io" + suffix;
-    case "42161":
-      return "https://arbiscan.io" + suffix;
-    case "250":
-      return "https://ftmscan.com" + suffix;
-    case "56":
-      return "https://bscscan.com" + suffix;
-    case "100":
-      return "https://gnosisscan.io" + suffix;
-  }
-};
 
 const locale = "en-US";
 
@@ -188,7 +125,7 @@ export function signedNumber(numb: string | number) {
   }).format(toBN(numb).toNumber());
 }
 
-export function formatDecimal(value: string, decimalPlaces = 5) {
+export function formatDecimal(value: string | number, decimalPlaces = 5) {
   if (!value) {
     value = "0";
   }
@@ -237,15 +174,28 @@ export const slack = async (
   });
 };
 
-export const calculateEstimatedFee = (params: CalculateFeeProps) => {
-  const { fee, multiplier = "0" } = params;
+export const calculateEstimatedFee = (
+  params: CalculateFeeProps
+): ICalculatedFee => {
+  const { fee, multiplier = "0", discountDetails } = params;
 
   if (!fee)
     return {
+      discountDetails: {
+        discount: 0,
+        name: "",
+        tooltip: "",
+        iconURL: "",
+      },
+      discountAmount: 0,
+      amountAfterDiscount: 0,
       min: 0,
       max: 0,
+      formattedAmountAfterDiscount: "0.00",
       formatted: "0.00",
     };
+
+  const discount = discountDetails?.discount;
 
   const maxVal = toBN(fee)
     .dividedBy(10 ** 18)
@@ -262,12 +212,37 @@ export const calculateEstimatedFee = (params: CalculateFeeProps) => {
   const formattedMin = formatDecimal(String(actualMin), 2);
   const formattedMax = formatDecimal(String(actualMax), 2);
 
+  const discountAmountMin = discount ? actualMin * discount : 0;
+  const discountAmount = discount ? actualMax * discount : 0;
+
+  const maxAmountAfterDiscount = discount
+    ? actualMax - discountAmount
+    : actualMax;
+  const minAmountAfterDiscount = discount
+    ? actualMin - discountAmountMin
+    : actualMin;
+
+  const formattedDiscountedAmountMin = formatDecimal(minAmountAfterDiscount, 2);
+  const formattedDiscountedAmount = formatDecimal(maxAmountAfterDiscount, 2);
+
   const isEqual = formattedMin === formattedMax;
 
+  const formatted = isEqual
+    ? formattedMax
+    : `${formattedMin} - ${formattedMax}`;
+
+  const formattedAmountAfterDiscount = isEqual
+    ? formattedDiscountedAmount
+    : `${formattedDiscountedAmountMin} - ${formattedDiscountedAmount}`;
+
   return {
+    discountDetails,
+    discountAmount,
     min: actualMin,
     max: actualMax,
-    formatted: isEqual ? formattedMax : `${formattedMin} - ${formattedMax}`,
+    formatted,
+    amountAfterDiscount: maxAmountAfterDiscount,
+    formattedAmountAfterDiscount,
   };
 };
 

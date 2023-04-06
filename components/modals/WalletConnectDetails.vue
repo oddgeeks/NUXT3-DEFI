@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { RPC_URLS } from "~~/connectors";
-
 const { safeAddress } = useAvocadoSafe();
 const wcStore = useWalletConnect();
 const [loading, toggle] = useToggle(false);
@@ -37,7 +35,7 @@ watch(chainId, async () => {
     await wc.updateSession({
       chainId: chainId.value,
       networkId: chainId.value,
-      rpcUrl: RPC_URLS[chainId.value],
+      rpcUrl: getRpcURLByChainId(chainId.value),
       accounts: [safeAddress.value],
     });
 

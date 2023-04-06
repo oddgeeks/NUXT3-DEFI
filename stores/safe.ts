@@ -1,7 +1,6 @@
 import { ethers } from "ethers";
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
 import { GaslessWallet__factory, Forwarder__factory } from "~/contracts";
-import { RPC_URLS } from "~~/connectors";
 import { IToken } from "./tokens";
 import { wait } from "@instadapp/utils";
 
@@ -17,16 +16,11 @@ export const useSafe = defineStore("safe", () => {
   const { account } = useWeb3();
   const { tokens, customTokens } = storeToRefs(useTokens());
   const documentVisibility = useDocumentVisibility();
-  const { networks } = useNetworks();
   const { parseTransactionError } = useErrorHandler();
 
   const forwarderProxyContract = Forwarder__factory.connect(
     forwarderProxyAddress,
-    new ethers.providers.JsonRpcProvider(RPC_URLS[137])
-  );
-
-  const availableNetworks = networks.filter(
-    (network) => network.chainId != avoChainId
+    new ethers.providers.JsonRpcProvider(getRpcURLByChainId(137))
   );
 
   const avoProvider = getRpcProvider(avoChainId);
@@ -175,12 +169,17 @@ export const useSafe = defineStore("safe", () => {
       balances.value.loading = true;
       balanceAborter.value = new AbortController();
 
+      const params: any = {
+        address: safeAddress.value,
+      }
+
+      for (const chainId of ["137", "10", "42161", "1", "43114", "100", "56"]) {
+        params[`customTokens[${chainId}]`] = customTokens.value.filter(t => t.chainId === chainId).map(t => t.address)
+      }
+
       const resp = (await http("/api/balances", {
         signal: balanceAborter.value?.signal,
-        params: {
-          address: safeAddress.value,
-          "customTokens[100]": customTokens.value.filter(t => t.chainId === '100').map(t => t.address),
-        },
+        params,
       })) as any[];
 
       balanceAborter.value = undefined;

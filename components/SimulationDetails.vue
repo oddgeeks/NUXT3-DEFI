@@ -13,7 +13,9 @@ defineProps<{
       Transaction Breakdown
     </h1>
 
-    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-[10px] gap-y-5">
+    <ul
+      class="grid grid-cols-1 sm:grid-cols-2 -mr-3 gap-x-[10px] gap-y-5 scroll-style max-h-[239px] overflow-y-auto"
+    >
       <template
         :key="k"
         v-for="(item, k) in details.balanceChange.approveTokens"

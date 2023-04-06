@@ -27,6 +27,7 @@ const chainUSDCAddresses: any = {
   43114: "0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
   100: "0xddafbb505ad214d7b80b1f830fccc89b60fb7a83",
   56: "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
+  1101: "0xa8ce8aee21bc2a48a5ef670afcc9274c7bbbc035",
 };
 
 const pendingGasAmount = useNuxtData("pending-deposit");
@@ -48,10 +49,16 @@ const { handleSubmit, errors, meta, resetForm } = useForm({
     amount: yup
       .string()
       .required("")
-      .test("min-amount", "Amount must be greater than 0.01", (value) => {
+      .test("min-amount", "", (value, { createError }) => {
         const amount = toBN(value);
+        const minAmount = String(chainId.value) == "1" ? "5" : "0.01";
 
-        return value ? amount.gt("0.01") : true;
+        return amount.gt(minAmount) || !value
+          ? true
+          : createError({
+              path: "amount",
+              message: `Amount must be greater than ${minAmount} USDC`,
+            });
       })
       .test("max-amount", "Insufficient balance", (value: any) => {
         const amount = toBN(value);
