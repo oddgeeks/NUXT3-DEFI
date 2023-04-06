@@ -1,9 +1,7 @@
 name: Open PR develop -> master
 
 on:
-  pull_request:
-    types:
-      - closed
+  push:
     branches:
       - develop
 
@@ -13,16 +11,17 @@ env:
 
 jobs:
   create_pull_request:
-    if: github.event.pull_request.merged == true
     name: Create Pull Request
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pull-requests: write
     steps:
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4.2.4
-        with:
-          branch: develop
-          base: master
-          title: Staging Changes
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
+      - name: Create Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create -B master -H develop -d --title "Staging" --body "## Changes to be merged from develop into master" || true
