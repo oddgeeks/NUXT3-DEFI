@@ -34,7 +34,7 @@ export function useEstimatedFee(txData: Ref, params: EstimatedFeeParams) {
     return calculateEstimatedFee({
       chainId: params.chainId,
       ...rawData.value,
-      // discountDetails,
+      discountDetails,
     });
   });
 
