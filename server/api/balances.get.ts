@@ -10,10 +10,10 @@ let lastUpdateTokens: number = 0;
 
 //
 const balanceResolverContracts = availableNetworks.reduce((acc, curr) => {
-  console.log(curr.params.serverRpcUrl);
-  if (!curr.params.balanceResolverAddress) return acc;
+  console.log(curr.serverRpcUrl);
+  if (!curr.balanceResolverAddress) return acc;
   acc[curr.chainId] = BalanceResolver__factory.connect(
-    curr.params.balanceResolverAddress,
+    curr.balanceResolverAddress,
     getServerRpcProvider(curr.chainId)
   );
   return acc;

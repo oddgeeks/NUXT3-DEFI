@@ -19,5 +19,4 @@ export const avoDepositAddress = prod
   ? AVO_PROD_DEPOSIT_ADDRESS
   : AVO_STAGING_DEPOSIT_ADDRESS;
 
-export const avoExplorerURL =
-  getNetworkByChainId(avoChainId).params.explorerUrl;
+export const avoExplorerURL = getNetworkByChainId(avoChainId).explorerUrl;

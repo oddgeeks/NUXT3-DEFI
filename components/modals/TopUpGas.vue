@@ -70,7 +70,7 @@ const token = computed(() => getUSDCByChainId(String(chainId.value)));
 
 const getUSDCByChainId = (chainId: string | number) => {
   const usdcAddr = availableNetworks.find((i) => String(i.chainId) == chainId)
-    ?.params?.usdcAddress as string;
+    ?.usdcAddress as string;
 
   return tokenBalances.value.find(
     (t) =>

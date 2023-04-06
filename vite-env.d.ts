@@ -20,14 +20,14 @@ interface Network {
   ankrName?: string;
   chainId: ChainId;
   isAvocado?: boolean;
+  serverRpcUrl: string | undefined;
+  balanceResolverAddress?: string;
+  usdcAddress: string;
+  explorerUrl: string;
   params: {
     chainName?: string;
-    rpcUrls: string[];
-    serverRpcUrl: string | undefined;
-    balanceResolverAddress?: string;
-    usdcAddress: string;
-    explorerUrl: string;
     iconUrls?: string[];
+    rpcUrls: string[];
     nativeCurrency?: {
       name: string;
       symbol: string;
