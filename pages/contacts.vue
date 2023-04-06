@@ -97,14 +97,14 @@ const filteredContacts = computed(() => {
               >
                 <td
                   class="pl-7.5 text-sm"
-                  @click="openSendToContactModal(contact)"
+                  @click="openSendModal(contact.chainId, undefined, contact)"
                 >
                   {{ contact.name }}
                 </td>
                 <td class="flex items-center justify-between pr-10 py-6 gap-10">
                   <div
                     class="flex flex-1 items-center gap-2.5"
-                    @click="openSendToContactModal(contact)"
+                    @click="openSendModal(contact.chainId, undefined, contact)"
                   >
                     <ChainLogo
                       :stroke="false"
@@ -165,7 +165,7 @@ const filteredContacts = computed(() => {
               </CommonButton>
               <CommonButton
                 class="flex-1 justify-center"
-                @click="openSendToContactModal(contact)"
+                @click="openSendModal(contact.chainId, undefined, contact)"
               >
                 Send
               </CommonButton>

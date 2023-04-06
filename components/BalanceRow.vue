@@ -134,7 +134,7 @@ const chartOptions = {
           }"
           :disabled="!interactable"
           class="!h-9 !w-9 !p-0 items-center justify-center"
-          @click="openSendModal(tokenBalance.address, tokenBalance.chainId)"
+          @click="openSendModal(tokenBalance.chainId, tokenBalance.address)"
         >
           <ArrowRight class="-rotate-45" />
         </CommonButton>

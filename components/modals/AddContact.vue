@@ -2,7 +2,6 @@
 import * as yup from "yup";
 import { isAddress } from "@ethersproject/address";
 import ClipboardSVG from "~/assets/images/icons/clipboard.svg?component";
-import { RPC_URLS } from "~~/connectors";
 import { useField, useForm } from "vee-validate";
 
 const emit = defineEmits(["resolve", "reject"]);
@@ -42,7 +41,7 @@ const {
           if (
             props.isEdit &&
             value?.toLowerCase() === props.address.toLowerCase() &&
-            parent.chainId === props.chainId
+            parent.chainId == props.chainId
           )
             return true;
           if (!isAddress(value || "")) return true;
@@ -71,17 +70,6 @@ const {
   meta: addressMeta,
   setValue: setAddress,
 } = useField<string>("address");
-
-const supportedChains = computed(() =>
-  Object.keys(RPC_URLS)
-    .filter((i) => i !== String(avoChainId))
-    .map((chainId) => {
-      return {
-        id: chainId,
-        name: chainIdToName(chainId),
-      };
-    })
-);
 
 const disabled = computed(() => !meta.value.valid || isSubmitting.value);
 
@@ -167,9 +155,9 @@ onMounted(() => {
         <CommonSelect
           class="w-full"
           v-model="chainId"
-          value-key="id"
+          value-key="chainId"
           label-key="name"
-          :options="supportedChains"
+          :options="availableNetworks"
         >
           <template #button-prefix>
             <ChainLogo class="w-6 h-6 shrink-0" :chain="chainId" />

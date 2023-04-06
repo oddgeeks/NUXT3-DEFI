@@ -21,7 +21,6 @@ import YourWallet from "~/components/modals/YourWallet.vue";
 import Networks from "~/components/modals/Networks.vue";
 import Balance from "~/components/modals/Balance.vue";
 import AddContact from "~/components/modals/AddContact.vue";
-import SendToContact from "~/components/modals/SendToContact.vue";
 import { IContact } from "./useContact";
 
 const { openModal } = useModal();
@@ -98,12 +97,17 @@ export const openSwapModal = (
   });
 };
 
-export const openSendModal = (address: string, chainId: number | string) => {
+export const openSendModal = (
+  chainId?: number | string,
+  address?: string,
+  contact?: IContact
+) => {
   openModal({
     component: Send,
     componentProps: {
       address,
-      chainId,
+      chainId: chainId,
+      contact,
     },
     options: {
       wrapperClass: "max-w-[500px]",
@@ -314,18 +318,6 @@ export const openAddContactModal = (
       address,
       chainId,
       isEdit,
-    },
-  });
-};
-
-export const openSendToContactModal = (contact: IContact) => {
-  openModal({
-    component: SendToContact,
-    componentProps: {
-      contact,
-    },
-    options: {
-      wrapperClass: "max-w-[500px]",
     },
   });
 };
