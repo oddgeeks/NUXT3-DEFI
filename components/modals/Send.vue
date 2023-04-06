@@ -21,7 +21,6 @@ const props = defineProps({
 });
 
 const { library, account } = useWeb3();
-const { switchNetworkByChainId, availableNetworks } = useNetworks();
 const { sendTransaction, tokenBalances, safe } = useAvocadoSafe();
 const { parseTransactionError } = useErrorHandler();
 const { tokens } = storeToRefs(useTokens());

@@ -234,9 +234,7 @@ const fetchSwapDetails = async () => {
       {
         signal: abortController.value?.signal,
         params: {
-          network: getNetworkByChainId(
-            Number(props.chainId)
-          ).name.toLowerCase(),
+          network: getNetworkByChainId(props.chainId).name.toLowerCase(),
           buyToken: swap.value.buyToken.address,
           sellToken: swap.value.sellToken.address,
           sellAmount: toWei(sellAmount.value, swap.value.sellToken.decimals),

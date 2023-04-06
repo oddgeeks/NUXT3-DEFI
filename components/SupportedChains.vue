@@ -3,8 +3,6 @@ const props = defineProps({
   account: String,
 });
 
-const { availableNetworks } = useNetworks();
-
 const sortedNetworks = computed(() => {
   const priorNetworks = [1, 137, 42161, 10, 56, 43114, 100];
 

@@ -14,6 +14,28 @@ interface Provider {
   switchNetwork: (network: Network) => Promise<any>;
 }
 
+interface Network {
+  name: string;
+  debankName?: string;
+  ankrName?: string;
+  chainId: ChainId;
+  isAvocado?: boolean;
+  params: {
+    chainName?: string;
+    rpcUrls: string[];
+    serverRpcUrl: string | undefined;
+    balanceResolverAddress?: string;
+    usdcAddress: string;
+    explorerUrl: string;
+    iconUrls?: string[];
+    nativeCurrency?: {
+      name: string;
+      symbol: string;
+      decimals: number;
+    };
+  };
+}
+
 interface NetworkVersion extends Network {
   latestVersion: string;
   currentVersion: string;
