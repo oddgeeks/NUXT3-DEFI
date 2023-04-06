@@ -64,6 +64,7 @@
     "yup": "^0.32.11"
   },
   "dependencies": {
+    "@instadapp/avocado-base": "^0.0.5",
     "canvas-confetti": "^1.6.0",
     "error-serializer": "^5.1.0",
     "fuse.js": "^6.6.2",

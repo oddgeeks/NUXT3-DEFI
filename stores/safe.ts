@@ -81,8 +81,8 @@ export const useSafe = defineStore("safe", () => {
           tokenBalance.balance = balance.balance;
           tokenBalance.balanceInUSD = toBN(tb.price || 0).gt(0)
             ? toBN(balance.balance)
-              .times(tb.price || 0)
-              .toFixed(2)
+                .times(tb.price || 0)
+                .toFixed(2)
             : balance.balanceInUSD;
         }
 
@@ -171,10 +171,18 @@ export const useSafe = defineStore("safe", () => {
 
       const params: any = {
         address: safeAddress.value,
-      }
+      };
 
-      for (const chainId of ["137", "10", "42161", "1", "43114", "100", "56"]) {
-        params[`customTokens[${chainId}]`] = customTokens.value.filter(t => t.chainId === chainId).map(t => t.address)
+      for (const network of availableNetworks) {
+        const customTokenAddress = customTokens.value
+          .filter((t) => String(t.chainId) == String(network.chainId))
+          .map((t) => t.address);
+
+        if (customTokenAddress.length) {
+          params[`customTokens[${network.chainId}]`] = customTokens.value
+            .filter((t) => String(t.chainId) == String(network.chainId))
+            .map((t) => t.address);
+        }
       }
 
       const resp = (await http("/api/balances", {

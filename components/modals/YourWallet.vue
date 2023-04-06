@@ -5,8 +5,6 @@ import LinkSVG from "~/assets/images/icons/external-link.svg?component";
 defineProps({
   address: String,
 });
-
-const { availableNetworks } = useNetworks();
 </script>
 
 <template>

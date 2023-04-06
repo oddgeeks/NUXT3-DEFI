@@ -6,8 +6,6 @@ import { Web3Provider } from "@ethersproject/providers";
 import { ethers } from "ethers";
 import { TorusConnector } from "@web3-react/torus-connector";
 import { WalletLinkConnector } from "./custom/walletlink";
-import { avoChainId } from "../utils/avocado";
-import { RPCMap, networkIds, getRpcURLByChainId } from "../utils/network";
 // const { networks } = useNetworks();
 
 const POLLING_INTERVAL = 12000;
