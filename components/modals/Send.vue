@@ -299,7 +299,7 @@ const handleEdit = async () => {
         </div>
         <CommonButton
           color="white"
-          class="justify-center bg-slate-800 !px-4"
+          class="justify-center dark:bg-slate-800 bg-slate-150 !px-4"
           @click="handleEdit()"
         >
           Edit
