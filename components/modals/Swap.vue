@@ -9,6 +9,7 @@ import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?compone
 import * as yup from "yup";
 import { storeToRefs } from "pinia";
 import { utils } from "ethers";
+import { getAddress } from "ethers/lib/utils";
 
 interface ISwap {
   sellToken: IToken;
@@ -50,9 +51,15 @@ const { toWei, fromWei } = useBignumber();
 const { formatPercent } = useFormatter();
 const { parseTransactionError } = useErrorHandler();
 const { account } = useWeb3();
+
 const toChainId = ref<string>(props.chainId);
-const tokenAddress = ref<string>(props.chainId);
-const networks = availableNetworks;
+const tokenAddress = ref<string>(props.address);
+const networks = availableNetworks.map((network) => {
+  return {
+    ...network,
+    chainId: network.chainId.toString(),
+  };
+});
 
 const slippages = [
   { value: "0.1", label: "0.1%" },
@@ -73,8 +80,8 @@ const [isBuyAmountDirty, toggleDirty] = useToggle(false);
 const refreshing = ref(false);
 
 const swap = ref<ISwap>({
-  sellToken: getTokenByAddress(props.address, toChainId.value)!,
-  buyToken: getTokenByAddress(props.address, toChainId.value)!,
+  sellToken: getTokenByAddress(tokenAddress.value, toChainId.value)!,
+  buyToken: getTokenByAddress(tokenAddress.value, toChainId.value)!,
 });
 
 const availableTokens = computed(() =>
@@ -278,7 +285,6 @@ const fetchSwapDetails = async () => {
     const err = parseTransactionError(e);
 
     if (err.parsed?.includes("aborted")) return;
-
     swapDetails.value.pending = false;
     swapDetails.value.error = "No route found, please try again later.";
   }
@@ -540,14 +546,14 @@ onUnmounted(() => {
           class="px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5"
         >
           <CommonSelect
-            v-model="tokenAddress"
+            v-model="toChainId"
             value-key="chainId"
             label-key="name"
             icon-key="icon"
             :options="networks"
           >
             <template #button-prefix>
-              <ChainLogo class="w-6 h-6" :chain="tokenAddress" />
+              <ChainLogo class="w-6 h-6" :chain="toChainId" />
             </template>
             <template #item-prefix="{ value }">
               <ChainLogo class="w-6 h-6" :chain="value" />
