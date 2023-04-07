@@ -62,9 +62,10 @@ const filteredBalances = computed(() => {
     balance: (balance: any) =>
       props.hideZeroBalances ? toBN(balance).decimalPlaces(5).gt(0) : true,
     chainId: (chainId: string) =>
-      props.networkPreference.size === availableNetworks.length
+      (props.networkPreference.size === availableNetworks.length
         ? true
-        : props.networkPreference.has(parseInt(chainId)),
+        : props.networkPreference.has(parseInt(chainId))) &&
+      availableNetworks.some((n) => String(n.chainId) == String(chainId)),
   };
 
   return filterArray(tokens, filters);
