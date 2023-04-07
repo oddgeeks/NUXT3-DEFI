@@ -9,7 +9,6 @@ import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?compone
 import * as yup from "yup";
 import { storeToRefs } from "pinia";
 import { utils } from "ethers";
-import { getAddress } from "ethers/lib/utils";
 
 interface ISwap {
   sellToken: IToken;
