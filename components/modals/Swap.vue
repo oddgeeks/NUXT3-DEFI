@@ -77,9 +77,18 @@ const [swapped, toggleSwapped] = useToggle();
 const [isBuyAmountDirty, toggleDirty] = useToggle(false);
 const refreshing = ref(false);
 
+const tochainComputed = computed(() => toChainId.value);
+const tokenAddressComputed = computed(() => tokenAddress.value);
+
 const swap = ref<ISwap>({
-  sellToken: getTokenByAddress(tokenAddress.value, toChainId.value)!,
-  buyToken: getTokenByAddress(tokenAddress.value, toChainId.value)!,
+  sellToken: getTokenByAddress(
+    tokenAddressComputed.value,
+    tochainComputed.value
+  )!,
+  buyToken: getTokenByAddress(
+    tokenAddressComputed.value,
+    tochainComputed.value
+  )!,
 });
 
 const availableTokens = computed(() =>
