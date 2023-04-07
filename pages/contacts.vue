@@ -102,18 +102,13 @@ const handleDeletingContact = async (contact: IContact) => {
               <tr
                 v-for="contact in filteredContacts"
                 class="contact-row text-sm font-semibold cursor-pointer"
+                @click="openSendModal(contact.chainId, undefined, contact)"
               >
-                <td
-                  class="pl-7.5 text-sm"
-                  @click="openSendModal(contact.chainId, undefined, contact)"
-                >
+                <td class="pl-7.5 text-sm">
                   {{ contact.name }}
                 </td>
                 <td class="flex items-center justify-between pr-10 py-6 gap-10">
-                  <div
-                    class="flex flex-1 items-center gap-2.5"
-                    @click="openSendModal(contact.chainId, undefined, contact)"
-                  >
+                  <div class="flex flex-1 items-center gap-2.5">
                     <ChainLogo
                       :stroke="false"
                       class="w-[22px] h-[22px]"
@@ -121,7 +116,7 @@ const handleDeletingContact = async (contact: IContact) => {
                     />
                     <span>{{ shortenHash(contact.address) }}</span>
                   </div>
-                  <button @click="handleDeletingContact(contact)">
+                  <button @click.stop="handleDeletingContact(contact)">
                     <SVGX class="text-slate-400" />
                   </button>
                 </td>
