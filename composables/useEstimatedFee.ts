@@ -26,7 +26,7 @@ export function useEstimatedFee(txData: Ref, params: EstimatedFeeParams) {
       iconURL: URLArbitrum,
       discount: isArbitrumChain ? 0.8 : undefined,
       tooltip: `Avocado users are granted a gas discount on the Arbitrum Network for a limited time.
-       <a target='_blank' class='text-primary' href='https://snapshot.org/#/instadapp-gov.eth/proposal/0x9e5d9e921dd799619feb7601ce00822a8bbf63f395a384583cd1b3cb917bbece'> 
+       <a target='_blank' class='text-primary' href='https://snapshot.org/#/instadapp-gov.eth/proposal/0xca15cef1935e9dcf58b59b31adc8883c4922929db3d3b7884ed9f4b3d77467d0 '> 
        Learn more
         </a>`,
     };
@@ -34,7 +34,7 @@ export function useEstimatedFee(txData: Ref, params: EstimatedFeeParams) {
     return calculateEstimatedFee({
       chainId: params.chainId,
       ...rawData.value,
-      // discountDetails,
+      discountDetails,
     });
   });
 

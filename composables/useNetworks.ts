@@ -95,11 +95,13 @@ export function useNetworks() {
 
     try {
       await library.value.send("wallet_switchEthereumChain", [
-        { chainId: ethers.utils.hexValue(network.chainId) },
+        {
+          chainId: ethers.utils.hexValue(network.chainId),
+        },
       ]);
       return Promise.resolve();
     } catch (err: any) {
-      console.log(err);
+      console.log(err, "selam");
       try {
         await library.value.send("wallet_addEthereumChain", [
           {
@@ -125,12 +127,9 @@ export function useNetworks() {
   };
 
   return {
-    networks,
     providers,
     currentNetwork,
     switchNetworkByChainId,
-    getNetworkByChainId,
-    availableNetworks,
     switchToAvocadoNetwork,
   };
 }

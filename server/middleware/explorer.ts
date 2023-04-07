@@ -1,8 +1,3 @@
-import {
-  AVO_PROD_EXPLORER_URL,
-  AVO_STAGING_EXPLORER_URL,
-} from "../../utils/avocado";
-
 // Redirect to existing tx and address pages to the new explorer
 export default defineEventHandler((event) => {
   const url = event.node.req.url;

@@ -45,7 +45,6 @@ const { tokenBalances, sendTransactions, safeAddress } = useAvocadoSafe();
 
 const { getTokenByAddress } = useTokens();
 const { tokens } = storeToRefs(useTokens());
-const { getNetworkByChainId } = useNetworks();
 const { toWei, fromWei } = useBignumber();
 const { formatPercent } = useFormatter();
 const { parseTransactionError } = useErrorHandler();
@@ -235,9 +234,7 @@ const fetchSwapDetails = async () => {
       {
         signal: abortController.value?.signal,
         params: {
-          network: getNetworkByChainId(
-            Number(props.chainId)
-          ).name.toLowerCase(),
+          network: getNetworkByChainId(props.chainId).name.toLowerCase(),
           buyToken: swap.value.buyToken.address,
           sellToken: swap.value.sellToken.address,
           sellAmount: toWei(sellAmount.value, swap.value.sellToken.decimals),
@@ -719,20 +716,32 @@ onUnmounted(() => {
                   style="width: 140px; height: 20px"
                   class="loading-box rounded-lg"
                 />
-                <div class="flex items-center justify-between sm:justify-start sm:gap-2 w-full" v-else>
+                <div
+                  class="flex items-center justify-between sm:justify-start sm:gap-2 w-full"
+                  v-else
+                >
                   <span>1 {{ swap.sellToken?.symbol }}</span>
                   <span class="sm:block hidden"> = </span>
-                  <span>{{ buyTokenAmountPerSellToken }} {{ swap.buyToken?.symbol }}</span>
+                  <span
+                    >{{ buyTokenAmountPerSellToken }}
+                    {{ swap.buyToken?.symbol }}</span
+                  >
                 </div>
                 <div
                   v-if="isLoading"
                   style="width: 140px; height: 20px"
                   class="loading-box rounded-lg"
                 />
-                <div v-else class="flex items-center justify-between sm:justify-end sm:gap-2 w-full">
+                <div
+                  v-else
+                  class="flex items-center justify-between sm:justify-end sm:gap-2 w-full"
+                >
                   <span>1 {{ swap.buyToken?.symbol }}</span>
                   <span class="sm:block hidden"> = </span>
-                  <span>{{ sellTokenAmountPerBuyToken }} {{ swap.sellToken?.symbol }}</span>
+                  <span
+                    >{{ sellTokenAmountPerBuyToken }}
+                    {{ swap.sellToken?.symbol }}</span
+                  >
                 </div>
               </div>
               <div
@@ -806,8 +815,6 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-
-
 .radio {
   @apply w-5 h-5 rounded-full border-[6.5px] dark:border-slate-600 mr-3 border-slate-300 shrink-0;
 }

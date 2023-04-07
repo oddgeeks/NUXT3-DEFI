@@ -4,7 +4,7 @@ import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import ChevronDownSVG from "~/assets/images/icons/chevron-down.svg?component";
 import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?component";
 import { storeToRefs } from "pinia";
-const { availableNetworks } = useNetworks();
+
 const { account } = useWeb3();
 const { unstableDappNetworks } = useBanner();
 const { networkPreference } = storeToRefs(useSafe());
@@ -38,9 +38,7 @@ const handleOpenDialog = () => {
     </div>
     <div class="flex gap-5 lg:flex-row flex-col flex-1">
       <div class="flex relative flex-col w-full gap-5">
-        <div
-          class="flex flex-col gap-5"
-        >
+        <div class="flex flex-col gap-5">
           <WarningsUnstableDappVersion v-if="unstableDappNetworks.length" />
           <div class="flex justify-between sm:pr-7.5">
             <div class="flex gap-7.5">
@@ -72,7 +70,10 @@ const handleOpenDialog = () => {
             </div>
             <div class="flex items-center space-x-4" v-if="account">
               <ClientOnly>
-                <div class="flex align-self-end items-center" v-if="networkPreference.size > 0">
+                <div
+                  class="flex align-self-end items-center"
+                  v-if="networkPreference.size > 0"
+                >
                   <ChainLogo
                     v-for="network in Array.from(networkPreference).slice(0, 3)"
                     style="width: 22px; height: 22px"
@@ -89,11 +90,19 @@ const handleOpenDialog = () => {
                   </div>
                 </div>
               </ClientOnly>
-              <button @click="openNetworksModal" class="text-sm inline-flex sm:hidden items-center gap-2">
+              <button
+                @click="openNetworksModal"
+                class="text-sm inline-flex sm:hidden items-center gap-2"
+              >
                 Filters
-                <ChevronDownSVG class="text-slate-400 w-[14px] h-[14px] -rotate-90" />
+                <ChevronDownSVG
+                  class="text-slate-400 w-[14px] h-[14px] -rotate-90"
+                />
               </button>
-              <Popover as="div" class="relative z-20 hidden sm:flex gap-4 items-center">
+              <Popover
+                as="div"
+                class="relative z-20 hidden sm:flex gap-4 items-center"
+              >
                 <PopoverButton class="text-sm flex items-center gap-2 h-7.5">
                   Networks
                   <ChevronDownSVG class="text-slate-400 w-[14px] h-[14px]" />
@@ -115,15 +124,30 @@ const handleOpenDialog = () => {
                     >
                       <span class="text-slate-400 text-[11px]">Networks</span>
                       <div
-                        @click="networkPreference = availableNetworks.length === networkPreference.size ? new Set() : new Set(availableNetworks.map(el => el.chainId))"
+                        @click="
+                          networkPreference =
+                            availableNetworks.length === networkPreference.size
+                              ? new Set()
+                              : new Set(
+                                  availableNetworks.map((el) => el.chainId)
+                                )
+                        "
                         class="text-green-600 cursor-pointer select-none text-[11px]"
                       >
-                        {{ availableNetworks.length === networkPreference.size ? 'Deselect all': 'Select all' }}
+                        {{
+                          availableNetworks.length === networkPreference.size
+                            ? "Deselect all"
+                            : "Select all"
+                        }}
                       </div>
                     </li>
 
                     <li
-                      @click="networkPreference.has(network.chainId) ? networkPreference.delete(network.chainId) : networkPreference.add(network.chainId)"
+                      @click="
+                        networkPreference.has(network.chainId)
+                          ? networkPreference.delete(network.chainId)
+                          : networkPreference.add(network.chainId)
+                      "
                       class="flex items-center gap-2.5 hover:bg-slate-150 hover:dark:bg-slate-800 cursor-pointer text-sm py-2.5 px-3 rounded-[14px]"
                       v-for="network in availableNetworks"
                     >
@@ -156,7 +180,9 @@ const handleOpenDialog = () => {
           class="absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-1/2 sm:-translate-y-1/2 flex items-center justify-center w-full"
         >
           <div class="flex flex-col items-center justify-center gap-6">
-            <p class="font-semibold leading-[30px] text-slate-400 sm:text-white sm:text-lg sm:whitespace-nowrap text-center">
+            <p
+              class="font-semibold leading-[30px] text-slate-400 sm:text-white sm:text-lg sm:whitespace-nowrap text-center"
+            >
               Connect your wallet to see the balances
             </p>
 
@@ -192,7 +218,10 @@ const handleOpenDialog = () => {
         </div>
         <div class="w-full flex flex-col gap-5">
           <h2 class="font-semibold inline-flex gap-2.5">Supported Chains</h2>
-          <SupportedChains :account="safeAddress" class="p-5 dark:bg-gray-850 bg-slate-50 rounded-5.5" />
+          <SupportedChains
+            :account="safeAddress"
+            class="p-5 dark:bg-gray-850 bg-slate-50 rounded-5.5"
+          />
         </div>
       </div>
     </div>

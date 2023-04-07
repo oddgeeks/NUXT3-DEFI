@@ -8,8 +8,6 @@ const props = defineProps<{
   session: any;
 }>();
 
-const { networks } = useNetworks();
-
 const chainId = ref(props.session.chainId);
 
 const icon = computed(() => {
@@ -98,7 +96,7 @@ watch(chainId, async () => {
       v-model="chainId"
       value-key="chainId"
       label-key="name"
-      :options="networks"
+      :options="availableNetworks"
     >
       <template #button-prefix>
         <ChainLogo class="w-6 h-6" :chain="chainId" />
