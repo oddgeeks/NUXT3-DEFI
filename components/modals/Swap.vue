@@ -46,7 +46,6 @@ const { tokenBalances, sendTransactions, safeAddress } = useAvocadoSafe();
 
 const { getTokenByAddress } = useTokens();
 const { tokens } = storeToRefs(useTokens());
-const { getNetworkByChainId, availableNetworks } = useNetworks();
 const { toWei, fromWei } = useBignumber();
 const { formatPercent } = useFormatter();
 const { parseTransactionError } = useErrorHandler();
