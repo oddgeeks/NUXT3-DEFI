@@ -322,5 +322,21 @@ export const openAddContactModal = (
   });
 };
 
+export const openDeleteContactModal = async () => {
+  return openDialogModal({
+    title: "Are you sure you want to delete contact?",
+    type: "question",
+    cancelButtonText: "Cancel",
+    isCancelButtonVisible: true,
+    buttonText: "Delete",
+    buttonProps: {
+      color: "red",
+    },
+    cancelButtonProps: {
+      color: "white",
+    },
+  });
+};
+
 //@ts-ignore
 globalThis.openCustomTxModal = openCustomTxModal;

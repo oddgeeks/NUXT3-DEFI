@@ -31,6 +31,14 @@ const filteredContacts = computed(() => {
     contact.name.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
 });
+
+const handleDeletingContact = async (contact: IContact) => {
+  const { success } = await openDeleteContactModal();
+
+  if (success) {
+    deleteContact(contact);
+  }
+};
 </script>
 
 <template>
@@ -113,7 +121,7 @@ const filteredContacts = computed(() => {
                     />
                     <span>{{ shortenHash(contact.address) }}</span>
                   </div>
-                  <button @click="deleteContact(contact)">
+                  <button @click="handleDeletingContact(contact)">
                     <SVGX class="text-slate-400" />
                   </button>
                 </td>
@@ -128,7 +136,7 @@ const filteredContacts = computed(() => {
               <span class="text-sm font-semibold text-slate-400">{{
                 contact.name
               }}</span>
-              <button @click="deleteContact(contact)">
+              <button @click="handleDeletingContact(contact)">
                 <SVGX class="text-slate-400 w-4 h-4" />
               </button>
             </div>
