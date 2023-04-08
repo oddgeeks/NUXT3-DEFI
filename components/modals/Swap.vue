@@ -52,12 +52,12 @@ const { account } = useWeb3();
 
 const toChainId = ref<string>(props.chainId);
 const tokenAddress = ref<string>(props.address);
-const networks = availableNetworks.map((network) => {
-  return {
+const networks = availableNetworks
+  .map((network) => ({
     ...network,
     chainId: network.chainId.toString(),
-  };
-});
+  }))
+  .filter((network) => network.chainId !== "1101");
 
 const slippages = [
   { value: "0.1", label: "0.1%" },
@@ -107,6 +107,7 @@ const availableBuyTokens = computed(() =>
 
 watch(toChainId, () => {
   swap.value.buyToken = availableBuyTokens.value[0];
+  swap.value.sellToken = availableTokens.value[0];
 });
 
 const sellTokenBalance = computed(
