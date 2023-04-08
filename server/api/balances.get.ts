@@ -194,15 +194,33 @@ export default defineEventHandler<IBalance[]>(async (event) => {
   }
 
   try {
-    return await Promise.all(
-      availableNetworks.map(async (network) => {
-        return await getChainBalances(
+    const promises = await Promise.allSettled(
+      availableNetworks.map((network) =>
+        getChainBalances(
           String(network.chainId),
           String(query.address),
           getQueryCustomTokens(event, String(network.chainId))
-        );
-      })
-    ).then((r) => r.flat());
+        )
+      )
+    );
+
+    const data = promises.reduce((acc, cur, index) => {
+      if (cur.status === "fulfilled") {
+        acc.push(...cur.value);
+      } else {
+        const network = availableNetworks[index];
+
+        $fetch("/api/slack", {
+          method: "POST",
+          body: {
+            message: `Error fetching balances ${cur?.reason} - ${network?.name}`,
+          },
+        });
+      }
+      return acc;
+    }, [] as IBalance[]);
+
+    return data;
   } catch (error) {
     console.log(error);
     try {
