@@ -98,7 +98,7 @@ export const openSwapModal = (
 };
 
 export const openSendModal = (
-  chainId?: number | string,
+  chainId: number | string,
   address?: string,
   contact?: IContact
 ) => {
@@ -106,7 +106,7 @@ export const openSendModal = (
     component: Send,
     componentProps: {
       address,
-      chainId: chainId,
+      chainId,
       contact,
     },
     options: {
