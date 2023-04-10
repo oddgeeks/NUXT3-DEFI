@@ -32,18 +32,17 @@ const contact = ref<IContact | undefined>(props.contact);
 const tochainId = ref<string>(props.chainId);
 
 const availableTokens = computed(() =>
-  tokens.value.filter((t) => t.chainId == tochainId.value)
+  tokenBalances.value.filter((t) => t.chainId == tochainId.value)
 );
 
 const tokenAddress = ref<string>(
   props.address ?? availableTokens.value[0].address
 );
 
-const token = computed(
-  () =>
-    tokenBalances.value.find(
-      (t) => t.chainId == tochainId.value && t.address === tokenAddress.value
-    )!
+const token = ref(
+  tokenBalances.value.find(
+    (t) => t.chainId == tochainId.value && t.address === tokenAddress.value
+  )!
 );
 
 watch(
