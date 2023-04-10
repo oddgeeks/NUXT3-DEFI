@@ -259,9 +259,7 @@ const fetchSwapDetails = async () => {
       {
         signal: abortController.value?.signal,
         params: {
-          network: getNetworkByChainId(
-            Number(toChainId.value)
-          ).name.toLowerCase(),
+          network: getNetworkByChainId(toChainId.value).name.toLowerCase(),
           buyToken: swap.value.buyToken.address,
           sellToken: swap.value.sellToken.address,
           sellAmount: toWei(sellAmount.value, swap.value.sellToken.decimals),
@@ -272,7 +270,6 @@ const fetchSwapDetails = async () => {
         },
       }
     );
-
     abortController.value = null;
 
     const best = data?.aggregators[0];
@@ -297,7 +294,6 @@ const fetchSwapDetails = async () => {
     swapDetails.value.error = "";
   } catch (e: any) {
     const err = parseTransactionError(e);
-
     if (err.parsed?.includes("aborted")) return;
     swapDetails.value.pending = false;
     swapDetails.value.error = "No route found, please try again later.";
@@ -554,10 +550,10 @@ onUnmounted(() => {
 <template>
   <form @submit="onSubmit" novalidate class="flex gap-7.5 flex-col">
     <div class="flex flex-col items-center justify-center">
-      <div class="flex flex-col gap-[15px]">
+      <div class="flex flex-col gap-[15px] w-full">
         <h2 class="text-lg leading-5 text-center">Swap</h2>
         <div
-          class="px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5"
+          class="flex items-center justify-center w-2/5 mx-auto rounded-full"
         >
           <CommonSelect
             v-model="toChainId"
@@ -565,6 +561,7 @@ onUnmounted(() => {
             label-key="name"
             icon-key="icon"
             :options="networks"
+            class="w-full rounded-full"
           >
             <template #button-prefix>
               <ChainLogo class="w-6 h-6" :chain="toChainId" />
@@ -818,7 +815,7 @@ onUnmounted(() => {
         </div>
       </div>
       <EstimatedFee
-        :chain-id="chainId"
+        :chain-id="toChainId"
         :loading="feePending"
         :data="data"
         :error="error"
