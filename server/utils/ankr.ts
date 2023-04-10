@@ -6,31 +6,28 @@ const { ankrApiKey } = useRuntimeConfig();
 // Setup provider AnkrProvider
 const ankrProvider = new AnkrProvider(ankrApiKey);
 
-const ALL_ANKR_BLOCKCHAIN: Blockchain[] = [
-  "eth",
-  "polygon",
-  "arbitrum",
-  "optimism",
-  "bsc",
-  "avalanche",
-];
-
-const CHAIN_ID_TO_ANKR_BLOCKCHAIN: Record<number, Blockchain> = {
-  1: "eth",
-  137: "polygon",
-  42161: "arbitrum",
-  10: "optimism",
-  56: "bsc",
-  43114: "avalanche",
-};
+const GNOSIS_CHAIN_ID = 100;
 
 export const getTokenTransfersFromAnkr = async (
   from: string,
   to: string,
   chainId?: number
 ): Promise<number> => {
+  const chains: Blockchain | Blockchain[] | undefined = chainId
+    ? <Blockchain | undefined>(
+        availableNetworks.find((network) => Number(network.chainId) === chainId)
+          ?.ankrName
+      )
+    : <Blockchain[]>(
+        availableNetworks
+          .filter(
+            (network) => network.chainId !== GNOSIS_CHAIN_ID && network.ankrName
+          )
+          .map((network) => network.ankrName!)
+      );
+
   // If chain Id is gnosis, return 0
-  if (chainId && !CHAIN_ID_TO_ANKR_BLOCKCHAIN[chainId]) {
+  if (chainId === GNOSIS_CHAIN_ID || !chains) {
     return 0;
   }
 
@@ -42,9 +39,7 @@ export const getTokenTransfersFromAnkr = async (
   let totalTransfer = 0;
   do {
     const res = await ankrProvider.getLogs({
-      blockchain: chainId
-        ? CHAIN_ID_TO_ANKR_BLOCKCHAIN[chainId]
-        : ALL_ANKR_BLOCKCHAIN,
+      blockchain: chains,
       fromBlock: 0,
       toBlock: "latest",
       topics: [
