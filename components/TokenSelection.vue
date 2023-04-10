@@ -38,12 +38,10 @@ const handleTokenSelection = async () => {
     @click="handleTokenSelection"
     class="gap-[6px] text-sm uppercase h-fit inline-flex items-center rounded-2xl pl-[14px] pr-3 py-3"
   >
-    <div class="flex items-center gap-2.5">
-      <img :src="selectedToken?.logoURI" class="h-6 w-6 rounded-full" />
-      <span class="inline-flex items-center">
-        {{ selectedToken?.symbol }}
-      </span>
-    </div>
-    <ChevronDownSVG class="w-5 text-slate-400 -rotate-90" />
+    <img :src="selectedToken?.logoURI" class="h-6 w-6 rounded-full" />
+    <span class="inline-flex items-center gap-[6px] w-full justify-between">
+      {{ selectedToken?.symbol }}
+      <ChevronDownSVG class="w-5 text-slate-400 -rotate-90" />
+    </span>
   </button>
 </template>
