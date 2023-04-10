@@ -77,14 +77,17 @@ const getFromDebank = async (address: string) => {
   );
 };
 
-const getFromAnkr = async (address: string): Promise<IBalance[]> => {
+const getFromAnkr = async (
+  address: string,
+  blockchain?: any
+): Promise<IBalance[]> => {
   const ankrBalances = await ankrProvider.getAccountBalance({
-    blockchain: [],
+    blockchain: blockchain || [],
     walletAddress: address,
   });
 
   let balances = ankrBalances.assets.map((asset) => {
-    const network = networks.find((n) => n.ankrName === asset.blockchain);
+    const network = networks.find((n) => n.ankrName === asset.blockchain)!;
 
     return {
       name: asset.tokenName,
@@ -94,7 +97,7 @@ const getFromAnkr = async (address: string): Promise<IBalance[]> => {
           : asset.contractAddress!,
       decimals: asset.tokenDecimals,
       symbol: asset.tokenSymbol,
-      chainId: network.chainId || null,
+      chainId: String(network.chainId) || null,
       logoURI: asset.thumbnail,
       price: asset.tokenPrice,
       balanceRaw: asset.balanceRawInteger,
@@ -194,15 +197,46 @@ export default defineEventHandler<IBalance[]>(async (event) => {
   }
 
   try {
-    return await Promise.all(
-      availableNetworks.map(async (network) => {
-        return await getChainBalances(
+    const promises = await Promise.allSettled(
+      availableNetworks.map((network) =>
+        getChainBalances(
           String(network.chainId),
           String(query.address),
           getQueryCustomTokens(event, String(network.chainId))
-        );
-      })
-    ).then((r) => r.flat());
+        )
+      )
+    );
+
+    const balances: IBalance[] = [];
+
+    for (const i in promises) {
+      const item = promises[i];
+
+      if (item.status === "fulfilled") {
+        balances.push(...item.value);
+      } else {
+        const network = availableNetworks[i];
+
+        $fetch("/api/slack", {
+          method: "POST",
+          body: {
+            message: `Error fetching balances ${item?.reason} - ${network?.name}`,
+          },
+        });
+
+        if (network && network?.ankrName) {
+          const val = await getFromAnkr(
+            String(query.address),
+            network.ankrName
+          );
+          balances.push(...val);
+        } else {
+          throw new Error("Fallback failed");
+        }
+      }
+    }
+
+    return balances;
   } catch (error) {
     console.log(error);
     try {
