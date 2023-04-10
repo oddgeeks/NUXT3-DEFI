@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Fuse from "fuse.js";
 import SearchSVG from "~/assets/images/icons/search.svg?component";
 import PlusSVG from "~/assets/images/icons/plus.svg?component";
 import SVGX from "~/assets/images/icons/x.svg?component";
@@ -17,6 +18,17 @@ const search = useDebounceFn((event: Event) => {
   searchQuery.value = (<HTMLInputElement>event.target).value;
 }, 200);
 
+const filteredTokens = computed(() => {
+  if (!searchQuery.value) return data.value || [];
+
+  const fuse = new Fuse(data.value || [], {
+    keys: ["name", "symbol", "address"],
+    threshold: 0.2,
+  });
+
+  return fuse.search(searchQuery.value).map((result) => result.item);
+});
+
 const filteredContacts = computed(() => {
   const _contacts = contacts.value[safeAddress.value];
   if (!_contacts) {
@@ -27,9 +39,12 @@ const filteredContacts = computed(() => {
     return _contacts;
   }
 
-  return _contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-  );
+  const fuse = new Fuse(_contacts, {
+    keys: ["name", "address"],
+    threshold: 0.2,
+  });
+
+  return fuse.search(searchQuery.value).map((result) => result.item);
 });
 
 const handleDeletingContact = async (contact: IContact) => {
