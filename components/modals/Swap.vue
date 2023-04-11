@@ -395,7 +395,9 @@ const { data: txs } = useAsyncData(
       data: bestRoute.value?.data.calldata,
       value: bestRoute.value?.data.value,
     });
-
+    console.log("staring  here");
+    console.log(txs);
+    console.log("finished here");
     return txs;
   },
   {
