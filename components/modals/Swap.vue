@@ -537,7 +537,7 @@ watch(slippage, () => {
   });
 });
 
-watch([sellAmount, swapped, slippage, customSlippage], () => {
+watch([sellAmount, swapped, slippage, customSlippage, toChainId], () => {
   fetchSwapDetails();
 });
 
