@@ -220,6 +220,7 @@ export default defineEventHandler<IBalance[]>(async (event) => {
         $fetch("/api/slack", {
           method: "POST",
           body: {
+            type: "error",
             message: `Error fetching balances ${item?.reason} - ${network?.name}`,
           },
         });
