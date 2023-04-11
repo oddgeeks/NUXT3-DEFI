@@ -67,7 +67,7 @@ export const useTokens = defineStore("tokens", () => {
         for (const tokenPrice of prices) {
           const token = _tokenList.find(
             (t) =>
-              t.chainId === String(cid) &&
+              t.chainId == String(cid) &&
               t.address.toLowerCase() === tokenPrice.address.toLowerCase()
           );
 
