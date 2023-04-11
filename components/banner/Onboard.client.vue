@@ -34,7 +34,7 @@ watch(account, async () => {
       </p>
     </div>
     <div class="flex space-x-5 items-center w-full sm:w-fit">
-      <CommonButton as="NuxtLink" href="https://onboard.avocado.instadapp.io/" target="_blank" size="sm" class="w-full sm:w-fit h-7.5 sm:h-fit justify-center">
+      <CommonButton as="NuxtLink" :href="avoOnboardURL" target="_blank" size="sm" class="w-full sm:w-fit h-7.5 sm:h-fit justify-center">
         Import
       </CommonButton>
       <button @click="hideOnboardBanner()" class="w-5 h-5 rounded-full flex items-center justify-center bg-white bg-opacity-20">
