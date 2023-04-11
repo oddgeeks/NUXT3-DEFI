@@ -225,17 +225,6 @@ const handleSellAmountInput = () => {
   toggleDirty(false);
 };
 
-const sendingDisabled = computed(
-  () =>
-    isSubmitting.value ||
-    swapDetails.value.pending ||
-    !meta.value.valid ||
-    feePending.value ||
-    isPriceImpactHigh.value ||
-    !!swapDetails.value.error ||
-    !!error.value
-);
-
 const isLoading = computed(
   () => swapDetails.value.pending && meta.value.valid && !refreshing.value
 );
@@ -414,18 +403,30 @@ const { data: txs } = useAsyncData(
     server: false,
   }
 );
+const estimatedFee = () => {
+  const { data, pending, error } = useEstimatedFee(txs, {
+    chainId: toChainId.value,
+    cb: () => {
+      resume();
+      refreshing.value = false;
+    },
+  });
 
-const {
-  data,
-  pending: feePending,
-  error,
-} = useEstimatedFee(txs, {
-  chainId: toChainId.value,
-  cb: () => {
-    resume();
-    refreshing.value = false;
-  },
-});
+  return { data, pending, error };
+};
+
+const { data, pending: feePending, error } = estimatedFee();
+
+const sendingDisabled = computed(
+  () =>
+    isSubmitting.value ||
+    swapDetails.value.pending ||
+    !meta.value.valid ||
+    feePending.value ||
+    isPriceImpactHigh.value ||
+    !!swapDetails.value.error ||
+    !!error.value
+);
 
 const onSubmit = handleSubmit(async () => {
   try {
@@ -531,6 +532,15 @@ watch(sellAmount, () => {
     buyAmount.value = "";
   }
 });
+
+watch(
+  () => toChainId.value,
+  (newValue, oldValue) => {
+    if (newValue) {
+      estimatedFee();
+    }
+  }
+);
 
 watch(slippage, () => {
   setCustomSlippage({
