@@ -328,7 +328,8 @@ const onSubmit = handleSubmit(async () => {
         <div class="flex items-center justify-between">
           <span class="text-sm">Address To</span>
           <span class="text-sm text-slate-400" v-if="totalTransfers">
-            {{ totalTransfers }} previuos sends
+            {{ totalTransfers }} previous
+            {{ totalTransfers === 1 ? "send" : "sends" }}
           </span>
           <span
             class="text-sm text-orange-400 flex items-center gap-2"
