@@ -5,7 +5,6 @@ import SVGInfoCircle from "~/assets/images/icons/exclamation-circle.svg?componen
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { isAddress } from "@ethersproject/address";
-import { storeToRefs } from "pinia";
 
 const emit = defineEmits(["destroy"]);
 const { toWei } = useBignumber();
@@ -25,27 +24,24 @@ const { library, account } = useWeb3();
 const { safeAddress, sendTransaction, tokenBalances, safe, isSafeAddress } =
   useAvocadoSafe();
 const { parseTransactionError } = useErrorHandler();
-const { tokens } = storeToRefs(useTokens());
 
 const tochainId = ref<string>(props.chainId);
-const tokenAddress = ref<string>(props.address);
 
-const token = computed(
-  () =>
-    tokenBalances.value.find(
-      (t) => t.chainId === tochainId.value && t.address === tokenAddress.value
-    )!
+const token = ref(
+  tokenBalances.value.find(
+    (t) => t.chainId === tochainId.value && t.address === props.address
+  )!
 );
 
 const availableTokens = computed(() =>
-  tokens.value.filter((t) => t.chainId === tochainId.value)
+  tokenBalances.value.filter((t) => t.chainId === tochainId.value)
 );
 
 watch(
   () => tochainId.value,
   () => {
     if (availableTokens.value.length > 0) {
-      tokenAddress.value = availableTokens.value[0].address;
+      token.value = availableTokens.value[0];
     }
   }
 );
@@ -267,22 +263,16 @@ const onSubmit = handleSubmit(async () => {
       <h2>Send</h2>
     </div>
     <div class="flex gap-x-4">
-      <!-- start token select -->
       <div class="space-y-2.5 flex flex-col w-full">
         <div class="flex items-center justify-between">
           <span class="text-sm">Coin</span>
         </div>
-        <CommonSelect
-          v-model="tokenAddress"
-          value-key="address"
-          label-key="name"
-          icon-key="logoURI"
-          :options="availableTokens"
-        >
-        </CommonSelect>
+        <TokenSelection
+          class="relative w-full flex items-center gap-2.5 max-h-12 rounded-2xl border-2 dark:border-slate-700 border-slate-150 !bg-slate-50 dark:!bg-gray-850 px-4 py-3 text-left"
+          v-model="token"
+          :tokens="availableTokens"
+        />
       </div>
-      <!-- end token select -->
-      <!-- start network select -->
       <div class="space-y-2.5 flex flex-col w-full">
         <div class="flex items-center justify-between">
           <span class="text-sm">Network</span>

@@ -74,7 +74,7 @@ export const useSafe = defineStore("safe", () => {
         const balance = balances.value.data?.find(
           (b: any) =>
             b.address.toLowerCase() === tb.address.toLowerCase() &&
-            tb.chainId === b.chainId
+            tb.chainId == b.chainId
         );
 
         if (balance) {
