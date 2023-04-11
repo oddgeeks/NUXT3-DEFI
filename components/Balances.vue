@@ -5,7 +5,6 @@ import { IBalance } from "~~/stores/safe";
 
 const { tokenBalances } = useAvocadoSafe();
 const { account } = useWeb3();
-const { networks, availableNetworks } = useNetworks();
 
 const whitelistedSymbols = [
   "ETH",

@@ -16,12 +16,18 @@ interface Provider {
 
 interface Network {
   name: string;
+  debankName?: string;
+  ankrName?: string;
   chainId: ChainId;
+  isAvocado?: boolean;
+  serverRpcUrl: string | undefined;
+  balanceResolverAddress?: string;
+  usdcAddress: string;
+  explorerUrl: string;
   params: {
     chainName?: string;
-    rpcUrls: string[];
-    blockExplorerUrls?: string[];
     iconUrls?: string[];
+    rpcUrls: string[];
     nativeCurrency?: {
       name: string;
       symbol: string;

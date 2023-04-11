@@ -24,7 +24,6 @@ export const useBridge = (props: IBridge) => {
   const { account } = useWeb3();
   const { fromWei, toWei } = useBignumber();
   const { tokenBalances, safeAddress } = useAvocadoSafe();
-  const { getNetworkByChainId } = useNetworks();
   const { tokens } = storeToRefs(useTokens());
 
   const fromChainId = ref(props.fromChainId);
