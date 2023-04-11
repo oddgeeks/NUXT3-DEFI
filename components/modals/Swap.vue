@@ -80,8 +80,9 @@ const availableTokens = computed(() =>
   )
 );
 const availableBuyTokens = computed(() =>
-  availableTokens.value.filter(
-    (t) => t.address !== swap.value.sellToken.address
+  tokens.value.filter(
+    (t) =>
+      t.chainId == props.chainId && t.address !== swap.value.sellToken.address
   )
 );
 
