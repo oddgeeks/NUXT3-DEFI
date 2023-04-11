@@ -20,3 +20,7 @@ export const avoDepositAddress = prod
   : AVO_STAGING_DEPOSIT_ADDRESS;
 
 export const avoExplorerURL = getNetworkByChainId(avoChainId).explorerUrl;
+
+export const avoOnboardURL = prod
+  ? "https://onboard.avocado.instadapp.io"
+  : "https://onboard.avocado.instad.app";
