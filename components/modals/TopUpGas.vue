@@ -281,11 +281,22 @@ onMounted(() => {
     </span>
     <div
       v-if="toBN(pendingGasAmount.data.value).gt('0')"
-      class="leading-5 text-xs gap-2 text-orange-400 items-center justify-center flex"
+      class="flex-col leading-5 text-xs gap-0.5 text-orange-400 items-center justify-center flex"
     >
-      <SvgSpinner />
-      {{ formatUsd(pendingGasAmount.data.value) }}
-      gas is pending block confirmation
+      <div class="flex items-center gap-2">
+        <SvgSpinner />
+        {{ formatUsd(pendingGasAmount.data.value) }}
+        gas is pending block confirmation
+      </div>
+      <NuxtLink
+        href="https://help.avocado.instadapp.io/en/articles/7211493-why-haven-t-my-gas-credits-reflected-yet"
+        target="blank"
+        external
+        rel="noopener noreferrer"
+        class="text-xs font-medium text-primary"
+      >
+        Learn More
+      </NuxtLink>
     </div>
     <form v-if="!isGiftActive" @submit="onSubmit" class="space-y-5">
       <div class="flex flex-col gap-2.5">
