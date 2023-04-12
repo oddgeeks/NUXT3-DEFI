@@ -371,7 +371,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
           resolve({
             storageId,
             connector,
-            chainId: payload.params[0].chainId || 137,
+            chainId: payload.params[0].chainId,
             peerMeta: payload.params[0].peerMeta,
           });
         });

@@ -58,6 +58,10 @@ const prepareAndConnect = handleSubmit(async () => {
   try {
     toggle(true);
     connection.value = await wcStore.prepareConnection(uri.value);
+    if (!connection.value.chainId) {
+      isExpertMode.value = true;
+      connection.value.chainId = 1;
+    }
     connectionChainId.value = connection.value.chainId;
     uri.value = "";
   } catch (e: any) {
