@@ -196,9 +196,7 @@ const { data: totalTransfers } = useAsyncData(
   }
 );
 
-const { data, pending, error } = useEstimatedFee(tx, {
-  chainId: tochainId.value,
-});
+const { data, pending, error } = useEstimatedFee(tx, tochainId);
 
 const onSubmit = handleSubmit(async () => {
   if (!token.value) {
