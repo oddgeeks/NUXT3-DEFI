@@ -21,19 +21,22 @@ const transaction = computed(() => ({
   operation: "0",
 }));
 
-const { data, pending, error } = useEstimatedFee(transaction, {
-  chainId: String(props.network.chainId),
-  immediate: true,
-});
+const { data, pending, error } = useEstimatedFee(
+  transaction,
+  ref(String(props.network.chainId)),
+  {
+    immediate: true,
+  }
+);
 
 const handleDeploy = async () => {
   try {
     submitting.value = true;
 
-    const metadata = encodeDeployMetadata()
+    const metadata = encodeDeployMetadata();
 
     const transactionHash = await sendTransaction(transaction.value, {
-      metadata
+      metadata,
     });
 
     logActionToSlack({
