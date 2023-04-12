@@ -69,8 +69,7 @@ const {
   data: fee,
   pending,
   error,
-} = useEstimatedFee(transactions, {
-  chainId: props.chainId,
+} = useEstimatedFee(transactions, ref(props.chainId), {
   immediate: true,
   options: options.value,
 });

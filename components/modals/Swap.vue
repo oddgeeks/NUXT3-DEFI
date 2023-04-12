@@ -68,11 +68,13 @@ const slippages = [
   { value: "3", label: "3%" },
 ];
 
-const swapDetails = ref({
+const defaultSwapDetails = () => ({
   data: null as ISwapResponse | null,
   error: "",
   pending: false,
 });
+
+const swapDetails = ref(defaultSwapDetails());
 const [swapped, toggleSwapped] = useToggle();
 const [isBuyAmountDirty, toggleDirty] = useToggle(false);
 const refreshing = ref(false);
@@ -108,6 +110,8 @@ const availableBuyTokens = computed(() =>
 watch(toChainId, () => {
   swap.value.buyToken = availableBuyTokens.value[0];
   swap.value.sellToken = availableTokens.value[0];
+
+  swapDetails.value = defaultSwapDetails();
 });
 
 const sellTokenBalance = computed(
@@ -418,8 +422,7 @@ const {
   data,
   pending: feePending,
   error,
-} = useEstimatedFee(txs, {
-  chainId: toChainId.value,
+} = useEstimatedFee(txs, toChainId, {
   cb: () => {
     resume();
     refreshing.value = false;
