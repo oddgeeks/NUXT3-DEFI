@@ -52,12 +52,9 @@ const { account } = useWeb3();
 
 const toChainId = ref<string>(props.chainId);
 const tokenAddress = ref<string>(props.address);
-const networks = availableNetworks
-  .map((network) => ({
-    ...network,
-    chainId: network.chainId.toString(),
-  }))
-  .filter((network) => network.chainId !== "1101");
+const networks = availableNetworks.filter(
+  (network) => network.chainId !== 1101
+);
 
 const slippages = [
   { value: "0.1", label: "0.1%" },
@@ -79,25 +76,15 @@ const [swapped, toggleSwapped] = useToggle();
 const [isBuyAmountDirty, toggleDirty] = useToggle(false);
 const refreshing = ref(false);
 
-const tochainComputed = computed(() => toChainId.value);
-const tokenAddressComputed = computed(() => tokenAddress.value);
-
 const swap = ref<ISwap>({
-  sellToken: getTokenByAddress(
-    tokenAddressComputed.value,
-    tochainComputed.value
-  )!,
-  buyToken: getTokenByAddress(
-    tokenAddressComputed.value,
-    tochainComputed.value
-  )!,
+  sellToken: getTokenByAddress(tokenAddress.value, toChainId.value)!,
+  buyToken: getTokenByAddress(tokenAddress.value, toChainId.value)!,
 });
 
 const availableTokens = computed(() =>
   tokens.value.filter(
     (t) =>
-      t.chainId === tochainComputed.value &&
-      t.address !== swap.value.buyToken.address
+      t.chainId == toChainId.value && t.address !== swap.value.buyToken.address
   )
 );
 
@@ -118,8 +105,8 @@ const sellTokenBalance = computed(
   () =>
     tokenBalances.value.find(
       (t) =>
-        t.address === swap.value.sellToken.address &&
-        t.chainId === String(toChainId.value)
+        t.address == swap.value.sellToken.address &&
+        t.chainId == toChainId.value
     )?.balance || "0.00"
 );
 
@@ -127,8 +114,7 @@ const buyTokenBalance = computed(
   () =>
     tokenBalances.value.find(
       (t) =>
-        t.address === swap.value.buyToken.address &&
-        t.chainId === String(toChainId.value)
+        t.address == swap.value.buyToken.address && t.chainId == toChainId.value
     )?.balance || "0.00"
 );
 
