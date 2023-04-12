@@ -329,7 +329,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
     uri: string
   ): Promise<{
     connector: WalletConnect;
-    chainId: number;
+    chainId: number | undefined;
     peerMeta: IClientMeta;
     storageId: string;
   }> => {
@@ -371,7 +371,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
           resolve({
             storageId,
             connector,
-            chainId: payload.params[0].chainId || 137,
+            chainId: payload.params[0].chainId,
             peerMeta: payload.params[0].peerMeta,
           });
         });
@@ -422,7 +422,7 @@ export const useWalletConnect = defineStore("wallet_connect", () => {
 
     console.log(result);
 
-    await connect(result.connector, result.storageId, result.chainId);
+    await connect(result.connector, result.storageId, result.chainId ?? 1);
   };
 
   const clearWalletConnectStorage = () => {
