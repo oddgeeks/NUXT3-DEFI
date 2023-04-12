@@ -96,14 +96,14 @@ export class WalletLinkConnector extends AbstractConnector {
   }
 
   private handleChainChanged(chainId: number | string): void {
-    if (__DEV__) {
+    if (process.dev) {
       console.log("Handling 'chainChanged' event with payload", chainId);
     }
     this.emitUpdate({ chainId: chainId });
   }
 
   private handleAccountsChanged(accounts: string[]): void {
-    if (__DEV__) {
+    if (process.dev) {
       console.log("Handling 'accountsChanged' event with payload", accounts);
     }
     this.emitUpdate({ account: accounts[0] });
