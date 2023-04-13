@@ -145,7 +145,7 @@ const getSentTimes = (contact: IContact) => {
           @click="openAddContactModal(searchQuery)"
         >
           <PlusSVG />
-          Create Contract
+          Create Contact
         </CommonButton>
       </div>
       <div
