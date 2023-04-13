@@ -62,9 +62,10 @@ const { data: txData } = useAsyncData(
   }
 );
 
-const { pending, data, error } = useEstimatedFee(txData, {
-  chainId: String(props.network.chainId),
-});
+const { pending, data, error } = useEstimatedFee(
+  txData,
+  ref(String(props.network.chainId))
+);
 
 const handleSubmit = async () => {
   try {

@@ -50,6 +50,12 @@ const { formatPercent } = useFormatter();
 const { parseTransactionError } = useErrorHandler();
 const { account } = useWeb3();
 
+const toChainId = ref<string>(props.chainId);
+const tokenAddress = ref<string>(props.address);
+const networks = availableNetworks.filter(
+  (network) => network.chainId !== 1101
+);
+
 const slippages = [
   { value: "0.1", label: "0.1%" },
   { value: "0.3", label: "0.3%" },
@@ -59,38 +65,48 @@ const slippages = [
   { value: "3", label: "3%" },
 ];
 
-const swapDetails = ref({
+const defaultSwapDetails = () => ({
   data: null as ISwapResponse | null,
   error: "",
   pending: false,
 });
+
+const swapDetails = ref(defaultSwapDetails());
 const [swapped, toggleSwapped] = useToggle();
 const [isBuyAmountDirty, toggleDirty] = useToggle(false);
 const refreshing = ref(false);
 
 const swap = ref<ISwap>({
-  sellToken: getTokenByAddress(props.address, props.chainId)!,
-  buyToken: getTokenByAddress(props.address, props.chainId)!,
+  sellToken: getTokenByAddress(tokenAddress.value, toChainId.value)!,
+  buyToken: getTokenByAddress(tokenAddress.value, toChainId.value)!,
 });
 
 const availableTokens = computed(() =>
   tokens.value.filter(
     (t) =>
-      t.chainId === props.chainId && t.address !== swap.value.buyToken.address
+      t.chainId == toChainId.value && t.address !== swap.value.buyToken.address
   )
 );
+
 const availableBuyTokens = computed(() =>
   availableTokens.value.filter(
     (t) => t.address !== swap.value.sellToken.address
   )
 );
 
+watch(toChainId, () => {
+  swap.value.buyToken = availableBuyTokens.value[0];
+  swap.value.sellToken = availableTokens.value[0];
+
+  swapDetails.value = defaultSwapDetails();
+});
+
 const sellTokenBalance = computed(
   () =>
     tokenBalances.value.find(
       (t) =>
-        t.address === swap.value.sellToken.address &&
-        t.chainId === String(props.chainId)
+        t.address == swap.value.sellToken.address &&
+        t.chainId == toChainId.value
     )?.balance || "0.00"
 );
 
@@ -98,8 +114,7 @@ const buyTokenBalance = computed(
   () =>
     tokenBalances.value.find(
       (t) =>
-        t.address === swap.value.buyToken.address &&
-        t.chainId === String(props.chainId)
+        t.address == swap.value.buyToken.address && t.chainId == toChainId.value
     )?.balance || "0.00"
 );
 
@@ -234,7 +249,7 @@ const fetchSwapDetails = async () => {
       {
         signal: abortController.value?.signal,
         params: {
-          network: getNetworkByChainId(props.chainId).name.toLowerCase(),
+          network: getNetworkByChainId(toChainId.value).name.toLowerCase(),
           buyToken: swap.value.buyToken.address,
           sellToken: swap.value.sellToken.address,
           sellAmount: toWei(sellAmount.value, swap.value.sellToken.decimals),
@@ -245,7 +260,6 @@ const fetchSwapDetails = async () => {
         },
       }
     );
-
     abortController.value = null;
 
     const best = data?.aggregators[0];
@@ -270,9 +284,7 @@ const fetchSwapDetails = async () => {
     swapDetails.value.error = "";
   } catch (e: any) {
     const err = parseTransactionError(e);
-
     if (err.parsed?.includes("aborted")) return;
-
     swapDetails.value.pending = false;
     swapDetails.value.error = "No route found, please try again later.";
   }
@@ -359,7 +371,7 @@ const { data: txs } = useAsyncData(
 
     const erc20 = Erc20__factory.connect(
       address,
-      getRpcProvider(props.chainId)
+      getRpcProvider(toChainId.value)
     );
 
     const txs = [];
@@ -384,7 +396,6 @@ const { data: txs } = useAsyncData(
       data: bestRoute.value?.data.calldata,
       value: bestRoute.value?.data.value,
     });
-
     return txs;
   },
   {
@@ -397,8 +408,7 @@ const {
   data,
   pending: feePending,
   error,
-} = useEstimatedFee(txs, {
-  chainId: props.chainId,
+} = useEstimatedFee(txs, toChainId, {
   cb: () => {
     resume();
     refreshing.value = false;
@@ -417,9 +427,13 @@ const onSubmit = handleSubmit(async () => {
       protocol: utils.formatBytes32String(bestRoute?.value?.name || ""),
     });
 
-    const transactionHash = await sendTransactions(txs.value!, +props.chainId, {
-      metadata,
-    });
+    const transactionHash = await sendTransactions(
+      txs.value!,
+      +toChainId.value,
+      {
+        metadata,
+      }
+    );
 
     const buyAmt = fromWei(
       swapDetails.value?.data?.data.buyTokenAmount || 0,
@@ -439,14 +453,14 @@ const onSubmit = handleSubmit(async () => {
       )}`,
       action: "swap",
       account: account.value,
-      chainId: props.chainId,
+      chainId: toChainId.value,
       txHash: transactionHash,
     });
 
     resetForm();
     emit("destroy");
 
-    showPendingTransactionModal(transactionHash, props.chainId, "swap");
+    showPendingTransactionModal(transactionHash, toChainId.value, "swap");
   } catch (e: any) {
     const err = parseTransactionError(e);
     openSnackbar({
@@ -485,7 +499,7 @@ onMounted(() => {
     props.toAddress ||
       (isEth ? usdc?.address : eth?.address) ||
       availableBuyTokens.value[0].address,
-    props.chainId
+    toChainId.value
   )!;
 
   if (props.amount) {
@@ -512,7 +526,7 @@ watch(slippage, () => {
   });
 });
 
-watch([sellAmount, swapped, slippage, customSlippage], () => {
+watch([sellAmount, swapped, slippage, customSlippage, toChainId], () => {
   fetchSwapDetails();
 });
 
@@ -523,23 +537,34 @@ onUnmounted(() => {
 
 <template>
   <form @submit="onSubmit" novalidate class="flex gap-7.5 flex-col">
-    <div class="flex justify-center flex-col items-center">
-      <div class="flex flex-col gap-[15px]">
+    <div class="flex flex-col items-center justify-center">
+      <div class="flex flex-col gap-[15px] w-full">
         <h2 class="text-lg leading-5 text-center">Swap</h2>
         <div
-          class="dark:bg-gray-850 bg-slate-50 px-3 py-[5px] inline-flex justify-center items-center gap-2 rounded-5"
+          class="flex items-center justify-center w-2/5 mx-auto rounded-full"
         >
-          <ChainLogo class="w-5 h-5" :chain="chainId" />
-          <span class="text-xs text-slate-400 leading-5">{{
-            chainIdToName(chainId)
-          }}</span>
+          <CommonSelect
+            v-model="toChainId"
+            value-key="chainId"
+            label-key="name"
+            icon-key="icon"
+            :options="networks"
+            class="w-full rounded-full"
+          >
+            <template #button-prefix>
+              <ChainLogo class="w-6 h-6" :chain="toChainId" />
+            </template>
+            <template #item-prefix="{ value }">
+              <ChainLogo class="w-6 h-6" :chain="value" />
+            </template>
+          </CommonSelect>
         </div>
       </div>
     </div>
 
     <div class="flex flex-col gap-4">
       <div
-        class="py-4 px-5 relative dark:bg-slate-800 bg-slate-100 focus-within:bg-slate-50 border-2 border-transparent focus-within:dark:border-slate-800 focus-within:border-slate-150 focus-within:dark:bg-gray-850 rounded-5 flex flex-col gap-4"
+        class="relative flex flex-col gap-4 px-5 py-4 border-2 border-transparent dark:bg-slate-800 bg-slate-100 focus-within:bg-slate-50 focus-within:dark:border-slate-800 focus-within:border-slate-150 focus-within:dark:bg-gray-850 rounded-5"
       >
         <div class="flex">
           <CommonInput
@@ -560,11 +585,11 @@ onUnmounted(() => {
             class="dark:bg-gray-900 bg-white"
           />
         </div>
-        <div class="flex justify-between items-center text-sm text-slate-400">
+        <div class="flex items-center justify-between text-sm text-slate-400">
           <div
             v-if="isLoading"
             style="width: 60px; height: 20px"
-            class="loading-box rounded-lg"
+            class="rounded-lg loading-box"
           />
           <span v-else>{{ formatUsd(sellAmountInUsd) }}</span>
           <div class="flex items-center ml-auto gap-2.5 uppercase">
@@ -579,7 +604,7 @@ onUnmounted(() => {
         </div>
         <span
           v-if="sellAmountMeta.dirty && errors['sell-amount']"
-          class="text-xs flex gap-2 items-center text-left mt-2 text-red-alert"
+          class="flex items-center gap-2 mt-2 text-xs text-left text-red-alert"
         >
           <SVGInfo /> {{ errors["sell-amount"] }}
         </span>
@@ -593,14 +618,14 @@ onUnmounted(() => {
       </div>
 
       <div
-        class="py-4 px-5 dark:bg-slate-800 bg-slate-100 focus-within:bg-slate-50 border-2 border-transparent focus-within:dark:border-slate-800 focus-within:border-slate-150 focus-within:dark:bg-gray-850 rounded-5 flex flex-col gap-4"
+        class="flex flex-col gap-4 px-5 py-4 border-2 border-transparent dark:bg-slate-800 bg-slate-100 focus-within:bg-slate-50 focus-within:dark:border-slate-800 focus-within:border-slate-150 focus-within:dark:bg-gray-850 rounded-5"
       >
         <div class="flex">
-          <div class="flex-1 flex items-center">
+          <div class="flex items-center flex-1">
             <div
               v-if="isLoading"
               style="width: 100px; height: 28px"
-              class="loading-box rounded-lg"
+              class="rounded-lg loading-box"
             />
             <CommonInput
               v-else
@@ -621,11 +646,11 @@ onUnmounted(() => {
             class="dark:bg-gray-900 bg-white"
           />
         </div>
-        <div class="flex justify-between items-center text-sm text-slate-400">
+        <div class="flex items-center justify-between text-sm text-slate-400">
           <div
             v-if="isLoading"
             style="width: 60px; height: 20px"
-            class="loading-box rounded-lg"
+            class="rounded-lg loading-box"
           />
           <span v-else>{{ formatUsd(buyAmountInUsd) }}</span>
           <div class="flex items-center ml-auto gap-2.5 uppercase">
@@ -642,9 +667,9 @@ onUnmounted(() => {
       <div class="space-y-2.5">
         <div class="px-5 pt-[14px] pb-5 dark:bg-gray-850 bg-slate-50 rounded-5">
           <div class="flex flex-col gap-5">
-            <details class="group flex flex-col">
+            <details class="flex flex-col group">
               <summary
-                class="text-sm font-semibold flex justify-between cursor-pointer"
+                class="flex justify-between text-sm font-semibold cursor-pointer"
               >
                 <span class="inline-flex gap-2.5">
                   Slippage
@@ -662,7 +687,7 @@ onUnmounted(() => {
                   class="w-5 text-slate-400 group-open:rotate-180"
                 />
               </summary>
-              <div class="flex flex-1 gap-4 items-end mt-4">
+              <div class="flex items-end flex-1 gap-4 mt-4">
                 <div class="flex flex-col gap-2.5 flex-1">
                   <CommonSelect
                     v-model="slippage"
@@ -699,7 +724,7 @@ onUnmounted(() => {
               </div>
               <span
                 v-if="slippageMeta.dirty && errors['customSlippage']"
-                class="text-xs flex gap-2 items-center text-left mt-4 text-red-alert"
+                class="flex items-center gap-2 mt-4 text-xs text-left text-red-alert"
               >
                 <SVGInfo /> {{ errors["customSlippage"] }}
               </span>
@@ -709,19 +734,19 @@ onUnmounted(() => {
 
             <div class="flex flex-col gap-4">
               <div
-                class="flex flex-col sm:flex-row text-slate-400 font-medium uppercase text-sm justify-between items-center"
+                class="flex flex-col items-center justify-between text-sm font-medium uppercase sm:flex-row text-slate-400"
               >
                 <div
                   v-if="isLoading"
                   style="width: 140px; height: 20px"
-                  class="loading-box rounded-lg"
+                  class="rounded-lg loading-box"
                 />
                 <div
-                  class="flex items-center justify-between sm:justify-start sm:gap-2 w-full"
+                  class="flex items-center justify-between w-full sm:justify-start sm:gap-2"
                   v-else
                 >
                   <span>1 {{ swap.sellToken?.symbol }}</span>
-                  <span class="sm:block hidden"> = </span>
+                  <span class="hidden sm:block"> = </span>
                   <span
                     >{{ buyTokenAmountPerSellToken }}
                     {{ swap.buyToken?.symbol }}</span
@@ -730,14 +755,14 @@ onUnmounted(() => {
                 <div
                   v-if="isLoading"
                   style="width: 140px; height: 20px"
-                  class="loading-box rounded-lg"
+                  class="rounded-lg loading-box"
                 />
                 <div
                   v-else
-                  class="flex items-center justify-between sm:justify-end sm:gap-2 w-full"
+                  class="flex items-center justify-between w-full sm:justify-end sm:gap-2"
                 >
                   <span>1 {{ swap.buyToken?.symbol }}</span>
-                  <span class="sm:block hidden"> = </span>
+                  <span class="hidden sm:block"> = </span>
                   <span
                     >{{ sellTokenAmountPerBuyToken }}
                     {{ swap.sellToken?.symbol }}</span
@@ -745,7 +770,7 @@ onUnmounted(() => {
                 </div>
               </div>
               <div
-                class="hidden sm:flex text-slate-400 font-medium text-sm justify-between items-center"
+                class="items-center justify-between hidden text-sm font-medium sm:flex text-slate-400"
               >
                 <span>
                   Minimum Received after slippage ({{ actualSlippage }}%)
@@ -753,7 +778,7 @@ onUnmounted(() => {
                 <div
                   v-if="isLoading"
                   style="width: 140px; height: 20px"
-                  class="loading-box rounded-lg"
+                  class="rounded-lg loading-box"
                 />
                 <span class="uppercase" v-else>
                   {{ minRecievedAfterSlippage }}
@@ -761,7 +786,7 @@ onUnmounted(() => {
                 </span>
               </div>
               <div
-                class="flex justify-between text-sm items-center font-medium"
+                class="flex items-center justify-between text-sm font-medium"
               >
                 <span :class="{ '!text-red-alert': gt(priceImpact, 0.04) }"
                   >Price Impact</span
@@ -769,7 +794,7 @@ onUnmounted(() => {
                 <div
                   v-if="isLoading"
                   style="width: 100px; height: 20px"
-                  class="loading-box rounded-lg"
+                  class="rounded-lg loading-box"
                 />
                 <span
                   v-else
@@ -783,7 +808,7 @@ onUnmounted(() => {
         </div>
       </div>
       <EstimatedFee
-        :chain-id="chainId"
+        :chain-id="toChainId"
         :loading="feePending"
         :data="data"
         :error="error"
@@ -800,7 +825,7 @@ onUnmounted(() => {
       />
     </div>
 
-    <div class="flex gap-4 flex-col">
+    <div class="flex flex-col gap-4">
       <CommonButton
         type="submit"
         :disabled="sendingDisabled"

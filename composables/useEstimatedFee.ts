@@ -3,23 +3,26 @@ import { storeToRefs } from "pinia";
 import URLArbitrum from "~/assets/images/logo/arbitrum.svg?url";
 
 interface EstimatedFeeParams {
-  chainId: string;
   immediate?: boolean;
   cb?: () => void;
   disabled?: () => boolean;
   options?: any;
 }
 
-export function useEstimatedFee(txData: Ref, params: EstimatedFeeParams) {
+export function useEstimatedFee(
+  txData: Ref,
+  chainId: Ref,
+  params?: EstimatedFeeParams
+) {
   const { avoProvider } = useSafe();
   const { account } = useWeb3();
   const { safe } = useAvocadoSafe();
   const { gasBalance } = storeToRefs(useSafe());
 
-  const immediate = !!params.immediate;
+  const immediate = !!params?.immediate;
 
   const data = computed(() => {
-    const isArbitrumChain = params.chainId == "42161";
+    const isArbitrumChain = chainId.value == "42161";
 
     const discountDetails: DiscountDetails = {
       name: "Gas Discount",
@@ -32,7 +35,7 @@ export function useEstimatedFee(txData: Ref, params: EstimatedFeeParams) {
     };
 
     return calculateEstimatedFee({
-      chainId: params.chainId,
+      chainId: chainId.value,
       ...rawData.value,
       discountDetails,
     });
@@ -58,8 +61,10 @@ export function useEstimatedFee(txData: Ref, params: EstimatedFeeParams) {
     "estimated-fee",
     async () => {
       try {
-        const disabled = params.disabled?.();
+        const disabled = params?.disabled?.();
         if (disabled) return;
+
+        console.log(chainId.value);
 
         if (!txData.value) return;
 
@@ -71,19 +76,19 @@ export function useEstimatedFee(txData: Ref, params: EstimatedFeeParams) {
 
         const message = await safe.value?.generateSignatureMessage(
           actualTx,
-          +params.chainId,
-          params.options
+          +chainId.value,
+          params?.options
         );
 
         const data = await avoProvider.send("txn_estimateFeeWithoutSignature", [
           message,
           account.value,
-          params.chainId,
+          chainId.value,
         ]);
 
         return data;
       } finally {
-        params.cb?.();
+        params?.cb?.();
       }
     },
     {

@@ -33,6 +33,6 @@ const typeClass = computed(() => {
       <SVGInfo class="w-[18px] h-[18px] shrink-0" />
       <span class="text-xs"> {{ text }}</span>
     </div>
-    <slot name="action"/>
+    <slot name="action" />
   </div>
 </template>
