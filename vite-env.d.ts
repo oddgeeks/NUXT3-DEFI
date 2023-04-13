@@ -3,6 +3,9 @@ interface Window {
 }
 
 type ITxType = "send" | "swap" | "bridge" | "topUpGas" | "wc" | "upgrade";
+
+type ChainId = 1 | 137 | 42161 | 10 | 56 | 43114 | 100 | 1101 | 634 | 63400;
+
 interface Provider {
   id: string;
   name: string;
@@ -13,13 +16,18 @@ interface Provider {
 
 interface Network {
   name: string;
-  chainId: number;
-  icon: any;
+  debankName?: string;
+  ankrName?: string;
+  chainId: ChainId;
+  isAvocado?: boolean;
+  serverRpcUrl: string | undefined;
+  balanceResolverAddress?: string;
+  usdcAddress: string;
+  explorerUrl: string;
   params: {
     chainName?: string;
-    rpcUrls?: string[];
-    blockExplorerUrls?: string[];
     iconUrls?: string[];
+    rpcUrls: string[];
     nativeCurrency?: {
       name: string;
       symbol: string;

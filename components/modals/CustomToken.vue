@@ -4,7 +4,6 @@ import { isAddress } from "@ethersproject/address";
 import ClipboardSVG from "~/assets/images/icons/clipboard.svg?component";
 import { IToken } from "~~/stores/tokens";
 import { Erc20__factory } from "~~/contracts";
-import { RPC_URLS } from "~~/connectors";
 import { useField, useForm } from "vee-validate";
 import { storeToRefs } from "pinia";
 
@@ -53,17 +52,6 @@ const {
   meta: addressMeta,
   setValue,
 } = useField<string>("address");
-
-const supportedChains = computed(() =>
-  Object.keys(RPC_URLS)
-    .filter((i) => i !== String(avoChainId))
-    .map((chainId) => {
-      return {
-        id: chainId,
-        name: chainIdToName(chainId),
-      };
-    })
-);
 
 const {
   data: token,
@@ -174,9 +162,9 @@ onUnmounted(() => {
         <CommonSelect
           class="w-full"
           v-model="chainId"
-          value-key="id"
+          value-key="chainId"
           label-key="name"
-          :options="supportedChains"
+          :options="availableNetworks"
         >
           <template #button-prefix>
             <ChainLogo class="w-6 h-6 shrink-0" :chain="chainId" />

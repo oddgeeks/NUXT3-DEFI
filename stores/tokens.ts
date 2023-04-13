@@ -22,7 +22,9 @@ export const useTokens = defineStore("tokens", () => {
 
   const fetchTokens = async () => {
     try {
-      const data: any = await $fetch("/tokenlist.json");
+      const data: any = await $fetch(
+        "https://cdn.instadapp.io/avocado/tokenlist.json"
+      );
 
       tokens.value = await fetchTokenPrices([
         ...data.tokens.map((t: any) => ({
@@ -65,7 +67,7 @@ export const useTokens = defineStore("tokens", () => {
         for (const tokenPrice of prices) {
           const token = _tokenList.find(
             (t) =>
-              t.chainId === String(cid) &&
+              t.chainId == String(cid) &&
               t.address.toLowerCase() === tokenPrice.address.toLowerCase()
           );
 
@@ -122,17 +124,6 @@ export const useTokens = defineStore("tokens", () => {
     token.isCustomToken = true;
     customTokens.value.push(token);
     fetchTokens();
-
-    const url = `<${getExplorerUrl(
-      token.chainId,
-      `/token/${token.address}`
-    )}|${shortenHash(token.address, 12)}>`;
-
-    // logActionToSlack({
-    //   action: "add-token",
-    //   message: `${token.name} :${chainIdToName(token.chainId)}: ${url}`,
-    //   account: account.value,
-    // });
   };
 
   const handleDeleteToken = (token: IToken) => {

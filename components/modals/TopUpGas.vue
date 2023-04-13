@@ -19,27 +19,16 @@ const [isGiftActive, toggleGift] = useToggle(false);
 const { gasBalance } = storeToRefs(useSafe());
 const { fetchGasBalance, avoProvider } = useSafe();
 
-const chainUSDCAddresses: any = {
-  137: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
-  10: "0x7f5c764cbc14f9669b88837ca1490cca17c31607",
-  42161: "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
-  1: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-  43114: "0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
-  100: "0xddafbb505ad214d7b80b1f830fccc89b60fb7a83",
-  56: "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
-};
-
 const pendingGasAmount = useNuxtData("pending-deposit");
 
-const networks = computed(() =>
-  Object.keys(chainUSDCAddresses)
-    .map((chainId) => ({
-      name: chainIdToName(chainId),
-      chainId,
-      balance: getUSDCByChainId(chainId)?.balance,
+const networks = computed(() => {
+  return availableNetworks
+    .map((network) => ({
+      ...network,
+      balance: getUSDCByChainId(network.chainId)?.balance,
     }))
-    .sort((a, b) => toBN(b.balance).minus(a.balance).toNumber())
-);
+    .sort((a, b) => toBN(b.balance).minus(a.balance).toNumber());
+});
 
 const claimLoading = ref(false);
 
@@ -79,12 +68,14 @@ const { value: chainId, setValue } = useField<number>(
 // TODO:
 const token = computed(() => getUSDCByChainId(String(chainId.value)));
 
-const getUSDCByChainId = (chainId: string) => {
+const getUSDCByChainId = (chainId: string | number) => {
+  const usdcAddr = availableNetworks.find((i) => String(i.chainId) == chainId)
+    ?.usdcAddress as string;
+
   return tokenBalances.value.find(
     (t) =>
-      t.chainId === chainId &&
-      toChecksumAddress(t.address) ===
-        toChecksumAddress(chainUSDCAddresses[chainId])
+      t.chainId == chainId &&
+      toChecksumAddress(t.address) === toChecksumAddress(usdcAddr)
   )!;
 };
 
@@ -290,11 +281,22 @@ onMounted(() => {
     </span>
     <div
       v-if="toBN(pendingGasAmount.data.value).gt('0')"
-      class="leading-5 text-xs gap-2 text-orange-400 items-center justify-center flex"
+      class="flex-col leading-5 text-xs gap-0.5 text-orange-400 items-center justify-center flex"
     >
-      <SvgSpinner />
-      {{ formatUsd(pendingGasAmount.data.value) }}
-      gas is pending block confirmation
+      <div class="flex items-center gap-2">
+        <SvgSpinner />
+        {{ formatUsd(pendingGasAmount.data.value) }}
+        gas is pending block confirmation
+      </div>
+      <NuxtLink
+        href="https://help.avocado.instadapp.io/en/articles/7211493-why-haven-t-my-gas-credits-reflected-yet"
+        target="blank"
+        external
+        rel="noopener noreferrer"
+        class="text-xs font-medium text-primary"
+      >
+        Learn More
+      </NuxtLink>
     </div>
     <form v-if="!isGiftActive" @submit="onSubmit" class="space-y-5">
       <div class="flex flex-col gap-2.5">

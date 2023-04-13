@@ -51,10 +51,13 @@ const {
   tokenAddress: props.address,
 });
 
-const { pending, error, data } = useEstimatedFee(transactions.data, {
-  chainId: props.chainId,
-  disabled: () => isInsufficientBalance.value,
-});
+const { pending, error, data } = useEstimatedFee(
+  transactions.data,
+  ref(props.chainId),
+  {
+    disabled: () => isInsufficientBalance.value,
+  }
+);
 
 const setMax = () => {
   amount.value = toBN(token.value!.balance).decimalPlaces(6, 1).toString();

@@ -1103,10 +1103,18 @@
   resolved "https://registry.yarnpkg.com/@headlessui/vue/-/vue-1.7.12.tgz#963b2eb2f548278c49f2d1e67f0a4a84f54078da"
   integrity sha512-IV0k1I2I8Bj37HljFF231Y9cpldfiucf+inMCxA/VPoQT6UTxo0N/rb78CrogBxXNfsPxKmz3y/nlv+eRz6zvg==
 
+"@instadapp/avocado-base@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado-base/-/avocado-base-0.0.5.tgz#f67165ee0768e27a798e3ee850803de6a8c3c1fb"
+  integrity sha512-ncbbWidPOzwZokIg32sIZ5/vQpOU9n8TaIahur1Ql0g/NK3Y8iXu0kqaX2tK/EuctLifAhUgeEh5rHBl5d0BJQ==
+  dependencies:
+    bignumber.js "^9.1.1"
+    ethers "^5.7.2"
+
 "@instadapp/avocado-dev@npm:@instadapp/avocado@dev":
-  version "0.0.0-dev.94711d4"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.94711d4.tgz#ae4c72ffa8e7ae4a985489fd7a95bee30abb04a0"
-  integrity sha512-Wt7tIdwhb7yP+8b3Jy7COAady1AF3oQtXkXIBwKln+686jgn3wbEL0vF/z3WdVKV3S3LKuKnm0vIe3L0JHAD+A==
+  version "0.0.0-dev.6f5b1a4"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.6f5b1a4.tgz#d8675f11601b47303168ee2e0a2a7d3e0938def5"
+  integrity sha512-6igyAjBajRDIfBBhlXKYdyGofJhHz7K1az6ARKEo21iLrf25t61ViGwATO2C+g949Vqgu4eJ3uODrbdmGXM/GQ==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
@@ -1119,10 +1127,10 @@
     semver "^7.3.8"
     tiny-warning "^1.0.3"
 
-"@instadapp/avocado@^0.1.9":
-  version "0.1.9"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.1.9.tgz#50bb6f3834bb3a488e6a4273073373ce686b77cc"
-  integrity sha512-yovYt9qJJZdEh997wbFChpc8gIcHr8qLgfwZHBmkTF5ixYRWBDR1dyFTM9QPvIveXqBuXNlDw6dg3jJOhERDFg==
+"@instadapp/avocado@^0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.1.10.tgz#5f727e6ddd18f3c58c34b0a1adb43371a5892993"
+  integrity sha512-TZP4OeGY9/6VARK9c1AGgWs4cWdtShRcq6ZIo2VjR4yYPs18N4iGjFgRd6KIZBFkDhpMkK/dgowX9uMVkgpv8Q==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
@@ -8064,7 +8072,18 @@ tsscmp@1.0.6:
   resolved "https://registry.yarnpkg.com/tsscmp/-/tsscmp-1.0.6.tgz#85b99583ac3589ec4bfef825b5000aa911d605eb"
   integrity sha512-LxhtAkPDTkVCMQjt2h6eBVY28KCjikZqZfMcC15YBeNjkgUpdCfBu5HoiOTDu86v6smE8yOjyEktJ8hlbANHQA==
 
-tsx@^3.12.2, tsx@^3.2.1:
+tsx@^3.12.2:
+  version "3.12.6"
+  resolved "https://registry.yarnpkg.com/tsx/-/tsx-3.12.6.tgz#36b3693e48b8392da374487190972c7b80e433b4"
+  integrity sha512-q93WgS3lBdHlPgS0h1i+87Pt6n9K/qULIMNYZo07nSeu2z5QE2CellcAZfofVXBo2tQg9av2ZcRMQ2S2i5oadQ==
+  dependencies:
+    "@esbuild-kit/cjs-loader" "^2.4.2"
+    "@esbuild-kit/core-utils" "^3.0.0"
+    "@esbuild-kit/esm-loader" "^2.5.5"
+  optionalDependencies:
+    fsevents "~2.3.2"
+
+tsx@^3.2.1:
   version "3.12.3"
   resolved "https://registry.yarnpkg.com/tsx/-/tsx-3.12.3.tgz#b29f6c9246d4e3ea46451cd81d7cbc98f45c4b8a"
   integrity sha512-Wc5BFH1xccYTXaQob+lEcimkcb/Pq+0en2s+ruiX0VEIC80nV7/0s7XRahx8NnsoCnpCVUPz8wrqVSPi760LkA==

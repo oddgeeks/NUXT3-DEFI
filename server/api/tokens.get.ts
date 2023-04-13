@@ -22,8 +22,6 @@ interface IProviderResponse {
   tokens: IProviderToken[];
 }
 
-const SUPPORTED_CHAIN_IDS = ["137", "10", "42161", "1", "43114", "100", "56"];
-
 const formatIPFS = (ipfs: string) => {
   if (ipfs.startsWith("ipfs") || ipfs.startsWith("ipfs://")) {
     return `https://ipfs.io/ipfs/${ipfs.replace("ipfs://", "")}`;
@@ -101,7 +99,9 @@ export default defineEventHandler<IToken[]>(async (event) => {
           };
         })
         .filter((t) => {
-          return SUPPORTED_CHAIN_IDS.includes(t.chainId);
+          return availableNetworks.some(
+            (n) => String(n.chainId) == String(t.chainId)
+          );
         })
         .filter(
           (token) =>

@@ -11,6 +11,8 @@ const meta = {
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  extends: ["@instadapp/avocado-base"],
+
   runtimeConfig: {
     socketApiKey: process.env.SOCKET_API_KEY,
     debankAccessKey: process.env.DEBANK_ACCESS_KEY,
@@ -37,6 +39,7 @@ export default defineNuxtConfig({
         cache: { maxAge: 86400 },
       },
       "/api/balances": { cache: { maxAge: 5 } },
+      "/api/transfers": { cache: { maxAge: 20 } },
       // "/api/tokens": {
       //   cache: {
       //     maxAge: 3600, // 1 hour
