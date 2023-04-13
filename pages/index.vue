@@ -68,9 +68,6 @@ const handleOpenDialog = () => {
                 </button>
               </ClientOnly>
             </div>
-<<<<<<< HEAD
-            <MultipleNetworkFilter v-if="account" />
-=======
             <div class="flex items-center space-x-4" v-if="account">
               <ClientOnly>
                 <div
@@ -172,7 +169,6 @@ const handleOpenDialog = () => {
                 </transition>
               </Popover>
             </div>
->>>>>>> a4638a918e7b7d43fd89a1456972136ca39978cf
           </div>
           <Balances
             :networkPreference="networkPreference"
