@@ -5,7 +5,7 @@ import PlusSVG from "~/assets/images/icons/plus.svg?component";
 import SVGX from "~/assets/images/icons/x.svg?component";
 
 const { account } = useWeb3();
-const { safeAddress } = useAvocadoSafe();
+const { safeAddress, isSafeAddress } = useAvocadoSafe();
 const { contacts, deleteContact } = useContacts();
 
 const searchQuery = ref("");
@@ -53,6 +53,50 @@ const handleDeletingContact = async (contact: IContact) => {
   if (success) {
     deleteContact(contact);
   }
+};
+
+const { data: transferCounts } = useAsyncData(
+  async () => {
+    const _contacts = contacts.value[safeAddress.value];
+    if (!_contacts || _contacts.length === 0) {
+      return {};
+    }
+
+    const res = await http("/api/transfers", {
+      params: {
+        from: safeAddress.value,
+        to: _contacts.map((_contact) => _contact.address),
+        chainIds: await Promise.all(
+          _contacts.map(async (_contact) => {
+            if (await isSafeAddress(_contact.address)) return 0;
+            return Number(_contact.chainId);
+          })
+        ),
+      },
+    });
+
+    return res;
+  },
+  {
+    watch: [safeAddress, contacts],
+  }
+);
+
+const getSentTimes = (contact: IContact) => {
+  if (transferCounts.value) {
+    const info = transferCounts.value.find(
+      (item) =>
+        item.to.toLowerCase() === contact.address.toLowerCase() &&
+        item.chainId == contact.chainId
+    );
+    if (!info || info.transferCount === 0) {
+      return "";
+    }
+    return `Sent ${info.transferCount} ${
+      info.transferCount === 1 ? "time" : "times"
+    }`;
+  }
+  return "";
 };
 </script>
 
@@ -123,7 +167,7 @@ const handleDeletingContact = async (contact: IContact) => {
                   {{ contact.name }}
                 </td>
                 <td class="flex items-center justify-between pr-10 py-6 gap-10">
-                  <div class="flex flex-1 items-center gap-2.5">
+                  <div class="flex items-center gap-2.5">
                     <ChainLogo
                       :stroke="false"
                       class="w-[22px] h-[22px]"
@@ -131,6 +175,9 @@ const handleDeletingContact = async (contact: IContact) => {
                     />
                     <span>{{ shortenHash(contact.address) }}</span>
                   </div>
+                  <span class="text-slate-400">{{
+                    getSentTimes(contact)
+                  }}</span>
                   <button @click.stop="handleDeletingContact(contact)">
                     <SVGX class="text-slate-400" />
                   </button>
@@ -166,6 +213,9 @@ const handleDeletingContact = async (contact: IContact) => {
                 </template>
               </Copy>
             </div>
+            <span class="text-slate-400" v-if="getSentTimes(contact) !== ''">{{
+              getSentTimes(contact)
+            }}</span>
             <div class="flex gap-2.5">
               <CommonButton
                 color="white"

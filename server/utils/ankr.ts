@@ -6,13 +6,20 @@ const { ankrApiKey } = useRuntimeConfig();
 // Setup provider AnkrProvider
 const ankrProvider = new AnkrProvider(ankrApiKey);
 
-const GNOSIS_CHAIN_ID = 100;
+export const ANKR_API_UNSPPORTED_CHAINS: Record<number, boolean> = {
+  100: true,
+  1101: true,
+};
 
-export const getTokenTransfersFromAnkr = async (
+export const getTokenTransfersByAnkr = async (
   from: string,
   to: string,
   chainId?: number
 ): Promise<number> => {
+  if (chainId && ANKR_API_UNSPPORTED_CHAINS[chainId]) {
+    return 0;
+  }
+
   const chains: Blockchain | Blockchain[] | undefined = chainId
     ? <Blockchain | undefined>(
         availableNetworks.find((network) => Number(network.chainId) === chainId)
@@ -21,13 +28,13 @@ export const getTokenTransfersFromAnkr = async (
     : <Blockchain[]>(
         availableNetworks
           .filter(
-            (network) => network.chainId !== GNOSIS_CHAIN_ID && network.ankrName
+            (network) =>
+              !ANKR_API_UNSPPORTED_CHAINS[network.chainId] && network.ankrName
           )
           .map((network) => network.ankrName!)
       );
 
-  // If chain Id is gnosis, return 0
-  if (chainId === GNOSIS_CHAIN_ID || !chains) {
+  if (!chains) {
     return 0;
   }
 
@@ -66,4 +73,21 @@ export const getTokenTransfersFromAnkr = async (
   } while (true);
 
   return totalTransfer;
+};
+
+export const getMultipleTokenTransfersByAnkr = async (
+  from: string,
+  to: string[],
+  chainId?: number
+): Promise<Record<string, number>> => {
+  const res = await Promise.all(
+    to.map((_to) => getTokenTransfersByAnkr(from, _to, chainId))
+  );
+
+  const transferCounts: Record<string, number> = {};
+  for (let i = 0; i < to.length; i += 1) {
+    transferCounts[to[i].toLowerCase()] = res[i];
+  }
+
+  return transferCounts;
 };

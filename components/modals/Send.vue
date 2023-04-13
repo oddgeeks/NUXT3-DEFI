@@ -200,12 +200,12 @@ const { data: totalTransfers } = useAsyncData(
     const res = await http("/api/transfers", {
       params: {
         from: safeAddress.value,
-        to: actualAddress.value,
-        chainId: toSafeAddress ? undefined : tochainId.value,
+        to: [actualAddress.value],
+        chainIds: [toSafeAddress ? 0 : tochainId.value],
       },
     });
 
-    return res.totalTransfers;
+    return res[0].transferCount;
   },
   {
     watch: [actualAddress, tochainId],
