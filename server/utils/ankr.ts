@@ -8,7 +8,6 @@ const ankrProvider = new AnkrProvider(ankrApiKey);
 
 export const ANKR_API_UNSPPORTED_CHAINS: Record<number, boolean> = {
   100: true,
-  1101: true,
 };
 
 export const getTokenTransfersByAnkr = async (
