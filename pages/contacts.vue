@@ -5,7 +5,7 @@ import PlusSVG from "~/assets/images/icons/plus.svg?component";
 import SVGX from "~/assets/images/icons/x.svg?component";
 
 const { account } = useWeb3();
-const { safeAddress, isSafeAddress } = useAvocadoSafe();
+const { safeAddress } = useAvocadoSafe();
 const { contacts, deleteContact } = useContacts();
 
 const searchQuery = ref("");
@@ -59,21 +59,33 @@ const { data: transferCounts } = useAsyncData(
   async () => {
     const _contacts = contacts.value[safeAddress.value];
     if (!_contacts || _contacts.length === 0) {
-      return {};
+      return [];
     }
 
+    let newContacts: IContact[] = _contacts;
+
+    if (Array.isArray(transferCounts.value)) {
+      newContacts = _contacts.filter(
+        (contact) =>
+          transferCounts.value.findIndex(
+            (transfer) =>
+              transfer.from === safeAddress.value &&
+              transfer.to === contact.address.toLowerCase() &&
+              transfer.chainId == contact.chainId
+          ) === -1
+      );
+    }
     const res = await http("/api/transfers", {
       params: {
         from: safeAddress.value,
-        to: _contacts.map((_contact) => _contact.address),
-        chainIds: await Promise.all(
-          _contacts.map(async (_contact) => {
-            if (await isSafeAddress(_contact.address)) return 0;
-            return Number(_contact.chainId);
-          })
-        ),
+        to: newContacts.map((_contact) => _contact.address),
+        chainIds: newContacts.map((_contact) => Number(_contact.chainId)),
       },
     });
+
+    if (Array.isArray(transferCounts.value)) {
+      return [...transferCounts.value, ...res];
+    }
 
     return res;
   },
@@ -83,7 +95,7 @@ const { data: transferCounts } = useAsyncData(
 );
 
 const getSentTimes = (contact: IContact) => {
-  if (transferCounts.value) {
+  if (transferCounts.value && Array.isArray(transferCounts.value)) {
     const info = transferCounts.value.find(
       (item) =>
         item.to.toLowerCase() === contact.address.toLowerCase() &&
