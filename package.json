@@ -64,8 +64,8 @@
     "yup": "^0.32.11"
   },
   "dependencies": {
-    "alchemy-sdk": "^2.6.3",
     "@instadapp/avocado-base": "^0.0.5",
+    "alchemy-sdk": "^2.7.0",
     "canvas-confetti": "^1.6.0",
     "error-serializer": "^5.1.0",
     "fuse.js": "^6.6.2",

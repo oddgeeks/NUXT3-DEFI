@@ -18,29 +18,32 @@ useAccountTrack(undefined, () => {
 const { data, pending } = useAsyncData(
   async () => {
     if (!safeAddress.value) return;
-    const nft = new NFT(safeAddress.value);
+    try {
+      const nft = new NFT("0x2e8ABfE042886E4938201101A63730D04F160A82");
 
-    return nft.getNFTs({
-      pageSize: 50,
-    });
+      return nft.getNFTs({
+        pageSize: 50,
+      });
+    } catch (e) {
+      console.log(e);
+    }
   },
   {
     server: false,
-    immediate: true,
     watch: [safeAddress],
   }
 );
 
 const filteredAssets = computed(() => {
   const items = data.value?.filter((item) =>
-    networkPreference.value.has(item.chainId)
+    networkPreference.value.has(+item.chainId as ChainId)
   );
 
   if (!searchQuery.value) return items;
 
   const fuse = new Fuse(items || [], {
     keys: ["collectionName", "name"],
-    threshold: 0.2,
+    threshold: 0.1,
   });
 
   return fuse.search(searchQuery.value).map((result) => result.item);
@@ -50,7 +53,9 @@ const filteredAssets = computed(() => {
 <template>
   <div class="flex-1 container relative">
     <div class="w-full flex items-center justify-between mb-5">
-      <h1>Your NFTs ({{ data?.length }})</h1>
+      <h1>
+        Your NFTs <span v-if="!pending && data">({{ data?.length }})</span>
+      </h1>
       <MultipleNetworkFilter v-if="account" />
     </div>
     <CommonInput
@@ -66,12 +71,20 @@ const filteredAssets = computed(() => {
     </CommonInput>
     <div
       :class="{
-        blur: pending,
+        'blur dark:bg-gray-850 rounded-[25px] bg-slate-50': pending || !data,
       }"
-      class="p-5 rounded-[25px] w-full h-full sm:absolute dark:bg-gray-850 bg-slate-50 max-h-full sm:overflow-auto scroll-style"
+      class="w-full h-full max-h-[750px] sm:overflow-auto scroll-style"
     >
+      <div
+        class="dark:bg-gray-850 bg-slate-50 rounded-[25px] w-full p-5"
+        v-if="!pending && data && !data.length"
+      >
+        No NFTs found
+      </div>
+
       <ul
-        class="grid grid-cols-1 sm:grid-cols-3 w-full h-full md:grid-cols-5 gap-5 content-baseline"
+        v-else
+        class="grid p-5 grid-cols-1 sm:grid-cols-3 dark:bg-gray-850 bg-slate-50 rounded-[25px] w-full md:grid-cols-5 gap-5 content-baseline"
       >
         <NFTCard
           :key="asset.name"

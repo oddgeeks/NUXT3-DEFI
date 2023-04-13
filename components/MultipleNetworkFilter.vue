@@ -3,8 +3,6 @@ import { storeToRefs } from "pinia";
 import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
 import ChevronDownSVG from "~/assets/images/icons/chevron-down.svg?component";
 
-const { availableNetworks } = useNetworks();
-
 const { networkPreference } = storeToRefs(useSafe());
 </script>
 
