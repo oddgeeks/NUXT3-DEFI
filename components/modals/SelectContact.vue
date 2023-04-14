@@ -5,7 +5,7 @@ import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
 
 const emit = defineEmits(["resolve", "reject"]);
 
-const { contacts } = useContacts();
+const { contacts, getSentTimes } = useContacts();
 const { safeAddress } = useAvocadoSafe();
 
 const searchQuery = ref("");
@@ -31,45 +31,6 @@ const filteredContacts = computed(() => {
 
   return fuse.search(searchQuery.value).map((result) => result.item);
 });
-
-const { data: transferCounts } = useAsyncData(
-  async () => {
-    const _contacts = contacts.value[safeAddress.value];
-    if (!_contacts || _contacts.length === 0) {
-      return [];
-    }
-
-    const res = await http("/api/transfers", {
-      params: {
-        from: safeAddress.value,
-        to: _contacts.map((_contact) => _contact.address),
-        chainIds: _contacts.map((_contact) => Number(_contact.chainId)),
-      },
-    });
-
-    return res;
-  },
-  {
-    watch: [safeAddress, contacts],
-  }
-);
-
-const getSentTimes = (contact: IContact) => {
-  if (transferCounts.value && Array.isArray(transferCounts.value)) {
-    const info = transferCounts.value.find(
-      (item) =>
-        item.to.toLowerCase() === contact.address.toLowerCase() &&
-        item.chainId == contact.chainId
-    );
-    if (!info || info.transferCount === 0) {
-      return "";
-    }
-    return `Sent ${info.transferCount} ${
-      info.transferCount === 1 ? "time" : "times"
-    }`;
-  }
-  return "";
-};
 </script>
 
 <template>
