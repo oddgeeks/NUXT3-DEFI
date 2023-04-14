@@ -54,6 +54,7 @@ export const useNft = () => {
           collectionName: nft.collectionName,
           name: nft.name,
           chainId: network.chainId,
+          tokenId: nft.tokenId,
         });
 
         return acc;

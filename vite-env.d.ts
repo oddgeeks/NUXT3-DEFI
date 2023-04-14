@@ -391,6 +391,7 @@ interface NFTData {
   collectionName: string;
   name: string;
   chainId: number;
+  tokenId: string;
 }
 
 interface NFTParams {
