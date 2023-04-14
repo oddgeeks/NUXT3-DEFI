@@ -60,7 +60,7 @@ const { value: chainId, setValue: setChainId } = useField<string>(
   "chainId",
   undefined,
   {
-    initialValue: "1",
+    initialValue: props.chainId ?? "1",
   }
 );
 const { value: contactName, setValue: setContactName } =
@@ -110,9 +110,6 @@ const pasteAddress = async () => {
 onMounted(() => {
   if (props.name) {
     setContactName(props.name);
-  }
-  if (props.chainId) {
-    setChainId(props.chainId);
   }
   if (props.address) {
     setAddress(props.address);
