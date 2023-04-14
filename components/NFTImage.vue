@@ -22,7 +22,7 @@ const handleError = () => {
     </div>
     <img
       v-else
-      class="rounded-[14px] w-full h-full sm:w-[168] sm:h-[160px] object-cover"
+      class="rounded-[14px] w-full h-full sm:w-[168px] sm:h-[160px] object-cover"
       width="168"
       height="160"
       @error="handleError"

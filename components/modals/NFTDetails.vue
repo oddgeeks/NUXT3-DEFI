@@ -6,7 +6,11 @@ defineProps<{
 
 <template>
   <div class="flex flex-col gap-7.5">
-    <NFTImage img-class="sm:h-[324px]" class="!sm:h-full" :asset="asset" />
+    <NFTImage
+      img-class="sm:h-[324px] sm:w-full"
+      class="!sm:h-full"
+      :asset="asset"
+    />
     <div class="flex gap-3 flex-col">
       <h1 v-if="asset.name" class="text-center text-lg leading-5">
         {{ asset.name }}

@@ -73,7 +73,7 @@ const filteredAssets = computed(() => {
       :class="{
         'blur dark:bg-gray-850 rounded-[25px] bg-slate-50': pending || !data,
       }"
-      class="w-full h-full max-h-[750px] sm:overflow-auto scroll-style"
+      class="w-[101%] h-full max-h-[750px] sm:overflow-auto sm:-mr-2 scroll-style"
     >
       <div
         class="dark:bg-gray-850 bg-slate-50 rounded-[25px] w-full p-5"
