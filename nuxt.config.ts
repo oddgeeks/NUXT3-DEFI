@@ -39,7 +39,7 @@ export default defineNuxtConfig({
         cache: { maxAge: 86400 },
       },
       "/api/balances": { cache: { maxAge: 5 } },
-      // "/api/transfers": { cache: { maxAge: 20 } },
+      "/api/transfers": { cache: { maxAge: 20 } },
       // "/api/tokens": {
       //   cache: {
       //     maxAge: 3600, // 1 hour
