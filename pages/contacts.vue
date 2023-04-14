@@ -6,7 +6,7 @@ import SVGX from "~/assets/images/icons/x.svg?component";
 
 const { account } = useWeb3();
 const { safeAddress } = useAvocadoSafe();
-const { contacts, deleteContact, transferCounts, getSentTimes } = useContacts();
+const { contacts, deleteContact, getSentTimes } = useContacts();
 
 const searchQuery = ref("");
 
