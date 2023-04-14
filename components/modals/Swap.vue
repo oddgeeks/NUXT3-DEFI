@@ -65,6 +65,9 @@ const slippages = [
   { value: "3", label: "3%" },
 ];
 
+const slippage = useLocalStorage("slippage", "0.3");
+const customSlippage = useLocalStorage("customSlippage", "");
+
 const defaultSwapDetails = () => ({
   data: null as ISwapResponse | null,
   error: "",
@@ -135,8 +138,6 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
     initialValues: {
       "sell-amount": undefined,
       "buy-amount": undefined,
-      customSlippage: undefined,
-      slippage: "0.3",
     },
     validationSchema: yup.object({
       "sell-amount": yup
@@ -145,20 +146,6 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
         .test("min-amount", "", validateMinAmount)
         .test("max-amount", "Insufficient balance", (val: any) =>
           validateMaxAmount(val, sellTokenBalance.value)
-        ),
-      slippage: yup.string().required(),
-      customSlippage: yup
-        .string()
-        .test(
-          "slippage",
-          "Slippage must be between 0.0001% and 100%",
-          (value) => {
-            const slippage = toBN(value!);
-
-            if (value) {
-              return slippage.gte(0.0001) && slippage.lte(100);
-            } else return true;
-          }
         ),
     }),
   });
@@ -170,14 +157,15 @@ const {
   setState: setSellAmount,
 } = useField<string>("sell-amount");
 
-const { value: slippage } = useField<string>("slippage");
-const {
-  value: customSlippage,
-  meta: slippageMeta,
-  setState: setCustomSlippage,
-} = useField<string>("customSlippage");
-
 const actualSlippage = computed(() => customSlippage.value || slippage.value);
+
+const slippageError = computed(() => {
+  const message = "Slippage must be between 0.0001% and 100%";
+  const value = toBN(actualSlippage.value);
+  if (actualSlippage.value) {
+    return value.gte(0.0001) && value.lte(100) ? "" : message;
+  } else return "";
+});
 
 const convertBuytoSellAmount = (val: string) => {
   const sellTokenPrice = swap.value.sellToken.price;
@@ -223,7 +211,8 @@ const sendingDisabled = computed(
     feePending.value ||
     isPriceImpactHigh.value ||
     !!swapDetails.value.error ||
-    !!error.value
+    !!error.value ||
+    !!slippageError.value
 );
 
 const isLoading = computed(
@@ -231,7 +220,7 @@ const isLoading = computed(
 );
 const fetchSwapDetails = async () => {
   const { valid } = await validate();
-  if (!valid) return;
+  if (!valid || !!slippageError.value) return;
 
   pause();
 
@@ -521,12 +510,10 @@ watch(sellAmount, () => {
 });
 
 watch(slippage, () => {
-  setCustomSlippage({
-    value: undefined,
-  });
+  customSlippage.value = "";
 });
 
-watch([sellAmount, swapped, slippage, customSlippage, toChainId], () => {
+watch([sellAmount, swapped, actualSlippage, toChainId], () => {
   fetchSwapDetails();
 });
 
@@ -703,6 +690,7 @@ onUnmounted(() => {
                 </div>
                 <CommonInput
                   name="slippage"
+                  type="numeric"
                   placeholder="Custom"
                   input-classes="!py-3"
                   class="flex-1"
@@ -718,10 +706,11 @@ onUnmounted(() => {
                 </CommonInput>
               </div>
               <span
-                v-if="slippageMeta.dirty && errors['customSlippage']"
+                v-if="!!slippageError"
                 class="flex items-center gap-2 mt-4 text-xs text-left text-red-alert"
               >
-                <SVGInfo /> {{ errors["customSlippage"] }}
+                <SVGInfo />
+                {{ slippageError }}
               </span>
             </details>
 
