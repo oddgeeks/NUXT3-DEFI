@@ -120,54 +120,56 @@ const handleDeletingContact = async (contact: IContact) => {
                 class="contact-row text-sm font-semibold cursor-pointer"
               >
                 <td class="pl-7.5 text-sm">
-                  {{ contact.name }}
+                  <span>{{ contact.name }}</span>
                 </td>
-                <td class="flex items-center justify-between pr-10 py-6 gap-10">
-                  <div class="flex items-center gap-2.5">
-                    <ChainLogo
-                      :stroke="false"
-                      class="w-[22px] h-[22px]"
-                      :chain="contact.chainId"
-                    />
-                    <span>{{ shortenHash(contact.address) }}</span>
-                  </div>
-                  <span class="text-slate-400">{{
-                    getSentTimes(contact)
-                  }}</span>
-                  <div class="flex items-center gap-9">
-                    <div class="flex gap-4">
-                      <CommonButton
-                        color="white"
-                        class="items-center h-10 !px-4"
-                        @click="
-                          openAddContactModal(
-                            contact.name,
-                            contact.address,
-                            contact.chainId,
-                            true
-                          )
-                        "
-                      >
-                        Edit
-                      </CommonButton>
-                      <CommonButton
-                        color="white"
-                        class="items-center gap-2.5 h-10 !px-4"
-                        @click="
-                          openSendModal(contact.chainId, undefined, contact)
-                        "
-                      >
-                        Send
-                        <div class="rounded-full bg-primary p-1.5">
-                          <ArrowRight
-                            class="text-white -rotate-45 w-3.5 h-3.5"
-                          />
-                        </div>
-                      </CommonButton>
+                <td class="pr-10 py-6">
+                  <div class="flex items-center justify-between gap-10">
+                    <div class="flex items-center gap-2.5">
+                      <ChainLogo
+                        :stroke="false"
+                        class="w-[22px] h-[22px]"
+                        :chain="contact.chainId"
+                      />
+                      <span>{{ shortenHash(contact.address) }}</span>
                     </div>
-                    <button @click="handleDeletingContact(contact)">
-                      <DeleteSVG class="text-red-alert w-4 h-4" />
-                    </button>
+                    <span class="text-slate-400">{{
+                      getSentTimes(contact)
+                    }}</span>
+                    <div class="flex items-center gap-9">
+                      <div class="flex gap-4">
+                        <CommonButton
+                          color="white"
+                          class="items-center h-10 !px-4"
+                          @click="
+                            openAddContactModal(
+                              contact.name,
+                              contact.address,
+                              contact.chainId,
+                              true
+                            )
+                          "
+                        >
+                          Edit
+                        </CommonButton>
+                        <CommonButton
+                          color="white"
+                          class="items-center gap-2.5 h-10 !px-4"
+                          @click="
+                            openSendModal(contact.chainId, undefined, contact)
+                          "
+                        >
+                          Send
+                          <div class="rounded-full bg-primary p-1.5">
+                            <ArrowRight
+                              class="text-white -rotate-45 w-3.5 h-3.5"
+                            />
+                          </div>
+                        </CommonButton>
+                      </div>
+                      <button @click="handleDeletingContact(contact)">
+                        <DeleteSVG class="text-red-alert w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </td>
               </tr>
