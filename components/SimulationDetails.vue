@@ -2,13 +2,19 @@
 defineProps<{
   details: ISimulation;
   chainId: string;
+  hasError: boolean;
 }>();
 </script>
 
 <template>
   <div class="flex gap-5 flex-col">
     <h1
-      class="text-xs justify-center text-center text-orange-400 flex items-center"
+      class="text-xs text-center sm:text-left"
+      :class="[
+        {
+          'text-orange-400': hasError,
+        },
+      ]"
     >
       Transaction Breakdown
     </h1>

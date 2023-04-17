@@ -239,6 +239,12 @@ onUnmounted(() => {
         </template>
       </div>
     </div>
+    <SimulationDetails
+      v-if="hasSimulationDetails"
+      :chainId="chainId"
+      :details="simulationDetails"
+      :hasError="!!error"
+    />
     <div class="flex justify-between items-center gap-4">
       <CommonButton
         @click="handleReject"
@@ -259,10 +265,5 @@ onUnmounted(() => {
         Submit
       </CommonButton>
     </div>
-    <SimulationDetails
-      v-if="hasSimulationDetails"
-      :chainId="chainId"
-      :details="simulationDetails"
-    />
   </form>
 </template>

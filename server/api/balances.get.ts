@@ -1,23 +1,21 @@
 import { BigNumber } from "bignumber.js";
 import { H3Event } from "h3";
 import { AnkrProvider } from "@ankr.com/ankr.js";
-import { BalanceResolver, BalanceResolver__factory } from "~~/contracts";
+import { TokenBalanceResolver, TokenBalanceResolver__factory } from "~~/contracts";
 import collect from "collect.js";
 import { IToken } from "~~/stores/tokens";
 
-let tokens = [];
+let tokens: any[] = [];
 let lastUpdateTokens: number = 0;
 
 //
 const balanceResolverContracts = availableNetworks.reduce((acc, curr) => {
-  console.log(curr.serverRpcUrl);
-  if (!curr.balanceResolverAddress) return acc;
-  acc[curr.chainId] = BalanceResolver__factory.connect(
-    curr.balanceResolverAddress,
+  acc[curr.chainId] = TokenBalanceResolver__factory.connect(
+    "0xB61D697fe78C9DE25285DbE69b2d7eb6DF899A88",
     getServerRpcProvider(curr.chainId)
   );
   return acc;
-}, {} as Record<string, BalanceResolver>);
+}, {} as Record<string, TokenBalanceResolver>);
 
 interface IBalance extends Partial<IToken> {
   balanceRaw: string;
@@ -135,8 +133,8 @@ const getChainBalances = async (
     chainTokenAddresses.map(async (chunk: any[]) => {
       const addresses = (chunk as any).all();
 
-      const [balances, prices] = await Promise.all([
-        balanceResolverContracts[chainId].getBalances(address, addresses),
+      const [{ balances }, prices] = await Promise.all([
+        balanceResolverContracts[chainId].callStatic.getBalances(address, addresses),
         $fetch<IToken[]>(`https://prices.instadapp.io/${chainId}/tokens`, {
           params: {
             includeSparklinePrice7d: false,
@@ -151,8 +149,9 @@ const getChainBalances = async (
           (p) => p.address.toLowerCase() === tokenAddress.toLowerCase()
         );
         if (!tokenPrice) continue;
+        if (!balances[index].success) continue;
 
-        let balance = toBN(balances[index]).div(10 ** tokenPrice.decimals);
+        let balance = toBN(balances[index].balance).div(10 ** tokenPrice.decimals);
 
         if (balance.gt(0)) {
           newBalances.push({
@@ -183,6 +182,11 @@ const getQueryCustomTokens = (event: H3Event, chainId: string) => {
       ? (query[`customTokens[${chainId}]`] as string[])
       : [query[`customTokens[${chainId}]`] as string]
     : [];
+};
+
+const ignoredReasons = ['TypeError: Body is unusable']; // Add more strings to ignore slack logs of more reasons
+const shouldIgnoreReason = (reason: string): boolean => {
+  return ignoredReasons.includes(reason);
 };
 
 export default defineEventHandler<IBalance[]>(async (event) => {
@@ -217,13 +221,15 @@ export default defineEventHandler<IBalance[]>(async (event) => {
       } else {
         const network = availableNetworks[i];
 
-        $fetch("/api/slack", {
-          method: "POST",
-          body: {
-            type: "error",
-            message: `Error fetching balances ${item?.reason} - ${network?.name}`,
-          },
-        });
+        if (!shouldIgnoreReason(item?.reason)) {
+          $fetch("/api/slack", {
+            method: "POST",
+            body: {
+              type: "error",
+              message: `Error fetching balances ${item?.reason} - ${network?.name}`,
+            },
+          });
+        }
 
         if (network && network?.ankrName) {
           const val = await getFromAnkr(
