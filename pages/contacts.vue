@@ -2,7 +2,8 @@
 import Fuse from "fuse.js";
 import SearchSVG from "~/assets/images/icons/search.svg?component";
 import PlusSVG from "~/assets/images/icons/plus.svg?component";
-import SVGX from "~/assets/images/icons/x.svg?component";
+import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
+import DeleteSVG from "~/assets/images/icons/delete.svg?component";
 
 const { account } = useWeb3();
 const { safeAddress } = useAvocadoSafe();
@@ -75,7 +76,7 @@ const handleDeletingContact = async (contact: IContact) => {
           name="Contact Search"
           @input="search"
           type="search"
-          placeholder="Search name"
+          placeholder="Search contract"
         >
           <template #prefix>
             <SearchSVG class="shrink-0 mr-2" />
@@ -110,14 +111,13 @@ const handleDeletingContact = async (contact: IContact) => {
                 class="text-left text-sm text-gray-400 font-medium border-b border-slate-150 dark:border-slate-800"
               >
                 <th class="text-left py-6 pl-7.5">Name</th>
-                <th class="pr-10">Address</th>
+                <th class="pr-10 w-[70%]">Address</th>
               </tr>
             </thead>
             <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
               <tr
                 v-for="contact in filteredContacts"
                 class="contact-row text-sm font-semibold cursor-pointer"
-                @click="openSendModal(contact.chainId, undefined, contact)"
               >
                 <td class="pl-7.5 text-sm">
                   {{ contact.name }}
@@ -134,9 +134,41 @@ const handleDeletingContact = async (contact: IContact) => {
                   <span class="text-slate-400">{{
                     getSentTimes(contact)
                   }}</span>
-                  <button @click.stop="handleDeletingContact(contact)">
-                    <SVGX class="text-slate-400" />
-                  </button>
+                  <div class="flex items-center gap-9">
+                    <div class="flex gap-4">
+                      <CommonButton
+                        color="white"
+                        class="items-center h-10 !px-4"
+                        @click="
+                          openAddContactModal(
+                            contact.name,
+                            contact.address,
+                            contact.chainId,
+                            true
+                          )
+                        "
+                      >
+                        Edit
+                      </CommonButton>
+                      <CommonButton
+                        color="white"
+                        class="items-center gap-2.5 h-10 !px-4"
+                        @click="
+                          openSendModal(contact.chainId, undefined, contact)
+                        "
+                      >
+                        Send
+                        <div class="rounded-full bg-primary p-1.5">
+                          <ArrowRight
+                            class="text-white -rotate-45 w-3.5 h-3.5"
+                          />
+                        </div>
+                      </CommonButton>
+                    </div>
+                    <button @click="handleDeletingContact(contact)">
+                      <DeleteSVG class="text-red-alert w-4 h-4" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -150,7 +182,7 @@ const handleDeletingContact = async (contact: IContact) => {
                 contact.name
               }}</span>
               <button @click="handleDeletingContact(contact)">
-                <SVGX class="text-slate-400 w-4 h-4" />
+                <DeleteSVG class="text-red-alert w-4 h-4" />
               </button>
             </div>
             <div
@@ -169,13 +201,16 @@ const handleDeletingContact = async (contact: IContact) => {
                 </template>
               </Copy>
             </div>
-            <span class="text-slate-400" v-if="getSentTimes(contact) !== ''">{{
-              getSentTimes(contact)
-            }}</span>
+            <span
+              class="text-slate-400 text-xs"
+              v-if="getSentTimes(contact) !== ''"
+            >
+              {{ getSentTimes(contact) }}
+            </span>
             <div class="flex gap-2.5">
               <CommonButton
                 color="white"
-                class="flex-1 justify-center"
+                class="flex-1 justify-center items-center"
                 @click="
                   openAddContactModal(
                     contact.name,
@@ -188,10 +223,14 @@ const handleDeletingContact = async (contact: IContact) => {
                 Edit
               </CommonButton>
               <CommonButton
-                class="flex-1 justify-center"
+                color="white"
+                class="flex-1 justify-center items-center gap-2.5"
                 @click="openSendModal(contact.chainId, undefined, contact)"
               >
                 Send
+                <div class="rounded-full bg-primary p-1">
+                  <ArrowRight class="text-white -rotate-45 w-3 h-3" />
+                </div>
               </CommonButton>
             </div>
           </div>
@@ -223,7 +262,7 @@ const handleDeletingContact = async (contact: IContact) => {
 .contact-row:hover > td::before {
   content: "";
   transform: translateZ(-1px) translateX(-50%) translateY(-50%);
-  @apply absolute top-1/2 left-1/2 dark:bg-slate-800 bg-slate-150 pointer-events-none;
+  @apply absolute top-1/2 left-1/2 dark:bg-slate-850 bg-slate-150 pointer-events-none;
   width: calc(100% + 1px);
   height: calc(100% - 16px);
 }
