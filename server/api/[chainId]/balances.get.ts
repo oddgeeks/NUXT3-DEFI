@@ -208,7 +208,7 @@ export default defineEventHandler<IBalance[]>(async (event) => {
       getQueryCustomTokens(event)
     )
   } catch (error) {
-    // TODO: slack log => fallback initiated for fetching balances
+    // TODO: slack log => fallback initiated for fetching balances (with user's address)
     return getFromAnkr(String(query.address), network.ankrName);
   }
 });
