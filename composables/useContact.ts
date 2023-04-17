@@ -95,7 +95,7 @@ export function useContacts() {
           item.to.toLowerCase() === contact.address.toLowerCase() &&
           item.chainId == contact.chainId
       );
-      if (!info || info.transferCount === 0) {
+      if (!info) {
         return "";
       }
       return `Sent ${info.transferCount} ${
