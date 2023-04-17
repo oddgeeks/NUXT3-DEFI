@@ -208,7 +208,13 @@ export default defineEventHandler<IBalance[]>(async (event) => {
       getQueryCustomTokens(event)
     )
   } catch (error) {
-    // TODO: slack log => fallback initiated for fetching balances (with user's address)
+    $fetch("/api/slack", {
+      method: "POST",
+      body: {
+        type: "error",
+        message: `Error fetching balances on ${network.chainId} network for ${query.address}. Fallback to custom Ankr API.`,
+      },
+    });
     return getFromAnkr(String(query.address), network.ankrName);
   }
 });
