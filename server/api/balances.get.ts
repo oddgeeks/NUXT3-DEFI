@@ -185,8 +185,8 @@ const getQueryCustomTokens = (event: H3Event, chainId: string) => {
     : [];
 };
 
+const ignoredReasons = ['TypeError: Body is unusable']; // Add more strings to ignore slack logs of more reasons
 const shouldIgnoreReason = (reason: string): boolean => {
-  const ignoredReasons = ['TypeError: Body is unusable']; // Add more strings to ignore slack logs of more reasons
   return ignoredReasons.includes(reason);
 };
 
