@@ -184,9 +184,11 @@ const getQueryCustomTokens = (event: H3Event, chainId: string) => {
     : [];
 };
 
-const ignoredReasons = ['TypeError: Body is unusable']; // Add more strings to ignore slack logs of more reasons
-const shouldIgnoreReason = (reason: string): boolean => {
-  return ignoredReasons.includes(reason);
+const ignoredReasons = ['Body is unusable']; // Add more strings to ignore slack logs of more reasons
+const shouldIgnoreReason = (error: PromiseRejectedResult): boolean => {
+  const message = String(error?.reason)
+
+  return ignoredReasons.some( ir => message.includes(ir))
 };
 
 export default defineEventHandler<IBalance[]>(async (event) => {
@@ -221,7 +223,7 @@ export default defineEventHandler<IBalance[]>(async (event) => {
       } else {
         const network = availableNetworks[i];
 
-        if (!shouldIgnoreReason(item?.reason)) {
+        if (!shouldIgnoreReason(item)) {
           $fetch("/api/slack", {
             method: "POST",
             body: {
