@@ -76,7 +76,7 @@ const handleDeletingContact = async (contact: IContact) => {
           name="Contact Search"
           @input="search"
           type="search"
-          placeholder="Search contract"
+          placeholder="Search contact"
         >
           <template #prefix>
             <SearchSVG class="shrink-0 mr-2" />
