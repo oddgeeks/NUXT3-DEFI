@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
       JSON.stringify({
         attachments: [
           {
-            text: message,
+            text: `[AvoApp] ${message}`,
             color: colors[type as keyof typeof colors],
           },
         ],
