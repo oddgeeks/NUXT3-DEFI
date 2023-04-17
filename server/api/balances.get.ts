@@ -185,6 +185,11 @@ const getQueryCustomTokens = (event: H3Event, chainId: string) => {
     : [];
 };
 
+const shouldIgnoreReason = (reason: string): boolean => {
+  const ignoredReasons = ['TypeError: Body is unusable']; // Add more strings to ignore slack logs of more reasons
+  return ignoredReasons.includes(reason);
+};
+
 export default defineEventHandler<IBalance[]>(async (event) => {
   let query = getQuery(event);
 
@@ -217,13 +222,15 @@ export default defineEventHandler<IBalance[]>(async (event) => {
       } else {
         const network = availableNetworks[i];
 
-        $fetch("/api/slack", {
-          method: "POST",
-          body: {
-            type: "error",
-            message: `Error fetching balances ${item?.reason} - ${network?.name}`,
-          },
-        });
+        if (!shouldIgnoreReason(item?.reason)) {
+          $fetch("/api/slack", {
+            method: "POST",
+            body: {
+              type: "error",
+              message: `Error fetching balances ${item?.reason} - ${network?.name}`,
+            },
+          });
+        }
 
         if (network && network?.ankrName) {
           const val = await getFromAnkr(
