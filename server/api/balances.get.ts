@@ -189,6 +189,17 @@ const shouldIgnoreReason = (reason: string): boolean => {
   return ignoredReasons.includes(reason);
 };
 
+// Added slack logs to understand how is exactly balance fetching happening on production
+const slackIt = async (type: string, message: string) => {
+  $fetch("/api/slack", {
+    method: "POST",
+    body: {
+      type: type,
+      message: message,
+    },
+  });
+}
+
 export default defineEventHandler<IBalance[]>(async (event) => {
   let query = getQuery(event);
 
@@ -222,22 +233,18 @@ export default defineEventHandler<IBalance[]>(async (event) => {
         const network = availableNetworks[i];
 
         if (!shouldIgnoreReason(item?.reason)) {
-          $fetch("/api/slack", {
-            method: "POST",
-            body: {
-              type: "error",
-              message: `Error fetching balances ${item?.reason} - ${network?.name}`,
-            },
-          });
+          slackIt("error", `[server/api/balances.get.ts] #001 Error fetching NORMAL balances - ${item?.reason} - ${network?.name} - ${query.address}`);
         }
 
         if (network && network?.ankrName) {
+          slackIt("error", `[server/api/balances.get.ts] #002 fetching ANKR balances initiated (fallback) - ${item?.reason} - ${network?.name} - ${query.address}`);
           const val = await getFromAnkr(
             String(query.address),
             network.ankrName
           );
           balances.push(...val);
         } else {
+          slackIt("error", `[server/api/balances.get.ts] #003 Error fetching ANKR balances (fallback) - ${item?.reason} - ${network?.name} - ${query.address}`);
           throw new Error("Fallback failed");
         }
       }
@@ -256,6 +263,7 @@ export default defineEventHandler<IBalance[]>(async (event) => {
         ),
       ]).then((r) => r.flat());
     } catch (error) {
+      slackIt("error", `[server/api/balances.get.ts] #004 Everything failed, trying debank now - ${query.address}`);
       return await getFromDebank(String(query.address));
     }
   }
