@@ -177,10 +177,10 @@ const getChainBalances = async (
 const getQueryCustomTokens = (event: H3Event) => {
   const query = getQuery(event);
 
-  return query[`customTokens`]
-    ? Array.isArray(query[`customTokens`])
-      ? (query[`customTokens`] as string[])
-      : [query[`customTokens`] as string]
+  return query[`customTokens[]`]
+    ? Array.isArray(query[`customTokens[]`])
+      ? (query[`customTokens[]`] as string[])
+      : [query[`customTokens[]`] as string]
     : [];
 };
 
