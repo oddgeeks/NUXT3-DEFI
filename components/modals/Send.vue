@@ -300,7 +300,7 @@ const handleSelectContact = async () => {
           contact,
       }"
     >
-      <h2>{{ contact ? contact.name : "Send" }}</h2>
+      <h2>{{ contact ? `Send to ${contact.name}` : "Send" }}</h2>
       <div
         v-if="contact"
         class="flex items-center rounded-5 mt-[15px] pl-5 pr-4 py-5 dark:bg-gray-850 bg-slate-50 justify-between w-full"
