@@ -184,6 +184,17 @@ const getQueryCustomTokens = (event: H3Event) => {
     : [];
 };
 
+// Added slack logs to understand how is exactly balance fetching happening on production
+const slackIt = async (type: string, message: string) => {
+  $fetch("/api/slack", {
+    method: "POST",
+    body: {
+      type: type,
+      message: message,
+    },
+  });
+}
+
 export default defineEventHandler<IBalance[]>(async (event) => {
   let query = getQuery(event);
   let chainId = getRouterParam(event, "chainId");
@@ -208,13 +219,7 @@ export default defineEventHandler<IBalance[]>(async (event) => {
       getQueryCustomTokens(event)
     )
   } catch (error) {
-    $fetch("/api/slack", {
-      method: "POST",
-      body: {
-        type: "error",
-        message: `Fallback to custom Ankr API. Error fetching balances on ${network.chainId} network for ${query.address} with direct RPC.`,
-      },
-    });
+    slackIt("error", `[server/api/[chainId]/balances.get.ts] #001 Fallback to custom Ankr API. Error fetching balances on ${network.chainId} network for ${query.address} with direct RPC.`)
     return getFromAnkr(String(query.address), network.ankrName);
   }
 });
