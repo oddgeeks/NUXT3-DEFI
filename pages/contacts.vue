@@ -120,10 +120,12 @@ const handleDeletingContact = async (contact: IContact) => {
                 class="contact-row text-sm font-semibold cursor-pointer"
               >
                 <td class="pl-7.5 text-sm">
-                  <span>{{ contact.name }}</span>
+                  <span class="relative">{{ contact.name }}</span>
                 </td>
                 <td class="pr-10 py-6">
-                  <div class="flex items-center justify-between gap-10">
+                  <div
+                    class="relative flex items-center justify-between gap-10"
+                  >
                     <div class="flex items-center gap-2.5">
                       <ChainLogo
                         :stroke="false"
