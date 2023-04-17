@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Erc20__factory } from "~~/contracts";
 import ClipboardSVG from "~/assets/images/icons/clipboard.svg?component";
+import SVGInfoCircle from "~/assets/images/icons/exclamation-circle.svg?component";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { isAddress } from "@ethersproject/address";
@@ -20,7 +21,8 @@ const props = defineProps({
 });
 
 const { library, account } = useWeb3();
-const { sendTransaction, tokenBalances, safe } = useAvocadoSafe();
+const { safeAddress, sendTransaction, tokenBalances, safe, isSafeAddress } =
+  useAvocadoSafe();
 const { parseTransactionError } = useErrorHandler();
 
 const tochainId = ref<string>(props.chainId);
@@ -173,9 +175,28 @@ const { data: tx } = useAsyncData(
   }
 );
 
-const { data, pending, error } = useEstimatedFee(tx, {
-  chainId: tochainId.value,
-});
+const { data: totalTransfers } = useAsyncData(
+  async () => {
+    if (!isAddress(actualAddress.value)) return;
+
+    const toSafeAddress = await isSafeAddress(actualAddress.value);
+
+    const res = await http("/api/transfers", {
+      params: {
+        from: safeAddress.value,
+        to: actualAddress.value,
+        chainId: toSafeAddress ? undefined : tochainId.value,
+      },
+    });
+
+    return res.totalTransfers;
+  },
+  {
+    watch: [actualAddress, tochainId],
+  }
+);
+
+const { data, pending, error } = useEstimatedFee(tx, tochainId);
 
 const onSubmit = handleSubmit(async () => {
   if (!token.value) {
@@ -304,6 +325,16 @@ const onSubmit = handleSubmit(async () => {
       <div class="space-y-2.5">
         <div class="flex items-center justify-between">
           <span class="text-sm">Address To</span>
+          <span class="text-sm text-slate-400" v-if="totalTransfers">
+            {{ totalTransfers }} previous
+            {{ totalTransfers === 1 ? "send" : "sends" }}
+          </span>
+          <span
+            class="text-sm text-orange-400 flex items-center gap-2"
+            v-else-if="totalTransfers === 0"
+          >
+            <SVGInfoCircle /> First time send
+          </span>
         </div>
 
         <CommonInput

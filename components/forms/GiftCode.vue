@@ -5,9 +5,8 @@ import * as yup from "yup";
 import { ethers } from "ethers";
 import { storeToRefs } from "pinia";
 
-
 const { parseTransactionError } = useErrorHandler();
-const { account } = useWeb3();
+const { account, provider } = useWeb3();
 const { fetchGasBalance, avoProvider } = useSafe();
 const { safeAddress } = storeToRefs(useSafe());
 const emit = defineEmits(["close"]);
@@ -30,7 +29,7 @@ const sendingDisabled = computed(
 );
 
 const onSubmit = handleSubmit(async () => {
-  const browserProvider = new ethers.providers.Web3Provider(window.ethereum);
+  const browserProvider = new ethers.providers.Web3Provider(provider.value);
 
   const signer = browserProvider.getSigner();
 
@@ -98,7 +97,7 @@ Issued At: ${new Date().toISOString()}`;
       type: "error",
       action: "reedem",
       account: account.value,
-      errorDetails: err.parsed
+      errorDetails: err.parsed,
     });
   }
 });
