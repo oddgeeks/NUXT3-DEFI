@@ -21,6 +21,7 @@ import YourWallet from "~/components/modals/YourWallet.vue";
 import Networks from "~/components/modals/Networks.vue";
 import Balance from "~/components/modals/Balance.vue";
 import AddContact from "~/components/modals/AddContact.vue";
+import SelectContact from "~/components/modals/SelectContact.vue";
 import { IContact } from "./useContact";
 
 const { openModal } = useModal();
@@ -335,6 +336,13 @@ export const openDeleteContactModal = async () => {
     cancelButtonProps: {
       color: "white",
     },
+  });
+};
+
+export const openSelectContactModal = async () => {
+  return openModal({
+    component: SelectContact,
+    async: true,
   });
 };
 

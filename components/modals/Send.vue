@@ -130,18 +130,6 @@ const setMax = () => {
   amount.value = toBN(token.value!.balance).decimalPlaces(6, 1).toString();
 };
 
-const pasteAddress = async () => {
-  try {
-    address.value = await navigator.clipboard.readText();
-  } catch (e) {
-    console.log(e);
-    openSnackbar({
-      message: "Please allow clipboard access",
-      type: "error",
-    });
-  }
-};
-
 const sendingDisabled = computed(
   () =>
     !token.value ||
@@ -288,6 +276,19 @@ const handleEdit = async () => {
     setAddress(contact.value.address);
   }
 };
+
+const handleSelectContact = async () => {
+  const result = await openSelectContactModal();
+
+  if (result.success) {
+    const _contact = result.payload as IContact;
+    if (tochainId.value !== _contact.chainId) {
+      tochainId.value = _contact.chainId;
+    }
+
+    setAddress(_contact.address);
+  }
+};
 </script>
 
 <template>
@@ -389,7 +390,7 @@ const handleEdit = async () => {
 
       <div v-if="!contact" class="space-y-2.5">
         <div class="flex items-center justify-between">
-          <span class="text-sm">Address To</span>
+          <span class="text-sm">Address</span>
           <span class="text-sm text-slate-400" v-if="totalTransfers">
             {{ totalTransfers }} previous
             {{ totalTransfers === 1 ? "send" : "sends" }}
@@ -411,11 +412,11 @@ const handleEdit = async () => {
           <template #suffix>
             <button
               v-tippy="{
-                content: 'Paste from clipboard',
+                content: 'Select contact',
                 trigger: 'mouseenter',
               }"
               type="button"
-              @click="pasteAddress"
+              @click="handleSelectContact()"
             >
               <ClipboardSVG />
             </button>
