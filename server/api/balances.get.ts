@@ -184,9 +184,11 @@ const getQueryCustomTokens = (event: H3Event, chainId: string) => {
     : [];
 };
 
-const ignoredReasons = ['TypeError: Body is unusable']; // Add more strings to ignore slack logs of more reasons
-const shouldIgnoreReason = (reason: string): boolean => {
-  return ignoredReasons.includes(reason);
+const ignoredReasons = ['Body is unusable']; // Add more strings to ignore slack logs of more reasons
+const shouldIgnoreReason = (error: PromiseRejectedResult): boolean => {
+  const message = String(error?.reason)
+
+  return ignoredReasons.some( ir => message.includes(ir))
 };
 
 // Added slack logs to understand how is exactly balance fetching happening on production
