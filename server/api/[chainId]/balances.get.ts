@@ -212,7 +212,7 @@ export default defineEventHandler<IBalance[]>(async (event) => {
       method: "POST",
       body: {
         type: "error",
-        message: `Error fetching balances on ${network.chainId} network for ${query.address}. Fallback to custom Ankr API.`,
+        message: `Fallback to custom Ankr API. Error fetching balances on ${network.chainId} network for ${query.address} with direct RPC.`,
       },
     });
     return getFromAnkr(String(query.address), network.ankrName);
