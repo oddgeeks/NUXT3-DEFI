@@ -235,18 +235,18 @@ export default defineEventHandler<IBalance[]>(async (event) => {
         const network = availableNetworks[i];
 
         if (!shouldIgnoreReason(item?.reason)) {
-          slackIt("error", `[server/api/balances.get.ts] #001 Error fetching NORMAL balances - ${item?.reason} - ${network?.name} - ${query.address}`);
+          slackIt("error", `[server/api/balances.get.ts] #001 Error fetching NORMAL balances - ${network?.name} - ${query.address} - ${item?.reason}`);
         }
 
         if (network && network?.ankrName) {
-          slackIt("error", `[server/api/balances.get.ts] #002 fetching ANKR balances initiated (fallback) - ${item?.reason} - ${network?.name} - ${query.address}`);
+          slackIt("error", `[server/api/balances.get.ts] #002 fetching ANKR balances initiated (fallback) - ${network?.name} - ${query.address} - ${item?.reason}`);
           const val = await getFromAnkr(
             String(query.address),
             network.ankrName
           );
           balances.push(...val);
         } else {
-          slackIt("error", `[server/api/balances.get.ts] #003 Error fetching ANKR balances (fallback) - ${item?.reason} - ${network?.name} - ${query.address}`);
+          slackIt("error", `[server/api/balances.get.ts] #003 Error fetching ANKR balances (fallback) - ${network?.name} - ${query.address} - ${item?.reason}`);
           throw new Error("Fallback failed");
         }
       }
