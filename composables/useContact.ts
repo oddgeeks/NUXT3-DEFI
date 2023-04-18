@@ -99,7 +99,7 @@ export function useContacts() {
         return "";
       }
       return `Sent ${info.transferCount} ${
-        info.transferCount <= 1 ? "time" : "times"
+        info.transferCount === 1 ? "time" : "times"
       }`;
     }
     return "";
