@@ -8,12 +8,8 @@ const colors: Record<"danger" | "error" | "success" | "banner", string> = {
 };
 
 export default defineEventHandler(async (event) => {
-  const {
-    slackKey,
-    slackErrorKey,
-    slackStagingKey,
-    public: publicConfig,
-  } = useRuntimeConfig();
+  const { slackKey, slackErrorKey, slackStagingKey } = useRuntimeConfig();
+  const { isProd } = useAppConfig();
 
   let { type = "success", message } = await readBody(event);
 
@@ -25,15 +21,9 @@ export default defineEventHandler(async (event) => {
     return {};
   }
 
-  const prod = publicConfig.env === "release";
-
-  console.log({
-    prod,
-  });
-
   let channelId = slackKey;
 
-  if (!prod) {
+  if (!isProd) {
     channelId = slackStagingKey;
   } else if (type === "error") {
     channelId = slackErrorKey;
@@ -49,7 +39,7 @@ export default defineEventHandler(async (event) => {
       JSON.stringify({
         attachments: [
           {
-            text: message,
+            text: `[AvoApp] ${message}`,
             color: colors[type as keyof typeof colors],
           },
         ],

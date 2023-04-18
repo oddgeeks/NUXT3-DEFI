@@ -10,7 +10,7 @@ import { ethers } from "ethers";
 
 const emit = defineEmits(["destroy"]);
 
-const { library, account } = useWeb3();
+const { library, account, provider } = useWeb3();
 const { sendTransaction, airDrop, tokenBalances, fetchAirDrop, safeAddress } =
   useAvocadoSafe();
 const { parseTransactionError } = useErrorHandler();
@@ -101,7 +101,7 @@ URI: https://avocado.instadapp.io
 Nonce: {{NONCE}}
 Issued At: ${new Date().toISOString()}`;
 
-    const browserProvider = new ethers.providers.Web3Provider(window.ethereum);
+    const browserProvider = new ethers.providers.Web3Provider(provider.value);
 
     const signer = browserProvider.getSigner();
 
