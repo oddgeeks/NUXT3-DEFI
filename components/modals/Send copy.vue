@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Erc20__factory } from "~~/contracts";
-import ContactSVG from "~/assets/images/icons/contact.svg?component";
+import ClipboardSVG from "~/assets/images/icons/clipboard.svg?component";
 import SVGInfoCircle from "~/assets/images/icons/exclamation-circle.svg?component";
+import PlusSVG from "~/assets/images/icons/plus.svg?component";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { isAddress } from "@ethersproject/address";
@@ -323,71 +324,74 @@ const handleSelectContact = async () => {
           Edit
         </CommonButton>
       </div>
+      <CommonSelect
+        v-else
+        v-model="tochainId"
+        value-key="chainId"
+        label-key="name"
+        icon-key="icon"
+        class="mt-[5px]"
+        :options="networks"
+      >
+        <template #button-prefix>
+          <ChainLogo class="w-6 h-6" :chain="tochainId" />
+        </template>
+        <template #item-prefix="{ value }">
+          <ChainLogo class="w-6 h-6" :chain="value" />
+        </template>
+      </CommonSelect>
     </div>
-    <div class="flex gap-x-4">
-      <div class="space-y-2.5 flex flex-col w-full">
-        <div class="flex items-center justify-between">
-          <span class="text-sm">Coin</span>
+    <div class="flex flex-col gap-3.5">
+      <div class="flex gap-x-5 rounded-5 bg-gray-850 px-5 py-4">
+        <div class="gap-y-2.5 flex flex-col">
+          <div class="flex items-center justify-between">
+            <span class="text-sm">Coin</span>
+          </div>
+          <TokenSelection
+            class="relative w-full flex items-center gap-2.5 max-h-12 rounded-2xl border-2 dark:border-slate-700 border-slate-150 !bg-slate-50 dark:!bg-gray-850 px-4 py-3 text-left"
+            v-model="token"
+            :tokens="availableTokens"
+          />
         </div>
-        <TokenSelection
-          class="relative w-full flex items-center gap-2.5 max-h-12 rounded-2xl border-2 dark:border-slate-700 border-slate-150 !bg-slate-50 dark:!bg-gray-850 px-4 py-3 text-left"
-          v-model="token"
-          :tokens="availableTokens"
-        />
+        <!-- end token select -->
+        <div class="gap-y-2.5 flex flex-col flex-1">
+          <div class="flex items-center justify-between">
+            <span class="text-sm">Amount</span>
+            <div class="flex text-sm uppercase gap-x-3">
+              <span>{{ formatDecimal(token.balance) }} {{ token.symbol }}</span>
+              <button
+                type="button"
+                class="text-primary hover:text-primary"
+                @click="setMax"
+              >
+                MAX
+              </button>
+            </div>
+          </div>
+          <CommonInput
+            type="numeric"
+            :error-message="amountMeta.dirty ? errors['amount'] : ''"
+            name="amount"
+            placeholder="Enter amount"
+            v-model="amount"
+          >
+          </CommonInput>
+        </div>
       </div>
-      <!-- end token select -->
-      <!-- start network select -->
-      <div v-if="!contact" class="space-y-2.5 flex flex-col w-full">
-        <div class="flex items-center justify-between">
-          <span class="text-sm">Network</span>
-        </div>
-        <CommonSelect
-          v-model="tochainId"
-          value-key="chainId"
-          label-key="name"
-          icon-key="icon"
-          :options="networks"
+      <div class="flex">
+        <CommonButton
+          color="white"
+          size="sm"
+          class="items-center gap-2.5 h-9 !px-2.5"
         >
-          <template #button-prefix>
-            <ChainLogo class="w-6 h-6" :chain="tochainId" />
-          </template>
-          <template #item-prefix="{ value }">
-            <ChainLogo class="w-6 h-6" :chain="value" />
-          </template>
-        </CommonSelect>
+          <div class="rounded-full bg-primary p-1.5 text-white">
+            <PlusSVG class="w-2 h-2" />
+          </div>
+          Add More
+        </CommonButton>
       </div>
-      <!-- end network select -->
     </div>
     <div class="space-y-5">
-      <div class="space-y-2.5 flex flex-col">
-        <div class="flex items-center justify-between">
-          <div>
-            <span class="text-sm">Amount</span>
-          </div>
-          <div class="flex text-sm uppercase gap-x-3">
-            <span>{{ formatDecimal(token.balance) }} {{ token.symbol }}</span>
-            <button
-              type="button"
-              class="text-primary hover:text-primary"
-              @click="setMax"
-            >
-              MAX
-            </button>
-          </div>
-        </div>
-        <CommonInput
-          type="numeric"
-          :error-message="amountMeta.dirty ? errors['amount'] : ''"
-          name="amount"
-          placeholder="Enter amount"
-          v-model="amount"
-        >
-        </CommonInput>
-        <span class="text-sm font-semibold text-left text-slate-400">
-          {{ formatUsd(amountInUsd) }}</span
-        >
-      </div>
-
       <div v-if="!contact" class="space-y-2.5">
         <div class="flex items-center justify-between">
           <span class="text-sm">Address</span>
@@ -418,7 +422,7 @@ const handleSelectContact = async () => {
               type="button"
               @click="handleSelectContact()"
             >
-              <ContactSVG />
+              <ClipboardSVG />
             </button>
           </template>
         </CommonInput>
