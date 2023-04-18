@@ -239,11 +239,14 @@ const onSubmit = handleSubmit(async () => {
   try {
     // encodeMultipleActions
     const metadatas = tokens.value.map((token, idx) =>
-      encodeTransferMetadata({
-        token: token.address,
-        amount: toWei(amounts.value[idx].value, token.decimals),
-        receiver: actualAddress.value,
-      })
+      encodeTransferMetadata(
+        {
+          token: token.address,
+          amount: toWei(amounts.value[idx].value, token.decimals),
+          receiver: actualAddress.value,
+        },
+        false
+      )
     );
     const metadata = encodeMultipleActions(...metadatas);
 
@@ -257,10 +260,18 @@ const onSubmit = handleSubmit(async () => {
 
     console.log(transactionHash);
 
+    let message = "";
+    for (let i = 0; i < tokens.value.length; i += 1) {
+      message += `${formatDecimal(amounts.value[i].value)} ${formatSymbol(
+        tokens.value[i].symbol
+      )}`;
+
+      if (i < tokens.value.length - 1) {
+        message += ", ";
+      }
+    }
     logActionToSlack({
-      message: `${formatDecimal(amount.value)} ${formatSymbol(
-        token.value?.symbol
-      )} to ${actualAddress.value}`,
+      message: `${message} to ${actualAddress.value}`,
       action: "send",
       txHash: transactionHash,
       chainId: tochainId.value,
