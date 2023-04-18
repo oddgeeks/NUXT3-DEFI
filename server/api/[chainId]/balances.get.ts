@@ -162,7 +162,7 @@ const getChainBalances = async (
             logoURI: tokenPrice.logoURI,
             chainId: String(chainId),
             price: String(tokenPrice?.price || 0) as any,
-            balanceRaw: balances[index].toString(),
+            balanceRaw: balances[index].balance.toString(),
             balance: balance.toFixed(6, 1),
             balanceInUSD: balance.times(tokenPrice?.price || 0).toFixed(2),
           });
