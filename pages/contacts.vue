@@ -6,7 +6,7 @@ import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
 import DeleteSVG from "~/assets/images/icons/delete.svg?component";
 
 const { account } = useWeb3();
-const { safeAddress } = useAvocadoSafe();
+const { safeAddress, tokenBalances } = useAvocadoSafe();
 const { contacts, deleteContact, getSentTimes } = useContacts();
 
 const searchQuery = ref("");
@@ -54,6 +54,10 @@ const handleDeletingContact = async (contact: IContact) => {
   if (success) {
     deleteContact(contact);
   }
+};
+
+const hasAvailableTokens = (chainId: number | string) => {
+  return tokenBalances.value.filter((t) => t.chainId == chainId).length > 0;
 };
 </script>
 
@@ -159,12 +163,17 @@ const handleDeletingContact = async (contact: IContact) => {
                           @click="
                             openSendModal(contact.chainId, undefined, contact)
                           "
+                          :disabled="!hasAvailableTokens(contact.chainId)"
                         >
                           Send
-                          <div class="rounded-full bg-primary p-1.5">
-                            <ArrowRight
-                              class="text-white -rotate-45 w-3.5 h-3.5"
-                            />
+                          <div
+                            class="rounded-full bg-primary p-1.5 text-white"
+                            :class="{
+                              'dark:bg-slate-600 bg-slate-300 dark:!text-slate-500 !text-slate-400':
+                                !hasAvailableTokens(contact.chainId),
+                            }"
+                          >
+                            <ArrowRight class="-rotate-45 w-3.5 h-3.5" />
                           </div>
                         </CommonButton>
                       </div>
@@ -230,10 +239,17 @@ const handleDeletingContact = async (contact: IContact) => {
                 color="white"
                 class="flex-1 justify-center items-center gap-2.5"
                 @click="openSendModal(contact.chainId, undefined, contact)"
+                :disabled="!hasAvailableTokens(contact.chainId)"
               >
                 Send
-                <div class="rounded-full bg-primary p-1">
-                  <ArrowRight class="text-white -rotate-45 w-3 h-3" />
+                <div
+                  class="rounded-full bg-primary p-1 text-white"
+                  :class="{
+                    'dark:bg-slate-600 bg-slate-300 dark:!text-slate-500 !text-slate-400':
+                      !hasAvailableTokens(contact.chainId),
+                  }"
+                >
+                  <ArrowRight class="-rotate-45 w-3 h-3" />
                 </div>
               </CommonButton>
             </div>
