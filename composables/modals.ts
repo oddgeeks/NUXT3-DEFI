@@ -325,7 +325,7 @@ export const openAddContactModal = (
 
 export const openDeleteContactModal = async () => {
   return openDialogModal({
-    title: "Are you sure you want to delete contact?",
+    title: "Are you sure you want to delete this contact?",
     type: "question",
     cancelButtonText: "Cancel",
     isCancelButtonVisible: true,

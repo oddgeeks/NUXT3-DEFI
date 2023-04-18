@@ -38,7 +38,7 @@ const availableTokens = computed(() =>
 );
 
 const tokenAddress = ref<string>(
-  props.address ?? availableTokens.value[0].address
+  props.address ?? "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
 );
 
 const token = ref(
@@ -51,7 +51,10 @@ watch(
   () => tochainId.value,
   () => {
     if (availableTokens.value.length > 0) {
-      token.value = availableTokens.value[0];
+      token.value = availableTokens.value.find(
+        (_token) =>
+          _token.address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+      );
     }
   }
 );
