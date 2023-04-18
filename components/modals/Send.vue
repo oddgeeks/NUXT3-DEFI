@@ -229,11 +229,15 @@ const { data, pending, error } = useEstimatedFee(txs, tochainId);
 
 const onSubmit = handleSubmit(async () => {
   try {
-    const metadata = encodeTransferMetadata({
-      token: tokens.value[0].address,
-      amount: toWei(amounts.value[0].value, tokens.value[0].decimals),
-      receiver: actualAddress.value,
-    });
+    // encodeMultipleActions
+    const metadatas = tokens.value.map((token, idx) =>
+      encodeTransferMetadata({
+        token: token.address,
+        amount: toWei(amounts.value[idx].value, token.decimals),
+        receiver: actualAddress.value,
+      })
+    );
+    const metadata = encodeMultipleActions(...metadatas);
 
     let transactionHash = await sendTransactions(
       txs.value!,
