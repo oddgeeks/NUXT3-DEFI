@@ -235,11 +235,12 @@ export default defineEventHandler<IBalance[]>(async (event) => {
         const network = availableNetworks[i];
 
         if (!shouldIgnoreReason(item?.reason)) {
-          slackIt("error", `[server/api/balances.get.ts] #001 Error fetching NORMAL balances - ${network?.name} - ${query.address} - ${item?.reason}`);
+          // NOTE: This is a temporary fix to avoid spamming slack logs - reenable whenever needed in future
+          // As of now this API is not used to load main balances on frontend, its being used for showing Onboard banner in this repo and on onboard repo 
+          // slackIt("error", `[server/api/balances.get.ts] #001 Error fetching NORMAL balances - ${network?.name} - ${query.address} - ${item?.reason}`);
         }
 
         if (network && network?.ankrName) {
-          slackIt("banner", `[server/api/balances.get.ts] #002 fetching ANKR balances initiated (fallback) - ${network?.name} - ${query.address} - ${item?.reason}`);
           const val = await getFromAnkr(
             String(query.address),
             network.ankrName
