@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Erc20__factory } from "~~/contracts";
-import ClipboardSVG from "~/assets/images/icons/clipboard.svg?component";
+import ContactSVG from "~/assets/images/icons/contact.svg?component";
 import SVGInfoCircle from "~/assets/images/icons/exclamation-circle.svg?component";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
@@ -10,13 +10,17 @@ const emit = defineEmits(["destroy"]);
 const { toWei } = useBignumber();
 
 const props = defineProps({
-  address: {
-    type: String,
-    required: true,
-  },
   chainId: {
     type: String,
     required: true,
+  },
+  address: {
+    type: String,
+    required: false,
+  },
+  contact: {
+    type: Object,
+    required: false,
   },
 });
 
@@ -25,23 +29,32 @@ const { safeAddress, sendTransaction, tokenBalances, safe, isSafeAddress } =
   useAvocadoSafe();
 const { parseTransactionError } = useErrorHandler();
 
+const contact = ref<IContact | undefined>(props.contact);
+
 const tochainId = ref<string>(props.chainId);
+
+const availableTokens = computed(() =>
+  tokenBalances.value.filter((t) => t.chainId == tochainId.value)
+);
+
+const tokenAddress = ref<string>(
+  props.address ?? "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+);
 
 const token = ref(
   tokenBalances.value.find(
-    (t) => t.chainId === tochainId.value && t.address === props.address
+    (t) => t.chainId == tochainId.value && t.address === tokenAddress.value
   )!
-);
-
-const availableTokens = computed(() =>
-  tokenBalances.value.filter((t) => t.chainId === tochainId.value)
 );
 
 watch(
   () => tochainId.value,
   () => {
     if (availableTokens.value.length > 0) {
-      token.value = availableTokens.value[0];
+      token.value = availableTokens.value.find(
+        (_token) =>
+          _token.address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+      );
     }
   }
 );
@@ -86,7 +99,7 @@ const { handleSubmit, errors, meta, resetForm, validate, isSubmitting } =
           if (!value) return true;
 
           const resolvedAddress =
-            value.endsWith(".eth") && tochainId.value === "1"
+            value.endsWith(".eth") && tochainId.value == "1"
               ? await getRpcProvider(1).resolveName(value)
               : null;
 
@@ -108,22 +121,16 @@ const { handleSubmit, errors, meta, resetForm, validate, isSubmitting } =
   });
 
 const { value: amount, meta: amountMeta } = useField<string>("amount");
-const { value: address, meta: addressMeta } = useField<string>("address");
+const {
+  value: address,
+  meta: addressMeta,
+  setValue: setAddress,
+} = useField<string>("address", undefined, {
+  initialValue: contact.value ? contact.value.address : "",
+});
 
 const setMax = () => {
   amount.value = toBN(token.value!.balance).decimalPlaces(6, 1).toString();
-};
-
-const pasteAddress = async () => {
-  try {
-    address.value = await navigator.clipboard.readText();
-  } catch (e) {
-    console.log(e);
-    openSnackbar({
-      message: "Please allow clipboard access",
-      type: "error",
-    });
-  }
 };
 
 const sendingDisabled = computed(
@@ -171,7 +178,7 @@ const { data: tx } = useAsyncData(
     return tx;
   },
   {
-    watch: [amount, address],
+    watch: [amount, address, token.value],
   }
 );
 
@@ -184,12 +191,12 @@ const { data: totalTransfers } = useAsyncData(
     const res = await http("/api/transfers", {
       params: {
         from: safeAddress.value,
-        to: actualAddress.value,
-        chainId: toSafeAddress ? undefined : tochainId.value,
+        to: [actualAddress.value],
+        chainIds: [toSafeAddress ? 0 : tochainId.value],
       },
     });
 
-    return res.totalTransfers;
+    return res[0].transferCount;
   },
   {
     watch: [actualAddress, tochainId],
@@ -253,12 +260,72 @@ const onSubmit = handleSubmit(async () => {
     });
   }
 });
+
+const handleEdit = async () => {
+  const result = await openAddContactModal(
+    contact.value.name,
+    contact.value.address,
+    contact.value.chainId,
+    true
+  );
+
+  if (result.success) {
+    contact.value = result.payload as IContact;
+
+    if (tochainId.value !== contact.value.chainId) {
+      tochainId.value = contact.value.chainId;
+    }
+
+    setAddress(contact.value.address);
+  }
+};
+
+const handleSelectContact = async () => {
+  const result = await openSelectContactModal();
+
+  if (result.success) {
+    const _contact = result.payload as IContact;
+    if (tochainId.value !== _contact.chainId) {
+      tochainId.value = _contact.chainId;
+    }
+
+    setAddress(_contact.address);
+  }
+};
 </script>
 
 <template>
   <form @submit="onSubmit" class="text-center flex gap-7.5 flex-col">
-    <div class="flex flex-col justify-center gap-[15px] items-center">
-      <h2>Send</h2>
+    <div
+      class="flex flex-col justify-center gap-[15px] items-center"
+      :class="{
+        'border-b-[1px] dark:border-b-slate-800 border-b-slate-100 -mx-[50px] px-[50px] pb-7.5':
+          contact,
+      }"
+    >
+      <h2>{{ contact ? `Send to ${contact.name}` : "Send" }}</h2>
+      <div
+        v-if="contact"
+        class="flex items-center rounded-5 mt-[15px] pl-5 pr-4 py-5 dark:bg-gray-850 bg-slate-50 justify-between w-full"
+      >
+        <div class="flex items-center gap-3">
+          <ChainLogo :stroke="false" class="w-7 h-7" :chain="contact.chainId" />
+          <Copy :text="contact.address">
+            <template #content>
+              <span class="dark:text-white text-slate-900">{{
+                shortenHash(contact.address)
+              }}</span>
+            </template>
+          </Copy>
+        </div>
+        <CommonButton
+          color="white"
+          class="justify-center dark:bg-slate-800 bg-slate-150 !px-4"
+          @click="handleEdit()"
+        >
+          Edit
+        </CommonButton>
+      </div>
     </div>
     <div class="flex gap-x-4">
       <div class="space-y-2.5 flex flex-col w-full">
@@ -271,7 +338,9 @@ const onSubmit = handleSubmit(async () => {
           :tokens="availableTokens"
         />
       </div>
-      <div class="space-y-2.5 flex flex-col w-full">
+      <!-- end token select -->
+      <!-- start network select -->
+      <div v-if="!contact" class="space-y-2.5 flex flex-col w-full">
         <div class="flex items-center justify-between">
           <span class="text-sm">Network</span>
         </div>
@@ -322,9 +391,9 @@ const onSubmit = handleSubmit(async () => {
         >
       </div>
 
-      <div class="space-y-2.5">
+      <div v-if="!contact" class="space-y-2.5">
         <div class="flex items-center justify-between">
-          <span class="text-sm">Address To</span>
+          <span class="text-sm">Address</span>
           <span class="text-sm text-slate-400" v-if="totalTransfers">
             {{ totalTransfers }} previous
             {{ totalTransfers === 1 ? "send" : "sends" }}
@@ -346,13 +415,13 @@ const onSubmit = handleSubmit(async () => {
           <template #suffix>
             <button
               v-tippy="{
-                content: 'Paste from clipboard',
+                content: 'Select contact',
                 trigger: 'mouseenter',
               }"
               type="button"
-              @click="pasteAddress"
+              @click="handleSelectContact()"
             >
-              <ClipboardSVG />
+              <ContactSVG />
             </button>
           </template>
         </CommonInput>
@@ -364,6 +433,16 @@ const onSubmit = handleSubmit(async () => {
         >
           Owner {{ shortenHash(account) }}
         </button>
+      </div>
+
+      <div
+        v-if="contact"
+        class="dark:bg-gray-850 !mt-5 bg-slate-50 px-3 py-2 flex space-x-2 rounded-[20px]"
+      >
+        <ChainLogo class="w-5 h-5" :chain="token.chainId" />
+        <span class="text-xs font-medium leading-5">
+          Sending on the {{ chainIdToName(token.chainId) }} network
+        </span>
       </div>
 
       <EstimatedFee

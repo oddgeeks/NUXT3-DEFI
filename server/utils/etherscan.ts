@@ -8,36 +8,45 @@ const ETHERSCAN_BASE_URLS: Record<number, string> = {
   56: "https://api.bscscan.com",
   100: "https://api.gnosisscan.io",
   43114: "https://api.snowtrace.io",
+  1101: "https://api-zkevm.polygonscan.com",
 };
 
-export const getTokenTransfersFromEtherscan = async (
+export const getTokenTransfersByEtherscan = async (
   from: string,
-  to: string,
+  to: string[],
   chainId: number
-): Promise<number> => {
+): Promise<Record<string, number>> => {
   const baseUrl = ETHERSCAN_BASE_URLS[chainId];
 
-  if (!baseUrl) {
-    return 0;
+  if (to.length === 0 || !baseUrl) {
+    return {};
+  }
+
+  const transferCounts: Record<string, number> = {};
+  for (let i = 0; i < to.length; i += 1) {
+    transferCounts[to[i].toLowerCase()] = 0;
   }
 
   let page = 0;
   const limit = 10000;
 
-  let totalTransfer = 0;
   do {
     const res: any = await $fetch(
-      `${baseUrl}/api?module=account&action=tokentx&address=${to}&sort=asc&startblock=0&page=${page}`
+      `${baseUrl}/api?module=account&action=tokentx&address=${from}&sort=asc&startblock=0&page=${page}`
     );
 
-    const filteredCount = res.result.filter(
-      (item: any) =>
-        item.from.toLowerCase() === from.toLowerCase() &&
-        item.to.toLowerCase() === to.toLowerCase() &&
-        !BigNumber.from(item.value).isZero()
-    ).length;
-
-    totalTransfer += filteredCount;
+    for (let i = 0; i < res.result.length; i += 1) {
+      const item = res.result[i];
+      if (
+        item.from.toLowerCase() !== from.toLowerCase() ||
+        BigNumber.from(item.value).isZero()
+      ) {
+        continue;
+      }
+      if (transferCounts[item.to.toLowerCase()] !== undefined) {
+        transferCounts[item.to.toLowerCase()] += 1;
+      }
+    }
 
     page += 1;
 
@@ -46,37 +55,46 @@ export const getTokenTransfersFromEtherscan = async (
     }
   } while (true);
 
-  return totalTransfer;
+  return transferCounts;
 };
 
-export const getEtherTransfersFromEtherscan = async (
+export const getEtherTransfersByEtherscan = async (
   from: string,
-  to: string,
+  to: string[],
   chainId: number
-): Promise<number> => {
+): Promise<Record<string, number>> => {
   const baseUrl = ETHERSCAN_BASE_URLS[chainId];
 
-  if (!baseUrl) {
-    return 0;
+  if (to.length === 0 || !baseUrl) {
+    return {};
+  }
+
+  const transferCounts: Record<string, number> = {};
+  for (let i = 0; i < to.length; i += 1) {
+    transferCounts[to[i].toLowerCase()] = 0;
   }
 
   let page = 0;
   const limit = 10000;
 
-  let totalTransfer = 0;
   do {
     const res: any = await $fetch(
-      `${baseUrl}/api?module=account&action=txlistinternal&address=${to}&sort=asc&startblock=0&page=${page}`
+      `${baseUrl}/api?module=account&action=txlistinternal&address=${from}&sort=asc&startblock=0&page=${page}`
     );
 
-    const filteredCount = res.result.filter(
-      (item: any) =>
-        item.from.toLowerCase() === from.toLowerCase() &&
-        item.to.toLowerCase() === to.toLowerCase() &&
-        !BigNumber.from(item.value).isZero()
-    ).length;
-
-    totalTransfer += filteredCount;
+    for (let i = 0; i < res.result.length; i += 1) {
+      const item = res.result[i];
+      if (
+        !item.from ||
+        item.from.toLowerCase() !== from.toLowerCase() ||
+        BigNumber.from(item.value).isZero()
+      ) {
+        continue;
+      }
+      if (transferCounts[item.to.toLowerCase()] !== undefined) {
+        transferCounts[item.to.toLowerCase()] += 1;
+      }
+    }
 
     page += 1;
 
@@ -85,5 +103,5 @@ export const getEtherTransfersFromEtherscan = async (
     }
   } while (true);
 
-  return totalTransfer;
+  return transferCounts;
 };

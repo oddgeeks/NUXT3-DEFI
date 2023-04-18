@@ -57,6 +57,7 @@ module.exports = {
         slate: {
           150: "#E9EDF4",
           750: "#2A3850",
+          850: "#1A2333",
         },
         orange: {
           DEFAULT: "#F2994A",
