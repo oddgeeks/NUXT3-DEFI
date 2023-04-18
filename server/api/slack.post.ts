@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
 
   if (!isProd) {
     channelId = slackStagingKey;
-  } else if (type === "error") {
+  } else if (type === "error" || type === "banner") {
     channelId = slackErrorKey;
   }
 
