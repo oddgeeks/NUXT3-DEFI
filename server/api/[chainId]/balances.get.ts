@@ -219,7 +219,7 @@ export default defineEventHandler<IBalance[]>(async (event) => {
       getQueryCustomTokens(event)
     )
   } catch (error) {
-    slackIt("error", `[server/api/[chainId]/balances.get.ts] #001 Fallback to custom Ankr API. Error fetching balances on ${network.chainId} network for ${query.address} with direct RPC.`)
+    slackIt("banner", `[server/api/[chainId]/balances.get.ts] #001 Fallback to custom Ankr API. Error fetching balances on ${network.chainId} network for ${query.address} with direct RPC.`)
     return getFromAnkr(String(query.address), network.ankrName);
   }
 });
