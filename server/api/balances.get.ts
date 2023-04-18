@@ -11,7 +11,7 @@ let lastUpdateTokens: number = 0;
 //
 const balanceResolverContracts = availableNetworks.reduce((acc, curr) => {
   acc[curr.chainId] = TokenBalanceResolver__factory.connect(
-    "0xB61D697fe78C9DE25285DbE69b2d7eb6DF899A88",
+    "0x3fb128aa5ac254c8539996b11c587e521ae0d3ab",
     getServerRpcProvider(curr.chainId)
   );
   return acc;
@@ -239,7 +239,7 @@ export default defineEventHandler<IBalance[]>(async (event) => {
         }
 
         if (network && network?.ankrName) {
-          slackIt("error", `[server/api/balances.get.ts] #002 fetching ANKR balances initiated (fallback) - ${network?.name} - ${query.address} - ${item?.reason}`);
+          slackIt("banner", `[server/api/balances.get.ts] #002 fetching ANKR balances initiated (fallback) - ${network?.name} - ${query.address} - ${item?.reason}`);
           const val = await getFromAnkr(
             String(query.address),
             network.ankrName
@@ -265,7 +265,7 @@ export default defineEventHandler<IBalance[]>(async (event) => {
         ),
       ]).then((r) => r.flat());
     } catch (error) {
-      slackIt("error", `[server/api/balances.get.ts] #004 Everything failed, trying debank now - ${query.address}`);
+      slackIt("banner", `[server/api/balances.get.ts] #004 Everything failed, trying debank now - ${query.address}`);
       return await getFromDebank(String(query.address));
     }
   }

@@ -20,6 +20,9 @@ import DeployNetwork from "~/components/modals/DeployNetwork.vue";
 import YourWallet from "~/components/modals/YourWallet.vue";
 import Networks from "~/components/modals/Networks.vue";
 import Balance from "~/components/modals/Balance.vue";
+import AddContact from "~/components/modals/AddContact.vue";
+import SelectContact from "~/components/modals/SelectContact.vue";
+import { IContact } from "./useContact";
 
 const { openModal } = useModal();
 interface DialogModalProps {
@@ -95,12 +98,17 @@ export const openSwapModal = (
   });
 };
 
-export const openSendModal = (address: string, chainId: number | string) => {
+export const openSendModal = (
+  chainId: number | string,
+  address?: string,
+  contact?: IContact
+) => {
   openModal({
     component: Send,
     componentProps: {
       address,
       chainId,
+      contact,
     },
     options: {
       wrapperClass: "max-w-[500px]",
@@ -294,6 +302,47 @@ export const openBalanceModal = (balance: any) => {
     componentProps: {
       balance,
     },
+  });
+};
+
+export const openAddContactModal = (
+  name?: string,
+  address?: string,
+  chainId?: number | string,
+  isEdit?: boolean
+) => {
+  return openModal({
+    component: AddContact,
+    async: true,
+    componentProps: {
+      name,
+      address,
+      chainId,
+      isEdit,
+    },
+  });
+};
+
+export const openDeleteContactModal = async () => {
+  return openDialogModal({
+    title: "Are you sure you want to delete this contact?",
+    type: "question",
+    cancelButtonText: "Cancel",
+    isCancelButtonVisible: true,
+    buttonText: "Delete",
+    buttonProps: {
+      color: "red",
+    },
+    cancelButtonProps: {
+      color: "white",
+    },
+  });
+};
+
+export const openSelectContactModal = async () => {
+  return openModal({
+    component: SelectContact,
+    async: true,
   });
 };
 
