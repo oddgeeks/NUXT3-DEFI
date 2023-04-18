@@ -162,7 +162,7 @@ const getChainBalances = async (
             logoURI: tokenPrice.logoURI,
             chainId: String(chainId),
             price: String(tokenPrice?.price || 0) as any,
-            balanceRaw: balances[index].toString(),
+            balanceRaw: balances[index].balance.toString(),
             balance: balance.toFixed(6, 1),
             balanceInUSD: balance.times(tokenPrice?.price || 0).toFixed(2),
           });
@@ -174,21 +174,14 @@ const getChainBalances = async (
   return newBalances;
 };
 
-const getQueryCustomTokens = (event: H3Event, chainId: string) => {
+const getQueryCustomTokens = (event: H3Event) => {
   const query = getQuery(event);
 
-  return query[`customTokens[${chainId}]`]
-    ? Array.isArray(query[`customTokens[${chainId}]`])
-      ? (query[`customTokens[${chainId}]`] as string[])
-      : [query[`customTokens[${chainId}]`] as string]
+  return query[`customTokens[]`]
+    ? Array.isArray(query[`customTokens[]`])
+      ? (query[`customTokens[]`] as string[])
+      : [query[`customTokens[]`] as string]
     : [];
-};
-
-const ignoredReasons = ['Body is unusable']; // Add more strings to ignore slack logs of more reasons
-const shouldIgnoreReason = (error: PromiseRejectedResult): boolean => {
-  const message = String(error?.reason)
-
-  return ignoredReasons.some( ir => message.includes(ir))
 };
 
 // Added slack logs to understand how is exactly balance fetching happening on production
@@ -204,6 +197,12 @@ const slackIt = async (type: string, message: string) => {
 
 export default defineEventHandler<IBalance[]>(async (event) => {
   let query = getQuery(event);
+  let chainId = getRouterParam(event, "chainId");
+  let network = availableNetworks.find((n) => n.chainId == chainId)
+
+  if(! network) {
+    return []
+  }
 
   if (!lastUpdateTokens || Date.now() - lastUpdateTokens > 10_000_000) {
     const data: any = await $fetch(
@@ -214,59 +213,13 @@ export default defineEventHandler<IBalance[]>(async (event) => {
   }
 
   try {
-    const promises = await Promise.allSettled(
-      availableNetworks.map((network) =>
-        getChainBalances(
-          String(network.chainId),
-          String(query.address),
-          getQueryCustomTokens(event, String(network.chainId))
-        )
-      )
-    );
-
-    const balances: IBalance[] = [];
-
-    for (const i in promises) {
-      const item = promises[i];
-
-      if (item.status === "fulfilled") {
-        balances.push(...item.value);
-      } else {
-        const network = availableNetworks[i];
-
-        if (!shouldIgnoreReason(item?.reason)) {
-          slackIt("error", `[server/api/balances.get.ts] #001 Error fetching NORMAL balances - ${network?.name} - ${query.address} - ${item?.reason}`);
-        }
-
-        if (network && network?.ankrName) {
-          slackIt("error", `[server/api/balances.get.ts] #002 fetching ANKR balances initiated (fallback) - ${network?.name} - ${query.address} - ${item?.reason}`);
-          const val = await getFromAnkr(
-            String(query.address),
-            network.ankrName
-          );
-          balances.push(...val);
-        } else {
-          slackIt("error", `[server/api/balances.get.ts] #003 Error fetching ANKR balances (fallback) - ${network?.name} - ${query.address} - ${item?.reason}`);
-          throw new Error("Fallback failed");
-        }
-      }
-    }
-
-    return balances;
+    return await getChainBalances(
+      String(network.chainId),
+      String(query.address),
+      getQueryCustomTokens(event)
+    )
   } catch (error) {
-    console.log(error);
-    try {
-      return await Promise.all([
-        getFromAnkr(String(query.address)),
-        getChainBalances(
-          "100",
-          String(query.address),
-          getQueryCustomTokens(event, "100")
-        ),
-      ]).then((r) => r.flat());
-    } catch (error) {
-      slackIt("error", `[server/api/balances.get.ts] #004 Everything failed, trying debank now - ${query.address}`);
-      return await getFromDebank(String(query.address));
-    }
+    slackIt("error", `[server/api/[chainId]/balances.get.ts] #001 Fallback to custom Ankr API. Error fetching balances on ${network.chainId} network for ${query.address} with direct RPC.`)
+    return getFromAnkr(String(query.address), network.ankrName);
   }
 });
