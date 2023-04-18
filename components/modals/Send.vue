@@ -43,7 +43,10 @@ const tokens = ref([
     ? tokenBalances.value.find(
         (t) => t.chainId == tochainId.value && t.address === props.address
       )!
-    : availableTokens.value[0],
+    : availableTokens.value.find(
+        (_token) =>
+          _token.address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+      )!,
 ]);
 
 watch(
@@ -51,7 +54,12 @@ watch(
   () => {
     if (availableTokens.value.length > 0) {
       replaceAmounts([""]);
-      tokens.value = [availableTokens.value[0]];
+      tokens.value = [
+        availableTokens.value.find(
+          (_token) =>
+            _token.address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+        ),
+      ];
     }
   }
 );
