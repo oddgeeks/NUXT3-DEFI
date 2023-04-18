@@ -35,5 +35,5 @@ jobs:
           COMMIT_HASH=$(git rev-parse --short HEAD)
           COMMIT_MESSAGE=$(git log -1 --pretty=%B)
           CURRENT_BODY=$(gh pr view $PR_NUMBER --json body -q ".body")
-          UPDATED_BODY="$CURRENT_BODY\n- $COMMIT_HASH - $COMMIT_MESSAGE"
-          gh pr edit $PR_NUMBER --body "$UPDATED_BODY"
+          UPDATED_BODY="$CURRENT_BODY\n - $COMMIT_HASH - $COMMIT_MESSAGE"
+          echo $UPDATED_BODY | gh pr edit $PR_NUMBER -F -
