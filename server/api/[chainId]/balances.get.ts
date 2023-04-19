@@ -11,7 +11,7 @@ let lastUpdateTokens: number = 0;
 //
 const balanceResolverContracts = availableNetworks.reduce((acc, curr) => {
   acc[curr.chainId] = TokenBalanceResolver__factory.connect(
-    "0xB61D697fe78C9DE25285DbE69b2d7eb6DF899A88",
+    "0x3fb128aa5ac254c8539996b11c587e521ae0d3ab",
     getServerRpcProvider(curr.chainId)
   );
   return acc;
@@ -219,7 +219,7 @@ export default defineEventHandler<IBalance[]>(async (event) => {
       getQueryCustomTokens(event)
     )
   } catch (error) {
-    slackIt("error", `[server/api/[chainId]/balances.get.ts] #001 Fallback to custom Ankr API. Error fetching balances on ${network.chainId} network for ${query.address} with direct RPC.`)
+    slackIt("banner", `[server/api/[chainId]/balances.get.ts] #001 Fallback to custom Ankr API. Error fetching balances on ${network.chainId} network for ${query.address} with direct RPC.`)
     return getFromAnkr(String(query.address), network.ankrName);
   }
 });

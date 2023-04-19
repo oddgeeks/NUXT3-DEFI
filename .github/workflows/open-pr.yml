@@ -16,6 +16,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      repository-projects: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -25,3 +26,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr create -B master -H develop -d --title "Staging" --body "## Changes to be merged from develop into master" || true
+
+      - name: Update Comment
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          #!/bin/bash
+
+          PR_NUMBER=$(gh pr list -B master -H develop -s open --json number -q ".[].number")
+          echo -e "### Changes to be merged from develop into master" > text
+          gh pr view --json commits -q '.commits[] | "- \(.oid) - \(.messageHeadline)"' | while read line; do
+            echo -e "$line" >> text
+          done;
+
+          gh pr edit $PR_NUMBER -F text
+
