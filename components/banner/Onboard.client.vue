@@ -5,7 +5,6 @@ import { IBalance } from "~~/stores/safe";
 
 const { hideOnboardBanner } = useBanner();
 const { account } = useWeb3();
-const { tokens } = useTokens();
 const { getBalances } = useSafe();
 
 const balances = ref<IBalance[]>([]);
@@ -26,6 +25,7 @@ const totalChains = computed(
 watch(
   account,
   async () => {
+    if (!account.value) return;
     const data = await getBalances(account.value);
 
     balances.value = data.flat() as IBalance[];
