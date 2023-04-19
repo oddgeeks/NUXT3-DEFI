@@ -53,13 +53,16 @@ watch(
   () => tochainId.value,
   () => {
     if (availableTokens.value.length > 0) {
-      replaceAmounts([""]);
       tokens.value = [
         availableTokens.value.find(
           (_token) =>
             _token.address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
         ),
       ];
+      for (let i = 1; i < amounts.value.length; i += 1) {
+        removeAmount(1);
+      }
+      amounts.value[0].value = "";
     }
   }
 );
@@ -415,7 +418,7 @@ const isInsufficient = (idx: number) => {
     >
       <div
         class="flex flex-col sm:flex-row gap-5 rounded-5 dark:bg-gray-850 bg-slate-50 px-5 py-4"
-        v-for="(tokenInput, idx) of amounts"
+        v-for="(token, idx) of tokens"
       >
         <div class="gap-y-2.5 flex flex-col">
           <div class="flex items-center justify-between">
