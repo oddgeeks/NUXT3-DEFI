@@ -522,6 +522,7 @@ const isInsufficient = (idx: number) => {
                 trigger: 'mouseenter',
               }"
               type="button"
+              class="ml-3"
               @click="handleSelectContact()"
             >
               <ContactSVG />
