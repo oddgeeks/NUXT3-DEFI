@@ -410,7 +410,9 @@ const isInsufficient = (idx: number) => {
         </template>
       </CommonSelect>
     </div>
-    <div class="flex flex-col gap-3.5">
+    <div
+      class="flex flex-col gap-3.5 scroll-style sm:max-h-[378px] sm:overflow-y-auto"
+    >
       <div
         class="flex flex-col sm:flex-row gap-5 rounded-5 dark:bg-gray-850 bg-slate-50 px-5 py-4"
         v-for="(tokenInput, idx) of amounts"
@@ -474,19 +476,19 @@ const isInsufficient = (idx: number) => {
           </CommonInput>
         </div>
       </div>
-      <div class="flex">
-        <CommonButton
-          color="white"
-          size="sm"
-          class="items-center gap-2.5 h-9 !px-2.5"
-          @click="handleAddMore()"
-        >
-          <div class="rounded-full bg-primary p-1.5 text-white">
-            <PlusSVG class="w-2 h-2" />
-          </div>
-          Add More
-        </CommonButton>
-      </div>
+    </div>
+    <div class="flex -mt-4">
+      <CommonButton
+        color="white"
+        size="sm"
+        class="items-center gap-2.5 h-9 !px-2.5"
+        @click="handleAddMore()"
+      >
+        <div class="rounded-full bg-primary p-1.5 text-white">
+          <PlusSVG class="w-2 h-2" />
+        </div>
+        Add More
+      </CommonButton>
     </div>
     <div class="space-y-5">
       <div v-if="!contact" class="space-y-2.5">
