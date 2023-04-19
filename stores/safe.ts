@@ -1,6 +1,11 @@
 import { ethers } from "ethers";
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
-import { GaslessWallet__factory, Forwarder__factory, TokenBalanceResolver__factory, TokenBalanceResolver } from "~/contracts";
+import {
+  GaslessWallet__factory,
+  Forwarder__factory,
+  TokenBalanceResolver__factory,
+  TokenBalanceResolver,
+} from "~/contracts";
 import { IToken } from "./tokens";
 import { wait } from "@instadapp/utils";
 import collect from "collect.js";
@@ -34,7 +39,10 @@ const getChainBalances = async (
       const addresses = (chunk as any).all();
 
       const [{ balances }, prices] = await Promise.all([
-        balanceResolverContracts[chainId].callStatic.getBalances(address, addresses),
+        balanceResolverContracts[chainId].callStatic.getBalances(
+          address,
+          addresses
+        ),
         $fetch<IToken[]>(`https://prices.instadapp.io/${chainId}/tokens`, {
           params: {
             includeSparklinePrice7d: false,
@@ -51,7 +59,9 @@ const getChainBalances = async (
         if (!tokenPrice) continue;
         if (!balances[index].success) continue;
 
-        let balance = toBN(balances[index].balance).div(10 ** tokenPrice.decimals);
+        let balance = toBN(balances[index].balance).div(
+          10 ** tokenPrice.decimals
+        );
 
         if (balance.gt(0)) {
           newBalances.push({
@@ -146,8 +156,8 @@ export const useSafe = defineStore("safe", () => {
           tokenBalance.balance = balance.balance;
           tokenBalance.balanceInUSD = toBN(tb.price || 0).gt(0)
             ? toBN(balance.balance)
-              .times(tb.price || 0)
-              .toFixed(2)
+                .times(tb.price || 0)
+                .toFixed(2)
             : balance.balanceInUSD;
         }
 
@@ -225,6 +235,47 @@ export const useSafe = defineStore("safe", () => {
     await fetchGasBalance();
   });
 
+  async function getBalances(address: string, signal?: AbortSignal) {
+    return Promise.all(
+      availableNetworks.map(async (network) => {
+        const customTokenAddress = customTokens.value
+          .filter((t) => String(t.chainId) == String(network.chainId))
+          .map((t) => t.address);
+
+        try {
+          return await getChainBalances(String(network.chainId), address, [
+            ...tokens.value
+              .filter((t) => t.chainId === String(network.chainId))
+              .map((t) => t.address),
+            ...customTokenAddress,
+          ]);
+        } catch (error) {
+          try {
+            const params: any = {
+              address,
+              customTokens: customTokenAddress,
+            };
+
+            const resp = await http(`/api/${network.chainId}/balances`, {
+              signal,
+              params,
+            });
+
+            return resp as any[];
+          } catch (error) {
+            notify({
+              type: "warning",
+              message: `Failed to fetch balances on ${chainIdToName(
+                network.chainId
+              )}`,
+            });
+            return [];
+          }
+        }
+      })
+    );
+  }
+
   const fetchBalances = async () => {
     if (!safeAddress.value) return;
     if (documentVisibility.value === "hidden") return;
@@ -234,45 +285,19 @@ export const useSafe = defineStore("safe", () => {
       balances.value.loading = true;
       // balanceAborter.value = new AbortController();
 
-
-      const data = await Promise.all(availableNetworks.map(async network => {
-        const customTokenAddress = customTokens.value
-          .filter((t) => String(t.chainId) == String(network.chainId))
-          .map((t) => t.address);
-
-        try {
-          return await getChainBalances(String(network.chainId), safeAddress.value, [
-            ...tokens.value.filter(t => t.chainId === String(network.chainId)).map((t) => t.address),
-            ...customTokenAddress,
-          ])
-
-        } catch (error) {
-          try {
-            const params: any = {
-              address: safeAddress.value,
-              customTokens: customTokenAddress
-            };
-
-            const resp = await http(`/api/${network.chainId}/balances`, {
-              signal: balanceAborter.value?.signal,
-              params,
-            });
-
-            return resp as any[]
-          } catch (error) {
-            notify({ type: 'warning', message: `Failed to fetch balances on ${chainIdToName(network.chainId)}` })
-            return []
-          }
-        }
-      }))
-
+      const data = await getBalances(
+        safeAddress.value,
+        balanceAborter.value?.signal
+      );
 
       balanceAborter.value = undefined;
 
-      balances.value.data = data.flat().sort((a, b) => toBN(a.balanceInUSD).gt(b.balanceInUSD) ? 1 : -1);
+      balances.value.data = data
+        .flat()
+        .sort((a, b) => (toBN(a.balanceInUSD).gt(b.balanceInUSD) ? 1 : -1));
       balances.value.error = null;
 
-      return balances.value.data
+      return balances.value.data;
     } catch (e: any) {
       const err = parseTransactionError(e);
       if (err?.parsed.includes("abort")) return;
@@ -335,6 +360,7 @@ export const useSafe = defineStore("safe", () => {
     networkVersions,
     networkPreference,
     avoProvider,
+    getBalances,
   };
 });
 
