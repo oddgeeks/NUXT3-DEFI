@@ -3,8 +3,11 @@ import type { H3Event } from 'h3'
 import { AnkrProvider } from '@ankr.com/ankr.js'
 import collect from 'collect.js'
 import type { TokenBalanceResolver } from '~~/contracts'
-import { TokenBalanceResolver__factory } from '~~/contracts'
+import {
+  TokenBalanceResolver__factory,
+} from '~~/contracts'
 import type { IToken } from '~~/stores/tokens'
+import { slackIt } from '~~/server/utils'
 
 let tokens: any[] = []
 let lastUpdateTokens = 0
@@ -131,7 +134,10 @@ async function getChainBalances(chainId: string,
       const addresses = (chunk as any).all()
 
       const [{ balances }, prices] = await Promise.all([
-        balanceResolverContracts[chainId].callStatic.getBalances(address, addresses),
+        balanceResolverContracts[chainId].callStatic.getBalances(
+          address,
+          addresses,
+        ),
         $fetch<IToken[]>(`https://prices.instadapp.io/${chainId}/tokens`, {
           params: {
             includeSparklinePrice7d: false,
@@ -150,7 +156,9 @@ async function getChainBalances(chainId: string,
         if (!balances[index].success)
           continue
 
-        const balance = toBN(balances[index].balance).div(10 ** tokenPrice.decimals)
+        const balance = toBN(balances[index].balance).div(
+          10 ** tokenPrice.decimals,
+        )
 
         if (balance.gt(0)) {
           newBalances.push({
@@ -190,16 +198,16 @@ function shouldIgnoreReason(error: PromiseRejectedResult): boolean {
   return ignoredReasons.some(ir => message.includes(ir))
 }
 
-// Added slack logs to understand how is exactly balance fetching happening on production
-async function slackIt(type: string, message: string) {
-  $fetch('/api/slack', {
-    method: 'POST',
-    body: {
-      type,
-      message,
-    },
-  })
-}
+// // Added slack logs to understand how is exactly balance fetching happening on production
+// const slackIt = async (type: string, message: string) => {
+//   $fetch("/api/slack", {
+//     method: "POST",
+//     body: {
+//       type: type,
+//       message: message,
+//     },
+//   });
+// }
 
 export default defineEventHandler<IBalance[]>(async (event) => {
   const query = getQuery(event)
@@ -248,7 +256,13 @@ export default defineEventHandler<IBalance[]>(async (event) => {
           balances.push(...val)
         }
         else {
-          slackIt('error', `[server/api/balances.get.ts] #003 Error fetching ANKR balances (fallback) - ${network?.name} - ${query.address} - ${item?.reason}`)
+          // slackIt("error", `[server/api/balances.get.ts] #003 Error fetching ANKR balances (fallback) - ${network?.name} - ${query.address} - ${item?.reason}`);
+          slackIt('banner', {
+            title: '[server/api/balances.get.ts]',
+            address: query.address as string,
+            chainId: network?.chainId as number,
+            message: `Error fetching ANKR balances (fallback) - ${item?.reason}`,
+          })
           throw new Error('Fallback failed')
         }
       }
@@ -269,7 +283,12 @@ export default defineEventHandler<IBalance[]>(async (event) => {
       ]).then(r => r.flat())
     }
     catch (error) {
-      slackIt('banner', `[server/api/balances.get.ts] #004 Everything failed, trying debank now - ${query.address}`)
+      slackIt('banner', {
+        title: '[server/api/balances.get.ts]',
+        address: query.address as string,
+        chainId: 0,
+        message: 'Everything failed, trying debank now',
+      })
       return await getFromDebank(String(query.address))
     }
   }
