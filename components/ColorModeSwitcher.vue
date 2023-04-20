@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import Sun from "~/assets/images/icons/sun.svg?component";
-import Moon from "~/assets/images/icons/moon.svg?component";
-import { ColorModeInstance } from "@nuxtjs/color-mode/dist/runtime/types";
+import type { ColorModeInstance } from '@nuxtjs/color-mode/dist/runtime/types'
+import Sun from '~/assets/images/icons/sun.svg?component'
+import Moon from '~/assets/images/icons/moon.svg?component'
 
-const switchColorMode = (colorMode: ColorModeInstance) => {
-  colorMode.preference = colorMode.value === "dark" ? "light" : "dark";
-};
+function switchColorMode(colorMode: ColorModeInstance) {
+  colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
+}
 </script>
 
 <template>
@@ -15,7 +15,7 @@ const switchColorMode = (colorMode: ColorModeInstance) => {
       @click="switchColorMode($colorMode)"
     >
       <Transition name="slide-up">
-        <span class="absolute" v-if="$colorMode.value === 'dark'">
+        <span v-if="$colorMode.value === 'dark'" class="absolute">
           <Sun />
         </span>
         <span v-else class="absolute">

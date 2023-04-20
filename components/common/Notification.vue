@@ -1,27 +1,28 @@
 <script setup lang="ts">
-import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
-type NotificationType = "success" | "error" | "warning";
+import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
+
+type NotificationType = 'success' | 'error' | 'warning'
 
 const props = withDefaults(
   defineProps<{
-    text: string;
-    type?: NotificationType;
+    text: string
+    type?: NotificationType
   }>(),
   {
-    type: "success",
-  }
-);
+    type: 'success',
+  },
+)
 
 const typeClass = computed(() => {
   switch (props.type) {
-    case "success":
-      return "bg-green-400 text-green-400";
-    case "error":
-      return "bg-red-alert text-red-alert";
-    case "warning":
-      return "bg-orange-400 text-orange-400";
+    case 'success':
+      return 'bg-green-400 text-green-400'
+    case 'error':
+      return 'bg-red-alert text-red-alert'
+    case 'warning':
+      return 'bg-orange-400 text-orange-400'
   }
-});
+})
 </script>
 
 <template>

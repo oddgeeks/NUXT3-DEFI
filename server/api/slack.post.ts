@@ -1,37 +1,35 @@
-import axios from "axios";
+import axios from 'axios'
 
-const colors: Record<"danger" | "error" | "success" | "banner", string> = {
-  danger: "#000000", // black
-  error: "#D50201", // red
-  success: "#2EA44E", // green
-  banner: "#EFC35C", // yellow
-};
+const colors: Record<'danger' | 'error' | 'success' | 'banner', string> = {
+  danger: '#000000', // black
+  error: '#D50201', // red
+  success: '#2EA44E', // green
+  banner: '#EFC35C', // yellow
+}
 
 export default defineEventHandler(async (event) => {
-  const { slackKey, slackErrorKey, slackStagingKey } = useRuntimeConfig();
-  const { isProd } = useAppConfig();
+  const { slackKey, slackErrorKey, slackStagingKey } = useRuntimeConfig()
+  const { isProd } = useAppConfig()
 
-  let { type = "success", message } = await readBody(event);
+  let { type = 'success', message } = await readBody(event)
 
   if (!slackKey || !slackErrorKey || !slackStagingKey) {
     console.log({
       type,
       message,
-    });
-    return {};
+    })
+    return {}
   }
 
-  let channelId = slackKey;
+  let channelId = slackKey
 
-  if (!isProd) {
-    channelId = slackStagingKey;
-  } else if (type === "error" || type === "banner") {
-    channelId = slackErrorKey;
-  }
+  if (!isProd)
+    channelId = slackStagingKey
+  else if (type === 'error' || type === 'banner')
+    channelId = slackErrorKey
 
-  if (process.env.NODE_ENV === "development") {
-    message += `\n${"`Development`"}`;
-  }
+  if (process.env.NODE_ENV === 'development')
+    message += `\n${'`Development`'}`
 
   await axios
     .post(
@@ -43,9 +41,9 @@ export default defineEventHandler(async (event) => {
             color: colors[type as keyof typeof colors],
           },
         ],
-      })
+      }),
     )
-    .catch(() => {});
+    .catch(() => {})
 
-  return {};
-});
+  return {}
+})

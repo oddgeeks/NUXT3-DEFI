@@ -1,22 +1,23 @@
 <script setup lang="ts">
-type ButtonProps = {
-  color?: "blue" | "red" | "white" | "orange";
-  size?: "md" | "lg" | "sm";
-  loading?: boolean;
-  as?: "button" | "a" | "NuxtLink";
-};
+interface ButtonProps {
+  color?: 'blue' | 'red' | 'white' | 'orange'
+  size?: 'md' | 'lg' | 'sm'
+  loading?: boolean
+  as?: 'button' | 'a' | 'NuxtLink'
+}
 
 const props = withDefaults(defineProps<ButtonProps>(), {
-  color: "blue",
-  size: "md",
+  color: 'blue',
+  size: 'md',
   loading: false,
-  as: "button",
-});
+  as: 'button',
+})
 
 const componentToShow = computed(() => {
-  if (props.as === "NuxtLink") return resolveComponent("NuxtLink");
-  return props.as;
-});
+  if (props.as === 'NuxtLink')
+    return resolveComponent('NuxtLink')
+  return props.as
+})
 </script>
 
 <template>
@@ -55,7 +56,7 @@ const componentToShow = computed(() => {
   >
     <slot name="prefix" />
     <slot v-if="!loading" />
-    <div v-else class="dot-flashing my-1.5"></div>
+    <div v-else class="dot-flashing my-1.5" />
     <slot name="suffix" />
   </component>
 </template>

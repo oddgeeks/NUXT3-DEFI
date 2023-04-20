@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import SVGX from "~/assets/images/icons/x.svg?component";
-import { useField, useForm } from "vee-validate";
-import * as yup from "yup";
-import { ethers } from "ethers";
-import { storeToRefs } from "pinia";
+import { useField, useForm } from 'vee-validate'
+import * as yup from 'yup'
+import { ethers } from 'ethers'
+import { storeToRefs } from 'pinia'
+import SVGX from '~/assets/images/icons/x.svg?component'
 
-const { parseTransactionError } = useErrorHandler();
-const { account, provider } = useWeb3();
-const { fetchGasBalance, avoProvider } = useSafe();
-const { safeAddress } = storeToRefs(useSafe());
-const emit = defineEmits(["close"]);
-
+const emit = defineEmits(['close'])
+const { parseTransactionError } = useErrorHandler()
+const { account, provider } = useWeb3()
+const { fetchGasBalance, avoProvider } = useSafe()
+const { safeAddress } = storeToRefs(useSafe())
 const {
   handleSubmit,
   isSubmitting,
@@ -18,20 +17,20 @@ const {
   errors,
 } = useForm({
   validationSchema: yup.object({
-    "gift-code": yup.string().required(""),
+    'gift-code': yup.string().required(''),
   }),
-});
+})
 
-const { value, meta: valueMeta, setErrors } = useField<string>("gift-code");
+const { value, meta: valueMeta, setErrors } = useField<string>('gift-code')
 
 const sendingDisabled = computed(
-  () => !account.value || !formMeta.value.valid || isSubmitting.value
-);
+  () => !account.value || !formMeta.value.valid || isSubmitting.value,
+)
 
 const onSubmit = handleSubmit(async () => {
-  const browserProvider = new ethers.providers.Web3Provider(provider.value);
+  const browserProvider = new ethers.providers.Web3Provider(provider.value)
 
-  const signer = browserProvider.getSigner();
+  const signer = browserProvider.getSigner()
 
   const message = `Avocado wants you to sign in with your web3 account ${
     account.value
@@ -41,26 +40,26 @@ Action: Redeem code
 Code: ${value.value}
 URI: https://avocado.instadapp.io
 Nonce: {{NONCE}}
-Issued At: ${new Date().toISOString()}`;
+Issued At: ${new Date().toISOString()}`
 
   try {
-    const airdropNonce = await avoProvider.send("api_generateNonce", [
+    const airdropNonce = await avoProvider.send('api_generateNonce', [
       account.value,
       message,
-    ]);
+    ])
 
     const redeemSignature = await signer.signMessage(
-      message.replaceAll("{{NONCE}}", airdropNonce)
-    );
+      message.replaceAll('{{NONCE}}', airdropNonce),
+    )
 
-    const success = await avoProvider.send("api_claimGift", [
+    const success = await avoProvider.send('api_claimGift', [
       value.value,
       redeemSignature,
       airdropNonce,
-    ]);
+    ])
 
     if (!success) {
-      setErrors("Invalid redeem code.");
+      setErrors('Invalid redeem code.')
 
       // logActionToSlack({
       //   message: `Invalid redeem code. (${value.value})`,
@@ -68,51 +67,53 @@ Issued At: ${new Date().toISOString()}`;
       //   action: "reedem",
       //   account: account.value,
       // });
-    } else {
+    }
+    else {
       logActionToSlack({
         message: `(${value.value})`,
-        action: "reedem",
+        action: 'reedem',
         account: account.value,
-      });
+      })
 
-      emit("close");
+      emit('close')
 
       openSnackbar({
-        message: "Gas redeemed successfully!",
-        type: "success",
+        message: 'Gas redeemed successfully!',
+        type: 'success',
         timeout: 3000,
-      });
+      })
 
-      fetchGasBalance();
+      fetchGasBalance()
     }
-  } catch (e: any) {
-    const err = parseTransactionError(e);
+  }
+  catch (e: any) {
+    const err = parseTransactionError(e)
     openSnackbar({
       message: err.formatted,
-      type: "error",
-    });
+      type: 'error',
+    })
 
     logActionToSlack({
       message: err.formatted,
-      type: "error",
-      action: "reedem",
+      type: 'error',
+      action: 'reedem',
       account: account.value,
       errorDetails: err.parsed,
-    });
+    })
   }
-});
+})
 </script>
 
 <template>
-  <form @submit="onSubmit" class="flex flex-col gap-7.5">
+  <form class="flex flex-col gap-7.5" @submit="onSubmit">
     <label for="input-gift-code">
       <div class="flex justify-between mb-2.5">
         <span class="text-sm">Reedem code</span>
         <button
-          @click="$emit('close')"
           type="button"
           class="h-5 w-5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
           aria-label="Gift Code"
+          @click="$emit('close')"
         >
           <SVGX class="w-2.5 h-2.5" />
         </button>

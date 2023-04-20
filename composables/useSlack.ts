@@ -1,91 +1,89 @@
 interface ISlackMessage {
-  message: string;
-  action: IWeb3Action | "wc" | "add-token" | "upgrade" | "deploy" | "network";
-  account: string;
-  type?: ISlackMessageType;
-  txHash?: string;
-  chainId?: string;
-  errorDetails?: string;
+  message: string
+  action: IWeb3Action | 'wc' | 'add-token' | 'upgrade' | 'deploy' | 'network'
+  account: string
+  type?: ISlackMessageType
+  txHash?: string
+  chainId?: string
+  errorDetails?: string
 }
 
-const prefixes: Record<ISlackMessage["action"], string> = {
-  bridge: `🌉 Bridged:`,
-  send: `💸 Sent:`,
-  swap: `🔄 Swapped:`,
-  topup: `⛽ Topup Gas:`,
-  reedem: `🔑 🎁 Reedemed:`,
-  claim: `🎁 Claimed:`,
-  wc: `:walletconnect:`,
-  "add-token": `🆕 Added Token:`,
-  upgrade: `🆙`,
-  deploy: `⬆️ Deployed:`,
-  network: `🌐 Network`,
-};
+const prefixes: Record<ISlackMessage['action'], string> = {
+  'bridge': '🌉 Bridged:',
+  'send': '💸 Sent:',
+  'swap': '🔄 Swapped:',
+  'topup': '⛽ Topup Gas:',
+  'reedem': '🔑 🎁 Reedemed:',
+  'claim': '🎁 Claimed:',
+  'wc': ':walletconnect:',
+  'add-token': '🆕 Added Token:',
+  'upgrade': '🆙',
+  'deploy': '⬆️ Deployed:',
+  'network': '🌐 Network',
+}
 
 const ignoredMessages = [
-  "Signing rejected",
-  "Transaction rejected",
-  "User declined transaction",
-  "User rejected the transaction",
-];
+  'Signing rejected',
+  'Transaction rejected',
+  'User declined transaction',
+  'User rejected the transaction',
+]
 
-export const logActionToSlack = (slackMessage: ISlackMessage) => {
-  const build = useBuildInfo();
+export function logActionToSlack(slackMessage: ISlackMessage) {
+  const build = useBuildInfo()
 
   let {
-    type = "success",
+    type = 'success',
     action,
     chainId,
     txHash,
     message,
     account,
     errorDetails,
-  } = slackMessage;
+  } = slackMessage
 
-  if (ignoredMessages.some((i) => message && message.includes(i))) return;
+  if (ignoredMessages.some(i => message && message.includes(i)))
+    return
 
-  const prefix = prefixes[action];
+  const prefix = prefixes[action]
 
-  const explorerLink =
-    chainId && txHash
+  const explorerLink
+    = chainId && txHash
       ? `<${getExplorerUrl(chainId, `/tx/${txHash}`)}|${shortenHash(
           txHash,
-          12
+          12,
         )}>`
-      : "";
+      : ''
 
   const accountLink = `<https://avocado.instadapp.io/?user=${account}|${shortenHash(
     account,
-    12
-  )}>`;
+    12,
+  )}>`
 
-  if (chainId) {
-    message += `\n${"`Network`"} :${formatChainName(chainId)}:`;
-  }
+  if (chainId)
+    message += `\n${'`Network`'} :${formatChainName(chainId)}:`
 
-  let logMessage = `${prefix} ${message}\n${"`User`"} ${accountLink}`;
+  let logMessage = `${prefix} ${message}\n${'`User`'} ${accountLink}`
 
-  if (explorerLink) {
-    logMessage += `\n${"`Tx`"} ${explorerLink}`;
-  }
+  if (explorerLink)
+    logMessage += `\n${'`Tx`'} ${explorerLink}`
 
-  logMessage += `\n${"`Commit`"} ${build.commit}`;
-  logMessage += `\n${"`Env`"} ${build.env}`;
-  logMessage += `\n${"`Branch`"} ${build.branch}`;
+  logMessage += `\n${'`Commit`'} ${build.commit}`
+  logMessage += `\n${'`Env`'} ${build.env}`
+  logMessage += `\n${'`Branch`'} ${build.branch}`
 
-  if (errorDetails) {
-    logMessage += `\n${"`Error details`"} ${errorDetails}`;
-  }
+  if (errorDetails)
+    logMessage += `\n${'`Error details`'} ${errorDetails}`
 
-  slack(logMessage, type);
-};
+  slack(logMessage, type)
+}
 
-export const formatSymbol = (str: string, isUpper = true) => {
-  const upper = isUpper ? str.toUpperCase() : str;
-  return `${upper} :${str}:`;
-};
+export function formatSymbol(str: string, isUpper = true) {
+  const upper = isUpper ? str.toUpperCase() : str
+  return `${upper} :${str}:`
+}
 
-export const formatChainName = (chainId: string) => {
-  const name = chainIdToName(chainId);
-  return name.toLowerCase().replace(" ", "-");
-};
+export function formatChainName(chainId: string) {
+  const name = chainIdToName(chainId)
+  return name.toLowerCase().replace(' ', '-')
+}

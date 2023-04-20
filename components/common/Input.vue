@@ -1,83 +1,76 @@
 <script setup lang="ts">
-import BigNumber from "bignumber.js";
-import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
+import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
 
 const props = withDefaults(
   defineProps<{
-    modelValue?: string | number | boolean | null | undefined;
-    placeholder: string;
-    inputClasses?: string;
-    containerClasses?: string;
-    name: string;
-    errorMessage?: string;
-    type?: "text" | "number" | "numeric" | "password" | "email" | "tel" | "url" | "search";
-    errorType?: "error" | "warning";
-    step?: string;
-    min?: string;
-    transparent?: boolean;
-    readonly?: boolean;
-    autofocus?: boolean;
+    modelValue?: string | number | boolean | null | undefined
+    placeholder: string
+    inputClasses?: string
+    containerClasses?: string
+    name: string
+    errorMessage?: string
+    type?: 'text' | 'number' | 'numeric' | 'password' | 'email' | 'tel' | 'url' | 'search'
+    errorType?: 'error' | 'warning'
+    step?: string
+    min?: string
+    transparent?: boolean
+    readonly?: boolean
+    autofocus?: boolean
   }>(),
   {
-    modelValue: "",
-    placeholder: "",
-    name: "",
-    type: "text",
-    errorType: "error",
-    errorMessage: "",
+    modelValue: '',
+    placeholder: '',
+    name: '',
+    type: 'text',
+    errorType: 'error',
+    errorMessage: '',
     transparent: false,
     readonly: false,
     autofocus: false,
-  }
-);
+  },
+)
 
-const seperator = ".";
-const emit = defineEmits(["update:modelValue"]);
-
+const emit = defineEmits(['update:modelValue'])
+const seperator = '.'
 const htmlInputType = computed(() => {
-  if (props.type === "numeric") {
-    return "text";
-  }
-  return props.type;
-});
+  if (props.type === 'numeric')
+    return 'text'
 
-const handleInput = (e: any) => {
-  let inputVal = e.target.value;
+  return props.type
+})
 
-  if (props.type === "numeric") {
-    inputVal = inputVal.replace(",", ".");
-  }
+function handleInput(e: any) {
+  let inputVal = e.target.value
 
-  emit("update:modelValue", inputVal);
-};
+  if (props.type === 'numeric')
+    inputVal = inputVal.replace(',', '.')
 
-const handleBeforeInput = (e: any) => {
-  if (props.type === "numeric") {
-    let key = (e.data || "").replace(",", ".");
-    const computedValue = props.modelValue + (key || "");
+  emit('update:modelValue', inputVal)
+}
 
-    const isValueEmpty = !props.modelValue;
-    const isSeperator = seperator === key;
-    const hasSeperator = String(props.modelValue).includes(seperator);
+function handleBeforeInput(e: any) {
+  if (props.type === 'numeric') {
+    const key = (e.data || '').replace(',', '.')
+    const computedValue = props.modelValue + (key || '')
 
-    if (isSeperator && isValueEmpty) {
-      return e.preventDefault();
-    }
+    const isValueEmpty = !props.modelValue
+    const isSeperator = seperator === key
+    const hasSeperator = String(props.modelValue).includes(seperator)
 
-    if (hasSeperator && isSeperator) {
-      return e.preventDefault();
-    }
+    if (isSeperator && isValueEmpty)
+      return e.preventDefault()
+
+    if (hasSeperator && isSeperator)
+      return e.preventDefault()
 
     // check key is number
-    if (key && toBN(key).isNaN() && key !== seperator) {
-      return e.preventDefault();
-    }
+    if (key && toBN(key).isNaN() && key !== seperator)
+      return e.preventDefault()
 
-    if (key && toBN(computedValue).isNaN()) {
-      return e.preventDefault();
-    }
+    if (key && toBN(computedValue).isNaN())
+      return e.preventDefault()
   }
-};
+}
 </script>
 
 <template>
@@ -97,33 +90,32 @@ const handleBeforeInput = (e: any) => {
     >
       <slot name="prefix" />
       <input
+        :id="`input-${name}`"
+        v-focus="{ enabled: autofocus }"
         autocomplete="off"
         :readonly="readonly"
         :type="htmlInputType"
-        @beforeinput="handleBeforeInput"
-        :id="'input-' + name"
-        @input="handleInput"
         :value="modelValue"
         :placeholder="placeholder"
         :step="step"
         :name="name"
-        v-focus="{ enabled: autofocus }"
         :min="min"
         class="placeholder-slate-400 focus-visible:!outline-none placeholder:text-sm border-none shadow-none focus:ring-0 focus:border-none bg-inherit rounded-[inherit] px-0 py-[13px] w-full"
         :class="[inputClasses]"
-      />
+        @beforeinput="handleBeforeInput"
+        @input="handleInput"
+      >
       <slot name="suffix" />
     </div>
     <span
+      v-if="!!errorMessage"
       class="text-xs flex gap-2 items-center text-left mt-2"
       :class="{
         'text-red-alert': errorType === 'error',
         'text-orange-500': errorType === 'warning',
       }"
-      v-if="!!errorMessage"
     >
       <SVGInfo />
-      {{ errorMessage }}</span
-    >
+      {{ errorMessage }}</span>
   </div>
 </template>

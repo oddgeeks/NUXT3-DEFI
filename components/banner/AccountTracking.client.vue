@@ -1,11 +1,11 @@
 <script setup lang="ts">
-const router = useRouter();
-const { trackingAccount } = useAccountTrack();
+const router = useRouter()
+const { trackingAccount } = useAccountTrack()
 
-const disconnect = () => {
-  trackingAccount.value = "";
-  router.go(0);
-};
+function disconnect() {
+  trackingAccount.value = ''
+  router.go(0)
+}
 </script>
 
 <template>
@@ -15,7 +15,7 @@ const disconnect = () => {
     <p class="text-xs text-primary">
       Tracking account: {{ shortenHash(trackingAccount) }}
     </p>
-    <button @click="disconnect" class="text-red-alert text-xs">
+    <button class="text-red-alert text-xs" @click="disconnect">
       (Disconnect)
     </button>
   </div>

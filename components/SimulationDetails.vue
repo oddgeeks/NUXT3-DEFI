@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 defineProps<{
-  details: ISimulation;
-  chainId: string;
-  hasError: boolean;
-}>();
+  details: ISimulation
+  chainId: string
+  hasError: boolean
+}>()
 </script>
 
 <template>
@@ -23,27 +23,27 @@ defineProps<{
       class="grid grid-cols-1 sm:grid-cols-2 -mr-3 gap-x-[10px] gap-y-5 scroll-style max-h-[239px] overflow-y-auto"
     >
       <template
-        :key="k"
         v-for="(item, k) in details.balanceChange.approveTokens"
+        :key="k"
       >
         <SimulationTokenCard
           type="approve"
-          :chainId="chainId"
+          :chain-id="chainId"
           :payload="item"
         />
       </template>
       <template
-        :key="k"
         v-for="(item, k) in details.balanceChange.receiveTokens"
+        :key="k"
       >
         <SimulationTokenCard
           type="recieve"
-          :chainId="chainId"
+          :chain-id="chainId"
           :payload="item"
         />
       </template>
-      <template :key="k" v-for="(item, k) in details.balanceChange.sendTokens">
-        <SimulationTokenCard type="send" :chainId="chainId" :payload="item" />
+      <template v-for="(item, k) in details.balanceChange.sendTokens" :key="k">
+        <SimulationTokenCard type="send" :chain-id="chainId" :payload="item" />
       </template>
     </ul>
   </div>
