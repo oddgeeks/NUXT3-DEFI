@@ -19,17 +19,6 @@ const search = useDebounceFn((event: Event) => {
   searchQuery.value = (<HTMLInputElement>event.target).value;
 }, 200);
 
-const filteredTokens = computed(() => {
-  if (!searchQuery.value) return data.value || [];
-
-  const fuse = new Fuse(data.value || [], {
-    keys: ["name", "symbol", "address"],
-    threshold: 0.2,
-  });
-
-  return fuse.search(searchQuery.value).map((result) => result.item);
-});
-
 const filteredContacts = computed(() => {
   const _contacts = contacts.value[safeAddress.value];
   if (!_contacts) {

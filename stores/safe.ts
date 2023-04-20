@@ -278,6 +278,7 @@ export const useSafe = defineStore("safe", () => {
 
   const fetchBalances = async () => {
     if (!safeAddress.value) return;
+    if (!tokens.value.length) return;
     if (documentVisibility.value === "hidden") return;
     // if (balanceAborter.value) balanceAborter.value.abort();
 
