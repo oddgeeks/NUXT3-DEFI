@@ -111,7 +111,7 @@ export const openSendModal = (
       contact,
     },
     options: {
-      wrapperClass: "max-w-[500px]",
+      wrapperClass: "max-w-[600px]",
     },
   });
 };
