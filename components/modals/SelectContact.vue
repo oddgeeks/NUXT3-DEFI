@@ -34,7 +34,7 @@ const filteredContacts = computed(() => {
 </script>
 
 <template>
-  <form @submit="onSubmit">
+  <form>
     <h1 class="text-lg text-center leading-5 mb-7.5">Contacts</h1>
     <div class="flex flex-col gap-4 sm:gap-3.5">
       <CommonInput
