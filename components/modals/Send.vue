@@ -337,7 +337,10 @@ const handleSelectContact = async () => {
 
 const handleAddMore = () => {
   pushAmount("");
-  tokens.value.push(getAvailableTokens()[0]);
+  const newToken = getAvailableTokens()[0];
+  if (newToken) {
+    tokens.value.push(newToken);
+  }
 };
 
 const deleteToken = (idx: number) => {
@@ -482,12 +485,19 @@ const isInsufficient = (idx: number) => {
     </div>
     <div class="flex -mt-4">
       <CommonButton
+        :disabled="getAvailableTokens().length === 0"
         color="white"
         size="sm"
         class="items-center gap-2.5 h-9 !px-2.5"
         @click="handleAddMore()"
       >
-        <div class="rounded-full bg-primary p-1.5 text-white">
+        <div
+          class="rounded-full bg-primary p-1.5 text-white"
+          :class="{
+            'dark:bg-slate-600 bg-slate-300 dark:!text-slate-500 !text-slate-400':
+              getAvailableTokens().length === 0,
+          }"
+        >
           <PlusSVG class="w-2 h-2" />
         </div>
         Add More
