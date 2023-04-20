@@ -1,21 +1,22 @@
 <script setup lang="ts">
-import { gt } from "semver";
-const { account } = useWeb3();
-const { data } = useNuxtData("allNetworkVersions");
+import { gt } from 'semver'
 
-useEagerConnect();
+const { account } = useWeb3()
+const { data } = useNuxtData('allNetworkVersions')
+
+useEagerConnect()
 
 const sortByVersion = computed(() => {
   return data.value?.sort((a: NetworkVersion, b: NetworkVersion) => {
-    return gt(a.latestVersion, b.latestVersion) ? -1 : 1;
-  });
-});
+    return gt(a.latestVersion, b.latestVersion) ? -1 : 1
+  })
+})
 
 const mostRecentVersion = computed(() => {
   return data.value?.sort((a: NetworkVersion, b: NetworkVersion) => {
-    return gt(a.latestVersion, b.latestVersion) ? -1 : 1;
-  })[0]?.latestVersion;
-});
+    return gt(a.latestVersion, b.latestVersion) ? -1 : 1
+  })[0]?.latestVersion
+})
 </script>
 
 <template>
@@ -39,8 +40,12 @@ const mostRecentVersion = computed(() => {
             <tr
               class="hidden sm:table-row text-left text-sm text-gray-400 font-medium border-b border-slate-150 dark:border-slate-800"
             >
-              <th class="text-left py-6 pl-7.5">Network</th>
-              <th class="py-5">Latest version</th>
+              <th class="text-left py-6 pl-7.5">
+                Network
+              </th>
+              <th class="py-5">
+                Latest version
+              </th>
               <th class="py-5 text-center">
                 <span class="opacity-0">Action</span>
               </th>
@@ -48,10 +53,10 @@ const mostRecentVersion = computed(() => {
           </thead>
           <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
             <NetworkUpgradeRow
-              :network="network"
-              :key="network.chainId"
-              :recent-version="mostRecentVersion"
               v-for="network in sortByVersion"
+              :key="network.chainId"
+              :network="network"
+              :recent-version="mostRecentVersion"
             />
           </tbody>
         </table>

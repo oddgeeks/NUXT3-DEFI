@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import InstadappSVG from "@/assets/images/logo/instadapp.svg?component";
-import Calendar from "@/assets/images/icons/calendar.svg?component";
-import Hamburger from "@/assets/images/icons/hamburger.svg?component";
-import Avocado from "@/assets/images/icons/avocado.svg?component";
+import InstadappSVG from '@/assets/images/logo/instadapp.svg?component'
+import Calendar from '@/assets/images/icons/calendar.svg?component'
+import Hamburger from '@/assets/images/icons/hamburger.svg?component'
+import Avocado from '@/assets/images/icons/avocado.svg?component'
 
-const { active, account } = useWeb3();
+defineEmits(['destroy'])
 
-defineEmits(["destroy"]);
+const { active, account } = useWeb3()
 </script>
 
 <template>
@@ -14,7 +14,9 @@ defineEmits(["destroy"]);
     <figure
       class="flex gap-3 items-center border-2 border-slate-100 dark:border-slate-800 rounded-full py-2 px-4"
     >
-      <figcaption class="text-xs text-slate-400">Built by</figcaption>
+      <figcaption class="text-xs text-slate-400">
+        Built by
+      </figcaption>
       <a target="_blank" href="https://instadapp.io/">
         <InstadappSVG />
       </a>
@@ -27,14 +29,12 @@ defineEmits(["destroy"]);
         rel="noopener noreferrer"
         target="_blank"
         href="https://twitter.com/instadapp"
-        >Twitter</a
-      >
+      >Twitter</a>
       <a
         rel="noopener noreferrer"
         target="_blank"
         href="https://discord.com/invite/C76CeZc"
-        >Discord</a
-      >
+      >Discord</a>
     </nav>
 
     <div
@@ -49,7 +49,7 @@ defineEmits(["destroy"]);
         <ColorModeSwitcher />
       </div>
 
-      <Web3Button :hideGas="true" />
+      <Web3Button :hide-gas="true" />
 
       <NuxtLink
         class="bg-slate-100 dark:bg-slate-800 w-[50px] h-[50px] flex justify-center items-center rounded-full"
@@ -61,14 +61,14 @@ defineEmits(["destroy"]);
     </div>
   </div>
   <div class="flex justify-between items-center">
-    <NuxtLink @click="$emit('destroy')" to="/" class="flex items-center">
+    <NuxtLink to="/" class="flex items-center" @click="$emit('destroy')">
       <Avocado />
-      <span class="ml-2" v-if="!active">Avocado</span>
+      <span v-if="!active" class="ml-2">Avocado</span>
     </NuxtLink>
 
-    <Web3Button :hideEOA="true" v-if="active" />
+    <Web3Button v-if="active" :hide-e-o-a="true" />
 
-    <button @click="$emit('destroy')" v-if="active">
+    <button v-if="active" @click="$emit('destroy')">
       <Hamburger />
     </button>
   </div>

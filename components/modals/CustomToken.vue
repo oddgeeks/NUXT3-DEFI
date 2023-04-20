@@ -1,88 +1,88 @@
 <script lang="ts" setup>
-import * as yup from "yup";
-import { isAddress } from "@ethersproject/address";
-import ClipboardSVG from "~/assets/images/icons/clipboard.svg?component";
-import { IToken } from "~~/stores/tokens";
-import { Erc20__factory } from "~~/contracts";
-import { useField, useForm } from "vee-validate";
-import { storeToRefs } from "pinia";
+import * as yup from 'yup'
+import { isAddress } from '@ethersproject/address'
+import { useField, useForm } from 'vee-validate'
+import { storeToRefs } from 'pinia'
+import ClipboardSVG from '~/assets/images/icons/clipboard.svg?component'
+import type { IToken } from '~~/stores/tokens'
+import { Erc20__factory } from '~~/contracts'
 
 const props = defineProps<{
-  address: string;
-}>();
+  address: string
+}>()
 
-const { handleAddToken } = useTokens();
-const { tokens } = storeToRefs(useTokens());
-const { fetchBalances } = useSafe();
+const { handleAddToken } = useTokens()
+const { tokens } = storeToRefs(useTokens())
+const { fetchBalances } = useSafe()
 
-const balance = ref("0");
+const balance = ref('0')
 
-const { handleSubmit, isSubmitting, errors, meta, resetForm, validate } =
-  useForm({
+const { handleSubmit, isSubmitting, errors, meta, resetForm, validate }
+  = useForm({
     validationSchema: yup.object({
-      chainId: yup.string().required(""),
+      chainId: yup.string().required(''),
       address: yup
         .string()
-        .required("")
-        .test("is-valid-address", "Incorrect address", (value) => {
-          return value ? isAddress(value || "") : true;
+        .required('')
+        .test('is-valid-address', 'Incorrect address', (value) => {
+          return value ? isAddress(value || '') : true
         })
         .test(
-          "duplicate-address",
-          "Token already added",
+          'duplicate-address',
+          'Token already added',
           (value, { parent }) => {
-            if (!isAddress(value || "")) return true;
+            if (!isAddress(value || ''))
+              return true
 
             return !tokens.value.some((t) => {
               return (
-                t.address.toLowerCase() === value?.toLowerCase() &&
-                t.chainId == parent.chainId
-              );
-            });
-          }
+                t.address.toLowerCase() === value?.toLowerCase()
+                && t.chainId == parent.chainId
+              )
+            })
+          },
         ),
     }),
-  });
+  })
 
-const { value: chainId } = useField<string>("chainId", undefined, {
-  initialValue: "1",
-});
+const { value: chainId } = useField<string>('chainId', undefined, {
+  initialValue: '1',
+})
 const {
   value: address,
   meta: addressMeta,
   setValue,
-} = useField<string>("address");
+} = useField<string>('address')
 
 const {
   data: token,
   pending,
   error,
 } = useAsyncData(
-  "custom-token",
+  'custom-token',
   async () => {
-    const { valid } = await validate();
+    const { valid } = await validate()
 
     if (valid) {
       const contract = Erc20__factory.connect(
         address.value,
-        getRpcProvider(chainId.value)
-      );
+        getRpcProvider(chainId.value),
+      )
 
-      const symbol = await contract.symbol();
-      const name = await contract.name();
-      const decimals = await contract.decimals();
+      const symbol = await contract.symbol()
+      const name = await contract.name()
+      const decimals = await contract.decimals()
 
-      const data = await fetchBalances();
+      const data = await fetchBalances()
 
       const tokenBalance = data?.find(
         (i: IToken) =>
-          i.address.toLowerCase() === address.value.toLowerCase() &&
-          i.chainId == chainId.value
-      );
+          i.address.toLowerCase() === address.value.toLowerCase()
+          && i.chainId == chainId.value,
+      )
 
-      if (tokenBalance) {
-        balance.value = tokenBalance.balance;
-      }
+      if (tokenBalance)
+        balance.value = tokenBalance.balance
 
       return {
         address: address.value,
@@ -90,78 +90,83 @@ const {
         symbol,
         name,
         decimals,
-        coingeckoId: "",
-        logoURI: "",
+        coingeckoId: '',
+        logoURI: '',
         price: 0,
         sparklinePrice7d: [],
-      } as IToken;
+      } as IToken
     }
   },
   {
     watch: [address, chainId],
-  }
-);
+  },
+)
 
 const loading = computed(
-  () => (isSubmitting.value || pending.value) && meta.value.valid
-);
+  () => (isSubmitting.value || pending.value) && meta.value.valid,
+)
 
 const disabled = computed(
-  () => !meta.value.valid || isSubmitting.value || !token.value || pending.value
-);
+  () => !meta.value.valid || isSubmitting.value || !token.value || pending.value,
+)
 
 const onSubmit = handleSubmit(async () => {
-  if (!token.value) return;
+  if (!token.value)
+    return
 
-  handleAddToken(token.value);
+  handleAddToken(token.value)
 
   openSnackbar({
     message: `${token.value?.name} added successfully.`,
-    type: "success",
+    type: 'success',
     timeout: 5000,
-  });
+  })
 
-  refreshNuxtData("custom-tokens");
+  refreshNuxtData('custom-tokens')
   resetForm({
     values: {
-      chainId: "1",
-      address: "",
+      chainId: '1',
+      address: '',
     },
-  });
-});
+  })
+})
 
-const pasteAddress = async () => {
+async function pasteAddress() {
   try {
-    address.value = await navigator.clipboard.readText();
-  } catch (e) {
-    console.log(e);
-    openSnackbar({
-      message: "Please allow clipboard access",
-      type: "error",
-    });
+    address.value = await navigator.clipboard.readText()
   }
-};
+  catch (e) {
+    console.log(e)
+    openSnackbar({
+      message: 'Please allow clipboard access',
+      type: 'error',
+    })
+  }
+}
 
 onMounted(() => {
-  if (props.address) {
-    setValue(props.address);
-  }
-});
+  if (props.address)
+    setValue(props.address)
+})
 
 onUnmounted(() => {
-  clearNuxtData("custom-token");
-});
+  clearNuxtData('custom-token')
+})
 </script>
 
 <template>
   <form @submit="onSubmit">
-    <h1 class="text-lg text-center leading-5 mb-7.5">Custom Token</h1>
+    <h1 class="text-lg text-center leading-5 mb-7.5">
+      Custom Token
+    </h1>
     <div class="flex flex-col gap-5 mb-7.5">
       <div>
-        <p class="mb-2.5 text-sm">Network</p>
+        <p class="mb-2.5 text-sm">
+          Network
+        </p>
         <CommonSelect
-          class="w-full"
           v-model="chainId"
+          class="w-full"
           value-key="chainId"
           label-key="name"
           :options="availableNetworks"
@@ -175,13 +180,15 @@ onUnmounted(() => {
         </CommonSelect>
       </div>
       <div>
-        <p class="mb-2.5 text-sm">Token Address</p>
+        <p class="mb-2.5 text-sm">
+          Token Address
+        </p>
         <CommonInput
+          v-model.trim="address"
           autofocus
-          :error-message="addressMeta.dirty ? errors['address'] : ''"
+          :error-message="addressMeta.dirty ? errors.address : ''"
           name="address"
           placeholder="Enter Address"
-          v-model.trim="address"
         >
           <template #suffix>
             <button type="button" @click="pasteAddress">
@@ -196,10 +203,12 @@ onUnmounted(() => {
         text="Token not found, try changing the network."
       />
     </div>
-    <div class="flex justify-between items-center mb-7.5" v-if="token">
+    <div v-if="token" class="flex justify-between items-center mb-7.5">
       <div class="text-slate-400">
         <p>{{ token.name }}</p>
-        <p class="text-sm font-medium">{{ balance }} {{ token.symbol }}</p>
+        <p class="text-sm font-medium">
+          {{ balance }} {{ token.symbol }}
+        </p>
       </div>
       <div
         class="dark:bg-gray-850 text-sm bg-slate-50 px-4 py-2.5 rounded-2xl items-center justify-center text-slate-400"

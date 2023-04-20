@@ -1,0 +1,24 @@
+{
+    "extends": "@antfu",
+    "ignorePatterns": [
+        "!pages/public"
+    ],
+    "parserOptions" :{
+        "ecmaFeatures" : {
+            "jsx": false
+        }
+    },
+    "plugins": ["simple-import-sort"],
+    "rules": {
+        "eqeqeq": "off",
+        "no-console": "off",
+        "max-statements-per-line": "off",
+        "no-mixed-operators": "off",
+        //ban-ts-comment off
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
+        "@typescript-eslint/no-use-before-define": "off",
+        "array-callback-return": "off",
+       
+    }
+}

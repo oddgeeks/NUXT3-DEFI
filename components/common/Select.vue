@@ -1,98 +1,103 @@
 <script lang="ts" setup>
-import ChevronDownSVG from "~/assets/images/icons/chevron-down.svg?component";
-import SVGSuccess from "~/assets/images/icons/check-circle.svg?component";
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
+import SVGSuccess from '~/assets/images/icons/check-circle.svg?component'
 
-const [open, toggle] = useToggle(false);
-
-const containerRef = ref(null);
-
-const emit = defineEmits(["update:modelValue"]);
 const props = defineProps<{
-  options: any[];
-  labelKey?: string;
-  valueKey?: string;
-  iconKey?: string;
-  isValueIndex?: boolean;
-  modelValue?: any;
-  containerClasses?: string;
-  itemTextClasses?: string;
-  itemWrapperClasses?: string;
-  selectedLabelClasses?: string;
-}>();
+  options: any[]
+  labelKey?: string
+  valueKey?: string
+  iconKey?: string
+  isValueIndex?: boolean
+  modelValue?: any
+  containerClasses?: string
+  itemTextClasses?: string
+  itemWrapperClasses?: string
+  selectedLabelClasses?: string
+}>()
+
+const emit = defineEmits(['update:modelValue'])
+
+const [open, toggle] = useToggle(false)
+
+const containerRef = ref(null)
 
 onClickOutside(containerRef, () => {
-  toggle(false);
-});
+  toggle(false)
+})
 
 const selected = computed({
   get: () => props.modelValue,
-  set: (value) => emit("update:modelValue", value),
-});
+  set: value => emit('update:modelValue', value),
+})
 
 const selectedLabel = computed(() => {
   const option = props.options.find(
-    (o, i) => getValue(o, i) == props.modelValue
-  );
-  return option ? getLabel(option) : null;
-});
+    (o, i) => getValue(o, i) == props.modelValue,
+  )
+  return option ? getLabel(option) : null
+})
 
-const getLabel = (option: any) => {
-  if (props.labelKey) return option[props.labelKey];
-  return option;
-};
+function getLabel(option: any) {
+  if (props.labelKey)
+    return option[props.labelKey]
+  return option
+}
 
-const getValue = (option: any, index?: number) => {
-  if (props.isValueIndex) return index;
-  if (props.valueKey) return option[props.valueKey];
-  return option;
-};
+function getValue(option: any, index?: number) {
+  if (props.isValueIndex)
+    return index
+  if (props.valueKey)
+    return option[props.valueKey]
+  return option
+}
 
-const getIcon = (option: any) => {
-  if (props.iconKey && option) return option[props.iconKey];
-  return null;
-};
+function getIcon(option: any) {
+  if (props.iconKey && option)
+    return option[props.iconKey]
+  return null
+}
 
 const selectedIcon = computed(() => {
-  let option;
-  if (props.isValueIndex) option = props.options[props.modelValue];
+  let option
+  if (props.isValueIndex)
+    option = props.options[props.modelValue]
   else
-    option = props.options.find((o, i) => getValue(o, i) == props.modelValue);
-  return getIcon(option);
-});
+    option = props.options.find((o, i) => getValue(o, i) == props.modelValue)
+  return getIcon(option)
+})
 
-const setSelected = (option: any, index: number) => {
-  selected.value = getValue(option, index);
-  toggle(false);
-};
+function setSelected(option: any, index: number) {
+  selected.value = getValue(option, index)
+  toggle(false)
+}
 
-const isSelected = (option: any, index: number) => {
-  return getValue(option, index) == props.modelValue;
-};
+function isSelected(option: any, index: number) {
+  return getValue(option, index) == props.modelValue
+}
 </script>
 
 <template>
   <div
-    @keydown.escape="toggle(false)"
     ref="containerRef"
     class="relative"
     :class="{ 'z-10': open }"
+    @keydown.escape="toggle(false)"
   >
     <button
       type="button"
-      ref="button"
-      @click="toggle()"
       :class="[
         { 'border-b-transparent rounded-b-none adjuster': open },
         containerClasses,
       ]"
       class="relative w-full flex items-center gap-2.5 max-h-12 rounded-2xl border-2 dark:border-slate-700 border-slate-150 bg-slate-50 dark:bg-gray-850 px-4 py-3 text-left"
+      @click="toggle()"
     >
       <slot name="button-prefix">
         <img
-          class="w-6 h-6"
           v-if="iconKey && selectedIcon"
+          class="w-6 h-6"
           :src="selectedIcon"
-        />
+        >
       </slot>
       <span :class="selectedLabelClasses" class="block truncate text-sm">{{
         selectedLabel
@@ -118,16 +123,16 @@ const isSelected = (option: any, index: number) => {
         >
           <button
             type="button"
-            @click="setSelected(option, i)"
             :class="itemWrapperClasses"
             class="w-full flex gap-2.5 items-center text-left py-3 px-3"
+            @click="setSelected(option, i)"
           >
             <slot :value="getValue(option, i)" name="item-prefix">
               <img
-                class="w-6 h-6"
                 v-if="iconKey && getIcon(option)"
+                class="w-6 h-6"
                 :src="getIcon(option)"
-              />
+              >
             </slot>
             <slot
               :label="getLabel(option)"

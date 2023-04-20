@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import InstadappSVG from "~/assets/images/logo/instadapp.svg?component";
+import InstadappSVG from '~/assets/images/logo/instadapp.svg?component'
 
-const info = useBuildInfo();
+const info = useBuildInfo()
 
 onMounted(() => {
   // console.clear()
   console.log(
     `%cAvocado v${info.version} (${info.commit.slice(0, 8)}.${info.env})`,
-    "color: white; background: #16a34a; font-size: 32px;padding: 8px;text-shadow: 2px 2px black;"
-  );
-});
+    'color: white; background: #16a34a; font-size: 32px;padding: 8px;text-shadow: 2px 2px black;',
+  )
+})
 </script>
 
 <template>
@@ -30,14 +30,12 @@ onMounted(() => {
         rel="noopener noreferrer"
         target="_blank"
         href="https://twitter.com/instadapp"
-        >Twitter</a
-      >
+      >Twitter</a>
       <a
         rel="noopener noreferrer"
         target="_blank"
         href="https://discord.com/invite/C76CeZc"
-        >Discord</a
-      >
+      >Discord</a>
     </nav>
   </footer>
 </template>

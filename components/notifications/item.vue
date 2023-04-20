@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import SVGX from "~/assets/images/icons/x.svg?component";
-import { Notifications } from "~~/composables/useNotification";
+import SVGX from '~/assets/images/icons/x.svg?component'
+import type { Notifications } from '~~/composables/useNotification'
 
-const { deleteItem } = useNotification();
+const props = defineProps<NotificationItem>()
+
+const { deleteItem } = useNotification()
 
 interface NotificationItem {
-  item: Notifications;
+  item: Notifications
 }
 
-const props = defineProps<NotificationItem>();
-
-onMounted(() => deleteItem(props.item.id, props.item.duration));
+onMounted(() => deleteItem(props.item.id, props.item.duration))
 </script>
 
 <template>
@@ -19,8 +19,10 @@ onMounted(() => deleteItem(props.item.id, props.item.duration));
   >
     <NotificationsIcon :type="item.type" />
     <div>
-      <h1 class="text-md text-slate-300">{{ item.title }}</h1>
-      <div class="text-sm text-slate-400" v-html="item.message"></div>
+      <h1 class="text-md text-slate-300">
+        {{ item.title }}
+      </h1>
+      <div class="text-sm text-slate-400" v-html="item.message" />
     </div>
     <button
       class="flex h-7.5 w-7.5 items-center justify-center"

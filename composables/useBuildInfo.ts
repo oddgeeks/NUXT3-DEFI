@@ -1,3 +1,3 @@
 export function useBuildInfo() {
-    return useAppConfig().buildInfo as BuildInfo
+  return useAppConfig().buildInfo as BuildInfo
 }

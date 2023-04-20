@@ -1,31 +1,33 @@
-const modals = ref<IModal[]>([]);
+const modals = ref<IModal[]>([])
 const lastModal = computed(
-  () => modals.value[Math.max(0, modals.value.length - 1)]
-);
+  () => modals.value[Math.max(0, modals.value.length - 1)],
+)
 
-const defaultOptions = () =>
-  ({
+function defaultOptions() {
+  return {
     raw: false,
     clickToClose: true,
-    wrapperClass: "",
-    contentClass: "",
-    sheetPosition: "bottom",
+    wrapperClass: '',
+    contentClass: '',
+    sheetPosition: 'bottom',
     snackOptions: {
       open: false,
-      type: "success",
-      message: "",
+      type: 'success',
+      message: '',
       timeout: 6000,
     },
-  } as IOptions);
+  } as IOptions
+}
 
 export function openSnackbar({
   message,
   timeout = 6000,
-  type = "success",
+  type = 'success',
 }: ISnackOptions) {
-  const modal = modals.value.find((m) => m.id === lastModal.value?.id);
+  const modal = modals.value.find(m => m.id === lastModal.value?.id)
 
-  if (!modal) throw new Error("No modal found");
+  if (!modal)
+    throw new Error('No modal found')
 
   modal.options = {
     ...modal.options,
@@ -35,14 +37,14 @@ export function openSnackbar({
       timeout,
       type,
     },
-  };
+  }
 
   setTimeout(() => {
     modal.options = {
       ...modal.options,
       snackOptions: defaultOptions().snackOptions,
-    };
-  }, timeout);
+    }
+  }, timeout)
 }
 
 async function openModal({
@@ -54,21 +56,20 @@ async function openModal({
   async = false,
   ...params
 }: Partial<IModal>): Promise<{
-  modal: IModal;
-  success: boolean;
-  payload: any;
+  modal: IModal
+  success: boolean
+  payload: any
 }> {
-  const id = params.id || Math.random().toString(36).substr(2, 9);
+  const id = params.id || Math.random().toString(36).substr(2, 9)
 
   const destroy = () => {
-    modals.value = modals.value.filter((m) => m.id !== id);
+    modals.value = modals.value.filter(m => m.id !== id)
 
-    if (!modals.value.length) {
-      repositionScroll();
-    }
-  };
+    if (!modals.value.length)
+      repositionScroll()
+  }
 
-  const mergedOptions = Object.assign({}, defaultOptions(), options);
+  const mergedOptions = Object.assign({}, defaultOptions(), options)
 
   const modal: IModal = {
     id,
@@ -80,53 +81,53 @@ async function openModal({
     async,
     options: mergedOptions,
     ...params,
-  };
-
-  if (!modals.value.length) {
-    adjustScroll();
   }
 
-  modals.value.push(modal);
+  if (!modals.value.length)
+    adjustScroll()
 
-  if (!modal.async)
+  modals.value.push(modal)
+
+  if (!modal.async) {
     return {
       modal,
       success: true,
       payload: null,
-    };
+    }
+  }
 
   return new Promise((resolve, reject) => {
     modal.onResolve = async (success = true, payload) => {
-      destroy();
+      destroy()
       resolve({
         modal,
         success,
         payload,
-      });
-    };
+      })
+    }
 
     modal.onReject = async (success: boolean, payload) => {
-      destroy();
+      destroy()
       resolve({
         modal,
         success,
         payload,
-      });
-    };
-  });
+      })
+    }
+  })
 }
 
-const adjustScroll = () => {
-  const scrollBarWidth = window.innerWidth - document.body.clientWidth;
+function adjustScroll() {
+  const scrollBarWidth = window.innerWidth - document.body.clientWidth
 
-  document.body.style.paddingRight = `${scrollBarWidth}px`;
-  document.body.classList.add("modal-open");
-};
+  document.body.style.paddingRight = `${scrollBarWidth}px`
+  document.body.classList.add('modal-open')
+}
 
-const repositionScroll = () => {
-  document.body.classList.remove("modal-open");
-  document.body.style.paddingRight = "";
-};
+function repositionScroll() {
+  document.body.classList.remove('modal-open')
+  document.body.style.paddingRight = ''
+}
 
 export function useModal() {
   return {
@@ -134,5 +135,5 @@ export function useModal() {
     openSnackbar,
     openModal,
     lastModal,
-  };
+  }
 }

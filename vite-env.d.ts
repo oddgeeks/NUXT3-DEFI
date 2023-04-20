@@ -385,3 +385,17 @@ interface ICalculatedFee {
   formatted: string;
   formattedAmountAfterDiscount: string;
 }
+
+
+ interface IContact {
+  name: string
+  address: string
+  chainId: number | string
+}
+
+ interface ITransferCount {
+  from: string
+  to: string
+  chainId: number | string
+  transferCount: number
+}
