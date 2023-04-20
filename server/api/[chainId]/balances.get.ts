@@ -1,9 +1,13 @@
 import { BigNumber } from "bignumber.js";
 import { H3Event } from "h3";
 import { AnkrProvider } from "@ankr.com/ankr.js";
-import { TokenBalanceResolver, TokenBalanceResolver__factory } from "~~/contracts";
+import {
+  TokenBalanceResolver,
+  TokenBalanceResolver__factory,
+} from "~~/contracts";
 import collect from "collect.js";
 import { IToken } from "~~/stores/tokens";
+import { slackIt } from "~~/server/utils";
 
 let tokens: any[] = [];
 let lastUpdateTokens: number = 0;
@@ -134,7 +138,10 @@ const getChainBalances = async (
       const addresses = (chunk as any).all();
 
       const [{ balances }, prices] = await Promise.all([
-        balanceResolverContracts[chainId].callStatic.getBalances(address, addresses),
+        balanceResolverContracts[chainId].callStatic.getBalances(
+          address,
+          addresses
+        ),
         $fetch<IToken[]>(`https://prices.instadapp.io/${chainId}/tokens`, {
           params: {
             includeSparklinePrice7d: false,
@@ -151,7 +158,9 @@ const getChainBalances = async (
         if (!tokenPrice) continue;
         if (!balances[index].success) continue;
 
-        let balance = toBN(balances[index].balance).div(10 ** tokenPrice.decimals);
+        let balance = toBN(balances[index].balance).div(
+          10 ** tokenPrice.decimals
+        );
 
         if (balance.gt(0)) {
           newBalances.push({
@@ -184,24 +193,13 @@ const getQueryCustomTokens = (event: H3Event) => {
     : [];
 };
 
-// Added slack logs to understand how is exactly balance fetching happening on production
-const slackIt = async (type: string, message: string) => {
-  $fetch("/api/slack", {
-    method: "POST",
-    body: {
-      type: type,
-      message: message,
-    },
-  });
-}
-
 export default defineEventHandler<IBalance[]>(async (event) => {
   let query = getQuery(event);
   let chainId = getRouterParam(event, "chainId");
-  let network = availableNetworks.find((n) => n.chainId == chainId)
+  let network = availableNetworks.find((n) => n.chainId == chainId);
 
-  if(! network) {
-    return []
+  if (!network) {
+    return [];
   }
 
   if (!lastUpdateTokens || Date.now() - lastUpdateTokens > 10_000_000) {
@@ -217,9 +215,15 @@ export default defineEventHandler<IBalance[]>(async (event) => {
       String(network.chainId),
       String(query.address),
       getQueryCustomTokens(event)
-    )
+    );
   } catch (error) {
-    slackIt("banner", `[server/api/[chainId]/balances.get.ts] #001 Fallback to custom Ankr API. Error fetching balances on ${network.chainId} network for ${query.address} with direct RPC.`)
+    slackIt("banner", {
+      title: "[server/api/[chainId]/balances.get.ts]",
+      address: query.address as string,
+      chainId: network.chainId,
+      message:
+        "#001 Error fetching balances with direct RPC. Fallback to custom Ankr API.",
+    });
     return getFromAnkr(String(query.address), network.ankrName);
   }
 });
