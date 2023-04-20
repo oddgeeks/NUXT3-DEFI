@@ -80,6 +80,8 @@ const getChainBalances = async (
     })
   );
 
+  console.log("Balance fetch: Public");
+
   return newBalances;
 };
 
@@ -260,6 +262,8 @@ export const useSafe = defineStore("safe", () => {
               signal,
               params,
             });
+
+            console.log("Balance fetch: Private");
 
             return resp as any[];
           } catch (error) {
