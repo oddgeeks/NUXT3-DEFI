@@ -1,9 +1,13 @@
 import { BigNumber } from "bignumber.js";
 import { H3Event } from "h3";
 import { AnkrProvider } from "@ankr.com/ankr.js";
-import { TokenBalanceResolver, TokenBalanceResolver__factory } from "~~/contracts";
+import {
+  TokenBalanceResolver,
+  TokenBalanceResolver__factory,
+} from "~~/contracts";
 import collect from "collect.js";
 import { IToken } from "~~/stores/tokens";
+import { slackIt } from "~~/server/utils";
 
 let tokens: any[] = [];
 let lastUpdateTokens: number = 0;
@@ -134,7 +138,10 @@ const getChainBalances = async (
       const addresses = (chunk as any).all();
 
       const [{ balances }, prices] = await Promise.all([
-        balanceResolverContracts[chainId].callStatic.getBalances(address, addresses),
+        balanceResolverContracts[chainId].callStatic.getBalances(
+          address,
+          addresses
+        ),
         $fetch<IToken[]>(`https://prices.instadapp.io/${chainId}/tokens`, {
           params: {
             includeSparklinePrice7d: false,
@@ -151,7 +158,9 @@ const getChainBalances = async (
         if (!tokenPrice) continue;
         if (!balances[index].success) continue;
 
-        let balance = toBN(balances[index].balance).div(10 ** tokenPrice.decimals);
+        let balance = toBN(balances[index].balance).div(
+          10 ** tokenPrice.decimals
+        );
 
         if (balance.gt(0)) {
           newBalances.push({
@@ -184,23 +193,23 @@ const getQueryCustomTokens = (event: H3Event, chainId: string) => {
     : [];
 };
 
-const ignoredReasons = ['Body is unusable']; // Add more strings to ignore slack logs of more reasons
+const ignoredReasons = ["Body is unusable"]; // Add more strings to ignore slack logs of more reasons
 const shouldIgnoreReason = (error: PromiseRejectedResult): boolean => {
-  const message = String(error?.reason)
+  const message = String(error?.reason);
 
-  return ignoredReasons.some( ir => message.includes(ir))
+  return ignoredReasons.some((ir) => message.includes(ir));
 };
 
-// Added slack logs to understand how is exactly balance fetching happening on production
-const slackIt = async (type: string, message: string) => {
-  $fetch("/api/slack", {
-    method: "POST",
-    body: {
-      type: type,
-      message: message,
-    },
-  });
-}
+// // Added slack logs to understand how is exactly balance fetching happening on production
+// const slackIt = async (type: string, message: string) => {
+//   $fetch("/api/slack", {
+//     method: "POST",
+//     body: {
+//       type: type,
+//       message: message,
+//     },
+//   });
+// }
 
 export default defineEventHandler<IBalance[]>(async (event) => {
   let query = getQuery(event);
@@ -236,7 +245,7 @@ export default defineEventHandler<IBalance[]>(async (event) => {
 
         if (!shouldIgnoreReason(item?.reason)) {
           // NOTE: This is a temporary fix to avoid spamming slack logs - reenable whenever needed in future
-          // As of now this API is not used to load main balances on frontend, its being used for showing Onboard banner in this repo and on onboard repo 
+          // As of now this API is not used to load main balances on frontend, its being used for showing Onboard banner in this repo and on onboard repo
           // slackIt("error", `[server/api/balances.get.ts] #001 Error fetching NORMAL balances - ${network?.name} - ${query.address} - ${item?.reason}`);
         }
 
@@ -247,7 +256,13 @@ export default defineEventHandler<IBalance[]>(async (event) => {
           );
           balances.push(...val);
         } else {
-          slackIt("error", `[server/api/balances.get.ts] #003 Error fetching ANKR balances (fallback) - ${network?.name} - ${query.address} - ${item?.reason}`);
+          // slackIt("error", `[server/api/balances.get.ts] #003 Error fetching ANKR balances (fallback) - ${network?.name} - ${query.address} - ${item?.reason}`);
+          slackIt("banner", {
+            title: "[server/api/balances.get.ts]",
+            address: query.address as string,
+            chainId: network?.chainId as number,
+            message: `Error fetching ANKR balances (fallback) - ${item?.reason}`,
+          });
           throw new Error("Fallback failed");
         }
       }
@@ -266,7 +281,12 @@ export default defineEventHandler<IBalance[]>(async (event) => {
         ),
       ]).then((r) => r.flat());
     } catch (error) {
-      slackIt("banner", `[server/api/balances.get.ts] #004 Everything failed, trying debank now - ${query.address}`);
+      slackIt("banner", {
+        title: "[server/api/balances.get.ts]",
+        address: query.address as string,
+        chainId: 0,
+        message: `Everything failed, trying debank now`,
+      });
       return await getFromDebank(String(query.address));
     }
   }
