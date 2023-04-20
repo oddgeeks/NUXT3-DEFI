@@ -168,7 +168,7 @@ const onSubmit = form.handleSubmit(async () => {
                 value-key="chainId"
                 label-key="name"
                 icon-key="icon"
-                :options="networks"
+                :options="availableNetworks"
               >
                 <template #button-prefix>
                   <ChainLogo class="w-6 h-6" :chain="fromChainId" />
