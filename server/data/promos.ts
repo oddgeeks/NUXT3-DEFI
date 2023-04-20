@@ -23,5 +23,10 @@ export const promos: IPromo[] = [
         title: "ENS Drop",
         slug: "ens-drop",
         promo: "ENS-Tweet-Drop-v1.0.0",
+    },
+    {
+        title: "Lens Drop",
+        slug: "lens-drop",
+        promo: "Lens-Drop-v1.0.0",
     }
 ];
