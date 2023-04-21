@@ -4,12 +4,16 @@ import SearchSVG from '~/assets/images/icons/search.svg?component'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 
 const emit = defineEmits(['resolve', 'reject'])
+
 const { contacts, getSentTimes } = useContacts()
 const { safeAddress } = useAvocadoSafe()
+
 const searchQuery = ref('')
+
 const search = useDebounceFn((event: Event) => {
   searchQuery.value = (<HTMLInputElement>event.target).value
 }, 200)
+
 const filteredContacts = computed(() => {
   const _contacts = contacts.value[safeAddress.value]
   if (!_contacts)
@@ -22,6 +26,7 @@ const filteredContacts = computed(() => {
     keys: ['name', 'address'],
     threshold: 0.2,
   })
+  
   return fuse.search(searchQuery.value).map(result => result.item)
 })
 </script>
