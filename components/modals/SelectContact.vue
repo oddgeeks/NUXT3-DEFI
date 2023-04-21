@@ -26,7 +26,7 @@ const filteredContacts = computed(() => {
     keys: ['name', 'address'],
     threshold: 0.2,
   })
-  
+
   return fuse.search(searchQuery.value).map(result => result.item)
 })
 </script>
