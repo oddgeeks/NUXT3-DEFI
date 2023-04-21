@@ -1,9 +1,9 @@
-import type { MaybeRef } from '@vueuse/core'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { storeToRefs } from 'pinia'
-import { Erc20__factory } from '~~/contracts'
 import type { IToken } from '~~/stores/tokens'
+import type { IBalance } from '~~/stores/safe'
+import { Erc20__factory } from '~~/contracts'
 
 interface IFee {
   amount: string
@@ -11,12 +11,7 @@ interface IFee {
   asset: IToken
 }
 
-interface IBridge {
-  fromChainId: MaybeRef<string>
-  tokenAddress: MaybeRef<string>
-}
-
-export function useBridge(props: IBridge) {
+export function useBridge(fromToken: Ref<IBalance>) {
   let txController: AbortController | null = null
   let tokensController: AbortController | null = null
   let routesController: AbortController | null = null
@@ -26,10 +21,14 @@ export function useBridge(props: IBridge) {
   const { tokenBalances, safeAddress } = useAvocadoSafe()
   const { tokens } = storeToRefs(useTokens())
 
-  const fromChainId = ref(props.fromChainId)
-  const toChainId = ref(props.fromChainId === '137' ? '10' : '137')
-  const tokenAddress = ref(props.tokenAddress)
+  const fromChainId = computed(() => fromToken.value.chainId)
+  const toChainId = ref(fromChainId.value == '137' ? '10' : '137')
   const toTokenAddress = ref()
+
+  watch(fromChainId, () => {
+    if (fromChainId.value == toChainId.value)
+      toChainId.value = fromChainId.value == '137' ? '10' : '137'
+  })
 
   const form = useForm({
     validationSchema: yup.object({
@@ -43,7 +42,7 @@ export function useBridge(props: IBridge) {
         })
         .test('max-amount', 'Insufficient balance', (value: any) => {
           const amount = toBN(value)
-          const balance = toBN(token.value.balance)
+          const balance = toBN(fromToken.value.balance)
 
           return amount.gt(0) ? amount.lte(balance) : true
         }),
@@ -52,17 +51,9 @@ export function useBridge(props: IBridge) {
 
   const amount = form.useFieldModel('amount')
 
-  const token = computed(
-    () =>
-      tokenBalances.value.find(
-        t =>
-          t.chainId === fromChainId.value && t.address === tokenAddress.value,
-      )!,
-  )
-
   const selectableToTokens = computed(() => {
     // allow to users to select eth and weth in case of bridging to mainnet
-    if (toChainId.value == '1' && token.value.symbol === 'weth') {
+    if (toChainId.value == '1' && fromToken.value.symbol === 'weth') {
       const availableTokens = tokens.value.filter(
         i =>
           (i.symbol === 'eth' || i.symbol === 'weth')
@@ -102,17 +93,19 @@ export function useBridge(props: IBridge) {
       i => i.address === toTokenAddress.value && i.chainId == toChainId.value,
     )
 
-    const actual = toToken || token.value
+    if (toToken)
+      return toToken
 
     const t = bridgeTokens.data.value?.find(
-      (t: any) => t.symbol.toLowerCase() === actual.symbol.toLowerCase(),
+      (t: any) =>
+        t.symbol.toLowerCase() === fromToken.value.symbol.toLowerCase(),
     )
 
     if (t)
       return t
 
     return bridgeTokens.data.value?.find((t: any) =>
-      t.symbol.toLowerCase().includes(actual.symbol.toLowerCase()),
+      t.symbol.toLowerCase().includes(fromToken.value.symbol.toLowerCase()),
     )
   })
 
@@ -131,7 +124,7 @@ export function useBridge(props: IBridge) {
 
   const recievedAmount = computed(() =>
     toBN(recivedValueInUsd.value)
-      .div(token.value.price ?? 1)
+      .div(fromToken.value.price ?? 1)
       .toFixed(),
   )
 
@@ -188,7 +181,10 @@ export function useBridge(props: IBridge) {
         else { return }
       }
 
-      const transferAmount = toWei(amount.value || '0', token.value.decimals)
+      const transferAmount = toWei(
+        amount.value || '0',
+        fromToken.value.decimals,
+      )
 
       try {
         if (routesController)
@@ -199,7 +195,7 @@ export function useBridge(props: IBridge) {
         const data: IBridgeResponse = await http('/api/socket/v2/quote', {
           signal: routesController.signal,
           params: {
-            fromTokenAddress: token.value.address,
+            fromTokenAddress: fromToken.value.address,
             fromChainId: fromChainId.value,
             toChainId: toChainId.value,
             toTokenAddress: bridgeToToken.value.address,
@@ -239,7 +235,7 @@ export function useBridge(props: IBridge) {
     {
       server: false,
       immediate: false,
-      watch: [amount, bridgeToToken],
+      watch: [amount, fromToken, bridgeToToken],
     },
   )
 
@@ -260,7 +256,7 @@ export function useBridge(props: IBridge) {
       for (const userTx of txRoute.value?.userTxs || []) {
         if (userTx.approvalData) {
           const erc20 = Erc20__factory.connect(
-            token.value.address,
+            fromToken.value.address,
             getRpcProvider(fromChainId.value),
           )
           const { data } = await erc20.populateTransaction.approve(
@@ -269,7 +265,7 @@ export function useBridge(props: IBridge) {
           )
 
           txs.push({
-            to: token.value.address,
+            to: fromToken.value.address,
             data,
           })
         }
@@ -311,7 +307,9 @@ export function useBridge(props: IBridge) {
           .toFixed()
       }, '0') || '0'
 
-    if (token.value.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
+    if (
+      fromToken.value.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    ) {
       v = toBN(v)
         .minus(amount.value || '0')
         .toFixed(0)
@@ -328,7 +326,7 @@ export function useBridge(props: IBridge) {
     const nativeBalance
       = tokenBalances.value.find(
         t =>
-          t.chainId == token.value.chainId
+          t.chainId == fromToken.value.chainId
           && t.symbol === nativeCurrency.value?.symbol,
       )?.balance || '0'
 
@@ -395,11 +393,11 @@ export function useBridge(props: IBridge) {
       i => i.chainId == fromChainId.value,
     )
     const isSameToken
-      = token.value?.symbol.toLowerCase()
+      = fromToken.value?.symbol.toLowerCase()
       === nativeCurrency.value?.symbol.toLowerCase()
 
     const fromAddress = !isSameToken
-      ? token.value
+      ? fromToken.value
       : balancedToken || fallbackToken
 
     const fromAmount = toBN(nativeFee.value)
@@ -426,7 +424,7 @@ export function useBridge(props: IBridge) {
 
   const disabled = computed(
     () =>
-      !token.value
+      !fromToken.value
       || !account.value
       || bridgeTokens.pending.value
       || !txRoute.value
@@ -457,7 +455,6 @@ export function useBridge(props: IBridge) {
     fromChainId,
     bridgeToToken,
     routes,
-    token,
     txRoute,
     form,
     bridgeFee,
