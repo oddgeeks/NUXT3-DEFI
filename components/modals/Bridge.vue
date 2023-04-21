@@ -16,11 +16,14 @@ const props = defineProps({
     default: false,
   },
 })
+
 const emit = defineEmits(['destroy'])
+
 const { account } = useWeb3()
 const { sendTransactions, tokenBalances } = useAvocadoSafe()
 const { toWei } = useBignumber()
 const { parseTransactionError } = useErrorHandler()
+
 const fromChainId = ref<string>(props.chainId)
 const availableTokens = computed(() =>
   tokenBalances.value.filter(t => t.chainId == fromChainId.value),
@@ -30,6 +33,7 @@ const fromToken = ref(
     t => t.chainId == fromChainId.value && t.address === props.address,
   )!,
 )
+
 watch(
   () => fromChainId.value,
   () => {
@@ -41,6 +45,7 @@ watch(
     }
   },
 )
+
 const {
   txRoute,
   toChainId,
@@ -73,6 +78,7 @@ const { pending, error, data } = useEstimatedFee(
 function setMax() {
   amount.value = toBN(fromToken.value!.balance).decimalPlaces(6, 1).toString()
 }
+
 const onSubmit = form.handleSubmit(async () => {
   if (!txRoute.value)
     return
@@ -87,6 +93,7 @@ const onSubmit = form.handleSubmit(async () => {
       toToken: bridgeToToken.value.address,
       toChainId: toChainId.value,
     })
+
     const transactionHash = await sendTransactions(
       transactions.data.value!,
       props.chainId,
@@ -94,6 +101,7 @@ const onSubmit = form.handleSubmit(async () => {
         metadata,
       },
     )
+
     logActionToSlack({
       message: `${formatDecimal(amount.value)} ${formatSymbol(
         fromToken.value.symbol,
@@ -106,8 +114,10 @@ const onSubmit = form.handleSubmit(async () => {
       txHash: transactionHash,
       account: account.value,
     })
+
     form.resetForm()
     emit('destroy')
+
     showPendingTransactionModal(transactionHash, props.chainId, 'bridge')
   }
   catch (e: any) {
@@ -116,6 +126,7 @@ const onSubmit = form.handleSubmit(async () => {
       message: err.formatted,
       type: 'error',
     })
+
     logActionToSlack({
       message: err.formatted,
       type: 'error',
