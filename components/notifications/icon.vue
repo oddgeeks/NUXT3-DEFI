@@ -1,32 +1,32 @@
 <script setup lang="ts">
-import SVGSuccess from "~/assets/images/icons/check-circle.svg?component";
-import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
-import SVGTriangle from "~/assets/images/icons/exclamation-triangle.svg?component";
-import { Notifications } from "~~/composables/useNotification";
+import SVGSuccess from '~/assets/images/icons/check-circle.svg?component'
+import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
+import SVGTriangle from '~/assets/images/icons/exclamation-triangle.svg?component'
+import type { Notifications } from '~~/composables/useNotification'
 
 const props = defineProps<{
-  type: Notifications["type"];
-}>();
+  type: Notifications['type']
+}>()
 
 const textClass = computed(
   () =>
     ({
-      success: "text-[#22c55e]",
-      info: "text-[#3b82f6]",
-      warning: "text-[#ef9500]",
-      error: "text-[#eb5757]",
-    }[props.type])
-);
+      success: 'text-[#22c55e]',
+      info: 'text-[#3b82f6]',
+      warning: 'text-[#ef9500]',
+      error: 'text-[#eb5757]',
+    }[props.type]),
+)
 
 const bgClass = computed(
   () =>
     ({
-      success: "bg-[#22c55e]",
-      info: "bg-[#3b82f6]",
-      warning: "bg-[#ef9500]",
-      error: "bg-[#eb5757]",
-    }[props.type])
-);
+      success: 'bg-[#22c55e]',
+      info: 'bg-[#3b82f6]',
+      warning: 'bg-[#ef9500]',
+      error: 'bg-[#eb5757]',
+    }[props.type]),
+)
 </script>
 
 <template>

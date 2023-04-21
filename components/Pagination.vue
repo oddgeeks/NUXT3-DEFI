@@ -1,9 +1,6 @@
 <script lang="ts" setup>
-import ArrowLeft from "~/assets/images/icons/arrow-left.svg?component";
-import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
-
-const { $scrollToTop } = useNuxtApp()
-type INavigationType = "first" | "prev" | "next" | "last";
+import ArrowLeft from '~/assets/images/icons/arrow-left.svg?component'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 
 const props = defineProps({
   total: {
@@ -21,19 +18,21 @@ const props = defineProps({
   urlPrefix: {
     type: String,
     required: true,
-    default: () => "/",
+    default: () => '/',
   },
-});
+})
+const { $scrollToTop } = useNuxtApp()
+type INavigationType = 'first' | 'prev' | 'next' | 'last'
 
 const router = useRouter()
 
 const pages = computed(() => {
-  const pages = [];
-  for (let i = 1; i <= Math.ceil(props.total / props.limit); i++) {
-    pages.push(i);
-  }
-  return pages;
-});
+  const pages = []
+  for (let i = 1; i <= Math.ceil(props.total / props.limit); i++)
+    pages.push(i)
+
+  return pages
+})
 
 const disabled = computed(() => {
   return {
@@ -42,25 +41,25 @@ const disabled = computed(() => {
   }
 })
 
-const start = computed(()=> (props.current - 1) * props.limit + 1)
-const end = computed(()=> Math.min(props.current * props.limit, props.total))
+const start = computed(() => (props.current - 1) * props.limit + 1)
+const end = computed(() => Math.min(props.current * props.limit, props.total))
 
-const navigate = (type: INavigationType) => {
-  let page;
+function navigate(type: INavigationType) {
+  let page
 
   switch (type) {
-    case "first":
-      page = 1;
-      break;
-    case "prev":
-      page = Math.max(props.current - 1, 1);
-      break;
-    case "next":
-      page = Math.min(props.current + 1, pages.value.length);
-      break;
-    case "last":
-      page = pages.value.length;
-      break;
+    case 'first':
+      page = 1
+      break
+    case 'prev':
+      page = Math.max(props.current - 1, 1)
+      break
+    case 'next':
+      page = Math.min(props.current + 1, pages.value.length)
+      break
+    case 'last':
+      page = pages.value.length
+      break
   }
 
   router.push({
@@ -68,9 +67,9 @@ const navigate = (type: INavigationType) => {
     query: {
       page,
     },
-  });
+  })
 
-  $scrollToTop();
+  $scrollToTop()
 }
 </script>
 
@@ -80,19 +79,19 @@ const navigate = (type: INavigationType) => {
       Showing {{ start }} to {{ end }} of {{ total }} results
     </div>
     <div class="flex gap-4 items-center w-full sm:w-fit">
-      <CommonButton @click="navigate('first')" :disabled="disabled.prev" size="md" class="!px-4 hidden sm:inline">
+      <CommonButton :disabled="disabled.prev" size="md" class="!px-4 hidden sm:inline" @click="navigate('first')">
         First
       </CommonButton>
-       <CommonButton @click="navigate('prev')"  :disabled="disabled.prev" size="md" class="!px-2 !py-2">
+      <CommonButton :disabled="disabled.prev" size="md" class="!px-2 !py-2" @click="navigate('prev')">
         <ArrowLeft class="w-5 h-5" />
       </CommonButton>
       <div class="px-5 py-3 text-slate-400 dark:bg-slate-800 text-center bg-slate-150 text-xs rounded-7.5 w-full sm:hidden">
         {{ start }} - {{ end }} of {{ total }} results
       </div>
-      <CommonButton @click="navigate('next')" :disabled="disabled.next" size="md" class="!px-2 !py-2">
+      <CommonButton :disabled="disabled.next" size="md" class="!px-2 !py-2" @click="navigate('next')">
         <ArrowRight class="w-5 h-5" />
       </CommonButton>
-      <CommonButton @click="navigate('last')" :disabled="disabled.next" size="md" class="!px-4 hidden sm:inline">
+      <CommonButton :disabled="disabled.next" size="md" class="!px-4 hidden sm:inline" @click="navigate('last')">
         Last
       </CommonButton>
     </div>

@@ -4,13 +4,23 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
+    "lint": "eslint --cache .",
+    "format": "eslint --cache --fix .",
     "generate:contracts": "rimraf contracts && typechain --target=ethers-v5 'abi/*.json' --out-dir 'contracts'",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
+  "dependencies": {
+    "@instadapp/avocado-base": "^0.0.9",
+    "canvas-confetti": "^1.6.0",
+    "error-serializer": "^5.1.0",
+    "fuse.js": "^6.6.2",
+    "semver": "^7.3.8"
+  },
   "devDependencies": {
     "@ankr.com/ankr.js": "^0.3.1",
+    "@antfu/eslint-config": "^0.38.5",
     "@coinbase/wallet-sdk": "3.0.4",
     "@fontsource/source-code-pro": "^4.5.12",
     "@headlessui/vue": "^1.7.12",
@@ -39,8 +49,10 @@
     "bignumber.js": "^9.1.1",
     "chart.js": "^4.2.0",
     "collect.js": "^4.34.3",
+    "eslint": "^8.38.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
     "ethers": "^5.7.2",
-    "nuxt": "^3.3.1",
+    "nuxt": "^3.4.1",
     "nuxt-security": "^0.13.0",
     "ohmyfetch": "^0.4.21",
     "pinia": "^2.0.33",
@@ -62,12 +74,5 @@
     "vue-tippy": "^6.0.0",
     "ws": "^8.12.0",
     "yup": "^0.32.11"
-  },
-  "dependencies": {
-    "@instadapp/avocado-base": "^0.0.9",
-    "canvas-confetti": "^1.6.0",
-    "error-serializer": "^5.1.0",
-    "fuse.js": "^6.6.2",
-    "semver": "^7.3.8"
   }
 }

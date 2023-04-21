@@ -1,31 +1,32 @@
 <script setup lang="ts">
-const emit = defineEmits(["destroy"]);
+const emit = defineEmits(['destroy'])
 
-const { account } = useWeb3();
-const { sendTransaction } = useAvocadoSafe();
-const { parseTransactionError } = useErrorHandler();
+const { account } = useWeb3()
+const { sendTransaction } = useAvocadoSafe()
+const { parseTransactionError } = useErrorHandler()
 
-const loading = ref(false);
+const loading = ref(false)
 
-const to = ref("");
-const value = ref("0");
-const operation = ref("0");
-const id = ref("0");
-const data = ref("0x");
-const chainId = ref("137");
+const to = ref('')
+const value = ref('0')
+const operation = ref('0')
+const id = ref('0')
+const data = ref('0x')
+const chainId = ref('137')
 
 const sendingDisabled = computed(
-  () => loading.value || !data.value || !to.value
-);
+  () => loading.value || !data.value || !to.value,
+)
 
-const onSubmit = async () => {
-  loading.value = false;
+async function onSubmit() {
+  loading.value = false
 
-  if (sendingDisabled.value) return;
+  if (sendingDisabled.value)
+    return
 
-  loading.value = true;
+  loading.value = true
   try {
-    let transactionHash = await sendTransaction(
+    const transactionHash = await sendTransaction(
       {
         to: to.value,
         data: data.value,
@@ -35,40 +36,43 @@ const onSubmit = async () => {
       },
       {
         id: id.value,
-      }
-    );
+      },
+    )
 
-    console.log(transactionHash);
+    console.log(transactionHash)
 
-    emit("destroy");
+    emit('destroy')
 
-    showPendingTransactionModal(transactionHash, chainId.value, "send");
-  } catch (e: any) {
-    const err = parseTransactionError(e);
+    showPendingTransactionModal(transactionHash, chainId.value, 'send')
+  }
+  catch (e: any) {
+    const err = parseTransactionError(e)
 
     openSnackbar({
       message: err.formatted,
-      type: "error",
-    });
+      type: 'error',
+    })
 
     logActionToSlack({
       message: err.formatted,
-      action: "send",
-      type: "error",
+      action: 'send',
+      type: 'error',
       account: account.value,
       errorDetails: err.parsed,
-    });
+    })
   }
 
-  loading.value = false;
-};
+  loading.value = false
+}
 </script>
 
 <template>
-  <form @submit.prevent="onSubmit" class="text-center flex gap-7.5 flex-col">
+  <form class="text-center flex gap-7.5 flex-col" @submit.prevent="onSubmit">
     <div class="flex justify-center flex-col items-center">
       <div class="flex flex-col gap-[14px]">
-        <h2 class="text-lg leading-5 text-center">Custom Transaction</h2>
+        <h2 class="text-lg leading-5 text-center">
+          Custom Transaction
+        </h2>
       </div>
     </div>
 
@@ -98,8 +102,7 @@ const onSubmit = async () => {
           <span class="text-sm">To</span>
         </div>
 
-        <CommonInput name="to" placeholder="Enter to" v-model="to">
-        </CommonInput>
+        <CommonInput v-model="to" name="to" placeholder="Enter to" />
       </div>
 
       <div class="space-y-2.5">
@@ -107,12 +110,11 @@ const onSubmit = async () => {
           <span class="text-sm">Value</span>
         </div>
         <CommonInput
+          v-model="value"
           type="numeric"
           name="value"
           placeholder="Enter value"
-          v-model="value"
-        >
-        </CommonInput>
+        />
       </div>
 
       <div class="space-y-2.5">
@@ -120,12 +122,11 @@ const onSubmit = async () => {
           <span class="text-sm">Operation</span>
         </div>
         <CommonInput
+          v-model="operation"
           type="numeric"
           name="operation"
           placeholder="Enter operation"
-          v-model="operation"
-        >
-        </CommonInput>
+        />
       </div>
 
       <div class="space-y-2.5">
@@ -133,12 +134,11 @@ const onSubmit = async () => {
           <span class="text-sm">ID</span>
         </div>
         <CommonInput
+          v-model="id"
           type="numeric"
           name="id"
           placeholder="Enter id"
-          v-model="id"
-        >
-        </CommonInput>
+        />
       </div>
 
       <div class="space-y-2.5">
@@ -146,8 +146,7 @@ const onSubmit = async () => {
           <span class="text-sm">Data</span>
         </div>
 
-        <CommonInput name="data" placeholder="Enter data" v-model="data">
-        </CommonInput>
+        <CommonInput v-model="data" name="data" placeholder="Enter data" />
       </div>
     </div>
 

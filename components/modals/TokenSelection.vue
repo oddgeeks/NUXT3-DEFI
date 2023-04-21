@@ -1,29 +1,29 @@
 <script lang="ts" setup>
-import PlusSVG from "~/assets/images/icons/plus.svg?component";
-import SVGSuccess from "~/assets/images/icons/check-circle.svg?component";
-import SearchSVG from "~/assets/images/icons/search.svg?component";
-import type { IToken } from "~~/stores/tokens";
-
-defineEmits(["resolve", "reject", "update:modelValue"]);
+import PlusSVG from '~/assets/images/icons/plus.svg?component'
+import SVGSuccess from '~/assets/images/icons/check-circle.svg?component'
+import SearchSVG from '~/assets/images/icons/search.svg?component'
+import type { IToken } from '~~/stores/tokens'
 
 const props = defineProps<{
-  tokens: IToken[];
-  selectedToken: IToken;
-}>();
+  tokens: IToken[]
+  selectedToken: IToken
+}>()
 
-const tokens = toRef(props, "tokens");
+defineEmits(['resolve', 'reject', 'update:modelValue'])
 
-const { tokenBalances } = useAvocadoSafe();
-const search = ref("");
+const tokens = toRef(props, 'tokens')
 
-const getTokenBalance = (address: string, chainId: string) => {
+const { tokenBalances } = useAvocadoSafe()
+const search = ref('')
+
+function getTokenBalance(address: string, chainId: string) {
   const token = tokenBalances.value.find(
-    (t) =>
-      t.chainId == chainId &&
-      t.address.toLocaleLowerCase() === address.toLocaleLowerCase()
-  );
-  return token ? token.balance : "0";
-};
+    t =>
+      t.chainId == chainId
+      && t.address.toLocaleLowerCase() === address.toLocaleLowerCase(),
+  )
+  return token ? token.balance : '0'
+}
 
 const tokensWithBalance = computed(() => {
   return tokens.value
@@ -31,32 +31,40 @@ const tokensWithBalance = computed(() => {
       return {
         ...i,
         balance: getTokenBalance(i.address, i.chainId),
-      };
+      }
     })
     .sort((a, b) => {
-      const populars = ["eth", "usdc", "usdt", "dai", "wbtc", "matic"];
+      const populars = ['eth', 'usdc', 'usdt', 'dai', 'wbtc', 'matic']
 
-      if (toBN(b.balance).gt(toBN(a.balance))) return 1;
-      if (toBN(b.balance).lt(toBN(a.balance))) return -1;
+      if (toBN(b.balance).gt(toBN(a.balance)))
+        return 1
+      if (toBN(b.balance).lt(toBN(a.balance)))
+        return -1
 
-      const aIndex = populars.indexOf(a.symbol.toLowerCase());
-      const bIndex = populars.indexOf(b.symbol.toLowerCase());
-      if (aIndex === -1 && bIndex === -1) return 0;
-      if (aIndex === -1) return 1;
-      if (bIndex === -1) return -1;
-      return aIndex - bIndex;
+      const aIndex = populars.indexOf(a.symbol.toLowerCase())
+      const bIndex = populars.indexOf(b.symbol.toLowerCase())
+      if (aIndex === -1 && bIndex === -1)
+        return 0
+      if (aIndex === -1)
+        return 1
+      if (bIndex === -1)
+        return -1
+      return aIndex - bIndex
     })
-    .filter((i) =>
-      !!search.value
-        ? i.name.toLowerCase().includes(search.value.toLowerCase()) ||
-          i.symbol.toLowerCase().includes(search.value.toLowerCase())
-        : true
-    );
-});
+    .filter(i =>
+      search.value
+        ? i.name.toLowerCase().includes(search.value.toLowerCase())
+          || i.symbol.toLowerCase().includes(search.value.toLowerCase())
+        : true,
+    )
+})
 </script>
+
 <template>
   <div>
-    <h1 class="text-lg text-center mb-7.5">Select a Token</h1>
+    <h1 class="text-lg text-center mb-7.5">
+      Select a Token
+    </h1>
     <CommonInput
       v-model="search"
       autofocus
@@ -70,13 +78,13 @@ const tokensWithBalance = computed(() => {
       </template>
     </CommonInput>
     <ul
-      class="overflow-auto scroll-style h-96"
       v-if="tokensWithBalance.length && tokensWithBalance.length > 0"
+      class="overflow-auto scroll-style h-96"
     >
-      <li v-for="token in tokensWithBalance">
+      <li v-for="token in tokensWithBalance" :key="token.address + token.name + token.chainId">
         <button
-          @click="$emit('resolve', true, token)"
           class="px-5 w-full text-left py-[14px] rounded-3xl flex items-center gap-3 hover:bg-slate-100 hover:dark:bg-slate-800"
+          @click="$emit('resolve', true, token)"
         >
           <div
             class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
@@ -85,7 +93,7 @@ const tokensWithBalance = computed(() => {
               :src="token.logoURI"
               class="h-10 w-10 rounded-full"
               :onerror="onImageError"
-            />
+            >
 
             <ChainLogo
               :stroke="true"
@@ -111,7 +119,9 @@ const tokensWithBalance = computed(() => {
       v-else
       class="flex flex-col space-y-8 items-center justify-center h-96"
     >
-      <p class="text-slate-400">Nothing could be found</p>
+      <p class="text-slate-400">
+        Nothing could be found
+      </p>
       <div class="flex items-center flex-col space-y-4">
         <CommonButton
           color="white"
@@ -123,8 +133,8 @@ const tokensWithBalance = computed(() => {
         </CommonButton>
         <CommonButton
           size="lg"
-          @click="openImportTokenModal()"
           class="flex items-center space-x-2"
+          @click="openImportTokenModal()"
         >
           <PlusSVG />
           <span>Custom token</span>

@@ -1,158 +1,159 @@
-import type { IToken } from "~~/stores/tokens";
-import type { IBalance } from "~~/stores/safe";
-import { useForm } from "vee-validate";
-import { Erc20__factory } from "~~/contracts";
-import * as yup from "yup";
-import { storeToRefs } from "pinia";
+import { useForm } from 'vee-validate'
+import * as yup from 'yup'
+import { storeToRefs } from 'pinia'
+import type { IToken } from '~~/stores/tokens'
+import type { IBalance } from '~~/stores/safe'
+import { Erc20__factory } from '~~/contracts'
 
-type IFee = {
-  amount: string;
-  feesInUsd: string;
-  asset: IToken;
-};
+interface IFee {
+  amount: string
+  feesInUsd: string
+  asset: IToken
+}
 
-export const useBridge = (fromToken: Ref<IBalance>) => {
-  let txController: AbortController | null = null;
-  let tokensController: AbortController | null = null;
-  let routesController: AbortController | null = null;
+export function useBridge(fromToken: Ref<IBalance>) {
+  let txController: AbortController | null = null
+  let tokensController: AbortController | null = null
+  let routesController: AbortController | null = null
 
-  const { account } = useWeb3();
-  const { fromWei, toWei } = useBignumber();
-  const { tokenBalances, safeAddress } = useAvocadoSafe();
-  const { tokens } = storeToRefs(useTokens());
+  const { account } = useWeb3()
+  const { fromWei, toWei } = useBignumber()
+  const { tokenBalances, safeAddress } = useAvocadoSafe()
+  const { tokens } = storeToRefs(useTokens())
 
-  const fromChainId = computed(() => fromToken.value.chainId);
-  const toChainId = ref(fromChainId.value == "137" ? "10" : "137");
-  const toTokenAddress = ref();
+  const fromChainId = computed(() => fromToken.value.chainId)
+  const toChainId = ref(fromChainId.value == '137' ? '10' : '137')
+  const toTokenAddress = ref()
 
   watch(fromChainId, () => {
-    if (fromChainId.value == toChainId.value) {
-      toChainId.value = fromChainId.value == "137" ? "10" : "137";
-    }
-  });
+    if (fromChainId.value == toChainId.value)
+      toChainId.value = fromChainId.value == '137' ? '10' : '137'
+  })
 
   const form = useForm({
     validationSchema: yup.object({
       amount: yup
         .string()
-        .required("")
-        .test("min-amount", "", (value: any) => {
-          const amount = toBN(value);
+        .required('')
+        .test('min-amount', '', (value: any) => {
+          const amount = toBN(value)
 
-          return value ? amount.gt(0) : true;
+          return value ? amount.gt(0) : true
         })
-        .test("max-amount", "Insufficient balance", (value: any) => {
-          const amount = toBN(value);
-          const balance = toBN(fromToken.value.balance);
+        .test('max-amount', 'Insufficient balance', (value: any) => {
+          const amount = toBN(value)
+          const balance = toBN(fromToken.value.balance)
 
-          return amount.gt(0) ? amount.lte(balance) : true;
+          return amount.gt(0) ? amount.lte(balance) : true
         }),
     }),
-  });
+  })
 
-  const amount = form.useFieldModel("amount");
+  const amount = form.useFieldModel('amount')
 
   const selectableToTokens = computed(() => {
     // allow to users to select eth and weth in case of bridging to mainnet
-    if (toChainId.value == "1" && fromToken.value.symbol === "weth") {
+    if (toChainId.value == '1' && fromToken.value.symbol === 'weth') {
       const availableTokens = tokens.value.filter(
-        (i) =>
-          (i.symbol === "eth" || i.symbol === "weth") &&
-          i.chainId == toChainId.value
-      );
+        i =>
+          (i.symbol === 'eth' || i.symbol === 'weth')
+          && i.chainId == toChainId.value,
+      )
 
       if (!toTokenAddress.value) {
         const eth = tokens.value.find(
-          (i) => i.symbol === "eth" && i.chainId == toChainId.value
-        );
+          i => i.symbol === 'eth' && i.chainId == toChainId.value,
+        )
 
-        toTokenAddress.value = eth?.address;
+        toTokenAddress.value = eth?.address
       }
 
-      return availableTokens;
-    } else {
-      toTokenAddress.value = undefined;
+      return availableTokens
+    }
+    else {
+      toTokenAddress.value = undefined
     }
 
-    return [];
-  });
+    return []
+  })
 
   const nativeCurrency = computed(() => {
     const nativeTokenMeta = getNetworkByChainId(+fromChainId.value).params
-      .nativeCurrency;
+      .nativeCurrency
 
     return tokens.value.find(
-      (t) =>
-        t.chainId == fromChainId.value &&
-        t.symbol.toLowerCase() === nativeTokenMeta?.symbol?.toLowerCase()
-    );
-  });
+      t =>
+        t.chainId == fromChainId.value
+        && t.symbol.toLowerCase() === nativeTokenMeta?.symbol?.toLowerCase(),
+    )
+  })
 
   const bridgeToToken = computed(() => {
     const toToken = tokens.value.find(
-      (i) => i.address === toTokenAddress.value && i.chainId == toChainId.value
-    );
+      i => i.address === toTokenAddress.value && i.chainId == toChainId.value,
+    )
 
-    if (toToken) {
-      return toToken;
-    }
+    if (toToken)
+      return toToken
 
     const t = bridgeTokens.data.value?.find(
       (t: any) =>
-        t.symbol.toLowerCase() === fromToken.value.symbol.toLowerCase()
-    );
+        t.symbol.toLowerCase() === fromToken.value.symbol.toLowerCase(),
+    )
 
-    if (t) return t;
+    if (t)
+      return t
 
     return bridgeTokens.data.value?.find((t: any) =>
-      t.symbol.toLowerCase().includes(fromToken.value.symbol.toLowerCase())
-    );
-  });
+      t.symbol.toLowerCase().includes(fromToken.value.symbol.toLowerCase()),
+    )
+  })
 
   const toAmount = computed(() =>
     formatDecimal(
       fromWei(
-        txRoute.value?.toAmount || "0",
-        bridgeToToken?.value?.decimals
-      ).toFixed()
-    )
-  );
+        txRoute.value?.toAmount || '0',
+        bridgeToToken?.value?.decimals,
+      ).toFixed(),
+    ),
+  )
 
   const recivedValueInUsd = computed(() =>
-    !txRoute?.value ? 0 : max(txRoute?.value.outputValueInUsd, 0)
-  );
+    !txRoute?.value ? 0 : max(txRoute?.value.outputValueInUsd, 0),
+  )
 
   const recievedAmount = computed(() =>
     toBN(recivedValueInUsd.value)
       .div(fromToken.value.price ?? 1)
-      .toFixed()
-  );
+      .toFixed(),
+  )
 
   const bridgeTokens = useAsyncData(
-    "bridge-tokens",
+    'bridge-tokens',
     async () => {
       try {
-        if (tokensController) {
-          tokensController.abort();
-        }
-        tokensController = new AbortController();
+        if (tokensController)
+          tokensController.abort()
+
+        tokensController = new AbortController()
 
         const { result }: IBridgeTokensResponse = await http(
-          "/api/socket/v2/token-lists/to-token-list",
+          '/api/socket/v2/token-lists/to-token-list',
           {
             signal: tokensController.signal,
             params: {
               fromChainId: fromChainId.value,
               toChainId: toChainId.value,
             },
-          }
-        );
+          },
+        )
 
-        tokensController = null;
+        tokensController = null
 
-        return result;
-      } catch (e) {
-        console.log(e);
+        return result
+      }
+      catch (e) {
+        console.log(e)
       }
     },
     {
@@ -160,36 +161,38 @@ export const useBridge = (fromToken: Ref<IBalance>) => {
       immediate: true,
       default: () => [],
       watch: [toChainId],
-    }
-  );
+    },
+  )
 
   const routes = useAsyncData(
-    "bridge-routes",
+    'bridge-routes',
     async () => {
-      const { valid } = await form.validate();
+      const { valid } = await form.validate()
 
-      if (!valid) return;
+      if (!valid)
+        return
 
       if (!bridgeToToken.value) {
         if (bridgeTokens.data.value?.length) {
-          throw new Error("No bridge token found", {
-            cause: "no-bridge-token",
-          });
-        } else return;
+          throw new Error('No bridge token found', {
+            cause: 'no-bridge-token',
+          })
+        }
+        else { return }
       }
 
       const transferAmount = toWei(
-        amount.value || "0",
-        fromToken.value.decimals
-      );
+        amount.value || '0',
+        fromToken.value.decimals,
+      )
 
       try {
-        if (routesController) {
-          routesController.abort();
-        }
-        routesController = new AbortController();
+        if (routesController)
+          routesController.abort()
 
-        const data: IBridgeResponse = await http("/api/socket/v2/quote", {
+        routesController = new AbortController()
+
+        const data: IBridgeResponse = await http('/api/socket/v2/quote', {
           signal: routesController.signal,
           params: {
             fromTokenAddress: fromToken.value.address,
@@ -202,247 +205,248 @@ export const useBridge = (fromToken: Ref<IBalance>) => {
             singleTxOnly: true,
             bridgeWithGas: false,
             defaultSwapSlippage: 1,
-            sort: "output",
+            sort: 'output',
             isContractCall: true,
           },
-        });
+        })
 
-        routesController = null;
+        routesController = null
 
         if (!data.result.routes.length) {
           throw new Error(
-            "Our bridge provider does not have routes for your desired transfer",
+            'Our bridge provider does not have routes for your desired transfer',
             {
-              cause: "no-routes",
-            }
-          );
+              cause: 'no-routes',
+            },
+          )
         }
 
-        return data;
-      } catch (error: any) {
-        console.log(error);
+        return data
+      }
+      catch (error: any) {
+        console.log(error)
         throw new Error(
           error.cause
             ? error.message
-            : "Unexpected error, please try again later"
-        );
+            : 'Unexpected error, please try again later',
+        )
       }
     },
     {
       server: false,
       immediate: false,
       watch: [amount, fromToken, bridgeToToken],
-    }
-  );
+    },
+  )
 
   const txRoute = computed(() => {
-    const [route] = routes.data.value?.result.routes || [];
+    const [route] = routes.data.value?.result.routes || []
 
-    return route ?? null;
-  });
+    return route ?? null
+  })
 
   const transactions = useAsyncData(
-    "bridge-transactions",
+    'bridge-transactions',
     async () => {
-      const txs = [];
+      const txs = []
 
-      if (!txRoute.value) return;
+      if (!txRoute.value)
+        return
 
       for (const userTx of txRoute.value?.userTxs || []) {
         if (userTx.approvalData) {
           const erc20 = Erc20__factory.connect(
             fromToken.value.address,
-            getRpcProvider(fromChainId.value)
-          );
+            getRpcProvider(fromChainId.value),
+          )
           const { data } = await erc20.populateTransaction.approve(
             userTx.approvalData.allowanceTarget,
-            userTx.approvalData.minimumApprovalAmount
-          );
+            userTx.approvalData.minimumApprovalAmount,
+          )
 
           txs.push({
             to: fromToken.value.address,
             data,
-          });
+          })
         }
       }
 
-      if (txController) {
-        txController.abort();
-      }
+      if (txController)
+        txController.abort()
 
-      txController = new AbortController();
+      txController = new AbortController()
 
-      const buildTx = await http("/api/socket/v2/build-tx", {
+      const buildTx = await http('/api/socket/v2/build-tx', {
         signal: txController.signal,
-        method: "POST",
+        method: 'POST',
         body: {
           route: txRoute.value,
         },
-      });
+      })
 
-      txController = null;
+      txController = null
 
       txs.push({
         to: buildTx.result.txTarget,
         data: buildTx.result.txData,
         value: buildTx.result.value,
-      });
+      })
 
-      return txs;
+      return txs
     },
     {
       watch: [txRoute],
-    }
-  );
+    },
+  )
 
   const nativeFee = computed(() => {
-    let v =
-      transactions.data.value?.reduce((acc: any, tx: any) => {
+    let v
+      = transactions.data.value?.reduce((acc: any, tx: any) => {
         return toBN(acc)
-          .plus(fromWei(tx?.value || "0", nativeCurrency.value?.decimals))
-          .toFixed();
-      }, "0") || "0";
+          .plus(fromWei(tx?.value || '0', nativeCurrency.value?.decimals))
+          .toFixed()
+      }, '0') || '0'
 
     if (
-      fromToken.value.address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+      fromToken.value.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
     ) {
       v = toBN(v)
-        .minus(amount.value || "0")
-        .toFixed(0);
+        .minus(amount.value || '0')
+        .toFixed(0)
     }
 
-    return v;
-  });
+    return v
+  })
 
   const nativeFeeInUsd = computed(() =>
-    times(nativeFee.value!, nativeCurrency.value?.price || 0)
-  );
+    times(nativeFee.value!, nativeCurrency.value?.price || 0),
+  )
 
   const isInsufficientBalance = computed(() => {
-    const nativeBalance =
-      tokenBalances.value.find(
-        (t) =>
-          t.chainId == fromToken.value.chainId &&
-          t.symbol === nativeCurrency.value?.symbol
-      )?.balance || "0";
+    const nativeBalance
+      = tokenBalances.value.find(
+        t =>
+          t.chainId == fromToken.value.chainId
+          && t.symbol === nativeCurrency.value?.symbol,
+      )?.balance || '0'
 
-    return toBN(nativeBalance).lt(nativeFee.value!);
-  });
+    return toBN(nativeBalance).lt(nativeFee.value!)
+  })
 
   const bridgeFee = computed<IFee>(() => {
     const fallback: IFee = {
-      amount: "0",
-      feesInUsd: "0",
+      amount: '0',
+      feesInUsd: '0',
       asset: nativeCurrency.value as IToken,
-    };
-
-    if (!txRoute.value) {
-      return fallback;
     }
+
+    if (!txRoute.value)
+      return fallback
 
     const fees = txRoute.value?.userTxs.reduce((acc: IFee, tx: any) => {
       const bridgeFee = tx.steps.reduce((acc: any, step: any) => {
-        if (!step?.protocolFees) return acc;
+        if (!step?.protocolFees)
+          return acc
 
-        const asset = step?.protocolFees?.asset;
+        const asset = step?.protocolFees?.asset
         const assetPrice = tokenBalances.value.find(
-          (i) => i.address.toLowerCase() === asset?.address.toLowerCase()
-        );
+          i => i.address.toLowerCase() === asset?.address.toLowerCase(),
+        )
 
         const amount = fromWei(
-          toBN(acc.amount || "0").plus(toBN(step?.protocolFees?.amount || "0")),
-          step?.protocolFees?.asset?.decimals
-        );
+          toBN(acc.amount || '0').plus(toBN(step?.protocolFees?.amount || '0')),
+          step?.protocolFees?.asset?.decimals,
+        )
 
         return {
           amount: amount.toFixed(),
-          feesInUsd: toBN(acc.feesInUsd || "0")
+          feesInUsd: toBN(acc.feesInUsd || '0')
             .plus(amount.times(assetPrice?.price || 0))
             .toFixed(),
           asset: step?.protocolFees?.asset,
-        };
-      }, fallback);
+        }
+      }, fallback)
 
       return {
         amount: toBN(bridgeFee.amount)
-          .plus(toBN(acc.amount || "0"))
+          .plus(toBN(acc.amount || '0'))
           .toFixed(),
         feesInUsd: toBN(bridgeFee.feesInUsd)
-          .plus(toBN(acc.feesInUsd || "0"))
+          .plus(toBN(acc.feesInUsd || '0'))
           .toFixed(),
         asset: bridgeFee.asset,
-      };
-    }, fallback);
+      }
+    }, fallback)
 
-    return fees;
-  });
+    return fees
+  })
 
   const handleSwapToken = () => {
     const balancedToken = tokenBalances.value.find(
-      (t) =>
-        gt(t.balance, "0") &&
-        t.chainId == fromChainId.value &&
-        t.symbol !== nativeCurrency.value?.symbol
-    );
+      t =>
+        gt(t.balance, '0')
+        && t.chainId == fromChainId.value
+        && t.symbol !== nativeCurrency.value?.symbol,
+    )
 
     const fallbackToken = tokens.value.find(
-      (i) => i.chainId == fromChainId.value
-    );
-    const isSameToken =
-      fromToken.value?.symbol.toLowerCase() ===
-      nativeCurrency.value?.symbol.toLowerCase();
+      i => i.chainId == fromChainId.value,
+    )
+    const isSameToken
+      = fromToken.value?.symbol.toLowerCase()
+      === nativeCurrency.value?.symbol.toLowerCase()
 
     const fromAddress = !isSameToken
       ? fromToken.value
-      : balancedToken || fallbackToken;
+      : balancedToken || fallbackToken
 
     const fromAmount = toBN(nativeFee.value)
-      .times(nativeCurrency.value?.price || "0")
-      .div(fromAddress?.price || "0")
-      .toFixed(5);
+      .times(nativeCurrency.value?.price || '0')
+      .div(fromAddress?.price || '0')
+      .toFixed(5)
 
     openSwapModal(
       fromAddress?.address!,
       fromChainId.value,
       nativeCurrency.value?.address!,
-      fromAmount
-    );
-  };
+      fromAmount,
+    )
+  }
 
   const selectableChains = computed(() =>
     availableNetworks.filter(
-      (c) =>
-        String(c.chainId) !== fromChainId.value &&
-        c.chainId !== avoChainId &&
-        !bridgeDisabledNetworks.includes(c.chainId)
-    )
-  );
+      c =>
+        String(c.chainId) !== fromChainId.value
+        && c.chainId !== avoChainId
+        && !bridgeDisabledNetworks.includes(c.chainId),
+    ),
+  )
 
   const disabled = computed(
     () =>
-      !fromToken.value ||
-      !account.value ||
-      bridgeTokens.pending.value ||
-      !txRoute.value ||
-      !form.meta.value.valid ||
-      !!transactions.error.value ||
-      loading.value ||
-      isInsufficientBalance.value
-  );
+      !fromToken.value
+      || !account.value
+      || bridgeTokens.pending.value
+      || !txRoute.value
+      || !form.meta.value.valid
+      || !!transactions.error.value
+      || loading.value
+      || isInsufficientBalance.value,
+  )
 
   const loading = computed(
     () =>
-      form.isSubmitting.value ||
-      routes.pending.value ||
-      transactions.pending.value ||
-      bridgeTokens.pending.value
-  );
+      form.isSubmitting.value
+      || routes.pending.value
+      || transactions.pending.value
+      || bridgeTokens.pending.value,
+  )
 
   onUnmounted(() => {
-    clearNuxtData("bridge-transactions");
-    clearNuxtData("bridge-tokens");
-    clearNuxtData("bridge-routes");
-  });
+    clearNuxtData('bridge-transactions')
+    clearNuxtData('bridge-tokens')
+    clearNuxtData('bridge-routes')
+  })
 
   return {
     amount,
@@ -467,5 +471,5 @@ export const useBridge = (fromToken: Ref<IBalance>) => {
     recievedAmount,
     toTokenAddress,
     selectableToTokens,
-  };
-};
+  }
+}

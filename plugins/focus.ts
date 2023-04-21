@@ -1,13 +1,14 @@
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.directive("focus", {
+  nuxtApp.vueApp.directive('focus', {
     mounted(el: HTMLElement, binding) {
-      const enabled = binding.value?.enabled ?? true;
+      const enabled = binding.value?.enabled ?? true
 
-      if (!enabled) return;
+      if (!enabled)
+        return
 
       setTimeout(() => {
-        el.focus();
-      }, 0);
+        el.focus()
+      }, 0)
     },
-  });
-});
+  })
+})

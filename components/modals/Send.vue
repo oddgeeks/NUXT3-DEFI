@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { Erc20__factory } from "~~/contracts";
-import ContactSVG from "~/assets/images/icons/contact.svg?component";
-import SVGInfoCircle from "~/assets/images/icons/exclamation-circle.svg?component";
-import { useField, useForm } from "vee-validate";
-import * as yup from "yup";
-import { isAddress } from "@ethersproject/address";
-
-const emit = defineEmits(["destroy"]);
-const { toWei } = useBignumber();
+import { useField, useFieldArray, useForm } from 'vee-validate'
+import * as yup from 'yup'
+import { isAddress } from '@ethersproject/address'
+import { Erc20__factory } from '~~/contracts'
+import ContactSVG from '~/assets/images/icons/contact.svg?component'
+import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg?component'
+import PlusSVG from '~/assets/images/icons/plus.svg?component'
 
 const props = defineProps({
   chainId: {
@@ -22,280 +20,355 @@ const props = defineProps({
     type: Object,
     required: false,
   },
-});
+})
+const emit = defineEmits(['destroy'])
+const { toWei } = useBignumber()
 
-const { library, account } = useWeb3();
-const { safeAddress, sendTransaction, tokenBalances, safe, isSafeAddress } =
-  useAvocadoSafe();
-const { parseTransactionError } = useErrorHandler();
+const { library, account } = useWeb3()
+const { safeAddress, sendTransactions, tokenBalances, safe, isSafeAddress }
+  = useAvocadoSafe()
+const { parseTransactionError } = useErrorHandler()
 
-const contact = ref<IContact | undefined>(props.contact);
+const contact = ref<IContact | undefined>(props.contact)
 
-const tochainId = ref<string>(props.chainId);
+const tochainId = ref<string>(props.chainId)
 
 const availableTokens = computed(() =>
-  tokenBalances.value.filter((t) => t.chainId == tochainId.value)
-);
+  tokenBalances.value.filter(t => t.chainId == tochainId.value),
+)
 
-const tokenAddress = ref<string>(
-  props.address ?? "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
-);
-
-const token = ref(
-  tokenBalances.value.find(
-    (t) => t.chainId == tochainId.value && t.address === tokenAddress.value
-  )!
-);
+const tokens = ref([
+  props.address
+    ? tokenBalances.value.find(
+      t => t.chainId == tochainId.value && t.address === props.address,
+    )!
+    : availableTokens.value.find(
+      _token =>
+        _token.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+    )!,
+])
 
 watch(
   () => tochainId.value,
   () => {
     if (availableTokens.value.length > 0) {
-      token.value = availableTokens.value.find(
-        (_token) =>
-          _token.address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
-      );
+      tokens.value = [
+        availableTokens.value.find(
+          _token =>
+            _token.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+        ) ?? availableTokens.value[0],
+      ]
+      for (let i = 1; i < amounts.value.length; i += 1)
+        removeAmount(1)
+
+      amounts.value[0].value = ''
     }
-  }
-);
+  },
+)
 
 const networks = availableNetworks.map((network) => {
   return {
     ...network,
     chainId: network.chainId.toString(),
-  };
-});
+  }
+})
 
-const amountInUsd = computed(() => {
-  if (!token.value) return "0";
-  return toBN(token.value.price || 0)
-    .times(amount.value || "0")
-    .toFixed();
-});
+const actualAddress = ref('')
 
-const actualAddress = ref("");
-
-const { handleSubmit, errors, meta, resetForm, validate, isSubmitting } =
-  useForm({
+const { handleSubmit, errors, meta, resetForm, validate, isSubmitting }
+  = useForm({
     validationSchema: yup.object({
-      amount: yup
-        .string()
-        .required("")
-        .test("min-amount", "", (value) => {
-          const amount = toBN(value);
+      amounts: yup
+        .array(
+          yup
+            .string()
+            .required('')
+            .test('min-amount', '', (value) => {
+              const amount = toBN(value)
 
-          return value ? amount.gt(0) : true;
-        })
-        .test("max-amount", "Insufficient balance", (value) => {
-          const amount = toBN(value);
-          const balance = toBN(token.value.balance);
-
-          return amount.gt(0) ? amount.lte(balance) : true;
+              return value ? amount.gt(0) : true
+            }),
+        )
+        .test('max-amount', 'Insufficient balance', (value) => {
+          for (let i = 0; i < value.length; i += 1) {
+            const amount = toBN(value[i])
+            const balance = toBN(tokens.value[i].balance)
+            if (amount.gt(balance))
+              return false
+          }
+          return true
         }),
       address: yup
         .string()
-        .required("")
-        .test("is-address", "Incorrect address", async (value) => {
-          if (!value) return true;
+        .required('')
+        .test('is-address', 'Incorrect address', async (value) => {
+          if (!value)
+            return true
 
-          const resolvedAddress =
-            value.endsWith(".eth") && tochainId.value == "1"
+          const resolvedAddress
+            = value.endsWith('.eth') && tochainId.value == '1'
               ? await getRpcProvider(1).resolveName(value)
-              : null;
+              : null
 
           if (resolvedAddress) {
-            actualAddress.value = resolvedAddress;
-            return true;
+            actualAddress.value = resolvedAddress
+            return true
           }
 
           if (isAddress(value)) {
-            actualAddress.value = value;
-            return true;
+            actualAddress.value = value
+            return true
           }
 
-          actualAddress.value = "";
+          actualAddress.value = ''
 
-          return false;
+          return false
         }),
     }),
-  });
+    initialValues: {
+      amounts: [''],
+    },
+  })
 
-const { value: amount, meta: amountMeta } = useField<string>("amount");
+const {
+  remove: removeAmount,
+  push: pushAmount,
+  update: updateAmount,
+  replace: replaceAmounts,
+  fields: amounts,
+} = useFieldArray<string>('amounts')
 const {
   value: address,
   meta: addressMeta,
   setValue: setAddress,
-} = useField<string>("address", undefined, {
-  initialValue: contact.value ? contact.value.address : "",
-});
+} = useField<string>('address', undefined, {
+  initialValue: contact.value ? contact.value.address : '',
+})
 
-const setMax = () => {
-  amount.value = toBN(token.value!.balance).decimalPlaces(6, 1).toString();
-};
+function amountInUsd(idx: number) {
+  if (!tokens.value[idx])
+    return '0'
+  return toBN(tokens.value[idx].price || 0)
+    .times(amounts.value[idx].value || '0')
+    .toFixed()
+}
+
+function setMax(idx: number) {
+  updateAmount(
+    idx,
+    toBN(tokens.value[idx].balance).decimalPlaces(6, 1).toString(),
+  )
+}
 
 const sendingDisabled = computed(
   () =>
-    !token.value ||
-    isSubmitting.value ||
-    !meta.value.valid ||
-    pending.value ||
-    !!error.value
-);
+    tokens.value.length === 0
+    || isSubmitting.value
+    || !meta.value.valid
+    || pending.value
+    || !!error.value,
+)
 
-const { data: tx } = useAsyncData(
+const { data: txs } = useAsyncData(
   async () => {
-    const { valid } = await validate();
-    if (!valid) return;
+    const { valid } = await validate()
+    if (!valid)
+      return
 
-    const transferAmount = toBN(amount.value)
-      .times(10 ** token.value.decimals)
-      .toFixed(0);
+    const txs = []
 
-    let tx = {
-      from: account.value,
-      to: actualAddress.value,
-      value: "0",
-      data: "0x",
-    };
+    for (let i = 0; i < tokens.value.length; i += 1) {
+      const token = tokens.value[i]
+      const amount = amounts.value[i]
 
-    if (token.value.address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE") {
-      tx.value = transferAmount;
-    } else {
-      const contract = Erc20__factory.connect(
-        token.value.address,
-        library.value
-      );
+      const transferAmount = toBN(amount.value)
+        .times(10 ** token.decimals)
+        .toFixed(0)
 
-      const { data } = await contract.populateTransaction.transfer(
-        actualAddress.value,
-        transferAmount
-      );
+      if (token.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
+        txs.push({
+          from: account.value,
+          to: actualAddress.value,
+          value: transferAmount,
+          data: '0x',
+        })
+      }
+      else {
+        const contract = Erc20__factory.connect(token.address, library.value)
 
-      tx.data = data!;
-      tx.to = token.value.address;
+        const { data } = await contract.populateTransaction.transfer(
+          actualAddress.value,
+          transferAmount,
+        )
+
+        txs.push({
+          from: account.value,
+          to: token.address,
+          value: '0',
+          data: data!,
+        })
+      }
     }
 
-    return tx;
+    return txs
   },
   {
-    watch: [amount, address, token.value],
-  }
-);
+    watch: [amounts.value, address, tokens.value],
+  },
+)
 
 const { data: totalTransfers } = useAsyncData(
   async () => {
-    if (!isAddress(actualAddress.value)) return;
+    if (!isAddress(actualAddress.value))
+      return
 
-    const toSafeAddress = await isSafeAddress(actualAddress.value);
+    const toSafeAddress = await isSafeAddress(actualAddress.value)
 
-    const res = await http("/api/transfers", {
+    const res = await http('/api/transfers', {
       params: {
         from: safeAddress.value,
         to: [actualAddress.value],
         chainIds: [toSafeAddress ? 0 : tochainId.value],
       },
-    });
+    })
 
-    return res[0].transferCount;
+    return res[0].transferCount
   },
   {
     watch: [actualAddress, tochainId],
-  }
-);
+  },
+)
 
-const { data, pending, error } = useEstimatedFee(tx, tochainId);
+const { data, pending, error } = useEstimatedFee(txs, tochainId)
 
 const onSubmit = handleSubmit(async () => {
-  if (!token.value) {
-    return;
-  }
-
   try {
-    const metadata = encodeTransferMetadata({
-      token: token.value.address,
-      amount: toWei(amount.value, token.value.decimals),
-      receiver: actualAddress.value,
-    });
+    // encodeMultipleActions
+    const metadatas = tokens.value.map((token, idx) =>
+      encodeTransferMetadata(
+        {
+          token: token.address,
+          amount: toWei(amounts.value[idx].value, token.decimals),
+          receiver: actualAddress.value,
+        },
+        false,
+      ),
+    )
+    const metadata = encodeMultipleActions(...metadatas)
 
-    let transactionHash = await sendTransaction(
-      {
-        ...(tx.value as any),
-        chainId: Number(tochainId.value),
-      },
+    const transactionHash = await sendTransactions(
+      txs.value!,
+      Number(tochainId.value),
       {
         metadata,
-      }
-    );
+      },
+    )
 
-    console.log(transactionHash);
+    console.log(transactionHash)
 
+    let message = ''
+    for (let i = 0; i < tokens.value.length; i += 1) {
+      message += `${formatDecimal(amounts.value[i].value)} ${formatSymbol(
+        tokens.value[i].symbol,
+      )}`
+
+      if (i < tokens.value.length - 1)
+        message += ', '
+    }
     logActionToSlack({
-      message: `${formatDecimal(amount.value)} ${formatSymbol(
-        token.value?.symbol
-      )} to ${actualAddress.value}`,
-      action: "send",
+      message: `${message} to ${actualAddress.value}`,
+      action: 'send',
       txHash: transactionHash,
       chainId: tochainId.value,
       account: account.value,
-    });
+    })
 
-    resetForm();
-    emit("destroy");
+    resetForm()
+    emit('destroy')
 
-    showPendingTransactionModal(transactionHash, tochainId.value, "send");
-  } catch (e: any) {
-    const err = parseTransactionError(e);
+    showPendingTransactionModal(transactionHash, tochainId.value, 'send')
+  }
+  catch (e: any) {
+    const err = parseTransactionError(e)
 
     openSnackbar({
       message: err.formatted,
-      type: "error",
-    });
+      type: 'error',
+    })
 
     logActionToSlack({
       message: err.formatted,
-      action: "send",
-      type: "error",
+      action: 'send',
+      type: 'error',
       account: account.value,
       errorDetails: err.parsed,
-    });
+    })
   }
-});
+})
 
-const handleEdit = async () => {
+async function handleEdit() {
   const result = await openAddContactModal(
     contact.value.name,
     contact.value.address,
     contact.value.chainId,
-    true
-  );
+    true,
+  )
 
   if (result.success) {
-    contact.value = result.payload as IContact;
+    contact.value = result.payload as IContact
 
-    if (tochainId.value !== contact.value.chainId) {
-      tochainId.value = contact.value.chainId;
-    }
+    if (tochainId.value !== contact.value.chainId)
+      tochainId.value = contact.value.chainId
 
-    setAddress(contact.value.address);
+    setAddress(contact.value.address)
   }
-};
+}
 
-const handleSelectContact = async () => {
-  const result = await openSelectContactModal();
+async function handleSelectContact() {
+  const result = await openSelectContactModal()
 
   if (result.success) {
-    const _contact = result.payload as IContact;
-    if (tochainId.value !== _contact.chainId) {
-      tochainId.value = _contact.chainId;
-    }
+    const _contact = result.payload as IContact
+    if (tochainId.value !== _contact.chainId)
+      tochainId.value = _contact.chainId
 
-    setAddress(_contact.address);
+    setAddress(_contact.address)
   }
-};
+}
+
+function handleAddMore() {
+  pushAmount('')
+  const newToken = getAvailableTokens()[0]
+  if (newToken)
+    tokens.value.push(newToken)
+}
+
+function deleteToken(idx: number) {
+  removeAmount(idx)
+  tokens.value.splice(idx, 1)
+}
+
+function getAvailableTokens(idx?: number) {
+  const tokensToRemove = (
+    idx === undefined
+      ? tokens.value
+      : tokens.value.filter((_, index) => index !== idx)
+  ).map(token => token.address)
+
+  return availableTokens.value.filter(
+    token => !tokensToRemove.includes(token.address),
+  )
+}
+
+function isInsufficient(idx: number) {
+  const amount = toBN(amounts.value[idx].value)
+  const balance = toBN(tokens.value[idx].balance)
+  return amount.gt(balance)
+}
 </script>
 
 <template>
-  <form @submit="onSubmit" class="text-center flex gap-7.5 flex-col">
+  <form class="text-center flex gap-7.5 flex-col" @submit="onSubmit">
     <div
       class="flex flex-col justify-center gap-[15px] items-center"
       :class="{
@@ -326,91 +399,131 @@ const handleSelectContact = async () => {
           Edit
         </CommonButton>
       </div>
+      <CommonSelect
+        v-else
+        v-model="tochainId"
+        value-key="chainId"
+        label-key="name"
+        icon-key="icon"
+        class="mt-[5px]"
+        :options="networks"
+      >
+        <template #button-prefix>
+          <ChainLogo class="w-6 h-6" :chain="tochainId" />
+        </template>
+        <template #item-prefix="{ value }">
+          <ChainLogo class="w-6 h-6" :chain="value" />
+        </template>
+      </CommonSelect>
     </div>
-    <div class="flex gap-x-4">
-      <div class="space-y-2.5 flex flex-col w-full">
-        <div class="flex items-center justify-between">
-          <span class="text-sm">Coin</span>
-        </div>
-        <TokenSelection
-          class="relative w-full flex items-center gap-2.5 max-h-12 rounded-2xl border-2 dark:border-slate-700 border-slate-150 !bg-slate-50 dark:!bg-gray-850 px-4 py-3 text-left"
-          v-model="token"
-          :tokens="availableTokens"
-        />
-      </div>
-      <!-- end token select -->
-      <!-- start network select -->
-      <div v-if="!contact" class="space-y-2.5 flex flex-col w-full">
-        <div class="flex items-center justify-between">
-          <span class="text-sm">Network</span>
-        </div>
-        <CommonSelect
-          v-model="tochainId"
-          value-key="chainId"
-          label-key="name"
-          icon-key="icon"
-          :options="networks"
-        >
-          <template #button-prefix>
-            <ChainLogo class="w-6 h-6" :chain="tochainId" />
-          </template>
-          <template #item-prefix="{ value }">
-            <ChainLogo class="w-6 h-6" :chain="value" />
-          </template>
-        </CommonSelect>
-      </div>
-      <!-- end network select -->
-    </div>
-    <div class="space-y-5">
-      <div class="space-y-2.5 flex flex-col">
-        <div class="flex items-center justify-between">
-          <div>
-            <span class="text-sm">Amount</span>
-          </div>
-          <div class="flex text-sm uppercase gap-x-3">
-            <span>{{ formatDecimal(token.balance) }} {{ token.symbol }}</span>
+    <div
+      class="flex flex-col gap-3.5 scroll-style sm:max-h-[378px] sm:overflow-y-auto"
+    >
+      <div
+        v-for="(token, idx) of tokens"
+        :key="idx"
+        class="flex flex-col sm:flex-row gap-5 rounded-5 dark:bg-gray-850 bg-slate-50 px-5 py-4"
+      >
+        <div class="gap-y-2.5 flex flex-col">
+          <div class="flex items-center justify-between">
+            <span class="text-sm">Coin</span>
             <button
+              v-if="amounts.length > 1"
+              class="sm:hidden"
               type="button"
-              class="text-primary hover:text-primary"
-              @click="setMax"
+              @click="deleteToken(idx)"
             >
-              MAX
+              <PlusSVG class="text-slate-400 rotate-45 w-3.5 h-3.5" />
             </button>
           </div>
+          <TokenSelection
+            v-model="tokens[idx]"
+            class="relative w-full flex items-center gap-2.5 max-h-12 rounded-2xl border-2 dark:border-slate-700 border-slate-150 !bg-slate-50 dark:!bg-gray-850 px-4 py-3 text-left"
+            :tokens="getAvailableTokens(idx)"
+          />
         </div>
-        <CommonInput
-          type="numeric"
-          :error-message="amountMeta.dirty ? errors['amount'] : ''"
-          name="amount"
-          placeholder="Enter amount"
-          v-model="amount"
-        >
-        </CommonInput>
-        <span class="text-sm font-semibold text-left text-slate-400">
-          {{ formatUsd(amountInUsd) }}</span
-        >
+        <!-- end token select -->
+        <div class="gap-y-2.5 flex flex-col flex-1">
+          <div class="flex items-center justify-between">
+            <span class="text-sm">Amount</span>
+            <div class="flex text-sm uppercase gap-x-3">
+              <span>
+                {{ formatDecimal(tokens[idx].balance) }}
+                {{ tokens[idx].symbol }}
+              </span>
+              <button
+                type="button"
+                class="text-primary hover:text-primary"
+                @click="setMax(idx)"
+              >
+                MAX
+              </button>
+              <button
+                v-if="amounts.length > 1"
+                class="hidden sm:flex"
+                type="button"
+                @click="deleteToken(idx)"
+              >
+                <PlusSVG class="text-slate-400 rotate-45 w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+          <CommonInput
+            v-model="amounts[idx].value"
+            type="numeric"
+            :error-message="isInsufficient(idx) ? 'Insufficient balance' : ''"
+            :name="`amounts[${idx}]`"
+            placeholder="Enter amount"
+          >
+            <template #suffix>
+              <span class="text-sm font-semibold text-left text-slate-400">
+                {{ formatUsd(amountInUsd(idx)) }}</span>
+            </template>
+          </CommonInput>
+        </div>
       </div>
-
+    </div>
+    <div class="flex -mt-4">
+      <CommonButton
+        :disabled="getAvailableTokens().length === 0"
+        color="white"
+        size="sm"
+        class="items-center gap-2.5 h-9 !px-2.5"
+        @click="handleAddMore()"
+      >
+        <div
+          class="rounded-full bg-primary p-1.5 text-white"
+          :class="{
+            'dark:bg-slate-600 bg-slate-300 dark:!text-slate-500 !text-slate-400':
+              getAvailableTokens().length === 0,
+          }"
+        >
+          <PlusSVG class="w-2 h-2" />
+        </div>
+        Add More
+      </CommonButton>
+    </div>
+    <div class="space-y-5">
       <div v-if="!contact" class="space-y-2.5">
         <div class="flex items-center justify-between">
           <span class="text-sm">Address</span>
-          <span class="text-sm text-slate-400" v-if="totalTransfers">
+          <span v-if="totalTransfers" class="text-sm text-slate-400">
             {{ totalTransfers }} previous
             {{ totalTransfers === 1 ? "send" : "sends" }}
           </span>
           <span
-            class="text-sm text-orange-400 flex items-center gap-2"
             v-else-if="totalTransfers === 0"
+            class="text-sm text-orange-400 flex items-center gap-2"
           >
             <SVGInfoCircle /> First time send
           </span>
         </div>
 
         <CommonInput
-          :error-message="addressMeta.dirty ? errors['address'] : ''"
+          v-model="address"
+          :error-message="addressMeta.dirty ? errors.address : ''"
           name="address"
           placeholder="Enter Address"
-          v-model="address"
         >
           <template #suffix>
             <button
@@ -419,6 +532,7 @@ const handleSelectContact = async () => {
                 trigger: 'mouseenter',
               }"
               type="button"
+              class="ml-3"
               @click="handleSelectContact()"
             >
               <ContactSVG />
@@ -428,8 +542,8 @@ const handleSelectContact = async () => {
 
         <button
           type="button"
-          @click="address = account"
           class="rounded-7.5 h-8 font-medium items-center justify-center flex px-3 text-xs ring-1 ring-slate-200 dark:ring-slate-700"
+          @click="address = account"
         >
           Owner {{ shortenHash(account) }}
         </button>
@@ -439,9 +553,9 @@ const handleSelectContact = async () => {
         v-if="contact"
         class="dark:bg-gray-850 !mt-5 bg-slate-50 px-3 py-2 flex space-x-2 rounded-[20px]"
       >
-        <ChainLogo class="w-5 h-5" :chain="token.chainId" />
+        <ChainLogo class="w-5 h-5" :chain="tochainId" />
         <span class="text-xs font-medium leading-5">
-          Sending on the {{ chainIdToName(token.chainId) }} network
+          Sending on the {{ chainIdToName(tochainId) }} network
         </span>
       </div>
 

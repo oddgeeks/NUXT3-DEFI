@@ -1,20 +1,20 @@
 <script lang="ts" setup>
-import * as yup from "yup";
-import { isAddress } from "@ethersproject/address";
-import ClipboardSVG from "~/assets/images/icons/clipboard.svg?component";
-import { useField, useForm } from "vee-validate";
-
-const emit = defineEmits(["resolve", "reject"]);
+import * as yup from 'yup'
+import { isAddress } from '@ethersproject/address'
+import { useField, useForm } from 'vee-validate'
+import ClipboardSVG from '~/assets/images/icons/clipboard.svg?component'
 
 const props = defineProps<{
-  name: string;
-  address: string;
-  chainId: string;
-  isEdit: Boolean;
-}>();
+  name?: string
+  address?: string
+  chainId: string
+  isEdit: Boolean
+}>()
 
-const { contacts, addContact, editContact } = useContacts();
-const { safeAddress } = useAvocadoSafe();
+const emit = defineEmits(['resolve', 'reject'])
+
+const { contacts, addContact, editContact } = useContacts()
+const { safeAddress } = useAvocadoSafe()
 
 const {
   handleSubmit,
@@ -26,59 +26,61 @@ const {
   values,
 } = useForm({
   validationSchema: yup.object({
-    contactName: yup.string().required(""),
-    chainId: yup.string().required(""),
+    contactName: yup.string().required(''),
+    chainId: yup.string().required(''),
     address: yup
       .string()
-      .required("")
-      .test("is-valid-address", "Incorrect address", (value) => {
-        return value ? isAddress(value || "") : true;
+      .required('')
+      .test('is-valid-address', 'Incorrect address', (value) => {
+        return value ? isAddress(value || '') : true
       })
       .test(
-        "duplicate-address",
-        "Contact already added",
+        'duplicate-address',
+        'Contact already added',
         (value, { parent }) => {
           if (
-            props.isEdit &&
-            value?.toLowerCase() === props.address.toLowerCase() &&
-            parent.chainId == props.chainId
+            props.isEdit
+            && value?.toLowerCase() === props.address.toLowerCase()
+            && parent.chainId == props.chainId
           )
-            return true;
-          if (!isAddress(value || "")) return true;
-          if (!contacts.value[safeAddress.value]) return true;
+            return true
+          if (!isAddress(value || ''))
+            return true
+          if (!contacts.value[safeAddress.value])
+            return true
           return !contacts.value[safeAddress.value].some(
-            (contact) =>
-              contact.address.toLowerCase() === value?.toLowerCase() &&
-              contact.chainId == parent.chainId
-          );
-        }
+            contact =>
+              contact.address.toLowerCase() === value?.toLowerCase()
+              && contact.chainId == parent.chainId,
+          )
+        },
       ),
   }),
-});
+})
 
 const { value: chainId, setValue: setChainId } = useField<string>(
-  "chainId",
+  'chainId',
   undefined,
   {
-    initialValue: props.chainId ?? "1",
-  }
-);
-const { value: contactName, setValue: setContactName } =
-  useField<string>("contactName");
+    initialValue: props.chainId ?? '1',
+  },
+)
+const { value: contactName, setValue: setContactName }
+  = useField<string>('contactName')
 const {
   value: address,
   meta: addressMeta,
   setValue: setAddress,
-} = useField<string>("address");
+} = useField<string>('address')
 
-const disabled = computed(() => !meta.value.valid || isSubmitting.value);
+const disabled = computed(() => !meta.value.valid || isSubmitting.value)
 
 const onSubmit = handleSubmit(() => {
   const _contact = {
     name: contactName.value,
     chainId: chainId.value,
     address: address.value,
-  };
+  }
   if (props.isEdit) {
     editContact(
       {
@@ -86,35 +88,36 @@ const onSubmit = handleSubmit(() => {
         address: props.address,
         chainId: props.chainId,
       },
-      _contact
-    );
-  } else {
-    addContact(_contact);
+      _contact,
+    )
+  }
+  else {
+    addContact(_contact)
   }
 
-  emit("resolve", true, _contact);
-});
+  emit('resolve', true, _contact)
+})
 
-const pasteAddress = async () => {
+async function pasteAddress() {
   try {
-    address.value = await navigator.clipboard.readText();
-  } catch (e) {
-    console.log(e);
-    openSnackbar({
-      message: "Please allow clipboard access",
-      type: "error",
-    });
+    address.value = await navigator.clipboard.readText()
   }
-};
+  catch (e) {
+    console.log(e)
+    openSnackbar({
+      message: 'Please allow clipboard access',
+      type: 'error',
+    })
+  }
+}
 
 onMounted(() => {
-  if (props.name) {
-    setContactName(props.name);
-  }
-  if (props.address) {
-    setAddress(props.address);
-  }
-});
+  if (props.name)
+    setContactName(props.name)
+
+  if (props.address)
+    setAddress(props.address)
+})
 </script>
 
 <template>
@@ -124,21 +127,25 @@ onMounted(() => {
     </h1>
     <div class="flex flex-col gap-5 mb-7.5">
       <div>
-        <p class="mb-2.5 text-sm">Name</p>
+        <p class="mb-2.5 text-sm">
+          Name
+        </p>
         <CommonInput
+          v-model="contactName"
           autofocus
           name="contactName"
           placeholder="Enter Name"
-          v-model="contactName"
         />
       </div>
       <div>
-        <p class="mb-2.5 text-sm">Address</p>
+        <p class="mb-2.5 text-sm">
+          Address
+        </p>
         <CommonInput
-          :error-message="addressMeta.dirty ? errors['address'] : ''"
+          v-model="address"
+          :error-message="addressMeta.dirty ? errors.address : ''"
           name="address"
           placeholder="Enter Address"
-          v-model="address"
         >
           <template #suffix>
             <button type="button" @click="pasteAddress">
@@ -148,10 +155,12 @@ onMounted(() => {
         </CommonInput>
       </div>
       <div>
-        <p class="mb-2.5 text-sm">Network</p>
+        <p class="mb-2.5 text-sm">
+          Network
+        </p>
         <CommonSelect
-          class="w-full"
           v-model="chainId"
+          class="w-full"
           value-key="chainId"
           label-key="name"
           :options="availableNetworks"

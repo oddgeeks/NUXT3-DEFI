@@ -1,14 +1,14 @@
 <script setup lang="ts">
-const { positionedNotifications } = useNotification();
+const { positionedNotifications } = useNotification()
 
 const positionClasses: any = {
-  "top-start": "top-0 left-0",
-  "top-end": "top-0 right-0",
-  "bottom-start": "bottom-0 left-0",
-  "bottom-end": "bottom-0 right-0",
-  "top-center": "left-1/2 -translate-x-1/2",
-  center: "left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2",
-};
+  'top-start': 'top-0 left-0',
+  'top-end': 'top-0 right-0',
+  'bottom-start': 'bottom-0 left-0',
+  'bottom-end': 'bottom-0 right-0',
+  'top-center': 'left-1/2 -translate-x-1/2',
+  'center': 'left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2',
+}
 
 //  | "center"
 //     | "top"

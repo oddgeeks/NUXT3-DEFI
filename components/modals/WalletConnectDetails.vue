@@ -1,33 +1,33 @@
 <script setup lang="ts">
-const { safeAddress } = useAvocadoSafe();
-const wcStore = useWalletConnect();
-const [loading, toggle] = useToggle(false);
-
-const emit = defineEmits(["destroy"]);
 const props = defineProps<{
-  session: any;
-}>();
+  session: any
+}>()
+const emit = defineEmits(['destroy'])
+const { safeAddress } = useAvocadoSafe()
+const wcStore = useWalletConnect()
+const [loading, toggle] = useToggle(false)
 
-const chainId = ref(props.session.chainId);
+const chainId = ref(props.session.chainId)
 
 const icon = computed(() => {
-  const icons = props.session.peerMeta.icons;
-  return icons.length ? icons[0] : "";
-});
+  const icons = props.session.peerMeta.icons
+  return icons.length ? icons[0] : ''
+})
 
-const disconnectWallet = async () => {
-  toggle(true);
-  await wcStore.disconnect(props.session);
-  toggle(false);
-  emit("destroy");
-};
+async function disconnectWallet() {
+  toggle(true)
+  await wcStore.disconnect(props.session)
+  toggle(false)
+  emit('destroy')
+}
 
 watch(chainId, async () => {
   const wc = wcStore.sessions.find(
-    (s) => s.session.peerId === props.session.peerId
-  );
+    s => s.session.peerId === props.session.peerId,
+  )
 
-  if (!wc) return;
+  if (!wc)
+    return
 
   try {
     await wc.updateSession({
@@ -35,22 +35,23 @@ watch(chainId, async () => {
       networkId: chainId.value,
       rpcUrl: getRpcURLByChainId(chainId.value),
       accounts: [safeAddress.value],
-    });
+    })
 
-    wcStore.refreshSessions();
+    wcStore.refreshSessions()
 
     openSnackbar({
-      message: "Network changed successfully",
-      type: "success",
-    });
-  } catch (e) {
-    console.log(e);
-    openSnackbar({
-      message: "Failed to change network",
-      type: "error",
-    });
+      message: 'Network changed successfully',
+      type: 'success',
+    })
   }
-});
+  catch (e) {
+    console.log(e)
+    openSnackbar({
+      message: 'Failed to change network',
+      type: 'error',
+    })
+  }
+})
 </script>
 
 <template>
@@ -65,7 +66,7 @@ watch(chainId, async () => {
           width="40"
           class="w-full h-full object-fit rounded-[inherit]"
           :src="icon"
-        />
+        >
 
         <ChainLogo
           class="w-5 h-5 absolute -left-1 -bottom-1"
@@ -92,8 +93,8 @@ watch(chainId, async () => {
       </div>
     </div>
     <CommonSelect
-      class="w-full"
       v-model="chainId"
+      class="w-full"
       value-key="chainId"
       label-key="name"
       :options="availableNetworks"
@@ -107,10 +108,10 @@ watch(chainId, async () => {
     </CommonSelect>
     <CommonButton
       :loading="loading"
-      @click="disconnectWallet()"
       color="red"
       class="w-full justify-center"
       size="lg"
+      @click="disconnectWallet()"
     >
       Disconnect
     </CommonButton>

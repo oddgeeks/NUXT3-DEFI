@@ -1,21 +1,21 @@
 <script setup>
 onMounted(() => {
-  window.wc = useWalletConnect();
-});
-useTokens();
-useSafe();
+  window.wc = useWalletConnect()
+})
+useTokens()
+useSafe()
 
 onMounted(() => {
   const hideAllTooltipsOnScroll = useThrottleFn(() => {
-    [...document.querySelectorAll("[data-tippy-root]")].forEach((e) =>
-      e._tippy?.hide()
-    );
-  }, 1000);
+    [...document.querySelectorAll('[data-tippy-root]')].forEach(e =>
+      e._tippy?.hide(),
+    )
+  }, 1000)
 
-  document.addEventListener("scroll", hideAllTooltipsOnScroll, true);
+  document.addEventListener('scroll', hideAllTooltipsOnScroll, true)
 
-  return () => document.removeEventListener("scroll", hideAllTooltipsOnScroll);
-});
+  return () => document.removeEventListener('scroll', hideAllTooltipsOnScroll)
+})
 </script>
 
 <template>

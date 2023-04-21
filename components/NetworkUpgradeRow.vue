@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { lt } from "semver";
+import { lt } from 'semver'
 
 const props = defineProps<{
-  network: NetworkVersion;
-  recentVersion: string;
-}>();
+  network: NetworkVersion
+  recentVersion: string
+}>()
 
-const { switchToAvocadoNetwork } = useNetworks();
+const { switchToAvocadoNetwork } = useNetworks()
 
 const isUpgradeAvailable = computed(() =>
-  lt(props.network.currentVersion, props.network.latestVersion)
-);
+  lt(props.network.currentVersion, props.network.latestVersion),
+)
 
-const handleUpgrade = async (network: NetworkVersion) => {
-  await switchToAvocadoNetwork();
+async function handleUpgrade(network: NetworkVersion) {
+  await switchToAvocadoNetwork()
 
-  openUpgradeModal(network);
-};
+  openUpgradeModal(network)
+}
 </script>
 
 <template>
@@ -45,26 +45,25 @@ const handleUpgrade = async (network: NetworkVersion) => {
     <td class="px-4.5 pb-6.5 sm:pr-7.5 sm:pb-0 sm:pl-0 sm:w-[221px]">
       <CommonButton
         v-if="isUpgradeAvailable"
-        @click="handleUpgrade(network)"
         class="w-full text-center justify-center"
+        @click="handleUpgrade(network)"
       >
         Upgrade Now
       </CommonButton>
       <CommonButton
         v-else-if="network.notdeployed"
-        @click="openDeployNetworkModal(network)"
         class="!px-[19px] w-full items-center justify-center"
+        @click="openDeployNetworkModal(network)"
       >
-       Deploy
+        Deploy
       </CommonButton>
       <CommonButton
         v-else
         disabled
         class="!px-[19px] w-full items-center justify-center"
       >
-       Already up to date
+        Already up to date
       </CommonButton>
-
     </td>
   </tr>
 </template>

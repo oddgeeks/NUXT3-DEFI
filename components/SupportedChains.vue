@@ -1,33 +1,34 @@
 <script setup lang="ts">
 const props = defineProps({
   account: String,
-});
+})
 
 const sortedNetworks = computed(() => {
-  const priorNetworks = [1, 137, 42161, 10, 56, 43114, 100];
+  const priorNetworks = [1, 137, 42161, 10, 56, 43114, 100]
 
   return availableNetworks.sort((a, b) => {
-    const aIndex = priorNetworks.indexOf(a.chainId);
-    const bIndex = priorNetworks.indexOf(b.chainId);
+    const aIndex = priorNetworks.indexOf(a.chainId)
+    const bIndex = priorNetworks.indexOf(b.chainId)
 
-    if (aIndex === -1 || bIndex === -1) return 0;
+    if (aIndex === -1 || bIndex === -1)
+      return 0
 
-    return aIndex - bIndex;
-  });
-});
+    return aIndex - bIndex
+  })
+})
 </script>
 
 <template>
   <ul class="grid grid-cols-4 gap-5">
     <li
+      v-for="network in sortedNetworks"
+      :key="network.chainId"
       v-tippy="{
         arrow: true,
         arrowType: 'round',
         animation: 'fade',
         content: network.name,
       }"
-      :key="network.chainId"
-      v-for="network in sortedNetworks"
     >
       <a
         v-if="props.account"
