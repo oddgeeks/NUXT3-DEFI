@@ -80,8 +80,6 @@ async function getChainBalances(chainId: string,
     }),
   )
 
-  console.log('Balance fetch: Public')
-
   return newBalances
 }
 
@@ -147,7 +145,10 @@ export const useSafe = defineStore('safe', () => {
           balance: '0',
           balanceInUSD: '0',
         }
-        const balance = balances.value.data?.find(
+
+        const currentBalances = balances.value.data || []
+
+        const balance = currentBalances.find(
           (b: any) =>
             b.address.toLowerCase() === tb.address.toLowerCase()
             && tb.chainId == b.chainId,
@@ -237,7 +238,25 @@ export const useSafe = defineStore('safe', () => {
     await fetchGasBalance()
   })
 
-  async function getBalances(address: string, signal?: AbortSignal) {
+  function updateBalances(data: IBalance[]) {
+    for (const balance of data) {
+      const currentBalances = balances.value.data || []
+
+      let currentBalance = currentBalances.find(
+        b =>
+          b.address.toLowerCase() === balance.address.toLowerCase()
+          && balance.chainId == b.chainId,
+      )
+
+      if (currentBalance) { currentBalance = balance }
+      else {
+        balances.value.data = balances.value.data || []
+        balances.value.data.push(balance)
+      }
+    }
+  }
+
+  async function getBalances(address: string, signal?: AbortSignal, updateState = false) {
     return Promise.all(
       availableNetworks.map(async (network) => {
         const customTokenAddress = customTokens.value
@@ -245,12 +264,19 @@ export const useSafe = defineStore('safe', () => {
           .map(t => t.address)
 
         try {
-          return await getChainBalances(String(network.chainId), address, [
+          return getChainBalances(String(network.chainId), address, [
             ...tokens.value
               .filter(t => t.chainId === String(network.chainId))
               .map(t => t.address),
             ...customTokenAddress,
-          ])
+          ]).then((data) => {
+            console.log('Balance fetch: Public', { updateState })
+
+            if (updateState)
+              updateBalances(data)
+
+            return data
+          })
         }
         catch (error) {
           try {
@@ -259,14 +285,17 @@ export const useSafe = defineStore('safe', () => {
               customTokens: customTokenAddress,
             }
 
-            const resp = await http(`/api/${network.chainId}/balances`, {
+            const data = await http(`/api/${network.chainId}/balances`, {
               signal,
               params,
-            })
+            }) as IBalance[]
 
-            console.log('Balance fetch: Private')
+            console.log('Balance fetch: Private', { updateState })
 
-            return resp as any[]
+            if (updateState)
+              updateBalances(data)
+
+            return data
           }
           catch (error) {
             notify({
@@ -298,13 +327,15 @@ export const useSafe = defineStore('safe', () => {
       const data = await getBalances(
         safeAddress.value,
         balanceAborter.value?.signal,
+        true,
       )
 
       balanceAborter.value = undefined
 
       balances.value.data = data
         .flat()
-        .sort((a, b) => (toBN(a.balanceInUSD).gt(b.balanceInUSD) ? 1 : -1))
+        .sort((a, b) => (toBN(a?.balanceInUSD || '0').gt(b?.balanceInUSD || '0') ? 1 : -1)) as IBalance[]
+
       balances.value.error = null
 
       return balances.value.data
@@ -361,6 +392,12 @@ export const useSafe = defineStore('safe', () => {
 
   watch([safeAddress, account, tokens], () => {
     fetchBalances()
+  }, {
+    immediate: true,
+  })
+
+  watch(safeAddress, () => {
+    balances.value.data = undefined // reset balances
   })
 
   return {
