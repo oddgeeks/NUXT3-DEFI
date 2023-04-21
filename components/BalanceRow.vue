@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import { Line } from "vue-chartjs";
-import { IBalance } from "~/stores/safe";
-import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
-import BridgeSVG from "~/assets/images/icons/bridge.svg?component";
-import RefreshSVG from "~/assets/images/icons/refresh.svg?component";
+import { Line } from 'vue-chartjs'
+import type { IBalance } from '~/stores/safe'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
+import BridgeSVG from '~/assets/images/icons/bridge.svg?component'
+import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 
 const props = defineProps<{
-  tokenBalance: IBalance;
-}>();
+  tokenBalance: IBalance
+}>()
 
-const DECIMAL_PLACES = 5;
+const DECIMAL_PLACES = 5
 
-const balance = computed(() => props.tokenBalance as IBalance);
+const balance = computed(() => props.tokenBalance as IBalance)
 
 const {
   priceDiffColor,
@@ -20,7 +20,7 @@ const {
   priceDiffClass,
   priceDiffInPercent,
   chartData,
-} = useGraph(balance);
+} = useGraph(balance)
 
 const chartOptions = {
   events: [],
@@ -44,8 +44,9 @@ const chartOptions = {
       display: false,
     },
   },
-};
+}
 </script>
+
 <template>
   <tr>
     <td class="text-left py-6 pl-7.5 w-1/3">
@@ -55,7 +56,7 @@ const chartOptions = {
             :src="tokenBalance.logoURI"
             class="h-10 w-10 rounded-full"
             :onerror="onImageError"
-          />
+          >
 
           <ChainLogo
             :stroke="true"
@@ -110,7 +111,7 @@ const chartOptions = {
       </div>
     </td>
     <td class="font-semibold py-6 text-sm pl-10">
-      <div class="flex gap-1 flex-col" v-if="priceDiffInPercent">
+      <div v-if="priceDiffInPercent" class="flex gap-1 flex-col">
         <span>
           {{ formatUsd(toBN(tokenBalance.price || "0").decimalPlaces(2)) }}
         </span>

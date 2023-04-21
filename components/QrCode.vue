@@ -1,9 +1,10 @@
 <script setup>
-import ExternalLinkSVG from "~/assets/images/icons/external-link.svg?component";
+import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
 
-const { safeAddress } = useAvocadoSafe();
-const account = computed(() => safeAddress.value || "0x000000000000000");
+const { safeAddress } = useAvocadoSafe()
+const account = computed(() => safeAddress.value || '0x000000000000000')
 </script>
+
 <template>
   <div>
     <div
@@ -11,11 +12,11 @@ const account = computed(() => safeAddress.value || "0x000000000000000");
       :class="{ 'blur pointer-events-none': !safeAddress }"
     >
       <StyledQrCode
+        :key="account"
         class="rounded-5 mx-auto bg-white overflow-hidden"
         :size="140"
         :margin="7"
         :data="account"
-        :key="account"
       />
 
       <Copy class="mt-5" :text="account">

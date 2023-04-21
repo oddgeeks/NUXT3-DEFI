@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { Line } from "vue-chartjs";
-import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
-import BridgeSVG from "~/assets/images/icons/bridge.svg?component";
-import RefreshSVG from "~/assets/images/icons/refresh.svg?component";
-import { IBalance } from "~/stores/safe";
+import { Line } from 'vue-chartjs'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
+import BridgeSVG from '~/assets/images/icons/bridge.svg?component'
+import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
+import type { IBalance } from '~/stores/safe'
 
 const props = defineProps({
   balance: {
     type: Object,
     required: true,
   },
-});
+})
 
-const balance = computed(() => props.balance as IBalance);
+const balance = computed(() => props.balance as IBalance)
 
 const {
   priceDiffColor,
@@ -21,7 +21,7 @@ const {
   priceDiffInPercent,
   chartData,
   temporaryDisabled,
-} = useGraph(balance);
+} = useGraph(balance)
 
 const chartOptions = {
   events: [],
@@ -45,7 +45,7 @@ const chartOptions = {
       display: false,
     },
   },
-};
+}
 </script>
 
 <template>
@@ -58,7 +58,7 @@ const chartOptions = {
           :src="balance.logoURI"
           class="h-[60px] w-[60px] rounded-full"
           :onerror="onImageError"
-        />
+        >
 
         <ChainLogo
           :stroke="true"

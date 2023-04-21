@@ -1,73 +1,77 @@
 <script lang="ts" setup>
-import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
-import SVGInfoCircle from "~/assets/images/icons/exclamation-circle.svg?component";
+import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
+import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg?component'
+
+const props = defineProps<{
+  payload: SimulationToken
+  type: 'approve' | 'recieve' | 'send'
+  chainId: string
+}>()
 
 enum Types {
-  Approve = "approve",
-  Recieve = "recieve",
-  Send = "send",
+  Approve = 'approve',
+  Recieve = 'recieve',
+  Send = 'send',
 }
 
 enum TypeTitles {
-  Approve = "Approve",
-  In = "In",
-  Out = "Out",
-  RevokedAllowance = "Revoked Allowance",
+  Approve = 'Approve',
+  In = 'In',
+  Out = 'Out',
+  RevokedAllowance = 'Revoked Allowance',
 }
 
-const props = defineProps<{
-  payload: SimulationToken;
-  type: "approve" | "recieve" | "send";
-  chainId: string;
-}>();
-
-const { getTokenByAddress, fetchTokenByAddress } = useTokens();
-const { fromWei } = useBignumber();
+const { getTokenByAddress, fetchTokenByAddress } = useTokens()
+const { fromWei } = useBignumber()
 
 const token = asyncComputed(async () => {
-  const token = getTokenByAddress(props.payload.token, props.chainId);
+  const token = getTokenByAddress(props.payload.token, props.chainId)
 
-  if (token) return token;
+  if (token)
+    return token
 
-  const tokens =
-    (await fetchTokenByAddress([props.payload.token], props.chainId)) || [];
-  return tokens[0];
-});
+  const tokens
+    = (await fetchTokenByAddress([props.payload.token], props.chainId)) || []
+  return tokens[0]
+})
 
 const amount = computed(() => {
-  if (toBN(props.payload.amount).gt(1e50)) return "∞";
+  if (toBN(props.payload.amount).gt(1e50))
+    return '∞'
 
-  return fromWei(props.payload.amount, token.value?.decimals).decimalPlaces(5);
-});
+  return fromWei(props.payload.amount, token.value?.decimals).decimalPlaces(5)
+})
 
 const formattedAmount = computed(() => {
-  if (amount.value === "∞") return amount.value;
+  if (amount.value === '∞')
+    return amount.value
 
-  return amount.value.toFormat();
-});
+  return amount.value.toFormat()
+})
 
 const priceInUSD = computed(() => {
-  if (!token.value || amount.value === "∞") return;
+  if (!token.value || amount.value === '∞')
+    return
 
-  return times(amount.value, token.value?.price || 0).toFixed();
-});
+  return times(amount.value, token.value?.price || 0).toFixed()
+})
 
 const actualType = computed(() => {
   switch (props.type) {
     case Types.Approve:
-      return toBN(props.payload.amount).eq("0")
+      return toBN(props.payload.amount).eq('0')
         ? TypeTitles.RevokedAllowance
-        : TypeTitles.Approve;
+        : TypeTitles.Approve
     case Types.Recieve:
-      return TypeTitles.In;
+      return TypeTitles.In
     case Types.Send:
-      return TypeTitles.Out;
+      return TypeTitles.Out
   }
-});
+})
 
 const out = computed(() => {
-  return props.type === Types.Send || props.type === Types.Approve;
-});
+  return props.type === Types.Send || props.type === Types.Approve
+})
 </script>
 
 <template>
@@ -80,7 +84,7 @@ const out = computed(() => {
         v-if="payload.type === 'NFT'"
         class="flex gap-1.5 items-center flex-1"
       >
-        <img width="26" height="26" :src="payload.nftMetadata?.imageUrl" />
+        <img width="26" height="26" :src="payload.nftMetadata?.imageUrl">
         <p class="inline leading-4 text-xs uppercase">
           {{ payload.nftMetadata?.name }}
         </p>
@@ -91,7 +95,7 @@ const out = computed(() => {
           width="26"
           height="26"
           :src="token?.logoURI"
-        />
+        >
         <p class="flex flex-col">
           <span class="text-xs uppercase leading-4">
             {{ formattedAmount }}
@@ -132,10 +136,9 @@ const out = computed(() => {
       <div
         class="text-[10px] font-medium w-fit text-slate-400 dark:bg-slate-800 py-1 px-2.5 bg-slate-150 rounded-10"
       >
-        <span class="leading-4" v-if="actualType === TypeTitles.In">
-          From: {{ shortenHash(payload.from) }}</span
-        >
-        <span class="leading-4" v-else> To: {{ shortenHash(payload.to) }}</span>
+        <span v-if="actualType === TypeTitles.In" class="leading-4">
+          From: {{ shortenHash(payload.from) }}</span>
+        <span v-else class="leading-4"> To: {{ shortenHash(payload.to) }}</span>
       </div>
       <div
         v-if="payload.type"

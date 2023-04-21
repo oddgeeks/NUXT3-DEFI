@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import ExclamationCircleSVG from "~/assets/images/icons/exclamation-circle.svg?component";
+import ExclamationCircleSVG from '~/assets/images/icons/exclamation-circle.svg?component'
 
-const { isSafeAddress } = useAvocadoSafe();
+const { isSafeAddress } = useAvocadoSafe()
 
-const router = useRoute();
-const account = router.params.account as string;
+const router = useRoute()
+const account = router.params.account as string
 
-if (!(await isSafeAddress(account))) {
-  throw { statusCode: 404, message: "Invalid address" };
-}
+if (!(await isSafeAddress(account)))
+  throw createError({ statusCode: 404, message: 'Invalid address' })
 </script>
 
 <template>
@@ -19,11 +18,11 @@ if (!(await isSafeAddress(account))) {
       >
         <div class="flex items-start">
           <StyledQrCode
+            :key="account"
             class="rounded-5 mx-auto bg-white overflow-hidden"
             :size="160"
             :margin="7"
             :data="account"
-            :key="account"
           />
         </div>
         <div class="flex flex-col space-y-5">

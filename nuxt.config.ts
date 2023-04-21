@@ -1,17 +1,17 @@
-import ViteComponents from "unplugin-vue-components/vite";
-import { HeadlessUiResolver } from "unplugin-vue-components/resolvers";
-import svgLoader from "vite-svg-loader";
+import ViteComponents from 'unplugin-vue-components/vite'
+import { HeadlessUiResolver } from 'unplugin-vue-components/resolvers'
+import svgLoader from 'vite-svg-loader'
 
 const meta = {
-  title: "Avocado",
+  title: 'Avocado',
   description:
-    "The multi-network gas and account abstraction allowing you to experience web3 more seamlessly.",
-  image: "https://avocado.instadapp.io/logo.png",
-};
+    'The multi-network gas and account abstraction allowing you to experience web3 more seamlessly.',
+  image: 'https://avocado.instadapp.io/logo.png',
+}
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  extends: ["@instadapp/avocado-base"],
+  extends: ['@instadapp/avocado-base'],
 
   runtimeConfig: {
     socketApiKey: process.env.SOCKET_API_KEY,
@@ -26,20 +26,21 @@ export default defineNuxtConfig({
   },
   nitro: {
     routeRules: {
-      "/**": {
+      '/**': {
         headers: {
-          "Content-Security-Policy": "frame-ancestors 'none'",
+          'Content-Security-Policy': 'frame-ancestors \'none\'',
         },
       },
-      "/tokenlist.json": {
+      '/tokenlist.json': {
         cors: true,
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         cache: { maxAge: 86400 },
       },
-      "/api/balances": { cache: { maxAge: 5 } },
-      "/api/transfers": { cache: { maxAge: 20 } },
+      "/api/**": { cache: { maxAge: 5 } },
+      // "/api/balances": { cache: { maxAge: 5 } },
+      // "/api/transfers": { cache: { maxAge: 20 } },
       // "/api/tokens": {
       //   cache: {
       //     maxAge: 3600, // 1 hour
@@ -52,135 +53,135 @@ export default defineNuxtConfig({
       title: meta.title,
       meta: [
         {
-          name: "title",
+          name: 'title',
           content: meta.title,
         },
         {
-          name: "theme-color",
-          content: "transparent",
+          name: 'theme-color',
+          content: 'transparent',
         },
         {
-          name: "description",
+          name: 'description',
           content: meta.description,
         },
         {
-          property: "og:title",
+          property: 'og:title',
           content: meta.title,
         },
         {
-          property: "og:description",
+          property: 'og:description',
           content: meta.description,
         },
         {
-          property: "og:url",
-          content: "https://avocado.instadapp.io",
+          property: 'og:url',
+          content: 'https://avocado.instadapp.io',
         },
         {
-          property: "og:image",
+          property: 'og:image',
           content: meta.image,
         },
         {
-          name: "twitter:site",
-          content: "@instadapp",
+          name: 'twitter:site',
+          content: '@instadapp',
         },
         {
-          name: "twitter:title",
+          name: 'twitter:title',
           content: meta.title,
         },
         {
-          name: "twitter:description",
+          name: 'twitter:description',
           content: meta.description,
         },
         {
-          name: "twitter:image",
+          name: 'twitter:image',
           content: meta.image,
         },
         {
-          name: "twitter:image_alt",
+          name: 'twitter:image_alt',
           content: meta.description,
         },
         {
-          name: "twitter:card",
-          content: "summary",
+          name: 'twitter:card',
+          content: 'summary',
         },
       ],
       link: [
         {
-          rel: "shortcut icon",
-          type: "image/x-icon",
-          href: "/icons/favicon.ico",
+          rel: 'shortcut icon',
+          type: 'image/x-icon',
+          href: '/icons/favicon.ico',
         },
         {
-          rel: "apple-touch-icon",
-          href: "/icons/apple-touch-icon.png",
+          rel: 'apple-touch-icon',
+          href: '/icons/apple-touch-icon.png',
         },
         {
-          rel: "icon",
-          type: "image/png",
-          sizes: "192x192",
-          href: "/icons/android-chrome-192x192.png",
+          rel: 'icon',
+          type: 'image/png',
+          sizes: '192x192',
+          href: '/icons/android-chrome-192x192.png',
         },
         {
-          rel: "icon",
-          type: "image/png",
-          sizes: "512x512",
-          href: "/icons/android-chrome-512x512.png",
+          rel: 'icon',
+          type: 'image/png',
+          sizes: '512x512',
+          href: '/icons/android-chrome-512x512.png',
         },
         {
-          rel: "icon",
-          type: "image/png",
-          sizes: "32x32",
-          href: "/icons/favicon-32x32.png",
+          rel: 'icon',
+          type: 'image/png',
+          sizes: '32x32',
+          href: '/icons/favicon-32x32.png',
         },
         {
-          rel: "icon",
-          type: "image/png",
-          sizes: "16x16",
-          href: "/icons/favicon-16x16.png",
+          rel: 'icon',
+          type: 'image/png',
+          sizes: '16x16',
+          href: '/icons/favicon-16x16.png',
         },
         {
-          rel: "manifest",
-          href: "/site.webmanifest",
+          rel: 'manifest',
+          href: '/site.webmanifest',
         },
       ],
     },
   },
-  //@ts-ignore
+  // @ts-expect-error
   modules: [
-    "@nuxtjs/color-mode",
-    "@vueuse/nuxt",
-    "@nuxtjs/tailwindcss",
-    "@instadapp/vue-web3-nuxt",
-    "@vueuse/nuxt",
-    "@pinia/nuxt",
+    '@nuxtjs/color-mode',
+    '@vueuse/nuxt',
+    '@nuxtjs/tailwindcss',
+    '@instadapp/vue-web3-nuxt',
+    '@vueuse/nuxt',
+    '@pinia/nuxt',
     [
-      "unplugin-vue-inspector/nuxt",
+      'unplugin-vue-inspector/nuxt',
       {
         enabled: false,
-        toggleButtonVisibility: "never",
+        toggleButtonVisibility: 'never',
       },
     ],
   ],
 
   colorMode: {
-    preference: "dark",
-    classSuffix: "",
+    preference: 'dark',
+    classSuffix: '',
   },
   css: [
-    "@fontsource/source-code-pro/400.css",
-    "@fontsource/source-code-pro/500.css",
-    "@fontsource/source-code-pro/600.css",
-    "~/assets/css/app.css",
+    '@fontsource/source-code-pro/400.css',
+    '@fontsource/source-code-pro/500.css',
+    '@fontsource/source-code-pro/600.css',
+    '~/assets/css/app.css',
   ],
 
   imports: {
-    dirs: ["./stores"],
+    dirs: ['./stores'],
   },
 
   routeRules: {
-    "/site.webmanifest": {
+    '/site.webmanifest': {
       headers: {
-        "Content-Type": "application/manifest+json",
+        'Content-Type': 'application/manifest+json',
       },
     },
   },
@@ -193,7 +194,7 @@ export default defineNuxtConfig({
       }),
       svgLoader({
         svgoConfig: {
-          plugins: ["prefixIds"],
+          plugins: ['prefixIds'],
         },
       }),
     ],
@@ -201,4 +202,4 @@ export default defineNuxtConfig({
   experimental: {
     // emitRouteChunkError: "reload",
   },
-});
+})

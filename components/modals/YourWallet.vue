@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import ExternalLinkSVG from "~/assets/images/icons/external-link.svg?component";
-import LinkSVG from "~/assets/images/icons/external-link.svg?component";
+import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
+import LinkSVG from '~/assets/images/icons/external-link.svg?component'
 
 defineProps({
   address: String,
-});
+})
 </script>
 
 <template>
@@ -12,15 +12,15 @@ defineProps({
     <span class="text-lg">Your Avocado Wallet</span>
 
     <StyledQrCode
+      :key="address"
       :size="220"
       :margin="16"
       class="rounded-5 mx-auto bg-white overflow-hidden"
       :data="address"
-      :key="address"
     />
 
     <div class="flex flex-col gap-2 items-center">
-      <Copy class="text-xl" :text="address" v-if="address">
+      <Copy v-if="address" class="text-xl" :text="address">
         <template #content>
           {{ shortenHash(address) }}
         </template>
@@ -41,6 +41,7 @@ defineProps({
       <div class="flex gap-2 justify-center flex-wrap">
         <div
           v-for="network in availableNetworks"
+          :key="network.chainId"
           class="flex items-center gap-2 text-[10px] p-1.5 bg-slate-50 dark:bg-gray-850 rounded-full"
         >
           <ChainLogo
@@ -64,9 +65,7 @@ defineProps({
         rel="noopener noreferrer"
         class="text-xs font-medium inline-flex items-center gap-2.5 text-primary"
       >
-        <span class="underline underline-offset-4"
-          >Learn more about how to deposit</span
-        >
+        <span class="underline underline-offset-4">Learn more about how to deposit</span>
         <LinkSVG class="w-4 h-4" />
       </a>
     </div>
