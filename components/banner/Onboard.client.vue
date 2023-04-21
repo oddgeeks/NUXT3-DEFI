@@ -1,42 +1,44 @@
 <script setup lang="ts">
-import SVGX from "~/assets/images/icons/x.svg?component";
-import WaveSVG from "~/assets/images/icons/wave.svg?component";
-import { IBalance } from "~~/stores/safe";
+import SVGX from '~/assets/images/icons/x.svg?component'
+import WaveSVG from '~/assets/images/icons/wave.svg?component'
+import type { IBalance } from '~~/stores/safe'
 
-const { hideOnboardBanner } = useBanner();
-const { account } = useWeb3();
-const { getBalances } = useSafe();
+const { hideOnboardBanner } = useBanner()
+const { account } = useWeb3()
+const { getBalances } = useSafe()
 
-const balances = ref<IBalance[]>([]);
+const balances = ref<IBalance[]>([])
 
 const totalWithBalance = computed(() =>
-  balances.value.filter((el) => toBN(el.balance).decimalPlaces(5).gt(0))
-);
+  balances.value.filter(el => toBN(el.balance).decimalPlaces(5).gt(0)),
+)
 const totalUSD = computed(() =>
   totalWithBalance.value.reduce(
-    (sum, cur) => sum.plus(cur.balanceInUSD || "0"),
-    toBN(0)
-  )
-);
+    (sum, cur) => sum.plus(cur.balanceInUSD || '0'),
+    toBN(0),
+  ),
+)
 const totalChains = computed(
-  () => new Set(totalWithBalance.value.map((el) => el.chainId)).size
-);
+  () => new Set(totalWithBalance.value.map(el => el.chainId)).size,
+)
 
 watch(
   account,
   async () => {
-    if (!account.value) return;
-    const data = await getBalances(account.value);
+    if (!account.value)
+      return
+    const data = await getBalances(account.value)
 
-    balances.value = data.flat() as IBalance[];
+    balances.value = data.flat() as IBalance[]
   },
-  { immediate: true }
-);
+  { immediate: true },
+)
 </script>
+
 <template>
   <div
-    class="w-full max-w-[832px] mx-auto text-xs relative bg-[#4CA054] bg-opacity-60 py-[15px] px-5 sm:rounded-5 backdrop-blur shrink-0 flex flex-col sm:flex-row justify-between items-center gap-[15px]"
     v-if="balances.length > 0"
+    class="w-full max-w-[832px] mx-auto text-xs relative bg-[#4CA054] bg-opacity-60 py-[15px] px-5 sm:rounded-5 backdrop-blur shrink-0 flex flex-col sm:flex-row justify-between items-center gap-[15px]"
   >
     <div class="flex space-x-[25px] items-start sm:items-center">
       <WaveSVG class="w-8 h-8" />
@@ -57,8 +59,8 @@ watch(
         Import
       </CommonButton>
       <button
-        @click="hideOnboardBanner()"
         class="w-5 h-5 rounded-full flex items-center justify-center bg-white bg-opacity-20"
+        @click="hideOnboardBanner()"
       >
         <SVGX class="dark:text-white text-slate-500" />
       </button>

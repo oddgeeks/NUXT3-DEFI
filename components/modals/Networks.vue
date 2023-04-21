@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import CheckCircle from "~/assets/images/icons/check-circle.svg?component";
-import { storeToRefs } from "pinia";
+import { storeToRefs } from 'pinia'
+import CheckCircle from '~/assets/images/icons/check-circle.svg?component'
 
-const { networkPreference } = storeToRefs(useSafe());
-const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
+const { networkPreference } = storeToRefs(useSafe())
+const isHideZeroBalances = useLocalStorage('hide-zero-balances', false)
 </script>
 
 <template>
@@ -15,13 +15,13 @@ const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
       >
         <span class="text-slate-400">Networks</span>
         <div
+          class="text-green-600 cursor-pointer"
           @click="
-            networkPreference =
-              networkPreference.size === availableNetworks.length
+            networkPreference
+              = networkPreference.size === availableNetworks.length
                 ? new Set()
                 : new Set(availableNetworks.map((el) => el.chainId))
           "
-          class="text-green-600 cursor-pointer"
         >
           {{
             networkPreference.size === availableNetworks.length ? "None" : "All"
@@ -30,18 +30,19 @@ const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
       </li>
 
       <li
+        v-for="network in availableNetworks"
+        :key="network.chainId"
+        class="flex items-center gap-3.5 hover:bg-slate-150 hover:dark:bg-slate-800 cursor-pointer py-2.5 px-3 rounded-[14px]"
+        :class="{
+          'dark:text-slate-500 text-slate-400': !networkPreference.has(
+            network.chainId,
+          ),
+        }"
         @click="
           networkPreference.has(network.chainId)
             ? networkPreference.delete(network.chainId)
             : networkPreference.add(network.chainId)
         "
-        class="flex items-center gap-3.5 hover:bg-slate-150 hover:dark:bg-slate-800 cursor-pointer py-2.5 px-3 rounded-[14px]"
-        :class="{
-          'dark:text-slate-500 text-slate-400': !networkPreference.has(
-            network.chainId
-          ),
-        }"
-        v-for="network in availableNetworks"
       >
         <ChainLogo style="width: 30px; height: 30px" :chain="network.chainId" />
         {{ network.name }}
@@ -60,8 +61,8 @@ const isHideZeroBalances = useLocalStorage("hide-zero-balances", false);
         :class="{
           'dark:text-white text-slate-900': isHideZeroBalances,
         }"
-        @click="isHideZeroBalances = !isHideZeroBalances"
         class="text-sm text-slate-400 inline-flex gap-2.5 items-center justify-center w-full"
+        @click="isHideZeroBalances = !isHideZeroBalances"
       >
         Hide 0 Balances
 

@@ -1,19 +1,19 @@
 <script lang="ts" setup>
-import GasSVG from "~/assets/images/icons/gas.svg?component";
-import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?component";
+import GasSVG from '~/assets/images/icons/gas.svg?component'
+import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg?component'
 
 const props = defineProps<{
-  data: ICalculatedFee;
-  loading?: boolean;
-  error?: string;
-  wrapperClass?: string;
-}>();
+  data: ICalculatedFee
+  loading?: boolean
+  error?: string
+  wrapperClass?: string
+}>()
 
-const { formatPercent } = useFormatter();
+const { formatPercent } = useFormatter()
 
 const discountAvailable = computed(() =>
-  toBN(props.data?.discountAmount).gt(0)
-);
+  toBN(props.data?.discountAmount).gt(0),
+)
 </script>
 
 <template>
@@ -29,7 +29,7 @@ const discountAvailable = computed(() =>
           <GasSVG class="w-4" />
           Gas fees
         </span>
-        <span class="loading-box rounded-5 w-24 h-5" v-if="loading"></span>
+        <span v-if="loading" class="loading-box rounded-5 w-24 h-5" />
         <template v-else-if="data">
           <span
             :class="[
@@ -44,7 +44,7 @@ const discountAvailable = computed(() =>
               width="18"
               height="18"
               src="https://cdn.instadapp.io/icons/tokens/usdc.svg"
-            />
+            >
             {{ data?.formatted }} USDC
           </span>
         </template>
@@ -59,18 +59,18 @@ const discountAvailable = computed(() =>
               width="18"
               height="18"
               :src="data.discountDetails?.iconURL"
-            />
+            >
             <p class="flex items-center gap-2">
               {{ data.discountDetails?.name }} ({{
                 formatPercent(data.discountDetails?.discount, 0)
               }})
 
               <QuestionCircleSVG
-                :content="data.discountDetails?.tooltip"
                 v-tippy="{
                   interactive: true,
                   allowHTML: true,
                 }"
+                :content="data.discountDetails?.tooltip"
                 class="w-4 h-4 text-primary"
               />
             </p>
@@ -82,7 +82,7 @@ const discountAvailable = computed(() =>
             USDC
           </p>
         </div>
-        <div class="ticket-divider w-full"></div>
+        <div class="ticket-divider w-full" />
         <div class="flex justify-between w-full text-sm">
           <p>Total gas fees</p>
           <p class="inline-flex items-center gap-2">
@@ -91,7 +91,7 @@ const discountAvailable = computed(() =>
               width="18"
               height="18"
               src="https://cdn.instadapp.io/icons/tokens/usdc.svg"
-            />
+            >
 
             {{ data?.formattedAmountAfterDiscount }} USDC
           </p>
@@ -100,7 +100,7 @@ const discountAvailable = computed(() =>
     </div>
     <CommonNotification v-if="error" type="error" :text="error">
       <template v-if="error.includes('gas')" #action>
-        <CommonButton @click="openTopUpGasModal()" size="sm">
+        <CommonButton size="sm" @click="openTopUpGasModal()">
           Top-up
         </CommonButton>
       </template>

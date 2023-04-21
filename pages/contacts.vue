@@ -1,53 +1,50 @@
 <script setup lang="ts">
-import Fuse from "fuse.js";
-import SearchSVG from "~/assets/images/icons/search.svg?component";
-import PlusSVG from "~/assets/images/icons/plus.svg?component";
-import ArrowRight from "~/assets/images/icons/arrow-right.svg?component";
-import DeleteSVG from "~/assets/images/icons/delete.svg?component";
+import Fuse from 'fuse.js'
+import SearchSVG from '~/assets/images/icons/search.svg?component'
+import PlusSVG from '~/assets/images/icons/plus.svg?component'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
+import DeleteSVG from '~/assets/images/icons/delete.svg?component'
 
-const { account } = useWeb3();
-const { safeAddress, tokenBalances } = useAvocadoSafe();
-const { contacts, deleteContact, getSentTimes } = useContacts();
+const { account } = useWeb3()
+const { safeAddress, tokenBalances } = useAvocadoSafe()
+const { contacts, deleteContact, getSentTimes } = useContacts()
 
-const searchQuery = ref("");
+const searchQuery = ref('')
 
 useAccountTrack(undefined, () => {
-  useEagerConnect();
-});
+  useEagerConnect()
+})
 
 const search = useDebounceFn((event: Event) => {
-  searchQuery.value = (<HTMLInputElement>event.target).value;
-}, 200);
+  searchQuery.value = (<HTMLInputElement>event.target).value
+}, 200)
 
 const filteredContacts = computed(() => {
-  const _contacts = contacts.value[safeAddress.value];
-  if (!_contacts) {
-    return [];
-  }
+  const _contacts = contacts.value[safeAddress.value]
+  if (!_contacts)
+    return []
 
-  if (!searchQuery.value || searchQuery.value.trim().length === 0) {
-    return _contacts;
-  }
+  if (!searchQuery.value || searchQuery.value.trim().length === 0)
+    return _contacts
 
   const fuse = new Fuse(_contacts, {
-    keys: ["name", "address"],
+    keys: ['name', 'address'],
     threshold: 0.2,
-  });
+  })
 
-  return fuse.search(searchQuery.value).map((result) => result.item);
-});
+  return fuse.search(searchQuery.value).map(result => result.item)
+})
 
-const handleDeletingContact = async (contact: IContact) => {
-  const { success } = await openDeleteContactModal();
+async function handleDeletingContact(contact: IContact) {
+  const { success } = await openDeleteContactModal()
 
-  if (success) {
-    deleteContact(contact);
-  }
-};
+  if (success)
+    deleteContact(contact)
+}
 
-const hasAvailableTokens = (chainId: number | string) => {
-  return tokenBalances.value.filter((t) => t.chainId == chainId).length > 0;
-};
+function hasAvailableTokens(chainId: number | string) {
+  return tokenBalances.value.filter(t => t.chainId == chainId).length > 0
+}
 </script>
 
 <template>
@@ -67,9 +64,9 @@ const hasAvailableTokens = (chainId: number | string) => {
               !contacts[safeAddress] || contacts[safeAddress].length === 0,
           }"
           name="Contact Search"
-          @input="search"
           type="search"
           placeholder="Search contact"
+          @input="search"
         >
           <template #prefix>
             <SearchSVG class="shrink-0 mr-2" />
@@ -103,13 +100,18 @@ const hasAvailableTokens = (chainId: number | string) => {
               <tr
                 class="text-left text-sm text-gray-400 font-medium border-b border-slate-150 dark:border-slate-800"
               >
-                <th class="text-left py-6 pl-7.5">Name</th>
-                <th class="pr-10 w-[70%]">Address</th>
+                <th class="text-left py-6 pl-7.5">
+                  Name
+                </th>
+                <th class="pr-10 w-[70%]">
+                  Address
+                </th>
               </tr>
             </thead>
             <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
               <tr
                 v-for="contact in filteredContacts"
+                :key="contact.address + contact.chainId"
                 class="contact-row text-sm font-semibold cursor-pointer"
               >
                 <td class="pl-7.5 text-sm">
@@ -140,7 +142,7 @@ const hasAvailableTokens = (chainId: number | string) => {
                               contact.name,
                               contact.address,
                               contact.chainId,
-                              true
+                              true,
                             )
                           "
                         >
@@ -149,10 +151,10 @@ const hasAvailableTokens = (chainId: number | string) => {
                         <CommonButton
                           color="white"
                           class="items-center gap-2.5 h-10 !px-4"
+                          :disabled="!hasAvailableTokens(contact.chainId)"
                           @click="
                             openSendModal(contact.chainId, undefined, contact)
                           "
-                          :disabled="!hasAvailableTokens(contact.chainId)"
                         >
                           Send
                           <div
@@ -176,8 +178,9 @@ const hasAvailableTokens = (chainId: number | string) => {
             </tbody>
           </table>
           <div
-            class="flex flex-col sm:hidden dark:bg-gray-850 bg-slate-50 px-5 pt-4 pb-4.5 rounded-[20px] gap-5"
             v-for="contact in filteredContacts"
+            :key="contact.address + contact.chainId"
+            class="flex flex-col sm:hidden dark:bg-gray-850 bg-slate-50 px-5 pt-4 pb-4.5 rounded-[20px] gap-5"
           >
             <div class="flex justify-between">
               <span class="text-sm font-semibold text-slate-400">{{
@@ -204,8 +207,8 @@ const hasAvailableTokens = (chainId: number | string) => {
               </Copy>
             </div>
             <span
-              class="text-slate-400 text-xs"
               v-if="getSentTimes(contact) !== ''"
+              class="text-slate-400 text-xs"
             >
               {{ getSentTimes(contact) }}
             </span>
@@ -218,7 +221,7 @@ const hasAvailableTokens = (chainId: number | string) => {
                     contact.name,
                     contact.address,
                     contact.chainId,
-                    true
+                    true,
                   )
                 "
               >
@@ -227,8 +230,8 @@ const hasAvailableTokens = (chainId: number | string) => {
               <CommonButton
                 color="white"
                 class="flex-1 justify-center items-center gap-2.5"
-                @click="openSendModal(contact.chainId, undefined, contact)"
                 :disabled="!hasAvailableTokens(contact.chainId)"
+                @click="openSendModal(contact.chainId, undefined, contact)"
               >
                 Send
                 <div

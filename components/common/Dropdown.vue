@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ChevronDownIcon } from "@heroicons/vue/solid";
-import { CheckIcon } from "@heroicons/vue/outline";
+import { ChevronDownIcon } from '@heroicons/vue/solid'
+import { CheckIcon } from '@heroicons/vue/outline'
 
 const props = defineProps({
   items: {
@@ -10,22 +10,22 @@ const props = defineProps({
   modelValue: {
     type: [String, Object, Number],
     default: null,
-  }
-});
+  },
+})
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(['update:modelValue'])
 
-const defaultValue = ref(props.items[0]);
+const defaultValue = ref(props.items[0])
 
 const selected = computed({
   get() {
-    return props.modelValue ? props.modelValue : defaultValue.value;
+    return props.modelValue ? props.modelValue : defaultValue.value
   },
   set(value) {
-    defaultValue.value = value;
-    emit("update:modelValue", value);
+    defaultValue.value = value
+    emit('update:modelValue', value)
   },
-});
+})
 </script>
 
 <template>
