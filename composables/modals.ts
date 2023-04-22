@@ -22,6 +22,7 @@ import Networks from '~/components/modals/Networks.vue'
 import Balance from '~/components/modals/Balance.vue'
 import AddContact from '~/components/modals/AddContact.vue'
 import SelectContact from '~/components/modals/SelectContact.vue'
+import NFTDetails from '~/components/modals/NFTDetails.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -334,6 +335,15 @@ export async function openSelectContactModal() {
   return openModal({
     component: SelectContact,
     async: true,
+  })
+}
+
+export function openNFTDetailsModal(NFTData: NFTData) {
+  openModal({
+    component: NFTDetails,
+    componentProps: {
+      asset: NFTData,
+    },
   })
 }
 
