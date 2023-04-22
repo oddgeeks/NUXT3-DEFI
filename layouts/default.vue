@@ -4,14 +4,14 @@ const {
   showIncorrectNetworkBanner,
   showInsufficientGasBanner,
   showOnboardBanner,
-} = useBanner();
+} = useBanner()
 
-const route = useRoute();
+const route = useRoute()
 </script>
 
 <template>
-  <section class="flex flex-col h-full">
-    <BannerAccountTracking class="hidden sm:flex" v-if="showTrackingBanner" />
+  <div class="flex flex-col h-full">
+    <BannerAccountTracking v-if="showTrackingBanner" class="hidden sm:flex" />
     <div class="fixed bottom-0 sm:bottom-12 w-full z-40">
       <BannerSwitchNetwork v-if="showIncorrectNetworkBanner" />
       <BannerOnboard
@@ -37,5 +37,6 @@ const route = useRoute();
     </div>
     <slot />
     <TheFooter />
-  </section>
+    </section>
+  </div>
 </template>

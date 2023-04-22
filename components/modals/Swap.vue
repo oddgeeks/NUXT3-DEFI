@@ -1,23 +1,19 @@
 <script setup lang="ts">
-import ChevronDownSVG from "~/assets/images/icons/chevron-down.svg?component";
-import type { IToken } from "~~/stores/tokens";
-import { Erc20__factory } from "~~/contracts";
-import { useField, useForm } from "vee-validate";
-import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
-import ArrowLeft from "~/assets/images/icons/arrow-left.svg?component";
-import QuestionCircleSVG from "~/assets/images/icons/question-circle.svg?component";
-import * as yup from "yup";
-import { storeToRefs } from "pinia";
-import { utils } from "ethers";
+import { useField, useForm } from 'vee-validate'
+import * as yup from 'yup'
+import { storeToRefs } from 'pinia'
+import { utils } from 'ethers'
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
+import type { IToken } from '~~/stores/tokens'
+import { Erc20__factory } from '~~/contracts'
+import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
+import ArrowLeft from '~/assets/images/icons/arrow-left.svg?component'
+import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg?component'
 
 interface ISwap {
-  sellToken: IToken;
-  buyToken: IToken;
+  sellToken: IToken
+  buyToken: IToken
 }
-
-let abortController = ref<AbortController | null>(null);
-
-const emit = defineEmits(["destroy"]);
 
 const props = defineProps({
   address: {
@@ -37,215 +33,212 @@ const props = defineProps({
   },
   amount: {
     type: String,
-    default: "",
+    default: '',
   },
-});
+})
 
-const { tokenBalances, sendTransactions, safeAddress } = useAvocadoSafe();
+const emit = defineEmits(['destroy'])
 
-const { getTokenByAddress } = useTokens();
-const { tokens } = storeToRefs(useTokens());
-const { toWei, fromWei } = useBignumber();
-const { formatPercent } = useFormatter();
-const { parseTransactionError } = useErrorHandler();
-const { account } = useWeb3();
+const abortController = ref<AbortController | null>(null)
 
-const toChainId = ref<string>(props.chainId);
-const tokenAddress = ref<string>(props.address);
+const { tokenBalances, sendTransactions, safeAddress } = useAvocadoSafe()
+
+const { getTokenByAddress } = useTokens()
+const { tokens } = storeToRefs(useTokens())
+const { toWei, fromWei } = useBignumber()
+const { formatPercent } = useFormatter()
+const { parseTransactionError } = useErrorHandler()
+const { account } = useWeb3()
+
+const toChainId = ref<string>(props.chainId)
+const tokenAddress = ref<string>(props.address)
 const networks = availableNetworks.filter(
-  (network) => network.chainId !== 1101
-);
+  network => network.chainId !== 1101,
+)
 
 const slippages = [
-  { value: "0.1", label: "0.1%" },
-  { value: "0.3", label: "0.3%" },
-  { value: "0.5", label: "0.5%" },
-  { value: "1", label: "1%" },
-  { value: "2", label: "2%" },
-  { value: "3", label: "3%" },
-];
+  { value: '0.1', label: '0.1%' },
+  { value: '0.3', label: '0.3%' },
+  { value: '0.5', label: '0.5%' },
+  { value: '1', label: '1%' },
+  { value: '2', label: '2%' },
+  { value: '3', label: '3%' },
+]
 
-const defaultSwapDetails = () => ({
-  data: null as ISwapResponse | null,
-  error: "",
-  pending: false,
-});
+const slippage = useLocalStorage('slippage', '0.3')
+const customSlippage = useLocalStorage('customSlippage', '')
 
-const swapDetails = ref(defaultSwapDetails());
-const [swapped, toggleSwapped] = useToggle();
-const [isBuyAmountDirty, toggleDirty] = useToggle(false);
-const refreshing = ref(false);
+function defaultSwapDetails() {
+  return {
+    data: null as ISwapResponse | null,
+    error: '',
+    pending: false,
+  }
+}
+
+const swapDetails = ref(defaultSwapDetails())
+const [swapped, toggleSwapped] = useToggle()
+const [isBuyAmountDirty, toggleDirty] = useToggle(false)
+const refreshing = ref(false)
 
 const swap = ref<ISwap>({
   sellToken: getTokenByAddress(tokenAddress.value, toChainId.value)!,
   buyToken: getTokenByAddress(tokenAddress.value, toChainId.value)!,
-});
+})
 
 const availableTokens = computed(() =>
   tokens.value.filter(
-    (t) =>
-      t.chainId == toChainId.value && t.address !== swap.value.buyToken.address
-  )
-);
+    t =>
+      t.chainId == toChainId.value && t.address !== swap.value.buyToken.address,
+  ),
+)
 
 const availableBuyTokens = computed(() =>
   availableTokens.value.filter(
-    (t) => t.address !== swap.value.sellToken.address
-  )
-);
+    t => t.address !== swap.value.sellToken.address,
+  ),
+)
 
 watch(toChainId, () => {
-  swap.value.buyToken = availableBuyTokens.value[0];
-  swap.value.sellToken = availableTokens.value[0];
+  swap.value.buyToken = availableBuyTokens.value[0]
+  swap.value.sellToken = availableTokens.value[0]
 
-  swapDetails.value = defaultSwapDetails();
-});
+  swapDetails.value = defaultSwapDetails()
+})
 
 const sellTokenBalance = computed(
   () =>
     tokenBalances.value.find(
-      (t) =>
-        t.address == swap.value.sellToken.address &&
-        t.chainId == toChainId.value
-    )?.balance || "0.00"
-);
+      t =>
+        t.address == swap.value.sellToken.address
+        && t.chainId == toChainId.value,
+    )?.balance || '0.00',
+)
 
 const buyTokenBalance = computed(
   () =>
     tokenBalances.value.find(
-      (t) =>
-        t.address == swap.value.buyToken.address && t.chainId == toChainId.value
-    )?.balance || "0.00"
-);
+      t =>
+        t.address == swap.value.buyToken.address && t.chainId == toChainId.value,
+    )?.balance || '0.00',
+)
 
-const validateMinAmount = (value: any) => {
-  const amount = toBN(value);
+function validateMinAmount(value: any) {
+  const amount = toBN(value)
 
-  return value ? amount.gt(0) : true;
-};
+  return value ? amount.gt(0) : true
+}
 
-const validateMaxAmount = (value: any, balance: string) => {
-  const amount = toBN(value);
+function validateMaxAmount(value: any, balance: string) {
+  const amount = toBN(value)
 
-  return amount.gt(0) ? amount.lte(toBN(balance)) : true;
-};
+  return amount.gt(0) ? amount.lte(toBN(balance)) : true
+}
 
-const { handleSubmit, errors, meta, validate, isSubmitting, resetForm } =
-  useForm({
+const { handleSubmit, errors, meta, validate, isSubmitting, resetForm }
+  = useForm({
     initialValues: {
-      "sell-amount": undefined,
-      "buy-amount": undefined,
-      customSlippage: undefined,
-      slippage: "0.3",
+      'sell-amount': undefined,
+      'buy-amount': undefined,
     },
     validationSchema: yup.object({
-      "sell-amount": yup
+      'sell-amount': yup
         .string()
-        .required("")
-        .test("min-amount", "", validateMinAmount)
-        .test("max-amount", "Insufficient balance", (val: any) =>
-          validateMaxAmount(val, sellTokenBalance.value)
-        ),
-      slippage: yup.string().required(),
-      customSlippage: yup
-        .string()
-        .test(
-          "slippage",
-          "Slippage must be between 0.0001% and 100%",
-          (value) => {
-            const slippage = toBN(value!);
-
-            if (value) {
-              return slippage.gte(0.0001) && slippage.lte(100);
-            } else return true;
-          }
+        .required('')
+        .test('min-amount', '', validateMinAmount)
+        .test('max-amount', 'Insufficient balance', (val: any) =>
+          validateMaxAmount(val, sellTokenBalance.value),
         ),
     }),
-  });
+  })
 
-const buyAmount = ref();
+const buyAmount = ref()
 const {
   value: sellAmount,
   meta: sellAmountMeta,
   setState: setSellAmount,
-} = useField<string>("sell-amount");
+} = useField<string>('sell-amount')
 
-const { value: slippage } = useField<string>("slippage");
-const {
-  value: customSlippage,
-  meta: slippageMeta,
-  setState: setCustomSlippage,
-} = useField<string>("customSlippage");
+const actualSlippage = computed(() => customSlippage.value || slippage.value)
 
-const actualSlippage = computed(() => customSlippage.value || slippage.value);
+const slippageError = computed(() => {
+  const message = 'Slippage must be between 0.0001% and 100%'
+  const value = toBN(actualSlippage.value)
+  if (actualSlippage.value)
+    return value.gte(0.0001) && value.lte(100) ? '' : message
+  else return ''
+})
 
-const convertBuytoSellAmount = (val: string) => {
-  const sellTokenPrice = swap.value.sellToken.price;
-  const buyTokenPrice = swap.value.buyToken.price;
+function convertBuytoSellAmount(val: string) {
+  const sellTokenPrice = swap.value.sellToken.price
+  const buyTokenPrice = swap.value.buyToken.price
 
-  if (!sellTokenPrice || !buyTokenPrice) return;
+  if (!sellTokenPrice || !buyTokenPrice)
+    return
 
   const buyAmountInSellAmount = toBN(val)
     .div(toBN(sellTokenPrice))
     .times(toBN(buyTokenPrice))
     .decimalPlaces(4)
-    .toFixed();
+    .toFixed()
 
   setSellAmount({
     touched: true,
     value: buyAmountInSellAmount,
-  });
-};
+  })
+}
 
-const handleBuyAmountInput = (e: any) => {
-  const val = e.target.value;
-  if (val) convertBuytoSellAmount(val);
+function handleBuyAmountInput(e: any) {
+  const val = e.target.value
+  if (val)
+    convertBuytoSellAmount(val)
 
-  toggleDirty(true);
-};
+  toggleDirty(true)
+}
 
-const setMax = () => {
-  toggleDirty(false);
+function setMax() {
+  toggleDirty(false)
   sellAmount.value = toBN(sellTokenBalance.value)
     .decimalPlaces(6, 1)
-    .toString();
-};
+    .toString()
+}
 
-const handleSellAmountInput = () => {
-  toggleDirty(false);
-};
+function handleSellAmountInput() {
+  toggleDirty(false)
+}
 
 const sendingDisabled = computed(
   () =>
-    isSubmitting.value ||
-    swapDetails.value.pending ||
-    !meta.value.valid ||
-    feePending.value ||
-    isPriceImpactHigh.value ||
-    !!swapDetails.value.error ||
-    !!error.value
-);
+    isSubmitting.value
+    || swapDetails.value.pending
+    || !meta.value.valid
+    || feePending.value
+    || isPriceImpactHigh.value
+    || !!swapDetails.value.error
+    || !!error.value
+    || !!slippageError.value,
+)
 
 const isLoading = computed(
-  () => swapDetails.value.pending && meta.value.valid && !refreshing.value
-);
-const fetchSwapDetails = async () => {
-  const { valid } = await validate();
-  if (!valid) return;
+  () => swapDetails.value.pending && meta.value.valid && !refreshing.value,
+)
+async function fetchSwapDetails() {
+  const { valid } = await validate()
+  if (!valid || !!slippageError.value)
+    return
 
-  pause();
+  pause()
 
   try {
-    if (abortController.value) {
-      abortController.value.abort();
-    }
+    if (abortController.value)
+      abortController.value.abort()
 
-    abortController.value = new AbortController();
+    abortController.value = new AbortController()
 
-    swapDetails.value.pending = true;
+    swapDetails.value.pending = true
 
     const data: ISwapResponse = await http(
-      "https://swap-aggregator.instadapp.io/swap",
+      'https://swap-aggregator.instadapp.io/swap',
       {
         signal: abortController.value?.signal,
         params: {
@@ -256,153 +249,158 @@ const fetchSwapDetails = async () => {
           maxSlippage: actualSlippage.value,
           slippage: actualSlippage.value,
           user: safeAddress.value,
-          access_token: "hxBA1uxwaGWN0xcpPOncVJ3Tk7FdFxY7g3NX28R14C",
+          access_token: 'hxBA1uxwaGWN0xcpPOncVJ3Tk7FdFxY7g3NX28R14C',
         },
-      }
-    );
-    abortController.value = null;
+      },
+    )
+    abortController.value = null
 
-    const best = data?.aggregators[0];
+    const best = data?.aggregators[0]
 
     if (!best) {
-      swapDetails.value.error = "No route found, please try again later";
-      return;
+      swapDetails.value.error = 'No route found, please try again later'
+      return
     }
 
     if (best && !isBuyAmountDirty.value) {
       buyAmount.value = formatDecimal(
         fromWei(
           best.data.buyTokenAmount,
-          best.data.buyToken.decimals
+          best.data.buyToken.decimals,
         ).toFixed(),
-        6
-      );
+        6,
+      )
     }
 
-    swapDetails.value.data = data;
-    swapDetails.value.pending = false;
-    swapDetails.value.error = "";
-  } catch (e: any) {
-    const err = parseTransactionError(e);
-    if (err.parsed?.includes("aborted")) return;
-    swapDetails.value.pending = false;
-    swapDetails.value.error = "No route found, please try again later.";
+    swapDetails.value.data = data
+    swapDetails.value.pending = false
+    swapDetails.value.error = ''
   }
-};
+  catch (e: any) {
+    const err = parseTransactionError(e)
+    if (err.parsed?.includes('aborted'))
+      return
+    swapDetails.value.pending = false
+    swapDetails.value.error = 'No route found, please try again later.'
+  }
+}
 
 const bestRoute = computed(
-  () => swapDetails.value?.data?.aggregators[0] || null
-);
+  () => swapDetails.value?.data?.aggregators[0] || null,
+)
 
 const priceImpact = computed(() =>
   toBN(bestRoute?.value?.data?.priceImpact || 0)
     .abs()
-    .toFixed()
-);
+    .toFixed(),
+)
 
 const isPriceImpactHigh = computed(() => {
-  if (!bestRoute.value) return false;
+  if (!bestRoute.value)
+    return false
 
-  return toBN(priceImpact.value).gt(actualSlippage.value);
-});
+  return toBN(priceImpact.value).gt(actualSlippage.value)
+})
 
 const sellAmountInUsd = computed(() => {
   return toBN(
     fromWei(
       swapDetails.value?.data?.data.sellTokenAmount || 0,
-      swapDetails.value?.data?.data.sellToken.decimals
-    )
+      swapDetails.value?.data?.data.sellToken.decimals,
+    ),
   )
     .times(swapDetails.value?.data?.data.sellToken.price || 0)
-    .toFixed(2);
-});
+    .toFixed(2)
+})
 
 const buyAmountInUsd = computed(() => {
   return toBN(
     fromWei(
       swapDetails.value?.data?.data.buyTokenAmount || 0,
-      swapDetails.value?.data?.data.buyToken.decimals
-    )
+      swapDetails.value?.data?.data.buyToken.decimals,
+    ),
   )
     .times(swapDetails.value?.data?.data.buyToken.price || 0)
-    .toFixed(2);
-});
+    .toFixed(2)
+})
 
 const minRecievedAfterSlippage = computed(() => {
   return fromWei(
     swapDetails.value?.data?.data.buyTokenAmount || 0,
-    swap.value.buyToken.decimals
+    swap.value.buyToken.decimals,
   )
     .div(toBN(1).plus(toBN(actualSlippage.value).div(100)))
-    .decimalPlaces(5);
-});
+    .decimalPlaces(5)
+})
 
 const buyTokenAmountPerSellToken = computed(() => {
-  const value = div(buyAmount.value, sellAmount.value);
+  const value = div(buyAmount.value, sellAmount.value)
 
-  return value.isFinite() ? formatDecimal(value.toFixed()) : "0.00";
-});
+  return value.isFinite() ? formatDecimal(value.toFixed()) : '0.00'
+})
 
 const sellTokenAmountPerBuyToken = computed(() => {
-  const value = div(sellAmount.value, buyAmount.value);
+  const value = div(sellAmount.value, buyAmount.value)
 
-  return value.isFinite() ? formatDecimal(value.toFixed()) : "0.00";
-});
+  return value.isFinite() ? formatDecimal(value.toFixed()) : '0.00'
+})
 
-const swapTokens = () => {
-  const sellTemp = swap.value.sellToken;
-  const buyTemp = swap.value.buyToken;
+function swapTokens() {
+  const sellTemp = swap.value.sellToken
+  const buyTemp = swap.value.buyToken
 
-  swap.value.buyToken = sellTemp;
-  swap.value.sellToken = buyTemp;
-  toggleSwapped();
-};
+  swap.value.buyToken = sellTemp
+  swap.value.sellToken = buyTemp
+  toggleSwapped()
+}
 
 const { data: txs } = useAsyncData(
   async () => {
-    const { valid } = await validate();
+    const { valid } = await validate()
 
-    if (!valid) return;
-    if (!bestRoute.value) throw new Error("Route not found");
+    if (!valid)
+      return
+    if (!bestRoute.value)
+      throw new Error('Route not found')
 
-    pause();
+    pause()
 
-    const address = bestRoute.value?.data.to;
+    const address = bestRoute.value?.data.to
 
     const erc20 = Erc20__factory.connect(
       address,
-      getRpcProvider(toChainId.value)
-    );
+      getRpcProvider(toChainId.value),
+    )
 
-    const txs = [];
+    const txs = []
 
     if (
-      swap.value.sellToken.address !==
-      "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+      swap.value.sellToken.address
+      !== '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
     ) {
       const { data } = await erc20.populateTransaction.approve(
         bestRoute.value.data.allowanceSpender || address,
-        bestRoute.value.data.sellTokenAmount
-      );
+        bestRoute.value.data.sellTokenAmount,
+      )
 
       txs.push({
         to: swap.value.sellToken.address,
         data,
-      });
+      })
     }
 
     txs.push({
       to: address,
       data: bestRoute.value?.data.calldata,
       value: bestRoute.value?.data.value,
-    });
-    return txs;
+    })
+    return txs
   },
   {
     watch: [bestRoute],
     server: false,
-  }
-);
+  },
+)
 
 const {
   data,
@@ -410,136 +408,137 @@ const {
   error,
 } = useEstimatedFee(txs, toChainId, {
   cb: () => {
-    resume();
-    refreshing.value = false;
+    resume()
+    refreshing.value = false
   },
-});
+})
 
 const onSubmit = handleSubmit(async () => {
   try {
-    pause();
+    pause()
     const metadata = encodeSwapMetadata({
       buyAmount: swapDetails.value?.data?.data.buyTokenAmount!,
       sellAmount: swapDetails.value?.data?.data.sellTokenAmount!,
       buyToken: swapDetails.value?.data?.data.buyToken.address!,
       sellToken: swap.value.sellToken.address,
       receiver: account.value,
-      protocol: utils.formatBytes32String(bestRoute?.value?.name || ""),
-    });
+      protocol: utils.formatBytes32String(bestRoute?.value?.name || ''),
+    })
 
     const transactionHash = await sendTransactions(
       txs.value!,
       +toChainId.value,
       {
         metadata,
-      }
-    );
+      },
+    )
 
     const buyAmt = fromWei(
       swapDetails.value?.data?.data.buyTokenAmount || 0,
-      swapDetails.value?.data?.data.buyToken.decimals
-    ).toFixed();
+      swapDetails.value?.data?.data.buyToken.decimals,
+    ).toFixed()
 
     const sellAmt = fromWei(
       swapDetails.value?.data?.data.sellTokenAmount || 0,
-      swapDetails.value?.data?.data.sellToken.decimals
-    ).toFixed();
+      swapDetails.value?.data?.data.sellToken.decimals,
+    ).toFixed()
 
     logActionToSlack({
       message: `${formatDecimal(sellAmt)} ${formatSymbol(
-        swap.value.sellToken.symbol
+        swap.value.sellToken.symbol,
       )} to ${formatDecimal(buyAmt)} ${formatSymbol(
-        swap.value.buyToken.symbol
+        swap.value.buyToken.symbol,
       )}`,
-      action: "swap",
+      action: 'swap',
       account: account.value,
       chainId: toChainId.value,
       txHash: transactionHash,
-    });
+    })
 
-    resetForm();
-    emit("destroy");
+    resetForm()
+    emit('destroy')
 
-    showPendingTransactionModal(transactionHash, toChainId.value, "swap");
-  } catch (e: any) {
-    const err = parseTransactionError(e);
+    showPendingTransactionModal(transactionHash, toChainId.value, 'swap')
+  }
+  catch (e: any) {
+    const err = parseTransactionError(e)
     openSnackbar({
       message: err.formatted,
-      type: "error",
-    });
+      type: 'error',
+    })
 
     logActionToSlack({
       message: err.formatted,
-      type: "error",
-      action: "swap",
+      type: 'error',
+      action: 'swap',
       account: account.value,
       errorDetails: err.parsed,
-    });
-  } finally {
-    resume();
+    })
   }
-});
+  finally {
+    resume()
+  }
+})
 
 const { pause, resume } = useInterval(10000, {
   controls: true,
   callback: () => {
-    refreshing.value = true;
-    fetchSwapDetails();
+    refreshing.value = true
+    fetchSwapDetails()
   },
-});
+})
 
 onMounted(() => {
   // set initial buy token
-  const eth = availableBuyTokens.value.find((i) => i.symbol.includes("eth"));
-  const usdc = availableBuyTokens.value.find((i) => i.symbol === "usdc");
+  const eth = availableBuyTokens.value.find(i => i.symbol.includes('eth'))
+  const usdc = availableBuyTokens.value.find(i => i.symbol === 'usdc')
 
-  const isEth = swap.value.sellToken.symbol.includes("eth");
+  const isEth = swap.value.sellToken.symbol.includes('eth')
 
   swap.value.buyToken = getTokenByAddress(
-    props.toAddress ||
-      (isEth ? usdc?.address : eth?.address) ||
-      availableBuyTokens.value[0].address,
-    toChainId.value
-  )!;
+    props.toAddress
+      || (isEth ? usdc?.address : eth?.address)
+      || availableBuyTokens.value[0].address,
+    toChainId.value,
+  )!
 
   if (props.amount) {
     setSellAmount({
       value: props.amount,
       touched: true,
-    });
+    })
   }
-});
+})
 
 watch([() => swap.value.sellToken, () => swap.value.buyToken], () => {
-  toggleSwapped();
-});
+  toggleSwapped()
+})
 
 watch(sellAmount, () => {
-  if (!sellAmount.value) {
-    buyAmount.value = "";
-  }
-});
+  if (!sellAmount.value)
+    buyAmount.value = ''
+})
 
 watch(slippage, () => {
-  setCustomSlippage({
-    value: undefined,
-  });
-});
+  customSlippage.value = ''
+})
 
-watch([sellAmount, swapped, slippage, customSlippage, toChainId], () => {
-  fetchSwapDetails();
-});
+watch([sellAmount, swapped, actualSlippage, toChainId], () => {
+  fetchSwapDetails()
+})
 
 onUnmounted(() => {
-  abortController.value?.abort();
-});
+  abortController.value?.abort()
+})
 </script>
 
 <template>
-  <form @submit="onSubmit" novalidate class="flex gap-7.5 flex-col">
+  <form novalidate class="flex gap-7.5 flex-col" @submit="onSubmit">
     <div class="flex flex-col items-center justify-center">
       <div class="flex flex-col gap-[15px] w-full">
-        <h2 class="text-lg leading-5 text-center">Swap</h2>
+        <h2 class="text-lg leading-5 text-center">
+          Swap
+        </h2>
         <div
           class="flex items-center justify-center w-2/5 mx-auto rounded-full"
         >
@@ -568,18 +567,22 @@ onUnmounted(() => {
       >
         <div class="flex">
           <CommonInput
+            v-model="sellAmount"
             autofocus
             transparent
             placeholder="0.0"
             name="sell-amount"
-            @input="handleSellAmountInput"
-            v-model="sellAmount"
             type="numeric"
             class="flex-1"
             input-classes="text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
             container-classes="!px-0"
+            @input="handleSellAmountInput"
           />
-          <TokenSelection v-model="swap.sellToken" :tokens="availableTokens" />
+          <TokenSelection
+            v-model="swap.sellToken"
+            :tokens="availableTokens"
+            class="dark:bg-gray-900 bg-white"
+          />
         </div>
         <div class="flex items-center justify-between text-sm text-slate-400">
           <div
@@ -589,11 +592,9 @@ onUnmounted(() => {
           />
           <span v-else>{{ formatUsd(sellAmountInUsd) }}</span>
           <div class="flex items-center ml-auto gap-2.5 uppercase">
-            <span class="font-medium"
-              >{{ formatDecimal(sellTokenBalance) }}
-              {{ swap.sellToken?.symbol }}</span
-            >
-            <button type="button" @click="setMax" class="text-primary">
+            <span class="font-medium">{{ formatDecimal(sellTokenBalance) }}
+              {{ swap.sellToken?.symbol }}</span>
+            <button type="button" class="text-primary" @click="setMax">
               MAX
             </button>
           </div>
@@ -606,8 +607,8 @@ onUnmounted(() => {
         </span>
         <button
           type="button"
-          @click="swapTokens"
           class="flex justify-center items-center absolute bg-slate-150 dark:bg-slate-600 ring-[6px] ring-white dark:ring-gray-950 rounded-full h-10 w-10 -bottom-[26px] left-1/2 -translate-x-1/2"
+          @click="swapTokens"
         >
           <ArrowLeft class="w-5 h-5 -rotate-90 text-slate-400" />
         </button>
@@ -625,20 +626,21 @@ onUnmounted(() => {
             />
             <CommonInput
               v-else
+              v-model="buyAmount"
               transparent
               type="numeric"
               placeholder="0.0"
               name="buy-amount"
-              @input="handleBuyAmountInput"
-              v-model="buyAmount"
               class="flex-1"
               input-classes="text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
               container-classes="!px-0"
+              @input="handleBuyAmountInput"
             />
           </div>
           <TokenSelection
             v-model="swap.buyToken"
             :tokens="availableBuyTokens"
+            class="dark:bg-gray-900 bg-white"
           />
         </div>
         <div class="flex items-center justify-between text-sm text-slate-400">
@@ -649,10 +651,8 @@ onUnmounted(() => {
           />
           <span v-else>{{ formatUsd(buyAmountInUsd) }}</span>
           <div class="flex items-center ml-auto gap-2.5 uppercase">
-            <span class="font-medium"
-              >{{ formatDecimal(buyTokenBalance) }}
-              {{ swap.buyToken?.symbol }}</span
-            >
+            <span class="font-medium">{{ formatDecimal(buyTokenBalance) }}
+              {{ swap.buyToken?.symbol }}</span>
           </div>
         </div>
       </div>
@@ -670,10 +670,10 @@ onUnmounted(() => {
                   Slippage
 
                   <button
-                    type="button"
                     v-tippy="
                       'Slippage is the difference between the expected price of an order and the price when the order actually executes. The slippage tolerance % lets you decide how much slippage you are willing to accept for a trade.'
                     "
+                    type="button"
                   >
                     <QuestionCircleSVG class="w-5 h-5 text-primary" />
                   </button>
@@ -697,31 +697,33 @@ onUnmounted(() => {
                       <div
                         :class="{ '!border-primary': !customSlippage }"
                         class="radio !mr-0"
-                      ></div>
+                      />
                     </template>
                   </CommonSelect>
                 </div>
                 <CommonInput
+                  v-model="customSlippage"
                   name="slippage"
+                  type="numeric"
                   placeholder="Custom"
                   input-classes="!py-3"
                   class="flex-1"
                   :container-classes="customSlippage ? '!ring-primary' : ''"
-                  v-model="customSlippage"
                 >
                   <template #prefix>
                     <div
                       :class="{ '!border-primary': customSlippage }"
                       class="radio"
-                    ></div>
+                    />
                   </template>
                 </CommonInput>
               </div>
               <span
-                v-if="slippageMeta.dirty && errors['customSlippage']"
+                v-if="!!slippageError"
                 class="flex items-center gap-2 mt-4 text-xs text-left text-red-alert"
               >
-                <SVGInfo /> {{ errors["customSlippage"] }}
+                <SVGInfo />
+                {{ slippageError }}
               </span>
             </details>
 
@@ -737,15 +739,13 @@ onUnmounted(() => {
                   class="rounded-lg loading-box"
                 />
                 <div
-                  class="flex items-center justify-between w-full sm:justify-start sm:gap-2"
                   v-else
+                  class="flex items-center justify-between w-full sm:justify-start sm:gap-2"
                 >
                   <span>1 {{ swap.sellToken?.symbol }}</span>
                   <span class="hidden sm:block"> = </span>
-                  <span
-                    >{{ buyTokenAmountPerSellToken }}
-                    {{ swap.buyToken?.symbol }}</span
-                  >
+                  <span>{{ buyTokenAmountPerSellToken }}
+                    {{ swap.buyToken?.symbol }}</span>
                 </div>
                 <div
                   v-if="isLoading"
@@ -758,10 +758,8 @@ onUnmounted(() => {
                 >
                   <span>1 {{ swap.buyToken?.symbol }}</span>
                   <span class="hidden sm:block"> = </span>
-                  <span
-                    >{{ sellTokenAmountPerBuyToken }}
-                    {{ swap.sellToken?.symbol }}</span
-                  >
+                  <span>{{ sellTokenAmountPerBuyToken }}
+                    {{ swap.sellToken?.symbol }}</span>
                 </div>
               </div>
               <div
@@ -775,7 +773,7 @@ onUnmounted(() => {
                   style="width: 140px; height: 20px"
                   class="rounded-lg loading-box"
                 />
-                <span class="uppercase" v-else>
+                <span v-else class="uppercase">
                   {{ minRecievedAfterSlippage }}
                   {{ swap.buyToken.symbol }}
                 </span>
@@ -783,9 +781,7 @@ onUnmounted(() => {
               <div
                 class="flex items-center justify-between text-sm font-medium"
               >
-                <span :class="{ '!text-red-alert': gt(priceImpact, 0.04) }"
-                  >Price Impact</span
-                >
+                <span :class="{ '!text-red-alert': gt(priceImpact, 0.04) }">Price Impact</span>
                 <div
                   v-if="isLoading"
                   style="width: 100px; height: 20px"
@@ -795,8 +791,7 @@ onUnmounted(() => {
                   v-else
                   :class="{ '!text-red-alert': gt(priceImpact, 0.04) }"
                 >
-                  {{ formatPercent(priceImpact) }}</span
-                >
+                  {{ formatPercent(priceImpact) }}</span>
               </div>
             </div>
           </div>

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import GloveSVG from '~/assets/images/icons/globe.svg?component';
-const { switchToAvocadoNetwork } = useNetworks();
+import GloveSVG from '~/assets/images/icons/globe.svg?component'
+
+const { switchToAvocadoNetwork } = useNetworks()
 </script>
 
 <template>
@@ -13,7 +14,7 @@ const { switchToAvocadoNetwork } = useNetworks();
         You're connected to the wrong network. Please switch to Avocado Network.
       </p>
     </div>
-    <CommonButton @click="switchToAvocadoNetwork()" class="whitespace-nowrap w-full h-7.5 sm:h-fit sm:w-fit justify-center" target="_blank" size="sm">
+    <CommonButton class="whitespace-nowrap w-full h-7.5 sm:h-fit sm:w-fit justify-center" target="_blank" size="sm" @click="switchToAvocadoNetwork()">
       Switch Network
     </CommonButton>
   </div>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
-import SVGX from "~/assets/images/icons/x.svg?component";
+import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
+import SVGX from '~/assets/images/icons/x.svg?component'
 
-const { hideVersionUpdateBanner } = useBanner();
+const { hideVersionUpdateBanner } = useBanner()
 </script>
 
 <template>
@@ -21,7 +21,7 @@ const { hideVersionUpdateBanner } = useBanner();
         Update Safe
       </NuxtLink>
     </div>
-    <button @click="hideVersionUpdateBanner" class="self-baseline w-5 h-5">
+    <button class="self-baseline w-5 h-5" @click="hideVersionUpdateBanner">
       <SVGX class="w-3 h-3 text-slate-400" />
     </button>
   </div>

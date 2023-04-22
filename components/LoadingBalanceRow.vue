@@ -8,39 +8,36 @@ const props = defineProps({
 
 const loadingClass = computed(() => ({
   'loading-box': props.loading,
-  'dark:bg-slate-800 bg-slate-150' : !props.loading,
+  'dark:bg-slate-800 bg-slate-150': !props.loading,
 }))
-
 </script>
 
 <template>
   <tr>
     <td class="text-left py-6 pl-7.5 w-1/3">
       <div class="flex space-x-3">
-       <div :class="loadingClass" class="w-10 h-10 rounded-full flex items-center justify-center">
-          
-        </div>
+        <div :class="loadingClass" class="w-10 h-10 rounded-full flex items-center justify-center" />
 
         <div class="space-y-1">
-          <div :class="loadingClass" class="rounded-5 w-20 h-5"></div>
+          <div :class="loadingClass" class="rounded-5 w-20 h-5" />
 
-          <div :class="loadingClass" class="rounded-5 w-32 h-5"></div>
+          <div :class="loadingClass" class="rounded-5 w-32 h-5" />
         </div>
       </div>
     </td>
     <td class="py-6">
-      <div :class="loadingClass" class="rounded-5 w-[120px] h-5"></div>
+      <div :class="loadingClass" class="rounded-5 w-[120px] h-5" />
     </td>
     <td class="py-6">
-      <div :class="loadingClass" class="rounded-5 w-20 h-5 mx-auto"></div>
+      <div :class="loadingClass" class="rounded-5 w-20 h-5 mx-auto" />
     </td>
     <td class="py-6 pl-10">
-      <div :class="loadingClass" class="rounded-5 w-[60px] h-5"></div>
+      <div :class="loadingClass" class="rounded-5 w-[60px] h-5" />
     </td>
     <td class="py-6 flex justify-center items-center gap-[15px]">
-      <div :class="loadingClass" class="rounded-5 w-9 h-9"></div>
-      <div :class="loadingClass" class="rounded-5 w-9 h-9"></div>
-      <div :class="loadingClass" class="rounded-5 w-9 h-9"></div>
+      <div :class="loadingClass" class="rounded-5 w-9 h-9" />
+      <div :class="loadingClass" class="rounded-5 w-9 h-9" />
+      <div :class="loadingClass" class="rounded-5 w-9 h-9" />
     </td>
   </tr>
 </template>

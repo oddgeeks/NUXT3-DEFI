@@ -1,22 +1,22 @@
-import { ConnectorUpdate } from "@web3-react/types";
-import { AbstractConnector } from "@web3-react/abstract-connector";
+import type { ConnectorUpdate } from '@web3-react/types'
+import { AbstractConnector } from '@web3-react/abstract-connector'
 
 interface WalletLinkConnectorArguments {
-  url: string;
-  appName: string;
-  appLogoUrl?: string;
-  darkMode?: boolean;
-  supportedChainIds?: number[];
+  url: string
+  appName: string
+  appLogoUrl?: string
+  darkMode?: boolean
+  supportedChainIds?: number[]
 }
 
 export class WalletLinkConnector extends AbstractConnector {
-  private readonly url: string;
-  private readonly appName: string;
-  private readonly appLogoUrl?: string;
-  private readonly darkMode: boolean;
+  private readonly url: string
+  private readonly appName: string
+  private readonly appLogoUrl?: string
+  private readonly darkMode: boolean
 
-  public walletLink: any;
-  private provider: any;
+  public walletLink: any
+  private provider: any
 
   constructor({
     url,
@@ -25,87 +25,88 @@ export class WalletLinkConnector extends AbstractConnector {
     darkMode,
     supportedChainIds,
   }: WalletLinkConnectorArguments) {
-    super({ supportedChainIds: supportedChainIds });
+    super({ supportedChainIds })
 
-    this.url = url;
-    this.appName = appName;
-    this.appLogoUrl = appLogoUrl;
-    this.darkMode = darkMode || false;
+    this.url = url
+    this.appName = appName
+    this.appLogoUrl = appLogoUrl
+    this.darkMode = darkMode || false
 
-    this.handleChainChanged = this.handleChainChanged.bind(this);
-    this.handleAccountsChanged = this.handleAccountsChanged.bind(this);
+    this.handleChainChanged = this.handleChainChanged.bind(this)
+    this.handleAccountsChanged = this.handleAccountsChanged.bind(this)
   }
 
   public async activate(): Promise<ConnectorUpdate> {
-    // @ts-ignore
+    // @ts-expect-error
     if (window.ethereum && window.ethereum.isCoinbaseWallet === true) {
       // user is in the dapp browser on Coinbase Wallet
-      this.provider = window.ethereum;
-    } else if (!this.walletLink) {
-      const CoinbaseWalletSDK = await import("@coinbase/wallet-sdk").then(
-        (m) => m?.default ?? m
-      );
+      this.provider = window.ethereum
+    }
+    else if (!this.walletLink) {
+      const CoinbaseWalletSDK = await import('@coinbase/wallet-sdk').then(
+        m => m?.default ?? m,
+      )
       console.log({
         CoinbaseWalletSDK,
-      });
+      })
       this.walletLink = new CoinbaseWalletSDK({
         appName: this.appName,
         darkMode: this.darkMode,
         ...(this.appLogoUrl ? { appLogoUrl: this.appLogoUrl } : {}),
-      });
+      })
       this.provider = this.walletLink.makeWeb3Provider(
         this.url,
-        avoChainId as any
-      );
+        avoChainId as any,
+      )
     }
 
     const accounts = await this.provider.request({
-      method: "eth_requestAccounts",
-    });
-    const account = accounts[0];
+      method: 'eth_requestAccounts',
+    })
+    const account = accounts[0]
 
-    this.provider.on("chainChanged", this.handleChainChanged);
-    this.provider.on("accountsChanged", this.handleAccountsChanged);
+    this.provider.on('chainChanged', this.handleChainChanged)
+    this.provider.on('accountsChanged', this.handleAccountsChanged)
 
-    return { provider: this.provider, account: account };
+    return { provider: this.provider, account }
   }
 
   public async getProvider(): Promise<any> {
-    return this.provider;
+    return this.provider
   }
 
   public async getChainId(): Promise<number> {
-    return this.provider.chainId;
+    return this.provider.chainId
   }
 
   public async getAccount(): Promise<null | string> {
     const accounts = await this.provider.request({
-      method: "eth_requestAccounts",
-    });
-    return accounts[0];
+      method: 'eth_requestAccounts',
+    })
+    return accounts[0]
   }
 
   public deactivate() {
-    this.provider.removeListener("chainChanged", this.handleChainChanged);
-    this.provider.removeListener("accountsChanged", this.handleAccountsChanged);
+    this.provider.removeListener('chainChanged', this.handleChainChanged)
+    this.provider.removeListener('accountsChanged', this.handleAccountsChanged)
   }
 
   public async close() {
-    this.provider.close();
-    this.emitDeactivate();
+    this.provider.close()
+    this.emitDeactivate()
   }
 
   private handleChainChanged(chainId: number | string): void {
-    if (process.dev) {
-      console.log("Handling 'chainChanged' event with payload", chainId);
-    }
-    this.emitUpdate({ chainId: chainId });
+    if (process.dev)
+      console.log('Handling \'chainChanged\' event with payload', chainId)
+
+    this.emitUpdate({ chainId })
   }
 
   private handleAccountsChanged(accounts: string[]): void {
-    if (process.dev) {
-      console.log("Handling 'accountsChanged' event with payload", accounts);
-    }
-    this.emitUpdate({ account: accounts[0] });
+    if (process.dev)
+      console.log('Handling \'accountsChanged\' event with payload', accounts)
+
+    this.emitUpdate({ account: accounts[0] })
   }
 }

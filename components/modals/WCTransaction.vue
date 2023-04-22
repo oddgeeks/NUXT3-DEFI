@@ -1,69 +1,68 @@
 <script lang="ts" setup>
-import NetworkSVG from "~/assets/images/icons/network.svg?component";
-import FlowersSVG from "~/assets/images/icons/flowers.svg?component";
-import SVGClockCircle from "~/assets/images/icons/clock-circle.svg?component";
-
-import type WalletConnect from "@walletconnect/client";
-
-const emit = defineEmits(["resolve", "reject"]);
+import type WalletConnect from '@walletconnect/client'
+import NetworkSVG from '~/assets/images/icons/network.svg?component'
+import FlowersSVG from '~/assets/images/icons/flowers.svg?component'
+import SVGClockCircle from '~/assets/images/icons/clock-circle.svg?component'
 
 const props = defineProps<{
-  payload: any;
-  chainId: string;
-  wc: WalletConnect;
-  metadata: string;
-  isSign?: boolean;
-  signMessageDetails?: any;
-}>();
+  payload: any
+  chainId: string
+  wc: WalletConnect
+  metadata: string
+  isSign?: boolean
+  signMessageDetails?: any
+}>()
 
-const { sendTransactions, safeAddress } = useAvocadoSafe();
-const { account } = useWeb3();
-const [submitting, toggle] = useToggle();
-const { parseTransactionError } = useErrorHandler();
+const emit = defineEmits(['resolve', 'reject'])
+
+const { sendTransactions, safeAddress } = useAvocadoSafe()
+const { account } = useWeb3()
+const [submitting, toggle] = useToggle()
+const { parseTransactionError } = useErrorHandler()
 
 const submitDisabled = computed(
-  () => submitting.value || pending.value || !!error.value
-);
+  () => submitting.value || pending.value || !!error.value,
+)
 
 onMounted(async () => {
-  document.title = "(1) Avocado";
+  document.title = '(1) Avocado'
 
-  injectFavicon("/icons/favicon-alert.ico");
-});
+  injectFavicon('/icons/favicon-alert.ico')
+})
 
 onBeforeUnmount(() => {
-  document.title = "Avocado";
+  document.title = 'Avocado'
 
-  injectFavicon("/icons/favicon.ico");
-});
+  injectFavicon('/icons/favicon.ico')
+})
 
-const rejectRequest = (message: string) => {
+function rejectRequest(message: string) {
   props.wc.rejectRequest({
     id: props.payload.id,
     error: {
       code: -32603,
-      message: message,
+      message,
     },
-  });
-};
+  })
+}
 
-const calculateDate = (timestamp: number) => {
-  return new Date(timestamp * 1000).toLocaleString();
-};
+function calculateDate(timestamp: number) {
+  return new Date(timestamp * 1000).toLocaleString()
+}
 
 const transactions = computed(() => {
-  const [transactionOrTransactions] = props.payload.params;
+  const [transactionOrTransactions] = props.payload.params
 
   return Array.isArray(transactionOrTransactions)
     ? transactionOrTransactions
-    : [transactionOrTransactions];
-});
+    : [transactionOrTransactions]
+})
 
 const options = computed(() => {
-  const [transactionOrTransactions, chainId, options] = props.payload.params;
+  const [transactionOrTransactions, chainId, options] = props.payload.params
 
-  return options || {};
-});
+  return options || {}
+})
 
 const {
   data: fee,
@@ -72,11 +71,11 @@ const {
 } = useEstimatedFee(transactions, ref(props.chainId), {
   immediate: true,
   options: options.value,
-});
+})
 
-const handleSubmit = async () => {
+async function handleSubmit() {
   try {
-    toggle(true);
+    toggle(true)
 
     const transactionHash = await sendTransactions(
       transactions.value,
@@ -84,102 +83,105 @@ const handleSubmit = async () => {
       {
         metadata: props.metadata,
         ...options.value,
-      }
-    );
+      },
+    )
 
     props.wc.approveRequest({
       id: props.payload.id,
       result: transactionHash,
-    });
+    })
 
     logActionToSlack({
-      message: `${props.isSign ? "Permit2 Approval" : "Txn"} on ${
+      message: `${props.isSign ? 'Permit2 Approval' : 'Txn'} on ${
         props.wc.peerMeta?.url
       }`,
-      type: "success",
-      action: "wc",
+      type: 'success',
+      action: 'wc',
       txHash: transactionHash,
       chainId: props.chainId,
       account: account.value,
-    });
+    })
 
-    emit("resolve", true);
+    emit('resolve', true)
 
-    showPendingTransactionModal(transactionHash, props.chainId, "wc");
-  } catch (e: any) {
-    const err = parseTransactionError(e);
+    showPendingTransactionModal(transactionHash, props.chainId, 'wc')
+  }
+  catch (e: any) {
+    const err = parseTransactionError(e)
 
     openSnackbar({
       message: err.formatted,
-      type: "error",
-    });
+      type: 'error',
+    })
 
     logActionToSlack({
-      message: `${props.isSign ? "Permit2 Approval" : "Txn"} ${
+      message: `${props.isSign ? 'Permit2 Approval' : 'Txn'} ${
         props.wc.peerMeta?.url
       } ${err}`,
-      type: "error",
-      action: "wc",
+      type: 'error',
+      action: 'wc',
       chainId: props.chainId,
       account: account.value,
       errorDetails: err.parsed,
-    });
-  } finally {
-    toggle(false);
+    })
   }
-};
+  finally {
+    toggle(false)
+  }
+}
 
 const { data: simulationDetails } = useAsyncData(
-  "simulationDetails",
+  'simulationDetails',
   () => {
-    return http("/api/simulate", {
-      method: "POST",
+    return http('/api/simulate', {
+      method: 'POST',
       body: {
         actions: transactions.value.map((i) => {
-          console.log(i);
+          console.log(i)
           return {
             target: i.to,
             data: i.data,
-            value: i?.value || "0",
-            operation: i?.operation ? String(i?.operation) : "0",
-          };
+            value: i?.value || '0',
+            operation: i?.operation ? String(i?.operation) : '0',
+          }
         }),
         avocadoSafe: safeAddress.value,
         chainId: props.chainId,
         id: options.value?.id,
       },
-    }) as Promise<ISimulation>;
+    }) as Promise<ISimulation>
   },
   {
     immediate: true,
     server: false,
-  }
-);
+  },
+)
 
 const hasSimulationDetails = computed(() => {
-  if (!simulationDetails.value) return false;
+  if (!simulationDetails.value)
+    return false
   return Object.values(simulationDetails.value.balanceChange).some(
-    (i: any[]) => i?.length > 0
-  );
-});
+    (i: any[]) => i?.length > 0,
+  )
+})
 
-const formatURL = (url: string) => {
-  return new URL(url).hostname;
-};
+function formatURL(url: string) {
+  return new URL(url).hostname
+}
 
-const handleReject = () => {
-  rejectRequest("Rejected");
-  emit("reject");
-};
+function handleReject() {
+  rejectRequest('Rejected')
+  emit('reject')
+}
 
 onUnmounted(() => {
-  clearNuxtData("simulationDetails");
-});
+  clearNuxtData('simulationDetails')
+})
 </script>
 
 <template>
-  <form @submit.prevent="handleSubmit" class="flex flex-col gap-7.5">
-    <audio src="/audio/alert.mp3" autoplay></audio>
+  <form class="flex flex-col gap-7.5" @submit.prevent="handleSubmit">
+    <audio src="/audio/alert.mp3" autoplay />
     <div class="font-semibold leading-[30px] text-center sm:text-left">
       <span v-if="isSign">Send Transaction: Permit2 Approval</span>
       <span v-else>Send Transaction</span>
@@ -219,7 +221,7 @@ onUnmounted(() => {
           </div>
         </div>
         <EstimatedFee
-          wrapperClass="!p-0"
+          wrapper-class="!p-0"
           :loading="pending"
           :data="fee"
           :error="error"
@@ -239,12 +241,18 @@ onUnmounted(() => {
         </template>
       </div>
     </div>
+    <SimulationDetails
+      v-if="hasSimulationDetails"
+      :chain-id="chainId"
+      :details="simulationDetails"
+      :has-error="!!error"
+    />
     <div class="flex justify-between items-center gap-4">
       <CommonButton
-        @click="handleReject"
         color="white"
         size="lg"
         class="flex-1 justify-center items-center hover:!bg-red-alert hover:!bg-opacity-10 hover:text-red-alert"
+        @click="handleReject"
       >
         Reject
       </CommonButton>
@@ -259,10 +267,5 @@ onUnmounted(() => {
         Submit
       </CommonButton>
     </div>
-    <SimulationDetails
-      v-if="hasSimulationDetails"
-      :chainId="chainId"
-      :details="simulationDetails"
-    />
   </form>
 </template>

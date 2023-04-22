@@ -397,3 +397,17 @@ interface NFTData {
 interface NFTParams {
   pageSize: number;
 }
+
+
+ interface IContact {
+  name: string
+  address: string
+  chainId: number | string
+}
+
+ interface ITransferCount {
+  from: string
+  to: string
+  chainId: number | string
+  transferCount: number
+}

@@ -1,27 +1,27 @@
 <script setup lang="ts">
-const { modals } = useModal();
+const { modals } = useModal()
 </script>
 
 <template>
   <Teleport to="body">
     <TransitionGroup :duration="300" name="modals">
       <Modal
-        @destroy="modal.destroy"
-        @reject="modal.onReject"
+        v-for="modal in modals"
         :key="modal.id"
         :modal-id="modal.id"
         :options="modal.options"
         :inline="false"
         :is-async="modal.async"
         :show="true"
-        v-for="modal in modals"
+        @destroy="modal.destroy"
+        @reject="modal.onReject"
       >
         <component
           :is="modal.component"
+          v-bind="modal.componentProps"
           @destroy="modal.destroy"
           @resolve="modal.onResolve"
           @reject="modal.onReject"
-          v-bind="modal.componentProps"
         />
       </Modal>
     </TransitionGroup>
