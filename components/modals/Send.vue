@@ -515,7 +515,11 @@ function isInsufficient(idx: number) {
             v-else-if="totalTransfers === 0"
             class="text-sm text-orange-400 flex items-center gap-2"
           >
-            <SVGInfoCircle /> First time send
+            <SVGInfoCircle
+              v-tippy="
+                'You are sending tokens to this address for the first time, make sure to double check the address again'
+              "
+            /> New Address Detected
           </span>
         </div>
 
