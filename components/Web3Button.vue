@@ -4,6 +4,7 @@ import GasSVG from '~/assets/images/icons/gas.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
 import PowerOnSVG from '~/assets/images/icons/power-on.svg?component'
 import PowerOffSVG from '~/assets/images/icons/power-off.svg?component'
+import SVGMetamask from '~/assets/images/wallet/metamask.svg?component'
 
 defineProps({
   hideGas: Boolean,
@@ -44,7 +45,7 @@ const addressLabel = computed(() =>
 )
 
 const providerLogo = computed(() => {
-  return providers.find(item => item.id === cachedProviderName.value)?.logo
+  return providers.find(item => item.id === cachedProviderName.value)?.logo ?? SVGMetamask
 })
 
 whenever(
