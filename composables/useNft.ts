@@ -56,6 +56,7 @@ export function useNft() {
           name: nft.name,
           chainId: network.chainId,
           tokenId: nft.tokenId,
+          contractAddress: nft.contractAddress,
         })
 
         return acc

@@ -15,12 +15,12 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const { data, pending } = useAsyncData(
+const { data, pending, refresh } = useAsyncData(
   async () => {
     if (!safeAddress.value)
       return
     try {
-      const nft = new NFT('0x2e8ABfE042886E4938201101A63730D04F160A82')
+      const nft = new NFT(safeAddress.value)
 
       return nft.getNFTs({
         pageSize: 50,
@@ -35,6 +35,10 @@ const { data, pending } = useAsyncData(
     watch: [safeAddress],
   },
 )
+
+useIntervalFn(() => {
+  refresh()
+}, 10000)
 
 const filteredAssets = computed(() => {
   const items = data.value?.filter(item =>
@@ -57,7 +61,7 @@ const filteredAssets = computed(() => {
   <div class="flex-1 container relative">
     <div class="w-full flex items-center justify-between mb-5">
       <h1>
-        Your NFTs <span v-if="!pending && data">({{ data?.length }})</span>
+        Your NFTs <span v-if="data">({{ data?.length }})</span>
       </h1>
       <MultipleNetworkFilter v-if="account" />
     </div>
@@ -74,7 +78,7 @@ const filteredAssets = computed(() => {
     </CommonInput>
     <div
       :class="{
-        'blur dark:bg-gray-850 rounded-[25px] bg-slate-50': pending || !data,
+        'blur dark:bg-gray-850 rounded-[25px] bg-slate-50': !data,
       }"
       class="w-[101%] h-full max-h-[750px] sm:overflow-auto sm:-mr-2 scroll-style"
     >

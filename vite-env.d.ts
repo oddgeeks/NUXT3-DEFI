@@ -392,6 +392,7 @@ interface NFTData {
   name: string;
   chainId: number;
   tokenId: string;
+  contractAddress: string;
 }
 
 interface NFTParams {
