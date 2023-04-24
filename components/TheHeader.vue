@@ -42,24 +42,31 @@ useIntervalFn(refresh, 1000)
         >
           Home
         </NuxtLink>
-        <NuxtLink
-          v-if="account"
-          active-class="dark:text-white text-slate-900"
-          class="text-slate-400 py-3 px-5"
-          external
-          target="_blank"
-          :to="`${avoExplorerURL}/address/${account}`"
-        >
-          History
-        </NuxtLink>
-        <NuxtLink
-          v-if="account"
-          active-class="dark:text-white text-slate-900"
-          class="text-slate-400 py-3 px-5"
-          to="/contacts"
-        >
-          Contacts
-        </NuxtLink>
+        <template v-if="account">
+          <NuxtLink
+            active-class="dark:text-white text-slate-900"
+            class="text-slate-400 py-3 px-5"
+            external
+            target="_blank"
+            :to="`${avoExplorerURL}/address/${account}`"
+          >
+            History
+          </NuxtLink>
+          <NuxtLink
+            active-class="dark:text-white text-slate-900"
+            class="text-slate-400 py-3 px-5"
+            to="/contacts"
+          >
+            Contacts
+          </NuxtLink>
+          <NuxtLink
+            active-class="dark:text-white text-slate-900"
+            class="text-slate-400 py-3 px-5"
+            to="/nft"
+          >
+            NFT
+          </NuxtLink>
+        </template>
       </div>
       <div class="flex items-center gap-5">
         <ColorModeSwitcher />
