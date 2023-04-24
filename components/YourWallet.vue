@@ -1,21 +1,24 @@
 <script setup lang="ts">
-import EyeSVG from '@/assets/images/icons/eye.svg?component';
+import EyeSVG from '@/assets/images/icons/eye.svg?component'
 
-const { safeAddress } = useAvocadoSafe();
-const account = computed(() => safeAddress.value || "0x000000000000000");
+const { safeAddress } = useAvocadoSafe()
+const account = computed(() => safeAddress.value || '0x000000000000000')
 
-const openModal = () => {
-  if (account.value === '0x000000000000000') return;
-  openYourWalletModal(account.value);
-};
+function openModal() {
+  if (account.value === '0x000000000000000')
+    return
+  openYourWalletModal(account.value)
+}
 </script>
 
 <template>
-  <div @click="openModal"
-    class="flex items-center justify-between px-4.5 py-4 bg-slate-50 dark:bg-gray-850 sm:hidden rounded-5">
+  <div
+    class="flex items-center justify-between px-4.5 py-4 bg-slate-50 dark:bg-gray-850 sm:hidden rounded-5"
+    @click="openModal"
+  >
     <div class="flex space-x-[17px] items-center">
       <div class="p-1 bg-white rounded-[8px] flex justify-center items-center">
-        <StyledQrCode class="mx-auto overflow-hidden" :class="{ 'blur-sm': account === '0x000000000000000' }" :size="32" :margin="0" :data="account" :key="account" />
+        <StyledQrCode :key="account" class="mx-auto overflow-hidden" :class="{ 'blur-sm': account === '0x000000000000000' }" :size="32" :margin="0" :data="account" />
       </div>
       <div class="flex flex-col space-y-1">
         <span>Your Avo Wallet</span>

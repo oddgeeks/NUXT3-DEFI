@@ -1,62 +1,59 @@
 <script setup lang="ts">
-import SVGX from "~/assets/images/icons/x.svg?component";
-
-const emit = defineEmits(["destroy", "reject"]);
-
-const { lastModal } = useModal();
-
-const { escape } = useMagicKeys();
+import SVGX from '~/assets/images/icons/x.svg?component'
 
 const props = withDefaults(
   defineProps<{
-    show?: boolean;
-    modalId?: string;
-    options?: any;
-    inline?: boolean;
-    isAsync?: boolean;
+    show?: boolean
+    modalId?: string
+    options?: any
+    inline?: boolean
+    isAsync?: boolean
   }>(),
   {
-    modalId: "",
+    modalId: '',
     show: false,
     isAsync: false,
     inline: false,
     options: {},
-  }
-);
+  },
+)
 
-const wrapperRef = ref<HTMLElement>();
+const emit = defineEmits(['destroy', 'reject'])
 
-const handleDestory = () => {
-  emit("destroy");
+const { lastModal } = useModal()
 
-  if (props.isAsync) {
-    emit("reject");
-  }
-};
+const { escape } = useMagicKeys()
+
+const wrapperRef = ref<HTMLElement>()
+
+function handleDestory() {
+  emit('destroy')
+
+  if (props.isAsync)
+    emit('reject')
+}
 
 onClickOutside(
   wrapperRef,
   (event: any) => {
     if (event.currentTarget) {
-      const targetModalId = event.target?.dataset?.modalId;
+      const targetModalId = event.target?.dataset?.modalId
 
-      if (targetModalId === props.modalId) {
-        handleDestory();
-      }
+      if (targetModalId === props.modalId)
+        handleDestory()
     }
   },
   {
-    ignore: [".modal-content-wrapper"],
-  }
-);
+    ignore: ['.modal-content-wrapper'],
+  },
+)
 
 whenever(escape, () => {
-  if (props.inline && props.show) {
-    handleDestory();
-  } else if (props.show && lastModal.value.id === props.modalId) {
-    handleDestory();
-  }
-});
+  if (props.inline && props.show)
+    handleDestory()
+  else if (props.show && lastModal.value.id === props.modalId)
+    handleDestory()
+})
 </script>
 
 <template>
@@ -94,8 +91,8 @@ whenever(escape, () => {
         >
           <button
             class="absolute h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100 top-0 right-0 m-6"
-            @click="handleDestory"
             aria-label="Close modal"
+            @click="handleDestory"
           >
             <SVGX />
           </button>

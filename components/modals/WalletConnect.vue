@@ -1,137 +1,147 @@
 <script setup lang="ts">
-import SVGX from "~/assets/images/icons/x.svg?component";
-import SVGAlert from "~/assets/images/icons/exclamation-octagon.svg?component";
-import SVGInfo from "~/assets/images/icons/exclamation-circle.svg?component";
-import { useField, useForm } from "vee-validate";
-import { parseWalletConnectUri } from "@walletconnect/utils";
-import LiteYouTubeEmbed from "vue-lite-youtube-embed";
-import "vue-lite-youtube-embed/style.css";
+import * as yup from 'yup'
+import { useField, useForm } from 'vee-validate'
+import { parseWalletConnectUri } from '@walletconnect/utils'
+import LiteYouTubeEmbed from 'vue-lite-youtube-embed'
+import SVGX from '~/assets/images/icons/x.svg?component'
+import SVGAlert from '~/assets/images/icons/exclamation-octagon.svg?component'
+import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
+import SVGQr from '~/assets/images/icons/qr.svg?component'
 
-import * as yup from "yup";
-import SVGQr from "~/assets/images/icons/qr.svg?component";
+import 'vue-lite-youtube-embed/style.css'
 
-const emit = defineEmits(["destroy"]);
+const emit = defineEmits(['destroy'])
 
-const wcStore = useWalletConnect();
+const wcStore = useWalletConnect()
 
-const isTutorialWatched = useLocalStorage("wallet-c-tutorial-watched", false);
-const isIframeVisible = ref(true);
-const connection = shallowRef();
-const connectionChainId = shallowRef(137);
+const isTutorialWatched = useLocalStorage('wallet-c-tutorial-watched', false)
+const isIframeVisible = ref(true)
+const connection = shallowRef()
+const connectionChainId = shallowRef(137)
 
-const [loading, toggle] = useToggle(false);
+const [loading, toggle] = useToggle(false)
 
-const isExpertMode = ref(false);
-const detailsRef = ref<HTMLDialogElement>();
+const isExpertMode = ref(false)
+const detailsRef = ref<HTMLDialogElement>()
 
 const { handleSubmit, errors, meta, resetForm } = useForm({
   validationSchema: yup.object({
     uri: yup
       .string()
       .required()
-      .test("uri", "Incorrect URI", (value: any) => {
-        const parsedURI = parseWalletConnectUri(value);
+      .test('uri', 'Incorrect URI', (value: any) => {
+        const parsedURI = parseWalletConnectUri(value)
 
         return (
-          !!parsedURI.key &&
-          !!parsedURI.bridge &&
-          !!parsedURI.bridge &&
-          !!parsedURI.protocol
-        );
+          !!parsedURI.key
+          && !!parsedURI.bridge
+          && !!parsedURI.bridge
+          && !!parsedURI.protocol
+        )
       }),
   }),
-});
+})
 
 const { value: uri, meta: uriMeta } = useField<string>(
-  "uri",
+  'uri',
   {},
   {
-    initialValue: "",
-  }
-);
+    initialValue: '',
+  },
+)
 
 const prepareAndConnect = handleSubmit(async () => {
-  if (!uri.value) {
-    return;
-  }
+  if (!uri.value)
+    return
 
   try {
-    toggle(true);
-    connection.value = await wcStore.prepareConnection(uri.value);
-    connectionChainId.value = connection.value.chainId;
-    uri.value = "";
-  } catch (e: any) {
-    console.log(e);
+    toggle(true)
+    connection.value = await wcStore.prepareConnection(uri.value)
+    if (!connection.value.chainId) {
+      isExpertMode.value = true
+      connection.value.chainId = 1
+    }
+    connectionChainId.value = connection.value.chainId
+    uri.value = ''
+  }
+  catch (e: any) {
+    console.log(e)
     openDialogModal({
-      title: "Connected Failed",
-      content: "Try again or return to the home page.",
-      type: "error",
-      buttonText: "Try Again",
-    });
-  } finally {
-    toggle(false);
+      title: 'Connected Failed',
+      content: 'Try again or return to the home page.',
+      type: 'error',
+      buttonText: 'Try Again',
+    })
   }
-});
+  finally {
+    toggle(false)
+  }
+})
 
-const connect = async () => {
+async function connect() {
   try {
-    toggle(true);
+    toggle(true)
     await wcStore.connect(
       connection.value.connector,
       connection.value.storageId,
-      connectionChainId.value
-    );
+      connectionChainId.value,
+    )
 
-    emit("destroy");
+    emit('destroy')
     openDialogModal({
-      title: "Connected Successfully",
+      title: 'Connected Successfully',
       content: `You can now use <a target='_blank' rel='noopener noreferrer' class='text-primary' href=${connection.value.peerMeta.url}>
         ${connection.value.peerMeta.name}
         </a> with your Avocado wallet.`,
-      type: "success",
+      type: 'success',
       isButtonVisible: false,
-    });
+    })
 
-    uri.value = "";
-    connection.value = undefined;
-  } catch (e) {
-    emit("destroy");
-    openDialogModal({
-      title: "Connected Failed",
-      content: "Try again or return to the home page.",
-      type: "error",
-      buttonText: "Try Again",
-    });
-  } finally {
-    toggle(false);
+    uri.value = ''
+    connection.value = undefined
   }
-};
+  catch (e) {
+    emit('destroy')
+    openDialogModal({
+      title: 'Connected Failed',
+      content: 'Try again or return to the home page.',
+      type: 'error',
+      buttonText: 'Try Again',
+    })
+  }
+  finally {
+    toggle(false)
+  }
+}
 
-const cancelExpertMode = () => {
-  if (detailsRef.value) detailsRef.value.open = false;
-};
+function cancelExpertMode() {
+  if (detailsRef.value)
+    detailsRef.value.open = false
+}
 
-const confirmExpertMode = () => {
-  if (detailsRef.value) detailsRef.value.open = false;
-  isExpertMode.value = true;
-};
+function confirmExpertMode() {
+  if (detailsRef.value)
+    detailsRef.value.open = false
+  isExpertMode.value = true
+}
 
-const exitExpertMode = () => {
-  connectionChainId.value = 1;
-  isExpertMode.value = false;
-};
+function exitExpertMode() {
+  connectionChainId.value = 1
+  isExpertMode.value = false
+}
 
 onMounted(async () => {
-  if (isTutorialWatched.value) return (isIframeVisible.value = false);
-});
+  if (isTutorialWatched.value)
+    return (isIframeVisible.value = false)
+})
 </script>
 
 <template>
   <div>
     <form
-      @submit.prevent="prepareAndConnect"
       v-if="!connection"
       class="space-y-8"
+      @submit.prevent="prepareAndConnect"
     >
       <div class="flex flex-col items-center">
         <svg
@@ -171,24 +181,23 @@ onMounted(async () => {
         </div>
 
         <p class="text-slate-400 text-xs text-center leading-5 font-medium">
-          Do not close this window while connecting.<br />
+          Do not close this window while connecting.<br>
           Have a question? Follow this
           <a
             target="blank"
             rel="noopener noreferrer"
             href="https://help.avocado.instadapp.io/en/articles/6848656-connect-dapps-on-avocado-using-walletconnect"
             class="inline-flex gap-2.5 text-primary"
-            >guide</a
-          >.
+          >guide</a>.
         </p>
       </div>
 
       <CommonInput
+        v-model="uri"
         name="uri"
         type="search"
         autofocus
-        :error-message="uriMeta.dirty ? errors['uri'] : ''"
-        v-model="uri"
+        :error-message="uriMeta.dirty ? errors.uri : ''"
         placeholder="QR code or link"
       >
         <template v-if="!uri" #suffix>
@@ -208,22 +217,22 @@ onMounted(async () => {
     </form>
 
     <form
-      tabindex="0"
+      v-else
       v-focus
+      tabindex="0"
+      class="space-y-8 focus:outline-none"
       @keypress.enter="connect"
       @submit.prevent="connect"
-      v-else
-      class="space-y-8 focus:outline-none"
     >
       <div class="flex flex-col items-center space-y-8">
-        <div class="w-10 h-10" v-if="connection.peerMeta.icons.length">
+        <div v-if="connection.peerMeta.icons.length" class="w-10 h-10">
           <img
             class="w-full h-full object-fit"
             referrerpolicy="no-referrer"
             :src="
               connection.peerMeta.icons[connection.peerMeta.icons.length - 1]
             "
-          />
+          >
         </div>
 
         <span> {{ connection.peerMeta.name }} Wants to Connect </span>
@@ -257,15 +266,15 @@ onMounted(async () => {
             </p>
             <div class="flex w-full gap-4">
               <CommonButton
-                @click="cancelExpertMode"
                 class="flex-1 justify-center"
+                @click="cancelExpertMode"
               >
                 Cancel
               </CommonButton>
               <CommonButton
-                @click="confirmExpertMode"
                 color="orange"
                 class="flex-1 justify-center items-center gap-2"
+                @click="confirmExpertMode"
               >
                 <SVGAlert />
                 Yes
@@ -282,17 +291,17 @@ onMounted(async () => {
             <SVGInfo />
           </p>
           <button
-            @click="exitExpertMode"
             type="button"
             class="flex dark:bg-slate-800 items-center justify-center w-5 h-5 rounded-full"
+            @click="exitExpertMode"
           >
             <SVGX class="w-2.5 h-2.5" />
           </button>
         </div>
         <CommonSelect
           v-model="connectionChainId"
-          labelKey="name"
-          valueKey="chainId"
+          label-key="name"
+          value-key="chainId"
           :options="availableNetworks"
         >
           <template #button-prefix>
@@ -312,9 +321,9 @@ onMounted(async () => {
         Approve
       </CommonButton>
     </form>
-    <div @click="isTutorialWatched = true" v-if="isIframeVisible" class="mt-6">
+    <div v-if="isIframeVisible" class="mt-6" @click="isTutorialWatched = true">
       <h1 class="text-xs leading-5 mb-3 text-slate-400 text-center font-medium">
-        Looking for step-by-step instructions? <br />Watch this video.
+        Looking for step-by-step instructions? <br>Watch this video.
       </h1>
       <LiteYouTubeEmbed
         id="1CcLfV2rxjA"

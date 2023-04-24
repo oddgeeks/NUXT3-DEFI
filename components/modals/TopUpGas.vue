@@ -1,96 +1,96 @@
 <script setup lang="ts">
-import LinkSVG from "~/assets/images/icons/external-link.svg?component";
-import { Erc20__factory } from "~~/contracts";
-import { storeToRefs } from "pinia";
-import { useField, useForm } from "vee-validate";
-import * as yup from "yup";
-import GasSVG from "~/assets/images/icons/gas.svg?component";
-import { toChecksumAddress } from "@walletconnect/utils";
-import { ethers } from "ethers";
+import { storeToRefs } from 'pinia'
+import { useField, useForm } from 'vee-validate'
+import * as yup from 'yup'
+import { toChecksumAddress } from '@walletconnect/utils'
+import { ethers } from 'ethers'
+import GasSVG from '~/assets/images/icons/gas.svg?component'
+import { Erc20__factory } from '~~/contracts'
+import LinkSVG from '~/assets/images/icons/external-link.svg?component'
 
-const emit = defineEmits(["destroy"]);
+const emit = defineEmits(['destroy'])
 
-const { library, account } = useWeb3();
-const { sendTransaction, airDrop, tokenBalances, fetchAirDrop, safeAddress } =
-  useAvocadoSafe();
-const { parseTransactionError } = useErrorHandler();
-const [isGiftActive, toggleGift] = useToggle(false);
+const { library, account, provider } = useWeb3()
+const { sendTransaction, airDrop, tokenBalances, fetchAirDrop, safeAddress }
+  = useAvocadoSafe()
+const { parseTransactionError } = useErrorHandler()
+const [isGiftActive, toggleGift] = useToggle(false)
 
-const { gasBalance } = storeToRefs(useSafe());
-const { fetchGasBalance, avoProvider } = useSafe();
+const { gasBalance } = storeToRefs(useSafe())
+const { fetchGasBalance, avoProvider } = useSafe()
 
-const pendingGasAmount = useNuxtData("pending-deposit");
+const pendingGasAmount = useNuxtData('pending-deposit')
 
 const networks = computed(() => {
   return availableNetworks
-    .map((network) => ({
+    .map(network => ({
       ...network,
       balance: getUSDCByChainId(network.chainId)?.balance,
     }))
-    .sort((a, b) => toBN(b.balance).minus(a.balance).toNumber());
-});
+    .sort((a, b) => toBN(b.balance).minus(a.balance).toNumber())
+})
 
-const claimLoading = ref(false);
+const claimLoading = ref(false)
 
 const { handleSubmit, errors, meta, resetForm } = useForm({
   validationSchema: yup.object({
     amount: yup
       .string()
-      .required("")
-      .test("min-amount", "", (value, { createError }) => {
-        const amount = toBN(value);
-        const minAmount = String(chainId.value) == "1" ? "5" : "0.01";
+      .required('')
+      .test('min-amount', '', (value, { createError }) => {
+        const amount = toBN(value)
+        const minAmount = String(chainId.value) == '1' ? '5' : '0.01'
 
         return amount.gt(minAmount) || !value
           ? true
           : createError({
-              path: "amount",
-              message: `Amount must be greater than ${minAmount} USDC`,
-            });
+            path: 'amount',
+            message: `Amount must be greater than ${minAmount} USDC`,
+          })
       })
-      .test("max-amount", "Insufficient balance", (value: any) => {
-        const amount = toBN(value);
-        const balance = toBN(token.value?.balance || 0);
+      .test('max-amount', 'Insufficient balance', (value: any) => {
+        const amount = toBN(value)
+        const balance = toBN(token.value?.balance || 0)
 
-        return amount.gt(0) ? amount.lte(balance) : true;
+        return amount.gt(0) ? amount.lte(balance) : true
       }),
     chainId: yup.number().integer().required(),
   }),
-});
+})
 
-const { value: amount, meta: amountMeta } = useField<string>("amount");
+const { value: amount, meta: amountMeta } = useField<string>('amount')
 const { value: chainId, setValue } = useField<number>(
-  "chainId",
+  'chainId',
   {},
-  { initialValue: 137 }
-);
+  { initialValue: 137 },
+)
 
 // TODO:
-const token = computed(() => getUSDCByChainId(String(chainId.value)));
+const token = computed(() => getUSDCByChainId(String(chainId.value)))
 
-const getUSDCByChainId = (chainId: string | number) => {
-  const usdcAddr = availableNetworks.find((i) => String(i.chainId) == chainId)
-    ?.usdcAddress as string;
+function getUSDCByChainId(chainId: string | number) {
+  const usdcAddr = availableNetworks.find(i => String(i.chainId) == chainId)
+    ?.usdcAddress as string
 
   return tokenBalances.value.find(
-    (t) =>
-      t.chainId == chainId &&
-      toChecksumAddress(t.address) === toChecksumAddress(usdcAddr)
-  )!;
-};
+    t =>
+      t.chainId == chainId
+      && toChecksumAddress(t.address) === toChecksumAddress(usdcAddr),
+  )!
+}
 
-const setMax = () => {
-  amount.value = token.value!.balance;
-};
+function setMax() {
+  amount.value = token.value!.balance
+}
 
-const loading = ref(false);
+const loading = ref(false)
 const sendingDisabled = computed(
-  () => !token.value || !account.value || loading.value || !meta.value.valid
-);
+  () => !token.value || !account.value || loading.value || !meta.value.valid,
+)
 
-const claim = async () => {
+async function claim() {
   try {
-    claimLoading.value = true;
+    claimLoading.value = true
 
     const message = `Avocado wants you to sign in with your web3 account ${
       account.value
@@ -99,156 +99,159 @@ const claim = async () => {
 Action: Claim 1 USDC airdrop
 URI: https://avocado.instadapp.io
 Nonce: {{NONCE}}
-Issued At: ${new Date().toISOString()}`;
+Issued At: ${new Date().toISOString()}`
 
-    const browserProvider = new ethers.providers.Web3Provider(window.ethereum);
+    const browserProvider = new ethers.providers.Web3Provider(provider.value)
 
-    const signer = browserProvider.getSigner();
+    const signer = browserProvider.getSigner()
 
-    const airdropNonce = await avoProvider.send("api_generateNonce", [
+    const airdropNonce = await avoProvider.send('api_generateNonce', [
       account.value,
       message,
-    ]);
+    ])
 
     const giftSignature = await signer.signMessage(
-      message.replaceAll("{{NONCE}}", airdropNonce)
-    );
+      message.replaceAll('{{NONCE}}', airdropNonce),
+    )
 
-    const data = await avoProvider.send("api_claimAirdrop", [
+    const data = await avoProvider.send('api_claimAirdrop', [
       giftSignature,
       airdropNonce,
-    ]);
+    ])
 
     if (data) {
       logActionToSlack({
-        action: "claim",
+        action: 'claim',
         account: account.value,
-        message: "1 USDC",
-      });
+        message: '1 USDC',
+      })
 
       openSnackbar({
-        message: "Claimed successfully",
-        type: "success",
-      });
+        message: 'Claimed successfully',
+        type: 'success',
+      })
     }
 
-    await fetchGasBalance();
-    await fetchAirDrop();
-  } catch (e: any) {
-    const err = parseTransactionError(e);
+    await fetchGasBalance()
+    await fetchAirDrop()
+  }
+  catch (e: any) {
+    const err = parseTransactionError(e)
 
     openSnackbar({
       message: err.formatted,
-      type: "error",
-    });
+      type: 'error',
+    })
 
     logActionToSlack({
       message: err.formatted,
-      type: "error",
-      action: "claim",
+      type: 'error',
+      action: 'claim',
       account: account.value,
       errorDetails: err.parsed,
-    });
-  } finally {
-    claimLoading.value = false;
+    })
   }
-};
+  finally {
+    claimLoading.value = false
+  }
+}
 
 const onSubmit = handleSubmit(async () => {
-  if (!token.value) {
-    return;
-  }
+  if (!token.value)
+    return
 
-  loading.value = false;
+  loading.value = false
 
-  if (sendingDisabled.value) return;
+  if (sendingDisabled.value)
+    return
 
-  loading.value = true;
+  loading.value = true
   try {
     const transferAmount = toBN(amount.value)
       .times(10 ** token.value.decimals)
-      .toFixed(0);
+      .toFixed(0)
 
-    let tx = {
+    const tx = {
       from: account.value,
       to: avoDepositAddress,
-      value: "0",
-      data: "0x",
-    };
+      value: '0',
+      data: '0x',
+    }
 
-    if (token.value.address === "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE") {
-      tx.value = transferAmount;
-    } else {
+    if (token.value.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
+      tx.value = transferAmount
+    }
+    else {
       const contract = Erc20__factory.connect(
         token.value.address,
-        library.value
-      );
+        library.value,
+      )
 
       const { data } = await contract.populateTransaction.transfer(
         avoDepositAddress,
-        transferAmount
-      );
+        transferAmount,
+      )
 
-      tx.data = data!;
-      tx.to = token.value.address;
+      tx.data = data!
+      tx.to = token.value.address
     }
 
     const metadata = encodeTopupMetadata({
       amount: transferAmount,
       token: token.value.address,
       onBehalf: safeAddress.value,
-    });
+    })
 
-    let transactionHash = await sendTransaction(
+    const transactionHash = await sendTransaction(
       {
         ...tx,
         chainId: chainId.value,
       },
       {
         metadata,
-      }
-    );
+      },
+    )
 
     logActionToSlack({
-      action: "topup",
-      message: `${amount.value} ${formatSymbol("usdc")}`,
+      action: 'topup',
+      message: `${amount.value} ${formatSymbol('usdc')}`,
       account: account.value,
       chainId: String(chainId.value),
       txHash: transactionHash,
-    });
+    })
 
-    emit("destroy");
+    emit('destroy')
 
-    showPendingTransactionModal(transactionHash, chainId.value, "topUpGas");
+    showPendingTransactionModal(transactionHash, chainId.value, 'topUpGas')
 
-    resetForm();
-  } catch (e: any) {
-    console.log(e);
+    resetForm()
+  }
+  catch (e: any) {
+    console.log(e)
 
-    const err = parseTransactionError(e);
+    const err = parseTransactionError(e)
     openSnackbar({
       message: err.formatted,
-      type: "error",
-    });
+      type: 'error',
+    })
 
     logActionToSlack({
       message: err.formatted,
-      type: "error",
-      action: "topup",
+      type: 'error',
+      action: 'topup',
       account: account.value,
       errorDetails: err.parsed,
-    });
+    })
   }
 
-  loading.value = false;
-});
+  loading.value = false
+})
 
 onMounted(() => {
-  const mostBalancedChain = networks.value[0]?.chainId;
-  if (mostBalancedChain) {
-    setValue(Number(mostBalancedChain));
-  }
-});
+  const mostBalancedChain = networks.value[0]?.chainId
+  if (mostBalancedChain)
+    setValue(Number(mostBalancedChain))
+})
 </script>
 
 <template>
@@ -259,7 +262,9 @@ onMounted(() => {
       <GasSVG class="text-slate-900 dark:text-white" />
     </div>
     <div class="flex gap-4 flex-col">
-      <h1 class="text-lg leading-5">Gas Reserve</h1>
+      <h1 class="text-lg leading-5">
+        Gas Reserve
+      </h1>
       <h2 class="text-xs text-slate-400 leading-5 font-medium">
         You will be able to use this as gas on any supported chain. Note that
         you need to have USDC in your Avocado wallet to add gas.
@@ -281,20 +286,31 @@ onMounted(() => {
     </span>
     <div
       v-if="toBN(pendingGasAmount.data.value).gt('0')"
-      class="leading-5 text-xs gap-2 text-orange-400 items-center justify-center flex"
+      class="flex-col leading-5 text-xs gap-0.5 text-orange-400 items-center justify-center flex"
     >
-      <SvgSpinner />
-      {{ formatUsd(pendingGasAmount.data.value) }}
-      gas is pending block confirmation
+      <div class="flex items-center gap-2">
+        <SvgSpinner />
+        {{ formatUsd(pendingGasAmount.data.value) }}
+        gas is pending block confirmation
+      </div>
+      <NuxtLink
+        href="https://help.avocado.instadapp.io/en/articles/7211493-why-haven-t-my-gas-credits-reflected-yet"
+        target="blank"
+        external
+        rel="noopener noreferrer"
+        class="text-xs font-medium text-primary"
+      >
+        Learn More
+      </NuxtLink>
     </div>
-    <form v-if="!isGiftActive" @submit="onSubmit" class="space-y-5">
+    <form v-if="!isGiftActive" class="space-y-5" @submit="onSubmit">
       <div class="flex flex-col gap-2.5">
         <span class="text-left leading-5 text-sm sm:text-base">Network</span>
         <CommonSelect
           v-model="chainId"
-          labelKey="name"
-          valueKey="chainId"
-          itemWrapperClasses="!items-baseline"
+          label-key="name"
+          value-key="chainId"
+          item-wrapper-classes="!items-baseline"
           :options="networks"
         >
           <template #button-prefix>
@@ -319,16 +335,14 @@ onMounted(() => {
           class="flex justify-between items-center leading-5 text-sm sm:text-base"
         >
           <span>Amount</span>
-          <span class="uppercase"
-            >{{ formatDecimal(token?.balance) }} {{ token?.symbol }}</span
-          >
+          <span class="uppercase">{{ formatDecimal(token?.balance) }} {{ token?.symbol }}</span>
         </div>
         <CommonInput
+          v-model="amount"
           type="numeric"
-          :error-message="amountMeta.dirty ? errors['amount'] : ''"
+          :error-message="amountMeta.dirty ? errors.amount : ''"
           name="amount"
           placeholder="Enter amount"
-          v-model="amount"
         >
           <template #suffix>
             <button
@@ -352,13 +366,13 @@ onMounted(() => {
       </CommonButton>
     </form>
 
-    <FormsGiftCode @close="toggleGift()" v-else />
+    <FormsGiftCode v-else @close="toggleGift()" />
 
     <button
       v-if="!isGiftActive"
-      @click="toggleGift()"
       type="button"
       class="text-xs text-primary !mt-3"
+      @click="toggleGift()"
     >
       Redeem Code
     </button>

@@ -1,78 +1,83 @@
 <script setup lang="ts">
-import { parseTransaction } from "ethers/lib/utils";
-
 const props = defineProps<{
-  network: Network;
-}>();
+  network: Network
+}>()
 
-const emit = defineEmits(["destroy"]);
+const emit = defineEmits(['destroy'])
 
-const { safeAddress, sendTransaction } = useAvocadoSafe();
-const { parseTransactionError } = useErrorHandler();
-const { account } = useWeb3();
+const { safeAddress, sendTransaction } = useAvocadoSafe()
+const { parseTransactionError } = useErrorHandler()
+const { account } = useWeb3()
 
-const submitting = ref(false);
+const submitting = ref(false)
 
 const transaction = computed(() => ({
   to: safeAddress.value,
-  data: "0x",
-  value: "0",
+  data: '0x',
+  value: '0',
   chainId: Number(props.network.chainId),
-  operation: "0",
-}));
+  operation: '0',
+}))
 
-const { data, pending, error } = useEstimatedFee(transaction, {
-  chainId: String(props.network.chainId),
-  immediate: true,
-});
+const { data, pending, error } = useEstimatedFee(
+  transaction,
+  ref(String(props.network.chainId)),
+  {
+    immediate: true,
+  },
+)
 
-const handleDeploy = async () => {
+async function handleDeploy() {
   try {
-    submitting.value = true;
+    submitting.value = true
 
     const metadata = encodeDeployMetadata()
 
     const transactionHash = await sendTransaction(transaction.value, {
-      metadata
-    });
+      metadata,
+    })
 
     logActionToSlack({
       message: ` ${props.network.name}`,
-      action: "deploy",
+      action: 'deploy',
       txHash: transactionHash,
       chainId: String(props.network.chainId),
       account: account.value,
-    });
+    })
 
-    emit("destroy");
+    emit('destroy')
 
-    showPendingTransactionModal(transactionHash, props.network.chainId, "send");
-  } catch (e: any) {
-    const err = parseTransactionError(e);
+    showPendingTransactionModal(transactionHash, props.network.chainId, 'send')
+  }
+  catch (e: any) {
+    const err = parseTransactionError(e)
 
     openSnackbar({
       message: err.formatted,
-      type: "error",
-    });
+      type: 'error',
+    })
 
     logActionToSlack({
       message: err.formatted,
-      action: "deploy",
-      type: "error",
+      action: 'deploy',
+      type: 'error',
       account: account.value,
       errorDetails: err.parsed,
-    });
-  } finally {
-    submitting.value = false;
+    })
   }
-};
+  finally {
+    submitting.value = false
+  }
+}
 </script>
 
 <template>
   <div class="flex gap-7.5 flex-col">
     <ChainLogo class="w-10 h-10 mx-auto" :chain="network.chainId" />
     <div>
-      <h1 class="font-lg text-center leading-5 mb-3">{{ network.name }}</h1>
+      <h1 class="font-lg text-center leading-5 mb-3">
+        {{ network.name }}
+      </h1>
       <h2 class="font-medium text-xs text-slate-400 leading-5 text-center">
         In order to interact with dapps on your requested network, please deploy
         (activate) your wallet.
