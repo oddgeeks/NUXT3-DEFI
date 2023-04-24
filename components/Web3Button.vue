@@ -4,6 +4,7 @@ import GasSVG from '~/assets/images/icons/gas.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
 import PowerOnSVG from '~/assets/images/icons/power-on.svg?component'
 import PowerOffSVG from '~/assets/images/icons/power-off.svg?component'
+import SVGMetamask from '~/assets/images/wallet/metamask.svg?component'
 
 defineProps({
   hideGas: Boolean,
@@ -14,7 +15,8 @@ const { active, deactivate, account, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
 const { gasBalance } = storeToRefs(useSafe())
 const [hovered, toggle] = useToggle(false)
-const { setConnectorName } = useConnectors()
+const { setConnectorName, cachedProviderName } = useConnectors()
+const { providers } = useNetworks()
 
 const ensName = ref()
 const isActualActive = computed(() => {
@@ -41,6 +43,10 @@ const addressLabel = computed(() =>
     ? `Tracking: ${shortenHash(account.value, 4)}`
     : ensName.value || shortenHash(account.value, 4),
 )
+
+const providerLogo = computed(() => {
+  return providers.find(item => item.id === cachedProviderName.value)?.logo ?? SVGMetamask
+})
 
 whenever(
   account,
@@ -88,11 +94,12 @@ whenever(
 
     <button
       v-if="!hideEOA"
-      class="dark:bg-slate-800 bg-slate-100 py-3 leading-5 justify-between pr-12 relative flex rounded-7.5 items-center px-4 gap-x-3"
+      class="dark:bg-slate-800 bg-slate-100 py-3 leading-5 justify-between pr-12 relative flex rounded-7.5 items-center px-4 gap-x-2.5"
       @mouseenter="toggle(true)"
       @mouseleave="toggle(false)"
       @click="closeConnection"
     >
+      <component :is="providerLogo" class="h-6 w-6" />
       {{ addressLabel }}
       <PowerOffSVG
         v-if="hovered"
