@@ -10,7 +10,7 @@ export function useNft() {
 
     async getNFTs(params: NFTParams): Promise<NFTData[]> {
       return Promise.all([
-        this.fetchAnkrNFTData([56], params),
+        this.fetchAnkrNFTData([56, 43114, 100, 250], params),
         this.fetchAlchemyNFTData([1, 137, 10, 42161], params),
       ]).then(res => res.flat())
     }
