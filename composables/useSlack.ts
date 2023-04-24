@@ -27,6 +27,8 @@ const ignoredMessages = [
   'Transaction rejected',
   'User declined transaction',
   'User rejected the transaction',
+  'Cannot read properties of undefined',
+  'Failed to get signature'
 ]
 
 export function logActionToSlack(slackMessage: ISlackMessage) {
@@ -42,7 +44,7 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
     errorDetails,
   } = slackMessage
 
-  if (ignoredMessages.some(i => message && message.includes(i)))
+  if (ignoredMessages.some(i => message && new RegExp(i).test(message)))
     return
 
   const prefix = prefixes[action]
