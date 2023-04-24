@@ -1,5 +1,7 @@
 import { injected, walletconnect, walletlink } from '~~/connectors'
 
+const cachedProviderName = useLocalStorage<string>('cachedProviderName', '')
+
 const providers = {
   // network,
   // torus,
@@ -9,8 +11,6 @@ const providers = {
 }
 
 export function useConnectors() {
-  const cachedProviderName = useLocalStorage<string>('cachedProviderName', '')
-
   function setConnectorName(name: string | null) {
     if (!process.client)
       return
