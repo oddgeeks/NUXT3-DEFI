@@ -409,5 +409,5 @@ interface ITokenPrice {
   logo_url: string
   price: string
   coingecko_id: string
-  sparkline_price_7d?: number[]
+  sparkline_price_7d: number[]
 }
