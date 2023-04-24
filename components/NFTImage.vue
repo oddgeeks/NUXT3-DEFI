@@ -1,22 +1,23 @@
 <script setup lang="ts">
-import BrokenSVG from "~/assets/images/icons/broken.svg?component";
-const error = ref(false);
+import BrokenSVG from '~/assets/images/icons/broken.svg?component'
 
 defineProps<{
-  asset: NFTData;
-  imgClass?: string;
-}>();
+  asset: NFTData
+  imgClass?: string
+}>()
 
-const handleError = () => {
-  error.value = true;
-};
+const error = ref(false)
+
+function handleError() {
+  error.value = true
+}
 </script>
 
 <template>
   <div class="relative w-full">
     <div
-      class="dark:bg-gray-850 bg-slate-50 rounded-[14px] w-full h-full sm:w-[168] sm:h-[160px] flex justify-center items-center"
       v-if="error"
+      class="dark:bg-gray-850 bg-slate-50 rounded-[14px] w-full h-full sm:w-[168] sm:h-[160px] flex justify-center items-center"
     >
       <BrokenSVG />
     </div>
@@ -25,12 +26,12 @@ const handleError = () => {
       class="rounded-[14px] w-full h-full sm:w-[168px] sm:h-[160px] object-cover"
       width="168"
       height="160"
-      @error="handleError"
       :src="asset.imageUrl"
       :alt="asset.collectionName"
       :class="imgClass"
       loading="lazy"
-    />
+      @error="handleError"
+    >
     <div
       class="backdrop-blur-[20px] absolute left-1.5 bottom-1.5 w-fit leading-[18px] text-xs items-center flex gap-1.5 p-1.5 rounded-10 bg-black bg-opacity-30"
     >

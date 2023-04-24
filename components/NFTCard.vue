@@ -1,14 +1,14 @@
 <script setup lang="ts">
 const props = defineProps<{
-  asset: NFTData;
-}>();
+  asset: NFTData
+}>()
 </script>
 
 <template>
-  <li class="dark:bg-slate-800 bg-slate-150 rounded-5" v-if="asset.imageUrl">
+  <li v-if="asset.imageUrl" class="dark:bg-slate-800 bg-slate-150 rounded-5">
     <button
-      @click="openNFTDetailsModal(asset)"
       class="w-full p-2.5 h-full text-left focus:outline-none rounded-[inherit] focus-within:ring-1 dark:ring-slate-150 ring-slate-800 dark:ring-opacity-10 ring-opacity-10"
+      @click="openNFTDetailsModal(asset)"
     >
       <figure class="h-full w-full flex flex-col gap-2.5">
         <NFTImage :asset="asset" />

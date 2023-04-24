@@ -10,7 +10,7 @@ const route = useRoute()
 </script>
 
 <template>
-  <div class="flex flex-col h-full">
+  <section class="flex flex-col h-full">
     <BannerAccountTracking v-if="showTrackingBanner" class="hidden sm:flex" />
     <div class="fixed bottom-0 sm:bottom-12 w-full z-40">
       <BannerSwitchNetwork v-if="showIncorrectNetworkBanner" />
@@ -37,6 +37,5 @@ const route = useRoute()
     </div>
     <slot />
     <TheFooter />
-    </section>
-  </div>
+  </section>
 </template>

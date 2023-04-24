@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps<{
-  asset: NFTData;
-}>();
+  asset: NFTData
+}>()
 </script>
 
 <template>

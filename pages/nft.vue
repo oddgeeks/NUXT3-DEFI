@@ -1,53 +1,56 @@
 <script setup lang="ts">
-import Fuse from "fuse.js";
-import { storeToRefs } from "pinia";
-import SearchSVG from "~/assets/images/icons/search.svg?component";
+import Fuse from 'fuse.js'
+import { storeToRefs } from 'pinia'
+import SearchSVG from '~/assets/images/icons/search.svg?component'
 
-const searchQuery = ref();
+const searchQuery = ref()
 
-const { account } = useWeb3();
-const { safeAddress } = useAvocadoSafe();
-const { networkPreference } = storeToRefs(useSafe());
+const { account } = useWeb3()
+const { safeAddress } = useAvocadoSafe()
+const { networkPreference } = storeToRefs(useSafe())
 
-const { NFT } = useNft();
+const { NFT } = useNft()
 
 useAccountTrack(undefined, () => {
-  useEagerConnect();
-});
+  useEagerConnect()
+})
 
 const { data, pending } = useAsyncData(
   async () => {
-    if (!safeAddress.value) return;
+    if (!safeAddress.value)
+      return
     try {
-      const nft = new NFT("0x2e8ABfE042886E4938201101A63730D04F160A82");
+      const nft = new NFT('0x2e8ABfE042886E4938201101A63730D04F160A82')
 
       return nft.getNFTs({
         pageSize: 50,
-      });
-    } catch (e) {
-      console.log(e);
+      })
+    }
+    catch (e) {
+      console.log(e)
     }
   },
   {
     server: false,
     watch: [safeAddress],
-  }
-);
+  },
+)
 
 const filteredAssets = computed(() => {
-  const items = data.value?.filter((item) =>
-    networkPreference.value.has(+item.chainId as ChainId)
-  );
+  const items = data.value?.filter(item =>
+    networkPreference.value.has(+item.chainId as ChainId),
+  )
 
-  if (!searchQuery.value) return items;
+  if (!searchQuery.value)
+    return items
 
   const fuse = new Fuse(items || [], {
-    keys: ["collectionName", "name"],
+    keys: ['collectionName', 'name'],
     threshold: 0.1,
-  });
+  })
 
-  return fuse.search(searchQuery.value).map((result) => result.item);
-});
+  return fuse.search(searchQuery.value).map(result => result.item)
+})
 </script>
 
 <template>
@@ -59,9 +62,9 @@ const filteredAssets = computed(() => {
       <MultipleNetworkFilter v-if="account" />
     </div>
     <CommonInput
+      v-model="searchQuery"
       placeholder="Search NFTs"
       name="search-nft"
-      v-model="searchQuery"
       type="search"
       class="mb-5"
     >
@@ -76,8 +79,8 @@ const filteredAssets = computed(() => {
       class="w-[101%] h-full max-h-[750px] sm:overflow-auto sm:-mr-2 scroll-style"
     >
       <div
-        class="dark:bg-gray-850 bg-slate-50 rounded-[25px] w-full p-5"
         v-if="!pending && data && !data.length"
+        class="dark:bg-gray-850 bg-slate-50 rounded-[25px] w-full p-5"
       >
         No NFTs found
       </div>
@@ -87,8 +90,8 @@ const filteredAssets = computed(() => {
         class="grid p-5 grid-cols-1 sm:grid-cols-3 dark:bg-gray-850 bg-slate-50 rounded-[25px] w-full md:grid-cols-5 gap-5 content-baseline"
       >
         <NFTCard
-          :key="asset.name"
           v-for="asset in filteredAssets"
+          :key="asset.name"
           :asset="asset"
         />
       </ul>
