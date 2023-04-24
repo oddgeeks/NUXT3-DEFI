@@ -304,7 +304,7 @@ const onSubmit = form.handleSubmit(async () => {
                 >
                   {{ formatDecimal(bridgeFee.amount, 4) }}
 
-                  {{ bridgeFee?.asset.symbol }}
+                  {{ bridgeFee?.asset?.symbol }}
 
                   ({{ formatUsd(bridgeFee?.feesInUsd) }})
                 </span>
