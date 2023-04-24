@@ -18,7 +18,6 @@ export interface IToken {
 export const useTokens = defineStore('tokens', () => {
   const tokens = ref<IToken[]>([])
   const customTokens = useStorageAsync<IToken[]>('custom-tokens', [])
-  const { account } = useWeb3()
 
   const fetchTokens = async () => {
     try {
@@ -55,11 +54,11 @@ export const useTokens = defineStore('tokens', () => {
       Object.keys(chainTokens).map(async (cid) => {
         const ts = chainTokens[cid]
 
-        const prices: IToken[] = await http(
-          `https://prices.instadapp.io/${cid}/tokens`,
+        const prices: ITokenPrice[] = await http(
+          `${blockQueryURL}/${cid}/tokens`,
           {
             params: {
-              includeSparklinePrice7d: true,
+              sparkline: true,
               addresses: ts.map(t => t.address),
             },
           },
@@ -73,13 +72,13 @@ export const useTokens = defineStore('tokens', () => {
           )
 
           if (token) {
-            token.price = tokenPrice.price
-            token.sparklinePrice7d = tokenPrice.sparklinePrice7d || []
+            token.price = toBN(tokenPrice.price).toNumber()
+            token.sparklinePrice7d = tokenPrice.sparkline_price_7d || []
           }
           else {
             console.log(
-              tokenPrice.chainId === String(cid),
-              tokenPrice.chainId,
+              tokenPrice.chain_id === String(cid),
+              tokenPrice.chain_id,
               cid,
               tokenPrice.address,
               tokenPrice.address,
@@ -93,12 +92,12 @@ export const useTokens = defineStore('tokens', () => {
   }
 
   const fetchTokenByAddress = async (addresses: string[], chainId: string) => {
-    return http(`https://prices.instadapp.io/${chainId}/tokens`, {
+    return http(`${blockQueryURL}/${chainId}/tokens`, {
       params: {
-        includeSparklinePrice7d: false,
+        sparkline: false,
         addresses,
       },
-    }) as Promise<IToken[]>
+    }) as Promise<ITokenPrice[]>
   }
 
   const getTokenByAddress = (address: string, chainId: string | number) => {
