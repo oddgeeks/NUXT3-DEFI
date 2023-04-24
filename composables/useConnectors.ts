@@ -9,6 +9,8 @@ const providers = {
 }
 
 export function useConnectors() {
+  const cachedProviderName = useLocalStorage<string>('cachedProviderName', '')
+
   function setConnectorName(name: string | null) {
     if (!process.client)
       return
@@ -35,5 +37,6 @@ export function useConnectors() {
     setConnectorName,
     getConnector,
     getConnectorName,
+    cachedProviderName,
   }
 }

@@ -14,7 +14,7 @@ const { active, deactivate, account, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
 const { gasBalance } = storeToRefs(useSafe())
 const [hovered, toggle] = useToggle(false)
-const { setConnectorName, getConnectorName } = useConnectors()
+const { setConnectorName, cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
 
 const ensName = ref()
@@ -44,8 +44,7 @@ const addressLabel = computed(() =>
 )
 
 const providerLogo = computed(() => {
-  const providerName = getConnectorName()
-  return providers.find(item => item.id === providerName)?.logo
+  return providers.find(item => item.id === cachedProviderName.value)?.logo
 })
 
 whenever(
