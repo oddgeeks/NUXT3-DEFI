@@ -14,7 +14,8 @@ const { active, deactivate, account, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
 const { gasBalance } = storeToRefs(useSafe())
 const [hovered, toggle] = useToggle(false)
-const { setConnectorName } = useConnectors()
+const { setConnectorName, getConnectorName } = useConnectors()
+const { providers } = useNetworks()
 
 const ensName = ref()
 const isActualActive = computed(() => {
@@ -41,6 +42,11 @@ const addressLabel = computed(() =>
     ? `Tracking: ${shortenHash(account.value, 4)}`
     : ensName.value || shortenHash(account.value, 4),
 )
+
+const providerLogo = computed(() => {
+  const providerName = getConnectorName()
+  return providers.find(item => item.id === providerName)?.logo
+})
 
 whenever(
   account,
@@ -88,11 +94,12 @@ whenever(
 
     <button
       v-if="!hideEOA"
-      class="dark:bg-slate-800 bg-slate-100 py-3 leading-5 justify-between pr-12 relative flex rounded-7.5 items-center px-4 gap-x-3"
+      class="dark:bg-slate-800 bg-slate-100 py-3 leading-5 justify-between pr-12 relative flex rounded-7.5 items-center px-4 gap-x-2.5"
       @mouseenter="toggle(true)"
       @mouseleave="toggle(false)"
       @click="closeConnection"
     >
+      <component :is="providerLogo" class="h-6 w-6" />
       {{ addressLabel }}
       <PowerOffSVG
         v-if="hovered"

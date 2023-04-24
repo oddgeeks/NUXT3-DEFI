@@ -24,8 +24,16 @@ export function useConnectors() {
     return provider ? (providers as any)[provider] : null
   }
 
+  function getConnectorName(): any {
+    if (!process.client)
+      return
+    const provider = localStorage.getItem('cachedProviderName')
+    return provider
+  }
+
   return {
     setConnectorName,
     getConnector,
+    getConnectorName,
   }
 }
