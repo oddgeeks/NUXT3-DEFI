@@ -86,7 +86,7 @@ const out = computed(() => {
       </div>
       <div v-else class="flex gap-1.5 items-center">
         <img
-          v-if="token.logo_url"
+          v-if="token?.logo_url"
           width="26"
           height="26"
           :src="token?.logo_url"

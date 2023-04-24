@@ -94,8 +94,8 @@ export const useTokens = defineStore('tokens', () => {
   const fetchTokenByAddress = async (addresses: string[], chainId: string) => {
     return http(`${blockQueryURL}/${chainId}/tokens`, {
       params: {
-        sparkline: false,
-        addresses,
+        'sparkline': false,
+        'addresses[]': addresses,
       },
     }) as Promise<ITokenPrice[]>
   }
