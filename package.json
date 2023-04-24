@@ -11,14 +11,6 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
-  "dependencies": {
-    "@instadapp/avocado-base": "^0.0.9",
-    "alchemy-sdk": "^2.7.0",
-    "canvas-confetti": "^1.6.0",
-    "error-serializer": "^5.1.0",
-    "fuse.js": "^6.6.2",
-    "semver": "^7.3.8"
-  },
   "devDependencies": {
     "@ankr.com/ankr.js": "^0.3.1",
     "@antfu/eslint-config": "^0.38.5",
@@ -78,6 +70,7 @@
   },
   "dependencies": {
     "@instadapp/avocado-base": "^0.0.10",
+    "alchemy-sdk": "^2.7.0",
     "canvas-confetti": "^1.6.0",
     "error-serializer": "^5.1.0",
     "fuse.js": "^6.6.2",
