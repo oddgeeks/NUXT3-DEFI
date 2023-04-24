@@ -10,6 +10,8 @@ definePageMeta({
   middleware: 'claims',
 })
 
+useEagerConnect()
+
 const route = useRoute()
 const router = useRouter()
 const { parseTransactionError } = useErrorHandler()
@@ -78,8 +80,8 @@ watch(eligible, (eligible) => {
   eligibleConfetti()
 })
 
-watch(account, async (account) => {
-  if (!account)
+watch([account, library], async () => {
+  if (!account.value || !library.value)
     return
 
   const signer = library.value.getSigner()
