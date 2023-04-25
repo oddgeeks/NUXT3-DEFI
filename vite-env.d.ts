@@ -20,6 +20,7 @@ interface Network {
   ankrName?: string;
   chainId: ChainId;
   isAvocado?: boolean;
+  zerionName?: string;
   serverRpcUrl: string | undefined;
   balanceResolverAddress?: string;
   usdcAddress: string;
@@ -411,4 +412,6 @@ interface NFTParams {
   to: string
   chainId: number | string
   transferCount: number
-}
+ }
+
+ 
