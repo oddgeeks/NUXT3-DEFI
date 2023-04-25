@@ -161,7 +161,7 @@ const chartOptions = {
             animation: 'fade',
             content: 'Bridge',
           }"
-          :disabled="!interactable || temporaryDisabled"
+          :disabled="!interactable"
           class="!h-9 !w-9 !p-0 items-center justify-center"
           @click="openBridgeModal(tokenBalance.address, tokenBalance.chainId)"
         >
