@@ -398,4 +398,10 @@ interface ICalculatedFee {
   to: string
   chainId: number | string
   transferCount: number
-}
+ }
+
+interface ILogBalanceParams {
+  chainId: number;
+  isOnboard: boolean;
+  isPublic: boolean;
+ }
