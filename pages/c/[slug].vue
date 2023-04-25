@@ -10,6 +10,8 @@ definePageMeta({
   middleware: 'claims',
 })
 
+useEagerConnect()
+
 const route = useRoute()
 const router = useRouter()
 const { parseTransactionError } = useErrorHandler()
@@ -78,16 +80,13 @@ watch(eligible, (eligible) => {
   eligibleConfetti()
 })
 
-watch(account, async (account) => {
-  if (!account)
+watch(account, async () => {
+  if (!account.value)
     return
-
-  const signer = library.value.getSigner()
-  const address = await signer.getAddress()
 
   const res = await http<IPromo>(`/api/promos/${route.params.slug}`)
   const r1 = await avoProvider.send('api_promoUserInfo', [
-    address,
+    account.value,
     res.promo,
   ])
 
