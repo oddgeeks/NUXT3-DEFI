@@ -26,3 +26,5 @@ export const avoExplorerURL = getNetworkByChainId(avoChainId).explorerUrl
 export const avoOnboardURL = isProd
   ? 'https://onboard.avocado.instadapp.io'
   : 'https://onboard.avocado.instad.app'
+
+export const zerionApiURL = 'https://api.zerion.io/v1'

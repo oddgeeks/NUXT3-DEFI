@@ -19,7 +19,7 @@ export function useNft() {
       chainIds: number[],
       params: NFTParams,
     ): Promise<NFTData[]> {
-      return http('/api/nft/achemist', {
+      return http('/api/nft/alchemy', {
         params: {
           address: this.owner,
           chains: chainIds,
