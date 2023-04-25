@@ -270,7 +270,7 @@ export const useSafe = defineStore('safe', () => {
               .map(t => t.address),
             ...customTokenAddress,
           ]).then((data) => {
-            console.log('Balance fetch: Public', { updateState })
+            logBalance({ isPublic: true, chainId: network.chainId, isOnboard: !updateState })
 
             if (updateState)
               updateBalances(data)
@@ -290,7 +290,7 @@ export const useSafe = defineStore('safe', () => {
               params,
             }) as IBalance[]
 
-            console.log('Balance fetch: Private', { updateState })
+            logBalance({ isPublic: false, chainId: network.chainId, isOnboard: !updateState })
 
             if (updateState)
               updateBalances(data)
@@ -417,5 +417,19 @@ export const useSafe = defineStore('safe', () => {
   }
 })
 
+function logBalance(params: ILogBalanceParams) {
+  const { isOnboard, isPublic, chainId } = params
+
+  const style1 = 'color: #fff; background: #3c3c3c; padding: 4px 8px; border-radius: 4px; font-weight: bold;margin-right: 4px'
+  const style2 = 'color: #fff; background: #007bff; padding: 4px 8px; border-radius: 4px; font-weight: bold;margin-right: 4px'
+  const style3 = 'color: #fff; background: #16A34A; padding: 4px 8px; border-radius: 4px; font-weight: bold;'
+
+  console.log(
+    `%c${isPublic ? 'Public' : 'Private'}%c${isOnboard ? 'Onboarding' : 'Main'}%c${chainIdToName(chainId)}`,
+    style1,
+    style2,
+    style3,
+  )
+}
 if (import.meta.hot)
   import.meta.hot.accept(acceptHMRUpdate(useSafe, import.meta.hot))
