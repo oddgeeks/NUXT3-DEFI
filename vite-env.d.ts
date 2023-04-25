@@ -415,3 +415,10 @@ interface NFTParams {
  }
 
  
+ }
+
+interface ILogBalanceParams {
+  chainId: number;
+  isOnboard: boolean;
+  isPublic: boolean;
+ }
