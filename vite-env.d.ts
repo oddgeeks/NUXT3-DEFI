@@ -398,7 +398,8 @@ interface ICalculatedFee {
   to: string
   chainId: number | string
   transferCount: number
-}
+ }
+
 
 interface ITokenPrice {
   address: string
@@ -411,3 +412,9 @@ interface ITokenPrice {
   coingecko_id: string
   sparkline_price_7d: number[]
 }
+
+interface ILogBalanceParams {
+  chainId: number;
+  isOnboard: boolean;
+  isPublic: boolean;
+ }
