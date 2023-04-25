@@ -414,8 +414,6 @@ interface NFTParams {
   transferCount: number
  }
 
- 
- }
 
 interface ILogBalanceParams {
   chainId: number;
