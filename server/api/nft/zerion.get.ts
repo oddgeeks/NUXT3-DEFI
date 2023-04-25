@@ -1,23 +1,15 @@
-import { array, object, string } from 'yup'
+import { mixed, object, string } from 'yup'
 
 export default defineEventHandler<NFTData[]>(async (event) => {
   const params = getQuery(event)
 
   const schema = object().shape({
     address: string().required(),
-    chains: array().default([]).min(1).required(),
+    chains: mixed()
+      .default([])
+      .required()
+      .transform((_, originalValue) => Array.isArray(originalValue) ? originalValue : [originalValue]),
   })
-
-  // const username = 'certel@hotmail.com'
-  // const password = 'zk_dev_aaf0f85786ca4e4fb0b3fbfec0e56e17'
-
-  // // Combine the username and password with a colon separator
-  // const combined = `${username}:${password}`
-
-  // // Convert the combined string to base64
-  // const base64Encoded = Buffer.from(combined).toString('base64')
-
-  // console.log(base64Encoded)
 
   await schema.validate(params)
 
@@ -28,6 +20,7 @@ export default defineEventHandler<NFTData[]>(async (event) => {
   const resp = await $fetch<IZerionNFT>(`https://api.zerion.io/v1/wallets/${address}/nft-positions/?currency=usd&page[size]=100`, {
     params: {
       'filter[chain_ids]': chainNames.join(','),
+      'include': 'nft_collections,nfts',
     },
     method: 'GET',
     headers: {

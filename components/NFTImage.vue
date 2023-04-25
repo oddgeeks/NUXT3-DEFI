@@ -16,7 +16,7 @@ function handleError() {
 <template>
   <div class="relative w-full">
     <div
-      v-if="error"
+      v-if="error || !asset.imageUrl"
       class="dark:bg-gray-850 bg-slate-50 rounded-[14px] w-full h-full sm:w-[168] sm:h-[160px] flex justify-center items-center"
     >
       <BrokenSVG />

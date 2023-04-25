@@ -95,7 +95,7 @@ const filteredAssets = computed(() => {
       >
         <NFTCard
           v-for="asset in filteredAssets"
-          :key="asset.name"
+          :key="asset.name + asset.contractAddress + asset.tokenId"
           :asset="asset"
         />
       </ul>

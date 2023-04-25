@@ -1,6 +1,6 @@
 import type { Network } from 'alchemy-sdk'
 import { Alchemy } from 'alchemy-sdk'
-import { array, object, string } from 'yup'
+import { mixed, object, string } from 'yup'
 
 export default defineEventHandler<NFTData[]>(async (event) => {
   const networks = {
@@ -8,15 +8,17 @@ export default defineEventHandler<NFTData[]>(async (event) => {
     137: 'polygon-mainnet',
     10: 'opt-mainnet',
     42161: 'arb-mainnet',
-  } as Record<number, Network>
+  } as Record<string, Network>
 
   const params = getQuery(event)
 
   const schema = object().shape({
     address: string().required(),
-    chains: array().default([]).min(1).required(),
+    chains: mixed<string[]>()
+      .default([])
+      .required()
+      .transform((_, originalValue) => Array.isArray(originalValue) ? originalValue : [originalValue]),
   })
-
   await schema.validate(params)
 
   const { chains, address } = schema.cast(params)
@@ -43,7 +45,7 @@ export default defineEventHandler<NFTData[]>(async (event) => {
         return {
           chainId,
           collectionName: i.contract.name,
-          imageUrl: i.media[0]?.thumbnail || i.media[0]?.gateway,
+          imageUrl: i.media[0]?.gateway || i.media[0]?.thumbnail,
           name: i.title,
           tokenId: i.tokenId,
           contractAddress: i.contract.address,

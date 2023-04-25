@@ -9,10 +9,23 @@ export function useNft() {
     }
 
     async getNFTs(params: NFTParams): Promise<NFTData[]> {
-      return Promise.all([
-        this.fetchAnkrNFTData([56, 43114, 250], params),
+      const resp = await Promise.allSettled([
         this.fetchAlchemyNFTData([1, 137, 10, 42161], params),
-      ]).then(res => res.flat())
+        this.fetchAnkrNFTData([56, 43114, 250], params),
+        this.fetchZerionNFTData([100], params),
+
+      ])
+
+      return resp.reduce((acc, i) => {
+        if (i.status === 'fulfilled' && i.value)
+          acc.push(...i.value)
+
+        else if (i.status === 'rejected')
+          console.error(i.reason)
+
+        return acc
+      }
+      , [] as NFTData[])
     }
 
     private async fetchAlchemyNFTData(
@@ -20,6 +33,18 @@ export function useNft() {
       params: NFTParams,
     ): Promise<NFTData[]> {
       return http('/api/nft/alchemy', {
+        params: {
+          address: this.owner,
+          chains: chainIds,
+        },
+      })
+    }
+
+    private async fetchZerionNFTData(
+      chainIds: number[],
+      params: NFTParams,
+    ): Promise<NFTData[]> {
+      return http('/api/nft/zerion', {
         params: {
           address: this.owner,
           chains: chainIds,
