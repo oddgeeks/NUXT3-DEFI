@@ -35,7 +35,7 @@ export default defineEventHandler<NFTData[]>(async (event) => {
       chainId: network?.chainId,
       collectionName: i.attributes.collection_info.name,
       name: i.attributes.nft_info.name,
-      imageUrl: i.attributes.nft_info.content.detail.url,
+      imageUrl: i.attributes.nft_info.content?.detail?.url || i.attributes.nft_info.content?.preview?.url || null,
       contractAddress: i.attributes.nft_info.contract_address,
       tokenId: i.attributes.nft_info.token_id,
     } as NFTData
