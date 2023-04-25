@@ -3,6 +3,7 @@ import * as yup from 'yup'
 import { ethers } from 'ethers'
 import { useField, useForm } from 'vee-validate'
 import { isAddress } from '@ethersproject/address'
+import BrokenSVG from '~/assets/images/icons/broken.svg?component'
 import ContactSVG from '~/assets/images/icons/contact.svg?component'
 
 const props = defineProps<{
@@ -120,9 +121,10 @@ const onSubmit = handleSubmit(async () => {
     <h1 class="text-center text-lg leading-5">
       Send
     </h1>
-    <div class="dark:bg-gray-850 bg-slate-50 px-5 py-4 rounded-5 flex gap-3">
-      <img :alt="asset.collectionName" width="40" height="40" class="w-10 h-10 rounded-full shrink-0" :src="asset.imageUrl">
-      <div class="flex flex-col gap-[2px]">
+    <div class="dark:bg-gray-850 bg-slate-50 px-5 py-4 rounded-5 flex gap-3 justify-between items-center">
+      <img v-if="asset.imageUrl" :alt="asset.collectionName" width="40" height="40" class="w-10 h-10 rounded-full shrink-0" :src="asset.imageUrl">
+      <BrokenSVG v-else class="w-8 h-8" />
+      <div class="flex flex-col gap-[2px] flex-1">
         <h1 v-tippy="asset.collectionName" class="text-lg leading-6  overflow-hidden whitespace-nowrap text-shadow">
           {{ asset.collectionName }}
         </h1>
@@ -140,7 +142,7 @@ const onSubmit = handleSubmit(async () => {
       autofocus
       :error-message="addressMeta.dirty ? errors.address : ''"
       name="address"
-      placeholder="Enter Transfer Address"
+      placeholder="Enter Address"
     >
       <template #suffix>
         <button

@@ -8,7 +8,8 @@ defineEmits(['destroy'])
 <template>
   <div class="flex flex-col gap-7.5">
     <NFTImage
-      img-class="sm:!h-auto sm:w-full"
+      details
+      img-class="sm:!h-[324px] sm:w-full"
       class="!sm:h-full"
       :asset="asset"
     />
