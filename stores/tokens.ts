@@ -54,15 +54,9 @@ export const useTokens = defineStore('tokens', () => {
       Object.keys(chainTokens).map(async (cid) => {
         const ts = chainTokens[cid]
 
-        const prices: ITokenPrice[] = await http(
-          `${blockQueryURL}/${cid}/tokens`,
-          {
-            params: {
-              sparkline: true,
-              addresses: ts.map(t => t.address),
-            },
-          },
-        )
+        const addresses = ts.map(t => t.address)
+
+        const prices: ITokenPrice[] = await fetchTokenByAddress(addresses, cid, true)
 
         for (const tokenPrice of prices) {
           const token = _tokenList.find(
@@ -91,10 +85,10 @@ export const useTokens = defineStore('tokens', () => {
     return _tokenList
   }
 
-  const fetchTokenByAddress = async (addresses: string[], chainId: string) => {
+  const fetchTokenByAddress = async (addresses: string[], chainId: string, sparkline = false) => {
     return http(`${blockQueryURL}/${chainId}/tokens`, {
       params: {
-        'sparkline': false,
+        'sparkline': sparkline,
         'addresses[]': addresses,
       },
     }) as Promise<ITokenPrice[]>
