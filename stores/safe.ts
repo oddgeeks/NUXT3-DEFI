@@ -281,6 +281,7 @@ export const useSafe = defineStore('safe', () => {
         catch (error) {
           try {
             const params: any = {
+              userAddress: account.value,
               address,
               customTokens: customTokenAddress,
             }
@@ -323,6 +324,16 @@ export const useSafe = defineStore('safe', () => {
     try {
       balances.value.loading = true
       // balanceAborter.value = new AbortController();
+
+      if (safeAddress.value === incorrectAddress) {
+        balances.value.data = []
+        notify({
+          type: 'warning',
+          message: 'Safe Address is not valid',
+        })
+
+        return
+      }
 
       const data = await getBalances(
         safeAddress.value,
