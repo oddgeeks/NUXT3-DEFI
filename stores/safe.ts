@@ -9,6 +9,7 @@ import {
   GaslessWallet__factory,
   TokenBalanceResolver__factory,
 } from '~/contracts'
+import { getAddress } from 'ethers/lib/utils'
 
 export interface IBalance extends IToken {
   balance: string
@@ -23,66 +24,6 @@ const balanceResolverContracts = availableNetworks.reduce((acc, curr) => {
   return acc
 }, {} as Record<string, TokenBalanceResolver>)
 
-async function getChainBalances(chainId: string,
-  address: string,
-  tokens: string[] = []) {
-  const newBalances: IBalance[] = []
-
-  const chainTokenAddresses = collect(tokens)
-    .chunk(chainId === '42161' ? 5 : 20)
-    .all()
-
-  await Promise.all(
-    chainTokenAddresses.map(async (chunk: any[]) => {
-      const addresses = (chunk as any).all()
-
-      const [{ balances }, prices] = await Promise.all([
-        balanceResolverContracts[chainId].callStatic.getBalances(
-          address,
-          addresses,
-        ),
-        $fetch<IToken[]>(`https://prices.instadapp.io/${chainId}/tokens`, {
-          params: {
-            includeSparklinePrice7d: false,
-            addresses,
-          },
-        }),
-      ])
-
-      for (let index = 0; index < balances.length; index++) {
-        const tokenAddress = addresses[index]
-        const tokenPrice = prices.find(
-          p => p.address.toLowerCase() === tokenAddress.toLowerCase(),
-        )
-        if (!tokenPrice)
-          continue
-        if (!balances[index].success)
-          continue
-
-        const balance = toBN(balances[index].balance).div(
-          10 ** tokenPrice.decimals,
-        )
-
-        if (balance.gt(0)) {
-          newBalances.push({
-            name: tokenPrice.name,
-            address: tokenPrice.address,
-            decimals: tokenPrice.decimals,
-            symbol: tokenPrice.symbol,
-            logoURI: tokenPrice.logoURI,
-            chainId: String(chainId),
-            price: String(tokenPrice?.price || 0) as any,
-            balance: balance.toFixed(6, 1),
-            balanceInUSD: balance.times(tokenPrice?.price || 0).toFixed(2),
-          } as any)
-        }
-      }
-    }),
-  )
-
-  return newBalances
-}
-
 export const useSafe = defineStore('safe', () => {
   // balance aborter
   const balanceAborter = ref<AbortController>()
@@ -90,6 +31,7 @@ export const useSafe = defineStore('safe', () => {
 
   const { account } = useWeb3()
   const { tokens, customTokens } = storeToRefs(useTokens())
+  const { fetchTokenByAddress } = useTokens()
   const documentVisibility = useDocumentVisibility()
   const { parseTransactionError } = useErrorHandler()
 
@@ -132,6 +74,61 @@ export const useSafe = defineStore('safe', () => {
     safeAddress.value = await forwarderProxyContract.computeAddress(
       account.value,
     )
+  }
+
+  async function getChainBalances(chainId: string,
+    address: string,
+    tokens: string[] = []) {
+    const newBalances: IBalance[] = []
+
+    const chainTokenAddresses = collect(tokens)
+      .chunk(chainId === '42161' ? 5 : 20)
+      .all()
+
+    await Promise.all(
+      chainTokenAddresses.map(async (chunk: any[]) => {
+        const addresses = (chunk as any).all()
+
+        const [{ balances }, prices] = await Promise.all([
+          balanceResolverContracts[chainId].callStatic.getBalances(
+            address,
+            addresses,
+          ),
+          fetchTokenByAddress(addresses, chainId),
+        ])
+
+        for (let index = 0; index < balances.length; index++) {
+          const tokenAddress = addresses[index]
+          const tokenPrice = prices.find(
+            p => p.address.toLowerCase() === tokenAddress.toLowerCase(),
+          )
+          if (!tokenPrice)
+            continue
+          if (!balances[index].success)
+            continue
+
+          const balance = toBN(balances[index].balance).div(
+            10 ** tokenPrice.decimals,
+          )
+
+          if (balance.gt(0)) {
+            newBalances.push({
+              name: tokenPrice.name,
+              address: getAddress(tokenPrice.address),
+              decimals: tokenPrice.decimals,
+              symbol: tokenPrice.symbol,
+              logoURI: tokenPrice.logo_url,
+              chainId: String(chainId),
+              price: String(tokenPrice?.price || 0) as any,
+              balance: balance.toFixed(6, 1),
+              balanceInUSD: balance.times(tokenPrice?.price || 0).toFixed(2),
+            } as any)
+          }
+        }
+      }),
+    )
+
+    return newBalances
   }
 
   const tokenBalances = computed(() => {
@@ -266,7 +263,7 @@ export const useSafe = defineStore('safe', () => {
         try {
           return getChainBalances(String(network.chainId), address, [
             ...tokens.value
-              .filter(t => t.chainId === String(network.chainId))
+              .filter(t => t.chainId == String(network.chainId))
               .map(t => t.address),
             ...customTokenAddress,
           ]).then((data) => {

@@ -21,15 +21,10 @@ enum TypeTitles {
   RevokedAllowance = 'Revoked Allowance',
 }
 
-const { getTokenByAddress, fetchTokenByAddress } = useTokens()
+const { fetchTokenByAddress } = useTokens()
 const { fromWei } = useBignumber()
 
 const token = asyncComputed(async () => {
-  const token = getTokenByAddress(props.payload.token, props.chainId)
-
-  if (token)
-    return token
-
   const tokens
     = (await fetchTokenByAddress([props.payload.token], props.chainId)) || []
   return tokens[0]
@@ -91,10 +86,10 @@ const out = computed(() => {
       </div>
       <div v-else class="flex gap-1.5 items-center">
         <img
-          v-if="token?.logoURI"
+          v-if="token?.logo_url"
           width="26"
           height="26"
-          :src="token?.logoURI"
+          :src="token?.logo_url"
         >
         <p class="flex flex-col">
           <span class="text-xs uppercase leading-4">

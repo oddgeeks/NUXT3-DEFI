@@ -1,3 +1,5 @@
+import { isAddress } from '@ethersproject/address'
+
 const contacts = useLocalStorage<Record<string, IContact[]>>('contacts', {})
 
 export function useContacts() {
@@ -53,7 +55,7 @@ export function useContacts() {
               transfer.from === safeAddress.value
               && transfer.to === contact.address.toLowerCase()
               && transfer.chainId == contact.chainId,
-          ) === -1,
+          ) === -1 && isAddress(contact.address),
       )
 
       if (newContacts.length !== 0) {
