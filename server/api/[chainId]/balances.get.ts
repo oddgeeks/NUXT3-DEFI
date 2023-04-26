@@ -8,6 +8,7 @@ import {
 } from '~~/contracts'
 import type { IToken } from '~~/stores/tokens'
 import { slackIt } from '~~/server/utils'
+import { blockQueryURL } from '~~/utils/avocado'
 
 let tokens: any[] = []
 let lastUpdateTokens = 0
