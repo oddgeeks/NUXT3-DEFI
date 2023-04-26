@@ -44,7 +44,7 @@ const addressLabel = computed(() =>
 )
 
 const connectedProvider = computed(() => {
-  return providers.find(item => item.id === cachedProviderName.value) ?? providers[0]
+  return providers.find(item => item.id === cachedProviderName.value)
 })
 
 whenever(
@@ -98,7 +98,9 @@ whenever(
       @mouseleave="toggle(false)"
       @click="closeConnection"
     >
-      <component :is="connectedProvider.logo" class="h-6 w-6" />
+      <div v-if="connectedProvider">
+        <component :is="connectedProvider.logo" class="h-6 w-6" />
+      </div>
       {{ addressLabel }}
       <PowerOffSVG
         v-if="hovered"
