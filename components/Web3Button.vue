@@ -4,7 +4,6 @@ import GasSVG from '~/assets/images/icons/gas.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
 import PowerOnSVG from '~/assets/images/icons/power-on.svg?component'
 import PowerOffSVG from '~/assets/images/icons/power-off.svg?component'
-import SVGMetamask from '~/assets/images/wallet/metamask.svg?component'
 
 defineProps({
   hideGas: Boolean,
@@ -44,8 +43,8 @@ const addressLabel = computed(() =>
     : ensName.value || shortenHash(account.value, 4),
 )
 
-const providerLogo = computed(() => {
-  return providers.find(item => item.id === cachedProviderName.value)?.logo ?? SVGMetamask
+const connectedProvider = computed(() => {
+  return providers.find(item => item.id === cachedProviderName.value)
 })
 
 whenever(
@@ -99,7 +98,9 @@ whenever(
       @mouseleave="toggle(false)"
       @click="closeConnection"
     >
-      <component :is="providerLogo" class="h-6 w-6" />
+      <div v-if="connectedProvider">
+        <component :is="connectedProvider.logo" class="h-6 w-6" />
+      </div>
       {{ addressLabel }}
       <PowerOffSVG
         v-if="hovered"
