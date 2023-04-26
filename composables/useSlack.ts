@@ -9,17 +9,17 @@ interface ISlackMessage {
 }
 
 const prefixes: Record<ISlackMessage['action'], string> = {
-  'bridge': '🌉 Bridged:',
-  'send': '💸 Sent:',
-  'swap': '🔄 Swapped:',
-  'topup': '⛽ Topup Gas:',
-  'reedem': '🔑 🎁 Reedemed:',
-  'claim': '🎁 Claimed:',
+  'bridge': 'Bridged:',
+  'send': 'Sent:',
+  'swap': 'Swapped:',
+  'topup': '💥 Topup Gas:',
+  'reedem': 'Reedemed:',
+  'claim': 'Claimed:',
   'wc': ':walletconnect:',
-  'add-token': '🆕 Added Token:',
-  'upgrade': '🆙',
-  'deploy': '⬆️ Deployed:',
-  'network': '🌐 Network',
+  'add-token': 'Added Token:',
+  'upgrade': '',
+  'deploy': 'Deployed:',
+  'network': 'Network',
 }
 
 const ignoredMessages = [
@@ -28,7 +28,7 @@ const ignoredMessages = [
   'User declined transaction',
   'User rejected the transaction',
   'Cannot read properties of undefined',
-  'Failed to get signature'
+  'Failed to get signature',
 ]
 
 export function logActionToSlack(slackMessage: ISlackMessage) {

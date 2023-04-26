@@ -7,7 +7,8 @@ import {
   TokenBalanceResolver__factory,
 } from '~~/contracts'
 import type { IToken } from '~~/stores/tokens'
-import { slackIt } from '~~/server/utils'
+
+// import { slackIt } from '~~/server/utils'
 
 let tokens: any[] = []
 let lastUpdateTokens = 0
@@ -138,9 +139,9 @@ async function getChainBalances(chainId: string,
           address,
           addresses,
         ),
-        $fetch<IToken[]>(`https://prices.instadapp.io/${chainId}/tokens`, {
+        $fetch<ITokenPrice[]>(`${blockQueryURL}/${chainId}/tokens`, {
           params: {
-            includeSparklinePrice7d: false,
+            sparkline: false,
             addresses,
           },
         }),
@@ -166,7 +167,7 @@ async function getChainBalances(chainId: string,
             address: tokenPrice.address,
             decimals: tokenPrice.decimals,
             symbol: tokenPrice.symbol,
-            logoURI: tokenPrice.logoURI,
+            logoURI: tokenPrice.logo_url,
             chainId: String(chainId),
             price: String(tokenPrice?.price || 0) as any,
             balanceRaw: balances[index].toString(),
@@ -257,12 +258,12 @@ export default defineEventHandler<IBalance[]>(async (event) => {
         }
         else {
           // slackIt("error", `[server/api/balances.get.ts] #003 Error fetching ANKR balances (fallback) - ${network?.name} - ${query.address} - ${item?.reason}`);
-          slackIt('banner', {
-            title: '[server/api/balances.get.ts]',
-            address: query.address as string,
-            chainId: network?.chainId as number,
-            message: `Error fetching ANKR balances (fallback) - ${item?.reason}`,
-          })
+          // slackIt('banner', {
+          //   title: '[server/api/balances.get.ts]',
+          //   address: query.address as string,
+          //   chainId: network?.chainId as number,
+          //   message: `Error fetching ANKR balances (fallback) - ${item?.reason}`,
+          // })
           throw new Error('Fallback failed')
         }
       }
@@ -283,12 +284,12 @@ export default defineEventHandler<IBalance[]>(async (event) => {
       ]).then(r => r.flat())
     }
     catch (error) {
-      slackIt('banner', {
-        title: '[server/api/balances.get.ts]',
-        address: query.address as string,
-        chainId: 0,
-        message: 'Everything failed, trying debank now',
-      })
+      // slackIt('banner', {
+      //   title: '[server/api/balances.get.ts]',
+      //   address: query.address as string,
+      //   chainId: 0,
+      //   message: 'Everything failed, trying debank now',
+      // })
       return await getFromDebank(String(query.address))
     }
   }

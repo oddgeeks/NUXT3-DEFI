@@ -417,8 +417,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
     availableNetworks.filter(
       c =>
         String(c.chainId) !== fromChainId.value
-        && c.chainId !== avoChainId
-        && !bridgeDisabledNetworks.includes(c.chainId),
+        && c.chainId !== avoChainId,
     ),
   )
 
