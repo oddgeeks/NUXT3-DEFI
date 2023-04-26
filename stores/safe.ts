@@ -9,6 +9,7 @@ import {
   GaslessWallet__factory,
   TokenBalanceResolver__factory,
 } from '~/contracts'
+import { getAddress } from 'ethers/lib/utils'
 
 export interface IBalance extends IToken {
   balance: string
@@ -113,7 +114,7 @@ export const useSafe = defineStore('safe', () => {
           if (balance.gt(0)) {
             newBalances.push({
               name: tokenPrice.name,
-              address: tokenPrice.address,
+              address: getAddress(tokenPrice.address),
               decimals: tokenPrice.decimals,
               symbol: tokenPrice.symbol,
               logoURI: tokenPrice.logo_url,
