@@ -27,4 +27,6 @@ export const avoOnboardURL = isProd
   ? 'https://onboard.avocado.instadapp.io'
   : 'https://onboard.avocado.instad.app'
 
+export const incorrectAddress = '0x0000000000000000000000000000000000000000'
+
 export const blockQueryURL = 'https://blockquery.instadapp.io'

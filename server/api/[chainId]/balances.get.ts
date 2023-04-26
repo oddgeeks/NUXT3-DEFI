@@ -221,6 +221,7 @@ export default defineEventHandler<IBalance[]>(async (event) => {
       title: '[server/api/[chainId]/balances.get.ts]',
       address: query.address as string,
       chainId: network.chainId,
+      userAddress: query?.userAddress as string,
       message:
         '#001 Error fetching balances with direct RPC. Fallback to custom Ankr API.',
     })

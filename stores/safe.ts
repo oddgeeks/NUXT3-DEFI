@@ -2,6 +2,7 @@ import { ethers } from 'ethers'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 import { wait } from '@instadapp/utils'
 import collect from 'collect.js'
+import { getAddress } from 'ethers/lib/utils'
 import type { IToken } from './tokens'
 import type { TokenBalanceResolver } from '~/contracts'
 import {
@@ -9,7 +10,6 @@ import {
   GaslessWallet__factory,
   TokenBalanceResolver__factory,
 } from '~/contracts'
-import { getAddress } from 'ethers/lib/utils'
 
 export interface IBalance extends IToken {
   balance: string
@@ -278,6 +278,7 @@ export const useSafe = defineStore('safe', () => {
         catch (error) {
           try {
             const params: any = {
+              userAddress: account.value,
               address,
               customTokens: customTokenAddress,
             }
@@ -320,6 +321,16 @@ export const useSafe = defineStore('safe', () => {
     try {
       balances.value.loading = true
       // balanceAborter.value = new AbortController();
+
+      if (safeAddress.value === incorrectAddress) {
+        balances.value.data = []
+        notify({
+          type: 'error',
+          message: 'Safe Address is not valid',
+        })
+
+        return
+      }
 
       const data = await getBalances(
         safeAddress.value,
