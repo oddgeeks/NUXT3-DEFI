@@ -12,8 +12,7 @@ export function useNft() {
       const resp = await Promise.allSettled([
         this.fetchAlchemyNFTData([1, 137, 10, 42161], params),
         this.fetchAnkrNFTData([56, 43114, 250], params),
-        this.fetchZerionNFTData([100], params),
-
+        // this.fetchZerionNFTData([100], params),
       ])
 
       return resp.reduce((acc, i) => {
