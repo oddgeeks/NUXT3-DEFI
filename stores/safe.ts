@@ -2,7 +2,6 @@ import { ethers } from 'ethers'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 import { wait } from '@instadapp/utils'
 import collect from 'collect.js'
-import { getAddress } from 'ethers/lib/utils'
 import type { IToken } from './tokens'
 import type { TokenBalanceResolver } from '~/contracts'
 import {
@@ -114,7 +113,7 @@ export const useSafe = defineStore('safe', () => {
           if (balance.gt(0)) {
             newBalances.push({
               name: tokenPrice.name,
-              address: getAddress(tokenPrice.address),
+              address: ethers.utils.getAddress(tokenPrice.address),
               decimals: tokenPrice.decimals,
               symbol: tokenPrice.symbol,
               logoURI: tokenPrice.logo_url,
