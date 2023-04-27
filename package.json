@@ -32,6 +32,7 @@
     "@vercel/analytics": "^0.1.11",
     "@vueuse/nuxt": "^9.13.0",
     "@walletconnect/client": "^1.8.0",
+    "@walletconnect/web3wallet": "^1.6.0",
     "@web3-react/injected-connector": "^6.0.7",
     "@web3-react/network-connector": "^6.2.9",
     "@web3-react/torus-connector": "^6.2.9",
