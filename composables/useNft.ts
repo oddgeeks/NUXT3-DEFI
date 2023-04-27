@@ -61,11 +61,14 @@ export function useNft() {
         .filter(i => i.ankrName && chainIds.includes(i.chainId))
         .map(i => i.ankrName)
 
+        console.log('ankrChains: ', ankrChains)
+
       const nfts = await provider.getNFTsByOwner({
         walletAddress: this.owner,
         pageSize: params.pageSize,
         blockchain: ankrChains as any,
       })
+      console.log('nfts: ', nfts)
 
       return nfts.assets.reduce((acc, nft) => {
         const network = availableNetworks.find(
