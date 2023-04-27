@@ -138,7 +138,7 @@ const onSubmit = handleSubmit(async () => {
 ${'`Collection name`'} ${props.asset.collectionName}
 ${'`Token name`'} ${props.asset.name || ''}
 ${'`Token ID`'} ${props.asset.tokenId || ''}
-${'`Transfer Address`'} ${actualAddress.value}`
+${'`Transfer To`'} ${actualAddress.value}`
 
     logActionToSlack({
       message,
@@ -169,31 +169,31 @@ ${'`Transfer Address`'} ${actualAddress.value}`
 
 <template>
   <form class="flex gap-7.5 flex-col" @submit.prevent="onSubmit">
-    <h1 class="text-center text-lg leading-5">
+    <h1 class="text-lg leading-5 text-center">
       Send
     </h1>
-    <div class="dark:bg-gray-850 bg-slate-50 px-5 py-4 rounded-5 flex gap-3 justify-between items-center">
+    <div class="flex items-center justify-between gap-3 px-5 py-4 dark:bg-gray-850 bg-slate-50 rounded-5">
       <img v-if="asset.imageUrl" :alt="asset.collectionName" width="40" height="40" class="w-10 h-10 rounded-full shrink-0" :src="asset.imageUrl">
       <BrokenSVG v-else class="w-8 h-8" />
       <div class="flex flex-col gap-[2px] flex-1">
-        <h1 v-tippy="asset.collectionName" class="text-lg leading-6  overflow-hidden whitespace-nowrap text-shadow">
+        <h1 v-tippy="asset.collectionName" class="overflow-hidden text-lg leading-6 whitespace-nowrap text-shadow">
           {{ asset.collectionName }}
         </h1>
-        <h2 class="text-xs text-slate-400 font-medium">
+        <h2 class="text-xs font-medium text-slate-400">
           {{ asset.name }}
         </h2>
       </div>
-      <div class="dark:bg-slate-800 bg-slate-150 rounded-5 px-3 h-10 text-xs flex gap-2 items-center justify-center">
+      <div class="flex items-center justify-center h-10 gap-2 px-3 text-xs dark:bg-slate-800 bg-slate-150 rounded-5">
         <ChainLogo :chain="asset.chainId" class="w-5.5 h-5.5" />
         {{ chainIdToName(asset.chainId) }}
       </div>
     </div>
     <div class="flex flex-col gap-2.5">
-      <div class="flex justify-between items-center">
+      <div class="flex items-center justify-between">
         <span class="text-sm">Address</span>
         <span
           v-if="addressIsDsa"
-          class="text-sm text-orange-400 flex items-center gap-2"
+          class="flex items-center gap-2 text-sm text-orange-400"
         >
           <SVGInfoCircle v-tippy="'Note that you are sending NFT to a DSA. Instadapp Pro does not support NFT transfers through its user interface, except for Uniswap NFT positions'" />DSA transfer Detected
         </span>
@@ -227,7 +227,7 @@ ${'`Transfer Address`'} ${actualAddress.value}`
       :data="data"
       :error="error"
     />
-    <CommonButton :loading="isSubmitting || pending" :disabled="sendingDisabled" type="submit" class="w-full justify-center" size="lg">
+    <CommonButton :loading="isSubmitting || pending" :disabled="sendingDisabled" type="submit" class="justify-center w-full" size="lg">
       Send NFT
     </CommonButton>
   </form>
