@@ -415,6 +415,19 @@ interface NFTParams {
  }
 
 
+
+interface ITokenPrice {
+  address: string
+  chain_id: string
+  name: string
+  symbol: string
+  decimals: number
+  logo_url: string
+  price: string
+  coingecko_id: string
+  sparkline_price_7d: number[]
+}
+
 interface ILogBalanceParams {
   chainId: number;
   isOnboard: boolean;

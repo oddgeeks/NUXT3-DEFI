@@ -30,3 +30,5 @@ export const avoOnboardURL = isProd
 export const zerionApiURL = 'https://api.zerion.io/v1'
 
 export const incorrectAddress = '0x0000000000000000000000000000000000000000'
+
+export const blockQueryURL = 'https://blockquery.instadapp.io'

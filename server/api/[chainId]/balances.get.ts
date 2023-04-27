@@ -2,12 +2,14 @@ import { BigNumber } from 'bignumber.js'
 import type { H3Event } from 'h3'
 import { AnkrProvider } from '@ankr.com/ankr.js'
 import collect from 'collect.js'
+import { getAddress } from 'ethers/lib/utils'
 import type { TokenBalanceResolver } from '~~/contracts'
 import {
   TokenBalanceResolver__factory,
 } from '~~/contracts'
 import type { IToken } from '~~/stores/tokens'
 import { slackIt } from '~~/server/utils'
+import { blockQueryURL } from '~~/utils/avocado'
 
 let tokens: any[] = []
 let lastUpdateTokens = 0
@@ -138,9 +140,9 @@ async function getChainBalances(chainId: string,
           address,
           addresses,
         ),
-        $fetch<IToken[]>(`https://prices.instadapp.io/${chainId}/tokens`, {
+        $fetch<ITokenPrice[]>(`${blockQueryURL}/${chainId}/tokens`, {
           params: {
-            includeSparklinePrice7d: false,
+            sparkline: false,
             addresses,
           },
         }),
@@ -163,10 +165,10 @@ async function getChainBalances(chainId: string,
         if (balance.gt(0)) {
           newBalances.push({
             name: tokenPrice.name,
-            address: tokenPrice.address,
+            address: getAddress(tokenPrice.address),
             decimals: tokenPrice.decimals,
             symbol: tokenPrice.symbol,
-            logoURI: tokenPrice.logoURI,
+            logoURI: tokenPrice.logo_url,
             chainId: String(chainId),
             price: String(tokenPrice?.price || 0) as any,
             balanceRaw: balances[index].balance.toString(),
