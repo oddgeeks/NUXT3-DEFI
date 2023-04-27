@@ -28,7 +28,7 @@ useIntervalFn(refresh, 1000)
 </script>
 
 <template>
-  <header class="flex justify-between items-center">
+  <header class="flex items-center justify-between">
     <NuxtLink to="/">
       <Logo />
     </NuxtLink>
@@ -37,7 +37,7 @@ useIntervalFn(refresh, 1000)
       <div class="flex text-sm">
         <NuxtLink
           active-class="dark:text-white text-slate-900"
-          class="text-slate-400 py-3 px-5"
+          class="px-5 py-3 text-slate-400"
           to="/"
         >
           Home
@@ -45,7 +45,7 @@ useIntervalFn(refresh, 1000)
         <template v-if="account">
           <NuxtLink
             active-class="dark:text-white text-slate-900"
-            class="text-slate-400 py-3 px-5"
+            class="px-5 py-3 text-slate-400"
             external
             target="_blank"
             :to="`${avoExplorerURL}/address/${account}`"
@@ -54,18 +54,18 @@ useIntervalFn(refresh, 1000)
           </NuxtLink>
           <NuxtLink
             active-class="dark:text-white text-slate-900"
-            class="text-slate-400 py-3 px-5"
+            class="px-5 py-3 text-slate-400"
             to="/contacts"
           >
             Contacts
           </NuxtLink>
-          <NuxtLink
+          <!-- <NuxtLink
             active-class="dark:text-white text-slate-900"
-            class="text-slate-400 py-3 px-5"
+            class="px-5 py-3 text-slate-400"
             to="/nft"
           >
             NFT
-          </NuxtLink>
+          </NuxtLink> -->
         </template>
       </div>
       <div class="flex items-center gap-5">
