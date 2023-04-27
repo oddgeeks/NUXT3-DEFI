@@ -1,6 +1,6 @@
 interface ISlackMessage {
   message: string
-  action: IWeb3Action | 'wc' | 'add-token' | 'upgrade' | 'deploy' | 'network'
+  action: IWeb3Action | 'wc' | 'add-token' | 'upgrade' | 'deploy' | 'network' | 'nft'
   account: string
   type?: ISlackMessageType
   txHash?: string
@@ -20,6 +20,7 @@ const prefixes: Record<ISlackMessage['action'], string> = {
   'upgrade': '',
   'deploy': 'Deployed:',
   'network': 'Network',
+  'nft': 'NFT Transfer',
 }
 
 const ignoredMessages = [

@@ -3,6 +3,7 @@ import * as yup from 'yup'
 import { ethers } from 'ethers'
 import { useField, useForm } from 'vee-validate'
 import { isAddress } from '@ethersproject/address'
+import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg?component'
 import BrokenSVG from '~/assets/images/icons/broken.svg?component'
 import ContactSVG from '~/assets/images/icons/contact.svg?component'
 
@@ -13,8 +14,25 @@ const props = defineProps<{
 const emit = defineEmits(['destroy'])
 
 const { safeAddress, sendTransactions } = useAvocadoSafe()
+const { account } = useWeb3()
+const { parseTransactionError } = useErrorHandler()
 
 const actualAddress = ref('')
+
+const addressIsDsa = computedAsync(async () => {
+  if (!actualAddress.value)
+    return false
+
+  try {
+    const isDSA = await checkAddressIsDsa(actualAddress.value, props.asset.chainId)
+
+    return isDSA
+  }
+  catch (e) {
+    console.log(e)
+    return false
+  }
+})
 
 const sendingDisabled = computed(
   () =>
@@ -31,6 +49,7 @@ const { handleSubmit, errors, meta, validate, isSubmitting }
         .string()
         .required('')
         .test('is-address', 'Incorrect address', async (value) => {
+          triggerRef(addressIsDsa)
           if (!value)
             return true
 
@@ -105,14 +124,46 @@ const { data: txs } = useAsyncData<any>(
 const { data, pending, error } = useEstimatedFee(txs, ref(props.asset.chainId))
 
 const onSubmit = handleSubmit(async () => {
-  const transactionHash = await sendTransactions(
-    txs.value,
-    props.asset.chainId,
-  )
+  try {
+    const transactionHash = await sendTransactions(
+      txs.value,
+      props.asset.chainId,
+    )
 
-  emit('destroy')
+    emit('destroy')
 
-  showPendingTransactionModal(transactionHash, props.asset.chainId, 'send')
+    showPendingTransactionModal(transactionHash, props.asset.chainId, 'send')
+
+    const message = `
+${'`Collection name`'} ${props.asset.collectionName}
+${'`Token name`'} ${props.asset.name || ''}
+${'`Token ID`'} ${props.asset.tokenId || ''}
+${'`Transfer Address`'} ${actualAddress.value}`
+
+    logActionToSlack({
+      message,
+      action: 'nft',
+      txHash: transactionHash,
+      chainId: String(props.asset.chainId),
+      account: account.value,
+    })
+  }
+  catch (e: any) {
+    const err = parseTransactionError(e)
+
+    openSnackbar({
+      message: err.formatted,
+      type: 'error',
+    })
+
+    logActionToSlack({
+      message: err.formatted,
+      action: 'nft',
+      type: 'error',
+      account: account.value,
+      errorDetails: err.parsed,
+    })
+  }
 })
 </script>
 
@@ -137,27 +188,39 @@ const onSubmit = handleSubmit(async () => {
         {{ chainIdToName(asset.chainId) }}
       </div>
     </div>
-    <CommonInput
-      v-model="address"
-      autofocus
-      :error-message="addressMeta.dirty ? errors.address : ''"
-      name="address"
-      placeholder="Enter Address"
-    >
-      <template #suffix>
-        <button
-          v-tippy="{
-            content: 'Select contact',
-            trigger: 'mouseenter',
-          }"
-          type="button"
-          class="ml-3"
-          @click="handleSelectContact()"
+    <div class="flex flex-col gap-2.5">
+      <div class="flex justify-between items-center">
+        <span class="text-sm">Address</span>
+        <span
+          v-if="addressIsDsa"
+          class="text-sm text-orange-400 flex items-center gap-2"
         >
-          <ContactSVG />
-        </button>
-      </template>
-    </CommonInput>
+          <SVGInfoCircle v-tippy="'Note that you are sending NFT to a DSA. Instadapp Pro does not support NFT transfers through its user interface, except for Uniswap NFT positions'" />DSA transfer Detected
+        </span>
+      </div>
+
+      <CommonInput
+        v-model="address"
+        autofocus
+        :error-message="addressMeta.dirty ? errors.address : ''"
+        name="address"
+        placeholder="Enter Address"
+      >
+        <template #suffix>
+          <button
+            v-tippy="{
+              content: 'Select contact',
+              trigger: 'mouseenter',
+            }"
+            type="button"
+            class="ml-3"
+            @click="handleSelectContact()"
+          >
+            <ContactSVG />
+          </button>
+        </template>
+      </CommonInput>
+    </div>
     <EstimatedFee
       :chain-id="asset.chainId"
       :loading="pending"
