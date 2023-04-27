@@ -24,19 +24,10 @@ const addressIsDsa = computedAsync(async () => {
     return false
 
   try {
-    const isDSA = await checkAddressIsDsa(actualAddress.value, props.asset.chainId);
+    const isDSA = await checkAddressIsDsa(actualAddress.value, props.asset.chainId)
+
     return isDSA
   }
-  catch (e) {
-    console.log(e)
-    return false
-  }
-})
-
-const contractIs1155 = computedAsync(async () => {
-  const isContract1155 = computed(() => props.asset.contractType === "ERC1155");
-  console.log('isContract1155: ', isContract1155)
-  return isContract1155
   catch (e) {
     console.log(e)
     return false
@@ -59,8 +50,6 @@ const { handleSubmit, errors, meta, validate, isSubmitting }
         .required('')
         .test('is-address', 'Incorrect address', async (value) => {
           triggerRef(addressIsDsa)
-          console.log('contractIs1155: ', contractIs1155)
-          triggerRef(contractIs1155)
           if (!value)
             return true
 
