@@ -2,7 +2,6 @@ import { BigNumber } from 'bignumber.js'
 import type { H3Event } from 'h3'
 import { AnkrProvider } from '@ankr.com/ankr.js'
 import collect from 'collect.js'
-import { getAddress } from 'ethers/lib/utils'
 import type { TokenBalanceResolver } from '~~/contracts'
 import {
   TokenBalanceResolver__factory,
@@ -10,6 +9,7 @@ import {
 import type { IToken } from '~~/stores/tokens'
 import { slackIt } from '~~/server/utils'
 import { blockQueryURL } from '~~/utils/avocado'
+import { ethers } from 'ethers'
 
 let tokens: any[] = []
 let lastUpdateTokens = 0
@@ -165,7 +165,7 @@ async function getChainBalances(chainId: string,
         if (balance.gt(0)) {
           newBalances.push({
             name: tokenPrice.name,
-            address: getAddress(tokenPrice.address),
+            address: ethers.utils.getAddress(tokenPrice.address),
             decimals: tokenPrice.decimals,
             symbol: tokenPrice.symbol,
             logoURI: tokenPrice.logo_url,
@@ -221,6 +221,7 @@ export default defineEventHandler<IBalance[]>(async (event) => {
       title: '[server/api/[chainId]/balances.get.ts]',
       address: query.address as string,
       chainId: network.chainId,
+      userAddress: query?.userAddress as string,
       message:
         '#001 Error fetching balances with direct RPC. Fallback to custom Ankr API.',
     })

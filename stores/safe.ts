@@ -9,7 +9,6 @@ import {
   GaslessWallet__factory,
   TokenBalanceResolver__factory,
 } from '~/contracts'
-import { getAddress } from 'ethers/lib/utils'
 
 export interface IBalance extends IToken {
   balance: string
@@ -114,7 +113,7 @@ export const useSafe = defineStore('safe', () => {
           if (balance.gt(0)) {
             newBalances.push({
               name: tokenPrice.name,
-              address: getAddress(tokenPrice.address),
+              address: ethers.utils.getAddress(tokenPrice.address),
               decimals: tokenPrice.decimals,
               symbol: tokenPrice.symbol,
               logoURI: tokenPrice.logo_url,
@@ -278,6 +277,7 @@ export const useSafe = defineStore('safe', () => {
         catch (error) {
           try {
             const params: any = {
+              userAddress: account.value,
               address,
               customTokens: customTokenAddress,
             }
@@ -320,6 +320,16 @@ export const useSafe = defineStore('safe', () => {
     try {
       balances.value.loading = true
       // balanceAborter.value = new AbortController();
+
+      if (safeAddress.value === incorrectAddress) {
+        balances.value.data = []
+        notify({
+          type: 'error',
+          message: 'Safe Address is not valid',
+        })
+
+        return
+      }
 
       const data = await getBalances(
         safeAddress.value,
