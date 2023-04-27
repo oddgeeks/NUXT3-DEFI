@@ -22,19 +22,38 @@ const { active, account } = useWeb3()
       </a>
     </figure>
 
-    <nav class="flex gap-10 text-xs text-slate-400 mt-5">
-      <a target="_blank" href="https://help.avocado.instadapp.io">Help</a>
-      <a href="mailto:info@instadapp.io">Email</a>
-      <a
-        rel="noopener noreferrer"
-        target="_blank"
-        href="https://twitter.com/instadapp"
-      >Twitter</a>
-      <a
-        rel="noopener noreferrer"
-        target="_blank"
-        href="https://discord.com/invite/C76CeZc"
-      >Discord</a>
+    <nav class="flex gap-5 flex-col text-xs text-slate-400 mt-5 w-full">
+      <div class="flex w-full justify-around">
+        <a target="_blank" href="https://help.avocado.instadapp.io">Help</a>
+        <a href="mailto:info@instadapp.io">Email</a>
+        <a
+          rel="noopener noreferrer"
+          target="_blank"
+          href="https://twitter.com/instadapp"
+        >Twitter</a>
+        <a
+          rel="noopener noreferrer"
+          target="_blank"
+          href="https://discord.com/invite/C76CeZc"
+        >Discord</a>
+      </div>
+
+      <div v-if="account" class="flex justify-center gap-10">
+        <NuxtLink
+          active-class="dark:text-white text-slate-900"
+          to="/contacts"
+          @click="$emit('destroy')"
+        >
+          Contacts
+        </NuxtLink>
+        <NuxtLink
+          active-class="dark:text-white text-slate-900"
+          to="/nft"
+          @click="$emit('destroy')"
+        >
+          NFT
+        </NuxtLink>
+      </div>
     </nav>
 
     <div

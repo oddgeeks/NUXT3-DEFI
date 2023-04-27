@@ -20,6 +20,7 @@ interface Network {
   ankrName?: string;
   chainId: ChainId;
   isAvocado?: boolean;
+  zerionName?: string;
   serverRpcUrl: string | undefined;
   balanceResolverAddress?: string;
   usdcAddress: string;
@@ -386,6 +387,19 @@ interface ICalculatedFee {
   formattedAmountAfterDiscount: string;
 }
 
+interface NFTData {
+  imageUrl: string;
+  collectionName: string;
+  name: string;
+  chainId: number;
+  tokenId: string;
+  contractAddress: string;
+}
+
+interface NFTParams {
+  pageSize: number;
+}
+
 
  interface IContact {
   name: string
@@ -399,6 +413,7 @@ interface ICalculatedFee {
   chainId: number | string
   transferCount: number
  }
+
 
 
 interface ITokenPrice {
