@@ -2,19 +2,17 @@
 import { storeToRefs } from 'pinia'
 import GasSVG from '~/assets/images/icons/gas.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
-import PowerOnSVG from '~/assets/images/icons/power-on.svg?component'
-import PowerOffSVG from '~/assets/images/icons/power-off.svg?component'
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
 
 defineProps({
   hideGas: Boolean,
   hideEOA: Boolean,
 })
 
-const { active, deactivate, account, connector } = useWeb3()
+const { active, account } = useWeb3()
 const { trackingAccount } = useAccountTrack()
 const { gasBalance } = storeToRefs(useSafe())
-const [hovered, toggle] = useToggle(false)
-const { setConnectorName, cachedProviderName } = useConnectors()
+const { cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
 
 const ensName = ref()
@@ -23,17 +21,6 @@ const isActualActive = computed(() => {
     return true
   return active.value
 })
-
-async function closeConnection() {
-  const { success } = await openDisconnectWalletModal()
-
-  if (success) {
-    trackingAccount.value = ''
-    setConnectorName(null)
-    if (connector.value)
-      deactivate()
-  }
-}
 
 const pendingGasAmount = useNuxtData('pending-deposit')
 
@@ -93,20 +80,28 @@ whenever(
 
     <button
       v-if="!hideEOA"
-      class="dark:bg-slate-800 bg-slate-100 py-3 leading-5 justify-between pr-12 relative flex rounded-7.5 items-center px-4 gap-x-2.5"
-      @mouseenter="toggle(true)"
-      @mouseleave="toggle(false)"
-      @click="closeConnection"
+      class="hidden sm:flex dark:bg-slate-800 bg-slate-100 py-3 leading-5 justify-between relative rounded-7.5 items-center px-4 gap-x-2.5"
+      @click="openSidebar"
     >
       <div v-if="connectedProvider">
         <component :is="connectedProvider.logo" class="h-6 w-6" />
       </div>
       {{ addressLabel }}
-      <PowerOffSVG
-        v-if="hovered"
-        class="pointer-events-none absolute right-0"
-      />
-      <PowerOnSVG v-else class="pointer-events-none absolute right-0" />
+      <ChevronDownSVG class="hidden sm:flex w-3.5 h-3.5 pointer-events-none -rotate-90 text-slate-400" />
     </button>
+
+    <div
+      v-if="!hideEOA"
+      class="sm:hidden dark:bg-slate-800 bg-slate-100 py-3 leading-5 justify-between relative flex rounded-7.5 items-center px-4 gap-x-2.5"
+    >
+      <div v-if="connectedProvider">
+        <component :is="connectedProvider.logo" class="h-6 w-6" />
+      </div>
+      <div class="flex flex-col">
+        <span class="text-slate-500 text-xs text-left">Owner's address</span>
+        <span>{{ addressLabel }}</span>
+      </div>
+      <ChevronDownSVG class="hidden sm:flex w-3.5 h-3.5 pointer-events-none -rotate-90 text-slate-400" />
+    </div>
   </div>
 </template>

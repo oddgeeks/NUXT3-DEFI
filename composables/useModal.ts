@@ -16,6 +16,7 @@ function defaultOptions() {
       message: '',
       timeout: 6000,
     },
+    hideClose: false,
   } as IOptions
 }
 

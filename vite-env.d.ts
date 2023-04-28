@@ -252,7 +252,8 @@ type IOptions = {
   wrapperClass?: string;
   contentClass?: string;
   snackOptions?: ISnackOptions;
-  sheetPosition?: "top" | "bottom";
+  sheetPosition?: "top" | "bottom" | "right";
+  hideClose?: boolean;
 };
 
 type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim";

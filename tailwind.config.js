@@ -46,6 +46,9 @@ module.exports = {
         10: '40px',
         7.5: '30px',
       },
+      borderWidth: {
+        1: '1px',
+      },
       fontFamily: {
         sans: ['Source Code Pro', ...defaultTheme.fontFamily.sans],
       },

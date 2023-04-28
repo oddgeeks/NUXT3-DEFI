@@ -9,7 +9,7 @@ const { active } = useWeb3()
   <header class="flex flex-col transition-transform">
     <div class="flex justify-between items-center">
       <NuxtLink to="/" class="flex items-center">
-        <Avocado />
+        <Avocado class="text-primary" />
         <span v-if="!active" class="ml-2">Avocado</span>
       </NuxtLink>
 

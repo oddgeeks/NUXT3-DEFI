@@ -24,6 +24,7 @@ import AddContact from '~/components/modals/AddContact.vue'
 import SelectContact from '~/components/modals/SelectContact.vue'
 import NFTDetails from '~/components/modals/NFTDetails.vue'
 import SendNFT from '~/components/modals/SendNFT.vue'
+import Sidebar from '~/components/modals/Sidebar.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -263,6 +264,7 @@ export function openMobileHeader() {
     options: {
       sheetPosition: 'top',
       contentClass: '!px-5 !py-5',
+      hideClose: true,
     },
   })
 }
@@ -356,6 +358,18 @@ export function openSendNFTModal(NFTData: NFTData) {
     },
     options: {
       wrapperClass: 'max-w-[600px]',
+    },
+  })
+}
+
+export function openSidebar() {
+  openModal({
+    component: Sidebar,
+    options: {
+      sheetPosition: 'right',
+      hideClose: true,
+      wrapperClass: '!w-[340px] mr-2 !my-0 h-screen !bg-transparent !py-2',
+      contentClass: 'flex h-full',
     },
   })
 }
