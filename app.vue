@@ -1,6 +1,6 @@
-<script setup>
+<script setup lang=ts>
 onMounted(() => {
-  window.wc = useWalletConnect()
+  window.wc = useWalletConnect()!
 })
 useTokens()
 useSafe()
@@ -8,11 +8,24 @@ useSafe()
 onMounted(() => {
   const hideAllTooltipsOnScroll = useThrottleFn(() => {
     [...document.querySelectorAll('[data-tippy-root]')].forEach(e =>
-      e._tippy?.hide(),
+      e?._tippy?.hide(),
     )
   }, 1000)
 
   document.addEventListener('scroll', hideAllTooltipsOnScroll, true)
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').then((registration) => {
+      console.log('Service Worker registered:', registration)
+    }).catch((error) => {
+      console.log('Service Worker registration failed:', error)
+    })
+
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      alert('New service worker is controlling the client')
+      // Show a notification to the user about the new version
+    })
+  }
 
   return () => document.removeEventListener('scroll', hideAllTooltipsOnScroll)
 })
