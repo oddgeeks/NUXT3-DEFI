@@ -9,9 +9,10 @@ defineProps<{
   details?: boolean
 }>()
 
-const [expanded, toggle] = useToggle(false)
-
 const error = ref(false)
+
+const expanded = inject('expanded') as Ref<boolean>
+const toggle = inject('toggle') as () => void
 
 function handleError() {
   error.value = true
@@ -30,15 +31,11 @@ async function handleToggle() {
 
   toggle()
 }
-
-watch(expanded, () => {
-
-})
 </script>
 
 <template>
   <div
-    :class="[expanded ? 'sm:scale-[1.35] scale-110 origin-top-center z-10 visible' : '']"
+    :class="[expanded ? 'sm:scale-[1.35] scale-110 origin-center z-10 visible' : '']"
     class="w-full relative animate-scale"
   >
     <div
@@ -55,7 +52,7 @@ watch(expanded, () => {
       height="160"
       :src="asset.imageUrl"
       :alt="asset.collectionName"
-      :class="[imgClass, expanded ? 'sm:!h-auto sm:w-auto' : '']"
+      :class="[imgClass, expanded ? 'sm:!h-auto sm:w-auto sm:max-h-[70vh] max-h-full' : '']"
       loading="lazy"
       @error="handleError"
     >
