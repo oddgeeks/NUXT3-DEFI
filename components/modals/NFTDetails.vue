@@ -1,8 +1,14 @@
 <script setup lang="ts">
-defineProps<{
+import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
+
+const props = defineProps<{
   asset: NFTData
 }>()
 defineEmits(['destroy'])
+
+const isContractERC1155 = computed(() => props.asset.contractType === 'ERC1155')
+
+const disabled = computed(() => isContractERC1155.value)
 </script>
 
 <template>
@@ -14,8 +20,12 @@ defineEmits(['destroy'])
       :asset="asset"
     />
     <div class="flex gap-3 flex-col">
-      <h1 v-if="asset.name" class="text-center text-lg leading-5">
+      <h1 v-if="asset.name" class="text-center text-lg leading-5 flex justify-center gap-2">
         {{ asset.name }}
+
+        <NuxtLink external target="_blank" class="shrink-0 text-slate-750 dark:text-slate-150" :to="getExplorerUrl(asset.chainId, `/address/${asset.contractAddress}`)">
+          <ExternalLinkSVG class="shrink-0 w-4" />
+        </NuxtLink>
       </h1>
       <h2
         v-if="asset.collectionName"
@@ -24,8 +34,11 @@ defineEmits(['destroy'])
         {{ asset.collectionName }}
       </h2>
     </div>
-    <CommonButton class="w-full justify-center" size="lg" @click="$emit('destroy'), openSendNFTModal(asset)">
+    <CommonButton :disabled="disabled" class="w-full justify-center" size="lg" @click="$emit('destroy'), openSendNFTModal(asset)">
       Send NFT
     </CommonButton>
+    <p v-if="isContractERC1155" class="text-sm text-orange-400 text-center">
+      ERC1155 transfer not supported yet
+    </p>
   </div>
 </template>
