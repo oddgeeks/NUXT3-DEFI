@@ -19,12 +19,17 @@ onMounted(() => {
   if ('serviceWorker' in navigator) {
     const wb = new Workbox('/sw.js')
 
+    console.log(wb)
+
     wb.addEventListener('installed', (event) => {
       if (event.isUpdate) {
-        if (confirm('New content is available!. Click OKi to refresh'))
+        if (confirm('New content is available!. Click OK to refresh'))
           window.location.reload()
       }
     })
+
+    if (!process.dev)
+      wb.register()
   }
 
   // if ('serviceWorker' in navigator) {
