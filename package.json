@@ -21,6 +21,7 @@
     "@instadapp/avocado-dev": "npm:@instadapp/avocado@dev",
     "@instadapp/utils": "^0.4.6",
     "@instadapp/vue-web3-nuxt": "^0.10.1",
+    "@kevinmarrec/nuxt-pwa": "^0.17.0",
     "@nuxtjs/color-mode": "^3.2.0",
     "@nuxtjs/tailwindcss": "^6.6.4",
     "@pinia/nuxt": "^0.4.7",

@@ -14,18 +14,13 @@ onMounted(() => {
 
   document.addEventListener('scroll', hideAllTooltipsOnScroll, true)
 
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').then((registration) => {
-      console.log('Service Worker registeredd:', registration)
-    }).catch((error) => {
-      console.log('Service Worker registration failed:', error)
-    })
-
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      alert('New service worker is controlling the client')
-      // Show a notification to the user about the new version
-    })
-  }
+  // if ('serviceWorker' in navigator) {
+  //   navigator.serviceWorker.register('/sw.js').then((registration) => {
+  //     console.log('Service Worker registeredd:', registration)
+  //   }).catch((error) => {
+  //     console.log('Service Worker registration failed:', error)
+  //   })
+  // }
 
   return () => document.removeEventListener('scroll', hideAllTooltipsOnScroll)
 })

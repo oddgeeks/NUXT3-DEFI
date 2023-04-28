@@ -146,8 +146,8 @@ export default defineNuxtConfig({
       ],
     },
   },
-  // @ts-expect-error
   modules: [
+    '@kevinmarrec/nuxt-pwa',
     '@nuxtjs/color-mode',
     '@vueuse/nuxt',
     '@nuxtjs/tailwindcss',
