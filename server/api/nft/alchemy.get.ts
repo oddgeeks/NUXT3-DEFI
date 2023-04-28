@@ -49,6 +49,7 @@ export default defineEventHandler<NFTData[]>(async (event) => {
           name: i.title,
           tokenId: i.tokenId,
           contractAddress: i.contract.address,
+          contractType: i.contract.tokenType,
         } as NFTData
       })
     }),

@@ -3,6 +3,7 @@ import * as yup from 'yup'
 import { ethers } from 'ethers'
 import { useField, useForm } from 'vee-validate'
 import { isAddress } from '@ethersproject/address'
+import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
 import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg?component'
 import BrokenSVG from '~/assets/images/icons/broken.svg?component'
 import ContactSVG from '~/assets/images/icons/contact.svg?component'
@@ -105,8 +106,8 @@ const { data: txs } = useAsyncData<any>(
 
     const contractInterface = new ethers.utils.Interface(erc712ABI)
 
-    console.log('safeAddress.value: ', safeAddress.value,'actualAddress.value: ', actualAddress.value, 
-    'props.asset.tokenId: ', props.asset.tokenId)
+    console.log('safeAddress.value: ', safeAddress.value, 'actualAddress.value: ', actualAddress.value,
+      'props.asset.tokenId: ', props.asset.tokenId)
     const calldata = contractInterface.encodeFunctionData('transferFrom', [safeAddress.value, actualAddress.value, props.asset.tokenId])
 
     console.log('props.asset.contractAddress: ', props.asset.contractAddress)
@@ -176,13 +177,18 @@ ${'`Transfer To`'} ${actualAddress.value}`
     <h1 class="text-lg leading-5 text-center">
       Send
     </h1>
-    <div class="flex items-center justify-between gap-3 px-5 py-4 dark:bg-gray-850 bg-slate-50 rounded-5">
+    <div class="flex items-center justify-between gap-3 px-5 py-4 dark:bg-gray-850 bg-slate-50 rounded-5 max-w-full">
       <img v-if="asset.imageUrl" :alt="asset.collectionName" width="40" height="40" class="w-10 h-10 rounded-full shrink-0" :src="asset.imageUrl">
       <BrokenSVG v-else class="w-8 h-8" />
-      <div class="flex flex-col gap-[2px] flex-1">
-        <h1 v-tippy="asset.collectionName" class="overflow-hidden text-lg leading-6 whitespace-nowrap text-shadow">
-          {{ asset.collectionName }}
-        </h1>
+      <div class="flex flex-col gap-[2px] flex-1 max-w-[60%]">
+        <div class="flex items-center">
+          <h1 v-tippy="asset.collectionName" class="inline-flex text-lg leading-6 overflow-hidden pr-4  whitespace-nowrap text-shadow">
+            {{ asset.collectionName }}
+          </h1>
+          <NuxtLink external target="_blank" class="shrink-0" :to="getExplorerUrl(asset.chainId, `/address/${asset.contractAddress}`)">
+            <ExternalLinkSVG class="shrink-0 w-4" />
+          </NuxtLink>
+        </div>
         <h2 class="text-xs font-medium text-slate-400">
           {{ asset.name }}
         </h2>
