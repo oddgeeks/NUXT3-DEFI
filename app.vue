@@ -1,4 +1,6 @@
 <script setup lang=ts>
+import { Workbox } from 'workbox-window'
+
 onMounted(() => {
   window.wc = useWalletConnect()!
 })
@@ -13,6 +15,17 @@ onMounted(() => {
   }, 1000)
 
   document.addEventListener('scroll', hideAllTooltipsOnScroll, true)
+
+  if ('serviceWorker' in navigator) {
+    const wb = new Workbox('/sw.js')
+
+    wb.addEventListener('installed', (event) => {
+      if (event.isUpdate) {
+        if (confirm('New content is available!. Click OK to refresh'))
+          window.location.reload()
+      }
+    })
+  }
 
   // if ('serviceWorker' in navigator) {
   //   navigator.serviceWorker.register('/sw.js').then((registration) => {
