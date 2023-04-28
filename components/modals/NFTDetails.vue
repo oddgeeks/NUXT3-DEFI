@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
+
 const props = defineProps<{
   asset: NFTData
 }>()
@@ -18,8 +20,12 @@ const disabled = computed(() => isContractERC1155.value)
       :asset="asset"
     />
     <div class="flex gap-3 flex-col">
-      <h1 v-if="asset.name" class="text-center text-lg leading-5">
+      <h1 v-if="asset.name" class="text-center text-lg leading-5 flex justify-center gap-2">
         {{ asset.name }}
+
+        <NuxtLink external target="_blank" class="shrink-0 text-slate-750 dark:text-slate-150" :to="getExplorerUrl(asset.chainId, `/address/${asset.contractAddress}`)">
+          <ExternalLinkSVG class="shrink-0 w-4" />
+        </NuxtLink>
       </h1>
       <h2
         v-if="asset.collectionName"
