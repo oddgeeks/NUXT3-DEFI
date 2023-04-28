@@ -21,7 +21,7 @@ onMounted(() => {
 
     wb.addEventListener('installed', (event) => {
       if (event.isUpdate) {
-        if (confirm('New content is available!. Click OK to refresh'))
+        if (confirm('New content is available!. Click OKi to refresh'))
           window.location.reload()
       }
     })
