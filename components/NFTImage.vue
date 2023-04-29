@@ -50,10 +50,9 @@ async function handleToggle() {
       class="rounded-[14px] w-full h-full sm:w-[168px] sm:h-[160px] object-cover"
       width="168"
       height="160"
-      :src="asset.imageUrl"
+      :src="details ? asset.imageUrl : asset?.thumbnailUrl ?? asset.imageUrl"
       :alt="asset.collectionName"
       :class="[imgClass, expanded ? 'sm:!h-auto sm:w-auto sm:max-h-[70vh] max-h-full' : '']"
-      loading="lazy"
       @error="handleError"
     >
     <div

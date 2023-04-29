@@ -345,6 +345,7 @@ export function openNFTDetailsModal(NFTData: NFTData) {
     componentProps: {
       asset: NFTData,
     },
+
   })
 }
 
