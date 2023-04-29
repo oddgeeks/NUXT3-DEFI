@@ -40,19 +40,19 @@ async function handleToggle() {
   >
     <div
       v-if="error || !asset.imageUrl"
-      class="dark:bg-gray-850 bg-slate-50 rounded-[14px] w-[168] h-[160px] flex justify-center items-center"
+      class="dark:bg-gray-850 bg-slate-50 rounded-[14px] w-[168] h-[240px] flex justify-center items-center"
     >
       <BrokenSVG />
     </div>
 
     <img
       v-else
-      class="rounded-[14px] w-full h-full sm:w-[168px] sm:h-[160px] object-cover"
+      class="rounded-[14px] w-full sm:w-full h-[240px]"
       width="168"
       height="160"
       :src="details ? asset.imageUrl : asset?.thumbnailUrl ?? asset.imageUrl"
       :alt="asset.collectionName"
-      :class="[imgClass, expanded ? 'sm:!h-auto sm:w-auto sm:max-h-[70vh] max-h-full' : '']"
+      :class="[imgClass, expanded ? 'sm:!h-auto sm:w-auto h-full sm:max-h-[70vh] object-contain max-h-full' : 'object-cover']"
       @error="handleError"
     >
     <div
