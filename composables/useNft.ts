@@ -86,6 +86,7 @@ export function useNft() {
           contractAddress: nft.contractAddress,
           contractType: nft.contractType,
           thumbnailUrl: nft.imageUrl,
+          attributes: nft.traits?.map(i => ({ type: i.trait_type, value: i.value })) as NFTAttributes[] || [],
         })
 
         return acc
