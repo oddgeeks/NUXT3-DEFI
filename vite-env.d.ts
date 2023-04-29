@@ -389,6 +389,7 @@ interface ICalculatedFee {
 
 interface NFTData {
   imageUrl: string;
+  thumbnailUrl: string;
   collectionName: string;
   name: string;
   chainId: number;

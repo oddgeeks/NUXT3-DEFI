@@ -85,6 +85,7 @@ export function useNft() {
           tokenId: nft.tokenId,
           contractAddress: nft.contractAddress,
           contractType: nft.contractType,
+          thumbnailUrl: nft.imageUrl,
         })
 
         return acc
