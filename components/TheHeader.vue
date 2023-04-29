@@ -59,13 +59,13 @@ useIntervalFn(refresh, 1000)
           >
             Contacts
           </NuxtLink>
-          <NuxtLink
+          <!-- <NuxtLink
             active-class="dark:text-white text-slate-900"
             class="px-5 py-3 text-slate-400"
             to="/nft"
           >
             NFT
-          </NuxtLink>
+          </NuxtLink> -->
         </template>
       </div>
       <div class="flex items-center gap-5">
