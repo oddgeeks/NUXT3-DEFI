@@ -22,7 +22,7 @@ const { data, pending, refresh } = useAsyncData(
     if (!safeAddress.value)
       return
     try {
-      const nft = new NFT(route.query?.nft || safeAddress.value)
+      const nft = new NFT(route.query?.nftUser || safeAddress.value)
 
       return nft.getNFTs({
         pageSize: 50,
