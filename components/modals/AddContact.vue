@@ -17,11 +17,11 @@ const { contacts, addContact, editContact } = useContacts()
 const { safeAddress } = useAvocadoSafe()
 
 const networks = [
-  ...availableNetworks,
   {
     name: 'All Networks',
     chainId: '',
   },
+  ...availableNetworks,
 ] as Network[]
 
 const {
