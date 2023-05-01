@@ -98,7 +98,7 @@ const filteredContacts = computed(() => {
               <ContactRow v-for="contact in filteredContacts" :key="contact.address + contact.chainId + contact.name" :contact="contact" />
             </tbody>
           </table>
-          <ContactMobileRow
+          <MobileContactRow
             v-for="contact in filteredContacts"
             :key="contact.address + contact.chainId + contact.name" :contact="contact"
           />

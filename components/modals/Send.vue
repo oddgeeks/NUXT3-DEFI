@@ -319,7 +319,7 @@ async function handleEdit() {
   if (result.success) {
     contact.value = result.payload as IContact
 
-    if (tochainId.value !== contact.value.chainId)
+    if (contact.value.chainId && tochainId.value !== contact.value.chainId)
       tochainId.value = contact.value.chainId
 
     setAddress(contact.value.address)
@@ -412,6 +412,7 @@ function isInsufficient(idx: number) {
           </Copy>
         </div>
         <CommonButton
+          :disabled="contact.owner"
           color="white"
           class="justify-center dark:bg-slate-800 bg-slate-150 !px-4"
           @click="handleEdit()"

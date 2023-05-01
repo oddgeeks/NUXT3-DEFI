@@ -51,6 +51,7 @@ async function handleDeletingContact(contact: IContact) {
             <CommonButton
               color="white"
               class="items-center h-10 !px-4"
+              :disabled="contact.owner"
               @click="
                 openAddContactModal(
                   contact.name,
