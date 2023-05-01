@@ -51,21 +51,7 @@ const chartOptions = {
 <template>
   <div class="flex flex-col items-center gap-7.5">
     <div class="flex flex-col items-center gap-5">
-      <div
-        class="relative inline-block h-[60px] w-[60px] rounded-full flex-shrink-0"
-      >
-        <img
-          :src="balance.logoURI"
-          class="h-[60px] w-[60px] rounded-full"
-          :onerror="onImageError"
-        >
-
-        <ChainLogo
-          :stroke="true"
-          class="w-[30px] h-[30px] absolute -left-1 -bottom-1"
-          :chain="balance.chainId"
-        />
-      </div>
+      <SafeTokenLogo class="h-[60px] w-[60px]" :chain-id="balance.chainId" :url="balance.logoURI" />
 
       <div class="flex flex-col items-center gap-3">
         <span class="text-[26px] leading-[25px]">

@@ -37,7 +37,7 @@ async function handleTokenSelection() {
     class="dark:bg-gray-900 bg-white text-sm uppercase h-fit inline-flex gap-2.5 items-center rounded-2xl pl-[14px] pr-3 py-3"
     @click="handleTokenSelection"
   >
-    <img :src="selectedToken?.logoURI" class="h-6 w-6 rounded-full">
+    <SafeTokenLogo class="h-6 w-6" :url="selectedToken?.logoURI" />
     <span class="inline-flex items-center gap-[6px] w-full justify-between">
       {{ selectedToken?.symbol }}
       <ChevronDownSVG class="w-5 text-slate-400 -rotate-90" />

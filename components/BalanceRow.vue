@@ -51,19 +51,7 @@ const chartOptions = {
   <tr>
     <td class="text-left py-6 pl-7.5 w-1/3">
       <div class="flex items-center space-x-3">
-        <div class="relative inline-block h-10 w-10 rounded-full flex-shrink-0">
-          <img
-            :src="tokenBalance.logoURI"
-            class="h-10 w-10 rounded-full"
-            :onerror="onImageError"
-          >
-
-          <ChainLogo
-            :stroke="true"
-            class="w-5.5 h-5.5 absolute -left-1 -bottom-1"
-            :chain="tokenBalance.chainId"
-          />
-        </div>
+        <SafeTokenLogo :chain-id="tokenBalance.chainId" :url="tokenBalance.logoURI" />
 
         <div class="max-w-[220px] w-full">
           <div

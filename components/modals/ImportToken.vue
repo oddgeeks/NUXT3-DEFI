@@ -63,7 +63,7 @@ const filteredTokens = computed(() => {
   return fuse.search(searchQuery.value).map(result => result.item)
 })
 
-const { list, containerProps, wrapperProps, scrollTo } = useVirtualList(
+const { list, containerProps, wrapperProps, scrollTo } = useVirtualList<IToken>(
   filteredTokens,
   {
     itemHeight: 88,
@@ -147,22 +147,8 @@ function handleCustomToken() {
             class="py-[14px] px-3 flex justify-between items-center hover:dark:bg-slate-800 rounded-[24px] w-full"
           >
             <div class="flex gap-3 items-center">
-              <div
-                class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
-              >
-                <img
-                  :src="token.data.logoURI"
-                  loading="lazy"
-                  class="h-10 w-10 rounded-full"
-                  :onerror="onImageError"
-                >
+              <SafeTokenLogo :chain-id="token.data.chainId" :url="token.data.logoURI" />
 
-                <ChainLogo
-                  :stroke="true"
-                  class="w-5.5 h-5.5 absolute -left-1 -bottom-1"
-                  :chain="token.data.chainId"
-                />
-              </div>
               <div class="flex flex-col gap-1">
                 <span
                   class="leading-5 w-[160px] sm:w-[231px] whitespace-nowrap overflow-hidden text-shadow text-sm sm:text-base"
