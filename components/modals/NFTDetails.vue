@@ -21,7 +21,7 @@ const disabled = computed(() => isContractERC1155.value)
   <div class="flex flex-col gap-7.5">
     <NFTImage
       details
-      img-class="sm:!h-[324px] sm:w-full"
+      img-class="sm:!h-[350px] sm:w-full object-contain"
       class="!sm:h-full"
       :asset="asset"
     />

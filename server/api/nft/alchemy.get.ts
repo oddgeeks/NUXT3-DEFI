@@ -54,6 +54,7 @@ export default defineEventHandler<NFTData[]>(async (event) => {
           contractAddress: i.contract.address,
           contractType: i.contract.tokenType,
           attributes: attributes?.map(i => ({ type: i.trait_type, value: i.value })) as NFTAttributes[] || [],
+          animationUrl: i.rawMetadata?.animation_url,
         } as NFTData
       })
     }),
