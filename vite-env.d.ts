@@ -402,6 +402,7 @@ interface NFTData {
   contractAddress: string;
   contractType: string;
   attributes: NFTAttributes[];
+  animationUrl?: string;
 }
 
 interface NFTParams {
