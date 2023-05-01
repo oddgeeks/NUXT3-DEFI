@@ -16,18 +16,23 @@ const emit = defineEmits(['resolve', 'reject'])
 const { contacts, addContact, editContact } = useContacts()
 const { safeAddress } = useAvocadoSafe()
 
+const networks = [
+  {
+    name: 'All Networks',
+    chainId: '',
+  },
+  ...availableNetworks,
+] as Network[]
+
 const {
   handleSubmit,
   isSubmitting,
   errors,
   meta,
-  resetForm,
-  validate,
-  values,
 } = useForm({
   validationSchema: yup.object({
     contactName: yup.string().required(''),
-    chainId: yup.string().required(''),
+    chainId: yup.string(),
     address: yup
       .string()
       .required('')
@@ -163,7 +168,7 @@ onMounted(() => {
           class="w-full"
           value-key="chainId"
           label-key="name"
-          :options="availableNetworks"
+          :options="networks"
         >
           <template #button-prefix>
             <ChainLogo class="w-6 h-6 shrink-0" :chain="chainId" />
