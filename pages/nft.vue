@@ -11,6 +11,8 @@ const { networkPreference } = storeToRefs(useSafe())
 
 const { NFT } = useNft()
 
+const route = useRoute()
+
 useAccountTrack(undefined, () => {
   useEagerConnect()
 })
@@ -20,7 +22,7 @@ const { data, pending, refresh } = useAsyncData(
     if (!safeAddress.value)
       return
     try {
-      const nft = new NFT(safeAddress.value)
+      const nft = new NFT(route.query?.nftUser || safeAddress.value)
 
       return nft.getNFTs({
         pageSize: 50,
