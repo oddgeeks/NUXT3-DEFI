@@ -9,9 +9,10 @@ defineProps<{
   details?: boolean
 }>()
 
-const [expanded, toggle] = useToggle(false)
-
 const error = ref(false)
+
+const expanded = inject('expanded') as Ref<boolean>
+const toggle = inject('toggle') as () => void
 
 function handleError() {
   error.value = true
@@ -30,33 +31,28 @@ async function handleToggle() {
 
   toggle()
 }
-
-watch(expanded, () => {
-
-})
 </script>
 
 <template>
   <div
-    :class="[expanded ? 'sm:scale-[1.35] scale-110 origin-top-center z-10 visible' : '']"
+    :class="[expanded ? 'sm:scale-[1.35] scale-110 origin-center z-10 visible' : '']"
     class="w-full relative animate-scale"
   >
     <div
       v-if="error || !asset.imageUrl"
-      class="dark:bg-gray-850 bg-slate-50 rounded-[14px] w-[168] h-[160px] flex justify-center items-center"
+      class="dark:bg-gray-850 bg-slate-50 rounded-[14px] w-[168] h-[240px] flex justify-center items-center"
     >
       <BrokenSVG />
     </div>
 
     <img
       v-else
-      class="rounded-[14px] w-full h-full sm:w-[168px] sm:h-[160px] object-cover"
+      class="rounded-[14px] w-full sm:w-full h-[240px]"
       width="168"
       height="160"
-      :src="asset.imageUrl"
+      :src="details ? asset.imageUrl : asset?.thumbnailUrl ?? asset.imageUrl"
       :alt="asset.collectionName"
-      :class="[imgClass, expanded ? 'sm:!h-auto sm:w-auto' : '']"
-      loading="lazy"
+      :class="[imgClass, expanded ? 'sm:!h-auto sm:w-auto h-full sm:max-h-[70vh] object-contain max-h-full' : 'object-cover']"
       @error="handleError"
     >
     <div

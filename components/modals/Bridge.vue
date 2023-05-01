@@ -248,13 +248,7 @@ const onSubmit = form.handleSubmit(async () => {
                   v-else
                   class="dark:bg-gray-800 bg-slate-100 w-full px-3 flex py-3 items-center gap-2.5 rounded-2xl"
                 >
-                  <img
-                    width="24"
-                    height="24"
-                    class="h-6 w-6"
-                    :src="`https://cdn.instadapp.io/icons/tokens/${fromToken.symbol.toLowerCase()}.svg`"
-                    :onerror="onImageError"
-                  >
+                  <SafeTokenLogo class="h-6 w-6" :url="`https://cdn.instadapp.io/icons/tokens/${fromToken.symbol.toLowerCase()}.svg`" />
                   <span
                     class="text-sm w-full leading-5 text-shadow overflow-hidden whitespace-nowrap"
                   >

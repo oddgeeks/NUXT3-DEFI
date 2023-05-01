@@ -387,14 +387,21 @@ interface ICalculatedFee {
   formattedAmountAfterDiscount: string;
 }
 
+interface NFTAttributes { 
+  type: string;
+  value: string;
+}
+
 interface NFTData {
   imageUrl: string;
+  thumbnailUrl: string;
   collectionName: string;
   name: string;
   chainId: number;
   tokenId: string;
   contractAddress: string;
   contractType: string;
+  attributes: NFTAttributes[];
 }
 
 interface NFTParams {

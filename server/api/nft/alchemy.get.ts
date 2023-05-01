@@ -42,14 +42,18 @@ export default defineEventHandler<NFTData[]>(async (event) => {
           (key: any) => networks[key] === chain,
         ) as any
 
+        const attributes = Array.isArray(i.rawMetadata?.attributes) ? i.rawMetadata?.attributes : []
+
         return {
           chainId,
           collectionName: i.contract.name,
-          imageUrl: i.media[0]?.gateway || i.media[0]?.thumbnail,
+          imageUrl: i.media[0]?.gateway,
+          thumbnailUrl: i.media[0]?.thumbnail,
           name: i.title,
           tokenId: i.tokenId,
           contractAddress: i.contract.address,
           contractType: i.contract.tokenType,
+          attributes: attributes?.map(i => ({ type: i.trait_type, value: i.value })) as NFTAttributes[] || [],
         } as NFTData
       })
     }),
