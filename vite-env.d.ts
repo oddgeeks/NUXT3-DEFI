@@ -413,6 +413,7 @@ interface NFTParams {
   name: string
   address: string
   chainId: number | string
+  owner: true
 }
 
  interface ITransferCount {
