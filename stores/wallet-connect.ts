@@ -1,14 +1,17 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import WalletConnect from '@walletconnect/client'
 import type { IClientMeta } from '@walletconnect/types'
-import { signingMethods } from 'wc-utilsv1'
-import { buildApprovedNamespaces } from 'wc-utils'
+import { signingMethods } from '@walletconnect/utils'
+
+// ignore this error
+// @ts-expect-error
 
 import { v4 as uuidv4 } from 'uuid'
 import { ethers } from 'ethers'
 import type { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3Wallet } from '@walletconnect/web3wallet'
 import { Core } from '@walletconnect/core'
+import { buildApprovedNamespaces } from '../utils/wc/namespaces'
 
 const clientMeta = {
   description: 'Instadapp Avocado - Safe',
@@ -511,7 +514,6 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
         return `eip155:${network.chainId}:${safe.safeAddress.value}`
       })
 
-      // ------- namespaces builder util ------------ //
       const approvedNamespaces = buildApprovedNamespaces({
         proposal: params,
         supportedNamespaces: {
@@ -530,6 +532,8 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
           },
         },
       })
+
+      console.log(approvedNamespaces)
 
       const session = await web3WalletV2.value?.approveSession({
         id,

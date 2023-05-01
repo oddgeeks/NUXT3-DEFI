@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import * as yup from 'yup'
 import { useField, useForm } from 'vee-validate'
-import { parseWalletConnectUri } from 'wc-utilsv1'
-import { normalizeNamespaces } from 'wc-utils'
+import { parseWalletConnectUri } from '@walletconnect/utils'
+
 import LiteYouTubeEmbed from 'vue-lite-youtube-embed'
 import SVGX from '~/assets/images/icons/x.svg?component'
 import SVGAlert from '~/assets/images/icons/exclamation-octagon.svg?component'
@@ -12,8 +12,6 @@ import SVGQr from '~/assets/images/icons/qr.svg?component'
 import 'vue-lite-youtube-embed/style.css'
 
 const emit = defineEmits(['destroy'])
-
-console.log(normalizeNamespaces)
 
 const wcStore = useWalletConnect()
 
@@ -26,10 +24,6 @@ const [loading, toggle] = useToggle(false)
 
 const isExpertMode = ref(false)
 const detailsRef = ref<HTMLDialogElement>()
-
-useScriptTag('https://cdn.jsdelivr.net/npm/@walletconnect/utils@2.7.2/dist/index.es.min.js', (e) => {
-  console.log(e)
-})
 
 const { handleSubmit, errors, meta, resetForm } = useForm({
   validationSchema: yup.object({
