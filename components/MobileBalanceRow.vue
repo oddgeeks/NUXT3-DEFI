@@ -19,11 +19,8 @@ const interactable = computed(() =>
     @click="interactable && openBalanceModal(tokenBalance)"
   >
     <div class="flex items-center space-x-2.5">
-      <div class="relative inline-block h-10 w-10 rounded-full flex-shrink-0">
-        <img :src="tokenBalance.logoURI" class="h-10 w-10 rounded-full" :onerror="onImageError">
+      <SafeTokenLogo :chain-id="tokenBalance.chainId" :url="tokenBalance.logoURI" />
 
-        <ChainLogo :stroke="true" class="w-5.5 h-5.5 absolute -left-1 -bottom-1" :chain="tokenBalance.chainId" />
-      </div>
       <div class="flex flex-col items-left">
         <div class="font-semibold w-44 text-shadow max-w-[256px] overflow-hidden uppercase">
           {{
