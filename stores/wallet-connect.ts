@@ -1,7 +1,7 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import WalletConnect from '@walletconnect/client'
 import type { IClientMeta } from '@walletconnect/types'
-import { signingMethods } from '@walletconnect/utils'
+import { signingMethods } from 'wc-utilsv1'
 import { buildApprovedNamespaces } from 'wc-utils'
 
 import { v4 as uuidv4 } from 'uuid'

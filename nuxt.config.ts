@@ -187,6 +187,9 @@ export default defineNuxtConfig({
   },
 
   vite: {
+    // optimizeDeps: {
+    //   exclude: ['@walletconnect/utils', '@walletconnect/client', 'wc-utils'],
+    // },
     plugins: [
       ViteComponents({
         dts: true,

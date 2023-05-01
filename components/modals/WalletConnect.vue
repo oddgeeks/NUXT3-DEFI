@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import * as yup from 'yup'
 import { useField, useForm } from 'vee-validate'
-import { parseWalletConnectUri } from '@walletconnect/utils'
+import { parseWalletConnectUri } from 'wc-utilsv1'
 import { normalizeNamespaces } from 'wc-utils'
 import LiteYouTubeEmbed from 'vue-lite-youtube-embed'
 import SVGX from '~/assets/images/icons/x.svg?component'

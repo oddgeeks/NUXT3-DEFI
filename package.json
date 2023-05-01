@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "scripts": {
     "build": "nuxt build",
+    "start": "nuxt start",
     "dev": "nuxt dev",
     "lint": "eslint --cache .",
     "format": "eslint --cache --fix .",
@@ -75,6 +76,7 @@
     "error-serializer": "^5.1.0",
     "fuse.js": "^6.6.2",
     "semver": "^7.3.8",
+    "wc-utilsv1": "npm:@walletconnect/utils@1.8.0",
     "wc-utils": "npm:@walletconnect/utils"
   }
 }

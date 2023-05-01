@@ -2,7 +2,7 @@
 import { storeToRefs } from 'pinia'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
-import { toChecksumAddress } from '@walletconnect/utils'
+import { toChecksumAddress } from 'wc-utilsv1'
 import { ethers } from 'ethers'
 import GasSVG from '~/assets/images/icons/gas.svg?component'
 import { Erc20__factory } from '~~/contracts'
