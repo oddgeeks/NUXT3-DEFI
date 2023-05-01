@@ -17,7 +17,7 @@ const props = defineProps({
     required: false,
   },
   contact: {
-    type: Object,
+    type: Object as PropType<IContact>,
     required: false,
   },
 })
@@ -31,7 +31,7 @@ const { parseTransactionError } = useErrorHandler()
 
 const contact = ref<IContact | undefined>(props.contact)
 
-const tochainId = ref<string>(props.chainId)
+const tochainId = ref<string>(props.chainId || '1')
 
 const availableTokens = computed(() =>
   tokenBalances.value.filter(t => t.chainId == tochainId.value),
@@ -134,7 +134,6 @@ const {
   remove: removeAmount,
   push: pushAmount,
   update: updateAmount,
-  replace: replaceAmounts,
   fields: amounts,
 } = useFieldArray<string>('amounts')
 const {
@@ -307,6 +306,9 @@ const onSubmit = handleSubmit(async () => {
 })
 
 async function handleEdit() {
+  if (!contact.value)
+    return
+
   const result = await openAddContactModal(
     contact.value.name,
     contact.value.address,
@@ -377,6 +379,23 @@ function isInsufficient(idx: number) {
       }"
     >
       <h2>{{ contact ? `Send to ${contact.name}` : "Send" }}</h2>
+
+      <CommonSelect
+        v-if="!contact?.chainId"
+        v-model="tochainId"
+        value-key="chainId"
+        label-key="name"
+        icon-key="icon"
+        class="mt-[5px]"
+        :options="networks"
+      >
+        <template #button-prefix>
+          <ChainLogo class="w-6 h-6" :chain="tochainId" />
+        </template>
+        <template #item-prefix="{ value }">
+          <ChainLogo class="w-6 h-6" :chain="value" />
+        </template>
+      </CommonSelect>
       <div
         v-if="contact"
         class="flex items-center rounded-5 mt-[15px] pl-5 pr-4 py-5 dark:bg-gray-850 bg-slate-50 justify-between w-full"
@@ -399,22 +418,6 @@ function isInsufficient(idx: number) {
           Edit
         </CommonButton>
       </div>
-      <CommonSelect
-        v-else
-        v-model="tochainId"
-        value-key="chainId"
-        label-key="name"
-        icon-key="icon"
-        class="mt-[5px]"
-        :options="networks"
-      >
-        <template #button-prefix>
-          <ChainLogo class="w-6 h-6" :chain="tochainId" />
-        </template>
-        <template #item-prefix="{ value }">
-          <ChainLogo class="w-6 h-6" :chain="value" />
-        </template>
-      </CommonSelect>
     </div>
     <div
       class="flex flex-col gap-3.5 scroll-style sm:max-h-[378px] sm:overflow-y-auto"

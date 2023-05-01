@@ -1,12 +1,43 @@
 import { isAddress } from '@ethersproject/address'
 
 const contacts = useLocalStorage<Record<string, IContact[]>>('contacts', {})
+const hideOwner = useLocalStorage<boolean>('hideOwnerContact', false)
 
 export function useContacts() {
   const { safeAddress } = useAvocadoSafe()
+  const { account } = useWeb3()
   const transferCounts = ref<ITransferCount[]>([])
 
+  const ownerContact = computed(() => {
+    if (!account.value)
+      return null
+
+    return {
+      name: 'Owner',
+      address: account.value,
+      chainId: '',
+      owner: true,
+    } as IContact
+  })
+
+  const safeContacts = computed(() => {
+    if (!safeAddress.value)
+      return []
+
+    const _contacts = contacts.value[safeAddress.value] || []
+
+    if (!hideOwner.value)
+      return [ownerContact.value, ..._contacts]
+
+    return _contacts
+  })
+
   const deleteContact = (contact: IContact) => {
+    if (contact.owner) {
+      hideOwner.value = true
+      return
+    }
+
     if (!contacts.value[safeAddress.value])
       return
 
@@ -42,20 +73,22 @@ export function useContacts() {
   watch(
     [safeAddress, contacts],
     async () => {
-      const _contacts = contacts.value[safeAddress.value]
-      if (!_contacts || _contacts.length === 0)
+      if (!safeAddress.value)
+        return
+
+      if (!safeContacts.value || safeContacts.value.length === 0)
         return []
 
-      let newContacts: IContact[] = _contacts
+      let newContacts = safeContacts.value
 
-      newContacts = _contacts.filter(
+      newContacts = safeContacts.value.filter(
         contact =>
           transferCounts.value.findIndex(
             transfer =>
               transfer.from === safeAddress.value
-              && transfer.to === contact.address.toLowerCase()
+              && transfer.to === contact?.address.toLowerCase()
               && transfer.chainId == contact.chainId,
-          ) === -1 && isAddress(contact.address),
+          ) === -1 && isAddress(contact?.address),
       )
 
       if (newContacts.length !== 0) {
@@ -91,6 +124,8 @@ export function useContacts() {
   }
 
   return {
+    ownerContact,
+    safeContacts,
     contacts,
     addContact,
     editContact,

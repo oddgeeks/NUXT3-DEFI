@@ -2,12 +2,10 @@
 import Fuse from 'fuse.js'
 import SearchSVG from '~/assets/images/icons/search.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
-import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
-import DeleteSVG from '~/assets/images/icons/delete.svg?component'
 
 const { account } = useWeb3()
-const { safeAddress, tokenBalances } = useAvocadoSafe()
-const { contacts, deleteContact, getSentTimes } = useContacts()
+const { safeAddress } = useAvocadoSafe()
+const { safeContacts } = useContacts()
 
 const searchQuery = ref('')
 
@@ -20,31 +18,19 @@ const search = useDebounceFn((event: Event) => {
 }, 200)
 
 const filteredContacts = computed(() => {
-  const _contacts = contacts.value[safeAddress.value]
-  if (!_contacts)
+  if (!safeContacts.value)
     return []
 
   if (!searchQuery.value || searchQuery.value.trim().length === 0)
-    return _contacts
+    return safeContacts.value
 
-  const fuse = new Fuse(_contacts, {
+  const fuse = new Fuse(safeContacts.value, {
     keys: ['name', 'address'],
     threshold: 0.2,
   })
 
   return fuse.search(searchQuery.value).map(result => result.item)
 })
-
-async function handleDeletingContact(contact: IContact) {
-  const { success } = await openDeleteContactModal()
-
-  if (success)
-    deleteContact(contact)
-}
-
-function hasAvailableTokens(chainId: number | string) {
-  return tokenBalances.value.filter(t => t.chainId == chainId).length > 0
-}
 </script>
 
 <template>
@@ -61,7 +47,7 @@ function hasAvailableTokens(chainId: number | string) {
           class="flex-1 w-full"
           :class="{
             'hidden sm:block':
-              !contacts[safeAddress] || contacts[safeAddress].length === 0,
+              !safeContacts || safeContacts.length === 0,
           }"
           name="Contact Search"
           type="search"
@@ -77,7 +63,7 @@ function hasAvailableTokens(chainId: number | string) {
           :disabled="!safeAddress"
           size="lg"
           class="flex items-center justify-center gap-2 px-5 w-full sm:w-fit"
-          @click="openAddContactModal(searchQuery)"
+          @click="openAddContactModal()"
         >
           <PlusSVG />
           Create Contact
@@ -109,182 +95,15 @@ function hasAvailableTokens(chainId: number | string) {
               </tr>
             </thead>
             <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
-              <tr
-                v-for="contact in filteredContacts"
-                :key="contact.address + contact.chainId"
-                class="contact-row text-sm font-semibold cursor-pointer"
-              >
-                <td class="pl-7.5 text-sm">
-                  <span class="relative">{{ contact.name }}</span>
-                </td>
-                <td class="pr-10 py-6">
-                  <div
-                    class="relative flex items-center justify-between gap-10"
-                  >
-                    <div class="flex items-center gap-2.5">
-                      <ChainLogo
-                        :stroke="false"
-                        class="w-[22px] h-[22px]"
-                        :chain="contact.chainId"
-                      />
-                      <span>{{ shortenHash(contact.address) }}</span>
-                    </div>
-                    <span class="text-slate-400">{{
-                      getSentTimes(contact)
-                    }}</span>
-                    <div class="flex items-center gap-9">
-                      <div class="flex gap-4">
-                        <CommonButton
-                          color="white"
-                          class="items-center h-10 !px-4"
-                          @click="
-                            openAddContactModal(
-                              contact.name,
-                              contact.address,
-                              contact.chainId,
-                              true,
-                            )
-                          "
-                        >
-                          Edit
-                        </CommonButton>
-                        <CommonButton
-                          color="white"
-                          class="items-center gap-2.5 h-10 !px-4"
-                          :disabled="!hasAvailableTokens(contact.chainId)"
-                          @click="
-                            openSendModal(contact.chainId, undefined, contact)
-                          "
-                        >
-                          Send
-                          <div
-                            class="rounded-full bg-primary p-1.5 text-white"
-                            :class="{
-                              'dark:bg-slate-600 bg-slate-300 dark:!text-slate-500 !text-slate-400':
-                                !hasAvailableTokens(contact.chainId),
-                            }"
-                          >
-                            <ArrowRight class="-rotate-45 w-3.5 h-3.5" />
-                          </div>
-                        </CommonButton>
-                      </div>
-                      <button @click="handleDeletingContact(contact)">
-                        <DeleteSVG class="text-red-alert w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </td>
-              </tr>
+              <ContactRow v-for="contact in filteredContacts" :key="contact.address + contact.chainId + contact.name" :contact="contact" />
             </tbody>
           </table>
-          <div
+          <ContactMobileRow
             v-for="contact in filteredContacts"
-            :key="contact.address + contact.chainId"
-            class="flex flex-col sm:hidden dark:bg-gray-850 bg-slate-50 px-5 pt-4 pb-4.5 rounded-[20px] gap-5"
-          >
-            <div class="flex justify-between">
-              <span class="text-sm font-semibold text-slate-400">{{
-                contact.name
-              }}</span>
-              <button @click="handleDeletingContact(contact)">
-                <DeleteSVG class="text-red-alert w-4 h-4" />
-              </button>
-            </div>
-            <div
-              class="flex items-center gap-3 rounded-7.5 px-4.5 py-3 border-2 dark:border-slate-700"
-            >
-              <ChainLogo
-                :stroke="false"
-                class="w-6.5 h-6.5"
-                :chain="contact.chainId"
-              />
-              <Copy :text="contact.address" class="flex-1 justify-between">
-                <template #content>
-                  <span class="dark:text-white text-slate-900">{{
-                    shortenHash(contact.address)
-                  }}</span>
-                </template>
-              </Copy>
-            </div>
-            <span
-              v-if="getSentTimes(contact) !== ''"
-              class="text-slate-400 text-xs"
-            >
-              {{ getSentTimes(contact) }}
-            </span>
-            <div class="flex gap-2.5">
-              <CommonButton
-                color="white"
-                class="flex-1 justify-center items-center"
-                @click="
-                  openAddContactModal(
-                    contact.name,
-                    contact.address,
-                    contact.chainId,
-                    true,
-                  )
-                "
-              >
-                Edit
-              </CommonButton>
-              <CommonButton
-                color="white"
-                class="flex-1 justify-center items-center gap-2.5"
-                :disabled="!hasAvailableTokens(contact.chainId)"
-                @click="openSendModal(contact.chainId, undefined, contact)"
-              >
-                Send
-                <div
-                  class="rounded-full bg-primary p-1 text-white"
-                  :class="{
-                    'dark:bg-slate-600 bg-slate-300 dark:!text-slate-500 !text-slate-400':
-                      !hasAvailableTokens(contact.chainId),
-                  }"
-                >
-                  <ArrowRight class="-rotate-45 w-3 h-3" />
-                </div>
-              </CommonButton>
-            </div>
-          </div>
+            :key="contact.address + contact.chainId + contact.name" :contact="contact"
+          />
         </template>
       </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-.contact-row > td > a {
-  @apply py-2 w-full inline-flex;
-}
-
-.contact-row > td:first-child {
-  @apply pl-7.5;
-}
-
-.contact-row > td > a {
-  @apply py-[18.5px] relative;
-}
-
-.contact-row > td {
-  transform-style: preserve-3d;
-  white-space: nowrap;
-  @apply md:pl-0 pl-4;
-}
-
-.contact-row:hover > td::before {
-  content: "";
-  transform: translateZ(-1px) translateX(-50%) translateY(-50%);
-  @apply absolute top-1/2 left-1/2 dark:bg-slate-850 bg-slate-150 pointer-events-none;
-  width: calc(100% + 1px);
-  height: calc(100% - 16px);
-}
-
-.contact-row:hover > td:first-child:before {
-  @apply rounded-l-5 ml-2.5;
-}
-
-.contact-row:hover > td:last-child:before {
-  @apply rounded-r-5;
-  translate: -10px 0;
-}
-</style>
