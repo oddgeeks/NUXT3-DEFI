@@ -74,6 +74,7 @@
     "canvas-confetti": "^1.6.0",
     "error-serializer": "^5.1.0",
     "fuse.js": "^6.6.2",
-    "semver": "^7.3.8"
+    "semver": "^7.3.8",
+    "wc-utils": "npm:@walletconnect/utils"
   }
 }

@@ -2,6 +2,7 @@
 import * as yup from 'yup'
 import { useField, useForm } from 'vee-validate'
 import { parseWalletConnectUri } from '@walletconnect/utils'
+import { normalizeNamespaces } from 'wc-utils'
 import LiteYouTubeEmbed from 'vue-lite-youtube-embed'
 import SVGX from '~/assets/images/icons/x.svg?component'
 import SVGAlert from '~/assets/images/icons/exclamation-octagon.svg?component'
@@ -11,6 +12,8 @@ import SVGQr from '~/assets/images/icons/qr.svg?component'
 import 'vue-lite-youtube-embed/style.css'
 
 const emit = defineEmits(['destroy'])
+
+console.log(normalizeNamespaces)
 
 const wcStore = useWalletConnect()
 
@@ -24,20 +27,35 @@ const [loading, toggle] = useToggle(false)
 const isExpertMode = ref(false)
 const detailsRef = ref<HTMLDialogElement>()
 
+useScriptTag('https://cdn.jsdelivr.net/npm/@walletconnect/utils@2.7.2/dist/index.es.min.js', (e) => {
+  console.log(e)
+})
+
 const { handleSubmit, errors, meta, resetForm } = useForm({
   validationSchema: yup.object({
     uri: yup
       .string()
       .required()
       .test('uri', 'Incorrect URI', (value: any) => {
-        const parsedURI = parseWalletConnectUri(value)
-
-        return (
-          !!parsedURI.key
+        try {
+          const version = wcStore.getConnectionVersion(value)
+          if (version === 1) {
+            const parsedURI = parseWalletConnectUri(value)
+            return (
+              !!parsedURI.key
           && !!parsedURI.bridge
           && !!parsedURI.bridge
           && !!parsedURI.protocol
-        )
+            )
+          }
+          else {
+            // validate WC v2
+            return true
+          }
+        }
+        catch (e) {
+          return false
+        }
       }),
   }),
 })
@@ -53,15 +71,21 @@ const { value: uri, meta: uriMeta } = useField<string>(
 const prepareAndConnect = handleSubmit(async () => {
   if (!uri.value)
     return
-
   try {
     toggle(true)
-    connection.value = await wcStore.prepareConnection(uri.value)
-    if (!connection.value.chainId) {
-      isExpertMode.value = true
-      connection.value.chainId = 1
+    const version = wcStore.getConnectionVersion(uri.value)
+    if (version === 1) {
+      connection.value = await wcStore.prepareConnection(uri.value)
+      if (!connection.value.chainId) {
+        isExpertMode.value = true
+        connection.value.chainId = 1
+      }
+      connectionChainId.value = connection.value.chainId
     }
-    connectionChainId.value = connection.value.chainId
+    else {
+      // TODO: handle WC v2
+      await wcStore.prepareConnectV2(uri.value)
+    }
     uri.value = ''
   }
   catch (e: any) {

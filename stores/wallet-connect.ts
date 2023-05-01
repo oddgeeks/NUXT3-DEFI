@@ -2,6 +2,8 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import WalletConnect from '@walletconnect/client'
 import type { IClientMeta } from '@walletconnect/types'
 import { signingMethods } from '@walletconnect/utils'
+import { buildApprovedNamespaces } from 'wc-utils'
+
 import { v4 as uuidv4 } from 'uuid'
 import { ethers } from 'ethers'
 import type { IWeb3Wallet } from '@walletconnect/web3wallet'
@@ -479,9 +481,72 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
       await web3WalletV2.value!.respondSessionRequest({ topic, response })
     })
   })
+
+  function getConnectionVersion(uri: string): 1 | 2 {
+    const v1Pattern = /^wc:[a-zA-Z0-9-]+@1\?/
+    const v2Pattern = /^wc:[a-zA-Z0-9]+@2\?/
+
+    if (v1Pattern.test(uri))
+      return 1
+
+    else if (v2Pattern.test(uri))
+      return 2
+
+    else
+      throw new Error('Invalid connection URI')
+  }
+
+  const prepareConnectV2 = async (
+    uri: string,
+  ) => {
+    web3WalletV2.value?.on('session_proposal', async (sessionProposal) => {
+      console.log('session_proposal', sessionProposal)
+      const { id, params } = sessionProposal
+
+      const chains = availableNetworks.map((network) => {
+        return `eip155:${network.chainId}`
+      })
+
+      const accounts = availableNetworks.map((network) => {
+        return `eip155:${network.chainId}:${safe.safeAddress.value}`
+      })
+
+      // ------- namespaces builder util ------------ //
+      const approvedNamespaces = buildApprovedNamespaces({
+        proposal: params,
+        supportedNamespaces: {
+          eip155: {
+            chains,
+            accounts,
+            methods: [
+              ...signingMethods,
+              'eth_sendAvocadoTransaction',
+              'eth_sendAvocadoTransactions',
+              'eth_getBalance',
+              'avocado_sendTransaction',
+              'avocado_sendTransactions',
+            ],
+            events: ['accountsChanged', 'chainChanged'],
+          },
+        },
+      })
+
+      const session = await web3WalletV2.value?.approveSession({
+        id,
+        namespaces: approvedNamespaces,
+      })
+
+      console.log(session)
+    })
+
+    await web3WalletV2.value?.core.pairing.pair({ uri })
+  }
+
   return {
     sessions,
     disconnect,
+    getConnectionVersion,
+    prepareConnectV2,
     prepareConnection,
     connect,
     prepareAndConnect,
