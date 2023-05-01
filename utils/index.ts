@@ -97,7 +97,7 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
   }
 }
 
-export function formatIPFS(ipfs: string) {
+export function formatIPFSUri(ipfs: string) {
   if (ipfs.startsWith('ipfs') || ipfs.startsWith('ipfs://'))
     return `https://ipfs.decentralized-content.com/ipfs/${ipfs.replace('ipfs://', '')}`
 

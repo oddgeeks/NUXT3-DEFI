@@ -45,7 +45,7 @@ async function handleToggle() {
       <BrokenSVG />
     </div>
 
-    <video v-else-if="asset.animationUrl && details" class="rounded-[14px] object-contain max-h-full" playsinline autoplay loop :src="formatIPFS(asset.animationUrl)" />
+    <video v-else-if="asset.animationUrl && details" class="rounded-[14px] object-contain max-h-full" playsinline autoplay loop :src="formatIPFSUri(asset.animationUrl)" />
 
     <img
       v-else
