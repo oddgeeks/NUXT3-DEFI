@@ -331,7 +331,8 @@ async function handleSelectContact() {
 
   if (result.success) {
     const _contact = result.payload as IContact
-    if (tochainId.value !== _contact.chainId)
+
+    if (!!_contact.chainId && tochainId.value !== _contact.chainId)
       tochainId.value = _contact.chainId
 
     setAddress(_contact.address)
@@ -546,14 +547,6 @@ function isInsufficient(idx: number) {
             </button>
           </template>
         </CommonInput>
-
-        <button
-          type="button"
-          class="rounded-7.5 h-8 font-medium items-center justify-center flex px-3 text-xs ring-1 ring-slate-200 dark:ring-slate-700"
-          @click="address = account"
-        >
-          Owner {{ shortenHash(account) }}
-        </button>
       </div>
 
       <div

@@ -27,9 +27,9 @@ export function useContacts() {
     const _contacts = contacts.value[safeAddress.value] || []
 
     if (!hideOwner.value)
-      return [ownerContact.value, ..._contacts]
+      return [ownerContact.value, ..._contacts] as IContact[]
 
-    return _contacts
+    return _contacts as IContact[]
   })
 
   const deleteContact = (contact: IContact) => {
