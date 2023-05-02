@@ -24,9 +24,6 @@ export default defineNuxtConfig({
     },
   },
   nitro: {
-    prerender: {
-      routes: ['/'],
-    },
     routeRules: {
       '/**': {
         headers: {
