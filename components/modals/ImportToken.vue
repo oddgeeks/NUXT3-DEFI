@@ -2,8 +2,8 @@
 import Fuse from 'fuse.js'
 import { storeToRefs } from 'pinia'
 import { isAddress } from '@ethersproject/address'
-import PlusSVG from '~/assets/images/icons/plus.svg?component'
-import SearchSVG from '~/assets/images/icons/search.svg?component'
+import PlusSVG from '~/assets/images/icons/plus.svg'
+import SearchSVG from '~/assets/images/icons/search.svg'
 import type { IToken } from '~~/stores/tokens'
 
 const emit = defineEmits(['destroy'])

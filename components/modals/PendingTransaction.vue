@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { TransactionReceipt } from '@ethersproject/abstract-provider'
 import { wait } from '@instadapp/utils'
-import SVGBridge from '~/assets/images/icons/bridge-2.svg?component'
-import SVGCheckCircle from '~/assets/images/icons/check-circle.svg?component'
+import SVGBridge from '~/assets/images/icons/bridge-2.svg'
+import SVGCheckCircle from '~/assets/images/icons/check-circle.svg'
 
 const props = defineProps<{
   hash: string

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import SVGCheckCircle from '~/assets/images/icons/check-circle.svg?component'
-import SVGErrorCircle from '~/assets/images/icons/error-circle.svg?component'
-import SVGQuestionCircle from '~/assets/images/icons/question-circle.svg?component'
+import SVGCheckCircle from '~/assets/images/icons/check-circle.svg'
+import SVGErrorCircle from '~/assets/images/icons/error-circle.svg'
+import SVGQuestionCircle from '~/assets/images/icons/question-circle.svg'
 
 defineProps<{
   id?: string

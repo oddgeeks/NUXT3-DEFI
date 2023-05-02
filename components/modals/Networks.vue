@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import CheckCircle from '~/assets/images/icons/check-circle.svg?component'
+import CheckCircle from '~/assets/images/icons/check-circle.svg'
 
 const { networkPreference } = storeToRefs(useSafe())
 const isHideZeroBalances = useLocalStorage('hide-zero-balances', false)
