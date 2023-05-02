@@ -327,11 +327,9 @@ export const useSafe = defineStore('safe', () => {
       return
     // if (balanceAborter.value) balanceAborter.value.abort();
 
-    if (safeAddress.value === incorrectAddress) {
-      balances.value.data = []
+    if (safeAddress.value === incorrectAddress)
 
       return
-    }
 
     try {
       balances.value.loading = true
