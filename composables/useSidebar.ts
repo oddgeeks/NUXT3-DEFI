@@ -1,4 +1,4 @@
-const opened = ref(false)
+const opened = ref(true)
 
 export function useSidebar() {
   const openSidebar = () => {

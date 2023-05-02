@@ -29,7 +29,10 @@ const [moreOptions, toggleOptions] = useToggle(false)
           class="w-7 h-7 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
           @click="toggleSidebar"
         >
-          <ArrowRight class="w-3.5 h-3.5 text-slate-400" />
+          <ArrowRight
+            class="w-3.5 h-3.5 text-slate-400"
+            :class="{ 'rotate-180': opened }"
+          />
         </button>
       </div>
       <QrCode />
