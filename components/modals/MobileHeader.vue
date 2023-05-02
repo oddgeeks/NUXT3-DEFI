@@ -5,6 +5,7 @@ import Hamburger from '@/assets/images/icons/hamburger.svg'
 import Avocado from '@/assets/images/icons/avocado.svg'
 
 defineEmits(['destroy'])
+
 const { active, account } = useWeb3()
 </script>
 

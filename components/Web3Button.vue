@@ -9,20 +9,24 @@ defineProps({
   hideGas: Boolean,
   hideEOA: Boolean,
 })
+
 const { active, deactivate, account, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
 const { gasBalance } = storeToRefs(useSafe())
 const [hovered, toggle] = useToggle(false)
 const { setConnectorName, cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
+
 const ensName = ref()
 const isActualActive = computed(() => {
   if (trackingAccount.value)
     return true
   return active.value
 })
+
 async function closeConnection() {
   const { success } = await openDisconnectWalletModal()
+
   if (success) {
     trackingAccount.value = ''
     setConnectorName(null)
@@ -30,15 +34,19 @@ async function closeConnection() {
       deactivate()
   }
 }
+
 const pendingGasAmount = useNuxtData('pending-deposit')
+
 const addressLabel = computed(() =>
   trackingAccount.value
     ? `Tracking: ${shortenHash(account.value, 4)}`
     : ensName.value || shortenHash(account.value, 4),
 )
+
 const connectedProvider = computed(() => {
   return providers.find(item => item.id === cachedProviderName.value)
 })
+
 whenever(
   account,
   async () => {

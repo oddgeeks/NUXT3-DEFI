@@ -17,10 +17,10 @@ const route = useRoute()
         v-else-if="showOnboardBanner && route.name !== 'claims-ens-drop'"
       />
     </div>
-    <BannerAccountTracking v-if="showTrackingBanner" class="hidden sm:flex" />
     <div class="flex">
-      <Sidebar />
+      <Sidebar class="sm:flex" />
       <div class="flex flex-col flex-1">
+        <BannerAccountTracking v-if="showTrackingBanner" class="hidden sm:flex" />
         <div class="py-8 px-10 hidden sm:block">
           <TheHeader />
         </div>
