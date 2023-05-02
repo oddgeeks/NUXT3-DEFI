@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
-import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg?component'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg'
+import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg'
 
 const props = defineProps<{
   payload: SimulationToken

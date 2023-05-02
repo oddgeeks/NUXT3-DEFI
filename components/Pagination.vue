@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import ArrowLeft from '~/assets/images/icons/arrow-left.svg?component'
-import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
+import ArrowLeft from '~/assets/images/icons/arrow-left.svg'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg'
 
 const props = defineProps({
   total: {

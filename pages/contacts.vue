@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
-import SearchSVG from '~/assets/images/icons/search.svg?component'
-import PlusSVG from '~/assets/images/icons/plus.svg?component'
+import SearchSVG from '~/assets/images/icons/search.svg'
+import PlusSVG from '~/assets/images/icons/plus.svg'
 
 const { account } = useWeb3()
 const { safeAddress } = useAvocadoSafe()

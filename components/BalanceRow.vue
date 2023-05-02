@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { Line } from 'vue-chartjs'
 import type { IBalance } from '~/stores/safe'
-import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
-import BridgeSVG from '~/assets/images/icons/bridge.svg?component'
-import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg'
+import BridgeSVG from '~/assets/images/icons/bridge.svg'
+import RefreshSVG from '~/assets/images/icons/refresh.svg'
 
 const props = defineProps<{
   tokenBalance: IBalance

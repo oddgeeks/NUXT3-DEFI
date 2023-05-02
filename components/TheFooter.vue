@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import InstadappSVG from '~/assets/images/logo/instadapp.svg?component'
+import InstadappSVG from '~/assets/images/logo/instadapp.svg'
 
 const info = useBuildInfo()
 const { isProd } = useAppConfig()

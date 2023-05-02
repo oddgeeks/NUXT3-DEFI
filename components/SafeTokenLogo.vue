@@ -1,10 +1,14 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   url: string
   chainId?: number | string
 } > ()
 
 const error = ref(false)
+
+watch(() => props.url, () => {
+  error.value = false
+})
 
 function onError() {
   error.value = true

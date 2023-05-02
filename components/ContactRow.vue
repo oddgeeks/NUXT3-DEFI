@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
-import DeleteSVG from '~/assets/images/icons/delete.svg?component'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg'
+import DeleteSVG from '~/assets/images/icons/delete.svg'
 
 defineProps({
   contact: {

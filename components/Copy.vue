@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import CopySVG from '~/assets/images/icons/copy.svg?component'
-import CheckCircle from '~/assets/images/icons/check-circle.svg?component'
+import CopySVG from '~/assets/images/icons/copy.svg'
+import CheckCircle from '~/assets/images/icons/check-circle.svg'
 
 defineProps<{
   text: string

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import Avocado from '@/assets/images/icons/avocado.svg?component'
-import Hamburger from '@/assets/images/icons/hamburger.svg?component'
+import Avocado from '@/assets/images/icons/avocado.svg'
+import Hamburger from '@/assets/images/icons/hamburger.svg'
 
 const { active } = useWeb3()
 </script>

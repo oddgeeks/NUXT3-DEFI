@@ -1,6 +1,5 @@
 import ViteComponents from 'unplugin-vue-components/vite'
 import { HeadlessUiResolver } from 'unplugin-vue-components/resolvers'
-import svgLoader from 'vite-svg-loader'
 
 const meta = {
   title: 'Avocado',
@@ -145,8 +144,15 @@ export default defineNuxtConfig({
       ],
     },
   },
-  // @ts-expect-error
+  svgo: {
+    defaultImport: 'component',
+    autoImportPath: './assets/images/icons',
+    svgoConfig: {
+      plugins: ['prefixIds'],
+    },
+  },
   modules: [
+    'nuxt-svgo',
     '@nuxtjs/color-mode',
     '@vueuse/nuxt',
     '@nuxtjs/tailwindcss',
@@ -190,11 +196,6 @@ export default defineNuxtConfig({
       ViteComponents({
         dts: true,
         resolvers: [HeadlessUiResolver({})],
-      }),
-      svgLoader({
-        svgoConfig: {
-          plugins: ['prefixIds'],
-        },
       }),
     ],
   },
