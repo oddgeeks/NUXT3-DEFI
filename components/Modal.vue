@@ -70,7 +70,6 @@ whenever(escape, () => {
           {
             'mt-auto rounded-t-7.5': options.sheetPosition === 'bottom',
             'mb-auto rounded-b-7.5': options.sheetPosition === 'top',
-            'ml-auto rounded-b-7.5': options.sheetPosition === 'right',
           },
           options.wrapperClass,
         ]"

@@ -12,6 +12,7 @@ import MoreOptionsSVG from '~/assets/images/icons/more-options.svg'
 import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg'
 import CopySVG from '~/assets/images/icons/copy.svg'
+import QrSVG from '~/assets/images/icons/qr.svg'
 
 const { opened, toggleSidebar } = useSidebar()
 const { safeAddress } = useAvocadoSafe()
@@ -155,10 +156,10 @@ const [moreOptions, toggleOptions] = useToggle(false)
           :class="{ 'rotate-180': opened }"
         />
       </button>
-      <div v-if="!!safeAddress" class="flex flex-col w-full gap-4">
-        <div class="flex justify-center items-center dark:bg-slate-800 w-full rounded-5 py-4">
-          <CopySVG class="text-white w-4.5 h-4.5" />
-        </div>
+      <div class="flex flex-col w-full gap-4" :class="{ 'blur pointer-events-none': !safeAddress }">
+        <button class="flex justify-center items-center dark:bg-slate-800 w-full rounded-5 py-4" @click="openQrcode">
+          <QrSVG class="text-white w-4.5 h-4.5" />
+        </button>
         <button class="flex justify-center items-center dark:bg-slate-800 w-full rounded-5 py-4" @click="copy(safeAddress)">
           <CopySVG class="text-white w-4.5 h-4.5" />
         </button>
