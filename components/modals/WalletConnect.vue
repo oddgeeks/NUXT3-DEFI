@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import * as yup from 'yup'
 import { useField, useForm } from 'vee-validate'
-import { parseWalletConnectUri } from '@walletconnect/utils'
 
 import LiteYouTubeEmbed from 'vue-lite-youtube-embed'
 import SVGX from '~/assets/images/icons/x.svg'
@@ -33,19 +32,13 @@ const { handleSubmit, errors, meta, resetForm } = useForm({
       .test('uri', 'Incorrect URI', (value: any) => {
         try {
           const version = wcStore.getConnectionVersion(value)
-          if (version === 1) {
-            const parsedURI = parseWalletConnectUri(value)
-            return (
-              !!parsedURI.key
-          && !!parsedURI.bridge
-          && !!parsedURI.bridge
-          && !!parsedURI.protocol
-            )
-          }
-          else {
-            // validate WC v2
+          if (version === 1)
             return true
-          }
+
+          else if (version === 2)
+            return true
+
+          return false
         }
         catch (e) {
           return false

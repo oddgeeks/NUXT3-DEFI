@@ -1,10 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import WalletConnect from '@walletconnect/client'
 import type { IClientMeta } from '@walletconnect/types'
-import { signingMethods } from '@walletconnect/utils'
-
-// ignore this error
-// @ts-expect-error
 
 import { v4 as uuidv4 } from 'uuid'
 import { ethers } from 'ethers'
