@@ -47,7 +47,7 @@ export default defineNuxtConfig({
     },
   },
   pwa: {
-    registerType: 'autoUpdate',
+    registerType: 'prompt',
     manifestFilename: 'site.webmanifest',
     workbox: {
       navigateFallback: null,
