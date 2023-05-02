@@ -11,15 +11,22 @@ const route = useRoute()
 
 <template>
   <section class="flex flex-col h-full">
-    <BannerAccountTracking v-if="showTrackingBanner" class="hidden sm:flex" />
     <div class="fixed bottom-0 sm:bottom-12 w-full z-40">
       <BannerSwitchNetwork v-if="showIncorrectNetworkBanner" />
       <BannerOnboard
         v-else-if="showOnboardBanner && route.name !== 'claims-ens-drop'"
       />
     </div>
-    <div class="py-8 px-10 hidden sm:block">
-      <TheHeader />
+    <BannerAccountTracking v-if="showTrackingBanner" class="hidden sm:flex" />
+    <div class="flex">
+      <Sidebar />
+      <div class="flex flex-col flex-1">
+        <div class="py-8 px-10 hidden sm:block">
+          <TheHeader />
+        </div>
+        <slot />
+        <TheFooter />
+      </div>
     </div>
     <div class="fixed w-full z-40 sm:hidden">
       <BannerAccountTracking v-if="showTrackingBanner" class="!bg-[#18242c]" />
@@ -35,7 +42,5 @@ const route = useRoute()
     >
       <WarningsGasBalance v-if="showInsufficientGasBanner" />
     </div>
-    <slot />
-    <TheFooter />
   </section>
 </template>

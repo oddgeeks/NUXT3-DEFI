@@ -2,38 +2,43 @@
 import { storeToRefs } from 'pinia'
 import GasSVG from '~/assets/images/icons/gas.svg'
 import PlusSVG from '~/assets/images/icons/plus.svg'
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
+import PowerOnSVG from '~/assets/images/icons/power-on.svg'
+import PowerOffSVG from '~/assets/images/icons/power-off.svg'
 
 defineProps({
   hideGas: Boolean,
   hideEOA: Boolean,
 })
-
-const { active, account } = useWeb3()
+const { active, deactivate, account, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
 const { gasBalance } = storeToRefs(useSafe())
-const { cachedProviderName } = useConnectors()
+const [hovered, toggle] = useToggle(false)
+const { setConnectorName, cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
-
 const ensName = ref()
 const isActualActive = computed(() => {
   if (trackingAccount.value)
     return true
   return active.value
 })
-
+async function closeConnection() {
+  const { success } = await openDisconnectWalletModal()
+  if (success) {
+    trackingAccount.value = ''
+    setConnectorName(null)
+    if (connector.value)
+      deactivate()
+  }
+}
 const pendingGasAmount = useNuxtData('pending-deposit')
-
 const addressLabel = computed(() =>
   trackingAccount.value
     ? `Tracking: ${shortenHash(account.value, 4)}`
     : ensName.value || shortenHash(account.value, 4),
 )
-
 const connectedProvider = computed(() => {
   return providers.find(item => item.id === cachedProviderName.value)
 })
-
 whenever(
   account,
   async () => {
@@ -80,28 +85,20 @@ whenever(
 
     <button
       v-if="!hideEOA"
-      class="hidden sm:flex dark:bg-slate-800 bg-slate-100 py-3 leading-5 justify-between relative rounded-7.5 items-center px-4 gap-x-2.5"
-      @click="openSidebar"
+      class="dark:bg-slate-800 bg-slate-100 py-3 leading-5 justify-between pr-12 relative flex rounded-7.5 items-center px-4 gap-x-2.5"
+      @mouseenter="toggle(true)"
+      @mouseleave="toggle(false)"
+      @click="closeConnection"
     >
       <div v-if="connectedProvider">
         <component :is="connectedProvider.logo" class="h-6 w-6" />
       </div>
       {{ addressLabel }}
-      <ChevronDownSVG class="hidden sm:flex w-3.5 h-3.5 pointer-events-none -rotate-90 text-slate-400" />
+      <PowerOffSVG
+        v-if="hovered"
+        class="pointer-events-none absolute right-0"
+      />
+      <PowerOnSVG v-else class="pointer-events-none absolute right-0" />
     </button>
-
-    <div
-      v-if="!hideEOA"
-      class="sm:hidden dark:bg-slate-800 bg-slate-100 py-3 leading-5 justify-between relative flex rounded-7.5 items-center px-4 gap-x-2.5"
-    >
-      <div v-if="connectedProvider">
-        <component :is="connectedProvider.logo" class="h-6 w-6" />
-      </div>
-      <div class="flex flex-col">
-        <span class="text-slate-500 text-xs text-left">Owner's address</span>
-        <span>{{ addressLabel }}</span>
-      </div>
-      <ChevronDownSVG class="hidden sm:flex w-3.5 h-3.5 pointer-events-none -rotate-90 text-slate-400" />
-    </div>
   </div>
 </template>

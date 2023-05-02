@@ -21,10 +21,7 @@ onMounted(() => {
 <template>
   <NuxtLayout>
     <NuxtLoadingIndicator color="#16A34A" :height="2" />
-    <div class="flex">
-      <Sidebar />
-      <NuxtPage />
-    </div>
+    <NuxtPage />
   </NuxtLayout>
 
   <Notifications />

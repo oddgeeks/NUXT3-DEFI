@@ -280,8 +280,7 @@ type IOptions = {
   wrapperClass?: string;
   contentClass?: string;
   snackOptions?: ISnackOptions;
-  sheetPosition?: "top" | "bottom" | "right";
-  hideClose?: boolean;
+  sheetPosition?: "top" | "bottom";
 };
 
 type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim";

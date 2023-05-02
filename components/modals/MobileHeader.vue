@@ -1,63 +1,27 @@
 <script setup lang="ts">
 import InstadappSVG from '@/assets/images/logo/instadapp.svg'
-import PowerSVG from '~/assets/images/icons/power.svg'
+import Calendar from '@/assets/images/icons/calendar.svg'
+import Hamburger from '@/assets/images/icons/hamburger.svg'
 import Avocado from '@/assets/images/icons/avocado.svg'
-import SVGX from '~/assets/images/icons/x.svg'
 
 defineEmits(['destroy'])
-
-const { active, deactivate, connector } = useWeb3()
-const { setConnectorName } = useConnectors()
-
-async function closeConnection() {
-  const { success } = await openDisconnectWalletModal()
-
-  if (success) {
-    setConnectorName(null)
-    if (connector.value)
-      deactivate()
-  }
-}
+const { active, account } = useWeb3()
 </script>
 
 <template>
-  <div class="flex flex-col items-center dark:bg-gray-850 bg-slate-50 -mx-5 -my-5 px-5 pt-[60px] gap-6 h-screen">
-    <div class="flex justify-between items-center w-full">
-      <NuxtLink to="/" class="flex rounded-[14px] bg-primary items-center" @click="$emit('destroy')">
-        <Avocado class="text-white" />
-      </NuxtLink>
-
-      <Web3Button v-if="active" :hide-e-o-a="true" />
-
-      <button class="flex items-center justify-center w-10 h-10 rounded-[14px] dark:bg-slate-800 bg-slate-150" @click="$emit('destroy')">
-        <SVGX class="w-4.5 h-4.5 dark:text-slate-500 text-slate-400" />
-      </button>
-    </div>
-
-    <div
-      v-show="active"
-      class="flex w-full justify-between items-center mt-1.5"
+  <div class="flex flex-col items-center mb-7.5">
+    <figure
+      class="flex gap-3 items-center border-2 border-slate-100 dark:border-slate-800 rounded-full py-2 px-4"
     >
-      <div
-        role="button"
-        tabindex="0"
-        class="bg-slate-100 dark:bg-slate-800 w-10 h-10 flex justify-center items-center rounded-full"
-      >
-        <ColorModeSwitcher />
-      </div>
+      <figcaption class="text-xs text-slate-400">
+        Built by
+      </figcaption>
+      <a target="_blank" href="https://instadapp.io/">
+        <InstadappSVG />
+      </a>
+    </figure>
 
-      <Web3Button :hide-gas="true" />
-
-      <button
-        class="bg-slate-100 dark:bg-slate-800 w-10 h-10 flex justify-center items-center rounded-full"
-        @click="closeConnection"
-      >
-        <PowerSVG class="w-[22px] h-[22px] text-slate-400" />
-      </button>
-    </div>
-    <OptionsAndAuthority class="w-full" @item-clicked="$emit('destroy')" />
-
-    <nav class="flex gap-5 flex-col text-xs text-slate-400 mt-1.5 w-full">
+    <nav class="flex gap-5 flex-col text-xs text-slate-400 mt-5 w-full">
       <div class="flex w-full justify-around">
         <a target="_blank" href="https://help.avocado.instadapp.io">Help</a>
         <a href="mailto:info@instadapp.io">Email</a>
@@ -72,17 +36,58 @@ async function closeConnection() {
           href="https://discord.com/invite/C76CeZc"
         >Discord</a>
       </div>
+
+      <div v-if="account" class="flex justify-center gap-10">
+        <NuxtLink
+          active-class="dark:text-white text-slate-900"
+          to="/contacts"
+          @click="$emit('destroy')"
+        >
+          Contacts
+        </NuxtLink>
+        <!-- <NuxtLink
+          active-class="dark:text-white text-slate-900"
+          to="/nft"
+          @click="$emit('destroy')"
+        >
+          NFT
+        </NuxtLink> -->
+      </div>
     </nav>
 
-    <figure
-      class="flex gap-3 items-center border-2 border-slate-100 dark:border-slate-800 rounded-full py-2 px-4 mt-2"
+    <div
+      v-show="active"
+      class="flex w-full justify-between items-center mt-7.5"
     >
-      <figcaption class="text-xs text-slate-400">
-        Built by
-      </figcaption>
-      <a target="_blank" href="https://instadapp.io/">
-        <InstadappSVG />
-      </a>
-    </figure>
+      <div
+        role="button"
+        tabindex="0"
+        class="bg-slate-100 dark:bg-slate-800 w-[50px] h-[50px] flex justify-center items-center rounded-full"
+      >
+        <ColorModeSwitcher />
+      </div>
+
+      <Web3Button :hide-gas="true" />
+
+      <NuxtLink
+        class="bg-slate-100 dark:bg-slate-800 w-[50px] h-[50px] flex justify-center items-center rounded-full"
+        external
+        :to="`${avoExplorerURL}/address/${account}`"
+      >
+        <Calendar color="blue" />
+      </NuxtLink>
+    </div>
+  </div>
+  <div class="flex justify-between items-center">
+    <NuxtLink to="/" class="flex items-center" @click="$emit('destroy')">
+      <Avocado />
+      <span v-if="!active" class="ml-2">Avocado</span>
+    </NuxtLink>
+
+    <Web3Button v-if="active" :hide-e-o-a="true" />
+
+    <button v-if="active" @click="$emit('destroy')">
+      <Hamburger />
+    </button>
   </div>
 </template>

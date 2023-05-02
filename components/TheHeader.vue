@@ -28,46 +28,8 @@ useIntervalFn(refresh, 1000)
 </script>
 
 <template>
-  <header class="flex items-center justify-between">
-    <NuxtLink to="/">
-      <Logo />
-    </NuxtLink>
-
+  <header class="flex items-center justify-end">
     <nav class="flex items-center gap-7.5 relative">
-      <div class="flex text-sm">
-        <NuxtLink
-          active-class="dark:text-white text-slate-900"
-          class="px-5 py-3 text-slate-400"
-          to="/"
-        >
-          Home
-        </NuxtLink>
-        <template v-if="account">
-          <NuxtLink
-            active-class="dark:text-white text-slate-900"
-            class="px-5 py-3 text-slate-400"
-            external
-            target="_blank"
-            :to="`${avoExplorerURL}/address/${account}`"
-          >
-            History
-          </NuxtLink>
-          <NuxtLink
-            active-class="dark:text-white text-slate-900"
-            class="px-5 py-3 text-slate-400"
-            to="/contacts"
-          >
-            Contacts
-          </NuxtLink>
-          <!-- <NuxtLink
-            active-class="dark:text-white text-slate-900"
-            class="px-5 py-3 text-slate-400"
-            to="/nft"
-          >
-            NFT
-          </NuxtLink> -->
-        </template>
-      </div>
       <div class="flex items-center gap-5">
         <ColorModeSwitcher />
         <Web3Button />
