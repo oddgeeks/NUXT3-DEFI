@@ -522,6 +522,7 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
             accounts,
             methods: [
               ...signingMethods,
+              ...params.requiredNamespaces?.eip155.methods,
               'eth_sendAvocadoTransaction',
               'eth_sendAvocadoTransactions',
               'eth_getBalance',
