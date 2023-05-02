@@ -46,13 +46,13 @@ const { active, account } = useWeb3()
         >
           Contacts
         </NuxtLink>
-        <NuxtLink
+        <!-- <NuxtLink
           active-class="dark:text-white text-slate-900"
           to="/nft"
           @click="$emit('destroy')"
         >
           NFT
-        </NuxtLink>
+        </NuxtLink> -->
       </div>
     </nav>
 

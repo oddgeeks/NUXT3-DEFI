@@ -61,7 +61,7 @@ export function useNft() {
         .filter(i => i.ankrName && chainIds.includes(i.chainId))
         .map(i => i.ankrName)
 
-        console.log('ankrChains: ', ankrChains)
+      console.log('ankrChains: ', ankrChains)
 
       const nfts = await provider.getNFTsByOwner({
         walletAddress: this.owner,
@@ -84,6 +84,9 @@ export function useNft() {
           chainId: network.chainId,
           tokenId: nft.tokenId,
           contractAddress: nft.contractAddress,
+          contractType: nft.contractType,
+          thumbnailUrl: nft.imageUrl,
+          attributes: nft.traits?.map(i => ({ type: i.trait_type, value: i.value })) as NFTAttributes[] || [],
         })
 
         return acc

@@ -662,7 +662,7 @@ onUnmounted(() => {
       <div class="space-y-2.5">
         <div class="px-5 pt-[14px] pb-5 dark:bg-gray-850 bg-slate-50 rounded-5">
           <div class="flex flex-col gap-5">
-            <details class="flex flex-col group">
+            <details open class="flex flex-col group">
               <summary
                 class="flex justify-between text-sm font-semibold cursor-pointer"
               >
