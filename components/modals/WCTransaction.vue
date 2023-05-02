@@ -117,7 +117,7 @@ async function handleSubmit() {
     logActionToSlack({
       message: `${props.isSign ? 'Permit2 Approval' : 'Txn'} ${
         props.wc.peerMeta?.url
-      } ${err}`,
+      } ${err.formatted}`,
       type: 'error',
       action: 'wc',
       chainId: props.chainId,
