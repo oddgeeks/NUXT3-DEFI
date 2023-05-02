@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import PlusSVG from '~/assets/images/icons/plus.svg?component'
-import SVGSuccess from '~/assets/images/icons/check-circle.svg?component'
-import SearchSVG from '~/assets/images/icons/search.svg?component'
+import PlusSVG from '~/assets/images/icons/plus.svg'
+import SVGSuccess from '~/assets/images/icons/check-circle.svg'
+import SearchSVG from '~/assets/images/icons/search.svg'
 import type { IToken } from '~~/stores/tokens'
 
 const props = defineProps<{

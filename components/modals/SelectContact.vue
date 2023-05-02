@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import Fuse from 'fuse.js'
-import SearchSVG from '~/assets/images/icons/search.svg?component'
-import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
+import SearchSVG from '~/assets/images/icons/search.svg'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg'
 
 const emit = defineEmits(['resolve', 'reject'])
 

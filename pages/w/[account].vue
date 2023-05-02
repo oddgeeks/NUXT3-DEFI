@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ExclamationCircleSVG from '~/assets/images/icons/exclamation-circle.svg?component'
+import ExclamationCircleSVG from '~/assets/images/icons/exclamation-circle.svg'
 
 const { isSafeAddress } = useAvocadoSafe()
 

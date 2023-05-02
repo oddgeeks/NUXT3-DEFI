@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { ColorModeInstance } from '@nuxtjs/color-mode/dist/runtime/types'
-import Sun from '~/assets/images/icons/sun.svg?component'
-import Moon from '~/assets/images/icons/moon.svg?component'
+import Sun from '~/assets/images/icons/sun.svg'
+import Moon from '~/assets/images/icons/moon.svg'
 
 function switchColorMode(colorMode: ColorModeInstance) {
   colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'

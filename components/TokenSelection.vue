@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
 import type { IToken } from '~~/stores/tokens'
 
 const props = defineProps<{

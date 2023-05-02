@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import GasSVG from '~/assets/images/icons/gas.svg?component'
-import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg?component'
+import GasSVG from '~/assets/images/icons/gas.svg'
+import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg'
 
 const props = defineProps<{
   data: ICalculatedFee
