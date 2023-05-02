@@ -1,4 +1,4 @@
-const opened = ref(true)
+const opened = useLocalStorage<boolean>('sidebar', true)
 
 export function useSidebar() {
   const openSidebar = () => {

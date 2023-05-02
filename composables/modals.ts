@@ -24,6 +24,7 @@ import AddContact from '~/components/modals/AddContact.vue'
 import SelectContact from '~/components/modals/SelectContact.vue'
 import NFTDetails from '~/components/modals/NFTDetails.vue'
 import SendNFT from '~/components/modals/SendNFT.vue'
+import SupportedNetworks from '~/components/modals/SupportedNetworks.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -358,6 +359,15 @@ export function openSendNFTModal(NFTData: NFTData) {
     options: {
       wrapperClass: 'max-w-[600px]',
     },
+  })
+}
+
+export function openSupportedNetworks() {
+  openModal({
+    component: SupportedNetworks,
+    // options: {
+    //   wrapperClass: 'max-w-[600px]',
+    // },
   })
 }
 
