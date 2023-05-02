@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
-import SVGX from '~/assets/images/icons/x.svg?component'
+import SVGInfo from '~/assets/images/icons/exclamation-circle.svg'
+import SVGX from '~/assets/images/icons/x.svg'
 
 const { hideVersionUpdateBanner } = useBanner()
 </script>

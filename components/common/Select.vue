@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
-import SVGSuccess from '~/assets/images/icons/check-circle.svg?component'
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
+import SVGSuccess from '~/assets/images/icons/check-circle.svg'
 
 const props = defineProps<{
   options: any[]

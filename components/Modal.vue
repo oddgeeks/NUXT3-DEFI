@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SVGX from '~/assets/images/icons/x.svg?component'
+import SVGX from '~/assets/images/icons/x.svg'
 
 const props = withDefaults(
   defineProps<{
@@ -63,7 +63,7 @@ whenever(escape, () => {
   >
     <div
       :data-modal-id="modalId"
-      class="flex sm:items-center justify-center h-full sm:min-h-screen text-center sm:p-0"
+      class="flex sm:items-center justify-center sm:h-auto h-full sm:min-h-screen text-center sm:p-0 modal-height-wrapper"
     >
       <div
         :class="[

@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 import Fuse from 'fuse.js'
-import SearchSVG from '~/assets/images/icons/search.svg?component'
-import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
+import SearchSVG from '~/assets/images/icons/search.svg'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg'
 
 const emit = defineEmits(['resolve', 'reject'])
 
-const { contacts, getSentTimes } = useContacts()
-const { safeAddress } = useAvocadoSafe()
+const { safeContacts, getSentTimes } = useContacts()
 
 const searchQuery = ref('')
 
@@ -15,7 +14,7 @@ const search = useDebounceFn((event: Event) => {
 }, 200)
 
 const filteredContacts = computed(() => {
-  const _contacts = contacts.value[safeAddress.value]
+  const _contacts = safeContacts.value as IContact[]
   if (!_contacts)
     return []
 
@@ -41,7 +40,7 @@ const filteredContacts = computed(() => {
         class="flex-1 w-full"
         :class="{
           'hidden sm:block':
-            !contacts[safeAddress] || contacts[safeAddress].length === 0,
+            !safeContacts || safeContacts.length === 0,
         }"
         input-classes="!py-3"
         name="Contact Search"

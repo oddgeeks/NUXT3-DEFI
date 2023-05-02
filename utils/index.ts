@@ -1,3 +1,5 @@
+import { ethers } from 'ethers'
+
 export const injectFavicon = function (src: string) {
   const head = document.querySelector('head')!
   const iconElement = document.createElement('link')
@@ -93,4 +95,38 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
     amountAfterDiscount: maxAmountAfterDiscount,
     formattedAmountAfterDiscount,
   }
+}
+
+export function formatIPFSUri(ipfs: string) {
+  if (ipfs.startsWith('ipfs') || ipfs.startsWith('ipfs://'))
+    return `https://ipfs.decentralized-content.com/ipfs/${ipfs.replace('ipfs://', '')}`
+
+  return ipfs
+}
+
+export async function checkAddressIsDsa(
+  dsaAddress: string,
+  chainId: number,
+): Promise<boolean> {
+  const abi = [
+    'function accountID(address) external view returns (uint64)',
+  ]
+
+  const instaListAddresses = {
+    1: '0x4c8a1BEb8a87765788946D6B19C6C6355194AbEb',
+    137: '0x839c2D3aDe63DF5b0b8F3E57D5e145057Ab41556',
+    43114: '0x9926955e0Dd681Dc303370C52f4Ad0a4dd061687',
+    42161: '0x3565F6057b7fFE36984779A507fC87b31EFb0f09',
+    250: '0x10e166c3FAF887D8a61dE6c25039231eE694E926',
+    10: '0x9926955e0Dd681Dc303370C52f4Ad0a4dd061687',
+  } as Record<number, string>
+
+  const instaListAddress = instaListAddresses[chainId]
+
+  const provider = getRpcProvider(chainId)
+
+  const instaList = new ethers.Contract(instaListAddress, abi, provider)
+  const accountId = await instaList.accountID(dsaAddress)
+
+  return accountId.gt(0)
 }

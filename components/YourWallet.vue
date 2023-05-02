@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import EyeSVG from '@/assets/images/icons/eye.svg?component'
+import EyeSVG from '@/assets/images/icons/eye.svg'
 
 const { safeAddress } = useAvocadoSafe()
 const account = computed(() => safeAddress.value || '0x000000000000000')

@@ -3,12 +3,12 @@ import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { storeToRefs } from 'pinia'
 import { utils } from 'ethers'
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
 import type { IToken } from '~~/stores/tokens'
 import { Erc20__factory } from '~~/contracts'
-import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
-import ArrowLeft from '~/assets/images/icons/arrow-left.svg?component'
-import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg?component'
+import SVGInfo from '~/assets/images/icons/exclamation-circle.svg'
+import ArrowLeft from '~/assets/images/icons/arrow-left.svg'
+import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg'
 
 interface ISwap {
   sellToken: IToken
@@ -662,7 +662,7 @@ onUnmounted(() => {
       <div class="space-y-2.5">
         <div class="px-5 pt-[14px] pb-5 dark:bg-gray-850 bg-slate-50 rounded-5">
           <div class="flex flex-col gap-5">
-            <details class="flex flex-col group">
+            <details open class="flex flex-col group">
               <summary
                 class="flex justify-between text-sm font-semibold cursor-pointer"
               >

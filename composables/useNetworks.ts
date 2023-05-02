@@ -5,9 +5,9 @@ import {
   injected,
   walletlink,
 } from '~~/connectors'
-import SVGWalletlink from '~/assets/images/wallet/walletlink.svg?component'
-import SVGMetamask from '~/assets/images/wallet/metamask.svg?component'
-import SVGWalletConnect from '~/assets/images/wallet/wallet-connect.svg?component'
+import SVGWalletlink from '~/assets/images/wallet/walletlink.svg'
+import SVGMetamask from '~/assets/images/wallet/metamask.svg'
+import SVGWalletConnect from '~/assets/images/wallet/wallet-connect.svg'
 
 export function useNetworks() {
   const { chainId, provider, library } = useWeb3()

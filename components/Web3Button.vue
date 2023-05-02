@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import GasSVG from '~/assets/images/icons/gas.svg?component'
-import PlusSVG from '~/assets/images/icons/plus.svg?component'
-import PowerOnSVG from '~/assets/images/icons/power-on.svg?component'
-import PowerOffSVG from '~/assets/images/icons/power-off.svg?component'
+import GasSVG from '~/assets/images/icons/gas.svg'
+import PlusSVG from '~/assets/images/icons/plus.svg'
+import PowerOnSVG from '~/assets/images/icons/power-on.svg'
+import PowerOffSVG from '~/assets/images/icons/power-off.svg'
 
 defineProps({
   hideGas: Boolean,

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import SearchSVG from '~/assets/images/icons/search.svg?component'
-import PlusSVG from '~/assets/images/icons/plus.svg?component'
+import SearchSVG from '~/assets/images/icons/search.svg'
+import PlusSVG from '~/assets/images/icons/plus.svg'
 import type { IBalance } from '~~/stores/safe'
 
 const props = defineProps({

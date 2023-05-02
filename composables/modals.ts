@@ -10,7 +10,7 @@ import TokenSelection from '~~/components/modals/TokenSelection.vue'
 import ImportToken from '~~/components/modals/ImportToken.vue'
 import CustomToken from '~~/components/modals/CustomToken.vue'
 import WCTransaction from '~~/components/modals/WCTransaction.vue'
-import PowerOffSVG from '~/assets/images/icons/power-off-bg.svg?component'
+import PowerOffSVG from '~/assets/images/icons/power-off-bg.svg'
 import Dialog from '~~/components/modals/Dialog.vue'
 import CustomTx from '~~/components/modals/CustomTx.vue'
 import UpgradeVersion from '~~/components/modals/UpgradeVersion.vue'
@@ -22,6 +22,8 @@ import Networks from '~/components/modals/Networks.vue'
 import Balance from '~/components/modals/Balance.vue'
 import AddContact from '~/components/modals/AddContact.vue'
 import SelectContact from '~/components/modals/SelectContact.vue'
+import NFTDetails from '~/components/modals/NFTDetails.vue'
+import SendNFT from '~/components/modals/SendNFT.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -334,6 +336,28 @@ export async function openSelectContactModal() {
   return openModal({
     component: SelectContact,
     async: true,
+  })
+}
+
+export function openNFTDetailsModal(NFTData: NFTData) {
+  openModal({
+    component: NFTDetails,
+    componentProps: {
+      asset: NFTData,
+    },
+
+  })
+}
+
+export function openSendNFTModal(NFTData: NFTData) {
+  openModal({
+    component: SendNFT,
+    componentProps: {
+      asset: NFTData,
+    },
+    options: {
+      wrapperClass: 'max-w-[600px]',
+    },
   })
 }
 

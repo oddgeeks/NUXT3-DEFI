@@ -1,0 +1,71 @@
+<script setup lang="ts">
+import ExternalLinkSVG from '~/assets/images/icons/external-link.svg'
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
+
+const props = defineProps<{
+  asset: NFTData
+}>()
+defineEmits(['destroy'])
+
+const [expanded, toggle] = useToggle(false)
+
+provide('expanded', expanded)
+provide('toggle', toggle)
+
+const isContractERC1155 = computed(() => props.asset.contractType === 'ERC1155')
+
+const disabled = computed(() => isContractERC1155.value)
+</script>
+
+<template>
+  <div class="flex flex-col gap-7.5">
+    <NFTImage
+      details
+      img-class="sm:!h-[350px] sm:w-full object-contain"
+      class="!sm:h-full"
+      :asset="asset"
+    />
+    <template v-if="!expanded">
+      <div class="flex gap-3 flex-col">
+        <h1 v-if="asset.name" class="text-center text-lg leading-5 flex justify-center gap-2">
+          {{ asset.name }}
+
+          <NuxtLink external target="_blank" class="shrink-0 text-slate-750 dark:text-slate-150" :to="getExplorerUrl(asset.chainId, `/address/${asset.contractAddress}`)">
+            <ExternalLinkSVG class="shrink-0 w-4" />
+          </NuxtLink>
+        </h1>
+        <h2
+          v-if="asset.collectionName"
+          class="text-sm text-slate-400 font-medium text-center"
+        >
+          {{ asset.collectionName }}
+        </h2>
+      </div>
+      <details v-if="asset.attributes?.length" class="dark:ring-slate-800 ring-slate-150 bg-slate-50 dark:bg-gray-850 ring-2 rounded-2xl group">
+        <summary
+          class="text-sm font-semibold cursor-pointer py-[14px] px-4 flex items-center justify-between"
+        >
+          Traits
+          <ChevronDownSVG
+            class="w-5 text-slate-400 group-open:rotate-180"
+          />
+        </summary>
+
+        <div class="border-t dark:border-slate-800 px-4 py-[14px] max-h-[300px] overflow-y-auto scroll-style">
+          <ul class="grid grid-cols-2 gap-2 items-baseline">
+            <li v-for="attr in asset.attributes" :key="attr.value" class="dark:bg-slate-800 bg-white flex flex-col rounded-[14px] px-[14px] py-2">
+              <span class="text-[10px] leading-4 text-slate-400"> {{ attr.type }}</span>
+              <span class="text-xs leading-5">{{ attr.value }}</span>
+            </li>
+          </ul>
+        </div>
+      </details>
+      <CommonButton :disabled="disabled" class="w-full justify-center" size="lg" @click="$emit('destroy'), openSendNFTModal(asset)">
+        Send NFT
+      </CommonButton>
+      <p v-if="isContractERC1155" class="text-sm text-orange-400 text-center">
+        ERC1155 transfer not supported yet
+      </p>
+    </template>
+  </div>
+</template>
