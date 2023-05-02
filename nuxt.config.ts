@@ -55,7 +55,7 @@ export default defineNuxtConfig({
     },
     client: {
       // if enabling periodic sync for update use 1 hour or so (periodicSyncForUpdates: 3600)
-      periodicSyncForUpdates: 1800, // 30 minutes
+      periodicSyncForUpdates: 20,
     },
   },
   app: {
