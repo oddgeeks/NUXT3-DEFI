@@ -30,6 +30,7 @@
     "@types/canvas-confetti": "^1.6.0",
     "@types/semver": "^7.3.13",
     "@vercel/analytics": "^0.1.11",
+    "@vite-pwa/nuxt": "^0.0.7",
     "@vueuse/nuxt": "^10.1.2",
     "@walletconnect/client": "^1.8.0",
     "@web3-react/injected-connector": "^6.0.7",
