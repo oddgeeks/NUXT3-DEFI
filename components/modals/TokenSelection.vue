@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import PlusSVG from '~/assets/images/icons/plus.svg?component'
-import SVGSuccess from '~/assets/images/icons/check-circle.svg?component'
-import SearchSVG from '~/assets/images/icons/search.svg?component'
+import PlusSVG from '~/assets/images/icons/plus.svg'
+import SVGSuccess from '~/assets/images/icons/check-circle.svg'
+import SearchSVG from '~/assets/images/icons/search.svg'
 import type { IToken } from '~~/stores/tokens'
 
 const props = defineProps<{
@@ -86,21 +86,8 @@ const tokensWithBalance = computed(() => {
           class="px-5 w-full text-left py-[14px] rounded-3xl flex items-center gap-3 hover:bg-slate-100 hover:dark:bg-slate-800"
           @click="$emit('resolve', true, token)"
         >
-          <div
-            class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
-          >
-            <img
-              :src="token.logoURI"
-              class="h-10 w-10 rounded-full"
-              :onerror="onImageError"
-            >
+          <SafeTokenLogo :chain-id="token.chainId" :url="token.logoURI" />
 
-            <ChainLogo
-              :stroke="true"
-              class="w-5.5 h-5.5 absolute -left-1 -bottom-1"
-              :chain="token.chainId"
-            />
-          </div>
           <div class="flex flex-col">
             <span> {{ token.name }} </span>
             <span class="text-slate-400 font-medium text-sm">

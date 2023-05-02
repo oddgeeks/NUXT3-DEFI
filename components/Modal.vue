@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SVGX from '~/assets/images/icons/x.svg?component'
+import SVGX from '~/assets/images/icons/x.svg'
 
 const props = withDefaults(
   defineProps<{

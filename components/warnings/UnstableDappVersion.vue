@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
+import SVGInfo from '~/assets/images/icons/exclamation-circle.svg'
 
 const { unstableDappNetworks } = useBanner()
 

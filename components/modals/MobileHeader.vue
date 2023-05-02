@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import InstadappSVG from '@/assets/images/logo/instadapp.svg?component'
-import PowerSVG from '~/assets/images/icons/power.svg?component'
-import Avocado from '@/assets/images/icons/avocado.svg?component'
-import SVGX from '~/assets/images/icons/x.svg?component'
+import InstadappSVG from '@/assets/images/logo/instadapp.svg'
+import PowerSVG from '~/assets/images/icons/power.svg'
+import Avocado from '@/assets/images/icons/avocado.svg'
+import SVGX from '~/assets/images/icons/x.svg'
 
 defineEmits(['destroy'])
 

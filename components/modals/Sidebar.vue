@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import SVGX from '~/assets/images/icons/x.svg?component'
-import PowerSVG from '~/assets/images/icons/power.svg?component'
+import SVGX from '~/assets/images/icons/x.svg'
+import PowerSVG from '~/assets/images/icons/power.svg'
 
 const emit = defineEmits(['destroy'])
 

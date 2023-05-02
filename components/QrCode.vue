@@ -1,6 +1,6 @@
 <script setup>
-import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
-import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg?component'
+import ExternalLinkSVG from '~/assets/images/icons/external-link.svg'
+import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg'
 
 const { safeAddress } = useAvocadoSafe()
 const account = computed(() => safeAddress.value || '0x000000000000000')

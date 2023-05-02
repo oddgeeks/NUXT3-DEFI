@@ -10,7 +10,7 @@ import TokenSelection from '~~/components/modals/TokenSelection.vue'
 import ImportToken from '~~/components/modals/ImportToken.vue'
 import CustomToken from '~~/components/modals/CustomToken.vue'
 import WCTransaction from '~~/components/modals/WCTransaction.vue'
-import PowerOffSVG from '~/assets/images/icons/power-off-bg.svg?component'
+import PowerOffSVG from '~/assets/images/icons/power-off-bg.svg'
 import Dialog from '~~/components/modals/Dialog.vue'
 import CustomTx from '~~/components/modals/CustomTx.vue'
 import UpgradeVersion from '~~/components/modals/UpgradeVersion.vue'
@@ -347,6 +347,7 @@ export function openNFTDetailsModal(NFTData: NFTData) {
     componentProps: {
       asset: NFTData,
     },
+
   })
 }
 

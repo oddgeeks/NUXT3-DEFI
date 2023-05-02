@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import GasSVG from '~/assets/images/icons/gas.svg?component'
-import PlusSVG from '~/assets/images/icons/plus.svg?component'
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
+import GasSVG from '~/assets/images/icons/gas.svg'
+import PlusSVG from '~/assets/images/icons/plus.svg'
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
 
 defineProps({
   hideGas: Boolean,

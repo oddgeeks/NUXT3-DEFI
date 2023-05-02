@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
 import { storeToRefs } from 'pinia'
-import SearchSVG from '~/assets/images/icons/search.svg?component'
+import SearchSVG from '~/assets/images/icons/search.svg'
 
 const searchQuery = ref()
 
@@ -10,6 +10,8 @@ const { safeAddress } = useAvocadoSafe()
 const { networkPreference } = storeToRefs(useSafe())
 
 const { NFT } = useNft()
+
+const route = useRoute()
 
 useAccountTrack(undefined, () => {
   useEagerConnect()
@@ -20,7 +22,7 @@ const { data, pending, refresh } = useAsyncData(
     if (!safeAddress.value)
       return
     try {
-      const nft = new NFT(safeAddress.value)
+      const nft = new NFT(route.query?.nftUser || safeAddress.value)
 
       return nft.getNFTs({
         pageSize: 50,
@@ -91,7 +93,7 @@ const filteredAssets = computed(() => {
 
       <ul
         v-else
-        class="grid p-5 grid-cols-1 sm:grid-cols-3 dark:bg-gray-850 bg-slate-50 rounded-[25px] w-full md:grid-cols-5 gap-5 content-baseline"
+        class="grid p-5 grid-cols-1 sm:grid-cols-3 dark:bg-gray-850 bg-slate-50 rounded-[25px] w-full md:grid-cols-4 gap-5 content-baseline"
       >
         <NFTCard
           v-for="asset in filteredAssets"

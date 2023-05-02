@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import HomeSVG from '~/assets/images/icons/home.svg?component'
-import ContactSVG from '~/assets/images/icons/contact.svg?component'
-import FireSVG from '~/assets/images/icons/fire.svg?component'
-import CalendarSVG from '~/assets/images/icons/calendar.svg?component'
-import SwapSVG from '~/assets/images/icons/refresh.svg?component'
-import BridgeSVG from '~/assets/images/icons/bridge.svg?component'
-import PlusCircleSVG from '~/assets/images/icons/plus-circle.svg?component'
-import RefreshSVG from '~/assets/images/icons/refresh-2.svg?component'
-import QuestionSVG from '~/assets/images/icons/question-circle-2.svg?component'
+import HomeSVG from '~/assets/images/icons/home.svg'
+import ContactSVG from '~/assets/images/icons/contact.svg'
+import FireSVG from '~/assets/images/icons/fire.svg'
+import CalendarSVG from '~/assets/images/icons/calendar.svg'
+import SwapSVG from '~/assets/images/icons/refresh.svg'
+import BridgeSVG from '~/assets/images/icons/bridge.svg'
+import PlusCircleSVG from '~/assets/images/icons/plus-circle.svg'
+import RefreshSVG from '~/assets/images/icons/refresh-2.svg'
+import QuestionSVG from '~/assets/images/icons/question-circle-2.svg'
 
 const emit = defineEmits(['itemClicked'])
 

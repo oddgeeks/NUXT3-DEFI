@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
-import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
+import SVGInfo from '~/assets/images/icons/exclamation-circle.svg'
+import RefreshSVG from '~/assets/images/icons/refresh.svg'
 
 const props = defineProps({
   address: {
@@ -248,13 +248,7 @@ const onSubmit = form.handleSubmit(async () => {
                   v-else
                   class="dark:bg-gray-800 bg-slate-100 w-full px-3 flex py-3 items-center gap-2.5 rounded-2xl"
                 >
-                  <img
-                    width="24"
-                    height="24"
-                    class="h-6 w-6"
-                    :src="`https://cdn.instadapp.io/icons/tokens/${fromToken.symbol.toLowerCase()}.svg`"
-                    :onerror="onImageError"
-                  >
+                  <SafeTokenLogo class="h-6 w-6" :url="fromToken.logoURI" />
                   <span
                     class="text-sm w-full leading-5 text-shadow overflow-hidden whitespace-nowrap"
                   >
