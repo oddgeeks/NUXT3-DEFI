@@ -18,8 +18,8 @@ const route = useRoute()
       />
     </div>
     <div class="flex">
-      <Sidebar class="hidden sm:flex" />
-      <div class="flex flex-col flex-1">
+      <Sidebar class="hidden sm:flex h-screen" />
+      <div class="flex flex-col flex-1 h-screen overflow-y-auto">
         <BannerAccountTracking v-if="showTrackingBanner" class="hidden sm:flex" />
         <div class="py-8 px-10 hidden sm:block">
           <TheHeader />
