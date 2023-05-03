@@ -23,8 +23,8 @@ const [moreOptions, toggleOptions] = useToggle(false)
 </script>
 
 <template>
-  <div class="flex h-full dark:bg-gray-850 bg-slate-50" :class="{ 'w-[340px]': opened, 'w-[120px]': !opened }">
-    <div v-if="opened" class="flex flex-col">
+  <aside class="flex h-full dark:bg-gray-850 bg-slate-50" :class="{ 'w-[340px]': opened, 'w-[120px]': !opened }">
+    <div v-if="opened" class="flex flex-col w-full">
       <div class="flex flex-col border-b-1 dark:border-slate-750 border-slate-150 gap-6 pt-7.5 pb-6 px-7.5">
         <div class="flex items-center justify-between">
           <NuxtLink to="/">
@@ -40,7 +40,9 @@ const [moreOptions, toggleOptions] = useToggle(false)
             />
           </button>
         </div>
-        <QrCode />
+        <div class="flex">
+          <QrCode />
+        </div>
         <div class="gap-3">
           <SupportedChains :account="account" class="!flex justify-between !gap-0" />
           <button class="text-primary text-xs" @click="openSupportedNetworks">
@@ -146,7 +148,7 @@ const [moreOptions, toggleOptions] = useToggle(false)
         </div>
       </div>
     </div>
-    <div v-else class="flex flex-col items-center w-full p-7.5 gap-6">
+    <div v-else class="flex flex-col items-center w-full p-7.5 gap-6 w-full">
       <button
         class="w-7 h-7 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
         @click="toggleSidebar"
@@ -192,5 +194,5 @@ const [moreOptions, toggleOptions] = useToggle(false)
         </NuxtLink>
       </div>
     </div>
-  </div>
+  </aside>
 </template>
