@@ -70,9 +70,19 @@ export const useSafe = defineStore('safe', () => {
       return
     }
 
-    safeAddress.value = await forwarderProxyContract.computeAddress(
+    const address = await forwarderProxyContract.computeAddress(
       account.value,
     )
+
+    if (address === incorrectAddress) {
+      notify({
+        type: 'error',
+        message: 'Safe Address is not valid',
+        duration: 15000,
+      })
+    }
+
+    safeAddress.value = address
   }
 
   async function getChainBalances(chainId: string,
@@ -317,19 +327,13 @@ export const useSafe = defineStore('safe', () => {
       return
     // if (balanceAborter.value) balanceAborter.value.abort();
 
+    if (safeAddress.value === incorrectAddress)
+
+      return
+
     try {
       balances.value.loading = true
       // balanceAborter.value = new AbortController();
-
-      if (safeAddress.value === incorrectAddress) {
-        balances.value.data = []
-        notify({
-          type: 'error',
-          message: 'Safe Address is not valid',
-        })
-
-        return
-      }
 
       const data = await getBalances(
         safeAddress.value,
