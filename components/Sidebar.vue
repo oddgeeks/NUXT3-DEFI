@@ -24,7 +24,7 @@ const [moreOptions, toggleOptions] = useToggle(false)
 
 <template>
   <ClientOnly>
-    <aside class="hidden sm:flex h-screen dark:bg-gray-850 bg-slate-50" :class="{ 'w-[340px]': opened, 'w-[120px]': !opened }">
+    <aside class="hidden sm:flex overflow-y-auto h-screen dark:bg-gray-850 bg-slate-50" :class="{ 'w-[340px]': opened, 'w-[120px]': !opened }">
       <div v-if="opened" class="flex flex-col w-full">
         <div class="flex flex-col border-b-1 dark:border-slate-750 border-slate-150 gap-6 pt-7.5 pb-6 px-7.5">
           <div class="flex items-center justify-between">
@@ -90,7 +90,7 @@ const [moreOptions, toggleOptions] = useToggle(false)
           <button
             class="flex h-11 items-center justify-between"
             :class="{
-              'text-white': moreOptions,
+              'dark:text-white text-slate-900': moreOptions,
             }"
             @click="toggleOptions(!moreOptions)"
           >
@@ -160,14 +160,14 @@ const [moreOptions, toggleOptions] = useToggle(false)
           />
         </button>
         <div class="flex flex-col w-full gap-4" :class="{ 'blur pointer-events-none': !safeAddress }">
-          <button class="flex justify-center items-center dark:bg-slate-800 w-full rounded-5 py-4" @click="openQrCode">
-            <QrSVG class="text-white w-4.5 h-4.5" />
+          <button class="flex justify-center items-center dark:bg-slate-800 bg-slate-100 w-full rounded-5 py-4" @click="openQrCode">
+            <QrSVG class="w-4.5 h-4.5" />
           </button>
-          <button class="flex justify-center items-center dark:bg-slate-800 w-full rounded-5 py-4" @click="copy(safeAddress)">
-            <CopySVG class="text-white w-4.5 h-4.5" />
+          <button class="flex justify-center items-center dark:bg-slate-800 bg-slate-100 w-full rounded-5 py-4" @click="copy(safeAddress)">
+            <CopySVG class="w-4.5 h-4.5" />
           </button>
         </div>
-        <div class="flex flex-col items-center gap-9 dark:bg-slate-800 py-6 text-slate-400 w-full rounded-5">
+        <div class="flex flex-col items-center gap-9 dark:bg-slate-800 bg-slate-100 py-6 text-slate-400 w-full rounded-5">
           <NuxtLink
             active-class="text-primary"
             to="/"
