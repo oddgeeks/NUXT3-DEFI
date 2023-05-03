@@ -159,7 +159,7 @@ const [moreOptions, toggleOptions] = useToggle(false)
         />
       </button>
       <div class="flex flex-col w-full gap-4" :class="{ 'blur pointer-events-none': !safeAddress }">
-        <button class="flex justify-center items-center dark:bg-slate-800 w-full rounded-5 py-4" @click="openQrcode">
+        <button class="flex justify-center items-center dark:bg-slate-800 w-full rounded-5 py-4" @click="openQrCode">
           <QrSVG class="text-white w-4.5 h-4.5" />
         </button>
         <button class="flex justify-center items-center dark:bg-slate-800 w-full rounded-5 py-4" @click="copy(safeAddress)">
