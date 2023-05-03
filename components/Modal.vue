@@ -90,7 +90,6 @@ whenever(escape, () => {
           class="modal-content-wrapper rounded-[inherit] relative sm:px-[50px] px-6 py-10 w-full"
         >
           <button
-            v-if="!props.options.hideClose"
             class="absolute h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100 top-0 right-0 m-6"
             aria-label="Close modal"
             @click="handleDestory"
