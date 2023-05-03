@@ -20,7 +20,7 @@ const account = computed(() => safeAddress.value || '0x000000000000000')
       <span class="text-sm dark:text-slate-500 text-slate-400">Your Avocado Address</span>
       <Copy :text="account" class="w-full">
         <template #content>
-          <span class="text-white text-base break-all">{{ account }}</span>
+          <span class="dark:text-white text-slate-900 text-base break-all">{{ account }}</span>
         </template>
       </Copy>
     </div>

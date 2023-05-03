@@ -24,7 +24,7 @@ const [moreOptions, toggleOptions] = useToggle(false)
 
 <template>
   <ClientOnly>
-    <aside class="hidden sm:flex overflow-y-auto scroll-style h-screen dark:bg-gray-850 bg-slate-50" :class="{ 'w-[340px]': opened, 'w-[120px]': !opened }">
+    <aside class="hidden sm:flex overflow-y-auto scroll-style h-screen dark:bg-gray-850 bg-slate-50 transition-all" :class="{ 'w-[340px]': opened, 'w-[120px]': !opened }">
       <div v-if="opened" class="flex flex-col w-full">
         <div class="flex flex-col border-b-1 dark:border-slate-750 border-slate-150 gap-6 pt-7.5 pb-6 px-7.5">
           <div class="flex items-center justify-between">
@@ -44,8 +44,8 @@ const [moreOptions, toggleOptions] = useToggle(false)
           <div class="flex">
             <QrCode />
           </div>
-          <div class="gap-3">
-            <SupportedChains :account="account" class="!flex justify-between !gap-0" />
+          <div class="flex flex-col items-start gap-3">
+            <SupportedChains :account="account" :max-count="6" class="!flex justify-between !gap-3" />
             <button class="text-primary text-xs" @click="openSupportedNetworks">
               View All Supported EVM Networks
             </button>
@@ -160,33 +160,81 @@ const [moreOptions, toggleOptions] = useToggle(false)
           />
         </button>
         <div class="flex flex-col w-full gap-4" :class="{ 'blur pointer-events-none': !safeAddress }">
-          <button class="flex justify-center items-center dark:bg-slate-800 bg-slate-100 w-full rounded-5 py-4" @click="openQrCode">
+          <button
+            v-tippy="{
+              arrow: true,
+              arrowType: 'round',
+              animation: 'fade',
+              content: 'Show Avocado Qrcode',
+              placement: 'right',
+            }"
+            class="flex justify-center items-center dark:bg-slate-800 bg-slate-100 w-full rounded-5 py-4"
+            @click="openQrCode"
+          >
             <QrSVG class="w-4.5 h-4.5" />
           </button>
-          <button class="flex justify-center items-center dark:bg-slate-800 bg-slate-100 w-full rounded-5 py-4" @click="copy(safeAddress)">
+          <button
+            v-tippy="{
+              arrow: true,
+              arrowType: 'round',
+              animation: 'fade',
+              content: 'Copy Your Avocado Address',
+              placement: 'right',
+            }"
+            class="flex justify-center items-center dark:bg-slate-800 bg-slate-100 w-full rounded-5 py-4"
+            @click="copy(safeAddress)"
+          >
             <CopySVG class="w-4.5 h-4.5" />
           </button>
         </div>
         <div class="flex flex-col items-center gap-9 dark:bg-slate-800 bg-slate-100 py-6 text-slate-400 w-full rounded-5">
           <NuxtLink
+            v-tippy="{
+              arrow: true,
+              arrowType: 'round',
+              animation: 'fade',
+              content: 'Home',
+              placement: 'right',
+            }"
             active-class="text-primary"
             to="/"
           >
             <HomeSVG class="w-4 h-4" />
           </NuxtLink>
           <NuxtLink
+            v-tippy="{
+              arrow: true,
+              arrowType: 'round',
+              animation: 'fade',
+              content: 'Contacts',
+              placement: 'right',
+            }"
             active-class="text-primary"
             to="/contacts"
           >
             <ContactSVG class="w-4 h-4" />
           </NuxtLink>
           <NuxtLink
+            v-tippy="{
+              arrow: true,
+              arrowType: 'round',
+              animation: 'fade',
+              content: 'View your NFTs',
+              placement: 'right',
+            }"
             active-class="text-primary"
             to="/nft"
           >
             <FireSVG class="w-4 h-4" />
           </NuxtLink>
           <NuxtLink
+            v-tippy="{
+              arrow: true,
+              arrowType: 'round',
+              animation: 'fade',
+              content: 'History',
+              placement: 'right',
+            }"
             external
             target="_blank"
             :to="`${avoExplorerURL}/address/${account}`"
