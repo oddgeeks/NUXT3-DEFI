@@ -17,7 +17,7 @@ const route = useRoute()
         v-else-if="showOnboardBanner && route.name !== 'claims-ens-drop'"
       />
     </div>
-    <div class="flex">
+    <div class="flex gap-10">
       <Sidebar />
       <div class="flex flex-col flex-1 h-screen overflow-y-auto">
         <BannerAccountTracking v-if="showTrackingBanner" class="hidden sm:flex" />
