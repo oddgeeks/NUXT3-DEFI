@@ -1,8 +1,13 @@
 <script setup>
 import { storeToRefs } from 'pinia'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg'
 
 const { balances } = storeToRefs(useSafe())
-const { totalBalance, account } = useAvocadoSafe()
+const { totalBalance, tokenBalances } = useAvocadoSafe()
+
+function hasAvailableTokens() {
+  return tokenBalances.value.length > 0
+}
 </script>
 
 <template>
@@ -14,8 +19,39 @@ const { totalBalance, account } = useAvocadoSafe()
       <div v-if="!balances.data" class="h-10 w-40 flex items-center">
         <div class="loading-box rounded-[12px] w-full h-[34px]" />
       </div>
-      <div v-else>
-        {{ formatUsd(totalBalance.toNumber()) }}
+      <div v-else class="flex items-center gap-7.5">
+        <span>{{ formatUsd(totalBalance.toNumber()) }}</span>
+        <div class="flex items-center gap-[15px]">
+          <CommonButton
+            color="white"
+            class="items-center gap-2.5 h-10 !px-4"
+            :disabled="!hasAvailableTokens()"
+            @click="openSendModal(1)"
+          >
+            Send
+            <div
+              class="rounded-full bg-primary p-1.5 text-white"
+              :class="{
+                'dark:bg-slate-600 bg-slate-300 dark:!text-slate-500 !text-slate-400':
+                  !hasAvailableTokens(),
+              }"
+            >
+              <ArrowRight class="-rotate-45 w-3.5 h-3.5" />
+            </div>
+          </CommonButton>
+          <CommonButton
+            color="white"
+            class="items-center gap-2.5 h-10 !px-4"
+            @click="openQrCode"
+          >
+            Receive
+            <div
+              class="rounded-full bg-primary p-1.5 text-white"
+            >
+              <ArrowRight class="rotate-[135deg] w-3.5 h-3.5" />
+            </div>
+          </CommonButton>
+        </div>
       </div>
     </div>
   </div>
