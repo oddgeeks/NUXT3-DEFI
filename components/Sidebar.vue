@@ -24,7 +24,7 @@ const [moreOptions, toggleOptions] = useToggle(false)
 
 <template>
   <ClientOnly>
-    <aside class="hidden sm:flex overflow-y-auto scroll-style h-screen dark:bg-gray-850 bg-slate-50 transition-all" :class="{ 'w-[340px]': opened, 'w-[120px]': !opened }">
+    <aside style="scrollbar-gutter:stable;overflow-y:overlay;" class="hidden sm:flex overflow-y-auto scroll-style h-screen dark:bg-gray-850 bg-slate-50 transition-all" :class="{ 'w-[340px]': opened, 'w-[120px]': !opened }">
       <div v-if="opened" class="flex flex-col w-full">
         <div class="flex flex-col border-b-1 dark:border-slate-750 border-slate-150 gap-6 pt-7.5 pb-6 px-7.5">
           <div class="flex items-center justify-between">
