@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
+import ExternalLinkSVG from '~/assets/images/icons/external-link.svg'
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
 
 const props = defineProps<{
   asset: NFTData
@@ -21,7 +21,7 @@ const disabled = computed(() => isContractERC1155.value)
   <div class="flex flex-col gap-7.5">
     <NFTImage
       details
-      img-class="sm:!h-[324px] sm:w-full"
+      img-class="sm:!h-[350px] sm:w-full object-contain"
       class="!sm:h-full"
       :asset="asset"
     />

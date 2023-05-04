@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import CheckCircle from '~/assets/images/icons/check-circle.svg?component'
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
+import CheckCircle from '~/assets/images/icons/check-circle.svg'
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
 
 const { networkPreference } = storeToRefs(useSafe())
 </script>

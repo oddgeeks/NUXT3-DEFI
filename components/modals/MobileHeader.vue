@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import InstadappSVG from '@/assets/images/logo/instadapp.svg?component'
-import Calendar from '@/assets/images/icons/calendar.svg?component'
-import Hamburger from '@/assets/images/icons/hamburger.svg?component'
-import Avocado from '@/assets/images/icons/avocado.svg?component'
+import InstadappSVG from '@/assets/images/logo/instadapp.svg'
+import Calendar from '@/assets/images/icons/calendar.svg'
+import Hamburger from '@/assets/images/icons/hamburger.svg'
+import Avocado from '@/assets/images/icons/avocado.svg'
 
 defineEmits(['destroy'])
 

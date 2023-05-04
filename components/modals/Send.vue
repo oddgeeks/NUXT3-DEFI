@@ -3,9 +3,9 @@ import { useField, useFieldArray, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { isAddress } from '@ethersproject/address'
 import { Erc20__factory } from '~~/contracts'
-import ContactSVG from '~/assets/images/icons/contact.svg?component'
-import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg?component'
-import PlusSVG from '~/assets/images/icons/plus.svg?component'
+import ContactSVG from '~/assets/images/icons/contact.svg'
+import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg'
+import PlusSVG from '~/assets/images/icons/plus.svg'
 
 const props = defineProps({
   chainId: {
@@ -17,7 +17,7 @@ const props = defineProps({
     required: false,
   },
   contact: {
-    type: Object,
+    type: Object as PropType<IContact>,
     required: false,
   },
 })
@@ -31,7 +31,7 @@ const { parseTransactionError } = useErrorHandler()
 
 const contact = ref<IContact | undefined>(props.contact)
 
-const tochainId = ref<string>(props.chainId)
+const tochainId = ref<string>(props.chainId || '1')
 
 const availableTokens = computed(() =>
   tokenBalances.value.filter(t => t.chainId == tochainId.value),
@@ -134,7 +134,6 @@ const {
   remove: removeAmount,
   push: pushAmount,
   update: updateAmount,
-  replace: replaceAmounts,
   fields: amounts,
 } = useFieldArray<string>('amounts')
 const {
@@ -307,6 +306,9 @@ const onSubmit = handleSubmit(async () => {
 })
 
 async function handleEdit() {
+  if (!contact.value)
+    return
+
   const result = await openAddContactModal(
     contact.value.name,
     contact.value.address,
@@ -317,9 +319,6 @@ async function handleEdit() {
   if (result.success) {
     contact.value = result.payload as IContact
 
-    if (tochainId.value !== contact.value.chainId)
-      tochainId.value = contact.value.chainId
-
     setAddress(contact.value.address)
   }
 }
@@ -329,8 +328,6 @@ async function handleSelectContact() {
 
   if (result.success) {
     const _contact = result.payload as IContact
-    if (tochainId.value !== _contact.chainId)
-      tochainId.value = _contact.chainId
 
     setAddress(_contact.address)
   }
@@ -377,6 +374,23 @@ function isInsufficient(idx: number) {
       }"
     >
       <h2>{{ contact ? `Send to ${contact.name}` : "Send" }}</h2>
+
+      <CommonSelect
+        v-if="!contact?.chainId"
+        v-model="tochainId"
+        value-key="chainId"
+        label-key="name"
+        icon-key="icon"
+        class="mt-[5px]"
+        :options="networks"
+      >
+        <template #button-prefix>
+          <ChainLogo class="w-6 h-6" :chain="tochainId" />
+        </template>
+        <template #item-prefix="{ value }">
+          <ChainLogo class="w-6 h-6" :chain="value" />
+        </template>
+      </CommonSelect>
       <div
         v-if="contact"
         class="flex items-center rounded-5 mt-[15px] pl-5 pr-4 py-5 dark:bg-gray-850 bg-slate-50 justify-between w-full"
@@ -392,6 +406,7 @@ function isInsufficient(idx: number) {
           </Copy>
         </div>
         <CommonButton
+          :disabled="contact.owner"
           color="white"
           class="justify-center dark:bg-slate-800 bg-slate-150 !px-4"
           @click="handleEdit()"
@@ -399,22 +414,6 @@ function isInsufficient(idx: number) {
           Edit
         </CommonButton>
       </div>
-      <CommonSelect
-        v-else
-        v-model="tochainId"
-        value-key="chainId"
-        label-key="name"
-        icon-key="icon"
-        class="mt-[5px]"
-        :options="networks"
-      >
-        <template #button-prefix>
-          <ChainLogo class="w-6 h-6" :chain="tochainId" />
-        </template>
-        <template #item-prefix="{ value }">
-          <ChainLogo class="w-6 h-6" :chain="value" />
-        </template>
-      </CommonSelect>
     </div>
     <div
       class="flex flex-col gap-3.5 scroll-style sm:max-h-[378px] sm:overflow-y-auto"
@@ -543,14 +542,6 @@ function isInsufficient(idx: number) {
             </button>
           </template>
         </CommonInput>
-
-        <button
-          type="button"
-          class="rounded-7.5 h-8 font-medium items-center justify-center flex px-3 text-xs ring-1 ring-slate-200 dark:ring-slate-700"
-          @click="address = account"
-        >
-          Owner {{ shortenHash(account) }}
-        </button>
       </div>
 
       <div

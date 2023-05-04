@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type WalletConnect from '@walletconnect/client'
-import NetworkSVG from '~/assets/images/icons/network.svg?component'
-import FlowersSVG from '~/assets/images/icons/flowers.svg?component'
-import SVGClockCircle from '~/assets/images/icons/clock-circle.svg?component'
+import NetworkSVG from '~/assets/images/icons/network.svg'
+import FlowersSVG from '~/assets/images/icons/flowers.svg'
+import SVGClockCircle from '~/assets/images/icons/clock-circle.svg'
 
 const props = defineProps<{
   payload: any
@@ -117,7 +117,7 @@ async function handleSubmit() {
     logActionToSlack({
       message: `${props.isSign ? 'Permit2 Approval' : 'Txn'} ${
         props.wc.peerMeta?.url
-      } ${err}`,
+      } ${err.formatted}`,
       type: 'error',
       action: 'wc',
       chainId: props.chainId,

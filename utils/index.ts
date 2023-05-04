@@ -97,6 +97,13 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
   }
 }
 
+export function formatIPFSUri(ipfs: string) {
+  if (ipfs.startsWith('ipfs') || ipfs.startsWith('ipfs://'))
+    return `https://ipfs.decentralized-content.com/ipfs/${ipfs.replace('ipfs://', '')}`
+
+  return ipfs
+}
+
 export async function checkAddressIsDsa(
   dsaAddress: string,
   chainId: number,

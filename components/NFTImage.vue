@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import BrokenSVG from '~/assets/images/icons/broken.svg?component'
-import ExpandSVG from '~/assets/images/icons/expand.svg?component'
-import ShrinkSVG from '~/assets/images/icons/shrink.svg?component'
+import BrokenSVG from '~/assets/images/icons/broken.svg'
+import ExpandSVG from '~/assets/images/icons/expand.svg'
+import ShrinkSVG from '~/assets/images/icons/shrink.svg'
 
 defineProps<{
   asset: NFTData
@@ -44,6 +44,8 @@ async function handleToggle() {
     >
       <BrokenSVG />
     </div>
+
+    <video v-else-if="asset.animationUrl && details" :poster="asset?.thumbnailUrl" class="rounded-[14px] object-contain max-h-full w-full" playsinline autoplay loop :src="formatIPFSUri(asset.animationUrl)" />
 
     <img
       v-else

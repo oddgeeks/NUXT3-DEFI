@@ -2,6 +2,34 @@ interface Window {
   ethereum: any;
 }
 
+declare module '*.svg' {
+  import { FunctionalComponent, SVGAttributes } from 'vue'
+  const src: FunctionalComponent<SVGAttributes>
+  export default src
+}
+
+declare module '*.svg?component' {
+  import { FunctionalComponent, SVGAttributes } from 'vue'
+  const src: FunctionalComponent<SVGAttributes>
+  export default src
+}
+
+declare module '*.svg?url' {
+  const src: string
+  export default src
+}
+
+declare module '*.svg?raw' {
+  const src: string
+  export default src
+}
+
+declare module '*.svg?skipsvgo' {
+  import { FunctionalComponent, SVGAttributes } from 'vue'
+  const src: FunctionalComponent<SVGAttributes>
+  export default src
+}
+
 type ITxType = "send" | "swap" | "bridge" | "topUpGas" | "wc" | "upgrade";
 
 type ChainId = 1 | 137 | 42161 | 10 | 56 | 43114 | 100 | 1101 | 634 | 63400;
@@ -402,6 +430,7 @@ interface NFTData {
   contractAddress: string;
   contractType: string;
   attributes: NFTAttributes[];
+  animationUrl?: string;
 }
 
 interface NFTParams {
@@ -413,6 +442,7 @@ interface NFTParams {
   name: string
   address: string
   chainId: number | string
+  owner: true
 }
 
  interface ITransferCount {
