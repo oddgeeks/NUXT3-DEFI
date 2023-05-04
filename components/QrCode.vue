@@ -10,13 +10,15 @@ const account = computed(() => safeAddress.value || '0x000000000000000')
     class="relative bg-slate-50 dark:bg-gray-850 rounded-5.5 flex justify-center items-center gap-4"
     :class="{ 'blur pointer-events-none': !safeAddress }"
   >
-    <StyledQrCode
-      :key="account"
-      class="rounded-5 bg-white overflow-hidden"
-      :size="80"
-      :margin="3"
-      :data="account"
-    />
+    <button @click="openQrCode">
+      <StyledQrCode
+        :key="account"
+        class="rounded-5 bg-white overflow-hidden"
+        :size="80"
+        :margin="3"
+        :data="account"
+      />
+    </button>
 
     <div class="flex flex-col gap-2">
       <div class="flex flex-col gap-1">

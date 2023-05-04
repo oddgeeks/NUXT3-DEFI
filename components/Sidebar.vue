@@ -15,11 +15,55 @@ import CopySVG from '~/assets/images/icons/copy.svg'
 import QrSVG from '~/assets/images/icons/qr.svg'
 
 const { opened, toggleSidebar } = useSidebar()
-const { safeAddress } = useAvocadoSafe()
+const { safeAddress, tokenBalances } = useAvocadoSafe()
 const { copy } = useClipboard()
 const { account } = useWeb3()
 
 const [moreOptions, toggleOptions] = useToggle(false)
+
+const priorityChainIds = [1, 137, 42161, 10, 43114, 56, 100]
+const priorityTokenKeys = ['ETH', 'MATIC', 'AVAX', 'INST', 'BNB', 'XDAI']
+const priorityStable = ['USDC', 'USDT', 'DAI', 'XDAI']
+
+const sortedBalances = computed(() => {
+  return sortByMany<IBalance>(tokenBalances.value, [
+    (a, b) =>
+      toBN(b?.balanceInUSD || 0)
+        .minus(a?.balanceInUSD || 0)
+        .toNumber(),
+    (a, b) =>
+      toBN(b?.balance || 0)
+        .minus(a?.balance || 0)
+        .toNumber(),
+    (a, b) => {
+      const aIndex = priorityTokenKeys.indexOf(a.symbol.toUpperCase())
+      const bIndex = priorityTokenKeys.indexOf(b.symbol.toUpperCase())
+      return indexSorter(aIndex, bIndex)
+    },
+    (a, b) => {
+      const aIndex = priorityChainIds.indexOf(Number(a.chainId))
+      const bIndex = priorityChainIds.indexOf(Number(b.chainId))
+      return indexSorter(aIndex, bIndex)
+    },
+    (a, b) => {
+      const aIndex = priorityStable.indexOf(a.symbol.toUpperCase())
+      const bIndex = priorityStable.indexOf(b.symbol.toUpperCase())
+      return indexSorter(aIndex, bIndex)
+    },
+  ])
+})
+
+function openSwap() {
+  if (sortedBalances.value.length === 0)
+    return
+  openSwapModal(sortedBalances.value[0].address, sortedBalances.value[0].chainId)
+}
+
+function openBridge() {
+  if (sortedBalances.value.length === 0)
+    return
+  openBridgeModal(sortedBalances.value[0].address, sortedBalances.value[0].chainId)
+}
 </script>
 
 <template>
@@ -124,7 +168,7 @@ const [moreOptions, toggleOptions] = useToggle(false)
             </button>
             <button
               class="flex h-11 items-center gap-2.5"
-              @click="addCustomToken"
+              @click="openImportTokenModal"
             >
               <PlusCircleSVG class="w-4 h-4" />
               Add custom Tokens
