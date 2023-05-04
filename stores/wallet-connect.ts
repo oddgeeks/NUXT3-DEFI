@@ -45,6 +45,7 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
               'eth_getBalance',
               'avocado_sendTransaction',
               'avocado_sendTransactions',
+              'avocado_getOwner',
             ],
           })
 
@@ -90,6 +91,13 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
                 wc.approveRequest({
                   id: payload.id,
                   result: [safe.safeAddress.value],
+                })
+              }
+
+              else if (payload.method === 'avocado_getOwner') {
+                wc.approveRequest({
+                  id: payload.id,
+                  result: account.value,
                 })
               }
               else if (
