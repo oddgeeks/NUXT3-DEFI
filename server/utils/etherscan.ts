@@ -34,7 +34,7 @@ export async function getTokenTransfersByEtherscan(from: string,
     for (let i = 0; i < res.result.length; i += 1) {
       const item = res.result[i]
       if (
-        item.from.toLowerCase() !== from.toLowerCase()
+        !item.from || !item.to || item.from.toLowerCase() !== from.toLowerCase()
         || BigNumber.from(item.value).isZero()
       )
         continue
