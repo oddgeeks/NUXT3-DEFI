@@ -8,6 +8,7 @@ import ExternalLinkSVG from '~/assets/images/icons/external-link.svg'
 import InstadappSVG from '@/assets/images/logo/instadapp.svg'
 
 const { active, deactivate, connector } = useWeb3()
+const { safeAddress } = useAvocadoSafe()
 const [opened, toggle] = useToggle(false)
 const { setConnectorName } = useConnectors()
 
@@ -34,8 +35,8 @@ watch(() => active.value, () => {
   >
     <div class="flex justify-between items-center px-5" :class="{ 'pb-5': !opened, 'pb-7.5': opened }">
       <NuxtLink to="/" class="flex items-center">
-        <div class="bg-primary w-10 h-10 rounded-[14px]">
-          <Avocado class="text-white" />
+        <div class="flex items-center justify-center bg-primary w-10 h-10 rounded-[14px]">
+          <Avocado class="text-white w-6 h-6" />
         </div>
         <span v-if="!active" class="ml-2">Avocado</span>
       </NuxtLink>
@@ -85,7 +86,19 @@ watch(() => active.value, () => {
             <QrSVG class="text-slate-400 w-4.5 h-4.5" />
           </button>
 
-          <Web3Button :hide-gas="true" :hide-power="true" />
+          <div class="px-4 dark:bg-slate-800 bg-slate-150 rounded-full h-[54px] flex items-center">
+            <Copy :text="safeAddress">
+              <template #content>
+                <div class="flex items-center gap-3">
+                  <Avocado class="text-primary" />
+                  <div class="flex flex-col">
+                    <span class="text-left text-xs text-slate-500 text-slate-400">Avo Address</span>
+                    <span class="dark:text-white text-slate-900">{{ shortenHash(safeAddress) }}</span>
+                  </div>
+                </div>
+              </template>
+            </Copy>
+          </div>
 
           <NuxtLink
             :href="`/w/${account}`"

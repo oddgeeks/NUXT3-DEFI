@@ -46,8 +46,8 @@ const { account } = useWeb3()
         <Navigation />
       </div>
       <div v-else class="flex flex-col items-center w-full p-7.5 gap-6 w-full">
-        <div class="flex flex-col items-center gap-2.5">
-          <Avocado class="text-primary w-12 h-12" />
+        <div class="flex flex-col items-center gap-5">
+          <Avocado class="text-primary" />
           <button
             class="w-7 h-7 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
             @click="toggleSidebar"

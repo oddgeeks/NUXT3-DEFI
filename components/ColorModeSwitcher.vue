@@ -15,10 +15,10 @@ function switchColorMode(colorMode: ColorModeInstance) {
       @click="switchColorMode($colorMode)"
     >
       <Transition name="slide-up">
-        <span v-if="$colorMode.value === 'dark'" class="absolute">
+        <span v-if="$colorMode.value === 'dark'">
           <Sun class="w-4.5 h-4.5 sm:w-5.5 sm:h-5.5" />
         </span>
-        <span v-else class="absolute">
+        <span v-else>
           <Moon class="w-4.5 h-4.5 sm:w-5.5 sm:h-5.5" />
         </span>
       </Transition>

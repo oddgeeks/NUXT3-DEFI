@@ -15,7 +15,6 @@ import Dialog from '~~/components/modals/Dialog.vue'
 import CustomTx from '~~/components/modals/CustomTx.vue'
 import UpgradeVersion from '~~/components/modals/UpgradeVersion.vue'
 import Web3 from '~/components/modals/Web3.vue'
-import MobileHeader from '~/components/modals/MobileHeader.vue'
 import DeployNetwork from '~/components/modals/DeployNetwork.vue'
 import YourWallet from '~/components/modals/YourWallet.vue'
 import Networks from '~/components/modals/Networks.vue'
@@ -256,16 +255,6 @@ export async function openUpgradeModal(network: NetworkVersion) {
 export function openCustomTxModal() {
   openModal({
     component: CustomTx,
-  })
-}
-
-export function openMobileHeader() {
-  openModal({
-    component: MobileHeader,
-    options: {
-      sheetPosition: 'top',
-      contentClass: '!px-5 !py-5',
-    },
   })
 }
 
