@@ -30,7 +30,7 @@ watch(() => active.value, () => {
 
 <template>
   <header
-    class="flex flex-col transition-transform py-[60px] bg-gray-50 dark:bg-gray-850 z-40 w-full overflow-y-auto"
+    class="flex flex-col transition-transform pt-[60px] bg-gray-50 dark:bg-gray-850 z-40 w-full overflow-y-auto mb-7.5"
     :class="{ 'rounded-b-5': !opened, 'h-screen': opened }"
   >
     <div class="flex justify-between items-center px-5" :class="{ 'pb-5': !opened, 'pb-7.5': opened }">
@@ -58,7 +58,7 @@ watch(() => active.value, () => {
         </CommonButton>
       </div>
     </div>
-    <div v-if="opened" class="flex flex-col w-full">
+    <div v-if="opened" class="flex flex-col w-full mb-[60px]">
       <div class="flex w-full justify-between items-center px-5 py-6 border-y-1 dark:border-slate-750 border-slate-150">
         <div
           role="button"
@@ -101,7 +101,7 @@ watch(() => active.value, () => {
           </div>
 
           <NuxtLink
-            :href="`/w/${account}`"
+            :href="`/w/${safeAddress}`"
             external
             target="_blank"
             class="bg-slate-100 dark:bg-slate-800 w-10 h-10 flex justify-center items-center rounded-full"

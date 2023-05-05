@@ -16,7 +16,7 @@ const { account } = useWeb3()
 
 <template>
   <ClientOnly>
-    <aside style="scrollbar-gutter:stable;overflow-y:overlay;" class="hidden sm:flex overflow-y-auto scroll-style h-screen dark:bg-gray-850 bg-slate-50 transition-all" :class="{ 'w-[340px]': opened, 'w-[120px]': !opened }">
+    <aside style="scrollbar-gutter:stable;overflow-y:overlay;" class="hidden sm:flex overflow-y-auto scroll-style h-screen dark:bg-gray-850 bg-slate-50 transition-[width]" :class="{ 'w-[340px]': opened, 'w-[120px]': !opened }">
       <div v-if="opened" class="flex flex-col w-full">
         <div class="flex flex-col gap-6 pt-7.5 pb-6 px-7.5">
           <div class="flex items-center justify-between">
@@ -64,7 +64,7 @@ const { account } = useWeb3()
               arrow: true,
               arrowType: 'round',
               animation: 'fade',
-              content: 'Show Avocado Qrcode',
+              content: 'Show Avocado QR Code',
               placement: 'right',
             }"
             class="flex justify-center items-center dark:bg-slate-800 bg-slate-100 w-full rounded-5 py-4"
