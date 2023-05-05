@@ -32,8 +32,8 @@ async function handleDeletingContact(contact: IContact) {
       <span class="text-sm font-semibold text-slate-400">{{
         contact.name
       }}</span>
-      <button @click="handleDeletingContact(contact)">
-        <DeleteSVG class="text-red-alert w-4 h-4" />
+      <button class="disabled:text-slate-400 disabled:opacity-40 text-red-alert" :disabled="contact.owner" @click="handleDeletingContact(contact)">
+        <DeleteSVG class="w-4 h-4" />
       </button>
     </div>
     <div
