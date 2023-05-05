@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Line } from 'vue-chartjs'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg'
 import BridgeSVG from '~/assets/images/icons/bridge.svg'
 import RefreshSVG from '~/assets/images/icons/refresh.svg'
@@ -19,33 +18,8 @@ const {
   interactable,
   priceDiffClass,
   priceDiffInPercent,
-  chartData,
   temporaryDisabled,
 } = useGraph(balance)
-
-const chartOptions = {
-  events: [],
-  borderColor: priceDiffColor.value,
-  borderWidth: 3,
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      display: false,
-    },
-    tooltips: {
-      display: false,
-    },
-  },
-  scales: {
-    x: {
-      display: false,
-    },
-    y: {
-      display: false,
-    },
-  },
-}
 </script>
 
 <template>
@@ -129,11 +103,8 @@ const chartOptions = {
       </div>
       <span class="pt-5 pr-5 text-slate-400">Last 7d</span>
       <div class="absolute bottom-5 h-[122px] w-full">
-        <Line
-          v-if="balance.sparklinePrice7d.length"
-          :data="chartData"
-          :options="chartOptions"
-        />
+        <SparklineChart v-if="balance.sparklinePrice7d.length" v-once :line-color="priceDiffColor" :sparkline-data="balance.sparklinePrice7d" />
+        <span v-else> - </span>
       </div>
     </div>
   </div>
