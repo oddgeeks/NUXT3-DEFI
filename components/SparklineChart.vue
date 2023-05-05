@@ -90,10 +90,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-:root {
- --textHeadingColor: rgb(117, 117, 117);
-}
-
 .chart-wrapper figure {
  display: flex;
  flex: 0 1 22.3rem;
