@@ -16,7 +16,7 @@ const route = useRoute()
     <div class="flex ">
       <Sidebar />
 
-      <div class="flex-1 sm:h-screen overflow-y-auto">
+      <div class="flex-1 h-screen overflow-y-auto">
         <div class="flex flex-col sm:px-10 px-4 max-w-7xl mx-auto">
           <TheHeader />
           <div
