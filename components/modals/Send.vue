@@ -319,9 +319,6 @@ async function handleEdit() {
   if (result.success) {
     contact.value = result.payload as IContact
 
-    if (contact.value.chainId && tochainId.value !== contact.value.chainId)
-      tochainId.value = contact.value.chainId
-
     setAddress(contact.value.address)
   }
 }
@@ -331,9 +328,6 @@ async function handleSelectContact() {
 
   if (result.success) {
     const _contact = result.payload as IContact
-
-    if (!!_contact.chainId && tochainId.value !== _contact.chainId)
-      tochainId.value = _contact.chainId
 
     setAddress(_contact.address)
   }
