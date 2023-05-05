@@ -30,11 +30,7 @@ const route = useRoute()
     </div>
     <div class="fixed w-full z-40 sm:hidden">
       <BannerAccountTracking v-if="showTrackingBanner" class="!bg-[#18242c]" />
-      <div
-        class="py-8 px-10 bg-gray-50 dark:bg-gray-850 z-40 rounded-b-7.5 w-full transition-transform"
-      >
-        <MobileHeader />
-      </div>
+      <MobileHeader />
     </div>
     <div
       class="container flex flex-col gap-4 banner-wrapper mt-36 sm:mt-0 [&:not(:empty)]:mb-7.5"

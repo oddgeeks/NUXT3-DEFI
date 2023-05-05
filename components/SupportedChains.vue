@@ -36,7 +36,7 @@ const visibleNetworks = computed(() => {
       >
         <ChainLogo
           :stroke="false"
-          class="w-6 h-6"
+          class="w-6.5 sm:w-6 h-6.5 sm:h-6"
           :chain="network.chainId"
         />
       </a>
@@ -44,7 +44,7 @@ const visibleNetworks = computed(() => {
       <ChainLogo
         v-else
         :stroke="false"
-        class="w-6 h-6"
+        class="w-6.5 sm:w-6 h-6.5 sm:h-6"
         :chain="network.chainId"
       />
     </li>
