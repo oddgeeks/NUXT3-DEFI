@@ -28,6 +28,7 @@
     "@tailwindcss/forms": "^0.5.3",
     "@typechain/ethers-v5": "^10.2.0",
     "@types/canvas-confetti": "^1.6.0",
+    "@types/d3": "^7.4.0",
     "@types/semver": "^7.3.13",
     "@vercel/analytics": "^0.1.11",
     "@vueuse/nuxt": "^10.1.2",
@@ -40,7 +41,6 @@
     "axios": "^0.27.2",
     "axios-retry": "^3.3.1",
     "bignumber.js": "^9.1.1",
-    "chart.js": "^4.2.0",
     "collect.js": "^4.34.3",
     "eslint": "^8.38.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
@@ -72,6 +72,7 @@
     "@instadapp/avocado-base": "^0.0.14",
     "alchemy-sdk": "^2.7.4",
     "canvas-confetti": "^1.6.0",
+    "d3": "^7.8.4",
     "error-serializer": "^5.1.0",
     "fuse.js": "^6.6.2",
     "semver": "^7.3.8"

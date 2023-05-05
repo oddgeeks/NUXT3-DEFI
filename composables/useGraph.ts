@@ -1,4 +1,3 @@
-import type { ChartData } from 'chart.js'
 import type { IBalance } from '~~/stores/safe'
 
 export function useGraph(balance: Ref<IBalance>) {
@@ -34,27 +33,11 @@ export function useGraph(balance: Ref<IBalance>) {
     return 'text-primary'
   })
 
-  const chartData = computed(
-    () =>
-      ({
-        labels: balance.value.sparklinePrice7d,
-        datasets: [
-          {
-            data: balance.value.sparklinePrice7d,
-            fill: false,
-            pointRadius: 0,
-            cubicInterpolationMode: 'monotone',
-          },
-        ],
-      } as ChartData<'line'>),
-  )
-
   return {
     interactable,
     priceDiffColor,
     priceDiffInPercent,
     priceDiffClass,
-    chartData,
     temporaryDisabled,
   }
 }
