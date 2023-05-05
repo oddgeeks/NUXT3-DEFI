@@ -4,6 +4,7 @@ import CheckCircle from '~/assets/images/icons/check-circle.svg'
 
 defineProps<{
   text: string
+  iconOnly?: boolean
 }>()
 const { copy, copied } = useClipboard()
 const slots = useSlots()
@@ -15,7 +16,7 @@ const slots = useSlots()
     @click="copy(text)"
   >
     <Transition mode="out-in" name="slide-left">
-      <span v-if="copied"> Copied </span>
+      <span v-if="copied && !iconOnly"> Copied </span>
       <span v-else-if="slots.content">
         <slot name="content" />
       </span>
@@ -24,7 +25,7 @@ const slots = useSlots()
     <Transition mode="out-in" name="slide">
       <CheckCircle
         v-if="copied"
-        class="w-4 h-4 dark:text-slate-900 text-white svg-circle"
+        class="w-4 h-4 shrink-0 dark:text-slate-900 text-white svg-circle"
       />
       <CopySVG v-else />
     </Transition>

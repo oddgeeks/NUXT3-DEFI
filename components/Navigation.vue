@@ -147,16 +147,17 @@ function openBridge() {
       </div>
     </div>
     <div v-if="eoaBalances && eoaBalances?.length" class="flex flex-col py-6 px-7.5 text-xs gap-2">
-      <span class="text-slate-400 text-center sm:text-left">You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet(EOA)</span>
+      <span class="text-slate-400 text-center sm:text-left">You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet (EOA)</span>
       <div class="flex justify-center sm:justify-start">
-        <NuxtLink
-          class="text-primary"
+        <CommonButton
+          size="sm"
+          as="NuxtLink"
           external
           target="_blank"
           :to="avoOnboardURL"
         >
           Import
-        </NuxtLink>
+        </CommonButton>
       </div>
     </div>
   </div>

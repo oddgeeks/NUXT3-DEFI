@@ -16,17 +16,15 @@ const route = useRoute()
     <div class="flex ">
       <Sidebar />
 
-      <div class="flex-1 h-screen overflow-y-auto">
-        <div class="flex flex-col sm:px-10 px-4 max-w-7xl mx-auto">
-          <TheHeader />
-          <div
-            class="container flex flex-col gap-4 mt-32 sm:mt-0"
-          >
-            <WarningsGasBalance v-if="showInsufficientGasBanner" />
-          </div>
-          <slot />
-          <TheFooter />
+      <div class="flex flex-1 flex-col sm:px-10 px-4 max-w-7xl mx-auto">
+        <TheHeader />
+        <div
+          class="container flex flex-col gap-4 mt-32 sm:mt-0"
+        >
+          <WarningsGasBalance v-if="showInsufficientGasBanner" />
         </div>
+        <slot />
+        <TheFooter />
       </div>
     </div>
     <div class="fixed bottom-0 sm:bottom-12 w-full z-40">

@@ -24,7 +24,7 @@ const account = computed(() => safeAddress.value || '0x000000000000000')
       <div class="flex flex-col gap-1">
         <span class="text-sm text-slate-500">Avo Address</span>
         <div class="flex items-center gap-2.5 text-lg">
-          <Copy :text="account">
+          <Copy v-tippy="account" :text="account">
             <template #content>
               {{ shortenHash(account) }}
             </template>

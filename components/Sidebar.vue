@@ -5,18 +5,16 @@ import FireSVG from '~/assets/images/icons/fire.svg'
 import CalendarSVG from '~/assets/images/icons/calendar.svg'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg'
 import Avocado from '@/assets/images/icons/avocado.svg'
-import CopySVG from '~/assets/images/icons/copy.svg'
 import QrSVG from '~/assets/images/icons/qr.svg'
 
 const { opened, toggleSidebar } = useSidebar()
 const { safeAddress } = useAvocadoSafe()
-const { copy } = useClipboard()
 const { account } = useWeb3()
 </script>
 
 <template>
   <ClientOnly>
-    <aside style="scrollbar-gutter:stable;overflow-y:overlay;" class="hidden h-auto sm:flex overflow-y-auto scroll-style dark:bg-gray-850 bg-slate-50 transition-[width]" :class="{ 'w-[340px]': opened, 'w-[120px]': !opened }">
+    <aside style="scrollbar-gutter:stable;overflow-y:overlay;" class="hidden sticky top-0 h-screen sm:flex overflow-y-auto scroll-style dark:bg-gray-850 bg-slate-50 transition-[width]" :class="{ 'w-[340px]': opened, 'w-[120px]': !opened }">
       <div v-if="opened" class="flex flex-col w-full">
         <div class="flex flex-col gap-6 pt-7.5 pb-6 px-7.5">
           <div class="flex items-center justify-between">
@@ -47,7 +45,9 @@ const { account } = useWeb3()
       </div>
       <div v-else class="flex flex-col items-center w-full p-7.5 gap-6">
         <div class="flex flex-col items-center gap-5">
-          <Avocado class="text-primary" />
+          <NuxtLink to="/">
+            <Avocado class="text-primary" />
+          </NuxtLink>
           <button
             class="w-7 h-7 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
             @click="toggleSidebar"
@@ -72,21 +72,25 @@ const { account } = useWeb3()
           >
             <QrSVG class="w-4.5 h-4.5" />
           </button>
-          <button
-            v-tippy="{
-              arrow: true,
-              arrowType: 'round',
-              animation: 'fade',
-              content: 'Copy Your Avocado Address',
-              placement: 'right',
-            }"
-            class="flex justify-center items-center dark:bg-slate-800 bg-slate-100 w-full rounded-5 py-4"
-            @click="copy(safeAddress)"
+
+          <div
+            class="flex justify-center items-center dark:bg-slate-800 bg-slate-100 w-full rounded-5"
           >
-            <CopySVG class="w-4.5 h-4.5" />
-          </button>
+            <Copy
+              v-tippy="{
+                arrow: true,
+                arrowType: 'round',
+                animation: 'fade',
+                content: 'Copy Your Avocado Address',
+                placement: 'right',
+              }"
+              :icon-only="true"
+              class="text-xs p-4"
+              :text="safeAddress"
+            />
+          </div>
         </div>
-        <div :class="{ 'blur pointer-events-none': !safeAddress }" class="flex flex-col items-center gap-9 dark:bg-slate-800 bg-slate-100 py-6 text-slate-400 w-full rounded-5">
+        <div :class="{ 'blur pointer-events-none': !safeAddress }" class="flex gap-2.5 py-2.5 flex-col items-center dark:bg-slate-800 bg-slate-100 text-slate-400 w-full rounded-5">
           <NuxtLink
             v-tippy="{
               arrow: true,
@@ -95,6 +99,7 @@ const { account } = useWeb3()
               content: 'Home',
               placement: 'right',
             }"
+            class="px-5 py-3"
             active-class="text-primary"
             to="/"
           >
@@ -108,6 +113,7 @@ const { account } = useWeb3()
               content: 'Contacts',
               placement: 'right',
             }"
+            class="px-5 py-3"
             active-class="text-primary"
             to="/contacts"
           >
@@ -121,6 +127,7 @@ const { account } = useWeb3()
               content: 'View your NFTs',
               placement: 'right',
             }"
+            class="px-5 py-3"
             active-class="text-primary"
             to="/nft"
           >
@@ -134,6 +141,7 @@ const { account } = useWeb3()
               content: 'History',
               placement: 'right',
             }"
+            class="px-5 py-3"
             external
             target="_blank"
             :to="`${avoExplorerURL}/address/${account}`"
