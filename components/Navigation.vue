@@ -172,9 +172,14 @@ function openBridge() {
   <div v-if="balances.data" class="flex flex-col py-6 px-7.5 text-xs gap-2">
     <span class="text-slate-400 text-center sm:text-left">You have {{ formatUsd(totalBalance.toNumber()) }} of assets spread across {{ fundedNetworks }} networks on your wallet(EOA)</span>
     <div class="flex justify-center sm:justify-start">
-      <button class="text-primary">
-        Migrate
-      </button>
+      <NuxtLink
+        class="text-primary"
+        external
+        target="_blank"
+        :to="avoOnboardURL"
+      >
+        Import
+      </NuxtLink>
     </div>
   </div>
 </template>

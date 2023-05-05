@@ -81,7 +81,7 @@ watch(() => active.value, () => {
         <div class="flex justify-between items-center w-full">
           <button
             class="bg-slate-100 dark:bg-slate-800 w-10 h-10 flex justify-center items-center rounded-full"
-            @click="openQrCode"
+            @click="openYourWalletModal(safeAddress)"
           >
             <QrSVG class="text-slate-400 w-4.5 h-4.5" />
           </button>
