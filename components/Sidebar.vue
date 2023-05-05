@@ -11,6 +11,7 @@ import QuestionSVG from '~/assets/images/icons/question-circle-2.svg'
 import MoreOptionsSVG from '~/assets/images/icons/more-options.svg'
 import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg'
+import Avocado from '@/assets/images/icons/avocado.svg'
 import CopySVG from '~/assets/images/icons/copy.svg'
 import QrSVG from '~/assets/images/icons/qr.svg'
 
@@ -194,15 +195,18 @@ function openBridge() {
         </div>
       </div>
       <div v-else class="flex flex-col items-center w-full p-7.5 gap-6 w-full">
-        <button
-          class="w-7 h-7 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
-          @click="toggleSidebar"
-        >
-          <ArrowRight
-            class="w-3.5 h-3.5 text-slate-400"
-            :class="{ 'rotate-180': opened }"
-          />
-        </button>
+        <div class="flex flex-col items-center gap-2.5">
+          <Avocado class="text-primary w-12 h-12" />
+          <button
+            class="w-7 h-7 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
+            @click="toggleSidebar"
+          >
+            <ArrowRight
+              class="w-3.5 h-3.5 text-slate-400"
+              :class="{ 'rotate-180': opened }"
+            />
+          </button>
+        </div>
         <div class="flex flex-col w-full gap-4" :class="{ 'blur pointer-events-none': !safeAddress }">
           <button
             v-tippy="{
