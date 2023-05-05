@@ -63,7 +63,7 @@ const {
       <span v-else> - </span>
     </td>
     <td class="text-center font-semibold py-6 px-6">
-      <div class="h-8 mx-auto">
+      <div class="h-8 w-36 mx-auto">
         <SparklineChart v-if="tokenBalance.sparklinePrice7d.length" v-once :line-color="priceDiffColor" :sparkline-data="tokenBalance.sparklinePrice7d" />
         <span v-else> - </span>
       </div>
