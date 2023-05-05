@@ -7,10 +7,20 @@ import QrSVG from '~/assets/images/icons/qr.svg'
 import ExternalLinkSVG from '~/assets/images/icons/external-link.svg'
 import InstadappSVG from '@/assets/images/logo/instadapp.svg'
 
-const { active, deactivate, connector } = useWeb3()
+const { active, deactivate, connector, account } = useWeb3()
+const { trackingAccount } = useAccountTrack()
 const { safeAddress } = useAvocadoSafe()
 const [opened, toggle] = useToggle(false)
 const { setConnectorName } = useConnectors()
+const {
+  showTrackingBanner,
+} = useBanner()
+
+const isActualActive = computed(() => {
+  if (trackingAccount.value)
+    return true
+  return active.value
+})
 
 async function closeConnection() {
   const { success } = await openDisconnectWalletModal()
@@ -29,22 +39,25 @@ watch(() => active.value, () => {
 </script>
 
 <template>
-  <header
-    class="flex flex-col transition-transform pt-[60px] bg-gray-50 dark:bg-gray-850 z-40 w-full overflow-y-auto mb-7.5"
-    :class="{ 'rounded-b-5': !opened, 'h-screen': opened }"
+  <div
+    class="flex flex-col transition-transform bg-gray-50 dark:bg-gray-850 z-40 w-full fixed sm:hidden"
+    :class="
+      [{ 'rounded-b-5': !opened, '': opened },
+       showTrackingBanner ? 'top-9' : 'top-0',
+      ]"
   >
-    <div class="flex justify-between items-center px-5" :class="{ 'pb-5': !opened, 'pb-7.5': opened }">
+    <div class="flex justify-between items-center p-5">
       <NuxtLink to="/" class="flex items-center">
         <div class="flex items-center justify-center bg-primary w-10 h-10 rounded-[14px]">
           <Avocado class="text-white w-6 h-6" />
         </div>
-        <span v-if="!active" class="ml-2">Avocado</span>
+        <span v-if="!isActualActive" class="ml-2">Avocado</span>
       </NuxtLink>
 
-      <Web3Button v-if="active" :hide-e-o-a="true" />
+      <Web3Button v-if="isActualActive" :hide-e-o-a="true" />
 
       <button
-        v-if="active"
+        v-if="isActualActive"
         class="flex items-center justify-center dark:bg-slate-800 bg-slate-100 w-10 h-10 rounded-[14px] text-slate-500"
         @click="toggle(!opened)"
       >
@@ -52,13 +65,13 @@ watch(() => active.value, () => {
         <Hamburger v-else />
       </button>
 
-      <div v-if="!active">
+      <div v-if="!isActualActive">
         <CommonButton size="md" @click="openWeb3Modal">
           Connect
         </CommonButton>
       </div>
     </div>
-    <div v-if="opened" class="flex flex-col w-full mb-[60px]">
+    <div v-if="opened" class="flex flex-col w-full mt-2.5 pb-[160px] h-screen overflow-auto">
       <div class="flex w-full justify-between items-center px-5 py-6 border-y-1 dark:border-slate-750 border-slate-150">
         <div
           role="button"
@@ -92,7 +105,7 @@ watch(() => active.value, () => {
                 <div class="flex items-center gap-3">
                   <Avocado class="text-primary" />
                   <div class="flex flex-col">
-                    <span class="text-left text-xs text-slate-500 text-slate-400">Avo Address</span>
+                    <span class="text-left text-xs text-slate-500">Avo Address</span>
                     <span class="dark:text-white text-slate-900">{{ shortenHash(safeAddress) }}</span>
                   </div>
                 </div>
@@ -116,7 +129,7 @@ watch(() => active.value, () => {
           </button>
         </div>
       </div>
-      <Navigation class="w-full" @navigate="toggle(false)" />
+      <Navigation @navigate="toggle(false)" />
       <div class="flex flex-col gap-7.5 px-[44px]">
         <nav class="flex gap-5 flex-col text-xs text-slate-400 mt-1.5 w-full">
           <div class="flex w-full justify-around">
@@ -152,5 +165,5 @@ watch(() => active.value, () => {
         </div>
       </div>
     </div>
-  </header>
+  </div>
 </template>

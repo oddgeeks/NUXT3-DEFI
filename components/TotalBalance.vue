@@ -15,13 +15,13 @@ function hasAvailableTokens() {
     <h2 class="text-slate-400 text-sm font-semibold mb-2.5">
       Total balance
     </h2>
-    <div class="font-semibold text-[40px] leading-10">
+    <div class="font-semibold leading-10">
       <div v-if="!balances.data" class="h-10 w-40 flex items-center">
         <div class="loading-box rounded-[12px] w-full h-[34px]" />
       </div>
-      <div v-else class="flex items-center gap-7.5">
-        <span>{{ formatUsd(totalBalance.toNumber()) }}</span>
-        <div class="flex items-center gap-[15px]">
+      <div v-else class="flex items-center sm:gap-7.5 gap-2.5">
+        <span class="sm:text-[40px] text-[32px]">{{ formatUsd(totalBalance.toNumber()) }}</span>
+        <div class="flex items-center gap-2.5 sm:gap-[15px]">
           <CommonButton
             color="white"
             class="items-center gap-2.5 h-10 !px-4"

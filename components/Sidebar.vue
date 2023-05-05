@@ -16,7 +16,7 @@ const { account } = useWeb3()
 
 <template>
   <ClientOnly>
-    <aside style="scrollbar-gutter:stable;overflow-y:overlay;" class="hidden sm:flex overflow-y-auto scroll-style h-screen dark:bg-gray-850 bg-slate-50 transition-[width]" :class="{ 'w-[340px]': opened, 'w-[120px]': !opened }">
+    <aside style="scrollbar-gutter:stable;overflow-y:overlay;" class="hidden h-auto sm:flex overflow-y-auto scroll-style dark:bg-gray-850 bg-slate-50 transition-[width]" :class="{ 'w-[340px]': opened, 'w-[120px]': !opened }">
       <div v-if="opened" class="flex flex-col w-full">
         <div class="flex flex-col gap-6 pt-7.5 pb-6 px-7.5">
           <div class="flex items-center justify-between">
@@ -45,7 +45,7 @@ const { account } = useWeb3()
         </div>
         <Navigation />
       </div>
-      <div v-else class="flex flex-col items-center w-full p-7.5 gap-6 w-full">
+      <div v-else class="flex flex-col items-center w-full p-7.5 gap-6">
         <div class="flex flex-col items-center gap-5">
           <Avocado class="text-primary" />
           <button
@@ -86,7 +86,7 @@ const { account } = useWeb3()
             <CopySVG class="w-4.5 h-4.5" />
           </button>
         </div>
-        <div class="flex flex-col items-center gap-9 dark:bg-slate-800 bg-slate-100 py-6 text-slate-400 w-full rounded-5">
+        <div :class="{ 'blur pointer-events-none': !safeAddress }" class="flex flex-col items-center gap-9 dark:bg-slate-800 bg-slate-100 py-6 text-slate-400 w-full rounded-5">
           <NuxtLink
             v-tippy="{
               arrow: true,

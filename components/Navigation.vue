@@ -18,6 +18,7 @@ const { account } = useWeb3()
 const { balances } = storeToRefs(useSafe())
 const { totalBalance, tokenBalances } = useAvocadoSafe()
 const [moreOptions, toggleOptions] = useToggle(false)
+const { safeAddress } = useAvocadoSafe()
 
 const sortedBalances = computed(() => {
   return sortByMany<IBalance>(tokenBalances.value, [
@@ -50,117 +51,119 @@ function openBridge() {
 </script>
 
 <template>
-  <div class="flex flex-col w-full gap-2 border-y-1 dark:border-slate-750 border-slate-150 px-7.5 py-4 text-slate-400 font-base">
-    <NuxtLink
-      active-class="text-primary"
-      class="flex h-11 items-center gap-2.5"
-      to="/"
-      @click="emit('navigate')"
-    >
-      <HomeSVG class="w-4 h-4" />
-      Home
-    </NuxtLink>
-    <NuxtLink
-      active-class="text-primary"
-      class="flex h-11 items-center gap-2.5"
-      to="/contacts"
-      @click="emit('navigate')"
-    >
-      <ContactSVG class="w-4 h-4" />
-      Contacts
-    </NuxtLink>
-    <NuxtLink
-      active-class="text-primary"
-      class="flex h-11 items-center gap-2.5"
-      to="/nft"
-      @click="emit('navigate')"
-    >
-      <FireSVG class="w-4 h-4" />
-      View your NFTs
-    </NuxtLink>
-    <NuxtLink
-      class="flex h-11 items-center gap-2.5"
-      external
-      target="_blank"
-      :to="`${avoExplorerURL}/address/${account}`"
-    >
-      <CalendarSVG class="w-4 h-4" />
-      History
-    </NuxtLink>
-  </div>
-  <div class="flex flex-col w-full gap-2 border-b-1 dark:border-slate-750 border-slate-150 px-7.5 py-4 text-slate-400">
-    <button
-      class="flex h-11 items-center justify-between"
-      :class="{
-        'dark:text-white text-slate-900': moreOptions,
-      }"
-      @click="toggleOptions(!moreOptions)"
-    >
-      <div class="flex items-center gap-2.5">
-        <MoreOptionsSVG class="w-4 h-4" />
-        More options
-      </div>
-      <ChevronDownSVG
-        class="w-4 h-4"
-        :class="{
-          'rotate-180': moreOptions,
-        }"
-      />
-    </button>
-    <div v-if="moreOptions" class="flex flex-col gap-2">
-      <button
-        class="flex h-11 items-center gap-2.5"
-        :disabled="!tokenBalances || tokenBalances.length === 0"
-        @click="openSwap"
-      >
-        <SwapSVG class="w-4 h-4" />
-        Swap
-      </button>
-      <button
-        class="flex h-11 items-center gap-2.5"
-        :disabled="!tokenBalances || tokenBalances.length === 0"
-        @click="openBridge"
-      >
-        <BridgeSVG class="w-4 h-4" />
-        Bridge
-      </button>
-      <button
-        class="flex h-11 items-center gap-2.5"
-        @click="openImportTokenModal"
-      >
-        <PlusCircleSVG class="w-4 h-4" />
-        Add custom Tokens
-      </button>
+  <div :class="{ 'blur pointer-events-none': !safeAddress }">
+    <div class="flex flex-col w-full gap-2 border-y-1 dark:border-slate-750 border-slate-150 px-7.5 py-4 text-slate-400 font-base">
       <NuxtLink
         active-class="text-primary"
         class="flex h-11 items-center gap-2.5"
-        to="/upgrade"
+        to="/"
+        @click="emit('navigate')"
       >
-        <RefreshSVG class="w-4 h-4" />
-        Deploy/Upgrade
+        <HomeSVG class="w-4 h-4" />
+        Home
+      </NuxtLink>
+      <NuxtLink
+        active-class="text-primary"
+        class="flex h-11 items-center gap-2.5"
+        to="/contacts"
+        @click="emit('navigate')"
+      >
+        <ContactSVG class="w-4 h-4" />
+        Contacts
+      </NuxtLink>
+      <NuxtLink
+        active-class="text-primary"
+        class="flex h-11 items-center gap-2.5"
+        to="/nft"
+        @click="emit('navigate')"
+      >
+        <FireSVG class="w-4 h-4" />
+        View your NFTs
       </NuxtLink>
       <NuxtLink
         class="flex h-11 items-center gap-2.5"
         external
         target="_blank"
-        to="https://help.avocado.instadapp.io"
+        :to="`${avoExplorerURL}/address/${account}`"
       >
-        <QuestionSVG class="w-4 h-4" />
-        Help
+        <CalendarSVG class="w-4 h-4" />
+        History
       </NuxtLink>
     </div>
-  </div>
-  <div v-if="balances.data" class="flex flex-col py-6 px-7.5 text-xs gap-2">
-    <span class="text-slate-400 text-center sm:text-left">You have {{ formatUsd(totalBalance.toNumber()) }} of assets spread across {{ fundedNetworks }} networks on your wallet(EOA)</span>
-    <div class="flex justify-center sm:justify-start">
-      <NuxtLink
-        class="text-primary"
-        external
-        target="_blank"
-        :to="avoOnboardURL"
+    <div class="flex flex-col w-full gap-2 border-b-1 dark:border-slate-750 border-slate-150 px-7.5 py-4 text-slate-400">
+      <button
+        class="flex h-11 items-center justify-between"
+        :class="{
+          'dark:text-white text-slate-900': moreOptions,
+        }"
+        @click="toggleOptions(!moreOptions)"
       >
-        Import
-      </NuxtLink>
+        <div class="flex items-center gap-2.5">
+          <MoreOptionsSVG class="w-4 h-4" />
+          More options
+        </div>
+        <ChevronDownSVG
+          class="w-4 h-4"
+          :class="{
+            'rotate-180': moreOptions,
+          }"
+        />
+      </button>
+      <div v-if="moreOptions" class="flex flex-col gap-2">
+        <button
+          class="flex h-11 items-center gap-2.5"
+          :disabled="!tokenBalances || tokenBalances.length === 0"
+          @click="openSwap"
+        >
+          <SwapSVG class="w-4 h-4" />
+          Swap
+        </button>
+        <button
+          class="flex h-11 items-center gap-2.5"
+          :disabled="!tokenBalances || tokenBalances.length === 0"
+          @click="openBridge"
+        >
+          <BridgeSVG class="w-4 h-4" />
+          Bridge
+        </button>
+        <button
+          class="flex h-11 items-center gap-2.5"
+          @click="openImportTokenModal"
+        >
+          <PlusCircleSVG class="w-4 h-4" />
+          Add custom Tokens
+        </button>
+        <NuxtLink
+          active-class="text-primary"
+          class="flex h-11 items-center gap-2.5"
+          to="/upgrade"
+        >
+          <RefreshSVG class="w-4 h-4" />
+          Deploy/Upgrade
+        </NuxtLink>
+        <NuxtLink
+          class="flex h-11 items-center gap-2.5"
+          external
+          target="_blank"
+          to="https://help.avocado.instadapp.io"
+        >
+          <QuestionSVG class="w-4 h-4" />
+          Help
+        </NuxtLink>
+      </div>
+    </div>
+    <div v-if="balances.data" class="flex flex-col py-6 px-7.5 text-xs gap-2">
+      <span class="text-slate-400 text-center sm:text-left">You have {{ formatUsd(totalBalance.toNumber()) }} of assets spread across {{ fundedNetworks }} networks on your wallet(EOA)</span>
+      <div class="flex justify-center sm:justify-start">
+        <NuxtLink
+          class="text-primary"
+          external
+          target="_blank"
+          :to="avoOnboardURL"
+        >
+          Import
+        </NuxtLink>
+      </div>
     </div>
   </div>
 </template>

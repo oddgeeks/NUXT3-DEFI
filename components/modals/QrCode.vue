@@ -5,7 +5,7 @@ const account = computed(() => safeAddress.value || '0x000000000000000')
 
 <template>
   <div
-    class="relative flex flex-col items-center items-center gap-4 w-[400px]"
+    class="relative flex flex-col items-center gap-4 w-[400px]"
     :class="{ 'blur pointer-events-none': !safeAddress }"
   >
     <StyledQrCode

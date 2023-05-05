@@ -3,6 +3,11 @@ import WorldSVG from '~/assets/images/icons/world.svg'
 
 const { account } = useWeb3()
 const { sortedNetworks } = useNetworks()
+
+const suffix = computed<any>(() => {
+  if (account.value)
+    return `/address/${account.value}`
+})
 </script>
 
 <template>
@@ -19,10 +24,9 @@ const { sortedNetworks } = useNetworks()
         :key="network.chainId"
       >
         <a
-          v-if="account"
           target="_blank"
           class="flex items-center gap-3"
-          :href="getExplorerUrl(network.chainId, `/address/${account}`)"
+          :href="getExplorerUrl(network.chainId, suffix)"
         >
           <ChainLogo
             :stroke="false"
@@ -31,13 +35,6 @@ const { sortedNetworks } = useNetworks()
           />
           <span>{{ network.name }}</span>
         </a>
-
-        <ChainLogo
-          v-else
-          :stroke="false"
-          class="w-[26px] h-[26px]"
-          :chain="network.chainId"
-        />
       </li>
     </ul>
   </form>
