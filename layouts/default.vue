@@ -28,8 +28,8 @@ const route = useRoute()
         <TheFooter />
       </div>
     </div>
-    <div class="fixed w-full z-40 sm:hidden">
-      <BannerAccountTracking v-if="showTrackingBanner" class="!bg-[#18242c]" />
+    <div class="relative fixed w-full z-40 sm:hidden">
+      <BannerAccountTracking class="absolute top-0 !bg-[#18242c]" />
       <MobileHeader />
       <slot />
     </div>
