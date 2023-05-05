@@ -61,7 +61,6 @@
     "uuid": "^9.0.0",
     "uuidv4": "^6.2.13",
     "vee-validate": "^4.7.4",
-    "vue-chartjs": "^5.2.0",
     "vue-gtag-next": "^1.14.0",
     "vue-lite-youtube-embed": "^1.2.0",
     "vue-tippy": "^6.0.0",
