@@ -13,18 +13,20 @@ const route = useRoute()
   <section class="flex flex-col h-full">
     <BannerAccountTracking v-if="showTrackingBanner" />
 
-    <div class="flex gap-10">
+    <div class="flex ">
       <Sidebar />
 
-      <div class="flex flex-col flex-1 sm:h-screen overflow-y-auto">
-        <TheHeader />
-        <div
-          class="container flex flex-col gap-4 mt-32 sm:mt-0"
-        >
-          <WarningsGasBalance v-if="showInsufficientGasBanner" />
+      <div class="flex-1 sm:h-screen overflow-y-auto">
+        <div class="flex flex-col sm:px-10 px-4 max-w-7xl mx-auto">
+          <TheHeader />
+          <div
+            class="container flex flex-col gap-4 mt-32 sm:mt-0"
+          >
+            <WarningsGasBalance v-if="showInsufficientGasBanner" />
+          </div>
+          <slot />
+          <TheFooter />
         </div>
-        <slot />
-        <TheFooter />
       </div>
     </div>
     <div class="fixed bottom-0 sm:bottom-12 w-full z-40">

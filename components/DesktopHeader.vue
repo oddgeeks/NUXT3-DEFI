@@ -28,7 +28,7 @@ useIntervalFn(refresh, 1000)
 </script>
 
 <template>
-  <div class="items-center justify-end py-8 px-10 hidden sm:flex">
+  <div class="items-center justify-end py-8 hidden sm:flex">
     <nav class="flex items-center gap-7.5 relative">
       <div class="flex items-center gap-5">
         <ColorModeSwitcher />

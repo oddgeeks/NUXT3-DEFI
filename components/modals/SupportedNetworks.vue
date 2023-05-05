@@ -18,7 +18,7 @@ const suffix = computed<any>(() => {
         All Supported EVM Networks
       </h1>
     </div>
-    <ul class="flex flex-col gap-5 bg-gray-850 px-5 py-4 rounded-5">
+    <ul class="flex flex-col gap-5 bg-slate-50 dark:bg-gray-850 px-5 py-4 rounded-5">
       <li
         v-for="network in sortedNetworks"
         :key="network.chainId"

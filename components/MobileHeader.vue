@@ -40,7 +40,7 @@ watch(() => active.value, () => {
 
 <template>
   <div
-    class="flex flex-col transition-transform bg-gray-50 dark:bg-gray-850 z-40 w-full fixed sm:hidden"
+    class="flex flex-col transition-transform bg-gray-50 dark:bg-gray-850 left-0 z-40 w-full fixed sm:hidden"
     :class="
       [{ 'rounded-b-5': !opened, '': opened },
        showTrackingBanner ? 'top-9' : 'top-0',

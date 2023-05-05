@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import HomeSVG from '~/assets/images/icons/home.svg'
 import ContactSVG from '~/assets/images/icons/contact.svg'
 import FireSVG from '~/assets/images/icons/fire.svg'
@@ -15,8 +14,7 @@ import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
 const emit = defineEmits(['navigate'])
 
 const { account } = useWeb3()
-const { balances } = storeToRefs(useSafe())
-const { totalBalance, tokenBalances } = useAvocadoSafe()
+const { tokenBalances, totalEoaBalance, eoaBalances, fundedEoaNetworks } = useAvocadoSafe()
 const [moreOptions, toggleOptions] = useToggle(false)
 const { safeAddress } = useAvocadoSafe()
 
@@ -31,10 +29,6 @@ const sortedBalances = computed(() => {
         .minus(a?.balance || 0)
         .toNumber(),
   ])
-})
-
-const fundedNetworks = computed(() => {
-  return new Set(tokenBalances.value.filter(item => toBN(item?.balance ?? 0).toNumber() !== 0).map(item => item.chainId.toString())).size
 })
 
 function openSwap() {
@@ -78,7 +72,7 @@ function openBridge() {
         @click="emit('navigate')"
       >
         <FireSVG class="w-4 h-4" />
-        View your NFTs
+        NFT
       </NuxtLink>
       <NuxtLink
         class="flex h-11 items-center gap-2.5"
@@ -152,8 +146,8 @@ function openBridge() {
         </NuxtLink>
       </div>
     </div>
-    <div v-if="balances.data" class="flex flex-col py-6 px-7.5 text-xs gap-2">
-      <span class="text-slate-400 text-center sm:text-left">You have {{ formatUsd(totalBalance.toNumber()) }} of assets spread across {{ fundedNetworks }} networks on your wallet(EOA)</span>
+    <div v-if="eoaBalances && eoaBalances?.length" class="flex flex-col py-6 px-7.5 text-xs gap-2">
+      <span class="text-slate-400 text-center sm:text-left">You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet(EOA)</span>
       <div class="flex justify-center sm:justify-start">
         <NuxtLink
           class="text-primary"

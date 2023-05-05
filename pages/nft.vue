@@ -60,7 +60,7 @@ const filteredAssets = computed(() => {
 </script>
 
 <template>
-  <div class="flex-1 container relative">
+  <div class="flex-1 relative">
     <div class="w-full flex items-center justify-between mb-5">
       <h1>
         Your NFTs <span v-if="data">({{ data?.length }})</span>

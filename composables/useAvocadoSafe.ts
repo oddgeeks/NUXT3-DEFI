@@ -7,7 +7,7 @@ export function useAvocadoSafe() {
   const { avoProvider } = useSafe()
 
   // check if we have a cached safe address
-  const { safeAddress, tokenBalances, totalBalance } = storeToRefs(useSafe())
+  const { safeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks } = storeToRefs(useSafe())
 
   const safe = shallowRef<ReturnType<typeof avocado.createSafe>>()
   const signer = computed(() => (safe.value ? safe.value.getSigner() : null))
@@ -102,6 +102,8 @@ export function useAvocadoSafe() {
   return {
     safe,
     tokenBalances,
+    totalEoaBalance,
+    eoaBalances,
     totalBalance,
     account,
     safeAddress,
@@ -110,5 +112,6 @@ export function useAvocadoSafe() {
     airDrop,
     fetchAirDrop: execute,
     isSafeAddress,
+    fundedEoaNetworks,
   }
 }

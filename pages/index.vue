@@ -29,7 +29,7 @@ function handleOpenDialog() {
 </script>
 
 <template>
-  <div class="container flex flex-col gap-[30px] flex-1">
+  <div class="flex flex-col gap-[30px] flex-1">
     <TotalBalance />
     <div class="flex flex-col gap-3.5">
       <DApps />
