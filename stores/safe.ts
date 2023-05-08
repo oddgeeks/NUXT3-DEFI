@@ -42,7 +42,7 @@ export const useSafe = defineStore('safe', () => {
   const avoProvider = getRpcProvider(avoChainId)
 
   const networkPreference = ref(
-    new Set(availableNetworks.map(el => el.chainId)),
+    availableNetworks.map(el => el.chainId),
   )
 
   const eoaBalances = ref<IBalance[]>()
