@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
-import { storeToRefs } from 'pinia'
 import SearchSVG from '~/assets/images/icons/search.svg'
 
 const searchQuery = ref()
 
 const { account } = useWeb3()
 const { safeAddress } = useAvocadoSafe()
-const { networkPreference } = storeToRefs(useSafe())
 
 const { NFT } = useNft()
 
 const route = useRoute()
+
+const networkPreferences = ref(
+  [1, 137, 10, 42161, 56, 43114, 250],
+)
 
 useAccountTrack(undefined, () => {
   useEagerConnect()
@@ -44,7 +46,7 @@ useIntervalFn(() => {
 
 const filteredAssets = computed(() => {
   const items = data.value?.filter(item =>
-    networkPreference.value.has(+item.chainId as ChainId),
+    networkPreferences.value.some(i => i == item.chainId),
   )
 
   if (!searchQuery.value)
@@ -65,7 +67,7 @@ const filteredAssets = computed(() => {
       <h1>
         Your NFTs <span v-if="data">({{ data?.length }})</span>
       </h1>
-      <MultipleNetworkFilter v-if="account" />
+      <MultipleNetworkFilter v-if="account" v-model:networks="networkPreferences" :filters="false" />
     </div>
     <CommonInput
       v-model="searchQuery"
