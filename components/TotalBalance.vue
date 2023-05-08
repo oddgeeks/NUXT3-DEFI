@@ -19,12 +19,12 @@ function hasAvailableTokens() {
       <div v-if="!balances.data" class="h-10 w-40 flex items-center">
         <div class="loading-box rounded-[12px] w-full h-[34px]" />
       </div>
-      <div v-else class="flex items-center sm:gap-7.5 gap-2.5">
+      <div v-else class="flex flex-col sm:flex-row sm:items-center sm:gap-7.5 gap-4">
         <span class="sm:text-[40px] text-[32px]">{{ formatUsd(totalBalance.toNumber()) }}</span>
-        <div class="flex items-center gap-2.5 sm:gap-[15px]">
+        <div class="flex items-center gap-[15px]">
           <CommonButton
             color="white"
-            class="items-center gap-2.5 h-10 !px-4"
+            class="flex-1 sm:flex-none items-center justify-center gap-2.5 h-10 !px-4"
             :disabled="!hasAvailableTokens()"
             @click="openSendModal(1)"
           >
@@ -41,7 +41,7 @@ function hasAvailableTokens() {
           </CommonButton>
           <CommonButton
             color="white"
-            class="items-center gap-2.5 h-10 !px-4"
+            class="flex-1 sm:flex-none items-center justify-center gap-2.5 h-10 !px-4"
             @click="openQrCode"
           >
             Receive
