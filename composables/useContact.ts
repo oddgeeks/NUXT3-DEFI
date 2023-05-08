@@ -1,6 +1,7 @@
 import { isAddress } from '@ethersproject/address'
 
 const contacts = useLocalStorage<Record<string, IContact[]>>('contacts', {})
+const hideOwner = useLocalStorage<boolean>('hideOwnerContact', false)
 
 export function useContacts() {
   const { safeAddress } = useAvocadoSafe()
@@ -25,12 +26,17 @@ export function useContacts() {
 
     const _contacts = contacts.value[safeAddress.value] || []
 
-    return [ownerContact.value, ..._contacts] as IContact[]
+    if (!hideOwner.value)
+      return [ownerContact.value, ..._contacts] as IContact[]
+
+    return _contacts as IContact[]
   })
 
   const deleteContact = (contact: IContact) => {
-    if (contact.owner)
+    if (contact.owner) {
+      hideOwner.value = true
       return
+    }
 
     if (!contacts.value[safeAddress.value])
       return
