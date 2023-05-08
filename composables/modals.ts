@@ -2,7 +2,7 @@ import type IWalletConnect from '@walletconnect/client'
 import Bridge from '~~/components/modals/Bridge.vue'
 import Swap from '~~/components/modals/Swap.vue'
 import PendingTransaction from '~~/components/modals/PendingTransaction.vue'
-import Send from '~~/components/modals/Send.vue'
+import Send from '~~/components/modals/Send/Main.vue'
 import TopUpGas from '~~/components/modals/TopUpGas.vue'
 import WalletConnect from '~~/components/modals/WalletConnect.vue'
 import WalletConnectDetails from '~~/components/modals/WalletConnectDetails.vue'
@@ -104,9 +104,6 @@ export function openSendModal(chainId: number | string,
       address,
       chainId,
       contact,
-    },
-    options: {
-      wrapperClass: 'max-w-[600px]',
     },
   })
 }
