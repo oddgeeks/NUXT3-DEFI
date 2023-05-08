@@ -45,6 +45,7 @@ export const useSafe = defineStore('safe', () => {
     availableNetworks.map(el => el.chainId),
   )
 
+  const eoaBalances = ref<IBalance[]>()
   const balances = ref({
     data: undefined as IBalance[] | undefined,
     loading: false,
@@ -63,6 +64,18 @@ export const useSafe = defineStore('safe', () => {
       toBN(0) || toBN(0),
     ),
   )
+
+  const totalEoaBalance = computed(() => {
+    return eoaBalances.value?.reduce(
+      (acc, curr) => acc.plus(curr.balanceInUSD || '0'),
+      toBN(0) || toBN(0),
+    )
+  },
+  )
+
+  const fundedEoaNetworks = computed(() => {
+    return new Set(eoaBalances.value?.filter(item => toBN(item?.balance ?? 0).toNumber() !== 0).map(item => item.chainId.toString())).size
+  })
 
   const fetchSafeddress = async () => {
     if (!account.value) {
@@ -364,6 +377,19 @@ export const useSafe = defineStore('safe', () => {
     }
   }
 
+  async function fetchEoaBalances() {
+    if (!account.value)
+      return
+    if (!tokens.value.length)
+      return
+    if (eoaBalances.value)
+      return
+
+    const resp = await getBalances(account.value)
+
+    eoaBalances.value = resp.flat()
+  }
+
   async function fetchGasBalance() {
     if (!account.value)
       return
@@ -403,12 +429,15 @@ export const useSafe = defineStore('safe', () => {
 
   watch([safeAddress, account, tokens], () => {
     fetchBalances()
+    fetchEoaBalances()
   }, {
     immediate: true,
   })
 
   watch(safeAddress, () => {
-    balances.value.data = undefined // reset balances
+    // reset balances
+    balances.value.data = undefined
+    eoaBalances.value = undefined
   })
 
   return {
@@ -419,12 +448,15 @@ export const useSafe = defineStore('safe', () => {
     fetchGasBalance,
     pending,
     balances,
+    eoaBalances,
+    totalEoaBalance,
     fetchBalances,
     forwarderProxyAddress,
     networkVersions,
     networkPreference,
     avoProvider,
     getBalances,
+    fundedEoaNetworks,
   }
 })
 

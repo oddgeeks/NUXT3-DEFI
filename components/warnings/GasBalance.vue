@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-green-400 gap-[15px] w-full justify-center flex sm:flex-row flex-col bg-opacity-10 text-green-400 rounded-5 p-4 text-sm text-center"
+    class="bg-green-400 gap-[15px] w-full justify-center mb-4 flex sm:flex-row flex-col bg-opacity-10 text-green-400 rounded-5 p-4 text-sm text-center"
   >
     <div class="inline-flex items-center gap-2">
       <span class="text-base">⛽</span>

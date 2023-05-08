@@ -29,7 +29,7 @@ function handleOpenDialog() {
 </script>
 
 <template>
-  <div class="container flex flex-col gap-[30px] flex-1">
+  <div class="flex flex-col gap-[30px] flex-1">
     <TotalBalance />
     <div class="flex flex-col gap-3.5">
       <DApps />
@@ -89,40 +89,6 @@ function handleOpenDialog() {
               <Web3Button />
             </div>
           </div>
-        </div>
-      </div>
-      <div
-        class="hidden sm:flex lg:flex-col md:shrink-0 md:basis-[213px] lg:mt-0 mt-16 gap-5"
-      >
-        <div class="w-full flex flex-col gap-5">
-          <h2 class="font-semibold inline-flex gap-2.5">
-            Your Avo Wallet
-            <button
-              @click="
-                openDialogModal({
-                  type: 'question',
-                  title: 'Your Avocado Wallet',
-                  isButtonVisible: false,
-                  content: `Deposit or receive funds by scanning or copying your Avocado Wallet QR code. Your Avocado wallet is fundamentally linked to your wallet address making (EOA) you the true owner of it.
-          <br><br>
-          <a href='https://help.avocado.instadapp.io/en/articles/7038878-depositing-funds-to-your-avocado-account' target='blank' rel='noopener noreferrer' class='text-sm font-medium inline-flex gap-2.5 text-primary'>Learn more about how to deposit ${LinkSVG}</a>
-          `,
-                })
-              "
-            >
-              <QuestionCircleSVG v-if="account" class="w-5 h-5 text-primary" />
-            </button>
-          </h2>
-          <QrCode />
-        </div>
-        <div class="w-full flex flex-col gap-5">
-          <h2 class="font-semibold inline-flex gap-2.5">
-            Supported Chains
-          </h2>
-          <SupportedChains
-            :account="safeAddress"
-            class="p-5 dark:bg-gray-850 bg-slate-50 rounded-5.5"
-          />
         </div>
       </div>
     </div>

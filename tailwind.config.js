@@ -11,7 +11,7 @@ module.exports = {
     container: {
       center: true,
       screens: {
-        lg: '1092px',
+        lg: '1240px',
       },
       padding: {
         DEFAULT: '1rem',
@@ -45,6 +45,9 @@ module.exports = {
         5.5: '25px',
         10: '40px',
         7.5: '30px',
+      },
+      borderWidth: {
+        1: '1px',
       },
       fontFamily: {
         sans: ['Source Code Pro', ...defaultTheme.fontFamily.sans],
