@@ -46,7 +46,8 @@ interface DialogModalProps {
 interface IWcTransactionModal {
   payload: any
   chainId: string
-  wc: IWalletConnect
+  session?: IWalletConnect
+  sessionV2?: SessionTypes.Struct
   metadata: string
   isSign?: boolean
   signMessageDetails?: any
@@ -183,7 +184,8 @@ export const openWCTransactionModal = useThrottleFn(
       componentProps: {
         payload: params.payload,
         chainId: params.chainId,
-        wc: params.wc,
+        session: params.session,
+        sessionV2: params.sessionV2,
         metadata: params.metadata,
         isSign: params.isSign,
         signMessageDetails: params?.signMessageDetails,

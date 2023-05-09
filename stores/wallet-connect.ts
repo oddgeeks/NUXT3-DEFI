@@ -119,7 +119,7 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
                     = await openWCTransactionModal({
                       chainId: String(wc.chainId),
                       payload,
-                      wc,
+                      session: wc,
                       metadata,
                     })
 
@@ -154,7 +154,7 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
                 const { success, payload: msg } = await openWCTransactionModal({
                   chainId: String(wc.chainId),
                   payload,
-                  wc,
+                  session: wc,
                   metadata,
                 })
 
@@ -234,7 +234,7 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
                       = await openWCTransactionModal({
                         chainId: String(wc.chainId),
                         payload,
-                        wc,
+                        session: wc,
                         metadata,
                         isSign: true,
                         signMessageDetails: eip712Data.message.details,
