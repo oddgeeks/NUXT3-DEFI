@@ -34,7 +34,7 @@ const filteredContacts = computed(() => {
 </script>
 
 <template>
-  <div class="container flex flex-col gap-[30px] flex-1">
+  <div class="flex flex-col gap-[30px] flex-1">
     <div class="flex gap-5 flex-col flex-1">
       <h2 class="sm:text-base text-sm font-semibold inline-flex items-center">
         Contacts

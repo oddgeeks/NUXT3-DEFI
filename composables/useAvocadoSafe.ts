@@ -1,13 +1,15 @@
 import { storeToRefs } from 'pinia'
 import { isAddress } from '@ethersproject/address'
+import { VoidSigner } from 'ethers'
 
 export function useAvocadoSafe() {
   const { switchToAvocadoNetwork } = useNetworks()
   const { library, account } = useWeb3()
+  const { trackingAccount } = useAccountTrack()
   const { avoProvider } = useSafe()
 
   // check if we have a cached safe address
-  const { safeAddress, tokenBalances, totalBalance } = storeToRefs(useSafe())
+  const { safeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks } = storeToRefs(useSafe())
 
   const safe = shallowRef<ReturnType<typeof avocado.createSafe>>()
   const signer = computed(() => (safe.value ? safe.value.getSigner() : null))
@@ -15,9 +17,15 @@ export function useAvocadoSafe() {
   watch(
     [library, account],
     () => {
-      safe.value = library.value
-        ? avocado.createSafe(library.value.getSigner().connectUnchecked())
-        : undefined
+      if (trackingAccount.value) {
+        const voidSigner = new VoidSigner(trackingAccount.value, avoProvider)
+        safe.value = avocado.createSafe(voidSigner)
+      }
+      else {
+        safe.value = library.value
+          ? avocado.createSafe(library.value.getSigner().connectUnchecked())
+          : undefined
+      }
     },
     { immediate: true },
   )
@@ -102,6 +110,8 @@ export function useAvocadoSafe() {
   return {
     safe,
     tokenBalances,
+    totalEoaBalance,
+    eoaBalances,
     totalBalance,
     account,
     safeAddress,
@@ -110,5 +120,6 @@ export function useAvocadoSafe() {
     airDrop,
     fetchAirDrop: execute,
     isSafeAddress,
+    fundedEoaNetworks,
   }
 }
