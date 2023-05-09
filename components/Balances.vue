@@ -1,20 +1,16 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import SearchSVG from '~/assets/images/icons/search.svg'
 import PlusSVG from '~/assets/images/icons/plus.svg'
 import type { IBalance } from '~~/stores/safe'
 
-const props = defineProps({
-  hideZeroBalances: {
-    type: Boolean,
-    default: false,
-  },
-  networkPreference: {
-    type: Set<Number>,
-    default: new Set(),
-  },
-})
+const props = defineProps<{
+  hideZeroBalances: boolean
+}>()
+
 const { tokenBalances } = useAvocadoSafe()
 const { account } = useWeb3()
+const { networkPreference } = storeToRefs(useSafe())
 
 const whitelistedSymbols = [
   'ETH',
@@ -60,9 +56,9 @@ const filteredBalances = computed(() => {
     balance: (balance: any) =>
       props.hideZeroBalances ? toBN(balance).decimalPlaces(5).gt(0) : true,
     chainId: (chainId: string) =>
-      (props.networkPreference.size === availableNetworks.length
+      (networkPreference.value.length === availableNetworks.length
         ? true
-        : props.networkPreference.has(parseInt(chainId)))
+        : networkPreference.value.includes(parseInt(chainId) as any))
       && availableNetworks.some(n => String(n.chainId) == String(chainId)),
   }
 

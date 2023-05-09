@@ -4,6 +4,20 @@ import CheckCircle from '~/assets/images/icons/check-circle.svg'
 
 const { networkPreference } = storeToRefs(useSafe())
 const isHideZeroBalances = useLocalStorage('hide-zero-balances', false)
+
+function toggleNetwork(network: any) {
+  if (networkPreference.value.includes(network))
+    networkPreference.value = networkPreference.value.filter(n => n !== network)
+  else
+    networkPreference.value = [...networkPreference.value, network]
+}
+
+function toggleAllNetworks() {
+  if (networkPreference.value.length === availableNetworks.length)
+    networkPreference.value = []
+  else
+    networkPreference.value = availableNetworks.map(n => n.chainId)
+}
 </script>
 
 <template>
@@ -16,15 +30,10 @@ const isHideZeroBalances = useLocalStorage('hide-zero-balances', false)
         <span class="text-slate-400">Networks</span>
         <div
           class="text-green-600 cursor-pointer"
-          @click="
-            networkPreference
-              = networkPreference.size === availableNetworks.length
-                ? new Set()
-                : new Set(availableNetworks.map((el) => el.chainId))
-          "
+          @click="toggleAllNetworks"
         >
           {{
-            networkPreference.size === availableNetworks.length ? "None" : "All"
+            networkPreference.length === availableNetworks.length ? "None" : "All"
           }}
         </div>
       </li>
@@ -34,20 +43,14 @@ const isHideZeroBalances = useLocalStorage('hide-zero-balances', false)
         :key="network.chainId"
         class="flex items-center gap-3.5 hover:bg-slate-150 hover:dark:bg-slate-800 cursor-pointer py-2.5 px-3 rounded-[14px]"
         :class="{
-          'dark:text-slate-500 text-slate-400': !networkPreference.has(
-            network.chainId,
-          ),
+          'dark:text-slate-500 text-slate-400': !networkPreference.includes(network.chainId),
         }"
-        @click="
-          networkPreference.has(network.chainId)
-            ? networkPreference.delete(network.chainId)
-            : networkPreference.add(network.chainId)
-        "
+        @click="toggleNetwork(network.chainId)"
       >
         <ChainLogo style="width: 30px; height: 30px" :chain="network.chainId" />
         {{ network.name }}
         <CheckCircle
-          v-if="networkPreference.has(network.chainId)"
+          v-if="networkPreference.includes(network.chainId)"
           class="success-circle cursor-pointer w-7 ml-auto"
         />
         <CheckCircle

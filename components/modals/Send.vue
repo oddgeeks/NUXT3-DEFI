@@ -538,7 +538,7 @@ function isInsufficient(idx: number) {
               class="ml-3"
               @click="handleSelectContact()"
             >
-              <ContactSVG />
+              <ContactSVG class="text-slate-400" />
             </button>
           </template>
         </CommonInput>

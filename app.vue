@@ -1,5 +1,6 @@
-<script setup>
+<script setup lang="ts">
 onMounted(() => {
+  // @ts-expect-error
   window.wc = useWalletConnect()
 })
 useTokens()
@@ -8,6 +9,7 @@ useSafe()
 onMounted(() => {
   const hideAllTooltipsOnScroll = useThrottleFn(() => {
     [...document.querySelectorAll('[data-tippy-root]')].forEach(e =>
+    // @ts-expect-error
       e._tippy?.hide(),
     )
   }, 1000)
@@ -24,6 +26,7 @@ onMounted(() => {
     <NuxtPage />
   </NuxtLayout>
 
+  <BannerNewVersion />
   <Notifications />
   <Modals />
 </template>

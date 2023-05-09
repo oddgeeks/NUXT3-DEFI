@@ -46,6 +46,18 @@ export default defineNuxtConfig({
       // },
     },
   },
+  pwa: {
+    registerType: 'prompt',
+    manifestFilename: 'site.webmanifest',
+    workbox: {
+      navigateFallback: null,
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+    },
+    client: {
+      // if enabling periodic sync for update use 1 hour or so (periodicSyncForUpdates: 3600)
+      periodicSyncForUpdates: 20,
+    },
+  },
   app: {
     head: {
       title: meta.title,
@@ -152,6 +164,7 @@ export default defineNuxtConfig({
     },
   },
   modules: [
+    '@vite-pwa/nuxt',
     'nuxt-svgo',
     '@nuxtjs/color-mode',
     '@vueuse/nuxt',

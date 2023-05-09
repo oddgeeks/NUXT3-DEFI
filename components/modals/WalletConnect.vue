@@ -212,7 +212,7 @@ onMounted(async () => {
         placeholder="QR code or link"
       >
         <template v-if="!uri" #suffix>
-          <SVGQr />
+          <SVGQr class="text-slate-400" />
         </template>
       </CommonInput>
 

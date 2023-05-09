@@ -15,7 +15,6 @@ import Dialog from '~~/components/modals/Dialog.vue'
 import CustomTx from '~~/components/modals/CustomTx.vue'
 import UpgradeVersion from '~~/components/modals/UpgradeVersion.vue'
 import Web3 from '~/components/modals/Web3.vue'
-import MobileHeader from '~/components/modals/MobileHeader.vue'
 import DeployNetwork from '~/components/modals/DeployNetwork.vue'
 import YourWallet from '~/components/modals/YourWallet.vue'
 import Networks from '~/components/modals/Networks.vue'
@@ -24,6 +23,8 @@ import AddContact from '~/components/modals/AddContact.vue'
 import SelectContact from '~/components/modals/SelectContact.vue'
 import NFTDetails from '~/components/modals/NFTDetails.vue'
 import SendNFT from '~/components/modals/SendNFT.vue'
+import SupportedNetworks from '~/components/modals/SupportedNetworks.vue'
+import QrCode from '~/components/modals/QrCode.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -257,16 +258,6 @@ export function openCustomTxModal() {
   })
 }
 
-export function openMobileHeader() {
-  openModal({
-    component: MobileHeader,
-    options: {
-      sheetPosition: 'top',
-      contentClass: '!px-5 !py-5',
-    },
-  })
-}
-
 export function openDeployNetworkModal(network: Network) {
   openModal({
     component: DeployNetwork,
@@ -357,6 +348,22 @@ export function openSendNFTModal(NFTData: NFTData) {
     },
     options: {
       wrapperClass: 'max-w-[600px]',
+    },
+  })
+}
+
+export function openSupportedNetworks() {
+  openModal({
+    component: SupportedNetworks,
+  })
+}
+
+export function openQrCode() {
+  openModal({
+    component: QrCode,
+    options: {
+      wrapperClass: '!bg-transparent max-w-[510px]',
+      contentClass: '!pt-6',
     },
   })
 }
