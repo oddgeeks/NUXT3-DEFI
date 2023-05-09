@@ -5,7 +5,7 @@ import ArrowRight from '~/assets/images/icons/arrow-right.svg'
 import SVGWalletConnect from '~/assets/images/wallet/wallet-connect-lite.svg'
 import URLWalletConnect from '~/assets/images/wallet/wallet-connect.svg?url'
 
-const { safeAddress, account } = useAvocadoSafe()
+const { safeAddress } = useAvocadoSafe()
 const wcStore = useWalletConnect()
 const wcStoreV2 = useWalletConnectV2()
 
@@ -72,8 +72,10 @@ async function disconnectAllConnections() {
     },
   })
 
-  if (success)
+  if (success) {
     wcStore.disconnectAll()
+    wcStoreV2.disconnectAll()
+  }
 }
 
 watch(

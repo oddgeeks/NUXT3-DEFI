@@ -120,6 +120,11 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
     syncActiveSessions()
   }
 
+  const disconnectAll = async () => {
+    for (const connector of sessions.value)
+      await disconnect(connector)
+  }
+
   onMounted(async () => {
     await init()
 
@@ -132,6 +137,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
     init,
     disconnect,
     connect,
+    disconnectAll,
   }
 })
 
