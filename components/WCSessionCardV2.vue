@@ -65,7 +65,7 @@ console.log(props.session)
           {{ session?.peer.metadata.name }}
         </h1>
         <h2 class="text-xs text-primary leading-5">
-          Connected
+          Connected v2
         </h2>
       </div>
     </button>
