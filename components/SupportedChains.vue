@@ -48,8 +48,8 @@ const visibleNetworks = computed(() => {
         :chain="network.chainId"
       />
     </li>
-    <div v-if="props.maxCount && sortedNetworks.length > props.maxCount" class="w-6 h-6 text-xs bg-primary text-white rounded-full flex items-center justify-center">
+    <button v-if="props.maxCount && sortedNetworks.length > props.maxCount" class="w-6 h-6 text-xs bg-primary text-white rounded-full flex items-center justify-center" @click="openSupportedNetworks">
       +{{ sortedNetworks.length - props.maxCount }}
-    </div>
+    </button>
   </ul>
 </template>
