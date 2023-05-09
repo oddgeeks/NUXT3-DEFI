@@ -33,4 +33,9 @@ export const promos: IPromo[] = [
     slug: 'alphainsiders-drop',
     promo: 'AlphaInsiders-v1.0.0',
   },
+  {
+    title: 'AlphaInsiders Giveaway Drop',
+    slug: 'alphainsiders-giveaway-drop',
+    promo: AlphaInsiders-Giveaway-v1.0.0',
+  },
 ]
