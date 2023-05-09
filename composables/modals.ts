@@ -1,4 +1,5 @@
 import type IWalletConnect from '@walletconnect/client'
+import type { SessionTypes } from '@walletconnect/types'
 import Bridge from '~~/components/modals/Bridge.vue'
 import Swap from '~~/components/modals/Swap.vue'
 import PendingTransaction from '~~/components/modals/PendingTransaction.vue'
@@ -6,6 +7,7 @@ import Send from '~~/components/modals/Send.vue'
 import TopUpGas from '~~/components/modals/TopUpGas.vue'
 import WalletConnect from '~~/components/modals/WalletConnect.vue'
 import WalletConnectDetails from '~~/components/modals/WalletConnectDetails.vue'
+import WalletConnectDetailsV2 from '~~/components/modals/WalletConnectDetailsV2.vue'
 import TokenSelection from '~~/components/modals/TokenSelection.vue'
 import ImportToken from '~~/components/modals/ImportToken.vue'
 import CustomToken from '~~/components/modals/CustomToken.vue'
@@ -144,6 +146,15 @@ export function openTopUpGasModal() {
 export function openWalletDetailsModal(session: any) {
   openModal({
     component: WalletConnectDetails,
+    componentProps: {
+      session,
+    },
+  })
+}
+
+export function openWalletDetailsModalV2(session: SessionTypes.Struct) {
+  openModal({
+    component: WalletConnectDetailsV2,
     componentProps: {
       session,
     },

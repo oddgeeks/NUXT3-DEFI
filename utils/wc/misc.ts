@@ -120,7 +120,6 @@ export function formatUA(protocol: string, version: number, sdkVersion: string) 
   const id = getJavascriptID()
   return [[protocol, version].join('-'), [SDK_TYPE, sdkVersion].join('-'), os, id].join('/')
 }
-console
 
 export function formatRelayRpcUrl({
   protocol,

@@ -1,11 +1,10 @@
 <script setup lang="ts">
+import type { Web3WalletTypes } from '@walletconnect/web3wallet'
+import type { SessionTypes } from '@walletconnect/types'
 import * as yup from 'yup'
 import { useField, useForm } from 'vee-validate'
 
 import LiteYouTubeEmbed from 'vue-lite-youtube-embed'
-import SVGX from '~/assets/images/icons/x.svg'
-import SVGAlert from '~/assets/images/icons/exclamation-octagon.svg'
-import SVGInfo from '~/assets/images/icons/exclamation-circle.svg'
 import SVGQr from '~/assets/images/icons/qr.svg'
 
 import 'vue-lite-youtube-embed/style.css'
@@ -13,18 +12,23 @@ import 'vue-lite-youtube-embed/style.css'
 const emit = defineEmits(['destroy'])
 
 const wcStore = useWalletConnect()
+const wcStoreV2 = useWalletConnectV2()
 
 const isTutorialWatched = useLocalStorage('wallet-c-tutorial-watched', false)
 const isIframeVisible = ref(true)
-const connection = shallowRef()
-const connectionChainId = shallowRef(137)
-
 const [loading, toggle] = useToggle(false)
 
-const isExpertMode = ref(false)
-const detailsRef = ref<HTMLDialogElement>()
+const connection = shallowRef()
+const proposal = ref<Web3WalletTypes.SessionProposal>()
+const namespaces = ref<SessionTypes.Namespaces>()
 
-const { handleSubmit, errors, meta, resetForm } = useForm({
+const isExpertMode = ref(false)
+const connectionChainId = shallowRef(137)
+
+provide('isExpertMode', isExpertMode)
+provide('connectionChainId', connectionChainId)
+
+const { handleSubmit, errors, meta } = useForm({
   validationSchema: yup.object({
     uri: yup
       .string()
@@ -70,8 +74,12 @@ const prepareAndConnect = handleSubmit(async () => {
       connectionChainId.value = connection.value.chainId
     }
     else {
-      // TODO: handle WC v2
-      await wcStore.prepareConnectV2(uri.value)
+      const { approvedNamespaces, sessionProposal } = await wcStoreV2.prepareConnectV2(uri.value)
+
+      proposal.value = sessionProposal
+      namespaces.value = approvedNamespaces
+
+      console.log(sessionProposal)
     }
     uri.value = ''
   }
@@ -89,21 +97,40 @@ const prepareAndConnect = handleSubmit(async () => {
   }
 })
 
+function contentTemplate(url: string, name: string) {
+  return `You can now use <a target='_blank' rel='noopener noreferrer' class='text-primary' href=${url}>
+        ${name}
+        </a> with your Avocado wallet.`
+}
+
 async function connect() {
   try {
     toggle(true)
-    await wcStore.connect(
-      connection.value.connector,
-      connection.value.storageId,
-      connectionChainId.value,
-    )
+    let content = ''
+
+    if (proposal.value && namespaces.value) {
+      // handle v2 connection
+      await wcStoreV2.connect(
+        proposal.value,
+        namespaces.value,
+      )
+      const metadata = proposal.value.params.proposer.metadata
+      content = contentTemplate(metadata.url, metadata.name)
+    }
+
+    else if (connection.value) {
+      await wcStore.connect(
+        connection.value.connector,
+        connection.value.storageId,
+        connectionChainId.value,
+      )
+      content = contentTemplate(connection.value.peerMeta.url, connection.value.peerMeta.name)
+    }
 
     emit('destroy')
     openDialogModal({
       title: 'Connected Successfully',
-      content: `You can now use <a target='_blank' rel='noopener noreferrer' class='text-primary' href=${connection.value.peerMeta.url}>
-        ${connection.value.peerMeta.name}
-        </a> with your Avocado wallet.`,
+      content,
       type: 'success',
       isButtonVisible: false,
     })
@@ -125,22 +152,6 @@ async function connect() {
   }
 }
 
-function cancelExpertMode() {
-  if (detailsRef.value)
-    detailsRef.value.open = false
-}
-
-function confirmExpertMode() {
-  if (detailsRef.value)
-    detailsRef.value.open = false
-  isExpertMode.value = true
-}
-
-function exitExpertMode() {
-  connectionChainId.value = 1
-  isExpertMode.value = false
-}
-
 onMounted(async () => {
   if (isTutorialWatched.value)
     return (isIframeVisible.value = false)
@@ -149,8 +160,11 @@ onMounted(async () => {
 
 <template>
   <div>
+    <WCApproveConnectionV2 v-if="proposal" :proposal="proposal" :loading="loading" @connect="connect" />
+    <WCApproveConnection v-else-if="connection" :connection="connection" :loading="loading" @connect="connect" />
+
     <form
-      v-if="!connection"
+      v-else
       class="space-y-8"
       @submit.prevent="prepareAndConnect"
     >
@@ -227,111 +241,6 @@ onMounted(async () => {
       </CommonButton>
     </form>
 
-    <form
-      v-else
-      v-focus
-      tabindex="0"
-      class="space-y-8 focus:outline-none"
-      @keypress.enter="connect"
-      @submit.prevent="connect"
-    >
-      <div class="flex flex-col items-center space-y-8">
-        <div v-if="connection.peerMeta.icons.length" class="w-10 h-10">
-          <img
-            class="w-full h-full object-fit"
-            referrerpolicy="no-referrer"
-            :src="
-              connection.peerMeta.icons[connection.peerMeta.icons.length - 1]
-            "
-          >
-        </div>
-
-        <span> {{ connection.peerMeta.name }} Wants to Connect </span>
-      </div>
-
-      <div class="flex flex-col gap-7.5">
-        <p class="text-slate-400 text-xs text-center font-medium">
-          You need the Avocado web app to be open to initiate transactions. You
-          will not receive transaction requests when it is not open.
-        </p>
-
-        <div class="text-primary text-sm text-center">
-          {{ connection.peerMeta.url }}
-        </div>
-        <details v-show="!isExpertMode" ref="detailsRef">
-          <summary
-            class="text-xs text-slate-600 flex items-center mx-auto gap-[6px] w-fit cursor-pointer"
-          >
-            Expert mode
-            <SVGAlert />
-          </summary>
-          <div
-            class="rounded-5 bg-orange-400 bg-opacity-10 mt-5 p-4 flex justify-center items-center flex-col"
-          >
-            <SVGInfo class="w-6 text-orange mb-2.5" />
-            <p
-              class="text-orange text-xs leading-5 font-medium text-center mb-4"
-            >
-              Would you like to manually switch Network? Some things may not
-              behave as expected.
-            </p>
-            <div class="flex w-full gap-4">
-              <CommonButton
-                class="flex-1 justify-center"
-                @click="cancelExpertMode"
-              >
-                Cancel
-              </CommonButton>
-              <CommonButton
-                color="orange"
-                class="flex-1 justify-center items-center gap-2"
-                @click="confirmExpertMode"
-              >
-                <SVGAlert />
-                Yes
-              </CommonButton>
-            </div>
-          </div>
-        </details>
-      </div>
-
-      <div v-if="isExpertMode">
-        <div class="mb-2.5 flex items-center justify-between">
-          <p class="text-orange text-sm flex items-center gap-2">
-            Network
-            <SVGInfo />
-          </p>
-          <button
-            type="button"
-            class="flex dark:bg-slate-800 items-center justify-center w-5 h-5 rounded-full"
-            @click="exitExpertMode"
-          >
-            <SVGX class="w-2.5 h-2.5" />
-          </button>
-        </div>
-        <CommonSelect
-          v-model="connectionChainId"
-          label-key="name"
-          value-key="chainId"
-          :options="availableNetworks"
-        >
-          <template #button-prefix>
-            <ChainLogo class="w-6 h-6" :chain="connectionChainId" />
-          </template>
-          <template #item-prefix="{ value }">
-            <ChainLogo class="w-6 h-6" :chain="value" />
-          </template>
-        </CommonSelect>
-      </div>
-      <CommonButton
-        type="submit"
-        :loading="loading"
-        class="w-full justify-center"
-        size="lg"
-      >
-        Approve
-      </CommonButton>
-    </form>
     <div v-if="isIframeVisible" class="mt-6" @click="isTutorialWatched = true">
       <h1 class="text-xs leading-5 mb-3 text-slate-400 text-center font-medium">
         Looking for step-by-step instructions? <br>Watch this video.

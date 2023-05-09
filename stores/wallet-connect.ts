@@ -1,13 +1,8 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import WalletConnect from '@walletconnect/client'
-import type { IClientMeta } from '@walletconnect/types'
 
 import { v4 as uuidv4 } from 'uuid'
 import { ethers } from 'ethers'
-import type { IWeb3Wallet } from '@walletconnect/web3wallet'
-import { Web3Wallet } from '@walletconnect/web3wallet'
-import { Core } from '@walletconnect/core'
-import { buildApprovedNamespaces } from '../utils/wc/namespaces'
 
 const clientMeta = {
   description: 'Instadapp Avocado - Safe',
@@ -18,6 +13,8 @@ const clientMeta = {
 
 export const useWalletConnect = defineStore('wallet_connect', () => {
   const safe = useAvocadoSafe()
+  useWalletConnectV2()
+
   const { library, account } = useWeb3()
   const { parseTransactionError } = useErrorHandler()
   const { switchToAvocadoNetwork, switchNetworkByChainId } = useNetworks()
@@ -27,7 +24,6 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
       keys: {},
     },
   )
-  const web3WalletV2 = shallowRef<IWeb3Wallet>()
 
   const sessions = computed(() => {
     if (!storage.value.keys[safe.safeAddress.value]) {
@@ -353,7 +349,7 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
   ): Promise<{
     connector: WalletConnect
     chainId: number | undefined
-    peerMeta: IClientMeta
+    peerMeta: any
     storageId: string
   }> => {
     const storageId = `wc_${safe.safeAddress.value}_${uuidv4()}`
@@ -368,7 +364,7 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
       new Promise<{
         connector: WalletConnect
         chainId: number
-        peerMeta: IClientMeta
+        peerMeta: any
         storageId: string
       }>((resolve, reject) => {
         const connector = new WalletConnect({
@@ -466,29 +462,6 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
 
   const refreshSessions = () => triggerRef(sessions)
 
-  onMounted(async () => {
-    web3WalletV2.value = await Web3Wallet.init({
-      core: new Core({
-        projectId: '42e9e3b646c9102371bd147b3e960c39',
-      }),
-      metadata: clientMeta,
-    })
-
-    web3WalletV2.value.on('session_request', async (event) => {
-      const { topic, params, id } = event
-      const { request } = params
-
-      const rpcParams = request.params
-
-      console.log(topic, params, id)
-      console.log(rpcParams)
-
-      const response = { id, result: '0x', jsonrpc: '2.0' }
-
-      await web3WalletV2.value!.respondSessionRequest({ topic, response })
-    })
-  })
-
   function getConnectionVersion(uri: string): 1 | 2 {
     const v1Pattern = /^wc:[a-zA-Z0-9-]+@1\?/
     const v2Pattern = /^wc:[a-zA-Z0-9]+@2\?/
@@ -503,65 +476,15 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
       throw new Error('Invalid connection URI')
   }
 
-  const prepareConnectV2 = async (
-    uri: string,
-  ) => {
-    web3WalletV2.value?.on('session_proposal', async (sessionProposal) => {
-      console.log('session_proposal', sessionProposal)
-      const { id, params } = sessionProposal
-
-      const chains = availableNetworks.map((network) => {
-        return `eip155:${network.chainId}`
-      })
-
-      const accounts = availableNetworks.map((network) => {
-        return `eip155:${network.chainId}:${safe.safeAddress.value}`
-      })
-
-      const approvedNamespaces = buildApprovedNamespaces({
-        proposal: params,
-        supportedNamespaces: {
-          eip155: {
-            chains,
-            accounts,
-            methods: [
-              ...signingMethods,
-              ...params.requiredNamespaces?.eip155.methods,
-              'eth_sendAvocadoTransaction',
-              'eth_sendAvocadoTransactions',
-              'eth_getBalance',
-              'avocado_sendTransaction',
-              'avocado_sendTransactions',
-            ],
-            events: ['accountsChanged', 'chainChanged'],
-          },
-        },
-      })
-
-      console.log(approvedNamespaces)
-
-      const session = await web3WalletV2.value?.approveSession({
-        id,
-        namespaces: approvedNamespaces,
-      })
-
-      console.log(session)
-    })
-
-    await web3WalletV2.value?.core.pairing.pair({ uri })
-  }
-
   return {
     sessions,
     disconnect,
     getConnectionVersion,
-    prepareConnectV2,
     prepareConnection,
     connect,
     prepareAndConnect,
     disconnectAll,
     refreshSessions,
-    web3WalletV2,
   }
 })
 
