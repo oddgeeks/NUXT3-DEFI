@@ -9,8 +9,6 @@ const props = defineProps<{
   wrapperClass?: string
 }>()
 
-const { formatPercent } = useFormatter()
-
 const discountAvailable = computed(() =>
   toBN(props.data?.discountAmount).gt(0),
 )

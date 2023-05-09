@@ -6,10 +6,8 @@ const props = defineProps<{
   tokenBalance: IBalance
 }>()
 
-const DECIMAL_PLACES = 5
-
 const interactable = computed(() =>
-  toBN(props.tokenBalance.balance).decimalPlaces(DECIMAL_PLACES).gt(0),
+  toBN(props.tokenBalance.balance).gt(0),
 )
 </script>
 
@@ -24,9 +22,7 @@ const interactable = computed(() =>
       <div class="flex flex-col items-left">
         <div class="font-semibold w-44 text-shadow max-w-[256px] overflow-hidden uppercase">
           {{
-            toBN(tokenBalance.balance)
-              .decimalPlaces(DECIMAL_PLACES)
-              .toFormat()
+            formatDecimal(tokenBalance.balance)
           }}
           {{ tokenBalance.symbol }}
         </div>
