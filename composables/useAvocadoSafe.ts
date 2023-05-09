@@ -18,8 +18,8 @@ export function useAvocadoSafe() {
     [library, account],
     () => {
       if (trackingAccount.value) {
-        const voidSigner = new VoidSigner(trackingAccount.value)
-        safe.value = avocado.createSafe(voidSigner, avoProvider)
+        const voidSigner = new VoidSigner(trackingAccount.value, avoProvider)
+        safe.value = avocado.createSafe(voidSigner)
       }
       else {
         safe.value = library.value
