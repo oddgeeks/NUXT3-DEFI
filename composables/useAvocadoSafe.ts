@@ -17,7 +17,7 @@ export function useAvocadoSafe() {
   watch(
     [library, account],
     () => {
-      if (trackingAccount.value) {
+      if (trackingAccount.value && trackingAccount.value !== '') {
         const voidSigner = new VoidSigner(trackingAccount.value, avoProvider)
         safe.value = avocado.createSafe(voidSigner)
       }

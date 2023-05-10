@@ -86,9 +86,11 @@ export function useEstimatedFee(
           params?.options,
         )
 
+        const actualAccount = trackingAccount.value && trackingAccount.value !== '' ? trackingAccount.value : account.value
+
         const data = await avoProvider.send('txn_estimateFeeWithoutSignature', [
           message,
-          trackingAccount.value ?? account.value,
+          actualAccount,
           chainId.value,
         ])
 
