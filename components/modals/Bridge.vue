@@ -20,6 +20,7 @@ const props = defineProps({
 const emit = defineEmits(['destroy'])
 
 const { account } = useWeb3()
+const { trackingAccount } = useAccountTrack()
 const { sendTransactions, tokenBalances } = useAvocadoSafe()
 const { toWei } = useBignumber()
 const { parseTransactionError } = useErrorHandler()
@@ -83,6 +84,13 @@ const onSubmit = form.handleSubmit(async () => {
   if (!txRoute.value)
     return
 
+  if (trackingAccount.value) {
+    openSnackbar({
+      message: 'Transaction might be successful',
+      type: 'success',
+    })
+    return
+  }
   try {
     const metadata = encodeBridgeMetadata({
       amount: toWei(amount.value, fromToken.value.decimals),
