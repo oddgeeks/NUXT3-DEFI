@@ -29,7 +29,7 @@ const {
 
       <div class="flex flex-col items-center gap-3">
         <span class="text-[26px] leading-[25px]">
-          {{ toBN(balance.balance).decimalPlaces(5).toFormat() }}
+          {{ formatDecimal(balance.balance) }}
           {{ balance.symbol.toUpperCase() }}
         </span>
 

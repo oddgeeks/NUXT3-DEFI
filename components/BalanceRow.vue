@@ -8,8 +8,6 @@ const props = defineProps<{
   tokenBalance: IBalance
 }>()
 
-const DECIMAL_PLACES = 5
-
 const balance = computed(() => props.tokenBalance as IBalance)
 
 const {
@@ -42,16 +40,15 @@ const {
               {{ tokenBalance.name }}
             </span>
           </div>
-          <div
+          <span
+            v-tippy="`${toBN(tokenBalance.balance).toFormat()} ${tokenBalance.symbol?.toUpperCase()}`"
             class="text-sm font-medium text-slate-400 max-w-[256px] uppercase"
           >
             {{
-              toBN(tokenBalance.balance)
-                .decimalPlaces(DECIMAL_PLACES)
-                .toFormat()
+              formatDecimal(tokenBalance.balance)
             }}
             {{ tokenBalance.symbol }}
-          </div>
+          </span>
         </div>
       </div>
     </td>
