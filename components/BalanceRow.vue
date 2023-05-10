@@ -40,14 +40,15 @@ const {
               {{ tokenBalance.name }}
             </span>
           </div>
-          <div
+          <span
+            v-tippy="`${toBN(tokenBalance.balance).toFormat()} ${tokenBalance.symbol?.toUpperCase()}`"
             class="text-sm font-medium text-slate-400 max-w-[256px] uppercase"
           >
             {{
               formatDecimal(tokenBalance.balance)
             }}
             {{ tokenBalance.symbol }}
-          </div>
+          </span>
         </div>
       </div>
     </td>
