@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { serialize } from 'error-serializer'
 import type { Web3WalletTypes } from '@walletconnect/web3wallet'
 import type { SessionTypes } from '@walletconnect/types'
 import * as yup from 'yup'
@@ -84,10 +85,14 @@ const prepareAndConnect = handleSubmit(async () => {
     uri.value = ''
   }
   catch (e: any) {
-    console.log(e)
+    const err = serialize(e)
+
+    console.log(err)
+
     openDialogModal({
       title: 'Connected Failed',
-      content: 'Try again or return to the home page.',
+      content: `Try again or return to the home page.<br />
+<span style='overflow-wrap:anywhere' class='mt-4 block'>Details: ${err.message}</span>`,
       type: 'error',
       buttonText: 'Try Again',
     })

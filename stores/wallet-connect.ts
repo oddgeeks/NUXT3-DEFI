@@ -358,7 +358,7 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
     return await Promise.race([
       new Promise((resolve, reject) => {
         setTimeout(() => {
-          reject(new Error('NOPE'))
+          reject(new Error('Timeout. Something went wrong'))
         }, 5000)
       }),
       new Promise<{

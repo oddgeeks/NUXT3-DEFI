@@ -1,3 +1,4 @@
+import { serialize } from 'error-serializer'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import type { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 
@@ -22,45 +23,52 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
     return new Promise<{
       sessionProposal: Web3WalletTypes.SessionProposal
       approvedNamespaces: SessionTypes.Namespaces
-    }>((resolve) => {
+    }>((resolve, reject) => {
       web3WalletV2.value?.on('session_proposal', async (sessionProposal) => {
-        const { params } = sessionProposal
+        try {
+          const { params } = sessionProposal
 
-        const chains = availableNetworks.map((network) => {
-          return `eip155:${network.chainId}`
-        })
+          const chains = availableNetworks.map((network) => {
+            return `eip155:${network.chainId}`
+          })
 
-        const accounts = availableNetworks.map((network) => {
-          return `eip155:${network.chainId}:${safe.safeAddress.value}`
-        })
+          const accounts = availableNetworks.map((network) => {
+            return `eip155:${network.chainId}:${safe.safeAddress.value}`
+          })
 
-        const approvedNamespaces = buildApprovedNamespaces({
-          proposal: params,
-          supportedNamespaces: {
-            eip155: {
-              chains,
-              accounts,
-              methods: [
-                ...signingMethods,
-                ...params.requiredNamespaces?.eip155.methods,
-                'eth_sendAvocadoTransaction',
-                'eth_sendAvocadoTransactions',
-                'eth_getBalance',
-                'avocado_sendTransaction',
-                'avocado_sendTransactions',
-              ],
-              events: ['accountsChanged', 'chainChanged'],
+          const approvedNamespaces = buildApprovedNamespaces({
+            proposal: params,
+            supportedNamespaces: {
+              eip155: {
+                chains,
+                accounts,
+                methods: [
+                  ...signingMethods,
+                  'eth_sendAvocadoTransaction',
+                  'eth_sendAvocadoTransactions',
+                  'eth_getBalance',
+                  'avocado_sendTransaction',
+                  'avocado_sendTransactions',
+                ],
+                events: ['accountsChanged', 'chainChanged'],
+              },
             },
-          },
-        })
-
-        resolve({
-          sessionProposal,
-          approvedNamespaces,
-        })
+          })
+          resolve({
+            sessionProposal,
+            approvedNamespaces,
+          })
+        }
+        catch (e) {
+          const err = serialize(e)
+          console.log(err, 'selam')
+          reject(e)
+        }
       })
 
-      web3WalletV2.value?.core.pairing.pair({ uri })
+      web3WalletV2.value?.core.pairing.pair({ uri }).catch((e) => {
+        reject(e)
+      })
     })
   }
 
