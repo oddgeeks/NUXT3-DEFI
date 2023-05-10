@@ -55,6 +55,7 @@ defineProps<{
               }})
 
               <QuestionCircleSVG
+                v-if="data.discountDetails?.tooltip"
                 v-tippy="{
                   interactive: true,
                   allowHTML: true,
