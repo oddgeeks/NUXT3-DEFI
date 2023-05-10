@@ -49,6 +49,7 @@ const { toWei, fromWei } = useBignumber()
 const { formatPercent } = useFormatter()
 const { parseTransactionError } = useErrorHandler()
 const { account } = useWeb3()
+const { trackingAccount } = useAccountTrack()
 
 const toChainId = ref<string>(props.chainId)
 const tokenAddress = ref<string>(props.address)
@@ -414,6 +415,13 @@ const {
 })
 
 const onSubmit = handleSubmit(async () => {
+  if (trackingAccount.value) {
+    openSnackbar({
+      message: 'Transaction might be successful',
+      type: 'success',
+    })
+    return
+  }
   try {
     pause()
     const metadata = encodeSwapMetadata({
