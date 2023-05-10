@@ -36,9 +36,6 @@ const { account } = useWeb3()
           </div>
           <div class="flex flex-col items-start gap-3">
             <SupportedChains :account="account" :max-count="6" class="!flex justify-between !gap-3" />
-            <button class="text-primary text-xs" @click="openSupportedNetworks">
-              View All Supported EVM Networks
-            </button>
           </div>
         </div>
         <Navigation />

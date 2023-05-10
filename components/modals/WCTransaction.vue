@@ -17,7 +17,6 @@ const emit = defineEmits(['resolve', 'reject'])
 
 const { sendTransactions, safeAddress } = useAvocadoSafe()
 const { account } = useWeb3()
-const { trackingAccount } = useAccountTrack()
 const [submitting, toggle] = useToggle()
 const { parseTransactionError } = useErrorHandler()
 
@@ -75,13 +74,6 @@ const {
 })
 
 async function handleSubmit() {
-  if (trackingAccount.value) {
-    openSnackbar({
-      message: 'Transaction might be successful',
-      type: 'success',
-    })
-    return
-  }
   try {
     toggle(true)
 
