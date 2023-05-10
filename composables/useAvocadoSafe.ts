@@ -1,11 +1,9 @@
 import { storeToRefs } from 'pinia'
 import { isAddress } from '@ethersproject/address'
-import { VoidSigner } from 'ethers'
 
 export function useAvocadoSafe() {
   const { switchToAvocadoNetwork } = useNetworks()
   const { library, account } = useWeb3()
-  const { trackingAccount } = useAccountTrack()
   const { avoProvider } = useSafe()
 
   // check if we have a cached safe address
@@ -17,15 +15,9 @@ export function useAvocadoSafe() {
   watch(
     [library, account],
     () => {
-      if (trackingAccount.value) {
-        const voidSigner = new VoidSigner(trackingAccount.value, avoProvider)
-        safe.value = avocado.createSafe(voidSigner)
-      }
-      else {
-        safe.value = library.value
-          ? avocado.createSafe(library.value.getSigner().connectUnchecked())
-          : undefined
-      }
+      safe.value = library.value
+        ? avocado.createSafe(library.value.getSigner().connectUnchecked())
+        : undefined
     },
     { immediate: true },
   )
