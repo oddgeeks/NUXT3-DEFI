@@ -5,7 +5,7 @@ import { VoidSigner } from 'ethers'
 export function useAvocadoSafe() {
   const { switchToAvocadoNetwork } = useNetworks()
   const { library, account } = useWeb3()
-  const { trackingAccount } = useAccountTrack()
+  const { trackingAccount, isTrackingMode } = useAccountTrack()
   const { avoProvider } = useSafe()
 
   // check if we have a cached safe address
@@ -17,7 +17,7 @@ export function useAvocadoSafe() {
   watch(
     [library, account],
     () => {
-      if (trackingAccount.value && trackingAccount.value !== '') {
+      if (isTrackingMode.value) {
         const voidSigner = new VoidSigner(trackingAccount.value, avoProvider)
         safe.value = avocado.createSafe(voidSigner)
       }
@@ -40,7 +40,7 @@ export function useAvocadoSafe() {
     },
     options: { metadata?: string; id?: string } = {},
   ) => {
-    if (trackingAccount.value && trackingAccount.value !== '') {
+    if (isTrackingMode.value) {
       openSnackbar({
         message: 'Transaction might be successful',
         type: 'success',
@@ -74,7 +74,7 @@ export function useAvocadoSafe() {
     chainId: number | string,
     options: { metadata?: string; id?: string } = {},
   ) => {
-    if (trackingAccount.value && trackingAccount.value !== '') {
+    if (isTrackingMode.value) {
       openSnackbar({
         message: 'Transaction might be successful',
         type: 'success',
