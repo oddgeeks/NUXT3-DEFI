@@ -16,7 +16,7 @@ function onError() {
 </script>
 
 <template>
-  <div class="relative inline-block h-10 w-10 rounded-full flex-shrink-0">
+  <div class="relative inline-flex h-10 w-10 rounded-full flex-shrink-0">
     <SvgFallbackLogo v-if="error || !url" />
 
     <template v-else>

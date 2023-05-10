@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import ExclamationCircleSVG from '~/assets/images/icons/exclamation-circle.svg'
 
+definePageMeta({
+  hideSidebar: true,
+})
+
 const { isSafeAddress } = useAvocadoSafe()
 
 const router = useRoute()
