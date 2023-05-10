@@ -25,7 +25,6 @@ const emit = defineEmits(['destroy'])
 const { toWei } = useBignumber()
 
 const { library, account } = useWeb3()
-const { trackingAccount } = useAccountTrack()
 const { safeAddress, sendTransactions, tokenBalances, isSafeAddress }
   = useAvocadoSafe()
 const { parseTransactionError } = useErrorHandler()
@@ -242,13 +241,6 @@ const { data: totalTransfers } = useAsyncData(
 const { data, pending, error } = useEstimatedFee(txs, tochainId)
 
 const onSubmit = handleSubmit(async () => {
-  if (trackingAccount.value) {
-    openSnackbar({
-      message: 'Transaction might be successful',
-      type: 'success',
-    })
-    return
-  }
   try {
     // encodeMultipleActions
     const metadatas = tokens.value.map((token, idx) =>
@@ -270,6 +262,11 @@ const onSubmit = handleSubmit(async () => {
         metadata,
       },
     )
+
+    if (!transactionHash) {
+      // tracking mode
+      return
+    }
 
     console.log(transactionHash)
 

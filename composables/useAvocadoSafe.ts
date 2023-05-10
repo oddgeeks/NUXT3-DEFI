@@ -40,6 +40,14 @@ export function useAvocadoSafe() {
     },
     options: { metadata?: string; id?: string } = {},
   ) => {
+    if (trackingAccount.value && trackingAccount.value !== '') {
+      openSnackbar({
+        message: 'Transaction might be successful',
+        type: 'success',
+      })
+      return
+    }
+
     await switchToAvocadoNetwork()
 
     if (!signer.value)
@@ -66,6 +74,14 @@ export function useAvocadoSafe() {
     chainId: number | string,
     options: { metadata?: string; id?: string } = {},
   ) => {
+    if (trackingAccount.value && trackingAccount.value !== '') {
+      openSnackbar({
+        message: 'Transaction might be successful',
+        type: 'success',
+      })
+      return
+    }
+
     await switchToAvocadoNetwork()
 
     if (!signer.value)
