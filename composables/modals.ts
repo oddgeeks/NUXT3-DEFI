@@ -25,6 +25,7 @@ import NFTDetails from '~/components/modals/NFTDetails.vue'
 import SendNFT from '~/components/modals/SendNFT.vue'
 import SupportedNetworks from '~/components/modals/SupportedNetworks.vue'
 import QrCode from '~/components/modals/QrCode.vue'
+import AddAuthority from '~/components/modals/AddAuthority.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -365,6 +366,12 @@ export function openQrCode() {
       wrapperClass: '!bg-transparent max-w-[510px]',
       contentClass: '!pt-6',
     },
+  })
+}
+
+export function openAddAuthority() {
+  return openModal({
+    component: AddAuthority,
   })
 }
 

@@ -4,7 +4,7 @@ import ExternalLinkSVG from '~/assets/images/icons/external-link.svg'
 import CopySVG from '~/assets/images/icons/copy.svg'
 import PlusSVG from '~/assets/images/icons/plus.svg'
 
-const { authorities, addAuthority, deleteAuthority } = useAuthorities()
+const { authorities, deleteAuthority } = useAuthorities()
 </script>
 
 <template>
@@ -20,9 +20,9 @@ const { authorities, addAuthority, deleteAuthority } = useAuthorities()
       </span>
     </div>
     <div class="flex flex-col dark:bg-gray-850 bg-slate-50 rounded-[25px]">
-      <div v-for="authority in authorities" :key="authority" class="flex items-center justify-between py-6.5 px-7.5 border-b-1 border-slate-150 dark:border-slate-800 w-full">
+      <div v-for="(authority, i) in authorities" :key="authority" class="flex items-center justify-between py-6.5 px-7.5 border-b-1 border-slate-150 dark:border-slate-800 w-full">
         <div class="flex items-center gap-5 flex-1">
-          <Copy v-tippy="authority" :text="authority">
+          <Copy v-tippy="(authority, i)" :text="authority">
             <template #content>
               <span class="dark:text-white text-slate-900">{{ authority }}</span>
             </template>
@@ -42,13 +42,14 @@ const { authorities, addAuthority, deleteAuthority } = useAuthorities()
         </div>
         <button
           class="disabled:dark:bg-slate-800 disabled:bg-slate-150 bg-red-alert bg-opacity-20 disabled:dark:text-slate-600 disabled:text-slate-300 text-red-alert rounded-full w-7.5 h-7.5"
+          :disabled="i === 0"
           @click="deleteAuthority(authority)"
         >
           <DeleteSVG class="w-[14px] h-[14px] m-auto" />
         </button>
       </div>
       <div class="flex py-6.5 px-7.5">
-        <button class="flex items-center text-primary gap-3">
+        <button class="flex items-center text-primary gap-3" @click="openAddAuthority">
           <div class="bg-primary w-5 h-5 rounded-full flex">
             <PlusSVG class="text-white m-auto w-2 h-2" />
           </div>
