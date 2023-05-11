@@ -2,9 +2,14 @@
 import DeleteSVG from '~/assets/images/icons/delete.svg'
 import ExternalLinkSVG from '~/assets/images/icons/external-link.svg'
 import CopySVG from '~/assets/images/icons/copy.svg'
+import AvatarSVG from '~/assets/images/icons/avatar.svg'
 import PlusSVG from '~/assets/images/icons/plus.svg'
 
 const { authorities, deleteAuthority } = useAuthorities()
+
+function getRandomColor() {
+  return Math.floor(Math.random() * 16777215).toString(16)
+}
 </script>
 
 <template>
@@ -22,6 +27,12 @@ const { authorities, deleteAuthority } = useAuthorities()
     <div class="flex flex-col dark:bg-gray-850 bg-slate-50 rounded-[25px]">
       <div v-for="(authority, i) in authorities" :key="authority" class="flex items-center justify-between py-6.5 px-7.5 border-b-1 border-slate-150 dark:border-slate-800 w-full">
         <div class="flex items-center gap-5 flex-1">
+          <AvatarSVG
+            :style="{
+              color: getRandomColor(),
+            }"
+            class="-mr-2"
+          />
           <Copy v-tippy="(authority, i)" :text="authority">
             <template #content>
               <span class="dark:text-white text-slate-900">{{ authority }}</span>
