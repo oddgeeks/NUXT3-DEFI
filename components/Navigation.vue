@@ -3,6 +3,7 @@ import HomeSVG from '~/assets/images/icons/home.svg'
 import ContactSVG from '~/assets/images/icons/contact.svg'
 import FireSVG from '~/assets/images/icons/fire.svg'
 import CalendarSVG from '~/assets/images/icons/calendar.svg'
+import AuthoritiesSVG from '~/assets/images/icons/authorities.svg'
 import SwapSVG from '~/assets/images/icons/refresh.svg'
 import BridgeSVG from '~/assets/images/icons/bridge.svg'
 import PlusCircleSVG from '~/assets/images/icons/plus-circle.svg'
@@ -82,6 +83,15 @@ function openBridge() {
       >
         <CalendarSVG class="w-4 h-4" />
         History
+      </NuxtLink>
+      <NuxtLink
+        active-class="text-primary"
+        class="flex h-11 items-center gap-2.5"
+        to="/authorities"
+        @click="emit('navigate')"
+      >
+        <AuthoritiesSVG class="w-4 h-4" />
+        Authorities
       </NuxtLink>
     </div>
     <div class="flex flex-col w-full gap-2 border-b-1 dark:border-slate-750 border-slate-150 px-7.5 py-4 text-slate-400">
