@@ -15,7 +15,7 @@ export function useAvocadoSafe() {
   const signer = computed(() => (safe.value ? safe.value.getSigner() : null))
 
   watch(
-    [library, account],
+    [library, account, isTrackingMode],
     () => {
       if (isTrackingMode.value) {
         const voidSigner = new VoidSigner(trackingAccount.value, avoProvider)
