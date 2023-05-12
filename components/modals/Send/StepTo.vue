@@ -2,7 +2,7 @@
 import { useField } from 'vee-validate'
 import ContactSVG from '~/assets/images/icons/contact.svg'
 
-const { data, stepBack } = useSend()
+const { data, stepBack, stepForward } = useSend()
 
 const {
   value: address,
@@ -25,6 +25,12 @@ async function handleSelectContact() {
 
     setAddress(_contact.address)
   }
+}
+
+function handleContinue() {
+  data.value.address = address.value
+
+  stepForward()
 }
 
 watch(() => data.value.toChainId, () => {
@@ -77,7 +83,7 @@ watch(() => data.value.toChainId, () => {
       <CommonButton color="white" class="justify-center" size="lg" @click="stepBack">
         Back
       </CommonButton>
-      <CommonButton class="justify-center" size="lg" @disabled="disabled">
+      <CommonButton class="justify-center" size="lg" :disabled="disabled" @click="handleContinue">
         Continue
       </CommonButton>
     </div>

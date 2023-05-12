@@ -21,6 +21,12 @@ function handleTokenChange(token: IToken) {
   validate()
 }
 
+function handleContinue() {
+  data.value.amount = amount.value
+
+  stepForward()
+}
+
 watch(() => data.value.toChainId, () => {
   validate()
 })
@@ -85,7 +91,7 @@ watch(() => data.value.toChainId, () => {
         </template>
       </CommonInput>
     </div>
-    <CommonButton :disabled="disabled" class="justify-center" size="lg" @click="stepForward">
+    <CommonButton :disabled="disabled" class="justify-center" size="lg" @click="handleContinue">
       Continue
     </CommonButton>
   </div>

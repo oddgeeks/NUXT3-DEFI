@@ -16,6 +16,7 @@ function defaultValues() {
     fromChainId: 1,
     toChainId: 137,
     tokenAddress: '',
+    address: '',
     amount: '0',
   }
 }
