@@ -49,7 +49,7 @@ if (!(await isSafeAddress(account)))
           <span class="font-semibold inline-flex gap-2.5 text-xs">
             Supported Chains
           </span>
-          <SupportedChains :account="account" class="!flex justify-between" />
+          <SupportedChains class="!flex justify-between" />
         </div>
       </div>
     </div>

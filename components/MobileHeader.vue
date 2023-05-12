@@ -123,7 +123,7 @@ watch(() => active.value, () => {
           </NuxtLink>
         </div>
         <div class="flex flex-col items-center gap-3">
-          <SupportedChains :account="account" :max-count="6" class="!flex justify-between !gap-4" />
+          <SupportedChains :max-count="6" class="!flex justify-between !gap-4" />
         </div>
       </div>
       <Navigation @navigate="toggle(false)" />
