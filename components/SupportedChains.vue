@@ -1,27 +1,26 @@
 <script setup lang="ts">
 const props = defineProps({
   account: String,
+  maxCount: {
+    type: Number,
+    required: false,
+  },
 })
 
-const sortedNetworks = computed(() => {
-  const priorNetworks = [1, 137, 42161, 10, 56, 43114, 100]
+const { sortedNetworks } = useNetworks()
 
-  return availableNetworks.sort((a, b) => {
-    const aIndex = priorNetworks.indexOf(a.chainId)
-    const bIndex = priorNetworks.indexOf(b.chainId)
+const visibleNetworks = computed(() => {
+  if (props.maxCount)
+    return sortedNetworks.value.slice(0, props.maxCount)
 
-    if (aIndex === -1 || bIndex === -1)
-      return 0
-
-    return aIndex - bIndex
-  })
+  return sortedNetworks.value
 })
 </script>
 
 <template>
   <ul class="grid grid-cols-4 gap-5">
     <li
-      v-for="network in sortedNetworks"
+      v-for="network in visibleNetworks"
       :key="network.chainId"
       v-tippy="{
         arrow: true,
@@ -37,7 +36,7 @@ const sortedNetworks = computed(() => {
       >
         <ChainLogo
           :stroke="false"
-          class="w-[26px] h-[26px]"
+          class="w-6.5 sm:w-6 h-6.5 sm:h-6"
           :chain="network.chainId"
         />
       </a>
@@ -45,9 +44,12 @@ const sortedNetworks = computed(() => {
       <ChainLogo
         v-else
         :stroke="false"
-        class="w-[26px] h-[26px]"
+        class="w-6.5 sm:w-6 h-6.5 sm:h-6"
         :chain="network.chainId"
       />
     </li>
+    <button v-if="props.maxCount && sortedNetworks.length > props.maxCount" class="w-6 h-6 text-xs bg-primary text-white rounded-full flex items-center justify-center" @click="openSupportedNetworks">
+      +{{ sortedNetworks.length - props.maxCount }}
+    </button>
   </ul>
 </template>

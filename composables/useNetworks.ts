@@ -85,6 +85,20 @@ export function useNetworks() {
     },
   })
 
+  const sortedNetworks = computed(() => {
+    const priorNetworks = [1, 137, 42161, 10, 56, 43114, 100]
+
+    return availableNetworks.sort((a, b) => {
+      const aIndex = priorNetworks.indexOf(a.chainId)
+      const bIndex = priorNetworks.indexOf(b.chainId)
+
+      if (aIndex === -1 || bIndex === -1)
+        return 0
+
+      return aIndex - bIndex
+    })
+  })
+
   const switchNetworkByChainId = async (chainId: number) => {
     const network = networks.find(i => i.chainId === Number(chainId))!
 
@@ -133,6 +147,7 @@ export function useNetworks() {
   return {
     providers,
     currentNetwork,
+    sortedNetworks,
     switchNetworkByChainId,
     switchToAvocadoNetwork,
   }

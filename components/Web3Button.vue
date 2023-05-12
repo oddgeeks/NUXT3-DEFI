@@ -8,6 +8,7 @@ import PowerOffSVG from '~/assets/images/icons/power-off.svg'
 defineProps({
   hideGas: Boolean,
   hideEOA: Boolean,
+  hidePower: Boolean,
 })
 
 const { active, deactivate, account, connector } = useWeb3()
@@ -93,20 +94,25 @@ whenever(
 
     <button
       v-if="!hideEOA"
-      class="dark:bg-slate-800 bg-slate-100 py-3 leading-5 justify-between pr-12 relative flex rounded-7.5 items-center px-4 gap-x-2.5"
+      class="dark:bg-slate-800 bg-slate-100 py-2.5 sm:py-3 leading-5 justify-between relative flex rounded-7.5 items-center px-4.5 sm:px-4 gap-x-2.5"
       @mouseenter="toggle(true)"
       @mouseleave="toggle(false)"
       @click="closeConnection"
     >
       <div v-if="connectedProvider">
-        <component :is="connectedProvider.logo" class="h-6 w-6" />
+        <component :is="connectedProvider.logo" class="h-7.5 sm:h-6 w-7.5 sm:w-6" />
       </div>
-      {{ addressLabel }}
-      <PowerOffSVG
-        v-if="hovered"
-        class="pointer-events-none absolute right-0"
-      />
-      <PowerOnSVG v-else class="pointer-events-none absolute right-0" />
+      <div class="flex flex-col items-start">
+        <span class="block sm:hidden text-xs text-slate-500 text-slate-400">Owner's Address</span>
+        <span>{{ addressLabel }}</span>
+      </div>
+      <div class="-my-3 -mx-3 w-12 h-12 hidden sm:flex items-center justify-center">
+        <PowerOffSVG
+          v-if="hovered"
+          class="pointer-events-none right-0"
+        />
+        <PowerOnSVG v-else class="pointer-events-none right-0" />
+      </div>
     </button>
   </div>
 </template>
