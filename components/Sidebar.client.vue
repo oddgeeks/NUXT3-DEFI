@@ -34,7 +34,7 @@ const { account } = useWeb3()
           <QrCode />
         </div>
         <div class="flex flex-col items-start gap-3">
-          <SupportedChains :account="account" :max-count="6" class="!flex justify-between !gap-3" />
+          <SupportedChains :max-count="6" class="!flex justify-between !gap-3" />
         </div>
       </div>
       <Navigation />
