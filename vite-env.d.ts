@@ -480,18 +480,13 @@ interface IEstimatedFeeData {
 }
 
  interface IEstimatedDiscount {
-  data?: Data
   amount: number
   transactionCount: number
-}
-
- interface Data {
-  method: string
   program: string
   name: string
   description: string
-  discounts: Discount[]
 }
+
 
  interface Discount {
   max: number

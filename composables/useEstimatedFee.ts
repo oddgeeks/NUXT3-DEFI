@@ -22,9 +22,9 @@ export function useEstimatedFee(
 
   const data = computed(() => {
     const discountDetails: DiscountDetails = {
-      name: rawData.value?.discount?.data?.name || '',
+      name: rawData.value?.discount?.name || '',
       discount: rawData.value?.discount?.amount || 0,
-      tooltip: rawData.value?.discount?.data?.description || '',
+      tooltip: rawData.value?.discount?.description || '',
     }
 
     console.log(rawData.value)
