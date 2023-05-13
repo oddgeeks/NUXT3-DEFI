@@ -24,6 +24,7 @@ function defaultValues() {
 const activeStep = ref(0)
 
 const data = ref(defaultValues())
+const actualAddress = ref('')
 
 export function useSend() {
   const steps = [
@@ -42,8 +43,7 @@ export function useSend() {
   ]
 
   const { tokenBalances } = storeToRefs(useSafe())
-
-  const actualAddress = ref('')
+  const { account, library } = useWeb3()
 
   const availableTokens = computed(() =>
     tokenBalances.value.filter(
@@ -53,14 +53,12 @@ export function useSend() {
   )
 
   const token = computed(() => {
-    const selam = tokenBalances.value.find(token =>
+    return tokenBalances.value.find(token =>
       +token.chainId == data.value.fromChainId
       && token.address.toLowerCase() === data.value.tokenAddress.toLowerCase())
-
-    return selam
   })
 
-  useForm({
+  const { isSubmitting } = useForm({
     validationSchema: yup.object({
       amount:
           yup
@@ -148,5 +146,6 @@ export function useSend() {
     reset,
     token,
     availableTokens,
+    actualAddress,
   }
 }

@@ -2,7 +2,7 @@
 import { useField } from 'vee-validate'
 import ContactSVG from '~/assets/images/icons/contact.svg'
 
-const { data, stepBack, stepForward } = useSend()
+const { data, stepBack, stepForward, actualAddress } = useSend()
 
 const {
   value: address,
@@ -14,7 +14,7 @@ const {
 } = useField<string>('address')
 
 const disabled = computed(() => {
-  return !address.value || errors.value.length > 0
+  return !actualAddress.value || errors.value.length > 0
 })
 
 async function handleSelectContact() {
@@ -60,6 +60,7 @@ watch(() => data.value.toChainId, () => {
     </div>
     <CommonInput
       v-model="address"
+      autofocus
       :error-message="addressMeta.dirty ? errorMessage : ''"
       name="address"
       placeholder="Enter Address"
@@ -68,7 +69,6 @@ watch(() => data.value.toChainId, () => {
         <button
           v-tippy="{
             content: 'Select contact',
-            trigger: 'mouseenter',
           }"
           type="button"
           class="ml-3"
