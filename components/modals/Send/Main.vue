@@ -9,7 +9,7 @@ const props = defineProps({
     required: true,
   },
 })
-
+defineEmits(['destroy'])
 const { initialize, steps, activeStep, reset } = useSend()
 
 initialize({
@@ -48,7 +48,7 @@ onUnmounted(() => {
       </li>
     </ul>
 
-    <component :is="steps[activeStep].component" />
+    <component :is="steps[activeStep].component" @destroy="$emit('destroy')" />
   </div>
 </template>
 
