@@ -7,7 +7,7 @@ import QrSVG from '~/assets/images/icons/qr.svg'
 import ExternalLinkSVG from '~/assets/images/icons/external-link.svg'
 import InstadappSVG from '@/assets/images/logo/instadapp.svg'
 
-const { active, deactivate, connector, account } = useWeb3()
+const { active, deactivate, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
 const { safeAddress } = useAvocadoSafe()
 const [opened, toggle] = useToggle(false)
@@ -66,7 +66,7 @@ watch(() => active.value, () => {
       </button>
 
       <div v-if="!isActualActive">
-        <CommonButton size="md" @click="openWeb3Modal">
+        <CommonButton v-if="!$router.currentRoute.value.meta.hideSidebar" size="md" @click="openWeb3Modal">
           Connect
         </CommonButton>
       </div>
