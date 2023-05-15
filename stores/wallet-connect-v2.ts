@@ -320,43 +320,45 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
           })
         }
       }
-      else if (
-        signingMethods.includes(request.method)
-        // payload.method === "personal_signx"
-      ) {
-        await switchNetworkByChainId(+chainId)
+      // @todo: will fill in later
 
-        const params = request.params
+      // else if (
+      //   signingMethods.includes(request.method)
+      //   // payload.method === "personal_signx"
+      // ) {
+      //   await switchNetworkByChainId(+chainId)
 
-        try {
-          const result = await library.value.send(
-            request.method,
-            params,
-          )
+      //   const params = request.params
 
-          web3WalletV2.value.respondSessionRequest({
-            topic: session.topic,
-            response: {
-              id,
-              result,
-              jsonrpc: '2.0',
-            },
-          })
-        }
-        catch (error: any) {
-          web3WalletV2.value.respondSessionRequest({
-            topic: session.topic,
-            response: {
-              id,
-              jsonrpc: '2.0',
-              error: {
-                code: 5000,
-                message: error?.message,
-              },
-            },
-          })
-        }
-      }
+      //   try {
+      //     const result = await library.value.send(
+      //       request.method,
+      //       params,
+      //     )
+
+      //     web3WalletV2.value.respondSessionRequest({
+      //       topic: session.topic,
+      //       response: {
+      //         id,
+      //         result,
+      //         jsonrpc: '2.0',
+      //       },
+      //     })
+      //   }
+      //   catch (error: any) {
+      //     web3WalletV2.value.respondSessionRequest({
+      //       topic: session.topic,
+      //       response: {
+      //         id,
+      //         jsonrpc: '2.0',
+      //         error: {
+      //           code: 5000,
+      //           message: error?.message,
+      //         },
+      //       },
+      //     })
+      //   }
+      // }
       else {
         const resp = await http(getRpcURLByChainId(chainId), {
           method: 'POST',
