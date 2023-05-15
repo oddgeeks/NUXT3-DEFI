@@ -3,7 +3,7 @@ import ArrowRight from '~/assets/images/icons/arrow-right.svg'
 import { Erc20__factory } from '~~/contracts'
 
 const emit = defineEmits(['destroy'])
-const { token, stepBack, data, actualAddress, activeStep } = useSend()
+const { token, stepBack, data, actualAddress, targetToken } = useSend()
 const { account, library } = useWeb3()
 const { toWei } = useBignumber()
 const { sendTransactions } = useAvocadoSafe()
@@ -55,7 +55,7 @@ const { data: txs } = useAsyncData(
     server: false,
   },
 )
-const { data: feeData, pending, error } = useEstimatedFee(txs, ref(String(data.value.toChainId)))
+const { data: feeData, pending, error } = useEstimatedFee(txs, ref(String(data.value.fromChainId)))
 
 const disabled = computed(() => {
   return !actualAddress.value || pending.value || error.value || isSubmitting.value
@@ -169,7 +169,6 @@ async function onSubmit() {
         </p>
       </div>
     </div>
-
     <div class="grid grid-cols-2 gap-5">
       <CommonButton color="white" class="justify-center" size="lg" @click="stepBack">
         Back

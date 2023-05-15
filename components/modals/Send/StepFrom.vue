@@ -11,7 +11,7 @@ const {
   validate,
   errors,
 } = useField<string>('amount', undefined, {
-  initialValue: data.value.amount,
+  initialValue: !isZero(data.value.amount) ? data.value.amount : undefined,
 })
 
 const disabled = computed(() => {
@@ -85,6 +85,7 @@ watch(() => data.value.toChainId, () => {
         type="numeric"
         :error-message="errorMessage"
         :name="amount"
+        autofocus
         placeholder="Enter amount"
       >
         <template #suffix>

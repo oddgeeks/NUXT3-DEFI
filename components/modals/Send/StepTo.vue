@@ -2,7 +2,7 @@
 import { useField } from 'vee-validate'
 import ContactSVG from '~/assets/images/icons/contact.svg'
 
-const { data, stepBack, stepForward, actualAddress } = useSend()
+const { data, stepBack, stepForward, actualAddress, toAvailableNetworks } = useSend()
 
 const {
   value: address,
@@ -50,7 +50,7 @@ watch(() => data.value.toChainId, () => {
         label-key="name"
         icon-key="icon"
         class="mt-[5px]"
-        :options="availableNetworks"
+        :options="toAvailableNetworks"
       >
         <template #button-prefix>
           <ChainLogo class="w-6 h-6" :chain="data.toChainId" />

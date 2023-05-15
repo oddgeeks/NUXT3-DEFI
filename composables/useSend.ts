@@ -43,7 +43,6 @@ export function useSend() {
   ]
 
   const { tokenBalances } = storeToRefs(useSafe())
-  const { account, library } = useWeb3()
 
   const availableTokens = computed(() =>
     tokenBalances.value.filter(
@@ -58,7 +57,19 @@ export function useSend() {
       && token.address.toLowerCase() === data.value.tokenAddress.toLowerCase())
   })
 
-  const { isSubmitting } = useForm({
+  const targetToken = computed(() => {
+    return tokenBalances.value.find(t =>
+      +t.chainId == data.value.toChainId
+      && (token.value && t.symbol.toLowerCase() === token.value.symbol.toLowerCase()))
+  })
+
+  const toAvailableNetworks = computed(() => {
+    const tokens = tokenBalances.value.filter(t => t.symbol.toLowerCase() === token.value?.symbol.toLowerCase())
+
+    return tokens.map(t => getNetworkByChainId(String(t.chainId))).filter(Boolean)
+  })
+
+  useForm({
     validationSchema: yup.object({
       amount:
           yup
@@ -145,7 +156,9 @@ export function useSend() {
     initialize,
     reset,
     token,
+    targetToken,
     availableTokens,
     actualAddress,
+    toAvailableNetworks,
   }
 }
