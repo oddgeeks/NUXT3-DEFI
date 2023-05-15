@@ -3,6 +3,7 @@ import Bridge from '~~/components/modals/Bridge.vue'
 import Swap from '~~/components/modals/Swap.vue'
 import PendingTransaction from '~~/components/modals/PendingTransaction.vue'
 import Send from '~~/components/modals/Send/Main.vue'
+import SignCrossSendTx from '~~/components/modals/SignCrossSendTx.vue'
 import TopUpGas from '~~/components/modals/TopUpGas.vue'
 import WalletConnect from '~~/components/modals/WalletConnect.vue'
 import WalletConnectDetails from '~~/components/modals/WalletConnectDetails.vue'
@@ -352,6 +353,14 @@ export function openSendNFTModal(NFTData: NFTData) {
 export function openSupportedNetworks() {
   openModal({
     component: SupportedNetworks,
+  })
+}
+
+export function openSignCrossSendTx(props: ICrossSendParams) {
+  return openModal({
+    async: true,
+    component: SignCrossSendTx,
+    componentProps: props,
   })
 }
 

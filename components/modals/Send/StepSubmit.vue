@@ -1,16 +1,23 @@
 <script setup lang="ts">
+import { ethers } from 'ethers'
+import { serialize } from 'error-serializer'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg'
 import { Erc20__factory } from '~~/contracts'
 
 const emit = defineEmits(['destroy'])
-const { token, stepBack, data, actualAddress } = useSend()
+const { token, stepBack, data, actualAddress, targetToken } = useSend()
 const { account, library } = useWeb3()
 const { toWei } = useBignumber()
-const { sendTransactions } = useAvocadoSafe()
+const { sendTransactions, safeAddress, safe } = useAvocadoSafe()
+const { avoProvider } = useSafe()
 const { parseTransactionError } = useErrorHandler()
 
 const isSubmitting = ref(false)
 const amountInUsd = computed(() => toBN(token.value?.price || 0).times(data.value.amount))
+
+const isCrossChain = computed(() => data.value.fromChainId !== data.value.toChainId)
+
+const crossTxs = ref<any[]>()
 
 const { data: txs } = useAsyncData(
   'send-txs',
@@ -18,44 +25,173 @@ const { data: txs } = useAsyncData(
     if (!data.value.tokenAddress || isZero(data.value.amount) || !token.value || !actualAddress.value)
       return
 
-    const txs = []
-
-    const transferAmount = toBN(data.value.amount)
-      .times(10 ** token.value?.decimals)
-      .toFixed()
-
-    if (token.value.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
-      txs.push({
-        from: account.value,
-        to: actualAddress.value,
-        value: transferAmount,
-        data: '0x',
-      })
+    if (isCrossChain.value) {
+      // return crossTxs.value
+      if (crossTxs.value) {
+        return [
+          {
+            from: '0x9F60699cE23f1Ab86Ec3e095b477Ff79d4f409AD',
+            to: '0x9F60699cE23f1Ab86Ec3e095b477Ff79d4f409AD',
+            value: '1809000000000000',
+            data: '0x',
+          },
+        ]
+      }
     }
+
     else {
-      const contract = Erc20__factory.connect(token.value.address, library.value)
+      const txs = []
 
-      const { data: transferData } = await contract.populateTransaction.transfer(
-        actualAddress.value,
-        transferAmount,
-      )
+      const transferAmount = toBN(data.value.amount)
+        .times(10 ** token.value?.decimals)
+        .toFixed()
 
-      txs.push({
-        from: account.value,
-        to: token.value.address,
-        value: '0',
-        data: transferData,
-      })
+      if (token.value.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
+        txs.push({
+          from: account.value,
+          to: actualAddress.value,
+          value: transferAmount,
+          data: '0x',
+        })
+      }
+      else {
+        const contract = Erc20__factory.connect(token.value.address, library.value)
+
+        const { data: transferData } = await contract.populateTransaction.transfer(
+          actualAddress.value,
+          transferAmount,
+        )
+
+        txs.push({
+          from: account.value,
+          to: token.value.address,
+          value: '0',
+          data: transferData,
+        })
+      }
+
+      return txs
     }
-
-    return txs
   },
   {
     immediate: true,
     server: false,
+    watch: [crossTxs],
   },
 )
-const { data: feeData, pending, error } = useEstimatedFee(txs, ref(String(data.value.fromChainId)))
+
+async function fetchCrossTxs() {
+  try {
+    if (!targetToken.value?.address)
+      return
+
+    isSubmitting.value = true
+
+    const quoteRoute: ISocketQuoteResult = await http('/api/socket/v2/quote', {
+      params: {
+        fromChainId: data.value.fromChainId,
+        toChainId: data.value.toChainId,
+        fromTokenAddress: token.value?.address,
+        toTokenAddress: targetToken.value?.address,
+        fromAmount: toWei(data.value.amount, token.value?.decimals!),
+        userAddress: safeAddress.value,
+        recipient: safeAddress.value,
+        isContractCall: true,
+        defaultBridgeSlippage: 0.5,
+        singleTxOnly: true,
+        sort: 'output',
+      },
+    })
+
+    if (!quoteRoute.success)
+      throw new Error('Can\'t get quote')
+
+    if (!quoteRoute.result.routes.length)
+      throw new Error('No routes found')
+
+    const bestRoute = quoteRoute.result.routes[0]
+
+    const buildTx: IScoketBuildTxResult = await http('/api/socket/v2/build-tx',
+      {
+        method: 'POST',
+        body: {
+          route: bestRoute,
+        },
+      },
+    )
+
+    if (!buildTx.success)
+      throw new Error('Can\'t build tx')
+
+    const ERC20ABI = [
+      'function approve(address, uint256) external',
+      'function transfer(address, uint256) external',
+    ]
+
+    const approvalData = buildTx.result.approvalData
+
+    const transferAmount = bestRoute.userTxs[0].steps[0].minAmountOut.toString()
+
+    const targetActions = [
+      {
+        to: targetToken.value.address,
+        data: (new ethers.utils.Interface(ERC20ABI)).encodeFunctionData('transfer', [account.value, transferAmount]),
+        operation: '0',
+        value: '0',
+      },
+    ]
+
+    const sourceActions = [
+      {
+        to: approvalData.approvalTokenAddress,
+        data: (new ethers.utils.Interface(ERC20ABI)).encodeFunctionData('approve', [approvalData.allowanceTarget, approvalData.minimumApprovalAmount]),
+        operation: '0',
+        value: '0',
+      },
+      {
+        to: buildTx.result.txTarget,
+        data: buildTx.result.txData,
+        operation: '0',
+        value: '0',
+      },
+    ]
+
+    const targetMessage = await safe.value?.generateSignatureMessage(
+      targetActions,
+      data.value.toChainId,
+    )
+
+    const sourceMessage = await safe.value?.generateSignatureMessage(
+      sourceActions,
+      data.value.fromChainId,
+    )
+
+    const { payload, success } = await openSignCrossSendTx({
+      sourceChainId: data.value.fromChainId,
+      targetChainId: data.value.toChainId,
+      sourceMessage,
+      targetMessage,
+    })
+
+    if (!success)
+      throw new Error('Can\'t sign tx')
+
+    crossTxs.value = payload
+  }
+  catch (e: any) {
+    const err = serialize(e)
+
+    openSnackbar({
+      message: err.message,
+      type: 'error',
+    })
+  }
+  finally {
+    isSubmitting.value = false
+  }
+}
+
+const { data: feeData, pending, error, rawData } = useEstimatedFee(txs, ref(String(data.value.fromChainId)))
 
 const disabled = computed(() => {
   return !actualAddress.value || pending.value || error.value || isSubmitting.value
@@ -68,6 +204,8 @@ async function onSubmit() {
 
     isSubmitting.value = true
 
+    let transactionHash = ''
+
     const metadata = encodeTransferMetadata(
       {
         token: token.value?.address!,
@@ -77,7 +215,14 @@ async function onSubmit() {
       true,
     )
 
-    const transactionHash = await sendTransactions(
+    if (isCrossChain.value) {
+      if (!crossTxs.value)
+        return
+
+      transactionHash = await avoProvider.send('api_requestCrosschainTransaction', crossTxs.value)
+    }
+
+    transactionHash = await sendTransactions(
       txs.value!,
       Number(data.value.toChainId),
       {
@@ -173,7 +318,11 @@ async function onSubmit() {
       <CommonButton color="white" class="justify-center" size="lg" @click="stepBack">
         Back
       </CommonButton>
-      <CommonButton :disabled="disabled" :loading="pending || isSubmitting" type="submit" class="justify-center" size="lg">
+
+      <CommonButton v-if="isCrossChain && !rawData" :disabled="disabled" :loading="pending || isSubmitting" class="justify-center" size="lg" @click="fetchCrossTxs">
+        Sign
+      </CommonButton>
+      <CommonButton v-else :disabled="disabled" :loading="pending || isSubmitting" type="submit" class="justify-center" size="lg">
         Send
       </CommonButton>
     </div>

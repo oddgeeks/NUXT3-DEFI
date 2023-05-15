@@ -12,7 +12,7 @@ const {
   errorMessage,
   errors,
 } = useField<string>('address', undefined, {
-  initialValue: data.value.address,
+  initialValue: data.value.address ? data.value.address : undefined,
 })
 
 const disabled = computed(() => {
