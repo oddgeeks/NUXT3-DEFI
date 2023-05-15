@@ -16,6 +16,7 @@ export function useEstimatedFee(
 ) {
   const { avoProvider } = useSafe()
   const { account } = useWeb3()
+  const { trackingAccount, isTrackingMode } = useAccountTrack()
   const { safe } = useAvocadoSafe()
   const { gasBalance } = storeToRefs(useSafe())
 
@@ -85,9 +86,11 @@ export function useEstimatedFee(
           params?.options,
         )
 
+        const actualAccount = isTrackingMode.value ? trackingAccount.value : account.value
+
         const data = await avoProvider.send('txn_estimateFeeWithoutSignature', [
           message,
-          account.value,
+          actualAccount,
           chainId.value,
         ])
 

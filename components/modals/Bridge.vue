@@ -101,6 +101,10 @@ const onSubmit = form.handleSubmit(async () => {
         metadata,
       },
     )
+    if (!transactionHash) {
+      // tracking mode
+      return
+    }
 
     logActionToSlack({
       message: `${formatDecimal(amount.value)} ${formatSymbol(

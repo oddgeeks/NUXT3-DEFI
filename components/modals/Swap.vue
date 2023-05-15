@@ -431,6 +431,11 @@ const onSubmit = handleSubmit(async () => {
       },
     )
 
+    if (!transactionHash) {
+      // tracking mode
+      return
+    }
+
     const buyAmt = fromWei(
       swapDetails.value?.data?.data.buyTokenAmount || 0,
       swapDetails.value?.data?.data.buyToken.decimals,
