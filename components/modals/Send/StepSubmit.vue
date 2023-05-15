@@ -3,7 +3,7 @@ import ArrowRight from '~/assets/images/icons/arrow-right.svg'
 import { Erc20__factory } from '~~/contracts'
 
 const emit = defineEmits(['destroy'])
-const { token, stepBack, data, actualAddress } = useSend()
+const { token, stepBack, data, actualAddress, activeStep } = useSend()
 const { account, library } = useWeb3()
 const { toWei } = useBignumber()
 const { sendTransactions } = useAvocadoSafe()
@@ -13,6 +13,7 @@ const isSubmitting = ref(false)
 const amountInUsd = computed(() => toBN(token.value?.price || 0).times(data.value.amount))
 
 const { data: txs } = useAsyncData(
+  'send-txs',
   async () => {
     if (!data.value.tokenAddress || isZero(data.value.amount) || !token.value || !actualAddress.value)
       return
@@ -52,7 +53,6 @@ const { data: txs } = useAsyncData(
   {
     immediate: true,
     server: false,
-    watch: [actualAddress, () => data.value.fromChainId, () => data.value.toChainId, () => data.value.fromChainId, () => data.value.amount],
   },
 )
 const { data: feeData, pending, error } = useEstimatedFee(txs, ref(String(data.value.toChainId)))

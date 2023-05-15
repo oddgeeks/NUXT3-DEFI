@@ -48,9 +48,7 @@ onUnmounted(() => {
       </li>
     </ul>
 
-    <KeepAlive>
-      <component :is="steps[activeStep].component" />
-    </KeepAlive>
+    <component :is="steps[activeStep].component" />
   </div>
 </template>
 

@@ -10,7 +10,9 @@ const {
   errorMessage,
   validate,
   errors,
-} = useField<string>('amount')
+} = useField<string>('amount', undefined, {
+  initialValue: data.value.amount,
+})
 
 const disabled = computed(() => {
   return !amount.value || errors.value.length > 0
