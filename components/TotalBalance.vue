@@ -12,8 +12,10 @@ function hasAvailableTokens() {
 
 <template>
   <div>
-    <h2 class="text-slate-400 text-sm font-semibold mb-2.5">
+    <h2 class="text-slate-400 text-sm font-semibold mb-2.5 flex items-center gap-2">
       Total balance
+
+      <SvgSpinner v-if="balances.loading" class="text-primary" />
     </h2>
     <div class="font-semibold leading-10">
       <div v-if="!balances.data" class="h-10 w-40 flex items-center">
