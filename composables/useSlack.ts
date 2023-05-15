@@ -52,7 +52,7 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
 
   const explorerLink
     = chainId && txHash
-      ? `<${getExplorerUrl(chainId, `/tx/${txHash}`)}|${shortenHash(
+      ? `<${`${avoExplorerURL}/tx/${txHash}`}|${shortenHash(
           txHash,
           12,
         )}>`
