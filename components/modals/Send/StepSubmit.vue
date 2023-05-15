@@ -3,7 +3,7 @@ import ArrowRight from '~/assets/images/icons/arrow-right.svg'
 import { Erc20__factory } from '~~/contracts'
 
 const emit = defineEmits(['destroy'])
-const { token, stepBack, data, actualAddress, targetToken } = useSend()
+const { token, stepBack, data, actualAddress } = useSend()
 const { account, library } = useWeb3()
 const { toWei } = useBignumber()
 const { sendTransactions } = useAvocadoSafe()

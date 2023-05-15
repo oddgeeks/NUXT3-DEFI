@@ -29,6 +29,12 @@ function handleContinue() {
   stepForward()
 }
 
+function handleNetworkChange() {
+  const firstBalancedToken = availableTokens.value.find(t => toBN(t.balance).gt('0') || !!t.balance)
+
+  data.value.tokenAddress = firstBalancedToken?.address || ''
+}
+
 watch(() => data.value.toChainId, () => {
   validate()
 })
@@ -41,10 +47,12 @@ watch(() => data.value.toChainId, () => {
       <CommonSelect
         v-model="data.fromChainId"
         value-key="chainId"
+
         label-key="name"
         icon-key="icon"
         class="mt-[5px]"
         :options="availableNetworks"
+        @update:modelValue="handleNetworkChange"
       >
         <template #button-prefix>
           <ChainLogo class="w-6 h-6" :chain="data.fromChainId" />

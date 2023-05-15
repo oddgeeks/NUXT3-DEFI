@@ -14,7 +14,7 @@ const { initialize, steps, activeStep, reset } = useSend()
 
 initialize({
   fromChainId: +props.chainId,
-  tokenAddress: props.address,
+  address: props.address,
 })
 
 onUnmounted(() => {

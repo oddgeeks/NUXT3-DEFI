@@ -8,7 +8,7 @@ import StepSubmit from '~~/components/modals/Send/StepSubmit.vue'
 
 interface Initialize {
   fromChainId: number
-  tokenAddress: string
+  address: string
 }
 
 function defaultValues() {
@@ -53,8 +53,8 @@ export function useSend() {
 
   const token = computed(() => {
     return tokenBalances.value.find(token =>
-      +token.chainId == data.value.fromChainId
-      && token.address.toLowerCase() === data.value.tokenAddress.toLowerCase())
+      String(token.chainId) == String(data.value.fromChainId)
+      && token.address.toLowerCase() == data.value.tokenAddress.toLowerCase())
   })
 
   const targetToken = computed(() => {
@@ -122,7 +122,7 @@ export function useSend() {
   const initialize = (params: Initialize) => {
     data.value.fromChainId = params.fromChainId
     data.value.toChainId = params.fromChainId
-    data.value.tokenAddress = params.tokenAddress
+    data.value.tokenAddress = params.address
   }
 
   const reset = () => {
@@ -137,15 +137,6 @@ export function useSend() {
   const stepForward = () => {
     activeStep.value = Math.min(steps.length - 1, activeStep.value + 1)
   }
-
-  watch(
-    () => data.value.fromChainId,
-    () => {
-      const firstBalancedToken = availableTokens.value.find(t => toBN(t.balance).gt('0') || !!t.balance)
-
-      data.value.tokenAddress = firstBalancedToken?.address || ''
-    },
-  )
 
   return {
     data,
