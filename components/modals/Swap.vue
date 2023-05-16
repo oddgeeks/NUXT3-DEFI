@@ -46,7 +46,6 @@ const { tokenBalances, sendTransactions, safeAddress } = useAvocadoSafe()
 const { getTokenByAddress } = useTokens()
 const { tokens } = storeToRefs(useTokens())
 const { toWei, fromWei } = useBignumber()
-const { formatPercent } = useFormatter()
 const { parseTransactionError } = useErrorHandler()
 const { account } = useWeb3()
 
@@ -325,12 +324,11 @@ const buyAmountInUsd = computed(() => {
 })
 
 const minRecievedAfterSlippage = computed(() => {
-  return fromWei(
+  return formatDecimal(fromWei(
     swapDetails.value?.data?.data.buyTokenAmount || 0,
     swap.value.buyToken.decimals,
   )
-    .div(toBN(1).plus(toBN(actualSlippage.value).div(100)))
-    .decimalPlaces(5)
+    .div(toBN(1).plus(toBN(actualSlippage.value).div(100))).toFixed())
 })
 
 const buyTokenAmountPerSellToken = computed(() => {
@@ -432,6 +430,11 @@ const onSubmit = handleSubmit(async () => {
         metadata,
       },
     )
+
+    if (!transactionHash) {
+      // tracking mode
+      return
+    }
 
     const buyAmt = fromWei(
       swapDetails.value?.data?.data.buyTokenAmount || 0,

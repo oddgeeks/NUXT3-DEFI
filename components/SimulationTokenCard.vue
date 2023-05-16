@@ -31,7 +31,7 @@ const token = asyncComputed(async () => {
 })
 
 const amount = computed(() => {
-  if (toBN(props.payload.amount).gt(1e50))
+  if (toBN(props.payload.amount).gt(1e29))
     return '∞'
 
   return fromWei(props.payload.amount, token.value?.decimals).decimalPlaces(5)

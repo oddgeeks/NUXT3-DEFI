@@ -7,6 +7,7 @@ const account = computed(() => safeAddress.value || '0x000000000000000')
 
 <template>
   <div
+    style="will-change: transform;"
     class="relative bg-slate-50 dark:bg-gray-850 rounded-5.5 flex justify-center items-center gap-4"
     :class="{ 'blur pointer-events-none': !safeAddress }"
   >

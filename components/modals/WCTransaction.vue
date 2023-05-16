@@ -85,6 +85,11 @@ async function handleSubmit() {
         ...options.value,
       },
     )
+    if (!transactionHash) {
+      // tracking mode
+      toggle(false)
+      return
+    }
 
     props.wc.approveRequest({
       id: props.payload.id,
