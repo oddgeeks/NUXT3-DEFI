@@ -6,6 +6,7 @@ import ArrowRight from '~/assets/images/icons/arrow-right.svg'
 import LinkSVG from '~/assets/images/icons/external-link.svg'
 import SVGWalletConnect from '~/assets/images/wallet/wallet-connect-lite.svg'
 import URLWalletConnect from '~/assets/images/wallet/wallet-connect.svg?url'
+import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg'
 
 const { safeAddress, account } = useAvocadoSafe()
 const wcStore = useWalletConnect()
@@ -130,7 +131,7 @@ watch(
           <div
             v-if="session.peerMeta"
             :key="session.peerMeta.url"
-            class="flex flex-1 items-center gap-3 p-5 dark:bg-gray-850 bg-slate-50 rounded-5 py-2.5 pr-[14px] pl-4"
+            class="flex-1 items-center flex gap-3 p-5 dark:bg-gray-850 bg-slate-50 rounded-5 py-2.5 pr-[14px] pl-4"
           >
             <button
               class="flex text-left gap-3 items-center"
@@ -159,7 +160,12 @@ watch(
                 >
                   {{ session.peerMeta.name }}
                 </h1>
-                <h2 class="text-xs text-primary leading-5">
+                <h2 v-if="wcStore.isDappUnsupported(session.peerMeta.url)" class="text-xs leading-5 text-orange-400 flex items-center gap-1">
+                  Connected
+
+                  <SVGInfoCircle class="w-3" />
+                </h2>
+                <h2 v-else class="text-xs leading-5 text-primary">
                   Connected
                 </h2>
               </div>
