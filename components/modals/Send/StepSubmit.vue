@@ -5,6 +5,7 @@ import ArrowRight from '~/assets/images/icons/arrow-right.svg'
 import { Erc20__factory } from '~~/contracts'
 
 const emit = defineEmits(['destroy'])
+const { isProd } = useAppConfig()
 const { token, stepBack, data, actualAddress, targetToken } = useSend()
 const { account, library } = useWeb3()
 const { toWei } = useBignumber()
@@ -31,7 +32,7 @@ const { data: crossFeeData, pending: crossPending, error: crossError } = useAsyn
   const resp = await http('/api/cross-chain/estimate', {
     method: 'POST',
     body: {
-      staging: true,
+      staging: !isProd,
       sourceChainId: String(data.value.fromChainId),
       targetChainId: String(data.value.toChainId),
       target: crossSignatures.value.target.message,
