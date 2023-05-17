@@ -18,8 +18,11 @@ const loading = ref({
 })
 
 const { safe } = useAvocadoSafe()
+const { switchToAvocadoNetwork } = useNetworks()
 
 async function handleSign(source: boolean) {
+  await switchToAvocadoNetwork()
+
   const message = source ? props.sourceMessage : props.targetMessage
   const chainId = source ? props.sourceChainId : props.targetChainId
 
