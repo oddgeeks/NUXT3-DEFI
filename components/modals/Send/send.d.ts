@@ -325,3 +325,42 @@ interface ICrossSendParams {
   targetChainId: number
   sourceChainId: number
 }
+
+interface ICrossEstimatedFee {
+  source: Source
+  target: Target
+}
+
+interface Source {
+  fee: string
+  multiplier: string
+}
+
+interface Target {
+  fee: string
+  multiplier: string
+}
+
+
+interface ICombineFeeParams {
+  source: CombineFee,
+  target: CombineFee
+}
+
+type CombineFee = {
+  chainId: string,
+  fee: string,
+  multiplier: string,
+}
+
+interface ICrossSignatures {
+  source: CrossSignature,
+  target: CrossSignature
+} 
+
+type CrossSignature = {
+    signature: string,
+    message: any,
+    owner: string,
+    chainId: string,
+}

@@ -8,8 +8,8 @@ const props = defineProps<{
 const emit = defineEmits(['resolve'])
 const { account } = useWeb3()
 const signatures = ref({
-  source: '',
-  target: '',
+  source: null,
+  target: null,
 })
 
 const loading = ref({
@@ -48,20 +48,22 @@ async function handleSign(source: boolean) {
 
 watch(signatures, () => {
   if (signatures.value.source && signatures.value.target) {
-    emit('resolve', true, [
-      {
+    emit('resolve', true, {
+      source: {
         signature: signatures.value.source,
         message: props.sourceMessage,
         owner: account.value,
-        chainId: props.sourceChainId,
+        chainId: String(props.sourceChainId),
       },
-      {
+      target: {
         signature: signatures.value.target,
         message: props.targetMessage,
         owner: account.value,
-        chainId: props.targetChainId,
+        chainId: String(props.targetChainId),
       },
-    ])
+    })
+
+    emit('resolve', true, signatures.value)
   }
 }, {
   immediate: true,

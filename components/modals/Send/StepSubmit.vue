@@ -15,9 +15,53 @@ const { parseTransactionError } = useErrorHandler()
 const isSubmitting = ref(false)
 const amountInUsd = computed(() => toBN(token.value?.price || 0).times(data.value.amount))
 
-const isCrossChain = computed(() => data.value.fromChainId !== data.value.toChainId)
+const isCrossChain = computed(() => String(data.value.fromChainId) !== String(data.value.toChainId))
 
-const crossTxs = ref<any[]>()
+const crossSignatures = ref<ICrossSignatures>()
+
+const { data: crossFeeData, pending: crossPending, error: crossError } = useAsyncData(async () => {
+  if (!crossSignatures.value) {
+    return calculateEstimatedFee({
+      chainId: String(data.value.toChainId),
+    })
+  }
+
+  console.log(crossSignatures.value)
+
+  const resp = await http('/api/cross-chain/estimate', {
+    method: 'POST',
+    body: {
+      staging: true,
+      sourceChainId: String(data.value.fromChainId),
+      targetChainId: String(data.value.toChainId),
+      target: crossSignatures.value.target.message,
+      source: crossSignatures.value.source.message,
+      bridge: {
+        token: targetToken.value?.address,
+        amount: toWei(data.value.amount, targetToken.value?.decimals!),
+      },
+      signer: account.value,
+      avocadoSafe: safeAddress.value,
+    },
+  }) as ICrossEstimatedFee
+
+  const combinedFeeParams = [resp.target, resp.source].reduce(
+    (acc, curr) => {
+      acc.fee = toBN(acc.fee).plus(toBN(curr.fee)).toString()
+      acc.multiplier = toBN(acc.multiplier).plus(toBN(curr.multiplier)).toString()
+      return acc
+    },
+    { fee: '0', multiplier: '0' },
+  )
+
+  return calculateEstimatedFee({
+    chainId: String(data.value.fromChainId),
+    fee: combinedFeeParams.fee,
+    multiplier: combinedFeeParams.multiplier,
+  })
+}, {
+  watch: [crossSignatures],
+})
 
 const { data: txs } = useAsyncData(
   'send-txs',
@@ -25,62 +69,49 @@ const { data: txs } = useAsyncData(
     if (!data.value.tokenAddress || isZero(data.value.amount) || !token.value || !actualAddress.value)
       return
 
-    if (isCrossChain.value) {
-      // return crossTxs.value
-      if (crossTxs.value) {
-        return [
-          {
-            from: '0x9F60699cE23f1Ab86Ec3e095b477Ff79d4f409AD',
-            to: '0x9F60699cE23f1Ab86Ec3e095b477Ff79d4f409AD',
-            value: '1809000000000000',
-            data: '0x',
-          },
-        ]
-      }
-    }
+    if (isCrossChain.value)
+      return
 
+    const txs = []
+
+    const transferAmount = toBN(data.value.amount)
+      .times(10 ** token.value?.decimals)
+      .toFixed()
+
+    if (token.value.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
+      txs.push({
+        from: account.value,
+        to: actualAddress.value,
+        value: transferAmount,
+        data: '0x',
+      })
+    }
     else {
-      const txs = []
+      const contract = Erc20__factory.connect(token.value.address, library.value)
 
-      const transferAmount = toBN(data.value.amount)
-        .times(10 ** token.value?.decimals)
-        .toFixed()
+      const { data: transferData } = await contract.populateTransaction.transfer(
+        actualAddress.value,
+        transferAmount,
+      )
 
-      if (token.value.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
-        txs.push({
-          from: account.value,
-          to: actualAddress.value,
-          value: transferAmount,
-          data: '0x',
-        })
-      }
-      else {
-        const contract = Erc20__factory.connect(token.value.address, library.value)
-
-        const { data: transferData } = await contract.populateTransaction.transfer(
-          actualAddress.value,
-          transferAmount,
-        )
-
-        txs.push({
-          from: account.value,
-          to: token.value.address,
-          value: '0',
-          data: transferData,
-        })
-      }
-
-      return txs
+      txs.push({
+        from: account.value,
+        to: token.value.address,
+        value: '0',
+        data: transferData,
+      })
     }
+
+    return txs
   },
   {
     immediate: true,
     server: false,
-    watch: [crossTxs],
+    watch: [crossSignatures],
   },
 )
 
-async function fetchCrossTxs() {
+async function fetchcrossSignatures() {
   try {
     if (!targetToken.value?.address)
       return
@@ -176,7 +207,7 @@ async function fetchCrossTxs() {
     if (!success)
       throw new Error('Can\'t sign tx')
 
-    crossTxs.value = payload
+    crossSignatures.value = payload
   }
   catch (e: any) {
     const err = serialize(e)
@@ -191,10 +222,14 @@ async function fetchCrossTxs() {
   }
 }
 
-const { data: feeData, pending, error, rawData } = useEstimatedFee(txs, ref(String(data.value.fromChainId)))
+const { data: feeData, pending, error } = useEstimatedFee(txs, ref(String(data.value.fromChainId)))
+
+const actualFeeError = computed(() => isCrossChain.value ? crossError.value : error.value)
+const actualFeeData = computed(() => isCrossChain.value ? crossFeeData.value : feeData.value)
+const actualFeePending = computed(() => isCrossChain.value ? crossPending.value : pending.value)
 
 const disabled = computed(() => {
-  return !actualAddress.value || pending.value || error.value || isSubmitting.value
+  return !actualAddress.value || actualFeePending.value || actualFeeError.value || isSubmitting.value
 })
 
 async function onSubmit() {
@@ -216,19 +251,23 @@ async function onSubmit() {
     )
 
     if (isCrossChain.value) {
-      if (!crossTxs.value)
-        return
+      if (!crossSignatures.value)
+        throw new Error('Signatures not found')
 
-      transactionHash = await avoProvider.send('api_requestCrosschainTransaction', crossTxs.value)
+      transactionHash = await avoProvider.send('api_requestCrosschainTransaction', [crossSignatures.value.source, crossSignatures.value.target])
+
+      if (!transactionHash)
+        throw new Error('Transaction not found')
     }
-
-    transactionHash = await sendTransactions(
-      txs.value!,
-      Number(data.value.toChainId),
-      {
-        metadata,
-      },
-    )
+    else {
+      transactionHash = await sendTransactions(
+        txs.value!,
+        Number(data.value.toChainId),
+        {
+          metadata,
+        },
+      )
+    }
 
     console.log(transactionHash)
 
@@ -319,18 +358,18 @@ async function onSubmit() {
         Back
       </CommonButton>
 
-      <CommonButton v-if="isCrossChain && !rawData" :disabled="disabled" :loading="pending || isSubmitting" class="justify-center" size="lg" @click="fetchCrossTxs">
+      <CommonButton v-if="isCrossChain && !crossSignatures" :disabled="disabled" :loading="actualFeePending || isSubmitting" class="justify-center" size="lg" @click="fetchcrossSignatures">
         Sign
       </CommonButton>
-      <CommonButton v-else :disabled="disabled" :loading="pending || isSubmitting" type="submit" class="justify-center" size="lg">
+      <CommonButton v-else :disabled="disabled" :loading="actualFeePending || isSubmitting" type="submit" class="justify-center" size="lg">
         Send
       </CommonButton>
     </div>
 
     <EstimatedFee
-      :loading="pending"
-      :data="feeData"
-      :error="error"
+      :loading="actualFeePending"
+      :data="actualFeeData"
+      :error="actualFeeError"
     />
   </form>
 </template>
