@@ -1646,10 +1646,10 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@instadapp/avocado-base@0.0.18":
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado-base/-/avocado-base-0.0.18.tgz#06bbd875bd0da7c55c03633c1c808df045074f64"
-  integrity sha512-T+MPYeMdXwDSp7EQq4lqxQ5BLZ6xwAWq7dqI81ZV+OGzz8AkKSziKuRrzTfLYpkKcn6KUOK4//H18b5C4ndApQ==
+"@instadapp/avocado-base@0.0.19":
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado-base/-/avocado-base-0.0.19.tgz#17a82ea89d3cd5065461e056159df0a0e39a78eb"
+  integrity sha512-ci2D4ilP9MMi6M/HUEi52F9EtizZ/EzLuf4zwptddC8l//rOjHfdyGAJs6W1PKkAP4YbTumaK1LcvVrhlD0jAQ==
   dependencies:
     bignumber.js "^9.1.1"
     ethers "^5.7.2"

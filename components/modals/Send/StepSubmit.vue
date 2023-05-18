@@ -241,19 +241,22 @@ async function onSubmit() {
     isSubmitting.value = true
 
     let transactionHash = ''
-
-    const metadata = encodeTransferMetadata(
-      {
-        token: token.value?.address!,
-        amount: toWei(data.value.amount, token.value?.decimals),
-        receiver: actualAddress.value,
-      },
-      true,
-    )
+    let metadata = ''
 
     if (isCrossChain.value) {
       if (!crossSignatures.value)
         throw new Error('Signatures not found')
+
+      metadata = encodeCrossTransferMetadata(
+        {
+          fromToken: data.value.tokenAddress,
+          toToken: targetToken.value?.address,
+          toChainId: data.value.toChainId,
+          amount: toWei(data.value.amount, token.value?.decimals),
+          receiver: data.value.address,
+        },
+        true,
+      )
 
       transactionHash = await avoProvider.send('api_requestCrosschainTransaction', [crossSignatures.value.source, crossSignatures.value.target])
 
@@ -261,6 +264,15 @@ async function onSubmit() {
         throw new Error('Transaction not found')
     }
     else {
+      metadata = encodeTransferMetadata(
+        {
+          token: token.value?.address!,
+          amount: toWei(data.value.amount, token.value?.decimals),
+          receiver: actualAddress.value,
+        },
+        true,
+      )
+
       transactionHash = await sendTransactions(
         txs.value!,
         Number(data.value.toChainId),
