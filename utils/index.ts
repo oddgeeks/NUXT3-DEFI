@@ -35,7 +35,6 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
         discount: 0,
         name: '',
         tooltip: '',
-        iconURL: '',
       },
       discountAmount: 0,
       amountAfterDiscount: 0,
@@ -43,10 +42,14 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
       max: 0,
       formattedAmountAfterDiscount: '0.00',
       formatted: '0.00',
+      discountAvailable: false,
+      chainId: params.chainId,
     }
   }
 
-  const discount = discountDetails?.discount
+  const discountAvailable = !isZero(discountDetails?.discount || 0)
+
+  const discount = discountDetails?.discount || 0
 
   const maxVal = toBN(fee)
     .dividedBy(10 ** 18)
@@ -63,13 +66,13 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
   const formattedMin = formatDecimal(String(actualMin), 2)
   const formattedMax = formatDecimal(String(actualMax), 2)
 
-  const discountAmountMin = discount ? actualMin * discount : 0
-  const discountAmount = discount ? actualMax * discount : 0
+  const discountAmountMin = discountAvailable ? actualMin * discount : 0
+  const discountAmount = discountAvailable ? actualMax * discount : 0
 
-  const maxAmountAfterDiscount = discount
+  const maxAmountAfterDiscount = discountAvailable
     ? actualMax - discountAmount
     : actualMax
-  const minAmountAfterDiscount = discount
+  const minAmountAfterDiscount = discountAvailable
     ? actualMin - discountAmountMin
     : actualMin
 
@@ -87,6 +90,7 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
     : `${formattedDiscountedAmountMin} - ${formattedDiscountedAmount}`
 
   return {
+    discountAvailable,
     discountDetails,
     discountAmount,
     min: actualMin,
@@ -94,6 +98,7 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
     formatted,
     amountAfterDiscount: maxAmountAfterDiscount,
     formattedAmountAfterDiscount,
+    chainId: params.chainId,
   }
 }
 
