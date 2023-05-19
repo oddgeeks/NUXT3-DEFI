@@ -25,7 +25,7 @@ const emit = defineEmits(['destroy'])
 const { toWei } = useBignumber()
 
 const { library, account } = useWeb3()
-const { safeAddress, sendTransactions, tokenBalances, safe, isSafeAddress }
+const { safeAddress, sendTransactions, tokenBalances, isSafeAddress }
   = useAvocadoSafe()
 const { parseTransactionError } = useErrorHandler()
 
@@ -262,6 +262,11 @@ const onSubmit = handleSubmit(async () => {
         metadata,
       },
     )
+
+    if (!transactionHash) {
+      // tracking mode
+      return
+    }
 
     console.log(transactionHash)
 

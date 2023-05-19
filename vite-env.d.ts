@@ -351,10 +351,9 @@ type SwapMetadataProps = {
 };
 
 type DiscountDetails = {
-  discount?: number;
+  discount: number;
   name: string;
   tooltip: string;
-  iconURL: string;
 };
 
 type CalculateFeeProps = {
@@ -409,10 +408,12 @@ interface ICalculatedFee {
   discountDetails?: DiscountDetails;
   discountAmount: number;
   amountAfterDiscount: number;
+  discountAvailable: boolean;
   min: number;
   max: number;
   formatted: string;
   formattedAmountAfterDiscount: string;
+  chainId: string;
 }
 
 interface NFTAttributes { 
@@ -469,6 +470,24 @@ interface ITokenPrice {
 interface ILogBalanceParams {
   chainId: number;
   isOnboard: boolean;
-  isPublic: boolean;
 }
  
+interface IEstimatedFeeData {
+  fee: string;
+  multiplier: string;
+  discount: IEstimatedDiscount;
+}
+
+ interface IEstimatedDiscount {
+  amount: number
+  transactionCount: number
+  program: string
+  name: string
+  description: string
+}
+
+
+ interface Discount {
+  max: number
+  amount: number
+}

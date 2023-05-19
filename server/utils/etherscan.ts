@@ -31,6 +31,9 @@ export async function getTokenTransfersByEtherscan(from: string,
       `${baseUrl}/api?module=account&action=tokentx&address=${from}&sort=asc&startblock=0&page=${page}`,
     )
 
+    if (!res.result)
+      break
+
     for (let i = 0; i < res.result.length; i += 1) {
       const item = res.result[i]
       if (
@@ -71,6 +74,9 @@ export async function getEtherTransfersByEtherscan(from: string,
     const res: any = await $fetch(
       `${baseUrl}/api?module=account&action=txlistinternal&address=${from}&sort=asc&startblock=0&page=${page}`,
     )
+
+    if (!res.result)
+      break
 
     for (let i = 0; i < res.result.length; i += 1) {
       const item = res.result[i]

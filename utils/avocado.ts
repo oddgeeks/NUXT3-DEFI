@@ -32,3 +32,5 @@ export const zerionApiURL = 'https://api.zerion.io/v1'
 export const incorrectAddress = '0x0000000000000000000000000000000000000000'
 
 export const blockQueryURL = 'https://blockquery.instadapp.io'
+
+export const unsupportedDapps = ['https://stargate.finance', 'https://app.gmx.io', 'https://www.sushi.com', 'https://app.alpacafinance.org', 'https://app-v2.alpacafinance.org', 'https://app.frax.finance', 'https://staking.synthetix.io', 'https://app.pooltogether.com', 'https://app.velodrome.finance', 'https://meshswap.fi', 'https://app.balancer.fi', 'https://oasis.app', 'https://app.tetu.io', 'https://mirror.xyz']

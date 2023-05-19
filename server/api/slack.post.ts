@@ -7,11 +7,16 @@ const colors: Record<'danger' | 'error' | 'success' | 'banner', string> = {
   banner: '#EFC35C', // yellow
 }
 
+const IGNORED_MESSAGES = ['/api/balances']
+
 export default defineEventHandler(async (event) => {
   const { slackKey, slackErrorKey, slackStagingKey } = useRuntimeConfig()
   const { isProd } = useAppConfig()
 
   let { type = 'success', message } = await readBody(event)
+
+  if (message && IGNORED_MESSAGES.some(i => message.includes(i)))
+    return {}
 
   if (!slackKey || !slackErrorKey || !slackStagingKey) {
     console.log({
