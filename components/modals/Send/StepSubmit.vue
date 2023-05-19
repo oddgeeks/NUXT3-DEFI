@@ -6,17 +6,16 @@ import { Erc20__factory } from '~~/contracts'
 
 const emit = defineEmits(['destroy'])
 const { isProd } = useAppConfig()
-const { token, stepBack, data, actualAddress, targetToken } = useSend()
+const { token, stepBack, data, actualAddress, targetToken, isCrossChain } = useSend()
 const { account, library } = useWeb3()
 const { toWei } = useBignumber()
 const { sendTransactions, safeAddress, safe } = useAvocadoSafe()
 const { avoProvider } = useSafe()
 const { parseTransactionError } = useErrorHandler()
 
+const bestRoute = ref<IRoute>()
 const isSubmitting = ref(false)
 const amountInUsd = computed(() => toBN(token.value?.price || 0).times(data.value.amount))
-
-const isCrossChain = computed(() => String(data.value.fromChainId) !== String(data.value.toChainId))
 
 const crossSignatures = ref<ICrossSignatures>()
 
@@ -112,11 +111,14 @@ const { data: txs } = useAsyncData(
   },
 )
 
-async function fetchcrossSignatures() {
-  try {
-    if (!targetToken.value?.address)
-      return
+async function fetchBestRoute() {
+  if (!isCrossChain.value)
+    return
 
+  if (!targetToken.value?.address)
+    return
+
+  try {
     isSubmitting.value = true
 
     const quoteRoute: ISocketQuoteResult = await http('/api/socket/v2/quote', {
@@ -141,13 +143,43 @@ async function fetchcrossSignatures() {
     if (!quoteRoute.result.routes.length)
       throw new Error('No routes found')
 
-    const bestRoute = quoteRoute.result.routes[0]
+    const route = quoteRoute.result.routes[0]
+
+    console.log({
+      quoteRoute,
+      route,
+    })
+
+    bestRoute.value = route
+  }
+  catch (e: any) {
+    const err = serialize(e)
+
+    openSnackbar({
+      message: err.message,
+      type: 'error',
+    })
+  }
+  finally {
+    isSubmitting.value = false
+  }
+}
+
+async function fetchcrossSignatures() {
+  try {
+    if (!bestRoute.value)
+      throw new Error('No route found')
+
+    if (!targetToken.value)
+      return
+
+    isSubmitting.value = true
 
     const buildTx: IScoketBuildTxResult = await http('/api/socket/v2/build-tx',
       {
         method: 'POST',
         body: {
-          route: bestRoute,
+          route: bestRoute.value,
         },
       },
     )
@@ -162,7 +194,7 @@ async function fetchcrossSignatures() {
 
     const approvalData = buildTx.result.approvalData
 
-    const transferAmount = bestRoute.userTxs[0].steps[0].minAmountOut.toString()
+    const transferAmount = bestRoute.value.userTxs[0].steps[0].minAmountOut.toString()
 
     const targetActions = [
       {
@@ -318,19 +350,25 @@ async function onSubmit() {
     isSubmitting.value = false
   }
 }
+
+onMounted(() => {
+  fetchBestRoute()
+})
 </script>
 
 <template>
-  <form class="flex flex-col gap-7.5" @submit.prevent="onSubmit">
-    <div class="bg-slate-50 dark:bg-gray-850 rounded-5 py-[14px] px-5 text-sm">
+  <form class="flex flex-col gap-7.5 sm:w-[500px] w-full" @submit.prevent="onSubmit">
+    <div class="bg-slate-50 dark:bg-gray-850 rounded-5 py-[14px] px-5 text-sm text-xs">
       <div class="flex flex-col gap-2.5 font-medium">
         <dl class="flex items-center justify-between">
           <dt class="text-slate-400">
             Network
           </dt>
           <dd class="flex items-center gap-2">
+            <ChainLogo class="w-5" :chain="data.fromChainId" />
             <span>{{ chainIdToName(data.fromChainId) }}</span>
             <ArrowRight class="text-slate-400 w-4" />
+            <ChainLogo class="w-5" :chain="data.toChainId" />
             <span>{{ chainIdToName(data.toChainId) }}</span>
           </dd>
         </dl>
@@ -338,21 +376,55 @@ async function onSubmit() {
           <dt class="text-slate-400">
             Token
           </dt>
-          <dd class="uppercase">
+          <dd class="uppercase items-center flex gap-2">
+            <SafeTokenLogo class="w-[18px] h-[18px]" :url="token?.logoURI" />
             {{ token?.symbol }}
           </dd>
         </dl>
         <dl class="flex items-center justify-between">
           <dt class="text-slate-400">
-            Address
+            Dest. address
           </dt>
           <dd>
-            {{ shortenHash(data.address) }}
+            <NuxtLink target="_blank" class="text-primary font-medium" :to="getExplorerUrl(data.toChainId, `/address/${data.address}`)" external>
+              {{ data.address }}
+            </NuxtLink>
+          </dd>
+        </dl>
+        <dl v-if="isCrossChain" class="flex items-center justify-between">
+          <dt class="text-slate-400">
+            Gas fees
+          </dt>
+          <dd>
+            {{ formatUsd(bestRoute?.totalGasFeesInUsd || "0") }}
           </dd>
         </dl>
       </div>
       <div class="ticket-divider w-full my-4" />
-      <div class="flex justify-between items-center font-semibold text-base">
+      <div v-if="isCrossChain" class="flex flex-col gap-[6px]">
+        <div class="flex justify-between items-center leading-5 font-semibold">
+          <span>
+            Amount receiving on dest. address
+          </span>
+          <p class="flex items-center gap-2.5">
+            <span class="uppercase">
+              {{ formatUsd(bestRoute?.receivedValueInUsd || "0") }}
+            </span>
+          </p>
+        </div>
+        <div class="flex justify-between leading-5 items-center font-semibold">
+          <span>
+            Amount to be deducted
+          </span>
+          <p class="flex items-center gap-2.5">
+            <span class="uppercase">
+              {{ formatUsd(bestRoute?.outputValueInUsd || "0") }}
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <div v-else class="flex justify-between items-center font-semibold text-base">
         <span>
           You send
         </span>
@@ -371,7 +443,7 @@ async function onSubmit() {
         Back
       </CommonButton>
 
-      <CommonButton v-if="isCrossChain && !crossSignatures" :disabled="disabled" :loading="actualFeePending || isSubmitting" class="justify-center" size="lg" @click="fetchcrossSignatures">
+      <CommonButton v-if="isCrossChain && !crossSignatures" :disabled="disabled || !bestRoute" :loading="actualFeePending || isSubmitting" class="justify-center" size="lg" @click="fetchcrossSignatures">
         Sign
       </CommonButton>
       <CommonButton v-else :disabled="disabled" :loading="actualFeePending || isSubmitting" type="submit" class="justify-center" size="lg">

@@ -107,6 +107,9 @@ export function openSendModal(chainId: number | string,
       chainId,
       contact,
     },
+    options: {
+      wrapperClass: '!max-w-fit',
+    },
   })
 }
 

@@ -69,6 +69,8 @@ export function useSend() {
     return tokens.map(t => getNetworkByChainId(String(t.chainId))).filter(Boolean)
   })
 
+  const isCrossChain = computed(() => String(data.value.fromChainId) !== String(data.value.toChainId))
+
   useForm({
     validationSchema: yup.object({
       amount:
@@ -141,6 +143,7 @@ export function useSend() {
   return {
     data,
     activeStep,
+    isCrossChain,
     stepBack,
     stepForward,
     steps,

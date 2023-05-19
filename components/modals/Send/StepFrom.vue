@@ -41,7 +41,7 @@ watch(() => data.value.toChainId, () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-5">
+  <div class="flex flex-col gap-5 sm:w-[360px] w-full">
     <div class="flex flex-col gap-2.5">
       <span class="text-sm">Network</span>
       <CommonSelect

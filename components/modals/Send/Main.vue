@@ -10,7 +10,7 @@ const props = defineProps({
   },
 })
 defineEmits(['destroy'])
-const { initialize, steps, activeStep, reset } = useSend()
+const { initialize, steps, activeStep, reset, isCrossChain } = useSend()
 
 initialize({
   fromChainId: +props.chainId,
@@ -24,6 +24,9 @@ onUnmounted(() => {
 
 <template>
   <div>
+    <h1 class="text-center mb-7.5 text-lg">
+      {{ isCrossChain ? 'Cross-chain Send' : 'Send' }}
+    </h1>
     <ul class="flex gap-2.5 justify-center mb-7.5">
       <li v-for="(step, index) in steps" :key="index" class="flex gap-2.5">
         <div class="flex flex-col items-center justify-center gap-2.5">
