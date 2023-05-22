@@ -13,9 +13,9 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
   const safe = useAvocadoSafe()
   const web3WalletV2 = shallowRef<IWeb3Wallet>()
   const sessions = ref<SessionTypes.Struct[]>([])
-  const { account, library } = useWeb3()
+  const { account } = useWeb3()
   const { parseTransactionError } = useErrorHandler()
-  const { switchToAvocadoNetwork, switchNetworkByChainId } = useNetworks()
+  const { switchToAvocadoNetwork } = useNetworks()
 
   const prepareConnectV2 = async (
     uri: string,
@@ -32,18 +32,24 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
             return `eip155:${network.chainId}`
           })
 
-          const accounts = availableNetworks.map((network) => {
-            return `eip155:${network.chainId}:${safe.safeAddress.value}`
+          const requiredChains = params.requiredNamespaces.eip155.chains ?? []
+          const requiredEvents = params.requiredNamespaces.eip155.events ?? []
+
+          const mergedChains = [...new Set([...chains, ...requiredChains])]
+
+          const accounts = mergedChains.map((network) => {
+            return `${network}:${safe.safeAddress.value}`
           })
 
           const approvedNamespaces = buildApprovedNamespaces({
             proposal: params,
             supportedNamespaces: {
               eip155: {
-                chains,
+                chains: requiredChains,
                 accounts,
                 methods: [
                   ...signingMethods,
+                  ...requiredEvents,
                   'eth_sendAvocadoTransaction',
                   'eth_sendAvocadoTransactions',
                   'eth_getBalance',
@@ -101,7 +107,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
       const { topic, params, id } = event
       const { request } = params
 
-      console.log({ event })
+      const chainId = normalizeChainId(event.params.chainId)
 
       const session = sessions.value.find((session) => {
         return session.topic === topic
@@ -114,7 +120,16 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
       if (!web3WalletV2.value || !session)
         return
 
-      const chainId = normalizeChainId(event.params.chainId)
+      if (!availableNetworks.find(n => String(n.chainId) == String(chainId))) {
+        return web3WalletV2.value.respondSessionRequest({
+          topic: session.topic,
+          response: {
+            id,
+            jsonrpc: '2.0',
+            error: getSdkError('UNSUPPORTED_CHAINS'),
+          },
+        })
+      }
 
       const metadata = encodeDappMetadata({
         name: session?.peer?.metadata?.name!,
