@@ -19,12 +19,13 @@ const amountInUsd = computed(() => toBN(token.value?.price || 0).times(data.valu
 
 const crossSignatures = ref<ICrossSignatures>()
 
+const defaultFee = calculateEstimatedFee({
+  chainId: String(data.value.toChainId),
+})
+
 const { data: crossFeeData, pending: crossPending, error: crossError } = useAsyncData(async () => {
-  if (!crossSignatures.value) {
-    return calculateEstimatedFee({
-      chainId: String(data.value.toChainId),
-    })
-  }
+  if (!crossSignatures.value)
+    return defaultFee
 
   console.log(crossSignatures.value)
 
@@ -61,6 +62,7 @@ const { data: crossFeeData, pending: crossPending, error: crossError } = useAsyn
   })
 }, {
   watch: [crossSignatures],
+  default: () => defaultFee,
 })
 
 const { data: txs } = useAsyncData(
@@ -459,7 +461,6 @@ onMounted(() => {
         Send
       </CommonButton>
     </div>
-
     <EstimatedFee
       :loading="actualFeePending"
       :data="actualFeeData"
