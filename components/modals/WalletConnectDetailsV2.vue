@@ -50,7 +50,7 @@ async function disconnectWallet() {
           rel="noopener noreferrer"
           target="_blank"
           :href="props.session.peer.metadata.url"
-          class="text-primary text-sm"
+          class="text-primary text-sm truncate max-w-sm"
         >
           {{ props.session.peer.metadata.url }}
         </a>

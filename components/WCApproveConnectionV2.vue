@@ -43,7 +43,7 @@ const iconURL = computed(() => {
         will not receive transaction requests when it is not open.
       </p>
 
-      <div class="text-primary text-sm text-center">
+      <div class="text-primary text-sm text-center truncate max-w-sm">
         {{ proposer.metadata.url }}
       </div>
     </div>
