@@ -185,7 +185,7 @@ async function fetchcrossSignatures() {
     )
 
     if (!buildTx.success)
-      throw new Error('Can\'t build tx')
+      throw new Error('Socket build transaction error, please try again later')
 
     const ERC20ABI = [
       'function approve(address, uint256) external',
@@ -238,7 +238,7 @@ async function fetchcrossSignatures() {
     })
 
     if (!success)
-      throw new Error('Can\'t sign tx')
+      throw new Error('Rejected by user')
 
     crossSignatures.value = payload
   }
@@ -291,6 +291,15 @@ async function onSubmit() {
       )
 
       transactionHash = await avoProvider.send('api_requestCrosschainTransaction', [crossSignatures.value.source, crossSignatures.value.target])
+
+      // wait 10 sec
+      // await new Promise(resolve => setTimeout(resolve, 10000))
+
+      // const tx = await avoProvider.send('api_getCrosschainTransaction', [
+      //   transactionHash,
+      // ])
+
+      // console.log(tx)
 
       if (!transactionHash)
         throw new Error('Transaction not found')
