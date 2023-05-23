@@ -360,7 +360,6 @@ interface ICrossSignatures {
 
 type CrossSignature = {
     signature: string,
-    message: any,
     owner: string,
     chainId: string,
 }

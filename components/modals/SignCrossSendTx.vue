@@ -51,13 +51,11 @@ watch(signatures, () => {
     emit('resolve', true, {
       source: {
         signature: signatures.value.source,
-        message: props.sourceMessage,
         owner: account.value,
         chainId: String(props.sourceChainId),
       },
       target: {
         signature: signatures.value.target,
-        message: props.targetMessage,
         owner: account.value,
         chainId: String(props.targetChainId),
       },

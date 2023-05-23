@@ -18,51 +18,11 @@ const isSubmitting = ref(false)
 const amountInUsd = computed(() => toBN(token.value?.price || 0).times(data.value.amount))
 
 const crossSignatures = ref<ICrossSignatures>()
+const targetMessage = ref()
+const sourceMessage = ref()
 
 const defaultFee = calculateEstimatedFee({
   chainId: String(data.value.toChainId),
-})
-
-const { data: crossFeeData, pending: crossPending, error: crossError } = useAsyncData(async () => {
-  if (!crossSignatures.value)
-    return defaultFee
-
-  console.log(crossSignatures.value)
-
-  const resp = await http('/api/cross-chain/estimate', {
-    method: 'POST',
-    body: {
-      staging: !isProd,
-      sourceChainId: String(data.value.fromChainId),
-      targetChainId: String(data.value.toChainId),
-      target: crossSignatures.value.target.message,
-      source: crossSignatures.value.source.message,
-      bridge: {
-        token: targetToken.value?.address,
-        amount: toWei(data.value.amount, targetToken.value?.decimals!),
-      },
-      signer: account.value,
-      avocadoSafe: safeAddress.value,
-    },
-  }) as ICrossEstimatedFee
-
-  const combinedFeeParams = [resp.target, resp.source].reduce(
-    (acc, curr) => {
-      acc.fee = toBN(acc.fee).plus(toBN(curr.fee)).toString()
-      acc.multiplier = toBN(acc.multiplier).plus(toBN(curr.multiplier)).toString()
-      return acc
-    },
-    { fee: '0', multiplier: '0' },
-  )
-
-  return calculateEstimatedFee({
-    chainId: String(data.value.fromChainId),
-    fee: combinedFeeParams.fee,
-    multiplier: combinedFeeParams.multiplier,
-  })
-}, {
-  watch: [crossSignatures],
-  default: () => defaultFee,
 })
 
 const { data: txs } = useAsyncData(
@@ -109,7 +69,7 @@ const { data: txs } = useAsyncData(
   {
     immediate: true,
     server: false,
-    watch: [crossSignatures],
+    watch: [data],
   },
 )
 
@@ -147,35 +107,10 @@ async function fetchBestRoute() {
 
     const route = quoteRoute.result.routes[0]
 
-    console.log({
-      quoteRoute,
-      route,
-    })
-
-    bestRoute.value = route
-  }
-  catch (e: any) {
-    const err = serialize(e)
-
-    openSnackbar({
-      message: err.message,
-      type: 'error',
-    })
-  }
-  finally {
-    isSubmitting.value = false
-  }
-}
-
-async function fetchcrossSignatures() {
-  try {
-    if (!bestRoute.value)
+    if (!route)
       throw new Error('No route found')
 
-    if (!targetToken.value)
-      return
-
-    isSubmitting.value = true
+    bestRoute.value = route
 
     const buildTx: IScoketBuildTxResult = await http('/api/socket/v2/build-tx',
       {
@@ -222,21 +157,47 @@ async function fetchcrossSignatures() {
       },
     ]
 
-    const targetMessage = await safe.value?.generateSignatureMessage(
+    const tMessage = await safe.value?.generateSignatureMessage(
       targetActions,
       data.value.toChainId,
     )
 
-    const sourceMessage = await safe.value?.generateSignatureMessage(
+    const sMessage = await safe.value?.generateSignatureMessage(
       sourceActions,
       data.value.fromChainId,
     )
 
+    targetMessage.value = tMessage
+    sourceMessage.value = sMessage
+  }
+  catch (e: any) {
+    const err = serialize(e)
+
+    openSnackbar({
+      message: err.message,
+      type: 'error',
+    })
+  }
+  finally {
+    isSubmitting.value = false
+  }
+}
+
+async function fetchcrossSignatures() {
+  try {
+    if (!bestRoute.value)
+      throw new Error('No route found')
+
+    if (!targetToken.value)
+      return
+
+    isSubmitting.value = true
+
     const { payload, success } = await openSignCrossSendTx({
       sourceChainId: data.value.fromChainId,
       targetChainId: data.value.toChainId,
-      sourceMessage,
-      targetMessage,
+      sourceMessage: sourceMessage.value,
+      targetMessage: targetMessage.value,
     })
 
     if (!success)
@@ -257,9 +218,57 @@ async function fetchcrossSignatures() {
   }
 }
 
+const { data: crossFeeData, pending: crossPending, error: crossError } = useAsyncData(async () => {
+  if (!targetMessage.value || !sourceMessage.value)
+    return defaultFee
+
+  const resp = await $fetch('/api/cross-chain/estimate', {
+    method: 'POST',
+    body: {
+      staging: !isProd,
+      sourceChainId: String(data.value.fromChainId),
+      targetChainId: String(data.value.toChainId),
+      target: targetMessage.value,
+      source: sourceMessage.value,
+      bridge: {
+        token: targetToken.value?.address,
+        amount: toWei(data.value.amount, targetToken.value?.decimals!),
+      },
+      signer: account.value,
+      avocadoSafe: safeAddress.value,
+    },
+  }) as ICrossEstimatedFee
+
+  const combinedFeeParams = [resp.target, resp.source].reduce(
+    (acc, curr) => {
+      acc.fee = toBN(acc.fee).plus(toBN(curr.fee)).toString()
+      acc.multiplier = toBN(acc.multiplier).plus(toBN(curr.multiplier)).toString()
+      return acc
+    },
+    { fee: '0', multiplier: '0' },
+  )
+
+  return calculateEstimatedFee({
+    chainId: String(data.value.fromChainId),
+    fee: combinedFeeParams.fee,
+    multiplier: combinedFeeParams.multiplier,
+  })
+}, {
+  watch: [targetMessage],
+  immediate: false,
+  default: () => defaultFee,
+})
+
 const { data: feeData, pending, error } = useEstimatedFee(txs, ref(String(data.value.fromChainId)))
 
-const actualFeeError = computed(() => isCrossChain.value ? crossError.value : error.value)
+const parsedCrossError = computed(() => {
+  if (!crossError.value)
+    return null
+
+  return serialize(crossError.value).message
+})
+
+const actualFeeError = computed(() => isCrossChain.value ? parsedCrossError.value : error.value)
 const actualFeeData = computed(() => isCrossChain.value ? crossFeeData.value : feeData.value)
 const actualFeePending = computed(() => isCrossChain.value ? crossPending.value : pending.value)
 
@@ -369,7 +378,7 @@ onMounted(() => {
 
 <template>
   <form class="flex flex-col gap-7.5 sm:w-[500px] w-full" @submit.prevent="onSubmit">
-    <div class="bg-slate-50 dark:bg-gray-850 rounded-5 py-[14px] px-5 text-sm text-xs">
+    <div class="bg-slate-50 dark:bg-gray-850 rounded-5 py-[14px] px-5 text-sm">
       <div class="flex flex-col gap-2.5 font-medium">
         <dl class="flex items-center justify-between">
           <dt class="text-slate-400">
