@@ -25,6 +25,12 @@ const defaultFee = calculateEstimatedFee({
   chainId: String(data.value.toChainId),
 })
 
+const crossFee = ref({
+  data: defaultFee,
+  pending: false,
+  error: '',
+})
+
 const { data: txs } = useAsyncData(
   'send-txs',
   async () => {
@@ -169,6 +175,8 @@ async function fetchBestRoute() {
 
     targetMessage.value = tMessage
     sourceMessage.value = sMessage
+
+    fetchCrossFee()
   }
   catch (e: any) {
     const err = serialize(e)
@@ -218,59 +226,56 @@ async function fetchcrossSignatures() {
   }
 }
 
-const { data: crossFeeData, pending: crossPending, error: crossError } = useAsyncData(async () => {
-  if (!targetMessage.value || !sourceMessage.value)
-    return defaultFee
+async function fetchCrossFee() {
+  try {
+    crossFee.value.pending = true
 
-  const resp = await $fetch('/api/cross-chain/estimate', {
-    method: 'POST',
-    body: {
-      staging: !isProd,
-      sourceChainId: String(data.value.fromChainId),
-      targetChainId: String(data.value.toChainId),
-      target: targetMessage.value,
-      source: sourceMessage.value,
-      bridge: {
-        token: targetToken.value?.address,
-        amount: toWei(data.value.amount, targetToken.value?.decimals!),
+    const resp = await $fetch('/api/cross-chain/estimate', {
+      method: 'POST',
+      body: {
+        staging: !isProd,
+        sourceChainId: String(data.value.fromChainId),
+        targetChainId: String(data.value.toChainId),
+        target: targetMessage.value,
+        source: sourceMessage.value,
+        bridge: {
+          token: targetToken.value?.address,
+          amount: toWei(data.value.amount, targetToken.value?.decimals!),
+        },
+        signer: account.value,
+        avocadoSafe: safeAddress.value,
       },
-      signer: account.value,
-      avocadoSafe: safeAddress.value,
-    },
-  }) as ICrossEstimatedFee
+    }) as ICrossEstimatedFee
 
-  const combinedFeeParams = [resp.target, resp.source].reduce(
-    (acc, curr) => {
-      acc.fee = toBN(acc.fee).plus(toBN(curr.fee)).toString()
-      acc.multiplier = toBN(acc.multiplier).plus(toBN(curr.multiplier)).toString()
-      return acc
-    },
-    { fee: '0', multiplier: '0' },
-  )
+    const combinedFeeParams = [resp.target, resp.source].reduce(
+      (acc, curr) => {
+        acc.fee = toBN(acc.fee).plus(toBN(curr.fee)).toString()
+        acc.multiplier = toBN(acc.multiplier).plus(toBN(curr.multiplier)).toString()
+        return acc
+      },
+      { fee: '0', multiplier: '0' },
+    )
 
-  return calculateEstimatedFee({
-    chainId: String(data.value.fromChainId),
-    fee: combinedFeeParams.fee,
-    multiplier: combinedFeeParams.multiplier,
-  })
-}, {
-  watch: [targetMessage],
-  immediate: false,
-  default: () => defaultFee,
-})
+    return calculateEstimatedFee({
+      chainId: String(data.value.fromChainId),
+      fee: combinedFeeParams.fee,
+      multiplier: combinedFeeParams.multiplier,
+    })
+  }
+  catch (e) {
+    const parsed = serialize(e)
+    crossFee.value.error = parsed.message
+  }
+  finally {
+    crossFee.value.pending = false
+  }
+}
 
 const { data: feeData, pending, error } = useEstimatedFee(txs, ref(String(data.value.fromChainId)))
 
-const parsedCrossError = computed(() => {
-  if (!crossError.value)
-    return null
-
-  return serialize(crossError.value).message
-})
-
-const actualFeeError = computed(() => isCrossChain.value ? parsedCrossError.value : error.value)
-const actualFeeData = computed(() => isCrossChain.value ? crossFeeData.value : feeData.value)
-const actualFeePending = computed(() => isCrossChain.value ? crossPending.value : pending.value)
+const actualFeeError = computed(() => isCrossChain.value ? crossFee.value.error : error.value)
+const actualFeeData = computed(() => isCrossChain.value ? crossFee.value.data : feeData.value)
+const actualFeePending = computed(() => isCrossChain.value ? crossFee.value.pending : pending.value)
 
 const disabled = computed(() => {
   return !actualAddress.value || actualFeePending.value || actualFeeError.value || isSubmitting.value
