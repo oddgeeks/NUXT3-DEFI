@@ -256,7 +256,7 @@ async function fetchCrossFee() {
       { fee: '0', multiplier: '0' },
     )
 
-    return calculateEstimatedFee({
+    crossFee.value.data = calculateEstimatedFee({
       chainId: String(data.value.fromChainId),
       fee: combinedFeeParams.fee,
       multiplier: combinedFeeParams.multiplier,
