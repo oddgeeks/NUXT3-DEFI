@@ -97,13 +97,13 @@ function getPrefix(amountInUsd: string, action: ISlackMessage['action']) {
   const actionPrefix = prefixes[action]
   let emoji = ''
 
-  if (gt(amountInUsd, '100000'))
+  if (gte(amountInUsd, '100000'))
     emoji = '🐳'
 
-  else if (gt(amountInUsd, '10000'))
+  else if (gte(amountInUsd, '10000'))
     emoji = '🚀'
 
-  else if (gt(amountInUsd, '100'))
+  else if (gte(amountInUsd, '100'))
     emoji = '🔥'
 
   if (emoji)
