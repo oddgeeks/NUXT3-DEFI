@@ -117,6 +117,7 @@ const onSubmit = form.handleSubmit(async () => {
       chainId: props.chainId,
       txHash: transactionHash,
       account: account.value,
+      amountInUsd: toBN(recivedValueInUsd.value).toString(),
     })
 
     form.resetForm()
