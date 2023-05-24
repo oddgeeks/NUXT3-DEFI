@@ -19,6 +19,7 @@ const fallbackFee: TotalFee = {
   token: null,
 }
 
+const error = ref('')
 const bestRoute = ref<IRoute>()
 const isSubmitting = ref(false)
 
@@ -126,13 +127,11 @@ async function fetchQuoteWithGasFee() {
     })
 
     if (!quoteRoute.success)
-      throw new Error('Can\'t get quote')
+      throw new Error('Can\'t get quote, please try again later')
     if (!quoteRoute.result.routes.length)
-      throw new Error('No routes found')
+      throw new Error('No routes has been found')
 
     const route = quoteRoute.result.routes[0]
-    if (!route)
-      throw new Error('No route found')
 
     const receivedValueInUsd = toBN(route.receivedValueInUsd)
     const desiredValueInUsd = toBN(data.value.amount).times(targetToken.value?.price || 0)
@@ -151,6 +150,7 @@ async function fetchQuoteWithGasFee() {
 }
 
 async function fetchBestRoute() {
+  error.value = ''
   if (!targetToken.value?.address)
     return
 
@@ -224,10 +224,7 @@ async function fetchBestRoute() {
   catch (e: any) {
     const err = serialize(e)
 
-    openSnackbar({
-      message: err.message,
-      type: 'error',
-    })
+    error.value = err.message
   }
   finally {
     isSubmitting.value = false
@@ -236,9 +233,6 @@ async function fetchBestRoute() {
 
 async function fetchcrossSignatures() {
   try {
-    if (!bestRoute.value)
-      throw new Error('No route found')
-
     if (!targetToken.value)
       return
 
@@ -342,6 +336,12 @@ async function onSubmit() {
     )
 
     const transactionHash = await avoProvider.send('api_requestCrosschainTransaction', [crossSignatures.value.source, crossSignatures.value.target])
+
+    console.log({
+      transactionHash,
+      crossSignatures: crossSignatures.value,
+
+    })
 
     // wait 10 sec
     // await new Promise(resolve => setTimeout(resolve, 10000))
@@ -499,6 +499,11 @@ onMounted(() => {
       :loading="crossFee.pending"
       :data="crossFee.data"
       :error="crossFee.error"
+    />
+    <CommonNotification
+      v-if="!!error"
+      type="error"
+      :text="error"
     />
     <CommonNotification
       v-if="totalGassFee.token && isInsufficientBalance"
