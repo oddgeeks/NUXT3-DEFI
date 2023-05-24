@@ -55,6 +55,20 @@ const totalGassFee = computed(() => {
   }, fallbackFee)
 })
 
+const totalReceivedAmount = computed(() => {
+  if (!bestRoute.value)
+    return '0'
+
+  return toBN(bestRoute.value.receivedValueInUsd).div(targetToken.value?.price || 1).toString()
+})
+
+const totalInputAmount = computed(() => {
+  if (!bestRoute.value)
+    return '0'
+
+  return fromWei(bestRoute.value.fromAmount, token.value?.decimals).toString()
+})
+
 const bridgeFee = computed(() => {
   if (!bestRoute.value)
     return fallbackFee
@@ -430,6 +444,7 @@ onMounted(() => {
             </NuxtLink>
           </dd>
         </dl>
+        <div class="ticket-divider w-full my-[6px]" />
         <dl class="flex items-center justify-between">
           <dt class="text-slate-400">
             Gas fees
@@ -460,14 +475,14 @@ onMounted(() => {
         </dl>
       </div>
       <div class="ticket-divider w-full my-4" />
-      <div class="flex flex-col gap-[6px] text-base">
+      <div class="flex flex-col gap-[6px]">
         <div class="flex justify-between items-center leading-5">
           <span class="font-medium">
             Amount receiving on dest. address
           </span>
           <p class="flex items-center gap-2.5">
-            <span class="uppercase">
-              {{ formatUsd(bestRoute?.receivedValueInUsd || "0") }}
+            <span class="uppercase text-base">
+              {{ formatDecimal(totalReceivedAmount) }} {{ token?.symbol }}
             </span>
           </p>
         </div>
@@ -476,8 +491,8 @@ onMounted(() => {
             Amount to be deducted
           </span>
           <p class="flex items-center gap-2.5">
-            <span class="uppercase">
-              {{ formatUsd(bestRoute?.inputValueInUsd || "0") }}
+            <span class="uppercase text-base">
+              {{ formatDecimal(totalInputAmount) }} {{ token?.symbol }}
             </span>
           </p>
         </div>
