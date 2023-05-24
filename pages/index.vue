@@ -8,6 +8,7 @@ const { account } = useWeb3()
 const { unstableDappNetworks } = useBanner()
 const { safeAddress } = useAvocadoSafe()
 const { networkPreference } = storeToRefs(useSafe())
+// const router = useRouter()
 
 useAccountTrack(undefined, () => {
   useEagerConnect()
@@ -26,6 +27,18 @@ function handleOpenDialog() {
           `,
   })
 }
+
+// onMounted(() => {
+//   nextTick(() => {
+//     console.log('Account value')
+//     setTimeout(() => {
+//       if (!account.value) {
+//         router.push('login')
+//       }
+//     }, 100)
+//   })
+  
+// })
 </script>
 
 <template>
