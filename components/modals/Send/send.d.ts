@@ -367,5 +367,5 @@ type CrossSignature = {
 type TotalFee = {
     amount: string,
     amountInUsd: string,
-    token: IToken | null,
+    token: IBalance | null,
 }

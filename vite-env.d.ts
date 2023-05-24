@@ -492,15 +492,3 @@ interface IEstimatedFeeData {
   amount: number
 }
 
- interface IToken {
-  name: string
-  address: string
-  decimals: number
-  symbol: string
-  chainId: string
-  logoURI: string
-  price: number | null
-  coingeckoId: string | null
-  sparklinePrice7d: number[]
-  isCustomToken?: boolean
-}
