@@ -456,6 +456,7 @@ const onSubmit = handleSubmit(async () => {
       account: account.value,
       chainId: toChainId.value,
       txHash: transactionHash,
+      amountInUsd: sellAmountInUsd.value,
     })
 
     resetForm()
