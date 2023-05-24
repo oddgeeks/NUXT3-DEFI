@@ -14,9 +14,9 @@ const route = useRoute()
     <BannerAccountTracking v-if="showTrackingBanner" />
 
     <div class="flex ">
-      <Sidebar v-if="!$route.meta.hideSidebar" />
+      <Sidebar v-if="!$router.currentRoute.value.meta.hideSidebar" />
 
-      <div class="flex flex-1 flex-col sm:px-10 px-4 max-w-7xl mx-auto">
+      <div class="flex flex-1 flex-col sm:px-10 px-4 max-w-7xl mx-auto min-w-0">
         <TheHeader />
         <div
           class="container flex flex-col gap-4 mt-32 sm:mt-0"

@@ -462,6 +462,10 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
 
   const refreshSessions = () => triggerRef(sessions)
 
+  function isDappUnsupported(url: string) {
+    return unsupportedDapps.some(dapp => url.includes(dapp))
+  }
+
   function getConnectionVersion(uri: string): 1 | 2 {
     const v1Pattern = /^wc:[a-zA-Z0-9-]+@1\?/
     const v2Pattern = /^wc:[a-zA-Z0-9]+@2\?/
@@ -485,6 +489,7 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
     prepareAndConnect,
     disconnectAll,
     refreshSessions,
+    isDappUnsupported,
   }
 })
 

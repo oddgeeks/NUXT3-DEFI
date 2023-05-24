@@ -25,7 +25,7 @@ const emit = defineEmits(['destroy'])
 const { toWei } = useBignumber()
 
 const { library, account } = useWeb3()
-const { safeAddress, sendTransactions, tokenBalances, safe, isSafeAddress }
+const { safeAddress, sendTransactions, tokenBalances, isSafeAddress }
   = useAvocadoSafe()
 const { parseTransactionError } = useErrorHandler()
 
@@ -263,10 +263,20 @@ const onSubmit = handleSubmit(async () => {
       },
     )
 
+    if (!transactionHash) {
+      // tracking mode
+      return
+    }
+
     console.log(transactionHash)
 
     let message = ''
+    let amountInUsd = '0'
     for (let i = 0; i < tokens.value.length; i += 1) {
+      const price = toBN(tokens.value[i].price || 0).times(amounts.value[i].value || '0')
+
+      amountInUsd = toBN(amountInUsd).plus(price).toString()
+
       message += `${formatDecimal(amounts.value[i].value)} ${formatSymbol(
         tokens.value[i].symbol,
       )}`
@@ -274,12 +284,14 @@ const onSubmit = handleSubmit(async () => {
       if (i < tokens.value.length - 1)
         message += ', '
     }
+
     logActionToSlack({
       message: `${message} to ${actualAddress.value}`,
       action: 'send',
       txHash: transactionHash,
       chainId: tochainId.value,
       account: account.value,
+      amountInUsd,
     })
 
     resetForm()

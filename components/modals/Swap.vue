@@ -236,9 +236,9 @@ async function fetchSwapDetails() {
 
     swapDetails.value.pending = true
 
-    const data: ISwapResponse = await http(
-      'https://swap-aggregator.instadapp.io/swap',
+    const data: ISwapResponse = await http('/swap',
       {
+        baseURL: swapAggregatorURL,
         signal: abortController.value?.signal,
         params: {
           network: getNetworkByChainId(toChainId.value).name.toLowerCase(),
@@ -248,7 +248,7 @@ async function fetchSwapDetails() {
           maxSlippage: actualSlippage.value,
           slippage: actualSlippage.value,
           user: safeAddress.value,
-          access_token: 'hxBA1uxwaGWN0xcpPOncVJ3Tk7FdFxY7g3NX28R14C',
+          access_token: swapAggregatorAccessToken,
         },
       },
     )
@@ -431,6 +431,11 @@ const onSubmit = handleSubmit(async () => {
       },
     )
 
+    if (!transactionHash) {
+      // tracking mode
+      return
+    }
+
     const buyAmt = fromWei(
       swapDetails.value?.data?.data.buyTokenAmount || 0,
       swapDetails.value?.data?.data.buyToken.decimals,
@@ -451,6 +456,7 @@ const onSubmit = handleSubmit(async () => {
       account: account.value,
       chainId: toChainId.value,
       txHash: transactionHash,
+      amountInUsd: sellAmountInUsd.value,
     })
 
     resetForm()

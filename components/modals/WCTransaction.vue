@@ -108,6 +108,11 @@ async function handleSubmit() {
         ...options.value,
       },
     )
+    if (!transactionHash) {
+      // tracking mode
+      toggle(false)
+      return
+    }
 
     console.log(props.session)
 

@@ -218,6 +218,7 @@ const onSubmit = handleSubmit(async () => {
       account: account.value,
       chainId: String(chainId.value),
       txHash: transactionHash,
+      amountInUsd: amount.value,
     })
 
     emit('destroy')

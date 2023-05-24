@@ -20,7 +20,12 @@ export function useAccountTrack(onSuccess?: () => void, onFailure?: () => void) 
 
   onNuxtReady(init)
 
+  const isTrackingMode = computed(() => {
+    return !!trackingAccount.value && trackingAccount.value !== ''
+  })
+
   return {
     trackingAccount,
+    isTrackingMode,
   }
 }

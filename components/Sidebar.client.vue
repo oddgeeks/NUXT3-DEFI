@@ -13,7 +13,7 @@ const { account } = useWeb3()
 </script>
 
 <template>
-  <aside style="scrollbar-gutter:stable;overflow-y:overlay;" class="hidden sticky top-0 h-screen sm:flex overflow-y-auto scroll-style dark:bg-gray-850 bg-slate-50 transition-[width]" :class="{ 'w-[340px]': opened, 'w-[120px]': !opened }">
+  <aside style="scrollbar-gutter:stable;overflow-y:overlay;" class="hidden shrink-0 sticky top-0 h-screen sm:flex overflow-y-auto scroll-style dark:bg-gray-850 bg-slate-50 transition-[width]" :class="{ 'w-[340px]': opened, 'w-[120px]': !opened }">
     <div v-if="opened" class="flex flex-col w-full">
       <div class="flex flex-col gap-6 pt-7.5 pb-6 px-7.5">
         <div class="flex items-center justify-between">
@@ -34,7 +34,7 @@ const { account } = useWeb3()
           <QrCode />
         </div>
         <div class="flex flex-col items-start gap-3">
-          <SupportedChains :account="account" :max-count="6" class="!flex justify-between !gap-3" />
+          <SupportedChains :max-count="6" class="!flex justify-between !gap-3" />
         </div>
       </div>
       <Navigation />
