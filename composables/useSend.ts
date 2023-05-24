@@ -122,9 +122,14 @@ export function useSend() {
   })
 
   const initialize = (params: Initialize) => {
+    const firstToken = tokenBalances.value.find(t => String(t.chainId) === String(params.fromChainId))
+    const firstBalancedToken = tokenBalances.value.find(t => String(t.chainId) === String(params.fromChainId) && gt(t.balance, '0'))
+
+    const actualTokenAddress = params.address ?? firstBalancedToken?.address ?? firstToken?.address
+
     data.value.fromChainId = params.fromChainId
     data.value.toChainId = params.fromChainId
-    data.value.tokenAddress = params.address
+    data.value.tokenAddress = actualTokenAddress
   }
 
   const reset = () => {
