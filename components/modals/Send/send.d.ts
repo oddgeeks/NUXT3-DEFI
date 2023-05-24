@@ -363,3 +363,9 @@ type CrossSignature = {
     owner: string,
     chainId: string,
 }
+
+type TotalFee = {
+    amount: string,
+    amountInUsd: string,
+    token: IToken | null,
+}

@@ -8,10 +8,16 @@ const emit = defineEmits(['destroy'])
 const { isProd } = useAppConfig()
 const { token, stepBack, data, actualAddress, targetToken, isCrossChain } = useSend()
 const { account, library } = useWeb3()
-const { toWei } = useBignumber()
-const { sendTransactions, safeAddress, safe } = useAvocadoSafe()
+const { toWei, fromWei } = useBignumber()
+const { sendTransactions, safeAddress, safe, tokenBalances } = useAvocadoSafe()
 const { avoProvider } = useSafe()
 const { parseTransactionError } = useErrorHandler()
+
+const fallbackFee: TotalFee = {
+  amount: '0',
+  amountInUsd: '0',
+  token: null,
+}
 
 const bestRoute = ref<IRoute>()
 const isSubmitting = ref(false)
@@ -29,6 +35,68 @@ const crossFee = ref({
   data: defaultFee,
   pending: false,
   error: '',
+})
+
+const totalGassFee = computed(() => {
+  if (!isCrossChain.value || !bestRoute.value)
+    return fallbackFee
+
+  return bestRoute.value.userTxs.reduce((prev, curr) => {
+    const asset = curr.gasFees.asset
+    const amount = fromWei(curr.gasFees.gasAmount, asset.decimals)
+    const amountInUsd = curr.gasFees.feesInUsd
+    const token = tokenBalances.value.find(t => t.address.toLowerCase() === asset.address.toLowerCase() && String(asset.chainId) == String(t.chainId))
+
+    return {
+      amount: toBN(prev.amount).plus(amount).toString(),
+      amountInUsd: toBN(prev.amountInUsd).plus(amountInUsd).toString(),
+      token,
+    } as TotalFee
+  }, fallbackFee)
+})
+
+const bridgeFee = computed(() => {
+  if (!isCrossChain.value || !bestRoute.value)
+    return fallbackFee
+
+  const fees = bestRoute.value?.userTxs.reduce((acc, tx) => {
+    const bridgeFee = tx.steps.reduce((acc, step) => {
+      if (!step?.protocolFees)
+        return acc
+
+      const asset = step?.protocolFees?.asset
+      const token = tokenBalances.value.find(
+        i => i.address.toLowerCase() === asset?.address.toLowerCase() && String(asset?.chainId) == String(i.chainId),
+      )
+
+      console.log(token)
+
+      const amount = fromWei(
+        toBN(acc.amount || '0').plus(toBN(step?.protocolFees?.amount || '0')),
+        step?.protocolFees?.asset?.decimals,
+      )
+
+      return {
+        amount: amount.toFixed(),
+        amountInUsd: toBN(acc.amountInUsd || '0')
+          .plus(amount.times(token?.price || 0))
+          .toFixed(),
+        token,
+      } as TotalFee
+    }, fallbackFee)
+
+    return {
+      amount: toBN(bridgeFee.amount)
+        .plus(toBN(acc.amount || '0'))
+        .toFixed(),
+      amountInUsd: toBN(bridgeFee.amountInUsd)
+        .plus(toBN(acc.amountInUsd || '0'))
+        .toFixed(),
+      token: bridgeFee.token,
+    } as unknown as TotalFee
+  }, fallbackFee)
+
+  return fees
 })
 
 const { data: txs } = useAsyncData(
@@ -79,23 +147,19 @@ const { data: txs } = useAsyncData(
   },
 )
 
-async function fetchBestRoute() {
-  if (!isCrossChain.value)
-    return
+async function fetchQuoteWithGasFee() {
+  const maxTries = 3
+  let tries = 0
+  let amount = data.value.amount
 
-  if (!targetToken.value?.address)
-    return
-
-  try {
-    isSubmitting.value = true
-
+  while (tries < maxTries) {
     const quoteRoute: ISocketQuoteResult = await http('/api/socket/v2/quote', {
       params: {
         fromChainId: data.value.fromChainId,
         toChainId: data.value.toChainId,
         fromTokenAddress: token.value?.address,
         toTokenAddress: targetToken.value?.address,
-        fromAmount: toWei(data.value.amount, token.value?.decimals!),
+        fromAmount: toWei(amount, token.value?.decimals!),
         userAddress: safeAddress.value,
         recipient: safeAddress.value,
         isContractCall: true,
@@ -107,14 +171,40 @@ async function fetchBestRoute() {
 
     if (!quoteRoute.success)
       throw new Error('Can\'t get quote')
-
     if (!quoteRoute.result.routes.length)
       throw new Error('No routes found')
 
     const route = quoteRoute.result.routes[0]
-
     if (!route)
       throw new Error('No route found')
+
+    const receivedValueInUsd = toBN(route.receivedValueInUsd)
+    const desiredValueInUsd = toBN(data.value.amount).times(targetToken.value?.price || 0)
+    const totalGasFeesInUsd = toBN(route.inputValueInUsd).minus(receivedValueInUsd)
+
+    if (receivedValueInUsd.gte(desiredValueInUsd))
+      return route
+
+    const totalGasFeeInAmount = totalGasFeesInUsd.div(token.value?.price || 1)
+
+    amount = toBN(amount).plus(totalGasFeeInAmount).toString()
+    tries++
+  }
+
+  throw new Error('Unable to fetch quote with acceptable gas fees after max retries')
+}
+
+async function fetchBestRoute() {
+  if (!isCrossChain.value)
+    return
+
+  if (!targetToken.value?.address)
+    return
+
+  try {
+    isSubmitting.value = true
+
+    const route = await fetchQuoteWithGasFee()
 
     bestRoute.value = route
 
@@ -382,7 +472,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <form class="flex flex-col gap-7.5 sm:w-[500px] w-full" @submit.prevent="onSubmit">
+  <form class="flex flex-col gap-7.5 sm:w-[520px] w-full" @submit.prevent="onSubmit">
     <div class="bg-slate-50 dark:bg-gray-850 rounded-5 py-[14px] px-5 text-sm">
       <div class="flex flex-col gap-2.5 font-medium">
         <dl class="flex items-center justify-between">
@@ -407,7 +497,7 @@ onMounted(() => {
           </dd>
         </dl>
         <dl class="flex items-center justify-between">
-          <dt class="text-slate-400">
+          <dt class="text-slate-400 whitespace-nowrap">
             Dest. address
           </dt>
           <dd>
@@ -416,17 +506,39 @@ onMounted(() => {
             </NuxtLink>
           </dd>
         </dl>
-        <dl v-if="isCrossChain" class="flex items-center justify-between">
-          <dt class="text-slate-400">
-            Gas fees
-          </dt>
-          <dd>
-            {{ formatUsd(bestRoute?.totalGasFeesInUsd || "0") }}
-          </dd>
-        </dl>
+        <template v-if="isCrossChain">
+          <dl class="flex items-center justify-between">
+            <dt class="text-slate-400">
+              Gas fees
+            </dt>
+            <dd class="flex items-center gap-2">
+              <img v-if="totalGassFee.token" class="w-5 h-5" :src="totalGassFee.token?.logoURI">
+              <span>
+                {{ formatDecimal(totalGassFee.amount) }}
+              </span>
+              <span>
+                ({{ formatUsd(totalGassFee.amountInUsd || "0") }})
+              </span>
+            </dd>
+          </dl>
+          <dl class="flex items-center justify-between">
+            <dt class="text-slate-400">
+              Bridge Fee
+            </dt>
+            <dd class="flex items-center gap-2">
+              <img v-if="bridgeFee.token" class="w-5 h-5" :src="bridgeFee.token?.logoURI">
+              <span>
+                {{ formatDecimal(bridgeFee.amount) }}
+              </span>
+              <span>
+                ({{ formatUsd(bridgeFee.amountInUsd || "0") }})
+              </span>
+            </dd>
+          </dl>
+        </template>
       </div>
       <div class="ticket-divider w-full my-4" />
-      <div v-if="isCrossChain" class="flex flex-col gap-[6px]">
+      <div v-if="isCrossChain" class="flex flex-col gap-[6px] text-base">
         <div class="flex justify-between items-center leading-5 font-semibold">
           <span>
             Amount receiving on dest. address
@@ -443,7 +555,7 @@ onMounted(() => {
           </span>
           <p class="flex items-center gap-2.5">
             <span class="uppercase">
-              {{ formatUsd(bestRoute?.outputValueInUsd || "0") }}
+              {{ formatUsd(bestRoute?.inputValueInUsd || "0") }}
             </span>
           </p>
         </div>
