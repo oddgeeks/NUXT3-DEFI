@@ -91,12 +91,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
       core: new Core({
         projectId: '42e9e3b646c9102371bd147b3e960c39',
       }),
-      metadata: {
-        description: 'Instadapp Avocado - Safe',
-        url: 'https://avocado.instadapp.io',
-        icons: ['https://avocado.instadapp.io/logo.png'],
-        name: 'Instadapp Avocado',
-      },
+      metadata: walletConnectMetadata,
     })
 
     web3WalletV2.value.on('session_delete', async (event) => {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type WalletConnect from '@walletconnect/client'
+import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg'
 import SVGX from '~/assets/images/icons/x.svg'
 import LinkSVG from '~/assets/images/icons/external-link.svg'
 
@@ -69,7 +70,12 @@ async function handleDisconnectWallet(session: any) {
         >
           {{ session?.peerMeta?.name }}
         </h1>
-        <h2 class="text-xs text-primary leading-5">
+        <h2 v-if="wcStore.isDappUnsupported(session?.peerMeta?.url || '')" class="text-xs leading-5 text-orange-400 flex items-center gap-1">
+          Connected
+
+          <SVGInfoCircle class="w-3" />
+        </h2>
+        <h2 v-else class="text-xs leading-5 text-primary">
           Connected
         </h2>
       </div>

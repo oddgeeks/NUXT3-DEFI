@@ -4,13 +4,6 @@ import WalletConnect from '@walletconnect/client'
 import { v4 as uuidv4 } from 'uuid'
 import { ethers } from 'ethers'
 
-const clientMeta = {
-  description: 'Instadapp Avocado - Safe',
-  url: 'https://avocado.instadapp.io',
-  icons: ['https://walletconnect.org/walletconnect-logo.png'],
-  name: 'Instadapp Avocado',
-}
-
 export const useWalletConnect = defineStore('wallet_connect', () => {
   const safe = useAvocadoSafe()
   useWalletConnectV2()
@@ -369,7 +362,7 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
       }>((resolve, reject) => {
         const connector = new WalletConnect({
           uri,
-          clientMeta,
+          clientMeta: walletConnectMetadata,
           storageId,
           signingMethods: [
             ...signingMethods,
