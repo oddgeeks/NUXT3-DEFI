@@ -6,7 +6,9 @@ import { Web3Wallet } from '@walletconnect/web3wallet'
 import { Core } from '@walletconnect/core'
 import type { SessionTypes } from '@walletconnect/types'
 import { ethers } from 'ethers'
-import { buildApprovedNamespaces } from '../utils/wc/namespaces'
+import { buildApprovedNamespaces } from '@walletconnect/utils'
+
+// import { buildApprovedNamespaces } from '../utils/wc/namespaces'
 import { getSdkError } from '~/utils/wc'
 
 export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
