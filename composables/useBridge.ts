@@ -213,6 +213,15 @@ export function useBridge(fromToken: Ref<IBalance>) {
         routesController = null
 
         if (!data.result.routes.length) {
+          Object.entries(data.result.bridgeRouteErrors).some((i) => {
+            const [provider, error] = i as any
+
+            if (error?.status === 'MIN_AMOUNT_NOT_MET') {
+              form.setFieldError('amount', `Minimum bridge amount is ${fromWei(error.minAmount, fromToken.value.decimals)} ${fromToken.value.symbol.toUpperCase()}`)
+              return true
+            }
+          })
+
           throw new Error(
             'Our bridge provider does not have routes for your desired transfer',
             {
