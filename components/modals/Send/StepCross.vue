@@ -3,6 +3,7 @@ import { ethers } from 'ethers'
 import { serialize } from 'error-serializer'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg'
 import RefreshSVG from '~/assets/images/icons/refresh.svg'
+import QuestionSVG from '~/assets/images/icons/question-circle.svg'
 
 const emit = defineEmits(['destroy'])
 const { isProd } = useAppConfig()
@@ -410,7 +411,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <form class="flex flex-col gap-7.5 sm:w-[520px] w-full" @submit.prevent="onSubmit">
+  <form class="flex flex-col gap-7.5 sm:w-[600px] w-full" @submit.prevent="onSubmit">
     <div class="bg-slate-50 dark:bg-gray-850 rounded-5 py-[14px] px-5 text-sm">
       <div class="flex flex-col gap-2.5 font-medium">
         <dl class="flex items-center justify-between">
@@ -454,7 +455,7 @@ onMounted(() => {
             <span>
               {{ formatDecimal(totalGassFee.amount) }}
             </span>
-            <span>
+            <span class="text-slate-400">
               ({{ formatUsd(totalGassFee.amountInUsd || "0") }})
             </span>
           </dd>
@@ -468,21 +469,28 @@ onMounted(() => {
             <span>
               {{ formatDecimal(bridgeFee.amount) }}
             </span>
-            <span>
+            <span class="text-slate-400">
               ({{ formatUsd(bridgeFee.amountInUsd || "0") }})
             </span>
           </dd>
         </dl>
       </div>
       <div class="ticket-divider w-full my-4" />
-      <div class="flex flex-col gap-[6px]">
+      <div class="flex flex-col gap-2.5">
         <div class="flex justify-between items-center leading-5">
-          <span class="font-medium">
+          <span class="font-medium inline-flex gap-2.5 items-center">
             Amount receiving on dest. address
+
+            <QuestionSVG v-tippy="''" class="w-4.5 h-4.5 text-slate-500" />
+
           </span>
           <p class="flex items-center gap-2.5">
             <span class="uppercase text-base">
               {{ formatDecimal(totalReceivedAmount) }} {{ token?.symbol }}
+            </span>
+
+            <span class="text-slate-400">
+              ({{ formatUsd(bestRoute?.receivedValueInUsd || "0") }})
             </span>
           </p>
         </div>
@@ -493,6 +501,9 @@ onMounted(() => {
           <p class="flex items-center gap-2.5">
             <span class="uppercase text-base">
               {{ formatDecimal(totalInputAmount) }} {{ token?.symbol }}
+            </span>
+            <span class="text-slate-400">
+              ({{ formatUsd(bestRoute?.inputValueInUsd || "0") }})
             </span>
           </p>
         </div>
