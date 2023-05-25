@@ -5,7 +5,7 @@ definePageMeta({
 </script>
 <template>
   <div
-    class="sm:w-[460px] w-full h-full mx-auto mt-[92px] py-10 sm:px-[50px] px-5 rounded-[30px] bg-gray-850"
+    class="sm:w-[460px] w-full h-full mx-auto mt-[92px] py-10 sm:px-[50px] px-5 rounded-[30px] dark:bg-gray-850 bg-white"
   >
     <div class="w-full flex justify-center">
       <SvgAvocadoLogo />
