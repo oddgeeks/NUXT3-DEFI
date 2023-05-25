@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="items-center justify-end py-8 hidden sm:flex">
+  <div class="items-center justify-end py-8 flex">
     <NuxtLink class="mr-auto" to="/">
       <Logo />
     </NuxtLink>
