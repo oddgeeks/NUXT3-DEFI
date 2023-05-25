@@ -16,8 +16,7 @@ definePageMeta({
     <p class="mt-2.5 text-xs leading-6 font-medium text-center text-slate-400">
       And enjoy the most user friendly web3 experience
     </p>
-
-    <div class="h-full mt-[30px]">
+    <div class="mt-[30px]">
       <Web3Connectors />
     </div>
   </div>
