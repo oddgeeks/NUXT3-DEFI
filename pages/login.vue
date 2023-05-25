@@ -5,7 +5,7 @@ definePageMeta({
 </script>
 <template>
   <div
-    class="sm:w-[460px] w-full mx-auto mt-[92px] py-10 sm:px-[50px] px-5 bg-gray-850"
+    class="sm:w-[460px] w-full h-full mx-auto mt-[92px] py-10 sm:px-[50px] px-5 rounded-[30px] bg-gray-850"
   >
     <div class="w-full flex justify-center">
       <SvgAvocadoLogo />
@@ -17,8 +17,8 @@ definePageMeta({
       And enjoy the most user friendly web3 experience
     </p>
 
-    <div class="sm:h-[300px] h-full mt-[30px]">
-      Here should come the connectors
+    <div class="h-full mt-[30px]">
+      <Web3Connectors />
     </div>
   </div>
 </template>
