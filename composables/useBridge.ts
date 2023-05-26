@@ -220,7 +220,8 @@ export function useBridge(fromToken: Ref<IBalance>) {
           if (minAmountError) {
             const [_, error] = minAmountError
 
-            form.setFieldError('amount', `Minimum bridge amount is ${fromWei(error.minAmount, fromToken.value.decimals)} ${fromToken.value.symbol.toUpperCase()}`)
+            if (!form.errors.value.amount)
+              form.setFieldError('amount', `Minimum bridge amount is ${fromWei(error.minAmount, fromToken.value.decimals)} ${fromToken.value.symbol.toUpperCase()}`)
           }
           else {
             throw new Error(
