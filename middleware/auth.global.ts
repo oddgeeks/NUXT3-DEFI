@@ -1,4 +1,7 @@
-import { getAccount } from "~/stores/auth";
-
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware((to) => {
+  if (!process.server) {
+    if (!localStorage.getItem('cachedProviderName') && to.fullPath === "/") {
+      return navigateTo('/login')
+    }
+  }
 });

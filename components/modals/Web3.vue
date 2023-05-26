@@ -1,5 +1,8 @@
 <script setup lang="ts">
 const emit = defineEmits(['destroy'])
+defineProps<{
+  buttonClass?: string
+}>()
 
 const { activate, account } = useWeb3()
 
@@ -26,7 +29,7 @@ async function connect(provider: any) {
 }
 
 function isProviderVisible(provider: Provider) {
-  if (provider.name === 'Metamask' && !window.ethereum)
+  if (provider.name === 'Metamask')
     return false
   return true
 }
@@ -42,18 +45,24 @@ whenever(
 
 <template>
   <div class="relative">
-    <div class="flex flex-col items-center justify-center mb-7 gap-4">
-      <span class="text-lg">Connect wallet</span>
-    </div>
+    <slot name="title">
+      <div class="flex flex-col items-center justify-center mb-7 gap-4">
+        <span class="text-lg">Connect wallet</span>
+      </div>
+    </slot>
 
     <ul class="grid gap-[15px] px-2 pb-2">
       <li v-for="provider in providers" :key="provider.name">
         <button
-          v-if="isProviderVisible(provider)" class="px-5 py-[15px] w-full dark:bg-gray-850 bg-slate-100 rounded-[40px] group transition-colors flex items-center gap-4"
+          v-if="isProviderVisible(provider)"
+          class="px-5 py-[15px] w-full dark:bg-gray-850 bg-slate-100 rounded-[40px] group transition-colors flex items-center gap-4"
           :class="
-            provider.name === 'Metamask'
-              ? 'dark:hover:bg-[#282125] hover:bg-[#FEF1E8]'
-              : 'dark:hover:bg-[#15233C] hover:bg-[#EBF2FE]'
+            [
+              provider.name === 'Metamask'
+                ? 'dark:hover:bg-[#282125] hover:bg-[#FEF1E8]'
+                : 'dark:hover:bg-[#15233C] hover:bg-[#EBF2FE]',
+              buttonClass
+            ]
           "
           @click="connect(provider)"
         >
