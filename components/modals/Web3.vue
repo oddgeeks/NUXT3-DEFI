@@ -29,9 +29,11 @@ async function connect(provider: any) {
 }
 
 function isProviderVisible(provider: Provider) {
-  if (provider.name === 'Metamask')
-    return false
-  return true
+  if (process.client) {
+    if (provider.name === 'Metamask' && !window.ethereum)
+      return false
+    return true
+  }
 }
 
 whenever(
