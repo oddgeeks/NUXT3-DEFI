@@ -213,21 +213,23 @@ export function useBridge(fromToken: Ref<IBalance>) {
         routesController = null
 
         if (!data.result.routes.length) {
-          Object.entries(data.result.bridgeRouteErrors).some((i) => {
-            const [provider, error] = i as any
-
-            if (error?.status === 'MIN_AMOUNT_NOT_MET') {
-              form.setFieldError('amount', `Minimum bridge amount is ${fromWei(error.minAmount, fromToken.value.decimals)} ${fromToken.value.symbol.toUpperCase()}`)
-              return true
-            }
+          const minAmountError: any = Object.entries(data.result.bridgeRouteErrors).find(([_, error]: any) => {
+            return error?.status === 'MIN_AMOUNT_NOT_MET'
           })
 
-          throw new Error(
-            'Our bridge provider does not have routes for your desired transfer',
-            {
-              cause: 'no-routes',
-            },
-          )
+          if (minAmountError) {
+            const [_, error] = minAmountError
+
+            form.setFieldError('amount', `Minimum bridge amount is ${fromWei(error.minAmount, fromToken.value.decimals)} ${fromToken.value.symbol.toUpperCase()}`)
+          }
+          else {
+            throw new Error(
+              'Our bridge provider does not have routes for your desired transfer',
+              {
+                cause: 'no-routes',
+              },
+            )
+          }
         }
 
         return data
