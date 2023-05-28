@@ -37,8 +37,9 @@ useIntervalFn(refresh, 1000)
         <ColorModeSwitcher />
         <Web3Button v-if="!$router.currentRoute.value.meta.hideSidebar" />
       </div>
+
       <Transition name="slide-fade">
-        <WarningsVersionUpdate v-if="showVersionUpdateBanner" />
+        <WarningsVersionUpdate v-if="showVersionUpdateBanner && $router.currentRoute.value.name !== 'upgrade'" />
       </Transition>
     </nav>
   </div>

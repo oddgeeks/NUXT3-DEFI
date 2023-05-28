@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type WalletConnect from '@walletconnect/client'
+import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg'
 import NetworkSVG from '~/assets/images/icons/network.svg'
 import FlowersSVG from '~/assets/images/icons/flowers.svg'
 import SVGClockCircle from '~/assets/images/icons/clock-circle.svg'
@@ -23,6 +24,8 @@ const { parseTransactionError } = useErrorHandler()
 const submitDisabled = computed(
   () => submitting.value || pending.value || !!error.value,
 )
+
+const networksSimulationNotSupported = [1313161554]
 
 onMounted(async () => {
   document.title = '(1) Avocado'
@@ -135,9 +138,12 @@ async function handleSubmit() {
   }
 }
 
-const { data: simulationDetails } = useAsyncData(
+const { data: simulationDetails, error: simulationError } = useAsyncData(
   'simulationDetails',
   () => {
+    if (networksSimulationNotSupported.includes(Number(props.chainId)))
+      throw new Error('Simulation not supported on this network.')
+
     return http('/api/simulate', {
       method: 'POST',
       body: {
@@ -252,6 +258,11 @@ onUnmounted(() => {
       :details="simulationDetails"
       :has-error="!!error"
     />
+    <p v-if="simulationError" class="text-xs leading-5 text-orange-400 flex items-center gap-2">
+      <SVGInfoCircle class="w-3" />
+
+      {{ simulationError.message }}
+    </p>
     <div class="flex justify-between items-center gap-4">
       <CommonButton
         color="white"
