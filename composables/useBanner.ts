@@ -73,8 +73,12 @@ export function useBanner() {
     if (isVersionUpdateBannerHidden.value)
       return false
 
-    return allVersions.some(network =>
-      gt(network.latestVersion, network.currentVersion),
+    return allVersions.some((network) => {
+      if (network.notdeployed)
+        return false
+
+      return gt(network.latestVersion, network.currentVersion)
+    },
     )
   })
 
