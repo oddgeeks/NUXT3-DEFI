@@ -44,7 +44,15 @@ async function handleUpgrade(network: NetworkVersion) {
     </td>
     <td class="px-4.5 pb-6.5 sm:pr-7.5 sm:pb-0 sm:pl-0 sm:w-[221px]">
       <CommonButton
-        v-if="isUpgradeAvailable"
+        v-if="network.notdeployed"
+        class="!px-[19px] w-full items-center justify-center"
+        @click="openDeployNetworkModal(network)"
+      >
+        Deploy
+      </CommonButton>
+
+      <CommonButton
+        v-else-if="isUpgradeAvailable"
         class="w-full text-center justify-center"
         @click="handleUpgrade(network)"
       >
