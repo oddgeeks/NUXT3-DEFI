@@ -399,7 +399,7 @@ export const useSafe = defineStore('safe', () => {
 
     try {
       pending.value.gasBalance = true
-      const b = await avoProvider.getBalance(account.value).then(toBN)
+      const b = await avoProvider.getBalance(safeAddress.value).then(toBN)
 
       gasBalance.value = b.div(10 ** 18).toFixed()
     }
