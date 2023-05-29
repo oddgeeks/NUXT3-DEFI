@@ -11,7 +11,7 @@ const router = useRoute()
 const account = router.params.account as string
 
 if (!(await isSafeAddress(account)))
-  throw createError({ statusCode: 404, message: 'Invalid address' })
+  throw createError({ statusCode: 404, message: 'Invalid address or Avocado wallet not deployed yet' })
 </script>
 
 <template>
