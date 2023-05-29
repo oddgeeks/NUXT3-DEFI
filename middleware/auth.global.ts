@@ -1,7 +1,9 @@
 export default defineNuxtRouteMiddleware((to) => {
   if (!process.server) {
-    const cachedProviderName = localStorage.getItem('cachedProviderName');
-    if (!cachedProviderName && (to.fullPath === "/" || to.fullPath === "/upgrade")) {
+    const routesToBeExclude = ['/', '/upgrade'];
+    const shouldExclude = routesToBeExclude.some(route => to.fullPath === route);
+
+    if (!localStorage.getItem('cachedProviderName') && shouldExclude) {
       return navigateTo('/login');
     }
   }

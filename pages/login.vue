@@ -11,7 +11,7 @@ const router = useRouter()
   >
     <ModalsWeb3 @destroy="router.push('/')" button-class="dark:bg-slate-800 bg-slate-100">
       <template #title>
-        <div class="mb-[30px]">
+        <div class="mb-7.5">
           <div class="w-full flex justify-center">
             <SvgAvocadoLogo />
           </div>
