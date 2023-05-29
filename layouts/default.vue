@@ -1,14 +1,13 @@
 <script setup lang="ts">
+const { account } = useWeb3()
 const {
   showTrackingBanner,
   showIncorrectNetworkBanner,
   showInsufficientGasBanner,
   showOnboardBanner,
 } = useBanner()
-
 const route = useRoute()
 
-const { account } = useWeb3()
 const shouldShow = ref(false)
 
 onMounted(() => {
