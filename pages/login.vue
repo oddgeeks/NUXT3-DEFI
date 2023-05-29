@@ -11,17 +11,19 @@ const router = useRouter()
   >
     <ModalsWeb3 @destroy="router.push('/')" button-class="dark:bg-slate-800 bg-slate-100">
       <template #title>
-        <div class="w-full flex justify-center">
-          <SvgAvocadoLogo />
+        <div class="mb-[30px]">
+          <div class="w-full flex justify-center">
+            <SvgAvocadoLogo />
+          </div>
+          <h1 class="mt-5 text-2xl leading-10 font-semibold text-center">
+            Connect to Avocado
+          </h1>
+          <p
+            class="mt-2.5 text-xs leading-6 font-medium text-center text-slate-400"
+          >
+            And enjoy the most user friendly web3 experience
+          </p>
         </div>
-        <h1 class="mt-5 text-2xl leading-10 font-semibold text-center">
-          Connect to Avocado
-        </h1>
-        <p
-          class="mt-2.5 text-xs leading-6 font-medium text-center text-slate-400"
-        >
-          And enjoy the most user friendly web3 experience
-        </p>
       </template>
     </ModalsWeb3>
   </div>

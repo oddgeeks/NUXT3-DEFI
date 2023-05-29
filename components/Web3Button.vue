@@ -17,6 +17,7 @@ const { gasBalance } = storeToRefs(useSafe())
 const [hovered, toggle] = useToggle(false)
 const { setConnectorName, cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
+const router = useRouter()
 
 const ensName = ref()
 const isActualActive = computed(() => {
@@ -31,6 +32,7 @@ async function closeConnection() {
   if (success) {
     trackingAccount.value = ''
     setConnectorName(null)
+    router.push('/login')
     if (connector.value)
       deactivate()
   }
