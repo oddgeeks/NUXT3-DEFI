@@ -217,7 +217,7 @@ async function fetchBestRoute() {
         to: buildTx.result.txTarget,
         data: buildTx.result.txData,
         operation: '0',
-        value: '0',
+        value: buildTx.result.value,
       },
     ]
 
@@ -317,9 +317,8 @@ async function fetchCrossFee() {
       multiplier: combinedFeeParams.multiplier,
     })
   }
-  catch (e) {
-    const parsed = serialize(e)
-    crossFee.value.error = parsed.message
+  catch (e: any) {
+    crossFee.value.error = e.data?.data?.message || e?.message || 'Something went wrong'
   }
   finally {
     crossFee.value.pending = false
@@ -577,7 +576,7 @@ onMounted(() => {
     <CommonNotification
       v-if="totalGassFee.token && isInsufficientBalance"
       type="error"
-      :text="`Not enough ${totalGassFee.token?.symbol.toUpperCase()} balance`"
+      :text="`Not enough ${totalGassFee.token?.symbol.toUpperCase()} balance to pay the bridge gas fee.`"
     >
       <template #action>
         <CommonButton
