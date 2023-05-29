@@ -29,6 +29,7 @@ function onError() {
 
     <ChainLogo
       v-if="chainId"
+      v-tippy="chainIdToName(chainId)"
       :stroke="true"
       class="w-5.5 h-5.5 absolute -left-1 -bottom-1"
       :chain="chainId"

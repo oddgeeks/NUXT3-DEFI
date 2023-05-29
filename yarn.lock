@@ -1646,18 +1646,18 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@instadapp/avocado-base@0.0.18":
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado-base/-/avocado-base-0.0.18.tgz#06bbd875bd0da7c55c03633c1c808df045074f64"
-  integrity sha512-T+MPYeMdXwDSp7EQq4lqxQ5BLZ6xwAWq7dqI81ZV+OGzz8AkKSziKuRrzTfLYpkKcn6KUOK4//H18b5C4ndApQ==
+"@instadapp/avocado-base@0.0.21":
+  version "0.0.21"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado-base/-/avocado-base-0.0.21.tgz#71be6adc2ecca045f35be6b0efeba5444770615b"
+  integrity sha512-HiiEJSLkc5d8ddkIJM0VHKEpLv90NZUy0n5nBd3EwJ8zcoLvL5E3a4KZNcoGBQA8/zlgmA2tNrqymdfcmdvX3A==
   dependencies:
     bignumber.js "^9.1.1"
     ethers "^5.7.2"
 
 "@instadapp/avocado-dev@npm:@instadapp/avocado@dev":
-  version "0.0.0-dev.444944a"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.444944a.tgz#51487b095b4972c90e9ae21cce9d2b2c898007a1"
-  integrity sha512-Ocy63WMX/ZFz/s1YzYBT2L3B6kBSZuHQDgeqn5bluYqajFAvQ/uTtvMZigdTW1Ga6gmjorDZjwKDcikGULfB4g==
+  version "0.0.0-dev.667e8f1"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.667e8f1.tgz#8c2b8234aef23ff4439c39f3d3f75bcf7400d21f"
+  integrity sha512-5u7Efv2sWGr7wJXfcWc6HYuBPHLNnq39f2Wxdg3YiazAkSeFn43ftcZSKJHKl3FxvPML0thJGMAExTiVOxx2TA==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
@@ -2980,6 +2980,13 @@
   dependencies:
     "@vue/shared" "3.2.47"
 
+"@vue/reactivity@3.3.4":
+  version "3.3.4"
+  resolved "https://registry.yarnpkg.com/@vue/reactivity/-/reactivity-3.3.4.tgz#a27a29c6cd17faba5a0e99fbb86ee951653e2253"
+  integrity sha512-kLTDLwd0B1jG08NBF3R5rqULtv/f8x3rOFByTDz4J53ttIQEDmALqKqXY0J+XQeN0aV2FBxY8nJDf88yvOPAqQ==
+  dependencies:
+    "@vue/shared" "3.3.4"
+
 "@vue/runtime-core@3.2.47":
   version "3.2.47"
   resolved "https://registry.yarnpkg.com/@vue/runtime-core/-/runtime-core-3.2.47.tgz#406ebade3d5551c00fc6409bbc1eeb10f32e121d"
@@ -2988,7 +2995,15 @@
     "@vue/reactivity" "3.2.47"
     "@vue/shared" "3.2.47"
 
-"@vue/runtime-dom@3.2.47", "@vue/runtime-dom@^3.2.45":
+"@vue/runtime-core@3.3.4":
+  version "3.3.4"
+  resolved "https://registry.yarnpkg.com/@vue/runtime-core/-/runtime-core-3.3.4.tgz#4bb33872bbb583721b340f3088888394195967d1"
+  integrity sha512-R+bqxMN6pWO7zGI4OMlmvePOdP2c93GsHFM/siJI7O2nxFRzj55pLwkpCedEY+bTMgp5miZ8CxfIZo3S+gFqvA==
+  dependencies:
+    "@vue/reactivity" "3.3.4"
+    "@vue/shared" "3.3.4"
+
+"@vue/runtime-dom@3.2.47":
   version "3.2.47"
   resolved "https://registry.yarnpkg.com/@vue/runtime-dom/-/runtime-dom-3.2.47.tgz#93e760eeaeab84dedfb7c3eaf3ed58d776299382"
   integrity sha512-ArXrFTjS6TsDei4qwNvgrdmHtD930KgSKGhS5M+j8QxXrDJYLqYw4RRcDy1bz1m1wMmb6j+zGLifdVHtkXA7gA==
@@ -2996,6 +3011,15 @@
     "@vue/runtime-core" "3.2.47"
     "@vue/shared" "3.2.47"
     csstype "^2.6.8"
+
+"@vue/runtime-dom@^3.2.45":
+  version "3.3.4"
+  resolved "https://registry.yarnpkg.com/@vue/runtime-dom/-/runtime-dom-3.3.4.tgz#992f2579d0ed6ce961f47bbe9bfe4b6791251566"
+  integrity sha512-Aj5bTJ3u5sFsUckRghsNjVTtxZQ1OyMWCr5dZRAPijF/0Vy4xEoRCwLyHXcj4D0UFbJ4lbx3gPTgg06K/GnPnQ==
+  dependencies:
+    "@vue/runtime-core" "3.3.4"
+    "@vue/shared" "3.3.4"
+    csstype "^3.1.1"
 
 "@vue/server-renderer@3.2.47":
   version "3.2.47"
@@ -3009,6 +3033,11 @@
   version "3.2.47"
   resolved "https://registry.yarnpkg.com/@vue/shared/-/shared-3.2.47.tgz#e597ef75086c6e896ff5478a6bfc0a7aa4bbd14c"
   integrity sha512-BHGyyGN3Q97EZx0taMQ+OLNuZcW3d37ZEVmEAyeoA9ERdGvm9Irc/0Fua8SNyOtV1w6BS4q25wbMzJujO9HIfQ==
+
+"@vue/shared@3.3.4":
+  version "3.3.4"
+  resolved "https://registry.yarnpkg.com/@vue/shared/-/shared-3.3.4.tgz#06e83c5027f464eef861c329be81454bc8b70780"
+  integrity sha512-7OjdcV8vQ74eiz1TZLzZP4JwqM5fA94K6yntPS5Z25r9HDuGNzaGdgvwKYq6S+MxwF0TFRwe50fIR/MYnakdkQ==
 
 "@vueuse/core@10.1.2":
   version "10.1.2"
@@ -4701,6 +4730,11 @@ csstype@^2.6.8:
   version "2.6.21"
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.21.tgz#2efb85b7cc55c80017c66a5ad7cbd931fda3a90e"
   integrity sha512-Z1PhmomIfypOpoMjRQB70jfvy/wxT50qW08YXO5lMIJkrdq4yOTR+AW7FqutScmB9NkLwxo+jU+kZLbofZZq/w==
+
+csstype@^3.1.1:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.1.2.tgz#1d4bf9d572f11c14031f0436e1c10bc1f571f50b"
+  integrity sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==
 
 cuint@^0.2.2:
   version "0.2.2"
