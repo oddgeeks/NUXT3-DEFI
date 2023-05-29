@@ -3,6 +3,7 @@ const { account } = useWeb3()
 const { showVersionUpdateBanner } = useBanner()
 const { avoProvider } = useSafe()
 const { fromWei } = useBignumber()
+const router = useRouter()
 
 const { refresh } = useAsyncData(
   'pending-deposit',
@@ -24,6 +25,10 @@ const { refresh } = useAsyncData(
   },
 )
 
+const userSignOut = () => {
+  router.push('/login')
+}
+
 useIntervalFn(refresh, 1000)
 </script>
 
@@ -35,7 +40,7 @@ useIntervalFn(refresh, 1000)
     <nav class="flex items-center gap-7.5 relative">
       <div class="flex items-center gap-5">
         <ColorModeSwitcher />
-        <Web3Button v-if="!$router.currentRoute.value.meta.hideSidebar" />
+        <Web3Button v-if="!$router.currentRoute.value.meta.hideSidebar" @user-sign-out="userSignOut"/>
       </div>
       <Transition name="slide-fade">
         <WarningsVersionUpdate v-if="showVersionUpdateBanner" />

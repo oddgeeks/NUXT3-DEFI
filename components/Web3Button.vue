@@ -11,13 +11,14 @@ defineProps({
   hidePower: Boolean,
 })
 
+const emit = defineEmits(['user-sign-out'])
+
 const { active, deactivate, account, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
 const { gasBalance } = storeToRefs(useSafe())
 const [hovered, toggle] = useToggle(false)
 const { setConnectorName, cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
-const router = useRouter()
 
 const ensName = ref()
 const isActualActive = computed(() => {
@@ -32,7 +33,7 @@ async function closeConnection() {
   if (success) {
     trackingAccount.value = ''
     setConnectorName(null)
-    router.push('/login')
+    emit('user-sign-out')
     if (connector.value)
       deactivate()
   }

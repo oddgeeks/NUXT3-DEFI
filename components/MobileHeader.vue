@@ -15,6 +15,7 @@ const { setConnectorName } = useConnectors()
 const {
   showTrackingBanner,
 } = useBanner()
+const router = useRouter()
 
 const isActualActive = computed(() => {
   if (trackingAccount.value)
@@ -27,9 +28,14 @@ async function closeConnection() {
 
   if (success) {
     setConnectorName(null)
+    userSignOut()
     if (connector.value)
       deactivate()
   }
+}
+
+const userSignOut = () => {
+  router.push('/login')
 }
 
 watch(() => active.value, () => {
