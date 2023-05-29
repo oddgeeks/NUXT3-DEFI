@@ -212,7 +212,6 @@ const sendingDisabled = computed(
     || swapDetails.value.pending
     || !meta.value.valid
     || feePending.value
-    || isPriceImpactHigh.value
     || !!swapDetails.value.error
     || !!error.value
     || !!slippageError.value,
@@ -293,13 +292,6 @@ const priceImpact = computed(() =>
     .abs()
     .toFixed(),
 )
-
-const isPriceImpactHigh = computed(() => {
-  if (!bestRoute.value)
-    return false
-
-  return toBN(priceImpact.value).gt(actualSlippage.value)
-})
 
 const sellAmountInUsd = computed(() => {
   return toBN(
@@ -811,11 +803,6 @@ onUnmounted(() => {
         v-if="swapDetails.error"
         type="error"
         :text="swapDetails.error"
-      />
-      <CommonNotification
-        v-if="isPriceImpactHigh"
-        type="warning"
-        text="Slippage value should be greater than price impact.  "
       />
     </div>
 
