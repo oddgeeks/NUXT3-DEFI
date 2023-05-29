@@ -35,7 +35,7 @@ useIntervalFn(refresh, 1000)
     <nav class="flex items-center gap-7.5 relative">
       <div class="flex items-center gap-5">
         <ColorModeSwitcher />
-        <Web3Button v-if="!$router.currentRoute.value.meta.hideSidebar"/>
+        <Web3Button v-if="!$router.currentRoute.value.meta.hideSidebar" />
       </div>
       <Transition name="slide-fade">
         <WarningsVersionUpdate v-if="showVersionUpdateBanner" />
