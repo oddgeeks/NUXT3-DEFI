@@ -205,6 +205,11 @@ export default defineNuxtConfig({
   },
 
   vite: {
+    build: {
+      commonjsOptions: {
+        transformMixedEsModules: true,
+      },
+    },
     plugins: [
       ViteComponents({
         dts: true,

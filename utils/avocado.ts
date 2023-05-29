@@ -39,6 +39,13 @@ const swapAggregatorURLStaging = 'https://swap-aggregator.instad.app'
 const swapAggregatorTokenProd = 'hxBA1uxwaGWN0xcpPOncVJ3Tk7FdFxY7g3NX28R14C'
 const swapAggregatorTokenStaging = 'tZIvMelWpiGgfZyDHJLVEygCvXC'
 
+export const walletConnectMetadata = {
+  description: 'Instadapp Avocado - Safe',
+  url: 'https://avocado.instadapp.io',
+  icons: ['https://walletconnect.org/walletconnect-logo.png'],
+  name: 'Instadapp Avocado',
+}
+
 export const swapAggregatorURL = isProd
   ? swapAggregatorURLProd
   : swapAggregatorURLStaging
