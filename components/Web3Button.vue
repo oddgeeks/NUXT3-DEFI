@@ -11,8 +11,6 @@ defineProps({
   hidePower: Boolean,
 })
 
-const emit = defineEmits(['user-sign-out'])
-
 const { active, deactivate, account, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
 const { gasBalance } = storeToRefs(useSafe())
