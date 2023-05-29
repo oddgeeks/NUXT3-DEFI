@@ -339,31 +339,36 @@ async function onSubmit() {
     if (!crossSignatures.value)
       throw new Error('Signatures not found')
 
-    const metadata = encodeCrossTransferMetadata(
-      {
-        fromToken: data.value.tokenAddress,
-        toToken: targetToken.value?.address,
-        toChainId: data.value.toChainId,
-        amount: toWei(data.value.amount, token.value?.decimals),
-        receiver: data.value.address,
-      },
-      true,
-    )
+    // const metadata = encodeCrossTransferMetadata(
+    //   {
+    //     fromToken: data.value.tokenAddress,
+    //     toToken: targetToken.value?.address,
+    //     toChainId: data.value.toChainId,
+    //     amount: toWei(data.value.amount, token.value?.decimals),
+    //     receiver: data.value.address,
+    //   },
+    //   true,
+    // )
+
+    Object.assign(crossSignatures.value.source, {
+      message: sourceMessage.value,
+    })
+
+    Object.assign(crossSignatures.value.target, {
+      message: targetMessage.value,
+    })
+
+    console.log([crossSignatures.value.source, crossSignatures.value.target])
 
     const transactionHash = await avoProvider.send('api_requestCrosschainTransaction', [crossSignatures.value.source, crossSignatures.value.target])
 
-    console.log({
+    await new Promise(resolve => setTimeout(resolve, 3000))
+
+    const tx = await avoProvider.send('api_getCrosschainTransaction', [
       transactionHash,
-      crossSignatures: crossSignatures.value,
+    ])
 
-    })
-
-    // wait 10 sec
-    // await new Promise(resolve => setTimeout(resolve, 10000))
-
-    // const tx = await avoProvider.send('api_getCrosschainTransaction', [
-    //   transactionHash,
-    // ])
+    console.log(tx)
 
     // console.log(tx)
 
@@ -403,6 +408,44 @@ async function onSubmit() {
   finally {
     isSubmitting.value = false
   }
+}
+
+function handleSwapToken() {
+  const nativeToken = totalGassFee.value.token
+
+  const balancedToken = tokenBalances.value.find(
+    t =>
+      gt(t.balance, '0')
+        && String(t.chainId) == String(data.value.fromChainId)
+        && t.symbol !== nativeToken?.symbol,
+  )
+
+  const fallbackToken = tokenBalances.value.find(
+    i => String(i.chainId) == String(data.value.fromChainId),
+  )
+
+  const isSameToken
+      = token.value?.symbol.toLowerCase()
+      === nativeToken?.symbol.toLowerCase()
+
+  const fromToken = !isSameToken
+    ? token.value
+    : balancedToken || fallbackToken
+
+  const fromAmount = toBN(totalGassFee.value.amountInUsd)
+    .div(fromToken?.price || '0')
+    .toFixed(5)
+
+  const fromAmountWithExtra = toBN(fromAmount)
+    .multipliedBy('1.01')
+    .toFixed(5)
+
+  openSwapModal(
+    fromToken?.address!,
+    data.value.fromChainId,
+    nativeToken?.address,
+    fromAmountWithExtra,
+  )
 }
 
 onMounted(() => {
@@ -540,6 +583,7 @@ onMounted(() => {
         <CommonButton
           size="sm"
           class="flex gap-[6px] items-center justify-center"
+          @click="handleSwapToken"
         >
           <RefreshSVG class="w-[14px] h-[14px]" />
           Swap Token
