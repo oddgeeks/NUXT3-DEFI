@@ -7,10 +7,17 @@ const {
 } = useBanner()
 
 const route = useRoute()
+
+const { account } = useWeb3()
+const shouldShow = ref(false)
+
+onMounted(() => {
+  shouldShow.value = true;
+})
 </script>
 
 <template>
-  <section class="flex flex-col h-full">
+  <section v-if="shouldShow" class="flex flex-col h-full">
     <BannerAccountTracking v-if="showTrackingBanner" />
 
     <div class="flex ">
