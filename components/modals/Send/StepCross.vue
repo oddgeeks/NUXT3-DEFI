@@ -339,27 +339,23 @@ async function fetchCrossFee() {
       },
     }) as ICrossEstimatedFee
 
-    const combinedFeeParams = [resp.target, resp.source].reduce(
-      (acc, curr) => {
-        acc.fee = toBN(acc.fee).plus(toBN(curr.fee)).toString()
-        acc.multiplier = toBN(acc.multiplier).plus(toBN(curr.multiplier)).toString()
-
-        if (curr.discount?.name) {
-          const discount = curr.discount as never
-          acc.discount.push(discount)
-        }
-
-        return acc
-      },
-      { fee: '0', multiplier: '0', discount: [] },
-    )
-
-    crossFee.value.data = calculateEstimatedFee({
+    const targetFee = calculateEstimatedFee({
       chainId: String(data.value.fromChainId),
-      fee: combinedFeeParams.fee,
-      multiplier: combinedFeeParams.multiplier,
-      discountDetails: combinedFeeParams.discount,
+      fee: resp.target.fee,
+      multiplier: resp.target.multiplier,
+      discountDetails: resp.target.discount?.name ? [resp.target.discount] : [],
     })
+
+    const sourceFee = calculateEstimatedFee({
+      chainId: String(data.value.fromChainId),
+      fee: resp.source.fee,
+      multiplier: resp.source.multiplier,
+      discountDetails: resp.source.discount?.name ? [resp.source.discount] : [],
+    })
+
+    const mergedFees = calculateMultipleEstimatedFee(targetFee, sourceFee)
+
+    crossFee.value.data = mergedFees
   }
   catch (e: any) {
     crossFee.value.error = e.data?.data?.message || e?.message || 'Something went wrong'

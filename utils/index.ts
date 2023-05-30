@@ -35,6 +35,8 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
       amountAfterDiscount: 0,
       min: 0,
       max: 0,
+      minAmountAfterDiscount: 0,
+      maxAmountAfterDiscount: 0,
       formattedAmountAfterDiscount: '0.00',
       formatted: '0.00',
       discountAvailable: false,
@@ -112,7 +114,58 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
     amountAfterDiscount: maxAmountAfterDiscount,
     formattedAmountAfterDiscount,
     chainId: params.chainId,
+    minAmountAfterDiscount,
+    maxAmountAfterDiscount,
   }
+}
+
+export function calculateMultipleEstimatedFee(...params: ICalculatedFee[]): ICalculatedFee {
+  const mergedFees = params.reduce((acc, fee) => {
+    const discountDetails = acc.discountDetails || []
+    const currentDiscount = fee.discountDetails || []
+
+    acc.amountAfterDiscount = toBN(acc.amountAfterDiscount).plus(fee.amountAfterDiscount).toNumber()
+    acc.discountDetails = [...discountDetails, ...currentDiscount]
+    acc.chainId = fee.chainId
+    acc.min = toBN(acc.min).plus(fee.min).toNumber()
+    acc.max = toBN(acc.max).plus(fee.max).toNumber()
+
+    acc.minAmountAfterDiscount = toBN(acc.minAmountAfterDiscount).plus(fee.minAmountAfterDiscount).toNumber()
+    acc.maxAmountAfterDiscount = toBN(acc.maxAmountAfterDiscount).plus(fee.maxAmountAfterDiscount).toNumber()
+
+    return acc
+  }, {
+    discountDetails: [],
+    amountAfterDiscount: 0,
+    min: 0,
+    max: 0,
+    formattedAmountAfterDiscount: '0.00',
+    formatted: '0.00',
+    discountAvailable: false,
+    chainId: '1',
+    maxAmountAfterDiscount: 0,
+    minAmountAfterDiscount: 0,
+  } as ICalculatedFee)
+
+  mergedFees.discountAvailable = !!mergedFees?.discountDetails && mergedFees?.discountDetails?.length > 0
+
+  const formattedDiscountedAmountMin = formatDecimal(mergedFees.minAmountAfterDiscount, 2)
+  const formattedDiscountedAmount = formatDecimal(mergedFees.maxAmountAfterDiscount, 2)
+
+  const formattedMin = formatDecimal(String(mergedFees.min), 2)
+  const formattedMax = formatDecimal(String(mergedFees.max), 2)
+
+  const isEqual = formattedMin === formattedMax
+
+  mergedFees.formatted = isEqual
+    ? formattedMax
+    : `${formattedMin} - ${formattedMax}`
+
+  mergedFees.formattedAmountAfterDiscount = isEqual
+    ? formattedDiscountedAmount
+    : `${formattedDiscountedAmountMin} - ${formattedDiscountedAmount}`
+
+  return mergedFees
 }
 
 export function formatIPFSUri(ipfs: string) {

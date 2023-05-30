@@ -417,6 +417,8 @@ interface ICalculatedFee {
   max: number;
   formatted: string;
   formattedAmountAfterDiscount: string;
+  minAmountAfterDiscount: number;
+  maxAmountAfterDiscount: number;
   chainId: string;
 }
 
