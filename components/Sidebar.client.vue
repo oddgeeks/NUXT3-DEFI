@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import HomeSVG from '~/assets/images/icons/home.svg'
-import ContactSVG from '~/assets/images/icons/contact.svg'
-import FireSVG from '~/assets/images/icons/fire.svg'
-import CalendarSVG from '~/assets/images/icons/calendar.svg'
-import ArrowRight from '~/assets/images/icons/arrow-right.svg'
-import Avocado from '@/assets/images/icons/avocado.svg'
-import QrSVG from '~/assets/images/icons/qr.svg'
+import HomeSVG from '~/assets/images/icons/home.svg?component'
+import ContactSVG from '~/assets/images/icons/contact.svg?component'
+import FireSVG from '~/assets/images/icons/fire.svg?component'
+import CalendarSVG from '~/assets/images/icons/calendar.svg?component'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
+import Avocado from '@/assets/images/icons/avocado.svg?component'
+import QrSVG from '~/assets/images/icons/qr.svg?component'
 
 const { opened, toggleSidebar } = useSidebar()
 const { safeAddress } = useAvocadoSafe()

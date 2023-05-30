@@ -4,9 +4,9 @@ import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { ethers } from 'ethers'
 import { getAddress } from 'ethers/lib/utils'
-import GasSVG from '~/assets/images/icons/gas.svg'
+import GasSVG from '~/assets/images/icons/gas.svg?component'
 import { Erc20__factory } from '~~/contracts'
-import LinkSVG from '~/assets/images/icons/external-link.svg'
+import LinkSVG from '~/assets/images/icons/external-link.svg?component'
 
 const emit = defineEmits(['destroy'])
 

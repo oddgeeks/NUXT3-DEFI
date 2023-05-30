@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
-import SearchSVG from '~/assets/images/icons/search.svg'
+import SearchSVG from '~/assets/images/icons/search.svg?component'
 
 const searchQuery = ref()
 

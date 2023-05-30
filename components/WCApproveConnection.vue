@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import SVGX from '~/assets/images/icons/x.svg'
-import SVGAlert from '~/assets/images/icons/exclamation-octagon.svg'
-import SVGInfo from '~/assets/images/icons/exclamation-circle.svg'
+import SVGX from '~/assets/images/icons/x.svg?component'
+import SVGAlert from '~/assets/images/icons/exclamation-octagon.svg?component'
+import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
 
 defineProps<{
   connection: any

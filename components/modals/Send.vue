@@ -3,9 +3,9 @@ import { useField, useFieldArray, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { isAddress } from '@ethersproject/address'
 import { Erc20__factory } from '~~/contracts'
-import ContactSVG from '~/assets/images/icons/contact.svg'
-import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg'
-import PlusSVG from '~/assets/images/icons/plus.svg'
+import ContactSVG from '~/assets/images/icons/contact.svg?component'
+import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg?component'
+import PlusSVG from '~/assets/images/icons/plus.svg?component'
 
 const props = defineProps({
   chainId: {

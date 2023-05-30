@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import CheckCircle from '~/assets/images/icons/check-circle.svg'
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
+import CheckCircle from '~/assets/images/icons/check-circle.svg?component'
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
 
 const props = defineProps({
   networks: {

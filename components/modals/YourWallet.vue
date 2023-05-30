@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ExternalLinkSVG from '~/assets/images/icons/external-link.svg'
-import LinkSVG from '~/assets/images/icons/external-link.svg'
+import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
+import LinkSVG from '~/assets/images/icons/external-link.svg?component'
 
 defineProps({
   address: String,
