@@ -216,7 +216,7 @@ async function fetchBestRoute() {
 
     const approvalData = buildTx.result.approvalData
 
-    const transferAmount = bestRoute.value.userTxs[0].steps[0].minAmountOut.toString()
+    const transferAmount = toWei(data.value.amount, token.value?.decimals!).toString()
 
     const targetActions = [
       {
@@ -390,34 +390,23 @@ async function onSubmit() {
       message: targetMessage.value,
     })
 
-    console.log([crossSignatures.value.source, crossSignatures.value.target])
+    const avocadoHash = await avoProvider.send('api_requestCrosschainTransaction', [crossSignatures.value.source, crossSignatures.value.target])
 
-    const transactionHash = await avoProvider.send('api_requestCrosschainTransaction', [crossSignatures.value.source, crossSignatures.value.target])
-
-    await new Promise(resolve => setTimeout(resolve, 3000))
-
-    const tx = await avoProvider.send('api_getCrosschainTransaction', [
-      transactionHash,
-    ])
-
-    console.log(tx)
-
-    if (!transactionHash)
-      throw new Error('Transaction not found')
+    console.log(avocadoHash)
 
     logActionToSlack({
       message: `${formatDecimal(data.value.amount)} ${formatSymbol(
         token.value.symbol,
       )} to ${actualAddress.value}`,
       action: 'send',
-      txHash: transactionHash,
+      txHash: avocadoHash,
       chainId: String(data.value.toChainId),
       account: account.value,
     })
 
     emit('destroy')
 
-    showPendingTransactionModal(transactionHash, data.value.toChainId, 'send')
+    showPendingTransactionModal(avocadoHash, data.value.toChainId, 'send')
   }
   catch (e: any) {
     const err = parseTransactionError(e)
