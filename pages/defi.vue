@@ -355,7 +355,7 @@ watch(safeAddress, () => {
             <td>
               {{ formatUsd(position.positions?.totalSupplyInUsd) }}
             </td>
-            <td>
+            <td class="py-5 pl-7.5">
               {{ formatUsd(position.positions?.totalBorrowInUsd) }}
             </td>
             <td class="pl-10">
