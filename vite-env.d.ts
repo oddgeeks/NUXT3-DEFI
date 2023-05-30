@@ -353,7 +353,7 @@ type SwapMetadataProps = {
 type DiscountDetails = {
   amount: number;
   name: string;
-  tooltip: string;
+  description: string;
 };
 
 type CalculateFeeProps = {

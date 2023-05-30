@@ -58,11 +58,11 @@ defineProps<{
               }})
 
               <QuestionCircleSVG
-                v-if="detail?.tooltip"
+                v-if="detail?.description"
                 v-tippy="{
                   interactive: true,
                   allowHTML: true,
-                  content: detail?.tooltip,
+                  content: detail?.description,
                 }"
                 class="w-4 h-4 text-primary"
               />

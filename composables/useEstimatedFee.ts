@@ -25,7 +25,7 @@ export function useEstimatedFee(
     const discountDetails: DiscountDetails = {
       name: rawData.value?.discount?.name || '',
       amount: rawData.value?.discount?.amount || 0,
-      tooltip: rawData.value?.discount?.description || '',
+      description: rawData.value?.discount?.description || '',
     }
 
     const isDiscountAvailable = !!rawData.value?.discount?.name
