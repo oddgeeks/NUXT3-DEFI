@@ -334,11 +334,13 @@ interface ICrossEstimatedFee {
 interface Source {
   fee: string
   multiplier: string
+  discount: IEstimatedDiscount;
 }
 
 interface Target {
   fee: string
   multiplier: string
+  discount: IEstimatedDiscount;
 }
 
 

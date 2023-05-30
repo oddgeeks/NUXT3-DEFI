@@ -27,16 +27,11 @@ export async function slack(message: string,
 }
 
 export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee {
-  const { fee, multiplier = '0', discountDetails } = params
+  const { fee, multiplier = '0', discountDetails = [] } = params
 
   if (!fee) {
     return {
-      discountDetails: {
-        discount: 0,
-        name: '',
-        tooltip: '',
-      },
-      discountAmount: 0,
+      discountDetails: [],
       amountAfterDiscount: 0,
       min: 0,
       max: 0,
@@ -47,9 +42,7 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
     }
   }
 
-  const discountAvailable = !isZero(discountDetails?.discount || 0)
-
-  const discount = discountDetails?.discount || 0
+  const discountAvailable = discountDetails?.length > 0
 
   const maxVal = toBN(fee)
     .dividedBy(10 ** 18)
@@ -66,15 +59,36 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
   const formattedMin = formatDecimal(String(actualMin), 2)
   const formattedMax = formatDecimal(String(actualMax), 2)
 
-  const discountAmountMin = discountAvailable ? actualMin * discount : 0
-  const discountAmount = discountAvailable ? actualMax * discount : 0
+  let maxAmountAfterDiscount = actualMax
+  let minAmountAfterDiscount = actualMin
 
-  const maxAmountAfterDiscount = discountAvailable
-    ? actualMax - discountAmount
-    : actualMax
-  const minAmountAfterDiscount = discountAvailable
-    ? actualMin - discountAmountMin
-    : actualMin
+  const appliedDiscounts = discountDetails.map((discountDetail) => {
+    const discount = discountDetail.amount
+
+    const discountAvailable = !isZero(discount || 0)
+
+    const discountAmountMin = discountAvailable
+      ? Math.min(
+        minAmountAfterDiscount * discount,
+        minAmountAfterDiscount,
+      )
+      : 0
+    const discountAmount = discountAvailable
+      ? Math.min(
+        maxAmountAfterDiscount * discount,
+        maxAmountAfterDiscount,
+      )
+      : 0
+
+    maxAmountAfterDiscount -= discountAmount
+    minAmountAfterDiscount -= discountAmountMin
+
+    return {
+      ...discountDetail,
+      discountAmountMin,
+      discountAmount,
+    }
+  })
 
   const formattedDiscountedAmountMin = formatDecimal(minAmountAfterDiscount, 2)
   const formattedDiscountedAmount = formatDecimal(maxAmountAfterDiscount, 2)
@@ -91,8 +105,7 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
 
   return {
     discountAvailable,
-    discountDetails,
-    discountAmount,
+    discountDetails: appliedDiscounts,
     min: actualMin,
     max: actualMax,
     formatted,

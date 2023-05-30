@@ -343,15 +343,22 @@ async function fetchCrossFee() {
       (acc, curr) => {
         acc.fee = toBN(acc.fee).plus(toBN(curr.fee)).toString()
         acc.multiplier = toBN(acc.multiplier).plus(toBN(curr.multiplier)).toString()
+
+        if (curr.discount?.name) {
+          const discount = curr.discount as never
+          acc.discount.push(discount)
+        }
+
         return acc
       },
-      { fee: '0', multiplier: '0' },
+      { fee: '0', multiplier: '0', discount: [] },
     )
 
     crossFee.value.data = calculateEstimatedFee({
       chainId: String(data.value.fromChainId),
       fee: combinedFeeParams.fee,
       multiplier: combinedFeeParams.multiplier,
+      discountDetails: combinedFeeParams.discount,
     })
   }
   catch (e: any) {

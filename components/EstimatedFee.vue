@@ -43,23 +43,26 @@ defineProps<{
           </span>
         </template>
       </div>
+
       <template v-if="data.discountAvailable && !loading">
         <div
+          v-for="detail in data.discountDetails"
+          :key="detail.name"
           class="text-xs font-medium text-slate-400 leading-5 flex justify-between items-center w-full"
         >
           <div class="flex items-center gap-1.5">
-            <ChainLogo class="w-[18px] h-[18px]" :chain="data.chainId" />
+            <span class="text-base"> 🎁 </span>
             <p class="flex items-center gap-2">
-              {{ data.discountDetails?.name }} ({{
-                formatPercent(data.discountDetails?.discount, 0)
+              {{ detail?.name }} ({{
+                formatPercent(detail?.amount, 0)
               }})
 
               <QuestionCircleSVG
-                v-if="data.discountDetails?.tooltip"
+                v-if="detail?.tooltip"
                 v-tippy="{
                   interactive: true,
                   allowHTML: true,
-                  content: data.discountDetails?.tooltip,
+                  content: detail?.tooltip,
                 }"
                 class="w-4 h-4 text-primary"
               />
@@ -67,7 +70,7 @@ defineProps<{
           </div>
           <p>
             {{
-              formatDecimal(toBN(data.discountAmount).times(-1).toFixed(), 2)
+              formatDecimal(toBN(detail.discountAmount).times(-1).toFixed(), 2)
             }}
             USDC
           </p>

@@ -351,7 +351,7 @@ type SwapMetadataProps = {
 };
 
 type DiscountDetails = {
-  discount: number;
+  amount: number;
   name: string;
   tooltip: string;
 };
@@ -360,7 +360,7 @@ type CalculateFeeProps = {
   fee?: string;
   multiplier?: string;
   chainId: string;
-  discountDetails?: DiscountDetails;
+  discountDetails?: DiscountDetails[];
 };
 
 interface BuildInfo {
@@ -404,9 +404,13 @@ interface Transaction {
   status: boolean;
 }
 
-interface ICalculatedFee {
-  discountDetails?: DiscountDetails;
+interface AppliedDiscountDetails extends DiscountDetails {
+  discountAmountMin: number;
   discountAmount: number;
+}
+
+interface ICalculatedFee {
+  discountDetails?: AppliedDiscountDetails[];
   amountAfterDiscount: number;
   discountAvailable: boolean;
   min: number;
