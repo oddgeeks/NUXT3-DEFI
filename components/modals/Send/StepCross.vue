@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ethers } from 'ethers'
 import { serialize } from 'error-serializer'
+import { storeToRefs } from 'pinia'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg'
 import RefreshSVG from '~/assets/images/icons/refresh.svg'
 import QuestionSVG from '~/assets/images/icons/question-circle.svg'
@@ -8,6 +9,7 @@ import QuestionSVG from '~/assets/images/icons/question-circle.svg'
 const emit = defineEmits(['destroy'])
 const { isProd } = useAppConfig()
 const { token, stepBack, data, actualAddress, targetToken } = useSend()
+const { gasBalance } = storeToRefs(useSafe())
 const { account } = useWeb3()
 const { toWei, fromWei } = useBignumber()
 const { safeAddress, safe, tokenBalances } = useAvocadoSafe()
@@ -227,18 +229,21 @@ async function fetchBestRoute() {
 
     const sourceActions = [
       {
-        to: approvalData.approvalTokenAddress,
-        data: (new ethers.utils.Interface(ERC20ABI)).encodeFunctionData('approve', [approvalData.allowanceTarget, approvalData.minimumApprovalAmount]),
-        operation: '0',
-        value: '0',
-      },
-      {
         to: buildTx.result.txTarget,
         data: buildTx.result.txData,
         operation: '0',
         value: buildTx.result.value,
       },
     ]
+
+    if (approvalData) {
+      sourceActions.unshift({
+        to: approvalData.approvalTokenAddress,
+        data: (new ethers.utils.Interface(ERC20ABI)).encodeFunctionData('approve', [approvalData.allowanceTarget, approvalData.minimumApprovalAmount]),
+        operation: '0',
+        value: '0',
+      })
+    }
 
     const tMessage = await safe.value?.generateSignatureMessage(
       targetActions,
@@ -264,6 +269,16 @@ async function fetchBestRoute() {
     isSubmitting.value = false
   }
 }
+
+const crossFeeError = computed(() => {
+  if (crossFee.value.pending)
+    return
+  if (crossFee.value.error)
+    return crossFee.value.error
+
+  if (toBN(gasBalance.value).lt(crossFee.value.data?.amountAfterDiscount!))
+    return 'Not enough USDC gas'
+})
 
 async function fetchcrossSignatures() {
   try {
@@ -347,7 +362,7 @@ async function fetchCrossFee() {
   }
 }
 const disabled = computed(() => {
-  return !actualAddress.value || crossFee.value.pending || crossFee.value.error || isSubmitting.value || !bestRoute.value || isInsufficientNativeBalance.value || isBalanceExceeded.value
+  return !actualAddress.value || crossFee.value.pending || !!crossFeeError.value || isSubmitting.value || !bestRoute.value || isInsufficientNativeBalance.value || isBalanceExceeded.value
 })
 
 async function onSubmit() {
@@ -575,7 +590,7 @@ onMounted(() => {
     <EstimatedFee
       :loading="crossFee.pending"
       :data="crossFee.data"
-      :error="crossFee.error"
+      :error="crossFeeError"
     />
     <CommonNotification
       v-if="!!error"
