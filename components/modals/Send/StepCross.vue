@@ -122,7 +122,10 @@ const isInsufficientBalance = computed(() => {
 async function fetchQuoteWithGasFee() {
   const maxTries = 3
   let tries = 0
-  let amount = data.value.amount
+  // let amount = data.value.amount
+
+  const desiredAmountInWei = toWei(data.value.amount, token.value?.decimals!)
+  let inputAmountInWei = desiredAmountInWei
 
   while (tries < maxTries) {
     const quoteRoute: ISocketQuoteResult = await http('/api/socket/v2/quote', {
@@ -131,7 +134,7 @@ async function fetchQuoteWithGasFee() {
         toChainId: data.value.toChainId,
         fromTokenAddress: token.value?.address,
         toTokenAddress: targetToken.value?.address,
-        fromAmount: toWei(amount, token.value?.decimals!),
+        fromAmount: inputAmountInWei,
         userAddress: safeAddress.value,
         recipient: safeAddress.value,
         isContractCall: true,
@@ -147,17 +150,23 @@ async function fetchQuoteWithGasFee() {
       throw new Error('No routes has been found')
 
     const route = quoteRoute.result.routes[0]
+    console.log(route)
 
-    const receivedValueInUsd = toBN(route.receivedValueInUsd)
-    const desiredValueInUsd = toBN(data.value.amount).times(targetToken.value?.price || 0)
-    const totalGasFeesInUsd = toBN(route.inputValueInUsd).minus(receivedValueInUsd)
+    const outputAmountInWei = toBN(route.toAmount)
 
-    if (receivedValueInUsd.gte(desiredValueInUsd))
+    if (outputAmountInWei.gte(desiredAmountInWei))
       return route
 
-    const totalGasFeeInAmount = totalGasFeesInUsd.div(token.value?.price || 1)
+    const nextIterationAmountInWei = toBN(desiredAmountInWei).minus(outputAmountInWei)
+    inputAmountInWei = nextIterationAmountInWei.plus(inputAmountInWei).times(1.005).toFixed(0) // increasing by 0.5%
+    // const receivedValueInUsd = toBN(route.receivedValueInUsd)
+    // const desiredValueInUsd = toBN(data.value.amount).times(targetToken.value?.price || 0)
+    // const totalGasFeesInUsd = toBN(route.inputValueInUsd).minus(receivedValueInUsd)
 
-    amount = toBN(amount).plus(totalGasFeeInAmount).toString()
+
+    // const totalGasFeeInAmount = totalGasFeesInUsd.div(token.value?.price || 1)
+
+    // amount = toBN(amount).plus(totalGasFeeInAmount).toString()
     tries++
   }
 
