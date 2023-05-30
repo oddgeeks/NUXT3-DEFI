@@ -83,6 +83,12 @@ function openBridge() {
         <CalendarSVG class="w-4 h-4" />
         History
       </NuxtLink>
+      <NuxtLink
+        class="flex h-11 items-center gap-2.5"
+        to="/defi"
+      >
+        Defi
+      </NuxtLink>
     </div>
     <div class="flex flex-col w-full gap-2 border-b-1 dark:border-slate-750 border-slate-150 px-7.5 py-4 text-slate-400">
       <button

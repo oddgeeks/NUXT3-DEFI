@@ -485,4 +485,25 @@ interface IEstimatedFeeData {
  interface Discount {
   max: number
   amount: number
+ }
+ type ImportProtocolKeys =
+  | "aave-v3"
+  | "aave-v2"
+  | "compound"
+  | "compound-v3"
+  | "makerdao";
+
+ interface DefiApis {
+  protocol: ImportProtocolKeys;
+  protocolId: number;
+  apiPath: string;
+  chainId: number;
+  logoURI?: string;
+  label: string;
+}
+
+interface Positions extends DefiApis {
+  positions: any;
+  vaultId?: string;
+  id: string;
 }
