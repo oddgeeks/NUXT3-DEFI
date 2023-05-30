@@ -27,6 +27,7 @@ import SelectContact from '~/components/modals/SelectContact.vue'
 import NFTDetails from '~/components/modals/NFTDetails.vue'
 import SendNFT from '~/components/modals/SendNFT.vue'
 import SupportedNetworks from '~/components/modals/SupportedNetworks.vue'
+import PendingCrossTransaction from '~/components/modals/PendingCrossTransaction.vue'
 import QrCode from '~/components/modals/QrCode.vue'
 
 const { openModal } = useModal()
@@ -386,6 +387,17 @@ export function openQrCode() {
     options: {
       wrapperClass: '!bg-transparent max-w-[510px]',
       contentClass: '!pt-6',
+    },
+  })
+}
+
+export function showPendingCrossTransaction(avocadoHash: string, fromChainId: number | string, toChainId: number | string) {
+  openModal({
+    component: PendingCrossTransaction,
+    componentProps: {
+      fromChainId,
+      toChainId,
+      avocadoHash,
     },
   })
 }

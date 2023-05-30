@@ -392,8 +392,6 @@ async function onSubmit() {
 
     const avocadoHash = await avoProvider.send('api_requestCrosschainTransaction', [crossSignatures.value.source, crossSignatures.value.target])
 
-    console.log(avocadoHash)
-
     logActionToSlack({
       message: `${formatDecimal(data.value.amount)} ${formatSymbol(
         token.value.symbol,
@@ -406,7 +404,7 @@ async function onSubmit() {
 
     emit('destroy')
 
-    showPendingTransactionModal(avocadoHash, data.value.toChainId, 'send')
+    showPendingCrossTransaction(avocadoHash, data.value.fromChainId, data.value.toChainId)
   }
   catch (e: any) {
     const err = parseTransactionError(e)

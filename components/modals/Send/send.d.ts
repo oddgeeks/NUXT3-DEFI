@@ -371,3 +371,88 @@ type TotalFee = {
     amountInUsd: string,
     token: IBalance | null,
 }
+
+interface ICrossChainTx {
+  id: string
+  owner_address: string
+  safe_address: any
+  source_transaction_id: any
+  source_payload: SourcePayload
+  source_status: string
+  source_transaction_hash: any
+  source_delayed_until: string
+  source_delayed_count: number
+  source_chain_id: string
+  source_safe_nonce: string
+  source_error: string
+  target_transaction_id: any
+  target_payload: TargetPayload
+  target_status: string
+  target_transaction_hash: any
+  target_delayed_until: any
+  target_delayed_count: number
+  target_chain_id: string
+  target_safe_nonce: string
+  target_error: any
+  status: string
+  created_at: string
+  updated_at: string
+  source_transaction: any
+  target_transaction: any
+}
+
+interface SourcePayload {
+  owner: string
+  chainId: string
+  message: Message
+  signature: string
+}
+
+interface Message {
+  params: Params
+  actions: Action[]
+  avoSafeNonce: string
+}
+
+interface Params {
+  id: string
+  gas: string
+  source: string
+  metadata: string
+  validUntil: string
+}
+
+interface Action {
+  data: string
+  value: string
+  target: string
+  operation: string
+}
+
+interface TargetPayload {
+  owner: string
+  chainId: string
+  message: Message2
+  signature: string
+}
+
+interface Message2 {
+  params: Params2
+  actions: Action2[]
+  avoSafeNonce: string
+}
+
+interface Params2 {
+  id: string
+  gas: string
+  source: string
+  metadata: string
+  validUntil: string
+}
+
+interface Action2 {
+  data: string
+  value: string
+  target: string
+  operation: string
+}
