@@ -60,7 +60,14 @@ const totalReceivedAmount = computed(() => {
   if (!bestRoute.value)
     return '0'
 
-  return toBN(bestRoute.value.receivedValueInUsd).div(targetToken.value?.price || 1).toString()
+  return fromWei(bestRoute.value.toAmount, targetToken.value?.decimals).toFixed()
+})
+
+const totalReceivedAmountInUsd = computed(() => {
+  if (!bestRoute.value)
+    return '0'
+
+  return toBN(totalReceivedAmount.value).times(targetToken.value?.price || 0).toFixed()
 })
 
 const totalInputAmount = computed(() => {
@@ -68,6 +75,13 @@ const totalInputAmount = computed(() => {
     return '0'
 
   return fromWei(bestRoute.value.fromAmount, token.value?.decimals).toString()
+})
+
+const isBalanceExceeded = computed(() => {
+  if (!bestRoute.value)
+    return false
+
+  return toBN(totalInputAmount.value).gt(token.value?.balance || '0')
 })
 
 const bridgeFee = computed(() => {
@@ -112,7 +126,7 @@ const bridgeFee = computed(() => {
   return fees
 })
 
-const isInsufficientBalance = computed(() => {
+const isInsufficientNativeBalance = computed(() => {
   if (!totalGassFee.value.token)
     return false
 
@@ -122,7 +136,6 @@ const isInsufficientBalance = computed(() => {
 async function fetchQuoteWithGasFee() {
   const maxTries = 3
   let tries = 0
-  // let amount = data.value.amount
 
   const desiredAmountInWei = toWei(data.value.amount, token.value?.decimals!)
   let inputAmountInWei = desiredAmountInWei
@@ -150,7 +163,11 @@ async function fetchQuoteWithGasFee() {
       throw new Error('No routes has been found')
 
     const route = quoteRoute.result.routes[0]
-    console.log(route)
+
+    const isMaxAmount = toBN(data.value.amount).eq(token.value?.balance || '0')
+
+    if (isMaxAmount)
+      return route
 
     const outputAmountInWei = toBN(route.toAmount)
 
@@ -159,14 +176,7 @@ async function fetchQuoteWithGasFee() {
 
     const nextIterationAmountInWei = toBN(desiredAmountInWei).minus(outputAmountInWei)
     inputAmountInWei = nextIterationAmountInWei.plus(inputAmountInWei).times(1.005).toFixed(0) // increasing by 0.5%
-    // const receivedValueInUsd = toBN(route.receivedValueInUsd)
-    // const desiredValueInUsd = toBN(data.value.amount).times(targetToken.value?.price || 0)
-    // const totalGasFeesInUsd = toBN(route.inputValueInUsd).minus(receivedValueInUsd)
 
-
-    // const totalGasFeeInAmount = totalGasFeesInUsd.div(token.value?.price || 1)
-
-    // amount = toBN(amount).plus(totalGasFeeInAmount).toString()
     tries++
   }
 
@@ -289,7 +299,10 @@ async function fetchcrossSignatures() {
 
 async function fetchCrossFee() {
   try {
-    if (isInsufficientBalance.value)
+    if (isInsufficientNativeBalance.value)
+      return
+
+    if (isBalanceExceeded.value)
       return
 
     crossFee.value.pending = true
@@ -334,7 +347,7 @@ async function fetchCrossFee() {
   }
 }
 const disabled = computed(() => {
-  return !actualAddress.value || crossFee.value.pending || crossFee.value.error || isSubmitting.value || !bestRoute.value || isInsufficientBalance.value
+  return !actualAddress.value || crossFee.value.pending || crossFee.value.error || isSubmitting.value || !bestRoute.value || isInsufficientNativeBalance.value || isBalanceExceeded.value
 })
 
 async function onSubmit() {
@@ -346,17 +359,6 @@ async function onSubmit() {
 
     if (!crossSignatures.value)
       throw new Error('Signatures not found')
-
-    // const metadata = encodeCrossTransferMetadata(
-    //   {
-    //     fromToken: data.value.tokenAddress,
-    //     toToken: targetToken.value?.address,
-    //     toChainId: data.value.toChainId,
-    //     amount: toWei(data.value.amount, token.value?.decimals),
-    //     receiver: data.value.address,
-    //   },
-    //   true,
-    // )
 
     Object.assign(crossSignatures.value.source, {
       message: sourceMessage.value,
@@ -377,8 +379,6 @@ async function onSubmit() {
     ])
 
     console.log(tx)
-
-    // console.log(tx)
 
     if (!transactionHash)
       throw new Error('Transaction not found')
@@ -541,7 +541,7 @@ onMounted(() => {
             </span>
 
             <span class="text-slate-400">
-              ({{ formatUsd(bestRoute?.receivedValueInUsd || "0") }})
+              ({{ formatUsd(totalReceivedAmountInUsd) }})
             </span>
           </p>
         </div>
@@ -583,7 +583,7 @@ onMounted(() => {
       :text="error"
     />
     <CommonNotification
-      v-if="totalGassFee.token && isInsufficientBalance"
+      v-if="totalGassFee.token && isInsufficientNativeBalance"
       type="error"
       :text="`Not enough ${totalGassFee.token?.symbol.toUpperCase()} balance to pay the bridge gas fee.`"
     >
@@ -598,5 +598,10 @@ onMounted(() => {
         </CommonButton>
       </template>
     </CommonNotification>
+    <CommonNotification
+      v-if="isBalanceExceeded"
+      type="warning"
+      text="The amount you are trying to send is more than your balance, please reduce the amount."
+    />
   </form>
 </template>
