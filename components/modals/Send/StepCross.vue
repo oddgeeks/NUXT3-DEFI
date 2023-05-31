@@ -250,7 +250,7 @@ async function fetchBestRoute() {
       fromToken: token.value?.address,
       toToken: targetToken.value?.address,
       toChainId: data.value.toChainId,
-      amount: transferAmount,
+      amount: bestRoute.value.toAmount,
       receiver: data.value.address,
     })
 
