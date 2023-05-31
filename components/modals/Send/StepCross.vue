@@ -2,6 +2,7 @@
 import { ethers } from 'ethers'
 import { serialize } from 'error-serializer'
 import { storeToRefs } from 'pinia'
+import { parse } from 'semver'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg'
 import RefreshSVG from '~/assets/images/icons/refresh.svg'
 import QuestionSVG from '~/assets/images/icons/question-circle.svg'
@@ -29,6 +30,8 @@ const isSubmitting = ref(false)
 const crossSignatures = ref<ICrossSignatures>()
 const targetMessage = ref()
 const sourceMessage = ref()
+
+const { data: networkVersions } = useNuxtData('allNetworkVersions')
 
 const defaultFee = calculateEstimatedFee({
   chainId: String(data.value.toChainId),
@@ -333,6 +336,9 @@ async function fetchCrossFee() {
 
     crossFee.value.pending = true
 
+    const sourceVersion = networkVersions.value.find((i: any) => i.chainId == data.value.fromChainId)?.currentVersion
+    const targetVersion = networkVersions.value.find((i: any) => i.chainId == data.value.toChainId)?.currentVersion
+
     const resp = await $fetch('/api/cross-chain/estimate', {
       method: 'POST',
       body: {
@@ -347,6 +353,8 @@ async function fetchCrossFee() {
         },
         signer: account.value,
         avocadoSafe: safeAddress.value,
+        sourceVersion: parse(sourceVersion)?.major,
+        targetVersion: parse(targetVersion)?.major,
       },
     }) as ICrossEstimatedFee
 
