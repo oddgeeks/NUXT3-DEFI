@@ -21,7 +21,7 @@ const { data: crossTx, error } = useAsyncData<ICrossChainTx>('cross-tx-details',
       props.avocadoHash,
     ]) as ICrossChainTx
 
-    if (tx.status === 'success')
+    if (tx?.status === 'success')
       return tx
 
     if (tx?.source_error)
