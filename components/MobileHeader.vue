@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import Avocado from '@/assets/images/icons/avocado.svg'
-import Hamburger from '@/assets/images/icons/hamburger.svg'
-import SVGX from '~/assets/images/icons/x.svg'
-import PowerSVG from '~/assets/images/icons/power.svg'
-import QrSVG from '~/assets/images/icons/qr.svg'
-import ExternalLinkSVG from '~/assets/images/icons/external-link.svg'
-import InstadappSVG from '@/assets/images/logo/instadapp.svg'
+import Avocado from '@/assets/images/icons/avocado.svg?component'
+import Hamburger from '@/assets/images/icons/hamburger.svg?component'
+import SVGX from '~/assets/images/icons/x.svg?component'
+import PowerSVG from '~/assets/images/icons/power.svg?component'
+import QrSVG from '~/assets/images/icons/qr.svg?component'
+import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
+import InstadappSVG from '@/assets/images/logo/instadapp.svg?component'
 
 const { active, deactivate, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()

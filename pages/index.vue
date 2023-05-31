@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import LinkSVG from '~/assets/images/icons/external-link.svg?raw'
-import CheckCircle from '~/assets/images/icons/check-circle.svg'
-import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg'
+import CheckCircle from '~/assets/images/icons/check-circle.svg?component'
+import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg?component'
 
 const { account } = useWeb3()
 const { unstableDappNetworks } = useBanner()

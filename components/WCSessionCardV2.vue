@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SessionTypes } from '@walletconnect/types'
-import SVGX from '~/assets/images/icons/x.svg'
-import LinkSVG from '~/assets/images/icons/external-link.svg'
+import SVGX from '~/assets/images/icons/x.svg?component'
+import LinkSVG from '~/assets/images/icons/external-link.svg?component'
 
 const props = defineProps<{
   session: SessionTypes.Struct

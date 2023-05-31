@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type WalletConnect from '@walletconnect/client'
-import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg'
-import SVGX from '~/assets/images/icons/x.svg'
-import LinkSVG from '~/assets/images/icons/external-link.svg'
+import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg?component'
+import SVGX from '~/assets/images/icons/x.svg?component'
+import LinkSVG from '~/assets/images/icons/external-link.svg?component'
 
 defineProps<{
   session: WalletConnect

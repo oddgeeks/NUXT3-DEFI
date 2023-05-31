@@ -3,7 +3,7 @@ import * as yup from 'yup'
 import { isAddress } from '@ethersproject/address'
 import { useField, useForm } from 'vee-validate'
 import { storeToRefs } from 'pinia'
-import ClipboardSVG from '~/assets/images/icons/clipboard.svg'
+import ClipboardSVG from '~/assets/images/icons/clipboard.svg?component'
 import type { IToken } from '~~/stores/tokens'
 import { Erc20__factory } from '~~/contracts'
 
