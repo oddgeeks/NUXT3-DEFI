@@ -3,9 +3,9 @@ import { ethers } from 'ethers'
 import { serialize } from 'error-serializer'
 import { storeToRefs } from 'pinia'
 import { parse } from 'semver'
-import ArrowRight from '~/assets/images/icons/arrow-right.svg'
-import RefreshSVG from '~/assets/images/icons/refresh.svg'
-import QuestionSVG from '~/assets/images/icons/question-circle.svg'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
+import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
+import QuestionSVG from '~/assets/images/icons/question-circle.svg?component'
 
 const emit = defineEmits(['destroy'])
 const { isProd } = useAppConfig()
