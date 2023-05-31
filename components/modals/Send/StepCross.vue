@@ -552,7 +552,7 @@ onMounted(() => {
           <span class="font-medium inline-flex gap-2.5 items-center">
             Amount receiving on dest. address
 
-            <QuestionSVG v-tippy="'The final amount that will be credited to destination wallet after deducting all fee components.'" class="w-4.5 h-4.5 text-slate-500" />
+            <QuestionSVG v-tippy="`Amount bridged to ${chainIdToName(data.toChainId)} wallet will be ${formatDecimal(totalReceivedAmount)} ${token?.symbol?.toUpperCase()} (after deducting fees) & final amount credited to destination address(${shortenHash(data.address)}) will be ${data.amount} ${token?.symbol?.toUpperCase()}`" class="w-4.5 h-4.5 text-slate-500" />
 
           </span>
           <p class="flex items-center gap-2.5">
