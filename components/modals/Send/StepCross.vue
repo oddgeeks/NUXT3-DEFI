@@ -380,6 +380,8 @@ const disabled = computed(() => {
 })
 
 async function onSubmit() {
+  const formattedNetwork = `:${formatChainName(data.value.fromChainId)}: → :${formatChainName(data.value.toChainId)}: Cross-chain Send Transaction`
+
   try {
     if (!token.value || !data.value)
       return
@@ -407,6 +409,7 @@ async function onSubmit() {
       txHash: avocadoHash,
       chainId: String(data.value.toChainId),
       account: account.value,
+      network: formattedNetwork,
     })
 
     emit('destroy')
@@ -427,6 +430,7 @@ async function onSubmit() {
       type: 'error',
       account: account.value,
       errorDetails: err.parsed,
+      network: formattedNetwork,
     })
   }
   finally {

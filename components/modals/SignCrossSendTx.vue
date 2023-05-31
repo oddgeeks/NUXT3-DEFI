@@ -83,7 +83,7 @@ watch(signatures, () => {
         <h1 class="text-xs text-slate-400">
           Source Approval
         </h1>
-        <div class="flex flex-col gap-2.5">
+        <div class="flex flex-col gap-2.5 items-center">
           <ChainLogo class="w-[60px] h-[60px]" :chain="sourceChainId" />
           <span class="text-sm"> {{ chainIdToName(sourceChainId) }}</span>
         </div>
@@ -95,7 +95,7 @@ watch(signatures, () => {
         <h1 class="text-xs text-slate-400">
           Source Approval
         </h1>
-        <div class="flex flex-col gap-2.5">
+        <div class="flex flex-col gap-2.5 items-center">
           <ChainLogo class="w-[60px] h-[60px]" :chain="targetChainId" />
           <span class="text-sm"> {{ chainIdToName(targetChainId) }}</span>
         </div>
