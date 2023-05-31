@@ -68,13 +68,6 @@ const totalReceivedAmount = computed(() => {
   return fromWei(bestRoute.value.toAmount, targetToken.value?.decimals).toFixed()
 })
 
-const totalReceivedAmountInUsd = computed(() => {
-  if (!bestRoute.value)
-    return '0'
-
-  return toBN(totalReceivedAmount.value).times(targetToken.value?.price || 0).toFixed()
-})
-
 const totalInputAmount = computed(() => {
   if (!bestRoute.value)
     return '0'
@@ -165,7 +158,7 @@ async function fetchQuoteWithGasFee() {
     if (!quoteRoute.success)
       throw new Error('Can\'t get quote, please try again later')
     if (!quoteRoute.result.routes.length)
-      throw new Error('No routes has been found')
+      throw new Error('No routes have been found')
 
     const route = quoteRoute.result.routes[0]
 
@@ -568,11 +561,11 @@ onMounted(() => {
           </span>
           <p class="flex items-center gap-2.5">
             <span class="uppercase text-base">
-              {{ formatDecimal(totalReceivedAmount) }} {{ token?.symbol }}
+              {{ formatDecimal(data.amount) }} {{ token?.symbol }}
             </span>
 
             <span class="text-slate-400">
-              ({{ formatUsd(totalReceivedAmountInUsd) }})
+              ({{ formatUsd(toBN(data.amount).times(token?.price || '0').toFixed()) }})
             </span>
           </p>
         </div>
