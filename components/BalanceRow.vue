@@ -9,6 +9,7 @@ const props = defineProps<{
 }>()
 
 const balance = computed(() => props.tokenBalance as IBalance)
+const liteAPY = ref('')
 
 const {
   priceDiffColor,
@@ -16,7 +17,15 @@ const {
   temporaryDisabled,
   priceDiffClass,
   priceDiffInPercent,
+  fetchLiteAPY,
 } = useGraph(balance)
+
+onMounted(async () => {
+  const apy = await fetchLiteAPY(props.tokenBalance)
+
+  if (apy)
+    liteAPY.value = apy
+})
 </script>
 
 <template>
@@ -25,21 +34,24 @@ const {
       <div class="flex items-center space-x-3">
         <SafeTokenLogo :chain-id="tokenBalance.chainId" :url="tokenBalance.logoURI" />
 
-        <div class="max-w-[220px] w-full">
-          <div
-            class="font-semibold w-44 text-shadow whitespace-nowrap overflow-hidden"
-          >
+        <div class="max-w-[320px] w-full">
+          <div class="flex items-center gap-1.5">
             <span
               v-if="tokenBalance.name.length > 15"
               v-tippy="tokenBalance.name"
             >
               {{ tokenBalance.name }}
+
             </span>
 
             <span v-else>
               {{ tokenBalance.name }}
             </span>
+            <NuxtLink v-if="liteAPY" external target="_blank" to="https://lite.instadapp.io" class="bg-lite font-medium text-lite  text-[10px] leading-[10px] inline-flex items-center justify-center bg-opacity-10 px-2 py-1 rounded-5">
+              Earn  {{ formatPercent(liteAPY) }} APY
+            </NuxtLink>
           </div>
+
           <span
             v-tippy="`${toBN(tokenBalance.balance).toFormat()} ${tokenBalance.symbol?.toUpperCase()}`"
             class="text-sm font-medium text-slate-400 max-w-[256px] uppercase"
