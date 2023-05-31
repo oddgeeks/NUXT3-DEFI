@@ -250,9 +250,20 @@ async function fetchBestRoute() {
       data.value.toChainId,
     )
 
+    const metadata = encodeCrossTransferMetadata({
+      fromToken: token.value?.address,
+      toToken: targetToken.value?.address,
+      toChainId: data.value.toChainId,
+      amount: transferAmount,
+      receiver: data.value.address,
+    })
+
     const sMessage = await safe.value?.generateSignatureMessage(
       sourceActions,
       data.value.fromChainId,
+      {
+        metadata,
+      },
     )
 
     targetMessage.value = tMessage
