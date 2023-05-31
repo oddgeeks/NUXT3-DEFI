@@ -331,7 +331,7 @@ watch(safeAddress, () => {
           </tr>
         </thead>
         <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
-          <tr v-for="position in filteredPositions" :key="position.label + position.chainId">
+          <tr v-for="position in filteredPositions" :key="position.label + position.chainId" class="cursor-pointer" @click="openDefiPositionDetailsModal(position)">
             <td class="py-[26px] pl-7.5">
               <div class="flex items-center gap-3">
                 <div

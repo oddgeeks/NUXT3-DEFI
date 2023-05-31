@@ -26,6 +26,7 @@ import SelectContact from '~/components/modals/SelectContact.vue'
 import NFTDetails from '~/components/modals/NFTDetails.vue'
 import SendNFT from '~/components/modals/SendNFT.vue'
 import SupportedNetworks from '~/components/modals/SupportedNetworks.vue'
+import DefiPositionDetails from '~/components/modals/DefiPositionDetails.vue'
 import QrCode from '~/components/modals/QrCode.vue'
 
 const { openModal } = useModal()
@@ -377,6 +378,18 @@ export function openQrCode() {
     options: {
       wrapperClass: '!bg-transparent max-w-[510px]',
       contentClass: '!pt-6',
+    },
+  })
+}
+
+export function openDefiPositionDetailsModal(position: Positions) {
+  openModal({
+    component: DefiPositionDetails,
+    componentProps: {
+      position,
+    },
+    options: {
+      wrapperClass: 'max-w-[760px]',
     },
   })
 }
