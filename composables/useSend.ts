@@ -66,7 +66,7 @@ export function useSend() {
   const toAvailableNetworks = computed(() => {
     const tokens = tokenBalances.value.filter(t => t.symbol.toLowerCase() === token.value?.symbol.toLowerCase())
 
-    return tokens.map(t => getNetworkByChainId(String(t.chainId))).filter(Boolean)
+    return [...new Set(tokens.map(t => t.chainId))].map(chainId => getNetworkByChainId(chainId)).filter(Boolean)
   })
 
   const isCrossChain = computed(() => String(data.value.fromChainId) !== String(data.value.toChainId))

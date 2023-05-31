@@ -336,8 +336,11 @@ async function fetchCrossFee() {
 
     crossFee.value.pending = true
 
-    const sourceVersion = networkVersions.value.find((i: any) => i.chainId == data.value.fromChainId)?.currentVersion
-    const targetVersion = networkVersions.value.find((i: any) => i.chainId == data.value.toChainId)?.currentVersion
+    const source = networkVersions.value.find((i: any) => i.chainId == data.value.fromChainId)
+    const target = networkVersions.value.find((i: any) => i.chainId == data.value.toChainId)
+
+    const sourceVersion = source?.notdeployed ? source?.latestVersion : source?.currentVersion
+    const targetVersion = target?.notdeployed ? target?.latestVersion : target?.currentVersion
 
     const resp = await $fetch('/api/cross-chain/estimate', {
       method: 'POST',
