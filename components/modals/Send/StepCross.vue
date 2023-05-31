@@ -564,7 +564,7 @@ onMounted(() => {
 
           </span>
           <p class="flex items-center gap-2.5">
-            <span v-tippy="`Amount bridged to ${chainIdToName(data.toChainId)} will be ${totalReceivedAmount} & final amount credited to destination address(${shortenHash(data.address)}) will be ${data.amount} ETH (after deducting fees)`" class="uppercase text-base">
+            <span class="uppercase text-base">
               {{ formatDecimal(totalReceivedAmount) }} {{ token?.symbol }}
             </span>
 
