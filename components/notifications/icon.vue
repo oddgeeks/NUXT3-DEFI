@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import SVGSuccess from '~/assets/images/icons/check-circle.svg'
-import SVGInfo from '~/assets/images/icons/exclamation-circle.svg'
-import SVGTriangle from '~/assets/images/icons/exclamation-triangle.svg'
+import SVGSuccess from '~/assets/images/icons/check-circle.svg?component'
+import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
+import SVGTriangle from '~/assets/images/icons/exclamation-triangle.svg?component'
 import type { Notifications } from '~~/composables/useNotification'
 
 const props = defineProps<{

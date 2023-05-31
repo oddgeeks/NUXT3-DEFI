@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import SVGCheckCircle from '~/assets/images/icons/check-circle.svg'
-import SVGErrorCircle from '~/assets/images/icons/error-circle.svg'
+import SVGCheckCircle from '~/assets/images/icons/check-circle.svg?component'
+import SVGErrorCircle from '~/assets/images/icons/error-circle.svg?component'
 
 defineProps<{
   open?: boolean

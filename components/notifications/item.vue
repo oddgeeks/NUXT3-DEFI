@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SVGX from '~/assets/images/icons/x.svg'
+import SVGX from '~/assets/images/icons/x.svg?component'
 import type { Notifications } from '~~/composables/useNotification'
 
 const props = defineProps<NotificationItem>()

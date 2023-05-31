@@ -6,7 +6,7 @@ import * as yup from 'yup'
 import { useField, useForm } from 'vee-validate'
 
 import LiteYouTubeEmbed from 'vue-lite-youtube-embed'
-import SVGQr from '~/assets/images/icons/qr.svg'
+import SVGQr from '~/assets/images/icons/qr.svg?component'
 
 import 'vue-lite-youtube-embed/style.css'
 

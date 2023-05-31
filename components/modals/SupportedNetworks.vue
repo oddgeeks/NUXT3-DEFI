@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import WorldSVG from '~/assets/images/icons/world.svg'
+import WorldSVG from '~/assets/images/icons/world.svg?component'
 
 const { safeAddress } = useAvocadoSafe()
 const { sortedNetworks } = useNetworks()

@@ -3,7 +3,7 @@ import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { ethers } from 'ethers'
 import { storeToRefs } from 'pinia'
-import SVGX from '~/assets/images/icons/x.svg'
+import SVGX from '~/assets/images/icons/x.svg?component'
 
 const emit = defineEmits(['close'])
 const { parseTransactionError } = useErrorHandler()

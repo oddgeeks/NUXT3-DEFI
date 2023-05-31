@@ -5,7 +5,7 @@ import {
   Forwarder__factory,
   GaslessWallet__factory,
 } from '@/contracts'
-import ArrowRight from '~/assets/images/icons/arrow-right.svg'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 
 const props = defineProps<{
   network: NetworkVersion

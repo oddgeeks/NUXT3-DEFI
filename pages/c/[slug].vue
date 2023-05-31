@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import confetti from 'canvas-confetti'
-import CheckCircle from '~/assets/images/icons/check-circle.svg'
-import GiftSVG from '~/assets/images/icons/gift.svg'
-import SVGX from '~/assets/images/icons/x.svg'
-import GasEmoji from '~/assets/images/icons/gas-emoji.svg'
+import CheckCircle from '~/assets/images/icons/check-circle.svg?component'
+import GiftSVG from '~/assets/images/icons/gift.svg?component'
+import SVGX from '~/assets/images/icons/x.svg?component'
+import GasEmoji from '~/assets/images/icons/gas-emoji.svg?component'
 import type { IPromo } from '~/server/data/promos'
 
 definePageMeta({

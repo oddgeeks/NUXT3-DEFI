@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import PlusSVG from '~/assets/images/icons/plus.svg'
-import ArrowLeft from '~/assets/images/icons/arrow-left.svg'
-import ArrowRight from '~/assets/images/icons/arrow-right.svg'
-import SVGWalletConnect from '~/assets/images/wallet/wallet-connect-lite.svg'
+import PlusSVG from '~/assets/images/icons/plus.svg?component'
+import ArrowLeft from '~/assets/images/icons/arrow-left.svg?component'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
+import SVGWalletConnect from '~/assets/images/wallet/wallet-connect-lite.svg?component'
 import URLWalletConnect from '~/assets/images/wallet/wallet-connect.svg?url'
 
 const { safeAddress } = useAvocadoSafe()
