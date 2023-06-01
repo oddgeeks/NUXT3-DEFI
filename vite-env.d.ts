@@ -505,5 +505,10 @@ interface IEstimatedFeeData {
 interface Positions extends DefiApis {
   positions: any;
   vaultId?: string;
+  apy: string;
   id: string;
+}
+
+interface IDefiActions {
+  getApy: (positions: any) => any
 }

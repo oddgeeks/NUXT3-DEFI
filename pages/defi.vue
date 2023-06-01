@@ -186,10 +186,12 @@ const availablePositions = computed<Positions[]>(() => {
           return {
             ...p,
             label: `${p.label} (${i.marketName})`,
+            apy: actions[p.protocol].getApy(i),
             positions: i,
           }
         })
       }
+
       else if (p.protocol === 'makerdao') {
         return p.positions.map((i: any) => {
           i.totalSupplyInUsd = times(i.collateral, i.price).toFixed()
@@ -198,12 +200,18 @@ const availablePositions = computed<Positions[]>(() => {
           return {
             ...p,
             label: `${p.label} ${i.type} (#${i.id})`,
+            apy: actions[p.protocol].getApy(i),
             positions: i,
             vaultId: i.id,
           }
         })
       }
-      else { return p }
+      else {
+        return {
+          ...p,
+          apy: actions[p.protocol].getApy(p.positions),
+        }
+      }
     })
     .filter(i => gt(i.positions?.totalSupplyInUsd, 0))
     .sort((a, b) =>
@@ -247,6 +255,46 @@ const summarize = computed(() => {
     },
   ]
 })
+
+const actions: Record<ImportProtocolKeys, IDefiActions> = {
+  'aave-v2': {
+    getApy: positions => calculateCommonAPY(positions.data),
+  },
+  'aave-v3': {
+    getApy: positions => calculateCommonAPY(positions.data),
+  },
+  'compound': {
+    getApy: positions => calculateCommonAPY(positions.data),
+  },
+  'makerdao': {
+    getApy: vault => vault.rate,
+  },
+  'compound-v3': {
+    getApy: (positions) => {
+      console.log(positions, 'not implemented yet')
+      return '0'
+    },
+  },
+}
+
+function calculateCommonAPY(positions: any[]) {
+  return positions.reduce((acc: any, curr: any) => {
+    const supplyYield = toBN(curr?.supplyYield || curr?.supplyRate)
+    const borrowYield = toBN(curr?.borrowYield || curr?.borrowRate)
+    const supply = toBN(curr?.supply)
+    const borrow = toBN(curr?.borrow)
+    const priceInUsd = toBN(curr?.priceInUsd)
+    const totalSupplyYield = supplyYield.plus(curr?.supplyRewardRate || curr?.compSupplyApy)
+    const totalBorrowYield = borrowYield.plus(curr?.borrowRewardRate || curr?.compBorrowApy)
+
+    const interest = supply
+      .times(totalSupplyYield)
+      .minus(borrow.times(totalBorrowYield))
+      .times(priceInUsd)
+
+    return toBN(acc).plus(interest)
+  }, 0)
+}
 
 const filteredPositions = computed(() => {
   if (!searchQuery.value)
@@ -359,7 +407,7 @@ watch(safeAddress, () => {
               {{ formatUsd(position.positions?.totalBorrowInUsd) }}
             </td>
             <td class="pl-10">
-              11
+              {{ formatPercent(toBN(position.apy).div(100).toFixed()) }}
             </td>
             <td class="pl-10">
               {{ formatDecimal(2) }}
