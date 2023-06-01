@@ -2,6 +2,7 @@
 defineProps<{
   position: Positions
 }>()
+
 </script>
 
 <template>
@@ -46,17 +47,27 @@ defineProps<{
         <h2 class="text-lg">
           Supplied: {{ formatUsd(position.positions?.totalSupplyInUsd) }}
         </h2>
-        <div class="dark:bg-gray-850 bg-slate-500 rounded-5 flex flex-col gap-1 px-5 py-4">
-          2521 DAI
-        </div>
+        <ul class="dark:bg-gray-850 bg-slate-500 rounded-5 flex flex-col">
+          <template v-if="toBN(position.positions?.totalSupplyInUsd).gt('0')">
+             <DefiPositionRow :item="item" :key="item.key" v-for="item in position.suppliedTokens"/>
+          </template>
+            <p class="py-4.5 px-5 text-center" v-else>
+            No Supplied tokens
+          </p>
+        </ul>
       </div>
       <div class="flex flex-col gap-5">
         <h2 class="text-lg">
           Borrowed: {{ formatUsd(position.positions?.totalBorrowInUsd) }}
         </h2>
-        <div class="dark:bg-gray-850 bg-slate-500 rounded-5 flex flex-col gap-1 px-5 py-4">
-          2521 DAI
-        </div>
+       <ul class="dark:bg-gray-850 bg-slate-500 rounded-5 flex flex-col">
+          <template v-if="toBN(position.positions?.totalBorrowInUsd).gt('0')">
+             <DefiPositionRow :item="item" :borrow="true" :key="item.key" v-for="item in position.borrowedTokens"/>
+          </template>
+          <p class="py-4.5 px-5 text-center" v-else>
+            No borrowed tokens
+          </p>
+        </ul>
       </div>
     </div>
   </div>

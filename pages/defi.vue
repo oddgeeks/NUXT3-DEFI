@@ -187,6 +187,8 @@ const availablePositions = computed<Positions[]>(() => {
             ...p,
             label: `${p.label} (${i.marketName})`,
             apy: actions[p.protocol].getApy(i),
+            borrowedTokens: actions[p.protocol].getBorrowedTokens(i),
+            suppliedTokens: actions[p.protocol].getSuppliedTokens(i),
             positions: i,
           }
         })
@@ -201,6 +203,8 @@ const availablePositions = computed<Positions[]>(() => {
             ...p,
             label: `${p.label} ${i.type} (#${i.id})`,
             apy: actions[p.protocol].getApy(i),
+            borrowedTokens: actions[p.protocol].getBorrowedTokens(i),
+            suppliedTokens: actions[p.protocol].getSuppliedTokens(i),
             positions: i,
             vaultId: i.id,
           }
@@ -210,6 +214,8 @@ const availablePositions = computed<Positions[]>(() => {
         return {
           ...p,
           apy: actions[p.protocol].getApy(p.positions),
+          borrowedTokens: actions[p.protocol].getBorrowedTokens(p.positions),
+          suppliedTokens: actions[p.protocol].getSuppliedTokens(p.positions),
         }
       }
     })
@@ -259,22 +265,60 @@ const summarize = computed(() => {
 const actions: Record<ImportProtocolKeys, IDefiActions> = {
   'aave-v2': {
     getApy: positions => calculateCommonAPY(positions.data),
+    getSuppliedTokens: positions => getCommonSuppliedTokens(positions.data),
+    getBorrowedTokens: positions => getCommonBorrowedTokens(positions.data),
   },
   'aave-v3': {
     getApy: positions => calculateCommonAPY(positions.data),
+    getSuppliedTokens: positions => getCommonSuppliedTokens(positions.data),
+    getBorrowedTokens: positions => getCommonBorrowedTokens(positions.data),
   },
   'compound': {
     getApy: positions => calculateCommonAPY(positions.data),
+    getSuppliedTokens: positions => getCommonSuppliedTokens(positions.data),
+    getBorrowedTokens: positions => getCommonBorrowedTokens(positions.data),
   },
   'makerdao': {
     getApy: vault => vault.rate,
+    getSuppliedTokens: (vault) => {
+      return [{
+        key: vault.tokenKey,
+        price: vault.price,
+        supply: div(vault.totalSupplyInUsd, vault.price).toFixed(),
+      }]
+    },
+    getBorrowedTokens: (vault) => {
+      return [{
+        key: vault.tokenKey,
+        price: vault.price,
+        borrow: div(vault.totalBorrowInUsd, vault.price).toFixed(),
+      }]
+    },
   },
   'compound-v3': {
     getApy: (positions) => {
       console.log(positions, 'not implemented yet')
       return '0'
     },
+    getSuppliedTokens: positions => getCommonSuppliedTokens(positions.tokens),
+    getBorrowedTokens: (positions) => {
+      return [
+        {
+          key: positions.baseConfig.key,
+          price: div(positions.basePosition.borrowInUsd, positions.basePosition.borrow).toFixed(),
+          borrow: positions.basePosition.borrow,
+        },
+      ]
+    },
   },
+}
+
+function getCommonSuppliedTokens(positions: any[]) {
+  return positions.filter((i: any) => gt(i.supply, 0))
+}
+
+function getCommonBorrowedTokens(positions: any[]) {
+  return positions.filter((i: any) => gt(i.borrow, 0))
 }
 
 function calculateCommonAPY(positions: any[]) {

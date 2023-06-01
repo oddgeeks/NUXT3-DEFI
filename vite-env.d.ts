@@ -507,8 +507,12 @@ interface Positions extends DefiApis {
   vaultId?: string;
   apy: string;
   id: string;
+  suppliedTokens: any[];
+  borrowedTokens: any[];
 }
 
 interface IDefiActions {
   getApy: (positions: any) => any
+  getSuppliedTokens: (positions: any) => any[]
+  getBorrowedTokens: (positions: any) => any[]
 }
