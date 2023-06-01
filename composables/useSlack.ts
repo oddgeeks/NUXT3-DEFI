@@ -7,6 +7,7 @@ interface ISlackMessage {
   chainId?: string
   errorDetails?: string
   amountInUsd?: string
+  network?: string
 }
 
 const prefixes: Record<ISlackMessage['action'], string> = {
@@ -45,6 +46,7 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
     account,
     errorDetails,
     amountInUsd = '0',
+    network,
   } = slackMessage
 
   if (ignoredMessages.some(i => message && new RegExp(i).test(message)))
@@ -65,8 +67,10 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
     12,
   )}>`
 
-  if (chainId)
-    message += `\n${'`Network`'} :${formatChainName(chainId)}:`
+  const formattedNetwork = network || (chainId ? `:${formatChainName(chainId)}:` : '')
+
+  if (formattedNetwork)
+    message += `\n${'`Network`'} ${formattedNetwork}`
 
   let logMessage = `${prefix} ${message}\n${'`User`'} ${accountLink}`
 
@@ -88,7 +92,7 @@ export function formatSymbol(str: string, isUpper = true) {
   return `${upper} :${str}:`
 }
 
-export function formatChainName(chainId: string) {
+export function formatChainName(chainId: string | number) {
   const name = chainIdToName(chainId)
   return name.toLowerCase().replace(' ', '-')
 }
