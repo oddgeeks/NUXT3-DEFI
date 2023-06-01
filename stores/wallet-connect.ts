@@ -1,19 +1,13 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import WalletConnect from '@walletconnect/client'
-import type { IClientMeta } from '@walletconnect/types'
-import { signingMethods } from '@walletconnect/utils'
+
 import { v4 as uuidv4 } from 'uuid'
 import { ethers } from 'ethers'
 
-const clientMeta = {
-  description: 'Instadapp Avocado - Safe',
-  url: 'https://avocado.instadapp.io',
-  icons: ['https://walletconnect.org/walletconnect-logo.png'],
-  name: 'Instadapp Avocado',
-}
-
 export const useWalletConnect = defineStore('wallet_connect', () => {
   const safe = useAvocadoSafe()
+  useWalletConnectV2()
+
   const { library, account } = useWeb3()
   const { parseTransactionError } = useErrorHandler()
   const { switchToAvocadoNetwork, switchNetworkByChainId } = useNetworks()
@@ -118,7 +112,7 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
                     = await openWCTransactionModal({
                       chainId: String(wc.chainId),
                       payload,
-                      wc,
+                      session: wc,
                       metadata,
                     })
 
@@ -153,7 +147,7 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
                 const { success, payload: msg } = await openWCTransactionModal({
                   chainId: String(wc.chainId),
                   payload,
-                  wc,
+                  session: wc,
                   metadata,
                 })
 
@@ -233,7 +227,7 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
                       = await openWCTransactionModal({
                         chainId: String(wc.chainId),
                         payload,
-                        wc,
+                        session: wc,
                         metadata,
                         isSign: true,
                         signMessageDetails: eip712Data.message.details,
@@ -348,7 +342,7 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
   ): Promise<{
     connector: WalletConnect
     chainId: number | undefined
-    peerMeta: IClientMeta
+    peerMeta: any
     storageId: string
   }> => {
     const storageId = `wc_${safe.safeAddress.value}_${uuidv4()}`
@@ -357,18 +351,18 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
     return await Promise.race([
       new Promise((resolve, reject) => {
         setTimeout(() => {
-          reject(new Error('NOPE'))
+          reject(new Error('Timeout. Something went wrong'))
         }, 5000)
       }),
       new Promise<{
         connector: WalletConnect
         chainId: number
-        peerMeta: IClientMeta
+        peerMeta: any
         storageId: string
       }>((resolve, reject) => {
         const connector = new WalletConnect({
           uri,
-          clientMeta,
+          clientMeta: walletConnectMetadata,
           storageId,
           signingMethods: [
             ...signingMethods,
@@ -465,9 +459,24 @@ export const useWalletConnect = defineStore('wallet_connect', () => {
     return unsupportedDapps.some(dapp => url.includes(dapp))
   }
 
+  function getConnectionVersion(uri: string): 1 | 2 {
+    const v1Pattern = /^wc:[a-zA-Z0-9-]+@1\?/
+    const v2Pattern = /^wc:[a-zA-Z0-9]+@2\?/
+
+    if (v1Pattern.test(uri))
+      return 1
+
+    else if (v2Pattern.test(uri))
+      return 2
+
+    else
+      throw new Error('Invalid connection URI')
+  }
+
   return {
     sessions,
     disconnect,
+    getConnectionVersion,
     prepareConnection,
     connect,
     prepareAndConnect,

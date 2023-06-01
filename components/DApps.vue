@@ -1,15 +1,13 @@
 <script lang="ts" setup>
-import PlusSVG from '~/assets/images/icons/plus.svg'
-import SVGX from '~/assets/images/icons/x.svg'
-import ArrowLeft from '~/assets/images/icons/arrow-left.svg'
-import ArrowRight from '~/assets/images/icons/arrow-right.svg'
-import LinkSVG from '~/assets/images/icons/external-link.svg'
-import SVGWalletConnect from '~/assets/images/wallet/wallet-connect-lite.svg'
+import PlusSVG from '~/assets/images/icons/plus.svg?component'
+import ArrowLeft from '~/assets/images/icons/arrow-left.svg?component'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
+import SVGWalletConnect from '~/assets/images/wallet/wallet-connect-lite.svg?component'
 import URLWalletConnect from '~/assets/images/wallet/wallet-connect.svg?url'
-import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg'
 
-const { safeAddress, account } = useAvocadoSafe()
+const { safeAddress } = useAvocadoSafe()
 const wcStore = useWalletConnect()
+const wcStoreV2 = useWalletConnectV2()
 
 const containerRef = ref<any>(null)
 const hasScroll = ref(false)
@@ -17,6 +15,8 @@ const hasScroll = ref(false)
 const { x, arrivedState } = useScroll(containerRef, {
   behavior: 'smooth',
 })
+
+const isAnySessionAvailable = computed(() => wcStore.sessions.length > 0 || wcStoreV2.sessions.length > 0)
 
 async function setScrollAvaibility() {
   if (!containerRef.value)
@@ -72,8 +72,10 @@ async function disconnectAllConnections() {
     },
   })
 
-  if (success)
+  if (success) {
     wcStore.disconnectAll()
+    wcStoreV2.disconnectAll()
+  }
 }
 
 watch(
@@ -93,10 +95,10 @@ watch(
 
 <template>
   <div class="flex flex-col items-baseline gap-[15px]">
-    <div v-if="wcStore.sessions.length" class="flex gap-3 items-center">
+    <div v-if="isAnySessionAvailable" class="flex gap-3 items-center">
       <h1>Connected Dapps</h1>
       <CommonButton
-        v-if="wcStore.sessions.length > 0"
+        v-if="isAnySessionAvailable"
         color="white"
         class="hover:!bg-red-alert hover:!bg-opacity-10 hover:text-red-alert"
         size="sm"
@@ -106,7 +108,7 @@ watch(
       </CommonButton>
     </div>
     <div
-      v-if="wcStore.sessions.length"
+      v-if="isAnySessionAvailable"
       class="flex items-center relative gap-[15px] max-w-full"
     >
       <CommonButton
@@ -128,62 +130,11 @@ watch(
         class="flex items-center relative gap-[15px] scroll-hide overflow-x-auto"
       >
         <template v-for="session in wcStore.sessions">
-          <div
-            v-if="session.peerMeta"
-            :key="session.peerMeta.url"
-            class="flex-1 items-center flex gap-3 p-5 dark:bg-gray-850 bg-slate-50 rounded-5 py-2.5 pr-[14px] pl-4"
-          >
-            <button
-              class="flex text-left gap-3 items-center"
-              @click="openWalletDetailsModal(session)"
-            >
-              <div
-                class="relative inline-block h-7.5 w-7.5 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
-              >
-                <img
-                  v-if="getSessionIconURL(session)"
-                  class="w-full h-full object-fit rounded-[inherit]"
-                  referrerpolicy="no-referrer"
-                  :src="getSessionIconURL(session)"
-                >
+          <WCSessionCard v-if="session.peerMeta" :key="session.peerMeta.url + session.chainId" :session="session" />
+        </template>
 
-                <ChainLogo
-                  class="w-5 h-5 absolute -left-1 -bottom-1"
-                  :chain="String(session.chainId)"
-                />
-              </div>
-
-              <div>
-                <h1
-                  style="width: 118px"
-                  class="text-sm overflow-hidden whitespace-nowrap text-shadow"
-                >
-                  {{ session.peerMeta.name }}
-                </h1>
-                <h2 v-if="wcStore.isDappUnsupported(session.peerMeta.url)" class="text-xs leading-5 text-orange-400 flex items-center gap-1">
-                  Connected
-
-                  <SVGInfoCircle class="w-3" />
-                </h2>
-                <h2 v-else class="text-xs leading-5 text-primary">
-                  Connected
-                </h2>
-              </div>
-            </button>
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              :href="session.peerMeta.url"
-            >
-              <LinkSVG class="text-primary" />
-            </a>
-            <button
-              v-tippy="'Disconnect'"
-              @click="handleDisconnectWallet(session)"
-            >
-              <SVGX class="text-slate-400 h-[18px] w-[18px]" />
-            </button>
-          </div>
+        <template v-for="session in wcStoreV2.sessions">
+          <WCSessionCardV2 v-if="session.peer.metadata" :key="session.peer.metadata.url" :session="session" />
         </template>
       </div>
       <div

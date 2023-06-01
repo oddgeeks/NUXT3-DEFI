@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { IBalance } from '~/stores/safe'
-import Options from '@/assets/images/icons/options.svg'
+import Options from '@/assets/images/icons/options.svg?component'
 
 const props = defineProps<{
   tokenBalance: IBalance

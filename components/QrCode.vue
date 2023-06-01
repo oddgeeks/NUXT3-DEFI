@@ -1,5 +1,5 @@
 <script setup>
-import ExternalLinkSVG from '~/assets/images/icons/external-link.svg'
+import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
 
 const { safeAddress, isSafeAddress } = useAvocadoSafe()
 const account = computed(() => safeAddress.value || '0x000000000000000')

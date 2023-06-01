@@ -1,17 +1,18 @@
 <script lang="ts" setup>
-const { account } = useWeb3()
+import { storeToRefs } from 'pinia'
+
 const { showVersionUpdateBanner } = useBanner()
-const { avoProvider } = useSafe()
+const { avoProvider, safeAddress } = storeToRefs(useSafe())
 const { fromWei } = useBignumber()
 
 const { refresh } = useAsyncData(
   'pending-deposit',
   async () => {
-    if (!account.value)
+    if (!safeAddress.value)
       return '0'
 
-    const amountInWei = await avoProvider.send('eth_getBalance', [
-      account.value,
+    const amountInWei = await avoProvider.value.send('eth_getBalance', [
+      safeAddress.value,
       'pending-deposit',
     ])
 
@@ -20,7 +21,7 @@ const { refresh } = useAsyncData(
   {
     immediate: true,
     server: false,
-    watch: [account],
+    watch: [safeAddress],
   },
 )
 

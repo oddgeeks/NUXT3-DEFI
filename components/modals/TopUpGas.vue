@@ -2,11 +2,11 @@
 import { storeToRefs } from 'pinia'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
-import { toChecksumAddress } from '@walletconnect/utils'
 import { ethers } from 'ethers'
-import GasSVG from '~/assets/images/icons/gas.svg'
+import { getAddress } from 'ethers/lib/utils'
+import GasSVG from '~/assets/images/icons/gas.svg?component'
 import { Erc20__factory } from '~~/contracts'
-import LinkSVG from '~/assets/images/icons/external-link.svg'
+import LinkSVG from '~/assets/images/icons/external-link.svg?component'
 
 const emit = defineEmits(['destroy'])
 
@@ -75,7 +75,7 @@ function getUSDCByChainId(chainId: string | number) {
   return tokenBalances.value.find(
     t =>
       t.chainId == chainId
-      && toChecksumAddress(t.address) === toChecksumAddress(usdcAddr),
+      && getAddress(t.address) === getAddress(usdcAddr),
   )!
 }
 

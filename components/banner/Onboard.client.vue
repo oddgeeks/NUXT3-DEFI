@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import SVGX from '~/assets/images/icons/x.svg'
-import WaveSVG from '~/assets/images/icons/wave.svg'
+import SVGX from '~/assets/images/icons/x.svg?component'
+import WaveSVG from '~/assets/images/icons/wave.svg?component'
 
 const { hideOnboardBanner } = useBanner()
 const { totalEoaBalance, eoaBalances, fundedEoaNetworks } = useAvocadoSafe()

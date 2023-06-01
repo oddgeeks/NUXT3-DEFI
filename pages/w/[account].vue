@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ExclamationCircleSVG from '~/assets/images/icons/exclamation-circle.svg'
+import ExclamationCircleSVG from '~/assets/images/icons/exclamation-circle.svg?component'
 
 definePageMeta({
   hideSidebar: true,

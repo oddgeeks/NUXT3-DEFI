@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ExternalLinkSVG from '~/assets/images/icons/external-link.svg'
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
+import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
 
 const props = defineProps<{
   asset: NFTData
