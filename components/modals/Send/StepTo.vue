@@ -4,6 +4,8 @@ import ContactSVG from '~/assets/images/icons/contact.svg'
 
 const { data, stepBack, stepForward, actualAddress, toAvailableNetworks } = useSend()
 
+const { query } = useRoute()
+
 const {
   value: address,
   meta: addressMeta,
@@ -46,6 +48,7 @@ watch(() => data.value.toChainId, () => {
       <span class="text-sm">Network</span>
       <CommonSelect
         v-model="data.toChainId"
+        :disabled="!query?.crossChainSend"
         value-key="chainId"
         label-key="name"
         icon-key="icon"
