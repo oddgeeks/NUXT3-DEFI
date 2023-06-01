@@ -15,15 +15,20 @@ const positions = ref<Positions[]>([])
 
 const searchQuery = ref('')
 
-const defiApis = computed<DefiApis[]>(() => [
+const makerdaoDefiURL = 'https://makerdao.com'
+const compoundDefiURL = 'https://compound.finance'
+const aaveDefiURL = 'https://aave.com'
+
+const defaultDefiApis: DefiApis[] = [
   {
     protocol: 'makerdao',
     apiPath: '/mainnet/makerdao/vaults',
-    proceedOnNativeNetwork: true,
     protocolId: 6,
     chainId: 1,
     logoURI: MakerUrl,
     label: 'MakerDAO',
+    instadappURL: 'https://defi.instadapp.io/makerdao',
+    defiURL: makerdaoDefiURL,
   },
   {
     protocol: 'compound',
@@ -32,6 +37,8 @@ const defiApis = computed<DefiApis[]>(() => [
     chainId: 1,
     logoURI: CompoundUrl,
     label: 'Compound',
+    instadappURL: 'https://defi.instadapp.io/compound',
+    defiURL: compoundDefiURL,
   },
   {
     protocol: 'compound-v3',
@@ -40,6 +47,8 @@ const defiApis = computed<DefiApis[]>(() => [
     chainId: 1,
     logoURI: CompoundUrl,
     label: 'Compound V3',
+    instadappURL: 'https://defi.instadapp.io/compound-v3',
+    defiURL: compoundDefiURL,
   },
 
   {
@@ -49,6 +58,8 @@ const defiApis = computed<DefiApis[]>(() => [
     chainId: 1,
     logoURI: AaveV2Url,
     label: 'Aave V3',
+    instadappURL: 'https://defi.instadapp.io/aave-v3',
+    defiURL: aaveDefiURL,
   },
   {
     protocol: 'aave-v3',
@@ -57,6 +68,8 @@ const defiApis = computed<DefiApis[]>(() => [
     chainId: 137,
     logoURI: AaveV2Url,
     label: 'Aave V3',
+    instadappURL: 'https://polygon.instadapp.io/aave-v3',
+    defiURL: aaveDefiURL,
   },
   {
     protocol: 'aave-v3',
@@ -65,6 +78,8 @@ const defiApis = computed<DefiApis[]>(() => [
     chainId: 42161,
     logoURI: AaveV2Url,
     label: 'Aave V3',
+    instadappURL: 'https://arbitrum.instadapp.io/aave-v3',
+    defiURL: aaveDefiURL,
   },
   {
     protocol: 'aave-v3',
@@ -73,6 +88,8 @@ const defiApis = computed<DefiApis[]>(() => [
     chainId: 43114,
     logoURI: AaveV2Url,
     label: 'Aave V3',
+    instadappURL: 'https://avalanche.instadapp.io/aave-v3',
+    defiURL: aaveDefiURL,
   },
   {
     protocol: 'aave-v3',
@@ -81,6 +98,8 @@ const defiApis = computed<DefiApis[]>(() => [
     chainId: 10,
     logoURI: AaveV2Url,
     label: 'Aave V3',
+    instadappURL: 'https://optimism.instadapp.io/aave-v3',
+    defiURL: aaveDefiURL,
   },
 
   {
@@ -90,6 +109,8 @@ const defiApis = computed<DefiApis[]>(() => [
     chainId: 1,
     logoURI: AaveV2Url,
     label: 'Aave V2',
+    instadappURL: 'https://defi.instadapp.io/aave-v2',
+    defiURL: aaveDefiURL,
   },
   {
     protocol: 'aave-v2',
@@ -98,6 +119,8 @@ const defiApis = computed<DefiApis[]>(() => [
     chainId: 137,
     logoURI: AaveV2Url,
     label: 'Aave V2',
+    instadappURL: 'https://polygon.instadapp.io/aave-v2',
+    defiURL: aaveDefiURL,
   },
 
   {
@@ -107,8 +130,14 @@ const defiApis = computed<DefiApis[]>(() => [
     chainId: 43114,
     logoURI: AaveV2Url,
     label: 'Aave V2',
+    instadappURL: 'https://avalanche.instadapp.io/aave-v2',
+    defiURL: aaveDefiURL,
   },
-])
+]
+
+const getDefiProtocolName = (protocol: string) => defaultDefiApis.find(d => d.protocol === protocol)?.label
+
+const defiApis = computed(() => defaultDefiApis)
 
 async function fetchPositions() {
   positions.value = []
@@ -455,6 +484,16 @@ watch(safeAddress, () => {
             </td>
             <td class="pl-10">
               {{ formatDecimal(2) }}
+            </td>
+            <td class="pl-10">
+              <CommonButton color="white" :href="position.defiURL" target="_blank" as="a" @click.stop>
+                {{ getDefiProtocolName(position.protocol) }}
+              </CommonButton>
+            </td>
+            <td class="pl-10">
+              <CommonButton color="blue" :href="position.instadappURL" target="_blank" as="a" @click.stop>
+                Instadapp
+              </CommonButton>
             </td>
           </tr>
         </tbody>

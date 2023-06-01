@@ -500,6 +500,8 @@ interface IEstimatedFeeData {
   chainId: number;
   logoURI?: string;
   label: string;
+  instadappURL: string;
+  defiURL: string;
 }
 
 interface Positions extends DefiApis {

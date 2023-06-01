@@ -34,7 +34,7 @@ const componentToShow = computed(() => {
           color === 'orange',
       },
       {
-        'bg-primary text-white hover:bg-primary-hover dark:disabled:bg-slate-800 dark:disabled:text-slate-500 disabled:text-slate-400 disabled:bg-slate-200':
+        'bg-blue-500 text-white hover:bg-blue-600 dark:disabled:bg-slate-800 dark:disabled:text-slate-500 disabled:text-slate-400 disabled:bg-slate-200':
           color === 'blue',
       },
       {
