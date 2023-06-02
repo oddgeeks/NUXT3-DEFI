@@ -217,19 +217,22 @@ export const useSafe = defineStore('safe', () => {
             '0x0000000000000000000000000000000000000001',
           )
 
-          const currentVersion = await wallet.DOMAIN_SEPARATOR_VERSION()
+          try {
+            const currentVersion = await wallet.DOMAIN_SEPARATOR_VERSION()
+            obj.currentVersion = currentVersion
+          }
+          catch (e) {
+            obj.notdeployed = true
+            obj.currentVersion = '0.0.0'
+          }
 
           obj.latestVersion = latestVersion
-          obj.currentVersion = currentVersion
 
           return obj
         }
         catch (e) {
-          // console.log(e);
           obj.notdeployed = true
 
-          obj.latestVersion = '0.0.0'
-          obj.currentVersion = '0.0.0'
           return obj
         }
       })
@@ -396,7 +399,7 @@ export const useSafe = defineStore('safe', () => {
 
     try {
       pending.value.gasBalance = true
-      const b = await avoProvider.getBalance(account.value).then(toBN)
+      const b = await avoProvider.getBalance(safeAddress.value).then(toBN)
 
       gasBalance.value = b.div(10 ** 18).toFixed()
     }

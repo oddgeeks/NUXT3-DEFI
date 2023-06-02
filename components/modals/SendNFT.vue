@@ -3,10 +3,10 @@ import * as yup from 'yup'
 import { ethers } from 'ethers'
 import { useField, useForm } from 'vee-validate'
 import { isAddress } from '@ethersproject/address'
-import ExternalLinkSVG from '~/assets/images/icons/external-link.svg'
-import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg'
-import BrokenSVG from '~/assets/images/icons/broken.svg'
-import ContactSVG from '~/assets/images/icons/contact.svg'
+import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
+import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg?component'
+import BrokenSVG from '~/assets/images/icons/broken.svg?component'
+import ContactSVG from '~/assets/images/icons/contact.svg?component'
 
 const props = defineProps<{
   asset: NFTData

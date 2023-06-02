@@ -1,16 +1,19 @@
 import type IWalletConnect from '@walletconnect/client'
+import type { SessionTypes } from '@walletconnect/types'
 import Bridge from '~~/components/modals/Bridge.vue'
 import Swap from '~~/components/modals/Swap.vue'
 import PendingTransaction from '~~/components/modals/PendingTransaction.vue'
-import Send from '~~/components/modals/Send.vue'
+import Send from '~~/components/modals/Send/Main.vue'
+import SignCrossSendTx from '~~/components/modals/SignCrossSendTx.vue'
 import TopUpGas from '~~/components/modals/TopUpGas.vue'
 import WalletConnect from '~~/components/modals/WalletConnect.vue'
 import WalletConnectDetails from '~~/components/modals/WalletConnectDetails.vue'
+import WalletConnectDetailsV2 from '~~/components/modals/WalletConnectDetailsV2.vue'
 import TokenSelection from '~~/components/modals/TokenSelection.vue'
 import ImportToken from '~~/components/modals/ImportToken.vue'
 import CustomToken from '~~/components/modals/CustomToken.vue'
 import WCTransaction from '~~/components/modals/WCTransaction.vue'
-import PowerOffSVG from '~/assets/images/icons/power-off-bg.svg'
+import PowerOffSVG from '~/assets/images/icons/power-off-bg.svg?component'
 import Dialog from '~~/components/modals/Dialog.vue'
 import CustomTx from '~~/components/modals/CustomTx.vue'
 import UpgradeVersion from '~~/components/modals/UpgradeVersion.vue'
@@ -24,6 +27,7 @@ import SelectContact from '~/components/modals/SelectContact.vue'
 import NFTDetails from '~/components/modals/NFTDetails.vue'
 import SendNFT from '~/components/modals/SendNFT.vue'
 import SupportedNetworks from '~/components/modals/SupportedNetworks.vue'
+import PendingCrossTransaction from '~/components/modals/PendingCrossTransaction.vue'
 import QrCode from '~/components/modals/QrCode.vue'
 import AddAuthority from '~/components/modals/AddAuthority.vue'
 
@@ -45,7 +49,8 @@ interface DialogModalProps {
 interface IWcTransactionModal {
   payload: any
   chainId: string
-  wc: IWalletConnect
+  session?: IWalletConnect
+  sessionV2?: SessionTypes.Struct
   metadata: string
   isSign?: boolean
   signMessageDetails?: any
@@ -108,7 +113,7 @@ export function openSendModal(chainId: number | string,
       contact,
     },
     options: {
-      wrapperClass: 'max-w-[600px]',
+      wrapperClass: '!max-w-fit',
     },
   })
 }
@@ -151,6 +156,15 @@ export function openWalletDetailsModal(session: any) {
   })
 }
 
+export function openWalletDetailsModalV2(session: SessionTypes.Struct) {
+  openModal({
+    component: WalletConnectDetailsV2,
+    componentProps: {
+      session,
+    },
+  })
+}
+
 export async function openTokenSelectionModal(params: any) {
   return openModal({
     component: TokenSelection,
@@ -173,7 +187,8 @@ export const openWCTransactionModal = useThrottleFn(
       componentProps: {
         payload: params.payload,
         chainId: params.chainId,
-        wc: params.wc,
+        session: params.session,
+        sessionV2: params.sessionV2,
         metadata: params.metadata,
         isSign: params.isSign,
         signMessageDetails: params?.signMessageDetails,
@@ -359,12 +374,31 @@ export function openSupportedNetworks() {
   })
 }
 
+export function openSignCrossSendTx(props: ICrossSendParams) {
+  return openModal({
+    async: true,
+    component: SignCrossSendTx,
+    componentProps: props,
+  })
+}
+
 export function openQrCode() {
   openModal({
     component: QrCode,
     options: {
       wrapperClass: '!bg-transparent max-w-[510px]',
       contentClass: '!pt-6',
+    },
+  })
+}
+
+export function showPendingCrossTransaction(avocadoHash: string, fromChainId: number | string, toChainId: number | string) {
+  openModal({
+    component: PendingCrossTransaction,
+    componentProps: {
+      fromChainId,
+      toChainId,
+      avocadoHash,
     },
   })
 }

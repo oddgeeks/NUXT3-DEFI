@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ExternalLinkSVG from '~/assets/images/icons/external-link.svg'
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
+import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
 
 const props = defineProps<{
   asset: NFTData
@@ -12,9 +12,9 @@ const [expanded, toggle] = useToggle(false)
 provide('expanded', expanded)
 provide('toggle', toggle)
 
-const isContractERC1155 = computed(() => props.asset.contractType === 'ERC1155')
+// const isContractERC1155 = computed(() => props.asset.contractType === 'ERC1155')
 
-const disabled = computed(() => isContractERC1155.value)
+// const disabled = computed(() => isContractERC1155.value)
 </script>
 
 <template>
@@ -26,17 +26,17 @@ const disabled = computed(() => isContractERC1155.value)
       :asset="asset"
     />
     <template v-if="!expanded">
-      <div class="flex gap-3 flex-col">
-        <h1 v-if="asset.name" class="text-center text-lg leading-5 flex justify-center gap-2">
+      <div class="flex flex-col gap-3">
+        <h1 v-if="asset.name" class="flex justify-center gap-2 text-lg leading-5 text-center">
           {{ asset.name }}
 
           <NuxtLink external target="_blank" class="shrink-0 text-slate-750 dark:text-slate-150" :to="getExplorerUrl(asset.chainId, `/address/${asset.contractAddress}`)">
-            <ExternalLinkSVG class="shrink-0 w-4" />
+            <ExternalLinkSVG class="w-4 shrink-0" />
           </NuxtLink>
         </h1>
         <h2
           v-if="asset.collectionName"
-          class="text-sm text-slate-400 font-medium text-center"
+          class="text-sm font-medium text-center text-slate-400"
         >
           {{ asset.collectionName }}
         </h2>
@@ -52,7 +52,7 @@ const disabled = computed(() => isContractERC1155.value)
         </summary>
 
         <div class="border-t dark:border-slate-800 px-4 py-[14px] max-h-[300px] overflow-y-auto scroll-style">
-          <ul class="grid grid-cols-2 gap-2 items-baseline">
+          <ul class="grid items-baseline grid-cols-2 gap-2">
             <li v-for="attr in asset.attributes" :key="attr.value" class="dark:bg-slate-800 bg-white flex flex-col rounded-[14px] px-[14px] py-2">
               <span class="text-[10px] leading-4 text-slate-400"> {{ attr.type }}</span>
               <span class="text-xs leading-5">{{ attr.value }}</span>
@@ -60,12 +60,9 @@ const disabled = computed(() => isContractERC1155.value)
           </ul>
         </div>
       </details>
-      <CommonButton :disabled="disabled" class="w-full justify-center" size="lg" @click="$emit('destroy'), openSendNFTModal(asset)">
+      <CommonButton class="justify-center w-full" size="lg" @click="$emit('destroy'), openSendNFTModal(asset)">
         Send NFT
       </CommonButton>
-      <p v-if="isContractERC1155" class="text-sm text-orange-400 text-center">
-        ERC1155 transfer not supported yet
-      </p>
     </template>
   </div>
 </template>

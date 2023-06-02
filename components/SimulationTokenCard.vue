@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import ArrowRight from '~/assets/images/icons/arrow-right.svg'
-import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
+import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg?component'
 
 const props = defineProps<{
   payload: SimulationToken
@@ -31,7 +31,7 @@ const token = asyncComputed(async () => {
 })
 
 const amount = computed(() => {
-  if (toBN(props.payload.amount).gt(1e50))
+  if (toBN(props.payload.amount).gt(1e29))
     return '∞'
 
   return fromWei(props.payload.amount, token.value?.decimals).decimalPlaces(5)

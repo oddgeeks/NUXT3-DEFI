@@ -3,12 +3,12 @@ import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { storeToRefs } from 'pinia'
 import { utils } from 'ethers'
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
 import type { IToken } from '~~/stores/tokens'
 import { Erc20__factory } from '~~/contracts'
-import SVGInfo from '~/assets/images/icons/exclamation-circle.svg'
-import ArrowLeft from '~/assets/images/icons/arrow-left.svg'
-import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg'
+import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
+import ArrowLeft from '~/assets/images/icons/arrow-left.svg?component'
+import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg?component'
 
 interface ISwap {
   sellToken: IToken
@@ -212,7 +212,6 @@ const sendingDisabled = computed(
     || swapDetails.value.pending
     || !meta.value.valid
     || feePending.value
-    || isPriceImpactHigh.value
     || !!swapDetails.value.error
     || !!error.value
     || !!slippageError.value,
@@ -236,9 +235,9 @@ async function fetchSwapDetails() {
 
     swapDetails.value.pending = true
 
-    const data: ISwapResponse = await http(
-      'https://swap-aggregator.instadapp.io/swap',
+    const data: ISwapResponse = await http('/swap',
       {
+        baseURL: swapAggregatorURL,
         signal: abortController.value?.signal,
         params: {
           network: getNetworkByChainId(toChainId.value).name.toLowerCase(),
@@ -248,7 +247,7 @@ async function fetchSwapDetails() {
           maxSlippage: actualSlippage.value,
           slippage: actualSlippage.value,
           user: safeAddress.value,
-          access_token: 'hxBA1uxwaGWN0xcpPOncVJ3Tk7FdFxY7g3NX28R14C',
+          access_token: swapAggregatorAccessToken,
         },
       },
     )
@@ -293,13 +292,6 @@ const priceImpact = computed(() =>
     .abs()
     .toFixed(),
 )
-
-const isPriceImpactHigh = computed(() => {
-  if (!bestRoute.value)
-    return false
-
-  return toBN(priceImpact.value).gt(actualSlippage.value)
-})
 
 const sellAmountInUsd = computed(() => {
   return toBN(
@@ -431,6 +423,11 @@ const onSubmit = handleSubmit(async () => {
       },
     )
 
+    if (!transactionHash) {
+      // tracking mode
+      return
+    }
+
     const buyAmt = fromWei(
       swapDetails.value?.data?.data.buyTokenAmount || 0,
       swapDetails.value?.data?.data.buyToken.decimals,
@@ -451,6 +448,7 @@ const onSubmit = handleSubmit(async () => {
       account: account.value,
       chainId: toChainId.value,
       txHash: transactionHash,
+      amountInUsd: sellAmountInUsd.value,
     })
 
     resetForm()
@@ -805,11 +803,6 @@ onUnmounted(() => {
         v-if="swapDetails.error"
         type="error"
         :text="swapDetails.error"
-      />
-      <CommonNotification
-        v-if="isPriceImpactHigh"
-        type="warning"
-        text="Slippage value should be greater than price impact.  "
       />
     </div>
 

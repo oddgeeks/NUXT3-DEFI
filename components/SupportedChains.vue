@@ -1,6 +1,5 @@
 <script setup lang="ts">
 const props = defineProps({
-  account: String,
   maxCount: {
     type: Number,
     required: false,
@@ -8,6 +7,8 @@ const props = defineProps({
 })
 
 const { sortedNetworks } = useNetworks()
+
+const { safeAddress } = useAvocadoSafe()
 
 const visibleNetworks = computed(() => {
   if (props.maxCount)
@@ -30,9 +31,9 @@ const visibleNetworks = computed(() => {
       }"
     >
       <a
-        v-if="props.account"
+        v-if="safeAddress"
         target="_blank"
-        :href="getExplorerUrl(network.chainId, `/address/${props.account}`)"
+        :href="getExplorerUrl(network.chainId, `/address/${safeAddress}`)"
       >
         <ChainLogo
           :stroke="false"

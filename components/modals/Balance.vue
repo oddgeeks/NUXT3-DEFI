@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import ArrowRight from '~/assets/images/icons/arrow-right.svg'
-import BridgeSVG from '~/assets/images/icons/bridge.svg'
-import RefreshSVG from '~/assets/images/icons/refresh.svg'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
+import BridgeSVG from '~/assets/images/icons/bridge.svg?component'
+import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 import type { IBalance } from '~/stores/safe'
 
 const props = defineProps({
@@ -12,6 +12,7 @@ const props = defineProps({
 })
 
 const balance = computed(() => props.balance as IBalance)
+const liteAPY = ref('')
 
 const {
   priceDiffColor,
@@ -19,7 +20,15 @@ const {
   priceDiffClass,
   priceDiffInPercent,
   temporaryDisabled,
+  fetchLiteAPY,
 } = useGraph(balance)
+
+onMounted(async () => {
+  const apy = await fetchLiteAPY(balance.value)
+
+  if (apy)
+    liteAPY.value = apy
+})
 </script>
 
 <template>
@@ -28,6 +37,10 @@ const {
       <SafeTokenLogo class="h-[60px] w-[60px]" :chain-id="balance.chainId" :url="balance.logoURI" />
 
       <div class="flex flex-col items-center gap-3">
+        <NuxtLink v-if="liteAPY" external target="_blank" to="https://lite.instadapp.io" class="bg-lite font-medium text-lite  text-[10px] leading-[10px] inline-flex items-center justify-center bg-opacity-10 px-2 py-1 rounded-5">
+          Earn  {{ formatPercent(liteAPY) }} APY
+        </NuxtLink>
+
         <span class="text-[26px] leading-[25px]">
           {{ formatDecimal(balance.balance) }}
           {{ balance.symbol.toUpperCase() }}

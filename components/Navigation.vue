@@ -156,7 +156,7 @@ function openBridge() {
         </NuxtLink>
       </div>
     </div>
-    <div v-if="eoaBalances && eoaBalances?.length" class="flex flex-col py-6 px-7.5 text-xs gap-2">
+    <div v-if="eoaBalances && eoaBalances?.length" class="flex flex-col py-6 px-7.5 text-xs gap-[14px]">
       <span class="text-slate-400 text-center sm:text-left">You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet (EOA)</span>
       <div class="flex justify-center sm:justify-start">
         <CommonButton
@@ -164,9 +164,10 @@ function openBridge() {
           as="NuxtLink"
           external
           target="_blank"
+          class="bg-opacity-[14%] !text-primary hover:bg-opacity-20 py-2"
           :to="avoOnboardURL"
         >
-          Import
+          Migrate to Avocado
         </CommonButton>
       </div>
     </div>

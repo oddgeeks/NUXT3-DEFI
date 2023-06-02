@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import WorldSVG from '~/assets/images/icons/world.svg'
+import WorldSVG from '~/assets/images/icons/world.svg?component'
 
-const { account } = useWeb3()
+const { safeAddress } = useAvocadoSafe()
 const { sortedNetworks } = useNetworks()
 
 const suffix = computed<any>(() => {
-  if (account.value)
-    return `/address/${account.value}`
+  if (safeAddress.value)
+    return `/address/${safeAddress.value}`
 })
 </script>
 

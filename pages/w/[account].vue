@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ExclamationCircleSVG from '~/assets/images/icons/exclamation-circle.svg'
+import ExclamationCircleSVG from '~/assets/images/icons/exclamation-circle.svg?component'
 
 definePageMeta({
   hideSidebar: true,
@@ -11,7 +11,7 @@ const router = useRoute()
 const account = router.params.account as string
 
 if (!(await isSafeAddress(account)))
-  throw createError({ statusCode: 404, message: 'Invalid address' })
+  throw createError({ statusCode: 404, message: 'Invalid address or Avocado wallet not deployed yet' })
 </script>
 
 <template>
@@ -49,7 +49,7 @@ if (!(await isSafeAddress(account)))
           <span class="font-semibold inline-flex gap-2.5 text-xs">
             Supported Chains
           </span>
-          <SupportedChains :account="account" class="!flex justify-between" />
+          <SupportedChains class="!flex justify-between" />
         </div>
       </div>
     </div>

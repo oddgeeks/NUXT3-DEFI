@@ -1,17 +1,13 @@
 <script lang="ts" setup>
-import GasSVG from '~/assets/images/icons/gas.svg'
-import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg'
+import GasSVG from '~/assets/images/icons/gas.svg?component'
+import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg?component'
 
-const props = defineProps<{
+defineProps<{
   data: ICalculatedFee
   loading?: boolean
   error?: string
   wrapperClass?: string
 }>()
-
-const discountAvailable = computed(() =>
-  toBN(props.data?.discountAmount).gt(0),
-)
 </script>
 
 <template>
@@ -31,13 +27,13 @@ const discountAvailable = computed(() =>
         <template v-else-if="data">
           <span
             :class="[
-              discountAvailable ? 'text-slate-400' : '',
+              data.discountAvailable ? 'text-slate-400' : '',
               { 'text-red-alert': error },
             ]"
             class="text-xs inline-flex items-center gap-2.5"
           >
             <img
-              v-if="!discountAvailable"
+              v-if="!data.discountAvailable"
               class="w-[18px] h-[18px]"
               width="18"
               height="18"
@@ -47,35 +43,34 @@ const discountAvailable = computed(() =>
           </span>
         </template>
       </div>
-      <template v-if="discountAvailable && !loading">
+
+      <template v-if="data.discountAvailable && !loading">
         <div
+          v-for="detail in data.discountDetails"
+          :key="detail.name"
           class="text-xs font-medium text-slate-400 leading-5 flex justify-between items-center w-full"
         >
           <div class="flex items-center gap-1.5">
-            <img
-              class="w-[18px] h-[18px]"
-              width="18"
-              height="18"
-              :src="data.discountDetails?.iconURL"
-            >
+            <span class="text-base"> 🎁 </span>
             <p class="flex items-center gap-2">
-              {{ data.discountDetails?.name }} ({{
-                formatPercent(data.discountDetails?.discount, 0)
+              {{ detail?.name }} ({{
+                formatPercent(detail?.amount, 0)
               }})
 
               <QuestionCircleSVG
+                v-if="detail?.description"
                 v-tippy="{
                   interactive: true,
                   allowHTML: true,
+                  content: detail?.description,
                 }"
-                :content="data.discountDetails?.tooltip"
                 class="w-4 h-4 text-primary"
               />
             </p>
           </div>
           <p>
             {{
-              formatDecimal(toBN(data.discountAmount).times(-1).toFixed(), 2)
+              formatDecimal(toBN(detail.discountAmount).times(-1).toFixed(), 2)
             }}
             USDC
           </p>

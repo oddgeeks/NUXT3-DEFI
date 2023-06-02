@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import SVGCheckCircle from '~/assets/images/icons/check-circle.svg'
-import SVGErrorCircle from '~/assets/images/icons/error-circle.svg'
-import SVGClockCircle from '~/assets/images/icons/clock-circle.svg'
-import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg'
+import SVGCheckCircle from '~/assets/images/icons/check-circle.svg?component'
+import SVGErrorCircle from '~/assets/images/icons/error-circle.svg?component'
+import SVGClockCircle from '~/assets/images/icons/clock-circle.svg?component'
+import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg?component'
 
 const props = defineProps<{
   status: IAvocadoTransaction['status'] | 'ready' | 'completed'

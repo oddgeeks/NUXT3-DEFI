@@ -33,11 +33,34 @@ export function useGraph(balance: Ref<IBalance>) {
     return 'text-primary'
   })
 
+  async function fetchLiteAPY(tokenBalance: IBalance) {
+    const ethAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+    const isEthAddress = tokenBalance.address.toLowerCase() === ethAddress.toLowerCase()
+    const isMainnet = tokenBalance.chainId === '1'
+
+    if (!isEthAddress || !isMainnet)
+      return
+
+    try {
+      const vaults = await $fetch(`https://api.instadapp.io/v2/mainnet/lite/users/${incorrectAddress}/vaults`) as any[]
+      const v2EthVault = vaults.find(v => v.version === '2' && v.tokenAddress === ethAddress)
+
+      if (!v2EthVault)
+        return
+
+      return div(v2EthVault.apy.apyWithoutFee, 100).toString()
+    }
+    catch (e) {
+      console.log(e)
+    }
+  }
+
   return {
     interactable,
     priceDiffColor,
     priceDiffInPercent,
     priceDiffClass,
     temporaryDisabled,
+    fetchLiteAPY,
   }
 }

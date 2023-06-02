@@ -2,12 +2,6 @@ interface Window {
   ethereum: any;
 }
 
-declare module '*.svg' {
-  import { FunctionalComponent, SVGAttributes } from 'vue'
-  const src: FunctionalComponent<SVGAttributes>
-  export default src
-}
-
 declare module '*.svg?component' {
   import { FunctionalComponent, SVGAttributes } from 'vue'
   const src: FunctionalComponent<SVGAttributes>
@@ -351,17 +345,16 @@ type SwapMetadataProps = {
 };
 
 type DiscountDetails = {
-  discount?: number;
+  amount: number;
   name: string;
-  tooltip: string;
-  iconURL: string;
+  description: string;
 };
 
 type CalculateFeeProps = {
   fee?: string;
   multiplier?: string;
   chainId: string;
-  discountDetails?: DiscountDetails;
+  discountDetails?: DiscountDetails[];
 };
 
 interface BuildInfo {
@@ -405,14 +398,22 @@ interface Transaction {
   status: boolean;
 }
 
-interface ICalculatedFee {
-  discountDetails?: DiscountDetails;
+interface AppliedDiscountDetails extends DiscountDetails {
+  discountAmountMin: number;
   discountAmount: number;
+}
+
+interface ICalculatedFee {
+  discountDetails?: AppliedDiscountDetails[];
   amountAfterDiscount: number;
+  discountAvailable: boolean;
   min: number;
   max: number;
   formatted: string;
   formattedAmountAfterDiscount: string;
+  minAmountAfterDiscount: number;
+  maxAmountAfterDiscount: number;
+  chainId: string;
 }
 
 interface NFTAttributes { 
@@ -469,5 +470,25 @@ interface ITokenPrice {
 interface ILogBalanceParams {
   chainId: number;
   isOnboard: boolean;
-  isPublic: boolean;
- }
+}
+ 
+interface IEstimatedFeeData {
+  fee: string;
+  multiplier: string;
+  discount: IEstimatedDiscount;
+}
+
+ interface IEstimatedDiscount {
+  amount: number
+  transactionCount: number
+  program: string
+  name: string
+  description: string
+}
+
+
+ interface Discount {
+  max: number
+  amount: number
+}
+

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import GloveSVG from '~/assets/images/icons/globe.svg'
+import GloveSVG from '~/assets/images/icons/globe.svg?component'
 
 const { switchToAvocadoNetwork } = useNetworks()
 </script>

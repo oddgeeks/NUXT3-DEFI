@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
+
 const props = defineProps<{
   session: any
 }>()
@@ -91,6 +93,17 @@ watch(chainId, async () => {
           {{ props.session.peerMeta.url }}
         </a>
       </div>
+    </div>
+    <div
+      v-if="wcStore.isDappUnsupported(props.session.peerMeta.url)"
+      class="rounded-5 bg-orange-400 bg-opacity-10 p-4 gap-2.5 flex justify-center"
+    >
+      <SVGInfo class="w-7 text-orange mt-1" />
+      <p
+        class="text-orange text-xs leading-5 font-medium"
+      >
+        This application has been reported to have compatibility issues with Avocado.
+      </p>
     </div>
     <CommonSelect
       v-model="chainId"

@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import Avocado from '@/assets/images/icons/avocado.svg'
-import Hamburger from '@/assets/images/icons/hamburger.svg'
-import SVGX from '~/assets/images/icons/x.svg'
-import PowerSVG from '~/assets/images/icons/power.svg'
-import QrSVG from '~/assets/images/icons/qr.svg'
-import ExternalLinkSVG from '~/assets/images/icons/external-link.svg'
-import InstadappSVG from '@/assets/images/logo/instadapp.svg'
+import Avocado from '@/assets/images/icons/avocado.svg?component'
+import Hamburger from '@/assets/images/icons/hamburger.svg?component'
+import SVGX from '~/assets/images/icons/x.svg?component'
+import PowerSVG from '~/assets/images/icons/power.svg?component'
+import QrSVG from '~/assets/images/icons/qr.svg?component'
+import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
+import InstadappSVG from '@/assets/images/logo/instadapp.svg?component'
 
-const { active, deactivate, connector, account } = useWeb3()
+const { active, deactivate, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
 const { safeAddress } = useAvocadoSafe()
 const [opened, toggle] = useToggle(false)
@@ -66,7 +66,7 @@ watch(() => active.value, () => {
       </button>
 
       <div v-if="!isActualActive">
-        <CommonButton size="md" @click="openWeb3Modal">
+        <CommonButton v-if="!$router.currentRoute.value.meta.hideSidebar" size="md" @click="openWeb3Modal">
           Connect
         </CommonButton>
       </div>
@@ -123,7 +123,7 @@ watch(() => active.value, () => {
           </NuxtLink>
         </div>
         <div class="flex flex-col items-center gap-3">
-          <SupportedChains :account="account" :max-count="6" class="!flex justify-between !gap-4" />
+          <SupportedChains :max-count="6" class="!flex justify-between !gap-4" />
         </div>
       </div>
       <Navigation @navigate="toggle(false)" />

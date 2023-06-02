@@ -6,6 +6,8 @@ interface ISlackMessage {
   txHash?: string
   chainId?: string
   errorDetails?: string
+  amountInUsd?: string
+  network?: string
 }
 
 const prefixes: Record<ISlackMessage['action'], string> = {
@@ -43,16 +45,18 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
     message,
     account,
     errorDetails,
+    amountInUsd = '0',
+    network,
   } = slackMessage
 
   if (ignoredMessages.some(i => message && new RegExp(i).test(message)))
     return
 
-  const prefix = prefixes[action]
+  const prefix = getPrefix(amountInUsd, action)
 
   const explorerLink
     = chainId && txHash
-      ? `<${getExplorerUrl(chainId, `/tx/${txHash}`)}|${shortenHash(
+      ? `<${`${avoExplorerURL}/tx/${txHash}`}|${shortenHash(
           txHash,
           12,
         )}>`
@@ -63,8 +67,10 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
     12,
   )}>`
 
-  if (chainId)
-    message += `\n${'`Network`'} :${formatChainName(chainId)}:`
+  const formattedNetwork = network || (chainId ? `:${formatChainName(chainId)}:` : '')
+
+  if (formattedNetwork)
+    message += `\n${'`Network`'} ${formattedNetwork}`
 
   let logMessage = `${prefix} ${message}\n${'`User`'} ${accountLink}`
 
@@ -86,7 +92,26 @@ export function formatSymbol(str: string, isUpper = true) {
   return `${upper} :${str}:`
 }
 
-export function formatChainName(chainId: string) {
+export function formatChainName(chainId: string | number) {
   const name = chainIdToName(chainId)
   return name.toLowerCase().replace(' ', '-')
+}
+
+function getPrefix(amountInUsd: string, action: ISlackMessage['action']) {
+  const actionPrefix = prefixes[action]
+  let emoji = ''
+
+  if (gte(amountInUsd, '100000'))
+    emoji = '🐳'
+
+  else if (gte(amountInUsd, '10000'))
+    emoji = '🚀'
+
+  else if (gte(amountInUsd, '100'))
+    emoji = '🔥'
+
+  if (emoji)
+    return `${emoji} (${formatUsd(amountInUsd)}) ${actionPrefix}`
+
+  return actionPrefix
 }
