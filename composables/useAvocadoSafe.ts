@@ -125,6 +125,7 @@ export function useAvocadoSafe() {
 
   return {
     safe,
+    signer,
     tokenBalances,
     totalEoaBalance,
     eoaBalances,

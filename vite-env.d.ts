@@ -492,3 +492,20 @@ interface IEstimatedFeeData {
   amount: number
 }
 
+ interface ISafe {
+  fully_deployed: number
+  id: number
+  safe_address: string
+  owner_address: string
+  created_at: string
+  updated_at: string
+  deployed: Record<string, boolean>,
+  version: Record<string, string>
+  authorities: Record<string, string[]>
+}
+
+
+interface IAuthority {
+  address: string
+  chainIds: string[]
+}

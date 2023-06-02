@@ -220,3 +220,15 @@ export const signingMethods = [
   'wallet_watchAsset',
   'wallet_scanQRCode',
 ]
+
+export function generateColor(address: string): string {
+  let hash = 0
+  for (let i = 0; i < address.length; i++)
+    hash = address.charCodeAt(i) + ((hash << 5) - hash)
+
+  const hue = hash % 360
+  const saturation = 50 + (hash % 50)
+  const lightness = 30 + (hash % 40)
+
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`
+}
