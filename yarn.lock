@@ -1715,10 +1715,10 @@
     semver "^7.3.8"
     tiny-warning "^1.0.3"
 
-"@instadapp/avocado@^0.1.11":
-  version "0.1.12"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.1.12.tgz#27dad8ff824df37ea49c32ba59b339f9266f7437"
-  integrity sha512-nhZd/HSmMbRh8NQBd/lbqkACYcqVEVY3eia3iB6p3NfYS9fnXqzFHBFe9MDipWUM8s8sxDHsUXfpf0SHal+avg==
+"@instadapp/avocado@^0.1.13":
+  version "0.1.13"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.1.13.tgz#a4df83edbae03aad4e4ef28c632c00f50dc3529f"
+  integrity sha512-Pqu9c+dfKD39UHF38cC9BY3S/Rb3cyFY9VCaSSVHd/dFkn36ziN54sYovWxI/AE2xj5Ac4fkRq93v48ud64Ysw==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
