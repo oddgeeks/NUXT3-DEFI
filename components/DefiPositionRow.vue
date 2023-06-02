@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
   item: any
-  borrow: boolean
+  borrow?: boolean
 }>()
 
 const { tokens } = storeToRefs(useTokens())

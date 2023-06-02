@@ -491,7 +491,8 @@ interface IEstimatedFeeData {
   | "aave-v2"
   | "compound"
   | "compound-v3"
-  | "makerdao";
+  | "makerdao"
+  | 'lite'
 
  interface DefiApis {
   protocol: ImportProtocolKeys;
@@ -505,9 +506,15 @@ interface IEstimatedFeeData {
 }
 
 interface Positions extends DefiApis {
-  positions: any;
+  positions: {
+    data?: any[]
+    tokens?: any[]
+    totalSupplyInUsd: string
+    totalBorrowInUsd: string
+  } ;
   vaultId?: string;
   apy: string;
+  healtFactor: string;
   id: string;
   suppliedTokens: any[];
   borrowedTokens: any[];

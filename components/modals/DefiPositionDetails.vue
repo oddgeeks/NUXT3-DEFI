@@ -2,7 +2,6 @@
 defineProps<{
   position: Positions
 }>()
-
 </script>
 
 <template>
@@ -25,17 +24,17 @@ defineProps<{
     <h1> {{ position.label }}</h1>
 
     <div class="grid grid-cols-2 gap-5 w-full">
-      <div class="dark:bg-gray-850 bg-slate-500 rounded-5 flex flex-col gap-1 px-5 py-4">
+      <div class="dark:bg-gray-850 bg-slate-50 rounded-5 flex flex-col gap-1 px-5 py-4">
         <p class="text-[26px] leading-[30px]">
-          9.7%
+          {{ formatPercent(toBN(position.apy).div(100).toFixed()) }}
         </p>
         <p class="text-xs text-slate-500">
           Net APY
         </p>
       </div>
-      <div class="dark:bg-gray-850 bg-slate-500 rounded-5 flex flex-col gap-1 px-5 py-4">
+      <div class="dark:bg-gray-850 bg-slate-50 rounded-5 flex flex-col gap-1 px-5 py-4">
         <p class="text-[26px] leading-[30px]">
-          1.24
+          {{ position.healtFactor }}
         </p>
         <p class="text-xs text-slate-500">
           Health Factor
@@ -47,11 +46,11 @@ defineProps<{
         <h2 class="text-lg">
           Supplied: {{ formatUsd(position.positions?.totalSupplyInUsd) }}
         </h2>
-        <ul class="dark:bg-gray-850 bg-slate-500 rounded-5 flex flex-col">
+        <ul class="dark:bg-gray-850 bg-slate-50 rounded-5 flex flex-col">
           <template v-if="toBN(position.positions?.totalSupplyInUsd).gt('0')">
-             <DefiPositionRow :item="item" :key="item.key" v-for="item in position.suppliedTokens"/>
+            <DefiPositionRow v-for="item in position.suppliedTokens" :key="item.key" :item="item" />
           </template>
-            <p class="py-4.5 px-5 text-center" v-else>
+          <p v-else class="py-4.5 px-5 text-center">
             No Supplied tokens
           </p>
         </ul>
@@ -60,11 +59,11 @@ defineProps<{
         <h2 class="text-lg">
           Borrowed: {{ formatUsd(position.positions?.totalBorrowInUsd) }}
         </h2>
-       <ul class="dark:bg-gray-850 bg-slate-500 rounded-5 flex flex-col">
+        <ul class="dark:bg-gray-850 bg-slate-50 rounded-5 flex flex-col">
           <template v-if="toBN(position.positions?.totalBorrowInUsd).gt('0')">
-             <DefiPositionRow :item="item" :borrow="true" :key="item.key" v-for="item in position.borrowedTokens"/>
+            <DefiPositionRow v-for="item in position.borrowedTokens" :key="item.key" :item="item" :borrow="true" />
           </template>
-          <p class="py-4.5 px-5 text-center" v-else>
+          <p v-else class="py-4.5 px-5 text-center">
             No borrowed tokens
           </p>
         </ul>
