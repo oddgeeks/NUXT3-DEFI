@@ -93,7 +93,7 @@ watch(signatures, () => {
       </div>
       <div class="dark:bg-gray-850 rounded-5 p-4 flex flex-col items-center gap-5">
         <h1 class="text-xs text-slate-400">
-          Source Approval
+          Dest. Approval
         </h1>
         <div class="flex flex-col gap-2.5 items-center">
           <ChainLogo class="w-[60px] h-[60px]" :chain="targetChainId" />
