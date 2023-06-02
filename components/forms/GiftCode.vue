@@ -32,7 +32,7 @@ const onSubmit = handleSubmit(async () => {
 
   const signer = browserProvider.getSigner()
 
-  const message = `Avocado wants you to sign in with your web3 account ${
+  let message = `Avocado wants you to sign in with your web3 account ${
     account.value
   }
 
@@ -40,22 +40,27 @@ Action: Redeem code
 Code: ${value.value}
 URI: https://avocado.instadapp.io
 Nonce: {{NONCE}}
+AvoAddress: {{SAFE}}
 Issued At: ${new Date().toISOString()}`
 
   try {
-    const airdropNonce = await avoProvider.send('api_generateNonce', [
+    const nonce = await avoProvider.send('api_generateNonce', [
       account.value,
+      safeAddress.value,
       message,
     ])
 
+    message = message.replaceAll('{{NONCE}}', nonce)
+    message = message.replaceAll('{{SAFE}}', safeAddress.value)
+
     const redeemSignature = await signer.signMessage(
-      message.replaceAll('{{NONCE}}', airdropNonce),
+      message,
     )
 
     const success = await avoProvider.send('api_claimGift', [
       value.value,
       redeemSignature,
-      airdropNonce,
+      nonce,
     ])
 
     if (!success) {
