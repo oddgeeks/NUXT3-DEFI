@@ -137,7 +137,7 @@ watch(safeAddress, () => {
               </CommonButton>
             </td>
             <td>
-              <CommonButton color="blue" :href="position.instadappURL" target="_blank" as="a" @click.stop>
+              <CommonButton v-if="position.instadappURL" color="blue" :href="position.instadappURL" target="_blank" as="a" @click.stop>
                 Instadapp
               </CommonButton>
             </td>

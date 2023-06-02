@@ -129,13 +129,13 @@ export function useDefi() {
     },
     {
       apiPath: '',
+      instadappURL: '',
       label: 'Instadapp Lite',
       chainId: 1,
       protocol: 'lite',
       protocolId: 0,
       logoURI: LiteUrl,
       defiURL: liteDefiURL,
-      instadappURL: liteDefiURL,
     },
   ]
 
