@@ -8,7 +8,8 @@ import StepSubmit from '~~/components/modals/Send/StepSubmit.vue'
 
 interface Initialize {
   fromChainId: number
-  address: string
+  address?: string
+  contact?: IContact
 }
 
 function defaultValues() {
@@ -127,9 +128,17 @@ export function useSend() {
 
     const actualTokenAddress = params.address ?? firstBalancedToken?.address ?? firstToken?.address
 
+    if (!actualTokenAddress) {
+      console.error('No tokens found')
+      return
+    }
+
     data.value.fromChainId = params.fromChainId
     data.value.toChainId = params.fromChainId
     data.value.tokenAddress = actualTokenAddress
+
+    if (params.contact)
+      data.value.address = params.contact.address
   }
 
   const reset = () => {

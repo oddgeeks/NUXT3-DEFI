@@ -25,7 +25,7 @@ const disabled = computed(() => {
 })
 
 async function handleSelectContact() {
-  const result = await openSelectContactModal()
+  const result = await openSelectContactModal(data.value.toChainId)
 
   if (result.success) {
     const _contact = result.payload as IContact
