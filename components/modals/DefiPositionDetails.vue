@@ -41,7 +41,7 @@ defineProps<{
         </p>
       </div>
     </div>
-    <div class="w-full grid grid-cols-2 gap-5">
+    <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-5">
       <div class="flex flex-col gap-5">
         <h2 class="text-lg">
           Supplied: {{ formatUsd(position.positions?.totalSupplyInUsd) }}
