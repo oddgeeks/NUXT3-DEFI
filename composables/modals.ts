@@ -338,10 +338,13 @@ export async function openDeleteContactModal() {
   })
 }
 
-export async function openSelectContactModal() {
+export async function openSelectContactModal(chainId: string | number) {
   return openModal({
     component: SelectContact,
     async: true,
+    componentProps: {
+      chainId,
+    },
   })
 }
 

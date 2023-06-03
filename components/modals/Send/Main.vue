@@ -1,22 +1,46 @@
 <script setup lang='ts'>
 const props = defineProps({
   chainId: {
-    type: String,
+    type: [String, Number],
     required: true,
   },
   address: {
     type: String,
-    required: true,
+    required: false,
+  },
+  contact: {
+    type: Object as PropType<IContact>,
+    required: false,
   },
 })
 defineEmits(['destroy'])
-const { initialize, steps, activeStep, reset, isCrossChain } = useSend()
+
+const { initialize, steps, activeStep, reset, isCrossChain, data } = useSend()
+const contact = ref<IContact | undefined>(props.contact)
 
 initialize({
   fromChainId: +props.chainId,
   address: props.address,
+  contact: props.contact,
 })
 
+async function handleEdit() {
+  if (!props.contact)
+    return
+
+  const result = await openAddContactModal(
+    props.contact.name,
+    props.contact.address,
+    props.contact.chainId,
+    true,
+  )
+
+  if (result.success) {
+    contact.value = result.payload as IContact
+
+    data.value.address = contact.value.address
+  }
+}
 onUnmounted(() => {
   reset()
 })
@@ -26,7 +50,31 @@ onUnmounted(() => {
   <div>
     <h1 class="text-center mb-7.5 text-lg">
       {{ isCrossChain ? 'Cross-chain Send' : 'Send' }}
+      <span v-if="contact"> to {{ contact.name }}  </span>
     </h1>
+    <div
+      v-if="contact"
+      class="flex items-center rounded-5 mb-5 -mt-3 pl-5 pr-4 py-5 dark:bg-gray-850 bg-slate-50 justify-between w-full"
+    >
+      <div class="flex items-center gap-3">
+        <ChainLogo :stroke="false" class="w-7 h-7" :chain="contact.chainId" />
+        <Copy :text="contact.address">
+          <template #content>
+            <span class="dark:text-white text-slate-900">{{
+              shortenHash(contact.address)
+            }}</span>
+          </template>
+        </Copy>
+      </div>
+      <CommonButton
+        :disabled="contact.owner"
+        color="white"
+        class="justify-center dark:bg-slate-800 bg-slate-150 !px-4"
+        @click="handleEdit()"
+      >
+        Edit
+      </CommonButton>
+    </div>
     <ul class="flex gap-2.5 justify-center mb-7.5">
       <li v-for="(step, index) in steps" :key="index" class="flex gap-2.5">
         <div class="flex flex-col items-center justify-center gap-2.5">

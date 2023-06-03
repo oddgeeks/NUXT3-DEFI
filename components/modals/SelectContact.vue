@@ -3,6 +3,13 @@ import Fuse from 'fuse.js'
 import SearchSVG from '~/assets/images/icons/search.svg?component'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 
+const props = defineProps({
+  chainId: {
+    type: [String, Number],
+    required: true,
+  },
+})
+
 const emit = defineEmits(['resolve', 'reject'])
 
 const { safeContacts, getSentTimes } = useContacts()
@@ -18,10 +25,12 @@ const filteredContacts = computed(() => {
   if (!_contacts)
     return []
 
-  if (!searchQuery.value || searchQuery.value.trim().length === 0)
-    return _contacts
+  const filteredContacts = props.chainId ? _contacts.filter(contact => (contact.chainId == props.chainId) || (!contact.chainId)) : _contacts
 
-  const fuse = new Fuse(_contacts, {
+  if (!searchQuery.value || searchQuery.value.trim().length === 0)
+    return filteredContacts
+
+  const fuse = new Fuse(filteredContacts, {
     keys: ['name', 'address'],
     threshold: 0.2,
   })
