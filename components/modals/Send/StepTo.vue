@@ -58,7 +58,7 @@ const { data: totalTransfers } = useAsyncData(
       },
     })
 
-    return res[0].transferCount
+    return res[0]?.transferCount || 0
   },
   {
     watch: [actualAddress, () => data.value.toChainId],
