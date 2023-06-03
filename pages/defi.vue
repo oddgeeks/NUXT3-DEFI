@@ -38,7 +38,7 @@ watch(safeAddress, () => {
     <h1>
       Your DeFi Positions
     </h1>
-    <div class="grid grid-cols-3 gap-5">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
       <div v-for="item in summarize" :key="item.name" class="dark:bg-gray-850 bg-slate-50 rounded-3xl p-5 flex items-center gap-4">
         <div :class="item.color" class="w-[50px] h-[50px] bg-opacity-10 rounded-2xl flex items-center justify-center">
           <component :is="item.icon" />
@@ -65,7 +65,7 @@ watch(safeAddress, () => {
     </CommonInput>
     <div
       style="scrollbar-gutter: stable; overflow-y: overlay"
-      class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] hidden sm:flex scroll-style"
+      class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] flex scroll-style"
     >
       <table
         class="table w-full"
@@ -89,8 +89,8 @@ watch(safeAddress, () => {
             <th class="py-5 pl-10">
               Health Factor
             </th>
-            <th class="py-5 pl-10" />
-            <th class="py-5 pl-10" />
+            <th class="py-5" />
+            <th class="py-5" />
           </tr>
         </thead>
         <tbody class="divide-y dark:divide-slate-800 divide-slate-150">

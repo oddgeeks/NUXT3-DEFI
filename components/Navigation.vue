@@ -10,6 +10,7 @@ import RefreshSVG from '~/assets/images/icons/refresh-2.svg?component'
 import QuestionSVG from '~/assets/images/icons/question-circle-2.svg?component'
 import MoreOptionsSVG from '~/assets/images/icons/more-options.svg?component'
 import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
+import DefiSVG from '~/assets/images/icons/defi.svg?component'
 
 const emit = defineEmits(['navigate'])
 
@@ -84,9 +85,11 @@ function openBridge() {
         History
       </NuxtLink>
       <NuxtLink
+        active-class="text-primary"
         class="flex h-11 items-center gap-2.5"
         to="/defi"
       >
+        <DefiSVG class="w-4 h-4" />
         Defi
       </NuxtLink>
     </div>
