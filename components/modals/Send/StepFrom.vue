@@ -6,10 +6,10 @@ const { data, token, availableTokens, stepForward } = useSend()
 
 const {
   value: amount,
-  setState,
   errorMessage,
   validate,
   errors,
+  setValue,
 } = useField<string>('amount', undefined, {
   initialValue: !isZero(data.value.amount) ? data.value.amount : undefined,
 })
@@ -82,7 +82,7 @@ watch(() => data.value.toChainId, () => {
           <button
             type="button"
             class="text-primary hover:text-primary"
-            @click="setState({ value: token?.balance || '0' })"
+            @click="setValue(token?.balance || '0')"
           >
             MAX
           </button>
