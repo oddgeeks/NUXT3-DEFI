@@ -2,8 +2,9 @@
 import { storeToRefs } from 'pinia'
 
 const { showVersionUpdateBanner } = useBanner()
-const { avoProvider, safeAddress } = storeToRefs(useSafe())
+const { safeAddress } = storeToRefs(useSafe())
 const { fromWei } = useBignumber()
+const { avoProvider } = useSafe()
 
 const { refresh } = useAsyncData(
   'pending-deposit',
@@ -11,7 +12,7 @@ const { refresh } = useAsyncData(
     if (!safeAddress.value)
       return '0'
 
-    const amountInWei = await avoProvider.value.send('eth_getBalance', [
+    const amountInWei = await avoProvider.send('eth_getBalance', [
       safeAddress.value,
       'pending-deposit',
     ])
