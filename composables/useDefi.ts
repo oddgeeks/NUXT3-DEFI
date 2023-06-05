@@ -225,13 +225,28 @@ export function useDefi() {
               },
             ]
 
+            const totalBorrowedAmount = parseFloat(i.basePosition.borrowInUsd)
+
             const suppliedTokens = getCommonSuppliedTokens(i.tokens)
+
+            const totalSuppliedAmount = suppliedTokens.reduce((sum, j) => {
+              return sum + parseFloat(j.supplyInUsd)
+            }, 0)
+
+            const netAssets = totalSuppliedAmount - totalBorrowedAmount
+
+            // Either the supply or borrow will be 0, making the ineterstGenerated positive or negative
+            const ineterstGenerated = minus(
+              times(i.basePosition.supplyInUsd, div(i.basePosition.supplyAPY, 100))
+              , times(i.basePosition.borrowInUsd, div(i.basePosition.borrowAPY, 100)))
+
+            const netAPY = div(ineterstGenerated, netAssets)
 
             return {
               ...p,
               label: `${p.label} (${i.marketName})`,
-              healthFactor: toBN(i.healthFactor).gt(1e29) ? '∞' : parseFloat(i.healthFactor).toFixed(2), // TODO: add healthFactor
-              apy: '0', // TODO: add apy
+              healthFactor: toBN(i.healthFactor).gt(1e29) ? '∞' : parseFloat(i.healthFactor).toFixed(2),
+              apy: netAPY.toFixed(2),
               borrowedTokens,
               suppliedTokens,
               positions: i,
@@ -268,7 +283,7 @@ export function useDefi() {
             return {
               ...p,
               label: `${p.label} ${i.type} (#${i.id})`,
-              healthFactor, // TODO: add healthFactor
+              healthFactor,
               apy: i.rate,
               borrowedTokens,
               suppliedTokens,
