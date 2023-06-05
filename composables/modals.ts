@@ -3,7 +3,8 @@ import type { SessionTypes } from '@walletconnect/types'
 import Bridge from '~~/components/modals/Bridge.vue'
 import Swap from '~~/components/modals/Swap.vue'
 import PendingTransaction from '~~/components/modals/PendingTransaction.vue'
-import Send from '~~/components/modals/Send.vue'
+import Send from '~~/components/modals/Send/Main.vue'
+import SignCrossSendTx from '~~/components/modals/SignCrossSendTx.vue'
 import TopUpGas from '~~/components/modals/TopUpGas.vue'
 import WalletConnect from '~~/components/modals/WalletConnect.vue'
 import WalletConnectDetails from '~~/components/modals/WalletConnectDetails.vue'
@@ -26,6 +27,7 @@ import SelectContact from '~/components/modals/SelectContact.vue'
 import NFTDetails from '~/components/modals/NFTDetails.vue'
 import SendNFT from '~/components/modals/SendNFT.vue'
 import SupportedNetworks from '~/components/modals/SupportedNetworks.vue'
+import PendingCrossTransaction from '~/components/modals/PendingCrossTransaction.vue'
 import DefiPositionDetails from '~/components/modals/DefiPositionDetails.vue'
 import QrCode from '~/components/modals/QrCode.vue'
 
@@ -111,7 +113,7 @@ export function openSendModal(chainId: number | string,
       contact,
     },
     options: {
-      wrapperClass: 'max-w-[600px]',
+      wrapperClass: '!max-w-fit',
     },
   })
 }
@@ -337,10 +339,13 @@ export async function openDeleteContactModal() {
   })
 }
 
-export async function openSelectContactModal() {
+export async function openSelectContactModal(chainId: string | number) {
   return openModal({
     component: SelectContact,
     async: true,
+    componentProps: {
+      chainId,
+    },
   })
 }
 
@@ -372,12 +377,31 @@ export function openSupportedNetworks() {
   })
 }
 
+export function openSignCrossSendTx(props: ICrossSendParams) {
+  return openModal({
+    async: true,
+    component: SignCrossSendTx,
+    componentProps: props,
+  })
+}
+
 export function openQrCode() {
   openModal({
     component: QrCode,
     options: {
       wrapperClass: '!bg-transparent max-w-[510px]',
       contentClass: '!pt-6',
+    },
+  })
+}
+
+export function showPendingCrossTransaction(avocadoHash: string, fromChainId: number | string, toChainId: number | string) {
+  openModal({
+    component: PendingCrossTransaction,
+    componentProps: {
+      fromChainId,
+      toChainId,
+      avocadoHash,
     },
   })
 }

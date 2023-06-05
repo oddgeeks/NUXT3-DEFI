@@ -68,7 +68,7 @@ async function handleDeletingContact(contact: IContact) {
               class="items-center gap-2.5 h-10 !px-4"
               :disabled="!!contact.chainId && !hasAvailableTokens(contact.chainId)"
               @click="
-                openSendModal(contact.chainId, undefined, contact)
+                openSendModal(contact.chainId || 1, undefined, contact)
               "
             >
               Send
