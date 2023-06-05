@@ -286,8 +286,6 @@ export function useDefi() {
               return acc + Number(currentHealthFactor)
             }, 0)
 
-            console.log('Total Health Factor: ', healthFactor)
-
             healthFactor = healthFactorSum.toString() === '0' ? '∞' : div(healthFactor, positionsData.length).toFixed(2)
           }
 
@@ -314,14 +312,21 @@ export function useDefi() {
     const total = availablePositions.value.reduce((acc, curr) => {
       const { totalSupplyInUsd, totalBorrowInUsd } = curr.positions
 
+      const interestFromProtocol = times(div(curr.apy, 100), minus(totalSupplyInUsd, totalBorrowInUsd))
+
       acc.totalSupplyInUsd = plus(acc.totalSupplyInUsd, totalSupplyInUsd).toString()
       acc.totalBorrowInUsd = plus(acc.totalBorrowInUsd, totalBorrowInUsd).toString()
+      acc.totalInterestFromProtocol = plus(acc.totalInterestFromProtocol, interestFromProtocol).toString()
 
       return acc
     }, {
       totalSupplyInUsd: '0',
       totalBorrowInUsd: '0',
+      totalInterestFromProtocol: '0',
     })
+
+    const totalNetAssets = minus(total.totalSupplyInUsd, total.totalBorrowInUsd)
+    const aggregatedAPY = div(total.totalInterestFromProtocol, totalNetAssets).toFixed(4)
 
     return [
       {
@@ -338,7 +343,7 @@ export function useDefi() {
       },
       {
         name: 'APY',
-        value: formatPercent('0'),
+        value: formatPercent(aggregatedAPY),
         color: 'bg-[#2F80ED]',
         icon: resolveComponent('SvgoPercent'),
       },
