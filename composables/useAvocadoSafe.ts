@@ -96,19 +96,6 @@ export function useAvocadoSafe() {
     return tx.hash!
   }
 
-  const { data: airDrop, execute } = useAsyncData(
-    'airDrop',
-    async () => {
-      const resp = await avoProvider.send('api_hasAirdrop', [account.value])
-
-      return resp
-    },
-    {
-      watch: [account],
-      server: false,
-    },
-  )
-
   const isSafeAddress = async (
     safeAddressToCheck: string,
   ): Promise<boolean> => {
@@ -134,8 +121,6 @@ export function useAvocadoSafe() {
     safeAddress,
     sendTransaction,
     sendTransactions,
-    airDrop,
-    fetchAirDrop: execute,
     isSafeAddress,
     fundedEoaNetworks,
   }

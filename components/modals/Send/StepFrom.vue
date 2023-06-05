@@ -6,10 +6,10 @@ const { data, token, availableTokens, stepForward } = useSend()
 
 const {
   value: amount,
-  setState,
   errorMessage,
   validate,
   errors,
+  setValue,
 } = useField<string>('amount', undefined, {
   initialValue: !isZero(data.value.amount) ? data.value.amount : undefined,
 })
@@ -33,6 +33,8 @@ function handleNetworkChange() {
   const firstBalancedToken = availableTokens.value.find(t => toBN(t.balance).gt('0') || !!t.balance)
 
   data.value.tokenAddress = firstBalancedToken?.address || ''
+
+  data.value.toChainId = data.value.fromChainId
 }
 
 watch(() => data.value.toChainId, () => {
@@ -47,12 +49,11 @@ watch(() => data.value.toChainId, () => {
       <CommonSelect
         v-model="data.fromChainId"
         value-key="chainId"
-
         label-key="name"
         icon-key="icon"
         class="mt-[5px]"
         :options="availableNetworks"
-        @update:modelValue="handleNetworkChange"
+        @update:model-value="handleNetworkChange"
       >
         <template #button-prefix>
           <ChainLogo class="w-6 h-6" :chain="data.fromChainId" />
@@ -82,7 +83,7 @@ watch(() => data.value.toChainId, () => {
           <button
             type="button"
             class="text-primary hover:text-primary"
-            @click="setState({ value: token?.balance || '0' })"
+            @click="setValue(token?.balance || '0')"
           >
             MAX
           </button>

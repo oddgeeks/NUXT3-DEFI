@@ -17,6 +17,7 @@ const router = useRouter()
 const { parseTransactionError } = useErrorHandler()
 const { account, library } = useWeb3()
 const { avoProvider } = useSafe()
+const { safeAddress } = useAvocadoSafe()
 
 const eligible = ref(false)
 const claimed = ref(false)
@@ -115,26 +116,32 @@ async function claimAirdrop() {
   claiming.value = true
   const signer = library.value.getSigner()
 
-  const message = `Avocado wants you to sign in with your web3 account ${account.value}
+  let message = `Avocado wants you to sign in with your web3 account ${account.value}
 
 Action: Claim ${toBN(promo.value.amount).toFixed(2)} USDC Airdrop
 URI: https://avocado.instadapp.io
 Nonce: {{NONCE}}
+AvoAddress: {{SAFE}}
 Issued At: ${new Date().toISOString()}`
 
   try {
-    const airdropNonce = await avoProvider.send('api_generateNonce', [
+    const nonce = await avoProvider.send('api_generateNonce', [
       account.value,
+      safeAddress.value,
       message,
     ])
+
+    message = message.replaceAll('{{NONCE}}', nonce)
+    message = message.replaceAll('{{SAFE}}', safeAddress.value)
+
     const redeemSignature = await signer.signMessage(
-      message.replaceAll('{{NONCE}}', airdropNonce),
+      message,
     )
 
     const success = await avoProvider.send('api_promoClaim', [
       promo.value.code,
       redeemSignature,
-      airdropNonce,
+      nonce,
     ])
 
     if (success) {

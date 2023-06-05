@@ -2,7 +2,6 @@
 import { storeToRefs } from 'pinia'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
-import { ethers } from 'ethers'
 import { getAddress } from 'ethers/lib/utils'
 import GasSVG from '~/assets/images/icons/gas.svg?component'
 import { Erc20__factory } from '~~/contracts'
@@ -10,14 +9,13 @@ import LinkSVG from '~/assets/images/icons/external-link.svg?component'
 
 const emit = defineEmits(['destroy'])
 
-const { library, account, provider } = useWeb3()
-const { sendTransaction, airDrop, tokenBalances, fetchAirDrop, safeAddress }
+const { library, account } = useWeb3()
+const { sendTransaction, tokenBalances, safeAddress }
   = useAvocadoSafe()
 const { parseTransactionError } = useErrorHandler()
 const [isGiftActive, toggleGift] = useToggle(false)
 
 const { gasBalance } = storeToRefs(useSafe())
-const { fetchGasBalance, avoProvider } = useSafe()
 
 const pendingGasAmount = useNuxtData('pending-deposit')
 
@@ -29,8 +27,6 @@ const networks = computed(() => {
     }))
     .sort((a, b) => toBN(b.balance).minus(a.balance).toNumber())
 })
-
-const claimLoading = ref(false)
 
 const { handleSubmit, errors, meta, resetForm } = useForm({
   validationSchema: yup.object({
@@ -87,74 +83,6 @@ const loading = ref(false)
 const sendingDisabled = computed(
   () => !token.value || !account.value || loading.value || !meta.value.valid,
 )
-
-async function claim() {
-  try {
-    claimLoading.value = true
-
-    const message = `Avocado wants you to sign in with your web3 account ${
-      account.value
-    }
-
-Action: Claim 1 USDC airdrop
-URI: https://avocado.instadapp.io
-Nonce: {{NONCE}}
-Issued At: ${new Date().toISOString()}`
-
-    const browserProvider = new ethers.providers.Web3Provider(provider.value)
-
-    const signer = browserProvider.getSigner()
-
-    const airdropNonce = await avoProvider.send('api_generateNonce', [
-      account.value,
-      message,
-    ])
-
-    const giftSignature = await signer.signMessage(
-      message.replaceAll('{{NONCE}}', airdropNonce),
-    )
-
-    const data = await avoProvider.send('api_claimAirdrop', [
-      giftSignature,
-      airdropNonce,
-    ])
-
-    if (data) {
-      logActionToSlack({
-        action: 'claim',
-        account: account.value,
-        message: '1 USDC',
-      })
-
-      openSnackbar({
-        message: 'Claimed successfully',
-        type: 'success',
-      })
-    }
-
-    await fetchGasBalance()
-    await fetchAirDrop()
-  }
-  catch (e: any) {
-    const err = parseTransactionError(e)
-
-    openSnackbar({
-      message: err.formatted,
-      type: 'error',
-    })
-
-    logActionToSlack({
-      message: err.formatted,
-      type: 'error',
-      action: 'claim',
-      account: account.value,
-      errorDetails: err.parsed,
-    })
-  }
-  finally {
-    claimLoading.value = false
-  }
-}
 
 const onSubmit = handleSubmit(async () => {
   if (!token.value)
