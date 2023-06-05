@@ -240,7 +240,7 @@ export function useDefi() {
               times(i.basePosition.supplyInUsd, div(i.basePosition.supplyAPY, 100))
               , times(i.basePosition.borrowInUsd, div(i.basePosition.borrowAPY, 100)))
 
-            const netAPY = div(ineterstGenerated, netAssets)
+            const netAPY = times(div(ineterstGenerated, netAssets), 100)
 
             return {
               ...p,
@@ -284,7 +284,7 @@ export function useDefi() {
               ...p,
               label: `${p.label} ${i.type} (#${i.id})`,
               healthFactor,
-              apy: i.rate,
+              apy: times(i.rate, 100).toFixed(2),
               borrowedTokens,
               suppliedTokens,
               positions: i,
