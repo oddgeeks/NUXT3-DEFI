@@ -7,7 +7,7 @@ import ClipboardSVG from '~/assets/images/icons/clipboard.svg?component'
 const props = defineProps<{
   name?: string
   address?: string
-  chainId: string
+  chainId?: string
   isEdit: Boolean
 }>()
 
@@ -45,7 +45,7 @@ const {
         (value, { parent }) => {
           if (
             props.isEdit
-            && value?.toLowerCase() === props.address.toLowerCase()
+            && value?.toLowerCase() === props.address?.toLowerCase()
             && parent.chainId == props.chainId
           )
             return true
@@ -67,11 +67,12 @@ const { value: chainId, setValue: setChainId } = useField<string>(
   'chainId',
   undefined,
   {
-    initialValue: props.chainId ?? '1',
+    initialValue: props.chainId ?? '',
   },
 )
 const { value: contactName, setValue: setContactName }
   = useField<string>('contactName')
+// eslint-disable-next-line vue/no-dupe-keys
 const {
   value: address,
   meta: addressMeta,
