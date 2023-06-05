@@ -4,6 +4,8 @@ import CompoundUrl from '~/assets/images/protocols/compound.svg?url'
 import MakerUrl from '~/assets/images/protocols/makerdao.svg?url'
 import LiteUrl from '~/assets/images/protocols/instadapp-lite.svg?url'
 
+const maxValue = '115792089237316195423570985008687907853269984665640564039457584007913129639935'
+
 export function useDefi() {
   const { safeAddress } = useAvocadoSafe()
 
@@ -198,7 +200,7 @@ export function useDefi() {
           ]
           return {
             ...p,
-            healtFactor: '1',
+            healtFactor: '100',
             apy: position.apy.apyWithoutFee,
             positions: {
               totalSupplyInUsd: toBN(position.userSupplyAmount).times(position.token?.price).toFixed(),
@@ -223,10 +225,12 @@ export function useDefi() {
 
             const suppliedTokens = getCommonSuppliedTokens(i.tokens)
 
+            console.log('i: ', i)
+
             return {
               ...p,
               label: `${p.label} (${i.marketName})`,
-              healtFactor: '1', // TODO: add healtFactor
+              healtFactor: i.healthFactor === maxValue ? '-' : parseFloat(i.healthFactor).toFixed(2), // TODO: add healtFactor
               apy: '0', // TODO: add apy
               borrowedTokens,
               suppliedTokens,
@@ -254,10 +258,14 @@ export function useDefi() {
               borrow: div(i.totalBorrowInUsd, i.price).toFixed(),
             }]
 
+            const healthFactor = i.debt.toString() === '0'
+              ? '100'
+              : div(times(times(i.collateral, i.price), i.liquidation), i.debt).toFixed(2) // Assuming DAI = $1
+
             return {
               ...p,
               label: `${p.label} ${i.type} (#${i.id})`,
-              healtFactor: '1', // TODO: add healtFactor
+              healtFactor: healthFactor, // TODO: add healtFactor
               apy: i.rate,
               borrowedTokens,
               suppliedTokens,
@@ -267,6 +275,9 @@ export function useDefi() {
           })
         }
         else {
+          console.log('p.protocol: ', p.protocol)
+          // console.log('p.positions.data: ', p.positions.data)
+          // console.log('calculateCommonAPY: ', calculateCommonAPY(p.positions.data || []))
           return {
             ...p,
             apy: p?.apy || calculateCommonAPY(p.positions.data || []),
@@ -332,6 +343,7 @@ export function useDefi() {
   }
 
   function calculateCommonAPY(positions: any[]) {
+    console.log('positions: ', positions)
     return positions.reduce((acc: any, curr: any) => {
       const supplyYield = toBN(curr?.supplyYield || curr?.supplyRate)
       const borrowYield = toBN(curr?.borrowYield || curr?.borrowRate)
