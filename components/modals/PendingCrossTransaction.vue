@@ -13,7 +13,7 @@ const { avoProvider } = useSafe()
 
 const pending = ref(true)
 
-const { data: crossTx, error } = useAsyncData<ICrossChainTx>('cross-tx-details', async () => {
+const { data: crossTx, error } = useAsyncData<ICrossChainTx | undefined>('cross-tx-details', async () => {
   await wait(5000)
 
   while (pending.value) {
@@ -29,25 +29,7 @@ const { data: crossTx, error } = useAsyncData<ICrossChainTx>('cross-tx-details',
     if (tx?.status === 'failed')
       throw new Error('Transaction failed.')
 
-    if (tx?.source_error)
-      throw new Error(tx.source_error)
-
-    if (tx?.target_error)
-      throw new Error(tx.target_error)
-
-    if (tx?.source_transaction_hash) {
-      const provider = getRpcProvider(props.fromChainId)
-
-      await provider.waitForTransaction(tx?.source_transaction_hash)
-    }
-
-    if (tx?.target_transaction_hash) {
-      const provider = getRpcProvider(props.toChainId)
-
-      await provider.waitForTransaction(tx?.target_transaction_hash)
-    }
-
-    await wait(1000)
+    await wait(3000)
   }
 }, {
   immediate: true,
