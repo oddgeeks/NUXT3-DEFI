@@ -14,7 +14,8 @@ defineProps({
 const { active, deactivate, account, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
 const { gasBalance } = storeToRefs(useSafe())
-const [hovered, toggle] = useToggle(false)
+const open = ref(false)
+const hovered = ref(false)
 const { setConnectorName, cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
 
@@ -30,6 +31,7 @@ async function closeConnection() {
 
   if (success) {
     trackingAccount.value = ''
+    open.value = false
     setConnectorName(null)
     if (connector.value)
       deactivate()
@@ -91,28 +93,59 @@ whenever(
         class="h-[26px] w-[26px] flex items-center justify-center bg-primary rounded-full text-white"
       ><PlusSVG /></span>
     </button>
+    <template v-if="!hideEOA">
+      <button
+        :class="open ? 'opacity-0 pointer-events-none' : 'opacity-100'"
+        class="bg-slate-100 relative rounded-7.5 dark:bg-slate-800 py-2.5 sm:py-3 px-4.5 sm:px-4 transition-all leading-5 justify-between flex items-center gap-x-2.5"
+        @click="open = true"
+      >
+        <div class="flex gap-[14px]">
+          <div class="flex items-center gap-2.5">
+            <div v-if="connectedProvider">
+              <component :is="connectedProvider.logo" class="h-7.5 sm:h-6 w-7.5 sm:w-6" />
+            </div>
+            <div class="flex flex-col items-start gap-[6px]">
+              <span>{{ addressLabel }}</span>
+            </div>
+          </div>
+        </div>
 
-    <button
-      v-if="!hideEOA"
-      class="dark:bg-slate-800 bg-slate-100 py-2.5 sm:py-3 leading-5 justify-between relative flex rounded-7.5 items-center px-4.5 sm:px-4 gap-x-2.5"
-      @mouseenter="toggle(true)"
-      @mouseleave="toggle(false)"
-      @click="closeConnection"
-    >
-      <div v-if="connectedProvider">
-        <component :is="connectedProvider.logo" class="h-7.5 sm:h-6 w-7.5 sm:w-6" />
+        <SvgoChevronDown class="-rotate-90 shrink-0" />
+      </button>
+
+      <div :class="open ? 'opacity-100 sm:w-[440px]' : 'opacity-0 sm:w-[213px] pointer-events-none'" class="bg-slate-100 transition-all leading-5 justify-between flex items-center gap-x-2.5 dark:bg-gray-850 absolute right-0 p-5 ring-1 dark:ring-slate-750 ring-slate-150 rounded-[25px]">
+        <div class="flex gap-[14px]">
+          <div class="flex items-center gap-2.5">
+            <div v-if="connectedProvider">
+              <component :is="connectedProvider.logo" class="h-7.5 sm:h-6 w-7.5 sm:w-6" />
+            </div>
+            <div class="flex flex-col items-start gap-[6px]">
+              <span class="text-xs text-slate-400 leading-[10px]">Owner's Address</span>
+              <span class="text-lg leading-5">{{ addressLabel }}</span>
+            </div>
+          </div>
+          <button
+            @click="closeConnection"
+            @mouseenter="hovered = true"
+            @mouseleave="hovered = false"
+          >
+            <div class="-my-3 -mx-3 w-12 h-12 hidden sm:flex items-center justify-center">
+              <PowerOffSVG
+                v-if="hovered"
+                class="pointer-events-none right-0"
+              />
+              <PowerOnSVG v-else class="pointer-events-none right-0" />
+            </div>
+          </button>
+        </div>
+        <button
+          class="h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
+          aria-label="Close EOA"
+          @click.stop=" open = false"
+        >
+          <SvgoX />
+        </button>
       </div>
-      <div class="flex flex-col items-start">
-        <span class="block sm:hidden text-xs text-slate-500 text-slate-400">Owner's Address</span>
-        <span>{{ addressLabel }}</span>
-      </div>
-      <div class="-my-3 -mx-3 w-12 h-12 hidden sm:flex items-center justify-center">
-        <PowerOffSVG
-          v-if="hovered"
-          class="pointer-events-none right-0"
-        />
-        <PowerOnSVG v-else class="pointer-events-none right-0" />
-      </div>
-    </button>
+    </template>
   </div>
 </template>
