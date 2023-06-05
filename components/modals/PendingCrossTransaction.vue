@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { wait } from '@instadapp/utils'
-import SVGCheckCircle from '~/assets/images/icons/check-circle.svg'
-import ArrowRight from '~/assets/images/icons/arrow-right.svg'
+import SVGCheckCircle from '~/assets/images/icons/check-circle.svg?component'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 
 const props = defineProps<{
   avocadoHash: string
