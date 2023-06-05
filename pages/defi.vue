@@ -38,13 +38,13 @@ watch(safeAddress, () => {
     <h1>
       Your DeFi Positions
     </h1>
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-      <div v-for="item in summarize" :key="item.name" class="dark:bg-gray-850 bg-slate-50 rounded-3xl p-5 flex items-center gap-4">
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
+      <div v-for="item in summarize" :key="item.name" class="flex items-center gap-4 p-5 dark:bg-gray-850 bg-slate-50 rounded-3xl">
         <div :class="item.color" class="w-[50px] h-[50px] bg-opacity-10 rounded-2xl flex items-center justify-center">
           <component :is="item.icon" />
         </div>
         <div class="flex flex-col gap-0.5">
-          <h1 class="text-slate-500 text-sm">
+          <h1 class="text-sm text-slate-500">
             {{ item.name }}
           </h1>
           <h2 class="text-3xl leading-10">
@@ -60,7 +60,7 @@ watch(safeAddress, () => {
       placeholder="Search name"
     >
       <template #prefix>
-        <SvgoSearch class="shrink-0 mr-2" />
+        <SvgoSearch class="mr-2 shrink-0" />
       </template>
     </CommonInput>
     <div
@@ -72,7 +72,7 @@ watch(safeAddress, () => {
       >
         <thead>
           <tr
-            class="text-left text-sm text-gray-400 font-medium border-b border-slate-150 dark:border-slate-800"
+            class="text-sm font-medium text-left text-gray-400 border-b border-slate-150 dark:border-slate-800"
           >
             <th class="text-left py-6 pl-7.5">
               Protocol
@@ -128,8 +128,8 @@ watch(safeAddress, () => {
             <td class="pl-10">
               {{ formatPercent(toBN(position.apy).div(100).toFixed()) }}
             </td>
-            <td class="pl-10 text-sm items-center">
-              <DefiHealthFactorBadge :healt-factor="position.healtFactor" />
+            <td class="items-center pl-10 text-sm">
+              <DefiHealthFactorBadge :healt-factor="position.healthFactor" />
             </td>
             <td>
               <CommonButton color="white" :href="position.defiURL" target="_blank" as="a" @click.stop>

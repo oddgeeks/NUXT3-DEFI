@@ -200,7 +200,7 @@ export function useDefi() {
           ]
           return {
             ...p,
-            healtFactor: '100',
+            healthFactor: '∞',
             apy: position.apy.apyWithoutFee,
             positions: {
               totalSupplyInUsd: toBN(position.userSupplyAmount).times(position.token?.price).toFixed(),
@@ -228,7 +228,7 @@ export function useDefi() {
             return {
               ...p,
               label: `${p.label} (${i.marketName})`,
-              healtFactor: i.healthFactor === maxValue ? '-' : parseFloat(i.healthFactor).toFixed(2), // TODO: add healtFactor
+              healthFactor: i.healthFactor === maxValue ? '-' : parseFloat(i.healthFactor).toFixed(2), // TODO: add healthFactor
               apy: '0', // TODO: add apy
               borrowedTokens,
               suppliedTokens,
@@ -257,13 +257,13 @@ export function useDefi() {
             }]
 
             const healthFactor = i.debt.toString() === '0'
-              ? '100'
+              ? '∞'
               : div(times(times(i.collateral, i.price), i.liquidation), i.debt).toFixed(2) // Assuming DAI = $1
 
             return {
               ...p,
               label: `${p.label} ${i.type} (#${i.id})`,
-              healtFactor: healthFactor, // TODO: add healtFactor
+              healthFactor, // TODO: add healthFactor
               apy: i.rate,
               borrowedTokens,
               suppliedTokens,
@@ -273,14 +273,13 @@ export function useDefi() {
           })
         }
         else {
-          let healthFactor = '100'
+          let healthFactor = '∞'
 
           if (p.protocol === 'compound') {
-            healthFactor = '0'
             const positionsData = p.positions.data as unknown as any[]
 
             // Accumulate health factor for each key and divide with total asset length to get the average
-            healthFactor = positionsData.reduce((acc: any, i: any) => {
+            const healthFactorSum = positionsData.reduce((acc: any, i: any) => {
               const currentHealthFactor = i.borrow.toString() === '0'
                 ? '0'
                 : div(times(times(i.supply, i.priceInUsd), i.factor), times(i.borrow, i.priceInUsd)).toFixed(2)
@@ -289,13 +288,19 @@ export function useDefi() {
 
             console.log('Total Health Factor: ', healthFactor)
 
-            healthFactor = div(healthFactor, positionsData.length).toFixed(2)
+            healthFactor = healthFactorSum.toString() === '0' ? '∞' : div(healthFactor, positionsData.length).toFixed(2)
           }
+
+          if (p.protocol === 'aave-v2')
+            console.log('p: ', p)
+          console.log('p?.positions?.healthFactor: ', p.positions.healthFactor)
 
           return {
             ...p,
             apy: p?.apy || calculateCommonAPY(p.positions.data || []),
-            healtFactor: p?.healtFactor || healthFactor || '1',
+            healthFactor: p.positions.healthFactor
+              ? p.positions.healthFactor === maxValue ? '∞' : parseFloat(p.positions.healthFactor).toFixed(2)
+              : healthFactor || '1',
             borrowedTokens: p?.borrowedTokens || getCommonBorrowedTokens(p.positions?.data || []),
             suppliedTokens: p?.suppliedTokens || getCommonSuppliedTokens(p.positions.data || []),
           }
@@ -407,19 +412,19 @@ export function useDefi() {
     } as Positions
   }
 
-  function calculateHealthFactor(healtFactor: number | string) {
+  function calculateHealthFactor(healthFactor: number | string) {
     const maxHealthFactor = '1.15'
     const minHealthFactor = '1.1'
 
-    if (gt(healtFactor, maxHealthFactor)) {
+    if (gt(healthFactor, maxHealthFactor)) {
       return {
         label: 'Safe',
         isRisky: false,
       }
     }
     if (
-      gt(healtFactor, minHealthFactor)
-    && lt(healtFactor, maxHealthFactor)
+      gt(healthFactor, minHealthFactor)
+    && lt(healthFactor, maxHealthFactor)
     ) {
       return {
         label: 'Moderate',
@@ -427,7 +432,7 @@ export function useDefi() {
         isModerate: true,
       }
     }
-    if (lt(healtFactor, minHealthFactor)) {
+    if (lt(healthFactor, minHealthFactor)) {
       return {
         label: 'Very Risky',
         isRisky: true,

@@ -1,16 +1,16 @@
 <script setup lang="ts">
 const props = defineProps<{
-  healtFactor: string | number
+  healthFactor: string | number
 }>()
 
 const { calculateHealthFactor } = useDefi()
 
-const status = calculateHealthFactor(props.healtFactor)
+const status = calculateHealthFactor(props.healthFactor)
 </script>
 
 <template>
   <span class="flex items-center gap-2.5">
-    {{ healtFactor }}
+    {{ healthFactor }}
 
     <CommonBadge
       :color="

@@ -514,12 +514,13 @@ interface Positions extends DefiApis {
   positions: {
     data?: any[]
     tokens?: any[]
+    healthFactor?: string
     totalSupplyInUsd: string
     totalBorrowInUsd: string
   } ;
   vaultId?: string;
   apy: string;
-  healtFactor: string;
+  healthFactor: string;
   id: string;
   suppliedTokens: any[];
   borrowedTokens: any[];
