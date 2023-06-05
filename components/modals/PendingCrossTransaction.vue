@@ -11,10 +11,12 @@ const props = defineProps<{
 
 const { avoProvider } = useSafe()
 
+const pending = ref(true)
+
 const { data: crossTx, error } = useAsyncData<ICrossChainTx>('cross-tx-details', async () => {
   await wait(5000)
 
-  while (true) {
+  while (pending.value) {
     const tx = await avoProvider.send('api_getCrosschainTransaction', [
       props.avocadoHash,
     ]) as ICrossChainTx
@@ -69,6 +71,7 @@ const statusLabel = computed(() => {
 
 onUnmounted(() => {
   clearNuxtData('cross-tx-details')
+  pending.value = false
 })
 </script>
 
