@@ -3,7 +3,7 @@ import TrashSVG from '~/assets/images/icons/trash.svg?url'
 import { AvoSafeImplementation__factory } from '~~/contracts'
 
 export const useAuthorities = defineStore('authorities', () => {
-  const { safeAddress, signer, sendTransaction } = useAvocadoSafe()
+  const { safeAddress, signer } = useAvocadoSafe()
   const { avoProvider } = useSafe()
 
   const safe = ref<ISafe>()
@@ -12,25 +12,8 @@ export const useAuthorities = defineStore('authorities', () => {
     if (!safe.value)
       return []
 
-    console.log(formatAuthorities(safe.value.authorities))
     return formatAuthorities(safe.value.authorities)
   })
-
-  const addAuthority = async (authority: string) => {
-    if (!signer.value)
-      return
-
-    const instance = AvoSafeImplementation__factory.connect(safeAddress.value, signer.value)
-    const resp = await instance.populateTransaction.addAuthorities([authority])
-
-    sendTransaction({
-      to: safeAddress.value,
-      data: resp.data,
-      value: '0',
-      operation: '0',
-      chainId: 137,
-    })
-  }
 
   const deleteAuthority = async (authority: IAuthority) => {
     const { success } = await openDialogModal({
@@ -50,6 +33,16 @@ export const useAuthorities = defineStore('authorities', () => {
     })
 
     if (success) {
+      const instance = AvoSafeImplementation__factory.connect(safeAddress.value, signer.value!)
+      const resp = await instance.populateTransaction.addAuthorities([authority.address])
+
+      const removeSignerAction = {
+        target: safeAddress,
+        data: resp.data,
+        value: 0,
+        operation: '0',
+      }
+
       // TODO: delete authority
     }
   }
@@ -85,7 +78,6 @@ export const useAuthorities = defineStore('authorities', () => {
   })
 
   return {
-    addAuthority,
     deleteAuthority,
     authorities,
   }

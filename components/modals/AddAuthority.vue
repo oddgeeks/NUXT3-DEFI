@@ -3,13 +3,16 @@ import * as yup from 'yup'
 import { isAddress } from '@ethersproject/address'
 import { useField, useForm } from 'vee-validate'
 import { storeToRefs } from 'pinia'
+import { AvoSafeImplementation__factory } from '~~/contracts'
 import AvatarSVG from '~/assets/images/icons/avatar.svg?component'
 import ContactSVG from '~/assets/images/icons/contact.svg?component'
 
 const emit = defineEmits(['destroy'])
 
-const { addAuthority } = useAuthorities()
 const { authorities } = storeToRefs(useAuthorities())
+const { safeAddress, signer, sendTransaction } = useAvocadoSafe()
+
+const chainId = ref('1')
 
 const {
   handleSubmit,
@@ -32,7 +35,7 @@ const {
             return true
           return !authorities.value.some(
             authority =>
-              authority.toLowerCase() === value?.toLowerCase(),
+              authority.address?.toLowerCase() === value?.toLowerCase(),
           )
         },
       ),
@@ -45,16 +48,51 @@ const {
   setValue,
 } = useField<string>('address')
 
-const disabled = computed(() => !meta.value.valid || isSubmitting.value)
+const { data: tx } = useAsyncData(async () => {
+  if (!address.value || !safeAddress.value)
+    return
 
-const onSubmit = handleSubmit(() => {
-  addAuthority(address.value)
+  const instance = AvoSafeImplementation__factory.connect(safeAddress.value, signer.value!)
+  const resp = await instance.populateTransaction.addAuthorities([address.value])
+
+  return {
+    to: safeAddress.value,
+    data: resp.data,
+    value: '0',
+    operation: '0',
+    chainId: chainId.value,
+  }
+}, {
+  watch: [
+    address,
+    safeAddress,
+    chainId,
+  ],
+})
+
+const { data, pending, error } = useEstimatedFee(
+  tx,
+  chainId,
+)
+
+const disabled = computed(() => !meta.value.valid || isSubmitting.value || !!error.value || pending.value)
+
+const onSubmit = handleSubmit(async () => {
+  if (!tx.value)
+    return
+
+  const txHash = await sendTransaction(tx.value)
+
+  if (!txHash)
+    return
 
   emit('destroy')
+
+  showPendingTransactionModal(txHash, chainId.value, 'send')
 })
 
 async function handleSelectContact() {
-  const result = await openSelectContactModal()
+  const result = await openSelectContactModal(chainId.value)
 
   if (result.success) {
     const _contact = result.payload as IContact
@@ -73,9 +111,11 @@ async function handleSelectContact() {
       </h1>
     </div>
     <div class="flex flex-col gap-5 mb-7.5">
-      <div>
+      <div class="flex flex-col gap-2.5">
+        <span class="text-sm">Address</span>
         <CommonInput
           v-model="address"
+          autofocus
           :error-message="addressMeta.dirty ? errors.address : ''"
           name="address"
           placeholder="Enter Address"
@@ -94,6 +134,22 @@ async function handleSelectContact() {
           </template>
         </CommonInput>
       </div>
+      <div class="flex flex-col gap-2.5">
+        <span class="text-sm">Network</span>
+        <CommonSelect
+          v-model="chainId"
+          value-key="chainId"
+          label-key="name"
+          :options="availableNetworks"
+        >
+          <template #button-prefix>
+            <ChainLogo class="w-6 h-6" :chain="chainId" />
+          </template>
+          <template #item-prefix="{ value }">
+            <ChainLogo class="w-6 h-6" :chain="value" />
+          </template>
+        </CommonSelect>
+      </div>
     </div>
     <div class="flex gap-4">
       <CommonButton
@@ -105,6 +161,7 @@ async function handleSelectContact() {
         Cancel
       </CommonButton>
       <CommonButton
+        :loading="isSubmitting"
         type="submit"
         size="lg"
         :disabled="disabled"
@@ -113,5 +170,6 @@ async function handleSelectContact() {
         Add
       </CommonButton>
     </div>
+    <EstimatedFee class="mt-7.5" :data="data" :loading="pending" :error="error" />
   </form>
 </template>
