@@ -1,13 +1,13 @@
 import axios from 'axios'
+import { storeToRefs } from 'pinia'
 import AaveV2Url from '~/assets/images/protocols/aave-v2.svg?url'
 import CompoundUrl from '~/assets/images/protocols/compound.svg?url'
 import MakerUrl from '~/assets/images/protocols/makerdao.svg?url'
 import LiteUrl from '~/assets/images/protocols/instadapp-lite.svg?url'
 
-const maxValue = '115792089237316195423570985008687907853269984665640564039457584007913129639935'
-
 export function useDefi() {
   const { safeAddress } = useAvocadoSafe()
+  const { tokens } = storeToRefs(useTokens())
 
   const positions = ref<Positions[]>([])
 
@@ -189,6 +189,8 @@ export function useDefi() {
   const availablePositions = computed<Positions[]>(() => {
     return positions.value
       .flatMap((p) => {
+        let healthFactor = '∞'
+
         if (p.protocol === 'lite') {
           const position = p.positions as any
           const suppliedTokens = [
@@ -200,7 +202,7 @@ export function useDefi() {
           ]
           return {
             ...p,
-            healthFactor: '∞',
+            healthFactor: '-',
             apy: position.apy.apyWithoutFee,
             positions: {
               totalSupplyInUsd: toBN(position.userSupplyAmount).times(position.token?.price).toFixed(),
@@ -228,7 +230,7 @@ export function useDefi() {
             return {
               ...p,
               label: `${p.label} (${i.marketName})`,
-              healthFactor: i.healthFactor === maxValue ? '-' : parseFloat(i.healthFactor).toFixed(2), // TODO: add healthFactor
+              healthFactor: toBN(i.healthFactor).gt(1e29) ? '∞' : parseFloat(i.healthFactor).toFixed(2), // TODO: add healthFactor
               apy: '0', // TODO: add apy
               borrowedTokens,
               suppliedTokens,
@@ -241,19 +243,22 @@ export function useDefi() {
           const positions = p.positions as unknown as any[]
 
           return positions.map((i: any) => {
+            const dai = tokens.value.find(t => t.symbol === 'dai')
+            const price = dai?.price || 1
+
             i.totalSupplyInUsd = times(i.collateral, i.price).toFixed()
             i.totalBorrowInUsd = times(i.debt, 1).toFixed()
 
             const suppliedTokens = [{
               key: i.tokenKey,
               price: i.price,
-              supply: div(i.totalSupplyInUsd, i.price).toFixed(),
+              supply: i.collateral,
             }]
 
             const borrowedTokens = [{
-              key: i.tokenKey,
-              price: i.price,
-              borrow: div(i.totalBorrowInUsd, i.price).toFixed(),
+              key: 'dai',
+              price,
+              borrow: i.debt,
             }]
 
             const healthFactor = i.debt.toString() === '0'
@@ -272,33 +277,32 @@ export function useDefi() {
             }
           })
         }
-        else {
-          let healthFactor = '∞'
 
-          if (p.protocol === 'compound') {
-            const positionsData = p.positions.data as unknown as any[]
+        else if (p.protocol === 'compound') {
+          const positionsData = p.positions.data as unknown as any[]
 
-            // Accumulate health factor for each key and divide with total asset length to get the average
-            const healthFactorSum = positionsData.reduce((acc: any, i: any) => {
-              const currentHealthFactor = i.borrow.toString() === '0'
-                ? '0'
-                : div(times(times(i.supply, i.priceInUsd), i.factor), times(i.borrow, i.priceInUsd)).toFixed(2)
-              return acc + Number(currentHealthFactor)
-            }, 0)
+          // Accumulate health factor for each key and divide with total asset length to get the average
+          const healthFactorSum = positionsData.reduce((acc: any, i: any) => {
+            const currentHealthFactor = i.borrow.toString() === '0'
+              ? '0'
+              : div(times(times(i.supply, i.priceInUsd), i.factor), times(i.borrow, i.priceInUsd)).toFixed(2)
+            return acc + Number(currentHealthFactor)
+          }, 0)
 
-            healthFactor = healthFactorSum.toString() === '0' ? '∞' : div(healthFactor, positionsData.length).toFixed(2)
-          }
+          healthFactor = healthFactorSum.toString() === '0' ? '∞' : div(healthFactor, positionsData.length).toFixed(2)
+        }
 
-          return {
+        return [
+          {
             ...p,
             apy: p?.apy || calculateCommonAPY(p.positions.data || []),
             healthFactor: p.positions.healthFactor
-              ? p.positions.healthFactor === maxValue ? '∞' : parseFloat(p.positions.healthFactor).toFixed(2)
+              ? toBN(p.positions.healthFactor).gt(1e29) ? '∞' : toBN(p.positions.healthFactor).toFixed(2)
               : healthFactor || '1',
             borrowedTokens: p?.borrowedTokens || getCommonBorrowedTokens(p.positions?.data || []),
             suppliedTokens: p?.suppliedTokens || getCommonSuppliedTokens(p.positions.data || []),
-          }
-        }
+          } as Positions,
+        ]
       })
       .filter(i => gt(i.positions?.totalSupplyInUsd, 0))
       .sort((a, b) =>
@@ -343,7 +347,7 @@ export function useDefi() {
       },
       {
         name: 'APY',
-        value: formatPercent(aggregatedAPY),
+        value: formatPercent(toBN(aggregatedAPY).isNaN() ? '0' : aggregatedAPY),
         color: 'bg-[#2F80ED]',
         icon: resolveComponent('SvgoPercent'),
       },

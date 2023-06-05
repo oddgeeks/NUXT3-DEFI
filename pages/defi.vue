@@ -9,7 +9,7 @@ const { safeAddress } = useAvocadoSafe()
 
 const searchQuery = ref('')
 
-const { availablePositions, summarize, getDefiProtocolName, calculateHealthFactor, fetchPositions } = useDefi()
+const { availablePositions, summarize, getDefiProtocolName, fetchPositions } = useDefi()
 
 const filteredPositions = computed(() => {
   if (!searchQuery.value)
@@ -129,7 +129,9 @@ watch(safeAddress, () => {
               {{ formatPercent(toBN(position.apy).div(100).toFixed()) }}
             </td>
             <td class="items-center pl-10 text-sm">
-              <DefiHealthFactorBadge :healt-factor="position.healthFactor" />
+              <p class="flex items-center gap-2.5">
+                <DefiHealthFactorBadge :health-factor="position.healthFactor" />
+              </p>
             </td>
             <td>
               <CommonButton color="white" :href="position.defiURL" target="_blank" as="a" @click.stop>
