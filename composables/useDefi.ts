@@ -225,8 +225,6 @@ export function useDefi() {
 
             const suppliedTokens = getCommonSuppliedTokens(i.tokens)
 
-            console.log('i: ', i)
-
             return {
               ...p,
               label: `${p.label} (${i.marketName})`,
@@ -275,13 +273,29 @@ export function useDefi() {
           })
         }
         else {
-          console.log('p.protocol: ', p.protocol)
-          // console.log('p.positions.data: ', p.positions.data)
-          // console.log('calculateCommonAPY: ', calculateCommonAPY(p.positions.data || []))
+          let healthFactor = '100'
+
+          if (p.protocol === 'compound') {
+            healthFactor = '0'
+            const positionsData = p.positions.data as unknown as any[]
+
+            // Accumulate health factor for each key and divide with total asset length to get the average
+            healthFactor = positionsData.reduce((acc: any, i: any) => {
+              const currentHealthFactor = i.borrow.toString() === '0'
+                ? '0'
+                : div(times(times(i.supply, i.priceInUsd), i.factor), times(i.borrow, i.priceInUsd)).toFixed(2)
+              return acc + Number(currentHealthFactor)
+            }, 0)
+
+            console.log('Total Health Factor: ', healthFactor)
+
+            healthFactor = div(healthFactor, positionsData.length).toFixed(2)
+          }
+
           return {
             ...p,
             apy: p?.apy || calculateCommonAPY(p.positions.data || []),
-            healtFactor: p?.healtFactor || '1', // TODO: add health factor
+            healtFactor: p?.healtFactor || healthFactor || '1',
             borrowedTokens: p?.borrowedTokens || getCommonBorrowedTokens(p.positions?.data || []),
             suppliedTokens: p?.suppliedTokens || getCommonSuppliedTokens(p.positions.data || []),
           }
@@ -343,7 +357,6 @@ export function useDefi() {
   }
 
   function calculateCommonAPY(positions: any[]) {
-    console.log('positions: ', positions)
     return positions.reduce((acc: any, curr: any) => {
       const supplyYield = toBN(curr?.supplyYield || curr?.supplyRate)
       const borrowYield = toBN(curr?.borrowYield || curr?.borrowRate)
