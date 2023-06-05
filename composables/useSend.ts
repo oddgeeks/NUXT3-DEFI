@@ -144,6 +144,7 @@ export function useSend() {
   const reset = () => {
     data.value = defaultValues()
     activeStep.value = 0
+    actualAddress.value = ''
   }
 
   const stepBack = () => {

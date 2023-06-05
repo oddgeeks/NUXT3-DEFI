@@ -80,6 +80,10 @@ const [swapped, toggleSwapped] = useToggle()
 const [isBuyAmountDirty, toggleDirty] = useToggle(false)
 const refreshing = ref(false)
 
+const isBuyAmountFocused = ref(false)
+const isUsdBuyAmountFocused = ref(false)
+const isSellAmountFocused = ref(false)
+
 const swap = ref<ISwap>({
   sellToken: getTokenByAddress(tokenAddress.value, toChainId.value)!,
   buyToken: getTokenByAddress(tokenAddress.value, toChainId.value)!,
@@ -261,13 +265,11 @@ async function fetchSwapDetails() {
     }
 
     if (best && !isBuyAmountDirty.value) {
-      buyAmount.value = formatDecimal(
-        fromWei(
-          best.data.buyTokenAmount,
-          best.data.buyToken.decimals,
-        ).toFixed(),
-        6,
-      )
+      buyAmount.value = fromWei(
+        best.data.buyTokenAmount,
+        best.data.buyToken.decimals,
+      ).decimalPlaces(6, 1)
+        .toString()
     }
 
     swapDetails.value.data = data
@@ -293,24 +295,32 @@ const priceImpact = computed(() =>
     .toFixed(),
 )
 
-const sellAmountInUsd = computed(() => {
+const sellTokenAmount = computed(() => {
   return toBN(
     fromWei(
       swapDetails.value?.data?.data.sellTokenAmount || 0,
       swapDetails.value?.data?.data.sellToken.decimals,
     ),
-  )
-    .times(swapDetails.value?.data?.data.sellToken.price || 0)
-    .toFixed(2)
+  ).toNumber()
 })
 
-const buyAmountInUsd = computed(() => {
+const buyTokenAmount = computed(() => {
   return toBN(
     fromWei(
       swapDetails.value?.data?.data.buyTokenAmount || 0,
       swapDetails.value?.data?.data.buyToken.decimals,
     ),
-  )
+  ).toNumber()
+})
+
+const sellAmountInUsd = computed(() => {
+  return toBN(sellTokenAmount.value)
+    .times(swapDetails.value?.data?.data.sellToken.price || 0)
+    .toFixed(2)
+})
+
+const buyAmountInUsd = computed(() => {
+  return toBN(buyTokenAmount.value)
     .times(swapDetails.value?.data?.data.buyToken.price || 0)
     .toFixed(2)
 })
@@ -334,6 +344,31 @@ const sellTokenAmountPerBuyToken = computed(() => {
 
   return value.isFinite() ? formatDecimal(value.toFixed()) : '0.00'
 })
+
+function handleSellUsdChange(e: Event) {
+  const target = e.target as HTMLInputElement
+
+  if (target?.value) {
+    const value = toBN(target.value).div(swap.value.sellToken.price || 0)
+
+    setSellAmount({
+      value: toBN(value)
+        .decimalPlaces(6, 1)
+        .toString(),
+      touched: true,
+    })
+  }
+}
+
+function handleBuyUsdChange(e: Event) {
+  const target = e.target as HTMLInputElement
+
+  if (target?.value) {
+    const value = toBN(target.value).div(swap.value.buyToken.price || 0).toString()
+
+    convertBuytoSellAmount(value)
+  }
+}
 
 function swapTokens() {
   const sellTemp = swap.value.sellToken
@@ -582,11 +617,17 @@ onUnmounted(() => {
         </div>
         <div class="flex items-center justify-between text-sm text-slate-400">
           <div
-            v-if="isLoading"
-            style="width: 60px; height: 20px"
+            v-if="isLoading && !isSellAmountFocused"
+            style="width: 60px; height: 24px"
             class="rounded-lg loading-box"
           />
-          <span v-else>{{ formatUsd(sellAmountInUsd) }}</span>
+          <CommonCurrencyInput
+            v-else
+            :model-value="toBN(sellAmountInUsd).toNumber()"
+            @blur="isSellAmountFocused = false"
+            @focus="isSellAmountFocused = true"
+            @input="handleSellUsdChange"
+          />
           <div class="flex items-center ml-auto gap-2.5 uppercase">
             <span class="font-medium">{{ formatDecimal(sellTokenBalance) }}
               {{ swap.sellToken?.symbol }}</span>
@@ -616,7 +657,7 @@ onUnmounted(() => {
         <div class="flex">
           <div class="flex items-center flex-1">
             <div
-              v-if="isLoading"
+              v-if="isLoading && !isBuyAmountFocused"
               style="width: 100px; height: 28px"
               class="rounded-lg loading-box"
             />
@@ -630,6 +671,8 @@ onUnmounted(() => {
               class="flex-1"
               input-classes="text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
               container-classes="!px-0"
+              @input-focus="isBuyAmountFocused = true"
+              @input-blur="isBuyAmountFocused = false"
               @input="handleBuyAmountInput"
             />
           </div>
@@ -641,11 +684,18 @@ onUnmounted(() => {
         </div>
         <div class="flex items-center justify-between text-sm text-slate-400">
           <div
-            v-if="isLoading"
-            style="width: 60px; height: 20px"
+            v-if="isLoading && !isUsdBuyAmountFocused"
+            style="width: 60px; height: 24px"
             class="rounded-lg loading-box"
           />
-          <span v-else>{{ formatUsd(buyAmountInUsd) }}</span>
+          <CommonCurrencyInput
+            v-else
+            :model-value="toBN(buyAmountInUsd).toNumber()"
+            @focus="isUsdBuyAmountFocused = true"
+            @blur="isUsdBuyAmountFocused = false"
+            @input="handleBuyUsdChange"
+          />
+
           <div class="flex items-center ml-auto gap-2.5 uppercase">
             <span class="font-medium">{{ formatDecimal(buyTokenBalance) }}
               {{ swap.buyToken?.symbol }}</span>
