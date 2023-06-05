@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { wait } from '@instadapp/utils'
-import SVGCheckCircle from '~/assets/images/icons/check-circle.svg'
-import ArrowRight from '~/assets/images/icons/arrow-right.svg'
+import SVGCheckCircle from '~/assets/images/icons/check-circle.svg?component'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 
 const props = defineProps<{
   avocadoHash: string
@@ -11,42 +11,26 @@ const props = defineProps<{
 
 const { avoProvider } = useSafe()
 
-const { data: crossTx, error } = useAsyncData<ICrossChainTx>('cross-tx-details', async () => {
+const pending = ref(true)
+
+const { data: crossTx, error } = useAsyncData<ICrossChainTx | undefined>('cross-tx-details', async () => {
   await wait(5000)
 
-  let count = 0
-
-  while (count < 150) {
+  while (pending.value) {
     const tx = await avoProvider.send('api_getCrosschainTransaction', [
       props.avocadoHash,
     ]) as ICrossChainTx
 
+    console.log('Fetching cross chain tx details...', tx)
+
     if (tx?.status === 'success')
       return tx
 
-    if (tx?.source_error)
-      throw new Error(tx.source_error)
+    if (tx?.status === 'failed')
+      throw new Error('Transaction failed.')
 
-    if (tx?.target_error)
-      throw new Error(tx.target_error)
-
-    if (tx?.source_transaction_hash) {
-      const provider = getRpcProvider(props.fromChainId)
-
-      await provider.waitForTransaction(tx?.source_transaction_hash)
-    }
-
-    if (tx?.target_transaction_hash) {
-      const provider = getRpcProvider(props.toChainId)
-
-      await provider.waitForTransaction(tx?.target_transaction_hash)
-    }
-
-    count++
-    await wait(1000)
+    await wait(3000)
   }
-
-  throw new Error('Transaction failed')
 }, {
   immediate: true,
 })
@@ -69,6 +53,7 @@ const statusLabel = computed(() => {
 
 onUnmounted(() => {
   clearNuxtData('cross-tx-details')
+  pending.value = false
 })
 </script>
 

@@ -30,7 +30,8 @@ const props = withDefaults(
   },
 )
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'inputFocus', 'inputBlur'])
+
 const seperator = '.'
 const htmlInputType = computed(() => {
   if (props.type === 'numeric')
@@ -104,6 +105,8 @@ function handleBeforeInput(e: any) {
         :class="[inputClasses]"
         @beforeinput="handleBeforeInput"
         @input="handleInput"
+        @focus="$emit('inputFocus')"
+        @blur="$emit('inputBlur')"
       >
       <slot name="suffix" />
     </div>
