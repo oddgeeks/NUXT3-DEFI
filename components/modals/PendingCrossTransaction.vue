@@ -14,15 +14,18 @@ const { avoProvider } = useSafe()
 const { data: crossTx, error } = useAsyncData<ICrossChainTx>('cross-tx-details', async () => {
   await wait(5000)
 
-  let count = 0
-
-  while (count < 150) {
+  while (true) {
     const tx = await avoProvider.send('api_getCrosschainTransaction', [
       props.avocadoHash,
     ]) as ICrossChainTx
 
+    console.log('Fetching cross chain tx details...', tx)
+
     if (tx?.status === 'success')
       return tx
+
+    if (tx?.status === 'failed')
+      throw new Error('Transaction failed.')
 
     if (tx?.source_error)
       throw new Error(tx.source_error)
@@ -42,11 +45,8 @@ const { data: crossTx, error } = useAsyncData<ICrossChainTx>('cross-tx-details',
       await provider.waitForTransaction(tx?.target_transaction_hash)
     }
 
-    count++
     await wait(1000)
   }
-
-  throw new Error('Transaction failed')
 }, {
   immediate: true,
 })
