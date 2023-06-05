@@ -291,10 +291,6 @@ export function useDefi() {
             healthFactor = healthFactorSum.toString() === '0' ? '∞' : div(healthFactor, positionsData.length).toFixed(2)
           }
 
-          if (p.protocol === 'aave-v2')
-            console.log('p: ', p)
-          console.log('p?.positions?.healthFactor: ', p.positions.healthFactor)
-
           return {
             ...p,
             apy: p?.apy || calculateCommonAPY(p.positions.data || []),
