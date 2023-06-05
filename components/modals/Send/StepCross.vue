@@ -354,6 +354,11 @@ async function fetchCrossFee() {
       },
     }) as ICrossEstimatedFee
 
+    if (toBN(resp.target?.fee).isNaN() || toBN(resp.source?.fee).isNaN()) {
+      console.log(resp)
+      throw new Error('Something went wrong')
+    }
+
     const targetFee = calculateEstimatedFee({
       chainId: String(data.value.fromChainId),
       fee: resp.target.fee,
