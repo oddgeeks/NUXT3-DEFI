@@ -34,7 +34,7 @@ async function closeConnection() {
   }
 }
 
-const userSignOut = () => {
+function userSignOut() {
   router.push('/login')
 }
 
@@ -72,7 +72,7 @@ watch(() => active.value, () => {
       </button>
 
       <div v-if="!isActualActive">
-        <CommonButton v-if="!$router.currentRoute.value.meta.hideSidebar" size="md" @click="openWeb3Modal">
+        <CommonButton size="md" @click="openWeb3Modal">
           Connect
         </CommonButton>
       </div>
