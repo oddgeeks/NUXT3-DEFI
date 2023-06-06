@@ -437,7 +437,7 @@ export function useDefi() {
             `https://api.instadapp.io/defi${api.apiPath}`,
             {
               params: {
-                user: '0xBe4d99f3d2dB30f7E6AC9b197a4D91ECC1178e5D',
+                user: safeAddress.value,
               },
               timeout: 20000,
             },
