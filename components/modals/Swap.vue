@@ -3,12 +3,12 @@ import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { storeToRefs } from 'pinia'
 import { utils } from 'ethers'
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
 import type { IToken } from '~~/stores/tokens'
 import { Erc20__factory } from '~~/contracts'
-import SVGInfo from '~/assets/images/icons/exclamation-circle.svg'
-import ArrowLeft from '~/assets/images/icons/arrow-left.svg'
-import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg'
+import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
+import ArrowLeft from '~/assets/images/icons/arrow-left.svg?component'
+import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg?component'
 
 interface ISwap {
   sellToken: IToken
@@ -79,6 +79,10 @@ const swapDetails = ref(defaultSwapDetails())
 const [swapped, toggleSwapped] = useToggle()
 const [isBuyAmountDirty, toggleDirty] = useToggle(false)
 const refreshing = ref(false)
+
+const isBuyAmountFocused = ref(false)
+const isUsdBuyAmountFocused = ref(false)
+const isSellAmountFocused = ref(false)
 
 const swap = ref<ISwap>({
   sellToken: getTokenByAddress(tokenAddress.value, toChainId.value)!,
@@ -212,7 +216,6 @@ const sendingDisabled = computed(
     || swapDetails.value.pending
     || !meta.value.valid
     || feePending.value
-    || isPriceImpactHigh.value
     || !!swapDetails.value.error
     || !!error.value
     || !!slippageError.value,
@@ -236,9 +239,9 @@ async function fetchSwapDetails() {
 
     swapDetails.value.pending = true
 
-    const data: ISwapResponse = await http(
-      'https://swap-aggregator.instadapp.io/swap',
+    const data: ISwapResponse = await http('/swap',
       {
+        baseURL: swapAggregatorURL,
         signal: abortController.value?.signal,
         params: {
           network: getNetworkByChainId(toChainId.value).name.toLowerCase(),
@@ -248,7 +251,7 @@ async function fetchSwapDetails() {
           maxSlippage: actualSlippage.value,
           slippage: actualSlippage.value,
           user: safeAddress.value,
-          access_token: 'hxBA1uxwaGWN0xcpPOncVJ3Tk7FdFxY7g3NX28R14C',
+          access_token: swapAggregatorAccessToken,
         },
       },
     )
@@ -262,13 +265,11 @@ async function fetchSwapDetails() {
     }
 
     if (best && !isBuyAmountDirty.value) {
-      buyAmount.value = formatDecimal(
-        fromWei(
-          best.data.buyTokenAmount,
-          best.data.buyToken.decimals,
-        ).toFixed(),
-        6,
-      )
+      buyAmount.value = fromWei(
+        best.data.buyTokenAmount,
+        best.data.buyToken.decimals,
+      ).decimalPlaces(6, 1)
+        .toString()
     }
 
     swapDetails.value.data = data
@@ -294,31 +295,32 @@ const priceImpact = computed(() =>
     .toFixed(),
 )
 
-const isPriceImpactHigh = computed(() => {
-  if (!bestRoute.value)
-    return false
-
-  return toBN(priceImpact.value).gt(actualSlippage.value)
-})
-
-const sellAmountInUsd = computed(() => {
+const sellTokenAmount = computed(() => {
   return toBN(
     fromWei(
       swapDetails.value?.data?.data.sellTokenAmount || 0,
       swapDetails.value?.data?.data.sellToken.decimals,
     ),
-  )
-    .times(swapDetails.value?.data?.data.sellToken.price || 0)
-    .toFixed(2)
+  ).toNumber()
 })
 
-const buyAmountInUsd = computed(() => {
+const buyTokenAmount = computed(() => {
   return toBN(
     fromWei(
       swapDetails.value?.data?.data.buyTokenAmount || 0,
       swapDetails.value?.data?.data.buyToken.decimals,
     ),
-  )
+  ).toNumber()
+})
+
+const sellAmountInUsd = computed(() => {
+  return toBN(sellTokenAmount.value)
+    .times(swapDetails.value?.data?.data.sellToken.price || 0)
+    .toFixed(2)
+})
+
+const buyAmountInUsd = computed(() => {
+  return toBN(buyTokenAmount.value)
     .times(swapDetails.value?.data?.data.buyToken.price || 0)
     .toFixed(2)
 })
@@ -342,6 +344,31 @@ const sellTokenAmountPerBuyToken = computed(() => {
 
   return value.isFinite() ? formatDecimal(value.toFixed()) : '0.00'
 })
+
+function handleSellUsdChange(e: Event) {
+  const target = e.target as HTMLInputElement
+
+  if (target?.value) {
+    const value = toBN(target.value).div(swap.value.sellToken.price || 0)
+
+    setSellAmount({
+      value: toBN(value)
+        .decimalPlaces(6, 1)
+        .toString(),
+      touched: true,
+    })
+  }
+}
+
+function handleBuyUsdChange(e: Event) {
+  const target = e.target as HTMLInputElement
+
+  if (target?.value) {
+    const value = toBN(target.value).div(swap.value.buyToken.price || 0).toString()
+
+    convertBuytoSellAmount(value)
+  }
+}
 
 function swapTokens() {
   const sellTemp = swap.value.sellToken
@@ -456,6 +483,7 @@ const onSubmit = handleSubmit(async () => {
       account: account.value,
       chainId: toChainId.value,
       txHash: transactionHash,
+      amountInUsd: sellAmountInUsd.value,
     })
 
     resetForm()
@@ -589,11 +617,17 @@ onUnmounted(() => {
         </div>
         <div class="flex items-center justify-between text-sm text-slate-400">
           <div
-            v-if="isLoading"
-            style="width: 60px; height: 20px"
+            v-if="isLoading && !isSellAmountFocused"
+            style="width: 60px; height: 24px"
             class="rounded-lg loading-box"
           />
-          <span v-else>{{ formatUsd(sellAmountInUsd) }}</span>
+          <CommonCurrencyInput
+            v-else
+            :model-value="toBN(sellAmountInUsd).toNumber()"
+            @blur="isSellAmountFocused = false"
+            @focus="isSellAmountFocused = true"
+            @input="handleSellUsdChange"
+          />
           <div class="flex items-center ml-auto gap-2.5 uppercase">
             <span class="font-medium">{{ formatDecimal(sellTokenBalance) }}
               {{ swap.sellToken?.symbol }}</span>
@@ -623,7 +657,7 @@ onUnmounted(() => {
         <div class="flex">
           <div class="flex items-center flex-1">
             <div
-              v-if="isLoading"
+              v-if="isLoading && !isBuyAmountFocused"
               style="width: 100px; height: 28px"
               class="rounded-lg loading-box"
             />
@@ -637,6 +671,8 @@ onUnmounted(() => {
               class="flex-1"
               input-classes="text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
               container-classes="!px-0"
+              @input-focus="isBuyAmountFocused = true"
+              @input-blur="isBuyAmountFocused = false"
               @input="handleBuyAmountInput"
             />
           </div>
@@ -648,11 +684,18 @@ onUnmounted(() => {
         </div>
         <div class="flex items-center justify-between text-sm text-slate-400">
           <div
-            v-if="isLoading"
-            style="width: 60px; height: 20px"
+            v-if="isLoading && !isUsdBuyAmountFocused"
+            style="width: 60px; height: 24px"
             class="rounded-lg loading-box"
           />
-          <span v-else>{{ formatUsd(buyAmountInUsd) }}</span>
+          <CommonCurrencyInput
+            v-else
+            :model-value="toBN(buyAmountInUsd).toNumber()"
+            @focus="isUsdBuyAmountFocused = true"
+            @blur="isUsdBuyAmountFocused = false"
+            @input="handleBuyUsdChange"
+          />
+
           <div class="flex items-center ml-auto gap-2.5 uppercase">
             <span class="font-medium">{{ formatDecimal(buyTokenBalance) }}
               {{ swap.buyToken?.symbol }}</span>
@@ -810,11 +853,6 @@ onUnmounted(() => {
         v-if="swapDetails.error"
         type="error"
         :text="swapDetails.error"
-      />
-      <CommonNotification
-        v-if="isPriceImpactHigh"
-        type="warning"
-        text="Slippage value should be greater than price impact.  "
       />
     </div>
 

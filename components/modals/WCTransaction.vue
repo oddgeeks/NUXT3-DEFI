@@ -1,13 +1,17 @@
 <script lang="ts" setup>
 import type WalletConnect from '@walletconnect/client'
-import NetworkSVG from '~/assets/images/icons/network.svg'
-import FlowersSVG from '~/assets/images/icons/flowers.svg'
-import SVGClockCircle from '~/assets/images/icons/clock-circle.svg'
+import type { SessionTypes } from '@walletconnect/types'
+import { storeToRefs } from 'pinia'
+import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg?component'
+import NetworkSVG from '~/assets/images/icons/network.svg?component'
+import FlowersSVG from '~/assets/images/icons/flowers.svg?component'
+import SVGClockCircle from '~/assets/images/icons/clock-circle.svg?component'
 
 const props = defineProps<{
   payload: any
   chainId: string
-  wc: WalletConnect
+  session?: WalletConnect
+  sessionV2?: SessionTypes.Struct
   metadata: string
   isSign?: boolean
   signMessageDetails?: any
@@ -19,10 +23,17 @@ const { sendTransactions, safeAddress } = useAvocadoSafe()
 const { account } = useWeb3()
 const [submitting, toggle] = useToggle()
 const { parseTransactionError } = useErrorHandler()
+const { web3WalletV2 } = storeToRefs(useWalletConnectV2())
 
 const submitDisabled = computed(
   () => submitting.value || pending.value || !!error.value,
 )
+
+const networksSimulationNotSupported = [1313161554]
+
+const peerURL = computed(() => {
+  return props.session ? props.session.peerMeta?.url : props.sessionV2?.peer?.metadata?.url
+})
 
 onMounted(async () => {
   document.title = '(1) Avocado'
@@ -37,13 +48,28 @@ onBeforeUnmount(() => {
 })
 
 function rejectRequest(message: string) {
-  props.wc.rejectRequest({
-    id: props.payload.id,
-    error: {
-      code: -32603,
-      message,
-    },
-  })
+  if (props.session) {
+    props.session.rejectRequest({
+      id: props.payload.id,
+      error: {
+        code: -32603,
+        message,
+      },
+    })
+  }
+  else if (props.sessionV2 && web3WalletV2.value) {
+    web3WalletV2.value.respondSessionRequest({
+      topic: props.sessionV2.topic,
+      response: {
+        id: props.payload.id,
+        jsonrpc: '2.0',
+        error: {
+          code: 5000,
+          message: 'User rejected.',
+        },
+      },
+    })
+  }
 }
 
 function calculateDate(timestamp: number) {
@@ -91,14 +117,28 @@ async function handleSubmit() {
       return
     }
 
-    props.wc.approveRequest({
-      id: props.payload.id,
-      result: transactionHash,
-    })
+    console.log(props.session)
+
+    if (props.session) {
+      props.session.approveRequest({
+        id: props.payload.id,
+        result: transactionHash,
+      })
+    }
+    else if (props.sessionV2 && web3WalletV2.value) {
+      web3WalletV2.value.respondSessionRequest({
+        topic: props.sessionV2.topic,
+        response: {
+          id: props.payload.id,
+          result: transactionHash,
+          jsonrpc: '2.0',
+        },
+      })
+    }
 
     logActionToSlack({
       message: `${props.isSign ? 'Permit2 Approval' : 'Txn'} on ${
-        props.wc.peerMeta?.url
+       peerURL.value
       }`,
       type: 'success',
       action: 'wc',
@@ -121,7 +161,7 @@ async function handleSubmit() {
 
     logActionToSlack({
       message: `${props.isSign ? 'Permit2 Approval' : 'Txn'} ${
-        props.wc.peerMeta?.url
+        peerURL.value
       } ${err.formatted}`,
       type: 'error',
       action: 'wc',
@@ -135,9 +175,12 @@ async function handleSubmit() {
   }
 }
 
-const { data: simulationDetails } = useAsyncData(
+const { data: simulationDetails, error: simulationError } = useAsyncData(
   'simulationDetails',
   () => {
+    if (networksSimulationNotSupported.includes(Number(props.chainId)))
+      throw new Error('Simulation not supported on this network.')
+
     return http('/api/simulate', {
       method: 'POST',
       body: {
@@ -206,9 +249,9 @@ onUnmounted(() => {
               rel="noopener noreferrer"
               target="_blank"
               class="text-primary text-sm"
-              :href="wc.peerMeta?.url"
+              :href="peerURL"
             >
-              {{ formatURL(wc.peerMeta?.url!) }}
+              {{ formatURL(peerURL!) }}
             </a>
           </div>
         </div>
@@ -252,6 +295,11 @@ onUnmounted(() => {
       :details="simulationDetails"
       :has-error="!!error"
     />
+    <p v-if="simulationError" class="text-xs leading-5 text-orange-400 flex items-center gap-2">
+      <SVGInfoCircle class="w-3" />
+
+      {{ simulationError.message }}
+    </p>
     <div class="flex justify-between items-center gap-4">
       <CommonButton
         color="white"

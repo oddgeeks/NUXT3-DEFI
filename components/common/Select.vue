@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
-import SVGSuccess from '~/assets/images/icons/check-circle.svg'
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
+import SVGSuccess from '~/assets/images/icons/check-circle.svg?component'
 
 const props = defineProps<{
   options: any[]
@@ -13,6 +13,7 @@ const props = defineProps<{
   itemTextClasses?: string
   itemWrapperClasses?: string
   selectedLabelClasses?: string
+  disabled?: boolean
 }>()
 
 const emit = defineEmits(['update:modelValue'])
@@ -80,7 +81,7 @@ function isSelected(option: any, index: number) {
   <div
     ref="containerRef"
     class="relative"
-    :class="{ 'z-10': open }"
+    :class="{ 'z-10': open, 'pointer-events-none': disabled }"
     @keydown.escape="toggle(false)"
   >
     <button
@@ -102,7 +103,7 @@ function isSelected(option: any, index: number) {
       <span :class="selectedLabelClasses" class="block truncate text-sm">{{
         selectedLabel
       }}</span>
-      <span class="pointer-events-none flex items-center ml-auto">
+      <span v-if="!disabled" class="pointer-events-none flex items-center ml-auto">
         <ChevronDownSVG class="h-5 w-5 text-gray-400" aria-hidden="true" />
       </span>
     </button>

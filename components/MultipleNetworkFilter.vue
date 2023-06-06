@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import CheckCircle from '~/assets/images/icons/check-circle.svg'
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
+import CheckCircle from '~/assets/images/icons/check-circle.svg?component'
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
 
 const props = defineProps({
   networks: {
@@ -76,7 +76,7 @@ function toggleAllNetworks() {
     <Popover
       as="div" :class="`relative z-20 gap-4 items-center ${!filters ? 'flex' : 'hidden sm:flex'}`"
     >
-      <PopoverButton class="text-sm flex items-center gap-2 h-7.5">
+      <PopoverButton class="text-sm flex items-center gap-2 h-7.5 focus-visible:outline-none">
         Networks
         <ChevronDownSVG class="text-slate-400 w-[14px] h-[14px]" />
       </PopoverButton>

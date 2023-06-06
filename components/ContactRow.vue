@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ArrowRight from '~/assets/images/icons/arrow-right.svg'
-import DeleteSVG from '~/assets/images/icons/delete.svg'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
+import DeleteSVG from '~/assets/images/icons/delete.svg?component'
 
 defineProps({
   contact: {
@@ -68,7 +68,7 @@ async function handleDeletingContact(contact: IContact) {
               class="items-center gap-2.5 h-10 !px-4"
               :disabled="!!contact.chainId && !hasAvailableTokens(contact.chainId)"
               @click="
-                openSendModal(contact.chainId, undefined, contact)
+                openSendModal(contact.chainId || 1, undefined, contact)
               "
             >
               Send

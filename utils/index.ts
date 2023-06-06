@@ -27,19 +27,16 @@ export async function slack(message: string,
 }
 
 export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee {
-  const { fee, multiplier = '0', discountDetails } = params
+  const { fee, multiplier = '0', discountDetails = [] } = params
 
   if (!fee) {
     return {
-      discountDetails: {
-        discount: 0,
-        name: '',
-        tooltip: '',
-      },
-      discountAmount: 0,
+      discountDetails: [],
       amountAfterDiscount: 0,
       min: 0,
       max: 0,
+      minAmountAfterDiscount: 0,
+      maxAmountAfterDiscount: 0,
       formattedAmountAfterDiscount: '0.00',
       formatted: '0.00',
       discountAvailable: false,
@@ -47,9 +44,7 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
     }
   }
 
-  const discountAvailable = !isZero(discountDetails?.discount || 0)
-
-  const discount = discountDetails?.discount || 0
+  const discountAvailable = discountDetails?.length > 0
 
   const maxVal = toBN(fee)
     .dividedBy(10 ** 18)
@@ -66,15 +61,36 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
   const formattedMin = formatDecimal(String(actualMin), 2)
   const formattedMax = formatDecimal(String(actualMax), 2)
 
-  const discountAmountMin = discountAvailable ? actualMin * discount : 0
-  const discountAmount = discountAvailable ? actualMax * discount : 0
+  let maxAmountAfterDiscount = actualMax
+  let minAmountAfterDiscount = actualMin
 
-  const maxAmountAfterDiscount = discountAvailable
-    ? actualMax - discountAmount
-    : actualMax
-  const minAmountAfterDiscount = discountAvailable
-    ? actualMin - discountAmountMin
-    : actualMin
+  const appliedDiscounts = discountDetails.map((discountDetail) => {
+    const discount = discountDetail.amount
+
+    const discountAvailable = !isZero(discount || 0)
+
+    const discountAmountMin = discountAvailable
+      ? Math.min(
+        minAmountAfterDiscount * discount,
+        minAmountAfterDiscount,
+      )
+      : 0
+    const discountAmount = discountAvailable
+      ? Math.min(
+        maxAmountAfterDiscount * discount,
+        maxAmountAfterDiscount,
+      )
+      : 0
+
+    maxAmountAfterDiscount -= discountAmount
+    minAmountAfterDiscount -= discountAmountMin
+
+    return {
+      ...discountDetail,
+      discountAmountMin,
+      discountAmount,
+    }
+  })
 
   const formattedDiscountedAmountMin = formatDecimal(minAmountAfterDiscount, 2)
   const formattedDiscountedAmount = formatDecimal(maxAmountAfterDiscount, 2)
@@ -91,15 +107,65 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
 
   return {
     discountAvailable,
-    discountDetails,
-    discountAmount,
+    discountDetails: appliedDiscounts,
     min: actualMin,
     max: actualMax,
     formatted,
     amountAfterDiscount: maxAmountAfterDiscount,
     formattedAmountAfterDiscount,
     chainId: params.chainId,
+    minAmountAfterDiscount,
+    maxAmountAfterDiscount,
   }
+}
+
+export function calculateMultipleEstimatedFee(...params: ICalculatedFee[]): ICalculatedFee {
+  const mergedFees = params.reduce((acc, fee) => {
+    const discountDetails = acc.discountDetails || []
+    const currentDiscount = fee.discountDetails || []
+
+    acc.amountAfterDiscount = toBN(acc.amountAfterDiscount).plus(fee.amountAfterDiscount).toNumber()
+    acc.discountDetails = [...discountDetails, ...currentDiscount]
+    acc.chainId = fee.chainId
+    acc.min = toBN(acc.min).plus(fee.min).toNumber()
+    acc.max = toBN(acc.max).plus(fee.max).toNumber()
+
+    acc.minAmountAfterDiscount = toBN(acc.minAmountAfterDiscount).plus(fee.minAmountAfterDiscount).toNumber()
+    acc.maxAmountAfterDiscount = toBN(acc.maxAmountAfterDiscount).plus(fee.maxAmountAfterDiscount).toNumber()
+
+    return acc
+  }, {
+    discountDetails: [],
+    amountAfterDiscount: 0,
+    min: 0,
+    max: 0,
+    formattedAmountAfterDiscount: '0.00',
+    formatted: '0.00',
+    discountAvailable: false,
+    chainId: '1',
+    maxAmountAfterDiscount: 0,
+    minAmountAfterDiscount: 0,
+  } as ICalculatedFee)
+
+  mergedFees.discountAvailable = !!mergedFees?.discountDetails && mergedFees?.discountDetails?.length > 0
+
+  const formattedDiscountedAmountMin = formatDecimal(mergedFees.minAmountAfterDiscount, 2)
+  const formattedDiscountedAmount = formatDecimal(mergedFees.maxAmountAfterDiscount, 2)
+
+  const formattedMin = formatDecimal(String(mergedFees.min), 2)
+  const formattedMax = formatDecimal(String(mergedFees.max), 2)
+
+  const isEqual = formattedMin === formattedMax
+
+  mergedFees.formatted = isEqual
+    ? formattedMax
+    : `${formattedMin} - ${formattedMax}`
+
+  mergedFees.formattedAmountAfterDiscount = isEqual
+    ? formattedDiscountedAmount
+    : `${formattedDiscountedAmountMin} - ${formattedDiscountedAmount}`
+
+  return mergedFees
 }
 
 export function formatIPFSUri(ipfs: string) {
@@ -135,3 +201,22 @@ export async function checkAddressIsDsa(
 
   return accountId.gt(0)
 }
+
+export const signingMethods = [
+  'eth_sendTransaction',
+  'eth_signTransaction',
+  'eth_sign',
+  'eth_signTypedData',
+  'eth_signTypedData_v1',
+  'eth_signTypedData_v2',
+  'eth_signTypedData_v3',
+  'eth_signTypedData_v4',
+  'personal_sign',
+  'wallet_addEthereumChain',
+  'wallet_switchEthereumChain',
+  'wallet_getPermissions',
+  'wallet_requestPermissions',
+  'wallet_registerOnboarding',
+  'wallet_watchAsset',
+  'wallet_scanQRCode',
+]

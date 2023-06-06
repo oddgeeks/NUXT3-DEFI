@@ -6,7 +6,6 @@ const isVersionUpdateBannerHidden = ref(false)
 export function useBanner() {
   const { gasBalance, pending } = storeToRefs(useSafe())
   const { account, chainId } = useWeb3()
-  const { airDrop } = useAvocadoSafe()
 
   const wcStore = useWalletConnect()
 
@@ -50,9 +49,6 @@ export function useBanner() {
     if (pending.value.global)
       return false
 
-    if (!airDrop.value)
-      return false
-
     return true
   })
 
@@ -73,8 +69,12 @@ export function useBanner() {
     if (isVersionUpdateBannerHidden.value)
       return false
 
-    return allVersions.some(network =>
-      gt(network.latestVersion, network.currentVersion),
+    return allVersions.some((network) => {
+      if (network.notdeployed)
+        return false
+
+      return gt(network.latestVersion, network.currentVersion)
+    },
     )
   })
 

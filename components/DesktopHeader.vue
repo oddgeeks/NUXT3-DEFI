@@ -1,17 +1,19 @@
 <script lang="ts" setup>
-const { account } = useWeb3()
+import { storeToRefs } from 'pinia'
+
 const { showVersionUpdateBanner } = useBanner()
-const { avoProvider } = useSafe()
+const { safeAddress } = storeToRefs(useSafe())
 const { fromWei } = useBignumber()
+const { avoProvider } = useSafe()
 
 const { refresh } = useAsyncData(
   'pending-deposit',
   async () => {
-    if (!account.value)
+    if (!safeAddress.value)
       return '0'
 
     const amountInWei = await avoProvider.send('eth_getBalance', [
-      account.value,
+      safeAddress.value,
       'pending-deposit',
     ])
 
@@ -20,7 +22,7 @@ const { refresh } = useAsyncData(
   {
     immediate: true,
     server: false,
-    watch: [account],
+    watch: [safeAddress],
   },
 )
 
@@ -37,8 +39,9 @@ useIntervalFn(refresh, 1000)
         <ColorModeSwitcher />
         <Web3Button v-if="!$router.currentRoute.value.meta.hideSidebar" />
       </div>
+
       <Transition name="slide-fade">
-        <WarningsVersionUpdate v-if="showVersionUpdateBanner" />
+        <WarningsVersionUpdate v-if="showVersionUpdateBanner && $router.currentRoute.value.name !== 'upgrade'" />
       </Transition>
     </nav>
   </div>

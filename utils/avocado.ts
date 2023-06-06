@@ -33,4 +33,25 @@ export const incorrectAddress = '0x0000000000000000000000000000000000000000'
 
 export const blockQueryURL = 'https://blockquery.instadapp.io'
 
+const swapAggregatorURLProd = 'https://swap-aggregator.instadapp.io'
+const swapAggregatorURLStaging = 'https://swap-aggregator.instad.app'
+
+const swapAggregatorTokenProd = 'hxBA1uxwaGWN0xcpPOncVJ3Tk7FdFxY7g3NX28R14C'
+const swapAggregatorTokenStaging = 'tZIvMelWpiGgfZyDHJLVEygCvXC'
+
+export const walletConnectMetadata = {
+  description: 'Instadapp Avocado - Safe',
+  url: 'https://avocado.instadapp.io',
+  icons: ['https://walletconnect.org/walletconnect-logo.png'],
+  name: 'Instadapp Avocado',
+}
+
+export const swapAggregatorURL = isProd
+  ? swapAggregatorURLProd
+  : swapAggregatorURLStaging
+
+export const swapAggregatorAccessToken = isProd
+  ? swapAggregatorTokenProd
+  : swapAggregatorTokenStaging
+
 export const unsupportedDapps = ['https://stargate.finance', 'https://app.gmx.io', 'https://www.sushi.com', 'https://app.alpacafinance.org', 'https://app-v2.alpacafinance.org', 'https://app.frax.finance', 'https://staking.synthetix.io', 'https://app.pooltogether.com', 'https://app.velodrome.finance', 'https://meshswap.fi', 'https://app.balancer.fi', 'https://oasis.app', 'https://app.tetu.io', 'https://mirror.xyz']

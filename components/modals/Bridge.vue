@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import SVGInfo from '~/assets/images/icons/exclamation-circle.svg'
-import RefreshSVG from '~/assets/images/icons/refresh.svg'
+import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
+import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 
 const props = defineProps({
   address: {
@@ -117,6 +117,7 @@ const onSubmit = form.handleSubmit(async () => {
       chainId: props.chainId,
       txHash: transactionHash,
       account: account.value,
+      amountInUsd: toBN(recivedValueInUsd.value).toString(),
     })
 
     form.resetForm()

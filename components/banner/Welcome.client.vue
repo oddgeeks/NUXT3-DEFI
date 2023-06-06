@@ -1,5 +1,5 @@
 <script setup>
-import SVGX from '~/assets/images/icons/x.svg'
+import SVGX from '~/assets/images/icons/x.svg?component'
 
 const { toggleWelcomeBanner } = useBanner()
 </script>

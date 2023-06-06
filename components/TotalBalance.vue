@@ -1,6 +1,6 @@
 <script setup>
 import { storeToRefs } from 'pinia'
-import ArrowRight from '~/assets/images/icons/arrow-right.svg'
+import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 
 const { balances } = storeToRefs(useSafe())
 const { totalBalance, tokenBalances } = useAvocadoSafe()
