@@ -103,17 +103,18 @@ const tippyOptions = {
         >
           <HomeSVG class="w-4 h-4" />
         </NuxtLink>
-        <NuxtLink
+        <!-- <NuxtLink
           v-tippy="{
             ...tippyOptions,
-            content: 'Contacts',
+            content: 'View your DeFi Positions',
           }"
-          class="px-5 py-3"
           active-class="text-primary"
-          to="/contacts"
+          class="px-5 py-3"
+          to="/defi"
         >
-          <ContactSVG class="w-4 h-4" />
-        </NuxtLink>
+          <SvgoDefi class="w-4 h-4" />
+        </NuxtLink> -->
+
         <NuxtLink
           v-tippy="{
             ...tippyOptions,
@@ -128,6 +129,17 @@ const tippyOptions = {
         <NuxtLink
           v-tippy="{
             ...tippyOptions,
+            content: 'Contacts',
+          }"
+          class="px-5 py-3"
+          active-class="text-primary"
+          to="/contacts"
+        >
+          <ContactSVG class="w-4 h-4" />
+        </NuxtLink>
+        <NuxtLink
+          v-tippy="{
+            ...tippyOptions,
             content: 'History',
           }"
           class="px-5 py-3"
@@ -136,17 +148,6 @@ const tippyOptions = {
           :to="`${avoExplorerURL}/address/${account}`"
         >
           <CalendarSVG class="w-4 h-4" />
-        </NuxtLink>
-        <NuxtLink
-          v-tippy="{
-            ...tippyOptions,
-            content: 'View your Defi Positions',
-          }"
-          active-class="text-primary"
-          class="px-5 py-3"
-          to="/defi"
-        >
-          <SvgoDefi class="w-4 h-4" />
         </NuxtLink>
       </div>
     </div>
