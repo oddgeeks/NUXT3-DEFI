@@ -10,13 +10,21 @@ const { account } = useWeb3()
 
 const searchQuery = ref('')
 
-const { availablePositions, summarize, getDefiProtocolName, fetchPositions } = useDefi()
+const { availablePositions, summarize, getDefiProtocolName, fetchPositions, defaultDefiApis } = useDefi()
+
+const networkPreferences = ref(
+  [...new Set(defaultDefiApis.map(i => i.chainId))],
+)
 
 const filteredPositions = computed(() => {
-  if (!searchQuery.value)
-    return availablePositions.value || []
+  const items = availablePositions.value?.filter(item =>
+    networkPreferences.value.some(i => i == item.chainId),
+  )
 
-  const fuse = new Fuse(availablePositions.value || [], {
+  if (!searchQuery.value)
+    return items || []
+
+  const fuse = new Fuse(items || [], {
     keys: ['label'],
     threshold: 0.2,
   })
@@ -36,9 +44,12 @@ watch(safeAddress, () => {
 
 <template>
   <div class="flex-1 flex gap-7.5 flex-col">
-    <h1>
-      Your DeFi Positions
-    </h1>
+    <div class="w-full flex items-center justify-between flex-wrap">
+      <h1 class="sm:text-base text-sm">
+        Your DeFi Positions
+      </h1>
+      <MultipleNetworkFilter v-if="account" v-model:networks="networkPreferences" class="!space-x-1" :filters="false" />
+    </div>
     <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
       <div v-for="item in summarize" :key="item.name" class="flex items-center gap-4 sm:p-5 px-4 py-3 dark:bg-gray-850 bg-slate-50 rounded-3xl">
         <div :class="item.color" class="sm:w-[50px] sm:h-[50px] w-11 h-11 bg-opacity-10 rounded-2xl flex items-center justify-center">

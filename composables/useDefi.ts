@@ -488,5 +488,6 @@ export function useDefi() {
     fetchPositions,
     getDefiProtocolName,
     calculateHealthFactor,
+    defaultDefiApis,
   }
 }
