@@ -11,6 +11,7 @@ import QuestionSVG from '~/assets/images/icons/question-circle-2.svg?component'
 import MoreOptionsSVG from '~/assets/images/icons/more-options.svg?component'
 import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
 import DefiSVG from '~/assets/images/icons/defi.svg?component'
+import type { IBalance } from '~/stores/safe'
 
 const emit = defineEmits(['navigate'])
 
