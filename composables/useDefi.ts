@@ -54,7 +54,7 @@ export function useDefi() {
       chainId: 137,
       logoURI: CompoundUrl,
       label: 'Compound V3',
-      instadappURL: 'https://defi.instadapp.io/compound-v3',
+      instadappURL: 'https://polygon.instadapp.io/compound-v3',
       defiURL: compoundDefiURL,
     },
     {
