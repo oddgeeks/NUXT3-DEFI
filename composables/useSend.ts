@@ -3,7 +3,6 @@ import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { isAddress } from '@ethersproject/address'
 import StepFrom from '~~/components/modals/Send/StepFrom.vue'
-import StepTo from '~~/components/modals/Send/StepTo.vue'
 import StepSubmit from '~~/components/modals/Send/StepSubmit.vue'
 
 interface Initialize {
@@ -32,10 +31,6 @@ export function useSend() {
     {
       name: 'From',
       component: StepFrom,
-    },
-    {
-      name: 'To',
-      component: StepTo,
     },
     {
       name: 'Send',
@@ -99,6 +94,8 @@ export function useSend() {
         .test('is-address', 'Incorrect address', async (value) => {
           if (!value)
             return true
+
+          actualAddress.value = ''
 
           const resolvedAddress
             = value.endsWith('.eth') && data.value.toChainId === 1

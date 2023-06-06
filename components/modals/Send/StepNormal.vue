@@ -152,8 +152,8 @@ async function onSubmit() {
             Dest. address
           </dt>
           <dd>
-            <NuxtLink target="_blank" class="text-primary font-medium" :to="getExplorerUrl(data.toChainId, `/address/${data.address}`)" external>
-              {{ data.address }}
+            <NuxtLink target="_blank" class="text-primary font-medium" :to="getExplorerUrl(data.toChainId, `/address/${actualAddress}`)" external>
+              {{ actualAddress }}
             </NuxtLink>
           </dd>
         </dl>
@@ -174,6 +174,11 @@ async function onSubmit() {
         </p>
       </div>
     </div>
+    <EstimatedFee
+      :loading="pending"
+      :data="feeData"
+      :error="error"
+    />
     <div class="grid grid-cols-2 gap-5">
       <CommonButton color="white" class="justify-center" size="lg" @click="stepBack">
         Back
@@ -183,10 +188,5 @@ async function onSubmit() {
         Send
       </CommonButton>
     </div>
-    <EstimatedFee
-      :loading="pending"
-      :data="feeData"
-      :error="error"
-    />
   </form>
 </template>

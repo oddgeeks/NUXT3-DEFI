@@ -112,7 +112,7 @@ export function openSendModal(chainId: number | string,
       contact,
     },
     options: {
-      wrapperClass: 'max-w-[560px]',
+      wrapperClass: '!max-w-fit',
       contentClass: '!px-7.5 !py-[32px]',
     },
   })

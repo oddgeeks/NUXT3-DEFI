@@ -251,7 +251,7 @@ async function fetchBestRoute() {
       toToken: targetToken.value?.address,
       toChainId: data.value.toChainId,
       amount: bestRoute.value.toAmount,
-      receiver: data.value.address,
+      receiver: actualAddress.value,
     })
 
     const sMessage = await safe.value?.generateSignatureMessage(
@@ -410,6 +410,11 @@ async function onSubmit() {
 
     const avocadoHash = await avoProvider.send('api_requestCrosschainTransaction', [crossSignatures.value.source, crossSignatures.value.target])
 
+    if (!avocadoHash) {
+      console.log(avocadoHash, 'Avocado hash not found', [crossSignatures.value.source, crossSignatures.value.target])
+      throw new Error('Something went wrong')
+    }
+
     logActionToSlack({
       message: `${formatDecimal(data.value.amount)} ${formatSymbol(
         token.value.symbol,
@@ -520,8 +525,8 @@ onMounted(() => {
             Dest. address
           </dt>
           <dd>
-            <NuxtLink target="_blank" class="text-primary font-medium" :to="getExplorerUrl(data.toChainId, `/address/${data.address}`)" external>
-              {{ data.address }}
+            <NuxtLink target="_blank" class="text-primary font-medium" :to="getExplorerUrl(data.toChainId, `/address/${actualAddress}`)" external>
+              {{ actualAddress }}
             </NuxtLink>
           </dd>
         </dl>
@@ -589,6 +594,13 @@ onMounted(() => {
         </div>
       </div>
     </div>
+
+    <EstimatedFee
+      :loading="crossFee.pending"
+      :data="crossFee.data"
+      :error="crossFeeError"
+    />
+
     <div class="grid grid-cols-2 gap-5">
       <CommonButton color="white" class="justify-center" size="lg" @click="stepBack">
         Back
@@ -601,11 +613,7 @@ onMounted(() => {
         Send
       </CommonButton>
     </div>
-    <EstimatedFee
-      :loading="crossFee.pending"
-      :data="crossFee.data"
-      :error="crossFeeError"
-    />
+
     <CommonNotification
       v-if="!!error"
       type="error"
