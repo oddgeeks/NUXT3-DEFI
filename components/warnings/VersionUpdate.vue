@@ -7,7 +7,7 @@ const { hideVersionUpdateBanner } = useBanner()
 
 <template>
   <div
-    class="bg-orange-400 rounded-5 w-[340px] flex gap-2.5 bg-opacity-20 p-[14px] absolute right-0 top-[66px]"
+    class="bg-[#3d312f] rounded-5 z-30 w-[340px] flex gap-2.5 p-[14px] absolute right-0 top-[66px]"
   >
     <SVGInfo class="text-orange-400 w-5 h-5 shrink-0" />
     <div class="flex flex-col gap-2">
