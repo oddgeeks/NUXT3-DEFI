@@ -23,12 +23,16 @@ const { data, pending, refresh } = useAsyncData(
   async () => {
     if (!safeAddress.value)
       return
+
+    if (safeAddress.value === incorrectAddress) {
+      console.log('incorrect address')
+      return []
+    }
+
     try {
       const nft = new NFT(route.query?.nftUser || safeAddress.value)
 
-      return nft.getNFTs({
-        pageSize: 50,
-      })
+      return nft.getNFTs()
     }
     catch (e) {
       console.log(e)
