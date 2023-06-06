@@ -13,7 +13,7 @@ export function useDefi() {
 
   const makerdaoDefiURL = 'https://makerdao.com'
   const compoundDefiURL = 'https://compound.finance'
-  const aaveDefiURL = 'https://aave.com'
+  const aaveDefiURL = 'https://app.aave.com'
   const liteDefiURL = 'https://instadapp.io'
 
   const defaultDefiApis: DefiApis[] = [
