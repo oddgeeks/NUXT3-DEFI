@@ -46,7 +46,7 @@ defineProps<{
         <h2 class="text-lg">
           Supplied: {{ formatUsd(position.positions?.totalSupplyInUsd) }}
         </h2>
-        <ul class="flex flex-col dark:bg-gray-850 bg-slate-50 rounded-5 sm:max-h-auto max-h-[180px] overflow-auto scroll-style">
+        <ul class="flex flex-col dark:bg-gray-850 bg-slate-50 rounded-5 sm:max-h-[500px] max-h-[180px] sm:oveflow-[initial] overflow-auto scroll-style">
           <template v-if="toBN(position.positions?.totalSupplyInUsd).gt('0')">
             <DefiPositionRow v-for="item in position.suppliedTokens" :key="item.key" :item="item" />
           </template>
@@ -59,7 +59,7 @@ defineProps<{
         <h2 class="text-lg">
           Borrowed: {{ formatUsd(position.positions?.totalBorrowInUsd) }}
         </h2>
-        <ul class="flex flex-col dark:bg-gray-850 bg-slate-50 rounded-5 sm:max-h-auto max-h-[180px] overflow-auto scroll-style">
+        <ul class="flex flex-col dark:bg-gray-850 bg-slate-50 rounded-5 sm:max-h-[500px] max-h-[180px] overflow-auto scroll-style">
           <template v-if="toBN(position.positions?.totalBorrowInUsd).gt('0')">
             <DefiPositionRow v-for="item in position.borrowedTokens" :key="item.key" :item="item" :borrow="true" />
           </template>
