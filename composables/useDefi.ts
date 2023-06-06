@@ -331,7 +331,7 @@ export function useDefi() {
             return acc + Number(currentHealthFactor)
           }, 0)
 
-          healthFactor = healthFactorSum.toString() === '0' ? '∞' : div(healthFactor, positionsData.length).toFixed(2)
+          healthFactor = healthFactorSum.toString() === '0' ? '∞' : div(healthFactorSum, positionsData.length).toFixed(2)
         }
 
         return [
