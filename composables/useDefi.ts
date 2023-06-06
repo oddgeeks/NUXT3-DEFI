@@ -323,15 +323,15 @@ export function useDefi() {
         else if (p.protocol === 'compound') {
           const positionsData = p.positions.data as unknown as any[]
 
-          // Accumulate health factor for each key and divide with total asset length to get the average
-          const healthFactorSum = positionsData.reduce((acc: any, i: any) => {
-            const currentHealthFactor = i.borrow.toString() === '0'
-              ? '0'
-              : div(times(times(i.supply, i.priceInUsd), i.factor), times(i.borrow, i.priceInUsd)).toFixed(2)
+          // Health factor (sum of (supplyInUsd * factor)/ sum of debtInUsd)
+          const healthFactorCollateralUsageUSD = positionsData.reduce((acc: any, i: any) => {
+            const currentHealthFactor = times(times(i.supply, i.priceInUsd), i.factor)
             return acc + Number(currentHealthFactor)
           }, 0)
 
-          healthFactor = healthFactorSum.toString() === '0' ? '∞' : div(healthFactor, positionsData.length).toFixed(2)
+          healthFactor = p.positions.totalBorrowInUsd.toString() === '0'
+            ? '∞'
+            : div(healthFactorCollateralUsageUSD, p.positions.totalBorrowInUsd).toFixed(2)
         }
 
         return [
