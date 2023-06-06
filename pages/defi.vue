@@ -40,15 +40,15 @@ watch(safeAddress, () => {
       Your DeFi Positions
     </h1>
     <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
-      <div v-for="item in summarize" :key="item.name" class="flex items-center gap-4 p-5 dark:bg-gray-850 bg-slate-50 rounded-3xl">
-        <div :class="item.color" class="w-[50px] h-[50px] bg-opacity-10 rounded-2xl flex items-center justify-center">
+      <div v-for="item in summarize" :key="item.name" class="flex items-center gap-4 sm:p-5 px-4 py-3 dark:bg-gray-850 bg-slate-50 rounded-3xl">
+        <div :class="item.color" class="sm:w-[50px] sm:h-[50px] w-11 h-11 bg-opacity-10 rounded-2xl flex items-center justify-center">
           <component :is="item.icon" />
         </div>
         <div class="flex flex-col gap-0.5">
-          <h1 class="text-sm text-slate-500">
+          <h1 class="sm:text-sm text-xs text-slate-500">
             {{ item.name }}
           </h1>
-          <h2 class="text-3xl leading-10">
+          <h2 class="sm:text-3xl leading-[30px] text-2xl sm:leading-10">
             {{ item.value }}
           </h2>
         </div>
@@ -69,7 +69,7 @@ watch(safeAddress, () => {
       <div
         :class="!account ? 'blur h-96' : ''"
         style="scrollbar-gutter: stable; overflow-y: overlay"
-        class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] flex scroll-style"
+        class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] hidden sm:flex scroll-style"
       >
         <table
           class="table w-full"
@@ -153,6 +153,80 @@ watch(safeAddress, () => {
           </tbody>
         </table>
       </div>
+
+      <ul class="sm:hidden flex-col flex gap-5">
+        <li
+          v-for="position in filteredPositions"
+          :key="position.label + position.chainId"
+          class="dark:bg-gray-850 flex-col bg-slate-50 rounded-5 flex gap-3"
+        >
+          <button class="flex justify-between w-full py-4 px-5 border-b dark:border-slate-800 border-slate-150" @click="openDefiPositionDetailsModal(position)">
+            <div class="flex items-center gap-3">
+              <div
+                class="relative inline-block h-7.5 w-7.5 rounded-full flex-shrink-0"
+              >
+                <img
+                  class="h-7.5 w-7.5 rounded-full"
+                  :src="position.logoURI"
+                  :alt="position.label"
+                >
+
+                <ChainLogo
+                  :stroke="true"
+                  class="absolute w-4 h-4 -right-1 -bottom-1"
+                  :chain="position.chainId"
+                />
+              </div>
+              <span class="w-[160px] text-sm text-left">
+                {{ position.label }}
+              </span>
+            </div>
+            <CommonButton class="whitespace-nowrap text-xs h-fit !px-4" color="white" :href="position.defiURL" target="_blank" as="a" @click.stop>
+              {{ getDefiProtocolName(position.protocol) || position.label }}
+            </CommonButton>
+          </button>
+          <div class="">
+            <dl class="grid grid-cols-2 gap-y-4">
+              <div class="border-b dark:border-slate-800 border-slate-150 pb-4 px-5">
+                <dt class="text-slate-500 text-xs leading-5">
+                  Supplied
+                </dt>
+                <dd class="text-sm">
+                  {{ formatUsd(position.positions?.totalSupplyInUsd) }}
+                </dd>
+              </div>
+              <div class="border-b dark:border-slate-800 border-slate-150">
+                <dt class="text-slate-500 text-xs leading-5">
+                  Borrowed
+                </dt>
+                <dd class="text-sm">
+                  {{ formatUsd(position.positions?.totalBorrowInUsd) }}
+                </dd>
+              </div>
+              <div class="pb-4 px-5">
+                <dt class="text-slate-500 text-xs leading-5">
+                  APY
+                </dt>
+                <dd class="text-sm">
+                  {{ formatPercent(toBN(position.apy).div(100).toFixed()) }}
+                </dd>
+              </div>
+              <div>
+                <dt class="text-slate-500 text-xs leading-5">
+                  Health Factor
+                </dt>
+                <dd class="text-sm">
+                  <DefiHealthFactorBadge :health-factor="position.healthFactor" />
+                </dd>
+              </div>
+            </dl>
+          </div>
+          <CommonButton v-if="position.instadappURL" size="lg" class="mx-5 justify-center" color="blue" :href="position.instadappURL" target="_blank" as="a" @click.stop>
+            Instadapp
+          </CommonButton>
+        </li>
+      </ul>
+
       <div
         v-if="!account"
         class="flex items-center justify-center w-full absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-1/2 sm:-translate-y-1/2"
