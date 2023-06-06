@@ -1,10 +1,10 @@
 export default defineNuxtRouteMiddleware((to) => {
-  if (!process.server) {
-    const routesToBeExclude = ['/', '/upgrade'];
-    const shouldExclude = routesToBeExclude.some(route => to.fullPath === route);
+  const routesToBeExclude = ['/', '/upgrade']
+  const shouldExclude = routesToBeExclude.includes(to.fullPath)
+  const cachedProviderName = useCookie('cachedProviderName')
 
-    if (!localStorage.getItem('cachedProviderName') && shouldExclude) {
-      return navigateTo('/login');
-    }
-  }
-});
+  console.log(cachedProviderName.value)
+
+  if (!cachedProviderName.value && shouldExclude)
+    return navigateTo('/login')
+})
