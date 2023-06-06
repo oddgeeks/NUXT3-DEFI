@@ -47,7 +47,16 @@ export function useDefi() {
       instadappURL: 'https://defi.instadapp.io/compound-v3',
       defiURL: compoundDefiURL,
     },
-
+    {
+      protocol: 'compound-v3',
+      protocolId: 4,
+      apiPath: '/polygon/compound/v3/position',
+      chainId: 137,
+      logoURI: CompoundUrl,
+      label: 'Compound V3',
+      instadappURL: 'https://defi.instadapp.io/compound-v3',
+      defiURL: compoundDefiURL,
+    },
     {
       protocol: 'aave-v3',
       protocolId: 2,
@@ -228,6 +237,15 @@ export function useDefi() {
             const totalBorrowedAmount = parseFloat(i.basePosition.borrowInUsd)
 
             const suppliedTokens = getCommonSuppliedTokens(i.tokens)
+
+            if (gt(i.basePosition.supply, '0')) {
+              suppliedTokens.push({
+                key: i.baseConfig.key,
+                price: i.basePosition.priceInBase,
+                supply: i.basePosition.supply,
+                supplyInUsd: i.basePosition.supplyInUsd,
+              })
+            }
 
             const totalSuppliedAmount = suppliedTokens.reduce((sum, j) => {
               return sum + parseFloat(j.supplyInUsd)
