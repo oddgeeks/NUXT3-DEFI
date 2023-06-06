@@ -86,7 +86,7 @@ watch(safeAddress, () => {
             <th class="py-5 pl-10">
               APY
             </th>
-            <th class="py-5 pl-10">
+            <th class="py-5 pl-10 whitespace-nowrap">
               Health Factor
             </th>
             <th class="py-5" />
