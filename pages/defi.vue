@@ -48,7 +48,7 @@ watch(safeAddress, () => {
       <h1 class="sm:text-base text-sm">
         Your DeFi Positions
       </h1>
-      <MultipleNetworkFilter v-if="account" v-model:networks="networkPreferences" class="!space-x-1" :filters="false" />
+      <MultipleNetworkFilter v-if="account" v-model:networks="networkPreferences" :filters="false" />
     </div>
     <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
       <div v-for="item in summarize" :key="item.name" class="flex items-center gap-4 sm:p-5 px-4 py-3 dark:bg-gray-850 bg-slate-50 rounded-3xl">
