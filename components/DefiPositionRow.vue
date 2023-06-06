@@ -15,7 +15,7 @@ function getTokenByKey(key: string) {
 const token = computed(() => getTokenByKey(props.item.key))
 
 const amount = computed(() => {
-  return props.borrow ? props.item.borrow : props.item.supply
+  return props.borrow ? gt(props.item.borrowStable, '0') ? props.item.borrowStable : props.item.borrow : props.item.supply
 })
 </script>
 

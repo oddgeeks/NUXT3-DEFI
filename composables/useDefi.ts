@@ -396,7 +396,7 @@ export function useDefi() {
   function getCommonBorrowedTokens(positions: any[]) {
     if (!positions)
       return []
-    return positions.filter((i: any) => gt(i.borrow, 0))
+    return positions.filter((i: any) => gt(i.borrow, 0) || gt(i?.borrowStable, '0'))
   }
 
   function calculateCommonAPY(positions: any[]) {
@@ -437,7 +437,7 @@ export function useDefi() {
             `https://api.instadapp.io/defi${api.apiPath}`,
             {
               params: {
-                user: safeAddress.value,
+                user: '0xBe4d99f3d2dB30f7E6AC9b197a4D91ECC1178e5D',
               },
               timeout: 20000,
             },
