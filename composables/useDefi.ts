@@ -253,12 +253,21 @@ export function useDefi() {
 
             const netAssets = totalSuppliedAmount - totalBorrowedAmount
 
-            // Either the supply or borrow will be 0, making the ineterstGenerated positive or negative
-            const ineterstGenerated = minus(
-              times(i.basePosition.supplyInUsd, div(i.basePosition.supplyAPY, 100))
-              , times(i.basePosition.borrowInUsd, div(i.basePosition.borrowAPY, 100)))
+            const stakingInterestGenerated = i.tokens.reduce((accum: any, t: any) => {
+              if (t.key === 'wsteth' || t.key === 'cbeth')
+                return plus(accum, times(t?.supplyInUsd, t?.stakingApr?.netStakingApr))
 
-            const netAPY = times(div(ineterstGenerated, netAssets), 100)
+              return accum
+            }, toBN(0))
+
+            // Either the supply or borrow will be 0, making the interstGenerated positive or negative
+            const interstGenerated = minus(
+              plus(
+                times(i.basePosition.supplyInUsd, plus(div(i.basePosition.supplyAPY, 100), i.rewards[0].supplyApy)),
+                stakingInterestGenerated)
+              , times(i.basePosition.borrowInUsd, minus(div(i.basePosition.borrowAPY, 100), i.rewards[0].borrowApy)))
+
+            const netAPY = times(div(interstGenerated, netAssets), 100)
 
             return {
               ...p,
@@ -406,8 +415,20 @@ export function useDefi() {
       const supply = toBN(curr?.supply)
       const borrow = toBN(curr?.borrow)
       const priceInUsd = toBN(curr?.priceInUsd)
-      const totalSupplyYield = supplyYield.plus(curr?.supplyRewardRate || curr?.compSupplyApy)
-      const totalBorrowYield = borrowYield.plus(curr?.borrowRewardRate || curr?.compBorrowApy)
+      let totalSupplyYield = supplyYield.plus(curr?.supplyRewardRate || curr?.compSupplyApy)
+      let totalBorrowYield = borrowYield.plus(curr?.borrowRewardRate || curr?.compBorrowApy)
+
+      const stakingTokenExists
+      = curr?.key === 'wsteth'
+      || curr?.key === 'steth'
+      || curr?.key === 'stmatic'
+      || curr?.key === 'savax'
+      || curr?.key === 'cbeth'
+
+      const stakingYield = stakingTokenExists ? toBN(curr?.stakingApr?.netStakingApr) : toBN(0)
+
+      totalSupplyYield = totalSupplyYield.plus(stakingYield)
+      totalBorrowYield = borrowYield.plus(stakingYield)
 
       const interest = supply
         .times(totalSupplyYield)
