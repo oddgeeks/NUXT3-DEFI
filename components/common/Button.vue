@@ -1,13 +1,13 @@
 <script setup lang="ts">
 interface ButtonProps {
-  color?: 'blue' | 'red' | 'white' | 'orange'
+  color?: 'blue' | 'red' | 'white' | 'orange' | 'primary'
   size?: 'md' | 'lg' | 'sm'
   loading?: boolean
   as?: 'button' | 'a' | 'NuxtLink'
 }
 
 const props = withDefaults(defineProps<ButtonProps>(), {
-  color: 'blue',
+  color: 'primary',
   size: 'md',
   loading: false,
   as: 'button',
@@ -34,8 +34,12 @@ const componentToShow = computed(() => {
           color === 'orange',
       },
       {
-        'bg-primary text-white hover:bg-primary-hover dark:disabled:bg-slate-800 dark:disabled:text-slate-500 disabled:text-slate-400 disabled:bg-slate-200':
+        'bg-blue-500 text-white hover:bg-blue-600 dark:disabled:bg-slate-800 dark:disabled:text-slate-500 disabled:text-slate-400 disabled:bg-slate-200':
           color === 'blue',
+      },
+      {
+        'bg-primary text-white hover:bg-primary-hover dark:disabled:bg-slate-800 dark:disabled:text-slate-500 disabled:text-slate-400 disabled:bg-slate-200':
+          color === 'primary',
       },
       {
         'dark:bg-slate-800 bg-slate-100 dark:disabled:text-slate-500 disabled:text-slate-400':
