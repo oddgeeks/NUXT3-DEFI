@@ -120,10 +120,20 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <h1 class="text-center mb-7.5 text-lg">
-      {{ isCrossChain ? 'Cross-chain Send' : 'Send' }}
-      <span v-if="contact"> to {{ contact.name }}  </span>
-    </h1>
+    <div class="flex gap-[14px] mb-7.5">
+      <div class="w-10 h-10 rounded-full items-center flex justify-center bg-primary">
+        <SvgoArrowRight class="-rotate-45" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <h1 class="text-lg leading-[20px]">
+          {{ isCrossChain ? 'Cross-chain Send' : 'Send' }}
+          <span v-if="contact"> to {{ contact.name }}  </span>
+        </h1>
+        <h2 class="font-medium text-xs text-slate-400 leading-5">
+          Transfer token across all the supported chains.
+        </h2>
+      </div>
+    </div>
     <div
       v-if="contact"
       class="flex items-center rounded-5 mb-5 -mt-3 pl-5 pr-4 py-5 dark:bg-gray-850 bg-slate-50 justify-between w-full"
@@ -148,133 +158,141 @@ onUnmounted(() => {
       </CommonButton>
     </div>
 
-    <div class="flex flex-col gap-2.5">
-      <div class="flex justify-between items-center">
-        <p class="text-sm text-slate-400">
-          From
-        </p>
-        <div class="text-xs flex gap-2 items-center">
-          <ChainLogo class="w-5 h-5" :chain="data.fromChainId" />
-          {{ chainIdToName(data.fromChainId) }}
-        </div>
-      </div>
-      <div class="flex justify-between gap-5 dark:bg-gray-850 bg-slate-50 px-5 py-4 rounded-5">
-        <div class="flex flex-col gap-2.5">
-          <span class="text-sm">Coin</span>
-          <TokenSelection
-            :model-value="token"
-            class="relative w-[160px] flex items-center gap-2.5 max-h-12 rounded-2xl border-2 dark:border-slate-700 border-slate-150 !bg-slate-50 dark:!bg-gray-850 px-4 py-3 text-left"
-            :tokens="availableTokens"
-            @update:model-value="handleTokenChange"
-          />
-        </div>
+    <div class="flex flex-col gap-[26px]">
+      <div class="flex flex-col gap-2.5 font-medium">
+        <div class="flex justify-between gap-5">
+          <div class="flex flex-col gap-2.5">
+            <span class="text-sm font-medium">Token</span>
+            <TokenSelection
+              :model-value="token"
+              :chain-id="data.fromChainId"
+              network-logo-class="w-[15px] h-[15px]"
+              class="relative w-[160px] flex items-center gap-2.5 max-h-12 rounded-[14px] border-1 dark:border-slate-700 border-slate-150 !bg-slate-50 dark:!bg-gray-850 text-left"
+              :tokens="availableTokens"
+              @update:model-value="handleTokenChange"
+            />
+          </div>
 
-        <div class="flex flex-col gap-2.5 flex-1">
-          <div class="flex items-center justify-between">
-            <span class="text-sm">Amount</span>
-            <div class="flex text-sm uppercase gap-x-3">
-              <span>
-                {{ formatDecimal(token?.balance || '0') }}
-                {{ token?.symbol }}
-              </span>
-              <button
-                type="button"
-                class="text-primary hover:text-primary"
-                @click="setValue(token?.balance || '0')"
-              >
-                MAX
-              </button>
+          <div class="flex flex-col gap-2.5 flex-1">
+            <div class="flex items-center justify-between">
+              <span class="text-sm">Amount</span>
+              <div class="flex text-sm uppercase gap-x-3">
+                <span>
+                  {{ formatDecimal(token?.balance || '0') }}
+                  {{ token?.symbol }}
+                </span>
+                <button
+                  type="button"
+                  class="text-primary hover:text-primary"
+                  @click="setValue(token?.balance || '0')"
+                >
+                  MAX
+                </button>
+              </div>
             </div>
-          </div>
-          <CommonInput
-            v-model="amount"
-            type="numeric"
-            :error-message="errorMessage"
-            :name="amount"
-            class="!rounded-2xl w-full"
-            input-classes="!py-3"
-            autofocus
-            placeholder="Enter amount"
-          >
-            <template #suffix>
-              <span class="text-sm font-semibold text-left text-slate-400 absolute right-5">
-                {{ formatUsd(toBN(token?.price || 0).times(amount || 0).toFixed()) }}</span>
-            </template>
-          </CommonInput>
-        </div>
-      </div>
-    </div>
-
-    <div class="flex flex-col gap-2.5">
-      <div class="flex justify-between items-center">
-        <p class="text-sm text-slate-400">
-          To
-        </p>
-      </div>
-      <div class="flex justify-between gap-5 dark:bg-gray-850 bg-slate-50 px-5 py-4 rounded-5">
-        <div class="flex flex-col gap-2.5">
-          <span class="text-sm">Network</span>
-          <CommonSelect
-            v-model="data.toChainId"
-            value-key="chainId"
-            label-key="name"
-            icon-key="icon"
-            class="w-[160px]"
-            :options="toAvailableNetworks"
-          >
-            <template #button-prefix>
-              <ChainLogo class="w-6 h-6 shrink-0" :chain="data.toChainId" />
-            </template>
-            <template #item-prefix="{ value }">
-              <ChainLogo class="w-6 h-6 shrink-0" :chain="value" />
-            </template>
-          </CommonSelect>
-        </div>
-
-        <div class="flex gap-2.5 flex-col w-full">
-          <div class="flex items-center justify-between">
-            <span class="text-sm">Address</span>
-            <span v-if="totalTransfers" class="text-sm text-slate-400">
-              {{ totalTransfers }} previous
-              {{ totalTransfers === 1 ? "send" : "sends" }}
-            </span>
-            <span
-              v-else-if="totalTransfers === 0"
-              class="text-sm text-orange-400 flex items-center gap-2"
+            <CommonInput
+              v-model="amount"
+              type="numeric"
+              :error-message="errorMessage"
+              :name="amount"
+              autofocus
+              class="!rounded-2xl w-full"
+              input-classes="!py-3"
+              placeholder="Enter amount"
             >
-              <SvgoExclamationCircle
-                v-tippy="
-                  'You are sending tokens to this address for the first time, make sure to double check the address again'
-                "
-              /> New Address Detected
-            </span>
+              <template #suffix>
+                <span class="text-sm text-left text-slate-400 absolute right-5">
+                  {{ formatUsd(toBN(token?.price || 0).times(amount || 0).toFixed()) }}</span>
+              </template>
+            </CommonInput>
           </div>
-          <CommonInput
-            v-model="fieldAddress"
-            autofocus
-            :error-message="addressMeta.dirty ? addressErrorMessage : ''"
-            name="address"
-            class="!rounded-2xl w-full"
-            input-classes="!py-3"
-            placeholder="Enter Address"
-          >
-            <template #suffix>
-              <button
-                v-tippy="{
-                  content: 'Select contact',
-                }"
-                type="button"
-                class="ml-3"
-                @click="handleSelectContact()"
-              >
-                <SvgoContact />
-              </button>
-            </template>
-          </CommonInput>
         </div>
       </div>
+
+      <div class="flex flex-col gap-2.5 font-medium">
+        <div class="flex justify-between gap-5">
+          <div class="flex flex-col gap-2.5">
+            <span class="text-sm">Network</span>
+            <CommonSelect
+              v-model="data.toChainId"
+              value-key="chainId"
+              label-key="name"
+              icon-key="icon"
+              class="w-[160px]"
+              :options="toAvailableNetworks"
+            >
+              <template #button-prefix>
+                <ChainLogo class="w-6 h-6 shrink-0" :chain="data.toChainId" />
+              </template>
+              <template #item-prefix="{ value }">
+                <ChainLogo class="w-6 h-6 shrink-0" :chain="value" />
+              </template>
+            </CommonSelect>
+          </div>
+
+          <div class="flex gap-2.5 flex-col w-full">
+            <div class="flex items-center justify-between">
+              <span class="text-sm">Address</span>
+              <span v-if="totalTransfers" class="text-sm text-slate-400">
+                {{ totalTransfers }} previous
+                {{ totalTransfers === 1 ? "send" : "sends" }}
+              </span>
+              <span
+                v-else-if="totalTransfers === 0"
+                class="text-sm text-orange-400 flex items-center gap-2"
+              >
+                <SvgoExclamationCircle
+                  v-tippy="
+                    'You are sending tokens to this address for the first time, make sure to double check the address again'
+                  "
+                /> New Address Detected
+              </span>
+            </div>
+            <CommonInput
+              v-model="fieldAddress"
+              :error-message="addressMeta.dirty ? addressErrorMessage : ''"
+              name="address"
+              class="!rounded-2xl w-full"
+              input-classes="!py-3"
+              placeholder="Enter Address"
+            >
+              <template #suffix>
+                <button
+                  v-tippy="{
+                    content: 'Select contact',
+                  }"
+                  type="button"
+                  class="ml-3"
+                  @click="handleSelectContact()"
+                >
+                  <SvgoContact />
+                </button>
+              </template>
+            </CommonInput>
+          </div>
+        </div>
+      </div>
+
+      <Transition>
+        <p v-if="isCrossChain" class="text-slate-400 font-medium leading-6 flex items-center text-xs">
+          <SvgoExclamationCircle class="mr-2.5 h-4.5 w-4.5 text-slate-500" />
+          This is a cross-chain send
+        </p>
+      </Transition>
     </div>
 
     <!-- <component :is="steps[activeStep].component" @destroy="$emit('destroy')" /> -->
   </div>
 </template>
+
+<style scoped>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease-in-out;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+</style>

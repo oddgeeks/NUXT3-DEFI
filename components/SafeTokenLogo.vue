@@ -2,6 +2,7 @@
 const props = defineProps<{
   url: string
   chainId?: number | string
+  networkLogoClass?: string
 } > ()
 
 const error = ref(false)
@@ -32,6 +33,7 @@ function onError() {
       v-tippy="chainIdToName(chainId)"
       :stroke="true"
       class="w-5.5 h-5.5 absolute -left-1 -bottom-1"
+      :class="[networkLogoClass]"
       :chain="chainId"
     />
   </div>
