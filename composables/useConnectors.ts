@@ -12,8 +12,6 @@ export function useConnectors() {
   const cachedProviderName = useCookie('cachedProviderName')
 
   function setConnectorName(name: string | null) {
-    if (!process.client)
-      return
     cachedProviderName.value = name
   }
 
