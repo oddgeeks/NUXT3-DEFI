@@ -6,6 +6,7 @@ useAccountTrack(undefined, () => {
 })
 
 const { safeAddress } = useAvocadoSafe()
+const { account } = useWeb3()
 
 const searchQuery = ref('')
 
@@ -63,91 +64,111 @@ watch(safeAddress, () => {
         <SvgoSearch class="mr-2 shrink-0" />
       </template>
     </CommonInput>
-    <div
-      style="scrollbar-gutter: stable; overflow-y: overlay"
-      class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] flex scroll-style"
-    >
-      <table
-        class="table w-full"
-      >
-        <thead>
-          <tr
-            class="text-sm font-medium text-left text-gray-400 border-b border-slate-150 dark:border-slate-800"
-          >
-            <th class="text-left py-6 pl-7.5">
-              Protocol
-            </th>
-            <th class="py-5">
-              Supplied
-            </th>
-            <th class="py-5 pl-7.5">
-              Borrowed
-            </th>
-            <th class="py-5 pl-10">
-              APY
-            </th>
-            <th class="py-5 pl-10 whitespace-nowrap">
-              Health Factor
-            </th>
-            <th class="py-5" />
-            <th class="py-5" />
-          </tr>
-        </thead>
-        <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
-          <tr
-            v-for="position in filteredPositions"
-            :key="position.label + position.chainId"
-            class="cursor-pointer" @click="openDefiPositionDetailsModal(position)"
-          >
-            <td class="py-[26px] pl-7.5">
-              <div class="flex items-center gap-3 w-fit">
-                <div
-                  class="relative inline-block h-7.5 w-7.5 rounded-full flex-shrink-0"
-                >
-                  <img
-                    class="h-7.5 w-7.5 rounded-full"
-                    :src="position.logoURI"
-                    :alt="position.label"
-                  >
 
-                  <ChainLogo
-                    :stroke="true"
-                    class="absolute w-4 h-4 -right-1 -bottom-1"
-                    :chain="position.chainId"
-                  />
+    <div class="relative">
+      <div
+        :class="!account ? 'blur h-96' : ''"
+        style="scrollbar-gutter: stable; overflow-y: overlay"
+        class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] flex scroll-style"
+      >
+        <table
+          class="table w-full"
+        >
+          <thead>
+            <tr
+              class="text-sm font-medium text-left text-gray-400 border-b border-slate-150 dark:border-slate-800"
+            >
+              <th class="text-left py-6 pl-7.5">
+                Protocol
+              </th>
+              <th class="py-5">
+                Supplied
+              </th>
+              <th class="py-5 pl-7.5">
+                Borrowed
+              </th>
+              <th class="py-5 pl-10">
+                APY
+              </th>
+              <th class="py-5 pl-10 whitespace-nowrap">
+                Health Factor
+              </th>
+              <th class="py-5" />
+              <th class="py-5" />
+            </tr>
+          </thead>
+          <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
+            <tr
+              v-for="position in filteredPositions"
+              :key="position.label + position.chainId"
+              class="cursor-pointer" @click="openDefiPositionDetailsModal(position)"
+            >
+              <td class="py-[26px] pl-7.5">
+                <div class="flex items-center gap-3 w-fit">
+                  <div
+                    class="relative inline-block h-7.5 w-7.5 rounded-full flex-shrink-0"
+                  >
+                    <img
+                      class="h-7.5 w-7.5 rounded-full"
+                      :src="position.logoURI"
+                      :alt="position.label"
+                    >
+
+                    <ChainLogo
+                      :stroke="true"
+                      class="absolute w-4 h-4 -right-1 -bottom-1"
+                      :chain="position.chainId"
+                    />
+                  </div>
+                  <span class="sm:whitespace-normal whitespace-nowrap">
+                    {{ position.label }}
+                  </span>
                 </div>
-                <span class="sm:whitespace-normal whitespace-nowrap">
-                  {{ position.label }}
-                </span>
-              </div>
-            </td>
-            <td>
-              {{ formatUsd(position.positions?.totalSupplyInUsd) }}
-            </td>
-            <td class="py-5 pl-7.5">
-              {{ formatUsd(position.positions?.totalBorrowInUsd) }}
-            </td>
-            <td class="pl-10">
-              {{ formatPercent(toBN(position.apy).div(100).toFixed()) }}
-            </td>
-            <td class="items-center pl-10 text-sm">
-              <p class="flex items-center gap-2.5">
-                <DefiHealthFactorBadge :health-factor="position.healthFactor" />
-              </p>
-            </td>
-            <td>
-              <CommonButton class="whitespace-nowrap" color="white" :href="position.defiURL" target="_blank" as="a" @click.stop>
-                {{ getDefiProtocolName(position.protocol) || position.label }}
-              </CommonButton>
-            </td>
-            <td class="pr-4">
-              <CommonButton v-if="position.instadappURL" color="blue" :href="position.instadappURL" target="_blank" as="a" @click.stop>
-                Instadapp
-              </CommonButton>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </td>
+              <td>
+                {{ formatUsd(position.positions?.totalSupplyInUsd) }}
+              </td>
+              <td class="py-5 pl-7.5">
+                {{ formatUsd(position.positions?.totalBorrowInUsd) }}
+              </td>
+              <td class="pl-10">
+                {{ formatPercent(toBN(position.apy).div(100).toFixed()) }}
+              </td>
+              <td class="items-center pl-10 text-sm">
+                <p class="flex items-center gap-2.5">
+                  <DefiHealthFactorBadge :health-factor="position.healthFactor" />
+                </p>
+              </td>
+              <td>
+                <CommonButton class="whitespace-nowrap" color="white" :href="position.defiURL" target="_blank" as="a" @click.stop>
+                  {{ getDefiProtocolName(position.protocol) || position.label }}
+                </CommonButton>
+              </td>
+              <td class="pr-4">
+                <CommonButton v-if="position.instadappURL" color="blue" :href="position.instadappURL" target="_blank" as="a" @click.stop>
+                  Instadapp
+                </CommonButton>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div
+        v-if="!account"
+        class="flex items-center justify-center w-full absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-1/2 sm:-translate-y-1/2"
+      >
+        <div class="flex flex-col items-center justify-center gap-6">
+          <p
+            class="font-semibold leading-[30px] text-slate-400 sm:text-white sm:text-lg sm:whitespace-nowrap text-center"
+          >
+            Connect your wallet to see your DeFi positions
+          </p>
+
+          <div class="w-28">
+            <Web3Button />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
