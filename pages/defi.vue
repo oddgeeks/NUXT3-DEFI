@@ -100,7 +100,7 @@ watch(safeAddress, () => {
             class="cursor-pointer" @click="openDefiPositionDetailsModal(position)"
           >
             <td class="py-[26px] pl-7.5">
-              <div class="flex items-center gap-3">
+              <div class="flex items-center gap-3 w-fit">
                 <div
                   class="relative inline-block h-7.5 w-7.5 rounded-full flex-shrink-0"
                 >
@@ -116,7 +116,9 @@ watch(safeAddress, () => {
                     :chain="position.chainId"
                   />
                 </div>
-                {{ position.label }}
+                <span class="sm:whitespace-normal whitespace-nowrap">
+                  {{ position.label }}
+                </span>
               </div>
             </td>
             <td>
@@ -134,11 +136,11 @@ watch(safeAddress, () => {
               </p>
             </td>
             <td>
-              <CommonButton color="white" :href="position.defiURL" target="_blank" as="a" @click.stop>
+              <CommonButton class="whitespace-nowrap" color="white" :href="position.defiURL" target="_blank" as="a" @click.stop>
                 {{ getDefiProtocolName(position.protocol) || position.label }}
               </CommonButton>
             </td>
-            <td>
+            <td class="pr-4">
               <CommonButton v-if="position.instadappURL" color="blue" :href="position.instadappURL" target="_blank" as="a" @click.stop>
                 Instadapp
               </CommonButton>
