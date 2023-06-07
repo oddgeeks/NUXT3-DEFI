@@ -22,7 +22,7 @@ const amount = computed(() => {
 <template>
   <li class="flex justify-between items-center py-4.5 px-5 border-b dark:border-b-slate-800 last:border-b-0">
     <span class="uppercase flex items-center gap-3 text-sm">
-      <img class="w-6 h-6" :src="token?.logoURI">
+      <SafeTokenLogo class="w-6 h-6" :url="token?.logoURI" />
       {{ formatDecimal(amount) }}
       {{ item.key }}
     </span>
