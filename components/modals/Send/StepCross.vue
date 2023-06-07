@@ -125,6 +125,32 @@ const bridgeFee = computed(() => {
   return fees
 })
 
+const totalAmounts = computed(() => {
+  return [{
+    amount: data.value.amount,
+    token: token.value,
+  }, {
+    amount: bridgeFee.value?.amount,
+    token: bridgeFee.value?.token,
+  }, {
+    amount: totalGassFee.value?.amount,
+    token: totalGassFee.value?.token,
+  }].reduce((acc: any, item) => {
+    if (toBN(item.amount).isZero())
+      return acc
+
+    const isSameToken = acc.find((i: any) => i.token?.symbol === item.token?.symbol)
+
+    if (isSameToken)
+      isSameToken.amount = toBN(isSameToken.amount).plus(item.amount).toString()
+
+    else
+      acc.push(item)
+
+    return acc
+  }, [])
+})
+
 const isInsufficientNativeBalance = computed(() => {
   if (!totalGassFee.value.token)
     return false
@@ -286,6 +312,17 @@ const crossFeeError = computed(() => {
 
   if (toBN(gasBalance.value).lt(crossFee.value.data?.amountAfterDiscount!))
     return 'Not enough USDC gas'
+})
+
+const tooltipText = computed(() => {
+  let tooltipText = 'Total amount is the amount that will be deducted from your account.'
+
+  if (!bridgeFee.value?.token || !totalGassFee.value?.token)
+    return tooltipText
+
+  tooltipText += `It includes ${formatDecimal(bridgeFee.value.amount)} ${bridgeFee.value.token?.symbol?.toUpperCase()} in bridge provider fee and ${formatDecimal(totalGassFee.value.amount)} ${totalGassFee?.value.token?.symbol?.toUpperCase()} in bridge provider source gas fee.`
+
+  return tooltipText
 })
 
 const totalAmountInUsd = computed(() => {
@@ -544,35 +581,6 @@ onMounted(() => {
             </NuxtLink>
           </dd>
         </dl>
-        <div class="ticket-divider w-full my-[6px]" />
-        <dl class="flex items-center justify-between">
-          <dt class="text-slate-400">
-            Source Gas Fee
-          </dt>
-          <dd class="flex items-center gap-2">
-            <img v-if="totalGassFee.token" class="w-5 h-5" :src="totalGassFee.token?.logoURI">
-            <span>
-              {{ formatDecimal(totalGassFee.amount) }}
-            </span>
-            <span class="text-slate-400">
-              ({{ formatUsd(totalGassFee.amountInUsd || "0") }})
-            </span>
-          </dd>
-        </dl>
-        <dl class="flex items-center justify-between">
-          <dt class="text-slate-400">
-            Bridge Fee
-          </dt>
-          <dd class="flex items-center gap-2">
-            <img v-if="bridgeFee.token" class="w-5 h-5" :src="bridgeFee.token?.logoURI">
-            <span>
-              {{ formatDecimal(bridgeFee.amount) }}
-            </span>
-            <span class="text-slate-400">
-              ({{ formatUsd(bridgeFee.amountInUsd || "0") }})
-            </span>
-          </dd>
-        </dl>
       </div>
       <div class="ticket-divider w-full my-4" />
       <div class="flex flex-col gap-4">
@@ -580,27 +588,21 @@ onMounted(() => {
           <span class="font-medium inline-flex gap-2.5 items-center">
             Total Amount
 
-            <QuestionSVG v-tippy="`Amount bridged to ${chainIdToName(data.toChainId)} wallet will be ${formatDecimal(totalReceivedAmount)} ${token?.symbol?.toUpperCase()} (after deducting fees) & final amount credited to destination address(${shortenHash(actualAddress)}) will be ${data.amount} ${token?.symbol?.toUpperCase()}`" class="w-4.5 h-4.5 text-slate-500" />
+            <QuestionSVG v-tippy="tooltipText" class="w-4.5 h-4.5 text-slate-500" />
 
           </span>
-          <div class="flex items-center gap-2.5 uppercase text-right flex-wrap justify-end max-w-[50%]">
-            <span v-if="toBN(totalGassFee.amount).gt('0')">
-              {{ formatDecimal(totalGassFee.amount) }} {{ totalGassFee.token?.symbol }} +
+          <div class="flex items-center gap-2.5 uppercase text-right justify-end">
+            <span v-for="total, i in totalAmounts" :key="i">
+              {{ formatDecimal(total?.amount) }}
+              {{ total?.token?.symbol }}
+              <span v-if="totalAmounts?.length - 1 !== i">
+                +
+              </span>
             </span>
 
-            <span v-if="toBN(bridgeFee.amount).gt('0')">
-              {{ formatDecimal(bridgeFee.amount) }} {{ bridgeFee.token?.symbol }} +
+            <span class="text-slate-400">
+              ({{ formatUsd(totalAmountInUsd) }})
             </span>
-
-            <p>
-              <span>
-                {{ formatDecimal(data.amount) }} {{ token?.symbol }}
-              </span>
-
-              <span class="text-slate-400">
-                ({{ formatUsd(totalAmountInUsd) }})
-              </span>
-            </p>
           </div>
         </div>
         <div class="flex justify-between leading-5 items-center">
