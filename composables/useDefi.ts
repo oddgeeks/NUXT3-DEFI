@@ -376,7 +376,7 @@ export function useDefi() {
 
     return [
       {
-        name: 'Lend',
+        name: 'Supplied',
         value: formatUsd(total.totalSupplyInUsd),
         color: 'bg-[#56CCF2]',
         icon: resolveComponent('SvgoMoneyLend'),
@@ -388,7 +388,7 @@ export function useDefi() {
         icon: resolveComponent('SvgoMoneyBorrowed'),
       },
       {
-        name: 'APY',
+        name: 'Net APY',
         value: formatPercent(toBN(aggregatedAPY).isNaN() ? '0' : aggregatedAPY),
         color: 'bg-[#2F80ED]',
         icon: resolveComponent('SvgoPercent'),

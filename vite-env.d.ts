@@ -531,3 +531,9 @@ interface IDefiActions {
   getSuppliedTokens: (positions: any) => any[]
   getBorrowedTokens: (positions: any) => any[]
 }
+
+type IDefiToken = {
+  key: string;
+  price?: string;
+  tokenAddress: string;
+}

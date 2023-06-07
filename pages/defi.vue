@@ -257,7 +257,3 @@ watch(safeAddress, () => {
     </div>
   </div>
 </template>
-
-<style>
-
-</style>
