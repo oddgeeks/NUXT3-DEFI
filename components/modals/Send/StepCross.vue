@@ -288,6 +288,14 @@ const crossFeeError = computed(() => {
     return 'Not enough USDC gas'
 })
 
+const totalAmountInUsd = computed(() => {
+  const sendAmountInUsd = toBN(data.value.amount || '0').times(token.value?.price || '0')
+
+  const formattedTotalAmountInUsd = toBN(totalGassFee.value.amountInUsd || '0').plus(bridgeFee.value.amountInUsd || '0').plus(sendAmountInUsd)
+
+  return formattedTotalAmountInUsd
+})
+
 async function fetchcrossSignatures() {
   try {
     if (!targetToken.value)
@@ -567,29 +575,39 @@ onMounted(() => {
         </dl>
       </div>
       <div class="ticket-divider w-full my-4" />
-      <div class="flex flex-col gap-2.5">
-        <div class="flex justify-between items-center leading-5">
+      <div class="flex flex-col gap-4">
+        <div class="flex justify-between items-baseline leading-5">
           <span class="font-medium inline-flex gap-2.5 items-center">
-            Amount receiving on dest. address
+            Total Amount
 
             <QuestionSVG v-tippy="`Amount bridged to ${chainIdToName(data.toChainId)} wallet will be ${formatDecimal(totalReceivedAmount)} ${token?.symbol?.toUpperCase()} (after deducting fees) & final amount credited to destination address(${shortenHash(actualAddress)}) will be ${data.amount} ${token?.symbol?.toUpperCase()}`" class="w-4.5 h-4.5 text-slate-500" />
 
           </span>
-          <p class="flex items-center gap-2.5">
-            <span class="uppercase text-base">
-              {{ formatDecimal(data.amount) }} {{ token?.symbol }}
+          <div class="flex items-center gap-2.5 uppercase text-right flex-wrap justify-end max-w-[50%]">
+            <span v-if="toBN(totalGassFee.amount).gt('0')">
+              {{ formatDecimal(totalGassFee.amount) }} {{ totalGassFee.token?.symbol }} +
             </span>
 
-            <span class="text-slate-400">
-              ({{ formatUsd(toBN(data.amount).times(token?.price || '0').toFixed()) }})
+            <span v-if="toBN(bridgeFee.amount).gt('0')">
+              {{ formatDecimal(bridgeFee.amount) }} {{ bridgeFee.token?.symbol }} +
             </span>
-          </p>
+
+            <p>
+              <span>
+                {{ formatDecimal(data.amount) }} {{ token?.symbol }}
+              </span>
+
+              <span class="text-slate-400">
+                ({{ formatUsd(totalAmountInUsd) }})
+              </span>
+            </p>
+          </div>
         </div>
         <div class="flex justify-between leading-5 items-center">
-          <span class="font-medium">
-            Amount to be deducted
+          <span class="font-medium text-xl">
+            Amount sent
           </span>
-          <p class="flex items-center gap-2.5">
+          <p class="flex items-center gap-2.5 text-xl">
             <span class="uppercase text-base">
               {{ formatDecimal(totalInputAmount) }} {{ token?.symbol }}
             </span>
