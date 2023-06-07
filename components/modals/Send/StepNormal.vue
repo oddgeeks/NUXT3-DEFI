@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Erc20__factory } from '~~/contracts'
 
-const emit = defineEmits(['destroy'])
 const { token, stepBack, data, actualAddress, isCrossChain } = useSend()
 const { account, library } = useWeb3()
 const { toWei } = useBignumber()
@@ -10,6 +9,8 @@ const { parseTransactionError } = useErrorHandler()
 
 const isSubmitting = ref(false)
 const amountInUsd = computed(() => toBN(token.value?.price || 0).times(data.value.amount))
+
+const destroyModal = inject('destroy') as () => void
 
 const { data: txs } = useAsyncData(
   'send-txs',
@@ -99,7 +100,7 @@ async function onSubmit() {
       account: account.value,
     })
 
-    emit('destroy')
+    destroyModal()
 
     showPendingTransactionModal(transactionHash, data.value.toChainId, 'send')
   }

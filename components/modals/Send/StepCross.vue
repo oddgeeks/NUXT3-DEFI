@@ -7,8 +7,6 @@ import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 import QuestionSVG from '~/assets/images/icons/question-circle.svg?component'
 
-const emit = defineEmits(['destroy'])
-
 const { isProd } = useAppConfig()
 const { token, stepBack, data, actualAddress, targetToken } = useSend()
 const { gasBalance } = storeToRefs(useSafe())
@@ -31,6 +29,8 @@ const isSubmitting = ref(false)
 const crossSignatures = ref<ICrossSignatures>()
 const targetMessage = ref()
 const sourceMessage = ref()
+
+const destroyModal = inject('destroy') as () => void
 
 const { data: networkVersions } = useNuxtData('allNetworkVersions')
 
@@ -427,7 +427,7 @@ async function onSubmit() {
       network: formattedNetwork,
     })
 
-    emit('destroy')
+    destroyModal()
 
     showPendingCrossTransaction(avocadoHash, data.value.fromChainId, data.value.toChainId)
   }

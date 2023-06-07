@@ -14,11 +14,13 @@ const props = defineProps({
   },
 })
 
-defineEmits(['destroy'])
+const emit = defineEmits(['destroy'])
 
 const { initialize, reset, isCrossChain, data, steps, activeStep } = useSend()
 
 const contact = ref<IContact | undefined>(props.contact)
+
+provide('destroy', () => emit('destroy'))
 
 initialize({
   fromChainId: +props.chainId,
@@ -89,6 +91,6 @@ onUnmounted(() => {
       </CommonButton>
     </div>
 
-    <component :is="steps[activeStep].component" @destroy="$emit('destroy')" />
+    <component :is="steps[activeStep].component" />
   </div>
 </template>
