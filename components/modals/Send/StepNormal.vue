@@ -166,15 +166,15 @@ async function onSubmit() {
       </div>
       <div class="ticket-divider w-full my-4" />
 
-      <div class="flex justify-between items-center font-semibold text-base">
+      <div class="flex justify-between items-center font-semibold text-2xl">
         <span>
-          You send
+          Amount
         </span>
         <p class="flex items-center gap-2.5">
           <span class="uppercase">
             {{ formatDecimal(data.amount) }} {{ token?.symbol }}
           </span>
-          <span class="text-xs text-slate-400">
+          <span class="text-slate-400">
             ({{ formatUsd(amountInUsd) }})
           </span>
         </p>

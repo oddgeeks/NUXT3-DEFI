@@ -5,7 +5,6 @@ import { storeToRefs } from 'pinia'
 import { parse } from 'semver'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
-import QuestionSVG from '~/assets/images/icons/question-circle.svg?component'
 
 const { isProd } = useAppConfig()
 const { token, stepBack, data, actualAddress, targetToken } = useSend()
@@ -62,13 +61,6 @@ const totalGassFee = computed(() => {
   }, fallbackFee)
 })
 
-const totalReceivedAmount = computed(() => {
-  if (!bestRoute.value)
-    return '0'
-
-  return fromWei(bestRoute.value.toAmount, targetToken.value?.decimals).toFixed()
-})
-
 const totalInputAmount = computed(() => {
   if (!bestRoute.value)
     return '0'
@@ -123,32 +115,6 @@ const bridgeFee = computed(() => {
   }, fallbackFee)
 
   return fees
-})
-
-const totalAmounts = computed(() => {
-  return [{
-    amount: data.value.amount,
-    token: token.value,
-  }, {
-    amount: bridgeFee.value?.amount,
-    token: bridgeFee.value?.token,
-  }, {
-    amount: totalGassFee.value?.amount,
-    token: totalGassFee.value?.token,
-  }].reduce((acc: any, item) => {
-    if (toBN(item.amount).isZero())
-      return acc
-
-    const isSameToken = acc.find((i: any) => i.token?.symbol === item.token?.symbol)
-
-    if (isSameToken)
-      isSameToken.amount = toBN(isSameToken.amount).plus(item.amount).toString()
-
-    else
-      acc.push(item)
-
-    return acc
-  }, [])
 })
 
 const isInsufficientNativeBalance = computed(() => {
@@ -314,23 +280,12 @@ const crossFeeError = computed(() => {
     return 'Not enough USDC gas'
 })
 
-const tooltipText = computed(() => {
-  let tooltipText = 'Total amount is the amount that will be deducted from your account.'
-
+const feeInfoMessage = computed(() => {
   if (!bridgeFee.value?.token || !totalGassFee.value?.token)
-    return tooltipText
+    return
 
-  tooltipText += `It includes ${formatDecimal(bridgeFee.value.amount)} ${bridgeFee.value.token?.symbol?.toUpperCase()} in bridge provider fee and ${formatDecimal(totalGassFee.value.amount)} ${totalGassFee?.value.token?.symbol?.toUpperCase()} in bridge provider source gas fee.`
-
-  return tooltipText
-})
-
-const totalAmountInUsd = computed(() => {
-  const sendAmountInUsd = toBN(data.value.amount || '0').times(token.value?.price || '0')
-
-  const formattedTotalAmountInUsd = toBN(totalGassFee.value.amountInUsd || '0').plus(bridgeFee.value.amountInUsd || '0').plus(sendAmountInUsd)
-
-  return formattedTotalAmountInUsd
+  return `You will be charged with ${formatDecimal(bridgeFee.value.amount)} ${bridgeFee.value.token?.symbol?.toUpperCase()}
+  (${formatUsd(bridgeFee.value.amountInUsd)}) + ${formatDecimal(totalGassFee.value.amount)} ${totalGassFee?.value.token?.symbol?.toUpperCase()} (${formatUsd(totalGassFee.value.amountInUsd)}) extra as fees for bridging service.`
 })
 
 async function fetchcrossSignatures() {
@@ -584,42 +539,30 @@ onMounted(() => {
       </div>
       <div class="ticket-divider w-full my-4" />
       <div class="flex flex-col gap-4">
-        <div class="flex justify-between items-baseline leading-5">
-          <span class="font-medium inline-flex gap-2.5 items-center">
-            Total Amount
-
-            <QuestionSVG v-tippy="tooltipText" class="w-4.5 h-4.5 text-slate-500" />
-
-          </span>
-          <div class="flex items-center gap-2.5 uppercase text-right justify-end">
-            <span v-for="total, i in totalAmounts" :key="i">
-              {{ formatDecimal(total?.amount) }}
-              {{ total?.token?.symbol }}
-              <span v-if="totalAmounts?.length - 1 !== i">
-                +
-              </span>
-            </span>
-
-            <span class="text-slate-400">
-              ({{ formatUsd(totalAmountInUsd) }})
-            </span>
-          </div>
-        </div>
         <div class="flex justify-between leading-5 items-center">
-          <span class="font-medium text-xl">
-            Amount sent
+          <span class="font-medium text-2xl">
+            Amount
           </span>
-          <p class="flex items-center gap-2.5 text-xl">
-            <span class="uppercase text-base">
-              {{ formatDecimal(totalInputAmount) }} {{ token?.symbol }}
+          <p class="flex items-center gap-2.5 text-2xl">
+            <span class="uppercase">
+              {{ formatDecimal(data.amount) }} {{ token?.symbol }}
             </span>
             <span class="text-slate-400">
-              ({{ formatUsd(bestRoute?.inputValueInUsd || "0") }})
+              ({{ formatUsd(toBN(data.amount).times(token?.price || '0').toString()) }})
             </span>
           </p>
         </div>
       </div>
     </div>
+
+    <Transition name="fade">
+      <p v-if="feeInfoMessage" class="text-slate-400 -mt-2 font-medium leading-6 flex items-start text-xs">
+        <SvgoExclamationCircle class="mr-2.5 mt-1 h-4.5 w-4.5 shrink-0 text-slate-500" />
+        <span class="block">
+          {{ feeInfoMessage }}
+        </span>
+      </p>
+    </Transition>
 
     <EstimatedFee
       :loading="crossFee.pending"

@@ -194,7 +194,7 @@ function handleContinue() {
       </div>
     </div>
 
-    <Transition>
+    <Transition name="fade">
       <p v-if="isCrossChain" class="text-slate-400 font-medium leading-6 flex items-center text-xs">
         <SvgoExclamationCircle class="mr-2.5 h-4.5 w-4.5 text-slate-500" />
         This is a cross-chain send
@@ -206,15 +206,3 @@ function handleContinue() {
     Continue
   </CommonButton>
 </template>
-
-<style scoped>
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.5s ease-in-out;
-}
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
-}
-</style>
