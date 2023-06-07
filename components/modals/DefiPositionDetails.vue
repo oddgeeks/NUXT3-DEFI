@@ -48,7 +48,7 @@ defineProps<{
         </h2>
         <ul class="flex flex-col dark:bg-gray-850 bg-slate-50 rounded-5 sm:max-h-[500px] max-h-[180px] sm:oveflow-[initial] overflow-auto scroll-style">
           <template v-if="toBN(position.positions?.totalSupplyInUsd).gt('0')">
-            <DefiPositionRow v-for="item in position.suppliedTokens" :key="item.key" :item="item" />
+            <DefiPositionRow v-for="item in position.suppliedTokens" :key="item.key" :chain-id="position.chainId" :item="item" />
           </template>
           <p v-else class="py-4.5 px-5 text-center">
             No Supplied tokens
@@ -61,7 +61,7 @@ defineProps<{
         </h2>
         <ul class="flex flex-col dark:bg-gray-850 bg-slate-50 rounded-5 sm:max-h-[500px] max-h-[180px] overflow-auto scroll-style">
           <template v-if="toBN(position.positions?.totalBorrowInUsd).gt('0')">
-            <DefiPositionRow v-for="item in position.borrowedTokens" :key="item.key" :item="item" :borrow="true" />
+            <DefiPositionRow v-for="item in position.borrowedTokens" :key="item.key" :chain-id="position.chainId" :item="item" :borrow="true" />
           </template>
           <p v-else class="py-4.5 px-5 text-center">
             No borrowed tokens
