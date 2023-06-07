@@ -2,6 +2,10 @@
 import Fuse from 'fuse.js'
 import SearchSVG from '~/assets/images/icons/search.svg?component'
 
+definePageMeta({
+  middleware: 'auth',
+})
+
 const searchQuery = ref()
 
 const { account } = useWeb3()

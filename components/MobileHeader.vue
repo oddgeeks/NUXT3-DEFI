@@ -15,6 +15,7 @@ const { setConnectorName } = useConnectors()
 const {
   showTrackingBanner,
 } = useBanner()
+const router = useRouter()
 
 const isActualActive = computed(() => {
   if (trackingAccount.value)
@@ -27,9 +28,14 @@ async function closeConnection() {
 
   if (success) {
     setConnectorName(null)
+    userSignOut()
     if (connector.value)
       deactivate()
   }
+}
+
+function userSignOut() {
+  router.push('/login')
 }
 
 watch(() => active.value, () => {
@@ -66,7 +72,7 @@ watch(() => active.value, () => {
       </button>
 
       <div v-if="!isActualActive">
-        <CommonButton v-if="!$router.currentRoute.value.meta.hideSidebar" size="md" @click="openWeb3Modal">
+        <CommonButton size="md" @click="openWeb3Modal">
           Connect
         </CommonButton>
       </div>

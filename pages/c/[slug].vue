@@ -7,7 +7,7 @@ import GasEmoji from '~/assets/images/icons/gas-emoji.svg?component'
 import type { IPromo } from '~/server/data/promos'
 
 definePageMeta({
-  middleware: 'claims',
+  middleware: ['auth', 'claims'],
 })
 
 useEagerConnect()

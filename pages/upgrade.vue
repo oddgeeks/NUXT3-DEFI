@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { gt } from 'semver'
 
+definePageMeta({
+  middleware: 'auth',
+})
+
 const { account } = useWeb3()
 const { data } = useNuxtData('allNetworkVersions')
 
