@@ -3,6 +3,8 @@ import { isAddress } from '@ethersproject/address'
 import { useField } from 'vee-validate'
 import type { IToken } from '~/stores/tokens'
 
+defineEmits(['destroy'])
+
 const { safeAddress } = useAvocadoSafe()
 
 const { isCrossChain, data, token, availableTokens, toAvailableNetworks, actualAddress, stepForward } = useSend()
@@ -63,7 +65,16 @@ async function handleSelectContact() {
 }
 
 function handleTokenChange(token: IToken) {
+  data.value.fromChainId = Number(token.chainId)
   data.value.tokenAddress = token.address
+
+  const isTargetChainNotAvailable = !toAvailableNetworks.value.find(
+    i => i.chainId === data.value.toChainId,
+  )
+
+  if (isTargetChainNotAvailable && toAvailableNetworks.value?.length)
+    data.value.toChainId = toAvailableNetworks.value[0].chainId
+
   validate()
 }
 

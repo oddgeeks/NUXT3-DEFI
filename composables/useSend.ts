@@ -43,7 +43,7 @@ export function useSend() {
   const availableTokens = computed(() =>
     tokenBalances.value.filter(
       t =>
-        +t.chainId == data.value.fromChainId && t.address.toLowerCase() !== data.value.tokenAddress.toLowerCase(),
+        gt(t.balance, '0'),
     ),
   )
 
@@ -82,7 +82,6 @@ export function useSend() {
               const amount = toBN(value)
               const balance = toBN(token.value?.balance || '0')
 
-              console.log(amount.toFixed(), balance.toFixed())
               if (amount.gt(balance))
                 return false
 

@@ -8,6 +8,7 @@ import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 import QuestionSVG from '~/assets/images/icons/question-circle.svg?component'
 
 const emit = defineEmits(['destroy'])
+
 const { isProd } = useAppConfig()
 const { token, stepBack, data, actualAddress, targetToken } = useSend()
 const { gasBalance } = storeToRefs(useSafe())
@@ -515,9 +516,14 @@ onMounted(() => {
           <dt class="text-slate-400">
             Token
           </dt>
-          <dd class="uppercase items-center flex gap-2">
+          <dd class=" items-center flex gap-2">
             <SafeTokenLogo class="w-[18px] h-[18px]" :url="token?.logoURI" />
-            {{ token?.symbol }}
+            <span class="uppercase">
+              {{ token?.symbol }}
+            </span>
+            <span v-tippy="token?.name" class="text-slate-400 max-w-[200px] truncate">
+              ({{ token?.name }})
+            </span>
           </dd>
         </dl>
         <dl class="flex items-center justify-between">
