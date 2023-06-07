@@ -159,7 +159,7 @@ async function fetchQuoteWithGasFee() {
     if (!quoteRoute.success)
       throw new Error('Can\'t get quote, please try again later')
     if (!quoteRoute.result.routes.length)
-      throw new Error('No routes have been found')
+      throw new Error('Our bridge provider does not have routes for your desired transfer')
 
     const route = quoteRoute.result.routes[0]
 
@@ -528,7 +528,7 @@ onMounted(() => {
         </dl>
         <dl class="flex items-center justify-between">
           <dt class="text-slate-400 whitespace-nowrap">
-            Dest. address
+            To address
           </dt>
           <dd>
             <NuxtLink target="_blank" class="text-primary font-medium" :to="getExplorerUrl(data.toChainId, `/address/${actualAddress}`)" external>
@@ -539,7 +539,7 @@ onMounted(() => {
         <div class="ticket-divider w-full my-[6px]" />
         <dl class="flex items-center justify-between">
           <dt class="text-slate-400">
-            Gas fees
+            Source Gas Fee
           </dt>
           <dd class="flex items-center gap-2">
             <img v-if="totalGassFee.token" class="w-5 h-5" :src="totalGassFee.token?.logoURI">

@@ -154,7 +154,7 @@ async function onSubmit() {
         </dl>
         <dl class="flex items-center justify-between">
           <dt class="text-slate-400 whitespace-nowrap">
-            Dest. address
+            To address
           </dt>
           <dd>
             <NuxtLink target="_blank" class="text-primary font-medium" :to="getExplorerUrl(data.toChainId, `/address/${actualAddress}`)" external>

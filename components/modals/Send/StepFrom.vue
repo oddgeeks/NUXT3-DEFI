@@ -73,8 +73,8 @@ function handleTokenChange(token: IToken) {
 }
 
 function handleContinue() {
-  stepForward()
   data.value.amount = amount.value
+  stepForward()
 }
 </script>
 
