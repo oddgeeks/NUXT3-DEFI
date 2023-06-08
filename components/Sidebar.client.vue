@@ -10,6 +10,13 @@ import QrSVG from '~/assets/images/icons/qr.svg?component'
 const { opened, toggleSidebar } = useSidebar()
 const { safeAddress } = useAvocadoSafe()
 const { account } = useWeb3()
+
+const tippyOptions = {
+  arrow: true,
+  arrowType: 'round',
+  animation: 'fade',
+  placement: 'right',
+}
 </script>
 
 <template>
@@ -57,11 +64,8 @@ const { account } = useWeb3()
       <div class="flex flex-col w-full gap-4" :class="{ 'blur pointer-events-none': !safeAddress }">
         <button
           v-tippy="{
-            arrow: true,
-            arrowType: 'round',
-            animation: 'fade',
+            ...tippyOptions,
             content: 'Show Avocado QR Code',
-            placement: 'right',
           }"
           class="flex justify-center items-center dark:bg-slate-800 bg-slate-100 w-full rounded-5 py-4"
           @click="openQrCode"
@@ -74,11 +78,9 @@ const { account } = useWeb3()
         >
           <Copy
             v-tippy="{
-              arrow: true,
-              arrowType: 'round',
-              animation: 'fade',
+              ...tippyOptions,
               content: 'Copy Your Avocado Address',
-              placement: 'right',
+
             }"
             :icon-only="true"
             class="text-xs p-4"
@@ -101,27 +103,22 @@ const { account } = useWeb3()
         >
           <HomeSVG class="w-4 h-4" />
         </NuxtLink>
-        <NuxtLink
+        <!-- <NuxtLink
           v-tippy="{
-            arrow: true,
-            arrowType: 'round',
-            animation: 'fade',
-            content: 'Contacts',
-            placement: 'right',
+            ...tippyOptions,
+            content: 'View your DeFi Positions',
           }"
-          class="px-5 py-3"
           active-class="text-primary"
-          to="/contacts"
+          class="px-5 py-3"
+          to="/defi"
         >
-          <ContactSVG class="w-4 h-4" />
-        </NuxtLink>
+          <SvgoDefi class="w-4 h-4" />
+        </NuxtLink> -->
+
         <NuxtLink
           v-tippy="{
-            arrow: true,
-            arrowType: 'round',
-            animation: 'fade',
+            ...tippyOptions,
             content: 'View your NFTs',
-            placement: 'right',
           }"
           class="px-5 py-3"
           active-class="text-primary"
@@ -131,11 +128,19 @@ const { account } = useWeb3()
         </NuxtLink>
         <NuxtLink
           v-tippy="{
-            arrow: true,
-            arrowType: 'round',
-            animation: 'fade',
+            ...tippyOptions,
+            content: 'Contacts',
+          }"
+          class="px-5 py-3"
+          active-class="text-primary"
+          to="/contacts"
+        >
+          <ContactSVG class="w-4 h-4" />
+        </NuxtLink>
+        <NuxtLink
+          v-tippy="{
+            ...tippyOptions,
             content: 'History',
-            placement: 'right',
           }"
           class="px-5 py-3"
           external

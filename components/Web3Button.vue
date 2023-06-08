@@ -18,6 +18,7 @@ const open = ref(false)
 const hovered = ref(false)
 const { setConnectorName, cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
+const router = useRouter()
 
 const ensName = ref()
 const isActualActive = computed(() => {
@@ -33,6 +34,7 @@ async function closeConnection() {
     trackingAccount.value = ''
     open.value = false
     setConnectorName(null)
+    userSignOut()
     if (connector.value)
       deactivate()
   }
@@ -49,6 +51,10 @@ const addressLabel = computed(() =>
 const connectedProvider = computed(() => {
   return providers.find(item => item.id === cachedProviderName.value)
 })
+
+const userSignOut = () => {
+  router.push('/login')
+}
 
 whenever(
   account,

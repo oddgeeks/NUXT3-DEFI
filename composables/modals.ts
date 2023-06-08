@@ -28,6 +28,7 @@ import NFTDetails from '~/components/modals/NFTDetails.vue'
 import SendNFT from '~/components/modals/SendNFT.vue'
 import SupportedNetworks from '~/components/modals/SupportedNetworks.vue'
 import PendingCrossTransaction from '~/components/modals/PendingCrossTransaction.vue'
+import DefiPositionDetails from '~/components/modals/DefiPositionDetails.vue'
 import QrCode from '~/components/modals/QrCode.vue'
 import AddAuthority from '~/components/modals/AddAuthority.vue'
 
@@ -402,6 +403,18 @@ export function showPendingCrossTransaction(avocadoHash: string, fromChainId: nu
       fromChainId,
       toChainId,
       avocadoHash,
+    },
+  })
+}
+
+export function openDefiPositionDetailsModal(position: Positions) {
+  openModal({
+    component: DefiPositionDetails,
+    componentProps: {
+      position,
+    },
+    options: {
+      wrapperClass: 'max-w-[760px]',
     },
   })
 }

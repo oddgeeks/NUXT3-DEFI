@@ -11,6 +11,7 @@ import RefreshSVG from '~/assets/images/icons/refresh-2.svg?component'
 import QuestionSVG from '~/assets/images/icons/question-circle-2.svg?component'
 import MoreOptionsSVG from '~/assets/images/icons/more-options.svg?component'
 import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
+import type { IBalance } from '~/stores/safe'
 
 const emit = defineEmits(['navigate'])
 
@@ -57,15 +58,14 @@ function openBridge() {
         <HomeSVG class="w-4 h-4" />
         Home
       </NuxtLink>
-      <NuxtLink
+      <!-- <NuxtLink
         active-class="text-primary"
         class="flex h-11 items-center gap-2.5"
-        to="/contacts"
-        @click="emit('navigate')"
+        to="/defi"
       >
-        <ContactSVG class="w-4 h-4" />
-        Contacts
-      </NuxtLink>
+        <DefiSVG class="w-4 h-4" />
+        DeFi
+      </NuxtLink> -->
       <NuxtLink
         active-class="text-primary"
         class="flex h-11 items-center gap-2.5"
@@ -74,6 +74,15 @@ function openBridge() {
       >
         <FireSVG class="w-4 h-4" />
         NFT
+      </NuxtLink>
+      <NuxtLink
+        active-class="text-primary"
+        class="flex h-11 items-center gap-2.5"
+        to="/contacts"
+        @click="emit('navigate')"
+      >
+        <ContactSVG class="w-4 h-4" />
+        Contacts
       </NuxtLink>
       <NuxtLink
         class="flex h-11 items-center gap-2.5"

@@ -3,6 +3,10 @@ import Fuse from 'fuse.js'
 import SearchSVG from '~/assets/images/icons/search.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
 
+definePageMeta({
+  middleware: 'auth',
+})
+
 const { account } = useWeb3()
 const { safeAddress } = useAvocadoSafe()
 const { safeContacts } = useContacts()

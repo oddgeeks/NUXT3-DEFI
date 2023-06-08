@@ -1,5 +1,3 @@
-import { AnkrProvider } from '@ankr.com/ankr.js'
-
 export function useNft() {
   class NFT {
     owner: string
@@ -8,10 +6,10 @@ export function useNft() {
       this.owner = owner
     }
 
-    async getNFTs(params: NFTParams): Promise<NFTData[]> {
+    async getNFTs(): Promise<NFTData[]> {
       const resp = await Promise.allSettled([
-        this.fetchAlchemyNFTData([1, 137, 10, 42161], params),
-        this.fetchAnkrNFTData([56, 43114, 250], params),
+        this.fetchAlchemyNFTData([1, 137, 10, 42161]),
+        this.fetchAnkrNFTData([56, 43114, 250]),
         // this.fetchZerionNFTData([100], params),
       ])
 
@@ -29,7 +27,6 @@ export function useNft() {
 
     private async fetchAlchemyNFTData(
       chainIds: number[],
-      params: NFTParams,
     ): Promise<NFTData[]> {
       return http('/api/nft/alchemy', {
         params: {
@@ -41,7 +38,6 @@ export function useNft() {
 
     private async fetchZerionNFTData(
       chainIds: number[],
-      params: NFTParams,
     ): Promise<NFTData[]> {
       return http('/api/nft/zerion', {
         params: {
@@ -53,44 +49,13 @@ export function useNft() {
 
     private async fetchAnkrNFTData(
       chainIds: number[],
-      params: NFTParams,
     ): Promise<NFTData[]> {
-      const provider = new AnkrProvider()
-
-      const ankrChains = availableNetworks
-        .filter(i => i.ankrName && chainIds.includes(i.chainId))
-        .map(i => i.ankrName)
-
-      console.log('ankrChains: ', ankrChains)
-
-      const nfts = await provider.getNFTsByOwner({
-        walletAddress: this.owner,
-        pageSize: params.pageSize,
-        blockchain: ankrChains as any,
+      return http('/api/nft/ankr', {
+        params: {
+          address: this.owner,
+          chains: chainIds,
+        },
       })
-      console.log('nfts: ', nfts)
-
-      return nfts.assets.reduce((acc, nft) => {
-        const network = availableNetworks.find(
-          i => i.ankrName === nft.blockchain,
-        )
-        if (!network)
-          return acc
-
-        acc.push({
-          imageUrl: nft.imageUrl,
-          collectionName: nft.collectionName,
-          name: nft.name,
-          chainId: network.chainId,
-          tokenId: nft.tokenId,
-          contractAddress: nft.contractAddress,
-          contractType: nft.contractType,
-          thumbnailUrl: nft.imageUrl,
-          attributes: nft.traits?.map(i => ({ type: i.trait_type, value: i.value })) as NFTAttributes[] || [],
-        })
-
-        return acc
-      }, [] as NFTData[])
     }
   }
 
