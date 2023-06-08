@@ -2,7 +2,6 @@
 import { storeToRefs } from 'pinia'
 import DeleteSVG from '~/assets/images/icons/delete.svg?component'
 import CopySVG from '~/assets/images/icons/copy.svg?component'
-import AvatarSVG from '~/assets/images/icons/avatar.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
 
 useAccountTrack(undefined, () => {
@@ -28,10 +27,8 @@ const { authorities } = storeToRefs(useAuthorities())
     <div class="flex flex-col dark:bg-gray-850 bg-slate-50 rounded-[25px]">
       <div v-for="(authority) in authorities" :key="authority.address" class="flex items-center justify-between py-6.5 px-7.5 border-b-1 border-slate-150 dark:border-slate-800 w-full">
         <div class="flex items-center gap-5 flex-1">
-          <AvatarSVG
-            :style="{
-              color: generateColor(authority.address),
-            }"
+          <AuthorityAvatar
+            :address="authority.address"
             class="-mr-2"
           />
           <span class="dark:text-white text-slate-900">{{ authority.address }}</span>
@@ -44,9 +41,9 @@ const { authorities } = storeToRefs(useAuthorities())
               </div>
             </template>
           </Copy>
-          <button>
-            <ChainLogo v-for="chainId in authority.chainIds" :key="chainId" class="w-5 h-5" :chain="chainId" />
-          </button>
+          <CommonButton class="text-xs leading-[14px]" color="white" @click="openManageAuthorityModal(authority)">
+            Manage Networks ({{ authority.chainIds.length }})
+          </CommonButton>
         </div>
         <button
           class="disabled:dark:bg-slate-800 disabled:bg-slate-150 bg-red-alert bg-opacity-20 disabled:dark:text-slate-600 disabled:text-slate-300 text-red-alert rounded-full w-7.5 h-7.5"
@@ -56,7 +53,7 @@ const { authorities } = storeToRefs(useAuthorities())
         </button>
       </div>
       <div class="flex py-6.5 px-7.5">
-        <button class="flex items-center text-primary gap-3" @click="openAddAuthority">
+        <button class="flex items-center text-primary gap-3" @click="openAddAuthorityModal()">
           <div class="bg-primary w-5 h-5 rounded-full flex">
             <PlusSVG class="text-white m-auto w-2 h-2" />
           </div>

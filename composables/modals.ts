@@ -31,6 +31,7 @@ import PendingCrossTransaction from '~/components/modals/PendingCrossTransaction
 import DefiPositionDetails from '~/components/modals/DefiPositionDetails.vue'
 import QrCode from '~/components/modals/QrCode.vue'
 import AddAuthority from '~/components/modals/AddAuthority.vue'
+import ManageAuthority from '~/components/modals/ManageAuthority.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -419,9 +420,18 @@ export function openDefiPositionDetailsModal(position: Positions) {
   })
 }
 
-export function openAddAuthority() {
+export function openAddAuthorityModal() {
   return openModal({
     component: AddAuthority,
+  })
+}
+
+export function openManageAuthorityModal(authority: IAuthority) {
+  return openModal({
+    component: ManageAuthority,
+    componentProps: {
+      authority,
+    },
   })
 }
 

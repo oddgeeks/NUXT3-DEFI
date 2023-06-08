@@ -554,3 +554,8 @@ interface IAuthority {
   address: string
   chainIds: string[]
 }
+
+interface IManageAuthorityModalParams {
+  authorityAddress: string
+  chainIds?: string[]
+}
