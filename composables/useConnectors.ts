@@ -9,7 +9,9 @@ const providers = {
 }
 
 export function useConnectors() {
-  const cachedProviderName = useCookie('cachedProviderName')
+  const cachedProviderName = useCookie('cachedProviderName', {
+    expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
+  })
 
   function setConnectorName(name: string | null) {
     cachedProviderName.value = name
