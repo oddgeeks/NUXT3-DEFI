@@ -58,7 +58,7 @@ export const useAuthorities = defineStore('authorities', () => {
       value.forEach((address: string) => {
         let existing = acc.find((item: IAuthority) => item.address === address)
         if (!existing) {
-          existing = { address, chainIds: [] }
+          existing = { address, chainIds: [], type: 'personal' }
           acc.push(existing)
         }
         existing.chainIds.push(key)

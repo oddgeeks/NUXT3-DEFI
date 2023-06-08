@@ -13,14 +13,17 @@ defineProps({
 
 const { active, deactivate, account, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
-const { gasBalance } = storeToRefs(useSafe())
-const open = ref(false)
-const hovered = ref(false)
+const { gasBalance, safeAddress } = storeToRefs(useSafe())
 const { setConnectorName, cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
 const router = useRouter()
 
+const { authorities } = storeToRefs(useAuthorities())
+
 const ensName = ref()
+const open = ref(false)
+const hovered = ref(false)
+
 const isActualActive = computed(() => {
   if (trackingAccount.value)
     return true
@@ -52,7 +55,14 @@ const connectedProvider = computed(() => {
   return providers.find(item => item.id === cachedProviderName.value)
 })
 
-const userSignOut = () => {
+const owner = computed<IAuthority>(() => {
+  return {
+    address: safeAddress.value,
+    type: 'personal',
+    chainIds: [],
+  }
+})
+function userSignOut() {
   router.push('/login')
 }
 
@@ -97,61 +107,111 @@ whenever(
 
       <span
         class="h-[26px] w-[26px] flex items-center justify-center bg-primary rounded-full text-white"
-      ><PlusSVG /></span>
+      ><PlusSVG />
+      </span>
     </button>
     <template v-if="!hideEOA">
-      <button
-        :class="open ? 'opacity-0 pointer-events-none' : 'opacity-100'"
-        class="bg-slate-100 relative rounded-7.5 dark:bg-slate-800 py-2.5 sm:py-3 px-4.5 sm:px-4 transition-all leading-5 justify-between flex items-center gap-x-2.5"
-        @click="open = true"
+      <Popover
+        as="div" class="relative z-30 gap-4 items-center flex"
       >
-        <div class="flex gap-[14px]">
-          <div class="flex items-center gap-2.5">
-            <div v-if="connectedProvider">
-              <component :is="connectedProvider.logo" class="h-7.5 sm:h-6 w-7.5 sm:w-6" />
-            </div>
-            <div class="flex flex-col items-start gap-[6px]">
-              <span>{{ addressLabel }}</span>
-            </div>
-          </div>
-        </div>
-
-        <SvgoChevronDown class="-rotate-90 shrink-0" />
-      </button>
-
-      <div :class="open ? 'opacity-100 sm:w-[440px]' : 'opacity-0 sm:w-[213px] pointer-events-none'" class="bg-slate-100 transition-all leading-5 justify-between flex items-center gap-x-2.5 dark:bg-gray-850 absolute right-0 p-5 ring-1 dark:ring-slate-750 ring-slate-150 rounded-[25px]">
-        <div class="flex gap-[14px]">
-          <div class="flex items-center gap-2.5">
-            <div v-if="connectedProvider">
-              <component :is="connectedProvider.logo" class="h-7.5 sm:h-6 w-7.5 sm:w-6" />
-            </div>
-            <div class="flex flex-col items-start gap-[6px]">
-              <span class="text-xs text-slate-400 leading-[10px]">Owner's Address</span>
-              <span class="text-lg leading-5">{{ addressLabel }}</span>
+        <PopoverButton class="bg-slate-100 relative rounded-7.5 dark:bg-slate-800 py-2.5 sm:py-3 px-4.5 sm:px-4 leading-5 justify-between flex items-center gap-x-2.5">
+          <div class="flex gap-[14px]">
+            <div class="flex items-center gap-2.5">
+              <div v-if="connectedProvider">
+                <component :is="connectedProvider.logo" class="h-7.5 sm:h-6 w-7.5 sm:w-6" />
+              </div>
+              <div class="flex flex-col items-start gap-[6px]">
+                <span>{{ addressLabel }}</span>
+              </div>
             </div>
           </div>
-          <button
-            @click="closeConnection"
-            @mouseenter="hovered = true"
-            @mouseleave="hovered = false"
-          >
-            <div class="-my-3 -mx-3 w-12 h-12 hidden sm:flex items-center justify-center">
-              <PowerOffSVG
-                v-if="hovered"
-                class="pointer-events-none right-0"
-              />
-              <PowerOnSVG v-else class="pointer-events-none right-0" />
-            </div>
-          </button>
-        </div>
-        <button
-          class="h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
-          aria-label="Close EOA"
-          @click.stop=" open = false"
+
+          <SvgoChevronDown class="-rotate-90 shrink-0" />
+        </PopoverButton>
+        <transition
+          enter-active-class="transition duration-100 ease-out"
+          enter-from-class="transform scale-95 opacity-0"
+          enter-to-class="transform scale-100 opacity-100"
+          leave-active-class="transition duration-75 ease-out"
+          leave-from-class="transform scale-100 opacity-100"
+          leave-to-class="transform scale-95 opacity-0"
         >
-          <SvgoX />
-        </button>
-      </div>
+          <PopoverPanel
+            v-slot="{ close }"
+            as="div"
+            class="bg-slate-100 sm:w-[440px] top-0 flex-col leading-5 justify-between flex gap-x-2.5 dark:bg-gray-850 absolute right-0 ring-1 dark:ring-slate-750 ring-slate-150 rounded-[25px]"
+          >
+            <div class="w-full flex justify-between p-5">
+              <div class="flex gap-[14px]">
+                <div class="flex items-center gap-2.5">
+                  <div v-if="connectedProvider">
+                    <component :is="connectedProvider.logo" class="h-7.5 sm:h-9 w-7.5 sm:w-9" />
+                  </div>
+                  <div class="flex flex-col items-start gap-[6px]">
+                    <span class="text-xs text-slate-400 leading-[10px]">Owner's Address</span>
+                    <span class="text-lg leading-5">{{ addressLabel }}</span>
+                  </div>
+                </div>
+                <button
+                  @click="closeConnection"
+                  @mouseenter="hovered = true"
+                  @mouseleave="hovered = false"
+                >
+                  <div class="-my-3 -mx-3 w-12 h-12 hidden sm:flex items-center justify-center">
+                    <PowerOffSVG
+                      v-if="hovered"
+                      class="pointer-events-none right-0"
+                    />
+                    <PowerOnSVG v-else class="pointer-events-none right-0" />
+                  </div>
+                </button>
+              </div>
+              <button
+                class="h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
+                aria-label="Close EOA"
+                @click.stop="close"
+              >
+                <SvgoX />
+              </button>
+            </div>
+            <div class="border-t dark:border-slate-750 px-5 pb-5 border-slate-150 pt-4">
+              <div>
+                <h2 class="text-xs mb-3">
+                  Generated wallets
+                </h2>
+                <WalletItem :active="true" :authority="owner" />
+              </div>
+              <div class="mt-5">
+                <h2 class="text-xs mb-3">
+                  Secondary wallets
+                </h2>
+                <ul class="flex flex-col gap-2.5">
+                  <li v-for="authority in authorities" :key="authority.address">
+                    <WalletItem :authority="authority" />
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </PopoverPanel>
+        </transition>
+      </Popover>
     </template>
   </div>
 </template>
+
+<style scoped>
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.25s ease-out;
+}
+
+.slide-up-enter-from {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+</style>
