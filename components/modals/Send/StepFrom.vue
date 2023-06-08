@@ -9,6 +9,10 @@ const { safeAddress } = useAvocadoSafe()
 
 const { isCrossChain, data, token, availableTokens, toAvailableNetworks, actualAddress, stepForward } = useSend()
 
+const route = useRoute()
+
+const isCrossChainEnabled = computed(() => route.query?.crossChainSend)
+
 const {
   value: amount,
   errorMessage,
@@ -132,7 +136,10 @@ function handleContinue() {
 
     <div class="flex flex-col gap-2.5 font-medium">
       <div class="flex justify-between gap-5">
-        <div class="flex flex-col gap-2.5">
+        <div
+          v-if="isCrossChainEnabled"
+          class="flex flex-col gap-2.5"
+        >
           <span class="text-sm">Network</span>
           <CommonSelect
             v-model="data.toChainId"
