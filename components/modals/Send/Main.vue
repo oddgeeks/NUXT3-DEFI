@@ -13,10 +13,14 @@ const props = defineProps({
     required: false,
   },
 })
-defineEmits(['destroy'])
 
-const { initialize, steps, activeStep, reset, isCrossChain, data } = useSend()
+const emit = defineEmits(['destroy'])
+
+const { initialize, reset, isCrossChain, data, steps, activeStep } = useSend()
+
 const contact = ref<IContact | undefined>(props.contact)
+
+provide('destroy', () => emit('destroy'))
 
 initialize({
   fromChainId: +props.chainId,
@@ -41,6 +45,7 @@ async function handleEdit() {
     data.value.address = contact.value.address
   }
 }
+
 onUnmounted(() => {
   reset()
 })
@@ -48,10 +53,20 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <h1 class="text-center mb-7.5 text-lg">
-      {{ isCrossChain ? 'Cross-chain Send' : 'Send' }}
-      <span v-if="contact"> to {{ contact.name }}  </span>
-    </h1>
+    <div class="flex gap-[14px] mb-7.5">
+      <div class="w-10 h-10 rounded-full items-center flex justify-center bg-primary">
+        <SvgoArrowRight class="-rotate-45" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <h1 class="text-lg leading-[20px]">
+          {{ isCrossChain ? 'Cross-chain Send' : 'Send' }}
+          <span v-if="contact"> to {{ contact.name }}  </span>
+        </h1>
+        <h2 class="font-medium text-xs text-slate-400 leading-5">
+          Transfer token across all the supported chains.
+        </h2>
+      </div>
+    </div>
     <div
       v-if="contact"
       class="flex items-center rounded-5 mb-5 -mt-3 pl-5 pr-4 py-5 dark:bg-gray-850 bg-slate-50 justify-between w-full"
@@ -75,42 +90,7 @@ onUnmounted(() => {
         Edit
       </CommonButton>
     </div>
-    <ul class="flex gap-2.5 justify-center mb-7.5">
-      <li v-for="(step, index) in steps" :key="index" class="flex gap-2.5">
-        <div class="flex flex-col items-center justify-center gap-2.5">
-          <div class="flex items-center justify-center flex-col gap-2.5">
-            <div
-              :class="index <= activeStep ? 'bg-primary' : 'bg-slate-800'"
-              class="w-10 h-10 rounded-full bg-primary flex items-center justify-center"
-            >
-              {{ index + 1 }}
-            </div>
-            <span :class="index <= activeStep ? '' : 'text-slate-500'" class="text-xs leading-5">
-              {{ step.name }}
-            </span>
-          </div>
-        </div>
-        <div
-          v-if="index + 1 < steps.length" :class="{
-            'animation': index < activeStep,
-            'bg-slate-750': index >= activeStep,
-          }" class="w-[60px] h-1 rounded-[10px] mt-[18px] bg-slate-750 relative divider"
-        />
-      </li>
-    </ul>
 
-    <component :is="steps[activeStep].component" @destroy="$emit('destroy')" />
+    <component :is="steps[activeStep].component" />
   </div>
 </template>
-
-<style scoped>
-.animation:after {
-  width: 100% !important;
-}
-
-.divider:after {
-  content: '';
-  transition: width 200ms ease-in-out;
-  @apply absolute bg-primary w-0 h-full rounded-[inherit];
-}
-</style>

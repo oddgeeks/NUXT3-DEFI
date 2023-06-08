@@ -210,3 +210,13 @@ input[type="search" i]::-webkit-search-cancel-button {
 .text-wrap {
   overflow-wrap: anywhere;
 }
+
+.fade-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease-in-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}

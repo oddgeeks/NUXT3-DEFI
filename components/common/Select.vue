@@ -90,7 +90,7 @@ function isSelected(option: any, index: number) {
         { 'border-b-transparent rounded-b-none adjuster': open },
         containerClasses,
       ]"
-      class="relative w-full flex items-center gap-2.5 max-h-12 rounded-2xl border-2 dark:border-slate-700 border-slate-150 bg-slate-50 dark:bg-gray-850 px-4 py-3 text-left"
+      class="relative w-full flex items-center gap-2.5 max-h-12 rounded-[14px] border-1 dark:border-slate-700 border-slate-150 bg-slate-50 dark:bg-gray-850 px-[14px] py-3 text-left"
       @click="toggle()"
     >
       <slot name="button-prefix">
@@ -114,7 +114,7 @@ function isSelected(option: any, index: number) {
     >
       <ul
         v-if="open"
-        class="absolute w-full flex flex-col gap-1.5 px-1 py-[15px] max-h-60 border-2 dark:border-slate-700 border-slate-150 border-t-0 rounded-b-2xl overflow-auto bg-slate-50 dark:bg-gray-850"
+        class="absolute w-full flex flex-col gap-1.5 px-1 py-[15px] max-h-60 border-1 dark:border-slate-700 border-slate-150 border-t-0 rounded-b-[14px] overflow-auto bg-slate-50 dark:bg-gray-850"
       >
         <li
           v-for="(option, i) in options"
@@ -162,7 +162,7 @@ function isSelected(option: any, index: number) {
 .adjuster:before {
   content: "";
   position: absolute;
-  left: -2px;
+  left: -1px;
   bottom: -2px;
   width: 2px;
   height: 2px;
@@ -172,7 +172,7 @@ function isSelected(option: any, index: number) {
 .adjuster:after {
   content: "";
   position: absolute;
-  right: -2px;
+  right: -1px;
   bottom: -2px;
   width: 2px;
   height: 2px;
