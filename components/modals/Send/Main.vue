@@ -63,7 +63,7 @@ onUnmounted(() => {
           <span v-if="contact"> to {{ contact.name }}  </span>
         </h1>
         <h2 class="font-medium text-xs text-slate-400 leading-5">
-          Transfer token across all the supported chains.
+          Transfer tokens to any address on selected chain.
         </h2>
       </div>
     </div>
