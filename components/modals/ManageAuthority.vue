@@ -123,15 +123,19 @@ async function handleSelectContact() {
           <SvgoSearch class="mr-2 shrink-0" />
         </template>
       </CommonInput>
-      <div class="dark:bg-gray-850 bg-slate-50 px-5 py-4 rounded-5">
-        <ul class="flex flex-col gap-5">
-          <li v-for="network in availableNetworks" :key="network.chainId" class="flex items-center gap-3">
-            <ChainLogo class="w-7 h-7" :chain="network.chainId" />
-            {{ network.name }}
+      <div class="dark:bg-gray-850 bg-slate-50 rounded-5 max-h-[380px] overflow-auto scroll-style">
+        <ul class="flex flex-col">
+          <li v-for="network in availableNetworks" :key="network.chainId" class="hover:bg-slate-150 py-2 rounded-[14px] hover:dark:bg-slate-800">
+            <button class="flex items-center justify-between w-full">
+              <span class="flex items-center gap-3 text-sm">
+                <ChainLogo class="w-7 h-7" :chain="network.chainId" />
+                {{ network.name }}
+              </span>
 
-            <SvgoCheckCircle
-              class="w-10 h-10 svg-circle darker"
-            />
+              <SvgoCheckCircle
+                class="w-5 h-5 svg-circle darker text-slate-500"
+              />
+            </button>
           </li>
         </ul>
       </div>

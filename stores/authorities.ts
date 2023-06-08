@@ -3,16 +3,17 @@ import TrashSVG from '~/assets/images/icons/trash.svg?url'
 import { AvoSafeImplementation__factory } from '~~/contracts'
 
 export const useAuthorities = defineStore('authorities', () => {
-  const { safeAddress, signer } = useAvocadoSafe()
-  const { avoProvider } = useSafe()
+  const { safeAddress, signer, mainSafeAddress } = useAvocadoSafe()
+  const { avoProvider, forwarderProxyContract } = useSafe()
 
   const safe = ref<ISafe>()
+  const authoritiesSafeAddresses = ref<string[]>([])
 
   const authorities = computed(() => {
     if (!safe.value)
       return []
 
-    return formatAuthorities(safe.value.authorities)
+    return formatAuthorities(safe.value.authorities, authoritiesSafeAddresses.value)
   })
 
   const deleteAuthority = async (authority: IAuthority) => {
@@ -48,17 +49,25 @@ export const useAuthorities = defineStore('authorities', () => {
   }
 
   const fetchAuthorities = async () => {
-    const resp = await avoProvider.send('api_getSafe', [safeAddress.value])
+    const resp = await avoProvider.send('api_getSafe', [mainSafeAddress.value])
+    const formattedAuthorities = formatAuthorities(resp.authorities)
 
+    const safes = await Promise.all(formattedAuthorities.map(i => forwarderProxyContract.computeAddress(
+      i.address,
+    )))
+
+    authoritiesSafeAddresses.value = safes
     safe.value = resp
   }
 
   const formatAuthorities = (input: ISafe['authorities']): IAuthority[] => {
     const result = Object.entries(input).reduce((acc: IAuthority[], [key, value]: [string, string[]]) => {
-      value.forEach((address: string) => {
+      value.forEach((address: string, index) => {
         let existing = acc.find((item: IAuthority) => item.address === address)
         if (!existing) {
-          existing = { address, chainIds: [], type: 'personal' }
+          const safeAddress = authoritiesSafeAddresses.value[index]
+
+          existing = { address, chainIds: [], type: 'personal', safeAddress: safeAddress || '' }
           acc.push(existing)
         }
         existing.chainIds.push(key)
@@ -69,10 +78,11 @@ export const useAuthorities = defineStore('authorities', () => {
     return result
   }
 
-  watch(safeAddress, () => {
-    if (!safeAddress.value)
+  watch(mainSafeAddress, async () => {
+    if (!mainSafeAddress.value)
       return
-    fetchAuthorities()
+
+    await fetchAuthorities()
   }, {
     immediate: true,
   })

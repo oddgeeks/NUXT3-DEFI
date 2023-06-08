@@ -13,7 +13,7 @@ defineProps({
 
 const { active, deactivate, account, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
-const { gasBalance, safeAddress } = storeToRefs(useSafe())
+const { gasBalance, safeAddress, mainSafeAddress } = storeToRefs(useSafe())
 const { setConnectorName, cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
 const router = useRouter()
@@ -35,6 +35,8 @@ async function closeConnection() {
 
   if (success) {
     trackingAccount.value = ''
+    safeAddress.value = undefined
+    mainSafeAddress.value = undefined
     open.value = false
     setConnectorName(null)
     userSignOut()
@@ -57,7 +59,8 @@ const connectedProvider = computed(() => {
 
 const owner = computed<IAuthority>(() => {
   return {
-    address: safeAddress.value,
+    safeAddress: mainSafeAddress.value,
+    address: account.value,
     type: 'personal',
     chainIds: [],
   }

@@ -553,6 +553,7 @@ type IDefiToken = {
 interface IAuthority {
   address: string
   chainIds: string[]
+  safeAddress: string
   type?: 'personal' | 'multisig'
 }
 

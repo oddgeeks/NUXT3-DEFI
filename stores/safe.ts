@@ -27,6 +27,7 @@ export const useSafe = defineStore('safe', () => {
   // balance aborter
   const balanceAborter = ref<AbortController>()
   const safeAddress = ref()
+  const mainSafeAddress = ref()
 
   const { account } = useWeb3()
   const { tokens, customTokens } = storeToRefs(useTokens())
@@ -78,10 +79,11 @@ export const useSafe = defineStore('safe', () => {
   })
 
   const fetchSafeddress = async () => {
-    if (!account.value) {
-      safeAddress.value = undefined
+    if (safeAddress.value)
       return
-    }
+
+    if (!account.value)
+      return
 
     const address = await forwarderProxyContract.computeAddress(
       account.value,
@@ -95,6 +97,7 @@ export const useSafe = defineStore('safe', () => {
       })
     }
 
+    mainSafeAddress.value = address
     safeAddress.value = address
   }
 
@@ -419,8 +422,7 @@ export const useSafe = defineStore('safe', () => {
     async () => {
       try {
         pending.value.global = true
-        safeAddress.value = undefined
-        fetchGasBalance()
+
         await fetchSafeddress()
       }
       finally {
@@ -433,6 +435,7 @@ export const useSafe = defineStore('safe', () => {
   watch([safeAddress, account, tokens], () => {
     fetchBalances()
     fetchEoaBalances()
+    fetchGasBalance()
   }, {
     immediate: true,
   })
@@ -446,6 +449,7 @@ export const useSafe = defineStore('safe', () => {
   return {
     gasBalance,
     safeAddress,
+    mainSafeAddress,
     tokenBalances,
     totalBalance,
     fetchGasBalance,
@@ -460,7 +464,12 @@ export const useSafe = defineStore('safe', () => {
     avoProvider,
     getBalances,
     fundedEoaNetworks,
+    forwarderProxyContract,
   }
+}, {
+  persist: {
+    paths: ['safeAddress', 'mainSafeAddress'],
+  },
 })
 
 function logBalance(params: ILogBalanceParams) {
