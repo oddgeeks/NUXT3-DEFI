@@ -4,6 +4,10 @@ import DeleteSVG from '~/assets/images/icons/delete.svg?component'
 import CopySVG from '~/assets/images/icons/copy.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
 
+definePageMeta({
+  middleware: 'auth',
+})
+
 useAccountTrack(undefined, () => {
   useEagerConnect()
 })
