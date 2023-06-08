@@ -5,6 +5,8 @@ import type { IToken } from '~~/stores/tokens'
 const props = defineProps<{
   tokens: IToken[]
   modelValue: IToken
+  chainId?: string | number
+  networkLogoClass?: string
 }>()
 
 const emit = defineEmits(['resolve', 'reject', 'update:modelValue'])
@@ -37,7 +39,7 @@ async function handleTokenSelection() {
     class="dark:bg-gray-900 bg-white text-sm uppercase h-fit inline-flex gap-2.5 items-center rounded-2xl pl-[14px] pr-3 py-3"
     @click="handleTokenSelection"
   >
-    <SafeTokenLogo class="h-6 w-6" :url="selectedToken?.logoURI" />
+    <SafeTokenLogo :network-logo-class="networkLogoClass" :chain-id="chainId" class="h-6 w-6" :url="selectedToken?.logoURI" />
     <span class="inline-flex items-center gap-[6px] w-full justify-between">
       {{ selectedToken?.symbol }}
       <ChevronDownSVG class="w-5 text-slate-400 -rotate-90" />

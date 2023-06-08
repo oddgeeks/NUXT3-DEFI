@@ -25,6 +25,8 @@ function getTokenBalance(address: string, chainId: string) {
   return token ? token.balance : '0'
 }
 
+const computeId = (token: IToken) => `${token.address}-${token.name}-${token.chainId}`
+
 const tokensWithBalance = computed(() => {
   return tokens.value
     .map((i) => {
@@ -58,6 +60,14 @@ const tokensWithBalance = computed(() => {
         : true,
     )
 })
+
+onMounted(() => {
+  const domId = computeId(props.selectedToken)
+
+  const el = document.getElementById(domId)
+  if (el)
+    el.scrollIntoView()
+})
 </script>
 
 <template>
@@ -81,7 +91,7 @@ const tokensWithBalance = computed(() => {
       v-if="tokensWithBalance.length && tokensWithBalance.length > 0"
       class="overflow-auto scroll-style h-96"
     >
-      <li v-for="token in tokensWithBalance" :key="token.address + token.name + token.chainId">
+      <li v-for="token in tokensWithBalance" :id="computeId(token)" :key="computeId(token)">
         <button
           class="px-5 w-full text-left py-[14px] rounded-3xl flex items-center gap-3 hover:bg-slate-100 hover:dark:bg-slate-800"
           @click="$emit('resolve', true, token)"
@@ -96,7 +106,7 @@ const tokensWithBalance = computed(() => {
             </span>
           </div>
           <SVGSuccess
-            v-if="token.symbol === selectedToken?.symbol"
+            v-if="token.address === selectedToken?.address && String(token?.chainId) === String(selectedToken?.chainId)"
             class="selected shrink-0 ml-auto text-white"
           />
         </button>

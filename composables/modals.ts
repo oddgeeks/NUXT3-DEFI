@@ -116,6 +116,7 @@ export function openSendModal(chainId: number | string,
     },
     options: {
       wrapperClass: '!max-w-fit',
+      contentClass: '!px-7.5 !py-[32px]',
     },
   })
 }
