@@ -176,8 +176,6 @@ async function fetchQuoteWithGasFee() {
 
 async function fetchBestRoute() {
   error.value = ''
-  if (!targetToken.value?.address)
-    return
 
   try {
     if (!targetToken.value?.address)
@@ -501,8 +499,10 @@ function handleSwapToken() {
   )
 }
 
-onMounted(() => {
+watch(targetToken, () => {
   fetchBestRoute()
+}, {
+  immediate: true,
 })
 </script>
 
@@ -536,7 +536,7 @@ onMounted(() => {
                 ({{ token?.name }})
               </span>
             </dd>
-            <template v-if="token?.symbol !== targetToken?.symbol">
+            <template v-if="targetToken && token?.symbol !== targetToken?.symbol">
               <ArrowRight class="text-slate-400 w-4" />
               <dd class=" items-center flex gap-2">
                 <SafeTokenLogo class="w-[18px] h-[18px]" :url="targetToken?.logoURI" />
@@ -569,7 +569,7 @@ onMounted(() => {
           </span>
           <p class="flex items-center gap-2.5 text-2xl">
             <span class="uppercase">
-              {{ formatDecimal(data.amount) }} {{ targetToken?.symbol }}
+              {{ formatDecimal(data.amount) }} {{ targetToken?.symbol || token?.symbol }}
             </span>
             <span class="text-slate-400">
               ({{ formatUsd(toBN(data.amount).times(token?.price || '0').toString()) }})
