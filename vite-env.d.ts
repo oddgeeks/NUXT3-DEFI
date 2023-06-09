@@ -470,6 +470,7 @@ interface ITokenPrice {
 interface ILogBalanceParams {
   chainId: number;
   isOnboard: boolean;
+  isPublic: boolean;
 }
  
 interface IEstimatedFeeData {

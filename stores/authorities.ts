@@ -13,7 +13,7 @@ export const useAuthorities = defineStore('authorities', () => {
     if (!safe.value)
       return []
 
-    return formatAuthorities(safe.value.authorities, authoritiesSafeAddresses.value)
+    return formatAuthorities(safe.value.authorities)
   })
 
   const deleteAuthority = async (authority: IAuthority) => {
@@ -82,7 +82,7 @@ export const useAuthorities = defineStore('authorities', () => {
     if (!mainSafeAddress.value)
       return
 
-    await fetchAuthorities()
+    fetchAuthorities()
   }, {
     immediate: true,
   })

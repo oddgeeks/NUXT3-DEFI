@@ -13,7 +13,8 @@ defineProps({
 
 const { active, deactivate, account, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
-const { gasBalance, safeAddress, mainSafeAddress } = storeToRefs(useSafe())
+const { gasBalance, mainSafeAddress } = storeToRefs(useSafe())
+const { resetAccounts } = useSafe()
 const { setConnectorName, cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
 const router = useRouter()
@@ -34,9 +35,7 @@ async function closeConnection() {
   const { success } = await openDisconnectWalletModal()
 
   if (success) {
-    trackingAccount.value = ''
-    safeAddress.value = undefined
-    mainSafeAddress.value = undefined
+    resetAccounts()
     open.value = false
     setConnectorName(null)
     userSignOut()
