@@ -526,15 +526,29 @@ onMounted(() => {
           <dt class="text-slate-400">
             Token
           </dt>
-          <dd class=" items-center flex gap-2">
-            <SafeTokenLogo class="w-[18px] h-[18px]" :url="token?.logoURI" />
-            <span class="uppercase">
-              {{ token?.symbol }}
-            </span>
-            <span v-tippy="token?.name" class="text-slate-400 max-w-[200px] truncate">
-              ({{ token?.name }})
-            </span>
-          </dd>
+          <div class="flex items-center gap-2">
+            <dd class=" items-center flex gap-2">
+              <SafeTokenLogo class="w-[18px] h-[18px]" :url="token?.logoURI" />
+              <span class="uppercase">
+                {{ token?.symbol }}
+              </span>
+              <span v-tippy="token?.name" class="text-slate-400 max-w-[200px] truncate">
+                ({{ token?.name }})
+              </span>
+            </dd>
+            <template v-if="token?.symbol !== targetToken?.symbol">
+              <ArrowRight class="text-slate-400 w-4" />
+              <dd class=" items-center flex gap-2">
+                <SafeTokenLogo class="w-[18px] h-[18px]" :url="targetToken?.logoURI" />
+                <span class="uppercase">
+                  {{ targetToken?.symbol }}
+                </span>
+                <span v-tippy="targetToken?.name" class="text-slate-400 max-w-[200px] truncate">
+                  ({{ targetToken?.name }})
+                </span>
+              </dd>
+            </template>
+          </div>
         </dl>
         <dl class="flex items-center justify-between">
           <dt class="text-slate-400 whitespace-nowrap">
@@ -555,7 +569,7 @@ onMounted(() => {
           </span>
           <p class="flex items-center gap-2.5 text-2xl">
             <span class="uppercase">
-              {{ formatDecimal(data.amount) }} {{ token?.symbol }}
+              {{ formatDecimal(data.amount) }} {{ targetToken?.symbol }}
             </span>
             <span class="text-slate-400">
               ({{ formatUsd(toBN(data.amount).times(token?.price || '0').toString()) }})
