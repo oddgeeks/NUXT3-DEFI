@@ -7,7 +7,7 @@ defineEmits(['destroy'])
 
 const { safeAddress } = useAvocadoSafe()
 
-const { isCrossChain, data, token, availableTokens, toAvailableNetworks, actualAddress, stepForward } = useSend()
+const { isCrossChain, data, token, availableTokens, toAvailableNetworks, actualAddress, stepForward, tokenlistPending } = useSend()
 
 const route = useRoute()
 
@@ -34,7 +34,7 @@ const {
 })
 
 const disabled = computed(() => {
-  return !actualAddress.value || !!errors.value.length || !!addressErrors.value.length || !amount.value
+  return !actualAddress.value || !!errors.value.length || !!addressErrors.value.length || !amount.value || tokenlistPending.value
 })
 
 const { data: totalTransfers } = useAsyncData(
@@ -209,7 +209,7 @@ function handleContinue() {
     </Transition>
   </div>
 
-  <CommonButton :disabled="disabled" class="justify-center mt-7.5 w-full" size="lg" @click="handleContinue">
+  <CommonButton :loading="tokenlistPending" :disabled="disabled" class="justify-center mt-7.5 w-full" size="lg" @click="handleContinue">
     Continue
   </CommonButton>
 </template>
