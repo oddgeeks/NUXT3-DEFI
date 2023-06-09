@@ -85,7 +85,7 @@ export function useSend() {
 
   const toAvailableNetworks = computed(() => availableNetworks)
 
-  const { data: toTokenList } = useAsyncData(async () => {
+  const { data: toTokenList, pending: tokenlistPending } = useAsyncData(async () => {
     if (data.value.fromChainId == data.value.toChainId)
       return
 
@@ -203,6 +203,7 @@ export function useSend() {
     token,
     targetToken,
     availableTokens,
+    tokenlistPending,
     actualAddress,
     toAvailableNetworks,
   }

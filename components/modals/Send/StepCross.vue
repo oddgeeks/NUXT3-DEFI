@@ -499,10 +499,8 @@ function handleSwapToken() {
   )
 }
 
-watch(targetToken, () => {
+onMounted(() => {
   fetchBestRoute()
-}, {
-  immediate: true,
 })
 </script>
 
