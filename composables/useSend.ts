@@ -54,23 +54,32 @@ export function useSend() {
   })
 
   const targetToken = computed(() => {
+    const selectedTokenSymbol = token.value?.symbol.toLowerCase()
+
+    const ethToken = tokenBalances.value.find(t =>
+      +t.chainId == data.value.toChainId
+      && t.symbol.toLowerCase() === 'eth')
+
+    if (selectedTokenSymbol === 'weth' && ethToken)
+      return ethToken
+
     const toToken = tokenBalances.value.find(t =>
       +t.chainId == data.value.toChainId
-      && (token.value && t.symbol.toLowerCase() === token.value.symbol.toLowerCase()))
+      && (token.value && t.symbol.toLowerCase() === selectedTokenSymbol))
 
     if (toToken)
       return toToken
 
     const t = toTokenList.value?.find(
       (t: any) =>
-        t.symbol.toLowerCase() === token.value?.symbol.toLowerCase(),
+        t.symbol.toLowerCase() === selectedTokenSymbol,
     )
 
     if (t)
       return t
 
     return toTokenList.value?.find((t: any) =>
-      t.symbol.toLowerCase().includes(token.value?.symbol.toLowerCase()),
+      t.symbol.toLowerCase().includes(selectedTokenSymbol),
     )
   })
 

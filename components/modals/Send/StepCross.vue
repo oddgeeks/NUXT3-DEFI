@@ -555,7 +555,7 @@ onMounted(() => {
           </span>
           <p class="flex items-center gap-2.5 text-2xl">
             <span class="uppercase">
-              {{ formatDecimal(data.amount) }} {{ token?.symbol }}
+              {{ formatDecimal(data.amount) }} {{ targetToken?.symbol }}
             </span>
             <span class="text-slate-400">
               ({{ formatUsd(toBN(data.amount).times(token?.price || '0').toString()) }})
