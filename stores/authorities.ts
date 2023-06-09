@@ -5,6 +5,7 @@ import { AvoSafeImplementation__factory } from '~~/contracts'
 export const useAuthorities = defineStore('authorities', () => {
   const { signer, safeAddress, mainSafeAddress } = useAvocadoSafe()
   const { avoProvider, forwarderProxyContract } = useSafe()
+  const { account } = useWeb3()
 
   const safe = ref<ISafe>()
   const authoritiesSafeAddresses = ref<string[]>([])
@@ -78,6 +79,12 @@ export const useAuthorities = defineStore('authorities', () => {
     }
   }
 
+  const fetchAuthoritySafes = async (authorityAddress: string) => {
+    return avoProvider.send('api_getSafes', [{
+      authority_address: authorityAddress,
+    }])
+  }
+
   const formatAuthorities = (input: ISafe['authorities'], safeAddresses: string[] = []): IAuthority[] => {
     const result = Object.entries(input).reduce((acc: IAuthority[], [key, value]: [string, string[]]) => {
       value.forEach((address: string, index) => {
@@ -109,6 +116,11 @@ export const useAuthorities = defineStore('authorities', () => {
 
     authoritiesSelectedSafeAddresses.value = selectedSafes
     selectedSafe.value = selectedSafeInstance
+
+    if (!account.value)
+      return
+
+    console.log(await fetchAuthoritySafes(mainSafeAddress.value))
   }, {
     immediate: true,
   })
