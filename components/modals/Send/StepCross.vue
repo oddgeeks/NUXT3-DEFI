@@ -217,7 +217,7 @@ async function fetchBestRoute() {
           }
         : { // ERC20 token transfer
             to: targetToken.value.address,
-            data: (new ethers.utils.Interface(ERC20ABI)).encodeFunctionData('transfer', [account.value, transferAmount]),
+            data: (new ethers.utils.Interface(ERC20ABI)).encodeFunctionData('transfer', [actualAddress.value, transferAmount]),
             operation: '0',
             value: '0',
           },
