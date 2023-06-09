@@ -34,7 +34,7 @@ const {
 })
 
 const disabled = computed(() => {
-  return !actualAddress.value || !!errors.value.length || !!addressErrors.value.length
+  return !actualAddress.value || !!errors.value.length || !!addressErrors.value.length || !amount.value
 })
 
 const { data: totalTransfers } = useAsyncData(
@@ -119,7 +119,7 @@ function handleContinue() {
             v-model="amount"
             type="numeric"
             :error-message="errorMessage"
-            :name="amount"
+            name="amount"
             autofocus
             class="!rounded-2xl w-full"
             input-classes="!py-3"
