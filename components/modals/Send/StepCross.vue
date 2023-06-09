@@ -180,6 +180,9 @@ async function fetchBestRoute() {
     return
 
   try {
+    if (!targetToken.value?.address)
+      throw new Error('No bridge token found')
+
     isSubmitting.value = true
 
     const route = await fetchQuoteWithGasFee()
@@ -206,21 +209,21 @@ async function fetchBestRoute() {
     const approvalData = buildTx.result.approvalData
 
     const transferAmount = toWei(data.value.amount, token.value?.decimals!).toString()
-      
+
     const targetActions = [
-      targetToken.value.address.toLowerCase() === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee".toLowerCase() ? 
-        { // Native token transfer
-          to: account.value,
-          data: "0x",
-          operation: '0',
-          value: transferAmount,
-        } :
-        { // ERC20 token transfer
-          to: targetToken.value.address,
-          data: (new ethers.utils.Interface(ERC20ABI)).encodeFunctionData('transfer', [account.value, transferAmount]),
-          operation: '0',
-          value: '0',
-        },
+      targetToken.value.address.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'.toLowerCase()
+        ? { // Native token transfer
+            to: actualAddress.value,
+            data: '0x',
+            operation: '0',
+            value: transferAmount,
+          }
+        : { // ERC20 token transfer
+            to: targetToken.value.address,
+            data: (new ethers.utils.Interface(ERC20ABI)).encodeFunctionData('transfer', [actualAddress.value, transferAmount]),
+            operation: '0',
+            value: '0',
+          },
     ]
 
     const sourceActions = [
