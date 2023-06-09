@@ -10,7 +10,7 @@ import ContactSVG from '~/assets/images/icons/contact.svg?component'
 
 const emit = defineEmits(['destroy'])
 
-const { authorities } = storeToRefs(useAuthorities())
+const { selectedSafeAuthorities } = storeToRefs(useAuthorities())
 
 const {
   handleSubmit,
@@ -31,7 +31,7 @@ const {
         (value) => {
           if (!isAddress(value || ''))
             return true
-          return !authorities.value.some(
+          return !selectedSafeAuthorities.value.some(
             authority =>
               authority.address?.toLowerCase() === value?.toLowerCase(),
           )
@@ -52,6 +52,8 @@ const onSubmit = handleSubmit(async () => {
   openManageAuthorityModal({
     address: address.value,
     chainIds: [],
+    safeAddress: '',
+    type: 'personal',
   })
   emit('destroy')
 })
@@ -64,6 +66,9 @@ async function handleSelectContact() {
 
     setValue(_contact.address)
   }
+}
+
+function handleContinue() {
 }
 </script>
 
@@ -112,6 +117,7 @@ async function handleSelectContact() {
         size="lg"
         :disabled="disabled"
         class="w-full items-center justify-center"
+        @click="handleContinue"
       >
         Continue
       </CommonButton>

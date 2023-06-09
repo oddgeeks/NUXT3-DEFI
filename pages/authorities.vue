@@ -13,7 +13,7 @@ useAccountTrack(undefined, () => {
 })
 
 const { deleteAuthority } = useAuthorities()
-const { authorities } = storeToRefs(useAuthorities())
+const { selectedSafeAuthorities } = storeToRefs(useAuthorities())
 </script>
 
 <template>
@@ -29,7 +29,7 @@ const { authorities } = storeToRefs(useAuthorities())
       </span>
     </div>
     <div class="flex flex-col dark:bg-gray-850 bg-slate-50 rounded-[25px]">
-      <div v-for="(authority) in authorities" :key="authority.address" class="flex items-center justify-between py-6.5 px-7.5 border-b-1 border-slate-150 dark:border-slate-800 w-full">
+      <div v-for="(authority) in selectedSafeAuthorities" :key="authority.address" class="flex items-center justify-between py-6.5 px-7.5 border-b-1 border-slate-150 dark:border-slate-800 w-full">
         <div class="flex items-center gap-5 flex-1">
           <AuthorityAvatar
             :address="authority.address"

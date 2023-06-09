@@ -19,7 +19,7 @@ const { setConnectorName, cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
 const router = useRouter()
 
-const { authorities } = storeToRefs(useAuthorities())
+const { mainSafeAuthorities } = storeToRefs(useAuthorities())
 
 const ensName = ref()
 const open = ref(false)
@@ -188,7 +188,7 @@ whenever(
                   Secondary wallets
                 </h2>
                 <ul class="flex flex-col gap-2.5">
-                  <li v-for="authority in authorities" :key="authority.address">
+                  <li v-for="authority in mainSafeAuthorities" :key="authority.address">
                     <WalletItem :authority="authority" />
                   </li>
                 </ul>

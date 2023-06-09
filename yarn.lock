@@ -1700,9 +1700,9 @@
     ethers "^5.7.2"
 
 "@instadapp/avocado-dev@npm:@instadapp/avocado@dev":
-  version "0.0.0-dev.a618559"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.a618559.tgz#a1ffe8d128825ebc5800c201428f37ab5e46a72b"
-  integrity sha512-+s30tPHh+K8O0ePvSrmhTIfI9TxvaRrcQCkCAQjpjPrfSEoe4tIcFhYSYR5HqCaU6d7VkJwvcT7cJQrjjxtFDw==
+  version "0.0.0-dev.2b826d9"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.2b826d9.tgz#67b4db23730c4fd65412c15c3bfda1b1ddfe3dd3"
+  integrity sha512-jFcRjd3H4WYzurlwpeRK34hRy7BnUcxQeHpCwvjl2kZ0tfMCWja7N9nhK8VrwPij8UFio/AxWRswv8aEELKIKA==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"

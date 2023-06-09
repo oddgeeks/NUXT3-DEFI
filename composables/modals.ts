@@ -32,6 +32,7 @@ import DefiPositionDetails from '~/components/modals/DefiPositionDetails.vue'
 import QrCode from '~/components/modals/QrCode.vue'
 import AddAuthority from '~/components/modals/AddAuthority.vue'
 import ManageAuthority from '~/components/modals/ManageAuthority.vue'
+import SignAuthority from '~/components/modals/SignAuthority.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -432,6 +433,16 @@ export function openManageAuthorityModal(authority: IAuthority) {
     component: ManageAuthority,
     componentProps: {
       authority,
+    },
+  })
+}
+
+export function openSignAuthorityModal(authority: IAuthority, chainIds: number[] | string[]) {
+  return openModal({
+    component: SignAuthority,
+    componentProps: {
+      authority,
+      chainIds,
     },
   })
 }
