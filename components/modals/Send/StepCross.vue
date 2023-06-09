@@ -210,7 +210,7 @@ async function fetchBestRoute() {
     const targetActions = [
       targetToken.value.address.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'.toLowerCase()
         ? { // Native token transfer
-            to: account.value,
+            to: actualAddress.value,
             data: '0x',
             operation: '0',
             value: transferAmount,
