@@ -527,12 +527,12 @@ onMounted(() => {
             Token
           </dt>
           <dd class=" items-center flex gap-2">
-            <SafeTokenLogo class="w-[18px] h-[18px]" :url="token?.logoURI" />
+            <SafeTokenLogo class="w-[18px] h-[18px]" :url="targetToken?.logoURI || token?.logoURI" />
             <span class="uppercase">
-              {{ token?.symbol }}
+              {{ targetToken?.symbol || token?.symbol }}
             </span>
-            <span v-tippy="token?.name" class="text-slate-400 max-w-[200px] truncate">
-              ({{ token?.name }})
+            <span v-tippy="targetToken?.name || token?.name" class="text-slate-400 max-w-[200px] truncate">
+              ({{ targetToken?.name || token?.name }})
             </span>
           </dd>
         </dl>
