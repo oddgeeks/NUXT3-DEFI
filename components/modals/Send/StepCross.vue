@@ -180,6 +180,9 @@ async function fetchBestRoute() {
     return
 
   try {
+    if (!targetToken.value?.address)
+      throw new Error('No bridge token found')
+
     isSubmitting.value = true
 
     const route = await fetchQuoteWithGasFee()

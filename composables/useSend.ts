@@ -54,15 +54,46 @@ export function useSend() {
   })
 
   const targetToken = computed(() => {
-    return tokenBalances.value.find(t =>
+    const toToken = tokenBalances.value.find(t =>
       +t.chainId == data.value.toChainId
       && (token.value && t.symbol.toLowerCase() === token.value.symbol.toLowerCase()))
+
+    if (toToken)
+      return toToken
+
+    const t = toTokenList.value?.find(
+      (t: any) =>
+        t.symbol.toLowerCase() === token.value?.symbol.toLowerCase(),
+    )
+
+    if (t)
+      return t
+
+    return toTokenList.value?.find((t: any) =>
+      t.symbol.toLowerCase().includes(token.value?.symbol.toLowerCase()),
+    )
   })
 
-  const toAvailableNetworks = computed(() => {
-    const tokens = tokenBalances.value.filter(t => t.symbol.toLowerCase() === token.value?.symbol.toLowerCase())
+  const toAvailableNetworks = computed(() => availableNetworks)
 
-    return [...new Set(tokens.map(t => t.chainId))].map(chainId => getNetworkByChainId(chainId)).filter(Boolean)
+  const { data: toTokenList } = useAsyncData(async () => {
+    if (data.value.fromChainId == data.value.toChainId)
+      return
+
+    const { result }: IBridgeTokensResponse = await http(
+      '/api/socket/v2/token-lists/to-token-list',
+      {
+        params: {
+          fromChainId: data.value.fromChainId,
+          toChainId: data.value.toChainId,
+        },
+      },
+    )
+
+    return result
+  }, {
+    watch: [() => data.value.toChainId],
+    immediate: false,
   })
 
   const isCrossChain = computed(() => String(data.value.fromChainId) !== String(data.value.toChainId))
