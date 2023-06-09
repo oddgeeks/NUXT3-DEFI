@@ -31,13 +31,10 @@ useIntervalFn(refresh, 1000)
 
 <template>
   <div class="items-center justify-end py-8 hidden sm:flex">
-    <NuxtLink v-if="$router.currentRoute.value.meta.hideSidebar" class="mr-auto" to="/">
-      <Logo />
-    </NuxtLink>
     <nav class="flex items-center gap-7.5 relative">
       <div class="flex items-center gap-5">
         <ColorModeSwitcher />
-        <Web3Button v-if="!$router.currentRoute.value.meta.hideSidebar" />
+        <Web3Button />
       </div>
 
       <Transition name="slide-fade">

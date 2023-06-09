@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Erc20__factory } from '~~/contracts'
 
-const emit = defineEmits(['destroy'])
 const { token, stepBack, data, actualAddress, isCrossChain } = useSend()
 const { account, library } = useWeb3()
 const { toWei } = useBignumber()
@@ -10,6 +9,8 @@ const { parseTransactionError } = useErrorHandler()
 
 const isSubmitting = ref(false)
 const amountInUsd = computed(() => toBN(token.value?.price || 0).times(data.value.amount))
+
+const destroyModal = inject('destroy') as () => void
 
 const { data: txs } = useAsyncData(
   'send-txs',
@@ -99,7 +100,7 @@ async function onSubmit() {
       account: account.value,
     })
 
-    emit('destroy')
+    destroyModal()
 
     showPendingTransactionModal(transactionHash, data.value.toChainId, 'send')
   }
@@ -142,38 +143,48 @@ async function onSubmit() {
           <dt class="text-slate-400">
             Token
           </dt>
-          <dd class="uppercase items-center flex gap-2">
+          <dd class=" items-center flex gap-2">
             <SafeTokenLogo class="w-[18px] h-[18px]" :url="token?.logoURI" />
-            {{ token?.symbol }}
+            <span class="uppercase">
+              {{ token?.symbol }}
+            </span>
+            <span v-tippy="token?.name" class="text-slate-400 max-w-[200px] truncate">
+              ({{ token?.name }})
+            </span>
           </dd>
         </dl>
         <dl class="flex items-center justify-between">
           <dt class="text-slate-400 whitespace-nowrap">
-            Dest. address
+            To address
           </dt>
           <dd>
-            <NuxtLink target="_blank" class="text-primary font-medium" :to="getExplorerUrl(data.toChainId, `/address/${data.address}`)" external>
-              {{ data.address }}
+            <NuxtLink target="_blank" class="text-primary font-medium" :to="getExplorerUrl(data.toChainId, `/address/${actualAddress}`)" external>
+              {{ actualAddress }}
             </NuxtLink>
           </dd>
         </dl>
       </div>
       <div class="ticket-divider w-full my-4" />
 
-      <div class="flex justify-between items-center font-semibold text-base">
+      <div class="flex justify-between items-center font-semibold text-2xl">
         <span>
-          You send
+          Amount
         </span>
         <p class="flex items-center gap-2.5">
           <span class="uppercase">
             {{ formatDecimal(data.amount) }} {{ token?.symbol }}
           </span>
-          <span class="text-xs text-slate-400">
+          <span class="text-slate-400">
             ({{ formatUsd(amountInUsd) }})
           </span>
         </p>
       </div>
     </div>
+    <EstimatedFee
+      :loading="pending"
+      :data="feeData"
+      :error="error"
+    />
     <div class="grid grid-cols-2 gap-5">
       <CommonButton color="white" class="justify-center" size="lg" @click="stepBack">
         Back
@@ -183,10 +194,5 @@ async function onSubmit() {
         Send
       </CommonButton>
     </div>
-    <EstimatedFee
-      :loading="pending"
-      :data="feeData"
-      :error="error"
-    />
   </form>
 </template>

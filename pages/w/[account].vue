@@ -2,7 +2,7 @@
 import ExclamationCircleSVG from '~/assets/images/icons/exclamation-circle.svg?component'
 
 definePageMeta({
-  hideSidebar: true,
+  layout: 'login-free',
 })
 
 const { isSafeAddress } = useAvocadoSafe()

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineEmits(['destroy'])
 const { isCrossChain } = useSend()
 </script>
 

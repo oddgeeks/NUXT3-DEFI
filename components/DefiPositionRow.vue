@@ -1,0 +1,49 @@
+<script setup lang="ts">
+import { storeToRefs } from 'pinia'
+
+const props = defineProps<{
+  item: any
+  borrow?: boolean
+  chainId: number | string
+}>()
+
+const { tokens } = storeToRefs(useTokens())
+const { fetchTokenByAddress } = useTokens()
+
+function getTokenByKey(key: string) {
+  return tokens.value.find(token => token.symbol === key)
+}
+
+const token = asyncComputed<any>(async () => {
+  const token = getTokenByKey(props.item.key)
+  if (token)
+    return token
+
+  const tokenAddress = props.item?.address || props.item?.underlyingTokenAddress || props.item?.aTokenAddress || props.item?.cTokenAddress
+
+  if (!tokenAddress)
+    return
+
+  const fetchedToken = await fetchTokenByAddress([tokenAddress], String(props.chainId))
+
+  if (fetchedToken?.length)
+    return fetchedToken[0]
+})
+
+const amount = computed(() => {
+  return props.borrow ? gt(props.item.borrowStable, '0') ? props.item.borrowStable : props.item.borrow : props.item.supply
+})
+</script>
+
+<template>
+  <li class="flex justify-between items-center py-4.5 px-5 border-b dark:border-b-slate-800 last:border-b-0">
+    <span class="uppercase flex items-center gap-3 text-sm">
+      <SafeTokenLogo class="w-6 h-6" :url="token?.logoURI || token?.logo_url" />
+      {{ formatDecimal(amount) }}
+      {{ item.key }}
+    </span>
+    <span class="text-slate-400 text-sm">
+      ({{ formatUsd(toBN(amount).times(item?.price || token?.price || 0)) }})
+    </span>
+  </li>
+</template>

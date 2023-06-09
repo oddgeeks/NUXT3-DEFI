@@ -34,7 +34,6 @@ export function useGraph(balance: Ref<IBalance>) {
   })
 
   async function fetchLiteAPY(tokenBalance: IBalance) {
-    const ethAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
     const isEthAddress = tokenBalance.address.toLowerCase() === ethAddress.toLowerCase()
     const isMainnet = tokenBalance.chainId === '1'
 

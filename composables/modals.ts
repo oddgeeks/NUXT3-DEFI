@@ -28,6 +28,7 @@ import NFTDetails from '~/components/modals/NFTDetails.vue'
 import SendNFT from '~/components/modals/SendNFT.vue'
 import SupportedNetworks from '~/components/modals/SupportedNetworks.vue'
 import PendingCrossTransaction from '~/components/modals/PendingCrossTransaction.vue'
+import DefiPositionDetails from '~/components/modals/DefiPositionDetails.vue'
 import QrCode from '~/components/modals/QrCode.vue'
 
 const { openModal } = useModal()
@@ -113,6 +114,7 @@ export function openSendModal(chainId: number | string,
     },
     options: {
       wrapperClass: '!max-w-fit',
+      contentClass: '!px-7.5 !py-[32px]',
     },
   })
 }
@@ -401,6 +403,18 @@ export function showPendingCrossTransaction(avocadoHash: string, fromChainId: nu
       fromChainId,
       toChainId,
       avocadoHash,
+    },
+  })
+}
+
+export function openDefiPositionDetailsModal(position: Positions) {
+  openModal({
+    component: DefiPositionDetails,
+    componentProps: {
+      position,
+    },
+    options: {
+      wrapperClass: 'max-w-[760px]',
     },
   })
 }

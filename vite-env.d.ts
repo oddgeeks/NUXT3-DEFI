@@ -490,5 +490,50 @@ interface IEstimatedFeeData {
  interface Discount {
   max: number
   amount: number
+ }
+ type ImportProtocolKeys =
+  | "aave-v3"
+  | "aave-v2"
+  | "compound"
+  | "compound-v3"
+  | "makerdao"
+  | 'lite'
+
+ interface DefiApis {
+  protocol: ImportProtocolKeys;
+  protocolId: number;
+  apiPath: string;
+  chainId: number;
+  logoURI?: string;
+  label: string;
+  instadappURL: string;
+  defiURL: string;
 }
 
+interface Positions extends DefiApis {
+  positions: {
+    data?: any[]
+    tokens?: any[]
+    healthFactor?: string
+    totalSupplyInUsd: string
+    totalBorrowInUsd: string
+  } ;
+  vaultId?: string;
+  apy: string;
+  healthFactor: string;
+  id: string;
+  suppliedTokens: any[];
+  borrowedTokens: any[];
+}
+
+interface IDefiActions {
+  getApy: (positions: any) => any
+  getSuppliedTokens: (positions: any) => any[]
+  getBorrowedTokens: (positions: any) => any[]
+}
+
+type IDefiToken = {
+  key: string;
+  price?: string;
+  tokenAddress: string;
+}

@@ -3,7 +3,6 @@ import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { isAddress } from '@ethersproject/address'
 import StepFrom from '~~/components/modals/Send/StepFrom.vue'
-import StepTo from '~~/components/modals/Send/StepTo.vue'
 import StepSubmit from '~~/components/modals/Send/StepSubmit.vue'
 
 interface Initialize {
@@ -34,10 +33,6 @@ export function useSend() {
       component: StepFrom,
     },
     {
-      name: 'To',
-      component: StepTo,
-    },
-    {
       name: 'Send',
       component: StepSubmit,
     },
@@ -48,7 +43,7 @@ export function useSend() {
   const availableTokens = computed(() =>
     tokenBalances.value.filter(
       t =>
-        +t.chainId == data.value.fromChainId && t.address.toLowerCase() !== data.value.tokenAddress.toLowerCase(),
+        gt(t.balance, '0'),
     ),
   )
 
@@ -87,7 +82,6 @@ export function useSend() {
               const amount = toBN(value)
               const balance = toBN(token.value?.balance || '0')
 
-              console.log(amount.toFixed(), balance.toFixed())
               if (amount.gt(balance))
                 return false
 
@@ -99,6 +93,8 @@ export function useSend() {
         .test('is-address', 'Incorrect address', async (value) => {
           if (!value)
             return true
+
+          actualAddress.value = ''
 
           const resolvedAddress
             = value.endsWith('.eth') && data.value.toChainId === 1

@@ -5,9 +5,7 @@ import { storeToRefs } from 'pinia'
 import { parse } from 'semver'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
-import QuestionSVG from '~/assets/images/icons/question-circle.svg?component'
 
-const emit = defineEmits(['destroy'])
 const { isProd } = useAppConfig()
 const { token, stepBack, data, actualAddress, targetToken } = useSend()
 const { gasBalance } = storeToRefs(useSafe())
@@ -30,6 +28,8 @@ const isSubmitting = ref(false)
 const crossSignatures = ref<ICrossSignatures>()
 const targetMessage = ref()
 const sourceMessage = ref()
+
+const destroyModal = inject('destroy') as () => void
 
 const { data: networkVersions } = useNuxtData('allNetworkVersions')
 
@@ -59,13 +59,6 @@ const totalGassFee = computed(() => {
       token,
     } as TotalFee
   }, fallbackFee)
-})
-
-const totalReceivedAmount = computed(() => {
-  if (!bestRoute.value)
-    return '0'
-
-  return fromWei(bestRoute.value.toAmount, targetToken.value?.decimals).toFixed()
 })
 
 const totalInputAmount = computed(() => {
@@ -158,7 +151,7 @@ async function fetchQuoteWithGasFee() {
     if (!quoteRoute.success)
       throw new Error('Can\'t get quote, please try again later')
     if (!quoteRoute.result.routes.length)
-      throw new Error('No routes have been found')
+      throw new Error('Our bridge provider does not have routes for your desired transfer')
 
     const route = quoteRoute.result.routes[0]
 
@@ -251,7 +244,7 @@ async function fetchBestRoute() {
       toToken: targetToken.value?.address,
       toChainId: data.value.toChainId,
       amount: bestRoute.value.toAmount,
-      receiver: data.value.address,
+      receiver: actualAddress.value,
     })
 
     const sMessage = await safe.value?.generateSignatureMessage(
@@ -285,6 +278,14 @@ const crossFeeError = computed(() => {
 
   if (toBN(gasBalance.value).lt(crossFee.value.data?.amountAfterDiscount!))
     return 'Not enough USDC gas'
+})
+
+const feeInfoMessage = computed(() => {
+  if (!bridgeFee.value?.token || !totalGassFee.value?.token)
+    return
+
+  return `You will be charged with ${formatDecimal(bridgeFee.value.amount)} ${bridgeFee.value.token?.symbol?.toUpperCase()}
+  (${formatUsd(bridgeFee.value.amountInUsd)}) + ${formatDecimal(totalGassFee.value.amount)} ${totalGassFee?.value.token?.symbol?.toUpperCase()} (${formatUsd(totalGassFee.value.amountInUsd)}) extra as fees for bridging service.`
 })
 
 async function fetchcrossSignatures() {
@@ -410,6 +411,11 @@ async function onSubmit() {
 
     const avocadoHash = await avoProvider.send('api_requestCrosschainTransaction', [crossSignatures.value.source, crossSignatures.value.target])
 
+    if (!avocadoHash) {
+      console.log(avocadoHash, 'Avocado hash not found', [crossSignatures.value.source, crossSignatures.value.target])
+      throw new Error('Something went wrong')
+    }
+
     logActionToSlack({
       message: `${formatDecimal(data.value.amount)} ${formatSymbol(
         token.value.symbol,
@@ -421,7 +427,7 @@ async function onSubmit() {
       network: formattedNetwork,
     })
 
-    emit('destroy')
+    destroyModal()
 
     showPendingCrossTransaction(avocadoHash, data.value.fromChainId, data.value.toChainId)
   }
@@ -510,85 +516,60 @@ onMounted(() => {
           <dt class="text-slate-400">
             Token
           </dt>
-          <dd class="uppercase items-center flex gap-2">
+          <dd class=" items-center flex gap-2">
             <SafeTokenLogo class="w-[18px] h-[18px]" :url="token?.logoURI" />
-            {{ token?.symbol }}
+            <span class="uppercase">
+              {{ token?.symbol }}
+            </span>
+            <span v-tippy="token?.name" class="text-slate-400 max-w-[200px] truncate">
+              ({{ token?.name }})
+            </span>
           </dd>
         </dl>
         <dl class="flex items-center justify-between">
           <dt class="text-slate-400 whitespace-nowrap">
-            Dest. address
+            To address
           </dt>
           <dd>
-            <NuxtLink target="_blank" class="text-primary font-medium" :to="getExplorerUrl(data.toChainId, `/address/${data.address}`)" external>
-              {{ data.address }}
+            <NuxtLink target="_blank" class="text-primary font-medium" :to="getExplorerUrl(data.toChainId, `/address/${actualAddress}`)" external>
+              {{ actualAddress }}
             </NuxtLink>
-          </dd>
-        </dl>
-        <div class="ticket-divider w-full my-[6px]" />
-        <dl class="flex items-center justify-between">
-          <dt class="text-slate-400">
-            Gas fees
-          </dt>
-          <dd class="flex items-center gap-2">
-            <img v-if="totalGassFee.token" class="w-5 h-5" :src="totalGassFee.token?.logoURI">
-            <span>
-              {{ formatDecimal(totalGassFee.amount) }}
-            </span>
-            <span class="text-slate-400">
-              ({{ formatUsd(totalGassFee.amountInUsd || "0") }})
-            </span>
-          </dd>
-        </dl>
-        <dl class="flex items-center justify-between">
-          <dt class="text-slate-400">
-            Bridge Fee
-          </dt>
-          <dd class="flex items-center gap-2">
-            <img v-if="bridgeFee.token" class="w-5 h-5" :src="bridgeFee.token?.logoURI">
-            <span>
-              {{ formatDecimal(bridgeFee.amount) }}
-            </span>
-            <span class="text-slate-400">
-              ({{ formatUsd(bridgeFee.amountInUsd || "0") }})
-            </span>
           </dd>
         </dl>
       </div>
       <div class="ticket-divider w-full my-4" />
-      <div class="flex flex-col gap-2.5">
-        <div class="flex justify-between items-center leading-5">
-          <span class="font-medium inline-flex gap-2.5 items-center">
-            Amount receiving on dest. address
-
-            <QuestionSVG v-tippy="`Amount bridged to ${chainIdToName(data.toChainId)} wallet will be ${formatDecimal(totalReceivedAmount)} ${token?.symbol?.toUpperCase()} (after deducting fees) & final amount credited to destination address(${shortenHash(data.address)}) will be ${data.amount} ${token?.symbol?.toUpperCase()}`" class="w-4.5 h-4.5 text-slate-500" />
-
+      <div class="flex flex-col gap-4">
+        <div class="flex justify-between leading-5 items-center">
+          <span class="font-medium text-2xl">
+            Amount
           </span>
-          <p class="flex items-center gap-2.5">
-            <span class="uppercase text-base">
+          <p class="flex items-center gap-2.5 text-2xl">
+            <span class="uppercase">
               {{ formatDecimal(data.amount) }} {{ token?.symbol }}
             </span>
-
             <span class="text-slate-400">
-              ({{ formatUsd(toBN(data.amount).times(token?.price || '0').toFixed()) }})
-            </span>
-          </p>
-        </div>
-        <div class="flex justify-between leading-5 items-center">
-          <span class="font-medium">
-            Amount to be deducted
-          </span>
-          <p class="flex items-center gap-2.5">
-            <span class="uppercase text-base">
-              {{ formatDecimal(totalInputAmount) }} {{ token?.symbol }}
-            </span>
-            <span class="text-slate-400">
-              ({{ formatUsd(bestRoute?.inputValueInUsd || "0") }})
+              ({{ formatUsd(toBN(data.amount).times(token?.price || '0').toString()) }})
             </span>
           </p>
         </div>
       </div>
     </div>
+
+    <Transition name="fade">
+      <p v-if="feeInfoMessage" class="text-slate-400 -mt-2 font-medium leading-6 flex items-start text-xs">
+        <SvgoExclamationCircle class="mr-2.5 mt-1 h-4.5 w-4.5 shrink-0 text-slate-500" />
+        <span class="block">
+          {{ feeInfoMessage }}
+        </span>
+      </p>
+    </Transition>
+
+    <EstimatedFee
+      :loading="crossFee.pending"
+      :data="crossFee.data"
+      :error="crossFeeError"
+    />
+
     <div class="grid grid-cols-2 gap-5">
       <CommonButton color="white" class="justify-center" size="lg" @click="stepBack">
         Back
@@ -601,11 +582,7 @@ onMounted(() => {
         Send
       </CommonButton>
     </div>
-    <EstimatedFee
-      :loading="crossFee.pending"
-      :data="crossFee.data"
-      :error="crossFeeError"
-    />
+
     <CommonNotification
       v-if="!!error"
       type="error"
