@@ -7,30 +7,17 @@ export const useAuthorities = defineStore('authorities', () => {
   const { avoProvider, forwarderProxyContract } = useSafe()
   const { account } = useWeb3()
 
-  const safe = ref<ISafe>()
-  const authoritiesSafeAddresses = ref<string[]>([])
+  const safes = ref<ISafe[]>([])
 
-  const selectedSafe = ref<ISafe>()
-  const authoritiesSelectedSafeAddresses = ref<string[]>([])
-
-  const mainSafeAuthorities = computed(() => {
-    if (!safe.value)
-      return []
-
-    return formatAuthorities(safe.value.authorities, authoritiesSafeAddresses.value)
+  const selectedSafe = computed(() => {
+    return safes.value.find((item: ISafe) => item.safe_address === safeAddress.value)
   })
 
-  const selectedSafeAuthorities = computed(() => {
+  const authorities = computed(() => {
     if (!selectedSafe.value)
       return []
 
-    return formatAuthorities(selectedSafe.value.authorities, authoritiesSelectedSafeAddresses.value)
-  })
-
-  const selectedSafeOwner = computed(() => {
-    const authority = mainSafeAuthorities.value.find(i => i.safeAddress === safeAddress?.value)
-
-    return authority?.address
+    return formatAuthorities(selectedSafe.value.authorities)
   })
 
   const deleteAuthority = async (authority: IAuthority) => {
@@ -65,34 +52,24 @@ export const useAuthorities = defineStore('authorities', () => {
     }
   }
 
-  const fetchAuthorities = async (safeAddress: string) => {
-    const resp = await avoProvider.send('api_getSafe', [safeAddress])
-    const formattedAuthorities = formatAuthorities(resp.authorities)
-
-    const safes = await Promise.all(formattedAuthorities.map(i => forwarderProxyContract.computeAddress(
-      i.address,
-    )))
-
-    return {
-      safeInstance: resp,
-      safes,
-    }
-  }
-
-  const fetchAuthoritySafes = async (authorityAddress: string) => {
-    return avoProvider.send('api_getSafes', [{
-      authority_address: authorityAddress,
+  const fetchSafes = async () => {
+    const respSafes = await avoProvider.send('api_getSafes', [{
+      authority_address: account.value,
     }])
+
+    safes.value = respSafes?.data || []
   }
 
-  const formatAuthorities = (input: ISafe['authorities'], safeAddresses: string[] = []): IAuthority[] => {
+  const fetchSafe = async () => {
+    return avoProvider.send('api_getSafe', [safeAddress.value])
+  }
+
+  const formatAuthorities = (input: ISafe['authorities']): IAuthority[] => {
     const result = Object.entries(input).reduce((acc: IAuthority[], [key, value]: [string, string[]]) => {
-      value.forEach((address: string, index) => {
+      value.forEach((address: string) => {
         let existing = acc.find((item: IAuthority) => item.address === address)
         if (!existing) {
-          const safeAddress = safeAddresses[index]
-
-          existing = { address, chainIds: [], type: 'personal', safeAddress: safeAddress || '' }
+          existing = { address, chainIds: [], type: 'personal' }
           acc.push(existing)
         }
         existing.chainIds.push(key)
@@ -103,33 +80,19 @@ export const useAuthorities = defineStore('authorities', () => {
     return result
   }
 
-  watch([safeAddress, mainSafeAddress], async () => {
-    if (!safeAddress.value || !mainSafeAddress.value)
+  watch([safeAddress, account], async () => {
+    if (!safeAddress.value || !account.value)
       return
 
-    const { safeInstance, safes } = await fetchAuthorities(mainSafeAddress.value)
-
-    authoritiesSafeAddresses.value = safes
-    safe.value = safeInstance
-
-    const { safeInstance: selectedSafeInstance, safes: selectedSafes } = await fetchAuthorities(safeAddress.value)
-
-    authoritiesSelectedSafeAddresses.value = selectedSafes
-    selectedSafe.value = selectedSafeInstance
-
-    if (!account.value)
-      return
-
-    console.log(await fetchAuthoritySafes(mainSafeAddress.value))
+    fetchSafes()
   }, {
     immediate: true,
   })
 
   return {
     deleteAuthority,
-    mainSafeAuthorities,
-    selectedSafeAuthorities,
-    selectedSafeOwner,
+    authorities,
+    safes,
   }
 })
 

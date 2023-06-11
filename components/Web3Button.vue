@@ -19,7 +19,7 @@ const { setConnectorName, cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
 const router = useRouter()
 
-const { mainSafeAuthorities } = storeToRefs(useAuthorities())
+const { safes } = storeToRefs(useAuthorities())
 
 const ensName = ref()
 const open = ref(false)
@@ -181,15 +181,17 @@ whenever(
                 <h2 class="text-xs mb-3">
                   Generated wallets
                 </h2>
-                <WalletItem :active="true" :authority="owner" />
+                <!-- <WalletItem :active="true" :authority="owner" /> -->
               </div>
               <div class="mt-5">
                 <h2 class="text-xs mb-3">
                   Secondary wallets
                 </h2>
                 <ul class="flex flex-col gap-2.5">
-                  <li v-for="authority in mainSafeAuthorities" :key="authority.address">
-                    <WalletItem :authority="authority" />
+                  <li v-for="safe in safes" :key="safe.safe_address">
+                    <template v-if="safe.owner_address === account">
+                      <WalletItem :safe="safe" />
+                    </template>
                   </li>
                 </ul>
               </div>

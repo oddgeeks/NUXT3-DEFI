@@ -2,13 +2,13 @@
 import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
-  authority: IAuthority
+  safe: ISafe
 }>()
 
 const { safeAddress } = storeToRefs(useSafe())
 
 const active = computed(() => {
-  return safeAddress.value === props.authority.safeAddress
+  return safeAddress.value === props.safe.safe_address
 })
 </script>
 
@@ -18,14 +18,14 @@ const active = computed(() => {
       'dark:bg-slate-850 bg-slate-50': active,
       'dark:bg-gray-850 bg-slate-150': !active,
     }"
-    class="px-4 w-full text-left flex justify-between py-3.5 border rounded-2xl border-slate-150 dark:border-slate-750" @click="safeAddress = authority.safeAddress"
+    class="px-4 w-full text-left flex justify-between py-3.5 border rounded-2xl border-slate-150 dark:border-slate-750" @click="safeAddress = safe.safe_address"
   >
     <div>
       <p class="leading-[10px] text-primary mb-2.5">
         Personal
       </p>
       <p class="text-sm leading-[18px] mb-[6px]">
-        {{ shortenHash(authority.safeAddress) }}
+        {{ shortenHash(safe.safe_address) }}
       </p>
 
       <p class="text-slate-400 leading-[18px] text-sm">
