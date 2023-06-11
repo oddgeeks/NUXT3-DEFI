@@ -1,13 +1,22 @@
 export function useAccountTrack(onSuccess?: () => void, onFailure?: () => void) {
-  const { account, library } = useWeb3()
-  const trackingAccount = useLocalStorage<string>('trackAccount', null)
+  const { account } = useWeb3()
+  const trackingAccount = useCookie<string | null>('trackAccount', {
+    default: () => null,
+    expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
+  })
+
   const route = useRoute()
-  const router = useRouter()
 
   const init = async () => {
     if (route.query?.user) {
       trackingAccount.value = route.query.user as string
-      router.replace({ query: {} })
+
+      // replace URL without triggering route change
+      if (process.client) {
+        const url = new URL(window.location.href)
+        url.searchParams.delete('user')
+        window.history.replaceState({}, '', url.toString())
+      }
     }
     if (trackingAccount.value) {
       account.value = trackingAccount.value
