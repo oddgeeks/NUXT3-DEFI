@@ -87,7 +87,7 @@ export function useSend() {
 
   const { data: toTokenList, pending: tokenlistPending } = useAsyncData(async () => {
     if (data.value.fromChainId == data.value.toChainId)
-      return
+      return []
 
     const { result }: IBridgeTokensResponse = await http(
       '/api/socket/v2/token-lists/to-token-list',
@@ -102,7 +102,6 @@ export function useSend() {
     return result
   }, {
     watch: [() => data.value.toChainId],
-    immediate: false,
   })
 
   const isCrossChain = computed(() => String(data.value.fromChainId) !== String(data.value.toChainId))
