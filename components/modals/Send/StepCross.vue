@@ -292,8 +292,8 @@ const feeInfoMessage = computed(() => {
   if (!bridgeFee.value?.token || !totalGassFee.value?.token)
     return
 
-  return `You will be charged with ${formatDecimal(bridgeFee.value.amount)} ${bridgeFee.value.token?.symbol?.toUpperCase()}
-  (${formatUsd(bridgeFee.value.amountInUsd)}) + ${formatDecimal(totalGassFee.value.amount)} ${totalGassFee?.value.token?.symbol?.toUpperCase()} (${formatUsd(totalGassFee.value.amountInUsd)}) extra as fees for bridging service.`
+  return `The third-party bridge provider will charge an additional fee of ${formatDecimal(bridgeFee.value.amount, 4)} ${bridgeFee.value.token?.symbol?.toUpperCase()}
+  (${formatUsd(bridgeFee.value.amountInUsd)}) and ${formatDecimal(totalGassFee.value.amount, 4)} ${totalGassFee?.value.token?.symbol?.toUpperCase()} (${formatUsd(totalGassFee.value.amountInUsd)}) for their bridging service.`
 })
 
 async function fetchcrossSignatures() {
