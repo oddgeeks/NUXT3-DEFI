@@ -80,6 +80,7 @@ export function openBridgeModal(address: string, chainId: number | string) {
     },
     options: {
       wrapperClass: 'max-w-[600px]',
+      contentClass: '!px-7.5 !py-[32px]',
     },
   })
 }
@@ -98,6 +99,7 @@ export function openSwapModal(address: string,
     },
     options: {
       wrapperClass: 'max-w-[600px]',
+      contentClass: '!px-7.5 !py-[32px]',
     },
   })
 }
