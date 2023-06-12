@@ -4,14 +4,12 @@ import { AvoSafeImplementation__factory } from '~~/contracts'
 
 export const useAuthorities = defineStore('authorities', () => {
   const { signer, safeAddress, mainSafeAddress } = useAvocadoSafe()
-  const { avoProvider, forwarderProxyContract } = useSafe()
+  const { avoProvider } = useSafe()
   const { account } = useWeb3()
 
   const safes = ref<ISafe[]>([])
-
-  const selectedSafe = computed(() => {
-    return safes.value.find((item: ISafe) => item.safe_address === safeAddress.value)
-  })
+  const selectedSafe = ref<ISafe>()
+  const mainSafe = ref<ISafe>()
 
   const authorities = computed(() => {
     if (!selectedSafe.value)
@@ -53,35 +51,24 @@ export const useAuthorities = defineStore('authorities', () => {
   }
 
   const fetchSafes = async () => {
-    const respSafes = await avoProvider.send('api_getSafes', [{
+    const resp = await avoProvider.send('api_getSafes', [{
       authority_address: account.value,
     }])
 
-    safes.value = respSafes?.data || []
+    console.log({
+      EOA: account.value,
+      safes: resp?.data,
+    })
+
+    safes.value = resp?.data || []
   }
 
-  const fetchSafe = async () => {
-    return avoProvider.send('api_getSafe', [safeAddress.value])
+  const fetchSafe = async (safeAddress: string) => {
+    return avoProvider.send('api_getSafe', [safeAddress])
   }
 
-  const formatAuthorities = (input: ISafe['authorities']): IAuthority[] => {
-    const result = Object.entries(input).reduce((acc: IAuthority[], [key, value]: [string, string[]]) => {
-      value.forEach((address: string) => {
-        let existing = acc.find((item: IAuthority) => item.address === address)
-        if (!existing) {
-          existing = { address, chainIds: [], type: 'personal' }
-          acc.push(existing)
-        }
-        existing.chainIds.push(key)
-      })
-      return acc
-    }, [])
-
-    return result
-  }
-
-  watch([safeAddress, account], async () => {
-    if (!safeAddress.value || !account.value)
+  watch(account, async () => {
+    if (!account.value)
       return
 
     fetchSafes()
@@ -89,10 +76,32 @@ export const useAuthorities = defineStore('authorities', () => {
     immediate: true,
   })
 
+  watch(safeAddress, async () => {
+    if (!safeAddress.value)
+      return
+
+    const resp = await fetchSafe(safeAddress.value)
+    selectedSafe.value = resp
+  }, {
+    immediate: true,
+  })
+
+  watch(mainSafeAddress, async () => {
+    if (!mainSafeAddress.value)
+      return
+
+    const resp = await fetchSafe(mainSafeAddress.value)
+    mainSafe.value = resp
+  }, {
+    immediate: true,
+  })
+
   return {
     deleteAuthority,
     authorities,
+    mainSafe,
     safes,
+    selectedSafe,
   }
 })
 

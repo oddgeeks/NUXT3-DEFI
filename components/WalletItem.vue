@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-
 const props = defineProps<{
   safe: ISafe
 }>()
 
-const { safeAddress } = storeToRefs(useSafe())
+const { safeAddress } = useAvocadoSafe()
 
 const active = computed(() => {
-  return safeAddress.value === props.safe.safe_address
+  return safeAddress.value === props.safe?.safe_address
 })
 </script>
 
@@ -25,7 +23,7 @@ const active = computed(() => {
         Personal
       </p>
       <p class="text-sm leading-[18px] mb-[6px]">
-        {{ shortenHash(safe.safe_address) }}
+        {{ shortenHash(safe?.safe_address) }}
       </p>
 
       <p class="text-slate-400 leading-[18px] text-sm">

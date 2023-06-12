@@ -8,7 +8,7 @@ export function useAvocadoSafe() {
   const { trackingAccount, isTrackingMode } = useAccountTrack()
   const { avoProvider } = useSafe()
 
-  const { selectedSafeOwner } = storeToRefs(useAuthorities())
+  const { selectedSafe } = storeToRefs(useAuthorities())
 
   // check if we have a cached safe address
   const { safeAddress, mainSafeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks } = storeToRefs(useSafe())
@@ -17,7 +17,7 @@ export function useAvocadoSafe() {
   const signer = computed(() => (safe.value ? safe.value.getSigner() : null))
 
   watch(
-    [library, account, isTrackingMode, selectedSafeOwner],
+    [library, account, isTrackingMode, selectedSafe],
     () => {
       if (isTrackingMode.value) {
         const voidSigner = new VoidSigner(trackingAccount.value, avoProvider)
@@ -25,7 +25,7 @@ export function useAvocadoSafe() {
       }
       else {
         safe.value = library.value
-          ? avocado.createSafe(library.value.getSigner().connectUnchecked(), undefined, selectedSafeOwner?.value || account.value)
+          ? avocado.createSafe(library.value.getSigner().connectUnchecked(), undefined, selectedSafe?.value?.owner_address || account.value)
           : undefined
       }
     },

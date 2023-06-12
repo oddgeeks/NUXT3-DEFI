@@ -13,13 +13,13 @@ defineProps({
 
 const { active, deactivate, account, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
-const { gasBalance, mainSafeAddress } = storeToRefs(useSafe())
+const { gasBalance } = storeToRefs(useSafe())
 const { resetAccounts } = useSafe()
 const { setConnectorName, cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
 const router = useRouter()
 
-const { safes } = storeToRefs(useAuthorities())
+const { safes, mainSafe } = storeToRefs(useAuthorities())
 
 const ensName = ref()
 const open = ref(false)
@@ -56,14 +56,6 @@ const connectedProvider = computed(() => {
   return providers.find(item => item.id === cachedProviderName.value)
 })
 
-const owner = computed<IAuthority>(() => {
-  return {
-    safeAddress: mainSafeAddress.value,
-    address: account.value,
-    type: 'personal',
-    chainIds: [],
-  }
-})
 function userSignOut() {
   router.push('/login')
 }
@@ -177,21 +169,20 @@ whenever(
               </button>
             </div>
             <div class="border-t dark:border-slate-750 px-5 pb-5 border-slate-150 pt-4">
-              <div>
+              <div v-if="mainSafe">
                 <h2 class="text-xs mb-3">
                   Generated wallets
                 </h2>
-                <!-- <WalletItem :active="true" :authority="owner" /> -->
+                <WalletItem :safe="mainSafe" />
               </div>
-              <div class="mt-5">
+
+              <div v-if="!!safes?.length" class="mt-5">
                 <h2 class="text-xs mb-3">
                   Secondary wallets
                 </h2>
                 <ul class="flex flex-col gap-2.5">
-                  <li v-for="safe in safes" :key="safe.safe_address">
-                    <template v-if="safe.owner_address === account">
-                      <WalletItem :safe="safe" />
-                    </template>
+                  <li v-for="safeItem in safes" :key="safeItem.safe_address">
+                    <WalletItem :safe="safeItem" />
                   </li>
                 </ul>
               </div>

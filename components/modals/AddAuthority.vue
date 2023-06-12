@@ -10,7 +10,7 @@ import ContactSVG from '~/assets/images/icons/contact.svg?component'
 
 const emit = defineEmits(['destroy'])
 
-const { selectedSafeAuthorities } = storeToRefs(useAuthorities())
+const { authorities } = storeToRefs(useAuthorities())
 
 const {
   handleSubmit,
@@ -31,7 +31,7 @@ const {
         (value) => {
           if (!isAddress(value || ''))
             return true
-          return !selectedSafeAuthorities.value.some(
+          return !authorities.value.some(
             authority =>
               authority.address?.toLowerCase() === value?.toLowerCase(),
           )
@@ -52,7 +52,6 @@ const onSubmit = handleSubmit(async () => {
   openManageAuthorityModal({
     address: address.value,
     chainIds: [],
-    safeAddress: '',
     type: 'personal',
   })
   emit('destroy')

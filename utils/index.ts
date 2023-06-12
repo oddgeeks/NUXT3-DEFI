@@ -232,3 +232,19 @@ export function generateColor(address: string): string {
 
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`
 }
+
+export function formatAuthorities(input: ISafe['authorities']): IAuthority[] {
+  const result = Object.entries(input).reduce((acc: IAuthority[], [key, value]: [string, string[]]) => {
+    value.forEach((address: string) => {
+      let existing = acc.find((item: IAuthority) => item.address === address)
+      if (!existing) {
+        existing = { address, chainIds: [], type: 'personal' }
+        acc.push(existing)
+      }
+      existing.chainIds.push(key)
+    })
+    return acc
+  }, [])
+
+  return result
+}
