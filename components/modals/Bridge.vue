@@ -45,7 +45,7 @@ watch(
     }
   },
 )
-
+// eslint-disable-next-line vue/no-dupe-keys
 const {
   txRoute,
   toChainId,
@@ -75,6 +75,17 @@ const { pending, error, data } = useEstimatedFee(
     disabled: () => isInsufficientBalance.value,
   },
 )
+
+const bridgeProtocol = computed<Protocol>(() => {
+  if (!txRoute.value?.userTxs?.length)
+    return
+  const [tx] = txRoute.value.userTxs
+
+  const bridge = tx?.steps?.find((i: any) => i.type === 'bridge')
+
+  return bridge?.protocol
+})
+
 function setMax() {
   amount.value = toBN(fromToken.value!.balance).decimalPlaces(6, 1).toString()
 }
@@ -302,6 +313,29 @@ const onSubmit = form.handleSubmit(async () => {
                       ? `~${Math.round(txRoute.serviceTime / 60)}m`
                       : "~10m"
                   }}
+                </span>
+              </div>
+              <div
+                class="items-center justify-between hidden text-sm font-medium sm:flex text-slate-400"
+              >
+                <span>
+                  Bridge Route
+                </span>
+
+                <div
+                  v-if="routes.pending.value"
+                  style="width: 140px; height: 20px"
+                  class="rounded-lg loading-box"
+                />
+                <span
+                  v-else-if="bridgeProtocol?.displayName"
+                  class="capitalize hidden sm:flex items-center gap-2.5"
+                >
+                  <img class="w-5 h-5" :src="bridgeProtocol.icon">
+                  {{ bridgeProtocol.displayName }}
+                </span>
+                <span v-else>
+                  -
                 </span>
               </div>
               <div class="flex justify-between items-center">

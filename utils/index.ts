@@ -220,3 +220,14 @@ export const signingMethods = [
   'wallet_watchAsset',
   'wallet_scanQRCode',
 ]
+
+export function formatProtocol(protocol: string) {
+  return (
+    new Map([
+      ['1inch-v5', '1inch'],
+      ['0x-v1', '0x'],
+      ['paraswap-v5', 'Paraswap'],
+      ['kyber-v1', 'Kyber Network'],
+    ]).get(protocol) || protocol
+  )
+}
