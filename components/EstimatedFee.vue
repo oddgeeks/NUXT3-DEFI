@@ -7,6 +7,8 @@ defineProps<{
   loading?: boolean
   error?: string
   wrapperClass?: string
+  showNetworkInfo?: boolean
+  hideErrorInfo?: boolean
 }>()
 </script>
 
@@ -17,7 +19,12 @@ defineProps<{
       class="flex flex-col gap-3 items-center min-h-12 justify-between bg-slate-50 dark:bg-gray-850 px-5 py-[15px] rounded-5"
     >
       <div class="flex justify-between w-full">
+        <span v-if="showNetworkInfo" class="text-xs flex items-center gap-3">
+          <ChainLogo class="w-6 h-6" :chain="data.chainId" />
+          {{ chainIdToName(data.chainId) }}
+        </span>
         <span
+          v-else
           class="text-xs text-slate-400 font-medium gap-2 inline-flex items-center"
         >
           <GasSVG class="w-4" />
@@ -91,7 +98,7 @@ defineProps<{
         </div>
       </template>
     </div>
-    <CommonNotification v-if="error" type="error" :text="error">
+    <CommonNotification v-if="error && !hideErrorInfo" type="error" :text="error">
       <template v-if="error.includes('gas')" #action>
         <CommonButton size="sm" @click="openTopUpGasModal()">
           Top-up

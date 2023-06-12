@@ -56,14 +56,12 @@ export function useEstimatedFee(
     error,
     pending,
   } = useAsyncData<IEstimatedFeeData>(
-    'estimated-fee',
+    `estimated-fee-${chainId.value}`,
     async () => {
       try {
         const disabled = params?.disabled?.()
         if (disabled)
           return
-
-        console.log(chainId.value)
 
         if (!txData.value)
           return

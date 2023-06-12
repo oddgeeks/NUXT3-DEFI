@@ -1,12 +1,18 @@
 <script lang="ts" setup>
-// import { AvoSafeImplementation__factory } from '~~/contracts'
 import Fuse from 'fuse.js'
 
-const props = defineProps<{
+interface Props {
   authority: IAuthority
-}>()
+  chainIds?: number[]
+}
 
-const selectedChainIds = ref<number[]>([])
+const props = withDefaults(defineProps<Props>(), {
+  chainIds: () => [],
+})
+
+const emit = defineEmits(['destroy'])
+
+const selectedChainIds = ref<number[]>(toRaw(props.chainIds))
 const searchQuery = ref('')
 
 function toggleNetwork(network: Network) {
@@ -35,6 +41,11 @@ const filteredNetworks = computed(() => {
 
   return fuse.search(searchQuery.value).map(result => result.item)
 })
+
+function handleContinue() {
+  emit('destroy')
+  openEstimateAuthorityModal(props.authority, selectedChainIds.value)
+}
 </script>
 
 <template>
@@ -97,7 +108,7 @@ const filteredNetworks = computed(() => {
         </li>
       </ul>
     </div>
-    <CommonButton :disabled="!selectedChainIds.length" size="lg" class="w-full justify-center">
+    <CommonButton :disabled="!selectedChainIds.length" size="lg" class="w-full justify-center" @click="handleContinue">
       Save Changes
     </CommonButton>
   </div>
