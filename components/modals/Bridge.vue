@@ -145,9 +145,19 @@ const onSubmit = form.handleSubmit(async () => {
 
 <template>
   <form class="flex gap-7.5 flex-col" @submit="onSubmit">
-    <h2 class="text-lg text-center">
-      Bridge
-    </h2>
+    <div class="flex gap-[14px]">
+      <div class="w-10 h-10 rounded-full items-center flex justify-center bg-primary">
+        <SvgoBridge />
+      </div>
+      <div class="flex flex-col gap-1">
+        <h1 class="text-lg leading-[20px]">
+          Bridge
+        </h1>
+        <h2 class="font-medium text-xs text-slate-400 leading-5">
+          Migrate tokens across multiple networks with lowest slippage.
+        </h2>
+      </div>
+    </div>
 
     <div class="flex flex-col gap-5">
       <div class="space-y-2.5">
