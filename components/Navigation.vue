@@ -57,14 +57,14 @@ function openBridge() {
         <HomeSVG class="w-4 h-4" />
         Home
       </NuxtLink>
-      <!-- <NuxtLink
+      <NuxtLink
         active-class="text-primary"
         class="flex h-11 items-center gap-2.5"
         to="/defi"
       >
-        <DefiSVG class="w-4 h-4" />
+        <SvgoDefi class="w-4 h-4" />
         DeFi
-      </NuxtLink> -->
+      </NuxtLink>
       <NuxtLink
         active-class="text-primary"
         class="flex h-11 items-center gap-2.5"
