@@ -1,13 +1,14 @@
-import { acceptHMRUpdate, defineStore } from 'pinia'
+import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 
 export const useAuthorities = defineStore('authorities', () => {
-  const { signer, safeAddress, mainSafeAddress, sendTransaction } = useAvocadoSafe()
-  const { avoProvider } = useSafe()
-  const { account } = useWeb3()
+  const avoProvider = getRpcProvider(avoChainId)
 
   const safes = ref<ISafe[]>([])
   const selectedSafe = ref<ISafe>()
   const mainSafe = ref<ISafe>()
+
+  const { safeAddress, mainSafeAddress } = storeToRefs(useSafe())
+  const { account } = useWeb3()
 
   const authorities = computed(() => {
     if (!selectedSafe.value)
@@ -19,10 +20,7 @@ export const useAuthorities = defineStore('authorities', () => {
   const isWalletSecondary = computed(() => mainSafe.value?.safe_address !== selectedSafe.value?.safe_address)
 
   const authorisedNetworks = computed(() => {
-    if (!account.value)
-      return availableNetworks
-
-    if (!isWalletSecondary.value)
+    if (!account.value || !safeAddress?.value || !isWalletSecondary.value)
       return availableNetworks
 
     const auth = authorities.value.find(i => i.address === account.value)
@@ -38,8 +36,8 @@ export const useAuthorities = defineStore('authorities', () => {
     safes.value = resp?.data || []
   }
 
-  const fetchSafe = async (safeAddress: string) => {
-    return avoProvider.send('api_getSafe', [safeAddress])
+  const fetchSafe = async (address: string) => {
+    return avoProvider.send('api_getSafe', [address])
   }
 
   async function setSafe() {

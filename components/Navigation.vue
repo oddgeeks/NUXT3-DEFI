@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import HomeSVG from '~/assets/images/icons/home.svg?component'
 import ContactSVG from '~/assets/images/icons/contact.svg?component'
 import FireSVG from '~/assets/images/icons/fire.svg?component'
@@ -17,6 +18,7 @@ const emit = defineEmits(['navigate'])
 
 const { account } = useWeb3()
 const { tokenBalances, totalEoaBalance, eoaBalances, fundedEoaNetworks } = useAvocadoSafe()
+const { authorisedNetworks } = storeToRefs(useAuthorities())
 const [moreOptions, toggleOptions] = useToggle(false)
 const { safeAddress } = useAvocadoSafe()
 
@@ -33,16 +35,27 @@ const sortedBalances = computed(() => {
   ])
 })
 
+const firstAvailableChain = computed(() => authorisedNetworks.value?.length ? authorisedNetworks.value[0]?.chainId : 1)
+const firstAvailableToken = computed(() => sortedBalances.value.find(b => String(b.chainId) == String(firstAvailableChain.value)))
+
 function openSwap() {
   if (sortedBalances.value.length === 0)
     return
-  openSwapModal(sortedBalances.value[0].address, sortedBalances.value[0].chainId)
+
+  if (!firstAvailableToken.value)
+    return
+
+  openSwapModal(firstAvailableToken.value?.address, firstAvailableChain.value)
 }
 
 function openBridge() {
   if (sortedBalances.value.length === 0)
     return
-  openBridgeModal(sortedBalances.value[0].address, sortedBalances.value[0].chainId)
+
+  if (!firstAvailableToken.value)
+    return
+
+  openBridgeModal(firstAvailableToken.value?.address, firstAvailableChain.value)
 }
 </script>
 
