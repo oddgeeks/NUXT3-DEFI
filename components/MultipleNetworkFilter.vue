@@ -11,11 +11,15 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  showSupportedNetworks: {
+    type: Boolean,
+    default: true,
+  },
 })
 
 const emit = defineEmits(['update:networks'])
 
-const allNetworks = props.networks.map(n => getNetworkByChainId(n))
+const allNetworks = props.showSupportedNetworks ? availableNetworks : props.networks.map(n => getNetworkByChainId(n))
 
 const networkPreference = computed({
   get() {
