@@ -224,7 +224,7 @@ export const signingMethods = [
 export function formatProtocol(protocol: string) {
   return (
     new Map([
-      ['1inch-v5', '1inch'],
+      ['1inch-v5', '1Inch'],
       ['0x-v1', '0x Protocol'],
       ['paraswap-v5', 'Paraswap'],
       ['kyber-v1', 'Kyber Network'],
