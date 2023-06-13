@@ -4,9 +4,36 @@ const props = defineProps<{
 }>()
 
 const { safeAddress } = useAvocadoSafe()
+const { getBalances } = useSafe()
+
+const balance = ref('0')
+const pending = ref(false)
 
 const active = computed(() => {
   return safeAddress.value === props.safe?.safe_address
+})
+
+async function fetchBalance() {
+  try {
+    pending.value = true
+    const resp = await getBalances(props.safe?.safe_address)
+
+    const balances = resp.flat()
+
+    const totalBalance = balances?.reduce(
+      (acc, curr) => acc.plus(curr.balanceInUSD || '0'),
+      toBN(0) || toBN(0),
+    )
+
+    balance.value = totalBalance.toFixed()
+  }
+  finally {
+    pending.value = false
+  }
+}
+
+onMounted(() => {
+  fetchBalance()
 })
 </script>
 
@@ -26,8 +53,14 @@ const active = computed(() => {
         {{ shortenHash(safe?.safe_address) }}
       </p>
 
-      <p class="text-slate-400 leading-[18px] text-sm">
-        {{ formatUsd('134785.50') }}
+      <div
+        v-if="pending "
+        style="width: 80px; height: 18px"
+        class="rounded-lg loading-box"
+      />
+
+      <p v-else class="text-slate-400 leading-[18px] text-sm">
+        {{ formatUsd(balance) }}
       </p>
     </div>
     <div>

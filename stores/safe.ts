@@ -302,6 +302,9 @@ export const useSafe = defineStore('safe', () => {
               updateBalances(data)
 
             return data
+          }).catch((error) => {
+            console.log(error)
+            return []
           })
         }
         catch (error) {
