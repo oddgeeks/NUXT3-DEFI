@@ -108,7 +108,7 @@ const discountAvailable = computed(() => {
     </div>
     <CommonNotification v-if="error && !hideErrorInfo" type="error" :text="error">
       <template v-if="error.includes('gas')" #action>
-        <CommonButton size="sm" @click="openTopUpGasModal()">
+        <CommonButton class="whitespace-nowrap" size="sm" @click="openTopUpGasModal()">
           Top-up
         </CommonButton>
       </template>

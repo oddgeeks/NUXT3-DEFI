@@ -32,7 +32,7 @@ const typeClass = computed(() => {
   >
     <div class="flex items-center gap-2.5">
       <SVGInfo class="w-[18px] h-[18px] shrink-0" />
-      <span class="text-xs"> {{ text }}</span>
+      <span class="text-xs whitespace-pre-line"> {{ text }}</span>
     </div>
     <slot name="action" />
   </div>
