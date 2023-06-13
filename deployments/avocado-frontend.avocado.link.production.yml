@@ -1,0 +1,140 @@
+# Deployment configuration for this application
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avocado-frontend
+  namespace: avocado
+  labels:
+    app: avocado-frontend
+spec:
+  minReadySeconds: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  replicas: 4
+  selector:
+    matchLabels:
+      app: avocado-frontend
+  template:
+    metadata:
+      labels:
+        app: avocado-frontend
+      annotations:
+        vault.security.banzaicloud.io/vault-addr: 'https://instadapp.vault.1592b418-2038-43e8-bf5a-0b50c0ea68e5.aws.hashicorp.cloud:8200'
+        vault.security.banzaicloud.io/vault-namespace: 'admin'
+        vault.security.banzaicloud.io/vault-serviceaccount: 'default'
+        vault.security.banzaicloud.io/vault-role: 'avocado-frontend'
+    spec:
+      topologySpreadConstraints:
+        - maxSkew: 2
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: avocado-frontend
+      containers:
+        - name: avocado-frontend
+          image: <IMAGE>
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: '1'
+              memory: '2G'
+            limits:
+              cpu: '2'
+              memory: '4G'
+          ports:
+            - containerPort: 5000
+          env:
+            - name: PORT
+              value: "5000"
+            - name: HOST
+              value: 0.0.0.0
+            - name: ANKR_API_KEY
+              value: vault:avocado/avocado.link/frontend#ANKR_API_KEY
+            - name: ARBITRUM_RPC_URL
+              value: vault:avocado/avocado.link/frontend#ARBITRUM_RPC_URL
+            - name: AURORA_RPC_URL
+              value: vault:avocado/avocado.link/frontend#AURORA_RPC_URL
+            - name: AVALANCHE_RPC_URL
+              value: vault:avocado/avocado.link/frontend#AVALANCHE_RPC_URL
+            - name: BSC_RPC_URL
+              value: vault:avocado/avocado.link/frontend#BSC_RPC_URL
+            - name: DEBANK_ACCESS_KEY
+              value: vault:avocado/avocado.link/frontend#DEBANK_ACCESS_KEY
+            - name: ENVIRONMENT
+              value: vault:avocado/avocado.link/frontend#ENVIRONMENT
+            - name: FANTOM_RPC_URL
+              value: vault:avocado/avocado.link/frontend#FANTOM_RPC_URL
+            - name: GA_ID
+              value: vault:avocado/avocado.link/frontend#GA_ID
+            - name: GNOSIS_RPC_URL
+              value: vault:avocado/avocado.link/frontend#GNOSIS_RPC_URL
+            - name: MAINNET_RPC_URL
+              value: vault:avocado/avocado.link/frontend#MAINNET_RPC_URL
+            - name: OPTIMISM_RPC_URL
+              value: vault:avocado/avocado.link/frontend#OPTIMISM_RPC_URL
+            - name: POLYGON_RPC_URL
+              value: vault:avocado/avocado.link/frontend#POLYGON_RPC_URL
+            - name: POLYGON_ZKEVM_RPC_URL
+              value: vault:avocado/avocado.link/frontend#POLYGON_ZKEVM_RPC_URL
+            - name: SLACK_ERROR_KEY
+              value: vault:avocado/avocado.link/frontend#SLACK_ERROR_KEY
+            - name: SLACK_KEY
+              value: vault:avocado/avocado.link/frontend#SLACK_KEY
+            - name: SLACK_STAGING_KEY
+              value: vault:avocado/avocado.link/frontend#SLACK_STAGING_KEY
+            - name: SOCKET_API_KEY
+              value: vault:avocado/avocado.link/frontend#SOCKET_API_KEY
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 3
+            periodSeconds: 8
+      imagePullSecrets:
+        - name: dockerconfigjson-github-com
+---
+# Service configuration for this application
+apiVersion: v1
+kind: Service
+metadata:
+  name: avocado-frontend
+  namespace: avocado
+  labels:
+    app: avocado-frontend
+spec:
+  ports:
+    - port: 80
+      targetPort: 5000
+  selector:
+    app: avocado-frontend
+---
+# Autoscaling configuration for this application
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: avocado-frontend
+  namespace: avocado
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: avocado-frontend
+  minReplicas: 4
+  maxReplicas: 20
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
