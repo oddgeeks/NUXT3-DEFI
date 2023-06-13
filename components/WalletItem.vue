@@ -3,37 +3,27 @@ const props = defineProps<{
   safe: ISafe
 }>()
 
-const { safeAddress } = useAvocadoSafe()
+const { safeAddress, totalBalance } = useAvocadoSafe()
 const { getBalances } = useSafe()
-
-const balance = ref('0')
-const pending = ref(false)
 
 const active = computed(() => {
   return safeAddress.value === props.safe?.safe_address
 })
 
-async function fetchBalance() {
-  try {
-    pending.value = true
-    const resp = await getBalances(props.safe?.safe_address)
+const { data: balance, pending } = useAsyncData(`safe-balance-${props.safe.safe_address}`, async () => {
+  if (props.safe.safe_address === safeAddress.value)
+    return totalBalance.value.toFixed()
 
-    const balances = resp.flat()
+  const resp = await getBalances(props.safe?.safe_address)
 
-    const totalBalance = balances?.reduce(
-      (acc, curr) => acc.plus(curr.balanceInUSD || '0'),
-      toBN(0) || toBN(0),
-    )
+  const balances = resp.flat()
 
-    balance.value = totalBalance.toFixed()
-  }
-  finally {
-    pending.value = false
-  }
-}
+  const balance = balances?.reduce(
+    (acc, curr) => acc.plus(curr.balanceInUSD || '0'),
+    toBN(0) || toBN(0),
+  )
 
-onMounted(() => {
-  fetchBalance()
+  return balance.toFixed()
 })
 </script>
 
@@ -54,7 +44,7 @@ onMounted(() => {
       </p>
 
       <div
-        v-if="pending "
+        v-if="!balance && pending"
         style="width: 80px; height: 18px"
         class="rounded-lg loading-box"
       />
