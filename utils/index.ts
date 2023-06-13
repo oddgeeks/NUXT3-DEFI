@@ -1,5 +1,8 @@
 import { ethers } from 'ethers'
 
+// @ts-expect-error
+import * as XXH from 'xxhashjs'
+
 export const injectFavicon = function (src: string) {
   const head = document.querySelector('head')!
   const iconElement = document.createElement('link')
@@ -222,13 +225,11 @@ export const signingMethods = [
 ]
 
 export function generateColor(address: string): string {
-  let hash = 0
-  for (let i = 0; i < address.length; i++)
-    hash = address.charCodeAt(i) + ((hash << 5) - hash)
+  const hash = XXH.h32(address, 0xABCD).toNumber()
 
   const hue = hash % 360
-  const saturation = 50 + (hash % 50)
-  const lightness = 30 + (hash % 40)
+  const saturation = 80 + (hash % 30)
+  const lightness = 70 + (hash % 20)
 
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`
 }

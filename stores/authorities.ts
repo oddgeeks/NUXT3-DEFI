@@ -1,9 +1,8 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import TrashSVG from '~/assets/images/icons/trash.svg?url'
 import { AvoSafeImplementation__factory } from '~~/contracts'
 
 export const useAuthorities = defineStore('authorities', () => {
-  const { signer, safeAddress, mainSafeAddress } = useAvocadoSafe()
+  const { signer, safeAddress, mainSafeAddress, sendTransaction } = useAvocadoSafe()
   const { avoProvider } = useSafe()
   const { account } = useWeb3()
 
@@ -18,35 +17,25 @@ export const useAuthorities = defineStore('authorities', () => {
     return formatAuthorities(selectedSafe.value.authorities)
   })
 
-  const deleteAuthority = async (authority: IAuthority) => {
-    const { success } = await openDialogModal({
-      title: 'Are you sure you want to delete the Authority?',
-      type: 'question',
-      headerIconUrl: TrashSVG,
-      isButtonVisible: true,
-      isCancelButtonVisible: true,
-      buttonText: 'Delete',
-      cancelButtonText: 'Cancel',
-      cancelButtonProps: {
-        color: 'white',
-      },
-      buttonProps: {
-        color: 'red',
-      },
-    })
+  const isWalletSecondary = computed(() => mainSafe.value?.safe_address !== selectedSafe.value?.safe_address)
 
-    if (success) {
+  const deleteAuthority = async (authority: IAuthority) => {
+    try {
       const instance = AvoSafeImplementation__factory.connect(safeAddress.value, signer.value!)
       const resp = await instance.populateTransaction.addAuthorities([authority.address])
 
-      const removeSignerAction = {
-        target: safeAddress,
+      const tx = await sendTransaction({
+        to: safeAddress.value,
         data: resp.data,
-        value: 0,
+        value: '0',
         operation: '0',
-      }
+        chainId: 137, //
+      })
 
-      // TODO: delete authority
+      console.log(tx)
+    }
+    catch (e) {
+      console.log(e)
     }
   }
 
@@ -55,16 +44,22 @@ export const useAuthorities = defineStore('authorities', () => {
       authority_address: account.value,
     }])
 
-    console.log({
-      EOA: account.value,
-      safes: resp?.data,
-    })
-
     safes.value = resp?.data || []
   }
 
   const fetchSafe = async (safeAddress: string) => {
     return avoProvider.send('api_getSafe', [safeAddress])
+  }
+
+  async function setSafe() {
+    const resp = await fetchSafe(safeAddress.value)
+
+    selectedSafe.value = resp
+  }
+
+  async function setMainSafe() {
+    const resp = await fetchSafe(mainSafeAddress.value)
+    mainSafe.value = resp
   }
 
   watch(account, async () => {
@@ -80,8 +75,7 @@ export const useAuthorities = defineStore('authorities', () => {
     if (!safeAddress.value)
       return
 
-    const resp = await fetchSafe(safeAddress.value)
-    selectedSafe.value = resp
+    setSafe()
   }, {
     immediate: true,
   })
@@ -90,8 +84,7 @@ export const useAuthorities = defineStore('authorities', () => {
     if (!mainSafeAddress.value)
       return
 
-    const resp = await fetchSafe(mainSafeAddress.value)
-    mainSafe.value = resp
+    setMainSafe()
   }, {
     immediate: true,
   })
@@ -102,6 +95,8 @@ export const useAuthorities = defineStore('authorities', () => {
     mainSafe,
     safes,
     selectedSafe,
+    setSafe,
+    isWalletSecondary,
   }
 })
 
