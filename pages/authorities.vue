@@ -13,7 +13,6 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const { deleteAuthority } = useAuthorities()
 const { authorities, isWalletSecondary } = storeToRefs(useAuthorities())
 
 async function handleDeleteAuthority(authority: IAuthority) {
@@ -34,7 +33,7 @@ async function handleDeleteAuthority(authority: IAuthority) {
   })
 
   if (success)
-    deleteAuthority(authority)
+    openEstimateAuthorityModal(authority, authority.chainIds, true)
 }
 </script>
 

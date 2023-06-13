@@ -7,6 +7,7 @@ interface ITxHash {
 const props = defineProps<{
   transactions: IAuthorityTx[]
   authority: IAuthority
+  remove: boolean
 }>()
 
 const { parseTransactionError } = useErrorHandler()
@@ -21,7 +22,7 @@ const finished = computed(() => txHashes.value.length === props.transactions.len
 async function refreshSafe() {
   setTimeout(() => {
     setSafe()
-  }, 15000)
+  }, 7000)
 }
 
 async function sendTransactions() {
@@ -104,7 +105,7 @@ onBeforeUnmount(() => {
           Saving Changes
         </h1>
         <p class="mt-2.5 text-slate-400 text-xs leading-5 font-medium">
-          {{ txHashes.length }} /{{ transactions.length }} chains Added
+          {{ txHashes.length }} /{{ transactions.length }} chains {{ remove ? 'Removed' : 'Added' }}
         </p>
         <SvgSpinner class="text-primary !w-10 !h-10" />
         <p class="font-medium text-xs leaidng-5 text-center text-slate-400">

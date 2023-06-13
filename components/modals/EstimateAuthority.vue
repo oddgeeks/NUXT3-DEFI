@@ -4,6 +4,7 @@ import { AvoSafeImplementation__factory } from '~~/contracts'
 const props = defineProps<{
   authority: IAuthority
   chainIds: number[]
+  remove?: boolean
 }>()
 
 const emit = defineEmits(['destroy'])
@@ -23,7 +24,10 @@ async function prepareTransactions() {
 
   for (const chainId of props.chainIds) {
     const instance = AvoSafeImplementation__factory.connect(safeAddress.value, signer.value!)
-    const resp = await instance.populateTransaction.addAuthorities([props.authority.address])
+    const functionName = props.remove ? 'removeAuthorities' : 'addAuthorities'
+
+    const resp = await instance.populateTransaction[functionName]([props.authority.address])
+
     const tx = {
       to: safeAddress.value,
       data: resp.data,
@@ -59,7 +63,7 @@ function handleBack() {
 function handleContinue() {
   emit('destroy')
 
-  openSignAuthorityModal(props.authority, transactions.value)
+  openSignAuthorityModal(props.authority, transactions.value, props.remove)
 }
 
 onMounted(() => {

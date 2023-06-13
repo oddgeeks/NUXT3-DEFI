@@ -1,5 +1,4 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { AvoSafeImplementation__factory } from '~~/contracts'
 
 export const useAuthorities = defineStore('authorities', () => {
   const { signer, safeAddress, mainSafeAddress, sendTransaction } = useAvocadoSafe()
@@ -19,25 +18,17 @@ export const useAuthorities = defineStore('authorities', () => {
 
   const isWalletSecondary = computed(() => mainSafe.value?.safe_address !== selectedSafe.value?.safe_address)
 
-  const deleteAuthority = async (authority: IAuthority) => {
-    try {
-      const instance = AvoSafeImplementation__factory.connect(safeAddress.value, signer.value!)
-      const resp = await instance.populateTransaction.addAuthorities([authority.address])
+  const authorisedNetworks = computed(() => {
+    if (!account.value)
+      return availableNetworks
 
-      const tx = await sendTransaction({
-        to: safeAddress.value,
-        data: resp.data,
-        value: '0',
-        operation: '0',
-        chainId: 137, //
-      })
+    if (!isWalletSecondary.value)
+      return availableNetworks
 
-      console.log(tx)
-    }
-    catch (e) {
-      console.log(e)
-    }
-  }
+    const auth = authorities.value.find(i => i.address === account.value)
+
+    return auth?.chainIds.map(i => getNetworkByChainId(i))
+  })
 
   const fetchSafes = async () => {
     const resp = await avoProvider.send('api_getSafes', [{
@@ -55,11 +46,23 @@ export const useAuthorities = defineStore('authorities', () => {
     const resp = await fetchSafe(safeAddress.value)
 
     selectedSafe.value = resp
+
+    console.log({
+      selectedSafe: resp,
+    })
   }
 
   async function setMainSafe() {
     const resp = await fetchSafe(mainSafeAddress.value)
+
+    console.log({
+      mainSafe: resp,
+    })
     mainSafe.value = resp
+  }
+
+  function checkNetworkIsAuthorised(chainId: string | number) {
+    return !!authorisedNetworks.value?.find(i => i.chainId == chainId)
   }
 
   watch(account, async () => {
@@ -90,13 +93,14 @@ export const useAuthorities = defineStore('authorities', () => {
   })
 
   return {
-    deleteAuthority,
     authorities,
     mainSafe,
     safes,
     selectedSafe,
     setSafe,
     isWalletSecondary,
+    authorisedNetworks,
+    checkNetworkIsAuthorised,
   }
 })
 

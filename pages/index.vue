@@ -10,7 +10,6 @@ definePageMeta({
 
 const { account } = useWeb3()
 const { unstableDappNetworks } = useBanner()
-const { safeAddress } = useAvocadoSafe()
 const { networkPreference } = storeToRefs(useSafe())
 
 useAccountTrack(undefined, () => {

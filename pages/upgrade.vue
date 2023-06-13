@@ -12,13 +12,13 @@ useEagerConnect()
 
 const sortByVersion = computed(() => {
   return data.value?.sort((a: NetworkVersion, b: NetworkVersion) => {
-    return gt(a.latestVersion, b.latestVersion) ? -1 : 1
+    return gt(a.latestVersion || '0.0.0', b.latestVersion || '0.0.0') ? -1 : 1
   })
 })
 
 const mostRecentVersion = computed(() => {
   return data.value?.sort((a: NetworkVersion, b: NetworkVersion) => {
-    return gt(a.latestVersion, b.latestVersion) ? -1 : 1
+    return gt(a.latestVersion || '0.0.0', b.latestVersion || '0') ? -1 : 1
   })[0]?.latestVersion
 })
 </script>

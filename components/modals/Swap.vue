@@ -48,12 +48,13 @@ const { tokens } = storeToRefs(useTokens())
 const { toWei, fromWei } = useBignumber()
 const { parseTransactionError } = useErrorHandler()
 const { account } = useWeb3()
+const { authorisedNetworks } = storeToRefs(useAuthorities())
 
 const toChainId = ref<string>(props.chainId)
 const tokenAddress = ref<string>(props.address)
-const networks = availableNetworks.filter(
+const networks = computed(() => authorisedNetworks.value?.filter(
   network => network.chainId !== 1101,
-)
+))
 
 const slippages = [
   { value: '0.1', label: '0.1%' },

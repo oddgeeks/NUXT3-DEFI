@@ -11,6 +11,7 @@ import ContactSVG from '~/assets/images/icons/contact.svg?component'
 const emit = defineEmits(['destroy'])
 
 const { authorities } = storeToRefs(useAuthorities())
+const { account } = useWeb3()
 
 const {
   handleSubmit,
@@ -35,6 +36,15 @@ const {
             authority =>
               authority.address?.toLowerCase() === value?.toLowerCase(),
           )
+        },
+      )
+      .test(
+        'cannot-add-self',
+        'Cannot add self as authority',
+        (value) => {
+          if (!isAddress(value || ''))
+            return true
+          return account.value?.toLowerCase() !== value?.toLowerCase()
         },
       ),
   }),

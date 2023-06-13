@@ -18,6 +18,7 @@ const {
   priceDiffClass,
   priceDiffInPercent,
   fetchLiteAPY,
+  nonAuthorised,
 } = useGraph(balance)
 
 onMounted(async () => {
@@ -92,7 +93,7 @@ onMounted(async () => {
       <span v-else> - </span>
     </td>
     <td class="text-right py-6">
-      <div class="flex items-center gap-[15px] justify-center">
+      <div v-tippy="nonAuthorised ? `You are not authorized to interact with tokens on ${chainIdToName(balance.chainId)}` : undefined" class="flex items-center gap-[15px] justify-center">
         <CommonButton
           v-tippy="{
             arrow: true,

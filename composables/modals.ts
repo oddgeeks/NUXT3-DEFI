@@ -439,12 +439,13 @@ export function openManageAuthorityModal(authority: IAuthority, chainIds?: numbe
   })
 }
 
-export function openEstimateAuthorityModal(authority: IAuthority, chainIds: number[] | string[]) {
+export function openEstimateAuthorityModal(authority: IAuthority, chainIds: number[] | string[], remove = false) {
   return openModal({
     component: EstimateAuthority,
     componentProps: {
       authority,
       chainIds,
+      remove,
     },
     options: {
       wrapperClass: '!max-w-[510px]',
@@ -452,12 +453,13 @@ export function openEstimateAuthorityModal(authority: IAuthority, chainIds: numb
   })
 }
 
-export function openSignAuthorityModal(authority: IAuthority, transactions: IAuthorityTx[]) {
+export function openSignAuthorityModal(authority: IAuthority, transactions: IAuthorityTx[], remove = false) {
   return openModal({
     component: SignAuthorityTransactions,
     componentProps: {
       transactions,
       authority,
+      remove,
     },
   })
 }
