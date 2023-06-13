@@ -1,9 +1,10 @@
+import { storeToRefs } from 'pinia'
 import type { IBalance } from '~~/stores/safe'
 
 export function useGraph(balance: Ref<IBalance>) {
-  const { checkNetworkIsAuthorised } = useAuthorities()
+  const { authorisedNetworks } = storeToRefs(useAuthorities())
 
-  const nonAuthorised = computed(() => !checkNetworkIsAuthorised(balance.value.chainId))
+  const nonAuthorised = computed(() => !authorisedNetworks.value?.find(i => String(i.chainId) == String(balance.value.chainId)))
 
   const interactable = computed(() => {
     return toBN(balance.value.balance).gt(0) && !nonAuthorised.value
