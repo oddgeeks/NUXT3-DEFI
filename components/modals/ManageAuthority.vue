@@ -108,7 +108,7 @@ function handleDeleteAuthority(chainId: number) {
               <ChainLogo class="w-7 h-7" :chain="chainId" />
               {{ chainIdToName(chainId) }}
             </span>
-            <button @click="handleDeleteAuthority(chainId)">
+            <button v-tippy="`Delete authority on ${chainIdToName(chainId)}`" @click="handleDeleteAuthority(Number(chainId))">
               <SvgoErrorCircle class="text-white w-5 h-5" />
             </button>
           </li>
