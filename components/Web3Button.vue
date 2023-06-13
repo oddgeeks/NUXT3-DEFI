@@ -13,7 +13,7 @@ defineProps({
 
 const { active, deactivate, account, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
-const { gasBalance } = storeToRefs(useSafe())
+const { gasBalance, mainSafeAddress } = storeToRefs(useSafe())
 const { resetAccounts } = useSafe()
 const { setConnectorName, cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
@@ -29,6 +29,23 @@ const isActualActive = computed(() => {
   if (trackingAccount.value)
     return true
   return active.value
+})
+
+const actualMainSafe = computed(() => {
+  if (mainSafe.value) { return mainSafe.value }
+  else {
+    return {
+      safe_address: mainSafeAddress.value,
+      authorities: {},
+      created_at: new Date(),
+      deployed: false,
+      fully_deployed: false,
+      id: 0,
+      owner_address: account.value,
+      updated_at: new Date(),
+      version: '0.0.0',
+    }
+  }
 })
 
 async function closeConnection() {
@@ -169,11 +186,11 @@ whenever(
               </button>
             </div>
             <div class="border-t dark:border-slate-750 px-5 pb-5 border-slate-150 pt-4">
-              <div v-if="mainSafe">
+              <div v-if="actualMainSafe">
                 <h2 class="text-xs mb-3">
                   Generated wallets
                 </h2>
-                <WalletItem :safe="mainSafe" />
+                <WalletItem :safe="actualMainSafe" />
               </div>
 
               <div v-if="!!safes?.length" class="mt-5">

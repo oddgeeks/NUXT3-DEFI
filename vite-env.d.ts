@@ -571,3 +571,4 @@ interface IAuthorityTx {
 }
 
 type ChainFees = Record<string, ICalculatedFee>
+type ChainFeeErrors = Record<string, string>

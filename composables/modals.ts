@@ -446,6 +446,9 @@ export function openEstimateAuthorityModal(authority: IAuthority, chainIds: numb
       authority,
       chainIds,
     },
+    options: {
+      wrapperClass: '!max-w-[510px]',
+    },
   })
 }
 

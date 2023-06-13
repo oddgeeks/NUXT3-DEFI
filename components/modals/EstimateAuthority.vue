@@ -12,9 +12,10 @@ const { safeAddress, signer } = useAvocadoSafe()
 
 const transactions = ref<IAuthorityTx[]>([])
 const chainFees = ref<ChainFees>({})
+const chainFeeErrors = ref<ChainFeeErrors>({})
 
 const disabled = computed(() => {
-  return !transactions.value.length || Object.keys(chainFees.value).length !== transactions.value.length
+  return !transactions.value.length || Object.keys(chainFees.value).length !== transactions.value.length || Object.keys(chainFeeErrors.value).length
 })
 
 async function prepareTransactions() {
@@ -38,6 +39,16 @@ async function prepareTransactions() {
 
   return txs
 }
+
+const fees = computed(() => {
+  const fees = Object.values(chainFees.value)
+  const mergedFees = calculateMultipleEstimatedFee(...fees)
+  return mergedFees
+})
+
+const formattedError = computed(() => {
+  return [...new Set(Object.values(chainFeeErrors.value))].join('\n')
+})
 
 function handleBack() {
   emit('destroy')
@@ -63,9 +74,11 @@ onMounted(() => {
     </h1>
     <div>
       <ul class="flex flex-col gap-5 dark:bg-gray-850 bg-slate-50 py-4 px-5 rounded-5">
-        <AuthorityEstimatedFeeItem v-for="tx in transactions" :key="tx.chainId" v-model="chainFees" :tx="tx" />
+        <AuthorityEstimatedFeeItem v-for="tx in transactions" :key="tx.chainId" v-model:errors="chainFeeErrors" v-model="chainFees" :tx="tx" />
       </ul>
     </div>
+
+    <EstimatedFee :error="formattedError" :data="fees" />
     <div class="flex gap-4">
       <CommonButton size="lg" class="w-full justify-center" @click="handleBack">
         Back

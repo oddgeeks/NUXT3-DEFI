@@ -2,14 +2,22 @@
 import GasSVG from '~/assets/images/icons/gas.svg?component'
 import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg?component'
 
-defineProps<{
+const props = defineProps<{
   data: ICalculatedFee
   loading?: boolean
   error?: string
   wrapperClass?: string
   showNetworkInfo?: boolean
   hideErrorInfo?: boolean
+  hideDiscount?: boolean
 }>()
+
+const discountAvailable = computed(() => {
+  if (props.hideDiscount)
+    return false
+
+  return props.data?.discountAvailable
+})
 </script>
 
 <template>
@@ -34,13 +42,13 @@ defineProps<{
         <template v-else-if="data">
           <span
             :class="[
-              data.discountAvailable ? 'text-slate-400' : '',
+              discountAvailable ? 'text-slate-400' : '',
               { 'text-red-alert': error },
             ]"
             class="text-xs inline-flex items-center gap-2.5"
           >
             <img
-              v-if="!data.discountAvailable"
+              v-if="!discountAvailable"
               class="w-[18px] h-[18px]"
               width="18"
               height="18"
@@ -51,7 +59,7 @@ defineProps<{
         </template>
       </div>
 
-      <template v-if="data.discountAvailable && !loading">
+      <template v-if="discountAvailable && !loading">
         <div
           v-for="detail in data.discountDetails"
           :key="detail.name"
