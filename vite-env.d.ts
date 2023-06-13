@@ -113,7 +113,7 @@ interface IBridgeTokensResult {
 
 interface IBridgeTokensResponse {
   success: boolean;
-  result: Result[];
+  result: IBridgeTokensResult[];
 }
 
 interface ISellToken {

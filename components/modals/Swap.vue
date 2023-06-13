@@ -567,9 +567,19 @@ onUnmounted(() => {
   <form novalidate class="flex gap-7.5 flex-col" @submit="onSubmit">
     <div class="flex flex-col items-center justify-center">
       <div class="flex flex-col gap-[15px] w-full">
-        <h2 class="text-lg leading-5 text-center">
-          Swap
-        </h2>
+        <div class="flex gap-[14px]">
+          <div class="w-10 h-10 rounded-full items-center flex justify-center bg-primary">
+            <SvgoRefresh class="-rotate-45" />
+          </div>
+          <div class="flex flex-col gap-1">
+            <h1 class="text-lg leading-[20px]">
+              Swap
+            </h1>
+            <h2 class="font-medium text-xs text-slate-400 leading-5">
+              Trade tokens on multiple networks at best price.
+            </h2>
+          </div>
+        </div>
         <div
           class="flex items-center justify-center w-2/5 mx-auto rounded-full"
         >

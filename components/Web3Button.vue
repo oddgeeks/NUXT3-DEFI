@@ -48,7 +48,7 @@ const pendingGasAmount = useNuxtData('pending-deposit')
 
 const addressLabel = computed(() =>
   trackingAccount.value
-    ? `Tracking: ${shortenHash(account.value, 4)}`
+    ? `Tracking: ${shortenHash(trackingAccount.value, 4)}`
     : ensName.value || shortenHash(account.value, 4),
 )
 

@@ -7,11 +7,7 @@ defineEmits(['destroy'])
 
 const { safeAddress } = useAvocadoSafe()
 
-const { isCrossChain, data, token, availableTokens, toAvailableNetworks, actualAddress, stepForward } = useSend()
-
-const route = useRoute()
-
-const isCrossChainEnabled = computed(() => route.query?.crossChainSend)
+const { isCrossChain, data, token, availableTokens, toAvailableNetworks, actualAddress, stepForward, tokenlistPending } = useSend()
 
 const {
   value: amount,
@@ -34,7 +30,7 @@ const {
 })
 
 const disabled = computed(() => {
-  return !actualAddress.value || !!errors.value.length || !!addressErrors.value.length
+  return !actualAddress.value || !!errors.value.length || !!addressErrors.value.length || !amount.value || tokenlistPending.value
 })
 
 const { data: totalTransfers } = useAsyncData(
@@ -119,7 +115,7 @@ function handleContinue() {
             v-model="amount"
             type="numeric"
             :error-message="errorMessage"
-            :name="amount"
+            name="amount"
             autofocus
             class="!rounded-2xl w-full"
             input-classes="!py-3"
@@ -137,7 +133,6 @@ function handleContinue() {
     <div class="flex flex-col gap-2.5 font-medium">
       <div class="flex justify-between gap-5">
         <div
-          v-if="isCrossChainEnabled"
           class="flex flex-col gap-2.5"
         >
           <span class="text-sm">Network</span>
@@ -209,7 +204,7 @@ function handleContinue() {
     </Transition>
   </div>
 
-  <CommonButton :disabled="disabled" class="justify-center mt-7.5 w-full" size="lg" @click="handleContinue">
+  <CommonButton :loading="tokenlistPending" :disabled="disabled" class="justify-center mt-7.5 w-full" size="lg" @click="handleContinue">
     Continue
   </CommonButton>
 </template>
