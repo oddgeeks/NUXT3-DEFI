@@ -3,7 +3,7 @@ const props = defineProps<{
   safe: ISafe
 }>()
 
-const { safeAddress, totalBalance } = useAvocadoSafe()
+const { safeAddress } = useAvocadoSafe()
 const { getBalances } = useSafe()
 
 const active = computed(() => {
@@ -11,9 +11,6 @@ const active = computed(() => {
 })
 
 const { data: balance, pending } = useAsyncData(`safe-balance-${props.safe.safe_address}`, async () => {
-  if (props.safe.safe_address === safeAddress.value)
-    return totalBalance.value.toFixed()
-
   const resp = await getBalances(props.safe?.safe_address)
 
   const balances = resp.flat()
