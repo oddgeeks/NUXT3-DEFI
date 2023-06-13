@@ -14,7 +14,9 @@ FROM node:18-alpine
 
 WORKDIR /usr/src/app
 
-COPY --from=build /usr/src/app/build/ /usr/src/app
+COPY --from=build /usr/src/app /usr/src/app
+
+RUN apk add git 
 
 RUN yarn install --production
 
