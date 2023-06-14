@@ -84,7 +84,7 @@ onMounted(() => {
 
     <EstimatedFee :error="formattedError" :data="fees" />
     <div class="flex gap-4">
-      <CommonButton size="lg" class="w-full justify-center" @click="handleBack">
+      <CommonButton color="white" size="lg" class="w-full justify-center" @click="handleBack">
         Back
       </CommonButton>
       <CommonButton :disabled="disabled" size="lg" class="w-full justify-center" @click="handleContinue">

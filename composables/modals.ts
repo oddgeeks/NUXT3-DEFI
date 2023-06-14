@@ -429,12 +429,13 @@ export function openAddAuthorityModal() {
   })
 }
 
-export function openManageAuthorityModal(authority: IAuthority, chainIds?: number[]) {
+export function openManageAuthorityModal(authority: IAuthority, chainIds?: number[], isNewAuthority = false) {
   return openModal({
     component: ManageAuthority,
     componentProps: {
       authority,
       chainIds,
+      isNewAuthority,
     },
   })
 }

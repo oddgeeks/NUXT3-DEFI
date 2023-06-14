@@ -63,7 +63,7 @@ const onSubmit = handleSubmit(async () => {
     address: address.value,
     chainIds: [],
     type: 'personal',
-  })
+  }, undefined, true)
   emit('destroy')
 })
 
@@ -75,9 +75,6 @@ async function handleSelectContact() {
 
     setValue(_contact.address)
   }
-}
-
-function handleContinue() {
 }
 </script>
 
@@ -126,7 +123,6 @@ function handleContinue() {
         size="lg"
         :disabled="disabled"
         class="w-full items-center justify-center"
-        @click="handleContinue"
       >
         Continue
       </CommonButton>

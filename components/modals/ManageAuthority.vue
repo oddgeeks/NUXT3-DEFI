@@ -6,6 +6,7 @@ import { lt } from 'semver'
 interface Props {
   authority: IAuthority
   chainIds?: number[]
+  isNewAuthority?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -14,16 +15,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['destroy'])
 
+const enable = ref(props.isNewAuthority || false)
+
 const { selectedSafe } = storeToRefs(useAuthorities())
 
 const selectedChainIds = ref<number[]>(toRaw(props.chainIds))
 const searchQuery = ref('')
-
-function checkVersionIsNotSupported(chainId: number) {
-  const version = selectedSafe.value?.version[chainId] || '0.0.0'
-
-  return lt(version, '3.0.0')
-}
 
 function toggleNetwork(network: Network) {
   const index = selectedChainIds.value.indexOf(network.chainId)
@@ -40,8 +37,13 @@ function isSelected(network: Network) {
 
 const filteredNetworks = computed(() => {
   const networks = availableNetworks.filter((n) => {
+    if (!enable.value)
+      return props.authority.chainIds?.includes(String(n.chainId))
+
+    const version = selectedSafe.value?.version[n.chainId] || '0.0.0'
+
     const isAlreadyAdded = !props.authority.chainIds?.includes(String(n.chainId))
-    const isNotSupported = checkVersionIsNotSupported(n.chainId)
+    const isNotSupported = lt(version, '3.0.0')
 
     return isAlreadyAdded && !isNotSupported
   })
@@ -57,14 +59,13 @@ const filteredNetworks = computed(() => {
   return fuse.search(searchQuery.value).map(result => result.item)
 })
 
+watch(enable, () => {
+  selectedChainIds.value = []
+})
+
 function handleContinue() {
   emit('destroy')
-  openEstimateAuthorityModal(props.authority, selectedChainIds.value)
-}
-
-function handleDeleteAuthority(chainId: number) {
-  emit('destroy')
-  openEstimateAuthorityModal(props.authority, [chainId], true)
+  openEstimateAuthorityModal(props.authority, selectedChainIds.value, !enable.value)
 }
 </script>
 
@@ -98,10 +99,16 @@ function handleDeleteAuthority(chainId: number) {
       </template>
     </CommonInput>
     <div class="dark:bg-gray-850 pt-4 bg-slate-50 rounded-5 sm:min-h-[100px] sm:max-h-[380px] overflow-auto scroll-style">
-      <div v-if="!!authority.chainIds?.length" class="px-6">
-        <p class="text-xs text-slate-400 mb-5">
-          Enabled
-        </p>
+      <div class="w-full justify-between flex px-6">
+        <button :class="enable ? 'text-white' : 'text-slate-400'" class="flex-1 text-center font-medium" @click="enable = true">
+          Enable
+        </button>
+        <button :class="!enable ? 'text-white' : 'text-slate-400'" class="text-slate-400 flex-1 text-center font-medium" @click="enable = false">
+          Disable
+        </button>
+      </div>
+
+      <!-- <div v-if="!!authority.chainIds?.length" class="px-6">
         <ul class="flex flex-col gap-5">
           <li v-for="chainId in authority.chainIds" :key="chainId" class="flex items-center justify-between w-full text-slate-400">
             <span class="flex items-center gap-3 text-sm">
@@ -113,8 +120,8 @@ function handleDeleteAuthority(chainId: number) {
             </button>
           </li>
         </ul>
-      </div>
-      <hr v-if="!!authority.chainIds?.length" class="border-slate-150 dark:border-slate-800 mt-5">
+      </div> -->
+      <!-- <hr v-if="!!authority.chainIds?.length" class="border-slate-150 dark:border-slate-800 mt-5"> -->
       <ul v-if="!!filteredNetworks.length" class="flex flex-col py-2 px-4">
         <li v-for="network in filteredNetworks" :key="network.chainId">
           <button :class="isSelected(network) ? 'dark:text-white text-slate-900' : ''" class="flex items-center justify-between w-full hover:bg-slate-150 py-2 text-slate-400 px-2 rounded-[14px] hover:dark:bg-slate-800" @click="toggleNetwork(network)">
@@ -131,11 +138,11 @@ function handleDeleteAuthority(chainId: number) {
         </li>
       </ul>
       <p v-else class="text-sm text-center p-4 text-slate-400 font-medium">
-        No networks available to add
+        No networks available to  {{ enable ? 'enable' : 'disable' }}
       </p>
     </div>
-    <CommonButton :disabled="!selectedChainIds.length" size="lg" class="w-full justify-center" @click="handleContinue">
-      Save Changes
+    <CommonButton :color="enable ? 'primary' : 'red'" :disabled="!selectedChainIds.length" size="lg" class="w-full justify-center" @click="handleContinue">
+      {{ enable ? 'Enable Chains' : 'Disable Chains' }}
     </CommonButton>
   </div>
 </template>
