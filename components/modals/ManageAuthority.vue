@@ -73,7 +73,7 @@ function handleContinue() {
       Enable/Disable networks to grant access to Funds.
     </h2>
   </div>
-  <div class="flex flex-col gap-2.5">
+  <div class="flex flex-col gap-7.5">
     <div class="dark:bg-gray-850 pt-4 bg-slate-50 rounded-5 sm:min-h-[100px] sm:max-h-[380px] overflow-auto scroll-style">
       <div class="w-full justify-between flex px-6">
         <button :class="enable ? 'text-white' : 'text-slate-400'" class="flex-1 text-center font-medium" @click="enable = true">

@@ -13,36 +13,62 @@ const props = defineProps<{
 const { parseTransactionError } = useErrorHandler()
 const { sendTransaction } = useAvocadoSafe()
 const { setSafe } = useAuthorities()
+const { account } = useWeb3()
 
 const txHashes = ref<ITxHash[]>([])
 const pending = ref(false)
 const error = ref()
 const finished = computed(() => txHashes.value.length === props.transactions.length)
 
+const action = computed(() => props.remove ? 'remove-auth' : 'add-auth')
 async function refreshSafe() {
   setTimeout(() => {
     setSafe()
   }, 7000)
 }
-
 async function sendTransactions() {
   try {
     pending.value = true
     error.value = undefined
     txHashes.value = []
     for (const tx of props.transactions) {
-      const hash = await sendTransaction(tx)
+      const provider = getRpcProvider(tx.chainId)
+
+      const metadata = encodeAuthMetadata({
+        address: props.authority.address,
+        chainId: tx.chainId,
+        remove: props.remove,
+      })
+
+      const hash = await sendTransaction(tx, {
+        metadata,
+      })
 
       if (!hash)
-        return
+        throw new Error('Transaction failed')
 
-      txHashes.value.push({
-        hash,
-        chainId: tx.chainId,
+      const transaction = await provider.getTransaction(hash)
+
+      transaction.wait().then(() => {
+        txHashes.value.push({
+          hash,
+          chainId: tx.chainId,
+        })
+      })
+
+      const accountLink = `<https://avocado.instadapp.io/?user=${props.authority.address}|${shortenHash(
+        props.authority.address,
+        12,
+      )}>`
+
+      logActionToSlack({
+        message: `${accountLink}`,
+        action: action.value,
+        account: account.value,
+        txHash: hash,
+        chainId: String(tx.chainId),
       })
     }
-
-    refreshSafe()
   }
   catch (e: any) {
     const err = parseTransactionError(e)
@@ -53,18 +79,22 @@ async function sendTransactions() {
 
     error.value = err
 
-    // logActionToSlack({
-    //   message: err.formatted,
-    //   type: 'error',
-    //   action: 'bridge',
-    //   account: account.value,
-    //   errorDetails: err.parsed,
-    // })
+    logActionToSlack({
+      message: err.formatted,
+      type: 'error',
+      action: action.value,
+      account: account.value,
+      errorDetails: err.parsed,
+    })
   }
   finally {
     pending.value = false
   }
 }
+
+whenever(finished, () => {
+  refreshSafe()
+})
 
 onMounted(() => sendTransactions())
 
@@ -105,7 +135,7 @@ onBeforeUnmount(() => {
           Saving Changes
         </h1>
         <p class="mt-2.5 text-slate-400 text-xs leading-5 font-medium">
-          {{ txHashes.length }} /{{ transactions.length }} chains {{ remove ? 'Removed' : 'Added' }}
+          {{ txHashes.length }}/{{ transactions.length }} chains {{ remove ? 'Removed' : 'Added' }}
         </p>
         <SvgSpinner class="text-primary !w-10 !h-10" />
         <p class="font-medium text-xs leaidng-5 text-center text-slate-400">

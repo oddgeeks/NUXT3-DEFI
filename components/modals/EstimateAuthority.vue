@@ -57,7 +57,7 @@ const formattedError = computed(() => {
 function handleBack() {
   emit('destroy')
 
-  openManageAuthorityModal(props.authority, props.chainIds, !props.remove)
+  openManageAuthorityModal(props.authority, props.chainIds.map(i => Number(i)), !props.remove)
 }
 
 function handleContinue() {
