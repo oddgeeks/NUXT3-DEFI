@@ -13,8 +13,10 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const { authorities, isWalletSecondary } = storeToRefs(useAuthorities())
+const { authorities, isWalletSecondary, selectedSafe } = storeToRefs(useAuthorities())
 const { account } = useWeb3()
+
+const owner = computed(() => selectedSafe.value?.owner_address || account.value)
 
 async function handleDeleteAuthority(authority: IAuthority) {
   const { success } = await openDialogModal({
@@ -51,16 +53,16 @@ async function handleDeleteAuthority(authority: IAuthority) {
       </span>
     </div>
     <div class="flex flex-col dark:bg-gray-850 bg-slate-50 rounded-[25px]">
-      <div v-if="account" class="flex items-center justify-between py-6.5 px-7.5 border-b-1 last:border-b-0 border-slate-150 dark:border-slate-800 w-full">
+      <div v-if="owner" class="flex items-center justify-between py-6.5 px-7.5 border-b-1 last:border-b-0 border-slate-150 dark:border-slate-800 w-full">
         <div class="flex items-center sm:gap-5 gap-3 flex-1 flex-wrap sm:text-base text-xs">
           <AuthorityAvatar
-            :address="account"
+            :address="owner"
             class="-mr-2 shrink-0"
           />
-          <span class="dark:text-white text-slate-900 sm:block hidden">{{ account }}</span>
-          <span class="dark:text-white text-slate-900 sm:hidden block sm:ml-0 ml-2.5">{{ shortenHash(account) }}</span>
+          <span class="dark:text-white text-slate-900 sm:block hidden">{{ owner }}</span>
+          <span class="dark:text-white text-slate-900 sm:hidden block sm:ml-0 ml-2.5">{{ shortenHash(owner) }}</span>
           (Owner)
-          <Copy :text="account">
+          <Copy :text="owner">
             <template #copy>
               <div
                 class="dark:bg-slate-800 bg-slate-150  rounded-full w-7.5 h-7.5 flex"
