@@ -347,9 +347,10 @@ const sellTokenAmountPerBuyToken = computed(() => {
 
 function handleSellUsdChange(e: Event) {
   const target = e.target as HTMLInputElement
+  const actualValue = target?.value ? target.value.replace('$', '') : '0'
 
-  if (target?.value) {
-    const value = toBN(target.value).div(swap.value.sellToken.price || 0)
+  if (actualValue) {
+    const value = toBN(actualValue).div(swap.value.sellToken.price || 0)
 
     setSellAmount({
       value: toBN(value)
@@ -362,9 +363,10 @@ function handleSellUsdChange(e: Event) {
 
 function handleBuyUsdChange(e: Event) {
   const target = e.target as HTMLInputElement
+  const actualValue = target?.value ? target.value.replace('$', '') : '0'
 
-  if (target?.value) {
-    const value = toBN(target.value).div(swap.value.buyToken.price || 0).toString()
+  if (actualValue) {
+    const value = toBN(actualValue).div(swap.value.buyToken.price || 0).toString()
 
     convertBuytoSellAmount(value)
   }
@@ -633,6 +635,7 @@ onUnmounted(() => {
           />
           <CommonCurrencyInput
             v-else
+            :class="isSellAmountFocused ? 'text-white' : ''"
             :model-value="toBN(sellAmountInUsd).toNumber()"
             @blur="isSellAmountFocused = false"
             @focus="isSellAmountFocused = true"
@@ -700,6 +703,7 @@ onUnmounted(() => {
           />
           <CommonCurrencyInput
             v-else
+            :class="isUsdBuyAmountFocused ? 'text-white' : ''"
             :model-value="toBN(buyAmountInUsd).toNumber()"
             @focus="isUsdBuyAmountFocused = true"
             @blur="isUsdBuyAmountFocused = false"
