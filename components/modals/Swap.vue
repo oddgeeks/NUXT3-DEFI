@@ -633,14 +633,16 @@ onUnmounted(() => {
             style="width: 60px; height: 24px"
             class="rounded-lg loading-box"
           />
-          <CommonCurrencyInput
-            v-else
-            class="focus:text-white"
-            :model-value="toBN(sellAmountInUsd).toNumber()"
-            @blur="isSellAmountFocused = false"
-            @focus="isSellAmountFocused = true"
-            @input="handleSellUsdChange"
-          />
+          <template v-else>
+            <span>USD&nbsp;</span>
+            <CommonCurrencyInput
+              class="focus:text-white"
+              :model-value="toBN(sellAmountInUsd).toNumber()"
+              @blur="isSellAmountFocused = false"
+              @focus="isSellAmountFocused = true"
+              @input="handleSellUsdChange"
+            />
+          </template>
           <div class="flex items-center ml-auto gap-2.5 uppercase">
             <span class="font-medium">{{ formatDecimal(sellTokenBalance) }}
               {{ swap.sellToken?.symbol }}</span>
@@ -701,14 +703,16 @@ onUnmounted(() => {
             style="width: 60px; height: 24px"
             class="rounded-lg loading-box"
           />
-          <CommonCurrencyInput
-            v-else
-            class="focus:text-white"
-            :model-value="toBN(buyAmountInUsd).toNumber()"
-            @focus="isUsdBuyAmountFocused = true"
-            @blur="isUsdBuyAmountFocused = false"
-            @input="handleBuyUsdChange"
-          />
+          <template v-else>
+            <span>USD&nbsp;</span>
+            <CommonCurrencyInput
+              class="focus:text-white"
+              :model-value="toBN(buyAmountInUsd).toNumber()"
+              @focus="isUsdBuyAmountFocused = true"
+              @blur="isUsdBuyAmountFocused = false"
+              @input="handleBuyUsdChange"
+            />
+          </template>
 
           <div class="flex items-center ml-auto gap-2.5 uppercase">
             <span class="font-medium">{{ formatDecimal(buyTokenBalance) }}
