@@ -349,6 +349,14 @@ function handleSellUsdChange(e: Event) {
   const target = e.target as HTMLInputElement
   const actualValue = target?.value ? target.value.replace('$', '') : '0'
 
+  if (target?.value === '$') {
+    target.value = '0'
+    return setSellAmount({
+      value: '0',
+      touched: true,
+    })
+  }
+
   if (actualValue) {
     const value = toBN(actualValue).div(swap.value.sellToken.price || 0)
 
@@ -364,6 +372,11 @@ function handleSellUsdChange(e: Event) {
 function handleBuyUsdChange(e: Event) {
   const target = e.target as HTMLInputElement
   const actualValue = target?.value ? target.value.replace('$', '') : '0'
+
+  if (target?.value === '$') {
+    target.value = '0'
+    return convertBuytoSellAmount('0')
+  }
 
   if (actualValue) {
     const value = toBN(actualValue).div(swap.value.buyToken.price || 0).toString()
@@ -633,16 +646,14 @@ onUnmounted(() => {
             style="width: 60px; height: 24px"
             class="rounded-lg loading-box"
           />
-          <template v-else>
-            <span>USD&nbsp;</span>
-            <CommonCurrencyInput
-              class="focus:text-white"
-              :model-value="toBN(sellAmountInUsd).toNumber()"
-              @blur="isSellAmountFocused = false"
-              @focus="isSellAmountFocused = true"
-              @input="handleSellUsdChange"
-            />
-          </template>
+          <CommonCurrencyInput
+            v-else
+            class="focus:text-white"
+            :model-value="toBN(sellAmountInUsd).toNumber()"
+            @blur="isSellAmountFocused = false"
+            @focus="isSellAmountFocused = true"
+            @input="handleSellUsdChange"
+          />
           <div class="flex items-center ml-auto gap-2.5 uppercase">
             <span class="font-medium">{{ formatDecimal(sellTokenBalance) }}
               {{ swap.sellToken?.symbol }}</span>
@@ -703,16 +714,14 @@ onUnmounted(() => {
             style="width: 60px; height: 24px"
             class="rounded-lg loading-box"
           />
-          <template v-else>
-            <span>USD&nbsp;</span>
-            <CommonCurrencyInput
-              class="focus:text-white"
-              :model-value="toBN(buyAmountInUsd).toNumber()"
-              @focus="isUsdBuyAmountFocused = true"
-              @blur="isUsdBuyAmountFocused = false"
-              @input="handleBuyUsdChange"
-            />
-          </template>
+          <CommonCurrencyInput
+            v-else
+            class="focus:text-white"
+            :model-value="toBN(buyAmountInUsd).toNumber()"
+            @focus="isUsdBuyAmountFocused = true"
+            @blur="isUsdBuyAmountFocused = false"
+            @input="handleBuyUsdChange"
+          />
 
           <div class="flex items-center ml-auto gap-2.5 uppercase">
             <span class="font-medium">{{ formatDecimal(buyTokenBalance) }}

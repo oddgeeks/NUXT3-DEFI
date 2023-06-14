@@ -9,6 +9,8 @@ const props = defineProps<{
 
 const { inputRef } = useCurrencyInput({
   currency: 'USD',
+  locale: 'en-US',
+  currencyDisplay: 'symbol',
   hideCurrencySymbolOnFocus: false,
   hideGroupingSeparatorOnFocus: true,
   hideNegligibleDecimalDigitsOnFocus: true,
