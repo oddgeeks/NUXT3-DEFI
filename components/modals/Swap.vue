@@ -823,7 +823,29 @@ onUnmounted(() => {
                 class="items-center justify-between hidden text-sm font-medium sm:flex text-slate-400"
               >
                 <span>
-                  Minimum Received after slippage ({{ actualSlippage }}%)
+                  Route Through
+                </span>
+                <div
+                  v-if="isLoading"
+                  style="width: 140px; height: 20px"
+                  class="rounded-lg loading-box"
+                />
+                <span
+                  v-else-if="bestRoute?.name"
+                  class="capitalize hidden sm:flex items-center gap-2.5"
+                >
+                  <ProtocolLogo class="w-5 h-5" :name="bestRoute.name" />
+                  {{ formatProtocol(bestRoute.name) }}
+                </span>
+                <span v-else>
+                  -
+                </span>
+              </div>
+              <div
+                class="items-center justify-between hidden text-sm font-medium sm:flex text-slate-400"
+              >
+                <span>
+                  Min. Received after slippage ({{ actualSlippage }}%)
                 </span>
                 <div
                   v-if="isLoading"
