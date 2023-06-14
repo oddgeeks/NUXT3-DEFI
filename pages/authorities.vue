@@ -14,6 +14,7 @@ useAccountTrack(undefined, () => {
 })
 
 const { authorities, isWalletSecondary } = storeToRefs(useAuthorities())
+const { account } = useWeb3()
 
 async function handleDeleteAuthority(authority: IAuthority) {
   const { success } = await openDialogModal({
@@ -50,6 +51,24 @@ async function handleDeleteAuthority(authority: IAuthority) {
       </span>
     </div>
     <div class="flex flex-col dark:bg-gray-850 bg-slate-50 rounded-[25px]">
+      <div v-if="account" class="flex items-center justify-between py-6.5 px-7.5 border-b-1 last:border-b-0 border-slate-150 dark:border-slate-800 w-full">
+        <div class="flex items-center gap-5 flex-1">
+          <AuthorityAvatar
+            :address="account"
+            class="-mr-2"
+          />
+          <span class="dark:text-white text-slate-900">{{ account }} (Owner)</span>
+          <Copy :text="account">
+            <template #copy>
+              <div
+                class="ml-2.5 dark:bg-slate-800 bg-slate-150  rounded-full w-7.5 h-7.5 flex"
+              >
+                <CopySVG class="w-[14px] h-[14px] m-auto text-slate-400" />
+              </div>
+            </template>
+          </Copy>
+        </div>
+      </div>
       <div v-for="(authority) in authorities" :key="authority.address" class="flex items-center justify-between py-6.5 px-7.5 border-b-1 last:border-b-0 border-slate-150 dark:border-slate-800 w-full">
         <div class="flex items-center gap-5 flex-1">
           <AuthorityAvatar
