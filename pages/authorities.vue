@@ -52,16 +52,18 @@ async function handleDeleteAuthority(authority: IAuthority) {
     </div>
     <div class="flex flex-col dark:bg-gray-850 bg-slate-50 rounded-[25px]">
       <div v-if="account" class="flex items-center justify-between py-6.5 px-7.5 border-b-1 last:border-b-0 border-slate-150 dark:border-slate-800 w-full">
-        <div class="flex items-center gap-5 flex-1">
+        <div class="flex items-center sm:gap-5 gap-3 flex-1 flex-wrap sm:text-base text-xs">
           <AuthorityAvatar
             :address="account"
-            class="-mr-2"
+            class="-mr-2 shrink-0"
           />
-          <span class="dark:text-white text-slate-900">{{ account }} (Owner)</span>
+          <span class="dark:text-white text-slate-900 sm:block hidden">{{ account }}</span>
+          <span class="dark:text-white text-slate-900 sm:hidden block sm:ml-0 ml-2.5">{{ shortenHash(account) }}</span>
+          (Owner)
           <Copy :text="account">
             <template #copy>
               <div
-                class="ml-2.5 dark:bg-slate-800 bg-slate-150  rounded-full w-7.5 h-7.5 flex"
+                class="dark:bg-slate-800 bg-slate-150  rounded-full w-7.5 h-7.5 flex"
               >
                 <CopySVG class="w-[14px] h-[14px] m-auto text-slate-400" />
               </div>
@@ -70,28 +72,36 @@ async function handleDeleteAuthority(authority: IAuthority) {
         </div>
       </div>
       <div v-for="(authority) in authorities" :key="authority.address" class="flex items-center justify-between py-6.5 px-7.5 border-b-1 last:border-b-0 border-slate-150 dark:border-slate-800 w-full">
-        <div class="flex items-center gap-5 flex-1">
+        <div class="flex items-center sm:gap-5 gap-3 flex-1 flex-wrap">
           <AuthorityAvatar
             :address="authority.address"
-            class="-mr-2"
+            class="-mr-2 shrink-0"
           />
-          <span class="dark:text-white text-slate-900">{{ authority.address }}</span>
+          <span class="dark:text-white text-slate-900 sm:block hidden">{{ authority.address }}</span>
+          <span class="dark:text-white text-xs text-slate-900 sm:hidden block sm:ml-0 ml-2.5">{{ shortenHash(authority.address) }}</span>
           <Copy :text="authority.address">
             <template #copy>
               <div
-                class="ml-2.5 dark:bg-slate-800 bg-slate-150  rounded-full w-7.5 h-7.5 flex"
+                class="dark:bg-slate-800 bg-slate-150  rounded-full w-7.5 h-7.5 flex"
               >
                 <CopySVG class="w-[14px] h-[14px] m-auto text-slate-400" />
               </div>
             </template>
           </Copy>
-          <CommonButton v-if="!isWalletSecondary" class="text-xs leading-[14px]" color="white" @click="openManageAuthorityModal(authority)">
+          <button
+            v-if="!isWalletSecondary"
+            class="disabled:dark:bg-slate-800 sm:hidden block disabled:bg-slate-150 bg-red-alert bg-opacity-20 disabled:dark:text-slate-600 disabled:text-slate-300 text-red-alert rounded-full w-7.5 h-7.5"
+            @click="handleDeleteAuthority(authority)"
+          >
+            <DeleteSVG class="w-[14px] h-[14px] m-auto" />
+          </button>
+          <CommonButton v-if="!isWalletSecondary" class="text-xs leading-[14px] sm:flex-none flex-1 justify-center" color="white" @click="openManageAuthorityModal(authority)">
             Manage Networks ({{ authority.chainIds.length }})
           </CommonButton>
         </div>
         <button
           v-if="!isWalletSecondary"
-          class="disabled:dark:bg-slate-800 disabled:bg-slate-150 bg-red-alert bg-opacity-20 disabled:dark:text-slate-600 disabled:text-slate-300 text-red-alert rounded-full w-7.5 h-7.5"
+          class="disabled:dark:bg-slate-800 sm:block hidden disabled:bg-slate-150 bg-red-alert bg-opacity-20 disabled:dark:text-slate-600 disabled:text-slate-300 text-red-alert rounded-full w-7.5 h-7.5"
           @click="handleDeleteAuthority(authority)"
         >
           <DeleteSVG class="w-[14px] h-[14px] m-auto" />
