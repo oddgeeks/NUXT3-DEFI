@@ -635,7 +635,7 @@ onUnmounted(() => {
           />
           <CommonCurrencyInput
             v-else
-            :class="isSellAmountFocused ? 'text-white' : ''"
+            class="focus:text-white"
             :model-value="toBN(sellAmountInUsd).toNumber()"
             @blur="isSellAmountFocused = false"
             @focus="isSellAmountFocused = true"
@@ -703,7 +703,7 @@ onUnmounted(() => {
           />
           <CommonCurrencyInput
             v-else
-            :class="isUsdBuyAmountFocused ? 'text-white' : ''"
+            class="focus:text-white"
             :model-value="toBN(buyAmountInUsd).toNumber()"
             @focus="isUsdBuyAmountFocused = true"
             @blur="isUsdBuyAmountFocused = false"
