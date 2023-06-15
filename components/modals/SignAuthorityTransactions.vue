@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { wait } from '@instadapp/utils'
+
 interface ITxHash {
   hash: string
   chainId: number
@@ -17,7 +19,7 @@ const { account } = useWeb3()
 
 const txHashes = ref<ITxHash[]>([])
 const pending = ref(false)
-const error = ref()
+const errors = ref<string[]>([])
 const finished = computed(() => txHashes.value.length === props.transactions.length)
 
 const action = computed(() => props.remove ? 'remove-auth' : 'add-auth')
@@ -27,11 +29,11 @@ async function refreshSafe() {
   }, 7000)
 }
 async function sendTransactions() {
-  try {
-    pending.value = true
-    error.value = undefined
-    txHashes.value = []
-    for (const tx of props.transactions) {
+  pending.value = true
+  errors.value = []
+  txHashes.value = []
+  for (const tx of props.transactions) {
+    try {
       const provider = getRpcProvider(tx.chainId)
 
       const metadata = encodeAuthMetadata({
@@ -44,10 +46,21 @@ async function sendTransactions() {
         metadata,
       })
 
-      if (!hash)
-        throw new Error('Transaction failed')
+      if (!hash) {
+        errors.value.push(`${chainIdToName(tx.chainId)}: Transaction hash not found`)
+        continue
+      }
+
+      await wait(1000)
+
+      console.log({ hash })
 
       const transaction = await provider.getTransaction(hash)
+
+      if (!transaction) {
+        errors.value.push(`${chainIdToName(tx.chainId)}: Transaction not found`)
+        continue
+      }
 
       transaction.wait().then(() => {
         txHashes.value.push({
@@ -69,26 +82,26 @@ async function sendTransactions() {
         chainId: String(tx.chainId),
       })
     }
-  }
-  catch (e: any) {
-    const err = parseTransactionError(e)
-    openSnackbar({
-      message: err.formatted,
-      type: 'error',
-    })
+    catch (e: any) {
+      const err = parseTransactionError(e)
+      openSnackbar({
+        message: err.formatted,
+        type: 'error',
+      })
 
-    error.value = err
+      errors.value.push(`${chainIdToName(tx.chainId)}: ${err.formatted}`)
 
-    logActionToSlack({
-      message: err.formatted,
-      type: 'error',
-      action: action.value,
-      account: account.value,
-      errorDetails: err.parsed,
-    })
-  }
-  finally {
-    pending.value = false
+      logActionToSlack({
+        message: err.formatted,
+        type: 'error',
+        action: action.value,
+        account: account.value,
+        errorDetails: err.parsed,
+      })
+    }
+    finally {
+      pending.value = false
+    }
   }
 }
 
@@ -114,10 +127,15 @@ onBeforeUnmount(() => {
       <div class="dark:bg-gray-850 bg-slate-50 rounded-5 px-2.5 py-2 text-slate-400 flex items-center text-xs">
         {{ shortenHash(authority.address) }}
       </div>
-      <template v-if="error">
+      <template v-if="errors.length">
         <h1>
-          Error Occured
+          Error
         </h1>
+        <ul class="flex flex-col gap-2">
+          <li v-for="error in errors" :key="error" class="text-xs text-slate-400">
+            {{ error }}
+          </li>
+        </ul>
         <CommonButton @click="sendTransactions">
           Try Again
         </CommonButton>
