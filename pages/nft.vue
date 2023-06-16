@@ -75,7 +75,7 @@ const filteredAssets = computed(() => {
       <h1>
         Your NFTs <span v-if="data">({{ data?.length }})</span>
       </h1>
-      <MultipleNetworkFilter v-if="account" v-model:networks="networkPreferences" :filters="false" />
+      <MultipleNetworkFilter v-if="account" v-model:networks="networkPreferences" :show-supported-networks="false" :filters="false" />
     </div>
     <CommonInput
       v-model="searchQuery"

@@ -347,9 +347,18 @@ const sellTokenAmountPerBuyToken = computed(() => {
 
 function handleSellUsdChange(e: Event) {
   const target = e.target as HTMLInputElement
+  const actualValue = target?.value ? target.value.replace('$', '') : '0'
 
-  if (target?.value) {
-    const value = toBN(target.value).div(swap.value.sellToken.price || 0)
+  if (target?.value === '$') {
+    target.value = '0'
+    return setSellAmount({
+      value: '0',
+      touched: true,
+    })
+  }
+
+  if (actualValue) {
+    const value = toBN(actualValue).div(swap.value.sellToken.price || 0)
 
     setSellAmount({
       value: toBN(value)
@@ -362,9 +371,15 @@ function handleSellUsdChange(e: Event) {
 
 function handleBuyUsdChange(e: Event) {
   const target = e.target as HTMLInputElement
+  const actualValue = target?.value ? target.value.replace('$', '') : '0'
 
-  if (target?.value) {
-    const value = toBN(target.value).div(swap.value.buyToken.price || 0).toString()
+  if (target?.value === '$') {
+    target.value = '0'
+    return convertBuytoSellAmount('0')
+  }
+
+  if (actualValue) {
+    const value = toBN(actualValue).div(swap.value.buyToken.price || 0).toString()
 
     convertBuytoSellAmount(value)
   }
@@ -633,6 +648,7 @@ onUnmounted(() => {
           />
           <CommonCurrencyInput
             v-else
+            class="focus:text-white"
             :model-value="toBN(sellAmountInUsd).toNumber()"
             @blur="isSellAmountFocused = false"
             @focus="isSellAmountFocused = true"
@@ -700,6 +716,7 @@ onUnmounted(() => {
           />
           <CommonCurrencyInput
             v-else
+            class="focus:text-white"
             :model-value="toBN(buyAmountInUsd).toNumber()"
             @focus="isUsdBuyAmountFocused = true"
             @blur="isUsdBuyAmountFocused = false"
@@ -822,7 +839,29 @@ onUnmounted(() => {
                 class="items-center justify-between hidden text-sm font-medium sm:flex text-slate-400"
               >
                 <span>
-                  Minimum Received after slippage ({{ actualSlippage }}%)
+                  Route Through
+                </span>
+                <div
+                  v-if="isLoading"
+                  style="width: 140px; height: 20px"
+                  class="rounded-lg loading-box"
+                />
+                <span
+                  v-else-if="bestRoute?.name"
+                  class="capitalize hidden sm:flex items-center gap-2.5"
+                >
+                  <ProtocolLogo class="w-5 h-5" :name="bestRoute.name" />
+                  {{ formatProtocol(bestRoute.name) }}
+                </span>
+                <span v-else>
+                  -
+                </span>
+              </div>
+              <div
+                class="items-center justify-between hidden text-sm font-medium sm:flex text-slate-400"
+              >
+                <span>
+                  Min. Received after slippage ({{ actualSlippage }}%)
                 </span>
                 <div
                   v-if="isLoading"

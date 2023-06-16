@@ -103,7 +103,7 @@ const tippyOptions = {
         >
           <HomeSVG class="w-4 h-4" />
         </NuxtLink>
-        <!-- <NuxtLink
+        <NuxtLink
           v-tippy="{
             ...tippyOptions,
             content: 'View your DeFi Positions',
@@ -113,7 +113,7 @@ const tippyOptions = {
           to="/defi"
         >
           <SvgoDefi class="w-4 h-4" />
-        </NuxtLink> -->
+        </NuxtLink>
 
         <NuxtLink
           v-tippy="{

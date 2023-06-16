@@ -8,7 +8,15 @@ const props = defineProps<{
 }>()
 
 const { inputRef } = useCurrencyInput({
-  currency: 'usd',
+  currency: 'USD',
+  locale: 'en-US',
+  currencyDisplay: 'symbol',
+  hideCurrencySymbolOnFocus: false,
+  hideGroupingSeparatorOnFocus: true,
+  hideNegligibleDecimalDigitsOnFocus: true,
+  autoDecimalDigits: false,
+  useGrouping: true,
+  accountingSign: false,
   ...props.options || {},
 })
 </script>
