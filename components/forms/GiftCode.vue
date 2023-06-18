@@ -3,13 +3,14 @@ import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { ethers } from 'ethers'
 import { storeToRefs } from 'pinia'
+import { wait } from '@instadapp/utils'
 import SVGX from '~/assets/images/icons/x.svg?component'
 
 const emit = defineEmits(['close'])
 const { parseTransactionError } = useErrorHandler()
 const { account, provider } = useWeb3()
 const { fetchGasBalance, avoProvider } = useSafe()
-const { safeAddress } = storeToRefs(useSafe())
+const { safeAddress, gasBalance } = storeToRefs(useSafe())
 const {
   handleSubmit,
   isSubmitting,
@@ -44,6 +45,7 @@ AvoAddress: {{SAFE}}
 Issued At: ${new Date().toISOString()}`
 
   try {
+    const oldGasBalance = gasBalance.value
     const nonce = await avoProvider.send('api_generateNonce', [
       account.value,
       safeAddress.value,
@@ -80,15 +82,19 @@ Issued At: ${new Date().toISOString()}`
         account: account.value,
       })
 
-      emit('close')
+      await wait(3000)
+
+      await fetchGasBalance()
+
+      const giftedAmount = toBN(gasBalance.value).minus(oldGasBalance).toFixed()
 
       openSnackbar({
-        message: 'Gas redeemed successfully!',
+        message: `${formatUsd(giftedAmount)} Gas redeemed successfully!`,
         type: 'success',
         timeout: 3000,
       })
 
-      fetchGasBalance()
+      emit('close')
     }
   }
   catch (e: any) {
