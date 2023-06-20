@@ -292,8 +292,32 @@ const feeInfoMessage = computed(() => {
   if (!bridgeFee.value?.token || !totalGassFee.value?.token)
     return
 
-  return `The third-party bridge provider will charge an additional fee of ${formatDecimal(bridgeFee.value.amount, 4)} ${bridgeFee.value.token?.symbol?.toUpperCase()}
-  (${formatUsd(bridgeFee.value.amountInUsd)}) and ${formatDecimal(totalGassFee.value.amount, 4)} ${totalGassFee?.value.token?.symbol?.toUpperCase()} (${formatUsd(totalGassFee.value.amountInUsd)}) for their bridging service.`
+  const amounts = [
+    {
+      amount: bridgeFee.value?.amount,
+      symbol: bridgeFee.value.token?.symbol?.toUpperCase(),
+      amountInUsd: bridgeFee.value?.amountInUsd,
+    },
+    {
+      amount: totalGassFee.value.amount,
+      symbol: totalGassFee?.value.token?.symbol?.toUpperCase(),
+      amountInUsd: totalGassFee.value?.amountInUsd,
+    },
+  ]
+
+  const filteredAmounts = amounts.filter(item => toBN(item.amount).gt('0'))
+
+  if (!filteredAmounts.length)
+    return
+
+  const formattedAmounts = filteredAmounts.map((i) => {
+    return `${formatDecimal(i.amount, 4)} ${i.symbol} (${formatUsd(i.amountInUsd)})`
+  })
+
+  const formatter = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' })
+  const formattedString = formatter.format(formattedAmounts)
+
+  return `The third-party bridge provider will charge an additional fee of ${formattedString} for their bridging service.`
 })
 
 async function fetchcrossSignatures() {
@@ -613,7 +637,7 @@ onMounted(() => {
     <CommonNotification
       v-if="totalGassFee.token && isInsufficientNativeBalance"
       type="error"
-      :text="`Not enough ${totalGassFee.token?.symbol.toUpperCase()} balance to pay the bridge gas fee.`"
+      :text="`Not enough ${totalGassFee.token?.symbol.toUpperCase()} balance to pay the bridge provider fee.`"
     >
       <template #action>
         <CommonButton
