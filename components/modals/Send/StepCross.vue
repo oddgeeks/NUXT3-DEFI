@@ -658,7 +658,7 @@ onMounted(() => {
     <CommonNotification
       v-if="nativeCurrency && isInsufficientNativeBalance"
       type="error"
-      :text="`Not enough ${nativeCurrency?.symbol.toUpperCase()} balance to pay the bridge provider fee.`"
+      :text="`Not enough ${nativeCurrency?.symbol.toUpperCase()} balance to pay native fee.`"
     >
       <template #action>
         <CommonButton
