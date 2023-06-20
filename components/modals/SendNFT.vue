@@ -84,7 +84,7 @@ const {
 } = useField<string>('address')
 
 async function handleSelectContact() {
-  const result = await openSelectContactModal()
+  const result = await openSelectContactModal(props.asset.chainId)
 
   if (result.success) {
     const _contact = result.payload as IContact

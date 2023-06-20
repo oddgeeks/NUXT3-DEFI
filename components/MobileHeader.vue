@@ -10,6 +10,7 @@ import InstadappSVG from '@/assets/images/logo/instadapp.svg?component'
 const { active, deactivate, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
 const { safeAddress } = useAvocadoSafe()
+const { resetAccounts } = useSafe()
 const [opened, toggle] = useToggle(false)
 const { setConnectorName } = useConnectors()
 const {
@@ -27,15 +28,12 @@ async function closeConnection() {
   const { success } = await openDisconnectWalletModal()
 
   if (success) {
+    resetAccounts()
     setConnectorName(null)
-    userSignOut()
+    router.push('/login')
     if (connector.value)
       deactivate()
   }
-}
-
-function userSignOut() {
-  router.push('/login')
 }
 
 watch(() => active.value, () => {

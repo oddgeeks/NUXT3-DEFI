@@ -39,11 +39,12 @@ export function useSend() {
   ]
 
   const { tokenBalances } = storeToRefs(useSafe())
+  const { checkNetworkIsAuthorised } = useAuthorities()
 
   const availableTokens = computed(() =>
     tokenBalances.value.filter(
       t =>
-        gt(t.balance, '0'),
+        gt(t.balance, '0') && checkNetworkIsAuthorised(t.chainId),
     ),
   )
 
@@ -82,8 +83,6 @@ export function useSend() {
       t.symbol.toLowerCase().includes(selectedTokenSymbol),
     )
   })
-
-  const toAvailableNetworks = computed(() => availableNetworks)
 
   const { data: toTokenList, pending: tokenlistPending } = useAsyncData(async () => {
     if (data.value.fromChainId == data.value.toChainId)
@@ -204,6 +203,5 @@ export function useSend() {
     availableTokens,
     tokenlistPending,
     actualAddress,
-    toAvailableNetworks,
   }
 }

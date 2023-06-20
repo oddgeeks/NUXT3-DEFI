@@ -1,7 +1,14 @@
+import { storeToRefs } from 'pinia'
 import type { IBalance } from '~~/stores/safe'
 
 export function useGraph(balance: Ref<IBalance>) {
-  const interactable = computed(() => toBN(balance.value.balance).gt(0))
+  const { authorisedNetworks } = storeToRefs(useAuthorities())
+
+  const nonAuthorised = computed(() => !authorisedNetworks.value?.find(i => String(i.chainId) == String(balance.value.chainId)))
+
+  const interactable = computed(() => {
+    return toBN(balance.value.balance).gt(0) && !nonAuthorised.value
+  })
 
   const temporaryDisabled = computed(() => balance.value.chainId == '1101')
 
@@ -61,5 +68,6 @@ export function useGraph(balance: Ref<IBalance>) {
     priceDiffClass,
     temporaryDisabled,
     fetchLiteAPY,
+    nonAuthorised,
   }
 }

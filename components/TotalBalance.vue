@@ -4,9 +4,15 @@ import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 
 const { balances } = storeToRefs(useSafe())
 const { totalBalance, tokenBalances } = useAvocadoSafe()
+const { authorisedNetworks } = storeToRefs(useAuthorities())
 
 function hasAvailableTokens() {
   return tokenBalances.value.length > 0
+}
+
+function handleOpenSendModal() {
+  const firstAvailableChain = authorisedNetworks.value[0]?.chainId || 1
+  openSendModal(firstAvailableChain)
 }
 </script>
 
@@ -28,7 +34,7 @@ function hasAvailableTokens() {
             color="white"
             class="flex-1 sm:flex-none items-center justify-center gap-2.5 h-10 !px-4"
             :disabled="!hasAvailableTokens()"
-            @click="openSendModal(1)"
+            @click="handleOpenSendModal"
           >
             Send
             <div

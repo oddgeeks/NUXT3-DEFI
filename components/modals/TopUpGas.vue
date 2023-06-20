@@ -12,6 +12,7 @@ const emit = defineEmits(['destroy'])
 const { library, account } = useWeb3()
 const { sendTransaction, tokenBalances, safeAddress }
   = useAvocadoSafe()
+const { authorisedNetworks } = storeToRefs(useAuthorities())
 const { parseTransactionError } = useErrorHandler()
 const [isGiftActive, toggleGift] = useToggle(false)
 
@@ -20,11 +21,10 @@ const { gasBalance } = storeToRefs(useSafe())
 const pendingGasAmount = useNuxtData('pending-deposit')
 
 const networks = computed(() => {
-  return availableNetworks
-    .map(network => ({
-      ...network,
-      balance: getUSDCByChainId(network.chainId)?.balance,
-    }))
+  return authorisedNetworks.value?.map(network => ({
+    ...network,
+    balance: getUSDCByChainId(network.chainId)?.balance,
+  }))
     .sort((a, b) => toBN(b.balance).minus(a.balance).toNumber())
 })
 
@@ -177,7 +177,7 @@ const onSubmit = handleSubmit(async () => {
 })
 
 onMounted(() => {
-  const mostBalancedChain = networks.value[0]?.chainId
+  const mostBalancedChain = networks.value ? networks.value[0]?.chainId : null
   if (mostBalancedChain)
     setValue(Number(mostBalancedChain))
 })

@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import HomeSVG from '~/assets/images/icons/home.svg?component'
 import ContactSVG from '~/assets/images/icons/contact.svg?component'
 import FireSVG from '~/assets/images/icons/fire.svg?component'
 import CalendarSVG from '~/assets/images/icons/calendar.svg?component'
+import AuthoritiesSVG from '~/assets/images/icons/authorities.svg?component'
 import SwapSVG from '~/assets/images/icons/refresh.svg?component'
 import BridgeSVG from '~/assets/images/icons/bridge.svg?component'
 import PlusCircleSVG from '~/assets/images/icons/plus-circle.svg?component'
@@ -16,6 +18,7 @@ const emit = defineEmits(['navigate'])
 
 const { account } = useWeb3()
 const { tokenBalances, totalEoaBalance, eoaBalances, fundedEoaNetworks } = useAvocadoSafe()
+const { authorisedNetworks } = storeToRefs(useAuthorities())
 const [moreOptions, toggleOptions] = useToggle(false)
 const { safeAddress } = useAvocadoSafe()
 
@@ -32,16 +35,27 @@ const sortedBalances = computed(() => {
   ])
 })
 
+const firstAvailableChain = computed(() => authorisedNetworks.value?.length ? authorisedNetworks.value[0]?.chainId : 1)
+const firstAvailableToken = computed(() => sortedBalances.value.find(b => String(b.chainId) == String(firstAvailableChain.value)))
+
 function openSwap() {
   if (sortedBalances.value.length === 0)
     return
-  openSwapModal(sortedBalances.value[0].address, sortedBalances.value[0].chainId)
+
+  if (!firstAvailableToken.value)
+    return
+
+  openSwapModal(firstAvailableToken.value?.address, firstAvailableChain.value)
 }
 
 function openBridge() {
   if (sortedBalances.value.length === 0)
     return
-  openBridgeModal(sortedBalances.value[0].address, sortedBalances.value[0].chainId)
+
+  if (!firstAvailableToken.value)
+    return
+
+  openBridgeModal(firstAvailableToken.value?.address, firstAvailableChain.value)
 }
 </script>
 
@@ -91,6 +105,15 @@ function openBridge() {
       >
         <CalendarSVG class="w-4 h-4" />
         History
+      </NuxtLink>
+      <NuxtLink
+        active-class="text-primary"
+        class="flex h-11 items-center gap-2.5"
+        to="/authorities"
+        @click="emit('navigate')"
+      >
+        <AuthoritiesSVG class="w-4 h-4" />
+        Authorities
       </NuxtLink>
     </div>
     <div class="flex flex-col w-full gap-2 border-b-1 dark:border-slate-750 border-slate-150 px-7.5 py-4 text-slate-400">

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
 import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 
@@ -23,6 +24,7 @@ const { account } = useWeb3()
 const { sendTransactions, tokenBalances } = useAvocadoSafe()
 const { toWei } = useBignumber()
 const { parseTransactionError } = useErrorHandler()
+const { authorisedNetworks } = storeToRefs(useAuthorities())
 
 const fromChainId = ref<string>(props.chainId)
 const availableTokens = computed(() =>
@@ -45,6 +47,7 @@ watch(
     }
   },
 )
+
 // eslint-disable-next-line vue/no-dupe-keys
 const {
   txRoute,
@@ -195,7 +198,7 @@ const onSubmit = form.handleSubmit(async () => {
                 value-key="chainId"
                 label-key="name"
                 icon-key="icon"
-                :options="availableNetworks"
+                :options="authorisedNetworks"
               >
                 <template #button-prefix>
                   <ChainLogo class="w-6 h-6" :chain="fromChainId" />

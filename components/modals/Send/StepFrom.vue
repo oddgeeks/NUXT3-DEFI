@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { isAddress } from '@ethersproject/address'
+import { storeToRefs } from 'pinia'
 import { useField } from 'vee-validate'
 import type { IToken } from '~/stores/tokens'
 
@@ -7,7 +8,9 @@ defineEmits(['destroy'])
 
 const { safeAddress } = useAvocadoSafe()
 
-const { isCrossChain, data, token, availableTokens, toAvailableNetworks, actualAddress, stepForward, tokenlistPending } = useSend()
+const { isCrossChain, data, token, availableTokens, actualAddress, stepForward, tokenlistPending } = useSend()
+
+const { authorisedNetworks } = storeToRefs(useAuthorities())
 
 const {
   value: amount,
@@ -142,7 +145,7 @@ function handleContinue() {
             label-key="name"
             icon-key="icon"
             class="w-[160px]"
-            :options="toAvailableNetworks"
+            :options="authorisedNetworks"
           >
             <template #button-prefix>
               <ChainLogo class="w-6 h-6 shrink-0" :chain="data.toChainId" />

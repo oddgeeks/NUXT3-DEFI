@@ -30,6 +30,10 @@ import SupportedNetworks from '~/components/modals/SupportedNetworks.vue'
 import PendingCrossTransaction from '~/components/modals/PendingCrossTransaction.vue'
 import DefiPositionDetails from '~/components/modals/DefiPositionDetails.vue'
 import QrCode from '~/components/modals/QrCode.vue'
+import AddAuthority from '~/components/modals/AddAuthority.vue'
+import ManageAuthority from '~/components/modals/ManageAuthority.vue'
+import EstimateAuthority from '~/components/modals/EstimateAuthority.vue'
+import SignAuthorityTransactions from '~/components/modals/SignAuthorityTransactions.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -415,6 +419,48 @@ export function openDefiPositionDetailsModal(position: Positions) {
     },
     options: {
       wrapperClass: 'max-w-[760px]',
+    },
+  })
+}
+
+export function openAddAuthorityModal() {
+  return openModal({
+    component: AddAuthority,
+  })
+}
+
+export function openManageAuthorityModal(authority: IAuthority, chainIds?: number[], isNewAuthority = false) {
+  return openModal({
+    component: ManageAuthority,
+    componentProps: {
+      authority,
+      chainIds,
+      isNewAuthority,
+    },
+  })
+}
+
+export function openEstimateAuthorityModal(authority: IAuthority, chainIds: number[] | string[], remove = false) {
+  return openModal({
+    component: EstimateAuthority,
+    componentProps: {
+      authority,
+      chainIds,
+      remove,
+    },
+    options: {
+      wrapperClass: '!max-w-[510px]',
+    },
+  })
+}
+
+export function openSignAuthorityModal(authority: IAuthority, transactions: IAuthorityTx[], remove = false) {
+  return openModal({
+    component: SignAuthorityTransactions,
+    componentProps: {
+      transactions,
+      authority,
+      remove,
     },
   })
 }

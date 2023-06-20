@@ -27,6 +27,7 @@ const slots = useSlots()
         v-if="copied"
         class="w-4 h-4 shrink-0 dark:text-slate-900 text-white svg-circle"
       />
+      <slot v-else-if="slots.copy" name="copy" />
       <CopySVG v-else />
     </Transition>
   </button>

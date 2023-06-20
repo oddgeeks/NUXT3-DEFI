@@ -470,6 +470,7 @@ interface ITokenPrice {
 interface ILogBalanceParams {
   chainId: number;
   isOnboard: boolean;
+  isPublic: boolean;
 }
  
 interface IEstimatedFeeData {
@@ -537,3 +538,37 @@ type IDefiToken = {
   price?: string;
   tokenAddress: string;
 }
+ interface ISafe {
+  fully_deployed: number
+  id: number
+  safe_address: string
+  owner_address: string
+  created_at: string
+  updated_at: string
+  deployed: Record<string, boolean>,
+  version: Record<string, string>
+  authorities: Record<string, string[]>
+}
+
+
+interface IAuthority {
+  address: string
+  chainIds: string[]
+  type?: 'personal' | 'multisig'
+}
+
+interface IManageAuthorityModalParams {
+  authorityAddress: string
+  chainIds?: string[]
+}
+
+interface IAuthorityTx {
+  to: string
+  data: string
+  value: string
+  operation: string
+  chainId: number
+}
+
+type ChainFees = Record<string, ICalculatedFee>
+type ChainFeeErrors = Record<string, string>

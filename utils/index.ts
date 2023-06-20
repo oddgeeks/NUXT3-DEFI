@@ -1,5 +1,8 @@
 import { ethers } from 'ethers'
 
+// @ts-expect-error
+import * as XXH from 'xxhashjs'
+
 export const injectFavicon = function (src: string) {
   const head = document.querySelector('head')!
   const iconElement = document.createElement('link')
@@ -220,6 +223,32 @@ export const signingMethods = [
   'wallet_watchAsset',
   'wallet_scanQRCode',
 ]
+
+export function generateColor(address: string): string {
+  const hash = XXH.h32(address, 0xABCD).toNumber()
+
+  const hue = hash % 360
+  const saturation = 80 + (hash % 30)
+  const lightness = 70 + (hash % 20)
+
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`
+}
+
+export function formatAuthorities(input: ISafe['authorities']): IAuthority[] {
+  const result = Object.entries(input).reduce((acc: IAuthority[], [key, value]: [string, string[]]) => {
+    value.forEach((address: string) => {
+      let existing = acc.find((item: IAuthority) => item.address === address)
+      if (!existing) {
+        existing = { address, chainIds: [], type: 'personal' }
+        acc.push(existing)
+      }
+      existing.chainIds.push(key)
+    })
+    return acc
+  }, [])
+
+  return result
+}
 
 export function formatProtocol(protocol: string) {
   return (

@@ -27,12 +27,14 @@ export const useSafe = defineStore('safe', () => {
   // balance aborter
   const balanceAborter = ref<AbortController>()
   const safeAddress = ref()
+  const mainSafeAddress = ref()
 
-  const { account } = useWeb3()
+  const { account, connector } = useWeb3()
   const { tokens, customTokens } = storeToRefs(useTokens())
   const { fetchTokenByAddress } = useTokens()
   const documentVisibility = useDocumentVisibility()
   const { parseTransactionError } = useErrorHandler()
+  const { trackingAccount } = useAccountTrack()
 
   const forwarderProxyContract = Forwarder__factory.connect(
     forwarderProxyAddress,
@@ -78,10 +80,11 @@ export const useSafe = defineStore('safe', () => {
   })
 
   const fetchSafeddress = async () => {
-    if (!account.value) {
-      safeAddress.value = undefined
+    if (!account.value)
       return
-    }
+
+    if (mainSafeAddress.value || safeAddress.value)
+      return
 
     const address = await forwarderProxyContract.computeAddress(
       account.value,
@@ -95,6 +98,7 @@ export const useSafe = defineStore('safe', () => {
       })
     }
 
+    mainSafeAddress.value = address
     safeAddress.value = address
   }
 
@@ -298,6 +302,9 @@ export const useSafe = defineStore('safe', () => {
               updateBalances(data)
 
             return data
+          }).catch((error) => {
+            console.log(error)
+            return []
           })
         }
         catch (error) {
@@ -408,6 +415,12 @@ export const useSafe = defineStore('safe', () => {
     }
   }
 
+  const resetAccounts = () => {
+    trackingAccount.value = ''
+    safeAddress.value = undefined
+    mainSafeAddress.value = undefined
+  }
+
   useIntervalFn(fetchGasBalance, 15000, {
     immediate: true,
   })
@@ -419,8 +432,7 @@ export const useSafe = defineStore('safe', () => {
     async () => {
       try {
         pending.value.global = true
-        safeAddress.value = undefined
-        fetchGasBalance()
+
         await fetchSafeddress()
       }
       finally {
@@ -433,6 +445,7 @@ export const useSafe = defineStore('safe', () => {
   watch([safeAddress, account, tokens], () => {
     fetchBalances()
     fetchEoaBalances()
+    fetchGasBalance()
   }, {
     immediate: true,
   })
@@ -443,9 +456,23 @@ export const useSafe = defineStore('safe', () => {
     eoaBalances.value = undefined
   })
 
+  watch(connector, () => {
+    if (!connector.value)
+      return
+    connector.value.on('Web3ReactUpdate', resetAccounts)
+  }, {
+    immediate: true,
+  })
+
+  onBeforeUnmount(() => {
+    if (connector.value)
+      connector.value.off('Web3ReactUpdate', resetAccounts)
+  })
+
   return {
     gasBalance,
     safeAddress,
+    mainSafeAddress,
     tokenBalances,
     totalBalance,
     fetchGasBalance,
@@ -460,7 +487,13 @@ export const useSafe = defineStore('safe', () => {
     avoProvider,
     getBalances,
     fundedEoaNetworks,
+    forwarderProxyContract,
+    resetAccounts,
   }
+}, {
+  persist: {
+    paths: ['safeAddress', 'mainSafeAddress'],
+  },
 })
 
 function logBalance(params: ILogBalanceParams) {
