@@ -6,8 +6,9 @@ export const useAuthorities = defineStore('authorities', () => {
   const safes = ref<ISafe[]>([])
   const selectedSafe = ref<ISafe>()
   const mainSafe = ref<ISafe>()
+  const multiSigSafe = ref<ISafe>()
 
-  const { safeAddress, mainSafeAddress } = storeToRefs(useSafe())
+  const { safeAddress, mainSafeAddress, multiSigSafeAddress } = storeToRefs(useSafe())
   const { account } = useWeb3()
 
   const authorities = computed(() => {
@@ -17,7 +18,7 @@ export const useAuthorities = defineStore('authorities', () => {
     return formatAuthorities(selectedSafe.value.authorities)
   })
 
-  const isWalletSecondary = computed(() => mainSafe.value?.safe_address !== selectedSafe.value?.safe_address)
+  const isWalletSecondary = computed(() => selectedSafe.value?.multisig !== 1 && (mainSafe.value?.safe_address !== selectedSafe.value?.safe_address))
 
   const authorisedNetworks = computed(() => {
     if (!account.value || !safeAddress?.value || !isWalletSecondary.value)
@@ -44,19 +45,18 @@ export const useAuthorities = defineStore('authorities', () => {
     const resp = await fetchSafe(safeAddress.value)
 
     selectedSafe.value = resp
-
-    console.log({
-      selectedSafe: resp,
-    })
   }
 
   async function setMainSafe() {
     const resp = await fetchSafe(mainSafeAddress.value)
 
-    console.log({
-      mainSafe: resp,
-    })
     mainSafe.value = resp
+  }
+
+  async function setMultiSigSafe() {
+    const resp = await fetchSafe(multiSigSafeAddress.value)
+
+    multiSigSafe.value = resp
   }
 
   function checkNetworkIsAuthorised(chainId: string | number) {
@@ -90,6 +90,15 @@ export const useAuthorities = defineStore('authorities', () => {
     immediate: true,
   })
 
+  watch(multiSigSafeAddress, async () => {
+    if (!multiSigSafeAddress.value)
+      return
+
+    setMultiSigSafe()
+  }, {
+    immediate: true,
+  })
+
   return {
     authorities,
     mainSafe,
@@ -99,6 +108,7 @@ export const useAuthorities = defineStore('authorities', () => {
     isWalletSecondary,
     authorisedNetworks,
     checkNetworkIsAuthorised,
+    multiSigSafe,
   }
 })
 

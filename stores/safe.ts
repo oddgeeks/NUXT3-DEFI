@@ -28,6 +28,7 @@ export const useSafe = defineStore('safe', () => {
   const balanceAborter = ref<AbortController>()
   const safeAddress = ref()
   const mainSafeAddress = ref()
+  const multiSigSafeAddress = ref()
 
   const { account, connector } = useWeb3()
   const { tokens, customTokens } = storeToRefs(useTokens())
@@ -79,7 +80,7 @@ export const useSafe = defineStore('safe', () => {
     return new Set(eoaBalances.value?.filter(item => toBN(item?.balance ?? 0).toNumber() !== 0).map(item => item.chainId.toString())).size
   })
 
-  const fetchSafeddress = async () => {
+  const fetchSafeAddress = async () => {
     if (!account.value)
       return
 
@@ -100,6 +101,14 @@ export const useSafe = defineStore('safe', () => {
 
     mainSafeAddress.value = address
     safeAddress.value = address
+  }
+
+  const fetchMultiSigSafeAddress = async () => {
+    const multiSigAddress = await forwarderProxyContract.computeAddressMultisig(
+      account.value,
+    )
+
+    multiSigSafeAddress.value = multiSigAddress
   }
 
   async function getChainBalances(chainId: string,
@@ -433,7 +442,8 @@ export const useSafe = defineStore('safe', () => {
       try {
         pending.value.global = true
 
-        await fetchSafeddress()
+        await fetchSafeAddress()
+        await fetchMultiSigSafeAddress()
       }
       finally {
         pending.value.global = false
@@ -489,6 +499,7 @@ export const useSafe = defineStore('safe', () => {
     fundedEoaNetworks,
     forwarderProxyContract,
     resetAccounts,
+    multiSigSafeAddress,
   }
 }, {
   persist: {

@@ -19,7 +19,7 @@ const { setConnectorName, cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
 const router = useRouter()
 
-const { safes, mainSafe } = storeToRefs(useAuthorities())
+const { safes, mainSafe, multiSigSafe } = storeToRefs(useAuthorities())
 
 const ensName = ref()
 const open = ref(false)
@@ -44,7 +44,7 @@ const actualMainSafe = computed(() => {
       owner_address: account.value,
       updated_at: new Date(),
       version: '0.0.0',
-    }
+    } as any
   }
 })
 
@@ -190,7 +190,10 @@ whenever(
                 <h2 class="text-xs mb-3">
                   Generated wallets
                 </h2>
-                <WalletItem :safe="actualMainSafe" />
+                <div class="flex flex-col gap-2.5">
+                  <WalletItem primary :safe="actualMainSafe" />
+                  <WalletItem v-if="multiSigSafe" primary :safe="multiSigSafe" />
+                </div>
               </div>
 
               <div v-if="!!safes?.length" class="mt-5">

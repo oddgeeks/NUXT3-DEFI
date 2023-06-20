@@ -545,6 +545,7 @@ type IDefiToken = {
   owner_address: string
   created_at: string
   updated_at: string
+  multisig: 0 | 1
   deployed: Record<string, boolean>,
   version: Record<string, string>
   authorities: Record<string, string[]>

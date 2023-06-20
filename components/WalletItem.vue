@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
   safe: ISafe
+  primary?: boolean
 }>()
 
 const { safeAddress } = useAvocadoSafe()
@@ -33,11 +34,14 @@ const { data: balance, pending } = useAsyncData(`safe-balance-${props.safe.safe_
     class="px-4 w-full text-left flex justify-between py-3.5 border rounded-2xl border-slate-150 dark:border-slate-750" @click="safeAddress = safe.safe_address"
   >
     <div>
-      <p class="leading-[10px] text-primary mb-2.5">
-        Personal
+      <p v-if="safe.multisig" class="leading-[10px] text-purple mb-2.5 text-sm">
+        MULTISIG
+      </p>
+      <p v-else class="leading-[10px] text-primary mb-2.5 text-sm">
+        AVOCADO
       </p>
       <p class="text-sm leading-[18px] mb-[6px]">
-        {{ shortenHash(safe?.safe_address) }}
+        {{ shortenHash(safe?.safe_address) }} <span v-if="primary">(Primary)</span>
       </p>
 
       <div

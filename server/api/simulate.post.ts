@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
     const parsed = schema.cast(params)
 
     const url
-      = 'https://microservices-theta.vercel.app/api/avocado/tenderly/simulate'
+      = 'https://microservices.instadapp.io/api/avocado/tenderly/simulate'
 
     const resp = await axios.post(url, {
       actions: parsed.actions,

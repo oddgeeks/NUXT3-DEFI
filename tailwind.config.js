@@ -83,6 +83,10 @@ module.exports = {
           hover: colors.primaryHover,
           DEFAULT: colors.primary,
         },
+        purple: {
+          DEFAULT: '#9B51E0',
+        },
+
       },
       animation: {
         'reverse-spin': 'reverse-spin 1s linear infinite',
