@@ -11,6 +11,7 @@ export function useBanner() {
 
   const { trackingAccount } = useAccountTrack()
   const isHideWelcomeBanner = useLocalStorage('hide-welcome-banner', false)
+  const isHideRabbyBanner = useLocalStorage('hide-rabby-banner', false)
   const isOnboardHidden = computed(() =>
     useStatefulCookie(`hide-onboard-${account.value}`),
   )
@@ -78,6 +79,14 @@ export function useBanner() {
     )
   })
 
+  const showRabbyBanner = computed(() => {
+    if (!account.value)
+      return false
+    if (isHideRabbyBanner.value)
+      return false
+    return true
+  })
+
   const unstableDappNetworks = computed(() => {
     if (!wcStore.sessions?.length)
       return []
@@ -100,12 +109,15 @@ export function useBanner() {
     showIncorrectNetworkBanner,
     showGasGiftBanner,
     showOnboardBanner,
+    showRabbyBanner,
     isVersionUpdateBannerHidden,
     showVersionUpdateBanner,
     unstableDappNetworks,
+    isHideRabbyBanner,
     showTrackingBanner: computed(() => !!trackingAccount.value),
     toggleWelcomeBanner: (val: boolean) => (isHideWelcomeBanner.value = !val),
     hideOnboardBanner: () => (isOnboardHidden.value.value = true),
+    hideRabbyBanner: () => (isHideRabbyBanner.value = true),
     hideVersionUpdateBanner: () => (isVersionUpdateBannerHidden.value = true),
   }
 }

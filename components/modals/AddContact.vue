@@ -14,6 +14,7 @@ const props = defineProps<{
 const emit = defineEmits(['resolve', 'reject'])
 
 const { contacts, addContact, editContact } = useContacts()
+const { account } = useWeb3()
 const { safeAddress } = useAvocadoSafe()
 
 const networks = [
@@ -53,6 +54,10 @@ const {
             return true
           if (!contacts.value[safeAddress.value])
             return true
+
+          if (value?.toLocaleLowerCase() === account.value?.toLowerCase())
+            return false
+
           return !contacts.value[safeAddress.value].some(
             contact =>
               contact.address.toLowerCase() === value?.toLowerCase()
@@ -90,9 +95,9 @@ const onSubmit = handleSubmit(() => {
   if (props.isEdit) {
     editContact(
       {
-        name: props.name,
-        address: props.address,
-        chainId: props.chainId,
+        name: props.name!,
+        address: props.address!,
+        chainId: props.chainId!,
       },
       _contact,
     )

@@ -1,4 +1,5 @@
 import { isAddress } from '@ethersproject/address'
+import { getAddress } from 'ethers/lib/utils'
 
 const contacts = useLocalStorage<Record<string, IContact[]>>('contacts', {})
 
@@ -45,6 +46,8 @@ export function useContacts() {
   }
 
   const addContact = (contact: IContact) => {
+    contact.address = getAddress(contact.address)
+
     if (contacts.value[safeAddress.value])
       contacts.value[safeAddress.value].push(contact)
     else
@@ -60,8 +63,10 @@ export function useContacts() {
         _contact.address.toLowerCase() === oldContact.address.toLowerCase()
         && _contact.chainId === oldContact.chainId,
     )
-    if (index > -1)
+    if (index > -1) {
+      newContact.address = getAddress(newContact.address)
       contacts.value[safeAddress.value][index] = newContact
+    }
   }
 
   watch(
