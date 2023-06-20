@@ -50,7 +50,7 @@
     "eslint": "^8.38.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "ethers": "^5.7.2",
-    "nuxt": "^3.5.2",
+    "nuxt": "^3.5.3",
     "nuxt-security": "^0.13.0",
     "nuxt-svgo": "^3.1.0",
     "ohmyfetch": "^0.4.21",
@@ -61,7 +61,7 @@
     "styled-qr-code": "^1.0.0",
     "tsx": "^3.12.2",
     "typechain": "^8.1.1",
-    "unplugin-vue-components": "^0.24.1",
+    "unplugin-vue-components": "^0.25.1",
     "unplugin-vue-inspector": "^0.2.2",
     "uuid": "^9.0.0",
     "uuidv4": "^6.2.13",
@@ -74,7 +74,7 @@
     "yup": "^0.32.11"
   },
   "dependencies": {
-    "@instadapp/avocado-base": "0.0.26",
+    "@instadapp/avocado-base": "0.0.27",
     "@walletconnect/utils": "^2.7.7",
     "alchemy-sdk": "^2.7.4",
     "canvas-confetti": "^1.6.0",

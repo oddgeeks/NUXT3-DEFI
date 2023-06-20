@@ -4,6 +4,7 @@ const {
   showIncorrectNetworkBanner,
   showInsufficientGasBanner,
   showOnboardBanner,
+  showRabbyBanner,
 } = useBanner()
 const route = useRoute()
 </script>
@@ -31,6 +32,7 @@ const route = useRoute()
       <BannerOnboard
         v-else-if="showOnboardBanner && route.name !== 'claims-ens-drop'"
       />
+      <BannerRabbyNetworkVote v-else-if="showRabbyBanner" />
     </div>
   </section>
 </template>
