@@ -23,6 +23,7 @@ const fallbackFee: TotalFee = {
 
 const error = ref('')
 const bestRoute = ref<IRoute>()
+const buildTransaction = ref<IScoketBuildTxResult>()
 const isSubmitting = ref(false)
 
 const crossSignatures = ref<ICrossSignatures>()
@@ -43,22 +44,39 @@ const crossFee = ref({
   error: '',
 })
 
-const totalGassFee = computed(() => {
-  if (!bestRoute.value)
-    return fallbackFee
+const nativeFee = computed(() => {
+  if (!buildTransaction.value?.result || !nativeCurrency.value)
+    return '0'
 
-  return bestRoute.value.userTxs.reduce((prev, curr) => {
-    const asset = curr.gasFees.asset
-    const amount = fromWei(curr.gasFees.gasAmount, asset.decimals)
-    const amountInUsd = curr.gasFees.feesInUsd
-    const token = tokenBalances.value.find(t => t.address.toLowerCase() === asset.address.toLowerCase() && String(asset.chainId) == String(t.chainId))
+  let v = fromWei(buildTransaction.value?.result?.value || '0', nativeCurrency.value?.decimals).toFixed()
 
-    return {
-      amount: toBN(prev.amount).plus(amount).toString(),
-      amountInUsd: toBN(prev.amountInUsd).plus(amountInUsd).toString(),
-      token,
-    } as TotalFee
-  }, fallbackFee)
+  if (
+    data.value.tokenAddress === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+  ) {
+    v = toBN(v)
+      .minus(data.value.amount || '0')
+      .toFixed(0)
+  }
+
+  return v
+})
+
+const nativeFeeInUsd = computed(() => {
+  if (!nativeFee.value)
+    return '0'
+
+  return times(nativeFee.value || '0', nativeCurrency.value?.price || '0')
+})
+
+const nativeCurrency = computed(() => {
+  const nativeTokenMeta = getNetworkByChainId(+data.value.fromChainId).params
+    .nativeCurrency
+
+  return tokenBalances.value.find(
+    t =>
+      String(t.chainId) == String(data.value.fromChainId)
+        && t.symbol.toLowerCase() === nativeTokenMeta?.symbol?.toLowerCase(),
+  )
 })
 
 const totalInputAmount = computed(() => {
@@ -118,10 +136,10 @@ const bridgeFee = computed(() => {
 })
 
 const isInsufficientNativeBalance = computed(() => {
-  if (!totalGassFee.value.token)
+  if (!nativeFee.value)
     return false
 
-  return toBN(totalGassFee.value.token.balance).lt(totalGassFee.value.amount)
+  return toBN(nativeCurrency.value?.balance || '0').lt(nativeFee.value)
 })
 
 async function fetchQuoteWithGasFee() {
@@ -142,7 +160,8 @@ async function fetchQuoteWithGasFee() {
         userAddress: safeAddress.value,
         recipient: safeAddress.value,
         isContractCall: true,
-        defaultBridgeSlippage: 0.5,
+        bridgeWithGas: false,
+        defaultBridgeSlippage: 1,
         singleTxOnly: true,
         sort: 'output',
       },
@@ -176,6 +195,7 @@ async function fetchQuoteWithGasFee() {
 
 async function fetchBestRoute() {
   error.value = ''
+  buildTransaction.value = undefined
 
   try {
     if (!targetToken.value?.address)
@@ -203,6 +223,8 @@ async function fetchBestRoute() {
       'function approve(address, uint256) external',
       'function transfer(address, uint256) external',
     ]
+
+    buildTransaction.value = buildTx
 
     const approvalData = buildTx.result.approvalData
 
@@ -289,11 +311,35 @@ const crossFeeError = computed(() => {
 })
 
 const feeInfoMessage = computed(() => {
-  if (!bridgeFee.value?.token || !totalGassFee.value?.token)
+  if (!bridgeFee.value?.token || !nativeFee.value)
     return
 
-  return `The third-party bridge provider will charge an additional fee of ${formatDecimal(bridgeFee.value.amount, 4)} ${bridgeFee.value.token?.symbol?.toUpperCase()}
-  (${formatUsd(bridgeFee.value.amountInUsd)}) and ${formatDecimal(totalGassFee.value.amount, 4)} ${totalGassFee?.value.token?.symbol?.toUpperCase()} (${formatUsd(totalGassFee.value.amountInUsd)}) for their bridging service.`
+  const amounts = [
+    {
+      amount: bridgeFee.value?.amount,
+      symbol: bridgeFee.value.token?.symbol?.toUpperCase(),
+      amountInUsd: bridgeFee.value?.amountInUsd,
+    },
+    {
+      amount: nativeFee.value,
+      symbol: nativeCurrency.value?.symbol?.toLowerCase(),
+      amountInUsd: times(nativeFee.value!, nativeCurrency.value?.price || 0),
+    },
+  ]
+
+  const filteredAmounts = amounts.filter(item => toBN(item.amount).gt('0'))
+
+  if (!filteredAmounts.length)
+    return
+
+  const formattedAmounts = filteredAmounts.map((i) => {
+    return `${formatDecimal(i.amount, 4)} ${i.symbol} (${formatUsd(i.amountInUsd)})`
+  })
+
+  const formatter = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' })
+  const formattedString = formatter.format(formattedAmounts)
+
+  return `The third-party bridge provider will charge an additional fee of ${formattedString} for their bridging service.`
 })
 
 async function fetchcrossSignatures() {
@@ -344,6 +390,7 @@ async function fetchCrossFee() {
     const sourceVersion = source?.notdeployed ? source?.latestVersion : source?.currentVersion
     const targetVersion = target?.notdeployed ? target?.latestVersion : target?.currentVersion
 
+    // @ts-expect-error
     const resp = await $fetch('/api/cross-chain/estimate', {
       method: 'POST',
       body: {
@@ -462,13 +509,11 @@ async function onSubmit() {
 }
 
 function handleSwapToken() {
-  const nativeToken = totalGassFee.value.token
-
   const balancedToken = tokenBalances.value.find(
     t =>
       gt(t.balance, '0')
         && String(t.chainId) == String(data.value.fromChainId)
-        && t.symbol !== nativeToken?.symbol,
+        && t.symbol !== nativeCurrency.value?.symbol,
   )
 
   const fallbackToken = tokenBalances.value.find(
@@ -477,13 +522,13 @@ function handleSwapToken() {
 
   const isSameToken
       = token.value?.symbol.toLowerCase()
-      === nativeToken?.symbol.toLowerCase()
+      === nativeCurrency.value?.symbol.toLowerCase()
 
   const fromToken = !isSameToken
     ? token.value
     : balancedToken || fallbackToken
 
-  const fromAmount = toBN(totalGassFee.value.amountInUsd)
+  const fromAmount = toBN(nativeFeeInUsd.value)
     .div(fromToken?.price || '0')
     .toFixed(5)
 
@@ -494,7 +539,7 @@ function handleSwapToken() {
   openSwapModal(
     fromToken?.address!,
     data.value.fromChainId,
-    nativeToken?.address,
+    nativeCurrency.value?.address,
     fromAmountWithExtra,
   )
 }
@@ -611,9 +656,9 @@ onMounted(() => {
       :text="error"
     />
     <CommonNotification
-      v-if="totalGassFee.token && isInsufficientNativeBalance"
+      v-if="nativeCurrency && isInsufficientNativeBalance"
       type="error"
-      :text="`Not enough ${totalGassFee.token?.symbol.toUpperCase()} balance to pay the bridge gas fee.`"
+      :text="`Not enough ${nativeCurrency?.symbol.toUpperCase()} balance to pay native fee.`"
     >
       <template #action>
         <CommonButton
