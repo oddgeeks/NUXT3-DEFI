@@ -26,7 +26,7 @@ export default defineNuxtConfig({
   nitro: {
     routeRules: {
       '/api/cross-chain/estimate': {
-        proxy: 'https://microservices-git-cross-chain-instadapp-eng.vercel.app/api/avocado/cross-chain/estimate',
+        proxy: 'https://microservices.instadapp.io/api/avocado/cross-chain/estimate',
       },
       '/**': {
         headers: {
