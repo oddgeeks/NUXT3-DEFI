@@ -18,7 +18,7 @@ export function useEstimatedFee(
   const { trackingAccount, isTrackingMode } = useAccountTrack()
   const { safe } = useAvocadoSafe()
   const { gasBalance, safeAddress } = storeToRefs(useSafe())
-  const { mainSafe, selectedSafe } = storeToRefs(useAuthorities())
+  const { selectedSafe } = storeToRefs(useAuthorities())
 
   const immediate = !!params?.immediate
 
@@ -82,8 +82,11 @@ export function useEstimatedFee(
 
         const actualAccount = isTrackingMode.value ? trackingAccount.value : account.value
 
-        const data = await avoProvider.send('txn_estimateFeeWithoutSignature', [
-          { message, signer: actualAccount, targetChainId: chainId.value, safe: safeAddress.value, owner: selectedSafe.value?.owner_address || account.value },
+        const signatureParams = { message, signer: actualAccount, targetChainId: chainId.value, safe: safeAddress.value, owner: selectedSafe.value?.owner_address || account.value }
+        const signatureMethod = selectedSafe.value?.multisig === 1 ? 'txn_multisigEstimateFeeWithoutSignature' : 'txn_estimateFeeWithoutSignature'
+
+        const data = await avoProvider.send(signatureMethod, [
+          signatureParams,
         ])
 
         return data
