@@ -466,6 +466,7 @@ const onSubmit = handleSubmit(async () => {
       protocol: utils.formatBytes32String(bestRoute?.value?.name || ''),
     })
 
+    console.log(txs.value)
     const transactionHash = await sendTransactions(
       txs.value!,
       +toChainId.value,
