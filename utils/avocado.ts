@@ -37,6 +37,9 @@ export const blockQueryURL = 'https://blockquery.instadapp.io'
 const swapAggregatorURLProd = 'https://swap-aggregator.instadapp.io'
 const swapAggregatorURLStaging = 'https://swap-aggregator.instad.app'
 
+const multisigURLStaging = 'https://multisig.api.avocado.instad.app'
+const multisigURLProd = 'https://multisig.api.avocado.instadapp.io'
+
 const swapAggregatorTokenProd = 'hxBA1uxwaGWN0xcpPOncVJ3Tk7FdFxY7g3NX28R14C'
 const swapAggregatorTokenStaging = 'tZIvMelWpiGgfZyDHJLVEygCvXC'
 
@@ -54,5 +57,7 @@ export const swapAggregatorURL = isProd
 export const swapAggregatorAccessToken = isProd
   ? swapAggregatorTokenProd
   : swapAggregatorTokenStaging
+
+export const multisigURL = isProd ? multisigURLProd : multisigURLStaging
 
 export const unsupportedDapps = ['https://stargate.finance', 'https://app.gmx.io', 'https://www.sushi.com', 'https://app.alpacafinance.org', 'https://app-v2.alpacafinance.org', 'https://app.frax.finance', 'https://staking.synthetix.io', 'https://app.pooltogether.com', 'https://app.velodrome.finance', 'https://meshswap.fi', 'https://app.balancer.fi', 'https://oasis.app', 'https://app.tetu.io', 'https://mirror.xyz']

@@ -18,6 +18,8 @@ export const useAuthorities = defineStore('authorities', () => {
     return formatAuthorities(selectedSafe.value.authorities)
   })
 
+  const isSafeMultisig = computed(() => selectedSafe.value?.multisig === 1)
+
   const isWalletSecondary = computed(() => selectedSafe.value?.multisig !== 1 && (mainSafe.value?.safe_address !== selectedSafe.value?.safe_address))
 
   const authorisedNetworks = computed(() => {
@@ -109,6 +111,7 @@ export const useAuthorities = defineStore('authorities', () => {
     authorisedNetworks,
     checkNetworkIsAuthorised,
     multiSigSafe,
+    isSafeMultisig,
   }
 })
 

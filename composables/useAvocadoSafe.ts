@@ -1,6 +1,10 @@
 import { storeToRefs } from 'pinia'
 import { isAddress } from '@ethersproject/address'
 import { VoidSigner, ethers } from 'ethers'
+import axios from 'axios'
+import {
+  AvoMultisigImplementation__factory,
+} from '~/contracts'
 import {
   Forwarder__factory,
 } from '@/contracts'
@@ -11,7 +15,7 @@ export function useAvocadoSafe() {
   const { trackingAccount, isTrackingMode } = useAccountTrack()
   const { avoProvider } = useSafe()
 
-  const { selectedSafe } = storeToRefs(useAuthorities())
+  const { selectedSafe, isSafeMultisig } = storeToRefs(useAuthorities())
 
   // check if we have a cached safe address
   const { safeAddress, mainSafeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks } = storeToRefs(useSafe())
@@ -92,15 +96,44 @@ export function useAvocadoSafe() {
     if (!signer.value)
       throw new Error('Safe not initialized')
 
-    await generateMultisigSignature({ chainId, actions: transactions })
+    if (isSafeMultisig.value) {
+      const params = await generateMultisigSignature({ chainId, actions: transactions })
 
-    // const tx = await signer.value.sendTransactions(
-    //   transactions,
-    //   Number(chainId),
-    //   { source: '0xE8385fB3A5F15dED06EB5E20E5A81BF43115eb8E', ...options },
-    // )
+      // generate proposal
+      const { data } = await axios.post<IMultisigTransaction>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {
+        chain_id: String(chainId),
+        status: 'pending',
+        nonce: String(params?.nonce),
+        signer: params?.signatureParams,
+        data: params?.castParams,
+      }, {
+        baseURL: multisigURL,
+      })
 
-    // return tx.hash!
+      if (data.confirmations_required === 1) {
+        const txHash = await multisigBroadcast({
+          confirmations: data.confirmations,
+          message: data.data,
+          owner: account.value,
+          safe: selectedSafe.value?.safe_address!,
+          targetChainId: chainId,
+        })
+
+        return txHash
+      }
+      else {
+        // handle multisig flow
+      }
+    }
+    else {
+      const tx = await signer.value.sendTransactions(
+        transactions,
+        Number(chainId),
+        { source: '0xE8385fB3A5F15dED06EB5E20E5A81BF43115eb8E', ...options },
+      )
+
+      return tx.hash!
+    }
   }
 
   const isSafeAddress = async (
@@ -118,8 +151,17 @@ export function useAvocadoSafe() {
   }
 
   async function generateMultisigSignature({ chainId, actions }: any) {
-    const providerWithSigner = new ethers.providers.Web3Provider(provider.value)
+    const providerWithSigner = library.value
     const underlyingProvider = new ethers.providers.JsonRpcProvider(getRpcURLByChainId(chainId))
+
+    actions = actions.map((action: any) => {
+      return {
+        operation: action.operation || '0',
+        target: action.to,
+        data: action.data || '0x',
+        value: action.value || '0',
+      }
+    })
 
     await providerWithSigner.send('eth_requestAccounts', [])
     const avoSigner = providerWithSigner.getSigner()
@@ -134,8 +176,17 @@ export function useAvocadoSafe() {
 
     const verifyingContract = selectedSafe.value?.safe_address!
 
-    const slot0 = await underlyingProvider.getStorageAt(verifyingContract, 0)
-    const nonce = Number(slot0.slice(0, 26))
+    const avoMultsigInstance = AvoMultisigImplementation__factory.connect(verifyingContract, underlyingProvider)
+
+    let nonce
+    try {
+      nonce = (await avoMultsigInstance.avoSafeNonce()).toNumber()
+    }
+    catch {
+      nonce = 0
+    }
+
+    console.log(nonce)
 
     const domain = {
       name: domainSeparatorName,
@@ -197,8 +248,6 @@ export function useAvocadoSafe() {
 
     const signature = await avoSigner._signTypedData(domain, types, castParams)
 
-    console.log(signature)
-
     const signatureParams = [{
       signature,
       signer: account.value,
@@ -212,20 +261,41 @@ export function useAvocadoSafe() {
         signatureParams,
       )
 
-      console.log('forwarderVerification', forwarderVerification)
+      if (forwarderVerification) {
+        return {
+          signatureParams: {
+            signature,
+            address: account.value,
+          },
+          castParams,
+          nonce,
+        }
+      }
     }
     catch (err) {
       console.log(err)
     }
+  }
 
-    // const transactionHash = await providerAvocado.send('txn_broadcast', [{
-    //   signatures: signatureParams,
-    //   message: castParams,
-    //   owner,
-    //   safe: multisigAddress,
-    //   targetChainId: String(underlyingChain),
-    // }])
-    // console.log(transactionHash)
+  const multisigBroadcast = async (params: IMultisigBroadcastParams) => {
+    const sortedSignatures = params.confirmations.sort((left, right) =>
+      left.address.toLowerCase().localeCompare(right.address.toLowerCase()),
+    ).map((i) => {
+      return {
+        signature: i.signature,
+        signer: i.address,
+      }
+    })
+
+    const transactionHash = await avoProvider.send('txn_broadcast', [{
+      signatures: sortedSignatures,
+      message: params.message,
+      owner: params.owner,
+      safe: params.safe,
+      targetChainId: String(params.targetChainId),
+    }])
+
+    return transactionHash
   }
 
   return {

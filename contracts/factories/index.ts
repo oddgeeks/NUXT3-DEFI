@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export { AvoFactoryProxy__factory } from "./AvoFactoryProxy__factory";
+export { AvoMultisigImplementation__factory } from "./AvoMultisigImplementation__factory";
 export { AvoSafeImplementation__factory } from "./AvoSafeImplementation__factory";
 export { BalanceResolver__factory } from "./BalanceResolver__factory";
 export { Erc20__factory } from "./Erc20__factory";
