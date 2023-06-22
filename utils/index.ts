@@ -250,6 +250,22 @@ export function formatAuthorities(input: ISafe['authorities']): IAuthority[] {
   return result
 }
 
+export function formatSigners(input: ISafe['signers']): ISigner[] {
+  const result = Object.entries(input).reduce((acc: ISigner[], [key, value]: [string, string[]]) => {
+    value.forEach((address: string) => {
+      let existing = acc.find((item: ISigner) => item.address === address)
+      if (!existing) {
+        existing = { address, chainIds: [] }
+        acc.push(existing)
+      }
+      existing.chainIds.push(key)
+    })
+    return acc
+  }, [])
+
+  return result
+}
+
 export function formatProtocol(protocol: string) {
   return (
     new Map([

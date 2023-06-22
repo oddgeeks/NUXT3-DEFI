@@ -18,6 +18,13 @@ export const useAuthorities = defineStore('authorities', () => {
     return formatAuthorities(selectedSafe.value.authorities)
   })
 
+  const signers = computed(() => {
+    if (!selectedSafe.value)
+      return []
+
+    return formatSigners(selectedSafe.value.signers)
+  })
+
   const isSafeMultisig = computed(() => selectedSafe.value?.multisig === 1)
 
   const isWalletSecondary = computed(() => selectedSafe.value?.multisig !== 1 && (mainSafe.value?.safe_address !== selectedSafe.value?.safe_address))
@@ -33,7 +40,7 @@ export const useAuthorities = defineStore('authorities', () => {
 
   const fetchSafes = async () => {
     const resp = await avoProvider.send('api_getSafes', [{
-      authority_address: account.value,
+      address: account.value,
     }])
 
     safes.value = resp?.data || []
@@ -56,9 +63,15 @@ export const useAuthorities = defineStore('authorities', () => {
   }
 
   async function setMultiSigSafe() {
-    const resp = await fetchSafe(multiSigSafeAddress.value)
+    try {
+      const resp = await fetchSafe(multiSigSafeAddress.value)
 
-    multiSigSafe.value = resp
+      console.log(resp)
+
+      multiSigSafe.value = resp
+    }
+    catch (e) {
+    }
   }
 
   function checkNetworkIsAuthorised(chainId: string | number) {
@@ -96,6 +109,8 @@ export const useAuthorities = defineStore('authorities', () => {
     if (!multiSigSafeAddress.value)
       return
 
+    console.log('multiSigSafeAddress', multiSigSafeAddress.value)
+
     setMultiSigSafe()
   }, {
     immediate: true,
@@ -112,6 +127,7 @@ export const useAuthorities = defineStore('authorities', () => {
     checkNetworkIsAuthorised,
     multiSigSafe,
     isSafeMultisig,
+    signers,
   }
 })
 

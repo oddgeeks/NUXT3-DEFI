@@ -52,14 +52,32 @@ interface ForwardParams {
 
 
 interface ISignatureParams {
-    signature: string
-    signer: string
+  signature: string
+  signer: string
 }
 
 interface IMultisigBroadcastParams {
-    confirmations: Confirmation[]
-    message: Data
-    owner: string
-    safe: string
-    targetChainId: string | number
+  confirmations: Confirmation[]
+  message: Data
+  owner: string
+  safe: string
+  targetChainId: string | number
+}
+
+type TransactionsAction = {
+  to: string
+  value?: string
+  data?: string
+  operation?: string
+  target?: string
+}
+
+interface TransactionAction extends TransactionsAction { 
+ chainId: number | string
+}
+
+interface IGenerateMultisigSignatureParams {
+  chainId: string | number
+  actions: TransactionsAction[]
+  nonce?: number
 }

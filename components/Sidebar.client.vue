@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import HomeSVG from '~/assets/images/icons/home.svg?component'
-import ContactSVG from '~/assets/images/icons/contact.svg?component'
-import FireSVG from '~/assets/images/icons/fire.svg?component'
-import CalendarSVG from '~/assets/images/icons/calendar.svg?component'
+import { storeToRefs } from 'pinia'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 import Avocado from '@/assets/images/icons/avocado.svg?component'
 import QrSVG from '~/assets/images/icons/qr.svg?component'
 
 const { opened, toggleSidebar } = useSidebar()
 const { safeAddress } = useAvocadoSafe()
-const { account } = useWeb3()
+const { isSafeMultisig } = storeToRefs(useAuthorities())
+const { navigations } = useNavigation()
 
 const tippyOptions = {
   arrow: true,
@@ -24,8 +22,9 @@ const tippyOptions = {
     <div v-if="opened" class="flex flex-col w-full">
       <div class="flex flex-col gap-6 pt-7.5 pb-6 px-7.5">
         <div class="flex items-center justify-between">
-          <NuxtLink to="/">
+          <NuxtLink class="flex items-center gap-2.5" to="/">
             <Logo />
+            <MultisigBadge v-if="isSafeMultisig" />
           </NuxtLink>
           <button
             class="w-7 h-7 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
@@ -48,8 +47,9 @@ const tippyOptions = {
     </div>
     <div v-else class="flex flex-col items-center w-full p-7.5 gap-6">
       <div class="flex flex-col items-center gap-5">
-        <NuxtLink to="/">
+        <NuxtLink class="flex flex-col items-center gap-2.5" to="/">
           <Avocado class="text-primary" />
+          <MultisigBadge v-if="isSafeMultisig" />
         </NuxtLink>
         <button
           class="w-7 h-7 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
@@ -89,66 +89,27 @@ const tippyOptions = {
         </div>
       </div>
       <div :class="{ 'blur pointer-events-none': !safeAddress }" class="flex gap-2.5 py-2.5 flex-col items-center dark:bg-slate-800 bg-slate-100 text-slate-400 w-full rounded-5">
-        <NuxtLink
-          v-tippy="{
-            arrow: true,
-            arrowType: 'round',
-            animation: 'fade',
-            content: 'Home',
-            placement: 'right',
-          }"
-          class="px-5 py-3"
-          active-class="text-primary"
-          to="/"
+        <template
+          v-for="nav in navigations"
+          :key="nav.to"
         >
-          <HomeSVG class="w-4 h-4" />
-        </NuxtLink>
-        <NuxtLink
-          v-tippy="{
-            ...tippyOptions,
-            content: 'View your DeFi Positions',
-          }"
-          active-class="text-primary"
-          class="px-5 py-3"
-          to="/defi"
-        >
-          <SvgoDefi class="w-4 h-4" />
-        </NuxtLink>
-
-        <NuxtLink
-          v-tippy="{
-            ...tippyOptions,
-            content: 'View your NFTs',
-          }"
-          class="px-5 py-3"
-          active-class="text-primary"
-          to="/nft"
-        >
-          <FireSVG class="w-4 h-4" />
-        </NuxtLink>
-        <NuxtLink
-          v-tippy="{
-            ...tippyOptions,
-            content: 'Contacts',
-          }"
-          class="px-5 py-3"
-          active-class="text-primary"
-          to="/contacts"
-        >
-          <ContactSVG class="w-4 h-4" />
-        </NuxtLink>
-        <NuxtLink
-          v-tippy="{
-            ...tippyOptions,
-            content: 'History',
-          }"
-          class="px-5 py-3"
-          external
-          target="_blank"
-          :to="`${avoExplorerURL}/address/${account}`"
-        >
-          <CalendarSVG class="w-4 h-4" />
-        </NuxtLink>
+          <NuxtLink
+            v-if="!nav.hidden"
+            v-tippy="{
+              arrow: true,
+              arrowType: 'round',
+              animation: 'fade',
+              content: nav.tooltip,
+              placement: 'right',
+            }"
+            :target="nav.target"
+            class="px-5 py-3"
+            active-class="text-primary"
+            :to="nav.to"
+          >
+            <component :is="nav.icon" class="w-4 h-4" />
+          </NuxtLink>
+        </template>
       </div>
     </div>
   </aside>

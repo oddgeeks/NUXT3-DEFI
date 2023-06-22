@@ -1,10 +1,5 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import HomeSVG from '~/assets/images/icons/home.svg?component'
-import ContactSVG from '~/assets/images/icons/contact.svg?component'
-import FireSVG from '~/assets/images/icons/fire.svg?component'
-import CalendarSVG from '~/assets/images/icons/calendar.svg?component'
-import AuthoritiesSVG from '~/assets/images/icons/authorities.svg?component'
 import SwapSVG from '~/assets/images/icons/refresh.svg?component'
 import BridgeSVG from '~/assets/images/icons/bridge.svg?component'
 import PlusCircleSVG from '~/assets/images/icons/plus-circle.svg?component'
@@ -21,6 +16,7 @@ const { tokenBalances, totalEoaBalance, eoaBalances, fundedEoaNetworks } = useAv
 const { authorisedNetworks } = storeToRefs(useAuthorities())
 const [moreOptions, toggleOptions] = useToggle(false)
 const { safeAddress } = useAvocadoSafe()
+const { navigations } = useNavigation()
 
 const sortedBalances = computed(() => {
   return sortByMany<IBalance>(tokenBalances.value, [
@@ -62,59 +58,23 @@ function openBridge() {
 <template>
   <div :class="{ 'blur pointer-events-none': !safeAddress }">
     <div class="flex flex-col w-full gap-2 border-y-1 dark:border-slate-750 border-slate-150 px-7.5 py-4 text-slate-400 font-base">
-      <NuxtLink
-        active-class="text-primary"
-        class="flex h-11 items-center gap-2.5"
-        to="/"
-        @click="emit('navigate')"
+      <template
+        v-for="nav in navigations"
+        :key="nav.to"
       >
-        <HomeSVG class="w-4 h-4" />
-        Home
-      </NuxtLink>
-      <NuxtLink
-        active-class="text-primary"
-        class="flex h-11 items-center gap-2.5"
-        to="/defi"
-      >
-        <SvgoDefi class="w-4 h-4" />
-        DeFi
-      </NuxtLink>
-      <NuxtLink
-        active-class="text-primary"
-        class="flex h-11 items-center gap-2.5"
-        to="/nft"
-        @click="emit('navigate')"
-      >
-        <FireSVG class="w-4 h-4" />
-        NFT
-      </NuxtLink>
-      <NuxtLink
-        active-class="text-primary"
-        class="flex h-11 items-center gap-2.5"
-        to="/contacts"
-        @click="emit('navigate')"
-      >
-        <ContactSVG class="w-4 h-4" />
-        Contacts
-      </NuxtLink>
-      <NuxtLink
-        class="flex h-11 items-center gap-2.5"
-        external
-        target="_blank"
-        :to="`${avoExplorerURL}/address/${account}`"
-      >
-        <CalendarSVG class="w-4 h-4" />
-        History
-      </NuxtLink>
-      <NuxtLink
-        active-class="text-primary"
-        class="flex h-11 items-center gap-2.5"
-        to="/authorities"
-        @click="emit('navigate')"
-      >
-        <AuthoritiesSVG class="w-4 h-4" />
-        Authorities
-      </NuxtLink>
+        <NuxtLink
+          v-if="!nav.hidden"
+          active-class="text-primary"
+          class="flex h-11 items-center gap-2.5"
+          :to="nav.to"
+          :external="nav.external"
+          :target="nav.target"
+          @click="emit('navigate')"
+        >
+          <component :is="nav.icon" class="w-4 h-4" />
+          {{ nav.label }}
+        </NuxtLink>
+      </template>
     </div>
     <div class="flex flex-col w-full gap-2 border-b-1 dark:border-slate-750 border-slate-150 px-7.5 py-4 text-slate-400">
       <button

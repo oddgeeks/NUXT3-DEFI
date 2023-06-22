@@ -549,6 +549,7 @@ type IDefiToken = {
   deployed: Record<string, boolean>,
   version: Record<string, string>
   authorities: Record<string, string[]>
+  signers: Record<string, string[]>
 }
 
 
@@ -556,6 +557,11 @@ interface IAuthority {
   address: string
   chainIds: string[]
   type?: 'personal' | 'multisig'
+}
+
+interface ISigner {
+  address: string
+  chainIds: string[]
 }
 
 interface IManageAuthorityModalParams {

@@ -104,6 +104,9 @@ export const useSafe = defineStore('safe', () => {
   }
 
   const fetchMultiSigSafeAddress = async () => {
+    if (!account.value)
+      return
+
     const multiSigAddress = await forwarderProxyContract.computeAddressMultisig(
       account.value,
     )
@@ -410,7 +413,7 @@ export const useSafe = defineStore('safe', () => {
   }
 
   async function fetchGasBalance() {
-    if (!account.value)
+    if (!safeAddress.value)
       return
 
     try {

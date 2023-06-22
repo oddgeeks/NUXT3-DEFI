@@ -16,9 +16,9 @@ export function useEstimatedFee(
   const { avoProvider } = useSafe()
   const { account } = useWeb3()
   const { trackingAccount, isTrackingMode } = useAccountTrack()
-  const { safe } = useAvocadoSafe()
+  const { safe, generateMultisigSignatureMessage } = useAvocadoSafe()
   const { gasBalance, safeAddress } = storeToRefs(useSafe())
-  const { selectedSafe } = storeToRefs(useAuthorities())
+  const { selectedSafe, isSafeMultisig } = storeToRefs(useAuthorities())
 
   const immediate = !!params?.immediate
 
@@ -74,16 +74,25 @@ export function useEstimatedFee(
 
         const actualTx = isArray(txData.value) ? txData.value : [txData.value]
 
-        const message = await safe.value?.generateSignatureMessage(
-          actualTx,
-          +chainId.value,
-          params?.options,
-        )
+        let message
+
+        if (isSafeMultisig.value) {
+          message = await generateMultisigSignatureMessage({ chainId: chainId.value, actions: actualTx })
+
+          console.log(message)
+        }
+        else {
+          message = await safe.value?.generateSignatureMessage(
+            actualTx,
+            +chainId.value,
+            params?.options,
+          )
+        }
 
         const actualAccount = isTrackingMode.value ? trackingAccount.value : account.value
 
         const signatureParams = { message, signer: actualAccount, targetChainId: chainId.value, safe: safeAddress.value, owner: selectedSafe.value?.owner_address || account.value }
-        const signatureMethod = selectedSafe.value?.multisig === 1 ? 'txn_multisigEstimateFeeWithoutSignature' : 'txn_estimateFeeWithoutSignature'
+        const signatureMethod = isSafeMultisig.value ? 'txn_multisigEstimateFeeWithoutSignature' : 'txn_estimateFeeWithoutSignature'
 
         const data = await avoProvider.send(signatureMethod, [
           signatureParams,

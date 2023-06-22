@@ -26,7 +26,7 @@ const { refresh } = useAsyncData(
   },
 )
 
-useIntervalFn(refresh, 1000)
+useIntervalFn(refresh, 30000)
 </script>
 
 <template>
