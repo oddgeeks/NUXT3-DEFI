@@ -126,6 +126,8 @@ const buyTokenBalance = computed(
     )?.balance || '0.00',
 )
 
+const [inputUSDToggle, inputUSDToggled] = useToggle(false)
+
 function validateMinAmount(value: any) {
   const amount = toBN(value)
 
@@ -596,9 +598,13 @@ onUnmounted(() => {
           </div>
         </div>
         <div
-          class="flex items-center justify-center w-2/5 mx-auto rounded-full"
+          class="flex flex-rows justify-between items-center mt-5 w-full mx-auto rounded-full"
         >
-          <CommonSelect
+          <p class="text-xs py-1 px-5 rounded-full border border-[#1e293b]">
+            Processing on the <ChainLogo class="w-6 h-6 inline" :chain="toChainId" /> {{ networks.find(network => network.chainId === parseInt(toChainId))?.name }} Network
+          </p>
+          <CommonToggle v-model="inputUSDToggle" text="Input USD" />
+          <!-- <CommonSelect
             v-model="toChainId"
             value-key="chainId"
             label-key="name"
@@ -612,7 +618,7 @@ onUnmounted(() => {
             <template #item-prefix="{ value }">
               <ChainLogo class="w-6 h-6" :chain="value" />
             </template>
-          </CommonSelect>
+          </CommonSelect> -->
         </div>
       </div>
     </div>
@@ -622,18 +628,39 @@ onUnmounted(() => {
         class="relative flex flex-col gap-4 px-5 py-4 border-2 border-transparent dark:bg-slate-800 bg-slate-100 focus-within:bg-slate-50 focus-within:dark:border-slate-800 focus-within:border-slate-150 focus-within:dark:bg-gray-850 rounded-5"
       >
         <div class="flex">
-          <CommonInput
-            v-model="sellAmount"
-            autofocus
-            transparent
-            placeholder="0.0"
-            name="sell-amount"
-            type="numeric"
+          <div
+            v-if="isLoading && !isSellAmountFocused"
             class="flex-1"
-            input-classes="text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
-            container-classes="!px-0"
-            @input="handleSellAmountInput"
-          />
+          >
+            <div
+              style="width: 100px; height: 28px"
+              class="rounded-lg loading-box"
+            />
+          </div>
+          <div v-else class="flex-1">
+            <CommonInput
+              v-if="!inputUSDToggle"
+              v-model="sellAmount"
+              transparent
+              placeholder="0.0"
+              name="sell-amount"
+              type="numeric"
+              class="flex-1"
+              input-classes="text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
+              container-classes="!px-0"
+              @input-focus="isSellAmountFocused = true"
+              @input-blur="isSellAmountFocused = false"
+              @input="handleSellAmountInput"
+            />
+            <CommonCurrencyInput
+              v-else
+              input-classes="flex-1 text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
+              :model-value="toBN(sellAmountInUsd).toNumber()"
+              @focus="isSellAmountFocused = true"
+              @blur="isSellAmountFocused = false"
+              @input="handleSellUsdChange"
+            />
+          </div>
           <TokenSelection
             v-model="swap.sellToken"
             :tokens="availableTokens"
@@ -642,18 +669,16 @@ onUnmounted(() => {
         </div>
         <div class="flex items-center justify-between text-sm text-slate-400">
           <div
-            v-if="isLoading && !isSellAmountFocused"
+            v-if="isLoading"
             style="width: 60px; height: 24px"
             class="rounded-lg loading-box"
           />
-          <CommonCurrencyInput
+          <p
             v-else
-            class="focus:text-white"
-            :model-value="toBN(sellAmountInUsd).toNumber()"
-            @blur="isSellAmountFocused = false"
-            @focus="isSellAmountFocused = true"
-            @input="handleSellUsdChange"
-          />
+            class="focus:text-white disabled bg-transparent p-0 outline-none border-0 font-medium focus:border-0 focus:ring-0"
+          >
+            {{ !inputUSDToggle ? `$ ${toBN(sellAmountInUsd).toNumber()}` : `${sellAmount}` }}
+          </p>
           <div class="flex items-center ml-auto gap-2.5 uppercase">
             <span class="font-medium">{{ formatDecimal(sellTokenBalance) }}
               {{ swap.sellToken?.symbol }}</span>
@@ -681,25 +706,37 @@ onUnmounted(() => {
         class="flex flex-col gap-4 px-5 py-4 border-2 border-transparent dark:bg-slate-800 bg-slate-100 focus-within:bg-slate-50 focus-within:dark:border-slate-800 focus-within:border-slate-150 focus-within:dark:bg-gray-850 rounded-5"
       >
         <div class="flex">
-          <div class="flex items-center flex-1">
+          <div
+            v-if="isLoading && !isUsdBuyAmountFocused"
+            class="flex-1 flex items-center"
+          >
             <div
-              v-if="isLoading && !isBuyAmountFocused"
               style="width: 100px; height: 28px"
               class="rounded-lg loading-box"
             />
+          </div>
+          <div v-else class="flex-1">
             <CommonInput
-              v-else
+              v-if="!inputUSDToggle"
               v-model="buyAmount"
               transparent
-              type="numeric"
               placeholder="0.0"
               name="buy-amount"
+              type="numeric"
               class="flex-1"
               input-classes="text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
               container-classes="!px-0"
-              @input-focus="isBuyAmountFocused = true"
-              @input-blur="isBuyAmountFocused = false"
+              @input-focus="isUsdBuyAmountFocused = true"
+              @input-blur="isUsdBuyAmountFocused = false"
               @input="handleBuyAmountInput"
+            />
+            <CommonCurrencyInput
+              v-else
+              input-classes="flex-1 text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
+              :model-value="toBN(buyAmountInUsd).toNumber()"
+              @focus="isUsdBuyAmountFocused = true"
+              @blur="isUsdBuyAmountFocused = false"
+              @input="handleSellUsdChange"
             />
           </div>
           <TokenSelection
@@ -710,18 +747,16 @@ onUnmounted(() => {
         </div>
         <div class="flex items-center justify-between text-sm text-slate-400">
           <div
-            v-if="isLoading && !isUsdBuyAmountFocused"
+            v-if="isLoading"
             style="width: 60px; height: 24px"
             class="rounded-lg loading-box"
           />
-          <CommonCurrencyInput
+          <p
             v-else
-            class="focus:text-white"
-            :model-value="toBN(buyAmountInUsd).toNumber()"
-            @focus="isUsdBuyAmountFocused = true"
-            @blur="isUsdBuyAmountFocused = false"
-            @input="handleBuyUsdChange"
-          />
+            class="focus:text-white disabled bg-transparent p-0 outline-none border-0 font-medium focus:border-0 focus:ring-0"
+          >
+            {{ !inputUSDToggle ? `$ ${toBN(buyAmountInUsd).toNumber()}` : `${buyAmount}` }}
+          </p>
 
           <div class="flex items-center ml-auto gap-2.5 uppercase">
             <span class="font-medium">{{ formatDecimal(buyTokenBalance) }}
