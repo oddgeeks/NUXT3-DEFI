@@ -233,9 +233,11 @@ const search = useDebounceFn((event: Event) => {
           <p class="text-[12px] text-[#4CA054] flex-1">
             You have $34.60 of assets spread across 2 networks on your wallet (EOA)
           </p>
-          <CommonButton class="text-[12px]">
-            Migrate
-          </CommonButton>
+          <NuxtLink href="http://onboard.avocado.instadapp.io/">
+            <CommonButton class="text-[12px]">
+              Migrate
+            </CommonButton>
+          </NuxtLink>
         </div>
       </div>
       <p
