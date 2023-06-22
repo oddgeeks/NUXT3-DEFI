@@ -9,7 +9,7 @@ const props = defineProps<{
   hideZeroBalances: boolean
 }>()
 
-const { totalBalance, tokenBalances } = useAvocadoSafe()
+const { totalBalance, tokenBalances, totalEoaBalance, fundedEoaNetworks } = useAvocadoSafe()
 const { account } = useWeb3()
 const { networkPreference } = storeToRefs(useSafe())
 
@@ -228,13 +228,19 @@ const search = useDebounceFn((event: Event) => {
             <SupportedChains class="!flex justify-between" />
           </div>
         </div>
-        <div class="bg-[#4CA0541A] w-2/3 rounded-[30px] px-[16px] py-[10px] flex flex-rows gap-[10px] items-center justify-center">
+        <div v-if="gt(totalEoaBalance, 1)" class="bg-[#4CA0541A] w-2/3 rounded-[30px] px-[16px] py-[10px] flex flex-rows gap-[10px] items-center justify-center">
           <InfoSVG />
           <p class="text-[12px] text-[#4CA054] flex-1">
-            You have $34.60 of assets spread across 2 networks on your wallet (EOA)
+            You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet (EOA)
           </p>
           <NuxtLink href="http://onboard.avocado.instadapp.io/">
-            <CommonButton class="text-[12px]">
+            <CommonButton
+              size="sm"
+              as="NuxtLink"
+              external
+              target="_blank"
+              :to="avoOnboardURL"
+            >
               Migrate
             </CommonButton>
           </NuxtLink>
