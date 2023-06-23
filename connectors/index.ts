@@ -31,11 +31,11 @@ export const walletlink = new WalletLinkConnector({
   darkMode: false,
 })
 
-export const walletconnect = new WalletConnectConnector({
-  rpc: RPCMap,
-  chainId: avoChainId,
-  qrcode: true,
-})
+// export const walletconnect = new WalletConnectConnector({
+//   rpc: RPCMap,
+//   chainId: avoChainId,
+//   qrcode: true,
+// })
 
 export const network = new NetworkConnector({
   urls: RPCMap,

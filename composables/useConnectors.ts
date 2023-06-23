@@ -1,10 +1,9 @@
-import { injected, walletconnect, walletlink } from '~~/connectors'
+import { injected, walletlink } from '~~/connectors'
 
 const providers = {
   // network,
   // torus,
   injected,
-  walletconnect,
   walletlink,
 }
 

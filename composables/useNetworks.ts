@@ -1,13 +1,11 @@
 import { ethers } from 'ethers'
 import {
   changeMetamaskNetwork,
-  changeNetworkWalletConnect,
   injected,
   walletlink,
 } from '~~/connectors'
 import SVGWalletlink from '~/assets/images/wallet/walletlink.svg?component'
 import SVGMetamask from '~/assets/images/wallet/metamask.svg?component'
-import SVGWalletConnect from '~/assets/images/wallet/wallet-connect.svg?component'
 
 export function useNetworks() {
   const { chainId, provider, library } = useWeb3()
@@ -35,20 +33,20 @@ export function useNetworks() {
         return walletlink
       },
     },
-    {
-      name: 'WalletConnect',
-      id: 'walletconnect',
-      logo: SVGWalletConnect,
-      switchNetwork: async (network: Network) => {
-        return await changeNetworkWalletConnect(network)
-      },
-      connect: async () => {
-        // @ts-expect-error
-        window.wc = changeNetworkWalletConnect()
+    // {
+    //   name: 'WalletConnect',
+    //   id: 'walletconnect',
+    //   logo: SVGWalletConnect,
+    //   switchNetwork: async (network: Network) => {
+    //     return await changeNetworkWalletConnect(network)
+    //   },
+    //   connect: async () => {
+    //     // @ts-expect-error
+    //     window.wc = changeNetworkWalletConnect()
 
-        return changeNetworkWalletConnect()
-      },
-    },
+    //     return changeNetworkWalletConnect()
+    //   },
+    // },
   ]
 
   const defaultNetwork = shallowRef(networks[0])
