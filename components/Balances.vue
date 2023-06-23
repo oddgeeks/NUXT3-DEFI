@@ -105,7 +105,7 @@ const { safeAddress, isSafeAddress } = useAvocadoSafe()
 <template>
   <div class="relative flex-1">
     <div class="h-full w-full flex flex-col gap-5">
-      <div v-if="!account || !tokenBalances.length || totalBalance > 0 || balances.loading" class="h-full w-full flex flex-col gap-5">
+      <div v-if="!account || !tokenBalances.length || totalBalance > 0 || !balances.data" class="h-full w-full flex flex-col gap-5">
         <CommonInput
           v-if="account"
           name="Token Search"
