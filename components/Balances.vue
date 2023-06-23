@@ -9,6 +9,7 @@ const props = defineProps<{
   hideZeroBalances: boolean
 }>()
 
+const { balances } = storeToRefs(useSafe())
 const { totalBalance, tokenBalances, totalEoaBalance, fundedEoaNetworks } = useAvocadoSafe()
 const { account } = useWeb3()
 const { networkPreference } = storeToRefs(useSafe())
@@ -104,7 +105,7 @@ const { safeAddress, isSafeAddress } = useAvocadoSafe()
 <template>
   <div class="relative flex-1">
     <div class="h-full w-full flex flex-col gap-5">
-      <div v-if="totalBalance > 0">
+      <div v-if="!account || !tokenBalances.length || totalBalance > 0 || balances.loading">
         <CommonInput
           v-if="account"
           name="Token Search"
