@@ -1,22 +1,18 @@
-<script>
-export default {
-  name: 'CommonToggle',
-  props: {
-    text: {
-      type: String,
-      default: () => '',
-    },
-    modelValue: {
-      type: Boolean,
-      default: () => false,
-    },
+<script lang="ts" setup>
+const props = withDefaults(
+  defineProps<{
+    text: string
+    modelValue?: Boolean
+  }>(),
+  {
+    text: '',
+    modelValue: false,
   },
-  emits: ['update:modelValue'],
-  methods: {
-    change(ev) {
-      this.$emit('update:modelValue', ev.target.checked)
-    },
-  },
+)
+
+const emit = defineEmits(['update:modelValue'])
+function change(ev: Event) {
+  emit('update:modelValue', ev.target.checked)
 }
 </script>
 
