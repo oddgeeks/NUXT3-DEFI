@@ -135,6 +135,9 @@ const onSubmit = handleSubmit(async () => {
       props.asset.chainId,
     )
 
+    if (!transactionHash)
+      return
+
     emit('destroy')
 
     showPendingTransactionModal(transactionHash, props.asset.chainId, 'send')

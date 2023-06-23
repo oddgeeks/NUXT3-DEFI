@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia'
 export function useNavigation() {
   const { account } = useWeb3()
   const { isSafeMultisig } = storeToRefs(useAuthorities())
+  const { safeAddress } = useAvocadoSafe()
 
   const navigations = computed(() => {
     return [
@@ -41,7 +42,7 @@ export function useNavigation() {
       {
         label: 'Pending Transactions',
         icon: 'SvgoAuthorities',
-        to: '/multisig/pending-transactions',
+        to: `/multisig/${safeAddress.value}/pending-transactions`,
         tooltip: 'Pending Transactions',
         hidden: !isSafeMultisig.value,
       },

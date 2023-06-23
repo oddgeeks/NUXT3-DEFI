@@ -112,7 +112,6 @@ async function handleSubmit() {
       },
     )
     if (!transactionHash) {
-      // tracking mode
       toggle(false)
       return
     }

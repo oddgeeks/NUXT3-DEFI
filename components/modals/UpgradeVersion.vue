@@ -87,6 +87,9 @@ async function handleSubmit() {
       },
     )
 
+    if (!transactionHash)
+      return
+
     emit('destroy')
 
     await showPendingTransactionModal(

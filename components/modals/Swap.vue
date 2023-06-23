@@ -466,7 +466,6 @@ const onSubmit = handleSubmit(async () => {
       protocol: utils.formatBytes32String(bestRoute?.value?.name || ''),
     })
 
-    console.log(txs.value)
     const transactionHash = await sendTransactions(
       txs.value!,
       +toChainId.value,
@@ -475,10 +474,8 @@ const onSubmit = handleSubmit(async () => {
       },
     )
 
-    if (!transactionHash) {
-      // tracking mode
+    if (!transactionHash)
       return
-    }
 
     const buyAmt = fromWei(
       swapDetails.value?.data?.data.buyTokenAmount || 0,

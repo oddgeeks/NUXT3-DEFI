@@ -76,6 +76,11 @@ interface TransactionAction extends TransactionsAction {
  chainId: number | string
 }
 
+interface IMultisigTransactionResponse {
+  meta: any
+  data: IMultisigTransaction[]
+}
+
 interface IGenerateMultisigSignatureParams {
   chainId: string | number
   actions: TransactionsAction[]

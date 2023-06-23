@@ -39,7 +39,8 @@ async function onSubmit() {
       },
     )
 
-    console.log(transactionHash)
+    if (!transactionHash)
+      return
 
     emit('destroy')
 

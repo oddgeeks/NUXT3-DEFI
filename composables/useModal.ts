@@ -117,6 +117,11 @@ async function openModal({
   })
 }
 
+function clearAllModals() {
+  modals.value = []
+  repositionScroll()
+}
+
 function adjustScroll() {
   const scrollBarWidth = window.innerWidth - document.body.clientWidth
 
@@ -135,5 +140,6 @@ export function useModal() {
     openSnackbar,
     openModal,
     lastModal,
+    clearAllModals,
   }
 }
