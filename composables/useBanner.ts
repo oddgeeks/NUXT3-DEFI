@@ -7,7 +7,7 @@ export function useBanner() {
   const { gasBalance, pending } = storeToRefs(useSafe())
   const { account, chainId } = useWeb3()
 
-  const wcStore = useWalletConnect()
+  const wcStoreV2 = useWalletConnectV2()
 
   const { trackingAccount } = useAccountTrack()
   const isHideWelcomeBanner = useLocalStorage('hide-welcome-banner', false)
@@ -88,19 +88,12 @@ export function useBanner() {
   })
 
   const unstableDappNetworks = computed(() => {
-    if (!wcStore.sessions?.length)
+    if (!wcStoreV2.sessions?.length)
       return []
     if (!allNetworkVersions.data.value?.length)
       return []
 
-    return wcStore.sessions.filter((session) => {
-      const version = allNetworkVersions.data.value.find(
-        network => network.chainId === session.chainId,
-      )
-      if (!version)
-        return false
-      return version?.notdeployed
-    })
+    return false
   })
 
   return {

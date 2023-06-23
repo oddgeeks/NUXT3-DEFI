@@ -423,6 +423,20 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
     return eip155ChainId.replace('eip155:', '')
   }
 
+  function getConnectionVersion(uri: string): 1 | 2 {
+    const v1Pattern = /^wc:[a-zA-Z0-9-]+@1\?/
+    const v2Pattern = /^wc:[a-zA-Z0-9]+@2\?/
+
+    if (v1Pattern.test(uri))
+      return 1
+
+    else if (v2Pattern.test(uri))
+      return 2
+
+    else
+      throw new Error('Invalid connection URI')
+  }
+
   return {
     prepareConnectV2,
     sessions,
@@ -431,6 +445,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
     connect,
     disconnectAll,
     web3WalletV2,
+    getConnectionVersion,
   }
 })
 

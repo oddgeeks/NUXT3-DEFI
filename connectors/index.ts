@@ -1,6 +1,5 @@
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { NetworkConnector } from '@web3-react/network-connector'
-import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { setWeb3LibraryCallback } from '@instadapp/vue-web3'
 import { Web3Provider } from '@ethersproject/providers'
 import { ethers } from 'ethers'
@@ -74,16 +73,4 @@ export async function changeMetamaskNetwork(network: Network) {
       }
     }
   }
-}
-
-export function changeNetworkWalletConnect(network?: Network) {
-  const chainId = network ? network.chainId : 137
-
-  return new WalletConnectConnector({
-    supportedChainIds: networkIds,
-    rpc: getRpcURLByChainId(chainId),
-    chainId,
-    bridge: 'https://bridge.walletconnect.org',
-    qrcode: true,
-  })
 }
