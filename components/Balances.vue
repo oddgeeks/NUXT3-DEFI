@@ -176,11 +176,11 @@ const { safeAddress, isSafeAddress } = useAvocadoSafe()
               </tr>
             </thead>
             <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
-              <template v-if="!account || !tokenBalances.length">
+              <template v-if="!account || !tokenBalances.length || !balances.data">
                 <LoadingBalanceRow
                   v-for="i in 8"
                   :key="i"
-                  :loading="!!account && !tokenBalances.length"
+                  :loading="!account || !tokenBalances.length || !balances.data"
                 />
               </template>
 
