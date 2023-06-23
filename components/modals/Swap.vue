@@ -677,7 +677,7 @@ onUnmounted(() => {
             v-else
             class="focus:text-white disabled bg-transparent p-0 outline-none border-0 font-medium focus:border-0 focus:ring-0"
           >
-            {{ !inputUSDToggle ? `$ ${toBN(sellAmountInUsd).toNumber()}` : `${sellAmount}` }}
+            {{ !inputUSDToggle ? `$ ${toBN(sellAmountInUsd).toNumber()}` : `${sellAmount ? sellAmount : 0}` }}
           </p>
           <div class="flex items-center ml-auto gap-2.5 uppercase">
             <span class="font-medium">{{ formatDecimal(sellTokenBalance) }}
@@ -755,7 +755,7 @@ onUnmounted(() => {
             v-else
             class="focus:text-white disabled bg-transparent p-0 outline-none border-0 font-medium focus:border-0 focus:ring-0"
           >
-            {{ !inputUSDToggle ? `$ ${toBN(buyAmountInUsd).toNumber()}` : `${buyAmount}` }}
+            {{ !inputUSDToggle ? `$ ${toBN(buyAmountInUsd).toNumber()}` : `${buyAmount ? buyAmount : 0}` }}
           </p>
 
           <div class="flex items-center ml-auto gap-2.5 uppercase">
