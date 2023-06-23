@@ -472,14 +472,18 @@ export const useSafe = defineStore('safe', () => {
   watch(connector, () => {
     if (!connector.value)
       return
-    connector.value.on('Web3ReactUpdate', resetAccounts)
+    connector.value.on('Web3ReactUpdate', (params) => {
+      // only reset accounts if account changed
+      if (params?.account)
+        resetAccounts()
+    })
   }, {
     immediate: true,
   })
 
   onBeforeUnmount(() => {
     if (connector.value)
-      connector.value.off('Web3ReactUpdate', resetAccounts)
+      connector.value.off('Web3ReactUpdate', () => {})
   })
 
   return {
