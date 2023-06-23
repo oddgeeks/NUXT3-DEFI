@@ -95,13 +95,14 @@ function checkTxIsCancelRequest(item: IMultisigTransaction) {
           <CommonButton v-if="item.confirmations.length === item.confirmations_required" @click="handleExecute(item)">
             execute
           </CommonButton>
-          <CommonButton color="red" @click="rejectMultisigTransaction(item)">
-            Reject
-          </CommonButton>
 
           <span v-if="checkTxIsCancelRequest(item)">
             This is cancel request
           </span>
+
+          <CommonButton v-else color="red" @click="rejectMultisigTransaction(item)">
+            Reject
+          </CommonButton>
         </li>
       </ul>
     </div>
