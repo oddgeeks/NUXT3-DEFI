@@ -34,6 +34,8 @@
     "@vercel/analytics": "^0.1.11",
     "@vite-pwa/nuxt": "^0.0.7",
     "@vueuse/nuxt": "^10.1.2",
+    "@walletconnect/ethereum-provider": "^2.8.2",
+    "@walletconnect/modal": "^2.5.2",
     "@walletconnect/types": "^2.7.3",
     "@walletconnect/web3wallet": "^1.8.2",
     "@web3-react/injected-connector": "^6.0.7",

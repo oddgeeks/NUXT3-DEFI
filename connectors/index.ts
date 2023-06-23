@@ -5,6 +5,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import { ethers } from 'ethers'
 import { TorusConnector } from '@web3-react/torus-connector'
 import { WalletLinkConnector } from './custom/walletlink'
+import { WalletConnectConnector } from './custom/walletconnect'
 
 // const { networks } = useNetworks();
 
@@ -30,11 +31,15 @@ export const walletlink = new WalletLinkConnector({
   darkMode: false,
 })
 
-// export const walletconnect = new WalletConnectConnector({
-//   rpc: RPCMap,
-//   chainId: avoChainId,
-//   qrcode: true,
-// })
+export const walletconnect = new WalletConnectConnector({
+  supportedChainIds: networkIds,
+  projectId: '42e9e3b646c9102371bd147b3e960c39',
+  rpcMap: networkIds.reduce((acc, chainId) => {
+    acc[chainId] = getRpcURLByChainId(chainId)
+
+    return acc
+  }, {} as any),
+})
 
 export const network = new NetworkConnector({
   urls: RPCMap,
