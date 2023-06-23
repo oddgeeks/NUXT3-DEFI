@@ -4,7 +4,6 @@ import { useCurrencyInput } from 'vue-currency-input'
 
 const props = defineProps<{
   modelValue: number
-  inputClasses?: string
   options?: CurrencyInputOptions
 }>()
 
@@ -26,7 +25,6 @@ const { inputRef } = useCurrencyInput({
   <input
     ref="inputRef"
     class="bg-transparent p-0 outline-none border-0 font-medium focus:border-0 focus:ring-0"
-    :class="[inputClasses]"
     type="text"
   >
 </template>

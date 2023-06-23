@@ -654,7 +654,7 @@ onUnmounted(() => {
             />
             <CommonCurrencyInput
               v-else
-              input-classes="flex-1 text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
+              class="flex-1 text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
               :model-value="toBN(sellAmountInUsd).toNumber()"
               @focus="isSellAmountFocused = true"
               @blur="isSellAmountFocused = false"
@@ -677,7 +677,7 @@ onUnmounted(() => {
             v-else
             class="focus:text-white disabled bg-transparent p-0 outline-none border-0 font-medium focus:border-0 focus:ring-0"
           >
-            {{ !inputUSDToggle ? `$ ${toBN(sellAmountInUsd).toNumber()}` : `${sellAmount ? sellAmount : 0}` }}
+            {{ !inputUSDToggle ? `${formatUsd(toBN(sellAmountInUsd).toNumber())}` : `${sellAmount ? sellAmount : 0}` }}
           </p>
           <div class="flex items-center ml-auto gap-2.5 uppercase">
             <span class="font-medium">{{ formatDecimal(sellTokenBalance) }}
@@ -732,7 +732,7 @@ onUnmounted(() => {
             />
             <CommonCurrencyInput
               v-else
-              input-classes="flex-1 text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
+              class="flex-1 text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
               :model-value="toBN(buyAmountInUsd).toNumber()"
               @focus="isUsdBuyAmountFocused = true"
               @blur="isUsdBuyAmountFocused = false"
@@ -755,7 +755,7 @@ onUnmounted(() => {
             v-else
             class="focus:text-white disabled bg-transparent p-0 outline-none border-0 font-medium focus:border-0 focus:ring-0"
           >
-            {{ !inputUSDToggle ? `$ ${toBN(buyAmountInUsd).toNumber()}` : `${buyAmount ? buyAmount : 0}` }}
+            {{ !inputUSDToggle ? `${formatUsd(toBN(buyAmountInUsd).toNumber())}` : `${buyAmount ? buyAmount : 0}` }}
           </p>
 
           <div class="flex items-center ml-auto gap-2.5 uppercase">
