@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
+import { isZero } from '@instadapp/avocado-base/utils/bignumber'
 import SearchSVG from '~/assets/images/icons/search.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
 import InfoSVG from '~/assets/images/icons/info.svg?component'
@@ -105,7 +106,7 @@ const { safeAddress, isSafeAddress } = useAvocadoSafe()
 <template>
   <div class="relative flex-1">
     <div class="h-full w-full flex flex-col gap-5">
-      <div v-if="!account || !tokenBalances.length || totalBalance > 0 || !balances.data" class="h-full w-full flex flex-col gap-5">
+      <div v-if="!account || !tokenBalances.length || !isZero(totalBalance) || !balances.data" class="h-full w-full flex flex-col gap-5">
         <CommonInput
           v-if="account"
           name="Token Search"
@@ -196,7 +197,7 @@ const { safeAddress, isSafeAddress } = useAvocadoSafe()
             </tbody>
           </table>
         </div>
-        <div class="flex flex-col space-y-4 sm:hidden">
+        <div v-if="balances.data" class="flex flex-col space-y-4 sm:hidden">
           <MobileBalanceRow
             v-for="tokenBalance in sortedBalances"
             :key="`${tokenBalance.chainId}-${tokenBalance.name}`"
