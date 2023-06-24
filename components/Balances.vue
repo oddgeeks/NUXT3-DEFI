@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { isZero } from '@instadapp/avocado-base/utils/bignumber'
 import SearchSVG from '~/assets/images/icons/search.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
 import InfoSVG from '~/assets/images/icons/info.svg?component'
