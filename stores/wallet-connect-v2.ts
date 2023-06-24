@@ -12,9 +12,16 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
   const safe = useAvocadoSafe()
   const web3WalletV2 = shallowRef<IWeb3Wallet>()
   const sessions = ref<SessionTypes.Struct[]>([])
-  const { account, provider } = useWeb3()
+  const { account } = useWeb3()
   const { parseTransactionError } = useErrorHandler()
   const { switchToAvocadoNetwork } = useNetworks()
+
+  const actualSessions = computed(() => sessions.value.filter((value) => {
+    if (value.self.metadata.name === 'Avocado')
+      return false
+
+    return true
+  }))
 
   const prepareConnectV2 = async (
     uri: string,
@@ -79,13 +86,10 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
 
   const syncActiveSessions = async () => {
     const sessionObjects = await web3WalletV2.value?.getActiveSessions() ?? {}
-    const peerPublicKey = provider.value && provider.value?.isWalletConnect ? provider.value.session.peer.publicKey : null
 
     sessions.value = Object.entries(sessionObjects).map(([key, value]) => {
-      if (peerPublicKey === value.peer.publicKey)
-        return
       return value
-    }).filter(Boolean) as SessionTypes.Struct[]
+    })
   }
 
   const init = async () => {
@@ -412,7 +416,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
   }
 
   const disconnectAll = async () => {
-    for (const connector of sessions.value)
+    for (const connector of actualSessions.value)
       await disconnect(connector)
   }
 
@@ -442,7 +446,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
 
   return {
     prepareConnectV2,
-    sessions,
+    sessions: actualSessions,
     init,
     disconnect,
     connect,
