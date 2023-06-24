@@ -16,15 +16,6 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
   const { parseTransactionError } = useErrorHandler()
   const { switchToAvocadoNetwork } = useNetworks()
 
-  const actualSessions = computed(() => sessions.value.filter((value) => {
-    const peerPublicKey = provider.value && provider.value?.isWalletConnect ? provider.value.session.peer.publicKey : null
-
-    if (peerPublicKey === value.peer.publicKey)
-      return false
-
-    return true
-  }))
-
   const prepareConnectV2 = async (
     uri: string,
   ) => {
@@ -421,7 +412,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
   }
 
   const disconnectAll = async () => {
-    for (const connector of actualSessions.value)
+    for (const connector of sessions.value)
       await disconnect(connector)
   }
 
@@ -451,7 +442,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
 
   return {
     prepareConnectV2,
-    sessions: actualSessions,
+    sessions,
     init,
     disconnect,
     connect,
