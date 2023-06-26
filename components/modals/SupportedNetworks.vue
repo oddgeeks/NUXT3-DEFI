@@ -15,7 +15,7 @@ const suffix = computed<any>(() => {
     <div class="flex flex-col items-center gap-7.5 mb-7.5">
       <WorldSVG />
       <h1 class="text-lg text-center leading-5">
-        All Supported EVM Networks
+        Supported EVM Networks
       </h1>
     </div>
     <ul class="flex flex-col gap-5 bg-slate-50 dark:bg-gray-850 px-5 py-4 rounded-5">
