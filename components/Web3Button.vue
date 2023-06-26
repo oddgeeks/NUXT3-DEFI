@@ -48,6 +48,13 @@ const actualMainSafe = computed(() => {
   }
 })
 
+const filteredSafes = computed(() => {
+  if (!safes.value)
+    return []
+
+  return safes.value.filter(safe => safe.safe_address !== actualMainSafe.value.safe_address)
+})
+
 async function closeConnection() {
   const { success } = await openDisconnectWalletModal()
 
@@ -196,12 +203,12 @@ whenever(
                 </div>
               </div>
 
-              <div v-if="!!safes?.length" class="mt-5">
+              <div v-if="!!filteredSafes?.length" class="mt-5">
                 <h2 class="text-xs mb-3">
                   Secondary wallets
                 </h2>
                 <ul class="flex flex-col gap-2.5">
-                  <li v-for="safeItem in safes" :key="safeItem.safe_address">
+                  <li v-for="safeItem in filteredSafes" :key="safeItem.safe_address">
                     <WalletItem :safe="safeItem" />
                   </li>
                 </ul>
