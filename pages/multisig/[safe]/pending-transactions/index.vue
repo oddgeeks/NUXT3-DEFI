@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import axios from 'axios'
+import collect from 'collect.js'
 import { storeToRefs } from 'pinia'
 
 const route = useRoute()
+
+type GroupedByNetwork = Record<string, IMultisigTransaction[]> | null
 
 const { selectedSafe } = storeToRefs(useAuthorities())
 const { signMultisigData, multisigBroadcast, rejectMultisigTransaction } = useAvocadoSafe()
@@ -27,6 +30,15 @@ const { data } = useAsyncData<IMultisigTransactionResponse>(`${route.params.safe
   watch: [status],
   immediate: true,
 
+})
+
+const groupedByNetwork = computed<GroupedByNetwork>(() => {
+  if (!data.value)
+    return {}
+
+  const collection = collect(data.value.data)
+
+  return collection.groupBy('chain_id')
 })
 
 async function handleSign(item: IMultisigTransaction) {
@@ -80,31 +92,33 @@ function checkTxIsCancelRequest(item: IMultisigTransaction) {
       <button @click="$router.push({ query: { status: ['success', 'failed'] } })">
         History
       </button>
+      {{ groupedByNetwork }}
+      <!-- <div v-for="items, chainId in groupedByNetwork " :key="chainId">
+        <ul class="flex flex-col gap-5">
+          <li v-for="item in items" :key="item.id" class="flex items-center gap-5">
+            {{ item.status }}
 
-      <ul v-if="data" class="flex flex-col gap-5">
-        <li v-for="item in data.data" :key="item.id" class="flex items-center gap-5">
-          {{ item.status }}
+            {{ item.nonce }}
+            <button v-if="signNeeded(item)" @click="handleSign(item)">
+              Sign
+            </button>
+            <span v-else class="text-slate-400">
+              Already signed
+            </span>
+            <CommonButton v-if="item.confirmations.length === item.confirmations_required" @click="handleExecute(item)">
+              execute
+            </CommonButton>
 
-          {{ item.nonce }}
-          <button v-if="signNeeded(item)" @click="handleSign(item)">
-            Sign
-          </button>
-          <span v-else class="text-slate-400">
-            Already signed
-          </span>
-          <CommonButton v-if="item.confirmations.length === item.confirmations_required" @click="handleExecute(item)">
-            execute
-          </CommonButton>
+            <span v-if="checkTxIsCancelRequest(item)">
+              This is cancel request
+            </span>
 
-          <span v-if="checkTxIsCancelRequest(item)">
-            This is cancel request
-          </span>
-
-          <CommonButton v-else color="red" @click="rejectMultisigTransaction(item)">
-            Reject
-          </CommonButton>
-        </li>
-      </ul>
+            <CommonButton v-else color="red" @click="rejectMultisigTransaction(item)">
+              Reject
+            </CommonButton>
+          </li>
+        </ul>
+      </div> -->
     </div>
   </div>
 </template>
