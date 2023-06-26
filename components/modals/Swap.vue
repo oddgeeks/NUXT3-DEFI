@@ -66,6 +66,7 @@ const slippages = [
 
 const slippage = useLocalStorage('slippage', '0.3')
 const customSlippage = useLocalStorage('customSlippage', '')
+const inputUSDToggle = useLocalStorage('inputUsdToggle', false)
 
 function defaultSwapDetails() {
   return {
@@ -78,9 +79,9 @@ function defaultSwapDetails() {
 const swapDetails = ref(defaultSwapDetails())
 const [swapped, toggleSwapped] = useToggle()
 const [isBuyAmountDirty, toggleDirty] = useToggle(false)
+
 const refreshing = ref(false)
 
-const isBuyAmountFocused = ref(false)
 const isUsdBuyAmountFocused = ref(false)
 const isSellAmountFocused = ref(false)
 
@@ -125,8 +126,6 @@ const buyTokenBalance = computed(
         t.address == swap.value.buyToken.address && t.chainId == toChainId.value,
     )?.balance || '0.00',
 )
-
-const [inputUSDToggle, inputUSDToggled] = useToggle(false)
 
 function validateMinAmount(value: any) {
   const amount = toBN(value)
@@ -598,27 +597,12 @@ onUnmounted(() => {
           </div>
         </div>
         <div
-          class="flex flex-rows justify-between items-center mt-5 w-full mx-auto rounded-full"
+          class="flex gap-2 justify-between items-center mt-5 w-full mx-auto rounded-full"
         >
           <p class="text-xs py-1 px-5 rounded-full border border-[#1e293b]">
-            Processing on the <ChainLogo class="w-6 h-6 inline" :chain="toChainId" /> {{ networks.find(network => network.chainId === parseInt(toChainId))?.name }} Network
+            <span class="sm:inline hidden"> Processing on the</span> <ChainLogo class="w-6 h-6 inline" :chain="toChainId" /> {{ networks.find(network => network.chainId === parseInt(toChainId))?.name }} Network
           </p>
           <CommonToggle v-model="inputUSDToggle" text="Input USD" />
-          <!-- <CommonSelect
-            v-model="toChainId"
-            value-key="chainId"
-            label-key="name"
-            icon-key="icon"
-            :options="networks"
-            class="w-full rounded-full"
-          >
-            <template #button-prefix>
-              <ChainLogo class="w-6 h-6" :chain="toChainId" />
-            </template>
-            <template #item-prefix="{ value }">
-              <ChainLogo class="w-6 h-6" :chain="value" />
-            </template>
-          </CommonSelect> -->
         </div>
       </div>
     </div>
@@ -630,7 +614,7 @@ onUnmounted(() => {
         <div class="flex">
           <div
             v-if="isLoading && !isSellAmountFocused"
-            class="flex-1"
+            class="flex-1 flex items-center"
           >
             <div
               style="width: 100px; height: 28px"
@@ -642,6 +626,7 @@ onUnmounted(() => {
               v-if="!inputUSDToggle"
               v-model="sellAmount"
               transparent
+              autofocus
               placeholder="0.0"
               name="sell-amount"
               type="numeric"
@@ -654,7 +639,8 @@ onUnmounted(() => {
             />
             <CommonCurrencyInput
               v-else
-              class="flex-1 text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
+              v-focus
+              class="flex-1 text-[26px] w-full placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
               :model-value="toBN(sellAmountInUsd).toNumber()"
               @focus="isSellAmountFocused = true"
               @blur="isSellAmountFocused = false"
@@ -675,7 +661,7 @@ onUnmounted(() => {
           />
           <p
             v-else
-            class="focus:text-white disabled bg-transparent p-0 outline-none border-0 font-medium focus:border-0 focus:ring-0"
+            class="font-medium leading-6"
           >
             {{ !inputUSDToggle ? `${formatUsd(toBN(sellAmountInUsd).toNumber())}` : `${sellAmount ? sellAmount : 0}` }}
           </p>
@@ -732,7 +718,7 @@ onUnmounted(() => {
             />
             <CommonCurrencyInput
               v-else
-              class="flex-1 text-[26px] placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
+              class="flex-1 text-[26px] w-full placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
               :model-value="toBN(buyAmountInUsd).toNumber()"
               @focus="isUsdBuyAmountFocused = true"
               @blur="isUsdBuyAmountFocused = false"
@@ -753,7 +739,7 @@ onUnmounted(() => {
           />
           <p
             v-else
-            class="focus:text-white disabled bg-transparent p-0 outline-none border-0 font-medium focus:border-0 focus:ring-0"
+            class="font-medium leading-6"
           >
             {{ !inputUSDToggle ? `${formatUsd(toBN(buyAmountInUsd).toNumber())}` : `${buyAmount ? buyAmount : 0}` }}
           </p>
