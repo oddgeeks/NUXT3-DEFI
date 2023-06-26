@@ -157,7 +157,7 @@ const { safeAddress, isSafeAddress } = useAvocadoSafe()
             class="table w-full"
             :class="{ 'blur pointer-events-none': !account }"
           >
-            <thead v-if="account">
+            <thead>
               <tr
                 class="text-left text-sm text-gray-400 font-medium border-b border-slate-150 dark:border-slate-800"
               >
@@ -229,10 +229,10 @@ const { safeAddress, isSafeAddress } = useAvocadoSafe()
               <span class="font-semibold inline-flex gap-2.5 text-xs">
                 Send tokens on any supported chain to your Avocado Wallet
               </span>
-              <SupportedChains class="!flex justify-between" />
+              <SupportedChains class="!flex" />
             </div>
           </div>
-          <div v-if="gt(totalEoaBalance, 1)" class="bg-[#4CA0541A] w-2/3 rounded-[30px] px-[16px] py-[10px] flex flex-rows gap-[10px] items-center justify-center">
+          <div v-if="gt(totalEoaBalance || '0', 1)" class="bg-[#4CA0541A] w-2/3 rounded-[30px] px-[16px] py-[10px] flex flex-rows gap-[10px] items-center justify-center">
             <InfoSVG />
             <p class="text-[12px] text-[#4CA054] flex-1">
               You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet (EOA)
@@ -266,7 +266,7 @@ const { safeAddress, isSafeAddress } = useAvocadoSafe()
             </span>
             <SupportedChains class="!flex justify-between" :max-count="5" />
           </div>
-          <div v-if="gt(totalEoaBalance, 1)" class="bg-[#4CA0541A] rounded-[20px] p-[16px] flex flex-col gap-[12px]">
+          <div v-if="gt(totalEoaBalance || '0', 1)" class="bg-[#4CA0541A] rounded-[20px] p-[16px] flex flex-col gap-[12px]">
             <p class="text-[12px] text-[#4CA054] flex-1">
               You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet (EOA)
             </p>
