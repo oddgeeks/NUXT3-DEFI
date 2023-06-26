@@ -21,7 +21,7 @@ export class WalletConnectConnector extends AbstractConnector {
 
   public walletConnectProvider?: EthereumProvider
 
-  constructor({ supportedChainIds, projectId, rpcMap }: { supportedChainIds: number[]; projectId: string; rpcMap: EthereumProviderOptions['rpcMap'] }) {
+  constructor({ supportedChainIds, projectId, rpcMap, methods }: { methods?: string[]; supportedChainIds: number[]; projectId: string; rpcMap: EthereumProviderOptions['rpcMap'] }) {
     super()
 
     const [defaultChain, ...optionalChains] = supportedChainIds
@@ -32,6 +32,7 @@ export class WalletConnectConnector extends AbstractConnector {
       rpcMap,
       projectId,
       showQrModal: true,
+      methods,
     }
 
     this.handleChainChanged = this.handleChainChanged.bind(this)
@@ -61,7 +62,7 @@ export class WalletConnectConnector extends AbstractConnector {
       const walletConnectProviderFactory = await import('@walletconnect/ethereum-provider').then(
         m => m?.default ?? m,
       )
-      this.walletConnectProvider = await walletConnectProviderFactory.init({ ...this.config, methods: ['eth_signTypedData_v4'] })
+      this.walletConnectProvider = await walletConnectProviderFactory.init(this.config)
     }
 
     this.walletConnectProvider.on('chainChanged', this.handleChainChanged)
