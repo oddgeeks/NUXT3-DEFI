@@ -241,12 +241,17 @@ async function fetchSwapDetails() {
 
     swapDetails.value.pending = true
 
+    const name = getNetworkByChainId(toChainId.value).name
+
+    const actualName
+    = name === 'Ethereum' ? 'mainnet' : name.toLocaleLowerCase()
+
     const data: ISwapResponse = await http('/swap',
       {
         baseURL: swapAggregatorURL,
         signal: abortController.value?.signal,
         params: {
-          network: getNetworkByChainId(toChainId.value).name.toLowerCase(),
+          network: actualName,
           buyToken: swap.value.buyToken.address,
           sellToken: swap.value.sellToken.address,
           sellAmount: toWei(sellAmount.value, swap.value.sellToken.decimals),
