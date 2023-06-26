@@ -61,7 +61,7 @@ export class WalletConnectConnector extends AbstractConnector {
       const walletConnectProviderFactory = await import('@walletconnect/ethereum-provider').then(
         m => m?.default ?? m,
       )
-      this.walletConnectProvider = await walletConnectProviderFactory.init(this.config)
+      this.walletConnectProvider = await walletConnectProviderFactory.init({ ...this.config, methods: ['eth_signTypedData_v4'] })
     }
 
     this.walletConnectProvider.on('chainChanged', this.handleChainChanged)
