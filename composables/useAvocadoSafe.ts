@@ -65,6 +65,7 @@ export function useAvocadoSafe() {
     if (isSafeMultisig.value) {
       const txHash = await createProposalOrSignDirecty({
         chainId: transaction.chainId,
+        metadata: options.metadata,
         actions: [
           {
             to: transaction.to,
@@ -115,7 +116,7 @@ export function useAvocadoSafe() {
       throw new Error('Safe not initialized')
 
     if (isSafeMultisig.value) {
-      const txHash = await createProposalOrSignDirecty({ chainId, actions: transactions })
+      const txHash = await createProposalOrSignDirecty({ chainId, actions: transactions, metadata: options.metadata })
 
       if (txHash)
         return txHash
@@ -145,8 +146,8 @@ export function useAvocadoSafe() {
     )
   }
 
-  async function generateMultisigSignatureAndSign({ chainId, actions, nonce }: IGenerateMultisigSignatureParams) {
-    const data = await generateMultisigSignatureMessage({ chainId, actions, nonce })
+  async function generateMultisigSignatureAndSign({ chainId, actions, nonce, metadata }: IGenerateMultisigSignatureParams) {
+    const data = await generateMultisigSignatureMessage({ chainId, actions, nonce, metadata })
     const signature = await signMultisigData({ chainId, data })
 
     return {
@@ -187,7 +188,7 @@ export function useAvocadoSafe() {
     return transactionHash
   }
 
-  async function generateMultisigSignatureMessage({ chainId, actions, nonce }: IGenerateMultisigSignatureParams) {
+  async function generateMultisigSignatureMessage({ chainId, actions, nonce, metadata }: IGenerateMultisigSignatureParams) {
     const underlyingProvider = new ethers.providers.JsonRpcProvider(getRpcURLByChainId(chainId))
 
     actions = actions.map((action) => {
@@ -225,7 +226,7 @@ export function useAvocadoSafe() {
       avoSafeNonce,
       salt: ethers.utils.defaultAbiCoder.encode(['uint256'], [Date.now()]),
       source: verifyingContract,
-      metadata: '0x00',
+      metadata: metadata || '0x00',
     }
 
     const forwardParams = {
@@ -241,8 +242,8 @@ export function useAvocadoSafe() {
     } as any
   }
 
-  async function createProposalOrSignDirecty({ chainId, actions, nonce }: IGenerateMultisigSignatureParams) {
-    const params = await generateMultisigSignatureAndSign({ chainId, actions, nonce })
+  async function createProposalOrSignDirecty({ chainId, actions, nonce, metadata }: IGenerateMultisigSignatureParams) {
+    const params = await generateMultisigSignatureAndSign({ chainId, actions, nonce, metadata })
 
     // generate proposal
     const { data } = await axios.post<IMultisigTransaction>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {

@@ -85,4 +85,5 @@ interface IGenerateMultisigSignatureParams {
   chainId: string | number
   actions: TransactionsAction[]
   nonce?: number
+  metadata?: string
 }
