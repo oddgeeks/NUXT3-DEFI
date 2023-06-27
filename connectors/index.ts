@@ -39,7 +39,7 @@ export const walletconnect = new WalletConnectConnector({
 
     return acc
   }, {} as any),
-  methods: ['eth_signTypedData_v4', 'eth_signTypedData', 'eth_sign'],
+  methods: ['eth_signTypedData_v4', 'eth_signTypedData', 'eth_sign', 'wallet_addEthereumChain', 'wallet_switchEthereumChain'],
 })
 
 export const network = new NetworkConnector({
