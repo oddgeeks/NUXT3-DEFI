@@ -7,13 +7,16 @@ const props = defineProps<{
   transaction: IMultisigTransaction
 }>()
 
-const { signMultisigData, multisigBroadcast, rejectMultisigTransaction } = useAvocadoSafe()
+const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurrentNonce } = useAvocadoSafe()
 const { selectedSafe } = storeToRefs(useAuthorities())
 const { account } = useWeb3()
+const currentNonce = ref<number>()
 
 const formatted = useDateFormat(props.transaction.created_at, 'MM.DD.YYYY, HH:mm:ss')
 const isConfirmationsMatch = computed(() => props.transaction.confirmations.length === props.transaction.confirmations_required)
 const confirmationNeeded = computed(() => props.transaction.confirmations_required - props.transaction.confirmations.length)
+
+const isSignReady = computed(() => props.transaction.nonce === String(currentNonce.value))
 
 const { data: simulationDetails, error: simulationError } = useAsyncData(
   `${props.transaction.id}`,
@@ -66,37 +69,91 @@ async function handleExecute(item: IMultisigTransaction) {
   if (hash)
     showPendingTransactionModal(hash, item.chain_id, 'send')
 }
+
+onMounted(async () => {
+  currentNonce.value = await getCurrentNonce(props.transaction.chain_id)
+})
 </script>
 
 <template>
   <div>
     <div class="flex">
+      {{ currentNonce }}
       <div class="flex-1 border-r dark:border-slate-800 border-slate-150">
-        <div class="p-7.5 border-b dark:border-slate-800 border-slate-150">
-          <div class="flex justify-between">
-            <div class="flex gap-4">
-              <div class="w-14 h-14 rounded-full items-center flex justify-center bg-primary">
-                <SvgoArrowRight class="-rotate-45 w-7 h-7" />
+        <div class="flex flex-col max-h-[710px] overflow-auto scroll-style">
+          <div class="p-7.5 border-b dark:border-slate-800 border-slate-150">
+            <div class="flex justify-between">
+              <div class="flex gap-4">
+                <div class="w-14 h-14 rounded-full items-center flex justify-center bg-primary">
+                  <SvgoArrowRight class="-rotate-45 w-7 h-7" />
+                </div>
+                <div>
+                  <h1 class="text-2xl">
+                    Send
+                  </h1>
+                  <span class="text-sm font-medium text-slate-400 inline-flex items-center gap-2">On <ChainLogo class="w-4 h-4" :chain="transaction.chain_id" /> {{ chainIdToName(transaction.chain_id) }}</span>
+                </div>
               </div>
-              <div>
-                <h1 class="text-2xl">
-                  Send
-                </h1>
-                <span class="text-sm font-medium text-slate-400 inline-flex items-center gap-2">On <ChainLogo class="w-4 h-4" :chain="transaction.chain_id" /> {{ chainIdToName(transaction.chain_id) }}</span>
+              <div class="flex flex-col gap-1.5">
+                <p class="font-medium leading-[30px]">
+                  Created {{ formatTimeAgo(new Date(transaction.created_at)) }}
+                </p>
+                <time class="text-xs text-slate-400 text-right leading-5" :datetime="transaction.created_at">
+                  {{ formatted }}
+                </time>
               </div>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <p class="font-medium leading-[30px]">
-                Created {{ formatTimeAgo(new Date(transaction.created_at)) }}
-              </p>
-              <time class="text-xs text-slate-400 text-right leading-5" :datetime="transaction.created_at">
-                {{ formatted }}
-              </time>
             </div>
           </div>
-        </div>
-        <div class="p-7.5 border-b dark:border-slate-800 border-slate-150">
-          <div>selam</div>
+          <div class="p-7.5 border-b dark:border-slate-800 border-slate-150">
+            <div v-once>
+              <ActionMetadata v-for="metadata in decodeMetadata(transaction.data.params.metadata)" :key="metadata" class="text-xs" :chain_id="transaction.chain_id" :metadata="metadata" />
+            </div>
+          </div>
+          <div class="px-7.5 flex flex-col py-5 border-b dark:border-slate-800 border-slate-150 gap-10">
+            <details v-for="action, i in transaction.data.params.actions" :key="action.data" open class="group">
+              <summary class="text-xs flex items-center justify-between cursor-pointer">
+                Action {{ i + 1 }}
+
+                <SvgoChevronDown
+                  class="w-5 text-slate-400 group-open:rotate-180"
+                />
+              </summary>
+              <div class="flex flex-col gap-2.5 mt-5">
+                <dl class="flex justify-between text-xs">
+                  <dt class="text-slate-400">
+                    Target
+                  </dt>
+                  <dd class="flex items-center gap-2 break-all w-[420px]">
+                    {{ action.target }}
+                  </dd>
+                </dl>
+                <dl class="flex justify-between text-xs">
+                  <dt class="text-slate-400">
+                    Data
+                  </dt>
+                  <dd class="flex items-center gap-2 break-all w-[420px]">
+                    {{ action.data }}
+                  </dd>
+                </dl>
+                <dl class="flex justify-between text-xs">
+                  <dt class="text-slate-400">
+                    Operation
+                  </dt>
+                  <dd class="flex items-center gap-2 break-all w-[420px]">
+                    {{ action.operation }}
+                  </dd>
+                </dl>
+                <dl class="flex justify-between text-xs">
+                  <dt class="text-slate-400">
+                    Value
+                  </dt>
+                  <dd class="flex items-center gap-2 break-all w-[420px]">
+                    {{ action.value }}
+                  </dd>
+                </dl>
+              </div>
+            </details>
+          </div>
         </div>
       </div>
       <div class="sm:w-[340px]">
@@ -162,10 +219,10 @@ async function handleExecute(item: IMultisigTransaction) {
             <CommonButton color="red" size="lg" class="flex-1 justify-center" @click="rejectMultisigTransaction(transaction)">
               Reject
             </CommonButton>
-            <CommonButton v-if="isConfirmationsMatch" size="lg" class="flex-1 justify-center" @click="handleExecute(transaction)">
+            <CommonButton v-if="isConfirmationsMatch" :disabled="!isSignReady" size="lg" class="flex-1 justify-center" @click="handleExecute(transaction)">
               Execute
             </CommonButton>
-            <CommonButton v-if="signNeeded(transaction)" size="lg" class="flex-1 justify-center" @click="handleSign(transaction)">
+            <CommonButton v-if="signNeeded(transaction)" :disabled="!isSignReady" size="lg" class="flex-1 justify-center" @click="handleSign(transaction)">
               Sign
             </CommonButton>
           </div>

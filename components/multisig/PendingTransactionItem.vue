@@ -6,20 +6,28 @@ const props = defineProps<{
 }>()
 
 const isConfirmationsMatch = computed(() => props.item.confirmations.length === props.item.confirmations_required)
+
+const firstActionMetadata = computed<any>(() => {
+  const data = decodeMetadata(props.item.data.params.metadata) as string[]
+
+  return data?.length ? data[0] : ''
+})
+
+const actionType = computed(() => formatTxType(firstActionMetadata.value?.type || ''))
 </script>
 
 <template>
   <li class="w-full">
-    <button class="flex items-center w-full gap-10 text-xs font-medium py-[26px] last:border-b-0 border-b border-slate-150 dark:border-slate-800 px-5" @click="openMultisigTransactionDetails(item)">
+    <button class="flex focus:outline-none items-center w-full gap-10 text-xs font-medium py-[26px] last:border-b-0 border-b border-slate-150 dark:border-slate-800 px-5" @click="openMultisigTransactionDetails(item)">
       <span class="w-10">
         {{ item.nonce }}
       </span>
       <span class="flex items-center gap-2.5">
         <SvgoRefresh class="w-4 h-4 text-primary" />
-        Swap
+        <span>{{ actionType }}</span>
       </span>
       <span class="flex-1">
-        42,022 USDT
+        <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" :key="metadata" compact :chain_id="item.chain_id" :metadata="metadata" />
       </span>
       <span class="whitespace-nowrap">
         {{ formatTimeAgo(new Date(item.created_at)) }}

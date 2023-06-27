@@ -1686,11 +1686,12 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@instadapp/avocado-base@0.0.31":
-  version "0.0.31"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado-base/-/avocado-base-0.0.31.tgz#dc08cab8d6d8310ea726c745a5881d26ab6356ee"
-  integrity sha512-r16fYlu8c0XmQEz07Oa4exEkwGXHQWBAJuw8Hx6KXBdlEveCg/HfOoeBNPaVZREwi6/gXDmFBn3/n3zzsPCcyQ==
+"@instadapp/avocado-base@0.0.36":
+  version "0.0.36"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado-base/-/avocado-base-0.0.36.tgz#ce8efe1bbe8fb910afab7103d9a74ffcde5b0902"
+  integrity sha512-A9W6fiqaUJkEOR7dEAj22kqpDhJCYUktD68xaIAk0ofXtYiJwUvZ9qfUc6WZp/ofS/sQj2abfFAgck4IAzGXFg==
   dependencies:
+    "@vueuse/nuxt" "^10.2.0"
     bignumber.js "^9.1.1"
     ethers "^5.7.2"
 
@@ -3210,10 +3211,25 @@
     "@vueuse/shared" "10.1.2"
     vue-demi ">=0.14.0"
 
+"@vueuse/core@10.2.0":
+  version "10.2.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/core/-/core-10.2.0.tgz#65cf5222bf0178ff5ddec20a113d7ca6c30481e1"
+  integrity sha512-aHBnoCteIS3hFu7ZZkVB93SanVDY6t4TIb7XDLxJT/HQdAZz+2RdIEJ8rj5LUoEJr7Damb5+sJmtpCwGez5ozQ==
+  dependencies:
+    "@types/web-bluetooth" "^0.0.17"
+    "@vueuse/metadata" "10.2.0"
+    "@vueuse/shared" "10.2.0"
+    vue-demi ">=0.14.5"
+
 "@vueuse/metadata@10.1.2":
   version "10.1.2"
   resolved "https://registry.yarnpkg.com/@vueuse/metadata/-/metadata-10.1.2.tgz#d8ffe557b1042efd03a0aa88540a00c25d193ee3"
   integrity sha512-3mc5BqN9aU2SqBeBuWE7ne4OtXHoHKggNgxZR2K+zIW4YLsy6xoZ4/9vErQs6tvoKDX6QAqm3lvsrv0mczAwIQ==
+
+"@vueuse/metadata@10.2.0":
+  version "10.2.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/metadata/-/metadata-10.2.0.tgz#a026425972786b83f5db6588d8252df42e07c247"
+  integrity sha512-IR7Mkq6QSgZ38q/2ZzOt+Zz1OpcEsnwE64WBumDQ+RGKrosFCtUA2zgRrOqDEzPBXrVB+4HhFkwDjQMu0fDBKw==
 
 "@vueuse/nuxt@^10.1.2":
   version "10.1.2"
@@ -3227,12 +3243,31 @@
     nuxt "^3.4.3"
     vue-demi ">=0.14.0"
 
+"@vueuse/nuxt@^10.2.0":
+  version "10.2.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/nuxt/-/nuxt-10.2.0.tgz#bf57c267bba3981a56b453e374b6768381d452fa"
+  integrity sha512-2rtZ5LmARJhUou8AJL1WwNNodinw/pwujVPsred+OuaU6H61t+hK3rQqdS/1Iu8Rw3mFj/dtVKVXOHai0dHMTg==
+  dependencies:
+    "@nuxt/kit" "^3.5.3"
+    "@vueuse/core" "10.2.0"
+    "@vueuse/metadata" "10.2.0"
+    local-pkg "^0.4.3"
+    nuxt "^3.5.3"
+    vue-demi ">=0.14.5"
+
 "@vueuse/shared@10.1.2":
   version "10.1.2"
   resolved "https://registry.yarnpkg.com/@vueuse/shared/-/shared-10.1.2.tgz#31d8733a217a6396eb67706319133bf62cdd8baa"
   integrity sha512-1uoUTPBlgyscK9v6ScGeVYDDzlPSFXBlxuK7SfrDGyUTBiznb3mNceqhwvZHjtDRELZEN79V5uWPTF1VDV8svA==
   dependencies:
     vue-demi ">=0.14.0"
+
+"@vueuse/shared@10.2.0":
+  version "10.2.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/shared/-/shared-10.2.0.tgz#9309b8e1ed660e24643482065ef0e59d223c3f69"
+  integrity sha512-dIeA8+g9Av3H5iF4NXR/sft4V6vys76CpZ6hxwj8eMXybXk2WRl3scSsOVi+kQ9SX38COR7AH7WwY83UcuxbSg==
+  dependencies:
+    vue-demi ">=0.14.5"
 
 "@walletconnect/auth-client@2.1.0":
   version "2.1.0"

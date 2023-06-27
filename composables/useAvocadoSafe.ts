@@ -189,8 +189,6 @@ export function useAvocadoSafe() {
   }
 
   async function generateMultisigSignatureMessage({ chainId, actions, nonce, metadata }: IGenerateMultisigSignatureParams) {
-    const underlyingProvider = new ethers.providers.JsonRpcProvider(getRpcURLByChainId(chainId))
-
     actions = actions.map((action) => {
       return {
         operation: action.operation || '0',
@@ -200,14 +198,9 @@ export function useAvocadoSafe() {
       }
     }) as any
 
-    const forwarderProxyContract = Forwarder__factory.connect(
-      forwarderProxyAddress,
-      underlyingProvider,
-    )
-
     const verifyingContract = selectedSafe.value?.safe_address!
 
-    const currentNonce = (await forwarderProxyContract.avoSafeNonceMultisig(selectedSafe.value?.owner_address!)).toNumber()
+    const currentNonce = await getCurrentNonce(chainId)
 
     const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {
       params: {
@@ -337,6 +330,18 @@ export function useAvocadoSafe() {
     })
   }
 
+  async function getCurrentNonce(chainId: number | string) {
+    const underlyingProvider = new ethers.providers.JsonRpcProvider(getRpcURLByChainId(chainId))
+    const forwarderProxyContract = Forwarder__factory.connect(
+      forwarderProxyAddress,
+      underlyingProvider,
+    )
+
+    const currentNonce = (await forwarderProxyContract.avoSafeNonceMultisig(selectedSafe.value?.owner_address!)).toNumber()
+
+    return currentNonce
+  }
+
   return {
     safe,
     signer,
@@ -358,5 +363,6 @@ export function useAvocadoSafe() {
     multiSigSafeAddress,
     createProposalOrSignDirecty,
     rejectMultisigTransaction,
+    getCurrentNonce,
   }
 }
