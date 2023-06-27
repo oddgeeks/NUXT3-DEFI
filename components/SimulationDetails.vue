@@ -3,12 +3,16 @@ defineProps<{
   details: ISimulation
   chainId: string
   hasError: boolean
+  wrapperClass?: string
+  itemClass?: string
+  titleHidden?: boolean
 }>()
 </script>
 
 <template>
   <div class="flex gap-5 flex-col">
     <h1
+      v-if="!titleHidden"
       class="text-xs text-center sm:text-left"
       :class="[
         {
@@ -20,6 +24,7 @@ defineProps<{
     </h1>
 
     <ul
+      :class="wrapperClass"
       class="grid grid-cols-1 sm:grid-cols-2 -mr-3 gap-x-[10px] gap-y-5 scroll-style max-h-[239px] overflow-y-auto"
     >
       <template
@@ -30,6 +35,7 @@ defineProps<{
           type="approve"
           :chain-id="chainId"
           :payload="item"
+          :class="itemClass"
         />
       </template>
       <template
@@ -40,10 +46,11 @@ defineProps<{
           type="recieve"
           :chain-id="chainId"
           :payload="item"
+          :class="itemClass"
         />
       </template>
       <template v-for="(item, k) in details.balanceChange.sendTokens" :key="k">
-        <SimulationTokenCard type="send" :chain-id="chainId" :payload="item" />
+        <SimulationTokenCard :class="itemClass" type="send" :chain-id="chainId" :payload="item" />
       </template>
     </ul>
   </div>

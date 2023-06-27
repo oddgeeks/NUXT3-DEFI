@@ -29,8 +29,6 @@ const submitDisabled = computed(
   () => submitting.value || pending.value || !!error.value,
 )
 
-const networksSimulationNotSupported = [1313161554]
-
 const peerURL = computed(() => {
   return props.session ? props.session.peerMeta?.url : props.sessionV2?.peer?.metadata?.url
 })

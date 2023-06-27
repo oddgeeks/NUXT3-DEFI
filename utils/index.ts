@@ -276,3 +276,5 @@ export function formatProtocol(protocol: string) {
     ]).get(protocol) || protocol
   )
 }
+
+export const networksSimulationNotSupported = [1313161554]

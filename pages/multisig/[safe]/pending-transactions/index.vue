@@ -32,13 +32,26 @@ const { data } = useAsyncData<IMultisigTransactionResponse>(`${route.params.safe
 
 })
 
+const tabs = computed(() => {
+  return [
+    {
+      value: ['pending'],
+      label: 'Pending',
+    },
+    {
+      value: ['success', 'failed'],
+      label: 'Completed',
+    },
+  ]
+})
+
 const groupedByNetwork = computed<GroupedByNetwork>(() => {
-  if (!data.value)
+  if (!data.value || !data.value.data.length)
     return {}
 
   const collection = collect(data.value.data)
 
-  return collection.groupBy('chain_id')
+  return collection.groupBy('chain_id').all()
 })
 
 async function handleSign(item: IMultisigTransaction) {
@@ -85,40 +98,38 @@ function checkTxIsCancelRequest(item: IMultisigTransaction) {
 
 <template>
   <div>
-    <div>
-      <button class="mr-2" @click="$router.push({ query: { status: 'pending' } })">
-        Pending
-      </button>
-      <button @click="$router.push({ query: { status: ['success', 'failed'] } })">
-        History
-      </button>
-      {{ groupedByNetwork }}
-      <!-- <div v-for="items, chainId in groupedByNetwork " :key="chainId">
-        <ul class="flex flex-col gap-5">
-          <li v-for="item in items" :key="item.id" class="flex items-center gap-5">
-            {{ item.status }}
+    <div class="flex flex-col gap-5">
+      <h1>
+        Transactions
+      </h1>
 
-            {{ item.nonce }}
-            <button v-if="signNeeded(item)" @click="handleSign(item)">
-              Sign
-            </button>
-            <span v-else class="text-slate-400">
-              Already signed
-            </span>
-            <CommonButton v-if="item.confirmations.length === item.confirmations_required" @click="handleExecute(item)">
-              execute
-            </CommonButton>
+      <div class="bg-slate-50 dark:bg-gray-850 rounded-10 p-1.5 flex w-fit">
+        <button
+          v-for="tab in tabs"
+          :key="tab.label"
+          :class="
+            JSON.stringify(tab.value) === JSON.stringify(status) ? 'dark:bg-slate-800 bg-slate-150' : 'text-slate-400'
+          "
+          class="px-4 justify-center flex-1 text-xs rounded-7.5 py-2 laeding-5 flex items-center"
+          @click="$router.push({ query: { status: tab.value } })"
+        >
+          {{ tab.label }}
+        </button>
+      </div>
 
-            <span v-if="checkTxIsCancelRequest(item)">
-              This is cancel request
-            </span>
+      <h2 class="text-xs">
+        Non-Sequential transactions can be executed in any order.
+      </h2>
 
-            <CommonButton v-else color="red" @click="rejectMultisigTransaction(item)">
-              Reject
-            </CommonButton>
-          </li>
+      <div v-for="items, chainId in groupedByNetwork" :key="chainId" class="dark:bg-gray-850 bg-slate-50 rounded-[25px] pt-[14px] overflow-hidden">
+        <h2 class="dark:bg-slate-850 bg-slate-150 py-2.5 flex items-center gap-2.5 px-5 text-xs font-medium leading-5 text-slate-400">
+          <ChainLogo class="w-5 h-5" :chain="chainId" />
+          {{ chainIdToName(chainId) }}
+        </h2>
+        <ul class="flex flex-col">
+          <MultisigPendingTransactionItem v-for="item in items" :key="item.id" :item="item" />
         </ul>
-      </div> -->
+      </div>
     </div>
   </div>
 </template>

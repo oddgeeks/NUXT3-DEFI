@@ -35,6 +35,7 @@ import ManageAuthority from '~/components/modals/ManageAuthority.vue'
 import EstimateAuthority from '~/components/modals/EstimateAuthority.vue'
 import SignAuthorityTransactions from '~/components/modals/SignAuthorityTransactions.vue'
 import ReviewMultisigTransaction from '~/components/modals/Multisig/ReviewTransaction.vue'
+import MultisigTransactionDetail from '~/components/modals/Multisig/TransactionDetails.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -471,6 +472,19 @@ export function openReviewMultisigTransaction(transactionId: string) {
     component: ReviewMultisigTransaction,
     componentProps: {
       transactionId,
+    },
+  })
+}
+
+export function openMultisigTransactionDetails(transaction: IMultisigTransaction) {
+  return openModal({
+    component: MultisigTransactionDetail,
+    componentProps: {
+      transaction,
+    },
+    options: {
+      wrapperClass: '!max-w-[1080px]',
+      contentClass: '!p-0',
     },
   })
 }
