@@ -15,7 +15,7 @@ const { unstableDappNetworks } = useBanner()
 const { safeAddress } = useAvocadoSafe()
 const { networkPreference } = storeToRefs(useSafe())
 
-const listType = ref('group')
+const listType = useLocalStorage('listType', 'group')
 
 useAccountTrack(undefined, () => {
   useEagerConnect()
@@ -80,10 +80,16 @@ function selectType(type: string) {
               </ClientOnly>
             </div>
             <div v-if="account" class="flex gap-[30px]">
-              <div class="flex gap-[16px] items-center">
-                <IndividualIconSVG :class="`${listType === 'individual' ? 'type-icon-selected' : 'type-icon-unselected'} cursor-pointer w-[20px] h-[20px]`" @click="() => selectType('individual')" />
-                <GroupIconSVG :class="`${listType === 'group' ? 'type-icon-selected' : 'type-icon-unselected'} cursor-pointer w-[22px] h-[22px]`" @click="() => selectType('group')" />
-              </div>
+              <ClientOnly v-if="account">
+                <div class="flex gap-[16px] items-center">
+                  <button v-tippy="'Individual'" @click="() => selectType('individual')">
+                    <IndividualIconSVG :class="`${listType === 'individual' ? 'type-icon-selected' : 'type-icon-unselected'} cursor-pointer w-[20px] h-[20px]`" />
+                  </button>
+                  <button v-tippy="'Group'" @click="() => selectType('group')">
+                    <GroupIconSVG :class="`${listType === 'group' ? 'type-icon-selected' : 'type-icon-unselected'} cursor-pointer w-[22px] h-[22px]`" />
+                  </button>
+                </div>
+              </ClientOnly>
               <MultipleNetworkFilter v-model:networks="networkPreference" />
             </div>
           </div>

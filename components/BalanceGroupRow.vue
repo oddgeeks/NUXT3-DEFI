@@ -10,9 +10,12 @@ const collapse = ref(false)
 const sum = computed(() => {
   return props.tokenBalance.reduce((sum, balance) => sum + toBN(balance.balance!).toNumber(), 0)
 })
+
 const sumInUsd = computed(() => {
   return props.tokenBalance.reduce((sum, balance) => sum + toBN(balance.balanceInUSD!).toNumber(), 0)
 })
+
+const balances = computed(() => (collapse ? [props.tokenBalance[0], ...props.tokenBalance] : [props.tokenBalance[0]]))
 
 function onToggle() {
   collapse.value = !collapse.value
@@ -21,7 +24,7 @@ function onToggle() {
 
 <template>
   <BalanceRow
-    v-for="(token, i) of (collapse ? [tokenBalance[0], ...tokenBalance] : [tokenBalance[0]])"
+    v-for="(token, i) of balances"
     :key="`${token.chainId} - ${token.symbol}`"
     :summary="i === 0"
     :hide="i !== 0"

@@ -226,5 +226,5 @@ input[type="search" i]::-webkit-search-cancel-button {
 }
 
 .type-icon-selected path {
-  @apply fill-white stroke-white;
+  @apply fill-black stroke-black dark:fill-white dark:stroke-white;
 }
