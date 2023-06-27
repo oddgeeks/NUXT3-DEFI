@@ -7,6 +7,7 @@ import type { IBalance } from '~~/stores/safe'
 
 const props = defineProps<{
   hideZeroBalances: boolean
+  listType: string
 }>()
 
 const { balances } = storeToRefs(useSafe())
@@ -198,11 +199,22 @@ const { safeAddress, isSafeAddress } = useAvocadoSafe()
               </template>
 
               <template v-else>
-                <BalanceGroupRow
-                  v-for="(tokenBalance, symbol) in groupedBalances"
-                  :key="symbol"
-                  :token-balance="tokenBalance"
-                />
+                <template v-if="listType === 'group'">
+                  <BalanceGroupRow
+                    v-for="(tokenBalance, symbol) in groupedBalances"
+                    :key="symbol"
+                    :token-balance="tokenBalance"
+                  />
+                </template>
+                <template v-else>
+                  <BalanceRow
+                    v-for="(tokenBalance, i) in searchQuery.length > 0 ? filteredBalances : sortedBalances"
+                    :key="i"
+                    :token-balance="tokenBalance"
+                    :summary="false"
+                    :hide="false"
+                  />
+                </template>
               </template>
             </tbody>
           </table>
