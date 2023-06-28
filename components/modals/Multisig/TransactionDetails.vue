@@ -7,16 +7,28 @@ const props = defineProps<{
   transaction: IMultisigTransaction
 }>()
 
+const emit = defineEmits(['destroy'])
+
 const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurrentNonce } = useAvocadoSafe()
 const { selectedSafe } = storeToRefs(useAuthorities())
 const { account } = useWeb3()
 const currentNonce = ref<number>()
+
+const pending = ref({
+  reject: false,
+  execute: false,
+  sign: false,
+})
 
 const formatted = useDateFormat(props.transaction.created_at, 'MM.DD.YYYY, HH:mm:ss')
 const isConfirmationsMatch = computed(() => props.transaction.confirmations.length === props.transaction.confirmations_required)
 const confirmationNeeded = computed(() => props.transaction.confirmations_required - props.transaction.confirmations.length)
 
 const isSignReady = computed(() => props.transaction.nonce === String(currentNonce.value))
+
+const nonceErrorMessage = computed(() => {
+  return !isSignReady.value ? `Please execute transaction ${currentNonce.value} first.` : ''
+})
 
 const { data: simulationDetails, error: simulationError } = useAsyncData(
   `${props.transaction.id}`,
@@ -44,30 +56,54 @@ function signNeeded(item: IMultisigTransaction) {
 }
 
 async function handleSign(item: IMultisigTransaction) {
-  const signature = await signMultisigData({ chainId: item.chain_id, data: item.data })
+  try {
+    pending.value.sign = true
+    const signature = await signMultisigData({ chainId: item.chain_id, data: item.data })
 
-  const { data } = await axios.post<IMultisigTransaction>(`/safes/${selectedSafe.value?.safe_address}/transactions/${item.id}/confirmations`, {
-    address: account.value,
-    signature,
-  }, {
-    baseURL: multisigURL,
-  })
+    const { data } = await axios.post<IMultisigTransaction>(`/safes/${selectedSafe.value?.safe_address}/transactions/${item.id}/confirmations`, {
+      address: account.value,
+      signature,
+    }, {
+      baseURL: multisigURL,
+    })
 
-  if (data.confirmations.length === data.confirmations_required)
-    handleExecute(data)
+    if (data.confirmations.length === data.confirmations_required)
+      handleExecute(data)
+  }
+  finally {
+    pending.value.sign = false
+  }
 }
 
 async function handleExecute(item: IMultisigTransaction) {
-  const hash = await multisigBroadcast({
-    owner: selectedSafe.value?.owner_address!,
-    confirmations: item.confirmations,
-    message: item.data,
-    safe: selectedSafe.value?.safe_address!,
-    targetChainId: item.chain_id,
-  })
+  try {
+    pending.value.execute = true
+    const hash = await multisigBroadcast({
+      owner: selectedSafe.value?.owner_address!,
+      confirmations: item.confirmations,
+      message: item.data,
+      safe: selectedSafe.value?.safe_address!,
+      targetChainId: item.chain_id,
+    })
 
-  if (hash)
-    showPendingTransactionModal(hash, item.chain_id, 'send')
+    if (hash) {
+      emit('destroy')
+      showPendingTransactionModal(hash, item.chain_id, 'send')
+    }
+  }
+  finally {
+    pending.value.execute = false
+  }
+}
+
+async function handleReject(transaction: IMultisigTransaction) {
+  try {
+    pending.value.reject = true
+    await rejectMultisigTransaction(transaction)
+  }
+  finally {
+    pending.value.reject = false
+  }
 }
 
 onMounted(async () => {
@@ -78,7 +114,6 @@ onMounted(async () => {
 <template>
   <div>
     <div class="flex">
-      {{ currentNonce }}
       <div class="flex-1 border-r dark:border-slate-800 border-slate-150">
         <div class="flex flex-col max-h-[710px] overflow-auto scroll-style">
           <div class="p-7.5 border-b dark:border-slate-800 border-slate-150">
@@ -215,16 +250,20 @@ onMounted(async () => {
               </p>
             </div>
           </details>
-          <div class="flex gap-2.5 items-center">
-            <CommonButton color="red" size="lg" class="flex-1 justify-center" @click="rejectMultisigTransaction(transaction)">
+          <div class="grid grid-cols-2 gap-2.5 items-center">
+            <CommonButton :loading="pending.reject" color="red" size="lg" class="justify-center" @click="handleReject(transaction)">
               Reject
             </CommonButton>
-            <CommonButton v-if="isConfirmationsMatch" :disabled="!isSignReady" size="lg" class="flex-1 justify-center" @click="handleExecute(transaction)">
-              Execute
-            </CommonButton>
-            <CommonButton v-if="signNeeded(transaction)" :disabled="!isSignReady" size="lg" class="flex-1 justify-center" @click="handleSign(transaction)">
-              Sign
-            </CommonButton>
+            <div v-if="isConfirmationsMatch" v-tippy="nonceErrorMessage">
+              <CommonButton :disabled="!isSignReady || pending.execute" :loading="pending.execute" size="lg" class="w-full justify-center" @click="handleExecute(transaction)">
+                Execute
+              </CommonButton>
+            </div>
+            <div v-if="signNeeded(transaction)" v-tippy="nonceErrorMessage">
+              <CommonButton :disabled="!isSignReady || pending.sign" :loading="pending.sign" size="lg" class="w-full justify-center" @click="handleSign(transaction)">
+                Sign
+              </CommonButton>
+            </div>
           </div>
         </div>
       </div>
