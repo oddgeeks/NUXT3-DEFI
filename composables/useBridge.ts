@@ -118,13 +118,13 @@ export function useBridge(fromToken: Ref<IBalance>) {
     ),
   )
 
-  const recivedValueInUsd = computed(() =>
-    !txRoute?.value ? 0 : max(txRoute?.value.outputValueInUsd, 0),
+  const recivedValueInUsd = computed(() => {
+    return toBN(recievedAmount.value).times(fromToken.value?.price || '0')
+  },
   )
 
   const recievedAmount = computed(() =>
-    toBN(recivedValueInUsd.value)
-      .div(fromToken.value.price ?? 1)
+    fromWei(txRoute?.value?.toAmount || '0', fromToken.value.decimals)
       .toFixed(),
   )
 
@@ -204,6 +204,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
             recipient: safeAddress.value,
             singleTxOnly: true,
             bridgeWithGas: false,
+            bridgeWithInsurance: true,
             defaultSwapSlippage: 1,
             sort: 'output',
             isContractCall: true,

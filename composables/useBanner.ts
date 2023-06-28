@@ -12,9 +12,7 @@ export function useBanner() {
   const { trackingAccount } = useAccountTrack()
   const isHideWelcomeBanner = useLocalStorage('hide-welcome-banner', false)
   const isHideRabbyBanner = useLocalStorage('hide-rabby-banner', false)
-  const isOnboardHidden = computed(() =>
-    useStatefulCookie(`hide-onboard-${account.value}`),
-  )
+  const isOnboardHidden = useLocalStorage('hide-onboard', false)
 
   const allNetworkVersions = useNuxtData('allNetworkVersions')
 
@@ -56,7 +54,7 @@ export function useBanner() {
   const showOnboardBanner = computed(() => {
     if (!account.value)
       return false
-    if (isOnboardHidden.value.value)
+    if (isOnboardHidden.value)
       return false
     return true
   })
@@ -109,7 +107,7 @@ export function useBanner() {
     isHideRabbyBanner,
     showTrackingBanner: computed(() => !!trackingAccount.value),
     toggleWelcomeBanner: (val: boolean) => (isHideWelcomeBanner.value = !val),
-    hideOnboardBanner: () => (isOnboardHidden.value.value = true),
+    hideOnboardBanner: () => (isOnboardHidden.value = true),
     hideRabbyBanner: () => (isHideRabbyBanner.value = true),
     hideVersionUpdateBanner: () => (isVersionUpdateBannerHidden.value = true),
   }
