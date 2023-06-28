@@ -6,7 +6,6 @@ import SVGWalletConnect from '~/assets/images/wallet/wallet-connect-lite.svg?com
 import URLWalletConnect from '~/assets/images/wallet/wallet-connect.svg?url'
 
 const { safeAddress } = useAvocadoSafe()
-const wcStore = useWalletConnect()
 const wcStoreV2 = useWalletConnectV2()
 
 const containerRef = ref<any>(null)
@@ -16,7 +15,7 @@ const { x, arrivedState } = useScroll(containerRef, {
   behavior: 'smooth',
 })
 
-const isAnySessionAvailable = computed(() => wcStore.sessions.length > 0 || wcStoreV2.sessions.length > 0)
+const isAnySessionAvailable = computed(() => wcStoreV2.sessions.length > 0)
 
 async function setScrollAvaibility() {
   if (!containerRef.value)
@@ -25,34 +24,6 @@ async function setScrollAvaibility() {
   hasScroll.value
     = containerRef.value.scrollWidth > containerRef.value.clientWidth
   x.value += 1
-}
-
-async function handleDisconnectWallet(session: any) {
-  const { success } = await openDialogModal({
-    title: 'Are you sure you want to disconnect?',
-    type: 'question',
-    headerIconUrl: getSessionIconURL(session),
-    isButtonVisible: true,
-    isCancelButtonVisible: true,
-    buttonText: 'Disconnect',
-    cancelButtonText: 'Cancel',
-    cancelButtonProps: {
-      color: 'white',
-    },
-    buttonProps: {
-      color: 'red',
-    },
-  })
-
-  if (success)
-    wcStore.disconnect(session)
-}
-
-function getSessionIconURL(session: any) {
-  if (session.peerMeta.icons && session.peerMeta.icons.length)
-    return session.peerMeta.icons[0]
-
-  return null
 }
 
 async function disconnectAllConnections() {
@@ -72,14 +43,12 @@ async function disconnectAllConnections() {
     },
   })
 
-  if (success) {
-    wcStore.disconnectAll()
+  if (success)
     wcStoreV2.disconnectAll()
-  }
 }
 
 watch(
-  [wcStore, containerRef],
+  [wcStoreV2, containerRef],
   async () => {
     if (containerRef.value) {
       await nextTick()
@@ -129,10 +98,6 @@ watch(
         ref="containerRef"
         class="flex items-center relative gap-[15px] scroll-hide overflow-x-auto"
       >
-        <template v-for="session in wcStore.sessions">
-          <WCSessionCard v-if="session.peerMeta" :key="session.peerMeta.url + session.chainId" :session="session" />
-        </template>
-
         <template v-for="session in wcStoreV2.sessions">
           <WCSessionCardV2 v-if="session.peer.metadata" :key="session.peer.metadata.url" :session="session" />
         </template>

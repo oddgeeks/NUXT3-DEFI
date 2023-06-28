@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import type WalletConnect from '@walletconnect/client'
 import type { SessionTypes } from '@walletconnect/types'
 import { storeToRefs } from 'pinia'
 import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg?component'
@@ -10,7 +9,6 @@ import SVGClockCircle from '~/assets/images/icons/clock-circle.svg?component'
 const props = defineProps<{
   payload: any
   chainId: string
-  session?: WalletConnect
   sessionV2?: SessionTypes.Struct
   metadata: string
   isSign?: boolean
@@ -32,7 +30,7 @@ const submitDisabled = computed(
 const networksSimulationNotSupported = [1313161554]
 
 const peerURL = computed(() => {
-  return props.session ? props.session.peerMeta?.url : props.sessionV2?.peer?.metadata?.url
+  return props.sessionV2?.peer?.metadata?.url
 })
 
 onMounted(async () => {
@@ -48,16 +46,7 @@ onBeforeUnmount(() => {
 })
 
 function rejectRequest(message: string) {
-  if (props.session) {
-    props.session.rejectRequest({
-      id: props.payload.id,
-      error: {
-        code: -32603,
-        message,
-      },
-    })
-  }
-  else if (props.sessionV2 && web3WalletV2.value) {
+  if (props.sessionV2 && web3WalletV2.value) {
     web3WalletV2.value.respondSessionRequest({
       topic: props.sessionV2.topic,
       response: {
@@ -65,7 +54,7 @@ function rejectRequest(message: string) {
         jsonrpc: '2.0',
         error: {
           code: 5000,
-          message: 'User rejected.',
+          message: message || 'User rejected.',
         },
       },
     })
@@ -117,15 +106,7 @@ async function handleSubmit() {
       return
     }
 
-    console.log(props.session)
-
-    if (props.session) {
-      props.session.approveRequest({
-        id: props.payload.id,
-        result: transactionHash,
-      })
-    }
-    else if (props.sessionV2 && web3WalletV2.value) {
+    if (props.sessionV2 && web3WalletV2.value) {
       web3WalletV2.value.respondSessionRequest({
         topic: props.sessionV2.topic,
         response: {
