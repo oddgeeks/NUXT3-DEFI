@@ -31,6 +31,7 @@ import PendingCrossTransaction from '~/components/modals/PendingCrossTransaction
 import DefiPositionDetails from '~/components/modals/DefiPositionDetails.vue'
 import QrCode from '~/components/modals/QrCode.vue'
 import AddAuthority from '~/components/modals/AddAuthority.vue'
+import AddSigner from '~/components/modals/Multisig/AddSigner.vue'
 import ManageAuthority from '~/components/modals/ManageAuthority.vue'
 import EstimateAuthority from '~/components/modals/EstimateAuthority.vue'
 import SignAuthorityTransactions from '~/components/modals/SignAuthorityTransactions.vue'
@@ -431,6 +432,11 @@ export function openAddAuthorityModal() {
   })
 }
 
+export function openAddSignerModal() {
+  return openModal({
+    component: AddSigner,
+  })
+}
 export function openManageAuthorityModal(authority: IAuthority, chainIds?: number[], isNewAuthority = false) {
   return openModal({
     component: ManageAuthority,

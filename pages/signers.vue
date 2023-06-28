@@ -50,6 +50,14 @@ const { account } = useWeb3()
           </span>
         </div>
       </div>
+      <div class="flex py-6.5 px-7.5 border-t-1 border-slate-150 dark:border-slate-800">
+        <button class="flex items-center text-primary gap-3" @click="openAddSignerModal()">
+          <div class="bg-primary w-5 h-5 rounded-full flex">
+            <SvgoPlus class="text-white m-auto w-2 h-2" />
+          </div>
+          Add New Signer
+        </button>
+      </div>
     </div>
   </div>
 </template>
