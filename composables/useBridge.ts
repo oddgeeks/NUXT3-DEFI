@@ -124,7 +124,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
   )
 
   const recievedAmount = computed(() =>
-    fromWei(txRoute?.value?.toAmount || '0', fromToken.value.decimals)
+    fromWei(txRoute?.value?.toAmount || '0', bridgeToToken?.value?.decimals)
       .toFixed(),
   )
 

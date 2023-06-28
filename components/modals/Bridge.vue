@@ -383,7 +383,13 @@ const onSubmit = form.handleSubmit(async () => {
               class="flex justify-between items-start sm:items-center whitespace-nowrap"
             >
               <span class="md:text-lg font-semibold !leading-5">You receive</span>
+              <div
+                v-if="routes.pending.value"
+                style="width: 140px; height: 20px"
+                class="rounded-lg loading-box"
+              />
               <span
+                v-else
                 class="sm:text-2xl text-sm font-semibold text-right !leading-5 uppercase inline-flex flex-wrap gap-2 sm:gap-2.5 justify-end"
               >
                 <span>{{ formatDecimal(recievedAmount) }}
