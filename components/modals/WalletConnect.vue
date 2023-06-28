@@ -12,7 +12,6 @@ import 'vue-lite-youtube-embed/style.css'
 
 const emit = defineEmits(['destroy'])
 
-const wcStore = useWalletConnect()
 const wcStoreV2 = useWalletConnectV2()
 
 const isTutorialWatched = useLocalStorage('wallet-c-tutorial-watched', false)
@@ -36,7 +35,7 @@ const { handleSubmit, errors, meta } = useForm({
       .required()
       .test('uri', 'Incorrect URI', (value: any) => {
         try {
-          const version = wcStore.getConnectionVersion(value)
+          const version = wcStoreV2.getConnectionVersion(value)
           if (version === 1)
             return true
 
@@ -65,14 +64,9 @@ const prepareAndConnect = handleSubmit(async () => {
     return
   try {
     toggle(true)
-    const version = wcStore.getConnectionVersion(uri.value)
+    const version = wcStoreV2.getConnectionVersion(uri.value)
     if (version === 1) {
-      connection.value = await wcStore.prepareConnection(uri.value)
-      if (!connection.value.chainId) {
-        isExpertMode.value = true
-        connection.value.chainId = 1
-      }
-      connectionChainId.value = connection.value.chainId
+      return
     }
     else {
       const { approvedNamespaces, sessionProposal } = await wcStoreV2.prepareConnectV2(uri.value)
@@ -121,15 +115,6 @@ async function connect() {
       )
       const metadata = proposal.value.params.proposer.metadata
       content = contentTemplate(metadata.url, metadata.name)
-    }
-
-    else if (connection.value) {
-      await wcStore.connect(
-        connection.value.connector,
-        connection.value.storageId,
-        connectionChainId.value,
-      )
-      content = contentTemplate(connection.value.peerMeta.url, connection.value.peerMeta.name)
     }
 
     emit('destroy')

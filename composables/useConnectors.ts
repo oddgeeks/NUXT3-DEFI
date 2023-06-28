@@ -4,8 +4,8 @@ const providers = {
   // network,
   // torus,
   injected,
-  walletconnect,
   walletlink,
+  walletconnect,
 }
 
 export function useConnectors() {

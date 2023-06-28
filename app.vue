@@ -1,8 +1,4 @@
 <script setup lang="ts">
-onMounted(() => {
-  // @ts-expect-error
-  window.wc = useWalletConnect()
-})
 useTokens()
 useSafe()
 
