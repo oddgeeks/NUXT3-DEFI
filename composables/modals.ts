@@ -30,11 +30,13 @@ import DefiPositionDetails from '~/components/modals/DefiPositionDetails.vue'
 import QrCode from '~/components/modals/QrCode.vue'
 import AddAuthority from '~/components/modals/AddAuthority.vue'
 import AddSigner from '~/components/modals/Multisig/AddSigner.vue'
+import ReviewSigner from '~/components/modals/Multisig/ReviewSigner.vue'
 import ManageAuthority from '~/components/modals/ManageAuthority.vue'
 import EstimateAuthority from '~/components/modals/EstimateAuthority.vue'
 import SignAuthorityTransactions from '~/components/modals/SignAuthorityTransactions.vue'
 import ReviewMultisigTransaction from '~/components/modals/Multisig/ReviewTransaction.vue'
 import MultisigTransactionDetail from '~/components/modals/Multisig/TransactionDetails.vue'
+import SignSigner from '~/components/modals/Multisig/SignSigner.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -62,7 +64,7 @@ interface IWcTransactionModal {
 
 export function showPendingTransactionModal(hash: string,
   chainId: number | string,
-  type: ITxType,
+  type?: ITxType,
   async = false) {
   return openModal({
     component: PendingTransaction,
@@ -350,7 +352,6 @@ export function openNFTDetailsModal(NFTData: NFTData) {
     componentProps: {
       asset: NFTData,
     },
-
   })
 }
 
@@ -419,11 +420,48 @@ export function openAddAuthorityModal() {
   })
 }
 
-export function openAddSignerModal() {
+export function openAddSignerModal(addresses?: string[], treshold?: number) {
   return openModal({
     component: AddSigner,
+    componentProps: {
+      addresses,
+      defaultTreshold: treshold,
+    },
+    options: {
+      wrapperClass: 'max-w-[560px]',
+      contentClass: '!p-0',
+    },
   })
 }
+
+export function openReviewSignerModal(addresses: string[], treshold: number) {
+  return openModal({
+    component: ReviewSigner,
+    componentProps: {
+      addresses,
+      defaultTreshold: treshold,
+    },
+    options: {
+      wrapperClass: 'max-w-[560px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export function openSignSignerModal(addresses: string[], treshold: number) {
+  return openModal({
+    component: SignSigner,
+    componentProps: {
+      addresses,
+      defaultTreshold: treshold,
+    },
+    options: {
+      wrapperClass: 'max-w-[560px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
 export function openManageAuthorityModal(authority: IAuthority, chainIds?: number[], isNewAuthority = false) {
   return openModal({
     component: ManageAuthority,

@@ -5,6 +5,7 @@ import axios from 'axios'
 
 import { isUndefined } from '@walletconnect/utils'
 import {
+  AvoMultisigImplementation__factory,
   Forwarder__factory,
 } from '@/contracts'
 
@@ -147,6 +148,7 @@ export function useAvocadoSafe() {
   }
 
   async function generateMultisigSignatureAndSign({ chainId, actions, nonce, metadata }: IGenerateMultisigSignatureParams) {
+    debugger
     const data = await generateMultisigSignatureMessage({ chainId, actions, nonce, metadata })
     const signature = await signMultisigData({ chainId, data })
 
@@ -192,7 +194,7 @@ export function useAvocadoSafe() {
     actions = actions.map((action) => {
       return {
         operation: action.operation || '0',
-        target: action.to,
+        target: action?.target || action.to,
         data: action.data || '0x',
         value: action.value || '0',
       }
@@ -223,7 +225,7 @@ export function useAvocadoSafe() {
     }
 
     const forwardParams = {
-      gas: '80000',
+      gas: '500000',
       gasPrice: '0',
       validUntil: '0',
       validAfter: '0',
@@ -342,6 +344,27 @@ export function useAvocadoSafe() {
     return currentNonce
   }
 
+  async function addSignersWithThreshold(addresses: string[], threshold: string, chainId: number | string) {
+    const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
+
+    const actions = [
+      {
+        target: selectedSafe.value?.safe_address,
+        data: avoMultsigInterface.encodeFunctionData('addSigners', [addresses]),
+        value: '0',
+        operation: '0',
+      },
+      {
+        target: selectedSafe.value?.safe_address,
+        data: avoMultsigInterface.encodeFunctionData('setRequiredSigners', [threshold]),
+        value: '0',
+        operation: '0',
+      },
+    ]
+
+    return createProposalOrSignDirecty({ chainId, actions } as any)
+  }
+
   return {
     safe,
     signer,
@@ -364,5 +387,6 @@ export function useAvocadoSafe() {
     createProposalOrSignDirecty,
     rejectMultisigTransaction,
     getCurrentNonce,
+    addSignersWithThreshold,
   }
 }

@@ -1,130 +1,172 @@
 <script lang="ts" setup>
 import * as yup from 'yup'
 import { isAddress } from '@ethersproject/address'
-import { useField, useForm } from 'vee-validate'
+import { useFieldArray, useForm } from 'vee-validate'
 import { storeToRefs } from 'pinia'
 
-// import { AvoSafeImplementation__factory } from '~~/contracts'
-import AvatarSVG from '~/assets/images/icons/avatar.svg?component'
-import ContactSVG from '~/assets/images/icons/contact.svg?component'
+const props = defineProps<{
+  addresses?: string[]
+  defaultTreshold?: number
+}>()
 
 const emit = defineEmits(['destroy'])
 
-const { authorities } = storeToRefs(useAuthorities())
+const { signers } = storeToRefs(useAuthorities())
 const { account } = useWeb3()
 
 const {
   handleSubmit,
-  isSubmitting,
   errors,
   meta,
 } = useForm({
   validationSchema: yup.object({
-    address: yup
-      .string()
-      .required('')
-      .test('is-valid-address', 'Incorrect address', (value) => {
-        return value ? isAddress(value || '') : true
-      })
-      .test(
-        'duplicate-address',
-        'Signer already added',
-        (value) => {
-          if (!isAddress(value || ''))
-            return true
-          return !authorities.value.some(
-            authority =>
-              authority.address?.toLowerCase() === value?.toLowerCase(),
-          )
-        },
-      )
-      .test(
-        'cannot-add-self',
-        'Cannot add self as signer',
-        (value) => {
-          if (!isAddress(value || ''))
-            return true
-          return account.value?.toLowerCase() !== value?.toLowerCase()
-        },
-      ),
+    addresses: yup
+      .array(yup.string()
+        .required('')
+        .test('is-valid-address', 'Incorrect address', (value) => {
+          return value ? isAddress(value || '') : true
+        })
+        .test(
+          'duplicate-address',
+          'Signer already added',
+          (value) => {
+            if (!isAddress(value || ''))
+              return true
+
+            const fieldCount = fields.value.filter(field => field.value.toLowerCase() === value?.toLowerCase())
+
+            if (fieldCount?.length > 1)
+              return false
+
+            return !signers.value.some(
+              signer =>
+                signer.address?.toLowerCase() === value?.toLowerCase(),
+            ) && fields.value.some(field => field.value.toLowerCase() === value?.toLowerCase())
+          },
+        )
+        .test(
+          'cannot-add-self',
+          'Cannot add self as signer',
+          (value) => {
+            if (!isAddress(value || ''))
+              return true
+            return account.value?.toLowerCase() !== value?.toLowerCase()
+          },
+        )),
+
   }),
+  initialValues: {
+    addresses: props.addresses || [''],
+  },
 })
 
-const {
-  value: address,
-  meta: addressMeta,
-  setValue,
-} = useField<string>('address')
+const { fields, push, update, remove } = useFieldArray<string>('addresses')
+const treshold = ref(props.defaultTreshold || 1)
 
 const disabled = computed(() => !meta.value.valid)
 
+function getErrorMessage(errors: any, key: number | string) {
+  const errorKey = `addresses[${key}]`
+  return errors ? errors[errorKey] : null
+}
+
 const onSubmit = handleSubmit(async () => {
-  openManageAuthorityModal({
-    address: address.value,
-    chainIds: [],
-    type: 'personal',
-  }, undefined, true)
+  const addresses = fields.value.map(field => field.value)
+
+  openReviewSignerModal(addresses, treshold.value)
   emit('destroy')
 })
 
-async function handleSelectContact() {
+async function handleSelectContact(key: number) {
   const result = await openSelectContactModal('0')
 
   if (result.success) {
     const _contact = result.payload as IContact
 
-    setValue(_contact.address)
+    update(key, _contact.address)
   }
 }
 </script>
 
 <template>
   <form @submit="onSubmit">
-    <div class="flex items-center justify-center gap-7.5 flex-col">
-      <AvatarSVG class="text-primary w-10 h-10" />
-      <h1 class="text-lg text-center leading-5 mb-7.5">
-        Add New Signer
-      </h1>
+    <div class="flex gap-[14px] p-7.5">
+      <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
+        1
+      </div>
+      <div class="flex flex-col gap-1">
+        <h1 class="text-lg leading-10">
+          Add New Signers
+        </h1>
+        <h2 class="text-xs leading-5 text-slate-400 font-medium">
+          Signers can approve/reject transaction. Signers are automatically saved as contacts.
+        </h2>
+      </div>
     </div>
-    <div class="flex flex-col gap-5 mb-7.5">
-      <CommonInput
-        v-model="address"
-        autofocus
-        :error-message="addressMeta.dirty ? errors.address : ''"
-        name="address"
-        placeholder="Enter Address"
+    <hr class="border-slate-150 dark:border-slate-800">
+    <div class="p-7.5 flex flex-col gap-5">
+      <div
+        v-for="field, key in fields"
+        :key="key"
+        class="flex flex-col gap-2"
       >
-        <template #suffix>
+        <div class="flex justify-between items-center w-full">
+          <span class="text-xs font-medium leading-5 text-slate-400">
+            Owner address
+          </span>
           <button
-            v-tippy="{
-              content: 'Select contact',
-            }"
-            type="button"
-            class="ml-3"
-            @click="handleSelectContact()"
+            v-if="key !== 0" class="h-5 w-5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
+            @click="remove(key as number)"
           >
-            <ContactSVG />
+            <SvgoX class="w-3 h-3" />
           </button>
-        </template>
-      </CommonInput>
+        </div>
+        <CommonInput
+          v-model="field.value"
+          autofocus
+          name="addresses"
+          placeholder="Enter Address"
+          :error-message="getErrorMessage(errors, key)"
+        >
+          <template #suffix>
+            <button
+              v-tippy="{
+                content: 'Select contact',
+              }"
+              type="button"
+              class="ml-3"
+              @click="handleSelectContact(field.key as number)"
+            >
+              <SvgoContact />
+            </button>
+          </template>
+        </CommonInput>
+      </div>
+      <button class="flex items-center text-primary gap-3 text-xs" @click="push('')">
+        <div class="bg-primary w-4 h-4 rounded-full flex">
+          <SvgoPlus class="text-white m-auto w-2 h-2" />
+        </div>
+        Add New Authority
+      </button>
     </div>
-    <div class="flex gap-4">
-      <CommonButton
-        color="white"
-        size="lg"
-        class="w-full items-center justify-center"
-        @click="$emit('destroy')"
-      >
-        Cancel
+    <hr class="border-slate-150 dark:border-slate-800">
+    <div class="p-7.5 flex flex-col gap-2">
+      <h2>Treshold</h2>
+      <h3 class="text-sm text-slate-400 mb-5">
+        Any transaction requires the confirmation of
+      </h3>
+      <div class="flex text-sm items-center gap-5">
+        <CommonSelect v-model="treshold" class="w-fit" :options="Array.from({ length: fields.length + 1 }, (_, i) => i + 1)" />
+        Out of {{ fields.length }} signer(s)
+      </div>
+    </div>
+    <hr class="border-slate-150 dark:border-slate-800">
+    <div class="p-7.5 grid grid-cols-2 gap-4">
+      <CommonButton class="justify-center" size="lg" color="white">
+        Back
       </CommonButton>
-      <CommonButton
-        :loading="isSubmitting"
-        type="submit"
-        size="lg"
-        :disabled="disabled"
-        class="w-full items-center justify-center"
-      >
-        Continue
+      <CommonButton type="submit" :disabled="disabled" class="justify-center" size="lg">
+        Next
       </CommonButton>
     </div>
   </form>
