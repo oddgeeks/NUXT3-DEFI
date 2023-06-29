@@ -86,4 +86,5 @@ interface IGenerateMultisigSignatureParams {
   actions: TransactionsAction[]
   nonce?: number
   metadata?: string
+  note?: string
 }

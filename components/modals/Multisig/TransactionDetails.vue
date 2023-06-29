@@ -24,7 +24,7 @@ const formatted = useDateFormat(props.transaction.created_at, 'MM.DD.YYYY, HH:mm
 const isConfirmationsMatch = computed(() => props.transaction.confirmations.length === props.transaction.confirmations_required)
 const confirmationNeeded = computed(() => props.transaction.confirmations_required - props.transaction.confirmations.length)
 
-const isSignReady = computed(() => props.transaction.nonce === String(currentNonce.value))
+const isSignReady = computed(() => props.transaction.nonce === String(currentNonce.value) || props.transaction.nonce === '-1')
 
 const nonceErrorMessage = computed(() => {
   return !isSignReady.value ? `Please execute transaction ${currentNonce.value} first.` : ''

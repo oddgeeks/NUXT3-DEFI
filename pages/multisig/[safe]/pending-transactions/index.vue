@@ -1,46 +1,85 @@
 <script setup lang="ts">
 import axios from 'axios'
 import collect from 'collect.js'
-import { storeToRefs } from 'pinia'
 
 const route = useRoute()
 
 type GroupedByNetwork = Record<string, IMultisigTransaction[]> | null
 
-const { selectedSafe } = storeToRefs(useAuthorities())
-const { signMultisigData, multisigBroadcast, rejectMultisigTransaction } = useAvocadoSafe()
-const { account } = useWeb3()
-
 useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const status = computed(() => route.query.status || ['pending'])
+const activeTab = ref('non-seq')
 
 const { data } = useAsyncData<IMultisigTransactionResponse>(`${route.params.safe}`, async () => {
   const { data } = await axios.get(`/safes/${route.params.safe}/transactions`, {
     params: {
-      status: status.value,
+      status: 'pending',
     },
     baseURL: multisigURL,
   })
 
   return data
 }, {
-  watch: [status],
+  watch: [activeTab],
   immediate: true,
+})
 
+const { data: completedTransactions } = useAsyncData<IMultisigTransactionResponse>(`${route.params.safe}+completed`, async () => {
+  const { data } = await axios.get(`/safes/${route.params.safe}/transactions`, {
+    params: {
+      status: ['success', 'failed'],
+    },
+    baseURL: multisigURL,
+  })
+
+  return data
+}, {
+  watch: [activeTab],
+  immediate: true,
+})
+
+const nonSeq = computed(() => {
+  if (!data.value)
+    return []
+
+  return data.value.data.filter(item => item.nonce == '-1')
+})
+
+const seq = computed(() => {
+  if (!data.value)
+    return []
+
+  return data.value.data.filter(item => item.nonce != '-1')
+})
+
+const actualTransactions = computed(() => {
+  if (!data.value)
+    return []
+
+  if (activeTab.value === 'non-seq')
+    return nonSeq.value
+
+  if (activeTab.value === 'seq')
+    return seq.value
+
+  return completedTransactions.value?.data || []
 })
 
 const tabs = computed(() => {
   return [
     {
-      value: ['pending'],
-      label: 'Pending',
+      value: 'non-seq',
+      label: `Non-Sequential (${nonSeq.value.length})`,
     },
     {
-      value: ['success', 'failed'],
-      label: 'Completed',
+      value: 'seq',
+      label: `Sequential (${seq.value.length})`,
+    },
+    {
+      value: 'completed',
+      label: `Completed (${completedTransactions.value?.data?.length || 0})`,
     },
   ]
 })
@@ -49,51 +88,10 @@ const groupedByNetwork = computed<GroupedByNetwork>(() => {
   if (!data.value || !data.value.data.length)
     return {}
 
-  const collection = collect(data.value.data)
+  const collection = collect(actualTransactions.value)
 
   return collection.groupBy('chain_id').all()
 })
-
-async function handleSign(item: IMultisigTransaction) {
-  const signature = await signMultisigData({ chainId: item.chain_id, data: item.data })
-
-  const { data } = await axios.post<IMultisigTransaction>(`/safes/${selectedSafe.value?.safe_address}/transactions/${item.id}/confirmations`, {
-    address: account.value,
-    signature,
-  }, {
-    baseURL: multisigURL,
-  })
-
-  if (data.confirmations.length === data.confirmations_required) {
-    await handleExecute(data)
-    alert('executed')
-  }
-}
-
-async function handleExecute(item: IMultisigTransaction) {
-  const hash = await multisigBroadcast({
-    owner: selectedSafe.value?.owner_address!,
-    confirmations: item.confirmations,
-    message: item.data,
-    safe: selectedSafe.value?.safe_address!,
-    targetChainId: item.chain_id,
-  })
-
-  if (hash)
-    showPendingTransactionModal(hash, item.chain_id, 'send')
-}
-
-function signNeeded(item: IMultisigTransaction) {
-  return !item.confirmations.find(c => c.address === account.value)
-}
-
-function checkTxIsCancelRequest(item: IMultisigTransaction) {
-  const actions = item.data.params.actions
-  const [action] = actions
-  const isDataEmpty = action && action.data === '0x'
-  const isToSafeAddress = action.target.toLocaleLowerCase() === item.safe_address.toLocaleLowerCase()
-  return isDataEmpty && isToSafeAddress
-}
 </script>
 
 <template>
@@ -108,10 +106,10 @@ function checkTxIsCancelRequest(item: IMultisigTransaction) {
           v-for="tab in tabs"
           :key="tab.label"
           :class="
-            JSON.stringify(tab.value) === JSON.stringify(status) ? 'dark:bg-slate-800 bg-slate-150' : 'text-slate-400'
+            tab.value === activeTab ? 'dark:bg-slate-800 bg-slate-150' : 'text-slate-400'
           "
-          class="px-4 justify-center flex-1 text-xs rounded-7.5 py-2 laeding-5 flex items-center"
-          @click="$router.push({ query: { status: tab.value } })"
+          class="px-4 justify-center flex-1 text-xs rounded-7.5 whitespace-nowrap py-2 laeding-5 flex items-center"
+          @click="activeTab = tab.value"
         >
           {{ tab.label }}
         </button>

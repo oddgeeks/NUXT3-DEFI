@@ -64,9 +64,15 @@ export function useAvocadoSafe() {
       throw new Error('Safe not initialized')
 
     if (isSafeMultisig.value) {
+      const data = await openEditNonceModal()
+
+      const payload = data?.payload
+
       const txHash = await createProposalOrSignDirecty({
         chainId: transaction.chainId,
         metadata: options.metadata,
+        nonce: payload?.nonce,
+        note: payload?.note,
         actions: [
           {
             to: transaction.to,
@@ -117,7 +123,11 @@ export function useAvocadoSafe() {
       throw new Error('Safe not initialized')
 
     if (isSafeMultisig.value) {
-      const txHash = await createProposalOrSignDirecty({ chainId, actions: transactions, metadata: options.metadata })
+      const data = await openEditNonceModal()
+
+      const payload = data?.payload
+
+      const txHash = await createProposalOrSignDirecty({ chainId, actions: transactions, metadata: options.metadata, nonce: payload?.nonce, note: payload?.note })
 
       if (txHash)
         return txHash
@@ -148,7 +158,6 @@ export function useAvocadoSafe() {
   }
 
   async function generateMultisigSignatureAndSign({ chainId, actions, nonce, metadata }: IGenerateMultisigSignatureParams) {
-    debugger
     const data = await generateMultisigSignatureMessage({ chainId, actions, nonce, metadata })
     const signature = await signMultisigData({ chainId, data })
 
@@ -237,7 +246,7 @@ export function useAvocadoSafe() {
     } as any
   }
 
-  async function createProposalOrSignDirecty({ chainId, actions, nonce, metadata }: IGenerateMultisigSignatureParams) {
+  async function createProposalOrSignDirecty({ chainId, actions, nonce, metadata, note }: IGenerateMultisigSignatureParams) {
     const params = await generateMultisigSignatureAndSign({ chainId, actions, nonce, metadata })
 
     // generate proposal
@@ -246,6 +255,8 @@ export function useAvocadoSafe() {
       status: 'pending',
       signer: params?.signatureParams,
       data: params?.castParams,
+      note,
+      nonce,
     }, {
       baseURL: multisigURL,
     })

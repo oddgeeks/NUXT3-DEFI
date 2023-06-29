@@ -36,6 +36,7 @@ import EstimateAuthority from '~/components/modals/EstimateAuthority.vue'
 import SignAuthorityTransactions from '~/components/modals/SignAuthorityTransactions.vue'
 import ReviewMultisigTransaction from '~/components/modals/Multisig/ReviewTransaction.vue'
 import MultisigTransactionDetail from '~/components/modals/Multisig/TransactionDetails.vue'
+import EditNonce from '~/components/modals/Multisig/EditNonce.vue'
 import SignSigner from '~/components/modals/Multisig/SignSigner.vue'
 
 const { openModal } = useModal()
@@ -459,6 +460,13 @@ export function openSignSignerModal(addresses: string[], treshold: number) {
       wrapperClass: 'max-w-[560px]',
       contentClass: '!p-0',
     },
+  })
+}
+
+export async function openEditNonceModal() {
+  return openModal({
+    component: EditNonce,
+    async: true,
   })
 }
 

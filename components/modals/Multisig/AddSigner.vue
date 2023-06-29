@@ -162,7 +162,7 @@ async function handleSelectContact(key: number) {
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <div class="p-7.5 grid grid-cols-2 gap-4">
-      <CommonButton class="justify-center" size="lg" color="white">
+      <CommonButton class="justify-center" size="lg" color="white" @click="$emit('destroy')">
         Back
       </CommonButton>
       <CommonButton type="submit" :disabled="disabled" class="justify-center" size="lg">
