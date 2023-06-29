@@ -195,7 +195,12 @@ const hasSimulationDetails = computed(() => {
 })
 
 function formatURL(url: string) {
-  return new URL(url).hostname
+  try {
+    return new URL(url).hostname
+  }
+  catch {
+    return null
+  }
 }
 
 function handleReject() {
@@ -232,7 +237,7 @@ onUnmounted(() => {
               class="text-primary text-sm"
               :href="peerURL"
             >
-              {{ formatURL(peerURL!) }}
+              {{ formatURL(peerURL!) || sessionV2?.peer.metadata.name }}
             </a>
           </div>
         </div>
