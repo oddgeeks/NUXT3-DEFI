@@ -7,14 +7,12 @@ export function useBanner() {
   const { gasBalance, pending } = storeToRefs(useSafe())
   const { account, chainId } = useWeb3()
 
-  const wcStore = useWalletConnect()
+  const wcStoreV2 = useWalletConnectV2()
 
   const { trackingAccount } = useAccountTrack()
   const isHideWelcomeBanner = useLocalStorage('hide-welcome-banner', false)
   const isHideRabbyBanner = useLocalStorage('hide-rabby-banner', false)
-  const isOnboardHidden = computed(() =>
-    useStatefulCookie(`hide-onboard-${account.value}`),
-  )
+  const isOnboardHidden = useLocalStorage('hide-onboard', false)
 
   const allNetworkVersions = useNuxtData('allNetworkVersions')
 
@@ -56,7 +54,7 @@ export function useBanner() {
   const showOnboardBanner = computed(() => {
     if (!account.value)
       return false
-    if (isOnboardHidden.value.value)
+    if (isOnboardHidden.value)
       return false
     return true
   })
@@ -88,19 +86,12 @@ export function useBanner() {
   })
 
   const unstableDappNetworks = computed(() => {
-    if (!wcStore.sessions?.length)
+    if (!wcStoreV2.sessions?.length)
       return []
     if (!allNetworkVersions.data.value?.length)
       return []
 
-    return wcStore.sessions.filter((session) => {
-      const version = allNetworkVersions.data.value.find(
-        network => network.chainId === session.chainId,
-      )
-      if (!version)
-        return false
-      return version?.notdeployed
-    })
+    return false
   })
 
   return {
@@ -116,7 +107,7 @@ export function useBanner() {
     isHideRabbyBanner,
     showTrackingBanner: computed(() => !!trackingAccount.value),
     toggleWelcomeBanner: (val: boolean) => (isHideWelcomeBanner.value = !val),
-    hideOnboardBanner: () => (isOnboardHidden.value.value = true),
+    hideOnboardBanner: () => (isOnboardHidden.value = true),
     hideRabbyBanner: () => (isHideRabbyBanner.value = true),
     hideVersionUpdateBanner: () => (isVersionUpdateBannerHidden.value = true),
   }

@@ -1,8 +1,8 @@
 import { ethers } from 'ethers'
 import {
   changeMetamaskNetwork,
-  changeNetworkWalletConnect,
   injected,
+  walletconnect,
   walletlink,
 } from '~~/connectors'
 import SVGWalletlink from '~/assets/images/wallet/walletlink.svg?component'
@@ -40,13 +40,10 @@ export function useNetworks() {
       id: 'walletconnect',
       logo: SVGWalletConnect,
       switchNetwork: async (network: Network) => {
-        return await changeNetworkWalletConnect(network)
+        return await changeMetamaskNetwork(network)
       },
       connect: async () => {
-        // @ts-expect-error
-        window.wc = changeNetworkWalletConnect()
-
-        return changeNetworkWalletConnect()
+        return walletconnect
       },
     },
   ]

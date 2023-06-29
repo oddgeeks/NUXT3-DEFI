@@ -35,8 +35,6 @@ async function handleDisconnectWallet(session: any) {
   if (success)
     wcStoreV2.disconnect(session)
 }
-
-console.log(props.session)
 </script>
 
 <template>
