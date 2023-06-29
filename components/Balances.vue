@@ -220,11 +220,21 @@ const { safeAddress, isSafeAddress } = useAvocadoSafe()
           </table>
         </div>
         <div v-if="balances.data" class="flex flex-col space-y-4 sm:hidden">
-          <MobileBalanceRow
-            v-for="tokenBalance in sortedBalances"
-            :key="`${tokenBalance.chainId}-${tokenBalance.name}`"
-            :token-balance="tokenBalance"
-          />
+          <div v-if="listType === 'group'" class="flex flex-col space-y-4">
+            <MobileBalanceGroupRow
+              v-for="(tokenBalance, symbol) in groupedBalances"
+              :key="symbol"
+              :token-balance="tokenBalance"
+            />
+          </div>
+          <div v-else class="flex flex-col space-y-4">
+            <MobileBalanceRow
+              v-for="(tokenBalance, i) in searchQuery.length > 0 ? filteredBalances : sortedBalances"
+              :key="i"
+              :individual="true"
+              :token-balance="tokenBalance"
+            />
+          </div>
         </div>
       </div>
       <div v-else class="w-full">

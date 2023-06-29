@@ -23,16 +23,17 @@ function onToggle() {
 </script>
 
 <template>
-  <BalanceRow
-    v-for="(token, i) of balances"
-    :key="`${token.chainId} - ${token.symbol}`"
-    :summary="i === 0"
-    :hide="i !== 0"
-    :token-balance="token"
-    :sum="sum"
-    :collapse="collapse"
-    :sum-in-usd="sumInUsd"
-    :on-toggle="onToggle"
-    :count="tokenBalance.length"
-  />
+  <div class="flex flex-col rounded-5 dark:bg-gray-850 bg-slate-50">
+    <MobileBalanceRow
+      v-for="(token, i) of balances"
+      :key="`${token.chainId} - ${token.symbol}`"
+      :summary="i === 0"
+      :token-balance="token"
+      :sum="sum"
+      :collapse="collapse"
+      :sum-in-usd="sumInUsd"
+      :on-toggle="onToggle"
+      :count="tokenBalance.length"
+    />
+  </div>
 </template>

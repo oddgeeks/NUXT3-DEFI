@@ -3,6 +3,7 @@ const props = defineProps<{
   url?: string
   chainId?: number | string
   networkLogoClass?: string
+  count?: number
 } > ()
 
 const error = ref(false)
@@ -36,5 +37,8 @@ function onError() {
       :class="[networkLogoClass]"
       :chain="chainId"
     />
+    <div v-if="count" class="w-5 h-5 absolute -left-1 -bottom-1 border border-black bg-primary text-white text-center rounded-full text-[10px] md:text-xs flex items-center justify-center">
+      {{ count }}
+    </div>
   </div>
 </template>

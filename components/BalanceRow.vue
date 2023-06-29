@@ -13,6 +13,7 @@ const props = defineProps<{
   hide?: boolean
   collapse?: boolean
   onToggle?: Function
+  count?: number
 }>()
 
 const balance = computed(() => props.tokenBalance as IBalance)
@@ -45,7 +46,7 @@ function onClick() {
     <td class="text-left py-6 pl-7.5 w-1/3">
       <div :class="`flex space-x-3 ${summary || (!summary && !hide) ? 'items-center' : 'pl-2'}`">
         <SafeTokenLogo v-if="!summary && !hide" :chain-id="tokenBalance.chainId" :url="tokenBalance.logoURI" />
-        <SafeTokenLogo v-if="summary" :url="tokenBalance.logoURI" />
+        <SafeTokenLogo v-if="summary" :url="tokenBalance.logoURI" :count="count" />
         <div v-if="hide" class="w-10 h-10 relative">
           <ChainLogo
             v-tippy="chainIdToName(tokenBalance.chainId)"
