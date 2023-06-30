@@ -9,6 +9,7 @@ const props = defineProps<{
 const { selectedSafe } = storeToRefs(useAuthorities())
 
 const isConfirmationsMatch = computed(() => props.item.confirmations.length === props.item.confirmations_required)
+const isTransactionExecuted = computed(() => props.item.executed_at !== null)
 
 const firstActionMetadata = computed<any>(() => {
   const data = decodeMetadata(props.item.data.params.metadata) as string[]
@@ -41,11 +42,9 @@ const isRejection = computed(() => {
         {{ item.nonce }}
       </span>
       <span class="flex items-center gap-2.5">
-
         <SvgoErrorCircle v-if="isRejection" class="w-4 h-4" />
         <ActionIcon v-else :action="actionType" />
         <span>{{ formattedActionType }}</span>
-
       </span>
       <span class="flex-1">
         <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" :key="metadata" compact :chain_id="item.chain_id" :metadata="metadata" />
@@ -60,7 +59,11 @@ const isRejection = computed(() => {
         </span>
       </span>
       <div class="w-56" :class="isConfirmationsMatch ? 'text-primary' : 'text-orange-400'">
-        <span v-if="isConfirmationsMatch" class="items-center flex gap-10 justify-between">
+        <span v-if="isTransactionExecuted" class="flex items-center gap-2">
+          Executed
+          <SvgoCheckCircle class="success-circle w-5 h-5" />
+        </span>
+        <span v-else-if="isConfirmationsMatch" class="items-center flex gap-10 justify-between">
           Ready to execute
           <SvgoCheckCircle class="success-circle w-5 h-5" />
         </span>

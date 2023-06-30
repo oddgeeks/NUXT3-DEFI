@@ -72,9 +72,6 @@ const seq = computed(() => {
 })
 
 const actualTransactions = computed(() => {
-  if (!data.value)
-    return []
-
   if (activeTab.value === 'non-seq')
     return nonSeq.value
 
@@ -85,10 +82,10 @@ const actualTransactions = computed(() => {
 })
 
 const groupedByNetwork = computed<GroupedByNetwork>(() => {
-  if (!data.value || !data.value.data.length)
+  if (!actualTransactions.value)
     return {}
 
-  const collection = collect(actualTransactions.value)
+  const collection = collect(actualTransactions.value || [])
 
   return collection.groupBy('chain_id').all()
 })
