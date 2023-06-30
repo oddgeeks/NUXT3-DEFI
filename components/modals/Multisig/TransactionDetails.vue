@@ -24,7 +24,9 @@ const formatted = useDateFormat(props.transaction.created_at, 'MM.DD.YYYY, HH:mm
 const isConfirmationsMatch = computed(() => props.transaction.confirmations.length === props.transaction.confirmations_required)
 const confirmationNeeded = computed(() => props.transaction.confirmations_required - props.transaction.confirmations.length)
 
-const isSignReady = computed(() => props.transaction.nonce === String(currentNonce.value) || props.transaction.nonce === '-1')
+const isNonseq = computed(() => props.transaction.nonce !== '-1')
+const isSignReady = computed(() => props.transaction.nonce === String(currentNonce.value) || isNonseq.value)
+const isTransactionExecuted = computed(() => props.transaction.executed_at !== null)
 
 const nonceErrorMessage = computed(() => {
   return !isSignReady.value ? `Please execute transaction ${currentNonce.value} first.` : ''
@@ -250,7 +252,7 @@ onMounted(async () => {
               </p>
             </div>
           </details>
-          <div class="grid grid-cols-2 gap-2.5 items-center">
+          <fieldset :disabled="isTransactionExecuted" class="grid grid-cols-2 gap-2.5 items-center">
             <CommonButton :loading="pending.reject" color="red" size="lg" class="justify-center" @click="handleReject(transaction)">
               Reject
             </CommonButton>
@@ -264,6 +266,10 @@ onMounted(async () => {
                 Sign
               </CommonButton>
             </div>
+          </fieldset>
+          <div v-if="isTransactionExecuted" class="text-xs leading-5 flex gap-2 mt-5 text-primary font-medium">
+            <SvgoInfo2 class="w-5 h-5 text-primary" />
+            Transaction has been executed
           </div>
         </div>
       </div>
