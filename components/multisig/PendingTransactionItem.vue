@@ -42,7 +42,7 @@ const isRejection = computed(() => {
         {{ item.nonce }}
       </span>
       <span class="flex items-center gap-2.5">
-        <SvgoErrorCircle v-if="isRejection" class="w-4 h-4" />
+        <SvgoErrorCircle v-if="isRejection" class="w-4 h-4 text-white" />
         <ActionIcon v-else :action="actionType" />
         <span>{{ formattedActionType }}</span>
       </span>
