@@ -31,8 +31,13 @@ const isNonceNotMatch = computed(() => isNonseq.value ? false : props.transactio
 const isTransactionExecuted = computed(() => props.transaction.executed_at !== null)
 const isSignedAlready = computed(() => props.transaction.confirmations.some(item => item.address === getAddress(account.value)))
 
+const isSafeDoesntMatch = computed(() => props.transaction.safe_address !== selectedSafe.value?.safe_address)
+
 const errorMessage = computed(() => {
   let message = null
+
+  if (isSafeDoesntMatch.value)
+    message = 'This transaction is not for your safe.'
 
   if (!currentNonce.value)
     return null
@@ -280,17 +285,17 @@ onMounted(async () => {
               </p>
             </div>
           </details>
-          <fieldset :disabled="isTransactionExecuted" class="grid grid-cols-2 gap-2.5 items-center">
+          <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch" class="grid grid-cols-2 gap-2.5 items-center">
             <CommonButton :loading="pending.reject" color="red" size="lg" class="justify-center" @click="handleReject(transaction)">
               Reject
             </CommonButton>
             <div v-show="isConfirmationsMatch" v-tippy="errorMessage">
-              <CommonButton :disabled="!!errorMessage || pending.execute" :loading="pending.execute || !currentNonce" size="lg" class="w-full justify-center" @click="handleExecute(transaction)">
+              <CommonButton :disabled="!!errorMessage || pending.execute" :loading="pending.execute || (!currentNonce && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" @click="handleExecute(transaction)">
                 Execute
               </CommonButton>
             </div>
             <div v-tippy="errorMessage">
-              <CommonButton :disabled="!!errorMessage || pending.sign" :loading="pending.sign || !currentNonce" size="lg" class="w-full justify-center" @click="handleSign(transaction)">
+              <CommonButton :disabled="!!errorMessage || pending.sign" :loading="pending.sign || (!currentNonce && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" @click="handleSign(transaction)">
                 Sign
               </CommonButton>
             </div>
@@ -299,6 +304,12 @@ onMounted(async () => {
             <SvgoInfo2 class="w-5 h-5 text-primary" />
             Transaction has been executed
           </div>
+
+          <p v-else-if="isSafeDoesntMatch" class="text-xs leading-5 mt-4 text-orange-400 flex gap-2">
+            <SvgoExclamationCircle class="w-3 shrink-0 mt-1" />
+
+            You don't have authority to execute this transaction.
+          </p>
         </div>
       </div>
     </div>
