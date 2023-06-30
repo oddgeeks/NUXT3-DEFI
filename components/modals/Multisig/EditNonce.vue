@@ -2,7 +2,11 @@
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 
+const props = defineProps<{
+  chainId: number | string
+}>()
 const emit = defineEmits(['resolve'])
+const { getLatestAvosafeNonce } = useAvocadoSafe()
 
 const {
   handleSubmit,
@@ -17,7 +21,7 @@ const {
 
 })
 
-const { value: nonce, errorMessage: nonceErrorMessage } = useField<string>('nonce')
+const { value: nonce, errorMessage: nonceErrorMessage, setValue } = useField<string>('nonce')
 const { value: note, errorMessage: noteErrorMessage } = useField<string>('note')
 
 const onSubmit = handleSubmit(() => {
@@ -25,6 +29,13 @@ const onSubmit = handleSubmit(() => {
     nonce: nonce.value,
     note: note.value,
   })
+})
+
+onMounted(async () => {
+  const latestNonce = await getLatestAvosafeNonce(props.chainId)
+
+  if (latestNonce)
+    setValue(String(latestNonce))
 })
 </script>
 

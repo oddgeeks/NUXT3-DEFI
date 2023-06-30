@@ -463,9 +463,12 @@ export function openSignSignerModal(addresses: string[], treshold: number) {
   })
 }
 
-export async function openEditNonceModal() {
+export async function openEditNonceModal(chainId: number | string) {
   return openModal({
     component: EditNonce,
+    componentProps: {
+      chainId,
+    },
     async: true,
   })
 }

@@ -64,7 +64,7 @@ export function useAvocadoSafe() {
       throw new Error('Safe not initialized')
 
     if (isSafeMultisig.value) {
-      const data = await openEditNonceModal()
+      const data = await openEditNonceModal(transaction.chainId)
 
       const payload = data?.payload
 
@@ -123,7 +123,7 @@ export function useAvocadoSafe() {
       throw new Error('Safe not initialized')
 
     if (isSafeMultisig.value) {
-      const data = await openEditNonceModal()
+      const data = await openEditNonceModal(chainId)
 
       const payload = data?.payload
 
@@ -211,18 +211,11 @@ export function useAvocadoSafe() {
 
     const verifyingContract = selectedSafe.value?.safe_address!
 
-    const currentNonce = await getCurrentNonce(chainId)
+    const latestAvosafeNonce = await getLatestAvosafeNonce(chainId)
 
-    const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {
-      params: {
-        status: 'pending',
-      },
-      baseURL: multisigURL,
-    })
+    console.log({ latestAvosafeNonce })
 
-    const maxNonce = Math.max(...data.data.map(i => Number(i.nonce)))
-
-    const avoSafeNonce = !isUndefined(nonce) ? nonce : Math.max(maxNonce, currentNonce - 1) + 1
+    const avoSafeNonce = !isUndefined(nonce) ? nonce : latestAvosafeNonce
 
     const params = {
       actions,
@@ -390,6 +383,21 @@ export function useAvocadoSafe() {
     return createProposalOrSignDirecty({ chainId, actions } as any)
   }
 
+  const getLatestAvosafeNonce = async (chainId: string | number) => {
+    const currentNonce = await getCurrentNonce(chainId)
+
+    const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {
+      params: {
+        status: 'pending',
+      },
+      baseURL: multisigURL,
+    })
+
+    const maxNonce = Math.max(...data.data.map(i => Number(i.nonce)))
+
+    return Math.max(maxNonce, currentNonce - 1) + 1
+  }
+
   return {
     safe,
     signer,
@@ -413,5 +421,6 @@ export function useAvocadoSafe() {
     rejectMultisigTransaction,
     getCurrentNonce,
     addSignersWithThreshold,
+    getLatestAvosafeNonce,
   }
 }
