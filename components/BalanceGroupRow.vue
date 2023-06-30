@@ -26,7 +26,7 @@ function onToggle() {
   <BalanceRow
     v-for="(token, i) of balances"
     :key="`${token.chainId} - ${token.symbol}`"
-    :summary="i === 0"
+    :summary="i === 0 && tokenBalance.length > 1"
     :hide="i !== 0"
     :token-balance="token"
     :sum="sum"

@@ -21,7 +21,7 @@ const interactable = computed(() =>
 function onSelect() {
   if (props.summary)
     props.onToggle()
-  else if (interactable)
+  else if (toBN(props.tokenBalance.balance).gt(0))
     openBalanceModal(props.tokenBalance)
 }
 </script>

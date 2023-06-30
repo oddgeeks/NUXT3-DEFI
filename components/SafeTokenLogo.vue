@@ -37,7 +37,7 @@ function onError() {
       :class="[networkLogoClass]"
       :chain="chainId"
     />
-    <div v-if="count" class="w-5 h-5 absolute -left-1 -bottom-1 border border-black bg-primary text-white text-center rounded-full text-[10px] md:text-xs flex items-center justify-center">
+    <div v-if="count" class="w-5 h-5 absolute -left-1 -bottom-1 border border-white dark:border-black bg-primary text-white text-center rounded-full text-[10px] md:text-xs flex items-center justify-center">
       {{ count }}
     </div>
   </div>

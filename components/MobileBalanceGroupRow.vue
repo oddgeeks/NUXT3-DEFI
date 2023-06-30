@@ -27,7 +27,8 @@ function onToggle() {
     <MobileBalanceRow
       v-for="(token, i) of balances"
       :key="`${token.chainId} - ${token.symbol}`"
-      :summary="i === 0"
+      :summary="i === 0 && tokenBalance.length > 1"
+      :individual="tokenBalance.length === 1"
       :token-balance="token"
       :sum="sum"
       :collapse="collapse"
