@@ -6,6 +6,7 @@ import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
   transaction: IMultisigTransaction
+  rejection?: boolean
 }>()
 
 const emit = defineEmits(['destroy'])
@@ -144,12 +145,16 @@ onMounted(async () => {
           <div class="p-7.5 border-b dark:border-slate-800 border-slate-150">
             <div class="flex justify-between">
               <div class="flex gap-4">
-                <div class="w-14 h-14 rounded-full items-center flex justify-center bg-primary">
-                  <ActionIcon class="text-white !w-5 !h-5" :action="actionType" />
+                <SvgoErrorCircle v-if="rejection" />
+                <div v-else class="w-14 h-14 rounded-full items-center flex justify-center bg-primary">
+                  <ActionIcon class="!text-white !w-5 !h-5" :action="actionType" />
                 </div>
                 <div>
                   <h1 class="text-2xl">
-                    {{ formattedActionType }}
+                    <span v-if="rejection">Rejection</span>
+                    <span v-else>
+                      {{ formattedActionType }}
+                    </span>
                   </h1>
                   <span class="text-sm font-medium text-slate-400 inline-flex items-center gap-2">On <ChainLogo class="w-4 h-4" :chain="transaction.chain_id" /> {{ chainIdToName(transaction.chain_id) }}</span>
                 </div>

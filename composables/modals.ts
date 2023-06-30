@@ -515,11 +515,12 @@ export function openReviewMultisigTransaction(transactionId: string) {
   })
 }
 
-export function openMultisigTransactionDetails(transaction: IMultisigTransaction) {
+export function openMultisigTransactionDetails(transaction: IMultisigTransaction, rejection?: boolean) {
   return openModal({
     component: MultisigTransactionDetail,
     componentProps: {
       transaction,
+      rejection,
     },
     options: {
       wrapperClass: '!max-w-[1080px]',
