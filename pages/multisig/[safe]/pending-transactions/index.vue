@@ -12,7 +12,24 @@ useAccountTrack(undefined, () => {
 
 const activeTab = ref('non-seq')
 
-const { data } = useAsyncData<IMultisigTransactionResponse>(`${route.params.safe}`, async () => {
+const tabs = computed(() => {
+  return [
+    {
+      value: 'non-seq',
+      label: `Non-Sequential (${nonSeq.value.length})`,
+    },
+    {
+      value: 'seq',
+      label: `Sequential (${seq.value.length})`,
+    },
+    {
+      value: 'completed',
+      label: `Completed (${completedTransactions.value?.data?.length || 0})`,
+    },
+  ]
+})
+
+const { data, refresh: refreshPendingTransactions } = useAsyncData<IMultisigTransactionResponse>(`${route.params.safe}`, async () => {
   const { data } = await axios.get(`/safes/${route.params.safe}/transactions`, {
     params: {
       status: 'pending',
@@ -26,7 +43,7 @@ const { data } = useAsyncData<IMultisigTransactionResponse>(`${route.params.safe
   immediate: true,
 })
 
-const { data: completedTransactions } = useAsyncData<IMultisigTransactionResponse>(`${route.params.safe}+completed`, async () => {
+const { data: completedTransactions, refresh: refreshCompletedTransactions } = useAsyncData<IMultisigTransactionResponse>(`${route.params.safe}+completed`, async () => {
   const { data } = await axios.get(`/safes/${route.params.safe}/transactions`, {
     params: {
       status: ['success', 'failed'],
@@ -67,23 +84,6 @@ const actualTransactions = computed(() => {
   return completedTransactions.value?.data || []
 })
 
-const tabs = computed(() => {
-  return [
-    {
-      value: 'non-seq',
-      label: `Non-Sequential (${nonSeq.value.length})`,
-    },
-    {
-      value: 'seq',
-      label: `Sequential (${seq.value.length})`,
-    },
-    {
-      value: 'completed',
-      label: `Completed (${completedTransactions.value?.data?.length || 0})`,
-    },
-  ]
-})
-
 const groupedByNetwork = computed<GroupedByNetwork>(() => {
   if (!data.value || !data.value.data.length)
     return {}
@@ -92,6 +92,11 @@ const groupedByNetwork = computed<GroupedByNetwork>(() => {
 
   return collection.groupBy('chain_id').all()
 })
+
+useIntervalFn(() => {
+  refreshPendingTransactions()
+  refreshCompletedTransactions()
+}, 15000)
 </script>
 
 <template>
