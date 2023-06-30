@@ -331,15 +331,29 @@ export function useAvocadoSafe() {
   }
 
   async function rejectMultisigTransaction(tx: IMultisigTransaction) {
+    const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
+    const isNonseq = tx.nonce == '-1'
+
+    const actions = isNonseq
+      ? [
+          {
+            to: tx.safe_address,
+            data: avoMultsigInterface.encodeFunctionData('occupyNonSequentialNonces', [[tx.id]]),
+            value: '0',
+            operation: '0',
+          },
+        ]
+      : [{
+          to: tx.safe_address,
+          data: '0x',
+          value: '0',
+          operation: '0',
+        }]
+
     return createProposalOrSignDirecty({
       chainId: tx.chain_id,
       nonce: Number(tx.nonce),
-      actions: [{
-        to: tx.safe_address,
-        data: '0x',
-        value: '0',
-        operation: '0',
-      }],
+      actions,
     })
   }
 

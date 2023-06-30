@@ -31,7 +31,7 @@ const isRejection = computed(() => {
   if (!action)
     return false
 
-  return action.data === '0x' && action.value == '0' && action.target === selectedSafe.value?.safe_address
+  return action.value == '0' && action.operation === '0' && action.target === props.item.safe_address
 })
 </script>
 
