@@ -7,6 +7,7 @@ import type { IBalance } from '~~/stores/safe'
 
 const props = defineProps<{
   hideZeroBalances: boolean
+  listType: string
 }>()
 
 const { balances } = storeToRefs(useSafe())
@@ -93,6 +94,19 @@ const sortedBalances = computed(() => {
       return indexSorter(aIndex, bIndex)
     },
   ])
+})
+
+const groupedBalances = computed(() => {
+  const result: { [symbol: string]: IBalance[] } = {}
+  const balances = searchQuery.value.length > 0 ? filteredBalances : sortedBalances
+  for (const balance of balances.value) {
+    const symbol = balance.symbol
+    if (!result[symbol])
+      result[symbol] = []
+
+    result[symbol].push(balance)
+  }
+  return result
 })
 
 const search = useDebounceFn((event: Event) => {
@@ -185,23 +199,42 @@ const { safeAddress, isSafeAddress } = useAvocadoSafe()
               </template>
 
               <template v-else>
-                <BalanceRow
-                  v-for="tokenBalance in searchQuery.length > 0
-                    ? filteredBalances
-                    : sortedBalances"
-                  :key="`${tokenBalance.chainId}-${tokenBalance.name}`"
-                  :token-balance="tokenBalance"
-                />
+                <template v-if="listType === 'group'">
+                  <BalanceGroupRow
+                    v-for="(tokenBalance, symbol) in groupedBalances"
+                    :key="symbol"
+                    :token-balance="tokenBalance"
+                  />
+                </template>
+                <template v-else>
+                  <BalanceRow
+                    v-for="(tokenBalance, i) in searchQuery.length > 0 ? filteredBalances : sortedBalances"
+                    :key="i"
+                    :token-balance="tokenBalance"
+                    :summary="false"
+                    :hide="false"
+                  />
+                </template>
               </template>
             </tbody>
           </table>
         </div>
         <div v-if="balances.data" class="flex flex-col space-y-4 sm:hidden">
-          <MobileBalanceRow
-            v-for="tokenBalance in sortedBalances"
-            :key="`${tokenBalance.chainId}-${tokenBalance.name}`"
-            :token-balance="tokenBalance"
-          />
+          <div v-if="listType === 'group'" class="flex flex-col space-y-4">
+            <MobileBalanceGroupRow
+              v-for="(tokenBalance, symbol) in groupedBalances"
+              :key="symbol"
+              :token-balance="tokenBalance"
+            />
+          </div>
+          <div v-else class="flex flex-col space-y-4">
+            <MobileBalanceRow
+              v-for="(tokenBalance, i) in searchQuery.length > 0 ? filteredBalances : sortedBalances"
+              :key="i"
+              :individual="true"
+              :token-balance="tokenBalance"
+            />
+          </div>
         </div>
       </div>
       <div v-else class="w-full">
