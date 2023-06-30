@@ -38,7 +38,7 @@ const isRejection = computed(() => {
 <template>
   <li class="w-full">
     <button class="flex focus:outline-none items-center w-full gap-10 text-xs font-medium py-[26px] last:border-b-0 border-b border-slate-150 dark:border-slate-800 px-5" @click="openMultisigTransactionDetails(item, isRejection)">
-      <span class="w-10">
+      <span v-if="item.nonce !== '-1'" class="w-10">
         {{ item.nonce }}
       </span>
       <span class="flex items-center gap-2.5">
