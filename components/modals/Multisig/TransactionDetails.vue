@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { formatTimeAgo } from '@vueuse/core'
 import axios from 'axios'
+import { getAddress } from 'ethers/lib/utils'
 import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
@@ -24,13 +25,39 @@ const formatted = useDateFormat(props.transaction.created_at, 'MM.DD.YYYY, HH:mm
 const isConfirmationsMatch = computed(() => props.transaction.confirmations.length === props.transaction.confirmations_required)
 const confirmationNeeded = computed(() => props.transaction.confirmations_required - props.transaction.confirmations.length)
 
-const isNonseq = computed(() => props.transaction.nonce !== '-1')
-const isSignReady = computed(() => props.transaction.nonce === String(currentNonce.value) || isNonseq.value)
+const isNonseq = computed(() => props.transaction.nonce == '-1')
+const isNonceNotMatch = computed(() => isNonseq.value ? false : props.transaction.nonce !== String(currentNonce.value))
 const isTransactionExecuted = computed(() => props.transaction.executed_at !== null)
+const isSignedAlready = computed(() => props.transaction.confirmations.some(item => item.address === getAddress(account.value)))
 
-const nonceErrorMessage = computed(() => {
-  return !isSignReady.value ? `Please execute transaction ${currentNonce.value} first.` : ''
+const errorMessage = computed(() => {
+  let message = null
+
+  if (!currentNonce.value)
+    return null
+  else if (isTransactionExecuted.value)
+    message = 'This transaction has already been executed.'
+
+  else if (isSignedAlready.value)
+    message = 'You have already signed this transaction.'
+
+  else if (isNonceNotMatch.value)
+    message = `Please execute transaction ${currentNonce.value} first.`
+
+  else
+    message = null
+
+  return message
 })
+
+const firstActionMetadata = computed<any>(() => {
+  const data = decodeMetadata(props.transaction.data.params.metadata) as string[]
+
+  return data?.length ? data[0] : ''
+})
+
+const actionType = computed(() => firstActionMetadata.value?.type || '')
+const formattedActionType = computed(() => formatTxType(actionType.value || ''))
 
 const { data: simulationDetails, error: simulationError } = useAsyncData(
   `${props.transaction.id}`,
@@ -52,10 +79,6 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
     server: false,
   },
 )
-
-function signNeeded(item: IMultisigTransaction) {
-  return !item.confirmations.find(c => c.address === account.value)
-}
 
 async function handleSign(item: IMultisigTransaction) {
   try {
@@ -122,11 +145,11 @@ onMounted(async () => {
             <div class="flex justify-between">
               <div class="flex gap-4">
                 <div class="w-14 h-14 rounded-full items-center flex justify-center bg-primary">
-                  <SvgoArrowRight class="-rotate-45 w-7 h-7" />
+                  <ActionIcon class="text-white !w-5 !h-5" :action="actionType" />
                 </div>
                 <div>
                   <h1 class="text-2xl">
-                    Send
+                    {{ formattedActionType }}
                   </h1>
                   <span class="text-sm font-medium text-slate-400 inline-flex items-center gap-2">On <ChainLogo class="w-4 h-4" :chain="transaction.chain_id" /> {{ chainIdToName(transaction.chain_id) }}</span>
                 </div>
@@ -256,13 +279,13 @@ onMounted(async () => {
             <CommonButton :loading="pending.reject" color="red" size="lg" class="justify-center" @click="handleReject(transaction)">
               Reject
             </CommonButton>
-            <div v-if="isConfirmationsMatch" v-tippy="nonceErrorMessage">
-              <CommonButton :disabled="!isSignReady || pending.execute" :loading="pending.execute" size="lg" class="w-full justify-center" @click="handleExecute(transaction)">
+            <div v-show="isConfirmationsMatch" v-tippy="errorMessage">
+              <CommonButton :disabled="!!errorMessage || pending.execute" :loading="pending.execute || !currentNonce" size="lg" class="w-full justify-center" @click="handleExecute(transaction)">
                 Execute
               </CommonButton>
             </div>
-            <div v-if="signNeeded(transaction)" v-tippy="nonceErrorMessage">
-              <CommonButton :disabled="!isSignReady || pending.sign" :loading="pending.sign" size="lg" class="w-full justify-center" @click="handleSign(transaction)">
+            <div v-tippy="errorMessage">
+              <CommonButton :disabled="!!errorMessage || pending.sign" :loading="pending.sign || !currentNonce" size="lg" class="w-full justify-center" @click="handleSign(transaction)">
                 Sign
               </CommonButton>
             </div>

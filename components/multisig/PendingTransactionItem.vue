@@ -13,7 +13,8 @@ const firstActionMetadata = computed<any>(() => {
   return data?.length ? data[0] : ''
 })
 
-const actionType = computed(() => formatTxType(firstActionMetadata.value?.type || ''))
+const actionType = computed(() => firstActionMetadata.value?.type || '')
+const formattedActionType = computed(() => formatTxType(actionType.value || ''))
 </script>
 
 <template>
@@ -23,8 +24,8 @@ const actionType = computed(() => formatTxType(firstActionMetadata.value?.type |
         {{ item.nonce }}
       </span>
       <span class="flex items-center gap-2.5">
-        <SvgoRefresh class="w-4 h-4 text-primary" />
-        <span>{{ actionType }}</span>
+        <ActionIcon :action="actionType" />
+        <span>{{ formattedActionType }}</span>
       </span>
       <span class="flex-1">
         <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" :key="metadata" compact :chain_id="item.chain_id" :metadata="metadata" />
