@@ -52,7 +52,7 @@ const filteredSafes = computed(() => {
   if (!safes.value)
     return []
 
-  return safes.value.filter(safe => safe.safe_address !== actualMainSafe.value.safe_address)
+  return safes.value.filter(safe => safe.safe_address !== actualMainSafe.value?.safe_address && safe.safe_address !== multiSigSafe.value?.safe_address)
 })
 
 async function closeConnection() {
