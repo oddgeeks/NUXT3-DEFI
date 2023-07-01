@@ -179,6 +179,12 @@ onMounted(async () => {
               <ActionMetadata v-for="metadata in decodeMetadata(transaction.data.params.metadata)" :key="metadata" class="text-xs" :chain_id="transaction.chain_id" :metadata="metadata" />
             </div>
           </div>
+          <div v-if="transaction.note" class="p-7.5 border-b dark:border-slate-800 border-slate-150">
+            <div class="flex justify-between text-sm">
+              <span>Note</span>
+              {{ transaction.note }}
+            </div>
+          </div>
           <div class="px-7.5 flex flex-col py-5 border-b dark:border-slate-800 border-slate-150 gap-10">
             <details v-for="action, i in transaction.data.params.actions" :key="action.data" open class="group">
               <summary class="text-xs flex items-center justify-between cursor-pointer">
