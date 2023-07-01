@@ -103,6 +103,8 @@ function isSelected(option: any, index: number) {
       <span :class="selectedLabelClasses" class="block truncate text-sm">{{
         selectedLabel
       }}</span>
+
+      <slot name="button-suffix" />
       <span v-if="!disabled" class="pointer-events-none flex items-center ml-auto">
         <ChevronDownSVG class="h-5 w-5 text-gray-400" aria-hidden="true" />
       </span>

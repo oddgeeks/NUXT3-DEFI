@@ -469,6 +469,10 @@ export async function openEditNonceModal(chainId: number | string) {
     componentProps: {
       chainId,
     },
+    options: {
+      wrapperClass: 'max-w-[560px]',
+      contentClass: '!p-0',
+    },
     async: true,
   })
 }

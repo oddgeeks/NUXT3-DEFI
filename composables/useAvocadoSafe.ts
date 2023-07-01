@@ -66,6 +66,9 @@ export function useAvocadoSafe() {
     if (isSafeMultisig.value) {
       const data = await openEditNonceModal(transaction.chainId)
 
+      if (!data.success)
+        throw new Error('Transaction canceled')
+
       const payload = data?.payload
 
       const txHash = await createProposalOrSignDirecty({
@@ -124,6 +127,9 @@ export function useAvocadoSafe() {
 
     if (isSafeMultisig.value) {
       const data = await openEditNonceModal(chainId)
+
+      if (!data.success)
+        throw new Error('Transaction canceled')
 
       const payload = data?.payload
 
