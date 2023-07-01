@@ -389,6 +389,7 @@ export function useAvocadoSafe() {
     const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {
       params: {
         status: 'pending',
+        chain_id: chainId,
       },
       baseURL: multisigURL,
     })
