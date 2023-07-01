@@ -7,7 +7,7 @@ const props = defineProps<{
 
 const { safeAddress } = useAvocadoSafe()
 const { getBalances } = useSafe()
-const walletName = useLocalStorage(props.safe?.safe_address, 'Personal')
+const walletName = useLocalStorage(`0x${props.safe?.safe_address}`, 'Personal')
 
 const active = computed(() => {
   return safeAddress.value === props.safe?.safe_address

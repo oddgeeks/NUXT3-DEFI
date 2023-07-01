@@ -4,10 +4,19 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['destroy'])
-const walletName = useLocalStorage(props.safe?.safe_address, 'Personal')
+const walletName = useLocalStorage(`0x${props.safe?.safe_address}`, 'Personal')
 const name = ref(walletName.value)
 
 function onSave() {
+  if (name.value === '' || name.value.length === 0 || !name.value) {
+    openSnackbar({
+      message: 'Wallet name can not be empty.',
+      type: 'error',
+    })
+    return
+  }
+  if (name.value == walletName.value)
+    emit('destroy')
   walletName.value = name.value
 }
 
