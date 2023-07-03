@@ -333,10 +333,8 @@ export function useDefi() {
             ? '∞'
             : div(healthFactorCollateralUsageUSD, p.positions.totalBorrowInUsd).toFixed(2)
         }
-        // if (p.protocol === 'compound') {
-        //   console.log('p.positions.data: ', p.positions.data)
-        //   console.log('COMPOUND:: ', calculateCommonAPY(p.positions.data || []).toString())
-        // }
+
+        console.log('p.positions.compPriceInUsd: ', p.positions.compPriceInUsd?.toString())
 
         return [
           {
@@ -412,7 +410,7 @@ export function useDefi() {
     return positions.filter((i: any) => gt(i.borrow, 0) || gt(i?.borrowStable, '0'))
   }
 
-  function calculateCommonAPY(positions: any[]) {
+  function calculateCommonAPY(positions: any[], compPriceInUSD?: string) {
     const totalInterest
     = positions.reduce((acc: any, curr: any) => {
       const supplyYield = toBN(curr?.supplyYield || curr?.supplyRate)
@@ -420,8 +418,8 @@ export function useDefi() {
       const supply = toBN(curr?.supply)
       const borrow = toBN(curr?.borrow)
       const priceInUsd = toBN(curr?.priceInUsd)
-      let totalSupplyYield = supplyYield.plus(curr?.supplyRewardRate || toBN(curr?.compSupplyApy).times(61.96)) // TODO: Update to COMP price
-      let totalBorrowYield = borrowYield.minus(curr?.borrowRewardRate || toBN(curr?.compBorrowApy).times(61.96)) // TODO: Update to COMP price
+      let totalSupplyYield = supplyYield.plus(curr?.supplyRewardRate || toBN(curr?.compSupplyApy).times(toBN(compPriceInUSD ?? '64.9'))) // TODO: Update to COMP price
+      let totalBorrowYield = borrowYield.minus(curr?.borrowRewardRate || toBN(curr?.compBorrowApy).times(toBN(compPriceInUSD ?? '64.9'))) // TODO: Update to COMP price
 
       const stakingTokenExists
       = curr?.key === 'wsteth'
@@ -439,12 +437,6 @@ export function useDefi() {
         .times(totalSupplyYield)
         .minus(borrow.times(totalBorrowYield))
         .times(priceInUsd)
-
-      // if (curr?.key === 'wsteth') {
-      //   console.log('stakingYield: ', stakingYield.toString())
-      //   console.log('totalSupplyYield: ', totalSupplyYield.toString())
-      //   console.log('interest: ', interest.toString())
-      // }
 
       return toBN(acc).plus(interest)
     }, 0)
