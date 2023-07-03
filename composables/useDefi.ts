@@ -418,8 +418,8 @@ export function useDefi() {
       const supply = toBN(curr?.supply)
       const borrow = toBN(curr?.borrow)
       const priceInUsd = toBN(curr?.priceInUsd)
-      let totalSupplyYield = supplyYield.plus(curr?.supplyRewardRate || toBN(curr?.compSupplyApy).times(toBN(compPriceInUSD ?? '64.9'))) // TODO: Update to COMP price
-      let totalBorrowYield = borrowYield.minus(curr?.borrowRewardRate || toBN(curr?.compBorrowApy).times(toBN(compPriceInUSD ?? '64.9'))) // TODO: Update to COMP price
+      let totalSupplyYield = supplyYield.plus(curr?.supplyRewardRate || toBN(curr?.compSupplyApy).times(toBN(compPriceInUSD ?? '64.9')))
+      let totalBorrowYield = borrowYield.minus(curr?.borrowRewardRate || toBN(curr?.compBorrowApy).times(toBN(compPriceInUSD ?? '64.9')))
 
       const stakingTokenExists
       = curr?.key === 'wsteth'
