@@ -339,7 +339,7 @@ export function useDefi() {
         return [
           {
             ...p,
-            apy: p?.apy || calculateCommonAPY(p.positions.data || []),
+            apy: p?.apy || calculateCommonAPY(p.positions.data || [], p.positions?.compPriceInUsd),
             healthFactor: p.positions.healthFactor
               ? toBN(p.positions.healthFactor).gt(1e29) ? '∞' : toBN(p.positions.healthFactor).toFixed(2)
               : healthFactor || '1',
