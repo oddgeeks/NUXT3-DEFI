@@ -64,7 +64,15 @@ export function useAvocadoSafe() {
       throw new Error('Safe not initialized')
 
     if (isSafeMultisig.value) {
-      const data = await openEditNonceModal(transaction.chainId)
+      const actions = [
+        {
+          to: transaction.to,
+          value: transaction.value,
+          data: transaction.data,
+          operation: transaction.operation,
+        },
+      ]
+      const data = await openEditNonceModal(transaction.chainId, actions)
 
       if (!data.success)
         throw new Error('Transaction canceled')
@@ -76,14 +84,7 @@ export function useAvocadoSafe() {
         metadata: options.metadata,
         nonce: payload?.nonce,
         note: payload?.note,
-        actions: [
-          {
-            to: transaction.to,
-            value: transaction.value,
-            data: transaction.data,
-            operation: transaction.operation,
-          },
-        ],
+        actions,
       })
 
       if (txHash)
@@ -126,7 +127,7 @@ export function useAvocadoSafe() {
       throw new Error('Safe not initialized')
 
     if (isSafeMultisig.value) {
-      const data = await openEditNonceModal(chainId)
+      const data = await openEditNonceModal(chainId, transactions)
 
       if (!data.success)
         throw new Error('Transaction canceled')

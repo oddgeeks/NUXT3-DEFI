@@ -1,8 +1,13 @@
 <script setup lang="ts">
-defineProps<{
+import { storeToRefs } from 'pinia'
+
+const props = defineProps<{
   chainId: number | string
+  actions: any[]
 }>()
+
 const emit = defineEmits(['resolve'])
+const { selectedSafe } = storeToRefs(useAuthorities())
 const nonce = ref<number | undefined>(-1)
 const note = ref<string | undefined>(undefined)
 
@@ -23,6 +28,35 @@ function onSubmit() {
     note: note.value,
   })
 }
+
+const { data: simulationDetails, error: simulationError } = useAsyncData(
+  () => {
+    if (networksSimulationNotSupported.includes(Number(props.chainId)))
+      throw new Error('Simulation not supported on this network.')
+
+    const actions = props.actions.map((action) => {
+      return {
+        operation: action.operation || '0',
+        target: action?.target || action.to,
+        data: action.data || '0x',
+        value: action.value || '0',
+      }
+    }) as any
+
+    return http('/api/simulate', {
+      method: 'POST',
+      body: {
+        actions,
+        avocadoSafe: selectedSafe.value?.safe_address,
+        chainId: props.chainId,
+      },
+    }) as Promise<ISimulation>
+  },
+  {
+    immediate: true,
+    server: false,
+  },
+)
 </script>
 
 <template>
@@ -74,6 +108,28 @@ function onSubmit() {
         </span>
         <textarea v-model="note" placeholder="Visible to All signers" class="dark:bg-slate-800 placeholder:text-sm text-sm rounded-[14px] bg-slate-100 py-[15px] px-4 border-0 outline-none focus:border-0 focus:outline-none focus:ring-0" />
       </div>
+
+      <details>
+        <summary class="text-orange-400 flex justify-between py-5 text-sm leading-5 cursor-pointer">
+          View transaction breakdown <SvgoChevronDown />
+        </summary>
+        <div>
+          <SimulationDetails
+            v-if="simulationDetails"
+            :chain-id="String(chainId)"
+            :details="simulationDetails"
+            :has-error="!!simulationError"
+            title-hidden
+            wrapper-class="sm:!flex flex-col"
+          />
+          <p v-if="simulationError" class="text-xs leading-5 text-orange-400 flex items-center gap-2">
+            <SvgoExclamationCircle class="w-3" />
+
+            {{ simulationError.message }}
+          </p>
+        </div>
+      </details>
+
       <CommonButton class="justify-center mt-5" size="lg" type="submit">
         Send for Approval
       </CommonButton>

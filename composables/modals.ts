@@ -477,11 +477,12 @@ export function openDeleteSigner(signers: ISigner[]) {
   })
 }
 
-export async function openEditNonceModal(chainId: number | string) {
+export async function openEditNonceModal(chainId: number | string, actions: any[]) {
   return openModal({
     component: EditNonce,
     componentProps: {
       chainId,
+      actions,
     },
     options: {
       wrapperClass: 'max-w-[560px]',
