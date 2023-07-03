@@ -77,14 +77,6 @@ export function useBanner() {
     )
   })
 
-  const showRabbyBanner = computed(() => {
-    if (!account.value)
-      return false
-    if (isHideRabbyBanner.value)
-      return false
-    return true
-  })
-
   const unstableDappNetworks = computed(() => {
     if (!wcStoreV2.sessions?.length)
       return []
@@ -100,7 +92,6 @@ export function useBanner() {
     showIncorrectNetworkBanner,
     showGasGiftBanner,
     showOnboardBanner,
-    showRabbyBanner,
     isVersionUpdateBannerHidden,
     showVersionUpdateBanner,
     unstableDappNetworks,
