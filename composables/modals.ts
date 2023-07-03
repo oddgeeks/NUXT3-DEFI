@@ -34,6 +34,7 @@ import AddAuthority from '~/components/modals/AddAuthority.vue'
 import ManageAuthority from '~/components/modals/ManageAuthority.vue'
 import EstimateAuthority from '~/components/modals/EstimateAuthority.vue'
 import SignAuthorityTransactions from '~/components/modals/SignAuthorityTransactions.vue'
+import WalletNameEdit from '~/components/modals/WalletNameEdit.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -461,6 +462,16 @@ export function openSignAuthorityModal(authority: IAuthority, transactions: IAut
       transactions,
       authority,
       remove,
+    },
+  })
+}
+
+export function openWalletNameEditModal(safe: ISafe) {
+  return openModal({
+    component: WalletNameEdit,
+    async: true,
+    componentProps: {
+      safe,
     },
   })
 }
