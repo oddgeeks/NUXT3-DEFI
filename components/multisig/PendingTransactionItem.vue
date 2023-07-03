@@ -47,7 +47,7 @@ const isRejection = computed(() => {
         <span>{{ formattedActionType }}</span>
       </span>
       <span class="flex-1">
-        <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" :key="metadata" compact :chain_id="item.chain_id" :metadata="metadata" />
+        <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" v-once :key="metadata" compact :chain_id="item.chain_id" :metadata="metadata" />
       </span>
       <span class="whitespace-nowrap">
         {{ formatTimeAgo(new Date(item.created_at)) }}

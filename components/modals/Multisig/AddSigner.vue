@@ -112,7 +112,7 @@ async function handleSelectContact(key: number) {
       >
         <div class="flex justify-between items-center w-full">
           <span class="text-xs font-medium leading-5 text-slate-400">
-            Owner address
+            Signer address
           </span>
           <button
             v-if="key !== 0" class="h-5 w-5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
@@ -146,7 +146,7 @@ async function handleSelectContact(key: number) {
         <div class="bg-primary w-4 h-4 rounded-full flex">
           <SvgoPlus class="text-white m-auto w-2 h-2" />
         </div>
-        Add New Authority
+        Add New Siger
       </button>
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
