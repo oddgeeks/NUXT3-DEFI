@@ -193,26 +193,7 @@ whenever(
               </button>
             </div>
             <div class="border-t dark:border-slate-750 px-5 pb-5 border-slate-150 pt-4">
-              <div v-if="actualMainSafe">
-                <h2 class="text-xs mb-3">
-                  Generated wallets
-                </h2>
-                <div class="flex flex-col gap-2.5">
-                  <WalletItem primary :safe="actualMainSafe" />
-                  <WalletItem v-if="multiSigSafe" primary :safe="multiSigSafe" />
-                </div>
-              </div>
-
-              <div v-if="!!filteredSafes?.length" class="mt-5">
-                <h2 class="text-xs mb-3">
-                  Secondary wallets
-                </h2>
-                <ul class="flex flex-col gap-2.5">
-                  <li v-for="safeItem in filteredSafes" :key="safeItem.safe_address">
-                    <WalletItem :safe="safeItem" />
-                  </li>
-                </ul>
-              </div>
+              <WalletItemList />
             </div>
           </PopoverPanel>
         </transition>

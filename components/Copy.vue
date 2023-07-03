@@ -13,7 +13,7 @@ const slots = useSlots()
 <template>
   <button
     class="text-slate-400 font-semibold inline-flex items-center gap-2.5"
-    @click="copy(text)"
+    @click.stop="copy(text)"
   >
     <Transition mode="out-in" name="slide-left">
       <span v-if="copied && !iconOnly"> Copied </span>

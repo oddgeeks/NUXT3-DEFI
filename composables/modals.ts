@@ -34,6 +34,7 @@ import ReviewSigner from '~/components/modals/Multisig/ReviewSigner.vue'
 import ManageAuthority from '~/components/modals/ManageAuthority.vue'
 import EstimateAuthority from '~/components/modals/EstimateAuthority.vue'
 import SignAuthorityTransactions from '~/components/modals/SignAuthorityTransactions.vue'
+import WalletNameEdit from '~/components/modals/WalletNameEdit.vue'
 import ReviewMultisigTransaction from '~/components/modals/Multisig/ReviewTransaction.vue'
 import MultisigTransactionDetail from '~/components/modals/Multisig/TransactionDetails.vue'
 import EditNonce from '~/components/modals/Multisig/EditNonce.vue'
@@ -524,6 +525,16 @@ export function openSignAuthorityModal(authority: IAuthority, transactions: IAut
       transactions,
       authority,
       remove,
+    },
+  })
+}
+
+export function openWalletNameEditModal(safe: ISafe) {
+  return openModal({
+    component: WalletNameEdit,
+    async: true,
+    componentProps: {
+      safe,
     },
   })
 }

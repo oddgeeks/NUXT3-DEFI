@@ -7,21 +7,34 @@ import QrSVG from '~/assets/images/icons/qr.svg?component'
 import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
 import InstadappSVG from '@/assets/images/logo/instadapp.svg?component'
 
-const { active, deactivate, connector } = useWeb3()
+const { active, deactivate, connector, account } = useWeb3()
 const { trackingAccount } = useAccountTrack()
 const { safeAddress } = useAvocadoSafe()
+const ensName = ref()
 const { resetAccounts } = useSafe()
 const [opened, toggle] = useToggle(false)
-const { setConnectorName } = useConnectors()
+const [walletListOpened, toggleWalletList] = useToggle(false)
+const { setConnectorName, cachedProviderName } = useConnectors()
+const { providers } = useNetworks()
 const {
   showTrackingBanner,
 } = useBanner()
 const router = useRouter()
 
+const addressLabel = computed(() =>
+  trackingAccount.value
+    ? `Tracking: ${shortenHash(trackingAccount.value, 4)}`
+    : ensName.value || shortenHash(account.value, 4),
+)
+
 const isActualActive = computed(() => {
   if (trackingAccount.value)
     return true
   return active.value
+})
+
+const connectedProvider = computed(() => {
+  return providers.find(item => item.id === cachedProviderName.value)
 })
 
 async function closeConnection() {
@@ -40,6 +53,14 @@ watch(() => active.value, () => {
   if (!active.value)
     toggle(false)
 })
+
+whenever(
+  account,
+  async () => {
+    ensName.value = await getRpcProvider(1).lookupAddress(account.value)
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -85,7 +106,20 @@ watch(() => active.value, () => {
           <ColorModeSwitcher />
         </div>
 
-        <Web3Button :hide-gas="true" :hide-power="true" />
+        <button class="bg-slate-100 relative rounded-7.5 dark:bg-slate-800 py-2.5 sm:py-3 px-4.5 sm:px-4 leading-5 justify-between flex items-center gap-x-2.5" @click="toggleWalletList(!walletListOpened)">
+          <div class="flex gap-[14px]">
+            <div class="flex items-center gap-2.5">
+              <div v-if="connectedProvider">
+                <component :is="connectedProvider.logo" class="h-7.5 sm:h-6 w-7.5 sm:w-6" />
+              </div>
+              <div class="flex flex-col items-start gap-[6px]">
+                <span>{{ addressLabel }}</span>
+              </div>
+            </div>
+          </div>
+
+          <SvgoChevronDown :class="`shrink-0${walletListOpened ? ' -rotate-180' : ''}`" />
+        </button>
 
         <button
           class="bg-slate-100 dark:bg-slate-800 w-10 h-10 flex justify-center items-center rounded-full"
@@ -93,6 +127,9 @@ watch(() => active.value, () => {
         >
           <PowerSVG class="text-slate-400" />
         </button>
+      </div>
+      <div v-if="walletListOpened" class="px-[20px] py-[24px]">
+        <WalletItemList />
       </div>
       <div class="flex flex-col items-center w-full px-5 py-6 gap-6">
         <div class="flex justify-between items-center w-full">
