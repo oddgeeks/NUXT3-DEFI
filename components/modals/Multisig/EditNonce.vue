@@ -109,9 +109,9 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
         <textarea v-model="note" placeholder="Visible to All signers" class="dark:bg-slate-800 placeholder:text-sm text-sm rounded-[14px] bg-slate-100 py-[15px] px-4 border-0 outline-none focus:border-0 focus:outline-none focus:ring-0" />
       </div>
 
-      <details>
+      <details class="group">
         <summary class="text-orange-400 flex justify-between py-5 text-sm leading-5 cursor-pointer">
-          View transaction breakdown <SvgoChevronDown />
+          View transaction breakdown <SvgoChevronDown class="group-open:rotate-180" />
         </summary>
         <div>
           <SimulationDetails
