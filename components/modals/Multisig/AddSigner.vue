@@ -156,8 +156,8 @@ async function handleSelectContact(key: number) {
         Any transaction requires the confirmation of
       </h3>
       <div class="flex text-sm items-center gap-5">
-        <CommonSelect v-model="treshold" class="w-fit" :options="Array.from({ length: fields.length + 1 }, (_, i) => i + 1)" />
-        Out of {{ fields.length }} signer(s)
+        <CommonSelect v-model="treshold" class="w-[80px]" :options="Array.from({ length: signers.length + fields.length }, (_, i) => i + 1)" />
+        Out of {{ signers.length + fields.length }} signer(s)
       </div>
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
