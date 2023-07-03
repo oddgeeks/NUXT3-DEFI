@@ -7,7 +7,11 @@ const props = defineProps<{
 
 const { safeAddress } = useAvocadoSafe()
 const { getBalances } = useSafe()
-const walletName = useLocalStorage(`0x${props.safe?.safe_address}`, 'Personal')
+const walletName = useLocalStorage(`safe-${props.safe?.safe_address}`, 'Personal')
+
+const val = walletName.value?.trim()
+if (!val)
+  walletName.value = 'Personal'
 
 const active = computed(() => {
   return safeAddress.value === props.safe?.safe_address
@@ -26,7 +30,7 @@ const { data: balance, pending } = useAsyncData(`safe-balance-${props.safe.safe_
   return balance.toFixed()
 })
 
-function onEdit() {
+async function onEdit() {
   openWalletNameEditModal(props.safe)
 }
 </script>

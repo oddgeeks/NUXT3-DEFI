@@ -1,24 +1,33 @@
 <script setup lang="ts">
+import * as yup from 'yup'
+import { useField, useForm } from 'vee-validate'
+
 const props = defineProps<{
   safe: ISafe
 }>()
 
 const emit = defineEmits(['destroy'])
-const walletName = useLocalStorage(`0x${props.safe?.safe_address}`, 'Personal')
-const name = ref(walletName.value)
+const walletName = useLocalStorage(`safe-${props.safe?.safe_address}`, 'Personal')
 
-function onSave() {
-  if (name.value === '' || name.value.length === 0 || !name.value) {
-    openSnackbar({
-      message: 'Wallet name can not be empty.',
-      type: 'error',
-    })
-    return
-  }
-  if (name.value == walletName.value)
-    emit('destroy')
+const {
+  handleSubmit,
+  isSubmitting,
+  errors,
+  meta,
+} = useForm({
+  validationSchema: yup.object({
+    'wallet-name': yup
+      .string()
+      .required(''),
+  }),
+})
+
+const { value: name, meta: nameMeta } = useField<string>('wallet-name', {}, { initialValue: walletName.value })
+const disabled = computed(() => !meta.value.valid || isSubmitting.value)
+
+const onSubmit = handleSubmit(() => {
   walletName.value = name.value
-}
+})
 
 watch([walletName], () => {
   emit('destroy')
@@ -26,7 +35,7 @@ watch([walletName], () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-[30px]">
+  <form class="flex flex-col gap-[30px]" @submit="onSubmit">
     <div class="flex flex-col gap-[12px]">
       <p class="text-[18px] leading-[20px] font-semibold text-center">
         Edit Wallet Note
@@ -37,13 +46,15 @@ watch([walletName], () => {
     </div>
     <CommonInput
       v-model="name"
-      name="WalletName"
+      :error-message="nameMeta.dirty ? errors['wallet-name'] : ''"
+      name="wallet-name"
       autofocus
       type="search"
+      required
       placeholder="Wallet Note"
     />
-    <CommonButton class="flex items-center justify-center" @click="onSave">
+    <CommonButton :disabled="disabled" type="submit" class="flex items-center justify-center">
       Save Changes
     </CommonButton>
-  </div>
+  </form>
 </template>
