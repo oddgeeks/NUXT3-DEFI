@@ -87,4 +87,5 @@ interface IGenerateMultisigSignatureParams {
   nonce?: number
   metadata?: string
   note?: string
+  clearModals?: boolean
 }

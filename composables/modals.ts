@@ -40,6 +40,8 @@ import MultisigTransactionDetail from '~/components/modals/Multisig/TransactionD
 import EditNonce from '~/components/modals/Multisig/EditNonce.vue'
 import SignSigner from '~/components/modals/Multisig/SignSigner.vue'
 import DeleteSigner from '~/components/modals/Multisig/DeleteSigner.vue'
+import SignDeleteSigner from '~/components/modals/Multisig/SignDeleteSigner.vue'
+import UpdateThreshold from '~/components/modals/Multisig/UpdateThreshold.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -465,15 +467,29 @@ export function openSignSignerModal(addresses: string[], treshold: number) {
   })
 }
 
-export function openDeleteSigner(signers: ISigner[]) {
+export function openDeleteSignerSign(signer: ISigner) {
+  return openModal({
+    component: SignDeleteSigner,
+    componentProps: {
+      signer,
+    },
+    options: {
+      wrapperClass: 'max-w-[560px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export function openDeleteSigner(signer: ISigner) {
   return openModal({
     component: DeleteSigner,
     componentProps: {
-      signers,
+      signer,
     },
     async: true,
     options: {
       wrapperClass: 'max-w-[560px]',
+      contentClass: '!p-0',
     },
   })
 }
@@ -526,6 +542,19 @@ export function openSignAuthorityModal(authority: IAuthority, transactions: IAut
       authority,
       remove,
     },
+  })
+}
+
+export function openUpdateThresholdModal(chainId: number | string) {
+  return openModal({
+    component: UpdateThreshold,
+    componentProps: {
+      chainId,
+    },
+    options: {
+      contentClass: '!p-0',
+    },
+    async: true,
   })
 }
 

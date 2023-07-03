@@ -1,28 +1,26 @@
 <script setup lang=ts>
 defineProps<{
-  signers: ISigner[]
+  signer: ISigner
 }>()
 
 defineEmits(['resolve', 'destroy'])
 </script>
 
 <template>
-  <div class="flex flex-col gap-4">
-    <h1 class="text-lg text-center">
-      Delete Signers
+  <div class="flex flex-col">
+    <h1 class="text-lg flex gap-[14px] p-7.5">
+      <SvgoTrash class="w-10 h-10" />
+      Are you sure you want to delete the following signer?
     </h1>
-    <h2 class="text-sm">
-      Are you sure you want to delete the following signers?
-    </h2>
-    <div>
-      <ul class="gap-4 flex flex-col">
-        <li v-for="signer in signers" :key="signer.address" class="text-sm flex items-center gap-2">
-          <AuthorityAvatar :address="signer.address" />
-          {{ signer.address }}
-        </li>
-      </ul>
-    </div>
-    <div class="flex gap-4">
+    <hr class="border-slate-150 dark:border-slate-800">
+    <p class="text-sm flex items-center gap-3 p-7.5">
+      <AuthorityAvatar :address="signer.address" />
+      <span class="text-slate-400 font-medium">
+        {{ signer.address }}
+      </span>
+    </p>
+    <hr class="border-slate-150 dark:border-slate-800">
+    <div class="flex gap-4 p-7.5">
       <CommonButton size="lg" class="flex-1 justify-center" color="white" @click="$emit('destroy')">
         Cancel
       </CommonButton>

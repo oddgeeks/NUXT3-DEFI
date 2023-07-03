@@ -246,7 +246,7 @@ export function useAvocadoSafe() {
     } as any
   }
 
-  async function createProposalOrSignDirecty({ chainId, actions, nonce, metadata, note }: IGenerateMultisigSignatureParams) {
+  async function createProposalOrSignDirecty({ chainId, actions, nonce, metadata, note, clearModals = true }: IGenerateMultisigSignatureParams) {
     const params = await generateMultisigSignatureAndSign({ chainId, actions, nonce, metadata })
 
     // generate proposal
@@ -274,7 +274,9 @@ export function useAvocadoSafe() {
     }
     else {
       // handle multisig flow
-      clearAllModals()
+      if (clearModals)
+        clearAllModals()
+
       openReviewMultisigTransaction(data.id)
     }
   }
@@ -390,18 +392,10 @@ export function useAvocadoSafe() {
     return createProposalOrSignDirecty({ chainId, actions } as any)
   }
 
-  async function removeSigner(address: string, chainId: number | string) {
+  async function removeSigner(address: string, chainId: number | string, threshold: number) {
     const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
 
-    const requiredSignersByChain = requiredSigners.value.find(i => i.chainId == chainId)
-
-    const requiredSignerCount = requiredSignersByChain?.signerCount || 1
-    const currentSignerCount = requiredSignersByChain?.signerCount || 1
-
-    const featuredRequiredCount = Math.max(requiredSignerCount - 1, 1)
-    const featuredCurrentSignerCount = Math.max(currentSignerCount - 1, 1)
-
-    const actions = [
+    const actions: any[] = [
       {
         target: selectedSafe.value?.safe_address,
         data: avoMultsigInterface.encodeFunctionData('removeSigners', [[address]]),
@@ -410,16 +404,16 @@ export function useAvocadoSafe() {
       },
     ]
 
-    // if (featuredRequiredCount < currentSignerCount) {
-    //   actions.push({
-    //     target: selectedSafe.value?.safe_address,
-    //     data: avoMultsigInterface.encodeFunctionData('setRequiredSigners', [featuredRequiredCount]),
-    //     value: '0',
-    //     operation: '0',
-    //   })
-    // }
+    if (threshold) {
+      actions.push({
+        target: selectedSafe.value?.safe_address,
+        data: avoMultsigInterface.encodeFunctionData('setRequiredSigners', [threshold]),
+        value: '0',
+        operation: '0',
+      })
+    }
 
-    return createProposalOrSignDirecty({ chainId, actions } as any)
+    return createProposalOrSignDirecty({ chainId, actions, clearModals: false })
   }
 
   const getLatestAvosafeNonce = async (chainId: string | number) => {

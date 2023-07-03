@@ -1,0 +1,42 @@
+<script lang="ts" setup>
+const props = defineProps<{
+  address: string
+  chainId: string | number
+}>()
+
+const emit = defineEmits(['destroy'])
+
+const pending = ref(false)
+const signed = ref(false)
+
+const { removeSigner } = useAvocadoSafe()
+
+async function handleSign() {
+  try {
+    pending.value = true
+
+    const { payload: threshold } = await openUpdateThresholdModal(props.chainId)
+
+    await removeSigner(props.address, props.chainId, threshold)
+    signed.value = true
+  }
+  catch (e) {
+    console.error(e)
+  }
+  finally {
+    pending.value = false
+  }
+}
+</script>
+
+<template>
+  <li class="flex items-center justify-between w-full">
+    <span class="flex items-center gap-3 text-sm leading-5">
+      <ChainLogo class="w-[26px] h-[26px]" :chain="chainId" />
+      {{ chainIdToName(chainId) }}
+    </span>
+    <CommonButton :disabled="pending || signed" :loading="pending" @click="handleSign">
+      {{ signed ? 'Signed' : 'Sign' }}
+    </CommonButton>
+  </li>
+</template>

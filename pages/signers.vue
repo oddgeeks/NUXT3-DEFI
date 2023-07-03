@@ -11,19 +11,14 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const { removeSigner } = useAvocadoSafe()
 const { signers, requiredSigners } = storeToRefs(useAuthorities())
 const { account } = useWeb3()
 
-const selectedSigners = ref<ISigner[]>([])
+async function handleDeleteSigner(signer: ISigner) {
+  const { success } = await openDeleteSigner(signer)
 
-async function handleDeleteSigner() {
-  const { success } = await openDeleteSigner(selectedSigners.value)
-
-  if (success) {
-    for (const signer of selectedSigners.value)
-      await removeSigner(signer.address, 137)
-  }
+  if (success)
+    openDeleteSignerSign(signer)
 }
 </script>
 
@@ -40,9 +35,6 @@ async function handleDeleteSigner() {
       </span>
     </div>
     <div class="flex flex-col gap-2">
-      <button v-if="selectedSigners.length" class="text-red-alert text-xs text-right" @click="handleDeleteSigner">
-        Delete selected signers
-      </button>
       <div class="flex flex-col dark:bg-gray-850 bg-slate-50 rounded-[25px]">
         <div v-if="account" class="flex items-center justify-between py-6.5 px-7.5 border-b-1 last:border-b-0 border-slate-150 dark:border-slate-800 w-full">
           <div class="flex items-center justify-between w-full">
@@ -92,7 +84,9 @@ async function handleDeleteSigner() {
                   </template>
                 </Copy>
               </div>
-              <input v-model="selectedSigners" :value="signer" type="checkbox">
+              <button @click="handleDeleteSigner(signer)">
+                <SvgoTrash />
+              </button>
             </div>
           </div>
         </template>
@@ -114,15 +108,15 @@ async function handleDeleteSigner() {
         Any transaction requires the confirmation of:
       </p>
       <div v-if="requiredSigners.length" class="dark:bg-gray-850 bg-slate-100 px-7.5 py-[26px] text-sm rounded-[25px]">
-        <span v-for="item of requiredSigners" :key="item.chainId" class="flex items-center gap-2.5 w-[140px]">
+        <span v-for="item of requiredSigners" :key="item.chainId" class="flex items-center gap-2.5">
           <ChainLogo class="w-5 h-5" :chain="item.chainId" />
           <span>
             {{ item.requiredSignerCount }} out of {{ item.signerCount }}
           </span>
+          <button class="text-primary ml-4">
+            Change
+          </button>
         </span>
-        <button class="mt-6 text-primary">
-          Change
-        </button>
       </div>
     </div>
   </div>
