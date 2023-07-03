@@ -15,7 +15,7 @@ const { unstableDappNetworks } = useBanner()
 const { safeAddress } = useAvocadoSafe()
 const { networkPreference } = storeToRefs(useSafe())
 
-const listType = useLocalStorage('listType', 'group')
+const listType = useLocalStorage('listType', 'individual')
 
 useAccountTrack(undefined, () => {
   useEagerConnect()
