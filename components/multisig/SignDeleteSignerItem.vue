@@ -15,7 +15,10 @@ async function handleSign() {
   try {
     pending.value = true
 
-    const { payload: threshold } = await openUpdateThresholdModal(props.chainId)
+    const { payload: threshold, success } = await openUpdateThresholdModal(props.chainId, -1)
+
+    if (!success)
+      return
 
     await removeSigner(props.address, props.chainId, threshold)
     signed.value = true
