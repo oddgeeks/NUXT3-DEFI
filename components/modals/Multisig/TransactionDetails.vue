@@ -31,6 +31,8 @@ const isNonceNotMatch = computed(() => isNonseq.value ? false : props.transactio
 const isTransactionExecuted = computed(() => props.transaction.executed_at !== null)
 const isSignedAlready = computed(() => props.transaction.confirmations.some(item => item.address === getAddress(account.value)))
 
+const decodedMetadata = computed(() => decodeMetadata(props.transaction.data.params.metadata))
+
 const isSafeDoesntMatch = computed(() => props.transaction.safe_address !== selectedSafe.value?.safe_address)
 
 const errorMessage = computed(() => {
@@ -174,9 +176,9 @@ onMounted(async () => {
               </div>
             </div>
           </div>
-          <div class="p-7.5 border-b dark:border-slate-800 border-slate-150">
+          <div v-if="decodedMetadata" class="p-7.5 border-b dark:border-slate-800 border-slate-150">
             <div v-once>
-              <ActionMetadata v-for="metadata in decodeMetadata(transaction.data.params.metadata)" :key="metadata" class="text-xs" :chain_id="transaction.chain_id" :metadata="metadata" />
+              <ActionMetadata v-for="metadata in decodedMetadata" :key="metadata" class="text-xs" :chain_id="transaction.chain_id" :metadata="metadata" />
             </div>
           </div>
           <div v-if="transaction.note" class="p-7.5 border-b dark:border-slate-800 border-slate-150">

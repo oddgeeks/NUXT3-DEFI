@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { formatTimeAgo } from '@vueuse/core'
-import { storeToRefs } from 'pinia'
+import { AvoMultisigImplementation__factory } from '~/contracts'
 
 const props = defineProps<{
   item: IMultisigTransaction
 }>()
-
-const { selectedSafe } = storeToRefs(useAuthorities())
 
 const isConfirmationsMatch = computed(() => props.item.confirmations.length === props.item.confirmations_required)
 const isTransactionExecuted = computed(() => props.item.executed_at !== null)
@@ -23,12 +21,53 @@ const formattedActionType = computed(() => {
   if (isRejection.value)
     return 'On-chain rejection'
 
+  const decodedData = getTypeFromData()
+
+  if (decodedData)
+    return decodedData
+
   return formatTxType(actionType.value || '')
 })
+
+function getTypeFromData() {
+  const [action] = props.item?.data?.params?.actions || []
+  const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
+
+  const functions = [{
+    name: 'removeSigners',
+    label: 'Remove Signers',
+  }, {
+    name: 'setRequiredSigners',
+    label: 'Set Required Signers',
+  }, {
+    name: 'addSigners',
+    label: 'Add Signers',
+  }, {
+    name: 'occupyNonSequentialNonces',
+    label: 'Occupy Non Sequential Nonces',
+  }]
+
+  for (const func of functions) {
+    try {
+      const decodedData = avoMultsigInterface.decodeFunctionData(func.name, action.data)
+
+      if (decodedData)
+        return func.label
+    }
+    catch (e) {
+      continue
+    }
+  }
+}
 
 const isRejection = computed(() => {
   const [action] = props.item?.data?.params?.actions || []
   if (!action)
+    return false
+
+  const data = getTypeFromData()
+
+  if (data)
     return false
 
   return action.value == '0' && action.operation === '0' && action.target === props.item.safe_address

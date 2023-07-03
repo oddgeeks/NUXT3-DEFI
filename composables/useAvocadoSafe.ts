@@ -16,7 +16,7 @@ export function useAvocadoSafe() {
   const { avoProvider } = useSafe()
   const { clearAllModals } = useModal()
 
-  const { selectedSafe, isSafeMultisig } = storeToRefs(useAuthorities())
+  const { selectedSafe, isSafeMultisig, requiredSigners } = storeToRefs(useAuthorities())
 
   // check if we have a cached safe address
   const { safeAddress, mainSafeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks, multiSigSafeAddress } = storeToRefs(useSafe())
@@ -389,6 +389,38 @@ export function useAvocadoSafe() {
     return createProposalOrSignDirecty({ chainId, actions } as any)
   }
 
+  async function removeSigner(address: string, chainId: number | string) {
+    const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
+
+    const requiredSignersByChain = requiredSigners.value.find(i => i.chainId == chainId)
+
+    const requiredSignerCount = requiredSignersByChain?.signerCount || 1
+    const currentSignerCount = requiredSignersByChain?.signerCount || 1
+
+    const featuredRequiredCount = Math.max(requiredSignerCount - 1, 1)
+    const featuredCurrentSignerCount = Math.max(currentSignerCount - 1, 1)
+
+    const actions = [
+      {
+        target: selectedSafe.value?.safe_address,
+        data: avoMultsigInterface.encodeFunctionData('removeSigners', [[address]]),
+        value: '0',
+        operation: '0',
+      },
+    ]
+
+    // if (featuredRequiredCount < currentSignerCount) {
+    //   actions.push({
+    //     target: selectedSafe.value?.safe_address,
+    //     data: avoMultsigInterface.encodeFunctionData('setRequiredSigners', [featuredRequiredCount]),
+    //     value: '0',
+    //     operation: '0',
+    //   })
+    // }
+
+    return createProposalOrSignDirecty({ chainId, actions } as any)
+  }
+
   const getLatestAvosafeNonce = async (chainId: string | number) => {
     const currentNonce = await getCurrentNonce(chainId)
 
@@ -429,5 +461,6 @@ export function useAvocadoSafe() {
     getCurrentNonce,
     addSignersWithThreshold,
     getLatestAvosafeNonce,
+    removeSigner,
   }
 }

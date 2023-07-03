@@ -38,6 +38,7 @@ import ReviewMultisigTransaction from '~/components/modals/Multisig/ReviewTransa
 import MultisigTransactionDetail from '~/components/modals/Multisig/TransactionDetails.vue'
 import EditNonce from '~/components/modals/Multisig/EditNonce.vue'
 import SignSigner from '~/components/modals/Multisig/SignSigner.vue'
+import DeleteSigner from '~/components/modals/Multisig/DeleteSigner.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -459,6 +460,19 @@ export function openSignSignerModal(addresses: string[], treshold: number) {
     options: {
       wrapperClass: 'max-w-[560px]',
       contentClass: '!p-0',
+    },
+  })
+}
+
+export function openDeleteSigner(signers: ISigner[]) {
+  return openModal({
+    component: DeleteSigner,
+    componentProps: {
+      signers,
+    },
+    async: true,
+    options: {
+      wrapperClass: 'max-w-[560px]',
     },
   })
 }
