@@ -248,17 +248,17 @@ onMounted(async () => {
         </div>
         <div class="pb-7.5 px-7.5 border-b dark:border-slate-800 border-slate-150">
           <ul class="flex gap-5 flex-col">
-            <li v-for="signer in transaction.signers" :key="signer">
+            <li v-for="signer in transaction.confirmations" :key="signer.address">
               <div class="flex gap-3 items-center">
-                <AuthorityAvatar class="w-9 h-9" :address="signer" />
+                <AuthorityAvatar class="w-9 h-9" :address="signer.address" />
                 <span class="text-xs leading-5 font-medium">
-                  {{ shortenHash(signer) }}
+                  {{ shortenHash(signer.address) }}
                 </span>
                 <div class="flex items-center gap-2.5 ml-auto">
                   <div class="flex items-center w-7.5 h-7.5 dark:bg-slate-800 bg-slate-100 rounded-full justify-center">
-                    <Copy class="w-3 h-3" icon-only :text="signer" />
+                    <Copy class="w-3 h-3" icon-only :text="signer.address" />
                   </div>
-                  <NuxtLink external target="_blank" :to="getExplorerUrl(transaction.chain_id, `/address/${signer}`)" class="flex items-center w-7.5 h-7.5 dark:bg-slate-800 bg-slate-100 rounded-full justify-center">
+                  <NuxtLink external target="_blank" :to="getExplorerUrl(transaction.chain_id, `/address/${signer.address}`)" class="flex items-center w-7.5 h-7.5 dark:bg-slate-800 bg-slate-100 rounded-full justify-center">
                     <SvgoExternalLink class="w-3 h-3 text-slate-400" />
                   </NuxtLink>
                 </div>
