@@ -108,6 +108,7 @@ export const useAuthorities = defineStore('authorities', () => {
 
   async function getRequiredSigners() {
     const requiredSignersArr: IRequiredSigners[] = []
+    requiredSigners.value = []
 
     for (const network of availableNetworks) {
       try {
@@ -163,9 +164,15 @@ export const useAuthorities = defineStore('authorities', () => {
       return
 
     await setMultiSigSafe()
-    getRequiredSigners()
   }, {
     immediate: true,
+  })
+
+  watch(selectedSafe, async () => {
+    if (!selectedSafe.value)
+      return
+
+    getRequiredSigners()
   })
 
   return {

@@ -11,7 +11,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['destroy'])
 
-const { signers } = storeToRefs(useAuthorities())
+const { signers, requiredSigners } = storeToRefs(useAuthorities())
 const { account } = useWeb3()
 
 const {
@@ -148,17 +148,6 @@ async function handleSelectContact(key: number) {
         </div>
         Add New Siger
       </button>
-    </div>
-    <hr class="border-slate-150 dark:border-slate-800">
-    <div class="p-7.5 flex flex-col gap-2">
-      <h2>Treshold</h2>
-      <h3 class="text-sm text-slate-400 mb-5">
-        Any transaction requires the confirmation of
-      </h3>
-      <div class="flex text-sm items-center gap-5">
-        <CommonSelect v-model="treshold" class="w-[80px]" :options="Array.from({ length: signers.length + fields.length }, (_, i) => i + 1)" />
-        Out of {{ signers.length + fields.length }} signer(s)
-      </div>
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <div class="p-7.5 grid grid-cols-2 gap-4">

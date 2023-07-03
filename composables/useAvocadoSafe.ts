@@ -381,15 +381,32 @@ export function useAvocadoSafe() {
         value: '0',
         operation: '0',
       },
+    ] as any[]
+
+    if (threshold) {
+      actions.push({
+        target: selectedSafe.value?.safe_address,
+        data: avoMultsigInterface.encodeFunctionData('setRequiredSigners', [threshold]),
+        value: '0',
+        operation: '0',
+      })
+    }
+
+    return createProposalOrSignDirecty({ chainId, actions, clearModals: false })
+  }
+
+  async function changeThreshold(threshold: string, chainId: string | number) {
+    const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
+    const actions = [
       {
         target: selectedSafe.value?.safe_address,
         data: avoMultsigInterface.encodeFunctionData('setRequiredSigners', [threshold]),
         value: '0',
         operation: '0',
       },
-    ]
+    ] as any[]
 
-    return createProposalOrSignDirecty({ chainId, actions } as any)
+    return createProposalOrSignDirecty({ chainId, actions })
   }
 
   async function removeSigner(address: string, chainId: number | string, threshold: number) {
@@ -457,5 +474,6 @@ export function useAvocadoSafe() {
     addSignersWithThreshold,
     getLatestAvosafeNonce,
     removeSigner,
+    changeThreshold,
   }
 }

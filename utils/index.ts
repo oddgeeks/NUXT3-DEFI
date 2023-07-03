@@ -235,7 +235,7 @@ export function generateColor(address: string): string {
 }
 
 export function formatAuthorities(input: ISafe['authorities']): IAuthority[] {
-  const result = Object.entries(input).reduce((acc: IAuthority[], [key, value]: [string, string[]]) => {
+  const result = Object.entries(input || {}).reduce((acc: IAuthority[], [key, value]: [string, string[]]) => {
     value.forEach((address: string) => {
       let existing = acc.find((item: IAuthority) => item.address === address)
       if (!existing) {
@@ -251,7 +251,7 @@ export function formatAuthorities(input: ISafe['authorities']): IAuthority[] {
 }
 
 export function formatSigners(input: ISafe['signers']): ISigner[] {
-  const result = Object.entries(input).reduce((acc: ISigner[], [key, value]: [string, string[]]) => {
+  const result = Object.entries(input || {}).reduce((acc: ISigner[], [key, value]: [string, string[]]) => {
     value.forEach((address: string) => {
       let existing = acc.find((item: ISigner) => item.address === address)
       if (!existing) {

@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
   chainId: number | string
+  additionalCount: number
 }>()
 
 defineEmits(['resolve'])
@@ -23,7 +24,7 @@ const threshold = ref(defaultThreshold.value)
       Any transaction requires the confirmation of
     </h3>
     <div class="flex text-sm items-center gap-5">
-      <CommonSelect v-model="threshold" class="w-[80px]" :options="generateNumber(Number(requiredSignersByChain) || 1, requiredSignersByChain?.signerCount || 1)" />
+      <CommonSelect v-model="threshold" class="w-[80px]" :options="generateNumber(1, (requiredSignersByChain?.signerCount || 1) + additionalCount)" />
       Out of {{ requiredSignersByChain?.signerCount }} signer(s)
     </div>
     <CommonButton class="w-full justify-center mt-5" size="lg" @click="$emit('resolve', true, defaultThreshold === threshold ? undefined : threshold)">

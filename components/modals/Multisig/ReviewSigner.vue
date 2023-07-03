@@ -17,6 +17,7 @@ function handleBack() {
 
 function handleNext() {
   emit('destroy')
+
   openSignSignerModal(props.addresses, props.defaultTreshold)
 }
 </script>
@@ -62,17 +63,6 @@ function handleNext() {
                 <Copy icon-only :text="address" />
               </li>
             </ul>
-          </td>
-        </tr>
-        <tr>
-          <td class=" text-slate-400 leading-[30px]">
-            Treshold
-          </td>
-          <td>
-            <span class="flex gap-3 items-center">
-              <SvgoUserCircle class="w-5 h-5 text-slate-400" />
-              {{ defaultTreshold }} out of {{ addresses.length }} signer(s)
-            </span>
           </td>
         </tr>
       </tbody>
