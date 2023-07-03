@@ -1,4 +1,5 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
+import { getAddress } from 'ethers/lib/utils'
 import {
   AvoMultisigImplementation__factory,
 } from '@/contracts'
@@ -57,7 +58,13 @@ export const useAuthorities = defineStore('authorities', () => {
   async function setSafe() {
     const resp = await fetchSafe(safeAddress.value)
 
-    selectedSafe.value = resp
+    if (!resp) {
+      const isMultiSafe = getAddress(safeAddress.value) === getAddress(multiSigSafeAddress.value)
+      selectedSafe.value = getDefaultSafe(safeAddress.value, isMultiSafe ? 1 : 0)
+    }
+    else {
+      selectedSafe.value = resp
+    }
   }
 
   async function setMainSafe() {
@@ -70,9 +77,10 @@ export const useAuthorities = defineStore('authorities', () => {
     try {
       const resp = await fetchSafe(multiSigSafeAddress.value)
 
-      console.log(resp)
-
-      multiSigSafe.value = resp
+      if (!resp)
+        multiSigSafe.value = getDefaultSafe(multiSigSafeAddress.value, 1)
+      else
+        multiSigSafe.value = resp
     }
     catch (e) {
     }
@@ -80,6 +88,22 @@ export const useAuthorities = defineStore('authorities', () => {
 
   function checkNetworkIsAuthorised(chainId: string | number) {
     return !!authorisedNetworks.value?.find(i => i.chainId == chainId)
+  }
+
+  function getDefaultSafe(address: string, multisig: 0 | 1 = 0): ISafe {
+    return {
+      safe_address: address,
+      authorities: {},
+      created_at: new Date().toString(),
+      deployed: {},
+      fully_deployed: 0,
+      id: 0,
+      owner_address: account.value,
+      updated_at: new Date().toString(),
+      version: {},
+      multisig,
+      signers: {},
+    }
   }
 
   async function getRequiredSigners() {
@@ -116,8 +140,8 @@ export const useAuthorities = defineStore('authorities', () => {
     immediate: true,
   })
 
-  watch(safeAddress, async () => {
-    if (!safeAddress.value)
+  watch([safeAddress, multiSigSafeAddress], async () => {
+    if (!safeAddress.value || !multiSigSafeAddress.value)
       return
 
     setSafe()
