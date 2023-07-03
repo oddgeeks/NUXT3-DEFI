@@ -10,6 +10,7 @@ const emit = defineEmits(['resolve'])
 const { selectedSafe } = storeToRefs(useAuthorities())
 const nonce = ref<number | undefined>(-1)
 const note = ref<string | undefined>(undefined)
+const detailsRef = ref<HTMLDetailsElement>()
 
 const transactionTypes = [
   {
@@ -27,6 +28,19 @@ function onSubmit() {
     nonce: nonce.value,
     note: note.value,
   })
+}
+
+function handleSimulate() {
+  if (simulationDetails.value?.transaction?.status) {
+    openSnackbar({
+      type: 'success',
+      message: 'Simulation successful',
+    })
+  }
+  else {
+    if (detailsRef.value)
+      detailsRef.value.open = true
+  }
 }
 
 const { data: simulationDetails, error: simulationError } = useAsyncData(
@@ -57,6 +71,8 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
     server: false,
   },
 )
+
+const isTransactionFailed = computed(() => !simulationDetails.value?.transaction?.status)
 </script>
 
 <template>
@@ -108,31 +124,37 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
         </span>
         <textarea v-model="note" placeholder="Visible to All signers" class="dark:bg-slate-800 placeholder:text-sm text-sm rounded-[14px] bg-slate-100 py-[15px] px-4 border-0 outline-none focus:border-0 focus:outline-none focus:ring-0" />
       </div>
-
-      <details class="group">
-        <summary class="text-orange-400 flex justify-between py-5 text-sm leading-5 cursor-pointer">
-          View transaction breakdown <SvgoChevronDown class="group-open:rotate-180" />
-        </summary>
-        <div>
-          <SimulationDetails
-            v-if="simulationDetails"
-            :chain-id="String(chainId)"
-            :details="simulationDetails"
-            :has-error="!!simulationError"
-            title-hidden
-            wrapper-class="sm:!flex flex-col"
-          />
-          <p v-if="simulationError" class="text-xs leading-5 text-orange-400 flex items-center gap-2">
-            <SvgoExclamationCircle class="w-3" />
-
-            {{ simulationError.message }}
-          </p>
-        </div>
-      </details>
-
-      <CommonButton class="justify-center mt-5" size="lg" type="submit">
-        Send for Approval
-      </CommonButton>
     </div>
+    <hr class="border-slate-150 dark:border-slate-800">
+    <div class="px-7.5 py-5 text-sm flex justify-between items-center">
+      Check if this transaction is valid
+      <button type="button" class="text-primary" @click="handleSimulate">
+        Simulate
+      </button>
+    </div>
+    <hr class="border-slate-150 dark:border-slate-800">
+    <details ref="detailsRef" class="group px-7.5 py-5">
+      <summary class="text-orange-400 flex justify-between text-sm leading-5 cursor-pointer">
+        View transaction breakdown <SvgoChevronDown class="group-open:rotate-180" />
+      </summary>
+      <div class="mt-5">
+        <SimulationDetails
+          v-if="simulationDetails"
+          :chain-id="String(chainId)"
+          :details="simulationDetails"
+          :has-error="!!simulationError"
+          title-hidden
+          wrapper-class="sm:!flex flex-col"
+        />
+        <div v-if="isTransactionFailed" class="text-xs leading-5 text-red-alert bg-red-alert bg-opacity-10 flex p-4 rounded-[14px] items-center gap-2">
+          <SvgoExclamationCircle class="w-3" />
+          This transaction will most likely fail
+        </div>
+      </div>
+    </details>
+    <hr class="border-slate-150 dark:border-slate-800">
+    <CommonButton class="justify-center mx-7.5 my-5" size="lg" type="submit">
+      Send for Approval
+    </CommonButton>
   </form>
 </template>
