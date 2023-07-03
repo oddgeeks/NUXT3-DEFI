@@ -550,7 +550,13 @@ type IDefiToken = {
   version: Record<string, string>
   authorities: Record<string, string[]>
   signers: Record<string, string[]>
-}
+ }
+
+interface IRequiredSigners {
+  chainId: number | string
+  requiredSignerCount: number
+  signerCount: number
+ }
 
 
 interface IAuthority {
