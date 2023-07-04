@@ -334,8 +334,6 @@ export function useDefi() {
             : div(healthFactorCollateralUsageUSD, p.positions.totalBorrowInUsd).toFixed(2)
         }
 
-        console.log('p.positions.compPriceInUsd: ', p.positions.compPriceInUsd?.toString())
-
         return [
           {
             ...p,
@@ -418,12 +416,8 @@ export function useDefi() {
       const supply = toBN(curr?.supply)
       const borrow = toBN(curr?.borrow)
       const priceInUsd = toBN(curr?.priceInUsd)
-      console.log('compPriceInUSD1: ', compPriceInUSD)
       let totalSupplyYield = supplyYield.plus(curr?.supplyRewardRate || toBN(curr?.compSupplyApy).times(toBN(compPriceInUSD ?? '64.9')))
       let totalBorrowYield = borrowYield.minus(curr?.borrowRewardRate || toBN(curr?.compBorrowApy).times(toBN(compPriceInUSD ?? '64.9')))
-      console.log('key: ', curr?.key)
-      console.log('totalSupplyYield: ', totalSupplyYield.toString())
-      console.log('totalBorrowYield: ', totalBorrowYield.toString())
 
       const stakingTokenExists
       = curr?.key === 'wsteth'
@@ -445,25 +439,17 @@ export function useDefi() {
       return toBN(acc).plus(interest)
     }, 0)
 
-    console.log('totalInterest: ', totalInterest.toString())
-
     const totalSuppliedAmount = positions.reduce((sum: any, curr: any) => {
       return toBN(sum).plus(toBN(curr?.supply).times(toBN(curr?.priceInUsd)))
     }, 0)
-
-    console.log('totalSuppliedAmount: ', totalSuppliedAmount.toString())
 
     const totalBorrowedAmount = positions.reduce((sum: any, curr: any) => {
       return toBN(sum).plus(toBN(curr?.borrow).times(toBN(curr?.priceInUsd)))
     }, 0)
 
-    console.log('totalBorrowedAmount: ', totalBorrowedAmount.toString())
-
     const netAssets = totalSuppliedAmount.minus(totalBorrowedAmount)
-    console.log('netAssets: ', netAssets.toString())
 
     const apy = netAssets.gt(0) ? toBN(totalInterest).dividedBy(netAssets).times(100).toFixed(4) : '0'
-    console.log('apy: ', apy)
 
     return apy
   }
