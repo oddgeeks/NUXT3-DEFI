@@ -420,8 +420,8 @@ export const useSafe = defineStore('safe', () => {
       try {
         pending.value.global = true
         safeAddress.value = undefined
-        fetchGasBalance()
         await fetchSafeddress()
+        fetchGasBalance()
       }
       finally {
         pending.value.global = false
