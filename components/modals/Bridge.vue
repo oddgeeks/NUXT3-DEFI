@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
 import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 
 const props = defineProps({
@@ -89,6 +88,40 @@ const bridgeProtocol = computed<Protocol>(() => {
 function setMax() {
   amount.value = toBN(fromToken.value!.balance).decimalPlaces(6, 1).toString()
 }
+
+const feeInfoMessage = computed(() => {
+  if (!bridgeFee.value?.asset || !nativeFee.value)
+    return
+
+  console.log(bridgeFee.value, nativeFee.value)
+
+  const amounts = [
+    {
+      amount: bridgeFee.value?.amount,
+      symbol: bridgeFee.value.asset?.symbol?.toUpperCase(),
+      amountInUsd: bridgeFee.value?.feesInUsd,
+    },
+    {
+      amount: nativeFee.value,
+      symbol: nativeCurrency.value?.symbol?.toLowerCase(),
+      amountInUsd: times(nativeFee.value!, nativeCurrency.value?.price || 0),
+    },
+  ]
+
+  const filteredAmounts = amounts.filter(item => toBN(item.amount).gt('0'))
+
+  if (!filteredAmounts.length)
+    return
+
+  const formattedAmounts = filteredAmounts.map((i) => {
+    return `${formatDecimal(i.amount, 4)} ${i.symbol} (${formatUsd(i.amountInUsd)})`
+  })
+
+  const formatter = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' })
+  const formattedString = formatter.format(formattedAmounts)
+
+  return `The third-party bridge provider will charge an additional fee of ${formattedString} for their bridging service.`
+})
 
 const onSubmit = form.handleSubmit(async () => {
   if (!txRoute.value)
@@ -338,43 +371,6 @@ const onSubmit = form.handleSubmit(async () => {
                   -
                 </span>
               </div>
-              <div class="flex justify-between items-center">
-                <span class="text-slate-400 text-sm font-medium">
-                  Bridge Fee
-                </span>
-                <span
-                  class="text-slate-400 text-sm font-medium text-right uppercase"
-                >
-                  {{ formatDecimal(bridgeFee.amount, 4) }}
-
-                  {{ bridgeFee?.asset?.symbol }}
-
-                  ({{ formatUsd(bridgeFee?.feesInUsd) }})
-                </span>
-              </div>
-
-              <div
-                v-if="!isZero(nativeFee!)"
-                class="flex justify-between items-center"
-              >
-                <span
-                  class="text-slate-400 inline-flex items-center gap-2 text-sm font-medium"
-                >Source Gas Fee
-                  <SVGInfo
-                    v-tippy="
-                      'This fee is a requirement from the underlying bridge provider to cover the gas cost on target chain.'
-                    "
-                    class="text-primary"
-                  />
-                </span>
-                <span
-                  class="text-slate-400 text-sm font-medium text-right uppercase"
-                >
-                  {{ formatDecimal(nativeFee!) }}
-                  {{ nativeCurrency?.symbol }}
-                  ({{ formatUsd(nativeFeeInUsd) }})
-                </span>
-              </div>
             </div>
 
             <div class="divider" />
@@ -404,6 +400,16 @@ const onSubmit = form.handleSubmit(async () => {
       </div>
 
       <EstimatedFee :loading="pending" :data="data" :error="error" />
+
+      <Transition name="fade">
+        <p v-if="feeInfoMessage" class="text-slate-400 mt-1 font-medium leading-6 flex items-start text-xs">
+          <SvgoExclamationCircle class="mr-2.5 mt-1 h-4.5 w-4.5 shrink-0 text-slate-500" />
+          <span class="block">
+            {{ feeInfoMessage }}
+          </span>
+        </p>
+      </Transition>
+
       <CommonNotification
         v-if="transactions.error.value"
         type="error"
