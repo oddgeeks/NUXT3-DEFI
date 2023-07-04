@@ -14,6 +14,8 @@ const { balances } = storeToRefs(useSafe())
 const { totalBalance, tokenBalances, totalEoaBalance, fundedEoaNetworks } = useAvocadoSafe()
 const { account } = useWeb3()
 const { networkPreference } = storeToRefs(useSafe())
+const { showVersionUpdateBanner } = useBanner()
+const lastNoticeShowDate = useLocalStorage<Date>('last_update_notice_show_date', new Date(0, 0))
 
 const whitelistedSymbols = [
   'ETH',
@@ -112,6 +114,15 @@ const groupedBalances = computed(() => {
 const search = useDebounceFn((event: Event) => {
   searchQuery.value = (<HTMLInputElement>event.target).value
 }, 200)
+
+watch(account, () => {
+  if (showVersionUpdateBanner.value) {
+    const today = new Date()
+    const differenceInDays = (today.getTime() - lastNoticeShowDate.value.getTime()) / (1000 * 3600 * 24)
+    if (differenceInDays >= 3)
+      openUpdateNoticeModal()
+  }
+})
 
 const { safeAddress, isSafeAddress } = useAvocadoSafe()
 </script>

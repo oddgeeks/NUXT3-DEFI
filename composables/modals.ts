@@ -28,6 +28,7 @@ import SupportedNetworks from '~/components/modals/SupportedNetworks.vue'
 import PendingCrossTransaction from '~/components/modals/PendingCrossTransaction.vue'
 import DefiPositionDetails from '~/components/modals/DefiPositionDetails.vue'
 import QrCode from '~/components/modals/QrCode.vue'
+import UpdateNoticeModal from '~/components/modals/UpdateNotice.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -403,6 +404,12 @@ export function openDefiPositionDetailsModal(position: Positions) {
     options: {
       wrapperClass: 'max-w-[760px]',
     },
+  })
+}
+
+export function openUpdateNoticeModal() {
+  openModal({
+    component: UpdateNoticeModal,
   })
 }
 
