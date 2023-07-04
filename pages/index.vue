@@ -82,10 +82,10 @@ function selectType(type: string) {
             <div v-if="account" class="flex gap-[10px]">
               <ClientOnly v-if="account">
                 <div class="flex gap-[16px] items-center">
-                  <button v-tippy="'Toggle Individual View'" @click="() => selectType('individual')">
+                  <button v-tippy="'Individual View'" @click="() => selectType('individual')">
                     <IndividualIconSVG :class="`${listType === 'individual' ? 'type-icon-selected' : 'type-icon-unselected'} cursor-pointer w-[20px] h-[20px]`" />
                   </button>
-                  <button v-tippy="'Toggle Group View'" @click="() => selectType('group')">
+                  <button v-tippy="'Group View'" @click="() => selectType('group')">
                     <GroupIconSVG :class="`${listType === 'group' ? 'type-icon-selected' : 'type-icon-unselected'} cursor-pointer w-[22px] h-[22px]`" />
                   </button>
                 </div>
