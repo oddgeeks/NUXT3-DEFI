@@ -51,7 +51,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
             proposal: params,
             supportedNamespaces: {
               eip155: {
-                chains: requiredChains,
+                chains: mergedChains,
                 accounts,
                 methods: [
                   ...signingMethods,
