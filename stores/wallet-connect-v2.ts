@@ -108,6 +108,8 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
       const { topic, params, id } = event
       const { request } = params
 
+      console.log({ request }, 'session_request')
+
       const chainId = normalizeChainId(event.params.chainId)
 
       const session = sessions.value.find((session) => {
@@ -128,6 +130,17 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
             id,
             jsonrpc: '2.0',
             error: getSdkError('UNSUPPORTED_CHAINS'),
+          },
+        })
+      }
+
+      if (request.method === 'wallet_addEthereumChain' || request.method === 'wallet_switchEthereumChain') {
+        return web3WalletV2.value.respondSessionRequest({
+          topic: session.topic,
+          response: {
+            id,
+            jsonrpc: '2.0',
+            result: null,
           },
         })
       }

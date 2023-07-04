@@ -3,9 +3,17 @@ import type { IBalance } from '~/stores/safe'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 import BridgeSVG from '~/assets/images/icons/bridge.svg?component'
 import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
 
 const props = defineProps<{
   tokenBalance: IBalance
+  summary?: boolean
+  sum?: number
+  sumInUsd?: number
+  hide?: boolean
+  collapse?: boolean
+  onToggle?: Function
+  count?: number
 }>()
 
 const balance = computed(() => props.tokenBalance as IBalance)
@@ -27,13 +35,27 @@ onMounted(async () => {
   if (apy)
     liteAPY.value = apy
 })
+
+function onClick() {
+  if (props.summary && props.onToggle)
+    props.onToggle()
+}
 </script>
 
 <template>
-  <tr>
+  <tr :class="`${summary ? 'hover:cursor-pointer' : ''}`" @click="onClick">
     <td class="text-left py-6 pl-7.5 w-1/3">
-      <div class="flex items-center space-x-3">
-        <SafeTokenLogo :chain-id="tokenBalance.chainId" :url="tokenBalance.logoURI" />
+      <div :class="`flex space-x-3 ${summary || (!summary && !hide) ? 'items-center' : 'pl-2'}`">
+        <SafeTokenLogo v-if="!summary && !hide" :chain-id="tokenBalance.chainId" :url="tokenBalance.logoURI" />
+        <SafeTokenLogo v-if="summary" :url="tokenBalance.logoURI" :count="count" />
+        <div v-if="hide" class="w-10 h-10 relative">
+          <ChainLogo
+            v-tippy="chainIdToName(tokenBalance.chainId)"
+            :stroke="true"
+            class="w-5.5 h-5.5 absolute right-0 top-0"
+            :chain="tokenBalance.chainId"
+          />
+        </div>
 
         <div class="max-w-[320px] w-full">
           <div class="flex items-center gap-1.5">
@@ -52,8 +74,8 @@ onMounted(async () => {
               Earn  {{ formatPercent(liteAPY) }} APY
             </NuxtLink>
           </div>
-
           <span
+            v-if="!summary"
             v-tippy="`${toBN(tokenBalance.balance).toFormat()} ${tokenBalance.symbol?.toUpperCase()}`"
             class="text-sm font-medium text-slate-400 max-w-[256px] uppercase"
           >
@@ -62,38 +84,55 @@ onMounted(async () => {
             }}
             {{ tokenBalance.symbol }}
           </span>
+          <span
+            v-else
+            v-tippy="`${sum} ${tokenBalance.symbol?.toUpperCase()}`"
+            class="text-sm font-medium text-slate-400 max-w-[256px] uppercase"
+          >
+            {{
+              formatDecimal(sum)
+            }}
+            {{ tokenBalance.symbol }}
+          </span>
         </div>
       </div>
     </td>
     <td class="font-semibold py-6 whitespace-nowrap">
-      <span v-if="tokenBalance.balanceInUSD">
-        {{ formatUsd(tokenBalance.balanceInUSD) }}
-      </span>
+      <div v-if="!summary">
+        <span v-if="tokenBalance.balanceInUSD">
+          {{ formatUsd(tokenBalance.balanceInUSD) }}
+        </span>
 
-      <span v-else> - </span>
+        <span v-else> - </span>
+      </div>
+      <span v-else>
+        {{ formatUsd(sumInUsd) }}
+      </span>
     </td>
     <td class="text-center font-semibold py-6 px-6">
-      <div class="h-8 w-36 mx-auto">
+      <div v-if="!hide" class="h-8 w-36 mx-auto">
         <SparklineChart v-if="tokenBalance.sparklinePrice7d.length" v-once :line-color="priceDiffColor" :sparkline-data="tokenBalance.sparklinePrice7d" />
         <span v-else> - </span>
       </div>
     </td>
     <td class="font-semibold py-6 text-sm pl-10">
-      <div v-if="priceDiffInPercent" class="flex gap-1 flex-col">
-        <span>
+      <div v-if="!hide">
+        <div v-if="priceDiffInPercent" class="flex gap-1 flex-col">
+          <span>
+            {{ formatUsd(toBN(tokenBalance.price || "0").decimalPlaces(2)) }}
+          </span>
+          <span :class="priceDiffClass">
+            {{ signedNumber(toBN(priceDiffInPercent).toFixed(2)) }}%
+          </span>
+        </div>
+        <span v-else-if="tokenBalance.price">
           {{ formatUsd(toBN(tokenBalance.price || "0").decimalPlaces(2)) }}
         </span>
-        <span :class="priceDiffClass">
-          {{ signedNumber(toBN(priceDiffInPercent).toFixed(2)) }}%
-        </span>
+        <span v-else> - </span>
       </div>
-      <span v-else-if="tokenBalance.price">
-        {{ formatUsd(toBN(tokenBalance.price || "0").decimalPlaces(2)) }}
-      </span>
-      <span v-else> - </span>
     </td>
-    <td class="text-right py-6">
-      <div v-tippy="nonAuthorised ? `You are not authorized to interact with tokens on ${chainIdToName(balance.chainId)}` : undefined" class="flex items-center gap-[15px] justify-center">
+    <td class="text-right py-6 min-w-[138px]">
+      <div v-if="!summary" v-tippy="nonAuthorised ? `You are not authorized to interact with tokens on ${chainIdToName(balance.chainId)}` : undefined" class="flex items-center gap-[15px] justify-center">
         <CommonButton
           v-tippy="{
             arrow: true,
@@ -135,6 +174,10 @@ onMounted(async () => {
         >
           <BridgeSVG />
         </CommonButton>
+      </div>
+      <div v-else class="flex justify-end pr-[30px]">
+        <ChevronDownSVG v-if="!collapse" class="text-slate-400 w-[14px] h-[14px]" />
+        <ChevronDownSVG v-else class="text-slate-400 w-[14px] h-[14px] rotate-180" />
       </div>
     </td>
   </tr>

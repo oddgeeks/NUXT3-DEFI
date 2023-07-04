@@ -220,3 +220,11 @@ input[type="search" i]::-webkit-search-cancel-button {
 .fade-leave-to {
   opacity: 0;
 }
+
+.type-icon-unselected path {
+  @apply fill-slate-400 stroke-slate-400;
+}
+
+.type-icon-selected path {
+  @apply fill-black stroke-black dark:fill-white dark:stroke-white;
+}
