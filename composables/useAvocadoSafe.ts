@@ -1,4 +1,3 @@
-import { storeToRefs } from 'pinia'
 import { isAddress } from '@ethersproject/address'
 import { VoidSigner, ethers } from 'ethers'
 import axios from 'axios'
@@ -14,9 +13,10 @@ export function useAvocadoSafe() {
   const { library, account } = useWeb3()
   const { trackingAccount, isTrackingMode } = useAccountTrack()
   const { avoProvider } = useSafe()
+  const { selectedSafe } = storeToRefs(useSafe())
   const { clearAllModals } = useModal()
 
-  const { selectedSafe, isSafeMultisig, requiredSigners } = storeToRefs(useAuthorities())
+  const { isSafeMultisig } = storeToRefs(useMultisig())
 
   // check if we have a cached safe address
   const { safeAddress, mainSafeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks, multiSigSafeAddress } = storeToRefs(useSafe())

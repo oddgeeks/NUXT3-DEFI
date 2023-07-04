@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 
 const props = defineProps({
@@ -23,7 +22,7 @@ const { account } = useWeb3()
 const { sendTransactions, tokenBalances } = useAvocadoSafe()
 const { toWei } = useBignumber()
 const { parseTransactionError } = useErrorHandler()
-const { authorisedNetworks } = storeToRefs(useAuthorities())
+const { authorisedNetworks } = useAuthorities()
 
 const fromChainId = ref<string>(props.chainId)
 const availableTokens = computed(() =>

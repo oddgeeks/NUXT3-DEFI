@@ -12,7 +12,7 @@ const emit = defineEmits(['destroy'])
 const { library, account } = useWeb3()
 const { sendTransaction, tokenBalances, safeAddress }
   = useAvocadoSafe()
-const { authorisedNetworks } = storeToRefs(useAuthorities())
+const { authorisedNetworks } = useAuthorities()
 const { parseTransactionError } = useErrorHandler()
 const [isGiftActive, toggleGift] = useToggle(false)
 

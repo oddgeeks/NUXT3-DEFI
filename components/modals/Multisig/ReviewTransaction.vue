@@ -7,7 +7,7 @@ defineProps<{
 
 defineEmits(['destroy'])
 
-const { selectedSafe } = storeToRefs(useAuthorities())
+const { selectedSafe } = storeToRefs(useSafe())
 </script>
 
 <template>

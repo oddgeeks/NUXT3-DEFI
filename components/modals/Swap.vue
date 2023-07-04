@@ -48,7 +48,7 @@ const { tokens } = storeToRefs(useTokens())
 const { toWei, fromWei } = useBignumber()
 const { parseTransactionError } = useErrorHandler()
 const { account } = useWeb3()
-const { authorisedNetworks } = storeToRefs(useAuthorities())
+const { authorisedNetworks } = useAuthorities()
 
 const toChainId = ref<string>(props.chainId)
 const tokenAddress = ref<string>(props.address)

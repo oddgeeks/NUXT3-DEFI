@@ -14,9 +14,9 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['destroy'])
 
-const enable = ref(props.isNewAuthority || false)
+const { selectedSafe } = storeToRefs(useSafe())
 
-const { selectedSafe } = storeToRefs(useAuthorities())
+const enable = ref(props.isNewAuthority || false)
 
 const selectedChainIds = ref<number[]>(toRaw(props.chainIds))
 

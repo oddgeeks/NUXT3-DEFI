@@ -1,8 +1,7 @@
-import { storeToRefs } from 'pinia'
 import type { IBalance } from '~~/stores/safe'
 
 export function useGraph(balance: Ref<IBalance>) {
-  const { authorisedNetworks } = storeToRefs(useAuthorities())
+  const { authorisedNetworks } = useAuthorities()
 
   const nonAuthorised = computed(() => !authorisedNetworks.value?.find(i => String(i.chainId) == String(balance.value.chainId)))
 

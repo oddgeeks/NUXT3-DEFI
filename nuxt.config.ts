@@ -195,7 +195,11 @@ export default defineNuxtConfig({
     '@fontsource/source-code-pro/600.css',
     '~/assets/css/app.css',
   ],
-
+  pinia: {
+    autoImports: [
+      'storeToRefs',
+    ],
+  },
   imports: {
     dirs: ['./stores'],
   },

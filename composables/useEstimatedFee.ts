@@ -1,5 +1,4 @@
 import { isArray } from '@vue/shared'
-import { storeToRefs } from 'pinia'
 
 interface EstimatedFeeParams {
   immediate?: boolean
@@ -17,8 +16,8 @@ export function useEstimatedFee(
   const { account } = useWeb3()
   const { trackingAccount, isTrackingMode } = useAccountTrack()
   const { safe, generateMultisigSignatureMessage } = useAvocadoSafe()
-  const { gasBalance, safeAddress } = storeToRefs(useSafe())
-  const { selectedSafe, isSafeMultisig } = storeToRefs(useAuthorities())
+  const { gasBalance, safeAddress, selectedSafe } = storeToRefs(useSafe())
+  const { isSafeMultisig } = storeToRefs(useMultisig())
 
   const immediate = !!params?.immediate
 

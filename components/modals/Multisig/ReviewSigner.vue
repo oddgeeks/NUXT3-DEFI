@@ -8,7 +8,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['destroy'])
 
-const { selectedSafe } = storeToRefs(useAuthorities())
+const { selectedSafe } = storeToRefs(useSafe())
 
 function handleBack() {
   emit('destroy')

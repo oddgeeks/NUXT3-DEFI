@@ -12,7 +12,7 @@ const props = defineProps<{
 const emit = defineEmits(['destroy'])
 
 const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurrentNonce } = useAvocadoSafe()
-const { selectedSafe } = storeToRefs(useAuthorities())
+const { selectedSafe } = storeToRefs(useSafe())
 const { account } = useWeb3()
 const currentNonce = ref<number>()
 

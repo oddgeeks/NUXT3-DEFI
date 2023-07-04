@@ -2,7 +2,6 @@
 import * as yup from 'yup'
 import { isAddress } from '@ethersproject/address'
 import { useField, useForm } from 'vee-validate'
-import { storeToRefs } from 'pinia'
 
 // import { AvoSafeImplementation__factory } from '~~/contracts'
 import AvatarSVG from '~/assets/images/icons/avatar.svg?component'
@@ -10,7 +9,7 @@ import ContactSVG from '~/assets/images/icons/contact.svg?component'
 
 const emit = defineEmits(['destroy'])
 
-const { authorities } = storeToRefs(useAuthorities())
+const { authorities } = useAuthorities()
 const { account } = useWeb3()
 
 const {

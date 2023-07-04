@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { isAddress } from '@ethersproject/address'
-import { storeToRefs } from 'pinia'
 import { useField } from 'vee-validate'
 import type { IToken } from '~/stores/tokens'
 
@@ -10,7 +9,7 @@ const { safeAddress } = useAvocadoSafe()
 
 const { isCrossChain, data, token, availableTokens, actualAddress, stepForward, tokenlistPending } = useSend()
 
-const { authorisedNetworks } = storeToRefs(useAuthorities())
+const { authorisedNetworks } = useAuthorities()
 
 const {
   value: amount,

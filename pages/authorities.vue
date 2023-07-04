@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import DeleteSVG from '~/assets/images/icons/delete.svg?component'
 import CopySVG from '~/assets/images/icons/copy.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
@@ -13,7 +12,9 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const { authorities, isWalletSecondary, selectedSafe } = storeToRefs(useAuthorities())
+const { authorities, isWalletSecondary } = useAuthorities()
+
+const { selectedSafe } = storeToRefs(useSafe())
 const { account } = useWeb3()
 
 const owner = computed(() => selectedSafe.value?.owner_address || account.value)

@@ -2,6 +2,7 @@ import { BigNumber } from 'bignumber.js'
 import type { H3Event } from 'h3'
 import { AnkrProvider } from '@ankr.com/ankr.js'
 import collect from 'collect.js'
+import { ethers } from 'ethers'
 import type { TokenBalanceResolver } from '~~/contracts'
 import {
   TokenBalanceResolver__factory,
@@ -9,7 +10,6 @@ import {
 import type { IToken } from '~~/stores/tokens'
 import { slackIt } from '~~/server/utils'
 import { blockQueryURL } from '~~/utils/avocado'
-import { ethers } from 'ethers'
 
 let tokens: any[] = []
 let lastUpdateTokens = 0

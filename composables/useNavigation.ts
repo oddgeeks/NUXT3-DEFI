@@ -1,8 +1,6 @@
-import { storeToRefs } from 'pinia'
-
 export function useNavigation() {
   const { account } = useWeb3()
-  const { isSafeMultisig } = storeToRefs(useAuthorities())
+  const { isSafeMultisig } = storeToRefs(useMultisig())
   const { safeAddress } = useAvocadoSafe()
 
   const navigations = computed(() => {

@@ -11,7 +11,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['destroy'])
 
-const { signers, requiredSigners } = storeToRefs(useAuthorities())
+const { signers } = storeToRefs(useMultisig())
 const { account } = useWeb3()
 
 const {

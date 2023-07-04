@@ -1,1651 +1,1651 @@
 [
-    {
-        "inputs": [
-            {
-                "internalType": "contract IAvoVersionsRegistry",
-                "name": "avoVersionsRegistry_",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "avoForwarder_",
-                "type": "address"
-            },
-            {
-                "internalType": "contract IAvoAuthoritiesList",
-                "name": "avoAuthoritiesList_",
-                "type": "address"
-            }
+  {
+    "inputs": [
+      {
+        "internalType": "contract IAvoVersionsRegistry",
+        "name": "avoVersionsRegistry_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "avoForwarder_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IAvoAuthoritiesList",
+        "name": "avoAuthoritiesList_",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "AvoCore__InvalidEIP1271Signature",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "AvoCore__InvalidParams",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "AvoCore__InvalidTiming",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "AvoCore__OutOfGas",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "AvoCore__Unauthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "AvoWallet__InsufficientGasSent",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "AvoWallet__InvalidParams",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "AvoWallet__InvalidSignature",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "fee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxFee",
+        "type": "uint256"
+      }
+    ],
+    "name": "AvoWallet__MaxFee",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "AvoWallet__Unauthorized",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "authority",
+        "type": "address"
+      }
+    ],
+    "name": "AuthorityAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "authority",
+        "type": "address"
+      }
+    ],
+    "name": "AuthorityRemoved",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "occupiedAvoSafeNonce",
+        "type": "uint256"
+      }
+    ],
+    "name": "AvoSafeNonceOccupied",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "source",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "signer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "metadata",
+        "type": "bytes"
+      }
+    ],
+    "name": "CastExecuted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "source",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "signer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "reason",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "metadata",
+        "type": "bytes"
+      }
+    ],
+    "name": "CastFailed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "fee",
+        "type": "uint256"
+      }
+    ],
+    "name": "FeePaid",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "version",
+        "type": "uint8"
+      }
+    ],
+    "name": "Initialized",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "occupiedNonSequentialNonce",
+        "type": "bytes32"
+      }
+    ],
+    "name": "NonSequentialNonceOccupied",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "messageHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "RemoveSignedMessage",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "messageHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "SignedMessage",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newImplementation",
+        "type": "address"
+      }
+    ],
+    "name": "Upgraded",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "ACTION_TYPE_HASH",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "CAST_AUTHORIZED_PARAMS_TYPE_HASH",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "CAST_AUTHORIZED_TYPE_HASH",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "CAST_FORWARD_PARAMS_TYPE_HASH",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "CAST_PARAMS_TYPE_HASH",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "CAST_TYPE_HASH",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "DEFAULT_CHAIN_ID",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "DOMAIN_SEPARATOR_NAME",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "DOMAIN_SEPARATOR_VERSION",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "TYPE_HASH",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "target",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          },
+          {
+            "internalType": "uint256",
+            "name": "value",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "operation",
+            "type": "uint256"
+          }
         ],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
-    },
-    {
-        "inputs": [],
-        "name": "AvoCore__InvalidEIP1271Signature",
-        "type": "error"
-    },
-    {
-        "inputs": [],
-        "name": "AvoCore__InvalidParams",
-        "type": "error"
-    },
-    {
-        "inputs": [],
-        "name": "AvoCore__InvalidTiming",
-        "type": "error"
-    },
-    {
-        "inputs": [],
-        "name": "AvoCore__OutOfGas",
-        "type": "error"
-    },
-    {
-        "inputs": [],
-        "name": "AvoCore__Unauthorized",
-        "type": "error"
-    },
-    {
-        "inputs": [],
-        "name": "AvoWallet__InsufficientGasSent",
-        "type": "error"
-    },
-    {
-        "inputs": [],
-        "name": "AvoWallet__InvalidParams",
-        "type": "error"
-    },
-    {
-        "inputs": [],
-        "name": "AvoWallet__InvalidSignature",
-        "type": "error"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "fee",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "maxFee",
-                "type": "uint256"
-            }
-        ],
-        "name": "AvoWallet__MaxFee",
-        "type": "error"
-    },
-    {
-        "inputs": [],
-        "name": "AvoWallet__Unauthorized",
-        "type": "error"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
+        "internalType": "struct AvoCoreStructs.Action[]",
+        "name": "actions_",
+        "type": "tuple[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      }
+    ],
+    "name": "_callTargets",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "components": [
+              {
                 "internalType": "address",
-                "name": "authority",
+                "name": "target",
                 "type": "address"
-            }
-        ],
-        "name": "AuthorityAdded",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "authority",
-                "type": "address"
-            }
-        ],
-        "name": "AuthorityRemoved",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "uint256",
-                "name": "occupiedAvoSafeNonce",
-                "type": "uint256"
-            }
-        ],
-        "name": "AvoSafeNonceOccupied",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "source",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "caller",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "signer",
-                "type": "address"
-            },
-            {
-                "indexed": false,
+              },
+              {
                 "internalType": "bytes",
-                "name": "metadata",
+                "name": "data",
                 "type": "bytes"
-            }
+              },
+              {
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "operation",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct AvoCoreStructs.Action[]",
+            "name": "actions",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "avoSafeNonce",
+            "type": "int256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "salt",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "source",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "metadata",
+            "type": "bytes"
+          }
         ],
-        "name": "CastExecuted",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
+        "internalType": "struct AvoCoreStructs.CastParams",
+        "name": "params_",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "functionTypeHash_",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "customStructHash_",
+        "type": "bytes32"
+      }
+    ],
+    "name": "_getSigDigest",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "authorities_",
+        "type": "address[]"
+      }
+    ],
+    "name": "addAuthorities",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "authorities",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "avoAuthoritiesList",
+    "outputs": [
+      {
+        "internalType": "contract IAvoAuthoritiesList",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "avoForwarder",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "avoSafeNonce",
+    "outputs": [
+      {
+        "internalType": "uint88",
+        "name": "",
+        "type": "uint88"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "avoVersionsRegistry",
+    "outputs": [
+      {
+        "internalType": "contract IAvoVersionsRegistry",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "components": [
+              {
                 "internalType": "address",
-                "name": "source",
+                "name": "target",
                 "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "caller",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "signer",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "string",
-                "name": "reason",
-                "type": "string"
-            },
-            {
-                "indexed": false,
+              },
+              {
                 "internalType": "bytes",
-                "name": "metadata",
+                "name": "data",
                 "type": "bytes"
-            }
-        ],
-        "name": "CastFailed",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
+              },
+              {
                 "internalType": "uint256",
-                "name": "fee",
+                "name": "value",
                 "type": "uint256"
-            }
-        ],
-        "name": "FeePaid",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint8",
-                "name": "version",
-                "type": "uint8"
-            }
-        ],
-        "name": "Initialized",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "occupiedNonSequentialNonce",
-                "type": "bytes32"
-            }
-        ],
-        "name": "NonSequentialNonceOccupied",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "messageHash",
-                "type": "bytes32"
-            }
-        ],
-        "name": "RemoveSignedMessage",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "messageHash",
-                "type": "bytes32"
-            }
-        ],
-        "name": "SignedMessage",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "newImplementation",
-                "type": "address"
-            }
-        ],
-        "name": "Upgraded",
-        "type": "event"
-    },
-    {
-        "inputs": [],
-        "name": "ACTION_TYPE_HASH",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "CAST_AUTHORIZED_PARAMS_TYPE_HASH",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "CAST_AUTHORIZED_TYPE_HASH",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "CAST_FORWARD_PARAMS_TYPE_HASH",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "CAST_PARAMS_TYPE_HASH",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "CAST_TYPE_HASH",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "DEFAULT_CHAIN_ID",
-        "outputs": [
-            {
+              },
+              {
                 "internalType": "uint256",
-                "name": "",
+                "name": "operation",
                 "type": "uint256"
-            }
+              }
+            ],
+            "internalType": "struct AvoCoreStructs.Action[]",
+            "name": "actions",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "avoSafeNonce",
+            "type": "int256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "salt",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "source",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "metadata",
+            "type": "bytes"
+          }
         ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "DOMAIN_SEPARATOR_NAME",
-        "outputs": [
-            {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
+        "internalType": "struct AvoCoreStructs.CastParams",
+        "name": "params_",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "gas",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "validUntil",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "validAfter",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "gasPrice",
+            "type": "uint256"
+          }
         ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "DOMAIN_SEPARATOR_VERSION",
-        "outputs": [
-            {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
+        "internalType": "struct AvoCoreStructs.CastForwardParams",
+        "name": "forwardParams_",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bytes",
+            "name": "signature",
+            "type": "bytes"
+          },
+          {
+            "internalType": "address",
+            "name": "signer",
+            "type": "address"
+          }
         ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "TYPE_HASH",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "components": [
-                    {
-                        "internalType": "address",
-                        "name": "target",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "bytes",
-                        "name": "data",
-                        "type": "bytes"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "value",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "operation",
-                        "type": "uint256"
-                    }
-                ],
-                "internalType": "struct AvoCoreStructs.Action[]",
-                "name": "actions_",
-                "type": "tuple[]"
-            },
-            {
-                "internalType": "uint256",
-                "name": "id_",
-                "type": "uint256"
-            }
-        ],
-        "name": "_callTargets",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "components": [
-                    {
-                        "components": [
-                            {
-                                "internalType": "address",
-                                "name": "target",
-                                "type": "address"
-                            },
-                            {
-                                "internalType": "bytes",
-                                "name": "data",
-                                "type": "bytes"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "value",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "operation",
-                                "type": "uint256"
-                            }
-                        ],
-                        "internalType": "struct AvoCoreStructs.Action[]",
-                        "name": "actions",
-                        "type": "tuple[]"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "id",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "int256",
-                        "name": "avoSafeNonce",
-                        "type": "int256"
-                    },
-                    {
-                        "internalType": "bytes32",
-                        "name": "salt",
-                        "type": "bytes32"
-                    },
-                    {
-                        "internalType": "address",
-                        "name": "source",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "bytes",
-                        "name": "metadata",
-                        "type": "bytes"
-                    }
-                ],
-                "internalType": "struct AvoCoreStructs.CastParams",
-                "name": "params_",
-                "type": "tuple"
-            },
-            {
-                "internalType": "bytes32",
-                "name": "functionTypeHash_",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "bytes32",
-                "name": "customStructHash_",
-                "type": "bytes32"
-            }
-        ],
-        "name": "_getSigDigest",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address[]",
-                "name": "authorities_",
-                "type": "address[]"
-            }
-        ],
-        "name": "addAuthorities",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
+        "internalType": "struct AvoCoreStructs.SignatureParams",
+        "name": "signatureParams_",
+        "type": "tuple"
+      }
+    ],
+    "name": "cast",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "success_",
+        "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "revertReason_",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "components": [
+              {
                 "internalType": "address",
-                "name": "",
+                "name": "target",
                 "type": "address"
-            }
-        ],
-        "name": "authorities",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "avoAuthoritiesList",
-        "outputs": [
-            {
-                "internalType": "contract IAvoAuthoritiesList",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "avoForwarder",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "avoSafeNonce",
-        "outputs": [
-            {
-                "internalType": "uint88",
-                "name": "",
-                "type": "uint88"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "avoVersionsRegistry",
-        "outputs": [
-            {
-                "internalType": "contract IAvoVersionsRegistry",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "components": [
-                    {
-                        "components": [
-                            {
-                                "internalType": "address",
-                                "name": "target",
-                                "type": "address"
-                            },
-                            {
-                                "internalType": "bytes",
-                                "name": "data",
-                                "type": "bytes"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "value",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "operation",
-                                "type": "uint256"
-                            }
-                        ],
-                        "internalType": "struct AvoCoreStructs.Action[]",
-                        "name": "actions",
-                        "type": "tuple[]"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "id",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "int256",
-                        "name": "avoSafeNonce",
-                        "type": "int256"
-                    },
-                    {
-                        "internalType": "bytes32",
-                        "name": "salt",
-                        "type": "bytes32"
-                    },
-                    {
-                        "internalType": "address",
-                        "name": "source",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "bytes",
-                        "name": "metadata",
-                        "type": "bytes"
-                    }
-                ],
-                "internalType": "struct AvoCoreStructs.CastParams",
-                "name": "params_",
-                "type": "tuple"
-            },
-            {
-                "components": [
-                    {
-                        "internalType": "uint256",
-                        "name": "gas",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "validUntil",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "validAfter",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "gasPrice",
-                        "type": "uint256"
-                    }
-                ],
-                "internalType": "struct AvoCoreStructs.CastForwardParams",
-                "name": "forwardParams_",
-                "type": "tuple"
-            },
-            {
-                "components": [
-                    {
-                        "internalType": "bytes",
-                        "name": "signature",
-                        "type": "bytes"
-                    },
-                    {
-                        "internalType": "address",
-                        "name": "signer",
-                        "type": "address"
-                    }
-                ],
-                "internalType": "struct AvoCoreStructs.SignatureParams",
-                "name": "signatureParams_",
-                "type": "tuple"
-            }
-        ],
-        "name": "cast",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "success_",
-                "type": "bool"
-            },
-            {
-                "internalType": "string",
-                "name": "revertReason_",
-                "type": "string"
-            }
-        ],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "components": [
-                    {
-                        "components": [
-                            {
-                                "internalType": "address",
-                                "name": "target",
-                                "type": "address"
-                            },
-                            {
-                                "internalType": "bytes",
-                                "name": "data",
-                                "type": "bytes"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "value",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "operation",
-                                "type": "uint256"
-                            }
-                        ],
-                        "internalType": "struct AvoCoreStructs.Action[]",
-                        "name": "actions",
-                        "type": "tuple[]"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "id",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "int256",
-                        "name": "avoSafeNonce",
-                        "type": "int256"
-                    },
-                    {
-                        "internalType": "bytes32",
-                        "name": "salt",
-                        "type": "bytes32"
-                    },
-                    {
-                        "internalType": "address",
-                        "name": "source",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "bytes",
-                        "name": "metadata",
-                        "type": "bytes"
-                    }
-                ],
-                "internalType": "struct AvoCoreStructs.CastParams",
-                "name": "params_",
-                "type": "tuple"
-            },
-            {
-                "components": [
-                    {
-                        "internalType": "uint256",
-                        "name": "maxFee",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "validUntil",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "validAfter",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "gasPrice",
-                        "type": "uint256"
-                    }
-                ],
-                "internalType": "struct AvoCoreStructs.CastAuthorizedParams",
-                "name": "authorizedParams_",
-                "type": "tuple"
-            }
-        ],
-        "name": "castAuthorized",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "success_",
-                "type": "bool"
-            },
-            {
-                "internalType": "string",
-                "name": "revertReason_",
-                "type": "string"
-            }
-        ],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "domainSeparatorV4",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address[]",
-                "name": "",
-                "type": "address[]"
-            },
-            {
-                "internalType": "uint256[]",
-                "name": "",
-                "type": "uint256[]"
-            },
-            {
-                "internalType": "uint256[]",
-                "name": "",
-                "type": "uint256[]"
-            },
-            {
-                "internalType": "address",
-                "name": "initiator_",
-                "type": "address"
-            },
-            {
+              },
+              {
                 "internalType": "bytes",
-                "name": "data_",
+                "name": "data",
                 "type": "bytes"
-            }
-        ],
-        "name": "executeOperation",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "components": [
-                    {
-                        "components": [
-                            {
-                                "internalType": "address",
-                                "name": "target",
-                                "type": "address"
-                            },
-                            {
-                                "internalType": "bytes",
-                                "name": "data",
-                                "type": "bytes"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "value",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "operation",
-                                "type": "uint256"
-                            }
-                        ],
-                        "internalType": "struct AvoCoreStructs.Action[]",
-                        "name": "actions",
-                        "type": "tuple[]"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "id",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "int256",
-                        "name": "avoSafeNonce",
-                        "type": "int256"
-                    },
-                    {
-                        "internalType": "bytes32",
-                        "name": "salt",
-                        "type": "bytes32"
-                    },
-                    {
-                        "internalType": "address",
-                        "name": "source",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "bytes",
-                        "name": "metadata",
-                        "type": "bytes"
-                    }
-                ],
-                "internalType": "struct AvoCoreStructs.CastParams",
-                "name": "params_",
-                "type": "tuple"
-            },
-            {
-                "components": [
-                    {
-                        "internalType": "uint256",
-                        "name": "gas",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "validUntil",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "validAfter",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "gasPrice",
-                        "type": "uint256"
-                    }
-                ],
-                "internalType": "struct AvoCoreStructs.CastForwardParams",
-                "name": "forwardParams_",
-                "type": "tuple"
-            }
-        ],
-        "name": "getSigDigest",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "owner_",
-                "type": "address"
-            }
-        ],
-        "name": "initialize",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "owner_",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "avoWalletVersion_",
-                "type": "address"
-            }
-        ],
-        "name": "initializeWithVersion",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "authority_",
-                "type": "address"
-            }
-        ],
-        "name": "isAuthority",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "hash",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "bytes",
-                "name": "signature",
-                "type": "bytes"
-            }
-        ],
-        "name": "isValidSignature",
-        "outputs": [
-            {
-                "internalType": "bytes4",
-                "name": "magicValue",
-                "type": "bytes4"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "components": [
-                    {
-                        "components": [
-                            {
-                                "internalType": "address",
-                                "name": "target",
-                                "type": "address"
-                            },
-                            {
-                                "internalType": "bytes",
-                                "name": "data",
-                                "type": "bytes"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "value",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "operation",
-                                "type": "uint256"
-                            }
-                        ],
-                        "internalType": "struct AvoCoreStructs.Action[]",
-                        "name": "actions",
-                        "type": "tuple[]"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "id",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "int256",
-                        "name": "avoSafeNonce",
-                        "type": "int256"
-                    },
-                    {
-                        "internalType": "bytes32",
-                        "name": "salt",
-                        "type": "bytes32"
-                    },
-                    {
-                        "internalType": "address",
-                        "name": "source",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "bytes",
-                        "name": "metadata",
-                        "type": "bytes"
-                    }
-                ],
-                "internalType": "struct AvoCoreStructs.CastParams",
-                "name": "params_",
-                "type": "tuple"
-            },
-            {
-                "components": [
-                    {
-                        "internalType": "uint256",
-                        "name": "gas",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "validUntil",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "validAfter",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "gasPrice",
-                        "type": "uint256"
-                    }
-                ],
-                "internalType": "struct AvoCoreStructs.CastForwardParams",
-                "name": "forwardParams_",
-                "type": "tuple"
-            }
-        ],
-        "name": "nonSequentialNonce",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "components": [
-                    {
-                        "components": [
-                            {
-                                "internalType": "address",
-                                "name": "target",
-                                "type": "address"
-                            },
-                            {
-                                "internalType": "bytes",
-                                "name": "data",
-                                "type": "bytes"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "value",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "operation",
-                                "type": "uint256"
-                            }
-                        ],
-                        "internalType": "struct AvoCoreStructs.Action[]",
-                        "name": "actions",
-                        "type": "tuple[]"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "id",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "int256",
-                        "name": "avoSafeNonce",
-                        "type": "int256"
-                    },
-                    {
-                        "internalType": "bytes32",
-                        "name": "salt",
-                        "type": "bytes32"
-                    },
-                    {
-                        "internalType": "address",
-                        "name": "source",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "bytes",
-                        "name": "metadata",
-                        "type": "bytes"
-                    }
-                ],
-                "internalType": "struct AvoCoreStructs.CastParams",
-                "name": "params_",
-                "type": "tuple"
-            },
-            {
-                "components": [
-                    {
-                        "internalType": "uint256",
-                        "name": "maxFee",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "validUntil",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "validAfter",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "gasPrice",
-                        "type": "uint256"
-                    }
-                ],
-                "internalType": "struct AvoCoreStructs.CastAuthorizedParams",
-                "name": "authorizedParams_",
-                "type": "tuple"
-            }
-        ],
-        "name": "nonSequentialNonceAuthorized",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "name": "nonSequentialNonces",
-        "outputs": [
-            {
+              },
+              {
                 "internalType": "uint256",
-                "name": "",
+                "name": "value",
                 "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint88[]",
-                "name": "avoSafeNonces_",
-                "type": "uint88[]"
-            }
-        ],
-        "name": "occupyAvoSafeNonces",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32[]",
-                "name": "nonSequentialNonces_",
-                "type": "bytes32[]"
-            }
-        ],
-        "name": "occupyNonSequentialNonces",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256[]",
-                "name": "",
-                "type": "uint256[]"
-            },
-            {
-                "internalType": "uint256[]",
-                "name": "",
-                "type": "uint256[]"
-            },
-            {
-                "internalType": "bytes",
-                "name": "",
-                "type": "bytes"
-            }
-        ],
-        "name": "onERC1155BatchReceived",
-        "outputs": [
-            {
-                "internalType": "bytes4",
-                "name": "",
-                "type": "bytes4"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            },
-            {
+              },
+              {
                 "internalType": "uint256",
-                "name": "",
+                "name": "operation",
                 "type": "uint256"
-            },
-            {
+              }
+            ],
+            "internalType": "struct AvoCoreStructs.Action[]",
+            "name": "actions",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "avoSafeNonce",
+            "type": "int256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "salt",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "source",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "metadata",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct AvoCoreStructs.CastParams",
+        "name": "params_",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "maxFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "validUntil",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "validAfter",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "gasPrice",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct AvoCoreStructs.CastAuthorizedParams",
+        "name": "authorizedParams_",
+        "type": "tuple"
+      }
+    ],
+    "name": "castAuthorized",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "success_",
+        "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "revertReason_",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "domainSeparatorV4",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "address",
+        "name": "initiator_",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data_",
+        "type": "bytes"
+      }
+    ],
+    "name": "executeOperation",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "target",
+                "type": "address"
+              },
+              {
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
+              },
+              {
                 "internalType": "uint256",
-                "name": "",
+                "name": "value",
                 "type": "uint256"
-            },
-            {
-                "internalType": "bytes",
-                "name": "",
-                "type": "bytes"
-            }
-        ],
-        "name": "onERC1155Received",
-        "outputs": [
-            {
-                "internalType": "bytes4",
-                "name": "",
-                "type": "bytes4"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            },
-            {
+              },
+              {
                 "internalType": "uint256",
-                "name": "",
+                "name": "operation",
                 "type": "uint256"
-            },
-            {
+              }
+            ],
+            "internalType": "struct AvoCoreStructs.Action[]",
+            "name": "actions",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "avoSafeNonce",
+            "type": "int256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "salt",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "source",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "metadata",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct AvoCoreStructs.CastParams",
+        "name": "params_",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "gas",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "validUntil",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "validAfter",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "gasPrice",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct AvoCoreStructs.CastForwardParams",
+        "name": "forwardParams_",
+        "type": "tuple"
+      }
+    ],
+    "name": "getSigDigest",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner_",
+        "type": "address"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "avoWalletVersion_",
+        "type": "address"
+      }
+    ],
+    "name": "initializeWithVersion",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "authority_",
+        "type": "address"
+      }
+    ],
+    "name": "isAuthority",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "hash",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "signature",
+        "type": "bytes"
+      }
+    ],
+    "name": "isValidSignature",
+    "outputs": [
+      {
+        "internalType": "bytes4",
+        "name": "magicValue",
+        "type": "bytes4"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "target",
+                "type": "address"
+              },
+              {
                 "internalType": "bytes",
-                "name": "",
+                "name": "data",
                 "type": "bytes"
-            }
+              },
+              {
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "operation",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct AvoCoreStructs.Action[]",
+            "name": "actions",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "avoSafeNonce",
+            "type": "int256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "salt",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "source",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "metadata",
+            "type": "bytes"
+          }
         ],
-        "name": "onERC721Received",
-        "outputs": [
-            {
-                "internalType": "bytes4",
-                "name": "",
-                "type": "bytes4"
-            }
+        "internalType": "struct AvoCoreStructs.CastParams",
+        "name": "params_",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "gas",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "validUntil",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "validAfter",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "gasPrice",
+            "type": "uint256"
+          }
         ],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "owner",
-        "outputs": [
-            {
+        "internalType": "struct AvoCoreStructs.CastForwardParams",
+        "name": "forwardParams_",
+        "type": "tuple"
+      }
+    ],
+    "name": "nonSequentialNonce",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "components": [
+              {
                 "internalType": "address",
-                "name": "",
+                "name": "target",
                 "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "reinitialize",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address[]",
-                "name": "authorities_",
-                "type": "address[]"
-            }
-        ],
-        "name": "removeAuthorities",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "message_",
-                "type": "bytes32"
-            }
-        ],
-        "name": "removeSignedMessage",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "message_",
-                "type": "bytes32"
-            }
-        ],
-        "name": "signMessage",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes4",
-                "name": "interfaceId",
-                "type": "bytes4"
-            }
-        ],
-        "name": "supportsInterface",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "avoWalletImpl_",
-                "type": "address"
-            }
-        ],
-        "name": "upgradeTo",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "avoImplementation_",
-                "type": "address"
-            },
-            {
+              },
+              {
                 "internalType": "bytes",
-                "name": "data_",
+                "name": "data",
                 "type": "bytes"
-            },
-            {
-                "internalType": "bool",
-                "name": "forceCall_",
-                "type": "bool"
-            }
+              },
+              {
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "operation",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct AvoCoreStructs.Action[]",
+            "name": "actions",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "avoSafeNonce",
+            "type": "int256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "salt",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "source",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "metadata",
+            "type": "bytes"
+          }
         ],
-        "name": "upgradeToAndCall",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "components": [
-                    {
-                        "components": [
-                            {
-                                "internalType": "address",
-                                "name": "target",
-                                "type": "address"
-                            },
-                            {
-                                "internalType": "bytes",
-                                "name": "data",
-                                "type": "bytes"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "value",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "operation",
-                                "type": "uint256"
-                            }
-                        ],
-                        "internalType": "struct AvoCoreStructs.Action[]",
-                        "name": "actions",
-                        "type": "tuple[]"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "id",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "int256",
-                        "name": "avoSafeNonce",
-                        "type": "int256"
-                    },
-                    {
-                        "internalType": "bytes32",
-                        "name": "salt",
-                        "type": "bytes32"
-                    },
-                    {
-                        "internalType": "address",
-                        "name": "source",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "bytes",
-                        "name": "metadata",
-                        "type": "bytes"
-                    }
-                ],
-                "internalType": "struct AvoCoreStructs.CastParams",
-                "name": "params_",
-                "type": "tuple"
-            },
-            {
-                "components": [
-                    {
-                        "internalType": "uint256",
-                        "name": "gas",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "validUntil",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "validAfter",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "gasPrice",
-                        "type": "uint256"
-                    }
-                ],
-                "internalType": "struct AvoCoreStructs.CastForwardParams",
-                "name": "forwardParams_",
-                "type": "tuple"
-            },
-            {
-                "components": [
-                    {
-                        "internalType": "bytes",
-                        "name": "signature",
-                        "type": "bytes"
-                    },
-                    {
-                        "internalType": "address",
-                        "name": "signer",
-                        "type": "address"
-                    }
-                ],
-                "internalType": "struct AvoCoreStructs.SignatureParams",
-                "name": "signatureParams_",
-                "type": "tuple"
-            }
+        "internalType": "struct AvoCoreStructs.CastParams",
+        "name": "params_",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "maxFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "validUntil",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "validAfter",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "gasPrice",
+            "type": "uint256"
+          }
         ],
-        "name": "verify",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
+        "internalType": "struct AvoCoreStructs.CastAuthorizedParams",
+        "name": "authorizedParams_",
+        "type": "tuple"
+      }
+    ],
+    "name": "nonSequentialNonceAuthorized",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "nonSequentialNonces",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint88[]",
+        "name": "avoSafeNonces_",
+        "type": "uint88[]"
+      }
+    ],
+    "name": "occupyAvoSafeNonces",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "nonSequentialNonces_",
+        "type": "bytes32[]"
+      }
+    ],
+    "name": "occupyNonSequentialNonces",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "name": "onERC1155BatchReceived",
+    "outputs": [
+      {
+        "internalType": "bytes4",
+        "name": "",
+        "type": "bytes4"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "name": "onERC1155Received",
+    "outputs": [
+      {
+        "internalType": "bytes4",
+        "name": "",
+        "type": "bytes4"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "name": "onERC721Received",
+    "outputs": [
+      {
+        "internalType": "bytes4",
+        "name": "",
+        "type": "bytes4"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "reinitialize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "authorities_",
+        "type": "address[]"
+      }
+    ],
+    "name": "removeAuthorities",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "message_",
+        "type": "bytes32"
+      }
+    ],
+    "name": "removeSignedMessage",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "message_",
+        "type": "bytes32"
+      }
+    ],
+    "name": "signMessage",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes4",
+        "name": "interfaceId",
+        "type": "bytes4"
+      }
+    ],
+    "name": "supportsInterface",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "avoWalletImpl_",
+        "type": "address"
+      }
+    ],
+    "name": "upgradeTo",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "avoImplementation_",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data_",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bool",
+        "name": "forceCall_",
+        "type": "bool"
+      }
+    ],
+    "name": "upgradeToAndCall",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "target",
+                "type": "address"
+              },
+              {
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
+              },
+              {
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "operation",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct AvoCoreStructs.Action[]",
+            "name": "actions",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "avoSafeNonce",
+            "type": "int256"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "salt",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "source",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "metadata",
+            "type": "bytes"
+          }
         ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "stateMutability": "payable",
-        "type": "receive"
-    }
+        "internalType": "struct AvoCoreStructs.CastParams",
+        "name": "params_",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "gas",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "validUntil",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "validAfter",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "gasPrice",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct AvoCoreStructs.CastForwardParams",
+        "name": "forwardParams_",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bytes",
+            "name": "signature",
+            "type": "bytes"
+          },
+          {
+            "internalType": "address",
+            "name": "signer",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct AvoCoreStructs.SignatureParams",
+        "name": "signatureParams_",
+        "type": "tuple"
+      }
+    ],
+    "name": "verify",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "receive"
+  }
 ]

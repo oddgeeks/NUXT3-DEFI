@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['resolve'])
-const { selectedSafe } = storeToRefs(useAuthorities())
+const { selectedSafe } = storeToRefs(useSafe())
 const nonce = ref<number | undefined>(-1)
 const note = ref<string | undefined>(undefined)
 const detailsRef = ref<HTMLDetailsElement>()
@@ -43,7 +43,7 @@ function handleSimulate() {
   }
 }
 
-const { data: simulationDetails, error: simulationError } = useAsyncData(
+const { data: simulationDetails, error: simulationError, pending } = useAsyncData(
   () => {
     if (networksSimulationNotSupported.includes(Number(props.chainId)))
       throw new Error('Simulation not supported on this network.')
@@ -128,7 +128,7 @@ const isTransactionFailed = computed(() => !simulationDetails.value?.transaction
     <hr class="border-slate-150 dark:border-slate-800">
     <div class="px-7.5 py-5 text-sm flex justify-between items-center">
       Check if this transaction is valid
-      <button type="button" class="text-primary" @click="handleSimulate">
+      <button :disabled="pending" type="button" class="text-primary disabled:text-slate-400" @click="handleSimulate">
         Simulate
       </button>
     </div>

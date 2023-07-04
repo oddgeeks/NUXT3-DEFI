@@ -1,4 +1,3 @@
-import { storeToRefs } from 'pinia'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { isAddress } from '@ethersproject/address'

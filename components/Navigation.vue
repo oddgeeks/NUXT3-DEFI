@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import SwapSVG from '~/assets/images/icons/refresh.svg?component'
 import BridgeSVG from '~/assets/images/icons/bridge.svg?component'
 import PlusCircleSVG from '~/assets/images/icons/plus-circle.svg?component'
@@ -13,7 +12,7 @@ const emit = defineEmits(['navigate'])
 
 const { account } = useWeb3()
 const { tokenBalances, totalEoaBalance, eoaBalances, fundedEoaNetworks } = useAvocadoSafe()
-const { authorisedNetworks } = storeToRefs(useAuthorities())
+const { authorisedNetworks } = useAuthorities()
 const [moreOptions, toggleOptions] = useToggle(false)
 const { safeAddress } = useAvocadoSafe()
 const { navigations } = useNavigation()

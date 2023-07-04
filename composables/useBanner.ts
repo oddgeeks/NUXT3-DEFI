@@ -1,4 +1,3 @@
-import { storeToRefs } from 'pinia'
 import { gt } from 'semver'
 
 const isVersionUpdateBannerHidden = ref(false)

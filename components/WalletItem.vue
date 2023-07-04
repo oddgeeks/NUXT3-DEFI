@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import EditSVG from '@/assets/images/icons/edit.svg?component'
-
 const props = defineProps<{
   safe: ISafe
   primary?: boolean
@@ -54,7 +52,7 @@ async function onEdit() {
         </p>
 
         <button @click.stop="onEdit">
-          <EditSVG />
+          <SvgoEdit />
         </button>
       </div>
 

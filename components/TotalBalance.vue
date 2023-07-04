@@ -4,7 +4,7 @@ import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 
 const { balances } = storeToRefs(useSafe())
 const { totalBalance, tokenBalances } = useAvocadoSafe()
-const { authorisedNetworks } = storeToRefs(useAuthorities())
+const { authorisedNetworks } = useAuthorities()
 
 function hasAvailableTokens() {
   return tokenBalances.value.length > 0

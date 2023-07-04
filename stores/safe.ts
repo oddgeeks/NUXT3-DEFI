@@ -2,6 +2,7 @@ import { ethers } from 'ethers'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 import { wait } from '@instadapp/utils'
 import collect from 'collect.js'
+import { getAddress } from 'ethers/lib/utils'
 import type { IToken } from './tokens'
 import type { TokenBalanceResolver } from '~/contracts'
 import {
@@ -29,6 +30,12 @@ export const useSafe = defineStore('safe', () => {
   const safeAddress = ref()
   const mainSafeAddress = ref()
   const multiSigSafeAddress = ref()
+
+  const safes = ref<ISafe[]>([])
+
+  const selectedSafe = ref<ISafe>()
+  const mainSafe = ref<ISafe>()
+  const multiSigSafe = ref<ISafe>()
 
   const { account, connector } = useWeb3()
   const { tokens, customTokens } = storeToRefs(useTokens())
@@ -79,6 +86,45 @@ export const useSafe = defineStore('safe', () => {
   const fundedEoaNetworks = computed(() => {
     return new Set(eoaBalances.value?.filter(item => toBN(item?.balance ?? 0).toNumber() !== 0).map(item => item.chainId.toString())).size
   })
+
+  const fetchSafe = async (address: string) => {
+    return avoProvider.send('api_getSafe', [address])
+  }
+
+  async function setMainSafe() {
+    const resp = await fetchSafe(mainSafeAddress.value)
+
+    if (!resp)
+      mainSafe.value = getDefaultSafe(mainSafeAddress.value, 0)
+
+    else
+      mainSafe.value = resp
+  }
+
+  async function setSelectedSafe() {
+    const resp = await fetchSafe(safeAddress.value)
+
+    if (!resp) {
+      const isMultiSafe = getAddress(safeAddress.value) === getAddress(multiSigSafeAddress.value)
+      selectedSafe.value = getDefaultSafe(safeAddress.value, isMultiSafe ? 1 : 0)
+    }
+    else {
+      selectedSafe.value = resp
+    }
+  }
+
+  async function setMultiSigSafe() {
+    try {
+      const resp = await fetchSafe(multiSigSafeAddress.value)
+
+      if (!resp)
+        multiSigSafe.value = getDefaultSafe(multiSigSafeAddress.value, 1)
+      else
+        multiSigSafe.value = resp
+    }
+    catch (e) {
+    }
+  }
 
   const fetchSafeAddress = async () => {
     if (!account.value)
@@ -427,10 +473,34 @@ export const useSafe = defineStore('safe', () => {
     }
   }
 
+  const fetchSafes = async () => {
+    const resp = await avoProvider.send('api_getSafes', [{
+      address: account.value,
+    }])
+
+    safes.value = resp?.data || []
+  }
+
   const resetAccounts = () => {
     trackingAccount.value = ''
     safeAddress.value = undefined
     mainSafeAddress.value = undefined
+  }
+
+  function getDefaultSafe(address: string, multisig: 0 | 1 = 0): ISafe {
+    return {
+      safe_address: address,
+      authorities: {},
+      created_at: new Date().toString(),
+      deployed: {},
+      fully_deployed: 0,
+      id: 0,
+      owner_address: account.value,
+      updated_at: new Date().toString(),
+      version: {},
+      multisig,
+      signers: {},
+    }
   }
 
   useIntervalFn(fetchGasBalance, 15000, {
@@ -440,13 +510,20 @@ export const useSafe = defineStore('safe', () => {
   useIntervalFn(fetchBalances, 15000)
 
   watch(
-    [account],
+    account,
     async () => {
+      if (!account.value)
+        return
+
       try {
         pending.value.global = true
 
         await fetchSafeAddress()
         await fetchMultiSigSafeAddress()
+
+        await setMainSafe()
+        await setMultiSigSafe()
+        fetchSafes()
       }
       finally {
         pending.value.global = false
@@ -469,6 +546,15 @@ export const useSafe = defineStore('safe', () => {
     eoaBalances.value = undefined
   })
 
+  watch([safeAddress, multiSigSafeAddress], async () => {
+    if (!safeAddress.value || !multiSigSafeAddress.value)
+      return
+
+    setSelectedSafe()
+  }, {
+    immediate: true,
+  })
+
   watch(connector, () => {
     if (!connector.value)
       return
@@ -487,9 +573,14 @@ export const useSafe = defineStore('safe', () => {
   })
 
   return {
-    gasBalance,
     safeAddress,
     mainSafeAddress,
+    multiSigSafeAddress,
+    multiSigSafe,
+    mainSafe,
+    selectedSafe,
+    safes,
+    gasBalance,
     tokenBalances,
     totalBalance,
     fetchGasBalance,
@@ -506,7 +597,7 @@ export const useSafe = defineStore('safe', () => {
     fundedEoaNetworks,
     forwarderProxyContract,
     resetAccounts,
-    multiSigSafeAddress,
+    setSelectedSafe,
   }
 }, {
   persist: {
@@ -514,19 +605,5 @@ export const useSafe = defineStore('safe', () => {
   },
 })
 
-function logBalance(params: ILogBalanceParams) {
-  const { isOnboard, isPublic, chainId } = params
-
-  const style1 = 'color: #fff; background: #3c3c3c; padding: 4px 8px; border-radius: 4px; font-weight: bold;margin-right: 4px'
-  const style2 = 'color: #fff; background: #007bff; padding: 4px 8px; border-radius: 4px; font-weight: bold;margin-right: 4px'
-  const style3 = 'color: #fff; background: #16A34A; padding: 4px 8px; border-radius: 4px; font-weight: bold;'
-
-  console.log(
-    `%c${isPublic ? 'Public' : 'Private'}%c${isOnboard ? 'Onboarding' : 'Main'}%c${chainIdToName(chainId)}`,
-    style1,
-    style2,
-    style3,
-  )
-}
 if (import.meta.hot)
   import.meta.hot.accept(acceptHMRUpdate(useSafe, import.meta.hot))

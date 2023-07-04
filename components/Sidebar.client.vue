@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 import Avocado from '@/assets/images/icons/avocado.svg?component'
 import QrSVG from '~/assets/images/icons/qr.svg?component'
 
 const { opened, toggleSidebar } = useSidebar()
 const { safeAddress } = useAvocadoSafe()
-const { isSafeMultisig } = storeToRefs(useAuthorities())
+const { isSafeMultisig } = storeToRefs(useMultisig())
 const { navigations } = useNavigation()
 
 const tippyOptions = {

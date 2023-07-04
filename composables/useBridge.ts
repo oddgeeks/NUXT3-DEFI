@@ -1,6 +1,6 @@
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
-import { storeToRefs } from 'pinia'
+
 import type { IToken } from '~~/stores/tokens'
 import type { IBalance } from '~~/stores/safe'
 import { Erc20__factory } from '~~/contracts'

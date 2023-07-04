@@ -1,9 +1,8 @@
 <script setup lang="ts">
-const emit = defineEmits(['destroy'])
 defineProps<{
   buttonClass?: string
 }>()
-
+const emit = defineEmits(['destroy'])
 const { activate, account } = useWeb3()
 
 const { providers } = useNetworks()
@@ -63,7 +62,7 @@ whenever(
               provider.name === 'Metamask'
                 ? 'dark:hover:bg-[#282125] hover:bg-[#FEF1E8]'
                 : 'dark:hover:bg-[#15233C] hover:bg-[#EBF2FE]',
-              buttonClass
+              buttonClass,
             ]
           "
           @click="connect(provider)"

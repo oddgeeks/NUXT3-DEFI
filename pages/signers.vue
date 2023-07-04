@@ -10,7 +10,7 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const { signers, requiredSigners } = storeToRefs(useAuthorities())
+const { signers, requiredSigners } = storeToRefs(useMultisig())
 const { changeThreshold } = useAvocadoSafe()
 
 async function handleDeleteSigner(signer: ISigner) {
@@ -39,9 +39,7 @@ async function handleTresholdChange(chainId: string | number) {
         Manage Multisig Signers
       </h2>
       <span class="text-xs text-slate-400 leading-5">
-        Authorities are addresses that have complete access to your Avocado Wallet and can initiate
-        <br>
-        any transaction. Make sure you only add trusted Addresses as Authority.
+        Signers are addresses that are required to sign transactions before they can be executed on the blockchain.
       </span>
     </div>
     <div class="flex flex-col gap-2">

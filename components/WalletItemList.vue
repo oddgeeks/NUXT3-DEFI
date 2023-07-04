@@ -1,34 +1,22 @@
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia'
-
-const { account } = useWeb3()
-const { safes, mainSafe, multiSigSafe } = storeToRefs(useAuthorities())
-const { getDefaultSafe } = useAuthorities()
-const { mainSafeAddress } = storeToRefs(useSafe())
+const { mainSafe, multiSigSafe, safes } = storeToRefs(useSafe())
 
 const filteredSafes = computed(() => {
   if (!safes.value)
     return []
 
-  return safes.value.filter(safe => safe.safe_address !== actualMainSafe.value?.safe_address && safe.safe_address !== multiSigSafe.value?.safe_address)
-})
-
-const actualMainSafe = computed(() => {
-  if (mainSafe.value)
-    return mainSafe.value
-  else
-    return getDefaultSafe(mainSafeAddress.value, 0)
+  return safes.value.filter(safe => safe.safe_address !== mainSafe.value?.safe_address && safe.safe_address !== multiSigSafe.value?.safe_address)
 })
 </script>
 
 <template>
   <div class="flex flex-col">
-    <div v-if="actualMainSafe">
+    <div v-if="mainSafe">
       <h2 class="text-xs mb-3">
         Generated wallets
       </h2>
       <div class="flex flex-col gap-2.5">
-        <WalletItem primary :safe="actualMainSafe" />
+        <WalletItem primary :safe="mainSafe" />
         <WalletItem v-if="multiSigSafe" primary :safe="multiSigSafe" />
       </div>
     </div>

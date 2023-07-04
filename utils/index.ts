@@ -286,3 +286,18 @@ export function generateNumber(min: number, max: number) {
 
   return numbers
 }
+
+export function logBalance(params: ILogBalanceParams) {
+  const { isOnboard, isPublic, chainId } = params
+
+  const style1 = 'color: #fff; background: #3c3c3c; padding: 4px 8px; border-radius: 4px; font-weight: bold;margin-right: 4px'
+  const style2 = 'color: #fff; background: #007bff; padding: 4px 8px; border-radius: 4px; font-weight: bold;margin-right: 4px'
+  const style3 = 'color: #fff; background: #16A34A; padding: 4px 8px; border-radius: 4px; font-weight: bold;'
+
+  console.log(
+    `%c${isPublic ? 'Public' : 'Private'}%c${isOnboard ? 'Onboarding' : 'Main'}%c${chainIdToName(chainId)}`,
+    style1,
+    style2,
+    style3,
+  )
+}

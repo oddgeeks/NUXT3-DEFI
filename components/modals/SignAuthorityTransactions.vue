@@ -14,7 +14,7 @@ const props = defineProps<{
 
 const { parseTransactionError } = useErrorHandler()
 const { sendTransaction } = useAvocadoSafe()
-const { setSafe } = useAuthorities()
+const { setSelectedSafe } = useSafe()
 const { account } = useWeb3()
 
 const txHashes = ref<ITxHash[]>([])
@@ -25,7 +25,7 @@ const finished = computed(() => txHashes.value.length === props.transactions.len
 const action = computed(() => props.remove ? 'remove-auth' : 'add-auth')
 async function refreshSafe() {
   setTimeout(() => {
-    setSafe()
+    setSelectedSafe()
   }, 7000)
 }
 async function sendTransactions() {

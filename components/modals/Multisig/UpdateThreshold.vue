@@ -8,7 +8,7 @@ const props = defineProps<{
 
 defineEmits(['resolve'])
 
-const { requiredSigners } = storeToRefs(useAuthorities())
+const { requiredSigners } = storeToRefs(useMultisig())
 
 const requiredSignersByChain = computed(() => requiredSigners.value.find(i => i.chainId == props.chainId))
 
