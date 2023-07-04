@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 
-const { active, deactivate, account, connector } = useWeb3()
+const { account } = useWeb3()
 const { safes, mainSafe, multiSigSafe } = storeToRefs(useAuthorities())
-const { gasBalance, mainSafeAddress } = storeToRefs(useSafe())
+const { getDefaultSafe } = useAuthorities()
+const { mainSafeAddress } = storeToRefs(useSafe())
 
 const filteredSafes = computed(() => {
   if (!safes.value)
@@ -13,22 +14,10 @@ const filteredSafes = computed(() => {
 })
 
 const actualMainSafe = computed(() => {
-  if (mainSafe.value) { return mainSafe.value }
-  else {
-    return {
-      safe_address: mainSafeAddress.value,
-      authorities: {},
-      created_at: new Date().toString(),
-      deployed: {},
-      fully_deployed: 0,
-      id: 0,
-      owner_address: account.value,
-      updated_at: new Date().toString(),
-      version: {},
-      multisig: 0,
-      signers: {},
-    } as ISafe
-  }
+  if (mainSafe.value)
+    return mainSafe.value
+  else
+    return getDefaultSafe(mainSafeAddress.value, 0)
 })
 </script>
 

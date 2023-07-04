@@ -188,6 +188,7 @@ export const useAuthorities = defineStore('authorities', () => {
     isSafeMultisig,
     signers,
     requiredSigners,
+    getDefaultSafe,
   }
 })
 

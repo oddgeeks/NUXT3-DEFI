@@ -13,13 +13,11 @@ defineProps({
 
 const { active, deactivate, account, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
-const { gasBalance, mainSafeAddress } = storeToRefs(useSafe())
+const { gasBalance } = storeToRefs(useSafe())
 const { resetAccounts } = useSafe()
 const { setConnectorName, cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
 const router = useRouter()
-
-const { safes, mainSafe, multiSigSafe } = storeToRefs(useAuthorities())
 
 const ensName = ref()
 const open = ref(false)
@@ -29,30 +27,6 @@ const isActualActive = computed(() => {
   if (trackingAccount.value)
     return true
   return active.value
-})
-
-const actualMainSafe = computed(() => {
-  if (mainSafe.value) { return mainSafe.value }
-  else {
-    return {
-      safe_address: mainSafeAddress.value,
-      authorities: {},
-      created_at: new Date(),
-      deployed: false,
-      fully_deployed: false,
-      id: 0,
-      owner_address: account.value,
-      updated_at: new Date(),
-      version: '0.0.0',
-    } as any
-  }
-})
-
-const filteredSafes = computed(() => {
-  if (!safes.value)
-    return []
-
-  return safes.value.filter(safe => safe.safe_address !== actualMainSafe.value?.safe_address && safe.safe_address !== multiSigSafe.value?.safe_address)
 })
 
 async function closeConnection() {
