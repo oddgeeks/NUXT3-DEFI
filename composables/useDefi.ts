@@ -5,6 +5,8 @@ import CompoundUrl from '~/assets/images/protocols/compound.svg?url'
 import MakerUrl from '~/assets/images/protocols/makerdao.svg?url'
 import LiteUrl from '~/assets/images/protocols/instadapp-lite.svg?url'
 
+const secondsInYear = toBN(31536000)
+
 export function useDefi() {
   const { safeAddress } = useAvocadoSafe()
   const { tokens } = storeToRefs(useTokens())
@@ -449,7 +451,8 @@ export function useDefi() {
 
     const netAssets = totalSuppliedAmount.minus(totalBorrowedAmount)
 
-    const apy = netAssets.gt(0) ? toBN(totalInterest).dividedBy(netAssets).times(100).toFixed(4) : '0'
+    const apr = netAssets.gt(0) ? toBN(totalInterest).dividedBy(netAssets).times(100) : toBN(0)
+    const apy = toBN(toBN(1).plus(apr.dividedBy(secondsInYear))).pow(secondsInYear).minus(1).toFixed(4)
 
     return apy
   }
