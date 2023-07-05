@@ -12,17 +12,6 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
-  "dependencies": {
-    "@instadapp/avocado-base": "0.0.37",
-    "@walletconnect/utils": "^2.8.2",
-    "alchemy-sdk": "^2.7.4",
-    "canvas-confetti": "^1.6.0",
-    "d3": "^7.8.4",
-    "error-serializer": "^5.1.0",
-    "fuse.js": "^6.6.2",
-    "semver": "^7.3.8",
-    "xxhashjs": "^0.2.2"
-  },
   "devDependencies": {
     "@ankr.com/ankr.js": "^0.3.1",
     "@antfu/eslint-config": "^0.38.5",
@@ -85,13 +74,14 @@
     "yup": "^0.32.11"
   },
   "dependencies": {
-    "@instadapp/avocado-base": "0.0.30",
+    "@instadapp/avocado-base": "0.0.37",
     "@walletconnect/utils": "^2.8.6",
     "alchemy-sdk": "^2.7.4",
     "canvas-confetti": "^1.6.0",
     "d3": "^7.8.4",
     "error-serializer": "^5.1.0",
     "fuse.js": "^6.6.2",
-    "semver": "^7.3.8"
+    "semver": "^7.3.8",
+    "xxhashjs": "^0.2.2"
   }
 }
