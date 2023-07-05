@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import CopySVG from '~/assets/images/icons/copy.svg?component'
-
 definePageMeta({
   middleware: 'auth',
 })
@@ -61,7 +58,7 @@ async function handleTresholdChange(chainId: string | number) {
                     <div
                       class="dark:bg-slate-800 bg-slate-150  rounded-full w-7.5 h-7.5 flex"
                     >
-                      <CopySVG class="w-[14px] h-[14px] m-auto text-slate-400" />
+                      <SvgoCopy class="w-[14px] h-[14px] m-auto text-slate-400" />
                     </div>
                   </template>
                 </Copy>
