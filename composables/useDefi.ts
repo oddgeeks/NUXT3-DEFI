@@ -337,7 +337,7 @@ export function useDefi() {
         return [
           {
             ...p,
-            apy: p?.apy || calculateCommonAPY(p.positions.data || []),
+            apy: p?.apy || calculateCommonAPY(p.positions.data || [], p.positions?.compPriceInUsd),
             healthFactor: p.positions.healthFactor
               ? toBN(p.positions.healthFactor).gt(1e29) ? '∞' : toBN(p.positions.healthFactor).toFixed(2)
               : healthFactor || '1',
@@ -408,35 +408,51 @@ export function useDefi() {
     return positions.filter((i: any) => gt(i.borrow, 0) || gt(i?.borrowStable, '0'))
   }
 
-  function calculateCommonAPY(positions: any[]) {
-    return positions.reduce((acc: any, curr: any) => {
-      const supplyYield = toBN(curr?.supplyYield || curr?.supplyRate)
-      const borrowYield = toBN(curr?.borrowYield || curr?.borrowRate)
-      const supply = toBN(curr?.supply)
-      const borrow = toBN(curr?.borrow)
-      const priceInUsd = toBN(curr?.priceInUsd)
-      let totalSupplyYield = supplyYield.plus(curr?.supplyRewardRate || curr?.compSupplyApy)
-      let totalBorrowYield = borrowYield.plus(curr?.borrowRewardRate || curr?.compBorrowApy)
+  function calculateCommonAPY(positions: any[], compPriceInUSD?: string | number) {
+    const totalInterest
+      = positions.reduce((acc: any, curr: any) => {
+        const supplyYield = toBN(curr?.supplyYield || curr?.supplyRate)
+        const borrowYield = toBN(curr?.borrowYield || curr?.borrowRate)
+        const supply = toBN(curr?.supply)
+        const borrow = toBN(curr?.borrow)
+        const priceInUsd = toBN(curr?.priceInUsd)
+        let totalSupplyYield = supplyYield.plus(curr?.supplyRewardRate || toBN(curr?.compSupplyApy).times(toBN(compPriceInUSD ?? '64.9')))
+        let totalBorrowYield = borrowYield.minus(curr?.borrowRewardRate || toBN(curr?.compBorrowApy).times(toBN(compPriceInUSD ?? '64.9')))
 
-      const stakingTokenExists
-      = curr?.key === 'wsteth'
-      || curr?.key === 'steth'
-      || curr?.key === 'stmatic'
-      || curr?.key === 'savax'
-      || curr?.key === 'cbeth'
+        const stakingTokenExists
+        = curr?.key === 'wsteth'
+        || curr?.key === 'steth'
+        || curr?.key === 'stmatic'
+        || curr?.key === 'savax'
+        || curr?.key === 'cbeth'
 
-      const stakingYield = stakingTokenExists ? toBN(curr?.stakingApr?.netStakingApr) : toBN(0)
+        const stakingYield = stakingTokenExists ? toBN(curr?.stakingApr?.netStakingApr) : toBN(0)
 
-      totalSupplyYield = totalSupplyYield.plus(stakingYield)
-      totalBorrowYield = borrowYield.plus(stakingYield)
+        totalSupplyYield = totalSupplyYield.plus(stakingYield)
+        totalBorrowYield = totalBorrowYield.plus(stakingYield)
 
-      const interest = supply
-        .times(totalSupplyYield)
-        .minus(borrow.times(totalBorrowYield))
-        .times(priceInUsd)
+        // APY interest
+        const interest = supply
+          .times(totalSupplyYield)
+          .minus(borrow.times(totalBorrowYield))
+          .times(priceInUsd)
 
-      return toBN(acc).plus(interest)
+        return toBN(acc).plus(interest)
+      }, 0)
+
+    const totalSuppliedAmount = positions.reduce((sum: any, curr: any) => {
+      return toBN(sum).plus(toBN(curr?.supply).times(toBN(curr?.priceInUsd)))
     }, 0)
+
+    const totalBorrowedAmount = positions.reduce((sum: any, curr: any) => {
+      return toBN(sum).plus(toBN(curr?.borrow).times(toBN(curr?.priceInUsd)))
+    }, 0)
+
+    const netAssets = totalSuppliedAmount.minus(totalBorrowedAmount)
+
+    const apy = netAssets.gt(0) ? toBN(totalInterest).dividedBy(netAssets).times(100) : toBN(0)
+
+    return apy
   }
 
   async function fetchDefiPosition(api: DefiApis) {

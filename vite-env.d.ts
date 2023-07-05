@@ -517,6 +517,7 @@ interface Positions extends DefiApis {
     healthFactor?: string
     totalSupplyInUsd: string
     totalBorrowInUsd: string
+    compPriceInUsd?: string
   } ;
   vaultId?: string;
   apy: string;

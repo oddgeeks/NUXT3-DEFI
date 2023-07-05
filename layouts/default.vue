@@ -4,8 +4,20 @@ const {
   showIncorrectNetworkBanner,
   showInsufficientGasBanner,
   showOnboardBanner,
+  showVersionUpdateBanner,
 } = useBanner()
 const route = useRoute()
+const router = useRouter()
+const lastNoticeShowDate = useLocalStorage<Date>('last_update_notice_show_date', new Date(0, 0))
+
+watch(showVersionUpdateBanner, () => {
+  if (showVersionUpdateBanner.value) {
+    const today = new Date()
+    const differenceInDays = (today.getTime() - lastNoticeShowDate.value.getTime()) / (1000 * 3600 * 24)
+    if (differenceInDays >= 3 && router.currentRoute.value.name !== 'upgrade')
+      openUpdateNoticeModal()
+  }
+})
 </script>
 
 <template>

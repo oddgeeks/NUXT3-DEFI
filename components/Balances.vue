@@ -112,7 +112,6 @@ const groupedBalances = computed(() => {
 const search = useDebounceFn((event: Event) => {
   searchQuery.value = (<HTMLInputElement>event.target).value
 }, 200)
-
 const { safeAddress, isSafeAddress } = useAvocadoSafe()
 </script>
 
@@ -208,8 +207,8 @@ const { safeAddress, isSafeAddress } = useAvocadoSafe()
                 </template>
                 <template v-else>
                   <BalanceRow
-                    v-for="(tokenBalance, i) in searchQuery.length > 0 ? filteredBalances : sortedBalances"
-                    :key="i"
+                    v-for="(tokenBalance) in searchQuery.length > 0 ? filteredBalances : sortedBalances"
+                    :key="`${tokenBalance.chainId} - ${tokenBalance.symbol}`"
                     :token-balance="tokenBalance"
                     :summary="false"
                     :hide="false"
