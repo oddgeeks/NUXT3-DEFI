@@ -39,7 +39,7 @@ async function handleDeleteSigner(address: string, chainId: string | number) {
           (Owner)
         </span>
       </div>
-      <button @click="handleDeleteSigner(address, chainId)">
+      <button v-if="!owner" @click="handleDeleteSigner(address, chainId)">
         <SvgoTrash class="w-7.5" />
       </button>
     </div>

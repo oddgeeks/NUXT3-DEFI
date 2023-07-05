@@ -495,14 +495,14 @@ export function openDeleteSigner(address: string) {
   })
 }
 
-export async function openEditNonceModal(chainId: number | string, actions: any[], defaultNonce?: number, calculateEstimatedFee?: boolean) {
+export async function openEditNonceModal(chainId: number | string, actions: any[], defaultNonce?: number, estimatedFee?: boolean) {
   return openModal({
     component: EditNonce,
     componentProps: {
       chainId,
       actions,
       defaultNonce,
-      calculateEstimatedFee,
+      estimatedFee,
     },
     options: {
       wrapperClass: 'max-w-[560px]',

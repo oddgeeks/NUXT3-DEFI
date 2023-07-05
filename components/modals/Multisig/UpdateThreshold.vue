@@ -15,6 +15,9 @@ const requiredSignersByChain = computed(() => requiredSigners.value.find(i => i.
 const defaultThreshold = computed(() => requiredSignersByChain.value?.requiredSignerCount || 1)
 
 const threshold = ref(defaultThreshold.value)
+
+const minCount = 1
+const maxCount = computed(() => Math.max(2, requiredSignersByChain.value?.signerCount || 1 + props.additionalCount))
 </script>
 
 <template>
@@ -23,8 +26,9 @@ const threshold = ref(defaultThreshold.value)
     <h3 class="text-sm text-slate-400 mb-5">
       Any transaction requires the confirmation of
     </h3>
+
     <div class="flex text-sm items-center gap-5">
-      <CommonSelect v-model="threshold" class="w-[80px]" :options="generateNumber(1, (requiredSignersByChain?.signerCount || 1) + additionalCount)" />
+      <CommonSelect v-model="threshold" class="w-[80px]" :options="generateNumber(minCount, maxCount)" />
       Out of {{ requiredSignersByChain?.signerCount }} signer(s)
     </div>
     <CommonButton class="w-full justify-center mt-5" size="lg" @click="$emit('resolve', true, defaultThreshold === threshold ? undefined : threshold)">

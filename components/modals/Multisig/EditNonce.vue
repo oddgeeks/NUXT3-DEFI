@@ -129,36 +129,38 @@ const isTransactionFailed = computed(() => !simulationDetails.value?.transaction
         <span class="text-xs text-slate-400">
           Note
         </span>
-        <textarea v-model="note" placeholder="Visible to All signers" class="dark:bg-slate-800 placeholder:text-sm text-sm rounded-[14px] bg-slate-100 py-[15px] px-4 border-0 outline-none focus:border-0 focus:outline-none focus:ring-0" />
+        <textarea v-model="note" v-focus placeholder="Visible to All signers" class="dark:bg-slate-800 placeholder:text-sm text-sm rounded-[14px] bg-slate-100 py-[15px] px-4 border-0 outline-none focus:border-0 focus:outline-none focus:ring-0" />
       </div>
     </div>
-    <hr class="border-slate-150 dark:border-slate-800">
-    <div class="px-7.5 py-5 text-sm flex justify-between items-center">
-      Check if this transaction is valid
-      <button :disabled="pending" type="button" class="text-primary disabled:text-slate-400" @click="handleSimulate">
-        Simulate
-      </button>
-    </div>
-    <hr class="border-slate-150 dark:border-slate-800">
-    <details ref="detailsRef" class="group px-7.5 py-5">
-      <summary class="text-orange-400 flex justify-between text-sm leading-5 cursor-pointer">
-        View transaction breakdown <SvgoChevronDown class="group-open:rotate-180" />
-      </summary>
-      <div class="mt-5">
-        <SimulationDetails
-          v-if="simulationDetails"
-          :chain-id="String(chainId)"
-          :details="simulationDetails"
-          :has-error="!!simulationError"
-          title-hidden
-          wrapper-class="sm:!flex flex-col"
-        />
-        <div v-if="isTransactionFailed" class="text-xs leading-5 text-red-alert bg-red-alert bg-opacity-10 flex p-4 rounded-[14px] items-center gap-2">
-          <SvgoExclamationCircle class="w-3" />
-          This transaction will most likely fail
+    <template v-if="!estimatedFee">
+      <hr class="border-slate-150 dark:border-slate-800">
+      <div class="px-7.5 py-5 text-sm flex justify-between items-center">
+        Check if this transaction is valid
+        <button :disabled="pending" type="button" class="text-primary disabled:text-slate-400" @click="handleSimulate">
+          Simulate
+        </button>
+      </div>
+      <hr class="border-slate-150 dark:border-slate-800">
+      <details ref="detailsRef" class="group px-7.5 py-5">
+        <summary class="text-orange-400 flex justify-between text-sm leading-5 cursor-pointer">
+          View transaction breakdown <SvgoChevronDown class="group-open:rotate-180" />
+        </summary>
+        <div class="mt-5">
+          <SimulationDetails
+            v-if="simulationDetails"
+            :chain-id="String(chainId)"
+            :details="simulationDetails"
+            :has-error="!!simulationError"
+            title-hidden
+            wrapper-class="sm:!flex flex-col"
+          />
+          <div v-if="isTransactionFailed" class="text-xs leading-5 text-red-alert bg-red-alert bg-opacity-10 flex p-4 rounded-[14px] items-center gap-2">
+            <SvgoExclamationCircle class="w-3" />
+            This transaction will most likely fail
+          </div>
         </div>
-      </div>
-    </details>
+      </details>
+    </template>
     <hr class="border-slate-150 dark:border-slate-800">
     <div v-if="estimatedFee" class="px-7.5 py-5">
       <EstimatedFee :data="data" :loading="feePending" :error="error" />
