@@ -221,7 +221,7 @@ export function useAvocadoSafe() {
     } as any
   }
 
-  async function createProposalOrSignDirecty({ chainId, actions, nonce, metadata, note, clearModals = true, estimatedFee = false }: IGenerateMultisigSignatureParams) {
+  async function createProposalOrSignDirecty({ chainId, actions, nonce, metadata, clearModals = true, estimatedFee = false }: IGenerateMultisigSignatureParams) {
     const { success, payload } = await openEditNonceModal(chainId, actions, nonce, estimatedFee)
 
     const actualNonce = nonce || payload?.nonce
@@ -239,7 +239,7 @@ export function useAvocadoSafe() {
       status: 'pending',
       signer: params?.signatureParams,
       data: params?.castParams,
-      note,
+      note: payload.note,
       nonce,
     }, {
       baseURL: multisigURL,
