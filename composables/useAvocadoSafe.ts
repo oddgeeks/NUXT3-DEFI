@@ -221,8 +221,8 @@ export function useAvocadoSafe() {
     } as any
   }
 
-  async function createProposalOrSignDirecty({ chainId, actions, nonce, metadata, note, clearModals = true }: IGenerateMultisigSignatureParams) {
-    const { success, payload } = await openEditNonceModal(chainId, actions, nonce)
+  async function createProposalOrSignDirecty({ chainId, actions, nonce, metadata, note, clearModals = true, estimatedFee = false }: IGenerateMultisigSignatureParams) {
+    const { success, payload } = await openEditNonceModal(chainId, actions, nonce, estimatedFee)
 
     const actualNonce = nonce || payload?.nonce
 
@@ -340,6 +340,7 @@ export function useAvocadoSafe() {
       chainId: tx.chain_id,
       nonce: Number(tx.nonce),
       actions,
+      estimatedFee: true,
     })
   }
 
@@ -376,7 +377,7 @@ export function useAvocadoSafe() {
       })
     }
 
-    return createProposalOrSignDirecty({ chainId, actions, clearModals: false })
+    return createProposalOrSignDirecty({ chainId, actions, clearModals: false, estimatedFee: true })
   }
 
   async function changeThreshold(threshold: string, chainId: string | number) {
@@ -390,7 +391,7 @@ export function useAvocadoSafe() {
       },
     ] as any[]
 
-    return createProposalOrSignDirecty({ chainId, actions })
+    return createProposalOrSignDirecty({ chainId, actions, estimatedFee: true })
   }
 
   async function removeSigner(address: string, chainId: number | string, threshold: number) {
@@ -414,7 +415,7 @@ export function useAvocadoSafe() {
       })
     }
 
-    return createProposalOrSignDirecty({ chainId, actions, clearModals: false })
+    return createProposalOrSignDirecty({ chainId, actions, clearModals: false, estimatedFee: true })
   }
 
   const getLatestAvosafeNonce = async (chainId: string | number) => {

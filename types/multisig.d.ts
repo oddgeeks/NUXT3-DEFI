@@ -88,4 +88,5 @@ interface IGenerateMultisigSignatureParams {
   metadata?: string
   note?: string
   clearModals?: boolean
+  estimatedFee?: boolean
 }

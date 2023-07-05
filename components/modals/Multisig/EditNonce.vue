@@ -5,6 +5,7 @@ const props = defineProps<{
   chainId: number | string
   actions: any[]
   defaultNonce?: number
+  estimatedFee?: boolean
 }>()
 
 const emit = defineEmits(['resolve'])
@@ -15,6 +16,7 @@ const detailsRef = ref<HTMLDetailsElement>()
 
 const { data, error, pending: feePending } = useEstimatedFee(ref(props.actions), ref(props.chainId), {
   immediate: true,
+  disabled: () => !props.estimatedFee,
 })
 
 const transactionTypes = [
@@ -158,7 +160,7 @@ const isTransactionFailed = computed(() => !simulationDetails.value?.transaction
       </div>
     </details>
     <hr class="border-slate-150 dark:border-slate-800">
-    <div class="px-7.5 py-5">
+    <div v-if="estimatedFee" class="px-7.5 py-5">
       <EstimatedFee :data="data" :loading="feePending" :error="error" />
     </div>
     <CommonButton :disabled="!!error || feePending" :loading="feePending" class="justify-center mx-7.5 my-5" size="lg" type="submit">
