@@ -13,6 +13,10 @@ const nonce = ref<number | undefined>(-1)
 const note = ref<string | undefined>(undefined)
 const detailsRef = ref<HTMLDetailsElement>()
 
+const { data, error, pending: feePending } = useEstimatedFee(ref(props.actions), ref(props.chainId), {
+  immediate: true,
+})
+
 const transactionTypes = [
   {
     name: 'Non-Sequential',
@@ -154,7 +158,10 @@ const isTransactionFailed = computed(() => !simulationDetails.value?.transaction
       </div>
     </details>
     <hr class="border-slate-150 dark:border-slate-800">
-    <CommonButton class="justify-center mx-7.5 my-5" size="lg" type="submit">
+    <div class="px-7.5 py-5">
+      <EstimatedFee :data="data" :loading="feePending" :error="error" />
+    </div>
+    <CommonButton :disabled="!!error || feePending" :loading="feePending" class="justify-center mx-7.5 my-5" size="lg" type="submit">
       Send for Approval
     </CommonButton>
   </form>

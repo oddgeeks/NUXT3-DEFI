@@ -54,14 +54,14 @@ async function handleTresholdChange(chainId: string | number) {
         </div>
       </div>
     </div>
-    <div>
+    <div v-if="requiredSigners.length">
       <h2 class="mb-2.5">
         Required confirmations
       </h2>
       <p class="text-xs text-slate-400 mb-5">
         Any transaction requires the confirmation of:
       </p>
-      <div v-if="requiredSigners.length" class="dark:bg-gray-850 bg-slate-100 px-7.5 py-[26px] text-sm rounded-[25px]">
+      <div class="dark:bg-gray-850 bg-slate-100 px-7.5 py-[26px] text-sm rounded-[25px]">
         <span v-for="item of requiredSigners" :key="item.chainId" class="flex items-center gap-2.5">
           <ChainLogo class="w-5 h-5" :chain="item.chainId" />
           <span>
