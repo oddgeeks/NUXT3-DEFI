@@ -30,6 +30,7 @@ export const useSafe = defineStore('safe', () => {
   const safeAddress = ref()
   const mainSafeAddress = ref()
   const multiSigSafeAddress = ref()
+  const accountSafeMapping = ref<Record<string, string>>({})
 
   const safes = ref<ISafe[]>([])
 
@@ -111,6 +112,8 @@ export const useSafe = defineStore('safe', () => {
     else {
       selectedSafe.value = resp
     }
+
+    accountSafeMapping.value[account.value] = safeAddress.value
   }
 
   async function setMultiSigSafe() {
@@ -130,7 +133,9 @@ export const useSafe = defineStore('safe', () => {
     if (!account.value)
       return
 
-    if (mainSafeAddress.value || safeAddress.value)
+    const cachedSafeAddress = accountSafeMapping.value[account.value]
+
+    if ((mainSafeAddress.value || safeAddress.value) && !cachedSafeAddress)
       return
 
     const address = await forwarderProxyContract.computeAddress(
@@ -146,7 +151,7 @@ export const useSafe = defineStore('safe', () => {
     }
 
     mainSafeAddress.value = address
-    safeAddress.value = address
+    safeAddress.value = cachedSafeAddress || address
   }
 
   const fetchMultiSigSafeAddress = async () => {
@@ -598,10 +603,11 @@ export const useSafe = defineStore('safe', () => {
     forwarderProxyContract,
     resetAccounts,
     setSelectedSafe,
+    accountSafeMapping,
   }
 }, {
   persist: {
-    paths: ['safeAddress', 'mainSafeAddress'],
+    paths: ['safeAddress', 'mainSafeAddress', 'accountSafeMapping'],
   },
 })
 
