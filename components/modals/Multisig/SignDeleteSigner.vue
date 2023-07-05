@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 defineProps<{
-  signer: ISigner
+  address: string
+  chainId: number | string
 }>()
 </script>
 
@@ -15,8 +16,8 @@ defineProps<{
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
 
-    <ul class="p-7.5 flex flex-col gap-7">
-      <MultisigSignDeleteSignerItem v-for="chain in signer.chainIds" :key="chain" :address="signer.address" :chain-id="chain" />
-    </ul>
+    <div class="p-7.5">
+      <MultisigSignDeleteSignerItem :address="address" :chain-id="chainId" />
+    </div>
   </div>
 </template>

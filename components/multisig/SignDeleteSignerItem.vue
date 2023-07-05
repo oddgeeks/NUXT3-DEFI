@@ -4,7 +4,7 @@ const props = defineProps<{
   chainId: string | number
 }>()
 
-const emit = defineEmits(['destroy'])
+defineEmits(['destroy'])
 
 const pending = ref(false)
 const signed = ref(false)
@@ -33,7 +33,7 @@ async function handleSign() {
 </script>
 
 <template>
-  <li class="flex items-center justify-between w-full">
+  <div class="flex items-center justify-between w-full">
     <span class="flex items-center gap-3 text-sm leading-5">
       <ChainLogo class="w-[26px] h-[26px]" :chain="chainId" />
       {{ chainIdToName(chainId) }}
@@ -41,5 +41,5 @@ async function handleSign() {
     <CommonButton :disabled="pending || signed" :loading="pending" @click="handleSign">
       {{ signed ? 'Signed' : 'Sign' }}
     </CommonButton>
-  </li>
+  </div>
 </template>

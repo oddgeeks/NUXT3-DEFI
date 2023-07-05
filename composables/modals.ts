@@ -467,11 +467,12 @@ export function openSignSignerModal(addresses: string[], treshold: number) {
   })
 }
 
-export function openDeleteSignerSign(signer: ISigner) {
+export function openDeleteSignerSign(address: string, chainId: number | string) {
   return openModal({
     component: SignDeleteSigner,
     componentProps: {
-      signer,
+      address,
+      chainId,
     },
     options: {
       wrapperClass: 'max-w-[560px]',
@@ -480,11 +481,11 @@ export function openDeleteSignerSign(signer: ISigner) {
   })
 }
 
-export function openDeleteSigner(signer: ISigner) {
+export function openDeleteSigner(address: string) {
   return openModal({
     component: DeleteSigner,
     componentProps: {
-      signer,
+      address,
     },
     async: true,
     options: {
@@ -494,12 +495,13 @@ export function openDeleteSigner(signer: ISigner) {
   })
 }
 
-export async function openEditNonceModal(chainId: number | string, actions: any[]) {
+export async function openEditNonceModal(chainId: number | string, actions: any[], defaultNonce?: number) {
   return openModal({
     component: EditNonce,
     componentProps: {
       chainId,
       actions,
+      defaultNonce,
     },
     options: {
       wrapperClass: 'max-w-[560px]',

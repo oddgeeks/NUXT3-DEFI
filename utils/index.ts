@@ -301,3 +301,5 @@ export function logBalance(params: ILogBalanceParams) {
     style3,
   )
 }
+
+export const arrayFormatter = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' })

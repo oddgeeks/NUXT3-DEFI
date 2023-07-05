@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 const props = defineProps<{
   chainId: number | string
   actions: any[]
+  defaultNonce?: number
 }>()
 
 const emit = defineEmits(['resolve'])
@@ -88,7 +89,7 @@ const isTransactionFailed = computed(() => !simulationDetails.value?.transaction
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <div class="px-7.5 py-5 flex flex-col gap-2.5">
-      <div class="flex flex-col gap-2">
+      <div v-if="!defaultNonce" class="flex flex-col gap-2">
         <span class="text-xs text-slate-400">
           Transaction type
         </span>

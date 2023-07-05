@@ -1,6 +1,6 @@
 <script setup lang=ts>
 defineProps<{
-  signer: ISigner
+  address: string
 }>()
 
 defineEmits(['resolve', 'destroy'])
@@ -14,9 +14,9 @@ defineEmits(['resolve', 'destroy'])
     </h1>
     <hr class="border-slate-150 dark:border-slate-800">
     <p class="text-sm flex items-center gap-3 p-7.5">
-      <AuthorityAvatar :address="signer.address" />
+      <AuthorityAvatar :address="address" />
       <span class="text-slate-400 font-medium">
-        {{ signer.address }}
+        {{ address }}
       </span>
     </p>
     <hr class="border-slate-150 dark:border-slate-800">

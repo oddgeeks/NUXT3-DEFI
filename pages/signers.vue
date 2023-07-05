@@ -7,15 +7,9 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const { signers, requiredSigners } = storeToRefs(useMultisig())
+const { selectedSafe } = storeToRefs(useSafe())
+const { requiredSigners } = storeToRefs(useMultisig())
 const { changeThreshold } = useAvocadoSafe()
-
-async function handleDeleteSigner(signer: ISigner) {
-  const { success } = await openDeleteSigner(signer)
-
-  if (success)
-    openDeleteSignerSign(signer)
-}
 
 async function handleTresholdChange(chainId: string | number) {
   const { success, payload } = await openUpdateThresholdModal(chainId, 0)
@@ -41,32 +35,13 @@ async function handleTresholdChange(chainId: string | number) {
     </div>
     <div class="flex flex-col gap-2">
       <div class="flex flex-col dark:bg-gray-850 bg-slate-50 rounded-[25px]">
-        <template v-for="(signer) in signers" :key="signer.address">
-          <div class="flex items-center justify-between py-6.5 px-7.5 border-b-1 last:border-b-0 border-slate-150 dark:border-slate-800 w-full">
-            <div class="flex items-center justify-between w-full">
-              <div class="flex items-center sm:gap-5 gap-3 flex-1 flex-wrap">
-                <AuthorityAvatar
-                  :address="signer.address"
-                  class="-mr-2 shrink-0"
-                />
-                <span class="sm:block hidden">
-                  {{ signer.address }}
-                </span>
-                <span class="dark:text-white text-xs text-slate-900 sm:hidden block sm:ml-0 ml-2.5">{{ shortenHash(signer.address) }}</span>
-                <Copy icon-only :text="signer.address">
-                  <template #copy>
-                    <div
-                      class="dark:bg-slate-800 bg-slate-150  rounded-full w-7.5 h-7.5 flex"
-                    >
-                      <SvgoCopy class="w-[14px] h-[14px] m-auto text-slate-400" />
-                    </div>
-                  </template>
-                </Copy>
-              </div>
-              <button @click="handleDeleteSigner(signer)">
-                <SvgoTrash />
-              </button>
-            </div>
+        <template v-for="addresses, chainId in selectedSafe?.signers || {}" :key="chainId">
+          <div v-if="addresses.length" class="rounded-t-[inherit]">
+            <h2 class="dark:bg-slate-850 rounded-t-[inherit] bg-slate-150 py-2.5 flex items-center gap-2.5 px-5 text-xs font-medium leading-5 text-slate-400">
+              <ChainLogo class="w-5 h-5" :chain="chainId" />
+              {{ chainIdToName(chainId) }}
+            </h2>
+            <MultisigSafeItems :addresses="addresses" :chain-id="chainId" />
           </div>
         </template>
         <div class="flex py-6.5 px-7.5 border-t-1 border-slate-150 dark:border-slate-800">

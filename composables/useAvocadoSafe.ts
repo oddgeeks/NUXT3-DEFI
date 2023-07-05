@@ -72,18 +72,10 @@ export function useAvocadoSafe() {
           operation: transaction.operation,
         },
       ]
-      const data = await openEditNonceModal(transaction.chainId, actions)
-
-      if (!data.success)
-        throw new Error('Transaction canceled')
-
-      const payload = data?.payload
 
       const txHash = await createProposalOrSignDirecty({
         chainId: transaction.chainId,
         metadata: options.metadata,
-        nonce: payload?.nonce,
-        note: payload?.note,
         actions,
       })
 
@@ -127,14 +119,7 @@ export function useAvocadoSafe() {
       throw new Error('Safe not initialized')
 
     if (isSafeMultisig.value) {
-      const data = await openEditNonceModal(chainId, transactions)
-
-      if (!data.success)
-        throw new Error('Transaction canceled')
-
-      const payload = data?.payload
-
-      const txHash = await createProposalOrSignDirecty({ chainId, actions: transactions, metadata: options.metadata, nonce: payload?.nonce, note: payload?.note })
+      const txHash = await createProposalOrSignDirecty({ chainId, actions: transactions, metadata: options.metadata })
 
       if (txHash)
         return txHash
@@ -187,14 +172,6 @@ export function useAvocadoSafe() {
       }
     })
 
-    console.log({
-      signatures: sortedSignatures,
-      message: params.message,
-      owner: params.owner,
-      safe: params.safe,
-      targetChainId: String(params.targetChainId),
-    })
-
     const transactionHash = await avoProvider.send('txn_broadcast', [{
       signatures: sortedSignatures,
       message: params.message,
@@ -219,8 +196,6 @@ export function useAvocadoSafe() {
     const verifyingContract = selectedSafe.value?.safe_address!
 
     const latestAvosafeNonce = await getLatestAvosafeNonce(chainId)
-
-    console.log({ latestAvosafeNonce })
 
     const avoSafeNonce = !isUndefined(nonce) ? nonce : latestAvosafeNonce
 
@@ -247,7 +222,16 @@ export function useAvocadoSafe() {
   }
 
   async function createProposalOrSignDirecty({ chainId, actions, nonce, metadata, note, clearModals = true }: IGenerateMultisigSignatureParams) {
-    const params = await generateMultisigSignatureAndSign({ chainId, actions, nonce, metadata })
+    const { success, payload } = await openEditNonceModal(chainId, actions, nonce)
+
+    const actualNonce = nonce || payload?.nonce
+
+    console.log({ actualNonce })
+
+    if (!success)
+      throw new Error('Transaction canceled')
+
+    const params = await generateMultisigSignatureAndSign({ chainId, actions, nonce: actualNonce, note: payload.note, metadata })
 
     // generate proposal
     const { data } = await axios.post<IMultisigTransaction>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {

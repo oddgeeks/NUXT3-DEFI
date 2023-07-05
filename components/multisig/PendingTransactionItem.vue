@@ -35,16 +35,30 @@ function getTypeFromData() {
 
   const functions = [{
     name: 'removeSigners',
-    label: 'Remove Signers',
+    format: (data: any) => {
+      const addresses = data[0] as string[]
+      const shortAddresses = addresses.map(i => shortenHash(i) || i)
+
+      const formatted = arrayFormatter.format(shortAddresses)
+
+      return `Remove signers: ${formatted}`
+    },
   }, {
     name: 'setRequiredSigners',
-    label: 'Set Required Signers',
+    format: (data: any) => {
+      const requiredSigners = data[0] as string
+      return `Set required signers to ${requiredSigners}`
+    },
   }, {
     name: 'addSigners',
-    label: 'Add Signers',
-  }, {
-    name: 'occupyNonSequentialNonces',
-    label: 'Occupy Non Sequential Nonces',
+    format: (data: any) => {
+      const addresses = data[0] as string[]
+      const shortAddresses = addresses.map(i => shortenHash(i) || i)
+
+      const formatted = arrayFormatter.format(shortAddresses)
+
+      return `Add signers: ${formatted}`
+    },
   }]
 
   for (const func of functions) {
@@ -52,7 +66,7 @@ function getTypeFromData() {
       const decodedData = avoMultsigInterface.decodeFunctionData(func.name, action.data)
 
       if (decodedData)
-        return func.label
+        return func.format(decodedData)
     }
     catch (e) {
       continue

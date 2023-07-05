@@ -604,6 +604,7 @@ export const useSafe = defineStore('safe', () => {
     resetAccounts,
     setSelectedSafe,
     accountSafeMapping,
+    fetchSafe,
   }
 }, {
   persist: {
