@@ -2,6 +2,7 @@
 import { isAddress } from '@ethersproject/address'
 import { useField } from 'vee-validate'
 import CheckCircle from '~/assets/images/icons/check-circle.svg?component'
+import InfoSVG from '~/assets/images/icons/info.svg?component'
 import type { IToken } from '~/stores/tokens'
 
 defineEmits(['destroy'])
@@ -11,8 +12,8 @@ const { safeAddress } = useAvocadoSafe()
 const { isCrossChain, data, token, availableTokens, targetToken, toAvailableNetworks, actualAddress, stepForward, tokenlistPending } = useSend()
 
 const toCrossChainNetworks = computed(() => toAvailableNetworks.value.filter(network => network.chainId !== data.value.fromChainId))
-const fromNetwork = computed(() => toAvailableNetworks.value.find(network => network.chainId === data.value.fromChainId)?.name)
-const targetNetwork = computed(() => toAvailableNetworks.value.find(network => network.chainId === data.value.toChainId)?.name)
+const fromNetwork = chainIdToName(data.value.fromChainId)
+const targetNetwork = chainIdToName(data.value.toChainId)
 
 const {
   value: amount,
@@ -40,9 +41,9 @@ const disabled = computed(() => {
 
 const sendDescription = computed(() => {
   if (isCrossChain.value)
-    return `Sending ${token.value?.symbol.toUpperCase()} from ${fromNetwork.value} to Receiver on ${targetNetwork.value}`
+    return `Sending ${token.value?.symbol.toUpperCase()} from ${fromNetwork} to Receiver on ${targetNetwork}`
   else
-    return `Sending ${token.value?.symbol.toUpperCase()} on ${fromNetwork.value}`
+    return `Sending ${token.value?.symbol.toUpperCase()} on ${fromNetwork}`
 })
 
 const { data: totalTransfers } = useAsyncData(
@@ -99,7 +100,7 @@ function onToggleCrossChain() {
 </script>
 
 <template>
-  <div class="flex flex-col gap-[26px]">
+  <div class="flex flex-col gap-[26px] w-full md:w-[450px]">
     <div class="flex flex-col gap-2.5 font-medium">
       <div class="flex justify-between gap-5">
         <div class="flex flex-col gap-2.5">
@@ -219,7 +220,10 @@ function onToggleCrossChain() {
 
     <Transition name="fade">
       <p class="text-slate-400 font-medium leading-6 flex items-center text-xs">
-        <SvgoExclamationCircle class="mr-2.5 h-4.5 w-4.5 text-slate-500" />
+        <InfoSVG
+          v-tippy="'Cross-chain send allows you to directly send tokens from chain A to the receiver on chain B'"
+          class="mr-2.5 h-4.5 w-4.5 svg-gray-info"
+        />
         {{ sendDescription }}
       </p>
     </Transition>
@@ -227,7 +231,7 @@ function onToggleCrossChain() {
       :class="{
         'dark:text-white text-slate-900': isCrossChain,
       }"
-      class="text-sm text-slate-400 hidden sm:inline-flex gap-2.5 items-center"
+      class="text-sm text-slate-400 flex gap-2.5 items-center"
       @click="onToggleCrossChain"
     >
       <CheckCircle
@@ -237,7 +241,7 @@ function onToggleCrossChain() {
         ]"
         class="w-4 h-4"
       />
-      This is a cross-chain send
+      I want to send cross-chain
     </button>
   </div>
 
