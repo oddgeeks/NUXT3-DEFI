@@ -27,7 +27,7 @@ const formattedActionType = computed(() => {
       <span v-if="item.nonce !== '-1'" class="w-10">
         {{ item.nonce }}
       </span>
-      <span class="flex items-center gap-2.5 w-32 self-baseline">
+      <span class="flex items-center gap-2.5 w-20 self-baseline">
         <ActionIcon :action="actionType" />
         <span>{{ formattedActionType }}</span>
       </span>

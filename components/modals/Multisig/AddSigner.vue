@@ -61,7 +61,6 @@ const {
 })
 
 const { fields, push, update, remove } = useFieldArray<string>('addresses')
-const treshold = ref(props.defaultTreshold || 1)
 
 const disabled = computed(() => !meta.value.valid)
 
@@ -73,7 +72,7 @@ function getErrorMessage(errors: any, key: number | string) {
 const onSubmit = handleSubmit(async () => {
   const addresses = fields.value.map(field => field.value)
 
-  openReviewSignerModal(addresses, treshold.value)
+  openReviewSignerModal(addresses)
   emit('destroy')
 })
 

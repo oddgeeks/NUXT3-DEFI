@@ -2,10 +2,9 @@
 const props = defineProps<{
   addresses: string[]
   chainId: string | number
-  defaultTreshold: number
 }>()
 
-const emit = defineEmits(['destroy'])
+defineEmits(['destroy'])
 
 const pending = ref(false)
 const signed = ref(false)

@@ -42,6 +42,7 @@ import SignSigner from '~/components/modals/Multisig/SignSigner.vue'
 import DeleteSigner from '~/components/modals/Multisig/DeleteSigner.vue'
 import SignDeleteSigner from '~/components/modals/Multisig/SignDeleteSigner.vue'
 import UpdateThreshold from '~/components/modals/Multisig/UpdateThreshold.vue'
+import MultisigSelectNetwork from '~/components/modals/Multisig/SelectNetwork.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -439,12 +440,11 @@ export function openAddSignerModal(addresses?: string[], treshold?: number) {
   })
 }
 
-export function openReviewSignerModal(addresses: string[], treshold: number) {
+export function openReviewSignerModal(addresses: string[]) {
   return openModal({
     component: ReviewSigner,
     componentProps: {
       addresses,
-      defaultTreshold: treshold,
     },
     options: {
       wrapperClass: 'max-w-[560px]',
@@ -453,12 +453,12 @@ export function openReviewSignerModal(addresses: string[], treshold: number) {
   })
 }
 
-export function openSignSignerModal(addresses: string[], treshold: number) {
+export function openSignSignerModal(addresses: string[], chainIds: number[]) {
   return openModal({
     component: SignSigner,
     componentProps: {
       addresses,
-      defaultTreshold: treshold,
+      chainIds,
     },
     options: {
       wrapperClass: 'max-w-[560px]',
@@ -591,6 +591,20 @@ export function openMultisigTransactionDetails(transaction: IMultisigTransaction
       wrapperClass: '!max-w-[1080px]',
       contentClass: '!p-0',
     },
+  })
+}
+
+export function openMultisigSelectNetworkModal(addresses: string[]) {
+  return openModal({
+    component: MultisigSelectNetwork,
+    componentProps: {
+      addresses,
+    },
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[560px]',
+    },
+    async: true,
   })
 }
 

@@ -3,7 +3,6 @@ import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
   addresses: string[]
-  defaultTreshold: number
 }>()
 
 const emit = defineEmits(['destroy'])
@@ -12,13 +11,20 @@ const { selectedSafe } = storeToRefs(useSafe())
 
 function handleBack() {
   emit('destroy')
-  openAddSignerModal(props.addresses, props.defaultTreshold)
+  openAddSignerModal(props.addresses)
 }
 
-function handleNext() {
+async function handleNext() {
   emit('destroy')
 
-  openSignSignerModal(props.addresses, props.defaultTreshold)
+  const { payload: selectedNetworks } = await openMultisigSelectNetworkModal(props.addresses)
+
+  if (!selectedNetworks)
+    return
+
+  openSignSignerModal(props.addresses, selectedNetworks)
+
+  // openSignSignerModal(props.addresses, props.defaultTreshold)
 }
 </script>
 

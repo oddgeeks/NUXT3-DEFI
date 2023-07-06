@@ -1,23 +1,14 @@
 <script lang="ts" setup>
 const props = defineProps<{
   addresses: string[]
-  defaultTreshold: number
+  chainIds: number[]
 }>()
 
 const emit = defineEmits(['destroy'])
 
-const { addSignersWithThreshold } = useAvocadoSafe()
-
 function handleBack() {
   emit('destroy')
-  openReviewSignerModal(props.addresses, props.defaultTreshold)
-}
-
-async function handleSign(chainId: string | number) {
-  const txHash = await addSignersWithThreshold(props.addresses, String(props.defaultTreshold), chainId)
-
-  if (txHash)
-    showPendingTransactionModal(txHash, chainId)
+  openReviewSignerModal(props.addresses)
 }
 </script>
 
@@ -35,7 +26,7 @@ async function handleSign(chainId: string | number) {
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <ul class="p-7.5 flex flex-col gap-7">
-      <MultisigSignAddSignerItem v-for="network in availableNetworks" :key="network.chainId" :chain-id="network.chainId" :default-treshold="defaultTreshold" :addresses="addresses" />
+      <MultisigSignAddSignerItem v-for="chainId in chainIds" :key="chainId" :chain-id="chainId" :addresses="addresses" />
     </ul>
     <div class="p-7.5 grid grid-cols-2 gap-4">
       <CommonButton class="justify-center" size="lg" color="white" @click="handleBack">
