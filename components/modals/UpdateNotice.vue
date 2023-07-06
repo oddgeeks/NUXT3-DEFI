@@ -20,12 +20,12 @@ watch(lastNoticeShowDate, () => {
 <template>
   <div class="flex flex-col justify-center items-center">
     <p>
-      Avocado update available
+      Update Avocado
     </p>
     <p class="mt-5 text-slate-400 text-center text-sm">
       New Avocado version available. Please update to a newer version to ensure seamless experience & access to latest features.
     </p>
-    <div class="w-full mt-3 flex flex-row items-center justify-center gap-2">
+    <div class="w-full mt-8 flex flex-row items-center justify-center gap-2">
       <CommonButton color="white" class="flex-1 justify-center text-sm" @click="onRemindLater()">
         Remind me later
       </CommonButton>
