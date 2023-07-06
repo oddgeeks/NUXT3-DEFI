@@ -104,7 +104,7 @@ const availableBuyTokens = computed(() =>
   ),
 )
 
-watch(availableBuyTokens, () => {
+watch([() => swap.value.sellToken], () => {
   swap.value.buyToken = availableBuyTokens.value[0]
   // swap.value.sellToken = availableTokens.value[0]
   toChainId.value = swap.value.sellToken.chainId
