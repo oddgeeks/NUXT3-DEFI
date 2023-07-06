@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { formatTimeAgo } from '@vueuse/core'
+import { isUndefined } from '@walletconnect/utils'
 import axios from 'axios'
 import { getAddress } from 'ethers/lib/utils'
 import { storeToRefs } from 'pinia'
@@ -293,12 +294,12 @@ onMounted(async () => {
               Reject
             </CommonButton>
             <div v-show="isConfirmationsMatch" v-tippy="errorMessage">
-              <CommonButton :disabled="!!errorMessage || pending.execute" :loading="pending.execute || (!currentNonce && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" @click="handleExecute(transaction)">
+              <CommonButton :disabled="!!errorMessage || pending.execute" :loading="pending.execute || (isUndefined(currentNonce) && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" @click="handleExecute(transaction)">
                 Execute
               </CommonButton>
             </div>
             <div v-tippy="errorMessage">
-              <CommonButton :disabled="!!errorMessage || pending.sign" :loading="pending.sign || (!currentNonce && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" @click="handleSign(transaction)">
+              <CommonButton :disabled="!!errorMessage || pending.sign" :loading="pending.sign || (isUndefined(currentNonce) && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" @click="handleSign(transaction)">
                 Sign
               </CommonButton>
             </div>

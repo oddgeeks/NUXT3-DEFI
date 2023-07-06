@@ -348,15 +348,20 @@ export function useAvocadoSafe() {
   }
 
   async function getCurrentNonce(chainId: number | string) {
-    const underlyingProvider = new ethers.providers.JsonRpcProvider(getRpcURLByChainId(chainId))
-    const forwarderProxyContract = Forwarder__factory.connect(
-      forwarderProxyAddress,
-      underlyingProvider,
-    )
+    try {
+      const underlyingProvider = new ethers.providers.JsonRpcProvider(getRpcURLByChainId(chainId))
+      const forwarderProxyContract = Forwarder__factory.connect(
+        forwarderProxyAddress,
+        underlyingProvider,
+      )
 
-    const currentNonce = (await forwarderProxyContract.avoSafeNonceMultisig(selectedSafe.value?.owner_address!)).toNumber()
+      const currentNonce = (await forwarderProxyContract.avoSafeNonceMultisig(selectedSafe.value?.owner_address!)).toNumber()
 
-    return currentNonce
+      return currentNonce
+    }
+    catch (e) {
+      console.log(e)
+    }
   }
 
   async function addSignersWithThreshold(addresses: string[], threshold: string, chainId: number | string) {
@@ -434,8 +439,6 @@ export function useAvocadoSafe() {
 
   const getLatestAvosafeNonce = async (chainId: string | number) => {
     const currentNonce = await getCurrentNonce(chainId)
-
-    console.log('currentNonce', currentNonce)
 
     const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {
       params: {
