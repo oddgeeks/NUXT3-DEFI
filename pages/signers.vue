@@ -13,7 +13,7 @@ const { requiredSigners } = storeToRefs(useMultisig())
 const { changeThreshold, removeSignerWithThreshold } = useAvocadoSafe()
 
 const selectedAddresses = ref<string[]>([])
-const selectedChainId = ref<string | number>('')
+const selectedChainId = ref<string | number>()
 
 provide('selectedAddresses', selectedAddresses)
 provide('selectedChainId', selectedChainId)
@@ -49,6 +49,9 @@ async function handleDeleteSigner() {
 
     if (txHash)
       showPendingTransactionModal(txHash, selectedChainId.value)
+
+    selectedAddresses.value = []
+    selectedChainId.value = undefined
   }
 }
 
@@ -67,9 +70,9 @@ useIntervalFn(() => {
         <span class="text-xs text-slate-400 leading-5">
           Signers are addresses that are required to sign transactions before they can be executed on<br> the blockchain.
         </span>
-        <div class="flex items-center gap-7.5">
-          <button class="flex items-center text-xs text-primary gap-2.5" @click="openAddSignerModal()">
-            <div class="bg-primary w-4.5 h-4.5 rounded-full flex">
+        <fieldset :disabled="!requiredSigners?.length" class="flex items-center gap-7.5">
+          <button class="flex items-center text-xs disabled:text-slate-400 text-primary gap-2.5" @click="openAddSignerModal()">
+            <div class="bg-current w-4.5 h-4.5 rounded-full flex">
               <SvgoPlus class="text-white m-auto w-2 h-2" />
             </div>
             Add New Signer
@@ -78,7 +81,7 @@ useIntervalFn(() => {
             Delete Selected
             <SvgoTrash2 class="w-3.5 h-3.5" />
           </button>
-        </div>
+        </fieldset>
       </div>
     </div>
     <div class="flex flex-col gap-2">
