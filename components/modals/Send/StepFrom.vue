@@ -11,8 +11,8 @@ const { safeAddress } = useAvocadoSafe()
 const { isCrossChain, data, token, availableTokens, targetToken, toAvailableNetworks, actualAddress, stepForward, tokenlistPending } = useSend()
 
 const toCrossChainNetworks = computed(() => toAvailableNetworks.value.filter(network => network.chainId !== data.value.fromChainId))
-const fromNetwork = chainIdToName(data.value.fromChainId)
-const targetNetwork = chainIdToName(data.value.toChainId)
+const fromNetwork = computed(() => chainIdToName(data.value.fromChainId))
+const targetNetwork = computed(() => chainIdToName(data.value.toChainId))
 
 const {
   value: amount,
@@ -40,9 +40,9 @@ const disabled = computed(() => {
 
 const sendDescription = computed(() => {
   if (isCrossChain.value)
-    return `Sending ${token.value?.symbol.toUpperCase()} from ${fromNetwork} to Receiver on ${targetNetwork}`
+    return `Sending ${token.value?.symbol.toUpperCase()} from ${fromNetwork.value} to Receiver on ${targetNetwork.value}`
   else
-    return `Sending ${token.value?.symbol.toUpperCase()} on ${fromNetwork}`
+    return `Sending ${token.value?.symbol.toUpperCase()} on ${fromNetwork.value}`
 })
 
 const { data: totalTransfers } = useAsyncData(
