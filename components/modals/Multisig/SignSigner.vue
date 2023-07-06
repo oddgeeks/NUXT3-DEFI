@@ -8,7 +8,7 @@ const emit = defineEmits(['destroy'])
 
 function handleBack() {
   emit('destroy')
-  openReviewSignerModal(props.addresses)
+  openMultisigSelectNetworkModal(props.addresses)
 }
 </script>
 

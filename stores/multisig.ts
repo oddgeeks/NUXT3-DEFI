@@ -19,7 +19,6 @@ export const useMultisig = defineStore('multisig', () => {
 
   async function getRequiredSigners() {
     const requiredSignersArr: IRequiredSigners[] = []
-    requiredSigners.value = []
 
     for (const network of availableNetworks) {
       try {
@@ -32,7 +31,6 @@ export const useMultisig = defineStore('multisig', () => {
           signerCount: signers.length,
         }
 
-        requiredSigners.value.push(obj)
         requiredSignersArr.push(obj)
       }
       catch (e) {

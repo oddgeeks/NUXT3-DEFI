@@ -40,7 +40,7 @@ function handleBack() {
     <div class="flex gap-[14px] p-7.5">
       <div class="flex flex-col gap-1">
         <h1>
-          Sign on required network to proceed further
+          Select on required network to proceed further
         </h1>
       </div>
     </div>
@@ -69,7 +69,7 @@ function handleBack() {
         Back
       </CommonButton>
       <CommonButton :disabled="!selectedNetworks.length" type="submit" class="justify-center" size="lg">
-        Next
+        Proceed
       </CommonButton>
     </div>
   </form>

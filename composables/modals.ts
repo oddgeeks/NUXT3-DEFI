@@ -481,11 +481,12 @@ export function openDeleteSignerSign(address: string, chainId: number | string) 
   })
 }
 
-export function openDeleteSigner(address: string) {
+export function openDeleteSigner(addresses: string[], chainId: number | string) {
   return openModal({
     component: DeleteSigner,
     componentProps: {
-      address,
+      addresses,
+      chainId,
     },
     async: true,
     options: {

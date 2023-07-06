@@ -17,7 +17,16 @@ const defaultThreshold = computed(() => requiredSignersByChain.value?.requiredSi
 const threshold = ref(defaultThreshold.value)
 
 const minCount = 1
-const maxCount = computed(() => Math.max(2, requiredSignersByChain.value?.signerCount || 1 + props.additionalCount))
+const maxCount = computed(() => (requiredSignersByChain.value?.signerCount || 1) + props.additionalCount)
+
+const availableThresholds = computed(() => generateNumber(minCount, maxCount.value))
+
+onMounted(() => {
+  const isValueNotExist = !availableThresholds.value.some(i => i == threshold.value)
+
+  if (isValueNotExist)
+    threshold.value = availableThresholds.value[0]
+})
 </script>
 
 <template>
@@ -29,7 +38,7 @@ const maxCount = computed(() => Math.max(2, requiredSignersByChain.value?.signer
 
     <div class="flex text-sm items-center gap-5">
       <CommonSelect v-model="threshold" class="w-[80px]" :options="generateNumber(minCount, maxCount)" />
-      Out of {{ requiredSignersByChain?.signerCount }} signer(s)
+      Out of {{ maxCount }} signer(s)
     </div>
     <CommonButton class="w-full justify-center mt-5" size="lg" @click="$emit('resolve', true, defaultThreshold === threshold ? undefined : threshold)">
       Continue

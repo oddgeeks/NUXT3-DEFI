@@ -19,12 +19,12 @@ async function handleNext() {
 
   const { payload: selectedNetworks } = await openMultisigSelectNetworkModal(props.addresses)
 
+  console.log(selectedNetworks)
+
   if (!selectedNetworks)
     return
 
   openSignSignerModal(props.addresses, selectedNetworks)
-
-  // openSignSignerModal(props.addresses, props.defaultTreshold)
 }
 </script>
 

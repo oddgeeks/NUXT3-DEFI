@@ -5,12 +5,15 @@ defineProps<{
   owner: boolean
 }>()
 
-async function handleDeleteSigner(address: string, chainId: string | number) {
-  const { success } = await openDeleteSigner(address)
+const selectedAddresses = toRef(inject<string[]>('selectedAddresses'))
+const selectedChainId = toRef(inject<number | string>('selectedChainId'))
 
-  if (success)
-    openDeleteSignerSign(address, chainId)
-}
+// async function handleDeleteSigner(address: string, chainId: string | number) {
+//   const { success } = await openDeleteSigner(address)
+
+//   if (success)
+//     openDeleteSignerSign(address, chainId)
+// }
 </script>
 
 <template>
@@ -35,13 +38,18 @@ async function handleDeleteSigner(address: string, chainId: string | number) {
           </template>
         </Copy>
 
+        <NuxtLink external target="_blank" :to="getExplorerUrl(chainId, `/address/${address}`)" class="dark:bg-slate-800 items-center justify-center bg-slate-150 rounded-full w-7.5 h-7.5 flex">
+          <SvgoExternalLink class="text-slate-400 w-4" />
+        </NuxtLink>
+
         <span v-if="owner">
           (Owner)
         </span>
       </div>
-      <button v-if="!owner" @click="handleDeleteSigner(address, chainId)">
-        <SvgoTrash class="w-7.5" />
-      </button>
+      <label v-if="!owner" :for="`input${address}`">
+        <input :id="`input${address}`" v-model="selectedAddresses" :value="address" class="peer sr-only" type="checkbox" @change="selectedChainId = chainId">
+        <SvgoCheckCircle class="svg-circle cursor-pointer darker text-slate-500 peer-checked:success-circle" />
+      </label>
     </div>
   </div>
 </template>

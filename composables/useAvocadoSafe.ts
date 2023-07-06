@@ -348,20 +348,15 @@ export function useAvocadoSafe() {
   }
 
   async function getCurrentNonce(chainId: number | string) {
-    try {
-      const underlyingProvider = new ethers.providers.JsonRpcProvider(getRpcURLByChainId(chainId))
-      const forwarderProxyContract = Forwarder__factory.connect(
-        forwarderProxyAddress,
-        underlyingProvider,
-      )
+    const underlyingProvider = new ethers.providers.JsonRpcProvider(getRpcURLByChainId(chainId))
+    const forwarderProxyContract = Forwarder__factory.connect(
+      forwarderProxyAddress,
+      underlyingProvider,
+    )
 
-      const currentNonce = (await forwarderProxyContract.avoSafeNonceMultisig(selectedSafe.value?.owner_address!)).toNumber()
+    const currentNonce = (await forwarderProxyContract.avoSafeNonceMultisig(selectedSafe.value?.owner_address!)).toNumber()
 
-      return currentNonce
-    }
-    catch (e) {
-      console.log(e)
-    }
+    return currentNonce
   }
 
   async function addSignersWithThreshold(addresses: string[], threshold: string, chainId: number | string) {
@@ -411,15 +406,15 @@ export function useAvocadoSafe() {
     return createProposalOrSignDirecty({ chainId, actions, estimatedFee: true, metadata })
   }
 
-  async function removeSigner(address: string, chainId: number | string, threshold: number) {
+  async function removeSignerWithThreshold(addresses: string[], chainId: number | string, threshold: number) {
     const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
 
-    const metadata = encodeRemoveSignersMetadata([address])
+    const metadata = encodeRemoveSignersMetadata(addresses)
 
     const actions: any[] = [
       {
         target: selectedSafe.value?.safe_address,
-        data: avoMultsigInterface.encodeFunctionData('removeSigners', [[address]]),
+        data: avoMultsigInterface.encodeFunctionData('removeSigners', [addresses]),
         value: '0',
         operation: '0',
       },
@@ -477,7 +472,7 @@ export function useAvocadoSafe() {
     getCurrentNonce,
     addSignersWithThreshold,
     getLatestAvosafeNonce,
-    removeSigner,
+    removeSignerWithThreshold,
     changeThreshold,
   }
 }

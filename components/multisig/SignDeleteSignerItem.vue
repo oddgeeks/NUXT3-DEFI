@@ -9,7 +9,7 @@ defineEmits(['destroy'])
 const pending = ref(false)
 const signed = ref(false)
 
-const { removeSigner } = useAvocadoSafe()
+const { removeSignerWithThreshold } = useAvocadoSafe()
 
 async function handleSign() {
   try {
@@ -20,7 +20,7 @@ async function handleSign() {
     if (!success)
       return
 
-    await removeSigner(props.address, props.chainId, threshold)
+    await removeSignerWithThreshold([props.address], props.chainId, threshold)
     signed.value = true
   }
   catch (e) {
