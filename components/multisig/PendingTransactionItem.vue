@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { formatTimeAgo } from '@vueuse/core'
-import { AvoMultisigImplementation__factory } from '~/contracts'
 
 const props = defineProps<{
   item: IMultisigTransaction
@@ -18,88 +17,21 @@ const firstActionMetadata = computed<any>(() => {
 const actionType = computed(() => firstActionMetadata.value?.type || '')
 
 const formattedActionType = computed(() => {
-  if (isRejection.value)
-    return 'On-chain rejection'
-
-  const decodedData = getTypeFromData()
-
-  if (decodedData)
-    return decodedData
-
   return formatTxType(actionType.value || '')
-})
-
-function getTypeFromData() {
-  const [action] = props.item?.data?.params?.actions || []
-  const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
-
-  const functions = [{
-    name: 'removeSigners',
-    format: (data: any) => {
-      const addresses = data[0] as string[]
-      const shortAddresses = addresses.map(i => shortenHash(i) || i)
-
-      const formatted = arrayFormatter.format(shortAddresses)
-
-      return `Remove signers: ${formatted}`
-    },
-  }, {
-    name: 'setRequiredSigners',
-    format: (data: any) => {
-      const requiredSigners = data[0] as string
-      return `Set required signers to ${requiredSigners}`
-    },
-  }, {
-    name: 'addSigners',
-    format: (data: any) => {
-      const addresses = data[0] as string[]
-      const shortAddresses = addresses.map(i => shortenHash(i) || i)
-
-      const formatted = arrayFormatter.format(shortAddresses)
-
-      return `Add signers: ${formatted}`
-    },
-  }]
-
-  for (const func of functions) {
-    try {
-      const decodedData = avoMultsigInterface.decodeFunctionData(func.name, action.data)
-
-      if (decodedData)
-        return func.format(decodedData)
-    }
-    catch (e) {
-      continue
-    }
-  }
-}
-
-const isRejection = computed(() => {
-  const [action] = props.item?.data?.params?.actions || []
-  if (!action)
-    return false
-
-  const data = getTypeFromData()
-
-  if (data)
-    return false
-
-  return action.value == '0' && action.operation === '0' && action.target === props.item.safe_address
 })
 </script>
 
 <template>
   <li class="w-full">
-    <button class="flex focus:outline-none items-center w-full gap-10 text-xs font-medium py-[26px] last:border-b-0 border-b border-slate-150 dark:border-slate-800 px-5" @click="openMultisigTransactionDetails(item, isRejection)">
+    <button class="flex focus:outline-none items-center w-full gap-10 text-xs font-medium py-[26px] last:border-b-0 border-b border-slate-150 dark:border-slate-800 px-5" @click="openMultisigTransactionDetails(item)">
       <span v-if="item.nonce !== '-1'" class="w-10">
         {{ item.nonce }}
       </span>
-      <span class="flex items-center gap-2.5">
-        <SvgoErrorCircle v-if="isRejection" class="w-4 h-4 text-white" />
-        <ActionIcon v-else :action="actionType" />
+      <span class="flex items-center gap-2.5 w-32 self-baseline">
+        <ActionIcon :action="actionType" />
         <span>{{ formattedActionType }}</span>
       </span>
-      <span class="flex-1">
+      <span class="flex-1 flex-col flex gap-2">
         <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" v-once :key="metadata" compact :chain_id="item.chain_id" :metadata="metadata" />
       </span>
       <span class="whitespace-nowrap">

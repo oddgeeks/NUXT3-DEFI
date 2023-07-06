@@ -6,7 +6,6 @@ import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
   transaction: IMultisigTransaction
-  rejection?: boolean
 }>()
 
 const emit = defineEmits(['destroy'])
@@ -152,16 +151,12 @@ onMounted(async () => {
           <div class="p-7.5 border-b dark:border-slate-800 border-slate-150">
             <div class="flex justify-between">
               <div class="flex gap-4">
-                <SvgoErrorCircle v-if="rejection" class="text-white" />
-                <div v-else class="w-14 h-14 rounded-full items-center flex justify-center bg-primary">
+                <div class="w-14 h-14 rounded-full items-center flex justify-center bg-primary">
                   <ActionIcon class="!text-white !w-5 !h-5" :action="actionType" />
                 </div>
                 <div>
                   <h1 class="text-[22px] leading-[30px]">
-                    <span v-if="rejection">Rejection</span>
-                    <span v-else>
-                      {{ formattedActionType }}
-                    </span>
+                    {{ formattedActionType }}
                   </h1>
                   <span class="text-sm font-medium text-slate-400 inline-flex items-center gap-2">On <ChainLogo class="w-4 h-4" :chain="transaction.chain_id" /> {{ chainIdToName(transaction.chain_id) }}</span>
                 </div>
@@ -294,7 +289,7 @@ onMounted(async () => {
             </div>
           </details>
           <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch" class="grid grid-cols-2 gap-2.5 items-center">
-            <CommonButton v-if="!rejection" :loading="pending.reject" color="red" size="lg" class="justify-center" @click="handleReject(transaction)">
+            <CommonButton :loading="pending.reject" color="red" size="lg" class="justify-center" @click="handleReject(transaction)">
               Reject
             </CommonButton>
             <div v-show="isConfirmationsMatch" v-tippy="errorMessage">

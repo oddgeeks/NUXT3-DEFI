@@ -320,6 +320,8 @@ export function useAvocadoSafe() {
     const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
     const isNonseq = tx.nonce == '-1'
 
+    const metadata = encodeRejectionMetadata(tx.id)
+
     const actions = isNonseq
       ? [
           {
@@ -340,6 +342,7 @@ export function useAvocadoSafe() {
       chainId: tx.chain_id,
       nonce: Number(tx.nonce),
       actions,
+      metadata,
       estimatedFee: true,
     })
   }
@@ -359,6 +362,13 @@ export function useAvocadoSafe() {
   async function addSignersWithThreshold(addresses: string[], threshold: string, chainId: number | string) {
     const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
 
+    const metadata = threshold
+      ? encodeMultipleActions(
+        encodeAddSignersMetadata(addresses, false),
+        encodeChangeThresholdMetadata(threshold, false),
+      )
+      : encodeAddSignersMetadata(addresses)
+
     const actions = [
       {
         target: selectedSafe.value?.safe_address,
@@ -377,10 +387,12 @@ export function useAvocadoSafe() {
       })
     }
 
-    return createProposalOrSignDirecty({ chainId, actions, clearModals: false, estimatedFee: true })
+    return createProposalOrSignDirecty({ chainId, actions, clearModals: false, estimatedFee: true, metadata })
   }
 
   async function changeThreshold(threshold: string, chainId: string | number) {
+    const metadata = encodeChangeThresholdMetadata(threshold)
+
     const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
     const actions = [
       {
@@ -391,11 +403,13 @@ export function useAvocadoSafe() {
       },
     ] as any[]
 
-    return createProposalOrSignDirecty({ chainId, actions, estimatedFee: true })
+    return createProposalOrSignDirecty({ chainId, actions, estimatedFee: true, metadata })
   }
 
   async function removeSigner(address: string, chainId: number | string, threshold: number) {
     const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
+
+    const metadata = encodeRemoveSignersMetadata([address])
 
     const actions: any[] = [
       {
@@ -415,7 +429,7 @@ export function useAvocadoSafe() {
       })
     }
 
-    return createProposalOrSignDirecty({ chainId, actions, clearModals: false, estimatedFee: true })
+    return createProposalOrSignDirecty({ chainId, actions, clearModals: false, estimatedFee: true, metadata })
   }
 
   const getLatestAvosafeNonce = async (chainId: string | number) => {
