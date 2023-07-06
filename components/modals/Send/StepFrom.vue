@@ -2,7 +2,6 @@
 import { isAddress } from '@ethersproject/address'
 import { useField } from 'vee-validate'
 import CheckCircle from '~/assets/images/icons/check-circle.svg?component'
-import InfoSVG from '~/assets/images/icons/info.svg?component'
 import type { IToken } from '~/stores/tokens'
 
 defineEmits(['destroy'])
@@ -220,29 +219,34 @@ function onToggleCrossChain() {
 
     <Transition name="fade">
       <p class="text-slate-400 font-medium leading-6 flex items-center text-xs">
-        <InfoSVG
-          v-tippy="'Cross-chain send allows you to directly send tokens from chain A to the receiver on chain B'"
+        <SvgoInfo2
           class="mr-2.5 h-4.5 w-4.5 svg-gray-info"
         />
         {{ sendDescription }}
       </p>
     </Transition>
-    <button
-      :class="{
-        'dark:text-white text-slate-900': isCrossChain,
-      }"
-      class="text-sm text-slate-400 flex gap-2.5 items-center"
-      @click="onToggleCrossChain"
-    >
-      <CheckCircle
-        :class="[
-          { 'success-circle text-white': isCrossChain },
-          { 'svg-circle darker': !isCrossChain },
-        ]"
-        class="w-4 h-4"
+    <div class="flex gap-2.5 items-center">
+      <button
+        :class="{
+          'dark:text-white text-slate-900': isCrossChain,
+        }"
+        class="text-sm text-slate-400 flex gap-2.5 items-center"
+        @click="onToggleCrossChain"
+      >
+        <CheckCircle
+          :class="[
+            { 'success-circle text-white': isCrossChain },
+            { 'svg-circle darker': !isCrossChain },
+          ]"
+          class="w-4 h-4"
+        />
+        I want to send cross-chain
+      </button>
+      <SvgoQuestionCircle
+        v-tippy="'Cross-chain send allows you to directly send tokens from chain A to the receiver on chain B'"
+        class="text-slate-400 w-4 h-4"
       />
-      I want to send cross-chain
-    </button>
+    </div>
   </div>
 
   <CommonButton :loading="tokenlistPending" :disabled="disabled" class="justify-center mt-7.5 w-full" size="lg" @click="handleContinue">
