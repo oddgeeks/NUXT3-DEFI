@@ -105,11 +105,13 @@ const availableBuyTokens = computed(() =>
 )
 
 watch([() => swap.value.sellToken], () => {
-  swap.value.buyToken = availableBuyTokens.value[0]
-  // swap.value.sellToken = availableTokens.value[0]
-  toChainId.value = swap.value.sellToken.chainId
+  if (swap.value.sellToken.chainId != toChainId.value) {
+    swap.value.buyToken = availableBuyTokens.value[0]
+    // swap.value.sellToken = availableTokens.value[0]
+    toChainId.value = swap.value.sellToken.chainId
 
-  swapDetails.value = defaultSwapDetails()
+    swapDetails.value = defaultSwapDetails()
+  }
 })
 
 const sellTokenBalance = computed(
