@@ -10,7 +10,7 @@ const meta = {
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  extends: ['@instadapp/avocado-base'],
+  extends: ['../avocado-utils'],
 
   runtimeConfig: {
     socketApiKey: process.env.SOCKET_API_KEY,

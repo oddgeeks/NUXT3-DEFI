@@ -153,7 +153,7 @@ onMounted(async () => {
             <div class="flex justify-between">
               <div class="flex gap-4">
                 <div class="w-14 h-14 rounded-full items-center flex justify-center bg-primary">
-                  <ActionIcon class="!text-white !w-5 !h-5" :action="actionType" />
+                  <ActionLogo class="!text-white !w-7.5 !h-7.5" :action="actionType" />
                 </div>
                 <div>
                   <h1 class="text-[22px] leading-[30px]">
