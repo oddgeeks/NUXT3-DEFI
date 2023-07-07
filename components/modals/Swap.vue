@@ -94,21 +94,24 @@ const swap = ref<ISwap>({
 const availableTokens = computed(() =>
   tokens.value.filter(
     t =>
-      t.chainId == toChainId.value && t.address !== swap.value.buyToken.address,
+      t.address !== swap.value.buyToken.address,
   ),
 )
 
 const availableBuyTokens = computed(() =>
-  availableTokens.value.filter(
-    t => t.address !== swap.value.sellToken.address,
+  tokens.value.filter(
+    t => t.chainId == swap.value.sellToken.chainId && t.address !== swap.value.sellToken.address,
   ),
 )
 
-watch(toChainId, () => {
-  swap.value.buyToken = availableBuyTokens.value[0]
-  swap.value.sellToken = availableTokens.value[0]
+watch([() => swap.value.sellToken], () => {
+  if (swap.value.sellToken.chainId != toChainId.value) {
+    swap.value.buyToken = availableBuyTokens.value[0]
+    // swap.value.sellToken = availableTokens.value[0]
+    toChainId.value = swap.value.sellToken.chainId
 
-  swapDetails.value = defaultSwapDetails()
+    swapDetails.value = defaultSwapDetails()
+  }
 })
 
 const sellTokenBalance = computed(
