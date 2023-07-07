@@ -139,8 +139,12 @@ async function handleReject(transaction: IMultisigTransaction) {
   }
 }
 
-onMounted(async () => {
+watch(selectedSafe, async () => {
+  if (!selectedSafe.value)
+    return
   currentNonce.value = await getCurrentNonce(props.transaction.chain_id)
+}, {
+  immediate: true,
 })
 </script>
 
@@ -174,7 +178,7 @@ onMounted(async () => {
           </div>
           <div v-if="decodedMetadata" class="p-7.5 border-b dark:border-slate-800 border-slate-150">
             <div v-once>
-              <ActionMetadata v-for="metadata in decodedMetadata" :key="metadata" class="text-xs" :chain_id="transaction.chain_id" :metadata="metadata" />
+              <ActionMetadata v-for="metadata in decodedMetadata" :key="metadata" compact class="text-xs" :chain_id="transaction.chain_id" :metadata="metadata" />
             </div>
           </div>
           <div v-if="transaction.note" class="p-7.5 border-b dark:border-slate-800 border-slate-150">
