@@ -70,7 +70,7 @@ useIntervalFn(() => {
         <span class="text-xs text-slate-400 leading-5">
           Signers are addresses that are required to sign transactions before they can be executed on<br> the blockchain.
         </span>
-        <fieldset :disabled="!requiredSigners?.length" class="flex items-center gap-7.5">
+        <fieldset class="flex items-center gap-7.5">
           <button class="flex items-center text-xs disabled:text-slate-400 text-primary gap-2.5" @click="openAddSignerModal()">
             <div class="bg-current w-4.5 h-4.5 rounded-full flex">
               <SvgoPlus class="text-white m-auto w-2 h-2" />
