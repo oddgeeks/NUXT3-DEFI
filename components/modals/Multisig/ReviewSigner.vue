@@ -38,6 +38,9 @@ async function handleNext() {
         <h1 class="text-lg leading-10">
           Review Details
         </h1>
+        <h2 class="text-xs leading-5 text-slate-400 font-medium">
+          It might take a few minutes for new signers to be synced
+        </h2>
       </div>
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
