@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getAddress } from 'ethers/lib/utils'
 import { lt } from 'semver'
 
 const props = defineProps<{
@@ -8,8 +9,13 @@ const props = defineProps<{
 
 const { switchToAvocadoNetwork } = useNetworks()
 
-const isUpgradeAvailable = computed(() =>
-  lt(props.network.currentVersion, props.network.latestVersion),
+const isUpgradeAvailable = computed(() => {
+  if (lt(props.network.currentVersion, props.network.latestVersion))
+    return true
+
+  if (props.network.latestImplementationAddress && props.network.currentImplementationAddress)
+    return getAddress(props.network.latestImplementationAddress) !== getAddress(props.network.currentImplementationAddress)
+},
 )
 
 async function handleUpgrade(network: NetworkVersion) {
@@ -58,13 +64,7 @@ async function handleUpgrade(network: NetworkVersion) {
       >
         Upgrade Now
       </CommonButton>
-      <CommonButton
-        v-else-if="network.notdeployed"
-        class="!px-[19px] w-full items-center justify-center"
-        @click="openDeployNetworkModal(network)"
-      >
-        Deploy
-      </CommonButton>
+
       <CommonButton
         v-else
         disabled

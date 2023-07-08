@@ -63,6 +63,8 @@ interface NetworkVersion extends Network {
   latestVersion: string;
   currentVersion: string;
   notdeployed?: boolean;
+  currentImplementationAddress?: string;
+  latestImplementationAddress?: string;
 }
 
 interface IAvocadoTransaction {

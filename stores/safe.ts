@@ -6,6 +6,7 @@ import { getAddress } from 'ethers/lib/utils'
 import type { IToken } from './tokens'
 import type { TokenBalanceResolver } from '~/contracts'
 import {
+  AvoFactoryProxy__factory,
   Forwarder__factory,
   GaslessWallet__factory,
   TokenBalanceResolver__factory,
@@ -270,14 +271,11 @@ export const useSafe = defineStore('safe', () => {
         } as NetworkVersion
 
         try {
+          const provider = getRpcProvider(network.chainId)
+
           const wallet = GaslessWallet__factory.connect(
             safeAddress.value,
-            getRpcProvider(network.chainId),
-          )
-
-          const forwarderProxyContract = Forwarder__factory.connect(
-            forwarderProxyAddress,
-            getRpcProvider(network.chainId),
+            provider,
           )
 
           const latestVersion = await forwarderProxyContract.avoWalletVersion(
@@ -287,8 +285,27 @@ export const useSafe = defineStore('safe', () => {
           try {
             const currentVersion = await wallet.DOMAIN_SEPARATOR_VERSION()
             obj.currentVersion = currentVersion
+
+            const forwarderProxyContract = Forwarder__factory.connect(
+              forwarderProxyAddress,
+              getRpcProvider(network.chainId),
+            )
+
+            const avoFactory = await forwarderProxyContract.avoFactory()
+
+            const avoFactoryProxyContract = AvoFactoryProxy__factory.connect(
+              avoFactory,
+              provider,
+            )
+
+            const currentImplementationAddress = `0x${(await provider.getStorageAt(safeAddress.value, 0)).slice(-40)}`
+            const latestImplementationAddress = await avoFactoryProxyContract.avoWalletImpl()
+
+            obj.currentImplementationAddress = currentImplementationAddress
+            obj.latestImplementationAddress = latestImplementationAddress
           }
           catch (e) {
+            console.log(e)
             obj.notdeployed = true
             obj.currentVersion = '0.0.0'
           }
