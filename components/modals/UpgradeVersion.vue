@@ -14,6 +14,7 @@ const props = defineProps<{
 const emit = defineEmits(['destroy'])
 
 const { safeAddress, sendTransaction } = useAvocadoSafe()
+const { isSafeMultisig } = storeToRefs(useMultisig())
 const { forwarderProxyAddress } = useSafe()
 const { parseTransactionError } = useErrorHandler()
 
@@ -35,7 +36,9 @@ async function fetchAvowalletImpl() {
     getRpcProvider(props.network.chainId),
   )
 
-  const avoWalletImpl = await avoFactoryProxyContract.avoWalletImpl()
+  const avoWalletImpl = isSafeMultisig.value ? await avoFactoryProxyContract.avoMultisigImpl() : await avoFactoryProxyContract.avoWalletImpl()
+
+  console.log(avoWalletImpl, { isSafeMultisig: isSafeMultisig.value })
 
   avoWalletImpAddress.value = avoWalletImpl
   return avoWalletImpl

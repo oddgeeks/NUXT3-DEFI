@@ -48,11 +48,80 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
+        name: "avoMultiSafe",
+        type: "address",
+      },
+    ],
+    name: "AvoMultiSafeDeployed",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "avoMultiSafe",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "version",
+        type: "address",
+      },
+    ],
+    name: "AvoMultiSafeDeployedWithVersion",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
         name: "avoSafe",
         type: "address",
       },
     ],
     name: "AvoSafeDeployed",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "avoSafe",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "version",
+        type: "address",
+      },
+    ],
+    name: "AvoSafeDeployedWithVersion",
     type: "event",
   },
   {
@@ -70,12 +139,51 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "avoMultiSafeBytecode",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "avoMultisigImpl",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "avoSafeBytecode",
     outputs: [
       {
         internalType: "bytes32",
         name: "",
         type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "avoSafeCreationCode",
+    outputs: [
+      {
+        internalType: "bytes",
+        name: "",
+        type: "bytes",
       },
     ],
     stateMutability: "view",
@@ -119,7 +227,26 @@ const _abi = [
     outputs: [
       {
         internalType: "address",
-        name: "",
+        name: "computedAddress_",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "owner_",
+        type: "address",
+      },
+    ],
+    name: "computeAddressMultisig",
+    outputs: [
+      {
+        internalType: "address",
+        name: "computedAddress_",
         type: "address",
       },
     ],
@@ -138,7 +265,74 @@ const _abi = [
     outputs: [
       {
         internalType: "address",
-        name: "",
+        name: "deployedAvoSafe_",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "owner_",
+        type: "address",
+      },
+    ],
+    name: "deployMultisig",
+    outputs: [
+      {
+        internalType: "address",
+        name: "deployedAvoMultiSafe_",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "owner_",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "avoMultisigVersion_",
+        type: "address",
+      },
+    ],
+    name: "deployMultisigWithVersion",
+    outputs: [
+      {
+        internalType: "address",
+        name: "deployedAvoMultiSafe_",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "owner_",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "avoWalletVersion_",
+        type: "address",
+      },
+    ],
+    name: "deployWithVersion",
+    outputs: [
+      {
+        internalType: "address",
+        name: "deployedAvoSafe_",
         type: "address",
       },
     ],
@@ -148,6 +342,38 @@ const _abi = [
   {
     inputs: [],
     name: "initialize",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "avoSafe_",
+        type: "address",
+      },
+    ],
+    name: "isAvoSafe",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "avoMultisigImpl_",
+        type: "address",
+      },
+    ],
+    name: "setAvoMultisigImpl",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

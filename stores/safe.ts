@@ -299,7 +299,7 @@ export const useSafe = defineStore('safe', () => {
             )
 
             const currentImplementationAddress = `0x${(await provider.getStorageAt(safeAddress.value, 0)).slice(-40)}`
-            const latestImplementationAddress = await avoFactoryProxyContract.avoWalletImpl()
+            const latestImplementationAddress = selectedSafe.value?.multisig === 1 ? await avoFactoryProxyContract.avoMultisigImpl() : await avoFactoryProxyContract.avoWalletImpl()
 
             obj.currentImplementationAddress = currentImplementationAddress
             obj.latestImplementationAddress = latestImplementationAddress
