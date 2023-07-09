@@ -305,7 +305,6 @@ export const useSafe = defineStore('safe', () => {
             obj.latestImplementationAddress = latestImplementationAddress
           }
           catch (e) {
-            console.log(e)
             obj.notdeployed = true
             obj.currentVersion = '0.0.0'
           }

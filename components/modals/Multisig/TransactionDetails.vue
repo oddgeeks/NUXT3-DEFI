@@ -16,6 +16,8 @@ const { selectedSafe } = storeToRefs(useSafe())
 const { account } = useWeb3()
 const currentNonce = ref<number>()
 
+const router = useRouter()
+
 const pending = ref({
   reject: false,
   execute: false,
@@ -146,6 +148,18 @@ watch(selectedSafe, async () => {
 }, {
   immediate: true,
 })
+
+const transactionURL = computed(() => {
+  if (process.server)
+    return ''
+  return `${window.location.origin}/multisig/${props.transaction.safe_address}/pending-transactions/${props.transaction.id}`
+})
+
+onUnmounted(() => {
+  const currentRoute = router.currentRoute.value
+  if (currentRoute.name === 'multisig-safe-pending-transactions-id')
+    router.push(`/multisig/${currentRoute.params.safe}/pending-transactions`)
+})
 </script>
 
 <template>
@@ -181,10 +195,30 @@ watch(selectedSafe, async () => {
               <ActionMetadata v-for="metadata in decodedMetadata" :key="metadata" compact class="text-xs" :chain_id="transaction.chain_id" :metadata="metadata" />
             </div>
           </div>
-          <div v-if="transaction.note" class="p-7.5 border-b dark:border-slate-800 border-slate-150">
-            <div class="flex justify-between text-sm">
-              <span>Note</span>
-              {{ transaction.note }}
+          <div class="p-7.5 flex-col gap-4 flex border-b dark:border-slate-800 border-slate-150">
+            <div v-if="transaction.note" class="flex justify-between text-sm items-center">
+              <span class="text-slate-400 text-xs">Note</span>
+              <span class="text-sm">
+                {{ transaction.note }}
+              </span>
+            </div>
+            <div class="flex justify-between text-sm items-center">
+              <span class="text-slate-400 text-xs">Safe Tx Hash</span>
+              <span class="text-sm flex items-center gap-2 font-medium">
+                {{ shortenHash(transaction.id) }}
+                <Copy icon-only :text="transaction.id" />
+
+                <CommonButton class="!px-4 !text-xs items-center gap-1.5 ml-2" color="white">
+                  <Copy :text="transactionURL">
+                    <template #content>
+                      <span class="text-white">Share</span>
+                    </template>
+                    <template #copy-icon>
+                      <SvgoNode class="text-white" />
+                    </template>
+                  </Copy>
+                </CommonButton>
+              </span>
             </div>
           </div>
           <div class="px-7.5 flex flex-col py-5 border-b dark:border-slate-800 border-slate-150 gap-10">

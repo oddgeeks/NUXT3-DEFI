@@ -19,7 +19,7 @@ if (!safe || !isAddress(safe)) {
   })
 }
 
-const { data } = useAsyncData<IMultisigTransactionResponse>(`${route.params.safe}+${route.params.id}`, async () => {
+const { data } = useAsyncData<IMultisigTransaction>(`${route.params.safe}+${route.params.id}`, async () => {
   const { data } = await axios.get(`/safes/${route.params.safe}/transactions/${route.params.id}`, {
     baseURL: multisigURL,
   })
@@ -30,10 +30,15 @@ const { data } = useAsyncData<IMultisigTransactionResponse>(`${route.params.safe
   immediate: true,
 
 })
+
+onMounted(() => {
+  if (data.value)
+    openMultisigTransactionDetails(data.value)
+})
 </script>
 
 <template>
-  <pre class="text-xs">
-    {{ data }}
-  </pre>
+  <div class="sr-only">
+    pending tx modal
+  </div>
 </template>
