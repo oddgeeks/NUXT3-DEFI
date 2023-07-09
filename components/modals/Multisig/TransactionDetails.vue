@@ -208,8 +208,8 @@ onUnmounted(() => {
                 {{ shortenHash(transaction.id) }}
                 <Copy icon-only :text="transaction.id" />
 
-                <CommonButton class="!px-4 !text-xs items-center gap-1.5 ml-2" color="white">
-                  <Copy :text="transactionURL">
+                <CommonButton class="!p-0 !text-xs items-center gap-1.5 ml-2" color="white">
+                  <Copy class="!px-4 py-2" :text="transactionURL">
                     <template #content>
                       <span class="text-white">Share</span>
                     </template>
