@@ -100,8 +100,8 @@ async function handleSubmit() {
       props.chainId,
       {
         metadata: props.metadata,
-        id,
         ...options.value,
+        id,
       },
     )
     if (!transactionHash) {

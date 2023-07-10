@@ -76,7 +76,7 @@ export function useEstimatedFee(
         let message
 
         if (isSafeMultisig.value) {
-          message = await generateMultisigSignatureMessage({ chainId: chainId.value, actions: actualTx })
+          message = await generateMultisigSignatureMessage({ chainId: chainId.value, actions: actualTx, options: params?.options })
 
           console.log(message)
         }

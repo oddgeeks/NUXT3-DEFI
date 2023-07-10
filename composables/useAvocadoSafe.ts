@@ -183,7 +183,7 @@ export function useAvocadoSafe() {
     return transactionHash
   }
 
-  async function generateMultisigSignatureMessage({ chainId, actions, nonce, metadata }: IGenerateMultisigSignatureParams) {
+  async function generateMultisigSignatureMessage({ chainId, actions, nonce, metadata, options = {} }: IGenerateMultisigSignatureParams) {
     actions = actions.map((action) => {
       return {
         operation: action.operation || '0',
@@ -206,6 +206,7 @@ export function useAvocadoSafe() {
       salt: ethers.utils.defaultAbiCoder.encode(['uint256'], [Date.now()]),
       source: verifyingContract,
       metadata: metadata || '0x00',
+      ...options,
     }
 
     const forwardParams = {
