@@ -31,7 +31,7 @@ const confirmationNeeded = computed(() => props.transaction.confirmations_requir
 const isNonseq = computed(() => props.transaction.nonce == '-1')
 const isNonceNotMatch = computed(() => isNonseq.value ? false : props.transaction.nonce !== String(currentNonce.value))
 const isTransactionExecuted = computed(() => props.transaction.executed_at !== null)
-const isSignedAlready = computed(() => props.transaction.confirmations.some(item => item.address === getAddress(account.value)))
+const isSignedAlready = computed(() => props.transaction.confirmations.some(item => getAddress(item.address) === getAddress(account.value)))
 
 const decodedMetadata = computed(() => decodeMetadata(props.transaction.data.params.metadata))
 
