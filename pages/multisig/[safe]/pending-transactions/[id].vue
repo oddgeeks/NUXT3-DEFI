@@ -31,9 +31,11 @@ const { data } = useAsyncData<IMultisigTransaction>(`${route.params.safe}+${rout
 
 })
 
-onMounted(() => {
+watch(data, () => {
   if (data.value)
     openMultisigTransactionDetails(data.value)
+}, {
+  immediate: true,
 })
 </script>
 
