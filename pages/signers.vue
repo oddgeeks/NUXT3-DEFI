@@ -55,6 +55,13 @@ async function handleDeleteSigner() {
   }
 }
 
+watch(selectedAddresses, () => {
+  setTimeout(() => {
+    if (selectedAddresses.value.length === 0)
+      selectedChainId.value = undefined
+  }, 0)
+})
+
 useIntervalFn(() => {
   setSelectedSafe()
 }, 15000)
@@ -63,6 +70,7 @@ useIntervalFn(() => {
 <template>
   <div class="flex flex-col gap-10 flex-1">
     <div class="flex flex-col gap-2.5">
+      {{ selectedChainId }}
       <h2 class="text-base">
         Manage Multisig Signers
       </h2>

@@ -1,19 +1,24 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   address: string
   chainId: number | string
   owner: boolean
 }>()
 
-const selectedAddresses = toRef(inject<string[]>('selectedAddresses'))
-const selectedChainId = toRef(inject<number | string>('selectedChainId'))
+const selectedAddresses = inject<Ref<string[]>>('selectedAddresses')
+const selectedChainId = inject<Ref<number | string>>('selectedChainId')
 
-// async function handleDeleteSigner(address: string, chainId: string | number) {
-//   const { success } = await openDeleteSigner(address)
+const isDisabled = computed(() => {
+  if (!selectedChainId?.value)
+    return false
 
-//   if (success)
-//     openDeleteSignerSign(address, chainId)
-// }
+  return selectedChainId.value !== props.chainId
+})
+
+const errorMessage = computed(() => {
+  if (isDisabled.value)
+    return 'Deselect current chain addresses to select a different chain'
+})
 </script>
 
 <template>
@@ -46,8 +51,12 @@ const selectedChainId = toRef(inject<number | string>('selectedChainId'))
           (Owner)
         </span>
       </div>
-      <label v-if="!owner" :for="`input${address}`">
-        <input :id="`input${address}`" v-model="selectedAddresses" :value="address" class="peer sr-only" type="checkbox" @change="selectedChainId = chainId">
+      <label
+        v-if="!owner" v-tippy="{
+          content: errorMessage || null,
+        }" :for="`input${address}`"
+      >
+        <input :id="`input${address}`" v-model="selectedAddresses" :disabled="isDisabled" :value="address" class="peer sr-only" type="checkbox" @change="selectedChainId = chainId">
         <SvgoCheckCircle class="svg-circle cursor-pointer darker text-slate-500 peer-checked:success-circle" />
       </label>
     </div>
