@@ -11,7 +11,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['destroy'])
 
-const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurrentNonce } = useAvocadoSafe()
+const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurrentNonce, getActualId } = useAvocadoSafe()
 const { selectedSafe } = storeToRefs(useSafe())
 const { account } = useWeb3()
 const currentNonce = ref<number>()
@@ -75,12 +75,15 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
     if (networksSimulationNotSupported.includes(Number(props.transaction.chain_id)))
       throw new Error('Simulation not supported on this network.')
 
+    const id = getActualId(props.transaction.data.params.actions)
+
     return http('/api/simulate', {
       method: 'POST',
       body: {
         actions: props.transaction.data.params.actions,
         avocadoSafe: props.transaction.safe_address,
         chainId: props.transaction.chain_id,
+        id,
       },
     }) as Promise<ISimulation>
   },

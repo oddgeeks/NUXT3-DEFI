@@ -17,12 +17,11 @@ const props = defineProps<{
 
 const emit = defineEmits(['resolve', 'reject'])
 
-const { sendTransactions, safeAddress } = useAvocadoSafe()
+const { sendTransactions, safeAddress, getActualId } = useAvocadoSafe()
 const { account } = useWeb3()
 const [submitting, toggle] = useToggle()
 const { parseTransactionError } = useErrorHandler()
 const { web3WalletV2 } = storeToRefs(useWalletConnectV2())
-const { isSafeMultisig } = storeToRefs(useMultisig())
 
 const submitDisabled = computed(
   () => submitting.value || pending.value || !!error.value,
@@ -90,10 +89,7 @@ const {
 async function handleSubmit() {
   try {
     toggle(true)
-
-    const isDelegateCall = transactions.value.some(i => i?.operation == '1')
-
-    const id = isSafeMultisig.value && isDelegateCall ? '1' : undefined
+    const id = getActualId(transactions.value)
 
     const transactionHash = await sendTransactions(
       transactions.value,
@@ -165,11 +161,12 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
     if (networksSimulationNotSupported.includes(Number(props.chainId)))
       throw new Error('Simulation not supported on this network.')
 
+    const id = getActualId(transactions.value)
+
     return http('/api/simulate', {
       method: 'POST',
       body: {
         actions: transactions.value.map((i) => {
-          console.log(i)
           return {
             target: i.to,
             data: i.data,
@@ -179,7 +176,7 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
         }),
         avocadoSafe: safeAddress.value,
         chainId: props.chainId,
-        id: options.value?.id,
+        id: id || options.value?.id,
       },
     }) as Promise<ISimulation>
   },

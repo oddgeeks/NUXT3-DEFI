@@ -10,6 +10,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['resolve'])
 const { selectedSafe } = storeToRefs(useSafe())
+const { getActualId } = useAvocadoSafe()
 const nonce = ref<number | undefined>(-1)
 const note = ref<string | undefined>(undefined)
 const detailsRef = ref<HTMLDetailsElement>()
@@ -64,12 +65,15 @@ const { data: simulationDetails, error: simulationError, pending } = useAsyncDat
       }
     }) as any
 
+    const id = getActualId(actions)
+
     return http('/api/simulate', {
       method: 'POST',
       body: {
         actions,
         avocadoSafe: selectedSafe.value?.safe_address,
         chainId: props.chainId,
+        id,
       },
     }) as Promise<ISimulation>
   },

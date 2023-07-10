@@ -455,6 +455,12 @@ export function useAvocadoSafe() {
     return Math.max(maxNonce, currentNonce - 1) + 1
   }
 
+  function getActualId(tx: any[]) {
+    const isDelegateCall = tx.some(i => i?.operation == '1')
+
+    return isSafeMultisig.value && isDelegateCall ? '1' : undefined
+  }
+
   return {
     safe,
     signer,
@@ -481,5 +487,6 @@ export function useAvocadoSafe() {
     getLatestAvosafeNonce,
     removeSignerWithThreshold,
     changeThreshold,
+    getActualId,
   }
 }
