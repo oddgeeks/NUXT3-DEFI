@@ -274,8 +274,8 @@ export function useAvocadoSafe() {
 
     const contract = AvoMultisigImplementation__factory.connect(safeAddress.value, getRpcProvider(chainId))
 
-    const domainSeparatorName = await contract.DOMAIN_SEPARATOR_NAME()
-    const domainSeparatorVersion = await contract.DOMAIN_SEPARATOR_VERSION()
+    const domainSeparatorName = await contract.DOMAIN_SEPARATOR_NAME().catch(() => 'Avocado-Multisig')
+    const domainSeparatorVersion = await contract.DOMAIN_SEPARATOR_VERSION().catch(() => '3.0.0')
 
     const verifyingContract = selectedSafe.value?.safe_address!
 
