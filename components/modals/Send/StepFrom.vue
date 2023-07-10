@@ -220,7 +220,7 @@ function onToggleCrossChain() {
     <Transition name="fade">
       <p class="text-slate-400 font-medium leading-6 flex items-center text-xs">
         <SvgoInfo2
-          class="mr-2.5 h-4.5 w-4.5 svg-gray-info rounded-full"
+          class="mr-2.5 h-4 w-4 svg-gray-info rounded-full"
         />
         {{ sendDescription }}
       </p>
