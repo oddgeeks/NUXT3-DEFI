@@ -235,7 +235,7 @@ onUnmounted(() => {
                   />
                 </summary>
                 <div class="flex flex-col gap-2.5 mt-5">
-                  <div v-if="action.operation === '1'" class="flex px-4 py-2 mb-2.5 gap-2.5 justify-between text-sm border w-fit dark:border-slate-700 rounded-[14px]">
+                  <div v-if="String(action.operation) === '1'" class="flex px-4 py-2 mb-2.5 gap-2.5 justify-between text-sm border w-fit dark:border-slate-700 rounded-[14px]">
                     <SvgoInfo2 class="text-slate-500" />
                     This is a delegate call transaction
                   </div>
