@@ -272,7 +272,7 @@ export function useAvocadoSafe() {
     await providerWithSigner.send('eth_requestAccounts', [])
     const avoSigner = providerWithSigner.getSigner()
 
-    const domainSeparatorName = 'Avocado-Safe-Multisig'
+    const domainSeparatorName = 'Avocado-Multisig'
     const domainSeparatorVersion = '3.0.0'
 
     const verifyingContract = selectedSafe.value?.safe_address!
