@@ -22,6 +22,7 @@ const { account } = useWeb3()
 const [submitting, toggle] = useToggle()
 const { parseTransactionError } = useErrorHandler()
 const { web3WalletV2 } = storeToRefs(useWalletConnectV2())
+const { isSafeMultisig } = storeToRefs(useMultisig())
 
 const submitDisabled = computed(
   () => submitting.value || pending.value || !!error.value,
@@ -90,11 +91,16 @@ async function handleSubmit() {
   try {
     toggle(true)
 
+    const isDelegateCall = transactions.value.some(i => i?.operation == '1')
+
+    const id = isSafeMultisig.value && isDelegateCall ? '1' : undefined
+
     const transactionHash = await sendTransactions(
       transactions.value,
       props.chainId,
       {
         metadata: props.metadata,
+        id,
         ...options.value,
       },
     )
