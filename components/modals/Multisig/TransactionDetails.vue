@@ -176,6 +176,10 @@ onUnmounted(() => {
   <div>
     <div class="flex">
       <div class="flex-1 border-r dark:border-slate-800 border-slate-150">
+        <pre class="text-[10px] w-[500px] overflow-auto">
+          {{ transaction.confirmations }}
+        </pre>
+        {{ account }}
         <div class="flex flex-col max-h-[710px] overflow-auto scroll-style">
           <div class="p-7.5 border-b dark:border-slate-800 border-slate-150">
             <div class="flex justify-between">
