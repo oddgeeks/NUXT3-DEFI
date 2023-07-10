@@ -6,9 +6,9 @@ const props = defineProps<{
 
 const emit = defineEmits(['destroy'])
 
-function handleBack() {
+async function handleBack() {
   emit('destroy')
-  openMultisigSelectNetworkModal(props.addresses)
+  openReviewSignerModal(props.addresses)
 }
 </script>
 
