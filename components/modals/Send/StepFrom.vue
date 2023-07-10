@@ -8,9 +8,11 @@ defineEmits(['destroy'])
 
 const { safeAddress } = useAvocadoSafe()
 
-const { isCrossChain, data, token, availableTokens, targetToken, toAvailableNetworks, actualAddress, stepForward, tokenlistPending } = useSend()
+const { authorisedNetworks } = useAuthorities()
 
-const toCrossChainNetworks = computed(() => toAvailableNetworks.value.filter(network => network.chainId !== data.value.fromChainId))
+const { isCrossChain, data, token, availableTokens, actualAddress, stepForward, tokenlistPending } = useSend()
+
+const toCrossChainNetworks = computed(() => !authorisedNetworks.value ? [] : authorisedNetworks.value.filter(network => network.chainId !== data.value.fromChainId))
 const fromNetwork = computed(() => chainIdToName(data.value.fromChainId))
 const targetNetwork = computed(() => chainIdToName(data.value.toChainId))
 
