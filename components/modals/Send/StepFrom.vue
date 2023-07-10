@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { isAddress } from '@ethersproject/address'
 import { useField } from 'vee-validate'
+import CheckCircle from '~/assets/images/icons/check-circle.svg?component'
 import type { IToken } from '~/stores/tokens'
 
 defineEmits(['destroy'])
 
 const { safeAddress } = useAvocadoSafe()
 
-const { isCrossChain, data, token, availableTokens, actualAddress, stepForward, tokenlistPending } = useSend()
+const { isCrossChain, data, token, availableTokens, targetToken, toAvailableNetworks, actualAddress, stepForward, tokenlistPending } = useSend()
 
-const { authorisedNetworks } = useAuthorities()
+const toCrossChainNetworks = computed(() => toAvailableNetworks.value.filter(network => network.chainId !== data.value.fromChainId))
+const fromNetwork = computed(() => chainIdToName(data.value.fromChainId))
+const targetNetwork = computed(() => chainIdToName(data.value.toChainId))
 
 const {
   value: amount,
@@ -33,6 +36,13 @@ const {
 
 const disabled = computed(() => {
   return !actualAddress.value || !!errors.value.length || !!addressErrors.value.length || !amount.value || tokenlistPending.value
+})
+
+const sendDescription = computed(() => {
+  if (isCrossChain.value)
+    return `Sending ${token.value?.symbol.toUpperCase()} from ${fromNetwork.value} to Receiver on ${targetNetwork.value}`
+  else
+    return `Sending ${token.value?.symbol.toUpperCase()} on ${fromNetwork.value}`
 })
 
 const { data: totalTransfers } = useAsyncData(
@@ -78,10 +88,18 @@ function handleContinue() {
   data.value.amount = amount.value
   stepForward()
 }
+
+function onToggleCrossChain() {
+  if (!isCrossChain.value)
+    data.value.toChainId = toCrossChainNetworks.value[0].chainId
+
+  else
+    data.value.toChainId = data.value.fromChainId
+}
 </script>
 
 <template>
-  <div class="flex flex-col gap-[26px]">
+  <div class="flex flex-col gap-[26px] w-full md:w-[450px]">
     <div class="flex flex-col gap-2.5 font-medium">
       <div class="flex justify-between gap-5">
         <div class="flex flex-col gap-2.5">
@@ -135,6 +153,7 @@ function handleContinue() {
     <div class="flex flex-col gap-2.5 font-medium">
       <div class="flex justify-between gap-5">
         <div
+          v-if="isCrossChain"
           class="flex flex-col gap-2.5"
         >
           <span class="text-sm">Network</span>
@@ -144,7 +163,7 @@ function handleContinue() {
             label-key="name"
             icon-key="icon"
             class="w-[160px]"
-            :options="authorisedNetworks"
+            :options="toCrossChainNetworks"
           >
             <template #button-prefix>
               <ChainLogo class="w-6 h-6 shrink-0" :chain="data.toChainId" />
@@ -199,11 +218,35 @@ function handleContinue() {
     </div>
 
     <Transition name="fade">
-      <p v-if="isCrossChain" class="text-slate-400 font-medium leading-6 flex items-center text-xs">
-        <SvgoExclamationCircle class="mr-2.5 h-4.5 w-4.5 text-slate-500" />
-        This is a cross-chain send
+      <p class="text-slate-400 font-medium leading-6 flex items-center text-xs">
+        <SvgoInfo2
+          class="mr-2.5 h-4 w-4 svg-gray-info rounded-full"
+        />
+        {{ sendDescription }}
       </p>
     </Transition>
+    <div class="flex gap-2.5 items-center">
+      <button
+        :class="{
+          'dark:text-white text-slate-900': isCrossChain,
+        }"
+        class="text-sm text-slate-400 flex gap-2.5 items-center"
+        @click="onToggleCrossChain"
+      >
+        <CheckCircle
+          :class="[
+            { 'success-circle text-white': isCrossChain },
+            { 'svg-circle darker': !isCrossChain },
+          ]"
+          class="w-4 h-4"
+        />
+        I want to send cross-chain
+      </button>
+      <SvgoQuestionCircle
+        v-tippy="'Cross-chain send allows you to directly send tokens from chain A to the receiver on chain B'"
+        class="text-slate-400 w-4 h-4"
+      />
+    </div>
   </div>
 
   <CommonButton :loading="tokenlistPending" :disabled="disabled" class="justify-center mt-7.5 w-full" size="lg" @click="handleContinue">
