@@ -58,7 +58,7 @@ const { data: simulationDetails, error: simulationError, pending } = useAsyncDat
 
     const actions = props.actions.map((action) => {
       return {
-        operation: action.operation || '0',
+        operation: action.operation ? String(action.operation) : '0',
         target: action?.target || action.to,
         data: action.data || '0x',
         value: action.value || '0',
@@ -70,7 +70,14 @@ const { data: simulationDetails, error: simulationError, pending } = useAsyncDat
     return http('/api/simulate', {
       method: 'POST',
       body: {
-        actions,
+        actions: actions.map((i: any) => {
+          return {
+            target: i?.target || i.to,
+            data: i.data,
+            value: i?.value || '0',
+            operation: i?.operation ? String(i?.operation) : '0',
+          }
+        }),
         avocadoSafe: selectedSafe.value?.safe_address,
         chainId: props.chainId,
         id,

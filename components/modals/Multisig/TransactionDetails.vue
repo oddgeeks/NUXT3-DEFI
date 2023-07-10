@@ -80,7 +80,14 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
     return http('/api/simulate', {
       method: 'POST',
       body: {
-        actions: props.transaction.data.params.actions,
+        actions: props.transaction.data.params.actions.map((i: any) => {
+          return {
+            target: i?.target || i.to,
+            data: i.data,
+            value: i?.value || '0',
+            operation: i?.operation ? String(i?.operation) : '0',
+          }
+        }),
         avocadoSafe: props.transaction.safe_address,
         chainId: props.transaction.chain_id,
         id,

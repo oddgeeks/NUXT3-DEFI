@@ -186,7 +186,7 @@ export function useAvocadoSafe() {
   async function generateMultisigSignatureMessage({ chainId, actions, nonce, metadata, options = {} }: IGenerateMultisigSignatureParams) {
     actions = actions.map((action) => {
       return {
-        operation: action.operation || '0',
+        operation: action.operation ? String(action.operation) : '0',
         target: action?.target || action.to,
         data: action.data || '0x',
         value: action.value || '0',
