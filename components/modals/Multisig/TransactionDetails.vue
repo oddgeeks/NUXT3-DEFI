@@ -209,7 +209,7 @@ onUnmounted(() => {
                 <Copy icon-only :text="transaction.id" />
 
                 <CommonButton class="!p-0 !text-xs items-center gap-1.5 ml-2" color="white">
-                  <Copy class="!px-4 py-2" :text="transactionURL">
+                  <Copy success-text="Link Copied" class="!px-4 py-2" :text="transactionURL">
                     <template #content>
                       <span class="text-white">Share</span>
                     </template>
@@ -221,50 +221,57 @@ onUnmounted(() => {
               </span>
             </div>
           </div>
-          <div class="px-7.5 flex flex-col py-5 border-b dark:border-slate-800 border-slate-150 gap-10">
-            <details v-for="action, i in transaction.data.params.actions" :key="action.data" open class="group">
-              <summary class="text-xs flex items-center justify-between cursor-pointer">
-                Action {{ i + 1 }}
+          <div class="flex flex-col py-5">
+            <template v-for="action, i in transaction.data.params.actions" :key="action.data">
+              <details open class="group px-7.5">
+                <summary class="text-xs flex items-center justify-between cursor-pointer">
+                  Action {{ i + 1 }}
 
-                <SvgoChevronDown
-                  class="w-5 text-slate-400 group-open:rotate-180"
-                />
-              </summary>
-              <div class="flex flex-col gap-2.5 mt-5">
-                <dl class="flex justify-between text-xs">
-                  <dt class="text-slate-400">
-                    Target
-                  </dt>
-                  <dd class="flex items-center gap-2 break-all w-[420px]">
-                    {{ action.target }}
-                  </dd>
-                </dl>
-                <dl class="flex justify-between text-xs">
-                  <dt class="text-slate-400">
-                    Data
-                  </dt>
-                  <dd class="flex items-center gap-2 break-all w-[420px]">
-                    {{ action.data }}
-                  </dd>
-                </dl>
-                <dl class="flex justify-between text-xs">
-                  <dt class="text-slate-400">
-                    Operation
-                  </dt>
-                  <dd class="flex items-center gap-2 break-all w-[420px]">
-                    {{ action.operation }}
-                  </dd>
-                </dl>
-                <dl class="flex justify-between text-xs">
-                  <dt class="text-slate-400">
-                    Value
-                  </dt>
-                  <dd class="flex items-center gap-2 break-all w-[420px]">
-                    {{ action.value }}
-                  </dd>
-                </dl>
-              </div>
-            </details>
+                  <SvgoChevronDown
+                    class="w-5 text-slate-400 group-open:rotate-180"
+                  />
+                </summary>
+                <div class="flex flex-col gap-2.5 mt-5">
+                  <div v-if="action.operation === '1'" class="flex px-4 py-2 mb-2.5 gap-2.5 justify-between text-sm border w-fit dark:border-slate-700 rounded-[14px]">
+                    <SvgoInfo2 class="text-slate-500" />
+                    This is a delegate call transaction
+                  </div>
+                  <dl class="flex justify-between text-xs">
+                    <dt class="text-slate-400">
+                      Target
+                    </dt>
+                    <dd class="flex items-center gap-2 break-all w-[420px]">
+                      {{ action.target }}
+                    </dd>
+                  </dl>
+                  <dl class="flex justify-between text-xs">
+                    <dt class="text-slate-400">
+                      Data
+                    </dt>
+                    <dd class="flex items-center gap-2 break-all w-[420px]">
+                      {{ action.data }}
+                    </dd>
+                  </dl>
+                  <dl class="flex justify-between text-xs">
+                    <dt class="text-slate-400">
+                      Operation
+                    </dt>
+                    <dd class="flex items-center gap-2 break-all w-[420px]">
+                      {{ action.operation }}
+                    </dd>
+                  </dl>
+                  <dl class="flex justify-between text-xs">
+                    <dt class="text-slate-400">
+                      Value
+                    </dt>
+                    <dd class="flex items-center gap-2 break-all w-[420px]">
+                      {{ action.value }}
+                    </dd>
+                  </dl>
+                </div>
+              </details>
+              <hr class="border-slate-150 my-5 last:hidden dark:border-slate-800">
+            </template>
           </div>
         </div>
       </div>
