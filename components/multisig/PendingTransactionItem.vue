@@ -37,7 +37,7 @@ async function handleClick(item: IMultisigTransaction) {
       <span v-if="activeTab !== 'non-seq'" :class="item.nonce === '-1' ? 'invisible' : ''">
         {{ item.nonce }}
       </span>
-      <span class="flex items-center gap-2.5 whitespace-nowrap self-baseline">
+      <span class="flex items-center gap-2.5 whitespace-nowrap w-[130px]">
         <ActionLogo class="shrink-0" :action="actionType" />
         <span>{{ formattedActionType }}</span>
       </span>
@@ -47,7 +47,7 @@ async function handleClick(item: IMultisigTransaction) {
       <span class="whitespace-nowrap">
         {{ formatTimeAgo(new Date(activeTab === 'completed' ? item.executed_at : item.created_at)) }}
       </span>
-      <span class="flex items-center gap-2.5 w-[140px]">
+      <span class="flex items-center gap-2.5 w-[120px]">
         <SvgoUserCircle :class="isConfirmationsMatch ? 'text-primary' : 'text-slate-400'" />
         <span :class="isConfirmationsMatch ? 'text-primary' : ''">
           {{ item.confirmations.length }} out of {{ item.confirmations_required }}
