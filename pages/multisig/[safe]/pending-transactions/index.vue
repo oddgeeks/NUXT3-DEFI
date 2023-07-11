@@ -37,7 +37,7 @@ const title = computed(() => {
   return tab?.title
 })
 
-const { data, refresh: refreshPendingTransactions } = useAsyncData<IMultisigTransactionResponse>(`${route.params.safe}`, async () => {
+const { data, refresh: refreshPendingTransactions } = useAsyncData<IMultisigTransactionResponse>(`multisig-${route.params.safe}-pending`, async () => {
   const { data } = await axios.get(`/safes/${route.params.safe}/transactions`, {
     params: {
       status: 'pending',
@@ -51,7 +51,7 @@ const { data, refresh: refreshPendingTransactions } = useAsyncData<IMultisigTran
   immediate: true,
 })
 
-const { data: completedTransactions, refresh: refreshCompletedTransactions } = useAsyncData<IMultisigTransactionResponse>(`${route.params.safe}+completed`, async () => {
+const { data: completedTransactions, refresh: refreshCompletedTransactions } = useAsyncData<IMultisigTransactionResponse>(`multisig-${route.params.safe}-completed`, async () => {
   const { data } = await axios.get(`/safes/${route.params.safe}/transactions`, {
     params: {
       status: ['success', 'failed'],

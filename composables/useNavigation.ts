@@ -1,9 +1,27 @@
+import axios from 'axios'
+
 export function useNavigation() {
   const { account } = useWeb3()
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { safeAddress } = useAvocadoSafe()
 
+  const { data } = useAsyncData<IMultisigTransactionResponse>(async () => {
+    const { data } = await axios.get(`/safes/${safeAddress.value}/transactions`, {
+      params: {
+        status: 'pending',
+      },
+      baseURL: multisigURL,
+    })
+
+    return data
+  }, {
+    watch: [safeAddress],
+  })
+
   const navigations = computed(() => {
+    const totalPendingTransactions = data.value?.meta?.total || 0
+    const pendingTransactionsLabel = totalPendingTransactions ? `Pending Transactions (${totalPendingTransactions})` : 'Pending Transactions'
+
     return [
       {
         icon: 'SvgoHome',
@@ -18,10 +36,10 @@ export function useNavigation() {
         tooltip: 'View your DeFi Positions',
       },
       {
-        label: 'Pending Transactions',
+        label: pendingTransactionsLabel,
         icon: 'SvgoAuthorities',
         to: `/multisig/${safeAddress.value}/pending-transactions`,
-        tooltip: 'Pending Transactions',
+        tooltip: pendingTransactionsLabel,
         hidden: !isSafeMultisig.value,
       },
       {
