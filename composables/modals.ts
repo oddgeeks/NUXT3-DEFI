@@ -580,11 +580,12 @@ export function openWalletNameEditModal(safe: ISafe) {
   })
 }
 
-export function openReviewMultisigTransaction(transactionId: string) {
+export function openReviewMultisigTransaction(transactionId: string, rejection = false) {
   return openModal({
     component: ReviewMultisigTransaction,
     componentProps: {
       transactionId,
+      rejection,
     },
   })
 }

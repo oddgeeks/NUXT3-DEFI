@@ -90,4 +90,5 @@ interface IGenerateMultisigSignatureParams {
   clearModals?: boolean
   estimatedFee?: boolean
   options?: any
+  rejection?: boolean
 }

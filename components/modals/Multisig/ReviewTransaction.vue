@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia'
 
 defineProps<{
   transactionId: string
+  rejection?: boolean
 }>()
 
 defineEmits(['destroy'])
@@ -21,7 +22,12 @@ const { selectedSafe } = storeToRefs(useSafe())
 
       <div class="flex flex-col gap-[15px]">
         <h1 class="text-lg font-semibold">
-          Your transaction was successfully proposed.
+          <template v-if="!rejection">
+            Your transaction was successfully proposed.
+          </template>
+          <template v-else>
+            Your transaction rejection was submitted
+          </template>
         </h1>
         <NuxtLink
           :to="`/multisig/${selectedSafe?.safe_address}/pending-transactions/${transactionId}`"

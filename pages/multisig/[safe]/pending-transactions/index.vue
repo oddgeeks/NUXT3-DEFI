@@ -57,6 +57,15 @@ const { data: completedTransactions, refresh: refreshCompletedTransactions } = u
   immediate: true,
 })
 
+function groupByNonce(txs: IMultisigTransaction[]) {
+  const collection = collect(txs || [])
+
+  const txsByNonce = collection.groupBy('nonce').all()
+
+  console.log(txsByNonce)
+  return txs
+}
+
 const nonSeq = computed(() => {
   if (!data.value)
     return []

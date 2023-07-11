@@ -222,7 +222,7 @@ export function useAvocadoSafe() {
     } as any
   }
 
-  async function createProposalOrSignDirecty({ chainId, actions, nonce, metadata, clearModals = true, estimatedFee = false }: IGenerateMultisigSignatureParams) {
+  async function createProposalOrSignDirecty({ chainId, actions, nonce, metadata, clearModals = true, estimatedFee = false, rejection }: IGenerateMultisigSignatureParams) {
     const { success, payload } = await openEditNonceModal(chainId, actions, nonce, estimatedFee)
 
     const actualNonce = nonce || payload?.nonce
@@ -262,7 +262,7 @@ export function useAvocadoSafe() {
       if (clearModals)
         clearAllModals()
 
-      openReviewMultisigTransaction(data.id)
+      openReviewMultisigTransaction(data.id, rejection)
     }
   }
 
@@ -351,6 +351,7 @@ export function useAvocadoSafe() {
       actions,
       metadata,
       estimatedFee: true,
+      rejection: true,
     })
   }
 
