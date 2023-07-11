@@ -96,17 +96,19 @@ const isTransactionFailed = computed(() => !simulationDetails.value?.transaction
 
 function getNonceTooltip(value: number | undefined) {
   let message = ''
+  const articleLink = 'https://help.avocado.instadapp.io/en/articles/8117229-sequential-vs-non-sequential-transactions'
   if (value === undefined)
-    message = 'Sequential nonce. <a target="_blank" class=\'text-primary\' href=\'https://help.avocado.instadapp.io/en/\'>Learn more</a>'
+    message = `Sequential transactions need to be executed in the order they were proposed in. <a target="_blank" class=\'text-primary\' href=\'${articleLink}\'>Learn more</a>`
 
   else if (value === -1)
-    message = 'Non-Sequential nonce. <a target="_blank" class=\'text-primary\' href=\'https://help.avocado.instadapp.io/en/\'>Learn more</a>'
+    message = `Non-Sequential transactions can be executed in any order. <a target="_blank" class=\'text-primary\' href=\'${articleLink}\'>Learn more</a>`
 
   return message
     ? {
         content: message,
         interactive: true,
         allowHTML: true,
+        placement: 'top',
       }
     : undefined
 }
