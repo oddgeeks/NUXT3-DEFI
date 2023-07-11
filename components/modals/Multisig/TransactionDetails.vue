@@ -357,12 +357,12 @@ onUnmounted(() => {
             <CommonButton :loading="pending.reject" color="red" size="lg" class="justify-center" @click="handleReject(transaction)">
               Reject
             </CommonButton>
-            <div v-show="isConfirmationsMatch" v-tippy="errorMessage">
+            <div v-if="isConfirmationsMatch" v-tippy="errorMessage">
               <CommonButton :disabled="!!errorMessage || pending.execute" :loading="pending.execute || (isUndefined(currentNonce) && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" @click="handleExecute(transaction)">
                 Execute
               </CommonButton>
             </div>
-            <div v-tippy="errorMessage">
+            <div v-else v-tippy="errorMessage">
               <CommonButton :disabled="!!errorMessage || pending.sign" :loading="pending.sign || (isUndefined(currentNonce) && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" @click="handleSign(transaction)">
                 Sign
               </CommonButton>
