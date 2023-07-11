@@ -130,14 +130,20 @@ useIntervalFn(() => {
         Non-Sequential transactions can be executed in any order.
       </h2>
 
-      <div v-for="items, chainId in groupedByNetwork" :key="chainId" class="dark:bg-gray-850 bg-slate-50 rounded-[25px] pt-[14px] overflow-hidden">
-        <h2 class="dark:bg-slate-850 bg-slate-150 py-2.5 flex items-center gap-2.5 px-5 text-xs font-medium leading-5 text-slate-400">
-          <ChainLogo class="w-5 h-5" :chain="chainId" />
-          {{ chainIdToName(chainId) }}
-        </h2>
-        <ul class="flex flex-col">
-          <MultisigPendingTransactionItem v-for="item in items" :key="item.id" :active-tab="activeTab" :item="item" />
-        </ul>
+      <div class="dark:bg-gray-850 bg-slate-50 rounded-[25px] overflow-hidden">
+        <details v-for="items, chainId in groupedByNetwork" :key="chainId" class="py-[14px] group">
+          <summary class="dark:bg-slate-850 bg-slate-150 py-2.5 flex items-center gap-2.5 px-5 text-xs font-medium leading-5 text-slate-400">
+            <ChainLogo class="w-5 h-5" :chain="chainId" />
+            {{ chainIdToName(chainId) }}
+
+            <SvgoChevronDown
+              class="w-5 text-slate-400 ml-auto group-open:rotate-180"
+            />
+          </summary>
+          <ul class="flex flex-col">
+            <MultisigPendingTransactionItem v-for="item in items" :key="item.id" :active-tab="activeTab" :item="item" />
+          </ul>
+        </details>
       </div>
     </div>
   </div>
