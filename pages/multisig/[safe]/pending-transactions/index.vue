@@ -24,7 +24,7 @@ const tabs = computed(() => {
     },
     {
       value: 'completed',
-      label: `Completed (${completedTransactions.value?.data?.length || 0})`,
+      label: 'Completed',
     },
   ]
 })
