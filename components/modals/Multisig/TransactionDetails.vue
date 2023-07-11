@@ -272,28 +272,29 @@ onUnmounted(() => {
             </div>
           </div>
           <div class="flex flex-col py-5">
-            <template v-for="action, i in transaction.data.params.actions" :key="action.data">
+            <span class="px-7.5 text-sm mb-5">
+              Actions ({{ transaction.data.params.actions.length }})
+            </span>
+            <template v-for="action in transaction.data.params.actions" :key="action.data">
               <details open class="group px-7.5">
                 <summary class="text-xs flex items-center justify-between cursor-pointer">
-                  Action {{ i + 1 }}
-
-                  <SvgoChevronDown
-                    class="w-5 text-slate-400 group-open:rotate-180"
-                  />
+                  <dl class="flex w-full justify-between text-xs">
+                    <dt class="text-slate-400">
+                      Target
+                    </dt>
+                    <dd class="flex justify-between items-center gap-2 break-all w-[420px]">
+                      {{ action.target }}
+                      <SvgoChevronDown
+                        class="w-5 text-slate-400 group-open:rotate-180"
+                      />
+                    </dd>
+                  </dl>
                 </summary>
                 <div class="flex flex-col gap-2.5 mt-5">
                   <div v-if="String(action.operation) === '1'" class="flex px-4 py-2 mb-2.5 gap-2.5 justify-between text-sm border w-fit dark:border-slate-700 rounded-[14px]">
                     <SvgoInfo2 class="text-slate-500" />
                     This is a delegate call transaction
                   </div>
-                  <dl class="flex justify-between text-xs">
-                    <dt class="text-slate-400">
-                      Target
-                    </dt>
-                    <dd class="flex items-center gap-2 break-all w-[420px]">
-                      {{ action.target }}
-                    </dd>
-                  </dl>
                   <dl class="flex justify-between text-xs">
                     <dt class="text-slate-400">
                       Data
