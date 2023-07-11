@@ -91,4 +91,13 @@ interface IGenerateMultisigSignatureParams {
   estimatedFee?: boolean
   options?: any
   rejection?: boolean
+  rejectionId?: string
+}
+
+interface IOpenNonceModalParams {
+  chainId: number | string;
+  actions: any[]; defaultNonce?: number;
+  estimatedFee?: boolean
+  rejection?: boolean
+  rejectionId?: string
 }

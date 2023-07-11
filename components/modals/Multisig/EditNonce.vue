@@ -6,6 +6,8 @@ const props = defineProps<{
   actions: any[]
   defaultNonce?: number
   estimatedFee?: boolean
+  rejection?: boolean
+  rejectionId?: string
 }>()
 
 const emit = defineEmits(['resolve'])
@@ -96,7 +98,10 @@ const isTransactionFailed = computed(() => !simulationDetails.value?.transaction
 <template>
   <form class="flex flex-col" @submit.prevent="onSubmit">
     <div class="px-7.5 pt-7.5 pb-5 flex flex-col gap-2.5">
-      <h1 class="text-lg">
+      <h1 v-if="rejection" class="text-lg">
+        Submit Reject Transaction Proposal
+      </h1>
+      <h1 v-else class="text-lg">
         Submit Transaction Proposal
       </h1>
       <div class="text-slate-500 flex items-center gap-2 text-xs font-medium">
@@ -137,6 +142,20 @@ const isTransactionFailed = computed(() => !simulationDetails.value?.transaction
       </div>
 
       <div class="flex flex-col gap-2">
+        <dl v-if="rejectionId" class="flex mb-2 justify-between">
+          <dt class="text-xs text-slate-400">
+            Proposal Hash
+          </dt>
+          <dd
+            v-tippy="{
+              content: rejectionId,
+              interactive: true,
+              maxWidth: 'none',
+            }" class="text-xs text-slate-400"
+          >
+            {{ shortenHash(rejectionId) }}
+          </dd>
+        </dl>
         <span class="text-xs text-slate-400">
           Note
         </span>

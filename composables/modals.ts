@@ -503,7 +503,8 @@ export function openDeleteSigner(addresses: string[], chainId: number | string) 
   })
 }
 
-export async function openEditNonceModal(chainId: number | string, actions: any[], defaultNonce?: number, estimatedFee?: boolean) {
+export async function openEditNonceModal(params: IOpenNonceModalParams) {
+  const { chainId, actions, defaultNonce, estimatedFee, rejection, rejectionId } = params
   return openModal({
     component: EditNonce,
     componentProps: {
@@ -511,6 +512,8 @@ export async function openEditNonceModal(chainId: number | string, actions: any[
       actions,
       defaultNonce,
       estimatedFee,
+      rejection,
+      rejectionId,
     },
     options: {
       wrapperClass: 'max-w-[560px]',

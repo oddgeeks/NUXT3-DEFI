@@ -222,12 +222,12 @@ export function useAvocadoSafe() {
     } as any
   }
 
-  async function createProposalOrSignDirecty({ chainId, actions, nonce, metadata, clearModals = true, estimatedFee = false, rejection }: IGenerateMultisigSignatureParams) {
-    const { success, payload } = await openEditNonceModal(chainId, actions, nonce, estimatedFee)
+  async function createProposalOrSignDirecty(args: IGenerateMultisigSignatureParams) {
+    const { chainId, actions, nonce, metadata, clearModals = true, estimatedFee = false, rejection, rejectionId } = args
+
+    const { success, payload } = await openEditNonceModal({ chainId, actions, defaultNonce: nonce, estimatedFee, rejection, rejectionId })
 
     const actualNonce = nonce || payload?.nonce
-
-    console.log({ actualNonce })
 
     if (!success)
       throw new Error('Transaction canceled')
@@ -352,6 +352,7 @@ export function useAvocadoSafe() {
       metadata,
       estimatedFee: true,
       rejection: true,
+      rejectionId: tx.id,
     })
   }
 
