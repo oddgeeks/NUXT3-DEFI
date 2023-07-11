@@ -36,6 +36,7 @@ const isSignedAlready = computed(() => props.transaction.confirmations.some(item
 const decodedMetadata = computed(() => decodeMetadata(props.transaction.data.params.metadata))
 
 const isSafeDoesntMatch = computed(() => props.transaction.safe_address !== selectedSafe.value?.safe_address)
+const proposalOwnerAddress = computed(() => props.transaction.confirmations.length ? props.transaction.confirmations[0].address : null)
 
 const errorMessage = computed(() => {
   let message = null
@@ -246,6 +247,12 @@ onUnmounted(() => {
             </div>
           </div>
           <div class="p-7.5 flex-col gap-4 flex border-b dark:border-slate-800 border-slate-150">
+            <div v-if="proposalOwnerAddress" class="flex justify-between text-sm items-center">
+              <span class="text-slate-400 text-xs">Proposal Creator</span>
+              <NuxtLink target="_blank" :to="getExplorerUrl(transaction.chain_id, `/address/${proposalOwnerAddress}`)" class="text-sm text-primary">
+                {{ shortenHash(proposalOwnerAddress) }}
+              </NuxtLink>
+            </div>
             <div v-if="transaction.transaction_hash" class="flex justify-between text-sm items-center">
               <span class="text-slate-400 text-xs">Transaction Hash</span>
               <NuxtLink target="_blank" :to="`${avoExplorerURL}/tx/${transaction.transaction_hash}`" class="text-sm text-primary">
