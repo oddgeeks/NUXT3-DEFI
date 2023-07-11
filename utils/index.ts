@@ -95,8 +95,8 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
     }
   })
 
-  const formattedDiscountedAmountMin = formatDecimal(minAmountAfterDiscount, 2)
-  const formattedDiscountedAmount = formatDecimal(maxAmountAfterDiscount, 2)
+  const formattedDiscountedAmountMin = formatDecimal(minAmountAfterDiscount, 3)
+  const formattedDiscountedAmount = formatDecimal(maxAmountAfterDiscount, 3)
 
   const isEqual = formattedMin === formattedMax
 
