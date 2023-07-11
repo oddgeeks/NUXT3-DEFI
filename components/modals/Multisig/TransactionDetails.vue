@@ -145,6 +145,14 @@ async function handleExecute(item: IMultisigTransaction) {
       showPendingTransactionModal(hash, item.chain_id, 'send')
     }
   }
+  catch (e) {
+    openDialogModal({
+      title: 'Error',
+      content: 'Something went wrong. Please try again later.',
+      type: 'error',
+    })
+    console.error(e)
+  }
   finally {
     pending.value.execute = false
   }
@@ -173,6 +181,29 @@ const transactionURL = computed(() => {
     return ''
   return `${window.location.origin}/multisig/${props.transaction.safe_address}/pending-transactions/${props.transaction.id}`
 })
+
+async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
+  pending.value.execute = true
+
+  try {
+    const { success } = await openDialogModal({
+      type: 'question',
+      title: 'Execute transaction',
+      content: 'Are you sure you want to execute this transaction?',
+      isCancelButtonVisible: true,
+      buttonText: 'Execute',
+      cancelButtonProps: {
+        color: 'white',
+      },
+    })
+
+    if (success)
+      handleExecute(transaction)
+  }
+  finally {
+    pending.value.execute = false
+  }
+}
 
 onUnmounted(() => {
   const currentRoute = router.currentRoute.value
@@ -358,7 +389,9 @@ onUnmounted(() => {
               Reject
             </CommonButton>
             <div v-if="isConfirmationsMatch" v-tippy="errorMessage">
-              <CommonButton :disabled="!!errorMessage || pending.execute" :loading="pending.execute || (isUndefined(currentNonce) && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" @click="handleExecute(transaction)">
+              <CommonButton
+                :disabled="!!errorMessage || pending.execute" :loading="pending.execute || (isUndefined(currentNonce) && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" error-message @click="handleExecuteConfirmation(transaction)"
+              >
                 Execute
               </CommonButton>
             </div>
