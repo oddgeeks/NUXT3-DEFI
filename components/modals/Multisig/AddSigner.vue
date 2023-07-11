@@ -38,10 +38,7 @@ const {
             if (fieldCount?.length > 1)
               return false
 
-            return !signers.value.some(
-              signer =>
-                signer.address?.toLowerCase() === value?.toLowerCase(),
-            ) && fields.value.some(field => field.value.toLowerCase() === value?.toLowerCase())
+            return true
           },
         )
         .test(

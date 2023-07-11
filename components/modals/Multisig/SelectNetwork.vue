@@ -50,7 +50,7 @@ function handleBack() {
         <h2 class="text-sm mb-4">
           Deployed
         </h2>
-        <ul class="mb-4">
+        <ul class="mb-4 flex flex-col gap-4">
           <MultisigSelectNetworkItem v-for="network in deployedNetworks" :key="network.chainId" :selected="isSelected(network.chainId)" :network="network" @on-select="toggleNetworkChainId(network.chainId)" />
         </ul>
       </template>

@@ -1,31 +1,52 @@
 <script setup lang="ts">
 import axios from 'axios'
-import collect from 'collect.js'
 
 const route = useRoute()
-
-type GroupedByNetwork = Record<string, IMultisigTransaction[]> | null
 
 useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const activeTab = ref('non-seq')
+const activeTab = ref<string | undefined>('nonseq')
+
+const { data: nonSeqResponse, refresh: refreshNonSeq } = useAsyncData<IMultisigTransactionResponse>(`${route.params.safe}-non-seq-count`, async () => {
+  const { data } = await axios.get(`/safes/${route.params.safe}/transactions`, {
+    params: {
+      status: 'pending',
+      nonce_type: 'nonseq',
+    },
+    baseURL: multisigURL,
+  })
+
+  return data
+})
+
+const { data: seqResponse, refresh: refreshSeq } = useAsyncData<IMultisigTransactionResponse>(`${route.params.safe}-seq-count`, async () => {
+  const { data } = await axios.get(`/safes/${route.params.safe}/transactions`, {
+    params: {
+      status: 'pending',
+      nonce_type: 'seq',
+    },
+    baseURL: multisigURL,
+  })
+
+  return data
+})
 
 const tabs = computed(() => {
   return [
     {
-      value: 'non-seq',
-      label: `Non-Sequential (${nonSeq.value.length})`,
+      value: 'nonseq',
+      label: `Non-Sequential (${nonSeqResponse.value?.meta?.total || 0})`,
       title: 'Non-Sequential transactions can be executed in any order.',
     },
     {
       value: 'seq',
-      label: `Sequential (${seq.value.length})`,
+      label: `Sequential (${seqResponse.value?.meta?.total || 0})`,
       title: 'Sequential transactions need to be executed in the order they were proposed in.',
     },
     {
-      value: 'completed',
+      value: undefined,
       label: 'Completed',
     },
   ]
@@ -37,79 +58,9 @@ const title = computed(() => {
   return tab?.title
 })
 
-const { data, refresh: refreshPendingTransactions } = useAsyncData<IMultisigTransactionResponse>(`multisig-${route.params.safe}-pending`, async () => {
-  const { data } = await axios.get(`/safes/${route.params.safe}/transactions`, {
-    params: {
-      status: 'pending',
-    },
-    baseURL: multisigURL,
-  })
-
-  return data
-}, {
-  watch: [activeTab],
-  immediate: true,
-})
-
-const { data: completedTransactions, refresh: refreshCompletedTransactions } = useAsyncData<IMultisigTransactionResponse>(`multisig-${route.params.safe}-completed`, async () => {
-  const { data } = await axios.get(`/safes/${route.params.safe}/transactions`, {
-    params: {
-      status: ['success', 'failed'],
-    },
-    baseURL: multisigURL,
-  })
-
-  return data
-}, {
-  watch: [activeTab],
-  immediate: true,
-})
-
-function groupByNonce(txs: IMultisigTransaction[]) {
-  const collection = collect(txs || [])
-
-  const txsByNonce = collection.groupBy('nonce').all()
-
-  console.log(txsByNonce)
-  return txs
-}
-
-const nonSeq = computed(() => {
-  if (!data.value)
-    return []
-
-  return data.value.data.filter(item => item.nonce == '-1')
-})
-
-const seq = computed(() => {
-  if (!data.value)
-    return []
-
-  return data.value.data.filter(item => item.nonce != '-1')
-})
-
-const actualTransactions = computed(() => {
-  if (activeTab.value === 'non-seq')
-    return nonSeq.value
-
-  if (activeTab.value === 'seq')
-    return seq.value
-
-  return completedTransactions.value?.data || []
-})
-
-const groupedByNetwork = computed<GroupedByNetwork>(() => {
-  if (!actualTransactions.value)
-    return {}
-
-  const collection = collect(actualTransactions.value || [])
-
-  return collection.groupBy('chain_id').all()
-})
-
 useIntervalFn(() => {
-  refreshPendingTransactions()
-  refreshCompletedTransactions()
+  refreshNonSeq()
+  refreshSeq()
 }, 15000)
 </script>
 
@@ -139,19 +90,7 @@ useIntervalFn(() => {
       </h2>
 
       <div class="dark:bg-gray-850 bg-slate-50 rounded-[25px] overflow-hidden">
-        <details v-for="items, chainId in groupedByNetwork" :key="chainId" open class="py-[14px] open:pb-0 group">
-          <summary class="dark:bg-slate-850 bg-slate-150 py-2.5 flex items-center gap-2.5 px-5 text-xs font-medium leading-5 text-slate-400">
-            <ChainLogo class="w-5 h-5" :chain="chainId" />
-            {{ chainIdToName(chainId) }}
-
-            <SvgoChevronDown
-              class="w-5 text-slate-400 ml-auto group-open:rotate-180"
-            />
-          </summary>
-          <ul class="flex flex-col">
-            <MultisigPendingTransactionItem v-for="item in items" :key="item.id" :active-tab="activeTab" :item="item" />
-          </ul>
-        </details>
+        <MultisigPendingTransactionItems v-for="network in availableNetworks" :key="network.chainId" :active-tab="activeTab" :chain-id="network.chainId" />
       </div>
     </div>
   </div>

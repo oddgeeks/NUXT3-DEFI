@@ -3,7 +3,7 @@ import { formatTimeAgo } from '@vueuse/core'
 
 const props = defineProps<{
   item: IMultisigTransaction
-  activeTab: string
+  activeTab: string | undefined
 }>()
 
 const route = useRoute()
