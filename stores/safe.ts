@@ -136,6 +136,8 @@ export const useSafe = defineStore('safe', () => {
 
     const cachedSafeAddress = accountSafeMapping.value[account.value]
 
+    console.log('selam', accountSafeMapping)
+
     if ((mainSafeAddress.value || safeAddress.value) && !cachedSafeAddress)
       return
 
@@ -625,6 +627,9 @@ export const useSafe = defineStore('safe', () => {
 }, {
   persist: {
     paths: ['safeAddress', 'mainSafeAddress', 'accountSafeMapping'],
+    storage: persistedState.cookiesWithOptions({
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 * 10),
+    }),
   },
 })
 
