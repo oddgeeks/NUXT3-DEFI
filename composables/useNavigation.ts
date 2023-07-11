@@ -18,6 +18,13 @@ export function useNavigation() {
         tooltip: 'View your DeFi Positions',
       },
       {
+        label: 'Pending Transactions',
+        icon: 'SvgoAuthorities',
+        to: `/multisig/${safeAddress.value}/pending-transactions`,
+        tooltip: 'Pending Transactions',
+        hidden: !isSafeMultisig.value,
+      },
+      {
         label: 'NFT',
         icon: 'SvgoFire',
         to: '/nft',
@@ -37,13 +44,7 @@ export function useNavigation() {
         to: `${avoExplorerURL}/address/${account.value}`,
         tooltip: 'History',
       },
-      {
-        label: 'Pending Transactions',
-        icon: 'SvgoAuthorities',
-        to: `/multisig/${safeAddress.value}/pending-transactions`,
-        tooltip: 'Pending Transactions',
-        hidden: !isSafeMultisig.value,
-      },
+
       {
         label: 'Authorities',
         icon: 'SvgoAuthorities',
@@ -61,6 +62,9 @@ export function useNavigation() {
     ]
   })
 
+  tryOnMounted(() => {
+    console.log('selam')
+  })
   return {
     navigations,
   }
