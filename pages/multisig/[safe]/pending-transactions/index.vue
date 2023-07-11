@@ -127,7 +127,7 @@ useIntervalFn(() => {
           {{ chainIdToName(chainId) }}
         </h2>
         <ul class="flex flex-col">
-          <MultisigPendingTransactionItem v-for="item in items" :key="item.id" :item="item" />
+          <MultisigPendingTransactionItem v-for="item in items" :key="item.id" :active-tab="activeTab" :item="item" />
         </ul>
       </div>
     </div>

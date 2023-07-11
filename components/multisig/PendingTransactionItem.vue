@@ -3,6 +3,7 @@ import { formatTimeAgo } from '@vueuse/core'
 
 const props = defineProps<{
   item: IMultisigTransaction
+  activeTab: string
 }>()
 
 const isConfirmationsMatch = computed(() => props.item.confirmations.length === props.item.confirmations_required)
@@ -35,7 +36,7 @@ const formattedActionType = computed(() => {
         <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" v-once :key="metadata" compact :chain_id="item.chain_id" :metadata="metadata" />
       </span>
       <span class="whitespace-nowrap">
-        {{ formatTimeAgo(new Date(item.created_at)) }}
+        {{ formatTimeAgo(new Date(activeTab === 'completed' ? item.executed_at : item.created_at)) }}
       </span>
       <span class="flex items-center gap-2.5 w-[140px]">
         <SvgoUserCircle :class="isConfirmationsMatch ? 'text-primary' : 'text-slate-400'" />
