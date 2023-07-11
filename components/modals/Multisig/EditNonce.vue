@@ -93,6 +93,23 @@ const { data: simulationDetails, error: simulationError, pending } = useAsyncDat
 )
 
 const isTransactionFailed = computed(() => !simulationDetails.value?.transaction?.status)
+
+function getNonceTooltip(value: number | undefined) {
+  let message = ''
+  if (value === undefined)
+    message = 'Sequential nonce. <a target="_blank" class=\'text-primary\' href=\'https://help.avocado.instadapp.io/en/\'>Learn more</a>'
+
+  else if (value === -1)
+    message = 'Non-Sequential nonce. <a target="_blank" class=\'text-primary\' href=\'https://help.avocado.instadapp.io/en/\'>Learn more</a>'
+
+  return message
+    ? {
+        content: message,
+        interactive: true,
+        allowHTML: true,
+      }
+    : undefined
+}
 </script>
 
 <template>
@@ -122,18 +139,22 @@ const isTransactionFailed = computed(() => !simulationDetails.value?.transaction
           :options="transactionTypes"
         >
           <template #button-suffix>
+            <SvgoInfo2 v-tippy="getNonceTooltip(nonce)" class="text-slate-500" />
+
             <template v-if="nonce === -1">
-              <SvgoInfo2 class="text-slate-500" />
               <span class="bg-primary bg-opacity-10 text-primary text-xs px-[6px] py-[5px] uppercase rounded-[10px]">
                 Recommended
               </span>
             </template>
           </template>
           <template #item="{ label, value }">
-            <span v-if="value === -1" class="flex items-center gap-2.5">
+            <span class="flex items-center gap-2.5">
               {{ label }}
-              <SvgoInfo2 class="text-slate-500" />
-              <span class="bg-primary bg-opacity-10 text-primary text-xs px-[6px] py-[5px] uppercase rounded-[10px]">
+              <SvgoInfo2
+                v-tippy="getNonceTooltip(value)" class="text-slate-500"
+              />
+
+              <span v-if="value === -1" class="bg-primary bg-opacity-10 text-primary text-xs px-[6px] py-[5px] uppercase rounded-[10px]">
                 Recommended
               </span>
             </span>
