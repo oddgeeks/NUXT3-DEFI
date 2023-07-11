@@ -17,16 +17,24 @@ const tabs = computed(() => {
     {
       value: 'non-seq',
       label: `Non-Sequential (${nonSeq.value.length})`,
+      title: 'Non-Sequential transactions can be executed in any order.',
     },
     {
       value: 'seq',
       label: `Sequential (${seq.value.length})`,
+      title: 'Sequential transactions need to be executed in the order they were proposed in.',
     },
     {
       value: 'completed',
       label: 'Completed',
     },
   ]
+})
+
+const title = computed(() => {
+  const tab = tabs.value.find(tab => tab.value === activeTab.value)
+
+  return tab?.title
 })
 
 const { data, refresh: refreshPendingTransactions } = useAsyncData<IMultisigTransactionResponse>(`${route.params.safe}`, async () => {
@@ -126,8 +134,8 @@ useIntervalFn(() => {
         </button>
       </div>
 
-      <h2 class="text-xs">
-        Non-Sequential transactions can be executed in any order.
+      <h2 v-if="title" class="text-xs">
+        {{ title }}
       </h2>
 
       <div class="dark:bg-gray-850 bg-slate-50 rounded-[25px] overflow-hidden">
