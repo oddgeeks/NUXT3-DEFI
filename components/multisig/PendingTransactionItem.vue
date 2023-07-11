@@ -42,7 +42,7 @@ async function handleClick(item: IMultisigTransaction) {
         <span>{{ formattedActionType }}</span>
       </span>
       <span class="flex-1 flex-col flex gap-2">
-        <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" v-once :key="metadata" compact :chain_id="item.chain_id" :metadata="metadata" />
+        <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" v-once :key="metadata" class="text-left" compact :chain_id="item.chain_id" :metadata="metadata" />
       </span>
       <span class="whitespace-nowrap">
         {{ formatTimeAgo(new Date(activeTab === 'completed' ? item.executed_at : item.created_at)) }}

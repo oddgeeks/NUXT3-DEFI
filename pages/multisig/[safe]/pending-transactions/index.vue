@@ -139,7 +139,7 @@ useIntervalFn(() => {
       </h2>
 
       <div class="dark:bg-gray-850 bg-slate-50 rounded-[25px] overflow-hidden">
-        <details v-for="items, chainId in groupedByNetwork" :key="chainId" open class="py-[14px] group">
+        <details v-for="items, chainId in groupedByNetwork" :key="chainId" open class="py-[14px] open:pb-0 group">
           <summary class="dark:bg-slate-850 bg-slate-150 py-2.5 flex items-center gap-2.5 px-5 text-xs font-medium leading-5 text-slate-400">
             <ChainLogo class="w-5 h-5" :chain="chainId" />
             {{ chainIdToName(chainId) }}
