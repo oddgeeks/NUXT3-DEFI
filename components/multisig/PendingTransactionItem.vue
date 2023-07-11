@@ -6,6 +6,8 @@ const props = defineProps<{
   activeTab: string
 }>()
 
+const route = useRoute()
+
 const isConfirmationsMatch = computed(() => props.item.confirmations.length === props.item.confirmations_required)
 const isTransactionExecuted = computed(() => props.item.executed_at !== null)
 const isTransactionFailed = computed(() => props.item.status === 'failed')
@@ -21,11 +23,17 @@ const actionType = computed(() => firstActionMetadata.value?.type || '')
 const formattedActionType = computed(() => {
   return formatTxType(actionType.value || '')
 })
+
+async function handleClick(item: IMultisigTransaction) {
+  window.history.replaceState({}, '', `pending-transactions/${item.id}`)
+  await openMultisigTransactionDetails(item)
+  window.history.replaceState({}, '', route.fullPath)
+}
 </script>
 
 <template>
   <li class="w-full">
-    <button class="flex focus:outline-none items-center w-full gap-10 text-xs font-medium py-[26px] last:border-b-0 border-b border-slate-150 dark:border-slate-800 px-5" @click="openMultisigTransactionDetails(item)">
+    <button class="flex focus:outline-none items-center w-full gap-10 text-xs font-medium py-[26px] last:border-b-0 border-b border-slate-150 dark:border-slate-800 px-5" @click="handleClick(item)">
       <span v-if="activeTab !== 'non-seq'" :class="item.nonce === '-1' ? 'invisible' : ''">
         {{ item.nonce }}
       </span>
