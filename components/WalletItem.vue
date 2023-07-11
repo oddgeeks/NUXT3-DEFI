@@ -6,7 +6,7 @@ const props = defineProps<{
 
 const { safeAddress } = useAvocadoSafe()
 const { getBalances } = useSafe()
-const walletName = useLocalStorage(`safe-${props.safe?.safe_address}`, 'Personal')
+const walletName = useLocalStorage(`safe-${props.safe?.safe_address}`, props.safe.multisig ? 'Multisig' : 'Personal')
 
 const val = walletName.value?.trim()
 if (!val)
