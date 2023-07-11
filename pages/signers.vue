@@ -64,7 +64,7 @@ watch(selectedAddresses, () => {
 
 useIntervalFn(() => {
   setSelectedSafe()
-}, 15000)
+}, 5000)
 </script>
 
 <template>
