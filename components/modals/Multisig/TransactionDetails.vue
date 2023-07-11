@@ -112,8 +112,17 @@ async function handleSign(item: IMultisigTransaction) {
       baseURL: multisigURL,
     })
 
-    if (data.confirmations.length === data.confirmations_required)
+    if (data.confirmations.length === data.confirmations_required) {
       handleExecute(data)
+    }
+    else {
+      emit('destroy')
+      openDialogModal({
+        title: 'Successfully signed',
+        type: 'success',
+        isButtonVisible: false,
+      })
+    }
   }
   finally {
     pending.value.sign = false
