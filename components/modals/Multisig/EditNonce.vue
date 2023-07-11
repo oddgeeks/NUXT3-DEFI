@@ -186,7 +186,7 @@ function getNonceTooltip(value: number | undefined) {
     <template v-if="!estimatedFee">
       <hr class="border-slate-150 dark:border-slate-800">
       <div class="px-7.5 py-5 text-sm flex justify-between items-center">
-        Check if this transaction is valid
+        Simulate Transaction
         <button :disabled="pending" type="button" class="text-primary disabled:text-slate-400" @click="handleSimulate">
           Simulate
         </button>

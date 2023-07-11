@@ -114,7 +114,7 @@ useIntervalFn(() => {
 </script>
 
 <template>
-  <div>
+  <div class="flex-1">
     <div class="flex flex-col gap-5">
       <h1>
         Transactions
