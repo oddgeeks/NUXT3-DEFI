@@ -6,10 +6,10 @@ const props = defineProps<{
   chainId: number | string
 }>()
 
-const { multiSigSafe } = storeToRefs(useSafe())
+const { selectedSafe } = storeToRefs(useSafe())
 
 const sortedAddresses = computed(() => {
-  const ownerAddress = multiSigSafe.value?.owner_address || ''
+  const ownerAddress = selectedSafe.value?.owner_address || ''
 
   return props.addresses
     .map(i => ({
