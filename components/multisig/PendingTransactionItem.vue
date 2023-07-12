@@ -81,7 +81,7 @@ async function handleClick(item: IMultisigTransaction) {
         <div :class="isConfirmationsMatch ? 'text-primary' : 'text-orange-400'">
           <span v-if="isTransactionFailed" class="flex items-center text-red-alert gap-2">
             Failed
-            <SvgoErrorCircle class="text-white w-5 h-5" />
+            <SvgoErrorCircle class="text-white w-4.5 h-4.5" />
           </span>
           <span v-else-if="isTransactionExecuted" class="flex items-center gap-2">
             Executed
