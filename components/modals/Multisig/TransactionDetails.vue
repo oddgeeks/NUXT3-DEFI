@@ -400,7 +400,7 @@ onUnmounted(() => {
             </div>
           </details>
           <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch" class="grid grid-cols-2 gap-2.5 items-center">
-            <CommonButton :loading="pending.reject" color="red" size="lg" class="justify-center" @click="handleReject(transaction)">
+            <CommonButton v-if="actionType !== 'rejection'" :loading="pending.reject" color="red" size="lg" class="justify-center" @click="handleReject(transaction)">
               Reject
             </CommonButton>
             <div v-if="isConfirmationsMatch" v-tippy="errorMessage">
