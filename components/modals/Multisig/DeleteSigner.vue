@@ -22,7 +22,10 @@ watch(reactiveAddresses, () => {
   <div class="flex flex-col">
     <h1 class="text-lg flex gap-[14px] p-7.5">
       <SvgoTrash class="w-10 h-10" />
-      Are you sure you want to delete the following signers?
+      <span>
+        Are you sure you want to delete the following signers from
+        <ChainLogo class="w-5 h-5 shrink-0 inline-block" :chain="chainId" />  {{ chainIdToName(chainId) }}?
+      </span>
     </h1>
     <hr class="border-slate-150 dark:border-slate-800">
     <ul class="text-sm flex gap-[26px] p-7.5 flex-col">
