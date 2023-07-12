@@ -131,9 +131,9 @@ const out = computed(() => {
       <div
         class="text-[10px] font-medium w-fit text-slate-400 dark:bg-slate-800 py-1 px-2.5 bg-slate-150 rounded-10"
       >
-        <span v-if="actualType === TypeTitles.In" class="leading-4">
-          From: {{ shortenHash(payload.from) }}</span>
-        <span v-else class="leading-4"> To: {{ shortenHash(payload.to) }}</span>
+        <span v-if="actualType === TypeTitles.In" class="leading-4 flex items-center gap-2.5">
+          From: {{ shortenHash(payload.from) }} <Copy class="w-3 h-3" :text="payload.from" icon-only /></span>
+        <span v-else class="leading-4 flex items-center gap-2.5"> To: {{ shortenHash(payload.to) }} <Copy class="w-3 h-3" :text="payload.from" icon-only /></span>
       </div>
       <div
         v-if="payload.type"
