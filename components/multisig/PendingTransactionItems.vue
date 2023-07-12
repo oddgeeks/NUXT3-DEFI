@@ -80,16 +80,18 @@ useIntervalFn(() => {
       />
     </summary>
 
-    <ul v-for="items, key in groupedData" :key="key">
-      <li>
-        <ul :class="key !== '-1' && items.length > 1 ? 'border rounded-lg border-slate-300 dark:border-slate-700' : ''" class="flex flex-col">
-          <p v-if="key !== '-1' && items.length > 1" class="text-xs p-4 pb-0 font-medium text-slate-400">
-            You can complete one of the transactions below. The other will be cancelled automatically.
-          </p>
-          <MultisigPendingTransactionItem v-for="item in items" :key="item.id" :active-tab="activeTab" :item="item" />
-        </ul>
-      </li>
-    </ul>
+    <div class="flex flex-col gap-4">
+      <ul v-for="items, key in groupedData" :key="key">
+        <li>
+          <ul :class="key !== '-1' && items.length > 1 ? 'border rounded-lg border-slate-300 dark:border-slate-700' : ''" class="flex flex-col">
+            <p v-if="key !== '-1' && items.length > 1" class="text-xs p-4 pb-0 font-medium text-slate-400">
+              You can complete one of the transactions below. The other will be cancelled automatically.
+            </p>
+            <MultisigPendingTransactionItem v-for="item in items" :key="item.id" :active-tab="activeTab" :item="item" />
+          </ul>
+        </li>
+      </ul>
+    </div>
     <Pagination :auto-navigate="false" :current="data.meta.current_page" :limit="data.meta.per_page" :total="data.meta.total" @update:current="handleCurrentUpdate" />
   </details>
 </template>
