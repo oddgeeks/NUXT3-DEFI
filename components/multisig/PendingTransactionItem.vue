@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { formatTimeAgo } from '@vueuse/core'
+import { getAddress } from 'ethers/lib/utils'
 
 const props = defineProps<{
   item: IMultisigTransaction
@@ -7,8 +8,10 @@ const props = defineProps<{
 }>()
 
 const route = useRoute()
+const { account } = useWeb3()
 
 const isConfirmationsMatch = computed(() => props.item.confirmations.length === props.item.confirmations_required)
+const isYourSignNeeded = computed(() => !props.item.confirmations.find(item => getAddress(account.value) === getAddress(item.address)))
 const isTransactionExecuted = computed(() => props.item.executed_at !== null)
 const isTransactionFailed = computed(() => props.item.status === 'failed')
 
@@ -68,7 +71,12 @@ async function handleClick(item: IMultisigTransaction) {
             <SvgoCheckCircle class="success-circle w-5 h-5" />
           </span>
           <span v-else class="items-center flex gap-10 justify-between">
-            Awaiting confirmations
+            <span v-if="isYourSignNeeded">
+              Your sign needed
+            </span>
+            <span v-else>
+              Awaiting signatures
+            </span>
             <span class="w-5 h-5 flex items-center justify-center">
               <SvgoHourGlass class="w-4 h-4" />
             </span>
