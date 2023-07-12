@@ -379,9 +379,10 @@ onUnmounted(() => {
         </div>
         <div class="py-7.5 px-7.5">
           <details class="mb-5 group">
-            <summary class="text-primary text-xs leading-5 cursor-pointer">
+            <summary class="text-primary text-xs leading-5 cursor-pointer flex items-center justify-between">
               <span class="group-open:hidden block">View transaction breakdown</span>
               <span class="group-open:block hidden">Hide transaction breakdown</span>
+              <SvgoChevronDown class="group-open:rotate-180" />
             </summary>
             <div class="mt-5">
               <SimulationDetails
