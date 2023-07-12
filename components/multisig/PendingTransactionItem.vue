@@ -11,7 +11,7 @@ const route = useRoute()
 const { account } = useWeb3()
 
 const isConfirmationsMatch = computed(() => props.item.confirmations.length === props.item.confirmations_required)
-const isYourSignNeeded = computed(() => !props.item.confirmations.find(item => getAddress(account.value) === getAddress(item.address)))
+const isYourSignNeeded = computed(() => !account.value ? false : !props.item.confirmations.find(item => getAddress(account.value) === getAddress(item.address)))
 const isTransactionExecuted = computed(() => props.item.executed_at !== null)
 const isTransactionFailed = computed(() => props.item.status === 'failed')
 
@@ -40,7 +40,7 @@ async function handleClick(item: IMultisigTransaction) {
       <span v-if="activeTab !== 'nonseq'" :class="item.nonce === '-1' ? 'invisible' : ''">
         {{ item.nonce }}
       </span>
-      <span class="flex items-center gap-2.5 whitespace-nowrap w-[130px]">
+      <span class="flex items-center gap-2.5 whitespace-nowrap w-[120px]">
         <ActionLogo class="shrink-0" :action="actionType" />
         <span>{{ formattedActionType }}</span>
       </span>
@@ -50,13 +50,13 @@ async function handleClick(item: IMultisigTransaction) {
       <span class="whitespace-nowrap">
         {{ formatTimeAgo(new Date(activeTab === 'completed' ? item.executed_at : item.created_at)) }}
       </span>
-      <span class="flex items-center gap-2.5 w-[120px]">
+      <span class="flex items-center gap-2.5  whitespace-nowrap">
         <SvgoUserCircle :class="isConfirmationsMatch ? 'text-primary' : 'text-slate-400'" />
         <span :class="isConfirmationsMatch ? 'text-primary' : ''">
           {{ item.confirmations.length }} out of {{ item.confirmations_required }}
         </span>
       </span>
-      <div class="w-56">
+      <div>
         <div :class="isConfirmationsMatch ? 'text-primary' : 'text-orange-400'">
           <span v-if="isTransactionFailed" class="flex items-center text-red-alert gap-2">
             Failed
@@ -66,11 +66,11 @@ async function handleClick(item: IMultisigTransaction) {
             Executed
             <SvgoCheckCircle class="success-circle w-5 h-5" />
           </span>
-          <span v-else-if="isConfirmationsMatch" class="items-center flex gap-10 justify-between">
+          <span v-else-if="isConfirmationsMatch" class="items-center flex gap-5 justify-between">
             Ready to execute
             <SvgoCheckCircle class="success-circle w-5 h-5" />
           </span>
-          <span v-else class="items-center flex gap-10 justify-between">
+          <span v-else class="items-center flex gap-5 justify-between whitespace-nowrap">
             <span v-if="isYourSignNeeded">
               Your sign needed
             </span>
