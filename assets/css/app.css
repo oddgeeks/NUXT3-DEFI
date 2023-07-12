@@ -78,6 +78,10 @@
     @apply dark:stroke-slate-750 dark:fill-slate-750 fill-slate-150 stroke-slate-150;
   }
 
+  .svg-gray-info > g > path:first-child {
+    @apply stroke-slate-400 fill-slate-400;
+  }
+
   html.dark .loading-box {
     background: linear-gradient(-45deg, #475569, #334155, #334155);
     background-size: 400% 400%;
