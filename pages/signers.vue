@@ -60,7 +60,7 @@ async function handleDeleteSigner() {
   const { success, payload: addresses } = await openDeleteSigner(selectedAddresses.value, selectedChainId.value)
 
   if (success && addresses) {
-    const { payload: threshold, success: thresholdSuccess } = await openUpdateThresholdModal(selectedChainId.value, addresses.length * -1)
+    const { payload: threshold, success: thresholdSuccess } = await openUpdateThresholdModal(selectedChainId.value, addresses.length * -1, true)
 
     if (!thresholdSuccess)
       return
