@@ -39,7 +39,7 @@ export function useNavigation() {
       },
       {
         label: pendingTransactionsLabel,
-        icon: 'SvgoAuthorities',
+        icon: 'SvgoStopwatch',
         to: `/multisig/${safeAddress.value}/pending-transactions`,
         tooltip: pendingTransactionsLabel,
         hidden: !isSafeMultisig.value,
@@ -74,9 +74,9 @@ export function useNavigation() {
       },
       {
         label: 'Signers',
-        icon: 'SvgoAuthorities',
+        icon: 'SvgoUserCircle',
         to: '/signers',
-        tooltip: 'Authorities',
+        tooltip: 'Signers',
         hidden: !isSafeMultisig.value,
       },
     ]
