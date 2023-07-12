@@ -136,8 +136,6 @@ export const useSafe = defineStore('safe', () => {
 
     const cachedSafeAddress = accountSafeMapping.value[account.value]
 
-    console.log('selam', accountSafeMapping)
-
     if ((mainSafeAddress.value || safeAddress.value) && !cachedSafeAddress)
       return
 

@@ -43,6 +43,7 @@ async function handleClick(item: IMultisigTransaction) {
       <span class="flex items-center gap-2.5 whitespace-nowrap w-[120px]">
         <ActionLogo class="shrink-0" :action="actionType" />
         <span>{{ formattedActionType }}</span>
+        <SvgoInfo2 v-if="actionType === 'rejection'" v-tippy="'Executing this will cancel the below transaction(s)'" class="text-slate-500" />
       </span>
       <span class="flex-1 flex-col flex gap-2">
         <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" v-once :key="metadata" class="text-left" compact :chain_id="item.chain_id" :metadata="metadata" />

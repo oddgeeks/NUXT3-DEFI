@@ -303,3 +303,10 @@ export function logBalance(params: ILogBalanceParams) {
 }
 
 export const arrayFormatter = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' })
+
+export function groupBy<T>(array: T[], predicate: (v: T) => string) {
+  return array.reduce((acc, value) => {
+    (acc[predicate(value)] ||= []).push(value)
+    return acc
+  }, {} as { [key: string]: T[] })
+}

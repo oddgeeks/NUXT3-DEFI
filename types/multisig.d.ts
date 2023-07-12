@@ -14,6 +14,7 @@ interface IMultisigTransaction {
   created_at: string
   updated_at: string
   executed_at: any
+  groupKey?: string
 }
 
 interface Confirmation {
@@ -76,8 +77,7 @@ interface TransactionAction extends TransactionsAction {
  chainId: number | string
 }
 
-interface IMultisigTransactionResponse {
-  meta: {
+type ResponseMeta = {
   "total": number,
   "per_page": number,
   "current_page": number,
@@ -88,6 +88,9 @@ interface IMultisigTransactionResponse {
   "next_page_url": string,
   "previous_page_url": string
 }
+
+interface IMultisigTransactionResponse {
+  meta: ResponseMeta
   data: IMultisigTransaction[]
 }
 
