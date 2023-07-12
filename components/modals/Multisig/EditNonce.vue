@@ -179,8 +179,9 @@ function getNonceTooltip(value: number | undefined) {
             {{ shortenHash(rejectionId) }}
           </dd>
         </dl>
-        <span class="text-xs text-slate-400">
+        <span class="text-xs flex items-center gap-2 text-slate-400">
           Note
+          <SvgoInfo2 v-tippy="'Specify any details/instructions you want other signers to read before signing this transaction.'" class="w-4 h-4 text-slate-500" />
         </span>
         <textarea v-model="note" v-focus placeholder="Visible to All signers" class="dark:bg-slate-800 placeholder:text-sm text-sm rounded-[14px] bg-slate-100 py-[15px] px-4 border-0 outline-none focus:border-0 focus:outline-none focus:ring-0" />
       </div>
