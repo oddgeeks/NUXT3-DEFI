@@ -196,7 +196,10 @@ function getNonceTooltip(value: number | undefined) {
       <hr class="border-slate-150 dark:border-slate-800">
       <details ref="detailsRef" class="group px-7.5 py-5">
         <summary class="text-orange-400 flex justify-between text-sm leading-5 cursor-pointer">
-          View transaction breakdown <SvgoChevronDown class="group-open:rotate-180" />
+          <span class="group-open:hidden block">View transaction breakdown</span>
+          <span class="group-open:block hidden">Hide transaction breakdown</span>
+
+          <SvgoChevronDown class="group-open:rotate-180" />
         </summary>
         <div class="mt-5">
           <SimulationDetails

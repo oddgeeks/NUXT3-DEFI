@@ -378,9 +378,10 @@ onUnmounted(() => {
           </div>
         </div>
         <div class="py-7.5 px-7.5">
-          <details class="mb-5">
+          <details class="mb-5 group">
             <summary class="text-primary text-xs leading-5 cursor-pointer">
-              View transaction breakdown
+              <span class="group-open:hidden block">View transaction breakdown</span>
+              <span class="group-open:block hidden">Hide transaction breakdown</span>
             </summary>
             <div class="mt-5">
               <SimulationDetails
