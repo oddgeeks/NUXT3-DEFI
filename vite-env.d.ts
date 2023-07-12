@@ -559,6 +559,7 @@ interface IRequiredSigners {
   chainId: number | string
   requiredSignerCount: number
   signerCount: number
+  signers: string[]
  }
 
 

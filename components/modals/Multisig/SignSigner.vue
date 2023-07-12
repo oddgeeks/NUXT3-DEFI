@@ -20,7 +20,7 @@ async function handleBack() {
       </div>
       <div class="flex flex-col gap-1">
         <h1 class="text-lg leading-10">
-          Sign on all the networks to proceed
+          Sign on networks to proceed
         </h1>
       </div>
     </div>

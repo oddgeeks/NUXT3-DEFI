@@ -29,6 +29,7 @@ export const useMultisig = defineStore('multisig', () => {
           chainId: network.chainId,
           requiredSignerCount: count,
           signerCount: signers.length,
+          signers: selectedSafe.value?.signers[network.chainId] || [],
         }
 
         requiredSignersArr.push(obj)

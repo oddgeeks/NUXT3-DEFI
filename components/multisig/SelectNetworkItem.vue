@@ -1,12 +1,24 @@
 <script setup lang="ts">
+import { getAddress } from 'ethers/lib/utils'
+
 const props = defineProps<{
   network: Network
   selected: boolean
+  addresses: string[]
 }>()
 defineEmits(['onSelect'])
 const { requiredSigners } = storeToRefs(useMultisig())
 
 const signer = computed(() => requiredSigners.value.find((signer: any) => signer.chainId == props.network.chainId))
+
+const disabled = computed(() => {
+  const [address] = props.addresses
+  return props.addresses?.length === 1 && signer.value?.signers.some(i => getAddress(i) === getAddress(address))
+})
+
+const isAddressAlreadyExist = computed(() => {
+  return props.addresses.some(address => signer.value?.signers.some(i => getAddress(i) === getAddress(address)))
+})
 </script>
 
 <template>
@@ -20,10 +32,11 @@ const signer = computed(() => requiredSigners.value.find((signer: any) => signer
           {{ network.name }}
         </div>
         <CommonButton
+          :disabled="disabled"
           :color="selected ? 'white' : 'primary'"
           @click="$emit('onSelect', network.chainId)"
         >
-          {{ selected ? 'Selected' : 'Select' }}
+          {{ disabled ? 'Already Added' : selected ? 'Selected' : 'Select' }}
         </CommonButton>
       </div>
     </div>
@@ -39,5 +52,9 @@ const signer = computed(() => requiredSigners.value.find((signer: any) => signer
         </div>
       </div>
     </template>
+    <span v-if="!disabled && isAddressAlreadyExist" class="text-[10px] p-4 pt-2 text-orange-400 flex items-center gap-2.5">
+      <SvgoInfo2 class="w-4 font-medium" />
+      One of the addresses is already a signer on Polygon & will be skipped.
+    </span>
   </li>
 </template>

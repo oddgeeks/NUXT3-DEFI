@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { getAddress } from 'ethers/lib/utils'
+
 const props = defineProps<{
   addresses: string[]
   chainId: string | number
@@ -10,17 +12,27 @@ const pending = ref(false)
 const signed = ref(false)
 
 const { addSignersWithThreshold } = useAvocadoSafe()
+const { selectedSafe } = storeToRefs(useSafe())
 
 async function handleSign() {
   try {
     pending.value = true
 
-    const { payload, success } = await openUpdateThresholdModal(props.chainId, props.addresses.length)
+    const existingSigners = selectedSafe.value?.signers[props.chainId] || []
+
+    const actualSigners = props.addresses.filter((address: string) => !existingSigners.some(addr => getAddress(address) === getAddress(addr)))
+
+    if (!actualSigners.length) {
+      console.log('No new signers')
+      return
+    }
+
+    const { payload, success } = await openUpdateThresholdModal(props.chainId, actualSigners.length)
 
     if (!success)
       return
 
-    const txHash = await addSignersWithThreshold(props.addresses, payload, props.chainId)
+    const txHash = await addSignersWithThreshold(actualSigners, payload, props.chainId)
 
     if (txHash)
       showPendingTransactionModal(txHash, props.chainId)

@@ -51,7 +51,7 @@ function handleBack() {
           Deployed
         </h2>
         <ul class="mb-4 flex flex-col gap-4">
-          <MultisigSelectNetworkItem v-for="network in deployedNetworks" :key="network.chainId" :selected="isSelected(network.chainId)" :network="network" @on-select="toggleNetworkChainId(network.chainId)" />
+          <MultisigSelectNetworkItem v-for="network in deployedNetworks" :key="network.chainId" :addresses="addresses" :selected="isSelected(network.chainId)" :network="network" @on-select="toggleNetworkChainId(network.chainId)" />
         </ul>
       </template>
       <template v-if="nonDeployedNetworks?.length">
@@ -59,7 +59,7 @@ function handleBack() {
           Not deployed
         </h2>
         <ul class="flex flex-col gap-4 max-h-[210px] scroll-style overflow-auto">
-          <MultisigSelectNetworkItem v-for="network in nonDeployedNetworks" :key="network.chainId" :selected="isSelected(network.chainId)" :network="network" @on-select="toggleNetworkChainId(network.chainId)" />
+          <MultisigSelectNetworkItem v-for="network in nonDeployedNetworks" :key="network.chainId" :addresses="addresses" :selected="isSelected(network.chainId)" :network="network" @on-select="toggleNetworkChainId(network.chainId)" />
         </ul>
       </template>
     </div>

@@ -95,7 +95,7 @@ useIntervalFn(() => {
     <div class="flex flex-col gap-2">
       <div class="flex flex-col gap-5">
         <template v-for="addresses, chainId in selectedSafe?.signers || {}" :key="chainId">
-          <details v-if="addresses.length" open class="rounded-[25px] group dark:bg-gray-850 bg-slate-50">
+          <details v-if="addresses.length" open class="rounded-[25px] group text-sm dark:bg-gray-850 bg-slate-50">
             <summary class="flex justify-between py-6.5 px-7.5 cursor-pointer group-open:border-b-1 last:border-b-0 border-slate-150 dark:border-slate-800 items-center">
               <h2 class="flex items-center gap-3">
                 <ChainLogo class="w-7.5 h-7.5" :chain="chainId" />
