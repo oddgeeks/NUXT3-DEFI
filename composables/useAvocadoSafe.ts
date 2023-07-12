@@ -227,7 +227,7 @@ export function useAvocadoSafe() {
 
     const { success, payload } = await openEditNonceModal({ chainId, actions, defaultNonce: nonce, estimatedFee, rejection, rejectionId })
 
-    const actualNonce = nonce || payload?.nonce
+    const actualNonce = !isUndefined(nonce) ? nonce : payload?.nonce
 
     if (!success)
       throw new Error('Transaction canceled')

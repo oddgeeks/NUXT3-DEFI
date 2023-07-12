@@ -64,6 +64,14 @@ function handleCurrentUpdate(val: number) {
   }
 }
 
+function checkIsGroup(key: string, items: IMultisigTransaction[]) {
+  return key !== '-1' && items.length > 1
+}
+
+function sortItems(items: IMultisigTransaction[]) {
+  return items.sort((a, b) => a.created_at > b.created_at ? -1 : 1)
+}
+
 useIntervalFn(() => {
   refresh()
 }, 15000)
@@ -71,7 +79,7 @@ useIntervalFn(() => {
 
 <template>
   <details v-if="data?.data?.length" ref="containerRef" open class="py-[14px] open:pb-0 group">
-    <summary class="dark:bg-slate-850 bg-slate-150 py-2.5 flex items-center gap-2.5 px-5 text-xs font-medium leading-5 text-slate-400">
+    <summary class="dark:bg-slate-850 bg-slate-150 py-2.5 flex cursor-pointer items-center gap-2.5 px-5 text-xs font-medium leading-5 text-slate-400">
       <ChainLogo class="w-5 h-5" :chain="chainId" />
       {{ chainIdToName(chainId) }}
 
@@ -83,11 +91,11 @@ useIntervalFn(() => {
     <div class="flex flex-col gap-4">
       <ul v-for="items, key in groupedData" :key="key">
         <li>
-          <ul :class="key !== '-1' && items.length > 1 ? 'border rounded-lg border-slate-300 dark:border-slate-700' : ''" class="flex flex-col">
-            <p v-if="key !== '-1' && items.length > 1" class="text-xs p-4 pb-0 font-medium text-slate-400">
+          <ul :class="checkIsGroup(key, items) ? 'rounded-lg border mx-5 mt-5 border-slate-300 dark:border-slate-700' : ''" class="flex flex-col">
+            <p v-if="checkIsGroup(key, items)" class="text-xs p-4 pb-0 font-medium text-slate-400">
               You can complete one of the transactions below. The other will be cancelled automatically.
             </p>
-            <MultisigPendingTransactionItem v-for="item in items" :key="item.id" :active-tab="activeTab" :item="item" />
+            <MultisigPendingTransactionItem v-for="item in sortItems(items)" :key="item.id" :active-tab="activeTab" :item="item" />
           </ul>
         </li>
       </ul>

@@ -130,7 +130,7 @@ function getNonceTooltip(value: number | undefined) {
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <div class="px-7.5 py-5 flex flex-col gap-2.5">
-      <div v-if="!defaultNonce" class="flex flex-col gap-2">
+      <div v-if="!rejection" class="flex flex-col gap-2">
         <span class="text-xs text-slate-400">
           Transaction type
         </span>
