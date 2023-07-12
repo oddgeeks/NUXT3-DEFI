@@ -93,6 +93,6 @@ useIntervalFn(() => {
         <MultisigPendingTransactionItems v-for="network in availableNetworks" :key="network.chainId" :active-tab="activeTab" :chain-id="network.chainId" />
       </div>
     </div>
-    <NuxtPage :page-key="$route.params.id" />
+    <NuxtPage :page-key="String($route.params.id)" />
   </div>
 </template>
