@@ -266,7 +266,7 @@ onUnmounted(() => {
               </span>
             </div>
             <div class="flex justify-between text-sm items-center">
-              <span class="text-slate-400 text-xs">Safe Tx Hash</span>
+              <span class="text-slate-400 text-xs">Avocado Multisig Hash</span>
               <span class="text-sm flex items-center gap-2 font-medium">
                 {{ shortenHash(transaction.id) }}
                 <Copy icon-only :text="transaction.id" />
