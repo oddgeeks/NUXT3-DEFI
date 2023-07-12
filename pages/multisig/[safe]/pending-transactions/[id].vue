@@ -4,13 +4,7 @@ import { isAddress } from 'ethers/lib/utils'
 
 const route = useRoute()
 
-useAccountTrack(undefined, () => {
-  useEagerConnect()
-})
-
 const safe = route.params.safe as string
-
-const status = computed(() => route.query.status || ['pending'])
 
 if (!safe || !isAddress(safe)) {
   throw createError({
@@ -26,7 +20,6 @@ const { data } = useAsyncData<IMultisigTransaction>(`${route.params.safe}+${rout
 
   return data
 }, {
-  watch: [status],
   immediate: true,
 
 })
