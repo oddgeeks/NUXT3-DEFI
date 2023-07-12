@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { formatTimeAgo } from '@vueuse/core'
 import { getAddress } from 'ethers/lib/utils'
+import { AvoMultisigImplementation__factory } from '@/contracts'
 
 const props = defineProps<{
   item: IMultisigTransaction
@@ -16,7 +17,26 @@ const isTransactionExecuted = computed(() => props.item.executed_at !== null)
 const isTransactionFailed = computed(() => props.item.status === 'failed')
 
 const firstActionMetadata = computed<any>(() => {
-  const data = decodeMetadata(props.item.data.params.metadata) as string[]
+  const metadata = props.item.data.params.metadata
+  const data = decodeMetadata(metadata) as string[]
+
+  const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
+  try {
+    for (const action of props.item.data.params.actions) {
+      const payload = avoMultsigInterface.decodeFunctionData('occupyNonSequentialNonces', action.data)
+      if (payload) {
+        const [ids] = payload
+
+        return {
+          type: 'rejection',
+          id: ids[0],
+        }
+      }
+    }
+  }
+  catch (error) {
+    // console.log(error)
+  }
 
   return data?.length ? data[0] : ''
 })
@@ -36,7 +56,7 @@ async function handleClick(item: IMultisigTransaction) {
 
 <template>
   <li class="w-full">
-    <button class="flex focus:outline-none items-center w-full gap-10 text-xs font-medium py-[26px] last:border-b-0 border-b border-slate-150 dark:border-slate-800 px-5" @click="handleClick(item)">
+    <button class="flex focus:outline-none items-center w-full gap-10 text-xs font-medium py-4 last:border-b-0 border-b border-slate-150 dark:border-slate-800 px-5" @click="handleClick(item)">
       <span v-if="activeTab !== 'nonseq'" :class="item.nonce === '-1' ? 'invisible' : ''">
         {{ item.nonce }}
       </span>
