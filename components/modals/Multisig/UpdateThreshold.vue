@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 const props = defineProps<{
   chainId: number | string
   additionalCount: number
+  remove?: boolean
 }>()
 
 defineEmits(['resolve'])
@@ -33,7 +34,12 @@ onMounted(() => {
   <div class="p-7.5">
     <h2>Treshold</h2>
     <h3 class="text-sm text-slate-400 mb-5">
-      Any transaction requires the confirmation of
+      <span v-if="!remove">
+        Any transaction requires the confirmation of
+      </span>
+      <span v-else>
+        After deleting signer(s), any transaction confirmation of
+      </span>
     </h3>
 
     <div class="flex text-sm items-center gap-5">

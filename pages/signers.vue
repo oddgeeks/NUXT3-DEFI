@@ -1,4 +1,9 @@
 <script setup lang="ts">
+interface IAvailableSigner {
+  chainId: string | number
+  addresses: string[]
+}
+
 definePageMeta({
   middleware: 'auth',
 })
@@ -14,6 +19,21 @@ const { changeThreshold, removeSignerWithThreshold } = useAvocadoSafe()
 
 const selectedAddresses = ref<string[]>([])
 const selectedChainId = ref<string | number>()
+
+const availableSigners = computed(() => {
+  const signers = selectedSafe?.value?.signers || {}
+
+  return Object.entries(signers).reduce<IAvailableSigner[]>((acc, [chainId, addresses]) => {
+    if (addresses.length) {
+      acc.push({
+        chainId,
+        addresses,
+      })
+    }
+
+    return acc
+  }, [])
+})
 
 provide('selectedAddresses', selectedAddresses)
 provide('selectedChainId', selectedChainId)
@@ -70,7 +90,6 @@ useIntervalFn(() => {
 <template>
   <div class="flex flex-col gap-10 flex-1">
     <div class="flex flex-col gap-2.5">
-      {{ selectedChainId }}
       <h2 class="text-base">
         Manage Multisig Signers
       </h2>
@@ -78,14 +97,14 @@ useIntervalFn(() => {
         <span class="text-xs text-slate-400 leading-5">
           Signers are addresses that are required to sign transactions before they can be executed on<br> the blockchain.
         </span>
-        <fieldset class="flex items-center gap-7.5">
-          <button class="flex items-center text-xs disabled:text-slate-400 text-primary gap-2.5" @click="openAddSignerModal()">
+        <fieldset class="flex items-center gap-7.5 self-start">
+          <button class="flex items-center text-xs disabled:text-slate-400 text-primary gap-2.5 whitespace-nowrap" @click="openAddSignerModal()">
             <div class="bg-current w-4.5 h-4.5 rounded-full flex">
               <SvgoPlus class="text-white m-auto w-2 h-2" />
             </div>
             Add New Signer
           </button>
-          <button :disabled="!selectedAddresses.length" class="flex disabled:text-slate-400 items-center text-xs text-red-alert gap-2.5" @click="handleDeleteSigner">
+          <button :disabled="!selectedAddresses.length" class="flex whitespace-nowrap disabled:text-slate-400 items-center text-xs text-red-alert gap-2.5" @click="handleDeleteSigner">
             Delete Selected
             <SvgoTrash2 class="w-3.5 h-3.5" />
           </button>
@@ -94,41 +113,41 @@ useIntervalFn(() => {
     </div>
     <div class="flex flex-col gap-2">
       <div class="flex flex-col gap-5">
-        <template v-for="addresses, chainId in selectedSafe?.signers || {}" :key="chainId">
-          <details v-if="addresses.length" open class="rounded-[25px] group text-sm dark:bg-gray-850 bg-slate-50">
+        <template v-for="item, i in availableSigners" :key="item.chainId">
+          <details :open="i === 0" class="rounded-[25px] group text-sm dark:bg-gray-850 bg-slate-50">
             <summary class="flex justify-between py-6.5 px-7.5 cursor-pointer group-open:border-b-1 last:border-b-0 border-slate-150 dark:border-slate-800 items-center">
               <h2 class="flex items-center gap-3">
-                <ChainLogo class="w-7.5 h-7.5" :chain="chainId" />
-                {{ chainIdToName(chainId) }}
+                <ChainLogo class="w-7.5 h-7.5" :chain="item.chainId" />
+                {{ chainIdToName(item.chainId) }}
               </h2>
               <div class="flex flex-1 justify-between gap-[142px] items-center">
                 <div class="flex items-center gap-[100px] flex-1 justify-end text-sm text-slate-400 font-medium">
-                  <div v-if="!getSignerInfo(chainId)" class="loading-box rounded-5 w-36 h-5" />
+                  <div v-if="!getSignerInfo(item.chainId)" class="loading-box rounded-5 w-36 h-5" />
                   <span v-else class="flex items-center gap-2.5">
                     <SvgoUsers />
-                    {{ getSignerInfo(chainId)?.signerCount }} total signers</span>
-                  <div v-if="!getSignerInfo(chainId)" class="loading-box rounded-5 w-36 h-5" />
+                    {{ getSignerInfo(item.chainId)?.signerCount }} total signers</span>
+                  <div v-if="!getSignerInfo(item.chainId)" class="loading-box rounded-5 w-36 h-5" />
                   <span v-else class="flex items-center gap-2.5">
                     <SvgoStamp />
-                    {{ getSignerInfo(chainId)?.requiredSignerCount }} confirmations required</span>
+                    {{ getSignerInfo(item.chainId)?.requiredSignerCount }} confirmations required</span>
                 </div>
                 <SvgoChevronDown class="w-5 text-slate-400 group-open:rotate-180" />
               </div>
             </summary>
-            <MultisigSafeItems :addresses="addresses" :chain-id="chainId" />
+            <MultisigSafeItems :addresses="item.addresses" :chain-id="item.chainId" />
             <div class="flex flex-col gap-4 py-6.5 px-7.5">
               <h2 class="text-xs font-medium text-slate-400">
                 Any transaction requires the confirmation of:
               </h2>
 
-              <div v-if="!getSignerInfo(chainId)" class="loading-box rounded-5 w-36 h-5" />
+              <div v-if="!getSignerInfo(item.chainId)" class="loading-box rounded-5 w-36 h-5" />
 
               <span v-else class="flex items-center gap-2.5">
                 <SvgoUserCircle class="text-slate-400" />
                 <span>
-                  {{ getSignerInfo(chainId)?.requiredSignerCount }} out of {{ getSignerInfo(chainId)?.signerCount }}
+                  {{ getSignerInfo(item.chainId)?.requiredSignerCount }} out of {{ getSignerInfo(item.chainId)?.signerCount }}
                 </span>
-                <button class="text-primary ml-4 text-xs" @click="handleTresholdChange(chainId)">
+                <button class="text-primary ml-4 text-xs" @click="handleTresholdChange(item.chainId)">
                   Change
                 </button>
               </span>
