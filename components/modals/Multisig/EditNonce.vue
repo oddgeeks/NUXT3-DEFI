@@ -13,9 +13,19 @@ const props = defineProps<{
 const emit = defineEmits(['resolve'])
 const { selectedSafe } = storeToRefs(useSafe())
 const { getActualId } = useAvocadoSafe()
+const { requiredSigners } = storeToRefs(useMultisig())
+
 const nonce = ref<number | undefined>(-1)
 const note = ref<string | undefined>(undefined)
 const detailsRef = ref<HTMLDetailsElement>()
+
+const requiredSignersByChain = computed(() => requiredSigners.value.find(i => i.chainId == props.chainId))
+
+const isExecuteReady = computed(() => {
+  if (!requiredSignersByChain.value)
+    return false
+  return requiredSignersByChain.value?.requiredSignerCount === 1
+})
 
 const { data, error, pending: feePending } = useEstimatedFee(ref(props.actions), ref(props.chainId), {
   immediate: true,
@@ -222,8 +232,8 @@ function getNonceTooltip(value: number | undefined) {
     <div v-if="estimatedFee" class="px-7.5 py-5">
       <EstimatedFee :data="data" :loading="feePending" :error="error" />
     </div>
-    <CommonButton :disabled="!!error || feePending" :loading="feePending" class="justify-center mx-7.5 my-5" size="lg" type="submit">
-      Send for Approval
+    <CommonButton :disabled="feePending" :loading="feePending" class="justify-center mx-7.5 my-5" size="lg" type="submit">
+      {{ isExecuteReady ? 'Sign and Execute Transaction' : 'Send for Approval' }}
     </CommonButton>
   </form>
 </template>
