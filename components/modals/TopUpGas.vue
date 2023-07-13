@@ -84,7 +84,9 @@ function getUSDCBalance(chainId: string | number, usdcAddr: string) {
 }
 
 function setMax() {
-  amount.value = token.value!.balance
+  if (!token.value)
+    return
+  amount.value = token.value.balance
 }
 
 const loading = ref(false)
@@ -104,7 +106,7 @@ const onSubmit = handleSubmit(async () => {
   loading.value = true
   try {
     const transferAmount = toBN(amount.value)
-      .times(10 ** token.value.decimals!)
+      .times(10 ** token.value.decimals)
       .toFixed(0)
 
     const tx = {
@@ -119,7 +121,7 @@ const onSubmit = handleSubmit(async () => {
     }
     else {
       const contract = Erc20__factory.connect(
-        token.value.address!,
+        token.value.address,
         library.value,
       )
 
@@ -129,7 +131,7 @@ const onSubmit = handleSubmit(async () => {
       )
 
       tx.data = data!
-      tx.to = token.value.address!
+      tx.to = token.value.address
     }
 
     const metadata = encodeTopupMetadata({
@@ -159,7 +161,7 @@ const onSubmit = handleSubmit(async () => {
 
     emit('destroy')
 
-    showPendingTransactionModal(transactionHash!, token.value.chainId, 'topUpGas')
+    showPendingTransactionModal(transactionHash, token.value.chainId, 'topUpGas')
 
     resetForm()
   }
