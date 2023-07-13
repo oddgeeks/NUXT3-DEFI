@@ -61,6 +61,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
                   'eth_getBalance',
                   'avocado_sendTransaction',
                   'avocado_sendTransactions',
+                  'avocado_getOwner',
                 ],
                 events: ['accountsChanged', 'chainChanged'],
               },
