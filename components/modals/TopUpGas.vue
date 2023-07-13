@@ -136,7 +136,7 @@ const onSubmit = handleSubmit(async () => {
 
     const metadata = encodeTopupMetadata({
       amount: transferAmount,
-      token: token.value.address!,
+      token: token.value.address,
       onBehalf: safeAddress.value,
     })
 
