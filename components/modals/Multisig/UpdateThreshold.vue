@@ -33,24 +33,30 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="p-7.5">
-    <h2 class="mb-2">
-      Threshold
-    </h2>
-    <h3 class="text-sm text-slate-400 mb-5">
-      <span v-if="isRemove">After deleting signer(s), any transaction confirmation of</span>
-      <span v-else-if="isAdd">After adding signer(s), any transaction confirmation of</span>
-      <span v-else>
-        Any transaction requires the confirmation of
-      </span>
-    </h3>
+  <div>
+    <div class="sm:p-7.5 p-6">
+      <h2 class="text-lg">
+        Update Treshold
+      </h2>
+      <h3 class="text-sm text-slate-400">
+        <span v-if="isRemove">After deleting signer(s), any transaction confirmation of</span>
+        <span v-else-if="isAdd">After adding signer(s), any transaction confirmation of</span>
+        <span v-else>
+          Any transaction requires the confirmation of
+        </span>
+      </h3>
+    </div>
 
-    <div class="flex text-sm items-center gap-5">
+    <hr class="border-slate-150 dark:border-slate-800">
+    <div class="flex text-sm items-center gap-5 sm:p-7.5 p-6">
       <CommonSelect v-model="threshold" class="w-[80px]" :options="generateNumber(minCount, maxCount)" />
       Out of {{ maxCount }} signer(s)
     </div>
-    <CommonButton class="w-full justify-center mt-5" size="lg" @click="$emit('resolve', true, defaultThreshold === threshold ? undefined : threshold)">
-      Continue
-    </CommonButton>
+    <hr class="border-slate-150 dark:border-slate-800">
+    <div class="sm:p-7.5 p-6">
+      <CommonButton class="w-full justify-center" size="lg" @click="$emit('resolve', true, defaultThreshold === threshold ? undefined : threshold)">
+        Continue
+      </CommonButton>
+    </div>
   </div>
 </template>

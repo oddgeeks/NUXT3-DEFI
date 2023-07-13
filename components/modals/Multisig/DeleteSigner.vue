@@ -20,11 +20,11 @@ watch(reactiveAddresses, () => {
 
 <template>
   <div class="flex flex-col">
-    <h1 class="text-lg flex gap-[14px] p-7.5">
+    <h1 class="text-lg flex gap-[14px] p-6 sm:p-7.5">
       <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
         1
       </div>
-      <p class="flex flex-col gap-2">
+      <p class="flex flex-col gap-4">
         <span class="leading-[26px]">
           Are you sure you want <br> to delete the following signers from?
 
@@ -34,7 +34,7 @@ watch(reactiveAddresses, () => {
       </p>
     </h1>
     <hr class="border-slate-150 dark:border-slate-800">
-    <ul class="text-sm flex gap-[26px] p-7.5 flex-col">
+    <ul class="text-sm flex gap-[26px] p-6 sm:p-7.5 flex-col">
       <li v-for="address in reactiveAddresses" :key="address" class="flex gap-3 items-center justify-between">
         <div class="flex gap-3 items-center">
           <AuthorityAvatar :address="address" />

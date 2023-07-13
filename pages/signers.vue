@@ -142,7 +142,7 @@ useIntervalFn(() => {
               </div>
             </summary>
             <MultisigSafeItems :addresses="item.addresses" :chain-id="item.chainId" />
-            <div class="flex flex-col gap-4 py-6.5 px-7.5">
+            <div class="flex flex-col gap-4 px-[18px] py-5 sm:py-6.5 sm:px-7.5">
               <h2 class="text-xs font-medium text-slate-400">
                 Any transaction requires the confirmation of:
               </h2>

@@ -104,7 +104,7 @@ async function handleSelectContact(key: number) {
       </div>
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
-    <div class="p-7.5 flex flex-col sm:gap-5 gap-7.5">
+    <div class="sm:p-7.5 p-5 flex flex-col sm:gap-5 gap-7.5">
       <div
         v-for="field, key in fields"
         :key="key"
