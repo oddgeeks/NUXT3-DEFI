@@ -64,6 +64,7 @@ const { handleSubmit, errors, meta, resetForm } = useForm({
 const { value: amount, meta: amountMeta } = useField<string>('amount')
 const { value: id, setValue } = useField<string>(
   'id',
+  {},
   { initialValue: usdcTokens.value[0].id },
 )
 
