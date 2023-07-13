@@ -22,7 +22,7 @@ const errorMessage = computed(() => {
 </script>
 
 <template>
-  <div class="flex items-center justify-between py-6.5 px-7.5 border-b-1 last:border-b-0 border-slate-150 dark:border-slate-800 w-full">
+  <div class="flex items-center justify-between p-[18px] sm:py-6.5 sm:px-7.5 border-b-1 last:border-b-0 border-slate-150 dark:border-slate-800 w-full">
     <div class="flex items-center justify-between w-full">
       <div class="flex items-center sm:gap-5 gap-3 flex-1 flex-wrap">
         <AuthorityAvatar
@@ -32,7 +32,11 @@ const errorMessage = computed(() => {
         <span class="sm:block hidden">
           {{ address }}
         </span>
-        <span class="dark:text-white text-xs text-slate-900 sm:hidden block sm:ml-0 ml-2.5">{{ shortenHash(address) }}</span>
+        <span class="dark:text-white text-xs flex text-slate-900 sm:hidden flex-col sm:ml-0 ml-2.5">
+          <span v-if="owner" class="text-slate-400">
+            Owner
+          </span>
+          {{ shortenHash(address) }}</span>
         <Copy icon-only :text="address">
           <template #copy>
             <div
@@ -47,7 +51,7 @@ const errorMessage = computed(() => {
           <SvgoExternalLink class="text-slate-400 w-4" />
         </NuxtLink>
 
-        <span v-if="owner">
+        <span v-if="owner" class="sm:block hidden">
           (Owner)
         </span>
       </div>

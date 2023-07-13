@@ -88,12 +88,12 @@ useIntervalFn(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-10 flex-1">
+  <div class="flex flex-col sm:gap-10 gap-5 flex-1">
     <div class="flex flex-col gap-2.5">
       <h2 class="text-base">
         Manage Multisig Signers
       </h2>
-      <div class="flex justify-between">
+      <div class="flex justify-between flex-wrap gap-5">
         <span class="text-xs text-slate-400 leading-5">
           Signers are addresses that are required to sign transactions before they can be executed on<br> the blockchain.
         </span>
@@ -115,23 +115,30 @@ useIntervalFn(() => {
       <div class="flex flex-col gap-5">
         <template v-for="item, i in availableSigners" :key="item.chainId">
           <details :open="i === 0" class="rounded-[25px] group text-sm dark:bg-gray-850 bg-slate-50">
-            <summary class="flex justify-between py-6.5 px-7.5 cursor-pointer group-open:border-b-1 last:border-b-0 border-slate-150 dark:border-slate-800 items-center">
-              <h2 class="flex items-center gap-3">
+            <summary class="flex justify-between flex-wrap sm:gap-0 gap-4.5 p-[18px] sm:py-6.5 sm:px-7.5 cursor-pointer group-open:border-b-1 last:border-b-0 border-slate-150 dark:border-slate-800 items-center">
+              <h2 class="flex items-center gap-3 sm:w-auto w-full">
                 <ChainLogo class="w-7.5 h-7.5" :chain="item.chainId" />
                 {{ chainIdToName(item.chainId) }}
+                <SvgoChevronDown class="w-5 shrink-0 sm:hidden block ml-auto text-slate-400 group-open:rotate-180" />
               </h2>
-              <div class="flex flex-1 justify-between gap-[142px] items-center">
-                <div class="flex items-center gap-[100px] flex-1 justify-end text-sm text-slate-400 font-medium">
+              <div class="flex flex-wrap flex-1 justify-between sm:gap-[142px] items-center">
+                <div class="flex items-center sm:gap-[100px] gap-5 flex-1 justify-end text-sm text-slate-400 font-medium">
                   <div v-if="!getSignerInfo(item.chainId)" class="loading-box rounded-5 w-36 h-5" />
                   <span v-else class="flex items-center gap-2.5">
-                    <SvgoUsers />
-                    {{ getSignerInfo(item.chainId)?.signerCount }} total signers</span>
+                    <SvgoUsers class="shrink-0" />
+                    {{ getSignerInfo(item.chainId)?.signerCount }}
+                    <span class="sm:block hidden">total signers</span>
+                    <span class="sm:hidden block whitespace-nowrap">total sign.</span>
+                  </span>
                   <div v-if="!getSignerInfo(item.chainId)" class="loading-box rounded-5 w-36 h-5" />
                   <span v-else class="flex items-center gap-2.5">
                     <SvgoStamp />
-                    {{ getSignerInfo(item.chainId)?.requiredSignerCount }} confirmations required</span>
+                    {{ getSignerInfo(item.chainId)?.requiredSignerCount }}
+                    <span class="sm:block hidden">confirmations required</span>
+                    <span class="sm:hidden block whitespace-nowrap">confirm. req.</span>
+                  </span>
                 </div>
-                <SvgoChevronDown class="w-5 text-slate-400 group-open:rotate-180" />
+                <SvgoChevronDown class="w-5 hidden sm:block shrink-0 text-slate-400 group-open:rotate-180" />
               </div>
             </summary>
             <MultisigSafeItems :addresses="item.addresses" :chain-id="item.chainId" />
@@ -142,7 +149,7 @@ useIntervalFn(() => {
 
               <div v-if="!getSignerInfo(item.chainId)" class="loading-box rounded-5 w-36 h-5" />
 
-              <span v-else class="flex items-center gap-2.5">
+              <span v-else class="flex items-center gap-2.5 sm:text-sm text-xs">
                 <SvgoUserCircle class="text-slate-400" />
                 <span>
                   {{ getSignerInfo(item.chainId)?.requiredSignerCount }} out of {{ getSignerInfo(item.chainId)?.signerCount }}

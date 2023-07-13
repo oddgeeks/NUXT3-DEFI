@@ -21,18 +21,24 @@ watch(reactiveAddresses, () => {
 <template>
   <div class="flex flex-col">
     <h1 class="text-lg flex gap-[14px] p-7.5">
-      <SvgoTrash class="w-10 h-10" />
-      <span>
-        Are you sure you want to delete the following signers from
-        <ChainLogo class="w-5 h-5 shrink-0 inline-block" :chain="chainId" />  {{ chainIdToName(chainId) }}?
-      </span>
+      <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
+        1
+      </div>
+      <p class="flex flex-col gap-2">
+        <span class="leading-[26px]">
+          Are you sure you want <br> to delete the following signers from?
+
+        </span>
+        <span class="block sm:text-sm text-xs text-slate-400 font-medium">
+          On <ChainLogo class="w-5 h-5 shrink-0 inline-block" :chain="chainId" />  {{ chainIdToName(chainId) }}</span>
+      </p>
     </h1>
     <hr class="border-slate-150 dark:border-slate-800">
     <ul class="text-sm flex gap-[26px] p-7.5 flex-col">
       <li v-for="address in reactiveAddresses" :key="address" class="flex gap-3 items-center justify-between">
         <div class="flex gap-3 items-center">
           <AuthorityAvatar :address="address" />
-          <span class="text-slate-400 font-medium">
+          <span style="overflow-wrap: anywhere" class="text-slate-400 font-medium">
             {{ address }}
           </span>
         </div>
