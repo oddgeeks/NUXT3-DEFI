@@ -368,20 +368,22 @@ export function useAvocadoSafe() {
     return currentNonce
   }
 
-  async function addSignersWithThreshold(addresses: string[], threshold: string, chainId: number | string) {
+  async function addSignersWithThreshold(addresses: ISignerAddress[], threshold: string, chainId: number | string) {
     const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
+
+    const signers = addresses.map(address => address.address)
 
     const metadata = threshold
       ? encodeMultipleActions(
-        encodeAddSignersMetadata(addresses, false),
+        encodeAddSignersMetadata(signers, false),
         encodeChangeThresholdMetadata(threshold, false),
       )
-      : encodeAddSignersMetadata(addresses)
+      : encodeAddSignersMetadata(signers)
 
     const actions = [
       {
         target: selectedSafe.value?.safe_address,
-        data: avoMultsigInterface.encodeFunctionData('addSigners', [addresses]),
+        data: avoMultsigInterface.encodeFunctionData('addSigners', [signers]),
         value: '0',
         operation: '0',
       },

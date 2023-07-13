@@ -2,7 +2,7 @@
 import { getAddress } from 'ethers/lib/utils'
 
 const props = defineProps<{
-  addresses: string[]
+  addresses: ISignerAddress[]
   chainId: string | number
 }>()
 
@@ -13,6 +13,7 @@ const signed = ref(false)
 
 const { addSignersWithThreshold } = useAvocadoSafe()
 const { selectedSafe } = storeToRefs(useSafe())
+const { addContact, safeContacts } = useContacts()
 
 async function handleSign() {
   try {
@@ -20,7 +21,7 @@ async function handleSign() {
 
     const existingSigners = selectedSafe.value?.signers[props.chainId] || []
 
-    const actualSigners = props.addresses.filter((address: string) => !existingSigners.some(addr => getAddress(address) === getAddress(addr)))
+    const actualSigners = props.addresses.filter(address => !existingSigners.some(addr => getAddress(address.address) === getAddress(addr)))
 
     if (!actualSigners.length) {
       console.log('No new signers')
@@ -33,6 +34,18 @@ async function handleSign() {
       return
 
     const txHash = await addSignersWithThreshold(actualSigners, payload, props.chainId)
+
+    for (const signer of actualSigners) {
+      const contact = safeContacts.value.find(contact => getAddress(contact.address) === getAddress(signer.address))
+
+      if (!contact) {
+        addContact({
+          address: signer.address,
+          name: signer.name,
+          chainId: '', // all chains
+        })
+      }
+    }
 
     if (txHash)
       showPendingTransactionModal(txHash, props.chainId)

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { getAddress } from 'ethers/lib/utils'
+import { Tippy } from 'vue-tippy'
 
 const props = defineProps<{
   network: Network
   selected: boolean
-  addresses: string[]
+  addresses: ISignerAddress[]
 }>()
 defineEmits(['onSelect'])
 const { requiredSigners } = storeToRefs(useMultisig())
@@ -13,11 +14,11 @@ const signer = computed(() => requiredSigners.value.find((signer: any) => signer
 
 const disabled = computed(() => {
   const [address] = props.addresses
-  return props.addresses?.length === 1 && signer.value?.signers.some(i => getAddress(i) === getAddress(address))
+  return props.addresses?.length === 1 && signer.value?.signers.some(i => getAddress(i) === getAddress(address.address))
 })
 
 const isAddressAlreadyExist = computed(() => {
-  return props.addresses.some(address => signer.value?.signers.some(i => getAddress(i) === getAddress(address)))
+  return props.addresses.some(address => signer.value?.signers.some(i => getAddress(i) === getAddress(address.address)))
 })
 </script>
 
@@ -46,6 +47,19 @@ const isAddressAlreadyExist = computed(() => {
         <div class="flex items-center gap-2.5">
           <SvgoUserCircle class="w-4 h-4 text-slate-400" />
           {{ signer?.signerCount }} existing signers
+          <Tippy max-width="none" interactive tag="button" content-tag="div" content-class="content-wrapper">
+            <template #default>
+              <SvgoInfo2 class="text-slate-500" />
+            </template>
+            <template #content>
+              <ul class="flex flex-col gap-2.5">
+                <li v-for="address in signer.signers" :key="address" class="flex text-xs items-center gap-2.5">
+                  <AuthorityAvatar class="shrink-0 w-5 h-5" :address="address" />
+                  {{ address }}
+                </li>
+              </ul>
+            </template>
+          </Tippy>
         </div>
         <div class="text-slate-400">
           Threshold:  {{ signer?.requiredSignerCount }}  out of  {{ signer?.signerCount }}

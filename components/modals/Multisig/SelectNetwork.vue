@@ -2,7 +2,7 @@
 import { major } from 'semver'
 
 const props = defineProps<{
-  addresses: string[]
+  addresses: ISignerAddress[]
 }>()
 
 const emit = defineEmits(['destroy', 'resolve'])
@@ -38,9 +38,12 @@ function handleBack() {
 <template>
   <form @submit.prevent="handleSubmit">
     <div class="flex gap-[14px] p-7.5">
-      <div class="flex flex-col gap-1">
+      <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
+        3
+      </div>
+      <div class="flex gap-1">
         <h1>
-          Select on required network to proceed further
+          Select networks where new signers will be added
         </h1>
       </div>
     </div>

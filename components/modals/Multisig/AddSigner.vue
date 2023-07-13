@@ -2,16 +2,14 @@
 import * as yup from 'yup'
 import { isAddress } from '@ethersproject/address'
 import { useFieldArray, useForm } from 'vee-validate'
-import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
-  addresses?: string[]
+  addresses?: ISignerAddress[]
   defaultTreshold?: number
 }>()
 
 const emit = defineEmits(['destroy'])
 
-const { signers } = storeToRefs(useMultisig())
 const { account } = useWeb3()
 
 const {
@@ -21,48 +19,51 @@ const {
 } = useForm({
   validationSchema: yup.object({
     addresses: yup
-      .array(yup.string()
-        .required('')
-        .test('is-valid-address', 'Incorrect address', (value) => {
-          return value ? isAddress(value || '') : true
-        })
-        .test(
-          'duplicate-address',
-          'Signer already added',
-          (value) => {
-            if (!isAddress(value || ''))
+      .array(yup.object({
+        name: yup.string()
+          .required(''),
+        address: yup.string()
+          .required('')
+          .test('is-valid-address', 'Incorrect address', (value) => {
+            return value ? isAddress(value || '') : true
+          })
+          .test(
+            'duplicate-address',
+            'Signer already added',
+            (value) => {
+              if (!isAddress(value || ''))
+                return true
+
+              const fieldCount = fields.value.filter(field => field.value.address.toLowerCase() === value?.toLowerCase())
+
+              if (fieldCount?.length > 1)
+                return false
+
               return true
-
-            const fieldCount = fields.value.filter(field => field.value.toLowerCase() === value?.toLowerCase())
-
-            if (fieldCount?.length > 1)
-              return false
-
-            return true
-          },
-        )
-        .test(
-          'cannot-add-self',
-          'Cannot add self as signer',
-          (value) => {
-            if (!isAddress(value || ''))
-              return true
-            return account.value?.toLowerCase() !== value?.toLowerCase()
-          },
-        )),
+            },
+          )
+          .test(
+            'cannot-add-self',
+            'Cannot add self as signer',
+            (value) => {
+              if (!isAddress(value || ''))
+                return true
+              return account.value?.toLowerCase() !== value?.toLowerCase()
+            },
+          ),
+      })),
 
   }),
   initialValues: {
-    addresses: props.addresses || [''],
+    addresses: props.addresses || [{ address: '', name: '' }],
   },
 })
 
-const { fields, push, update, remove } = useFieldArray<string>('addresses')
+const { fields, push, update, remove } = useFieldArray<ISignerAddress>('addresses')
 
 const disabled = computed(() => !meta.value.valid)
 
-function getErrorMessage(errors: any, key: number | string) {
-  const errorKey = `addresses[${key}]`
+function getErrorMessage(errors: any, errorKey: string) {
   return errors ? errors[errorKey] : null
 }
 
@@ -79,7 +80,10 @@ async function handleSelectContact(key: number) {
   if (result.success) {
     const _contact = result.payload as IContact
 
-    update(key, _contact.address)
+    update(key, {
+      address: _contact.address,
+      name: _contact.name,
+    })
   }
 }
 </script>
@@ -104,41 +108,56 @@ async function handleSelectContact(key: number) {
       <div
         v-for="field, key in fields"
         :key="key"
-        class="flex flex-col gap-2"
+        class="flex gap-5"
       >
-        <div class="flex justify-between items-center w-full">
-          <span class="text-xs font-medium leading-5 text-slate-400">
-            Signer address
-          </span>
-          <button
-            v-if="key !== 0" class="h-5 w-5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
-            @click="remove(key as number)"
-          >
-            <SvgoX class="w-3 h-3" />
-          </button>
+        <div class="flex flex-col gap-2">
+          <div class="flex justify-between items-center w-full">
+            <span class="text-xs font-medium leading-5 text-slate-400">
+              Signer name
+            </span>
+          </div>
+          <CommonInput
+            v-model="field.value.name"
+            autofocus
+            :name="`addresses[${key}].name`"
+            placeholder="Signer Name"
+            :error-message="getErrorMessage(errors, `addresses[${key}].name`)"
+          />
         </div>
-        <CommonInput
-          v-model="field.value"
-          autofocus
-          name="addresses"
-          placeholder="Enter Address"
-          :error-message="getErrorMessage(errors, key)"
-        >
-          <template #suffix>
+        <div class="flex flex-col gap-2">
+          <div class="flex justify-between items-center w-full">
+            <span class="text-xs font-medium leading-5 text-slate-400">
+              Signer address
+            </span>
             <button
-              v-tippy="{
-                content: 'Select contact',
-              }"
-              type="button"
-              class="ml-3"
-              @click="handleSelectContact(field.key as number)"
+              v-if="key !== 0" class="h-5 w-5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
+              @click="remove(key as number)"
             >
-              <SvgoContact />
+              <SvgoX class="w-3 h-3" />
             </button>
-          </template>
-        </CommonInput>
+          </div>
+          <CommonInput
+            v-model="field.value.address"
+            :name="`addresses[${key}].address`"
+            :error-message="getErrorMessage(errors, `addresses[${key}].address`)"
+            placeholder="Enter Address"
+          >
+            <template #suffix>
+              <button
+                v-tippy="{
+                  content: 'Select contact',
+                }"
+                type="button"
+                class="ml-3"
+                @click="handleSelectContact(field.key as number)"
+              >
+                <SvgoContact />
+              </button>
+            </template>
+          </CommonInput>
+        </div>
       </div>
-      <button class="flex items-center text-primary gap-3 text-xs" @click="push('')">
+      <button class="flex items-center text-primary gap-3 text-xs" @click="push({ address: '', name: '' })">
         <div class="bg-primary w-4 h-4 rounded-full flex">
           <SvgoPlus class="text-white m-auto w-2 h-2" />
         </div>

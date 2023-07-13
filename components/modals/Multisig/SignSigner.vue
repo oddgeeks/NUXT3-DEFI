@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 const props = defineProps<{
-  addresses: string[]
+  addresses: ISignerAddress[]
   chainIds: number[]
 }>()
 

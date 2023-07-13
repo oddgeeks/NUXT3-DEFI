@@ -2,7 +2,7 @@
 import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
-  addresses: string[]
+  addresses: ISignerAddress[]
 }>()
 
 const emit = defineEmits(['destroy'])
@@ -64,12 +64,13 @@ async function handleNext() {
           </td>
           <td>
             <ul class="flex flex-col gap-5">
-              <li v-for="address in addresses" :key="address" class="flex gap-3 items-center">
-                <AuthorityAvatar :address="address" />
+              <li v-for="address in addresses" :key="address.address" class="flex gap-3 items-center">
+                <AuthorityAvatar :address="address.address" />
+                ({{ address.name }})
                 <span class="text-slate-400">
-                  {{ shortenHash(address) }}
+                  {{ shortenHash(address.address) }}
                 </span>
-                <Copy icon-only :text="address" />
+                <Copy icon-only :text="address.address" />
               </li>
             </ul>
           </td>

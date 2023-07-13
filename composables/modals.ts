@@ -433,7 +433,7 @@ export function openAddAuthorityModal() {
   })
 }
 
-export function openAddSignerModal(addresses?: string[], treshold?: number) {
+export function openAddSignerModal(addresses?: ISignerAddress[], treshold?: number) {
   return openModal({
     component: AddSigner,
     componentProps: {
@@ -447,7 +447,7 @@ export function openAddSignerModal(addresses?: string[], treshold?: number) {
   })
 }
 
-export function openReviewSignerModal(addresses: string[]) {
+export function openReviewSignerModal(addresses: ISignerAddress[]) {
   return openModal({
     component: ReviewSigner,
     componentProps: {
@@ -460,7 +460,7 @@ export function openReviewSignerModal(addresses: string[]) {
   })
 }
 
-export function openSignSignerModal(addresses: string[], chainIds: number[]) {
+export function openSignSignerModal(addresses: ISignerAddress[], chainIds: number[]) {
   return openModal({
     component: SignSigner,
     componentProps: {
@@ -608,7 +608,7 @@ export async function openMultisigTransactionDetails(transaction: IMultisigTrans
   })
 }
 
-export function openMultisigSelectNetworkModal(addresses: string[]) {
+export function openMultisigSelectNetworkModal(addresses: ISignerAddress[]) {
   return openModal({
     component: MultisigSelectNetwork,
     componentProps: {

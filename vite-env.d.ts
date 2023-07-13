@@ -589,3 +589,8 @@ interface IAuthorityTx {
 
 type ChainFees = Record<string, ICalculatedFee>
 type ChainFeeErrors = Record<string, string>
+
+interface ISignerAddress {
+  name: string
+  address: string
+}
