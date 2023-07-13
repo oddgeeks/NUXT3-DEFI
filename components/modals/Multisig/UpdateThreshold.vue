@@ -4,7 +4,6 @@ import { storeToRefs } from 'pinia'
 const props = defineProps<{
   chainId: number | string
   additionalCount: number
-  remove?: boolean
 }>()
 
 defineEmits(['resolve'])
@@ -22,6 +21,9 @@ const maxCount = computed(() => (requiredSignersByChain.value?.signerCount || 1)
 
 const availableThresholds = computed(() => generateNumber(minCount, maxCount.value))
 
+const isRemove = computed(() => toBN(props.additionalCount).lt(0))
+const isAdd = computed(() => toBN(props.additionalCount).gt(0))
+
 onMounted(() => {
   const isValueNotExist = !availableThresholds.value.some(i => i == threshold.value)
 
@@ -36,11 +38,10 @@ onMounted(() => {
       Threshold
     </h2>
     <h3 class="text-sm text-slate-400 mb-5">
-      <span v-if="!remove">
-        Any transaction requires the confirmation of
-      </span>
+      <span v-if="isRemove">After deleting signer(s), any transaction confirmation of</span>
+      <span v-else-if="isAdd">After adding signer(s), any transaction confirmation of</span>
       <span v-else>
-        After deleting signer(s), any transaction confirmation of
+        Any transaction requires the confirmation of
       </span>
     </h3>
 

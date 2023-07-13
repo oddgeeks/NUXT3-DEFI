@@ -559,13 +559,12 @@ export function openSignAuthorityModal(authority: IAuthority, transactions: IAut
   })
 }
 
-export function openUpdateThresholdModal(chainId: number | string, additionalCount: number, remove = false) {
+export function openUpdateThresholdModal(chainId: number | string, additionalCount: number) {
   return openModal({
     component: UpdateThreshold,
     componentProps: {
       chainId,
       additionalCount,
-      remove,
     },
     options: {
       contentClass: '!p-0',
