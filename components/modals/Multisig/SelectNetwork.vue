@@ -48,7 +48,7 @@ function handleBack() {
       </div>
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
-    <div class="p-7.5">
+    <div class="sm:p-7.5 py-5 px-6">
       <template v-if="deployedNetworks?.length">
         <h2 class="text-sm mb-4">
           Deployed

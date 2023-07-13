@@ -43,8 +43,8 @@ const isAddressAlreadyExist = computed(() => {
     </div>
     <template v-if="signer">
       <hr class="border-slate-150 dark:border-slate-800">
-      <div class="flex p-3 items-center text-xs justify-between">
-        <div class="flex items-center gap-2.5">
+      <div class="flex sm:items-center text-xs justify-between sm:flex-row flex-col">
+        <div class="flex sm:p-3 p-4 items-center gap-2.5">
           <SvgoUserCircle class="w-4 h-4 text-slate-400" />
           {{ signer?.signerCount }} existing signers
           <Tippy max-width="none" interactive tag="button" content-tag="div" content-class="content-wrapper">
@@ -61,7 +61,8 @@ const isAddressAlreadyExist = computed(() => {
             </template>
           </Tippy>
         </div>
-        <div class="text-slate-400">
+        <hr class="border-slate-150 sm:hidden block dark:border-slate-800">
+        <div class="text-slate-400 sm:p-3 p-4">
           Threshold:  {{ signer?.requiredSignerCount }}  out of  {{ signer?.signerCount }}
         </div>
       </div>

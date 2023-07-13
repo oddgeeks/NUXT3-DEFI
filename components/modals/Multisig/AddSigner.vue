@@ -104,16 +104,16 @@ async function handleSelectContact(key: number) {
       </div>
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
-    <div class="p-7.5 flex flex-col gap-5">
+    <div class="p-7.5 flex flex-col sm:gap-5 gap-7.5">
       <div
         v-for="field, key in fields"
         :key="key"
-        class="flex gap-5"
+        class="flex gap-5 sm:flex-row flex-col"
       >
         <div class="flex flex-col gap-2">
           <div class="flex justify-between items-center w-full">
             <span class="text-xs font-medium leading-5 text-slate-400">
-              Signer name
+              <span class="sm:hidden inline">{{ key + 1 }}</span> Signer name
             </span>
           </div>
           <CommonInput
