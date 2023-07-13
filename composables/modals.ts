@@ -433,12 +433,12 @@ export function openAddAuthorityModal() {
   })
 }
 
-export function openAddSignerModal(addresses?: ISignerAddress[], treshold?: number) {
+export function openAddSignerModal(addresses?: ISignerAddress[], threshold?: number) {
   return openModal({
     component: AddSigner,
     componentProps: {
       addresses,
-      defaultTreshold: treshold,
+      defaultThreshold: threshold,
     },
     options: {
       wrapperClass: 'max-w-[560px]',

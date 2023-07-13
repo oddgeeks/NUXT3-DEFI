@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 export function useNavigation() {
-  const { account } = useWeb3()
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { safeAddress } = useAvocadoSafe()
 
@@ -61,7 +60,7 @@ export function useNavigation() {
         icon: 'SvgoCalendar',
         external: true,
         target: '_blank',
-        to: `${avoExplorerURL}/address/${account.value}`,
+        to: `${avoExplorerURL}/address/${safeAddress.value}`,
         tooltip: 'History',
       },
 

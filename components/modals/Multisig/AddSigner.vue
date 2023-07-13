@@ -5,7 +5,7 @@ import { useFieldArray, useForm } from 'vee-validate'
 
 const props = defineProps<{
   addresses?: ISignerAddress[]
-  defaultTreshold?: number
+  defaultThreshold?: number
 }>()
 
 const emit = defineEmits(['destroy'])

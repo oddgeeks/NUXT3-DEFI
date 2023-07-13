@@ -33,7 +33,7 @@ onMounted(() => {
 <template>
   <div class="p-7.5">
     <h2 class="mb-2">
-      Treshold
+      Threshold
     </h2>
     <h3 class="text-sm text-slate-400 mb-5">
       <span v-if="!remove">
