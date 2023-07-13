@@ -21,7 +21,7 @@ export function useContacts() {
   })
 
   const safeContacts = computed(() => {
-    if (!safeAddress.value)
+    if (!safeAddress.value || !ownerContact.value)
       return []
 
     const _contacts = contacts.value[safeAddress.value] || []
