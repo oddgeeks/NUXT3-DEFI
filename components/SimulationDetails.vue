@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-defineProps<{
+const props = defineProps<{
   details: ISimulation
   chainId: string
   hasError: boolean
@@ -7,6 +7,14 @@ defineProps<{
   itemClass?: string
   titleHidden?: boolean
 }>()
+
+const noBreakdownAvailable = computed(() => {
+  const details = props.details
+
+  return details.balanceChange.approveTokens?.length === 0
+    && details.balanceChange.receiveTokens?.length === 0
+    && details.balanceChange.sendTokens?.length === 0
+})
 </script>
 
 <template>
@@ -23,7 +31,12 @@ defineProps<{
       Transaction Breakdown
     </h1>
 
+    <p v-if="noBreakdownAvailable" class="text-slate-400 font-medium text-xs">
+      No breakdown available
+    </p>
+
     <ul
+      v-else
       :class="wrapperClass"
       class="grid grid-cols-1 sm:grid-cols-2 -mr-3 gap-x-[10px] gap-y-5 scroll-style max-h-[239px] overflow-y-auto"
     >
