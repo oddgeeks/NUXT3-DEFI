@@ -269,6 +269,10 @@ export async function openUpgradeModal(network: NetworkVersion) {
     componentProps: {
       network,
     },
+    options: {
+      contentClass: 'sm:!p-7.5',
+      wrapperClass: '!max-w-[510px]',
+    },
   })
 }
 
