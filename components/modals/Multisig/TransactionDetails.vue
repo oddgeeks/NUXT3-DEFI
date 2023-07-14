@@ -219,7 +219,7 @@ onUnmounted(() => {
   <div>
     <div class="flex sm:flex-row flex-col">
       <div class="flex-1 border-r dark:border-slate-800 border-slate-150">
-        <div class="flex flex-col max-h-[710px] overflow-auto scroll-style">
+        <div class="flex flex-col sm:max-h-[710px] overflow-auto scroll-style">
           <div class="sm:p-7.5 p-5 border-b dark:border-slate-800 border-slate-150">
             <div class="flex justify-between sm:flex-row flex-col sm:gap-0 gap-5">
               <div class="flex gap-4">
