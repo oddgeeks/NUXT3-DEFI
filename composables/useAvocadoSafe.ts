@@ -16,7 +16,7 @@ export function useAvocadoSafe() {
   const { selectedSafe } = storeToRefs(useSafe())
   const { clearAllModals } = useModal()
 
-  const { isSafeMultisig } = storeToRefs(useMultisig())
+  const { isSafeMultisig, requiredSigners } = storeToRefs(useMultisig())
 
   // check if we have a cached safe address
   const { safeAddress, mainSafeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks, multiSigSafeAddress } = storeToRefs(useSafe())
@@ -371,6 +371,8 @@ export function useAvocadoSafe() {
   async function addSignersWithThreshold(addresses: ISignerAddress[], threshold: string, chainId: number | string) {
     const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
 
+    const currentThreshold = requiredSigners.value.find(i => i.chainId == chainId)?.requiredSignerCount
+
     const signers = addresses.map(address => address.address)
 
     const metadata = threshold
@@ -389,13 +391,21 @@ export function useAvocadoSafe() {
       },
     ] as any[]
 
-    if (threshold) {
-      actions.push({
+    if (threshold && currentThreshold) {
+      const isThresholdIncreased = toBN(threshold).gt(currentThreshold)
+
+      const action = {
         target: selectedSafe.value?.safe_address,
         data: avoMultsigInterface.encodeFunctionData('setRequiredSigners', [threshold]),
         value: '0',
         operation: '0',
-      })
+      }
+
+      if (isThresholdIncreased)
+        actions.push(action)
+
+      else
+        actions.unshift(action)
     }
 
     return createProposalOrSignDirecty({ chainId, actions, clearModals: false, estimatedFee: true, metadata })
@@ -420,6 +430,8 @@ export function useAvocadoSafe() {
   async function removeSignerWithThreshold(addresses: string[], chainId: number | string, threshold: number) {
     const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
 
+    const currentThreshold = requiredSigners.value.find(i => i.chainId == chainId)?.requiredSignerCount
+
     const metadata = encodeRemoveSignersMetadata(addresses)
 
     const actions: any[] = [
@@ -431,13 +443,21 @@ export function useAvocadoSafe() {
       },
     ]
 
-    if (threshold) {
-      actions.push({
+    if (threshold && currentThreshold) {
+      const isThresholdIncreased = toBN(threshold).gt(currentThreshold)
+
+      const action = {
         target: selectedSafe.value?.safe_address,
         data: avoMultsigInterface.encodeFunctionData('setRequiredSigners', [threshold]),
         value: '0',
         operation: '0',
-      })
+      }
+
+      if (isThresholdIncreased)
+        actions.push(action)
+
+      else
+        actions.unshift(action)
     }
 
     return createProposalOrSignDirecty({ chainId, actions, clearModals: false, estimatedFee: true, metadata })

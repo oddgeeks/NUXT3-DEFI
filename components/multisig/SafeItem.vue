@@ -19,6 +19,17 @@ const errorMessage = computed(() => {
   if (isDisabled.value)
     return 'Deselect current chain addresses to select a different chain'
 })
+
+function handleInput() {
+  if (!selectedAddresses?.value)
+    return
+
+  if (selectedAddresses?.value.includes(props.address))
+    selectedAddresses.value = selectedAddresses.value.filter(address => address !== props.address)
+
+  else
+    selectedAddresses.value = [...selectedAddresses.value, props.address]
+}
 </script>
 
 <template>
@@ -58,9 +69,9 @@ const errorMessage = computed(() => {
       <label
         v-if="!owner" v-tippy="{
           content: errorMessage || null,
-        }" :for="`input${address}`"
+        }" :for="`input-${address}-${chainId}`"
       >
-        <input :id="`input${address}`" v-model="selectedAddresses" :disabled="isDisabled" :value="address" class="peer sr-only" type="checkbox" @change="selectedChainId = chainId">
+        <input :id="`input-${address}-${chainId}`" :disabled="isDisabled" :value="address" class="peer sr-only" type="checkbox" @change="selectedChainId = chainId" @input="handleInput">
         <SvgoCheckCircle class="svg-circle cursor-pointer darker text-slate-500 peer-checked:success-circle" />
       </label>
     </div>
