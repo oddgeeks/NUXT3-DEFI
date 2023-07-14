@@ -78,7 +78,7 @@ useIntervalFn(() => {
 </script>
 
 <template>
-  <details v-if="data?.data?.length" ref="containerRef" open class="py-[14px] open:pb-0 group">
+  <details v-if="data?.data?.length" ref="containerRef" open class="sm:py-[14px] sm:open:pb-0 group">
     <summary class="dark:bg-slate-850 bg-slate-150 py-2.5 flex cursor-pointer items-center gap-2.5 px-5 text-xs font-medium leading-5 text-slate-400">
       <ChainLogo class="w-5 h-5" :chain="chainId" />
       {{ chainIdToName(chainId) }}
@@ -88,11 +88,11 @@ useIntervalFn(() => {
       />
     </summary>
 
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-4 sm:p-5 p-5">
       <ul v-for="items, key in groupedData" :key="key">
         <li>
-          <ul :class="checkIsGroup(key, items) ? 'rounded-lg border mx-5 mt-5 border-slate-300 dark:border-slate-700' : ''" class="flex flex-col">
-            <p v-if="checkIsGroup(key, items)" class="text-xs p-4 pb-0 font-medium text-slate-400">
+          <ul :class="checkIsGroup(key, items) ? 'rounded-lg p-4 sm:p-0 border sm:block flex gap-5 flex-col sm:mx-5 sm:mt-5 border-slate-300 dark:border-slate-700' : ''" class="flex flex-col">
+            <p v-if="checkIsGroup(key, items)" class="text-xs sm:p-4 sm:pb-0 font-medium text-slate-400">
               You can complete one of the transactions below. The other will be cancelled automatically.
             </p>
             <MultisigPendingTransactionItem v-for="item in sortItems(items)" :key="item.id" :active-tab="activeTab" :item="item" />
@@ -100,6 +100,6 @@ useIntervalFn(() => {
         </li>
       </ul>
     </div>
-    <Pagination :auto-navigate="false" :current="data.meta.current_page" :limit="data.meta.per_page" :total="data.meta.total" @update:current="handleCurrentUpdate" />
+    <Pagination class="sm:px-0 px-4" :auto-navigate="false" :current="data.meta.current_page" :limit="data.meta.per_page" :total="data.meta.total" @update:current="handleCurrentUpdate" />
   </details>
 </template>

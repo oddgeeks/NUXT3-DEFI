@@ -217,11 +217,11 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <div class="flex">
+    <div class="flex sm:flex-row flex-col">
       <div class="flex-1 border-r dark:border-slate-800 border-slate-150">
         <div class="flex flex-col max-h-[710px] overflow-auto scroll-style">
-          <div class="p-7.5 border-b dark:border-slate-800 border-slate-150">
-            <div class="flex justify-between">
+          <div class="sm:p-7.5 p-5 border-b dark:border-slate-800 border-slate-150">
+            <div class="flex justify-between sm:flex-row flex-col sm:gap-0 gap-5">
               <div class="flex gap-4">
                 <div class="w-14 h-14 rounded-full items-center flex justify-center bg-primary">
                   <ActionLogo class="!text-white !w-7.5 !h-7.5" :action="actionType" />
@@ -233,41 +233,41 @@ onUnmounted(() => {
                   <span class="text-sm font-medium text-slate-400 inline-flex items-center gap-2">On <ChainLogo class="w-4 h-4" :chain="transaction.chain_id" /> {{ chainIdToName(transaction.chain_id) }}</span>
                 </div>
               </div>
-              <div class="flex flex-col gap-1.5">
-                <p class="font-medium leading-[30px]">
+              <div class="flex items-center gap-2.5 sm:gap-1.5 sm:flex-col sm:justify-normal justify-between">
+                <p class="font-medium leading-[30px] whitespace-nowrap">
                   Created {{ formatTimeAgo(new Date(transaction.created_at)) }}
                 </p>
-                <time class="text-xs text-slate-400 text-right leading-5" :datetime="transaction.created_at">
+                <time class="text-xs text-slate-400 sm:text-right leading-5 whitespace-nowrap" :datetime="transaction.created_at">
                   {{ formatted }}
                 </time>
               </div>
             </div>
           </div>
-          <div v-if="decodedMetadata" class="p-7.5 border-b dark:border-slate-800 border-slate-150">
+          <div v-if="decodedMetadata" class="sm:p-7.5 p-5 border-b dark:border-slate-800 border-slate-150">
             <div v-once class="flex">
               <ActionMetadata v-for="metadata in decodedMetadata" :key="metadata" compact class="text-xs" :chain_id="transaction.chain_id" :metadata="metadata" />
             </div>
           </div>
-          <div class="p-7.5 flex-col gap-4 flex border-b dark:border-slate-800 border-slate-150">
-            <div v-if="proposalOwnerAddress" class="flex justify-between text-sm items-center">
+          <div class="sm:p-7.5 p-5 flex-col gap-5 flex border-b dark:border-slate-800 border-slate-150">
+            <div v-if="proposalOwnerAddress" class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
               <span class="text-slate-400 text-xs">Proposal Creator</span>
               <NuxtLink target="_blank" :to="getExplorerUrl(transaction.chain_id, `/address/${proposalOwnerAddress}`)" class="text-sm text-primary">
                 {{ shortenHash(proposalOwnerAddress) }}
               </NuxtLink>
             </div>
-            <div v-if="transaction.transaction_hash" class="flex justify-between text-sm items-center">
+            <div v-if="transaction.transaction_hash" class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
               <span class="text-slate-400 text-xs">Transaction Hash</span>
               <NuxtLink target="_blank" :to="`${avoExplorerURL}/tx/${transaction.transaction_hash}`" class="text-sm text-primary">
                 {{ shortenHash(transaction.transaction_hash) }}
               </NuxtLink>
             </div>
-            <div v-if="transaction.note" class="flex justify-between text-sm items-center">
+            <div v-if="transaction.note" class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
               <span class="text-slate-400 text-xs">Note</span>
               <span class="text-sm">
                 {{ transaction.note }}
               </span>
             </div>
-            <div class="flex justify-between text-sm items-center">
+            <div class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
               <span class="text-slate-400 text-xs">Avocado Multisig Hash</span>
               <span class="text-sm flex items-center gap-2 font-medium">
                 {{ shortenHash(transaction.id) }}
@@ -287,17 +287,17 @@ onUnmounted(() => {
             </div>
           </div>
           <div class="flex flex-col py-5">
-            <span class="px-7.5 text-sm mb-5">
+            <span class="sm:px-7.5 px-5 text-sm mb-5">
               Actions ({{ transaction.data.params.actions.length }})
             </span>
             <template v-for="action in transaction.data.params.actions" :key="action.data">
-              <details open class="group px-7.5">
+              <details open class="group px-5 sm:px-7.5">
                 <summary class="text-xs flex items-center justify-between cursor-pointer">
-                  <dl class="flex w-full justify-between text-xs">
+                  <dl class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center w-full">
                     <dt class="text-slate-400">
                       Target
                     </dt>
-                    <dd class="flex justify-between items-center gap-2 break-all w-[420px]">
+                    <dd class="flex justify-between items-center gap-2 break-all sm:w-[420px]">
                       {{ action.target }}
                       <SvgoChevronDown
                         class="w-5 text-slate-400 group-open:rotate-180"
@@ -310,27 +310,27 @@ onUnmounted(() => {
                     <SvgoInfo2 class="text-slate-500" />
                     This is a delegate call transaction
                   </div>
-                  <dl class="flex justify-between text-xs">
+                  <dl class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
                     <dt class="text-slate-400">
                       Data
                     </dt>
-                    <dd class="flex items-center gap-2 break-all w-[420px]">
+                    <dd class="flex items-center gap-2 break-all sm:w-[420px]">
                       {{ action.data }}
                     </dd>
                   </dl>
-                  <dl class="flex justify-between text-xs">
+                  <dl class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
                     <dt class="text-slate-400">
                       Operation
                     </dt>
-                    <dd class="flex items-center gap-2 break-all w-[420px]">
+                    <dd class="flex items-center gap-2 break-all sm:w-[420px]">
                       {{ action.operation }}
                     </dd>
                   </dl>
-                  <dl class="flex justify-between text-xs">
+                  <dl class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
                     <dt class="text-slate-400">
                       Value
                     </dt>
-                    <dd class="flex items-center gap-2 break-all w-[420px]">
+                    <dd class="flex items-center gap-2 break-all sm:w-[420px]">
                       {{ action.value }}
                     </dd>
                   </dl>
@@ -342,8 +342,8 @@ onUnmounted(() => {
         </div>
       </div>
       <div class="sm:w-[340px]">
-        <div class="p-7.5">
-          <div class="flex flex-col gap-1.5">
+        <div class="sm:p-7.5 p-5 flex">
+          <div class="flex sm:gap-1.5 flex-col gap-2">
             <span class="leading-[30px]">
               Signers
             </span>
@@ -355,7 +355,7 @@ onUnmounted(() => {
             </span>
           </div>
         </div>
-        <div class="pb-7.5 px-7.5 border-b dark:border-slate-800 border-slate-150">
+        <div class="sm:pb-7.5 pb-5 sm:px-7.5 px-5 border-b dark:border-slate-800 border-slate-150">
           <ul class="flex gap-5 flex-col">
             <li v-for="signer in transaction.confirmations" :key="signer.address">
               <div class="flex gap-3 items-center">
@@ -379,7 +379,7 @@ onUnmounted(() => {
             {{ confirmationNeeded }} more confirmations needed for execution
           </div>
         </div>
-        <div class="py-7.5 px-7.5">
+        <div class="sm:p-7.5 p-5">
           <details class="mb-5 group">
             <summary class="text-primary text-xs leading-5 cursor-pointer flex items-center justify-between">
               <span class="group-open:hidden block">View transaction breakdown</span>

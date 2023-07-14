@@ -41,11 +41,13 @@ const tabs = computed(() => {
       value: 'nonseq',
       query: 'nonseq',
       label: `Non-Sequential (${nonSeqResponse.value?.meta?.total || 0})`,
+      mobileLabel: 'Non-Seq',
       title: 'Non-Sequential transactions can be executed in any order.',
     },
     {
       value: 'seq',
       query: 'seq',
+      mobileLabel: 'Seq',
       label: `Sequential (${seqResponse.value?.meta?.total || 0})`,
       title: 'Sequential transactions need to be executed in the order they were proposed in.',
     },
@@ -72,11 +74,11 @@ useIntervalFn(() => {
 <template>
   <div class="flex-1">
     <div class="flex flex-col gap-5">
-      <h1>
+      <h1 class="text-center sm:text-left">
         Transactions
       </h1>
 
-      <div class="bg-slate-50 dark:bg-gray-850 rounded-10 p-1.5 flex w-fit">
+      <div class="bg-slate-50 dark:bg-gray-850 rounded-10 p-1.5 flex w-fit sm:self-baseline self-center">
         <button
           v-for="tab in tabs"
           :key="tab.label"
@@ -86,14 +88,15 @@ useIntervalFn(() => {
           class="px-4 justify-center flex-1 text-xs rounded-7.5 whitespace-nowrap py-2 laeding-5 flex items-center"
           @click="$router.replace({ query: { tab: tab.query } })"
         >
-          {{ tab.label }}
+          <span class="sm:block hidden"> {{ tab.label }}</span>
+          <span class="sm:hidden block"> {{ tab.mobileLabel || tab.label }}</span>
         </button>
       </div>
 
-      <h2 v-if="title" class="text-xs">
+      <h2 v-if="title" class="text-xs leading-5 sm:text-left text-center">
         {{ title }}
       </h2>
-      <div class="dark:bg-gray-850 bg-slate-50 rounded-[25px] overflow-hidden">
+      <div class="sm:dark:bg-gray-850 sm:bg-slate-50 sm:rounded-[25px] sm:gap-0 gap-5 flex flex-col overflow-hidden sm:mx-0 -mx-4">
         <MultisigPendingTransactionItems v-for="network in availableNetworks" :key="network.chainId" :active-tab="activeTab" :chain-id="network.chainId" />
       </div>
     </div>
