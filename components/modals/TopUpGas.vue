@@ -248,7 +248,7 @@ onMounted(() => {
         <span class="text-left leading-5 text-sm sm:text-base">Network</span>
         <CommonSelect
           v-model="id"
-          label-key="network"
+          label-key="name"
           value-key="id"
           item-wrapper-classes="!items-baseline"
           :options="usdcTokens"
@@ -257,7 +257,7 @@ onMounted(() => {
             <ChainLogo v-if="token" class="w-6 h-6" :chain="token.chainId" />
           </template>
           <template #item-prefix="{ value }">
-            <ChainLogo v-if="getToken(value)" class="w-6 h-6" :chain="getToken(value).chainId" />
+            <ChainLogo v-if="getToken(value)" class="w-6 h-6 flex-shrink-0" :chain="getToken(value).chainId" />
           </template>
           <template #item="{ label, item }">
             <div class="flex flex-col gap-1 mb-auto text-sm sm:text-base">
