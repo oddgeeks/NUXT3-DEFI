@@ -1810,9 +1810,9 @@
     ethers "^5.7.2"
 
 "@instadapp/avocado-dev@npm:@instadapp/avocado@dev":
-  version "0.0.0-dev.cac30a0"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.cac30a0.tgz#baff59ff0ff6dabeaa9f4e48912b1eded6dacad9"
-  integrity sha512-e0R7J+2ftXW1I/FEUO/b5TZAWvWzbIkofyhWSyEJ2TMJokILCkJor9/hKv39LmMD8m/sQOqUM2sQYpvpVq5dpA==
+  version "0.0.0-dev.c866841"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.c866841.tgz#30fc4f079492639c761cf45b37fe2600be6cded4"
+  integrity sha512-C6POqmmPg3w9KUPE/nviuhsEdCeUo3QVc/ynWhL8J1ku6Qoc4UffEtwE+ZO34kcohUYXkDgJRH5BfbRK8CmZJA==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
@@ -1825,7 +1825,7 @@
     semver "^7.3.8"
     tiny-warning "^1.0.3"
 
-"@instadapp/avocado@^0.1.13":
+"@instadapp/avocado@^0.1.14":
   version "0.1.14"
   resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.1.14.tgz#18ec9b9fff4fd3e0129a38aed4131f07744efa38"
   integrity sha512-BLmIHfjnwJ1cH+79tQ+Unytex9QtP295Q8XRJc5jv/vSjXya93Cexql4DwPkcmguzHV75wiqEpRmT9SIGvPVIQ==
@@ -8509,9 +8509,9 @@ minizlib@^2.1.1:
     yallist "^4.0.0"
 
 mitt@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/mitt/-/mitt-3.0.0.tgz#69ef9bd5c80ff6f57473e8d89326d01c414be0bd"
-  integrity sha512-7dX2/10ITVyqh4aOSVI9gdape+t9l2/8QxHrFmUXu4EEUpdlxl6RudZUPZoc+zuY2hk1j7XxVroIVIan/pD/SQ==
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/mitt/-/mitt-3.0.1.tgz#ea36cf0cc30403601ae074c8f77b7092cdab36d1"
+  integrity sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==
 
 mkdirp-promise@4:
   version "4.0.1"
