@@ -26,6 +26,7 @@ const pendingGasAmount = useNuxtData('pending-deposit')
 
 const usdcTokens = computed(() => {
   return chainUsdcAddresses
+    .filter(usdc => usdc.chainId != 250)
     .map((usdc: any) => {
       const tk = getTokenByAddress(usdc.address, usdc.chainId)!
       return {
@@ -264,7 +265,7 @@ onMounted(() => {
           </template>
           <template #item="{ label, item }">
             <div class="flex flex-col gap-1 mb-auto text-sm sm:text-base">
-              <span>{{ label }}</span>
+              <span class="text-sm">{{ label }}</span>
               <span class="text-sm text-gray-400 font-medium">
                 {{ formatDecimal(item.balance) }} {{ item.symbol.toUpperCase() }}
               </span>
