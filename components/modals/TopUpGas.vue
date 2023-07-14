@@ -6,6 +6,7 @@ import { getAddress } from 'ethers/lib/utils'
 import GasSVG from '~/assets/images/icons/gas.svg?component'
 import { Erc20__factory } from '~~/contracts'
 import LinkSVG from '~/assets/images/icons/external-link.svg?component'
+import type { IToken } from '~/stores/tokens'
 
 const emit = defineEmits(['destroy'])
 
@@ -13,19 +14,25 @@ const { library, account } = useWeb3()
 const { sendTransaction, tokenBalances, safeAddress }
   = useAvocadoSafe()
 const { parseTransactionError } = useErrorHandler()
+const { getTokenByAddress } = useTokens()
 const [isGiftActive, toggleGift] = useToggle(false)
 
 const { gasBalance } = storeToRefs(useSafe())
+function computeId(usdc: IToken) {
+  return `${usdc.address}-${usdc.name}-${usdc.chainId}`
+}
 
 const pendingGasAmount = useNuxtData('pending-deposit')
 
-const networks = computed(() => {
-  return availableNetworks
-    .map(network => ({
-      ...network,
-      balance: getUSDCByChainId(network.chainId)?.balance,
+const usdcTokens = computed(() => {
+  return chainUsdcAddresses
+    .map((usdc: any) => ({
+      id: computeId(getTokenByAddress(usdc.address, usdc.chainId)!),
+      ...getTokenByAddress(usdc.address, usdc.chainId),
+      balance: getUSDCBalance(usdc.chainId, usdc.address)?.balance,
+      network: chainIdToName(usdc.chainId),
     }))
-    .sort((a, b) => toBN(b.balance).minus(a.balance).toNumber())
+    .sort((a: any, b: any) => toBN(b.balance).minus(a.balance).toNumber())
 })
 
 const { handleSubmit, errors, meta, resetForm } = useForm({
@@ -34,8 +41,8 @@ const { handleSubmit, errors, meta, resetForm } = useForm({
       .string()
       .required('')
       .test('min-amount', '', (value, { createError }) => {
-        const amount = toBN(value)
-        const minAmount = String(chainId.value) == '1' ? '5' : '0.01'
+        const amount = toBN(value!)
+        const minAmount = String(token.value?.chainId) == '1' ? '5' : '0.01'
 
         return amount.gt(minAmount) || !value
           ? true
@@ -50,24 +57,26 @@ const { handleSubmit, errors, meta, resetForm } = useForm({
 
         return amount.gt(0) ? amount.lte(balance) : true
       }),
-    chainId: yup.number().integer().required(),
+    id: yup.string().required(),
   }),
 })
 
 const { value: amount, meta: amountMeta } = useField<string>('amount')
-const { value: chainId, setValue } = useField<number>(
-  'chainId',
+const { value: id, setValue } = useField<string>(
+  'id',
   {},
-  { initialValue: 137 },
+  { initialValue: usdcTokens.value[0].id },
 )
 
+console.log(id.value)
+
 // TODO:
-const token = computed(() => getUSDCByChainId(String(chainId.value)))
+const token = computed(() => usdcTokens.value.find((tk: any) => tk.id === id.value))
+function getToken(tokenId: string) {
+  return usdcTokens.value.find((tk: any) => tk.id === tokenId)
+}
 
-function getUSDCByChainId(chainId: string | number) {
-  const usdcAddr = availableNetworks.find(i => String(i.chainId) == chainId)
-    ?.usdcAddress as string
-
+function getUSDCBalance(chainId: string | number, usdcAddr: string) {
   return tokenBalances.value.find(
     t =>
       t.chainId == chainId
@@ -76,7 +85,9 @@ function getUSDCByChainId(chainId: string | number) {
 }
 
 function setMax() {
-  amount.value = token.value!.balance
+  if (!token.value)
+    return
+  amount.value = token.value.balance
 }
 
 const loading = ref(false)
@@ -133,7 +144,7 @@ const onSubmit = handleSubmit(async () => {
     const transactionHash = await sendTransaction(
       {
         ...tx,
-        chainId: chainId.value,
+        chainId: token.value.chainId,
       },
       {
         metadata,
@@ -144,14 +155,14 @@ const onSubmit = handleSubmit(async () => {
       action: 'topup',
       message: `${amount.value} ${formatSymbol('usdc')}`,
       account: account.value,
-      chainId: String(chainId.value),
+      chainId: String(token.value.chainId),
       txHash: transactionHash,
       amountInUsd: amount.value,
     })
 
     emit('destroy')
 
-    showPendingTransactionModal(transactionHash, chainId.value, 'topUpGas')
+    showPendingTransactionModal(transactionHash, token.value.chainId, 'topUpGas')
 
     resetForm()
   }
@@ -177,9 +188,9 @@ const onSubmit = handleSubmit(async () => {
 })
 
 onMounted(() => {
-  const mostBalancedChain = networks.value[0]?.chainId
+  const mostBalancedChain = usdcTokens.value[0].id
   if (mostBalancedChain)
-    setValue(Number(mostBalancedChain))
+    setValue(mostBalancedChain)
 })
 </script>
 
@@ -236,23 +247,23 @@ onMounted(() => {
       <div class="flex flex-col gap-2.5">
         <span class="text-left leading-5 text-sm sm:text-base">Network</span>
         <CommonSelect
-          v-model="chainId"
+          v-model="id"
           label-key="name"
-          value-key="chainId"
+          value-key="id"
           item-wrapper-classes="!items-baseline"
-          :options="networks"
+          :options="usdcTokens"
         >
           <template #button-prefix>
-            <ChainLogo class="w-6 h-6" :chain="chainId" />
+            <ChainLogo v-if="token" class="w-6 h-6" :chain="token.chainId" />
           </template>
           <template #item-prefix="{ value }">
-            <ChainLogo class="w-6 h-6" :chain="value" />
+            <ChainLogo v-if="getToken(value)" class="w-6 h-6 flex-shrink-0" :chain="getToken(value).chainId" />
           </template>
           <template #item="{ label, item }">
             <div class="flex flex-col gap-1 mb-auto text-sm sm:text-base">
               <span>{{ label }}</span>
               <span class="text-sm text-gray-400 font-medium">
-                {{ formatDecimal(item.balance) }} USDC
+                {{ formatDecimal(item.balance) }} {{ item.symbol.toUpperCase() }}
               </span>
             </div>
           </template>
