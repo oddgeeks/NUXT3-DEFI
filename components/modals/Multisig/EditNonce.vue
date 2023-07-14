@@ -139,7 +139,7 @@ function getNonceTooltip(value: number | undefined) {
       </div>
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
-    <div class="px-7.5 py-5 flex flex-col gap-2.5">
+    <div class="sm:px-7.5 px-5 py-5 flex flex-col gap-2.5">
       <div v-if="!rejection" class="flex flex-col gap-2">
         <span class="text-xs text-slate-400">
           Transaction type
@@ -198,14 +198,14 @@ function getNonceTooltip(value: number | undefined) {
     </div>
     <template v-if="!estimatedFee">
       <hr class="border-slate-150 dark:border-slate-800">
-      <div class="px-7.5 py-5 text-sm flex justify-between items-center">
+      <div class="sm:px-7.5 px-5 py-5 text-sm flex justify-between items-center">
         Simulate Transaction
         <button :disabled="pending" type="button" class="text-primary disabled:text-slate-400" @click="handleSimulate">
           Simulate
         </button>
       </div>
       <hr class="border-slate-150 dark:border-slate-800">
-      <details ref="detailsRef" class="group px-7.5 py-5">
+      <details ref="detailsRef" class="group sm:px-7.5 px-5 py-5">
         <summary class="text-orange-400 flex justify-between text-sm leading-5 cursor-pointer">
           <span class="group-open:hidden block">View transaction breakdown</span>
           <span class="group-open:block hidden">Hide transaction breakdown</span>
@@ -229,7 +229,7 @@ function getNonceTooltip(value: number | undefined) {
       </details>
     </template>
     <hr class="border-slate-150 dark:border-slate-800">
-    <div v-if="estimatedFee" class="px-7.5 py-5">
+    <div v-if="estimatedFee" class="sm:px-7.5 px-5 py-5">
       <EstimatedFee :data="data" :loading="feePending" :error="error" />
     </div>
     <CommonButton :disabled="feePending" :loading="feePending" class="justify-center mx-7.5 my-5" size="lg" type="submit">

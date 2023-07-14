@@ -14,7 +14,7 @@ async function handleBack() {
 
 <template>
   <div>
-    <div class="flex gap-[14px] p-7.5">
+    <div class="flex gap-[14px] sm:p-7.5 p-5">
       <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
         3
       </div>

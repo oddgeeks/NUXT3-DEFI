@@ -78,7 +78,7 @@ useIntervalFn(() => {
 </script>
 
 <template>
-  <details v-if="data?.data?.length" ref="containerRef" open class="sm:py-[14px] sm:open:pb-0 group">
+  <details v-if="data?.data?.length" ref="containerRef" open class="sm:pb-[14px] sm:first:pt-[14px] sm:open:pb-0 group">
     <summary class="dark:bg-slate-850 bg-slate-150 py-2.5 flex cursor-pointer items-center gap-2.5 px-5 text-xs font-medium leading-5 text-slate-400">
       <ChainLogo class="w-5 h-5" :chain="chainId" />
       {{ chainIdToName(chainId) }}
@@ -88,7 +88,7 @@ useIntervalFn(() => {
       />
     </summary>
 
-    <div class="flex flex-col gap-4 sm:p-5 p-5">
+    <div class="flex flex-col sm:gap-0 gap-4 sm:p-0 p-5">
       <ul v-for="items, key in groupedData" :key="key">
         <li>
           <ul :class="checkIsGroup(key, items) ? 'rounded-lg p-4 sm:p-0 border sm:block flex gap-5 flex-col sm:mx-5 sm:mt-5 border-slate-300 dark:border-slate-700' : ''" class="flex flex-col">

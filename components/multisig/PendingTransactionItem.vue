@@ -58,7 +58,7 @@ async function handleClick(item: IMultisigTransaction) {
   <li class="w-full">
     <button class="w-full" @click="handleClick(item)">
       <div class="hidden sm:flex focus:outline-none items-center w-full gap-10 text-xs font-medium py-4 last:border-b-0 border-b border-slate-150 dark:border-slate-800 px-5">
-        <span v-if="activeTab !== 'nonseq'" :class="item.nonce === '-1' ? 'invisible' : ''">
+        <span v-if="activeTab !== 'nonseq'" :class="item.nonce === '-1' ? 'hidden' : ''">
           {{ item.nonce }}
         </span>
         <span class="flex items-center gap-2.5 whitespace-nowrap w-[120px]">

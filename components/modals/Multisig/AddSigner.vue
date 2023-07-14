@@ -90,7 +90,7 @@ async function handleSelectContact(key: number) {
 
 <template>
   <form @submit="onSubmit">
-    <div class="flex gap-[14px] p-7.5">
+    <div class="flex gap-[14px] sm:p-7.5 p-5">
       <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
         1
       </div>
@@ -127,7 +127,7 @@ async function handleSelectContact(key: number) {
         <div class="flex flex-col gap-2">
           <div class="flex justify-between items-center w-full">
             <span class="text-xs font-medium leading-5 text-slate-400">
-              Signer address
+              <span class="sm:hidden inline">{{ key + 1 }}</span> Signer Address
             </span>
             <button
               v-if="key !== 0" class="h-5 w-5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
