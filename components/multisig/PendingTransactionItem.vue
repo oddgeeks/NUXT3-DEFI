@@ -57,11 +57,11 @@ async function handleClick(item: IMultisigTransaction) {
 <template>
   <li class="w-full">
     <button class="w-full" @click="handleClick(item)">
-      <div class="hidden sm:flex focus:outline-none items-center w-full gap-10 text-xs font-medium py-4 last:border-b-0 border-b border-slate-150 dark:border-slate-800 px-5">
-        <span v-if="activeTab !== 'nonseq'" :class="item.nonce === '-1' ? 'hidden' : ''">
-          {{ item.nonce }}
-        </span>
-        <span class="flex items-center gap-2.5 whitespace-nowrap w-[120px]">
+      <div class="hidden grid-row sm:grid grid-item focus:outline-none items-center w-full text-xs font-medium py-4 last:border-b-0 border-b border-slate-150 dark:border-slate-800 px-5">
+        <span class="flex items-center gap-2.5 whitespace-nowrap">
+          <span v-if="activeTab !== 'nonseq'" :class="item.nonce === '-1' ? 'hidden' : ''">
+            {{ item.nonce }}
+          </span>
           <ActionLogo class="shrink-0" :action="actionType" />
           <span>{{ formattedActionType }}</span>
           <SvgoInfo2 v-if="actionType === 'rejection'" v-tippy="'Executing this will cancel transaction(s)'" class="text-slate-500" />
@@ -163,3 +163,10 @@ async function handleClick(item: IMultisigTransaction) {
     </button>
   </li>
 </template>
+
+<style scoped>
+.grid-item {
+  grid-template-columns: 160px 1fr 100px 160px 200px;
+  @apply gap-8;
+}
+</style>
