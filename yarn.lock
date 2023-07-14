@@ -1826,10 +1826,10 @@
     semver "^7.3.8"
     tiny-warning "^1.0.3"
 
-"@instadapp/avocado@^0.1.14":
-  version "0.1.14"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.1.14.tgz#18ec9b9fff4fd3e0129a38aed4131f07744efa38"
-  integrity sha512-BLmIHfjnwJ1cH+79tQ+Unytex9QtP295Q8XRJc5jv/vSjXya93Cexql4DwPkcmguzHV75wiqEpRmT9SIGvPVIQ==
+"@instadapp/avocado@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.2.0.tgz#4a1b6fb4801fada1419270a4d4a66d2151e17cbe"
+  integrity sha512-8TxWOFjJZU3LjU+3+aNYuZlGfQUzA1lrNNjDgh78FlxjFBVNeTh6cazN05laF2FyLts/w8V9oZ80muhQnfFW/A==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
