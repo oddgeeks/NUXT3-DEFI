@@ -1801,19 +1801,18 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@instadapp/avocado-base@0.0.41":
-  version "0.0.41"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado-base/-/avocado-base-0.0.41.tgz#bed28d824fe24a1de736d6ffb3d5e6cc8f4ee9b6"
-  integrity sha512-f4BEHc9UOzh9S6TDOmRqyRS/Akxa1IznZWWs12mNgI8wBkhmsBVUALi5gpsLUEKRxSsgQge//3kIJN+wLgSwNA==
+"@instadapp/avocado-base@0.0.30":
+  version "0.0.30"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado-base/-/avocado-base-0.0.30.tgz#258a632ae8bb5706a920275cef502a16c6cc6701"
+  integrity sha512-tDoGtgmgnd0ekQhVMuWBfG7c1BFE1CObwYZE0dMYPKwvliEyorxDArLC770Ipj0CSTJ/EETfYVFR+0S9Q/R2cw==
   dependencies:
-    "@vueuse/nuxt" "^10.2.0"
     bignumber.js "^9.1.1"
     ethers "^5.7.2"
 
 "@instadapp/avocado-dev@npm:@instadapp/avocado@dev":
-  version "0.0.0-dev.a4ba06c"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.a4ba06c.tgz#9ec394911ee17faed3d1096d0f376a7cfb107f4c"
-  integrity sha512-87sOQVo+uu/NtgzpiaBCQUKAi71Lga1xbF6AN9J1bBP24JXVJsaJ8r7IEpBYsFJ5paD1/tO/q7yCVljBezjSLw==
+  version "0.0.0-dev.c72d149"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.c72d149.tgz#9d45a55f999aba00bc7cc9a868d8847d05ff429f"
+  integrity sha512-oIWy1o7WHmcVtMhr8wF8BS9lHf4WMBxvo4p3YwJYdb2g120EbKIdX/W6YE0gNSHw4GdQMi6GR9UxmngfalUzwg==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
@@ -1826,10 +1825,10 @@
     semver "^7.3.8"
     tiny-warning "^1.0.3"
 
-"@instadapp/avocado@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.2.0.tgz#4a1b6fb4801fada1419270a4d4a66d2151e17cbe"
-  integrity sha512-8TxWOFjJZU3LjU+3+aNYuZlGfQUzA1lrNNjDgh78FlxjFBVNeTh6cazN05laF2FyLts/w8V9oZ80muhQnfFW/A==
+"@instadapp/avocado@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.2.1.tgz#bf8c4bfd638a41fcedd1ab7b5196b9065dd7823f"
+  integrity sha512-fs4ouxS5yXBRW9GBCnWzXZzp90z/j6UpcuTPm76skrjhGjamSyHiJdKPg0zipn8/bTFdL0sp9fT7h5L7GOHnag==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
@@ -3373,7 +3372,7 @@
   resolved "https://registry.yarnpkg.com/@vueuse/metadata/-/metadata-10.2.1.tgz#0865066def62ed97629c417ec79678d508d22934"
   integrity sha512-3Gt68mY/i6bQvFqx7cuGBzrCCQu17OBaGWS5JdwISpMsHnMKKjC2FeB5OAfMcCQ0oINfADP3i9A4PPRo0peHdQ==
 
-"@vueuse/nuxt@^10.1.2", "@vueuse/nuxt@^10.2.0":
+"@vueuse/nuxt@^10.1.2":
   version "10.2.1"
   resolved "https://registry.yarnpkg.com/@vueuse/nuxt/-/nuxt-10.2.1.tgz#96a4e0a8dc1f1410b1ade5a1d7c4a7ae943a8f26"
   integrity sha512-01iDXnjZFDaGZnEL0nvlmSTNV0EG6WY+VSFyWnBji9lbxdQwOn4DHvLou3ePe8ipaoQVtY58WcL0OHIFa4+fBA==
