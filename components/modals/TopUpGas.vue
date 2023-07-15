@@ -26,12 +26,16 @@ const pendingGasAmount = useNuxtData('pending-deposit')
 
 const usdcTokens = computed(() => {
   return chainUsdcAddresses
-    .map((usdc: any) => ({
-      id: computeId(getTokenByAddress(usdc.address, usdc.chainId)!),
-      ...getTokenByAddress(usdc.address, usdc.chainId),
-      balance: getUSDCBalance(usdc.chainId, usdc.address)?.balance,
-      network: chainIdToName(usdc.chainId),
-    }))
+    .filter(usdc => usdc.chainId != 250)
+    .map((usdc: any) => {
+      const tk = getTokenByAddress(usdc.address, usdc.chainId)!
+      return {
+        id: computeId(tk),
+        ...tk,
+        name: `${tk.name} (${chainIdToName(usdc.chainId)})`,
+        balance: getUSDCBalance(usdc.chainId, usdc.address)?.balance,
+      }
+    })
     .sort((a: any, b: any) => toBN(b.balance).minus(a.balance).toNumber())
 })
 
@@ -261,7 +265,7 @@ onMounted(() => {
           </template>
           <template #item="{ label, item }">
             <div class="flex flex-col gap-1 mb-auto text-sm sm:text-base">
-              <span>{{ label }}</span>
+              <span class="text-sm">{{ label }}</span>
               <span class="text-sm text-gray-400 font-medium">
                 {{ formatDecimal(item.balance) }} {{ item.symbol.toUpperCase() }}
               </span>
