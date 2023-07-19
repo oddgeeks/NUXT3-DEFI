@@ -9,6 +9,7 @@ const {
 const route = useRoute()
 const router = useRouter()
 const lastNoticeShowDate = useLocalStorage<Date>('last_update_notice_show_date', new Date(0, 0))
+const welcomeMessageShow = useLocalStorage<Boolean>('welcome_message_check', false)
 
 watch(showVersionUpdateBanner, () => {
   if (showVersionUpdateBanner.value) {
@@ -17,6 +18,8 @@ watch(showVersionUpdateBanner, () => {
     if (differenceInDays >= 3 && router.currentRoute.value.name !== 'upgrade')
       openUpdateNoticeModal()
   }
+  if (!welcomeMessageShow.value)
+    openWelcomeModal()
 })
 </script>
 
