@@ -408,8 +408,9 @@ export function openDefiPositionDetailsModal(position: Positions) {
 }
 
 export function openUpdateNoticeModal() {
-  openModal({
+  return openModal({
     component: UpdateNoticeModal,
+    async: true,
   })
 }
 

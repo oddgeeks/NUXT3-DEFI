@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const emit = defineEmits(['destroy'])
+const emit = defineEmits(['resolve'])
 const router = useRouter()
 const lastNoticeShowDate = useLocalStorage('last_update_notice_show_date', new Date(0, 0))
 
@@ -9,11 +9,11 @@ function onRemindLater() {
 
 function onUpdateBtn() {
   router.push('/upgrade')
-  emit('destroy')
+  emit('resolve', true)
 }
 
 watch(lastNoticeShowDate, () => {
-  emit('destroy')
+  emit('resolve', true)
 })
 </script>
 

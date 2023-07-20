@@ -6,16 +6,34 @@ const {
   showOnboardBanner,
   showVersionUpdateBanner,
 } = useBanner()
+const { data: allNetworkVersions } = useNuxtData('allNetworkVersions')
 const route = useRoute()
 const router = useRouter()
 const lastNoticeShowDate = useLocalStorage<Date>('last_update_notice_show_date', new Date(0, 0))
+const ignore_version = useLocalStorage('ignore_version', [])
 
-watch(showVersionUpdateBanner, () => {
+function isIgnoreVersion() {
+  return !allNetworkVersions.value.some((network) => {
+    if (network.notdeployed)
+      return false
+
+    if (gt(network.latestVersion, network.currentVersion)) {
+      if (ignore_version.value.findIndex(net => net.chainId === network.chainId && net.latestVersion === network.latestVersion) == -1)
+        return true
+    }
+    return false
+  })
+}
+
+watch(showVersionUpdateBanner, async () => {
   if (showVersionUpdateBanner.value) {
     const today = new Date()
     const differenceInDays = (today.getTime() - lastNoticeShowDate.value.getTime()) / (1000 * 3600 * 24)
-    if (differenceInDays >= 3 && router.currentRoute.value.name !== 'upgrade')
-      openUpdateNoticeModal()
+    if (differenceInDays >= 3 && router.currentRoute.value.name !== 'upgrade' && !isIgnoreVersion()) {
+      const res = await openUpdateNoticeModal()
+      if (!res.success)
+        ignore_version.value = allNetworkVersions.value
+    }
   }
 })
 </script>
