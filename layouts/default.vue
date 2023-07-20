@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { gt } from 'semver'
+
 const {
   showTrackingBanner,
   showIncorrectNetworkBanner,
@@ -13,7 +15,7 @@ const lastNoticeShowDate = useLocalStorage<Date>('last_update_notice_show_date',
 const ignore_version = useLocalStorage('ignore_version', [])
 
 function isIgnoreVersion() {
-  return !allNetworkVersions.value.some((network) => {
+  return !(allNetworkVersions.value.some((network) => {
     if (network.notdeployed)
       return false
 
@@ -22,7 +24,7 @@ function isIgnoreVersion() {
         return true
     }
     return false
-  })
+  }))
 }
 
 watch(showVersionUpdateBanner, async () => {
