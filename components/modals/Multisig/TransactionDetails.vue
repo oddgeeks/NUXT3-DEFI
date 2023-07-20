@@ -291,7 +291,7 @@ onUnmounted(() => {
               Actions ({{ transaction.data.params.actions.length }})
             </span>
             <template v-for="action in transaction.data.params.actions" :key="action.data">
-              <details open class="group px-5 sm:px-7.5">
+              <details class="group px-5 sm:px-7.5">
                 <summary class="text-xs flex items-center justify-between cursor-pointer">
                   <dl class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center w-full">
                     <dt class="text-slate-400">
