@@ -20,8 +20,10 @@ watch(showVersionUpdateBanner, () => {
   }
 })
 
-if (!welcomeMessageShow.value)
-  openWelcomeModal()
+onMounted(() => {
+  if (!welcomeMessageShow.value)
+    openWelcomeModal()
+})
 </script>
 
 <template>
