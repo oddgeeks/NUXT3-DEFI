@@ -41,7 +41,7 @@ watch(welcomeMessageShow, () => {
       <p class="text-[26px] font-semibold leading-[30px]">
         Welcome to Avocado
       </p>
-      <p class="text-slate-400 leading-[20px] text-[14px]">
+      <p class="text-slate-400 leading-[20px] text-[14px] font-light">
         The web3 superwallet
       </p>
     </div>
@@ -57,7 +57,7 @@ watch(welcomeMessageShow, () => {
         <p class="text-[18px] font-semibold leading-[20px]">
           {{ item.title }}
         </p>
-        <p class="text-slate-400 text-[12px] leading-[20px]">
+        <p class="text-slate-400 text-[12px] leading-[20px] font-light">
           {{ item.content }}
         </p>
       </div>
