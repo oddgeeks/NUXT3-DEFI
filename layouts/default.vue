@@ -18,9 +18,10 @@ watch(showVersionUpdateBanner, () => {
     if (differenceInDays >= 3 && router.currentRoute.value.name !== 'upgrade')
       openUpdateNoticeModal()
   }
-  if (!welcomeMessageShow.value)
-    openWelcomeModal()
 })
+
+if (!welcomeMessageShow.value)
+  openWelcomeModal()
 </script>
 
 <template>

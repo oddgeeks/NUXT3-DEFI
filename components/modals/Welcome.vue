@@ -36,17 +36,17 @@ watch(welcomeMessageShow, () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-[30px] pb-8">
-    <div class="flex flex-col gap-[10px] sm:px-[50px] px-6 pt-10">
+  <div class="flex flex-col gap-[30px] pb-[30px]">
+    <div class="flex flex-col gap-[10px] px-[30px] pt-[30px]">
       <p class="text-[26px] font-semibold leading-[30px]">
         Welcome to Avocado
       </p>
-      <p class="mt-[10px] text-slate-400 leading-[20px] text-[14px]">
+      <p class="text-slate-400 leading-[20px] text-[14px]">
         The web3 superwallet
       </p>
     </div>
-    <hr class="border-slate-400">
-    <div v-for="item of data" :key="item.title" class="flex flex-row gap-[20px] justify-center items-center px-6">
+    <hr class="border-slate-800">
+    <div v-for="item of data" :key="item.title" class="flex flex-row gap-[20px] justify-center items-center px-[30px]">
       <div class="bg-[#4CA0541a] rounded-full w-[46px] h-[46px] flex justify-center items-center">
         <SvgoWNetwork v-if="item.icon === 'network'" />
         <SvgoWGasTank v-if="item.icon === 'gastank'" />
@@ -62,11 +62,11 @@ watch(welcomeMessageShow, () => {
         </p>
       </div>
     </div>
-    <hr class="border-slate-400">
-    <div class="w-full px-6 flex flex-col gap-[20px] justify-center items-center">
-      <CommonButton class="w-full flex justify-center" @click="onContinue()">
+    <hr class="border-slate-800">
+    <div class="w-full px-[30px] flex flex-col gap-[20px] justify-center items-center">
+      <button class="bg-[#4CA054] rounded-full px-[30px] py-[12px] text-[14px] leading-[20px] font-semibold w-full hover:bg-[]" @click="onContinue()">
         Continue
-      </CommonButton>
+      </button>
       <NuxtLink
         href="https://help.avocado.instadapp.io/en/articles/7038838-a-checklist-to-get-started-with-avocado"
         target="_blank"
