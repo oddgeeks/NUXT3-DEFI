@@ -4,6 +4,7 @@ const isVersionUpdateBannerHidden = ref(false)
 
 export function useBanner() {
   const { gasBalance, pending } = storeToRefs(useSafe())
+  const { isSafeMultisig } = storeToRefs(useMultisig())
   const { account, chainId } = useWeb3()
 
   const wcStoreV2 = useWalletConnectV2()
@@ -55,6 +56,9 @@ export function useBanner() {
       return false
     if (isOnboardHidden.value)
       return false
+    if (isSafeMultisig.value)
+      return false
+
     return true
   })
 
