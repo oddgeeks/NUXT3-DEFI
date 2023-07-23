@@ -161,7 +161,7 @@ async function handleSelectContact(key: number) {
         <div class="bg-primary w-4 h-4 rounded-full flex">
           <SvgoPlus class="text-white m-auto w-2 h-2" />
         </div>
-        Add New Siger
+        Add more signer(s)
       </button>
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
