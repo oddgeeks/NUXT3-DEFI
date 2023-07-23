@@ -1,5 +1,4 @@
 <script setup lang=ts>
-import { isUndefined } from '@walletconnect/utils'
 import axios from 'axios'
 
 const props = defineProps<{
@@ -12,11 +11,13 @@ const page = ref(1)
 const containerRef = ref<HTMLElement | null>(null)
 
 const { data, refresh } = useAsyncData(`multisig-${route.params.safe}-${props.chainId}`, async () => {
+  const isCompleted = props.activeTab === 'completed'
+
   const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${route.params.safe}/transactions`, {
     params: {
-      status: isUndefined(props.activeTab) ? ['success', 'failed'] : 'pending',
+      status: isCompleted ? ['success', 'failed'] : 'pending',
       chain_id: props.chainId,
-      nonce_type: props.activeTab,
+      nonce_type: isCompleted ? undefined : props.activeTab,
       page: page.value,
     },
     baseURL: multisigURL,
