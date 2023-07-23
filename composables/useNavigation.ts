@@ -2,9 +2,12 @@ import axios from 'axios'
 
 export function useNavigation() {
   const { isSafeMultisig } = storeToRefs(useMultisig())
-  const { safeAddress } = useAvocadoSafe()
+  const { safeAddress, account } = useAvocadoSafe()
 
   const { data } = useAsyncData<IMultisigTransactionResponse>(async () => {
+    if (!safeAddress.value || !account.value)
+      return
+
     const { data } = await axios.get(`/safes/${safeAddress.value}/transactions`, {
       params: {
         status: 'pending',
@@ -16,7 +19,7 @@ export function useNavigation() {
 
     return data
   }, {
-    watch: [safeAddress],
+    watch: [safeAddress, account],
   })
 
   const navigations = computed(() => {
