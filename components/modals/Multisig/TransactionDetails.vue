@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { wait } from '@instadapp/utils'
 import { formatTimeAgo } from '@vueuse/core'
 import { isUndefined } from '@walletconnect/utils'
 import axios from 'axios'
@@ -115,7 +116,7 @@ async function handleSign(item: IMultisigTransaction) {
     })
 
     if (data.confirmations.length === data.confirmations_required && signAndExecute.value) {
-      handleExecute(data)
+      await handleExecute(data)
     }
     else {
       emit('destroy')
@@ -143,6 +144,7 @@ async function handleExecute(item: IMultisigTransaction) {
     })
 
     if (hash) {
+      wait(2000)
       emit('destroy')
       showPendingTransactionModal(hash, item.chain_id, 'send')
     }
@@ -439,7 +441,7 @@ onUnmounted(() => {
               </CommonButton>
             </div>
           </fieldset>
-          <div v-if="isTransactionExecuted" class="text-xs leading-5 flex gap-2 mt-5 text-primary font-medium">
+          <div v-if="isTransactionExecuted" class="text-xs leading-5 flex gap-2 text-primary font-medium">
             <SvgoInfo2 class="w-5 h-5 text-primary" />
             Transaction has been executed
           </div>
