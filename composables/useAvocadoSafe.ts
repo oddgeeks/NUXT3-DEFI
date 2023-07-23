@@ -375,17 +375,21 @@ export function useAvocadoSafe() {
 
     const signers = addresses.map(address => address.address)
 
+    const sortedSigners = signers.sort((left, right) =>
+      left.toLowerCase().localeCompare(right.toLowerCase()),
+    )
+
     const metadata = threshold
       ? encodeMultipleActions(
-        encodeAddSignersMetadata(signers, false),
+        encodeAddSignersMetadata(sortedSigners, false),
         encodeChangeThresholdMetadata(threshold, false),
       )
-      : encodeAddSignersMetadata(signers)
+      : encodeAddSignersMetadata(sortedSigners)
 
     const actions = [
       {
         target: selectedSafe.value?.safe_address,
-        data: avoMultsigInterface.encodeFunctionData('addSigners', [signers]),
+        data: avoMultsigInterface.encodeFunctionData('addSigners', [sortedSigners]),
         value: '0',
         operation: '0',
       },
@@ -432,12 +436,16 @@ export function useAvocadoSafe() {
 
     const currentThreshold = requiredSigners.value.find(i => i.chainId == chainId)?.requiredSignerCount
 
-    const metadata = encodeRemoveSignersMetadata(addresses)
+    const sortedAddress = addresses.sort((left, right) =>
+      left.toLowerCase().localeCompare(right.toLowerCase()),
+    )
+
+    const metadata = encodeRemoveSignersMetadata(sortedAddress)
 
     const actions: any[] = [
       {
         target: selectedSafe.value?.safe_address,
-        data: avoMultsigInterface.encodeFunctionData('removeSigners', [addresses]),
+        data: avoMultsigInterface.encodeFunctionData('removeSigners', [sortedAddress]),
         value: '0',
         operation: '0',
       },
