@@ -405,7 +405,7 @@ onUnmounted(() => {
           </details>
           <label v-if="confirmationNeeded === 1 && !isSignedAlready" class="text-xs text-left flex items-center gap-2.5">
             <input v-model="signAndExecute" type="checkbox" class="text-primary rounded-md w-5 h-5 ring-0 focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-0">
-            <span>
+            <span class="font-medium">
               I want to sign & execute in 1 thn.
             </span>
           </label>
