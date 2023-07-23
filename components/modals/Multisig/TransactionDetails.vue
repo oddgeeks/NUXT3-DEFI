@@ -246,7 +246,7 @@ onUnmounted(() => {
           </div>
           <div v-if="decodedMetadata" class="sm:p-7.5 p-5 border-b dark:border-slate-800 border-slate-150">
             <div v-once class="flex">
-              <ActionMetadata v-for="metadata in decodedMetadata" :key="metadata" compact class="text-xs" :chain_id="transaction.chain_id" :metadata="metadata" />
+              <ActionMetadata v-for="metadata in decodedMetadata" :key="metadata" compact class="text-xs whitespace-nowrap" :chain_id="transaction.chain_id" :metadata="metadata" />
             </div>
           </div>
           <div class="sm:p-7.5 p-5 flex-col gap-5 flex border-b dark:border-slate-800 border-slate-150">
