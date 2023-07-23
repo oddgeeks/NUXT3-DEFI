@@ -92,7 +92,7 @@ useIntervalFn(() => {
     <div class="flex flex-col sm:gap-0 gap-4 sm:p-0 p-5">
       <ul v-for="items, key in groupedData" :key="key">
         <li>
-          <ul :class="checkIsGroup(key, items) ? 'rounded-lg p-4 sm:p-0 border sm:block flex gap-5 flex-col sm:mx-5 sm:mt-5 border-slate-300 dark:border-slate-700' : ''" class="flex flex-col">
+          <ul :class="checkIsGroup(key, items) ? 'p-4 sm:p-0 border sm:block flex gap-5 flex-col border-slate-300 dark:border-slate-700' : ''" class="flex flex-col">
             <p v-if="checkIsGroup(key, items)" class="text-xs sm:p-4 sm:pb-0 font-medium text-slate-400">
               You can complete one of the transactions below. The other will be cancelled automatically.
             </p>
