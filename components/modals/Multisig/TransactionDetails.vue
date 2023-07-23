@@ -15,6 +15,7 @@ const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurre
 const { selectedSafe } = storeToRefs(useSafe())
 const { account } = useWeb3()
 const currentNonce = ref<number>()
+const signAndExecute = ref(false)
 
 const router = useRouter()
 
@@ -49,7 +50,7 @@ const errorMessage = computed(() => {
   else if (isTransactionExecuted.value)
     message = 'This transaction has already been executed.'
 
-  else if (isSignedAlready.value)
+  else if (isSignedAlready.value && !isConfirmationsMatch.value)
     message = 'You have already signed this transaction.'
 
   else if (isNonceNotMatch.value)
@@ -113,7 +114,7 @@ async function handleSign(item: IMultisigTransaction) {
       baseURL: multisigURL,
     })
 
-    if (data.confirmations.length === data.confirmations_required) {
+    if (data.confirmations.length === data.confirmations_required && signAndExecute.value) {
       handleExecute(data)
     }
     else {
@@ -199,7 +200,7 @@ async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
     })
 
     if (success)
-      handleExecute(transaction)
+      await handleExecute(transaction)
   }
   finally {
     pending.value.execute = false
@@ -379,8 +380,8 @@ onUnmounted(() => {
             {{ confirmationNeeded }} more confirmations needed for execution
           </div>
         </div>
-        <div class="sm:p-7.5 p-5">
-          <details class="mb-5 group">
+        <div class="sm:p-7.5 p-5 flex flex-col gap-5">
+          <details class="group">
             <summary class="text-primary text-xs leading-5 cursor-pointer flex items-center justify-between">
               <span class="group-open:hidden block">View transaction breakdown</span>
               <span class="group-open:block hidden">Hide transaction breakdown</span>
@@ -402,6 +403,12 @@ onUnmounted(() => {
               </p>
             </div>
           </details>
+          <label v-if="confirmationNeeded === 1 && !isSignedAlready" class="text-xs text-left flex items-center gap-2.5">
+            <input v-model="signAndExecute" type="checkbox" class="text-primary rounded-md w-5 h-5 ring-0 focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-0">
+            <span>
+              I want to sign & execute in 1 thn.
+            </span>
+          </label>
           <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch" class="grid grid-cols-2 gap-2.5 items-center">
             <CommonButton v-if="actionType !== 'rejection'" :loading="pending.reject" color="red" size="lg" class="justify-center" @click="handleReject(transaction)">
               Reject
@@ -414,8 +421,8 @@ onUnmounted(() => {
               </CommonButton>
             </div>
             <div v-else v-tippy="errorMessage">
-              <CommonButton :disabled="!!errorMessage || pending.sign" :loading="pending.sign || (isUndefined(currentNonce) && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" @click="handleSign(transaction)">
-                Sign
+              <CommonButton :disabled="!!errorMessage || pending.sign" :loading="pending.sign || (isUndefined(currentNonce) && !isSafeDoesntMatch)" size="lg" class="w-full justify-center !leading-5" :class="signAndExecute ? '!px-2 text-xs' : ''" @click="handleSign(transaction)">
+                {{ signAndExecute ? 'Sign & Execute' : 'Sign' }}
               </CommonButton>
             </div>
           </fieldset>
