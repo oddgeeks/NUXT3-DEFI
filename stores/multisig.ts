@@ -17,19 +17,20 @@ export const useMultisig = defineStore('multisig', () => {
 
   const isSafeMultisig = computed(() => selectedSafe.value?.multisig === 1)
 
-  async function getRequiredSigners() {
+  async function getRequiredSigners(safe: ISafe) {
     const requiredSignersArr: IRequiredSigners[] = []
 
     for (const network of availableNetworks) {
       try {
-        const instance = AvoMultisigImplementation__factory.connect(selectedSafe.value?.safe_address!, getRpcProvider(network.chainId))
+        const instance = AvoMultisigImplementation__factory.connect(safe.safe_address, getRpcProvider(network.chainId))
         const count = await instance.requiredSigners()
-        const signers = selectedSafe.value?.signers[network.chainId] || []
+        const signers = safe?.signers[network.chainId] || []
+
         const obj = {
           chainId: network.chainId,
           requiredSignerCount: count,
           signerCount: signers.length,
-          signers: selectedSafe.value?.signers[network.chainId] || [],
+          signers,
         }
 
         requiredSignersArr.push(obj)
@@ -39,20 +40,23 @@ export const useMultisig = defineStore('multisig', () => {
       }
     }
 
-    requiredSigners.value = requiredSignersArr
+    return requiredSignersArr
   }
 
   watch(selectedSafe, async () => {
     if (!selectedSafe.value)
       return
 
-    getRequiredSigners()
+    const signers = await getRequiredSigners(selectedSafe.value)
+
+    requiredSigners.value = signers
   })
 
   return {
     isSafeMultisig,
     signers,
     requiredSigners,
+    getRequiredSigners,
   }
 })
 

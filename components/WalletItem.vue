@@ -4,6 +4,9 @@ const props = defineProps<{
   primary?: boolean
 }>()
 
+const route = useRoute()
+const router = useRouter()
+
 const { safeAddress } = useAvocadoSafe()
 const { getBalances } = useSafe()
 const walletName = useLocalStorage(`safe-${props.safe?.safe_address}`, props.safe.multisig ? 'Multisig' : 'Personal')
@@ -32,6 +35,20 @@ const { data: balance, pending } = useAsyncData(`safe-balance-${props.safe.safe_
 async function onEdit() {
   openWalletNameEditModal(props.safe)
 }
+
+function handleClick() {
+  const safe = route.params?.safe as string
+
+  if (props.safe.multisig === 1 && safe) {
+    router.replace({
+      params: {
+        safe: props.safe.safe_address,
+      },
+    })
+  }
+
+  safeAddress.value = props.safe.safe_address
+}
 </script>
 
 <template>
@@ -40,7 +57,7 @@ async function onEdit() {
       'dark:bg-slate-850 bg-slate-50': active,
       'dark:bg-gray-850 bg-slate-150': !active,
     }"
-    class="px-4 w-full text-left items-stretch flex justify-between py-3.5 border rounded-2xl border-slate-150 dark:border-slate-750" @click="safeAddress = safe.safe_address"
+    class="px-4 w-full text-left items-stretch flex justify-between py-3.5 border rounded-2xl border-slate-150 dark:border-slate-750" @click="handleClick"
   >
     <div>
       <div class="flex items-center gap-[8px] mb-2.5">

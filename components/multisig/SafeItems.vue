@@ -4,12 +4,11 @@ import { getAddress } from 'ethers/lib/utils'
 const props = defineProps<{
   addresses: string[]
   chainId: number | string
+  multisigSafe: ISafe
 }>()
 
-const { selectedSafe } = storeToRefs(useSafe())
-
 const sortedAddresses = computed(() => {
-  const ownerAddress = selectedSafe.value?.owner_address || ''
+  const ownerAddress = props.multisigSafe?.owner_address || ''
 
   return props.addresses
     .map(i => ({

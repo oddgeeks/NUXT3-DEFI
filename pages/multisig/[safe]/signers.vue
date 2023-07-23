@@ -1,27 +1,58 @@
 <script setup lang="ts">
+import { getAddress, isAddress } from 'ethers/lib/utils'
+
 interface IAvailableSigner {
   chainId: string | number
   addresses: string[]
 }
 
-definePageMeta({
-  middleware: 'auth',
-})
+const route = useRoute()
+
+if (!route.params.safe || !isAddress(route.params.safe as string))
+  throw new Error('Safe address is required')
 
 useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
+const { fetchSafe } = useSafe()
 const { selectedSafe } = storeToRefs(useSafe())
-const { setSelectedSafe } = useSafe()
-const { requiredSigners } = storeToRefs(useMultisig())
+const { getRequiredSigners } = useMultisig()
 const { changeThreshold, removeSignerWithThreshold } = useAvocadoSafe()
 
 const selectedAddresses = ref<string[]>([])
 const selectedChainId = ref<string | number>()
 
+const isSafeDoesNotMatch = computed(() => {
+  const safe = route.params.safe as string
+  if (!selectedSafe.value || !safe)
+    return true
+
+  return getAddress(safe) !== getAddress(selectedSafe.value?.safe_address)
+})
+
+const { data: multisigSafe, refresh } = useAsyncData<ISafe>(`${route.params.safe}-signers`, async () => {
+  const safeAddress = route.params.safe as string
+  const resp = await fetchSafe(safeAddress)
+
+  return resp
+})
+
+const { data: requiredSigners } = useAsyncData(`${route.params.safe}-required-signers`, async () => {
+  if (!multisigSafe.value)
+    return
+
+  return getRequiredSigners(multisigSafe.value)
+}, {
+  watch: [multisigSafe],
+  server: false,
+})
+
 const availableSigners = computed(() => {
-  const signers = selectedSafe?.value?.signers || {}
+  if (!multisigSafe?.value)
+    return []
+
+  const signers = multisigSafe?.value?.signers || {}
 
   return Object.entries(signers).reduce<IAvailableSigner[]>((acc, [chainId, addresses]) => {
     if (addresses.length) {
@@ -39,7 +70,7 @@ provide('selectedAddresses', selectedAddresses)
 provide('selectedChainId', selectedChainId)
 
 function getSignerInfo(chainId: string | number) {
-  return requiredSigners.value.find((signer: any) => signer.chainId == chainId)
+  return requiredSigners.value?.find((signer: any) => signer.chainId == chainId)
 }
 
 async function handleTresholdChange(chainId: string | number) {
@@ -82,8 +113,8 @@ watch(selectedAddresses, () => {
   }, 0)
 })
 
-useIntervalFn(() => {
-  setSelectedSafe()
+useIntervalFn(async () => {
+  refresh()
 }, 5000)
 </script>
 
@@ -97,7 +128,7 @@ useIntervalFn(() => {
         <span class="text-xs text-slate-400 leading-5">
           Signers are addresses that are required to sign transactions before they can be executed on<br> the blockchain.
         </span>
-        <fieldset class="flex items-center gap-7.5 sm:w-auto w-full justify-between self-start">
+        <fieldset :disabled="isSafeDoesNotMatch" class="flex items-center gap-7.5 sm:w-auto w-full justify-between self-start">
           <button class="flex items-center text-xs disabled:text-slate-400 text-primary gap-2.5 whitespace-nowrap" @click="openAddSignerModal()">
             <div class="bg-current w-4.5 h-4.5 rounded-full flex">
               <SvgoPlus class="text-white m-auto w-2 h-2" />
@@ -141,7 +172,7 @@ useIntervalFn(() => {
                 <SvgoChevronDown class="w-5 hidden sm:block shrink-0 text-slate-400 group-open:rotate-180" />
               </div>
             </summary>
-            <MultisigSafeItems :addresses="item.addresses" :chain-id="item.chainId" />
+            <MultisigSafeItems v-if="multisigSafe" :multisig-safe="multisigSafe" :addresses="item.addresses" :chain-id="item.chainId" />
             <div class="flex flex-col gap-4 px-[18px] py-5 sm:py-6.5 sm:px-7.5">
               <h2 class="text-xs font-medium text-slate-400">
                 Any transaction requires the confirmation of:
@@ -154,7 +185,7 @@ useIntervalFn(() => {
                 <span>
                   {{ getSignerInfo(item.chainId)?.requiredSignerCount }} out of {{ getSignerInfo(item.chainId)?.signerCount }}
                 </span>
-                <button class="text-primary ml-4 text-xs" @click="handleTresholdChange(item.chainId)">
+                <button :disabled="isSafeDoesNotMatch" class="text-primary disabled:text-slate-400 ml-4 text-xs" @click="handleTresholdChange(item.chainId)">
                   Change
                 </button>
               </span>

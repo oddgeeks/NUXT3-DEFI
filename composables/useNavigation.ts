@@ -77,7 +77,7 @@ export function useNavigation() {
       {
         label: 'Signers',
         icon: 'SvgoUserCircle',
-        to: '/signers',
+        to: `/multisig/${safeAddress.value}/signers`,
         tooltip: 'Signers',
         hidden: !isSafeMultisig.value,
       },
