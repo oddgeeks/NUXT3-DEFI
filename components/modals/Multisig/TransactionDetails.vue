@@ -15,7 +15,7 @@ const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurre
 const { selectedSafe } = storeToRefs(useSafe())
 const { account } = useWeb3()
 const currentNonce = ref<number>()
-const signAndExecute = ref(false)
+const [signAndExecute, toggle] = useToggle(false)
 
 const router = useRouter()
 
@@ -403,12 +403,25 @@ onUnmounted(() => {
               </p>
             </div>
           </details>
-          <label v-if="confirmationNeeded === 1 && !isSignedAlready" class="text-xs text-left flex items-center gap-2.5">
-            <input v-model="signAndExecute" type="checkbox" class="text-primary rounded-md w-5 h-5 ring-0 focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-0">
-            <span class="font-medium">
-              I want to sign & execute in 1 thn.
-            </span>
-          </label>
+
+          <button
+            v-if="confirmationNeeded === 1 && !isSignedAlready"
+            :class="{
+              'dark:text-white text-slate-900': signAndExecute,
+            }"
+            class="text-xs text-left font-medium items-base text-slate-400 flex gap-2.5"
+            @click="toggle()"
+          >
+            <SvgoCheckCircle
+              :class="[
+                { 'success-circle text-white': signAndExecute },
+                { 'svg-circle darker': !signAndExecute },
+              ]"
+              class="w-4 h-4 shrink-0"
+            />
+            I want to sign & execute in the same txn
+          </button>
+
           <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch" class="grid grid-cols-2 gap-2.5 items-center">
             <CommonButton v-if="actionType !== 'rejection'" :loading="pending.reject" color="red" size="lg" class="justify-center" @click="handleReject(transaction)">
               Reject
