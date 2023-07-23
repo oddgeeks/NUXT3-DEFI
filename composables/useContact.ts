@@ -122,6 +122,24 @@ export function useContacts() {
     return ''
   }
 
+  function getContactNameByAddress(address: string) {
+    if (!address)
+      return ''
+
+    const contact = safeContacts.value.find(
+      contact => getAddress(contact.address) === getAddress(address),
+    )
+
+    if (contact) {
+      if (contact.owner)
+        return 'You'
+
+      return contact.name
+    }
+
+    return ''
+  }
+
   return {
     ownerContact,
     safeContacts,
@@ -131,5 +149,6 @@ export function useContacts() {
     deleteContact,
     transferCounts,
     getSentTimes,
+    getContactNameByAddress,
   }
 }

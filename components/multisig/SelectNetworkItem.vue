@@ -9,7 +9,7 @@ const props = defineProps<{
 }>()
 defineEmits(['onSelect'])
 const { requiredSigners } = storeToRefs(useMultisig())
-const { safeContacts } = useContacts()
+const { getContactNameByAddress } = useContacts()
 
 const signer = computed(() => requiredSigners.value.find((signer: any) => signer.chainId == props.network.chainId))
 
@@ -21,10 +21,6 @@ const disabled = computed(() => {
 const isAddressAlreadyExist = computed(() => {
   return props.addresses.some(address => signer.value?.signers.some(i => getAddress(i) === getAddress(address.address)))
 })
-
-function getContactName(address: string) {
-  return safeContacts.value.find(i => getAddress(i.address) === getAddress(address))?.name || ''
-}
 </script>
 
 <template>
@@ -60,7 +56,7 @@ function getContactName(address: string) {
               <ul class="flex flex-col gap-2.5">
                 <li v-for="address in signer.signers" :key="address" class="flex text-xs items-center gap-2.5">
                   <AuthorityAvatar class="shrink-0 w-5 h-5" :address="address" />
-                  {{ address }} {{ getContactName(address) ? `(${getContactName(address)})` : '' }}
+                  {{ address }} {{ getContactNameByAddress(address) ? `(${getContactNameByAddress(address)})` : '' }}
                 </li>
               </ul>
             </template>

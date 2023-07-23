@@ -8,6 +8,12 @@ const props = defineProps<{
 const selectedAddresses = inject<Ref<string[]>>('selectedAddresses')
 const selectedChainId = inject<Ref<number | string>>('selectedChainId')
 
+const { getContactNameByAddress } = useContacts()
+
+const contactName = computed(() => {
+  return getContactNameByAddress(props.address)
+})
+
 const isDisabled = computed(() => {
   if (!selectedChainId?.value)
     return false
@@ -41,11 +47,26 @@ function handleInput() {
           class="-mr-2 shrink-0"
         />
         <span class="sm:block hidden">
-          {{ address }}
+          <span v-if="contactName" class="text-white">
+            ({{ contactName }})
+            <span class="text-slate-400">
+              {{ address }}
+            </span>
+          </span>
+          <span v-else>
+            {{ address }}
+          </span>
         </span>
         <span class="dark:text-white text-xs flex text-slate-900 sm:hidden flex-col sm:ml-0 ml-2.5">
-          <span v-if="owner" class="text-slate-400">
-            Owner
+
+          <span>
+            <span v-if="contactName" class="text-slate-400">
+              {{ contactName }}
+            </span>
+
+            <span v-if="owner" class="text-slate-400">
+              (Owner)
+            </span>
           </span>
           {{ shortenHash(address) }}</span>
         <Copy icon-only :text="address">
