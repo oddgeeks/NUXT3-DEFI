@@ -118,7 +118,7 @@ whenever(
             </div>
           </div>
 
-          <SvgoChevronDown class="-rotate-90 shrink-0" />
+          <SvgoChevronDown class="shrink-0" />
         </PopoverButton>
         <transition
           enter-active-class="transition duration-100 ease-out"
