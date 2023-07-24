@@ -2,7 +2,7 @@ import { ethers } from 'ethers'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 import { wait } from '@instadapp/utils'
 import collect from 'collect.js'
-import { getAddress } from 'ethers/lib/utils'
+import { getAddress, isAddress } from 'ethers/lib/utils'
 import type { IToken } from './tokens'
 import type { TokenBalanceResolver } from '~/contracts'
 import {
@@ -32,6 +32,7 @@ export const useSafe = defineStore('safe', () => {
   const mainSafeAddress = ref()
   const multiSigSafeAddress = ref()
   const accountSafeMapping = ref<Record<string, string>>({})
+  const route = useRoute()
 
   const safes = ref<ISafe[]>([])
 
@@ -502,6 +503,26 @@ export const useSafe = defineStore('safe', () => {
     safes.value = resp?.data || []
   }
 
+  const setMultisigParamSafe = async () => {
+    const paramSafe = route.params.safe as string
+
+    if (!paramSafe)
+      return
+
+    if (!isAddress(paramSafe))
+      return
+
+    // check if paramSafe is a valid multisig safe
+    const isValidMultiSigSafe = !!safes.value.find(
+      safe => getAddress(safe.safe_address) === getAddress(paramSafe),
+    ) || getAddress(paramSafe) === getAddress(multiSigSafeAddress.value)
+
+    if (!isValidMultiSigSafe)
+      return
+
+    safeAddress.value = paramSafe
+  }
+
   const resetAccounts = () => {
     trackingAccount.value = ''
     safeAddress.value = undefined
@@ -544,7 +565,9 @@ export const useSafe = defineStore('safe', () => {
 
         await setMainSafe()
         await setMultiSigSafe()
-        fetchSafes()
+        await fetchSafes()
+
+        setMultisigParamSafe()
       }
       finally {
         pending.value.global = false
