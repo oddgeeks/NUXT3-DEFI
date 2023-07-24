@@ -14,6 +14,7 @@ const emit = defineEmits(['destroy'])
 
 const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurrentNonce, getActualId } = useAvocadoSafe()
 const { selectedSafe } = storeToRefs(useSafe())
+const { getContactNameByAddress } = useContacts()
 const { account } = useWeb3()
 const currentNonce = ref<number>()
 const [signAndExecute, toggle] = useToggle(false)
@@ -363,9 +364,14 @@ onUnmounted(() => {
             <li v-for="signer in transaction.confirmations" :key="signer.address">
               <div class="flex gap-3 items-center">
                 <AuthorityAvatar class="w-9 h-9" :address="signer.address" />
-                <span class="text-xs leading-5 font-medium">
-                  {{ shortenHash(signer.address) }}
-                </span>
+                <p class="flex items-center gap-1.5">
+                  <span v-if="getContactNameByAddress(signer.address)" class="text-xs whitespace-nowrap truncate max-w-[60px]">
+                    ({{ getContactNameByAddress(signer.address) }})
+                  </span>
+                  <span :class="getContactNameByAddress(signer.address) ? 'text-slate-400' : ''" class="text-xs leading-5 font-medium">
+                    {{ shortenHash(signer.address) }}
+                  </span>
+                </p>
                 <div class="flex items-center gap-2.5 ml-auto">
                   <div class="flex items-center w-7.5 h-7.5 dark:bg-slate-800 bg-slate-100 rounded-full justify-center">
                     <Copy class="w-3 h-3" icon-only :text="signer.address" />
