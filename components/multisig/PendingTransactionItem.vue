@@ -11,7 +11,7 @@ const props = defineProps<{
 const route = useRoute()
 const { account } = useWeb3()
 
-const isConfirmationsMatch = computed(() => props.item.confirmations.length === props.item.confirmations_required)
+const isConfirmationsMatch = computed(() => gte(props.item.confirmations.length, props.item.confirmations_required))
 const isYourSignNeeded = computed(() => !account.value ? false : !props.item.confirmations.find(item => getAddress(account.value) === getAddress(item.address)))
 const isTransactionExecuted = computed(() => props.item.executed_at !== null)
 const isTransactionFailed = computed(() => props.item.status === 'failed')

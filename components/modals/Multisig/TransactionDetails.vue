@@ -28,7 +28,7 @@ const pending = ref({
 })
 
 const formatted = useDateFormat(props.transaction.created_at, 'MM.DD.YYYY, HH:mm:ss')
-const isConfirmationsMatch = computed(() => props.transaction.confirmations.length === props.transaction.confirmations_required)
+const isConfirmationsMatch = computed(() => gte(props.transaction.confirmations.length, props.transaction.confirmations_required))
 const confirmationNeeded = computed(() => props.transaction.confirmations_required - props.transaction.confirmations.length)
 
 const isNonseq = computed(() => props.transaction.nonce == '-1')
@@ -415,7 +415,7 @@ onUnmounted(() => {
           </details>
 
           <button
-            v-if="confirmationNeeded === 1 && !isSignedAlready"
+            v-if="!isSignedAlready"
             :class="{
               'dark:text-white text-slate-900': signAndExecute,
             }"
@@ -442,7 +442,7 @@ onUnmounted(() => {
                 Reject
               </CommonButton>
             </div>
-            <div v-if="isConfirmationsMatch" v-tippy="errorMessage">
+            <div v-if="isConfirmationsMatch && isSignedAlready" v-tippy="errorMessage">
               <CommonButton
                 :disabled="!!errorMessage || pending.execute" :loading="pending.execute || (isUndefined(currentNonce) && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" error-message @click="handleExecuteConfirmation(transaction)"
               >
