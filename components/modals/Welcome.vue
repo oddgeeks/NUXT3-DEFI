@@ -36,35 +36,35 @@ watch(welcomeMessageShow, () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-[30px] pb-[30px]">
-    <div class="flex flex-col gap-[10px] px-[30px] pt-[30px]">
-      <p class="text-[26px] font-semibold leading-[30px]">
+  <div class="flex flex-col gap-7.5 pb-7.5">
+    <div class="flex flex-col gap-2.5 px-7.5 pt-7.5">
+      <p class="font-semibold text-[26px] font-semibold leading-[30px]">
         Welcome to Avocado
       </p>
-      <p class="text-slate-400 leading-[20px] text-[14px] font-light">
+      <p class="text-slate-400 font-medium leading-5 text-sm font-light">
         The web3 superwallet
       </p>
     </div>
     <hr class="border-slate-800">
-    <div v-for="item of data" :key="item.title" class="flex flex-row gap-[20px] justify-center items-center px-[30px]">
+    <div v-for="item of data" :key="item.title" class="flex flex-row gap-5 justify-center items-center px-7.5">
       <div class="bg-[#4CA0541a] rounded-full w-[46px] h-[46px] flex justify-center items-center">
         <SvgoWNetwork v-if="item.icon === 'network'" />
         <SvgoWGasTank v-if="item.icon === 'gastank'" />
         <SvgoWRefresh v-if="item.icon === 'refresh'" />
         <SvgoWCross v-if="item.icon === 'cross'" />
       </div>
-      <div class="flex flex-col flex-1 gap-[12px]">
-        <p class="text-[18px] font-semibold leading-[20px]">
+      <div class="flex flex-col flex-1 gap-3">
+        <p class="text-lg font-semibold leading-5">
           {{ item.title }}
         </p>
-        <p class="text-slate-400 text-[12px] leading-[20px] font-light">
+        <p class="text-slate-400 font-medium text-xs leading-5">
           {{ item.content }}
         </p>
       </div>
     </div>
     <hr class="border-slate-800">
-    <div class="w-full px-[30px] flex flex-col gap-[20px] justify-center items-center">
-      <button class="bg-[#4CA054] rounded-full px-[30px] py-[12px] text-[14px] leading-[20px] font-semibold w-full hover:bg-[]" @click="onContinue()">
+    <div class="w-full px-7.5 flex flex-col gap-5 justify-center items-center">
+      <button class="bg-[#4CA054] rounded-full px-7.5 py-3 text-sm leading-5 font-semibold w-full hover:bg-[]" @click="onContinue()">
         Continue
       </button>
       <NuxtLink
