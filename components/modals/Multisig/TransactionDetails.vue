@@ -364,8 +364,8 @@ onUnmounted(() => {
             <li v-for="signer in transaction.confirmations" :key="signer.address">
               <div class="flex gap-3 items-center">
                 <AuthorityAvatar class="w-9 h-9" :address="signer.address" />
-                <p class="flex items-center gap-1.5">
-                  <span v-if="getContactNameByAddress(signer.address)" class="text-xs whitespace-nowrap truncate max-w-[60px]">
+                <p class="flex flex-col gap-0.5">
+                  <span v-if="getContactNameByAddress(signer.address)" class="text-xs whitespace-nowrap truncate max-w-[150px]">
                     ({{ getContactNameByAddress(signer.address) }})
                   </span>
                   <span :class="getContactNameByAddress(signer.address) ? 'text-slate-400' : ''" class="text-xs leading-5 font-medium">
