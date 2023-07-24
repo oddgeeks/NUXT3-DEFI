@@ -478,6 +478,7 @@ async function onSubmit() {
       action: 'send',
       txHash: avocadoHash,
       chainId: String(data.value.toChainId),
+      amountInUsd: times(data.value.amount, token.value.price || '0').toFixed(),
       account: account.value,
       network: formattedNetwork,
     })
