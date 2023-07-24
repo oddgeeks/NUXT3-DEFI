@@ -26,22 +26,20 @@ const data = [
   },
 ]
 
-function onContinue() {
-  welcomeMessageShow.value = true
-}
+welcomeMessageShow.value = true
 
-watch(welcomeMessageShow, () => {
+function onContinue() {
   emit('destroy')
-})
+}
 </script>
 
 <template>
   <div class="flex flex-col gap-7.5 pb-7.5">
     <div class="flex flex-col gap-2.5 px-7.5 pt-7.5">
-      <p class="font-semibold text-[26px] font-semibold leading-[30px]">
+      <p class="font-semibold text-[26px] leading-[30px]">
         Welcome to Avocado
       </p>
-      <p class="text-slate-400 font-medium leading-5 text-sm font-light">
+      <p class="text-slate-400 font-medium leading-5 text-sm">
         The web3 superwallet
       </p>
     </div>
@@ -64,7 +62,7 @@ watch(welcomeMessageShow, () => {
     </div>
     <hr class="border-slate-800">
     <div class="w-full px-7.5 flex flex-col gap-5 justify-center items-center">
-      <button class="bg-[#4CA054] rounded-full px-7.5 py-3 text-sm leading-5 font-semibold w-full hover:bg-[]" @click="onContinue()">
+      <button class="bg-[#4CA054] rounded-full px-7.5 py-3 text-sm leading-5 font-semibold w-full" @click="onContinue()">
         Continue
       </button>
       <NuxtLink
