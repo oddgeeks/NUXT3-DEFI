@@ -415,7 +415,7 @@ onUnmounted(() => {
           </details>
 
           <button
-            v-if="!isSignedAlready"
+            v-if="!isSignedAlready && isConfirmationsMatch"
             :class="{
               'dark:text-white text-slate-900': signAndExecute,
             }"
