@@ -267,9 +267,9 @@ onUnmounted(() => {
                 {{ shortenHash(transaction.transaction_hash) }}
               </NuxtLink>
             </div>
-            <div v-if="transaction.note" class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
+            <div v-if="transaction.note" class="flex flex-col justify-between text-sm gap-2.5">
               <span class="text-slate-400 text-xs">Note</span>
-              <span class="text-sm">
+              <span class="text-xs whitespace-break-spaces">
                 {{ transaction.note }}
               </span>
             </div>
