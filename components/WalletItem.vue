@@ -39,12 +39,17 @@ async function onEdit() {
 function handleClick() {
   const safe = route.params?.safe as string
 
-  if (props.safe.multisig === 1 && safe) {
-    router.replace({
-      params: {
-        safe: props.safe.safe_address,
-      },
-    })
+  if (safe) {
+    if (props.safe.multisig === 1) {
+      router.replace({
+        params: {
+          safe: props.safe.safe_address,
+        },
+      })
+    }
+    else {
+      router.push('/')
+    }
   }
 
   safeAddress.value = props.safe.safe_address
