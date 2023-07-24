@@ -353,7 +353,7 @@ onUnmounted(() => {
             <span class="leading-[30px]">
               Signers
             </span>
-            <span :class="transaction.confirmations.length === transaction.confirmations_required ? 'text-primary' : 'text-slate-400'" class="flex items-center gap-2.5 text-xs">
+            <span :class="isConfirmationsMatch ? 'text-primary' : 'text-slate-400'" class="flex items-center gap-2.5 text-xs">
               <SvgoUserCircle />
               <span class="font-medium leading-5">
                 {{ transaction.confirmations.length }} out of {{ transaction.confirmations_required }}
@@ -368,7 +368,7 @@ onUnmounted(() => {
                 <AuthorityAvatar class="w-9 h-9 shrink-0" :address="signer.address" />
                 <p class="flex flex-col gap-0.5">
                   <span v-if="getContactNameByAddress(signer.address)" class="text-xs whitespace-nowrap truncate max-w-[150px]">
-                    ({{ getContactNameByAddress(signer.address) }})
+                    {{ getContactNameByAddress(signer.address) }}
                   </span>
                   <span :class="getContactNameByAddress(signer.address) ? 'text-slate-400' : ''" class="text-xs leading-5 font-medium">
                     {{ shortenHash(signer.address) }}
