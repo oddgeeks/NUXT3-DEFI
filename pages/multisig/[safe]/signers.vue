@@ -134,7 +134,7 @@ useIntervalFn(async () => {
             <div class="bg-current w-4.5 h-4.5 rounded-full flex">
               <SvgoPlus class="text-white m-auto w-2 h-2" />
             </div>
-            Add New Signer
+            Add New Signer(s)
           </button>
           <button :disabled="!selectedAddresses.length" class="flex whitespace-nowrap disabled:text-slate-400 items-center text-xs text-red-alert gap-2.5" @click="handleDeleteSigner">
             Delete Selected

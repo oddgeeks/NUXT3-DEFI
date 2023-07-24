@@ -107,7 +107,7 @@ async function handleSelectContact(key: number) {
       </div>
       <div class="flex flex-col gap-1">
         <h1 class="text-lg leading-10">
-          Add New Signers
+          Add New Signer(s)
         </h1>
         <h2 class="text-xs leading-5 text-slate-400 font-medium">
           Signers can approve/reject transaction. Signers are automatically saved as contacts.
