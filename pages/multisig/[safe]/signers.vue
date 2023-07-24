@@ -17,7 +17,7 @@ useAccountTrack(undefined, () => {
 
 const { fetchSafe } = useSafe()
 const { selectedSafe } = storeToRefs(useSafe())
-const { getRequiredSigners } = useMultisig()
+const { getRequiredSigners, setRequiredSigners } = useMultisig()
 const { changeThreshold, removeSignerWithThreshold } = useAvocadoSafe()
 
 const selectedAddresses = ref<string[]>([])
@@ -114,6 +114,7 @@ watch(selectedAddresses, () => {
 })
 
 useIntervalFn(async () => {
+  setRequiredSigners()
   refresh()
 }, 5000)
 </script>

@@ -43,13 +43,18 @@ export const useMultisig = defineStore('multisig', () => {
     return requiredSignersArr
   }
 
+  async function setRequiredSigners() {
+    if (!selectedSafe.value)
+      return
+    const signers = await getRequiredSigners(selectedSafe.value)
+    requiredSigners.value = signers
+  }
+
   watch(selectedSafe, async () => {
     if (!selectedSafe.value)
       return
 
-    const signers = await getRequiredSigners(selectedSafe.value)
-
-    requiredSigners.value = signers
+    setRequiredSigners()
   })
 
   return {
@@ -57,6 +62,7 @@ export const useMultisig = defineStore('multisig', () => {
     signers,
     requiredSigners,
     getRequiredSigners,
+    setRequiredSigners,
   }
 })
 
