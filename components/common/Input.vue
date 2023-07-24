@@ -118,7 +118,7 @@ function handleBeforeInput(e: any) {
         'text-orange-500': errorType === 'warning',
       }"
     >
-      <SVGInfo />
+      <SVGInfo class="shrink-0" />
       {{ errorMessage }}</span>
   </div>
 </template>

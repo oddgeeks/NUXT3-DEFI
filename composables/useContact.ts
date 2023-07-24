@@ -122,7 +122,7 @@ export function useContacts() {
     return ''
   }
 
-  function getContactNameByAddress(address: string) {
+  function getContactNameByAddress(address: string, ownerName = 'You') {
     if (!address)
       return ''
 
@@ -132,7 +132,7 @@ export function useContacts() {
 
     if (contact) {
       if (contact.owner)
-        return 'You'
+        return ownerName
 
       return contact.name
     }

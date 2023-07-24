@@ -11,6 +11,7 @@ const props = defineProps<{
 const emit = defineEmits(['destroy'])
 
 const { account } = useWeb3()
+const { getContactNameByAddress } = useContacts()
 
 const {
   handleSubmit,
@@ -26,6 +27,16 @@ const {
           .required('')
           .test('is-valid-address', 'Incorrect address', (value) => {
             return value ? isAddress(value || '') : true
+          })
+          .test('contact-already-exist', 'Contact already exists, please select from contacts list', (value, ctx) => {
+            if (!isAddress(value || ''))
+              return true
+
+            const contactName = ctx.parent?.name
+
+            const contact = getContactNameByAddress(value || '', 'Owner')
+
+            return contact ? contact?.toLowerCase() === contactName?.toLowerCase() : true
           })
           .test(
             'duplicate-address',
@@ -110,7 +121,7 @@ async function handleSelectContact(key: number) {
         :key="key"
         class="flex gap-5 sm:flex-row flex-col"
       >
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-1 flex-col gap-2">
           <div class="flex justify-between items-center w-full">
             <span class="text-xs font-medium leading-5 text-slate-400">
               <span class="sm:hidden inline">{{ key + 1 }}</span> Signer name
@@ -124,7 +135,7 @@ async function handleSelectContact(key: number) {
             :error-message="getErrorMessage(errors, `addresses[${key}].name`)"
           />
         </div>
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-1 basis-12 flex-col gap-2">
           <div class="flex justify-between items-center w-full">
             <span class="text-xs font-medium leading-5 text-slate-400">
               <span class="sm:hidden inline">{{ key + 1 }}</span> Signer Address
