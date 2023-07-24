@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { pathToRegexp } from 'path-to-regexp'
+
 definePageMeta({
   layout: 'login-free',
 })
@@ -7,13 +9,37 @@ const router = useRouter()
 const route = useRoute()
 
 const redirectTo = route.query?.redirectTo as string
+
+function handleDestroy() {
+  if (!redirectTo) {
+    router.push({ path: '/' })
+    return
+  }
+
+  const routes = router.getRoutes()
+  let isValid = false
+
+  for (const page of routes) {
+    const path = page.path.replace('()', '')
+    const regexp = pathToRegexp(path)
+
+    isValid = regexp.test(redirectTo)
+
+    if (isValid) {
+      router.push({ path: redirectTo })
+      return
+    }
+  }
+
+  router.push('/')
+}
 </script>
 
 <template>
   <div
     class="sm:w-[460px] w-full h-full mx-auto mt-10 sm:mt-[92px] py-10 sm:px-[50px] px-5 rounded-[30px] dark:bg-gray-850 bg-white"
   >
-    <ModalsWeb3 button-class="dark:bg-slate-800 bg-slate-100" @destroy="router.push(redirectTo || '/')">
+    <ModalsWeb3 button-class="dark:bg-slate-800 bg-slate-100" @destroy="handleDestroy">
       <template #title>
         <div class="mb-7.5">
           <div class="w-full flex justify-center">
