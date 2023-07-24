@@ -47,7 +47,7 @@ const errorMessage = computed(() => {
   if (isSafeDoesntMatch.value)
     message = 'This transaction is not for your safe.'
 
-  if (!currentNonce.value)
+  if (isUndefined(currentNonce.value))
     return null
   else if (isTransactionExecuted.value)
     message = 'This transaction has already been executed.'
