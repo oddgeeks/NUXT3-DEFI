@@ -4,7 +4,7 @@ export function useNavigation() {
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { safeAddress, account } = useAvocadoSafe()
 
-  const { data } = useAsyncData<IMultisigTransactionResponse>(async () => {
+  const { data, refresh } = useAsyncData<IMultisigTransactionResponse>(async () => {
     if (!safeAddress.value || !account.value)
       return
 
@@ -21,6 +21,8 @@ export function useNavigation() {
   }, {
     watch: [safeAddress, account],
   })
+
+  useIntervalFn(refresh, 15000)
 
   const navigations = computed(() => {
     const totalPendingTransactions = data.value?.meta?.total || 0
