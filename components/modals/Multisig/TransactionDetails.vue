@@ -73,6 +73,8 @@ const firstActionMetadata = computed<any>(() => {
 const actionType = computed(() => firstActionMetadata.value?.type || '')
 const formattedActionType = computed(() => formatTxType(actionType.value || ''))
 
+const isRejection = computed(() => actionType.value === 'rejection')
+
 const { data: simulationDetails, error: simulationError } = useAsyncData(
   `${props.transaction.id}`,
   () => {
@@ -431,9 +433,15 @@ onUnmounted(() => {
           </button>
 
           <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch" class="grid grid-cols-2 gap-2.5 items-center">
-            <CommonButton v-if="actionType !== 'rejection'" :loading="pending.reject" color="red" size="lg" class="justify-center" @click="handleReject(transaction)">
-              Reject
-            </CommonButton>
+            <div
+              v-tippy="{
+                content: isRejection ? 'Rejection proposals can not be reject again.' : undefined,
+              }"
+            >
+              <CommonButton :disabled="isRejection" :loading="pending.reject" color="red" size="lg" class="justify-center w-full" @click="handleReject(transaction)">
+                Reject
+              </CommonButton>
+            </div>
             <div v-if="isConfirmationsMatch" v-tippy="errorMessage">
               <CommonButton
                 :disabled="!!errorMessage || pending.execute" :loading="pending.execute || (isUndefined(currentNonce) && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" error-message @click="handleExecuteConfirmation(transaction)"
