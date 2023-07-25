@@ -283,7 +283,7 @@ onUnmounted(() => {
             </div>
             <div v-if="transaction.note" class="flex flex-col justify-between text-sm gap-2.5">
               <span class="text-slate-400 text-xs">Note</span>
-              <span class="text-xs whitespace-break-spaces">
+              <span class="text-xs whitespace-break-spaces max-h-[250px] overflow-auto scroll-style">
                 {{ transaction.note }}
               </span>
             </div>
@@ -376,7 +376,7 @@ onUnmounted(() => {
           </div>
         </div>
         <div class="sm:pb-7.5 pb-5 sm:px-7.5 px-5 border-b dark:border-slate-800 border-slate-150">
-          <ul class="flex gap-5 flex-col">
+          <ul class="flex gap-5 flex-col max-h-[300px] overflow-auto scroll-style">
             <li v-for="signer in transaction.confirmations" :key="signer.address">
               <div class="flex gap-3 items-center">
                 <AuthorityAvatar class="w-9 h-9 shrink-0" :address="signer.address" />
