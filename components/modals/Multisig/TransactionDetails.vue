@@ -433,11 +433,7 @@ onUnmounted(() => {
           </button>
 
           <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch" class="grid grid-cols-2 gap-2.5 items-center">
-            <div
-              v-tippy="{
-                content: isRejection ? 'Rejection proposals can not be reject again.' : undefined,
-              }"
-            >
+            <div v-if="!isRejection">
               <CommonButton :disabled="isRejection" :loading="pending.reject" color="red" size="lg" class="justify-center w-full" @click="handleReject(transaction)">
                 Reject
               </CommonButton>
