@@ -94,6 +94,8 @@ interface IMultisigTransactionResponse {
   data: IMultisigTransaction[]
 }
 
+type MultisigTransactionType = 'add-signers' | 'remove-signers' | 'others'
+
 interface IGenerateMultisigSignatureParams {
   chainId: string | number
   actions: TransactionsAction[]
@@ -105,6 +107,7 @@ interface IGenerateMultisigSignatureParams {
   options?: any
   rejection?: boolean
   rejectionId?: string
+  transactionType?: 'add-signers' | 'remove-signers' | 'others'
 }
 
 interface IOpenNonceModalParams {
@@ -113,4 +116,5 @@ interface IOpenNonceModalParams {
   estimatedFee?: boolean
   rejection?: boolean
   rejectionId?: string
+  transactionType: 'add-signers' | 'remove-signers' | 'others'
 }

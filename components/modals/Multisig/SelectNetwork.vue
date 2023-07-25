@@ -11,8 +11,8 @@ const { data: networkVersions } = useNuxtData('allNetworkVersions')
 
 const selectedNetworks = ref<string[]>([])
 
-const deployedNetworks = computed(() => networkVersions.value.filter((network: any) => gte(major(network.currentVersion), 3)))
-const nonDeployedNetworks = computed(() => networkVersions.value.filter((network: any) => lt(major(network.currentVersion), 3)))
+const deployedNetworks = computed(() => networkVersions.value.filter((network: any) => gte(major(network?.currentVersion || '0'), 3)))
+const nonDeployedNetworks = computed(() => networkVersions.value.filter((network: any) => lt(major(network?.currentVersion || '0'), 3)))
 
 function toggleNetworkChainId(chainId: string) {
   if (selectedNetworks.value.includes(chainId))

@@ -12,12 +12,15 @@ const props = defineProps<{
 const route = useRoute()
 const { account } = useWeb3()
 const { selectedSafe } = storeToRefs(useSafe())
+const { isAccountCanSign } = useMultisig()
 
 const actualRequiredSigner = computed(() => props.activeTab === 'completed' ? props.item.confirmations_required : props.requiredSigner || 0)
 
+const canSign = computed(() => isAccountCanSign(props.item.chain_id, account.value, selectedSafe.value?.owner_address))
+
 const isConfirmationsMatch = computed(() => gte(props.item.confirmations.length, actualRequiredSigner.value))
 const isYourSignNeeded = computed(() => {
-  if (isSafeDoesntMatch.value || !account.value)
+  if (isSafeDoesntMatch.value || !account.value || !canSign.value)
     return false
 
   return !props.item.confirmations.find(item => getAddress(account.value) === getAddress(item.address))

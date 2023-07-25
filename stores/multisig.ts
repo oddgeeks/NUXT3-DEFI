@@ -19,8 +19,8 @@ export const useMultisig = defineStore('multisig', () => {
   const isSafeMultisig = computed(() => selectedSafe.value?.multisig === 1)
 
   function isAccountCanSign(chainId: number | string, account?: string, multisigOwner?: string) {
-    if (!account || !multisigOwner || !chainId || !requiredSigners.value)
-      return false
+    if (!account || !multisigOwner || !chainId || !requiredSigners.value?.length)
+      return
 
     const signers = requiredSigners.value.find(s => s.chainId == chainId)?.signers || []
 

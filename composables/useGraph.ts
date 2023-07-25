@@ -1,9 +1,17 @@
 import type { IBalance } from '~~/stores/safe'
 
 export function useGraph(balance: Ref<IBalance>) {
+  const { selectedSafe } = storeToRefs(useSafe())
   const { authorisedNetworks } = useAuthorities()
+  const { isAccountCanSign } = useMultisig()
+  const { account } = useWeb3()
 
-  const nonAuthorised = computed(() => !authorisedNetworks.value?.find(i => String(i.chainId) == String(balance.value.chainId)))
+  const nonAuthorised = computed(() => {
+    const isNotAuthorised = !authorisedNetworks.value?.find(i => String(i.chainId) == String(balance.value.chainId))
+    const canSign = isAccountCanSign(balance.value.chainId, account.value, selectedSafe.value?.owner_address)
+
+    return isNotAuthorised || !canSign
+  })
 
   const interactable = computed(() => {
     return toBN(balance.value.balance).gt(0) && !nonAuthorised.value

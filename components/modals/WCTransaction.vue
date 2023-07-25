@@ -23,8 +23,19 @@ const [submitting, toggle] = useToggle()
 const { parseTransactionError } = useErrorHandler()
 const { web3WalletV2 } = storeToRefs(useWalletConnectV2())
 
+const { selectedSafe } = storeToRefs(useSafe())
+const { authorisedNetworks } = useAuthorities()
+const { isAccountCanSign } = useMultisig()
+
+const nonAuthorised = computed(() => {
+  const isNotAuthorised = !authorisedNetworks.value?.find(i => String(i.chainId) == String(props.chainId))
+  const canSign = isAccountCanSign(props.chainId, account.value, selectedSafe.value?.owner_address)
+
+  return isNotAuthorised || !canSign
+})
+
 const submitDisabled = computed(
-  () => submitting.value || pending.value || !!error.value,
+  () => submitting.value || pending.value || !!error.value || nonAuthorised.value,
 )
 
 const peerURL = computed(() => {
@@ -285,6 +296,10 @@ onUnmounted(() => {
       <SVGInfoCircle class="w-3" />
 
       {{ simulationError.message }}
+    </p>
+    <p v-if="nonAuthorised" class="text-xs leading-5 text-orange-400 flex gap-2">
+      <SvgoExclamationCircle class="w-3 shrink-0 mt-1" />
+      You are not authorised to sign transactions on {{ chainIdToName(chainId) }} network.
     </p>
     <div class="flex justify-between items-center gap-4">
       <CommonButton

@@ -14,6 +14,7 @@ const emit = defineEmits(['destroy'])
 
 const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurrentNonce, getActualId } = useAvocadoSafe()
 const { getRequiredSigner, isAccountCanSign } = useMultisig()
+const { requiredSigners } = storeToRefs(useMultisig())
 const { selectedSafe } = storeToRefs(useSafe())
 const { getContactNameByAddress } = useContacts()
 const { account } = useWeb3()
@@ -48,10 +49,18 @@ const isTransactionExecuted = computed(() => props.transaction.executed_at !== n
 const isSignedAlready = computed(() => account.value ? props.transaction.confirmations.some(item => getAddress(item.address) === getAddress(account.value)) : false)
 
 const canSign = computed(() => isAccountCanSign(props.transaction.chain_id, account.value, selectedSafe.value?.owner_address))
-
 const decodedMetadata = computed(() => decodeMetadata(props.transaction.data.params.metadata))
+const isGeneralLoading = computed(() => !selectedSafe.value || !requiredSigners.value?.length || isUndefined(currentNonce))
 
-const isSafeDoesntMatch = computed(() => getAddress(props.transaction.safe_address) !== getAddress(selectedSafe.value?.safe_address!))
+const isSafeDoesntMatch = computed(() => {
+  if (!selectedSafe.value?.safe_address)
+    return
+
+  if (!requiredSigners.value)
+    return
+
+  return getAddress(props.transaction.safe_address) !== getAddress(selectedSafe.value?.safe_address!)
+})
 const proposalOwnerAddress = computed(() => props.transaction.confirmations.length ? props.transaction.confirmations[0].address : null)
 
 const errorMessage = computed(() => {
@@ -449,7 +458,7 @@ onUnmounted(() => {
             I want to sign & execute in the same txn
           </button>
 
-          <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch || !canSign" class="grid grid-cols-2 gap-2.5 items-center">
+          <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch || !canSign || isGeneralLoading" class="grid grid-cols-2 gap-2.5 items-center">
             <div v-if="!isRejection">
               <CommonButton :disabled="isRejection" :loading="pending.reject" color="red" size="lg" class="justify-center w-full" @click="handleReject(transaction)">
                 Reject
@@ -457,13 +466,13 @@ onUnmounted(() => {
             </div>
             <div v-if="isConfirmationsMatch && isSignedAlready" v-tippy="errorMessage">
               <CommonButton
-                :disabled="!!errorMessage || pending.execute" :loading="pending.execute || (isUndefined(currentNonce) && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" error-message @click="handleExecuteConfirmation(transaction)"
+                :disabled="!!errorMessage || pending.execute" :loading="pending.execute || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" error-message @click="handleExecuteConfirmation(transaction)"
               >
                 Execute
               </CommonButton>
             </div>
             <div v-else v-tippy="errorMessage">
-              <CommonButton :disabled="!!errorMessage || pending.sign" :loading="pending.sign || (isUndefined(currentNonce) && !isSafeDoesntMatch)" size="lg" class="w-full justify-center !leading-5" :class="signAndExecute ? '!px-2 text-xs' : ''" @click="handleSign(transaction)">
+              <CommonButton :disabled="!!errorMessage || pending.sign" :loading="pending.sign || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center !leading-5" :class="signAndExecute ? '!px-2 text-xs' : ''" @click="handleSign(transaction)">
                 {{ signAndExecute ? 'Sign & Execute' : 'Sign' }}
               </CommonButton>
             </div>
@@ -473,12 +482,12 @@ onUnmounted(() => {
             Transaction has been executed
           </div>
 
-          <p v-else-if="isSafeDoesntMatch" class="text-xs leading-5 mt-4 text-orange-400 flex gap-2">
+          <p v-else-if="!isGeneralLoading && isSafeDoesntMatch" class="text-xs leading-5 mt-4 text-orange-400 flex gap-2">
             <SvgoExclamationCircle class="w-3 shrink-0 mt-1" />
 
             You don't have authority to execute this transaction.
           </p>
-          <p v-else-if="!canSign" class="text-xs leading-5 mt-4 text-orange-400 flex gap-2">
+          <p v-else-if="!isGeneralLoading && !canSign" class="text-xs leading-5 mt-4 text-orange-400 flex gap-2">
             <SvgoExclamationCircle class="w-3 shrink-0 mt-1" />
             You are not a signer on {{ chainIdToName(transaction.chain_id) }} network
           </p>

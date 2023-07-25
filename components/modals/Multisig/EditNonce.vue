@@ -8,6 +8,7 @@ const props = defineProps<{
   estimatedFee?: boolean
   rejection?: boolean
   rejectionId?: string
+  transactionType?: MultisigTransactionType
 }>()
 
 const emit = defineEmits(['resolve'])
@@ -15,7 +16,10 @@ const { selectedSafe } = storeToRefs(useSafe())
 const { getActualId } = useAvocadoSafe()
 const { requiredSigners } = storeToRefs(useMultisig())
 
-const nonce = ref<number | undefined>(-1)
+const isDeleteOrAddSigner = props.transactionType === 'remove-signers' || props.transactionType === 'add-signers'
+const recommendedNonce = isDeleteOrAddSigner ? -1 : undefined
+
+const nonce = ref<number | undefined>(recommendedNonce)
 const note = ref<string | undefined>(undefined)
 const detailsRef = ref<HTMLDetailsElement>()
 
@@ -153,7 +157,7 @@ function getNonceTooltip(value: number | undefined) {
           <template #button-suffix>
             <SvgoInfo2 v-tippy="getNonceTooltip(nonce)" class="text-slate-500" />
 
-            <template v-if="nonce === -1">
+            <template v-if="nonce === recommendedNonce">
               <span class="bg-primary bg-opacity-10 text-primary text-xs px-[6px] py-[5px] uppercase rounded-[10px]">
                 Recommended
               </span>
@@ -166,7 +170,7 @@ function getNonceTooltip(value: number | undefined) {
                 v-tippy="getNonceTooltip(value)" class="text-slate-500"
               />
 
-              <span v-if="value === -1" class="bg-primary bg-opacity-10 text-primary text-xs px-[6px] py-[5px] uppercase rounded-[10px]">
+              <span v-if="value === recommendedNonce" class="bg-primary bg-opacity-10 text-primary text-xs px-[6px] py-[5px] uppercase rounded-[10px]">
                 Recommended
               </span>
             </span>

@@ -10,7 +10,6 @@ import type { IBalance } from '~/stores/safe'
 
 const emit = defineEmits(['navigate'])
 
-const { account } = useWeb3()
 const { tokenBalances, totalEoaBalance, eoaBalances, fundedEoaNetworks } = useAvocadoSafe()
 const { authorisedNetworks } = useAuthorities()
 const [moreOptions, toggleOptions] = useToggle(false)
