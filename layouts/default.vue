@@ -27,6 +27,8 @@ function isIgnoreVersion() {
   }))
 }
 
+const welcomeMessageShow = useLocalStorage<Boolean>('welcome_message_check', false)
+
 watch(showVersionUpdateBanner, async () => {
   if (showVersionUpdateBanner.value) {
     const today = new Date()
@@ -37,6 +39,11 @@ watch(showVersionUpdateBanner, async () => {
         ignore_version.value = allNetworkVersions.value
     }
   }
+})
+
+onMounted(() => {
+  if (!welcomeMessageShow.value)
+    openWelcomeModal()
 })
 </script>
 

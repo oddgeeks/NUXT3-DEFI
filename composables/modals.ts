@@ -29,6 +29,7 @@ import PendingCrossTransaction from '~/components/modals/PendingCrossTransaction
 import DefiPositionDetails from '~/components/modals/DefiPositionDetails.vue'
 import QrCode from '~/components/modals/QrCode.vue'
 import UpdateNoticeModal from '~/components/modals/UpdateNotice.vue'
+import WelcomeModal from '~/components/modals/Welcome.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -411,6 +412,16 @@ export function openUpdateNoticeModal() {
   return openModal({
     component: UpdateNoticeModal,
     async: true,
+  })
+}
+
+export function openWelcomeModal() {
+  openModal({
+    component: WelcomeModal,
+    options: {
+      wrapperClass: 'md:min-w-[560px]',
+      contentClass: '!p-0',
+    },
   })
 }
 
