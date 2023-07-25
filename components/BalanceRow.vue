@@ -132,7 +132,11 @@ function onClick() {
       </div>
     </td>
     <td class="text-right py-6 min-w-[138px]">
-      <div v-if="!summary" v-tippy="nonAuthorised ? `You are not authorized to interact with tokens on ${chainIdToName(balance.chainId)}` : undefined" class="flex items-center gap-[15px] justify-center">
+      <div
+        v-if="!summary" v-tippy="{
+          content: nonAuthorised ? `You are not authorized to interact with tokens on ${chainIdToName(balance.chainId)}` : undefined,
+        }" class="flex items-center gap-[15px] justify-center"
+      >
         <CommonButton
           v-tippy="{
             arrow: true,

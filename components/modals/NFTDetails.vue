@@ -66,7 +66,11 @@ const isNotAuthorised = computed(() => {
           </ul>
         </div>
       </details>
-      <div v-tippy="isNotAuthorised ? `You are not authorized to interact with tokens on ${chainIdToName(asset.chainId)}` : undefined">
+      <div
+        v-tippy="{
+          content: isNotAuthorised ? `You are not authorized to interact with tokens on ${chainIdToName(asset.chainId)}` : undefined,
+        }"
+      >
         <CommonButton :disabled="isNotAuthorised" class="justify-center w-full" size="lg" @click="$emit('destroy'), openSendNFTModal(asset)">
           Send NFT
         </CommonButton>
