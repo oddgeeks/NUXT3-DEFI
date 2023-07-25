@@ -572,7 +572,7 @@ onMounted(() => {
 
   const alternativeToken = availableBuyTokens.value.find(i => lc(i.symbol) === alternativeTokenSymbol)
 
-  swap.value.buyToken = alternativeToken || usdc || usdt
+  swap.value.buyToken = alternativeToken || usdt || usdc
 
   if (props.amount) {
     setSellAmount({
