@@ -7,6 +7,7 @@ const props = defineProps<{
   item: IMultisigTransaction
   activeTab: string | undefined
   requiredSigner: number | null
+  insideGroup: boolean
 }>()
 
 const route = useRoute()
@@ -73,9 +74,9 @@ async function handleClick(item: IMultisigTransaction) {
 </script>
 
 <template>
-  <li class="w-full">
+  <li :class="insideGroup ? 'last:!border-b-0' : ''" class="w-full border-b border-slate-150 dark:border-slate-800">
     <button class="w-full" @click="handleClick(item)">
-      <div class="hidden grid-row sm:grid grid-item focus:outline-none items-center w-full text-xs font-medium py-4 last:border-b-0 border-b border-slate-150 dark:border-slate-800 px-5">
+      <div class="hidden grid-row sm:grid grid-item focus:outline-none items-center w-full text-xs font-medium py-4 px-5">
         <span class="flex items-center gap-2.5 whitespace-nowrap">
           <span v-if="activeTab !== 'nonseq'" :class="item.nonce === '-1' ? 'hidden' : ''">
             {{ item.nonce }}
