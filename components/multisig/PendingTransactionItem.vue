@@ -6,12 +6,15 @@ import { AvoMultisigImplementation__factory } from '@/contracts'
 const props = defineProps<{
   item: IMultisigTransaction
   activeTab: string | undefined
+  requiredSigner: number | null
 }>()
 
 const route = useRoute()
 const { account } = useWeb3()
 
-const isConfirmationsMatch = computed(() => gte(props.item.confirmations.length, props.item.confirmations_required))
+const actualRequiredSigner = computed(() => props.activeTab === 'completed' ? props.item.confirmations_required : props.requiredSigner || 0)
+
+const isConfirmationsMatch = computed(() => gte(props.item.confirmations.length, actualRequiredSigner.value))
 const isYourSignNeeded = computed(() => !account.value ? false : !props.item.confirmations.find(item => getAddress(account.value) === getAddress(item.address)))
 const isTransactionExecuted = computed(() => props.item.executed_at !== null)
 const isTransactionFailed = computed(() => props.item.status === 'failed')
@@ -80,7 +83,7 @@ async function handleClick(item: IMultisigTransaction) {
         <span class="flex items-center gap-2.5  whitespace-nowrap">
           <SvgoUserCircle :class="isConfirmationsMatch ? 'text-primary' : 'text-slate-400'" />
           <span :class="isConfirmationsMatch ? 'text-primary' : ''">
-            {{ item.confirmations.length }} out of {{ item.confirmations_required }}
+            {{ item.confirmations.length }} out of {{ actualRequiredSigner }}
           </span>
         </span>
         <div>
@@ -136,7 +139,7 @@ async function handleClick(item: IMultisigTransaction) {
         <div class="flex items-center py-3 px-4 gap-2.5 whitespace-nowrap text-xs">
           <SvgoUserCircle :class="isConfirmationsMatch ? 'text-primary' : 'text-slate-400'" />
           <span :class="isConfirmationsMatch ? 'text-primary' : ''">
-            {{ item.confirmations.length }} out of {{ item.confirmations_required }}
+            {{ item.confirmations.length }} out of {{ actualRequiredSigner }}
           </span>
         </div>
         <hr class="border-slate-150 w-full dark:border-slate-800">

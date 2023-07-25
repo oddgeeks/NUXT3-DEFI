@@ -13,6 +13,7 @@ const props = defineProps<{
 const emit = defineEmits(['destroy'])
 
 const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurrentNonce, getActualId } = useAvocadoSafe()
+const { getRequiredSigner } = useMultisig()
 const { selectedSafe } = storeToRefs(useSafe())
 const { getContactNameByAddress } = useContacts()
 const { account } = useWeb3()
@@ -27,9 +28,17 @@ const pending = ref({
   sign: false,
 })
 
+const { data: requiredSigner } = useAsyncData<number>(`multisig-required-signer-${props.transaction.safe_address}-${props.transaction.chain_id}`, async () => {
+  return getRequiredSigner(props.transaction.safe_address, props.transaction.chain_id)
+}, {
+  immediate: true,
+})
+
+const actualRequiredSigner = computed(() => isTransactionExecuted.value ? props.transaction.confirmations_required : requiredSigner.value || 0)
+
 const formatted = useDateFormat(props.transaction.created_at, 'MM.DD.YYYY, HH:mm:ss')
-const isConfirmationsMatch = computed(() => gte(props.transaction.confirmations.length, props.transaction.confirmations_required))
-const confirmationNeeded = computed(() => props.transaction.confirmations_required - props.transaction.confirmations.length)
+const isConfirmationsMatch = computed(() => gte(props.transaction.confirmations.length, actualRequiredSigner.value))
+const confirmationNeeded = computed(() => actualRequiredSigner.value - props.transaction.confirmations.length)
 
 const isNonseq = computed(() => props.transaction.nonce == '-1')
 const isNonceNotMatch = computed(() => isNonseq.value ? false : props.transaction.nonce !== String(currentNonce.value))
@@ -118,7 +127,7 @@ async function handleSign(item: IMultisigTransaction) {
       baseURL: multisigURL,
     })
 
-    if (data.confirmations.length === data.confirmations_required && signAndExecute.value) {
+    if (data.confirmations.length === requiredSigner.value && signAndExecute.value) {
       await handleExecute(data)
     }
     else {
@@ -356,7 +365,7 @@ onUnmounted(() => {
             <span :class="isConfirmationsMatch ? 'text-primary' : 'text-slate-400'" class="flex items-center gap-2.5 text-xs">
               <SvgoUserCircle />
               <span class="font-medium leading-5">
-                {{ transaction.confirmations.length }} out of {{ transaction.confirmations_required }}
+                {{ transaction.confirmations.length }} out of {{ actualRequiredSigner }}
               </span>
             </span>
           </div>

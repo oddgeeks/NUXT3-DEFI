@@ -6,6 +6,8 @@ const props = defineProps<{
   activeTab: string | undefined
 }>()
 
+const { getRequiredSigner } = useMultisig()
+
 const route = useRoute()
 const page = ref(1)
 const containerRef = ref<HTMLElement | null>(null)
@@ -44,6 +46,13 @@ const { data, refresh } = useAsyncData(`multisig-${route.params.safe}-${props.ch
   immediate: true,
 })
 
+const { data: requiredSigner, refresh: refreshSigner } = useAsyncData<number>(`multisig-required-signer-${route.params.safe}-${props.chainId}`, async () => {
+  const multisigAddress = route.params.safe as string
+  return getRequiredSigner(multisigAddress, props.chainId)
+}, {
+  immediate: true,
+})
+
 const groupedData = computed(() => {
   const groupedData = groupBy(data.value?.data || [], (item) => {
     return item.groupKey || item.nonce
@@ -75,7 +84,8 @@ function sortItems(items: IMultisigTransaction[]) {
 
 useIntervalFn(() => {
   refresh()
-}, 15000)
+  refreshSigner()
+}, 10000)
 </script>
 
 <template>
@@ -96,7 +106,7 @@ useIntervalFn(() => {
             <p v-if="checkIsGroup(key, items)" class="text-xs sm:p-4 sm:pb-0 font-medium text-slate-400">
               You can complete one of the transactions below. The other will be cancelled automatically.
             </p>
-            <MultisigPendingTransactionItem v-for="item in sortItems(items)" :key="item.id" :active-tab="activeTab" :item="item" />
+            <MultisigPendingTransactionItem v-for="item in sortItems(items)" :key="item.id" :required-signer="requiredSigner" :active-tab="activeTab" :item="item" />
           </ul>
         </li>
       </ul>
