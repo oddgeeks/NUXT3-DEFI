@@ -3,6 +3,7 @@ import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { storeToRefs } from 'pinia'
 import { utils } from 'ethers'
+import type { IBalance } from '~/stores/safe'
 import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
 import type { IToken } from '~~/stores/tokens'
 import { Erc20__factory } from '~~/contracts'
@@ -12,7 +13,7 @@ import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg?compone
 
 interface ISwap {
   sellToken: IToken
-  buyToken: IToken
+  buyToken: IToken | IBalance
 }
 
 const props = defineProps({
@@ -547,19 +548,31 @@ const { pause, resume } = useInterval(10000, {
   },
 })
 
+function lc(s: string) {
+  return s.toLocaleLowerCase()
+}
+
 onMounted(() => {
   // set initial buy token
-  const eth = availableBuyTokens.value.find(i => i.symbol.includes('eth'))
-  const usdc = availableBuyTokens.value.find(i => i.symbol === 'usdc')
+  const selltokenSymbol = lc(swap.value.sellToken.symbol)
+  const usdc = availableBuyTokens.value.find(i => lc(i.symbol) === 'usdc')!
+  const usdt = availableBuyTokens.value.find(i => lc(i.symbol) === 'usdt')!
 
-  const isEth = swap.value.sellToken.symbol.includes('eth')
+  const defaultAlternative = 'eth'
 
-  swap.value.buyToken = getTokenByAddress(
-    props.toAddress
-      || (isEth ? usdc?.address : eth?.address)
-      || availableBuyTokens.value[0].address,
-    toChainId.value,
-  )!
+  const tokenAlternatives = {
+    eth: 'usdc',
+    weth: 'eth',
+    usdc: 'eth',
+    usdt: 'eth',
+    dai: 'eth',
+  } as Record<string, string>
+
+  const alternativeTokenSymbol = tokenAlternatives[selltokenSymbol] || defaultAlternative
+
+  const alternativeToken = availableBuyTokens.value.find(i => lc(i.symbol) === alternativeTokenSymbol)
+
+  swap.value.buyToken = alternativeToken || usdc || usdt
 
   if (props.amount) {
     setSellAmount({
