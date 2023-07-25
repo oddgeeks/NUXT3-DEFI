@@ -16,8 +16,9 @@ useAccountTrack(undefined, () => {
 })
 
 const { fetchSafe } = useSafe()
+const { account } = useWeb3()
 const { selectedSafe } = storeToRefs(useSafe())
-const { getRequiredSigners, setRequiredSigners } = useMultisig()
+const { getRequiredSigners, setRequiredSigners, isAccountCanSign } = useMultisig()
 const { changeThreshold, removeSignerWithThreshold } = useAvocadoSafe()
 
 const selectedAddresses = ref<string[]>([])
@@ -186,7 +187,7 @@ useIntervalFn(async () => {
                 <span>
                   {{ getSignerInfo(item.chainId)?.requiredSignerCount }} out of {{ getSignerInfo(item.chainId)?.signerCount }}
                 </span>
-                <button :disabled="isSafeDoesNotMatch" class="text-primary disabled:text-slate-400 ml-4 text-xs" @click="handleTresholdChange(item.chainId)">
+                <button :disabled="isSafeDoesNotMatch || !isAccountCanSign(item.chainId, account, selectedSafe?.owner_address)" class="text-primary disabled:text-slate-400 ml-4 text-xs" @click="handleTresholdChange(item.chainId)">
                   Change
                 </button>
               </span>

@@ -1,4 +1,5 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
+import { getAddress } from 'ethers/lib/utils'
 import {
   AvoMultisigImplementation__factory,
 } from '@/contracts'
@@ -16,6 +17,18 @@ export const useMultisig = defineStore('multisig', () => {
   })
 
   const isSafeMultisig = computed(() => selectedSafe.value?.multisig === 1)
+
+  function isAccountCanSign(chainId: number | string, account?: string, multisigOwner?: string) {
+    if (!account || !multisigOwner || !chainId || !requiredSigners.value)
+      return false
+
+    const signers = requiredSigners.value.find(s => s.chainId == chainId)?.signers || []
+
+    if (getAddress(multisigOwner) === getAddress(account))
+      return true
+
+    return signers.some(s => getAddress(s) === getAddress(account))
+  }
 
   async function getRequiredSigners(safe: ISafe) {
     const requiredSignersArr: IRequiredSigners[] = []
@@ -68,6 +81,7 @@ export const useMultisig = defineStore('multisig', () => {
     getRequiredSigners,
     setRequiredSigners,
     getRequiredSigner,
+    isAccountCanSign,
   }
 })
 

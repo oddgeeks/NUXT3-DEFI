@@ -5,8 +5,14 @@ const props = defineProps<{
   owner: boolean
 }>()
 
+const { account } = useWeb3()
+const { selectedSafe } = storeToRefs(useSafe())
+const { isAccountCanSign } = useMultisig()
+
 const selectedAddresses = inject<Ref<string[]>>('selectedAddresses')
 const selectedChainId = inject<Ref<number | string>>('selectedChainId')
+
+const canSign = computed(() => isAccountCanSign(props.chainId, account.value, selectedSafe.value?.owner_address))
 
 const { getContactNameByAddress } = useContacts()
 
@@ -24,6 +30,9 @@ const isDisabled = computed(() => {
 const errorMessage = computed(() => {
   if (isDisabled.value)
     return 'Deselect current chain addresses to select a different chain'
+
+  if (!canSign.value)
+    return 'You are not a signer on this network'
 })
 
 function handleInput() {
@@ -92,7 +101,7 @@ function handleInput() {
           content: errorMessage || null,
         }" :for="`input-${address}-${chainId}`"
       >
-        <input :id="`input-${address}-${chainId}`" :disabled="isDisabled" :value="address" class="peer sr-only" type="checkbox" @change="selectedChainId = chainId" @input="handleInput">
+        <input :id="`input-${address}-${chainId}`" :disabled="isDisabled || !canSign" :value="address" class="peer sr-only" type="checkbox" @change="selectedChainId = chainId" @input="handleInput">
         <SvgoCheckCircle class="svg-circle cursor-pointer darker text-slate-500 peer-checked:success-circle" />
       </label>
     </div>

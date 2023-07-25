@@ -13,7 +13,7 @@ const props = defineProps<{
 const emit = defineEmits(['destroy'])
 
 const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurrentNonce, getActualId } = useAvocadoSafe()
-const { getRequiredSigner } = useMultisig()
+const { getRequiredSigner, isAccountCanSign } = useMultisig()
 const { selectedSafe } = storeToRefs(useSafe())
 const { getContactNameByAddress } = useContacts()
 const { account } = useWeb3()
@@ -40,10 +40,14 @@ const formatted = useDateFormat(props.transaction.created_at, 'MM.DD.YYYY, HH:mm
 const isConfirmationsMatch = computed(() => gte(props.transaction.confirmations.length, actualRequiredSigner.value))
 const confirmationNeeded = computed(() => actualRequiredSigner.value - props.transaction.confirmations.length)
 
+const isConfirmationWillMatch = computed(() => gte(props.transaction.confirmations.length + 1, actualRequiredSigner.value))
+
 const isNonseq = computed(() => props.transaction.nonce == '-1')
 const isNonceNotMatch = computed(() => isNonseq.value ? false : props.transaction.nonce !== String(currentNonce.value))
 const isTransactionExecuted = computed(() => props.transaction.executed_at !== null)
 const isSignedAlready = computed(() => account.value ? props.transaction.confirmations.some(item => getAddress(item.address) === getAddress(account.value)) : false)
+
+const canSign = computed(() => isAccountCanSign(props.transaction.chain_id, account.value, selectedSafe.value?.owner_address))
 
 const decodedMetadata = computed(() => decodeMetadata(props.transaction.data.params.metadata))
 
@@ -58,6 +62,7 @@ const errorMessage = computed(() => {
 
   if (isUndefined(currentNonce.value))
     return null
+
   else if (isTransactionExecuted.value)
     message = 'This transaction has already been executed.'
 
@@ -424,7 +429,7 @@ onUnmounted(() => {
           </details>
 
           <button
-            v-if="!isSignedAlready && isConfirmationsMatch"
+            v-if="!isSignedAlready && isConfirmationWillMatch"
             :class="{
               'dark:text-white text-slate-900': signAndExecute,
             }"
@@ -441,7 +446,7 @@ onUnmounted(() => {
             I want to sign & execute in the same txn
           </button>
 
-          <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch" class="grid grid-cols-2 gap-2.5 items-center">
+          <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch || !canSign" class="grid grid-cols-2 gap-2.5 items-center">
             <div v-if="!isRejection">
               <CommonButton :disabled="isRejection" :loading="pending.reject" color="red" size="lg" class="justify-center w-full" @click="handleReject(transaction)">
                 Reject
@@ -469,6 +474,10 @@ onUnmounted(() => {
             <SvgoExclamationCircle class="w-3 shrink-0 mt-1" />
 
             You don't have authority to execute this transaction.
+          </p>
+          <p v-else-if="!canSign" class="text-xs leading-5 mt-4 text-orange-400 flex gap-2">
+            <SvgoExclamationCircle class="w-3 shrink-0 mt-1" />
+            You are not a signer on {{ chainIdToName(transaction.chain_id) }} network
           </p>
         </div>
       </div>

@@ -9,7 +9,10 @@ const props = defineProps<{
 }>()
 defineEmits(['onSelect'])
 const { requiredSigners } = storeToRefs(useMultisig())
+const { selectedSafe } = storeToRefs(useSafe())
+const { isAccountCanSign } = useMultisig()
 const { getContactNameByAddress } = useContacts()
+const { account } = useWeb3()
 
 const signer = computed(() => requiredSigners.value.find((signer: any) => signer.chainId == props.network.chainId))
 
@@ -18,8 +21,15 @@ const disabled = computed(() => {
   return props.addresses?.length === 1 && signer.value?.signers.some(i => getAddress(i) === getAddress(address.address))
 })
 
-const isAddressAlreadyExist = computed(() => {
-  return props.addresses.some(address => signer.value?.signers.some(i => getAddress(i) === getAddress(address.address)))
+const duplicateAddresses = computed(() => {
+  return props.addresses.filter(address => signer.value?.signers.some(i => getAddress(i) === getAddress(address.address)))
+})
+
+const canSign = computed(() => {
+  if (!account.value || !selectedSafe.value?.owner_address)
+    return false
+
+  return isAccountCanSign(props.network.chainId, account.value, selectedSafe.value?.owner_address)
 })
 </script>
 
@@ -33,13 +43,19 @@ const isAddressAlreadyExist = computed(() => {
           <ChainLogo class="w-[26px] h-[26px]" :chain="network.chainId" />
           {{ network.name }}
         </div>
-        <CommonButton
-          :disabled="disabled"
-          :color="selected ? 'white' : 'primary'"
-          @click="$emit('onSelect', network.chainId)"
+        <div
+          v-tippy="{
+            content: !canSign ? 'You are not a signer on this network' : undefined,
+          }"
         >
-          {{ disabled ? 'Already Added' : selected ? 'Selected' : 'Select' }}
-        </CommonButton>
+          <CommonButton
+            :disabled="disabled || !canSign"
+            :color="selected ? 'white' : 'primary'"
+            @click="$emit('onSelect', network.chainId)"
+          >
+            {{ disabled ? 'Already Added' : selected ? 'Selected' : 'Select' }}
+          </CommonButton>
+        </div>
       </div>
     </div>
     <template v-if="signer">
@@ -68,9 +84,9 @@ const isAddressAlreadyExist = computed(() => {
         </div>
       </div>
     </template>
-    <span v-if="!disabled && isAddressAlreadyExist" class="text-[10px] p-4 pt-2 text-orange-400 flex items-center gap-2.5">
+    <span v-if="!disabled && duplicateAddresses?.length" class="text-[10px] p-4 pt-2 text-orange-400 flex items-center gap-2.5">
       <SvgoInfo2 class="w-4 font-medium" />
-      One of the addresses is already a signer on Polygon & will be skipped.
+      Following addresses is already a signer on {{ chainIdToName(network.chainId) }} & will be skipped.
     </span>
   </li>
 </template>
