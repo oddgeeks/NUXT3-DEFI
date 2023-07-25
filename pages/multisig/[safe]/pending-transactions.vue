@@ -68,7 +68,7 @@ const title = computed(() => {
 useIntervalFn(() => {
   refreshNonSeq()
   refreshSeq()
-}, 15000)
+}, 10000)
 </script>
 
 <template>

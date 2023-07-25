@@ -7,6 +7,7 @@ const props = defineProps<{
 }>()
 
 const { getRequiredSigner } = useMultisig()
+const { lastModal } = useModal()
 
 const route = useRoute()
 const page = ref(1)
@@ -82,10 +83,20 @@ function sortItems(items: IMultisigTransaction[]) {
   return items.sort((a, b) => a.created_at > b.created_at ? -1 : 1)
 }
 
-useIntervalFn(() => {
+function refreshAll() {
   refresh()
   refreshSigner()
+}
+
+useIntervalFn(() => {
+  refreshAll()
 }, 10000)
+
+watch(lastModal, () => {
+  // Refresh data when modal is closed
+  if (!lastModal.value)
+    refreshAll()
+})
 </script>
 
 <template>

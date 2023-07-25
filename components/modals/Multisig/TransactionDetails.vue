@@ -263,8 +263,11 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
-          <div v-if="decodedMetadata" class="sm:p-7.5 p-5 border-b dark:border-slate-800 border-slate-150">
-            <div v-once class="flex flex-1 flex-col gap-2 max-w-2xl scroll-style overflow-auto">
+          <div v-if="decodedMetadata" class="sm:p-7.5 p-5 border-b flex gap-2.5 dark:border-slate-800 border-slate-150 max-w-2xl scroll-style overflow-auto">
+            <span v-if="isRejection" class="text-xs inline-flex whitespace-nowrap">
+              Executing this transaction will reject transaction
+            </span>
+            <div v-once class="flex flex-1 flex-col gap-2">
               <ActionMetadata v-for="metadata in decodedMetadata" :key="metadata" compact class="text-xs whitespace-nowrap" :chain_id="transaction.chain_id" :metadata="metadata" />
             </div>
           </div>
