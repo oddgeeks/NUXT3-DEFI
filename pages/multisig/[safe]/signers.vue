@@ -147,7 +147,7 @@ useIntervalFn(async () => {
     <div class="flex flex-col gap-2">
       <div class="flex flex-col gap-5">
         <template v-for="item, i in availableSigners" :key="item.chainId">
-          <details :open="i === 0" class="rounded-[25px] group text-sm dark:bg-gray-850 bg-slate-50">
+          <details class="rounded-[25px] group text-sm dark:bg-gray-850 bg-slate-50">
             <summary class="flex justify-between flex-wrap sm:gap-0 gap-4.5 p-[18px] sm:py-6.5 sm:px-7.5 cursor-pointer group-open:border-b-1 last:border-b-0 border-slate-150 dark:border-slate-800 items-center">
               <h2 class="flex items-center gap-3 sm:w-auto w-full">
                 <ChainLogo class="w-7.5 h-7.5" :chain="item.chainId" />
