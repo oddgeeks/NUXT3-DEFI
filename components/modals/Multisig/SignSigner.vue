@@ -32,11 +32,11 @@ async function handleBack() {
       <MultisigSignAddSignerItem v-for="chainId in chainIds" :key="chainId" v-model="signs" :chain-id="chainId" :addresses="addresses" />
     </ul>
     <div class="p-7.5 grid grid-cols-2 gap-4">
+      <CommonButton class="justify-center" size="lg" color="white" @click="handleBack">
+        Back
+      </CommonButton>
       <CommonButton v-if="allSigned" class="justify-center" size="lg" @click="$emit('destroy')">
         Close
-      </CommonButton>
-      <CommonButton v-else class="justify-center" size="lg" color="white" @click="handleBack">
-        Back
       </CommonButton>
     </div>
   </div>
