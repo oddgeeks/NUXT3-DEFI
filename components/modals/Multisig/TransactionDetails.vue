@@ -256,7 +256,7 @@ onUnmounted(() => {
           </div>
           <div class="sm:p-7.5 p-5 flex-col gap-5 flex border-b dark:border-slate-800 border-slate-150">
             <div v-if="proposalOwnerAddress" class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
-              <span class="text-slate-400 text-xs">Proposal Creator</span>
+              <span class="text-slate-400 text-xs">Creator</span>
               <NuxtLink target="_blank" :to="getExplorerUrl(transaction.chain_id, `/address/${proposalOwnerAddress}`)" class="text-sm text-primary">
                 {{ shortenHash(proposalOwnerAddress) }}
               </NuxtLink>
