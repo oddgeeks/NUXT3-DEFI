@@ -141,7 +141,7 @@ async function handleSelectContact(key: number) {
               <span class="sm:hidden inline">{{ key + 1 }}</span> Signer Address
             </span>
             <button
-              v-if="key !== 0" class="h-5 w-5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
+              v-if="fields.length > 1" class="h-5 w-5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
               @click="remove(key as number)"
             >
               <SvgoX class="w-3 h-3" />

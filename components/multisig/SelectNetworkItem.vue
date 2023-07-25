@@ -84,9 +84,18 @@ const canSign = computed(() => {
         </div>
       </div>
     </template>
-    <span v-if="!disabled && duplicateAddresses?.length" class="text-[10px] p-4 pt-2 text-orange-400 flex items-center gap-2.5">
-      <SvgoInfo2 class="w-4 font-medium" />
-      Following addresses is already a signer on {{ chainIdToName(network.chainId) }} & will be skipped.
+    <span v-if="!disabled && duplicateAddresses?.length" class="text-[10px] p-4 flex flex-col gap-2.5 pt-2 text-orange-400">
+      <span class="flex items-center gap-2.5">
+        <SvgoInfo2 class="w-4 font-medium" />
+        Following addresses is already a signer on {{ chainIdToName(network.chainId) }} & will be skipped.
+      </span>
+      <div>
+        <ul>
+          <li v-for="address in duplicateAddresses" :key="address.address" class="flex text-xs items-center gap-2.5">
+            {{ address.address }} {{ getContactNameByAddress(address.address) ? `(${getContactNameByAddress(address.address)})` : '' }}
+          </li>
+        </ul>
+      </div>
     </span>
   </li>
 </template>
