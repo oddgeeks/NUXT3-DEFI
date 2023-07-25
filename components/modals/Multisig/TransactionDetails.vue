@@ -51,7 +51,7 @@ const canSign = computed(() => isAccountCanSign(props.transaction.chain_id, acco
 
 const decodedMetadata = computed(() => decodeMetadata(props.transaction.data.params.metadata))
 
-const isSafeDoesntMatch = computed(() => props.transaction.safe_address !== selectedSafe.value?.safe_address)
+const isSafeDoesntMatch = computed(() => getAddress(props.transaction.safe_address) !== getAddress(selectedSafe.value?.safe_address!))
 const proposalOwnerAddress = computed(() => props.transaction.confirmations.length ? props.transaction.confirmations[0].address : null)
 
 const errorMessage = computed(() => {

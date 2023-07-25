@@ -11,12 +11,24 @@ const props = defineProps<{
 
 const route = useRoute()
 const { account } = useWeb3()
+const { selectedSafe } = storeToRefs(useSafe())
 
 const actualRequiredSigner = computed(() => props.activeTab === 'completed' ? props.item.confirmations_required : props.requiredSigner || 0)
 
 const isConfirmationsMatch = computed(() => gte(props.item.confirmations.length, actualRequiredSigner.value))
-const isYourSignNeeded = computed(() => !account.value ? false : !props.item.confirmations.find(item => getAddress(account.value) === getAddress(item.address)))
+const isYourSignNeeded = computed(() => {
+  if (isSafeDoesntMatch.value || !account.value)
+    return false
+
+  return !props.item.confirmations.find(item => getAddress(account.value) === getAddress(item.address))
+})
 const isTransactionExecuted = computed(() => props.item.executed_at !== null)
+const isSafeDoesntMatch = computed(() => {
+  if (!selectedSafe.value?.safe_address)
+    return true
+
+  return getAddress(props.item.safe_address) !== getAddress(selectedSafe.value?.safe_address || '')
+})
 const isTransactionFailed = computed(() => props.item.status === 'failed')
 
 const firstActionMetadata = computed<any>(() => {
@@ -86,6 +98,7 @@ async function handleClick(item: IMultisigTransaction) {
             {{ item.confirmations.length }} out of {{ actualRequiredSigner }}
           </span>
         </span>
+
         <div>
           <div :class="isConfirmationsMatch ? 'text-primary' : 'text-orange-400'">
             <span v-if="isTransactionFailed" class="flex items-center text-red-alert gap-2">

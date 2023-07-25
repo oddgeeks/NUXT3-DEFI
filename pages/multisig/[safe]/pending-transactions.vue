@@ -21,6 +21,9 @@ const { data: nonSeqResponse, refresh: refreshNonSeq } = useAsyncData<IMultisigT
   })
 
   return data
+}, {
+  lazy: true,
+  server: false,
 })
 
 const { data: seqResponse, refresh: refreshSeq } = useAsyncData<IMultisigTransactionResponse>(`${route.params.safe}-seq-count`, async () => {
@@ -33,6 +36,9 @@ const { data: seqResponse, refresh: refreshSeq } = useAsyncData<IMultisigTransac
   })
 
   return data
+}, {
+  lazy: true,
+  server: false,
 })
 
 const tabs = computed(() => {
