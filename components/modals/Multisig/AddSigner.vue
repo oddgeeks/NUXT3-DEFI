@@ -86,7 +86,7 @@ const onSubmit = handleSubmit(async () => {
 })
 
 async function handleSelectContact(key: number) {
-  const result = await openSelectContactModal('0')
+  const result = await openSelectContactModal()
 
   if (result.success) {
     const _contact = result.payload as IContact

@@ -4,9 +4,10 @@ import { getAddress } from 'ethers/lib/utils'
 const props = defineProps<{
   addresses: ISignerAddress[]
   chainId: string | number
+  modelValue: boolean[]
 }>()
 
-defineEmits(['destroy'])
+const emit = defineEmits(['destroy', 'update:modelValue'])
 
 const pending = ref(false)
 const signed = ref(false)
@@ -51,6 +52,10 @@ async function handleSign() {
       showPendingTransactionModal(txHash, props.chainId)
 
     signed.value = true
+
+    const modelValue = props.modelValue
+    modelValue.push(true)
+    emit('update:modelValue', modelValue)
   }
   catch (e) {
     console.error(e)

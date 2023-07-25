@@ -347,7 +347,7 @@ export async function openDeleteContactModal() {
   })
 }
 
-export async function openSelectContactModal(chainId: string | number) {
+export async function openSelectContactModal(chainId?: string | number) {
   return openModal({
     component: SelectContact,
     async: true,
