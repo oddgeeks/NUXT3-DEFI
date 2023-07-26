@@ -12,6 +12,8 @@ const props = defineProps<{
 
 const emit = defineEmits(['destroy'])
 
+const transactionRef = ref(props.transaction)
+
 const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurrentNonce, getActualId } = useAvocadoSafe()
 const { getRequiredSigner, isAccountCanSign } = useMultisig()
 const { requiredSigners } = storeToRefs(useMultisig())
@@ -29,27 +31,27 @@ const pending = ref({
   sign: false,
 })
 
-const { data: requiredSigner } = useAsyncData<number>(`multisig-required-signer-${props.transaction.safe_address}-${props.transaction.chain_id}`, async () => {
-  return getRequiredSigner(props.transaction.safe_address, props.transaction.chain_id)
+const { data: requiredSigner } = useAsyncData<number>(`multisig-required-signer-${transactionRef.value.safe_address}-${transactionRef.value.chain_id}`, async () => {
+  return getRequiredSigner(transactionRef.value.safe_address, transactionRef.value.chain_id)
 }, {
   immediate: true,
 })
 
-const actualRequiredSigner = computed(() => isTransactionExecuted.value ? props.transaction.confirmations_required : requiredSigner.value || 0)
+const actualRequiredSigner = computed(() => isTransactionExecuted.value ? transactionRef.value.confirmations_required : requiredSigner.value || 0)
 
-const formatted = useDateFormat(props.transaction.created_at, 'MM.DD.YYYY, HH:mm:ss')
-const isConfirmationsMatch = computed(() => gte(props.transaction.confirmations.length, actualRequiredSigner.value))
-const confirmationNeeded = computed(() => actualRequiredSigner.value - props.transaction.confirmations.length)
+const formatted = useDateFormat(transactionRef.value.created_at, 'MM.DD.YYYY, HH:mm:ss')
+const isConfirmationsMatch = computed(() => gte(transactionRef.value.confirmations.length, actualRequiredSigner.value))
+const confirmationNeeded = computed(() => actualRequiredSigner.value - transactionRef.value.confirmations.length)
 
-const isConfirmationWillMatch = computed(() => gte(props.transaction.confirmations.length + 1, actualRequiredSigner.value))
+const isConfirmationWillMatch = computed(() => gte(transactionRef.value.confirmations.length + 1, actualRequiredSigner.value))
 
-const isNonseq = computed(() => props.transaction.nonce == '-1')
-const isNonceNotMatch = computed(() => isNonseq.value ? false : props.transaction.nonce !== String(currentNonce.value))
-const isTransactionExecuted = computed(() => props.transaction.executed_at !== null)
-const isSignedAlready = computed(() => account.value ? props.transaction.confirmations.some(item => getAddress(item.address) === getAddress(account.value)) : false)
+const isNonseq = computed(() => transactionRef.value.nonce == '-1')
+const isNonceNotMatch = computed(() => isNonseq.value ? false : transactionRef.value.nonce !== String(currentNonce.value))
+const isTransactionExecuted = computed(() => transactionRef.value.executed_at !== null)
+const isSignedAlready = computed(() => account.value ? transactionRef.value.confirmations.some(item => getAddress(item.address) === getAddress(account.value)) : false)
 
-const canSign = computed(() => isAccountCanSign(props.transaction.chain_id, account.value, selectedSafe.value?.owner_address))
-const decodedMetadata = computed(() => decodeMetadata(props.transaction.data.params.metadata))
+const canSign = computed(() => isAccountCanSign(transactionRef.value.chain_id, account.value, selectedSafe.value?.owner_address))
+const decodedMetadata = computed(() => decodeMetadata(transactionRef.value.data.params.metadata))
 const isGeneralLoading = computed(() => !selectedSafe.value || !requiredSigners.value?.length || isUndefined(currentNonce))
 
 const isSafeDoesntMatch = computed(() => {
@@ -59,9 +61,9 @@ const isSafeDoesntMatch = computed(() => {
   if (!requiredSigners.value)
     return
 
-  return getAddress(props.transaction.safe_address) !== getAddress(selectedSafe.value?.safe_address!)
+  return getAddress(transactionRef.value.safe_address) !== getAddress(selectedSafe.value?.safe_address!)
 })
-const proposalOwnerAddress = computed(() => props.transaction.confirmations.length ? props.transaction.confirmations[0].address : null)
+const proposalOwnerAddress = computed(() => transactionRef.value.confirmations.length ? transactionRef.value.confirmations[0].address : null)
 
 const errorMessage = computed(() => {
   let message = null
@@ -88,7 +90,7 @@ const errorMessage = computed(() => {
 })
 
 const firstActionMetadata = computed<any>(() => {
-  const data = decodeMetadata(props.transaction.data.params.metadata) as string[]
+  const data = decodeMetadata(transactionRef.value.data.params.metadata) as string[]
 
   return data?.length ? data[0] : ''
 })
@@ -99,17 +101,17 @@ const formattedActionType = computed(() => formatTxType(actionType.value || ''))
 const isRejection = computed(() => actionType.value === 'rejection')
 
 const { data: simulationDetails, error: simulationError } = useAsyncData(
-  `${props.transaction.id}`,
+  `${transactionRef.value.id}`,
   () => {
-    if (networksSimulationNotSupported.includes(Number(props.transaction.chain_id)))
+    if (networksSimulationNotSupported.includes(Number(transactionRef.value.chain_id)))
       throw new Error('Simulation not supported on this network.')
 
-    const id = getActualId(props.transaction.data.params.actions)
+    const id = getActualId(transactionRef.value.data.params.actions)
 
     return http('/api/simulate', {
       method: 'POST',
       body: {
-        actions: props.transaction.data.params.actions.map((i: any) => {
+        actions: transactionRef.value.data.params.actions.map((i: any) => {
           return {
             target: i?.target || i.to,
             data: i.data,
@@ -117,8 +119,8 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
             operation: i?.operation ? String(i?.operation) : '0',
           }
         }),
-        avocadoSafe: props.transaction.safe_address,
-        chainId: props.transaction.chain_id,
+        avocadoSafe: transactionRef.value.safe_address,
+        chainId: transactionRef.value.chain_id,
         id,
       },
     }) as Promise<ISimulation>
@@ -141,17 +143,12 @@ async function handleSign(item: IMultisigTransaction) {
       baseURL: multisigURL,
     })
 
-    if (data.confirmations.length === requiredSigner.value && signAndExecute.value) {
+    if (data.confirmations.length === requiredSigner.value && signAndExecute.value)
       await handleExecute(data)
-    }
-    else {
-      emit('destroy')
-      openDialogModal({
-        title: 'Successfully signed',
-        type: 'success',
-        isButtonVisible: false,
-      })
-    }
+
+    else
+
+      transactionRef.value = data
   }
   finally {
     pending.value.sign = false
@@ -201,7 +198,7 @@ async function handleReject(transaction: IMultisigTransaction) {
 watch(selectedSafe, async () => {
   if (!selectedSafe.value)
     return
-  currentNonce.value = await getCurrentNonce(props.transaction.chain_id)
+  currentNonce.value = await getCurrentNonce(transactionRef.value.chain_id)
 }, {
   immediate: true,
 })
@@ -209,7 +206,7 @@ watch(selectedSafe, async () => {
 const transactionURL = computed(() => {
   if (process.server)
     return ''
-  return `${window.location.origin}/multisig/${props.transaction.safe_address}/pending-transactions/${props.transaction.id}`
+  return `${window.location.origin}/multisig/${transactionRef.value.safe_address}/pending-transactions/${transactionRef.value.id}`
 })
 
 async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
@@ -259,14 +256,14 @@ onUnmounted(() => {
                   <h1 class="text-[22px] leading-[30px]">
                     {{ formattedActionType }}
                   </h1>
-                  <span class="text-sm font-medium text-slate-400 inline-flex items-center gap-2">On <ChainLogo class="w-4 h-4" :chain="transaction.chain_id" /> {{ chainIdToName(transaction.chain_id) }}</span>
+                  <span class="text-sm font-medium text-slate-400 inline-flex items-center gap-2">On <ChainLogo class="w-4 h-4" :chain="transactionRef.chain_id" /> {{ chainIdToName(transactionRef.chain_id) }}</span>
                 </div>
               </div>
               <div class="flex items-center gap-2.5 sm:gap-1.5 sm:flex-col sm:justify-normal justify-between">
                 <p class="font-medium leading-[30px] whitespace-nowrap">
-                  Created {{ formatTimeAgo(new Date(transaction.created_at)) }}
+                  Created {{ formatTimeAgo(new Date(transactionRef.created_at)) }}
                 </p>
-                <time class="text-xs text-slate-400 sm:text-right leading-5 whitespace-nowrap" :datetime="transaction.created_at">
+                <time class="text-xs text-slate-400 sm:text-right leading-5 whitespace-nowrap" :datetime="transactionRef.created_at">
                   {{ formatted }}
                 </time>
               </div>
@@ -278,7 +275,7 @@ onUnmounted(() => {
                 Executing this transaction will reject transaction
               </span>
               <div v-once class="flex flex-1 flex-col gap-2">
-                <ActionMetadata v-for="metadata in decodedMetadata" :key="metadata" compact class="text-xs whitespace-nowrap" :chain_id="transaction.chain_id" :metadata="metadata" />
+                <ActionMetadata v-for="metadata in decodedMetadata" :key="metadata" compact class="text-xs whitespace-nowrap" :chain_id="transactionRef.chain_id" :metadata="metadata" />
               </div>
             </div>
           </div>
@@ -286,7 +283,7 @@ onUnmounted(() => {
             <div v-if="proposalOwnerAddress" class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
               <span class="text-slate-400 text-xs">Creator</span>
               <span>
-                <NuxtLink target="_blank" :to="getExplorerUrl(transaction.chain_id, `/address/${proposalOwnerAddress}`)" class="text-sm text-primary">
+                <NuxtLink target="_blank" :to="getExplorerUrl(transactionRef.chain_id, `/address/${proposalOwnerAddress}`)" class="text-sm text-primary">
                   {{ shortenHash(proposalOwnerAddress) }}
                 </NuxtLink>
                 <span v-if="getContactNameByAddress(proposalOwnerAddress)">
@@ -294,23 +291,23 @@ onUnmounted(() => {
                 </span>
               </span>
             </div>
-            <div v-if="transaction.transaction_hash" class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
+            <div v-if="transactionRef.transaction_hash" class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
               <span class="text-slate-400 text-xs">Transaction Hash</span>
-              <NuxtLink target="_blank" :to="`${avoExplorerURL}/tx/${transaction.transaction_hash}`" class="text-sm text-primary">
-                {{ shortenHash(transaction.transaction_hash) }}
+              <NuxtLink target="_blank" :to="`${avoExplorerURL}/tx/${transactionRef.transaction_hash}`" class="text-sm text-primary">
+                {{ shortenHash(transactionRef.transaction_hash) }}
               </NuxtLink>
             </div>
-            <div v-if="transaction.note" class="flex flex-col justify-between text-sm gap-2.5">
+            <div v-if="transactionRef.note" class="flex flex-col justify-between text-sm gap-2.5">
               <span class="text-slate-400 text-xs">Note</span>
               <span class="text-xs whitespace-break-spaces max-h-[250px] overflow-auto scroll-style">
-                {{ transaction.note }}
+                {{ transactionRef.note }}
               </span>
             </div>
             <div class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
               <span class="text-slate-400 text-xs">Avocado Multisig Hash</span>
               <span class="text-sm flex items-center gap-2 font-medium">
-                {{ shortenHash(transaction.id) }}
-                <Copy icon-only :text="transaction.id" />
+                {{ shortenHash(transactionRef.id) }}
+                <Copy icon-only :text="transactionRef.id" />
 
                 <CommonButton class="!p-0 !text-xs items-center gap-1.5 ml-2" color="white">
                   <Copy success-text="Link Copied" class="!px-4 py-2" :text="transactionURL">
@@ -327,9 +324,9 @@ onUnmounted(() => {
           </div>
           <div class="flex flex-col py-5">
             <span class="sm:px-7.5 px-5 text-sm mb-5">
-              Actions ({{ transaction.data.params.actions.length }})
+              Actions ({{ transactionRef.data.params.actions.length }})
             </span>
-            <template v-for="action in transaction.data.params.actions" :key="action.data">
+            <template v-for="action in transactionRef.data.params.actions" :key="action.data">
               <details class="group px-5 sm:px-7.5">
                 <summary class="text-xs flex items-center justify-between cursor-pointer">
                   <dl class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center w-full">
@@ -389,14 +386,14 @@ onUnmounted(() => {
             <span :class="isConfirmationsMatch ? 'text-primary' : 'text-slate-400'" class="flex items-center gap-2.5 text-xs">
               <SvgoUserCircle />
               <span class="font-medium leading-5">
-                {{ transaction.confirmations.length }} out of {{ actualRequiredSigner }}
+                {{ transactionRef.confirmations.length }} out of {{ actualRequiredSigner }}
               </span>
             </span>
           </div>
         </div>
         <div class="sm:pb-7.5 pb-5 sm:px-7.5 px-5 border-b dark:border-slate-800 border-slate-150">
           <ul class="flex gap-5 flex-col max-h-[300px] overflow-auto scroll-style">
-            <li v-for="signer in transaction.confirmations" :key="signer.address">
+            <li v-for="signer in transactionRef.confirmations" :key="signer.address">
               <div class="flex gap-3 items-center">
                 <AuthorityAvatar class="w-9 h-9 shrink-0" :address="signer.address" />
                 <p class="flex flex-col gap-0.5">
@@ -411,7 +408,7 @@ onUnmounted(() => {
                   <div class="flex items-center w-7.5 h-7.5 dark:bg-slate-800 bg-slate-100 rounded-full justify-center">
                     <Copy class="w-3 h-3" icon-only :text="signer.address" />
                   </div>
-                  <NuxtLink external target="_blank" :to="getExplorerUrl(transaction.chain_id, `/address/${signer.address}`)" class="flex items-center w-7.5 h-7.5 dark:bg-slate-800 bg-slate-100 rounded-full justify-center">
+                  <NuxtLink external target="_blank" :to="getExplorerUrl(transactionRef.chain_id, `/address/${signer.address}`)" class="flex items-center w-7.5 h-7.5 dark:bg-slate-800 bg-slate-100 rounded-full justify-center">
                     <SvgoExternalLink class="w-3 h-3 text-slate-400" />
                   </NuxtLink>
                 </div>
@@ -433,7 +430,7 @@ onUnmounted(() => {
             <div class="mt-5">
               <SimulationDetails
                 v-if="simulationDetails"
-                :chain-id="transaction.chain_id"
+                :chain-id="transactionRef.chain_id"
                 :details="simulationDetails"
                 :has-error="!!simulationError"
                 title-hidden
@@ -467,19 +464,19 @@ onUnmounted(() => {
 
           <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch || !canSign || isGeneralLoading" class="grid grid-cols-2 gap-2.5 items-center">
             <div v-if="!isRejection">
-              <CommonButton :disabled="isRejection" :loading="pending.reject" color="red" size="lg" class="justify-center w-full" @click="handleReject(transaction)">
+              <CommonButton :disabled="isRejection" :loading="pending.reject" color="red" size="lg" class="justify-center w-full" @click="handleReject(transactionRef)">
                 Reject
               </CommonButton>
             </div>
             <div v-if="isConfirmationsMatch && isSignedAlready" v-tippy="errorMessage">
               <CommonButton
-                :disabled="!!errorMessage || pending.execute" :loading="pending.execute || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" error-message @click="handleExecuteConfirmation(transaction)"
+                :disabled="!!errorMessage || pending.execute" :loading="pending.execute || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" error-message @click="handleExecuteConfirmation(transactionRef)"
               >
                 Execute
               </CommonButton>
             </div>
             <div v-else v-tippy="errorMessage">
-              <CommonButton :disabled="!!errorMessage || pending.sign" :loading="pending.sign || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center !leading-5" :class="signAndExecute ? '!px-2 text-xs' : ''" @click="handleSign(transaction)">
+              <CommonButton :disabled="!!errorMessage || pending.sign" :loading="pending.sign || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center !leading-5" :class="signAndExecute ? '!px-2 text-xs' : ''" @click="handleSign(transactionRef)">
                 {{ signAndExecute ? 'Sign & Execute' : 'Sign' }}
               </CommonButton>
             </div>
@@ -496,7 +493,7 @@ onUnmounted(() => {
           </p>
           <p v-else-if="!isGeneralLoading && !canSign" class="text-xs leading-5 mt-4 text-orange-400 flex gap-2">
             <SvgoExclamationCircle class="w-3 shrink-0 mt-1" />
-            You are not a signer on {{ chainIdToName(transaction.chain_id) }} network
+            You are not a signer on {{ chainIdToName(transactionRef.chain_id) }} network
           </p>
         </div>
       </div>
