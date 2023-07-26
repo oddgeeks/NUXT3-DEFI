@@ -23,6 +23,7 @@ const nonce = ref<number | undefined>(recommendedNonce)
 const note = ref<string | undefined>(undefined)
 const detailsRef = ref<HTMLDetailsElement>()
 const [simulationStatus, toggle] = useToggle()
+const [signAndExecute, signAndExecuteToggle] = useToggle(false)
 
 const requiredSignersByChain = computed(() => requiredSigners.value.find(i => i.chainId == props.chainId))
 
@@ -52,6 +53,7 @@ function onSubmit() {
   emit('resolve', true, {
     nonce: nonce.value,
     note: note.value,
+    signOnly: !signAndExecute.value,
   })
 }
 
@@ -234,11 +236,29 @@ function getNonceTooltip(value: number | undefined) {
       </details>
     </template>
     <hr class="border-slate-150 dark:border-slate-800">
+    <button
+      v-if="isExecuteReady"
+      type="button"
+      :class="{
+        'dark:text-white text-slate-900': signAndExecute,
+      }"
+      class="text-xs text-left font-medium items-base text-slate-400 flex gap-2.5 group sm:px-7.5 px-5 py-5"
+      @click="signAndExecuteToggle()"
+    >
+      <SvgoCheckCircle
+        :class="[
+          { 'success-circle text-white': signAndExecute },
+          { 'svg-circle darker': !signAndExecute },
+        ]"
+        class="w-4 h-4 shrink-0"
+      />
+      I want to sign & execute in the same txn
+    </button>
     <div v-if="estimatedFee" class="sm:px-7.5 px-5 py-5">
       <EstimatedFee :data="data" :loading="feePending" :error="error" />
     </div>
     <CommonButton :disabled="feePending" :loading="feePending" class="justify-center mx-7.5 my-5" size="lg" type="submit">
-      {{ isExecuteReady ? 'Sign and Execute Transaction' : 'Send for Approval' }}
+      {{ signAndExecute ? 'Sign and Execute Transaction' : 'Sign and Send for Approval' }}
     </CommonButton>
   </form>
 </template>

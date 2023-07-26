@@ -15,8 +15,6 @@ export function useNavigation() {
       baseURL: multisigURL,
     })
 
-    console.log(data)
-
     return data
   }, {
     watch: [safeAddress, account],

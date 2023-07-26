@@ -232,6 +232,8 @@ export function useAvocadoSafe() {
     if (!success)
       throw new Error('Transaction canceled')
 
+    const signOnly = payload.signOnly
+
     const params = await generateMultisigSignatureAndSign({ chainId, actions, nonce: actualNonce, note: payload.note, metadata })
 
     // generate proposal
@@ -246,7 +248,7 @@ export function useAvocadoSafe() {
       baseURL: multisigURL,
     })
 
-    if (data.confirmations_required === 1) {
+    if (data.confirmations_required === 1 && !signOnly) {
       const txHash = await multisigBroadcast({
         confirmations: data.confirmations,
         message: data.data,
