@@ -5,6 +5,7 @@ import { isUndefined } from '@walletconnect/utils'
 import axios from 'axios'
 import { getAddress } from 'ethers/lib/utils'
 import { storeToRefs } from 'pinia'
+import { Tippy } from 'vue-tippy'
 
 const props = defineProps<{
   transaction: IMultisigTransaction
@@ -64,6 +65,29 @@ const isSafeDoesntMatch = computed(() => {
   return getAddress(transactionRef.value.safe_address) !== getAddress(selectedSafe.value?.safe_address!)
 })
 const proposalOwnerAddress = computed(() => transactionRef.value.confirmations.length ? transactionRef.value.confirmations[0].address : null)
+
+const { data: isSameNonceExist } = useAsyncData(`${transactionRef.value.id}-same-nonce`, async () => {
+  const params = isNonseq.value
+    ? {
+        rejection_id: transactionRef.value.id,
+        status: 'pending',
+      }
+    : {
+        nonce: transactionRef.value.nonce,
+        status: 'pending',
+      }
+
+  const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${transactionRef.value.safe_address}/transactions`, {
+    params,
+    baseURL: multisigURL,
+  })
+
+  return isNonseq.value ? data.meta.total > 0 : data.meta.total > 1
+}, {
+  immediate: true,
+  server: false,
+  watch: [transactionRef],
+})
 
 const errorMessage = computed(() => {
   let message = null
@@ -463,11 +487,11 @@ onUnmounted(() => {
           </button>
 
           <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch || !canSign || isGeneralLoading" class="grid grid-cols-2 gap-2.5 items-center">
-            <div v-if="!isRejection">
-              <CommonButton :disabled="isRejection" :loading="pending.reject" color="red" size="lg" class="justify-center w-full" @click="handleReject(transactionRef)">
+            <Tippy v-if="!isRejection" :content="isSameNonceExist ? 'A rejection proposal for this txn already exists' : undefined" tag="div">
+              <CommonButton :disabled="isRejection || !!isSameNonceExist" :loading="pending.reject" color="red" size="lg" class="justify-center w-full" @click="handleReject(transactionRef)">
                 Reject
               </CommonButton>
-            </div>
+            </Tippy>
             <div v-if="isConfirmationsMatch && isSignedAlready" v-tippy="errorMessage">
               <CommonButton
                 :disabled="!!errorMessage || pending.execute" :loading="pending.execute || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" error-message @click="handleExecuteConfirmation(transactionRef)"
