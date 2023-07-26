@@ -22,6 +22,7 @@ const recommendedNonce = isDeleteOrAddSigner ? -1 : undefined
 const nonce = ref<number | undefined>(recommendedNonce)
 const note = ref<string | undefined>(undefined)
 const detailsRef = ref<HTMLDetailsElement>()
+const [simulationStatus, toggle] = useToggle()
 
 const requiredSignersByChain = computed(() => requiredSigners.value.find(i => i.chainId == props.chainId))
 
@@ -52,19 +53,6 @@ function onSubmit() {
     nonce: nonce.value,
     note: note.value,
   })
-}
-
-function handleSimulate() {
-  if (simulationDetails.value?.transaction?.status) {
-    openSnackbar({
-      type: 'success',
-      message: 'Simulation successful',
-    })
-  }
-  else {
-    if (detailsRef.value)
-      detailsRef.value.open = true
-  }
 }
 
 const { data: simulationDetails, error: simulationError, pending } = useAsyncData(
@@ -202,17 +190,34 @@ function getNonceTooltip(value: number | undefined) {
     </div>
     <template v-if="!estimatedFee">
       <hr class="border-slate-150 dark:border-slate-800">
-      <div class="sm:px-7.5 px-5 py-5 text-sm flex justify-between items-center">
+      <div v-if="!simulationStatus" class="sm:px-7.5 px-5 py-5 text-sm flex justify-between items-center">
         Simulate Transaction
-        <button :disabled="pending" type="button" class="text-primary disabled:text-slate-400" @click="handleSimulate">
-          Simulate
+        <div class="flex items-center gap-2.5">
+          <SvgSpinner v-if="pending" class="text-primary" />
+          <button :disabled="pending" type="button" class="text-primary disabled:text-slate-400" @click="toggle()">
+            Simulate
+          </button>
+        </div>
+      </div>
+      <div v-else :class="simulationDetails?.transaction?.status ? 'bg-primary' : 'bg-red-alert'" class="bg-opacity-10 rounded-[14px] text-sm p-4 sm:mx-7.5 mx-5 my-5 font-medium flex gap-3 items-center">
+        <template v-if="isTransactionFailed">
+          <SvgoErrorCircle class="w-4.5 h-4.5" />
+          This transaction will most likely fail
+        </template>
+        <template v-else>
+          <SvgoCheckCircle class="success-circle w-4.5 h-4.5" />
+          This transaction will most likely succeed
+        </template>
+
+        <button class="ml-auto" @click="toggle()">
+          <SvgoX />
         </button>
       </div>
       <hr class="border-slate-150 dark:border-slate-800">
       <details ref="detailsRef" class="group sm:px-7.5 px-5 py-5">
         <summary class="text-orange-400 flex justify-between text-sm leading-5 cursor-pointer">
-          <span class="group-open:hidden block">View transaction breakdown</span>
-          <span class="group-open:block hidden">Hide transaction breakdown</span>
+          <span class="group-open:hidden block font-medium">View transaction breakdown</span>
+          <span class="group-open:block hidden font-medium">Hide transaction breakdown</span>
 
           <SvgoChevronDown class="group-open:rotate-180" />
         </summary>
@@ -225,10 +230,6 @@ function getNonceTooltip(value: number | undefined) {
             title-hidden
             wrapper-class="sm:!flex flex-col"
           />
-          <div v-if="isTransactionFailed" class="text-xs leading-5 text-red-alert bg-red-alert bg-opacity-10 flex p-4 rounded-[14px] items-center gap-2">
-            <SvgoExclamationCircle class="w-3" />
-            This transaction will most likely fail
-          </div>
         </div>
       </details>
     </template>

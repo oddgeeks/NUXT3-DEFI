@@ -272,20 +272,27 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
-          <div v-if="decodedMetadata" class="sm:p-7.5 p-5 border-b flex gap-2.5 dark:border-slate-800 border-slate-150 max-w-2xl scroll-style overflow-auto">
-            <span v-if="isRejection" class="text-xs inline-flex whitespace-nowrap">
-              Executing this transaction will reject transaction
-            </span>
-            <div v-once class="flex flex-1 flex-col gap-2">
-              <ActionMetadata v-for="metadata in decodedMetadata" :key="metadata" compact class="text-xs whitespace-nowrap" :chain_id="transaction.chain_id" :metadata="metadata" />
+          <div v-if="decodedMetadata" class="sm:p-7.5 p-5 border-b flex gap-2.5 dark:border-slate-800 border-slate-150">
+            <div class="max-w-2xl scroll-style overflow-auto flex gap-2.5">
+              <span v-if="isRejection" class="text-xs inline-flex whitespace-nowrap">
+                Executing this transaction will reject transaction
+              </span>
+              <div v-once class="flex flex-1 flex-col gap-2">
+                <ActionMetadata v-for="metadata in decodedMetadata" :key="metadata" compact class="text-xs whitespace-nowrap" :chain_id="transaction.chain_id" :metadata="metadata" />
+              </div>
             </div>
           </div>
           <div class="sm:p-7.5 p-5 flex-col gap-5 flex border-b dark:border-slate-800 border-slate-150">
             <div v-if="proposalOwnerAddress" class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
               <span class="text-slate-400 text-xs">Creator</span>
-              <NuxtLink target="_blank" :to="getExplorerUrl(transaction.chain_id, `/address/${proposalOwnerAddress}`)" class="text-sm text-primary">
-                {{ shortenHash(proposalOwnerAddress) }}
-              </NuxtLink>
+              <span>
+                <NuxtLink target="_blank" :to="getExplorerUrl(transaction.chain_id, `/address/${proposalOwnerAddress}`)" class="text-sm text-primary">
+                  {{ shortenHash(proposalOwnerAddress) }}
+                </NuxtLink>
+                <span v-if="getContactNameByAddress(proposalOwnerAddress)">
+                  ({{ getContactNameByAddress(proposalOwnerAddress) }})
+                </span>
+              </span>
             </div>
             <div v-if="transaction.transaction_hash" class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
               <span class="text-slate-400 text-xs">Transaction Hash</span>

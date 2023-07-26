@@ -27,7 +27,7 @@ const pendingGasAmount = useNuxtData('pending-deposit')
 
 const usdcTokens = computed(() => {
   return chainUsdcAddresses
-    .filter(usdc => usdc.chainId != 250)
+    .filter(usdc => usdc.chainId != 250 && authorisedNetworks.value?.some(n => n.chainId == usdc.chainId))
     .map((usdc: any) => {
       const tk = getTokenByAddress(usdc.address, usdc.chainId)!
       return {
