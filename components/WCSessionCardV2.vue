@@ -12,7 +12,18 @@ const wcStoreV2 = useWalletConnectV2()
 const iconURL = computed(() => {
   const [icon] = props.session.peer.metadata.icons
 
+  if (icon.startsWith('<svg'))
+    return
+
   return icon
+})
+
+const isConnectionWarned = computed(() => {
+  const metadataURL = props.session?.peer.metadata.url
+  if (!metadataURL)
+    return true
+
+  return wcStoreV2.checkDappIsWarned(metadataURL)
 })
 
 async function handleDisconnectWallet(session: any) {
@@ -46,6 +57,7 @@ async function handleDisconnectWallet(session: any) {
       @click="openWalletDetailsModalV2(session)"
     >
       <div
+        v-if="iconURL"
         class="relative inline-block h-7.5 w-7.5 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
       >
         <img
@@ -67,7 +79,14 @@ async function handleDisconnectWallet(session: any) {
         </h2>
       </div>
     </button>
+    <SvgoInfo2
+      v-if="isConnectionWarned" v-tippy="{
+        content: 'This DApp is known to have some compatability issues with Avocado.',
+        maxWidth: 'none',
+      }" class="text-orange-400 cursor-pointer"
+    />
     <a
+      v-if="session?.peer.metadata.url"
       target="_blank"
       rel="noopener noreferrer"
       :href="session?.peer.metadata.url"

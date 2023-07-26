@@ -12,6 +12,9 @@ const [loading, toggle] = useToggle(false)
 const iconURL = computed(() => {
   const [icon] = props.session.peer.metadata.icons
 
+  if (icon.startsWith('<svg'))
+    return
+
   return icon
 })
 
@@ -27,6 +30,7 @@ async function disconnectWallet() {
   <div class="flex flex-col gap-9">
     <div class="inline-flex flex-col items-center">
       <div
+        v-if="iconURL"
         class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
       >
         <img
@@ -47,6 +51,7 @@ async function disconnectWallet() {
           Please don't close the tab.
         </p>
         <a
+          v-if="props.session.peer.metadata.url"
           rel="noopener noreferrer"
           target="_blank"
           :href="props.session.peer.metadata.url"
