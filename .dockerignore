@@ -1,0 +1,12 @@
+node_modules
+.nuxt
+npm-debug.log
+Dockerfile
+deployments
+.github
+build
+dist
+deployments
+.gitignore
+.env*
+.editorconfig

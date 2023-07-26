@@ -99,6 +99,7 @@ async function onSubmit() {
       )} to ${actualAddress.value}`,
       action: 'send',
       txHash: transactionHash,
+      amountInUsd: amountInUsd.value.toFixed(),
       chainId: String(data.value.toChainId),
       account: account.value,
     })

@@ -44,6 +44,7 @@ import SignDeleteSigner from '~/components/modals/Multisig/SignDeleteSigner.vue'
 import UpdateThreshold from '~/components/modals/Multisig/UpdateThreshold.vue'
 import MultisigSelectNetwork from '~/components/modals/Multisig/SelectNetwork.vue'
 import UpdateNoticeModal from '~/components/modals/UpdateNotice.vue'
+import WelcomeModal from '~/components/modals/Welcome.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -426,8 +427,19 @@ export function openDefiPositionDetailsModal(position: Positions) {
 }
 
 export function openUpdateNoticeModal() {
-  openModal({
+  return openModal({
     component: UpdateNoticeModal,
+    async: true,
+  })
+}
+
+export function openWelcomeModal() {
+  openModal({
+    component: WelcomeModal,
+    options: {
+      wrapperClass: 'md:min-w-[560px]',
+      contentClass: '!p-0',
+    },
   })
 }
 

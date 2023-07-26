@@ -1806,13 +1806,14 @@
   integrity sha512-nf4WBrVnDy8/6HUNwM565s/wE1SUk5vayZj0EgMqPOto7dwfnrKNwSaORlSj126nKRmyBW8aw8/9HicL442/GA==
   dependencies:
     "@vueuse/nuxt" "^10.2.0"
+    "@vueuse/nuxt" "^10.2.0"
     bignumber.js "^9.1.1"
     ethers "^5.7.2"
 
 "@instadapp/avocado-dev@npm:@instadapp/avocado@dev":
-  version "0.0.0-dev.cac30a0"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.cac30a0.tgz#baff59ff0ff6dabeaa9f4e48912b1eded6dacad9"
-  integrity sha512-e0R7J+2ftXW1I/FEUO/b5TZAWvWzbIkofyhWSyEJ2TMJokILCkJor9/hKv39LmMD8m/sQOqUM2sQYpvpVq5dpA==
+  version "0.0.0-dev.018d39d"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.018d39d.tgz#4958789ec4613bbfe3ba928c29f0438e1ea8c93f"
+  integrity sha512-a7jDmIm1GgRghOnS+8bH2cf4kgu0NbuJ8aUI7coOTsuFye+zii0MFq3hto3YxdL735XIsMPDAJZcqY5nUTKytw==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
@@ -1825,10 +1826,10 @@
     semver "^7.3.8"
     tiny-warning "^1.0.3"
 
-"@instadapp/avocado@^0.1.13":
-  version "0.1.14"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.1.14.tgz#18ec9b9fff4fd3e0129a38aed4131f07744efa38"
-  integrity sha512-BLmIHfjnwJ1cH+79tQ+Unytex9QtP295Q8XRJc5jv/vSjXya93Cexql4DwPkcmguzHV75wiqEpRmT9SIGvPVIQ==
+"@instadapp/avocado@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.2.2.tgz#43f8c7ed1acd1311308ef941792eafb13a5a1eb3"
+  integrity sha512-eKIt5fkPt13B/VdXKncYsgxQLgOOLauhzpElm8pmZWclm4DfOUmvuaGyPzGvEnVCiOauVJkQqdoKy7R0DqYngg==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
@@ -3347,6 +3348,7 @@
   resolved "https://registry.yarnpkg.com/@vueuse/metadata/-/metadata-10.2.1.tgz#0865066def62ed97629c417ec79678d508d22934"
   integrity sha512-3Gt68mY/i6bQvFqx7cuGBzrCCQu17OBaGWS5JdwISpMsHnMKKjC2FeB5OAfMcCQ0oINfADP3i9A4PPRo0peHdQ==
 
+"@vueuse/nuxt@^10.1.2", "@vueuse/nuxt@^10.2.0":
 "@vueuse/nuxt@^10.1.2", "@vueuse/nuxt@^10.2.0":
   version "10.2.1"
   resolved "https://registry.yarnpkg.com/@vueuse/nuxt/-/nuxt-10.2.1.tgz#96a4e0a8dc1f1410b1ade5a1d7c4a7ae943a8f26"
@@ -8305,6 +8307,9 @@ minizlib@^2.1.1:
     yallist "^4.0.0"
 
 mitt@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/mitt/-/mitt-3.0.1.tgz#ea36cf0cc30403601ae074c8f77b7092cdab36d1"
+  integrity sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/mitt/-/mitt-3.0.1.tgz#ea36cf0cc30403601ae074c8f77b7092cdab36d1"
   integrity sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==
