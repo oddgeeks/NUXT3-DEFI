@@ -12,6 +12,7 @@ const emit = defineEmits(['destroy'])
 
 const { account } = useWeb3()
 const { getContactNameByAddress } = useContacts()
+const contactSelections = ref<number[]>([])
 
 const {
   handleSubmit,
@@ -85,6 +86,15 @@ const onSubmit = handleSubmit(async () => {
   emit('destroy')
 })
 
+function handleUpdateField(key: number) {
+  update(key, {
+    address: '',
+    name: '',
+  })
+
+  contactSelections.value = contactSelections.value.filter(selection => selection !== key)
+}
+
 async function handleSelectContact(key: number) {
   const result = await openSelectContactModal()
 
@@ -95,6 +105,8 @@ async function handleSelectContact(key: number) {
       address: _contact.address,
       name: _contact.name,
     })
+
+    contactSelections.value.push(key)
   }
 }
 </script>
@@ -116,7 +128,7 @@ async function handleSelectContact(key: number) {
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <div class="sm:p-7.5 p-5 flex flex-col sm:gap-5 gap-7.5">
-      <div
+      <fieldset
         v-for="field, key in fields"
         :key="key"
         class="flex gap-5 sm:flex-row flex-col"
@@ -129,6 +141,7 @@ async function handleSelectContact(key: number) {
           </div>
           <CommonInput
             v-model="field.value.name"
+            :disabled="contactSelections.includes(key as number)"
             autofocus
             :name="`addresses[${key}].name`"
             placeholder="Signer Name"
@@ -150,24 +163,32 @@ async function handleSelectContact(key: number) {
           <CommonInput
             v-model="field.value.address"
             :name="`addresses[${key}].address`"
+            :disabled="contactSelections.includes(key as number)"
             :error-message="getErrorMessage(errors, `addresses[${key}].address`)"
             placeholder="Enter Address"
           >
             <template #suffix>
               <button
-                v-tippy="{
-                  content: 'Select contact',
-                }"
+                v-if="contactSelections.includes(field.key as number)"
+                v-tippy="'Clear Contact'"
+                type="button"
+                class="ml-3" @click="handleUpdateField(field.key as number)"
+              >
+                <SvgoBack class="text-slate-400" />
+              </button>
+              <button
+                v-else
+                v-tippy="'Select contact'"
                 type="button"
                 class="ml-3"
                 @click="handleSelectContact(field.key as number)"
               >
-                <SvgoContact />
+                <SvgoContact class="text-slate-400" />
               </button>
             </template>
           </CommonInput>
         </div>
-      </div>
+      </fieldset>
       <button class="flex items-center text-primary gap-3 text-xs" @click="push({ address: '', name: '' })">
         <div class="bg-primary w-4 h-4 rounded-full flex">
           <SvgoPlus class="text-white m-auto w-2 h-2" />
