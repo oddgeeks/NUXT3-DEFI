@@ -154,7 +154,6 @@ onMounted(async () => {
 <template>
   <div>
     <WCApproveConnectionV2 v-if="proposal" :proposal="proposal" :loading="loading" @connect="connect" @destroy="$emit('destroy')" />
-    <WCApproveConnection v-else-if="connection" :connection="connection" :loading="loading" @connect="connect" />
 
     <form
       v-else
