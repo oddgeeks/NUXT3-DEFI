@@ -104,9 +104,6 @@ const errorMessage = computed(() => {
   else if (isSignedAlready.value && !isConfirmationsMatch.value)
     message = 'You have already signed this transaction.'
 
-  else if (isNonceNotMatch.value)
-    message = `Please execute transaction ${currentNonce.value} first.`
-
   else
     message = null
 
@@ -469,7 +466,7 @@ onUnmounted(() => {
           </details>
 
           <button
-            v-if="!isSignedAlready && isConfirmationWillMatch"
+            v-if="!isSignedAlready && isConfirmationWillMatch && !isNonceNotMatch"
             :class="{
               'dark:text-white text-slate-900': signAndExecute,
             }"
@@ -492,9 +489,9 @@ onUnmounted(() => {
                 Reject
               </CommonButton>
             </Tippy>
-            <div v-if="isConfirmationsMatch && isSignedAlready" v-tippy="errorMessage">
+            <div v-if="isConfirmationsMatch && isSignedAlready" v-tippy="isNonceNotMatch ? `Please execute transaction ${currentNonce} first.` : errorMessage">
               <CommonButton
-                :disabled="!!errorMessage || pending.execute" :loading="pending.execute || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" error-message @click="handleExecuteConfirmation(transactionRef)"
+                :disabled="!!errorMessage || pending.execute || isNonceNotMatch" :loading="pending.execute || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" error-message @click="handleExecuteConfirmation(transactionRef)"
               >
                 Execute
               </CommonButton>
