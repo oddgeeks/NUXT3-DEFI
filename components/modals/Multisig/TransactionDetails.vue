@@ -53,7 +53,7 @@ const isSignedAlready = computed(() => account.value ? transactionRef.value.conf
 
 const canSign = computed(() => isAccountCanSign(transactionRef.value.chain_id, account.value, selectedSafe.value?.owner_address))
 const decodedMetadata = computed(() => decodeMetadata(transactionRef.value.data.params.metadata))
-const isGeneralLoading = computed(() => !selectedSafe.value || !requiredSigners.value?.length || isUndefined(currentNonce))
+const isGeneralLoading = computed(() => !selectedSafe.value || !requiredSigners.value?.length || isUndefined(currentNonce.value))
 
 const isSafeDoesntMatch = computed(() => {
   if (!selectedSafe.value?.safe_address)
