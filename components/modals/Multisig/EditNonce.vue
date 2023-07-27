@@ -201,17 +201,29 @@ function getNonceTooltip(value: number | undefined) {
           </button>
         </div>
       </div>
-      <div v-else :class="simulationDetails?.transaction?.status ? 'bg-primary' : 'bg-red-alert'" class="bg-opacity-10 rounded-[14px] text-sm p-4 sm:mx-7.5 mx-5 my-5 font-medium flex gap-3 items-center">
-        <template v-if="isTransactionFailed">
-          <SvgoErrorCircle class="w-4.5 h-4.5" />
-          This transaction will most likely fail
-        </template>
-        <template v-else>
-          <SvgoCheckCircle class="success-circle w-4.5 h-4.5" />
-          This transaction will most likely succeed
-        </template>
+      <div v-else :class="simulationDetails?.transaction?.status ? 'bg-primary' : 'bg-red-alert'" class="bg-opacity-10 items-baseline justify-between rounded-[14px] text-sm p-4 sm:mx-7.5 mx-5 my-5 font-medium flex gap-3">
+        <div class="flex gap-3 flex-col flex-1">
+          <div class="flex gap-3">
+            <template v-if="isTransactionFailed">
+              <SvgoErrorCircle class="w-4.5 h-4.5" />
+              This transaction will most likely fail
+            </template>
+            <template v-else>
+              <SvgoCheckCircle class="success-circle w-4.5 h-4.5" />
+              This transaction will most likely succeed
+            </template>
+          </div>
 
-        <button class="ml-auto" @click="toggle()">
+          <p v-if="simulationDetails?.transaction.simulationId" class="text-xs text-slate-400 font-medium">
+            View complete simulation report
+            <NuxtLink target="_blank" class="inline-flex items-center gap-2 text-primary" external :to="`https://dashboard.tenderly.co/public/InstaDApp/avocado/simulator/${simulationDetails?.transaction.simulationId}?hideSidebar=true`">
+              on Tenderly
+              <SvgoExternalLink />
+            </NuxtLink>
+          </p>
+        </div>
+
+        <button @click="toggle()">
           <SvgoX />
         </button>
       </div>

@@ -39,8 +39,8 @@ onMounted(() => {
         Update Treshold
       </h2>
       <h3 class="text-sm text-slate-400">
-        <span v-if="isRemove">After deleting signer(s), any transaction confirmation of</span>
-        <span v-else-if="isAdd">After adding signer(s), any transaction confirmation of</span>
+        <span v-if="isRemove">After deleting signer(s), any transaction requires confirmation of</span>
+        <span v-else-if="isAdd">After adding signer(s), any transaction requires confirmation of</span>
         <span v-else>
           Any transaction requires the confirmation of
         </span>
