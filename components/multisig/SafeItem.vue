@@ -99,6 +99,7 @@ function handleInput() {
       <label
         v-if="!owner" v-tippy="{
           content: errorMessage || null,
+          hideOnClick: false,
         }" :for="`input-${address}-${chainId}`"
       >
         <input :id="`input-${address}-${chainId}`" :disabled="isDisabled || !canSign" :value="address" class="peer sr-only" type="checkbox" @change="selectedChainId = chainId" @input="handleInput">
