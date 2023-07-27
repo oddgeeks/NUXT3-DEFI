@@ -75,7 +75,7 @@ async function handleClick(item: IMultisigTransaction) {
 
 <template>
   <li :class="insideGroup ? 'last:!border-b-0' : ''" class="w-full border-b border-slate-150 dark:border-slate-800">
-    <button class="w-full" @click="handleClick(item)">
+    <button class="w-full" @click.stop="handleClick(item)">
       <div class="hidden grid-row sm:grid grid-item focus:outline-none items-center w-full text-xs font-medium py-4 px-5">
         <span class="flex items-center gap-2.5 whitespace-nowrap">
           <span v-if="activeTab !== 'nonseq'" :class="item.nonce === '-1' ? 'hidden' : ''">

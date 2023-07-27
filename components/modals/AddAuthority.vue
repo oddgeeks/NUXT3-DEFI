@@ -4,8 +4,7 @@ import { isAddress } from '@ethersproject/address'
 import { useField, useForm } from 'vee-validate'
 
 // import { AvoSafeImplementation__factory } from '~~/contracts'
-import AvatarSVG from '~/assets/images/icons/avatar.svg?component'
-import ContactSVG from '~/assets/images/icons/contact.svg?component'
+import ContactSVG from '~/assets/images/icons/contact.svg'
 
 const emit = defineEmits(['destroy'])
 
@@ -80,7 +79,7 @@ async function handleSelectContact() {
 <template>
   <form @submit="onSubmit">
     <div class="flex items-center justify-center gap-7.5 flex-col">
-      <AvatarSVG class="text-primary w-10 h-10" />
+      <AuthorityAvatar address="0x" class="text-primary w-10 h-10" />
       <h1 class="text-lg text-center leading-5 mb-7.5">
         Add New Authority
       </h1>
