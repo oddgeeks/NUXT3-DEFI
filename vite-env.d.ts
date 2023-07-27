@@ -538,3 +538,9 @@ type IDefiToken = {
   price?: string;
   tokenAddress: string;
 }
+
+interface INavigationTab {
+  label: string;
+  value: 'dapps' | 'balances' | 'shortcuts';
+  query?: string;
+}

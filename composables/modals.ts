@@ -30,6 +30,7 @@ import DefiPositionDetails from '~/components/modals/DefiPositionDetails.vue'
 import QrCode from '~/components/modals/QrCode.vue'
 import UpdateNoticeModal from '~/components/modals/UpdateNotice.vue'
 import WelcomeModal from '~/components/modals/Welcome.vue'
+import CreateBookmark from '~/components/modals/CreateBookmark.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -420,6 +421,17 @@ export function openWelcomeModal() {
     component: WelcomeModal,
     options: {
       wrapperClass: 'md:min-w-[560px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export function openCreateBookmarkModal(props: CreateBookmarkProps) {
+  openModal({
+    component: CreateBookmark,
+    componentProps: props,
+    options: {
+      wrapperClass: 'max-w-[600px]',
       contentClass: '!p-0',
     },
   })

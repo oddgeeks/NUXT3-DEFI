@@ -9,7 +9,7 @@ import SVGClockCircle from '~/assets/images/icons/clock-circle.svg?component'
 const props = defineProps<{
   payload: any
   chainId: string
-  sessionV2?: SessionTypes.Struct
+  sessionV2: SessionTypes.Struct
   metadata: string
   isSign?: boolean
   signMessageDetails?: any
@@ -305,6 +305,19 @@ onUnmounted(() => {
       >
         Submit
       </CommonButton>
+    </div>
+    <div class="flex justify-center items-center gap-2 text-xs font-medium text-primary">
+      <SvgoBookmark />
+      <button
+        type="button" @click="openCreateBookmarkModal({
+          chainId,
+          payload,
+          session: sessionV2,
+        })"
+      >
+        Save as Tx Shortcut
+      </button>
+      <SvgoInfo2 class="text-slate-500" />
     </div>
   </form>
 </template>
