@@ -13,6 +13,7 @@ const props = defineProps<{
   metadata: string
   isSign?: boolean
   signMessageDetails?: any
+  bookmark?: IWcBookmark
 }>()
 
 const emit = defineEmits(['resolve', 'reject'])
@@ -309,15 +310,32 @@ onUnmounted(() => {
     <div class="flex justify-center items-center gap-2 text-xs font-medium text-primary">
       <SvgoBookmark />
       <button
+        v-if="!bookmark"
+        type="button"
+      >
+        Save as Tx Shortcut
+      </button>
+      <button
+        v-else
         type="button" @click="openCreateBookmarkModal({
+          ...bookmark,
+          edit: true,
+        })"
+      >
+        {{ bookmark.name }}
+      </button>
+      <SvgoInfo2 v-if="!bookmark" class="text-slate-500" />
+      <button
+        v-else
+        type="button"
+        @click="openCreateBookmarkModal({
           chainId,
           payload,
           session: sessionV2,
         })"
       >
-        Save as Tx Shortcut
+        <SvgoPencil class="text-slate-400 shrink-0" />
       </button>
-      <SvgoInfo2 class="text-slate-500" />
     </div>
   </form>
 </template>

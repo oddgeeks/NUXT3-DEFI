@@ -14,13 +14,13 @@ export function useBookmark() {
     bookmarks.value.push(bookmark)
   }
 
-  const updateBookmark = (bookmark: IWcBookmark, name: string) => {
-    const index = bookmarks.value.findIndex(b => b.name === bookmark.name)
-    debugger
+  const updateBookmark = (oldName: string, name: string) => {
+    const bookmark = bookmarks.value.find(b => b.name === oldName && getAddress(b.safeAddress) === getAddress(safeAddress.value))
+
+    if (!bookmark)
+      throw new Error('Bookmark not found')
 
     bookmark.name = name
-
-    bookmarks.value[index] = bookmark
   }
 
   const safeBookmarks = computed(() => {

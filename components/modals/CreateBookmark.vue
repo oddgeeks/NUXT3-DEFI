@@ -43,13 +43,13 @@ const onSubmit = handleSubmit(() => {
   }
   try {
     if (props.edit)
-      updateBookmark(bookmark, value.value)
+      updateBookmark(props.name!, value.value)
 
     else
       addBookmark(bookmark)
 
     openSnackbar({
-      message: 'Bookmark created successfully',
+      message: 'Bookmark saved successfully',
       type: 'success',
     })
 

@@ -54,6 +54,7 @@ interface IWcTransactionModal {
   metadata: string
   isSign?: boolean
   signMessageDetails?: any
+  bookmark?: IWcBookmark
 }
 
 export function showPendingTransactionModal(hash: string,
@@ -183,6 +184,7 @@ export const openWCTransactionModal = useThrottleFn(
         metadata: params.metadata,
         isSign: params.isSign,
         signMessageDetails: params?.signMessageDetails,
+        bookmark: params?.bookmark,
       },
       options: {
         contentClass: 'md:px-10 md:pt-[34px] md:pb-10',
