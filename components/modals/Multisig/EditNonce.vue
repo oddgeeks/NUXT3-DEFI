@@ -248,6 +248,11 @@ function getNonceTooltip(value: number | undefined) {
       </details>
     </template>
     <hr class="border-slate-150 dark:border-slate-800">
+
+    <div v-if="estimatedFee" class="sm:px-7.5 px-5 py-5">
+      <EstimatedFee :data="data" :loading="feePending" :error="error" />
+    </div>
+
     <button
       v-if="isExecuteReady"
       type="button"
@@ -266,9 +271,6 @@ function getNonceTooltip(value: number | undefined) {
       />
       I want to sign & execute in the same txn
     </button>
-    <div v-if="estimatedFee" class="sm:px-7.5 px-5 py-5">
-      <EstimatedFee :data="data" :loading="feePending" :error="error" />
-    </div>
     <CommonButton :disabled="feePending" :loading="feePending" class="justify-center mx-7.5 my-5" size="lg" type="submit">
       {{ signAndExecute ? 'Sign and Execute Transaction' : 'Sign and Send for Approval' }}
     </CommonButton>
