@@ -5,6 +5,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['resolve', 'destroy'])
+const { getContactNameByAddress } = useContacts()
 
 const reactiveAddresses = ref(props.addresses)
 
@@ -26,7 +27,7 @@ watch(reactiveAddresses, () => {
       </div>
       <p class="flex flex-col gap-4">
         <span class="leading-[26px]">
-          Are you sure you want <br> to delete the following signers from?
+          Are you sure you want <br> to delete the following signers?
 
         </span>
         <span class="block sm:text-sm text-xs text-slate-400 font-medium">
@@ -39,7 +40,15 @@ watch(reactiveAddresses, () => {
         <div class="flex gap-3 items-center">
           <AuthorityAvatar :address="address" />
           <span style="overflow-wrap: anywhere" class="text-slate-400 font-medium">
-            {{ address }}
+            <span v-if="getContactNameByAddress(address)" class="text-white">
+              ({{ getContactNameByAddress(address) }})
+              <span class="text-slate-400">
+                {{ address }}
+              </span>
+            </span>
+            <span v-else>
+              {{ address }}
+            </span>
           </span>
         </div>
         <button class="text-slate-400" @click="removeAddress(address)">
