@@ -19,7 +19,7 @@ async function handleBack() {
   <div>
     <div class="flex gap-[14px] sm:p-7.5 p-5">
       <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
-        3
+        4
       </div>
       <div class="flex flex-col gap-1">
         <h1 class="text-lg leading-10">
