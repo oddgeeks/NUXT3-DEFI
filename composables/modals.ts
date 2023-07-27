@@ -428,10 +428,11 @@ export function openWelcomeModal() {
   })
 }
 
-export function openCreateBookmarkModal(props: CreateBookmarkProps) {
-  openModal({
+export async function openCreateBookmarkModal(props: CreateBookmarkProps) {
+  return openModal({
     component: CreateBookmark,
     componentProps: props,
+    async: true,
     options: {
       wrapperClass: 'max-w-[600px]',
       contentClass: '!p-0',

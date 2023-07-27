@@ -12,7 +12,7 @@ function getIcon(session: SessionTypes.Struct) {
 
 <template>
   <div>
-    <ul class="flex gap-[15px]">
+    <ul class="flex gap-[15px] flex-wrap">
       <li v-for="bookmark in safeBookmarks" :key="bookmark.name" class="dark:bg-gray-850 flex items-center gap-[14px] rounded-10 bg-slate-50">
         <button
           class="flex items-center gap-2.5 text-xs font-medium pl-[14px] py-2.5"

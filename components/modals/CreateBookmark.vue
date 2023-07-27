@@ -15,9 +15,9 @@ const props = defineProps<{
   edit?: boolean
 }>()
 
-const emit = defineEmits(['destroy'])
+const emit = defineEmits(['destroy', 'resolve'])
 
-const { addBookmark, updateBookmark } = useBookmark()
+const { addBookmark, updateBookmark, deleteBookmark } = useBookmark()
 const { safeAddress } = storeToRefs(useSafe())
 
 const {
@@ -54,7 +54,7 @@ const onSubmit = handleSubmit(() => {
     })
 
     setTimeout(() => {
-      emit('destroy')
+      emit('resolve', true, bookmark)
     }, 500)
   }
   catch (error: any) {
@@ -64,6 +64,28 @@ const onSubmit = handleSubmit(() => {
     })
   }
 })
+
+async function handleDeleteBookmark() {
+  const { success } = await openDialogModal({
+    title: 'Are you sure you want delete shortcut?',
+    type: 'question',
+    isButtonVisible: true,
+    isCancelButtonVisible: true,
+    buttonText: 'Delete',
+    cancelButtonText: 'Cancel',
+    cancelButtonProps: {
+      color: 'white',
+    },
+    buttonProps: {
+      color: 'red',
+    },
+  })
+
+  if (success) {
+    deleteBookmark(props.name!)
+    emit('resolve', true)
+  }
+}
 </script>
 
 <template>
@@ -131,6 +153,9 @@ const onSubmit = handleSubmit(() => {
           Save Tx Shortcut
         </CommonButton>
       </div>
+      <button v-if="edit" type="button" class="flex justify-center items-center gap-2.5 text-xs text-red-alert" @click="handleDeleteBookmark">
+        Delete Shortcut <SvgoDelete class="w-3 h-3" />
+      </button>
     </div>
   </form>
 </template>

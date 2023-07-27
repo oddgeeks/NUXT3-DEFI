@@ -23,6 +23,18 @@ export function useBookmark() {
     bookmark.name = name
   }
 
+  const deleteBookmark = (name?: string) => {
+    if (!name)
+      return
+
+    const index = bookmarks.value.findIndex(b => b.name === name && getAddress(b.safeAddress) === getAddress(safeAddress.value))
+
+    if (index === -1)
+      throw new Error('Bookmark not found')
+
+    bookmarks.value.splice(index, 1)
+  }
+
   const safeBookmarks = computed(() => {
     if (!safeAddress.value)
       return []
@@ -35,5 +47,6 @@ export function useBookmark() {
     addBookmark,
     updateBookmark,
     safeBookmarks,
+    deleteBookmark,
   }
 }

@@ -30,6 +30,8 @@ const submitDisabled = computed(
 
 const networksSimulationNotSupported = [1313161554]
 
+const reactiveBookmark = ref(props.bookmark)
+
 const peerURL = computed(() => {
   return props.sessionV2?.peer?.metadata?.url
 })
@@ -209,6 +211,29 @@ function handleReject() {
   emit('reject')
 }
 
+async function handleCreateBookmark() {
+  const { success, payload } = await openCreateBookmarkModal({
+    chainId: props.chainId,
+    payload: props.payload,
+    session: props.sessionV2,
+  })
+
+  if (success && payload) {
+    console.log(payload)
+    reactiveBookmark.value = payload
+  }
+}
+
+async function handleUpdateBookmark() {
+  const { success, payload } = await openCreateBookmarkModal({
+    ...reactiveBookmark.value,
+    edit: true,
+  })
+
+  if (success)
+    reactiveBookmark.value = payload
+}
+
 onUnmounted(() => {
   clearNuxtData('simulationDetails')
 })
@@ -216,7 +241,7 @@ onUnmounted(() => {
 
 <template>
   <form class="flex flex-col gap-7.5" @submit.prevent="handleSubmit">
-    <audio src="/audio/alert.mp3" autoplay />
+    <audio v-if="!bookmark" src="/audio/alert.mp3" autoplay />
     <div class="font-semibold leading-[30px] text-center sm:text-left">
       <span v-if="isSign">Send Transaction: Permit2 Approval</span>
       <span v-else>Send Transaction</span>
@@ -310,29 +335,23 @@ onUnmounted(() => {
     <div class="flex justify-center items-center gap-2 text-xs font-medium text-primary">
       <SvgoBookmark />
       <button
-        v-if="!bookmark"
+        v-if="!reactiveBookmark"
         type="button"
+        @click="handleCreateBookmark"
       >
         Save as Tx Shortcut
       </button>
-      <button
+      <span
         v-else
-        type="button" @click="openCreateBookmarkModal({
-          ...bookmark,
-          edit: true,
-        })"
+        type="button"
       >
-        {{ bookmark.name }}
-      </button>
-      <SvgoInfo2 v-if="!bookmark" class="text-slate-500" />
+        {{ reactiveBookmark.name }}
+      </span>
+      <SvgoInfo2 v-if="!reactiveBookmark" class="text-slate-500" />
       <button
         v-else
         type="button"
-        @click="openCreateBookmarkModal({
-          chainId,
-          payload,
-          session: sessionV2,
-        })"
+        @click="handleUpdateBookmark"
       >
         <SvgoPencil class="text-slate-400 shrink-0" />
       </button>
