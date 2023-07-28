@@ -11515,7 +11515,7 @@ vue-router@^4.2.3:
   dependencies:
     "@vue/devtools-api" "^6.5.0"
 
-vue-tippy@^6.0.0:
+vue-tippy@^6.2.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/vue-tippy/-/vue-tippy-6.2.0.tgz#ee8c4d4220d033a77c7fb467af967cd299fb968e"
   integrity sha512-UytUItp2ZDLXUwAotmioz02uLQoaAl5iVM+5yKsQWrXr29L9ivavtkL684FqbmOfbeCypBw+rVKsXhwdnCt/Cg==

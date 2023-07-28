@@ -17,6 +17,7 @@ const { authorisedNetworks } = useAuthorities()
 const { parseTransactionError } = useErrorHandler()
 const { getTokenByAddress } = useTokens()
 const [isGiftActive, toggleGift] = useToggle(false)
+const isDefaultTokenSet = ref(false)
 
 const { gasBalance } = storeToRefs(useSafe())
 function computeId(usdc: IToken) {
@@ -69,8 +70,6 @@ const { handleSubmit, errors, meta, resetForm } = useForm({
 const { value: amount, meta: amountMeta } = useField<string>('amount')
 const { value: id, setValue } = useField<string>(
   'id',
-  {},
-  { initialValue: usdcTokens.value[0]?.id },
 )
 
 // TODO:
@@ -190,10 +189,17 @@ const onSubmit = handleSubmit(async () => {
   loading.value = false
 })
 
-onMounted(() => {
-  const mostBalancedChain = usdcTokens.value[0].id
-  if (mostBalancedChain)
-    setValue(mostBalancedChain)
+watch(usdcTokens, () => {
+  if (usdcTokens.value?.length > 0 && !isDefaultTokenSet.value) {
+    const mostBalancedChain = usdcTokens.value[0]?.id
+
+    if (mostBalancedChain) {
+      setValue(mostBalancedChain)
+      isDefaultTokenSet.value = true
+    }
+  }
+}, {
+  immediate: true,
 })
 </script>
 
@@ -278,7 +284,8 @@ onMounted(() => {
           class="flex justify-between items-center leading-5 text-sm sm:text-base"
         >
           <span>Amount</span>
-          <span class="uppercase">{{ formatDecimal(token?.balance) }} {{ token?.symbol }}</span>
+          <SvgSpinner v-if="!usdcTokens?.length" class="text-primary" />
+          <span v-else class="uppercase">{{ formatDecimal(token?.balance) }} {{ token?.symbol }}</span>
         </div>
         <CommonInput
           v-model="amount"
