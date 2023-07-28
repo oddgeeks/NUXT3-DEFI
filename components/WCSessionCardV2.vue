@@ -39,7 +39,7 @@ async function handleDisconnectWallet(session: any) {
 
 <template>
   <div
-    class="flex flex-1 items-center sm:justify-normal justify-between gap-3 p-5 dark:bg-gray-850 bg-slate-50 rounded-5 py-2.5 pr-[14px] pl-4"
+    class="flex items-center sm:justify-normal justify-between gap-3 p-5 dark:bg-gray-850 bg-slate-50 rounded-5 py-2.5 pr-[14px] pl-4"
   >
     <button
       class="flex text-left gap-3 items-center"

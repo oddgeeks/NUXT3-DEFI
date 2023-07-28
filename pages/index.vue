@@ -51,9 +51,15 @@ function selectType(type: string) {
     <div class="flex gap-5 lg:flex-row flex-col flex-1">
       <div class="flex relative flex-col w-full gap-5">
         <div class="flex flex-col gap-5">
-          <WarningsUnstableDappVersion v-if="unstableDappNetworks.length" />
+          <WarningsUnstableDappVersion v-if="unstableDappNetworks?.length" />
           <div class="flex justify-between sm:pr-7.5">
             <div class="flex gap-7.5">
+              <h2 class="font-semibold inline-flex gap-2.5 items-center">
+                Balances
+                <button v-if="account" @click="handleOpenDialog">
+                  <SvgoQuestionCircle class="w-5 h-5 text-primary" />
+                </button>
+              </h2>
               <ClientOnly v-if="account">
                 <button
                   :class="{
