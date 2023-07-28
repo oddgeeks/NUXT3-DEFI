@@ -34,7 +34,7 @@ async function disconnectAllConnections() {
 
 <template>
   <div>
-    <div class="flex gap-3 items-center mb-7.5">
+    <div :class="isAnySessionAvailable ? 'mb-7.5' : ''" class="flex gap-3 items-center">
       <CommonButton
         :disabled="!safeAddress"
         size="lg"
