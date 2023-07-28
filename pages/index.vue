@@ -45,10 +45,10 @@ function selectType(type: string) {
       <Tabs />
       <YourWallet />
     </div>
-    <DApps v-if="$route.query.tab === 'dapps'" />
+    <DApps v-if="$route.query.tab === undefined" />
     <Shortcuts v-if="$route.query.tab === 'shortcuts'" />
 
-    <div v-if="$route.query.tab === undefined" class="flex gap-5 lg:flex-row flex-col flex-1">
+    <div class="flex gap-5 lg:flex-row flex-col flex-1">
       <div class="flex relative flex-col w-full gap-5">
         <div class="flex flex-col gap-5">
           <WarningsUnstableDappVersion v-if="unstableDappNetworks.length" />
