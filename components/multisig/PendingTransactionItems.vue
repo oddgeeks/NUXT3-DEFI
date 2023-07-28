@@ -7,6 +7,8 @@ const props = defineProps<{
 }>()
 
 const { getRequiredSigner } = useMultisig()
+const { getCurrentNonce } = useAvocadoSafe()
+const { fetchSafe } = useSafe()
 const { lastModal } = useModal()
 
 const route = useRoute()
@@ -45,6 +47,12 @@ const { data, refresh } = useAsyncData(`multisig-${route.params.safe}-${props.ch
 }, {
   watch: [() => props.activeTab, page],
   immediate: true,
+})
+
+const { data: currentNonce } = useAsyncData(`current-nonce-${route.params.safe}-${props.chainId}`, async () => {
+  const safe = await fetchSafe(route.params.safe as string)
+
+  return getCurrentNonce(props.chainId, safe.owner_address)
 })
 
 const { data: requiredSigner, refresh: refreshSigner } = useAsyncData<number>(`multisig-required-signer-${route.params.safe}-${props.chainId}`, async () => {
@@ -118,7 +126,7 @@ watch(lastModal, () => {
               <SvgoInfo2 />
               You can complete one of the transactions below. The other will be cancelled automatically.
             </p>
-            <MultisigPendingTransactionItem v-for="item in sortItems(items)" :key="item.id" :inside-group="checkIsGroup(key, items)" :required-signer="requiredSigner" :active-tab="activeTab" :item="item" />
+            <MultisigPendingTransactionItem v-for="item in sortItems(items)" :key="item.id" :current-nonce="currentNonce" :inside-group="checkIsGroup(key, items)" :required-signer="requiredSigner" :active-tab="activeTab" :item="item" />
           </ul>
         </li>
       </ul>

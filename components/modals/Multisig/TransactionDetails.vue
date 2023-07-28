@@ -219,7 +219,7 @@ async function handleReject(transaction: IMultisigTransaction) {
 watch(selectedSafe, async () => {
   if (!selectedSafe.value)
     return
-  currentNonce.value = await getCurrentNonce(transactionRef.value.chain_id)
+  currentNonce.value = await getCurrentNonce(transactionRef.value.chain_id, selectedSafe.value?.owner_address)
 }, {
   immediate: true,
 })
@@ -489,7 +489,11 @@ onUnmounted(() => {
                 Reject
               </CommonButton>
             </Tippy>
-            <div v-if="isConfirmationsMatch && isSignedAlready" v-tippy="isNonceNotMatch ? `Please execute transaction ${currentNonce} first.` : errorMessage">
+            <div
+              v-if="isConfirmationsMatch && isSignedAlready" v-tippy="{
+                content: isNonceNotMatch ? `Please execute transaction ${currentNonce} first.` : errorMessage,
+              }"
+            >
               <CommonButton
                 :disabled="!!errorMessage || pending.execute || isNonceNotMatch" :loading="pending.execute || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" error-message @click="handleExecuteConfirmation(transactionRef)"
               >

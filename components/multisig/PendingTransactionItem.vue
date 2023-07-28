@@ -8,6 +8,7 @@ const props = defineProps<{
   activeTab: string | undefined
   requiredSigner: number | null
   insideGroup: boolean
+  currentNonce: number | null
 }>()
 
 const route = useRoute()
@@ -18,6 +19,9 @@ const { isAccountCanSign } = useMultisig()
 const actualRequiredSigner = computed(() => props.activeTab === 'completed' ? props.item.confirmations_required : props.requiredSigner || 0)
 
 const canSign = computed(() => isAccountCanSign(props.item.chain_id, account.value, selectedSafe.value?.owner_address))
+
+const isNonseq = computed(() => props.item.nonce == '-1')
+const isNonceNotMatch = computed(() => isNonseq.value ? false : props.item.nonce !== String(props.currentNonce))
 
 const isConfirmationsMatch = computed(() => gte(props.item.confirmations.length, actualRequiredSigner.value))
 const isYourSignNeeded = computed(() => {
@@ -114,7 +118,12 @@ async function handleClick(item: IMultisigTransaction) {
               <SvgoCheckCircle class="success-circle w-5 h-5" />
             </span>
             <span v-else-if="isConfirmationsMatch" class="items-center flex gap-5 justify-between">
-              Ready to execute
+              <span v-if="isNonceNotMatch">
+                Threshold reached
+              </span>
+              <span v-else>
+                Ready to execute
+              </span>
               <SvgoCheckCircle class="success-circle w-5 h-5" />
             </span>
             <span v-else class="items-center flex gap-5 justify-between whitespace-nowrap">

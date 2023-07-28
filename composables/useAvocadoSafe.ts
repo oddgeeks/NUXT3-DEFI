@@ -358,14 +358,14 @@ export function useAvocadoSafe() {
     })
   }
 
-  async function getCurrentNonce(chainId: number | string) {
+  async function getCurrentNonce(chainId: number | string, ownerAddress: string) {
     const underlyingProvider = new ethers.providers.JsonRpcProvider(getRpcURLByChainId(chainId))
     const forwarderProxyContract = Forwarder__factory.connect(
       forwarderProxyAddress,
       underlyingProvider,
     )
 
-    const currentNonce = (await forwarderProxyContract.avoSafeNonceMultisig(selectedSafe.value?.owner_address!)).toNumber()
+    const currentNonce = (await forwarderProxyContract.avoSafeNonceMultisig(ownerAddress)).toNumber()
 
     return currentNonce
   }
