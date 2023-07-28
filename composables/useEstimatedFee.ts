@@ -41,8 +41,10 @@ export function useEstimatedFee(
     const message = 'Something went wrong. Please try again!'
     if (pending.value)
       return
-    if (error.value)
+    if (error.value) {
+      console.log(error.value)
       return message
+    }
 
     if (rawData.value && (!rawData.value?.fee || !rawData.value?.multiplier))
       return message

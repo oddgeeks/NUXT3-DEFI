@@ -474,7 +474,10 @@ export function useAvocadoSafe() {
   }
 
   const getLatestAvosafeNonce = async (chainId: string | number) => {
-    const currentNonce = await getCurrentNonce(chainId)
+    if (!selectedSafe.value?.owner_address)
+      return
+
+    const currentNonce = await getCurrentNonce(chainId, selectedSafe.value?.owner_address)
 
     const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {
       params: {
