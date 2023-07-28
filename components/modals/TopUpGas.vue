@@ -70,10 +70,8 @@ const { value: amount, meta: amountMeta } = useField<string>('amount')
 const { value: id, setValue } = useField<string>(
   'id',
   {},
-  { initialValue: usdcTokens.value[0].id },
+  { initialValue: usdcTokens.value[0]?.id },
 )
-
-console.log(id.value)
 
 // TODO:
 const token = computed(() => usdcTokens.value.find((tk: any) => tk.id === id.value))
