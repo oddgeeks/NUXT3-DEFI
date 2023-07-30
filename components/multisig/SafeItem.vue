@@ -77,7 +77,8 @@ function handleInput() {
               (Owner)
             </span>
           </span>
-          {{ shortenHash(address) }}</span>
+          {{ shortenHash(address) }}
+        </span>
         <Copy icon-only :text="address">
           <template #copy>
             <div
@@ -95,6 +96,10 @@ function handleInput() {
         <span v-if="owner" class="sm:block hidden">
           (Owner)
         </span>
+
+        <button v-if="!contactName" class="text-sm text-primary font-medium" @click="openAddContactModal(undefined, address)">
+          Save as Contact
+        </button>
       </div>
       <label
         v-if="!owner" v-tippy="{
