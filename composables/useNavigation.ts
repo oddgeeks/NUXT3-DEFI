@@ -84,9 +84,6 @@ export function useNavigation() {
     ]
   })
 
-  tryOnMounted(() => {
-    console.log('selam')
-  })
   return {
     navigations,
   }
