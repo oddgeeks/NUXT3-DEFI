@@ -108,11 +108,16 @@ watch(lastModal, () => {
 </script>
 
 <template>
-  <details v-if="data?.data?.length" ref="containerRef" open class="sm:pb-[14px] sm:first:pt-[14px] sm:open:pb-0 group">
+  <details v-if="data?.data?.length" ref="containerRef" class="sm:pb-[14px] sm:first:pt-[14px] sm:open:pb-0 group">
     <summary class="dark:bg-slate-850 bg-slate-150 py-2.5 flex cursor-pointer items-center gap-2.5 px-5 text-xs font-medium leading-5 text-slate-400">
       <ChainLogo class="w-5 h-5" :chain="chainId" />
-      {{ chainIdToName(chainId) }}
+      <span class="text-white">
+        {{ chainIdToName(chainId) }}
+      </span>
 
+      <div>
+        {{ data.meta.total }} total transaction{{ data.meta.total > 1 ? 's' : '' }}
+      </div>
       <SvgoChevronDown
         class="w-5 text-slate-400 ml-auto group-open:rotate-180"
       />
