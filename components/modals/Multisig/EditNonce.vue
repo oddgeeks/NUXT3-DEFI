@@ -112,7 +112,25 @@ function getNonceTooltip(value: number | undefined) {
         content: message,
         interactive: true,
         allowHTML: true,
-        placement: 'top',
+        placement: 'bottom',
+        popperOptions: {
+          strategy: 'fixed',
+          modifiers: [
+            {
+              name: 'flip',
+              options: {
+                fallbackPlacements: ['bottom', 'right'],
+              },
+            },
+            {
+              name: 'preventOverflow',
+              options: {
+                altAxis: true,
+                tether: false,
+              },
+            },
+          ],
+        },
       }
     : undefined
 }
@@ -156,6 +174,7 @@ function getNonceTooltip(value: number | undefined) {
           <template #item="{ label, value }">
             <span class="flex items-center gap-2.5">
               {{ label }}
+
               <SvgoInfo2
                 v-tippy="getNonceTooltip(value)" class="text-slate-500"
               />
