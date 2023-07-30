@@ -234,16 +234,7 @@ async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
   pending.value.execute = true
 
   try {
-    const { success } = await openDialogModal({
-      type: 'question',
-      title: 'Execute transaction',
-      content: 'Are you sure you want to execute this transaction?',
-      isCancelButtonVisible: true,
-      buttonText: 'Execute',
-      cancelButtonProps: {
-        color: 'white',
-      },
-    })
+    const { success } = await openExecuteTransactionModal(transaction.chain_id, transaction.data.params.actions)
 
     if (success)
       await handleExecute(transaction)

@@ -18,6 +18,7 @@ export function useEstimatedFee(
   const { safe, generateMultisigSignatureMessage } = useAvocadoSafe()
   const { gasBalance, safeAddress, selectedSafe } = storeToRefs(useSafe())
   const { isSafeMultisig } = storeToRefs(useMultisig())
+  const { parseTransactionError } = useErrorHandler()
 
   const immediate = !!params?.immediate
 
@@ -42,8 +43,9 @@ export function useEstimatedFee(
     if (pending.value)
       return
     if (error.value) {
-      console.log(error.value)
-      return message
+      const formatted = parseTransactionError(error.value)?.formatted
+
+      return formatted || message
     }
 
     if (rawData.value && (!rawData.value?.fee || !rawData.value?.multiplier))
@@ -100,6 +102,9 @@ export function useEstimatedFee(
         ])
 
         return data
+      }
+      catch (err: any) {
+        throw err?.error || err
       }
       finally {
         params?.cb?.()

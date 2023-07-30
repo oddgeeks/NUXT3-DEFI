@@ -1,4 +1,5 @@
 import type { SessionTypes } from '@walletconnect/types'
+import ExecuteTransaction from '~~/components/modals/Multisig/ExecuteTransaction.vue'
 import Bridge from '~~/components/modals/Bridge.vue'
 import Swap from '~~/components/modals/Swap.vue'
 import PendingTransaction from '~~/components/modals/PendingTransaction.vue'
@@ -633,6 +634,17 @@ export function openMultisigSelectNetworkModal(addresses: ISignerAddress[]) {
     options: {
       contentClass: '!p-0',
       wrapperClass: '!max-w-[560px]',
+    },
+    async: true,
+  })
+}
+
+export function openExecuteTransactionModal(chainId: string | number, data: any) {
+  return openModal({
+    component: ExecuteTransaction,
+    componentProps: {
+      chainId,
+      data,
     },
     async: true,
   })
