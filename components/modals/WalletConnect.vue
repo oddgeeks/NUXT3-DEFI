@@ -97,6 +97,9 @@ const prepareAndConnect = handleSubmit(async () => {
 })
 
 function contentTemplate(url: string, name: string) {
+  if (!url)
+    return `You can now use ${name} with your Avocado wallet.`
+
   return `You can now use <a target='_blank' rel='noopener noreferrer' class='text-primary' href=${url}>
         ${name}
         </a> with your Avocado wallet.`
@@ -150,8 +153,7 @@ onMounted(async () => {
 
 <template>
   <div>
-    <WCApproveConnectionV2 v-if="proposal" :proposal="proposal" :loading="loading" @connect="connect" />
-    <WCApproveConnection v-else-if="connection" :connection="connection" :loading="loading" @connect="connect" />
+    <WCApproveConnectionV2 v-if="proposal" :proposal="proposal" :loading="loading" @connect="connect" @destroy="$emit('destroy')" />
 
     <form
       v-else

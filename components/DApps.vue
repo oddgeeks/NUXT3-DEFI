@@ -99,7 +99,7 @@ watch(
         class="flex items-center relative gap-[15px] scroll-hide overflow-x-auto"
       >
         <template v-for="session in wcStoreV2.sessions">
-          <WCSessionCardV2 v-if="session.peer.metadata" :key="session.peer.metadata.url" :session="session" />
+          <WCSessionCardV2 v-if="session.peer.metadata" :key="session.peer.metadata.url || session.peer.metadata.name" :session="session" />
         </template>
       </div>
       <div
