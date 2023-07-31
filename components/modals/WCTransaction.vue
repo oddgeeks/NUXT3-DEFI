@@ -23,15 +23,10 @@ const [submitting, toggle] = useToggle()
 const { parseTransactionError } = useErrorHandler()
 const { web3WalletV2 } = storeToRefs(useWalletConnectV2())
 
-const { selectedSafe } = storeToRefs(useSafe())
 const { authorisedNetworks } = useAuthorities()
-const { isAccountCanSign } = useMultisig()
 
 const nonAuthorised = computed(() => {
-  const isNotAuthorised = !authorisedNetworks.value?.find(i => String(i.chainId) == String(props.chainId))
-  const canSign = isAccountCanSign(props.chainId, account.value, selectedSafe.value?.owner_address)
-
-  return isNotAuthorised || !canSign
+  return !authorisedNetworks.value?.find(i => String(i.chainId) == String(props.chainId))
 })
 
 const submitDisabled = computed(
