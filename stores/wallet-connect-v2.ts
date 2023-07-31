@@ -440,6 +440,11 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
     syncActiveSessions()
   })
 
+  watch(safe.safeAddress, async () => {
+    await disconnectAll()
+    syncActiveSessions()
+  })
+
   const normalizeChainId = (eip155ChainId: string) => {
     return eip155ChainId.replace('eip155:', '')
   }
