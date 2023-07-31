@@ -1,12 +1,12 @@
 <svg width="26" height="26" viewBox="0 0 163 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <mask id="mask0_30_9" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="163" height="160">
+  <mask id="mask0_30_10" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="163" height="160">
     <path d="M81.5014 152.069C81.5014 156.662 85.2867 160.429 89.9176 159.961C130.973 155.806 163 121.592 163 80.0003C163 38.4082 130.973 4.19493 89.9176 0.039875C85.2867 -0.431344 81.5014 3.3384 81.5014 7.93141V30.1063C81.5014 34.6994 85.3121 38.3361 89.8781 39.2426C109.146 43.076 123.656 59.8652 123.656 80.0003C123.656 100.135 109.146 116.924 89.8781 120.758C85.3121 121.664 81.5014 125.304 81.5014 129.894V152.069ZM56.2076 15.0219C56.2076 9.36723 50.5959 5.38128 45.4549 7.88429C18.5236 21.0036 0 48.3675 0 80.0003C0 111.633 18.5236 138.997 45.4549 152.116C50.5959 154.619 56.2076 150.633 56.2076 144.978V15.0246V15.0219Z" fill="#4CA054"/>
   </mask>
-  <g mask="url(#mask0_30_9)">
-    <circle cx="83.2851" cy="80.2851" r="79.2851" fill="url(#paint0_linear_30_9)"/>
+  <g mask="url(#mask0_30_10)">
+    <circle cx="83.2851" cy="80.2851" r="79.2851" fill="url(#paint0_linear_30_10)"/>
   </g>
   <defs>
-  <linearGradient id="paint0_linear_30_9" x1="83.2851" y1="1" x2="83.2851" y2="159.57" gradientUnits="userSpaceOnUse">
+  <linearGradient id="paint0_linear_30_10" x1="83.2851" y1="1" x2="83.2851" y2="159.57" gradientUnits="userSpaceOnUse">
     <stop stop-color="#007229"/>
     <stop offset="1" stop-color="#69EE00" stop-opacity="0.97"/>
   </linearGradient>
