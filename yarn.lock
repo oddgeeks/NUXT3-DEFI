@@ -2227,7 +2227,7 @@
     vite-plugin-checker "^0.6.1"
     vue-bundle-renderer "^1.0.3"
 
-"@nuxtjs/color-mode@^3.2.0":
+"@nuxtjs/color-mode@^3.3.0":
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/@nuxtjs/color-mode/-/color-mode-3.3.0.tgz#4c0e2ea2b23813461e6cfaa10dd169805a5145a6"
   integrity sha512-YVFNmTISke1eL7uk5p9I1suOsM222FxrqKoF13HS4x94OKCWwPLLeTCEzHZ8orzKnaFUbCXpuL4pRv8gvW+0Kw==
@@ -2236,7 +2236,7 @@
     lodash.template "^4.5.0"
     pathe "^1.1.1"
 
-"@nuxtjs/tailwindcss@^6.6.7":
+"@nuxtjs/tailwindcss@^6.8.0":
   version "6.8.0"
   resolved "https://registry.yarnpkg.com/@nuxtjs/tailwindcss/-/tailwindcss-6.8.0.tgz#14fd9862b1d41912f851624a18bc6d1b5611d504"
   integrity sha512-jzuvD1nfA2BPnSbHtKK0aiI51ndMa7lNGL1iDEFuEPsltzilZ9ED7zOP6niGTrImg0n5Yt4GEJpixi6yWwp9Hw==
@@ -3325,7 +3325,7 @@
   resolved "https://registry.yarnpkg.com/@vueuse/metadata/-/metadata-10.3.0.tgz#14fe6cc909573785f73a56e4d9351edf3830b796"
   integrity sha512-Ema3YhNOa4swDsV0V7CEY5JXvK19JI/o1szFO1iWxdFg3vhdFtCtSTP26PCvbUpnUtNHBY2wx5y3WDXND5Pvnw==
 
-"@vueuse/nuxt@^10.1.2", "@vueuse/nuxt@^10.2.0":
+"@vueuse/nuxt@^10.2.0", "@vueuse/nuxt@^10.3.0":
   version "10.3.0"
   resolved "https://registry.yarnpkg.com/@vueuse/nuxt/-/nuxt-10.3.0.tgz#05470d1e673954c4ea6a7880866058d55b2c0cce"
   integrity sha512-Dmkm9H5Ubq279+FHhlJtlFP99wKrn2apuo4hk/0GbEi/6+zif7MJRtAjDBBV4VjmY6XV3kO8dQR8940FStbxsA==
@@ -8658,10 +8658,10 @@ nuxt-csurf@^1.1.0:
     "@nuxt/kit" "^3.1.0"
     defu "^6.1.1"
 
-nuxt-security@^0.13.0:
-  version "0.13.1"
-  resolved "https://registry.yarnpkg.com/nuxt-security/-/nuxt-security-0.13.1.tgz#a5c90df345d5fb2af6819ded6dacf1a466999a30"
-  integrity sha512-ZqO9Eu2LmB43U/NK+kAQtTcEO+7swu6WhgZBjvHwSCvg5cDvruhfEjLOffF4nuhvyVpKnt5HRfeRao8ABIe3ug==
+nuxt-security@^0.14.2:
+  version "0.14.4"
+  resolved "https://registry.yarnpkg.com/nuxt-security/-/nuxt-security-0.14.4.tgz#40971e670f1c102bfad62fa26571464899fe337d"
+  integrity sha512-y1+KrWPGyfiH9OB72m0wAxHDxtFEF14c/U6g5K8YFr07ierjJqKCWm9qIyVdjWqGSLNiY0qMSuUHtbh11ICYJg==
   dependencies:
     "@nuxt/kit" "^3.2.2"
     basic-auth "^2.0.1"
@@ -9119,7 +9119,7 @@ pify@^5.0.0:
   resolved "https://registry.yarnpkg.com/pify/-/pify-5.0.0.tgz#1f5eca3f5e87ebec28cc6d54a0e4aaf00acc127f"
   integrity sha512-eW/gHNMlxdSP6dmG6uJip6FXN0EQBwm2clYYd8Wul42Cwu/DK8HEftzsapcNdYe2MfLiIwZqsDk2RDEsTE79hA==
 
-pinia@>=2.1.0, pinia@^2.1.3:
+pinia@>=2.1.0, pinia@^2.1.6:
   version "2.1.6"
   resolved "https://registry.yarnpkg.com/pinia/-/pinia-2.1.6.tgz#e88959f14b61c4debd9c42d0c9944e2875cbe0fa"
   integrity sha512-bIU6QuE5qZviMmct5XwCesXelb5VavdOWKWaB17ggk++NUwQWWbP5YnsONTk3b752QkW9sACiR81rorpeOMSvQ==
@@ -11211,14 +11211,14 @@ unplugin-vue-components@^0.25.1:
     resolve "^1.22.2"
     unplugin "^1.3.1"
 
-unplugin-vue-inspector@^0.2.2:
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/unplugin-vue-inspector/-/unplugin-vue-inspector-0.2.5.tgz#9cf4e291c7a1e39946773425ffe70576e09d46b6"
-  integrity sha512-puzBWNyvDho8iOj2kRd7fBtr46O/VtM3g4LNx/BgNjXcB9KHWf2AdZmjBiQNTVAog7JtdcX7KFroIgSrLAszGQ==
+unplugin-vue-inspector@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/unplugin-vue-inspector/-/unplugin-vue-inspector-0.3.0.tgz#24c55bc2800d62cdda079de9d448aa484234c41c"
+  integrity sha512-WhsYGflyhmOmGl+aZ01ezM2uj42PR/wPiWONOvB3e0WVZKV7X0jhDmo2ia3uIMExzkZNAH6Q/K5fFtZ/3VgjWg==
   dependencies:
     kolorist "^1.7.0"
     unplugin "^1.3.1"
-    vite-plugin-vue-inspector "3.4.2"
+    vite-plugin-vue-inspector "3.5.0"
 
 unplugin-vue-router@^0.6.4:
   version "0.6.4"
@@ -11438,10 +11438,10 @@ vite-plugin-pwa@^0.14.4:
     workbox-build "^6.5.4"
     workbox-window "^6.5.4"
 
-vite-plugin-vue-inspector@3.4.2:
-  version "3.4.2"
-  resolved "https://registry.yarnpkg.com/vite-plugin-vue-inspector/-/vite-plugin-vue-inspector-3.4.2.tgz#6fe5757ca7d2ffac3721510587e2b8bc2791f040"
-  integrity sha512-q5OTkcZJqL78bwGJl1Zk8CNqtxZ9wP2udJYqyFIZzL1lTax0/oq7DhNkLrnPTxkJuf0QPZKdunb1vDyCByn4dQ==
+vite-plugin-vue-inspector@3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/vite-plugin-vue-inspector/-/vite-plugin-vue-inspector-3.5.0.tgz#09819a2f8863d1b43151c94bd7474aec3fc1dd24"
+  integrity sha512-dDoxEi5VWkfsKflVUYxElC3XD/MOn8s/6mjCqWRDlFIQ+OsY0cW5PNTbqxGllbBBCr5SDnDmPWFS1vMJxrLVEw==
   dependencies:
     "@babel/core" "^7.21.3"
     "@babel/plugin-syntax-import-meta" "^7.10.4"
