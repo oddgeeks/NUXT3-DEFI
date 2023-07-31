@@ -15,6 +15,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  containerClass: {
+    type: String,
+    default: '',
+  },
 })
 
 const emit = defineEmits(['update:networks'])
@@ -94,6 +98,7 @@ function toggleAllNetworks() {
       >
         <PopoverPanel
           as="ul"
+          :class="[containerClass]"
           class="absolute w-[220px] sm:left-1/2 -left-4 border-2 rounded-5 p-[6px] -translate-x-1/2 bg-slate-50 dark:bg-gray-850 top-8 border-slate-150 dark:border-slate-700"
         >
           <li
