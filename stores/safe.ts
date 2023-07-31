@@ -564,6 +564,8 @@ export const useSafe = defineStore('safe', () => {
       if (!account.value)
         return
 
+      console.log('selam')
+
       try {
         pending.value.global = true
 
@@ -609,10 +611,18 @@ export const useSafe = defineStore('safe', () => {
   watch(connector, () => {
     if (!connector.value)
       return
-    connector.value.on('Web3ReactUpdate', (params) => {
+    connector.value.on('Web3ReactUpdate', async (params) => {
       // only reset accounts if account changed
-      if (params?.account)
+      if (params?.account) {
         resetAccounts()
+
+        // if safepal available, tricky way to update account
+        if (window.ethereum.isSafePal) {
+          account.value = ''
+          await new Promise(resolve => setTimeout(resolve, 1))
+          account.value = params.account
+        }
+      }
     })
   }, {
     immediate: true,
