@@ -20,6 +20,7 @@ const { getRequiredSigner, isAccountCanSign } = useMultisig()
 const { requiredSigners } = storeToRefs(useMultisig())
 const { selectedSafe } = storeToRefs(useSafe())
 const { getContactNameByAddress } = useContacts()
+const { parseTransactionError } = useErrorHandler()
 const { account } = useWeb3()
 const currentNonce = ref<number>()
 const [signAndExecute, toggle] = useToggle(false)
@@ -193,10 +194,11 @@ async function handleExecute(item: IMultisigTransaction) {
       showPendingTransactionModal(hash, item.chain_id, 'send')
     }
   }
-  catch (e) {
+  catch (e: any) {
+    const message = parseTransactionError(e)
     openDialogModal({
       title: 'Error',
-      content: 'Something went wrong. Please try again later.',
+      content: message.formatted || 'Something went wrong. Please try again later.',
       type: 'error',
     })
     console.error(e)
