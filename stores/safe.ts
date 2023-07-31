@@ -86,6 +86,13 @@ export const useSafe = defineStore('safe', () => {
   },
   )
 
+  const isSelectedSafeSecondary = computed(() => {
+    if (!safeAddress.value || !multiSigSafeAddress.value || !mainSafeAddress.value)
+      return false
+
+    return getAddress(safeAddress.value) !== getAddress(multiSigSafeAddress.value) && getAddress(safeAddress.value) !== getAddress(mainSafeAddress.value)
+  })
+
   const fundedEoaNetworks = computed(() => {
     return new Set(eoaBalances.value?.filter(item => toBN(item?.balance ?? 0).toNumber() !== 0).map(item => item.chainId.toString())).size
   })
@@ -644,6 +651,7 @@ export const useSafe = defineStore('safe', () => {
     setSelectedSafe,
     accountSafeMapping,
     fetchSafe,
+    isSelectedSafeSecondary,
   }
 }, {
   persist: {

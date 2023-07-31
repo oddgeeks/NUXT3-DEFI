@@ -1,5 +1,5 @@
 export function useAuthorities() {
-  const { selectedSafe, mainSafe, safeAddress } = storeToRefs(useSafe())
+  const { selectedSafe, mainSafe, safeAddress, isSelectedSafeSecondary } = storeToRefs(useSafe())
   const { isSafeMultisig, requiredSigners } = storeToRefs(useMultisig())
   const { isAccountCanSign } = useMultisig()
 
@@ -15,13 +15,10 @@ export function useAuthorities() {
   })
 
   const authorisedNetworks = computed(() => {
-    if (!account.value || !safeAddress?.value || !selectedSafe.value)
+    if (!account.value || !safeAddress?.value || !selectedSafe.value || !isSelectedSafeSecondary.value)
       return availableNetworks
 
     if (!isSafeMultisig.value) {
-      if (!isWalletSecondary.value)
-        return availableNetworks
-
       const auth = authorities.value.find(i => i.address === account.value)
 
       return auth?.chainIds.map(i => getNetworkByChainId(i))
