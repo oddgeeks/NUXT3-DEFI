@@ -15,7 +15,7 @@ const route = useRoute()
 const page = ref(1)
 const containerRef = ref<HTMLElement | null>(null)
 
-const { data, refresh } = useAsyncData(`multisig-${route.params.safe}-${props.chainId}`, async () => {
+const { data, refresh, error } = useAsyncData(`multisig-${route.params.safe}-${props.chainId}`, async () => {
   const isCompleted = props.activeTab === 'completed'
 
   const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${route.params.safe}/transactions`, {

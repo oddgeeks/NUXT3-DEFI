@@ -31,26 +31,28 @@ export const useMultisig = defineStore('multisig', () => {
   }
 
   async function getRequiredSigners(safe: ISafe) {
-    const promises = availableNetworks.map(async (network) => {
+    const requiredSignersArr: IRequiredSigners[] = []
+
+    for (const network of availableNetworks) {
       try {
         const count = await getRequiredSigner(safe.safe_address, network.chainId)
         const signers = safe?.signers[network.chainId] || []
 
-        return {
+        const obj = {
           chainId: network.chainId,
           requiredSignerCount: count,
           signerCount: signers.length,
           signers,
         }
+
+        requiredSignersArr.push(obj)
       }
       catch (e) {
-        return null
+        continue
       }
-    })
+    }
 
-    const results = await Promise.all(promises)
-
-    return results.filter(r => r !== null) as IRequiredSigners[]
+    return requiredSignersArr
   }
 
   async function getRequiredSigner(safeAddress: string, chainId: number | string) {
