@@ -192,7 +192,7 @@ useIntervalFn(async () => {
                 </button>
               </span>
 
-              <p v-if="!isAccountCanSign(item.chainId, account, selectedSafe?.owner_address)" class="text-orange gap-2 text-xs flex items-center">
+              <p v-if="!isAccountCanSign(item.chainId, account, selectedSafe?.owner_address)" class="text-orange font-medium gap-2 text-xs flex items-center">
                 <SvgoInfo2 />
                 You are not a signer on this chain.
               </p>
