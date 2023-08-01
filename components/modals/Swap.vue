@@ -935,7 +935,7 @@ onUnmounted(() => {
                                   <SvgoCheckCircle v-else-if="aggr.name === bestRoute.name" class="w-4 success-circle" />
                                 </div>
                                 <span class="text-xs text-slate-400">
-                                  {{ fromWei(aggr.data.buyTokenAmount, aggr.data.buyToken.decimals) }}
+                                  {{ formatDecimal(fromWei(aggr.data.buyTokenAmount, aggr.data.buyToken.decimals).toFixed()) }}
                                   {{ aggr.data.buyToken.symbol }}
                                   ({{ formatUsd(times(fromWei(aggr.data.buyTokenAmount, aggr.data.buyToken.decimals), aggr.data.buyToken.price)) }})</span>
                               </div>
