@@ -11,6 +11,7 @@ defineEmits(['createBookmark', 'updateBookmark'])
     <SvgoBookmark />
     <button
       v-if="!bookmark"
+      v-tippy="'Bookmark this transaction so you can execute it in one click from the Avocado UI.'"
       type="button"
       @click="$emit('createBookmark')"
     >

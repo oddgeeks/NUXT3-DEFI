@@ -45,7 +45,7 @@ function handleOpenBookmark(bookmark: IBookmark) {
               @click="handleOpenBookmark(bookmark)"
             >
               <SafeTokenLogo network-logo-class="!w-5 !h-5" class="w-[28px] h-[28px]" :chain-id="bookmark.chainId" :url="getIcon(bookmark)" />
-              <span class="text-sm overflow-hidden text-left whitespace-nowrap text-shadow sm:w-[148px] w-[200px]">
+              <span class="text-sm overflow-hidden text-left whitespace-nowrap truncate sm:w-[148px] w-[200px]">
                 {{ bookmark.name }}
               </span>
             </button>
