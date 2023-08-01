@@ -23,6 +23,28 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
     return true
   }))
 
+  function isSameOrigin(url1: string, url2: string) {
+    try {
+      const url = new URL(url1)
+      const hostname = url.hostname
+      const peerMetaUrl = new URL(url2)
+      const peerMetaHostname = peerMetaUrl.hostname
+
+      return hostname === peerMetaHostname
+    }
+    catch (e) {
+      return false
+    }
+  }
+
+  function checkDappIsBanned(peerURL: string) {
+    return bannedDapps.some(i => isSameOrigin(i, peerURL))
+  }
+
+  function checkDappIsWarned(peerURL: string) {
+    return warnedDapps.some(i => isSameOrigin(i, peerURL))
+  }
+
   const prepareConnectV2 = async (
     uri: string,
   ) => {
@@ -472,6 +494,8 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
     disconnectAll,
     web3WalletV2,
     getConnectionVersion,
+    checkDappIsBanned,
+    checkDappIsWarned,
   }
 })
 
