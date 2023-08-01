@@ -86,6 +86,13 @@ export const useSafe = defineStore('safe', () => {
   },
   )
 
+  const isMainSafeAvocadoSelected = computed(() => {
+    if (!safeAddress.value || !mainSafeAddress.value)
+      return false
+
+    return getAddress(safeAddress.value) === getAddress(mainSafeAddress.value)
+  })
+
   const isSelectedSafeSecondary = computed(() => {
     if (!safeAddress.value || !multiSigSafeAddress.value || !mainSafeAddress.value)
       return false
@@ -662,6 +669,7 @@ export const useSafe = defineStore('safe', () => {
     accountSafeMapping,
     fetchSafe,
     isSelectedSafeSecondary,
+    isMainSafeAvocadoSelected,
   }
 }, {
   persist: {

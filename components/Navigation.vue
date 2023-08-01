@@ -11,6 +11,7 @@ import type { IBalance } from '~/stores/safe'
 const emit = defineEmits(['navigate'])
 
 const { tokenBalances, totalEoaBalance, eoaBalances, fundedEoaNetworks } = useAvocadoSafe()
+const { isMainSafeAvocadoSelected } = storeToRefs(useSafe())
 const { authorisedNetworks } = useAuthorities()
 const [moreOptions, toggleOptions] = useToggle(false)
 const { safeAddress } = useAvocadoSafe()
@@ -136,7 +137,7 @@ function openBridge() {
         </NuxtLink>
       </div>
     </div>
-    <div v-if="eoaBalances && eoaBalances?.length" class="flex flex-col py-6 px-7.5 text-xs gap-[14px]">
+    <div v-if="eoaBalances && eoaBalances?.length && isMainSafeAvocadoSelected" class="flex flex-col py-6 px-7.5 text-xs gap-[14px]">
       <span class="text-slate-400 text-center sm:text-left">You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet (EOA)</span>
       <div class="flex justify-center sm:justify-start">
         <CommonButton
