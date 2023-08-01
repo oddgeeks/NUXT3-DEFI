@@ -19,16 +19,22 @@ function handleDestroy() {
   const routes = router.getRoutes()
   let isValid = false
 
-  for (const page of routes) {
-    const path = page.path.replace('()', '')
-    const regexp = pathToRegexp(path)
+  try {
+    for (const page of routes) {
+      const path = page.path.replaceAll('()', '')
+      const regexp = pathToRegexp(path)
 
-    isValid = regexp.test(redirectTo)
+      isValid = regexp.test(redirectTo)
 
-    if (isValid) {
-      router.push({ path: redirectTo })
-      return
+      if (isValid) {
+        router.push({ path: redirectTo })
+        return
+      }
     }
+  }
+  catch (error) {
+    router.push('/')
+    return
   }
 
   router.push('/')
