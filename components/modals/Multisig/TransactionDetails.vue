@@ -490,7 +490,7 @@ onUnmounted(() => {
             </Tippy>
             <div
               v-if="isConfirmationsMatch && isSignedAlready" v-tippy="{
-                content: isNonceNotMatch ? `Please execute transaction ${currentNonce} first.` : errorMessage,
+                content: isNonceNotMatch ? `Please execute transaction #${currentNonce} first.` : errorMessage,
               }"
             >
               <CommonButton
