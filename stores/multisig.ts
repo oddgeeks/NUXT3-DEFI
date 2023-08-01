@@ -32,9 +32,10 @@ export const useMultisig = defineStore('multisig', () => {
 
   async function getRequiredSigners(safe: ISafe) {
     const promises = availableNetworks.map(async (network) => {
+      const signers = safe?.signers[network.chainId] || []
+
       try {
         const count = await getRequiredSigner(safe.safe_address, network.chainId)
-        const signers = safe?.signers[network.chainId] || []
 
         return {
           chainId: network.chainId,
@@ -44,7 +45,12 @@ export const useMultisig = defineStore('multisig', () => {
         }
       }
       catch (e) {
-        return null
+        return {
+          chainId: network.chainId,
+          requiredSignerCount: 1,
+          signerCount: signers.length,
+          signers,
+        }
       }
     })
 

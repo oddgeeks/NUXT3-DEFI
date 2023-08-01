@@ -639,12 +639,13 @@ export function openMultisigSelectNetworkModal(addresses: ISignerAddress[]) {
   })
 }
 
-export function openExecuteTransactionModal(chainId: string | number, data: any) {
+export function openExecuteTransactionModal(chainId: string | number, data: any, isGasTopup = false) {
   return openModal({
     component: ExecuteTransaction,
     componentProps: {
       chainId,
       data,
+      isGasTopup,
     },
     async: true,
   })

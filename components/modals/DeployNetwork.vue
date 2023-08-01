@@ -37,6 +37,9 @@ async function handleDeploy() {
       metadata,
     })
 
+    if (!transactionHash)
+      return
+
     logActionToSlack({
       message: ` ${props.network.name}`,
       action: 'deploy',

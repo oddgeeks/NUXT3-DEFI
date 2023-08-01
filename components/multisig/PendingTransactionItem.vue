@@ -16,7 +16,7 @@ const { account } = useWeb3()
 const { selectedSafe } = storeToRefs(useSafe())
 const { isAccountCanSign } = useMultisig()
 
-const actualRequiredSigner = computed(() => props.activeTab === 'completed' ? props.item.confirmations_required : props.requiredSigner || 0)
+const actualRequiredSigner = computed(() => props.activeTab === 'completed' ? props.item.confirmations_required : props.requiredSigner || 1)
 
 const canSign = computed(() => isAccountCanSign(props.item.chain_id, account.value, selectedSafe.value?.owner_address))
 

@@ -153,6 +153,9 @@ const onSubmit = handleSubmit(async () => {
       },
     )
 
+    if (!transactionHash)
+      return
+
     logActionToSlack({
       action: 'topup',
       message: `${amount.value} ${formatSymbol('usdc')}`,

@@ -34,12 +34,17 @@ const pending = ref({
 })
 
 const { data: requiredSigner } = useAsyncData<number>(`multisig-required-signer-${transactionRef.value.safe_address}-${transactionRef.value.chain_id}`, async () => {
-  return getRequiredSigner(transactionRef.value.safe_address, transactionRef.value.chain_id)
+  try {
+    return getRequiredSigner(transactionRef.value.safe_address, transactionRef.value.chain_id)
+  }
+  catch {
+    return 1
+  }
 }, {
   immediate: true,
 })
 
-const actualRequiredSigner = computed(() => isTransactionExecuted.value ? transactionRef.value.confirmations_required : requiredSigner.value || 0)
+const actualRequiredSigner = computed(() => isTransactionExecuted.value ? transactionRef.value.confirmations_required : requiredSigner.value || 1)
 
 const formatted = useDateFormat(transactionRef.value.created_at, 'MM.DD.YYYY, HH:mm:ss')
 const isConfirmationsMatch = computed(() => gte(transactionRef.value.confirmations.length, actualRequiredSigner.value))
@@ -236,7 +241,8 @@ async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
   pending.value.execute = true
 
   try {
-    const { success } = await openExecuteTransactionModal(transaction.chain_id, transaction.data.params.actions)
+    const isGasTopup = actionType.value === 'gas-topup'
+    const { success } = await openExecuteTransactionModal(transaction.chain_id, transaction.data.params.actions, isGasTopup)
 
     if (success)
       await handleExecute(transaction)
