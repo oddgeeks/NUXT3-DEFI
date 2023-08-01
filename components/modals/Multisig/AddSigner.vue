@@ -164,16 +164,16 @@ async function handleSelectContact(key: number) {
           <CommonInput
             v-model="field.value.address"
             :name="`addresses[${key}].address`"
-            :disabled="contactSelections.includes(key as number)"
+            :disabled="contactSelections.includes(key)"
             :error-message="getErrorMessage(errors, `addresses[${key}].address`)"
             placeholder="Enter Address"
           >
             <template #suffix>
               <button
-                v-if="contactSelections.includes(field.key as number)"
+                v-if="contactSelections.includes(key)"
                 v-tippy="'Clear Contact'"
                 type="button"
-                class="ml-3" @click="handleUpdateField(field.key as number)"
+                class="ml-3" @click="handleUpdateField(key)"
               >
                 <SvgoBack class="text-slate-400" />
               </button>
@@ -182,7 +182,7 @@ async function handleSelectContact(key: number) {
                 v-tippy="'Select contact'"
                 type="button"
                 class="ml-3"
-                @click="handleSelectContact(field.key as number)"
+                @click="handleSelectContact(key)"
               >
                 <SvgoContact class="text-slate-400" />
               </button>
