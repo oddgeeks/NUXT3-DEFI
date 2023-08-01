@@ -1,11 +1,11 @@
 import { getAddress } from 'ethers/lib/utils'
 import { storeToRefs } from 'pinia'
 
-const bookmarks = useLocalStorage<IWcBookmark[]>('tx-bookmarks', [])
+const bookmarks = useLocalStorage<IBookmark[]>('tx-bookmarks', [])
 
 export function useBookmark() {
   const { safeAddress } = storeToRefs(useSafe())
-  const addBookmark = (bookmark: IWcBookmark) => {
+  const addBookmark = (bookmark: IBookmark) => {
     // check if bookmark already exists
     const exists = bookmarks.value.find(b => b.name === bookmark.name)
     if (exists)
@@ -14,13 +14,13 @@ export function useBookmark() {
     bookmarks.value.push(bookmark)
   }
 
-  const updateBookmark = (oldName: string, name: string) => {
-    const bookmark = bookmarks.value.find(b => b.name === oldName && getAddress(b.safeAddress) === getAddress(safeAddress.value))
+  const updateBookmark = (bkmrk: IBookmark, newBookmark: IBookmark) => {
+    const bookmark = bookmarks.value.find(b => b.name === bkmrk.name && getAddress(b.safeAddress) === getAddress(safeAddress.value))
 
     if (!bookmark)
       throw new Error('Bookmark not found')
 
-    bookmark.name = name
+    Object.assign(bookmark, newBookmark)
   }
 
   const deleteBookmark = (name?: string) => {

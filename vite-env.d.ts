@@ -541,6 +541,6 @@ type IDefiToken = {
 
 interface INavigationTab {
   label: string;
-  value: 'dapps' | 'balances' | 'shortcuts';
+  value: 'dapps' | 'balances' | 'bookmarks';
   query?: string;
 }

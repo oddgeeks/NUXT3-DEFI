@@ -5,19 +5,22 @@ import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 
 const props = defineProps<{
-  payload: {
+  payload?: {
     method: string
     params: any
   }
-  session: SessionTypes.Struct
-  name?: string
+  session?: SessionTypes.Struct
+  type: 'wc' | 'transfer'
+  name: string
   chainId: number | string
+  sendData?: ISendData
   edit?: boolean
 }>()
 
 const emit = defineEmits(['destroy', 'resolve'])
 
 const { addBookmark, updateBookmark, deleteBookmark } = useBookmark()
+const { getTokenByAddress } = useTokens()
 const { safeAddress } = storeToRefs(useSafe())
 
 const {
@@ -33,17 +36,21 @@ const { value } = useField<string>('shortcut-name', undefined, {
   initialValue: props.name,
 })
 
+const token = computed(() => !props.sendData ? null : getTokenByAddress(props.sendData?.tokenAddress, props.chainId))
+
 const onSubmit = handleSubmit(() => {
-  const bookmark: IWcBookmark = {
+  const bookmark: IBookmark = {
     name: value.value,
     chainId: props.chainId,
     payload: props.payload,
     safeAddress: safeAddress.value,
+    sendData: props.sendData,
     session: props.session,
+    type: props.type,
   }
   try {
     if (props.edit)
-      updateBookmark(props.name!, value.value)
+      updateBookmark(props as IBookmark, bookmark)
 
     else
       addBookmark(bookmark)
@@ -102,35 +109,77 @@ async function handleDeleteBookmark() {
     <div class="p-7.5 font-medium">
       <table class="text-sm">
         <tbody>
-          <tr>
-            <td class="text-slate-400 pb-7.5">
-              App URL
-            </td>
-            <td class="pl-[60px] pb-7.5">
-              <NuxtLink target="_blank" external class="text-primary" :to="session.peer.metadata.url">
-                {{ session.peer.metadata.url }}
-              </NuxtLink>
-            </td>
-          </tr>
-          <tr>
-            <td class="text-slate-400 pb-7.5">
-              Network
-            </td>
-            <td class="pl-[60px] pb-7.5">
-              <div class="flex gap-2.5 items-center">
-                <ChainLogo class="w-5.5 h-5.5" :chain="chainId" />
-                {{ chainIdToName(chainId) }}
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td class="text-slate-400">
-              App Name
-            </td>
-            <td class="pl-[60px] align-baseline">
-              {{ session.peer.metadata.name }}
-            </td>
-          </tr>
+          <template v-if="type === 'wc' && session">
+            <tr>
+              <td class="text-slate-400 pb-7.5">
+                App URL
+              </td>
+              <td class="pl-[60px] pb-7.5">
+                <NuxtLink target="_blank" external class="text-primary" :to="session.peer.metadata.url">
+                  {{ session.peer.metadata.url }}
+                </NuxtLink>
+              </td>
+            </tr>
+            <tr>
+              <td class="text-slate-400 pb-7.5">
+                Network
+              </td>
+              <td class="pl-[60px] pb-7.5">
+                <div class="flex gap-2.5 items-center">
+                  <ChainLogo class="w-5.5 h-5.5" :chain="chainId" />
+                  {{ chainIdToName(chainId) }}
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="text-slate-400">
+                App Name
+              </td>
+              <td class="pl-[60px] align-baseline">
+                {{ session.peer.metadata.name }}
+              </td>
+            </tr>
+          </template>
+          <template v-if="type === 'transfer' && sendData">
+            <tr>
+              <td class="text-slate-400 pb-7.5">
+                Network
+              </td>
+              <td class="pl-[60px] pb-7.5">
+                <div class="flex gap-2.5 items-center">
+                  <ChainLogo class="w-5.5 h-5.5" :chain="sendData.fromChainId" />
+                  <span>{{ chainIdToName(sendData.fromChainId) }}</span>
+                  <template v-if="sendData.toChainId && sendData.toChainId !== sendData.fromChainId">
+                    <SvgoArrowRight class="text-slate-400 w-5" />
+                    <ChainLogo class="w-5.5 h-5.5" :chain="sendData.toChainId" />
+                    <span>{{ chainIdToName(sendData.toChainId) }}</span>
+                  </template>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="text-slate-400 pb-7.5">
+                Amount
+              </td>
+              <td class="pl-[60px] pb-7.5">
+                <div class="flex items-center gap-2.5 uppercase">
+                  <SafeTokenLogo class="w-5.5 h-5.5" :url="token?.logoURI" />
+                  {{ formatDecimal(sendData.amount) }}
+                  {{ token?.symbol }}
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="text-slate-400">
+                Dest. Address
+              </td>
+              <td class="pl-[60px]">
+                <NuxtLink v-tippy="sendData.address" target="_blank" class="text-primary font-medium" :to="getExplorerUrl(sendData.toChainId, `/address/${sendData.address}`)" external>
+                  {{ shortenHash(sendData.address) }}
+                </NuxtLink>
+              </td>
+            </tr>
+          </template>
         </tbody>
       </table>
     </div>

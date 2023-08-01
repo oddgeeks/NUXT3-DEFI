@@ -13,7 +13,7 @@ const props = defineProps<{
   metadata: string
   isSign?: boolean
   signMessageDetails?: any
-  bookmark?: IWcBookmark
+  bookmark?: IBookmark
 }>()
 
 const emit = defineEmits(['resolve', 'reject'])
@@ -77,7 +77,7 @@ const transactions = computed(() => {
 })
 
 const options = computed(() => {
-  const [transactionOrTransactions, chainId, options] = props.payload.params
+  const [_, __, options] = props.payload.params
 
   return options || {}
 })
@@ -216,6 +216,8 @@ async function handleCreateBookmark() {
     chainId: props.chainId,
     payload: props.payload,
     session: props.sessionV2,
+    metadata: props.metadata,
+    type: 'wc',
   })
 
   if (success && payload) {
@@ -226,7 +228,7 @@ async function handleCreateBookmark() {
 
 async function handleUpdateBookmark() {
   const { success, payload } = await openCreateBookmarkModal({
-    ...reactiveBookmark.value,
+    ...props.bookmark,
     edit: true,
   })
 
@@ -332,29 +334,6 @@ onUnmounted(() => {
         Submit
       </CommonButton>
     </div>
-    <div class="flex justify-center items-center gap-2 text-xs font-medium text-primary">
-      <SvgoBookmark />
-      <button
-        v-if="!reactiveBookmark"
-        type="button"
-        @click="handleCreateBookmark"
-      >
-        Save as Tx Shortcut
-      </button>
-      <span
-        v-else
-        type="button"
-      >
-        {{ reactiveBookmark.name }}
-      </span>
-      <SvgoInfo2 v-if="!reactiveBookmark" class="text-slate-500" />
-      <button
-        v-else
-        type="button"
-        @click="handleUpdateBookmark"
-      >
-        <SvgoPencil class="text-slate-400 shrink-0" />
-      </button>
-    </div>
+    <ManageBookmark :bookmark="reactiveBookmark" @update-bookmark="handleUpdateBookmark" @create-bookmark="handleCreateBookmark" />
   </form>
 </template>

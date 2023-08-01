@@ -46,7 +46,7 @@ function selectType(type: string) {
       <YourWallet />
     </div>
     <DApps v-if="$route.query.tab === undefined" />
-    <Shortcuts v-if="$route.query.tab === 'shortcuts'" />
+    <Bookmarks v-if="$route.query.tab === 'bookmarks'" />
 
     <div class="flex gap-5 lg:flex-row flex-col flex-1">
       <div class="flex relative flex-col w-full gap-5">

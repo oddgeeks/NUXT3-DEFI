@@ -54,7 +54,7 @@ interface IWcTransactionModal {
   metadata: string
   isSign?: boolean
   signMessageDetails?: any
-  bookmark?: IWcBookmark
+  bookmark?: IBookmark
 }
 
 export function showPendingTransactionModal(hash: string,
@@ -105,13 +105,16 @@ export function openSwapModal(address: string,
 
 export function openSendModal(chainId: number | string,
   address?: string,
-  contact?: IContact) {
+  contact?: IContact,
+  bookmark?: IBookmark,
+) {
   openModal({
     component: Send,
     componentProps: {
       address,
       chainId,
       contact,
+      bookmark,
     },
     options: {
       wrapperClass: '!max-w-fit',

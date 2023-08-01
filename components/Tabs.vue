@@ -8,8 +8,8 @@ const tabs = computed<INavigationTab[]>(() => {
     },
     {
       label: 'Transaction Shortcuts',
-      query: 'shortcuts',
-      value: 'shortcuts',
+      query: 'bookmarks',
+      value: 'bookmarks',
     },
   ]
 })

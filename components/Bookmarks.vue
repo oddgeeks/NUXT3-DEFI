@@ -1,14 +1,36 @@
 <script setup lang="ts">
-import type { SessionTypes } from '@walletconnect/types'
 import { Splide, SplideSlide } from '@splidejs/vue-splide'
 import '@splidejs/vue-splide/css'
 
 const { safeBookmarks } = useBookmark()
+const { getTokenByAddress } = useTokens()
 
-function getIcon(session: SessionTypes.Struct) {
-  const [icon] = session.peer.metadata.icons
+function getIcon(bookmark: IBookmark) {
+  if (bookmark.type === 'wc' && bookmark.session) {
+    const [icon] = bookmark.session.peer.metadata.icons
 
-  return icon
+    return icon
+  }
+
+  if (bookmark.type === 'transfer' && bookmark.sendData) {
+    const token = getTokenByAddress(bookmark.sendData?.tokenAddress, bookmark.chainId)
+    return token?.logoURI
+  }
+}
+
+function handleOpenBookmark(bookmark: IBookmark) {
+  if (bookmark.type === 'wc') {
+    openWCTransactionModal({
+      chainId: String(bookmark.chainId),
+      payload: bookmark.payload,
+      sessionV2: bookmark.session,
+      metadata: bookmark.metadata || '0x',
+      bookmark,
+    })
+  }
+
+  if (bookmark.type === 'transfer')
+    openSendModal(bookmark.chainId, undefined, undefined, bookmark)
 }
 </script>
 
@@ -20,15 +42,9 @@ function getIcon(session: SessionTypes.Struct) {
           <li class="dark:bg-gray-850 flex items-center gap-[14px] rounded-10 bg-slate-50">
             <button
               class="flex items-center gap-2.5 text-xs font-medium pl-[14px] whitespace-nowrap py-2.5"
-              @click="openWCTransactionModal({
-                chainId: String(bookmark.chainId),
-                payload: bookmark.payload,
-                sessionV2: bookmark.session,
-                metadata: '0x',
-                bookmark,
-              })"
+              @click="handleOpenBookmark(bookmark)"
             >
-              <SafeTokenLogo network-logo-class="!w-5 !h-5" class="w-[28px] h-[28px]" :chain-id="bookmark.chainId" :url="getIcon(bookmark.session)" />
+              <SafeTokenLogo network-logo-class="!w-5 !h-5" class="w-[28px] h-[28px]" :chain-id="bookmark.chainId" :url="getIcon(bookmark)" />
               <span class="text-sm overflow-hidden text-left whitespace-nowrap text-shadow sm:w-[148px] w-[200px]">
                 {{ bookmark.name }}
               </span>
