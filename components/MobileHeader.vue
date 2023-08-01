@@ -54,8 +54,8 @@ watch(() => active.value, () => {
   >
     <div class="flex justify-between items-center p-5">
       <NuxtLink to="/" class="flex items-center">
-        <div class="flex items-center justify-center bg-primary w-10 h-10 rounded-[14px]">
-          <Avocado class="text-white w-6 h-6" />
+        <div class="flex items-center justify-center w-10 h-10 rounded-[14px]">
+          <SvgoAvocado2 class="text-white w-6 h-6" />
         </div>
         <span v-if="!isActualActive" class="ml-2">Avocado</span>
       </NuxtLink>
