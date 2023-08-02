@@ -172,7 +172,15 @@ export function useAvocadoSafe() {
       }
     })
 
+    const executionSignature = await library.value.getSigner().signMessage(JSON.stringify({
+      message: params.message,
+      safe: params.safe,
+      signatures: sortedSignatures,
+      targetChainId: String(params.targetChainId),
+    }))
+
     const transactionHash = await avoProvider.send('txn_broadcast', [{
+      executionSignature,
       signatures: sortedSignatures,
       message: params.message,
       owner: params.owner,
