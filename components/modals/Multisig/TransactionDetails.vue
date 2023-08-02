@@ -126,7 +126,7 @@ const actionType = computed(() => firstActionMetadata.value?.type || '')
 const formattedActionType = computed(() => formatTxType(actionType.value || ''))
 
 const isColorRed = computed(() => {
-  return actionType.value === 'rejection' || actionType.value === 'remove-signers'
+  return isRejection.value
 })
 
 const isRejection = computed(() => actionType.value === 'rejection')
@@ -488,7 +488,7 @@ onUnmounted(() => {
 
           <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch || !canSign || isGeneralLoading" class="grid grid-cols-2 gap-2.5 items-center">
             <Tippy v-if="!isRejection" :content="isSameNonceExist ? 'A rejection proposal for this txn already exists' : undefined" tag="div">
-              <CommonButton :disabled="isRejection || !!isSameNonceExist" :loading="pending.reject" color="white" size="lg" class="justify-center w-full" @click="handleReject(transactionRef)">
+              <CommonButton color="red" :disabled="isRejection || !!isSameNonceExist" :loading="pending.reject" size="lg" class="justify-center w-full" @click="handleReject(transactionRef)">
                 Reject
               </CommonButton>
             </Tippy>
@@ -498,7 +498,7 @@ onUnmounted(() => {
               }"
             >
               <CommonButton
-                color="red"
+                :color="isColorRed ? 'red' : 'primary'"
                 :disabled="!!errorMessage || pending.execute || isNonceNotMatch" :loading="pending.execute || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" error-message @click="handleExecuteConfirmation(transactionRef)"
               >
                 Execute

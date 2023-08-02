@@ -118,13 +118,13 @@ async function handleClick(item: IMultisigTransaction) {
               <SvgoCheckCircle class="success-circle w-5 h-5" />
             </span>
             <span v-else-if="isConfirmationsMatch" class="items-center flex gap-5 justify-between">
-              <span v-if="isNonceNotMatch">
+              <span v-if="isNonceNotMatch" class="text-slate-400">
                 Threshold reached
               </span>
               <span v-else>
                 Ready to execute
               </span>
-              <SvgoCheckCircle class="success-circle w-5 h-5" />
+              <SvgoCheckCircle :class="isNonceNotMatch ? 'svg-circle text-[initial]' : 'success-circle'" class="w-5 h-5" />
             </span>
             <span v-else class="items-center flex gap-5 justify-between whitespace-nowrap">
               <span v-if="isYourSignNeeded">
