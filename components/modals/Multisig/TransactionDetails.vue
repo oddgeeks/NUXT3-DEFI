@@ -445,7 +445,7 @@ onUnmounted(() => {
           </div>
         </div>
         <div class="sm:p-7.5 p-5 flex flex-col gap-5">
-          <details class="group">
+          <details v-if="!isTransactionExecuted" class="group">
             <summary class="text-primary text-xs leading-5 cursor-pointer flex items-center justify-between">
               <span class="group-open:hidden block">View transaction breakdown</span>
               <span class="group-open:block hidden">Hide transaction breakdown</span>
