@@ -221,7 +221,7 @@ export function useAvocadoSafe() {
     }
 
     const forwardParams = {
-      gas: '500000',
+      gas: '0',
       gasPrice: '0',
       validUntil: '0',
       validAfter: '0',
