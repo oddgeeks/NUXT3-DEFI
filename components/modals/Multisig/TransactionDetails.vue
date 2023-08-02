@@ -125,6 +125,10 @@ const firstActionMetadata = computed<any>(() => {
 const actionType = computed(() => firstActionMetadata.value?.type || '')
 const formattedActionType = computed(() => formatTxType(actionType.value || ''))
 
+const isColorRed = computed(() => {
+  return actionType.value === 'rejection' || actionType.value === 'remove-signers'
+})
+
 const isRejection = computed(() => actionType.value === 'rejection')
 
 const { data: simulationDetails, error: simulationError } = useAsyncData(
@@ -269,7 +273,7 @@ onUnmounted(() => {
           <div class="sm:p-7.5 p-5 border-b dark:border-slate-800 border-slate-150">
             <div class="flex justify-between sm:flex-row flex-col sm:gap-0 gap-5">
               <div class="flex gap-4">
-                <div class="w-14 h-14 rounded-full items-center flex justify-center bg-primary">
+                <div :class="isColorRed ? 'bg-red-alert' : 'bg-primary'" class="w-14 h-14 rounded-full items-center flex justify-center">
                   <ActionLogo class="!text-white !w-7.5 !h-7.5" :action="actionType" />
                 </div>
                 <div>
@@ -494,13 +498,14 @@ onUnmounted(() => {
               }"
             >
               <CommonButton
+                color="red"
                 :disabled="!!errorMessage || pending.execute || isNonceNotMatch" :loading="pending.execute || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" error-message @click="handleExecuteConfirmation(transactionRef)"
               >
                 Execute
               </CommonButton>
             </div>
             <div v-else v-tippy="errorMessage">
-              <CommonButton :disabled="!!errorMessage || pending.sign" :loading="pending.sign || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center !leading-5" :class="signAndExecute ? '!px-2 text-xs' : ''" @click="handleSign(transactionRef)">
+              <CommonButton :color="signAndExecute ? 'red' : 'primary'" :disabled="!!errorMessage || pending.sign" :loading="pending.sign || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center !leading-5" :class="signAndExecute ? '!px-2 text-xs' : ''" @click="handleSign(transactionRef)">
                 {{ signAndExecute ? 'Sign & Execute' : isSignedAlready ? 'Signed' : 'Sign' }}
               </CommonButton>
             </div>
