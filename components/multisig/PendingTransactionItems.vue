@@ -108,8 +108,8 @@ watch(lastModal, () => {
 </script>
 
 <template>
-  <details v-if="data?.data?.length" ref="containerRef" class="sm:pb-[14px] sm:first:pt-[14px] sm:open:pb-0 group">
-    <summary class="dark:bg-slate-850 bg-slate-150 py-2.5 flex cursor-pointer items-center gap-2.5 px-5 text-xs font-medium leading-5 text-slate-400">
+  <details v-if="data?.data?.length" ref="containerRef" class="dark:bg-gray-850 rounded-2xl bg-slate-50 sm:open:pb-0 group">
+    <summary class="py-4 flex cursor-pointer items-center gap-2.5 px-5 text-xs font-medium leading-5 text-slate-400">
       <ChainLogo class="w-5 h-5" :chain="chainId" />
       <span class="text-white">
         {{ chainIdToName(chainId) }}

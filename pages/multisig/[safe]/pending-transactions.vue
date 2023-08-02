@@ -102,7 +102,7 @@ useIntervalFn(() => {
       <h2 v-if="title" class="text-xs leading-5 sm:text-left text-center">
         {{ title }}
       </h2>
-      <div class="sm:dark:bg-gray-850 sm:bg-slate-50 sm:rounded-[25px] sm:gap-0 gap-5 flex flex-col overflow-hidden sm:mx-0 -mx-4">
+      <div class="gap-5 flex flex-col">
         <MultisigPendingTransactionItems v-for="network in availableNetworks" :key="network.chainId" :active-tab="activeTab" :chain-id="network.chainId" />
       </div>
     </div>
