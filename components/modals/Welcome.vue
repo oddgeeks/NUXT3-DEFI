@@ -19,11 +19,6 @@ const data = [
     title: 'Auto Switch',
     content: 'Connect any dapp to Avocado using WalletConnect and Avocado automatically switches network for you when required.',
   },
-  {
-    icon: 'cross',
-    title: 'Cross-Chain Send',
-    content: 'Send funds directly from chain A to anyone on chain B. No hassles of manually bridging.',
-  },
 ]
 
 welcomeMessageShow.value = true
@@ -68,7 +63,7 @@ function onContinue() {
       <NuxtLink
         href="https://help.avocado.instadapp.io/en/articles/7038838-a-checklist-to-get-started-with-avocado"
         target="_blank"
-        class="inline-flex text-primary text-sm items-center gap-2"
+        class="inline-flex text-primary text-xs items-center gap-2"
       >
         Learn more about Avocado
         <ExternalLinkSVG class="w-3 h-3" />
