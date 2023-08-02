@@ -50,7 +50,7 @@
     "eslint": "^8.38.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "ethers": "^5.7.2",
-    "nuxt": "^3.6.2",
+    "nuxt": "^3.6.5",
     "nuxt-security": "^0.14.2",
     "nuxt-svgo": "^3.1.0",
     "ohmyfetch": "^0.4.21",
