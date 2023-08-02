@@ -9,6 +9,7 @@ defineProps({
   hideGas: Boolean,
   hideEOA: Boolean,
   hidePower: Boolean,
+  buttonClass: String,
 })
 
 const { active, deactivate, account, connector } = useWeb3()
@@ -68,7 +69,7 @@ whenever(
 </script>
 
 <template>
-  <CommonButton v-show="!isActualActive" size="lg" @click="openWeb3Modal">
+  <CommonButton v-show="!isActualActive" :class="buttonClass" size="lg" @click="openWeb3Modal">
     Connect
   </CommonButton>
   <div v-show="isActualActive" class="flex items-center gap-[14px]">

@@ -444,7 +444,7 @@ onUnmounted(() => {
             {{ confirmationNeeded }} more confirmations needed for execution
           </div>
         </div>
-        <div class="sm:p-7.5 p-5 flex flex-col gap-5">
+        <div v-if="account" class="sm:p-7.5 p-5 flex flex-col gap-5">
           <details v-if="!isTransactionExecuted" class="group">
             <summary class="text-primary text-xs leading-5 cursor-pointer flex items-center justify-between">
               <span class="group-open:hidden block">View transaction breakdown</span>
@@ -488,7 +488,7 @@ onUnmounted(() => {
 
           <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch || !canSign || isGeneralLoading" class="grid grid-cols-2 gap-2.5 items-center">
             <Tippy v-if="!isRejection" :content="isSameNonceExist ? 'A rejection proposal for this txn already exists' : undefined" tag="div">
-              <CommonButton :disabled="isRejection || !!isSameNonceExist" :loading="pending.reject" color="red" size="lg" class="justify-center w-full" @click="handleReject(transactionRef)">
+              <CommonButton :disabled="isRejection || !!isSameNonceExist" :loading="pending.reject" color="white" size="lg" class="justify-center w-full" @click="handleReject(transactionRef)">
                 Reject
               </CommonButton>
             </Tippy>
@@ -524,6 +524,10 @@ onUnmounted(() => {
             <SvgoExclamationCircle class="w-3 shrink-0 mt-1" />
             You are not a signer on {{ chainIdToName(transactionRef.chain_id) }} network
           </p>
+        </div>
+        <div v-else class="sm:p-7.5 p-5 flex flex-col gap-5">
+          <span class="text-xs leading-5 text-slate-400">Connect your wallet to sign and execute this transaction.</span>
+          <Web3Button button-class="!justify-center items-center text-center" />
         </div>
       </div>
     </div>
