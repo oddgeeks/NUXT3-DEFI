@@ -172,7 +172,10 @@ export function useAvocadoSafe() {
       }
     })
 
-    const executionSignature = await library.value.getSigner().signMessage(JSON.stringify({
+    if (!signer.value)
+      throw new Error('Safe not initialized')
+
+    const executionSignature = await signer.value.signMessage(JSON.stringify({
       message: params.message,
       safe: params.safe,
       signatures: sortedSignatures,
