@@ -15,7 +15,7 @@ const route = useRoute()
 const page = ref(1)
 const containerRef = ref<HTMLElement | null>(null)
 
-const { data, refresh, error } = useAsyncData(`multisig-${route.params.safe}-${props.chainId}`, async () => {
+const { data, refresh } = useAsyncData(`multisig-${route.params.safe}-${props.chainId}`, async () => {
   const isCompleted = props.activeTab === 'completed'
 
   const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${route.params.safe}/transactions`, {
@@ -124,7 +124,12 @@ watch(lastModal, () => {
     </summary>
 
     <div class="flex flex-col sm:gap-0 gap-4 sm:p-0 p-5">
-      <ul v-for="items, key in groupedData" :key="key">
+      <ul v-if="activeTab === 'completed'">
+        <li>
+          <MultisigPendingTransactionItem v-for="item in data.data" :key="item.id" :current-nonce="currentNonce" :inside-group="false" :required-signer="requiredSigner" :active-tab="activeTab" :item="item" />
+        </li>
+      </ul>
+      <ul v-for="items, key in groupedData" v-else :key="key">
         <li>
           <ul :class="checkIsGroup(key, items) ? 'p-4 my-4 sm:p-0 border sm:block flex gap-5 flex-col border-slate-300 dark:border-slate-750 rounded-5 dark:bg-slate-850 bg-slate-150' : ''" class="flex flex-col">
             <p v-if="checkIsGroup(key, items)" class="text-xs sm:p-4 flex items-center gap-2.5 sm:pb-0 font-medium  text-slate-500 dark:text-slate-400">
