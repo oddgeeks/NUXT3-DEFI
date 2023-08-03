@@ -415,7 +415,7 @@ onUnmounted(() => {
             <span :class="isConfirmationsMatch ? 'text-primary' : 'text-slate-400'" class="flex items-center gap-2.5 text-xs">
               <SvgoUserCircle />
               <span class="font-medium leading-5">
-                {{ transactionRef.confirmations.length }} out of {{ actualRequiredSigner }}
+                {{ transactionRef.confirmations.length }} signed out of {{ actualRequiredSigner }} required
               </span>
             </span>
           </div>
