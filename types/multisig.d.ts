@@ -58,6 +58,7 @@ interface ISignatureParams {
 }
 
 interface IMultisigBroadcastParams {
+  proposalId: string
   confirmations: Confirmation[]
   message: Data
   owner: string

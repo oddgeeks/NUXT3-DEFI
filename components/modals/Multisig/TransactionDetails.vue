@@ -15,7 +15,7 @@ const emit = defineEmits(['destroy'])
 
 const transactionRef = ref(props.transaction)
 
-const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurrentNonce, getActualId } = useAvocadoSafe()
+const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurrentNonce, getActualId, checkTransactionExecuted } = useAvocadoSafe()
 const { getRequiredSigner, isAccountCanSign } = useMultisig()
 const { requiredSigners } = storeToRefs(useMultisig())
 const { selectedSafe } = storeToRefs(useSafe())
@@ -54,7 +54,7 @@ const isConfirmationWillMatch = computed(() => gte(transactionRef.value.confirma
 
 const isNonseq = computed(() => transactionRef.value.nonce == '-1')
 const isNonceNotMatch = computed(() => isNonseq.value ? false : transactionRef.value.nonce !== String(currentNonce.value))
-const isTransactionExecuted = computed(() => transactionRef.value.executed_at !== null)
+const isTransactionExecuted = computed(() => checkTransactionExecuted(transactionRef.value))
 const isSignedAlready = computed(() => account.value ? transactionRef.value.confirmations.some(item => getAddress(item.address) === getAddress(account.value)) : false)
 
 const canSign = computed(() => isAccountCanSign(transactionRef.value.chain_id, account.value, selectedSafe.value?.owner_address))
@@ -190,6 +190,7 @@ async function handleExecute(item: IMultisigTransaction) {
   try {
     pending.value.execute = true
     const hash = await multisigBroadcast({
+      proposalId: item.id,
       owner: selectedSafe.value?.owner_address!,
       confirmations: item.confirmations,
       message: item.data,

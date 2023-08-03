@@ -8,6 +8,8 @@ import {
   Forwarder__factory,
 } from '@/contracts'
 
+const executedTransactions = ref<string[]>([])
+
 export function useAvocadoSafe() {
   const { switchToAvocadoNetwork } = useNetworks()
   const { library, account } = useWeb3()
@@ -191,6 +193,8 @@ export function useAvocadoSafe() {
       targetChainId: String(params.targetChainId),
     }])
 
+    executedTransactions.value.push(params.proposalId)
+
     return transactionHash
   }
 
@@ -261,6 +265,7 @@ export function useAvocadoSafe() {
 
     if (data.confirmations_required === 1 && !signOnly) {
       const txHash = await multisigBroadcast({
+        proposalId: data.id,
         confirmations: data.confirmations,
         message: data.data,
         owner: selectedSafe.value?.owner_address!,
@@ -509,6 +514,10 @@ export function useAvocadoSafe() {
     return isSafeMultisig.value && isDelegateCall ? '1' : undefined
   }
 
+  function checkTransactionExecuted(tx: IMultisigTransaction) {
+    return executedTransactions.value.some(i => i == tx.id) || tx.executed_at !== null
+  }
+
   return {
     safe,
     signer,
@@ -536,5 +545,7 @@ export function useAvocadoSafe() {
     removeSignerWithThreshold,
     changeThreshold,
     getActualId,
+    executedTransactions,
+    checkTransactionExecuted,
   }
 }

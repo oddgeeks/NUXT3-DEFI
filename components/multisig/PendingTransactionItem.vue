@@ -14,6 +14,7 @@ const props = defineProps<{
 const route = useRoute()
 const { account } = useWeb3()
 const { selectedSafe } = storeToRefs(useSafe())
+const { checkTransactionExecuted } = useAvocadoSafe()
 const { isAccountCanSign } = useMultisig()
 
 const actualRequiredSigner = computed(() => props.activeTab === 'completed' ? props.item.confirmations_required : props.requiredSigner || 1)
@@ -30,7 +31,7 @@ const isYourSignNeeded = computed(() => {
 
   return !props.item.confirmations.find(item => getAddress(account.value) === getAddress(item.address))
 })
-const isTransactionExecuted = computed(() => props.item.executed_at !== null)
+const isTransactionExecuted = computed(() => checkTransactionExecuted(props.item))
 const isSafeDoesntMatch = computed(() => {
   if (!selectedSafe.value?.safe_address)
     return true
