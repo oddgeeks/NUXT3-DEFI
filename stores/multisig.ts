@@ -32,6 +32,9 @@ export const useMultisig = defineStore('multisig', () => {
 
   async function getRequiredSigners(safe: ISafe) {
     const promises = availableNetworks.map(async (network) => {
+      if (!safe?.signers)
+        return []
+
       const signers = safe?.signers[network.chainId] || []
 
       try {

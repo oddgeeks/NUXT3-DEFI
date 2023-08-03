@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import axios from 'axios'
 import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
@@ -13,7 +14,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['resolve'])
 const { selectedSafe } = storeToRefs(useSafe())
-const { getActualId } = useAvocadoSafe()
+const { getActualId, safeAddress } = useAvocadoSafe()
 const { requiredSigners } = storeToRefs(useMultisig())
 
 const isDeleteOrAddSigner = props.transactionType === 'remove-signers' || props.transactionType === 'add-signers'
@@ -27,10 +28,31 @@ const [signAndExecute, signAndExecuteToggle] = useToggle(false)
 
 const requiredSignersByChain = computed(() => requiredSigners.value.find(i => i.chainId == props.chainId))
 
+const { data: seqResponse, status } = useAsyncData<IMultisigTransactionResponse>(`${safeAddress.value}-seq-count`, async () => {
+  const { data } = await axios.get(`/safes/${safeAddress.value}/transactions`, {
+    params: {
+      status: 'pending',
+      nonce_type: 'seq',
+    },
+    baseURL: multisigURL,
+  })
+
+  return data
+}, {
+  lazy: true,
+  server: false,
+})
+
+const isExecutionNotAvailable = computed(() => {
+  if (status.value === 'pending')
+    return true
+  return nonce.value === -1 ? false : gt(seqResponse.value?.meta?.total || 0, 0)
+})
+
 const isExecuteReady = computed(() => {
   if (!requiredSignersByChain.value)
     return false
-  return requiredSignersByChain.value?.requiredSignerCount === 1
+  return requiredSignersByChain.value?.requiredSignerCount === 1 && !isExecutionNotAvailable.value
 })
 
 const { data, error, pending: feePending } = useEstimatedFee(ref(props.actions), ref(props.chainId), {
