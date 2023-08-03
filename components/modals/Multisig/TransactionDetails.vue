@@ -53,7 +53,11 @@ const confirmationNeeded = computed(() => actualRequiredSigner.value - transacti
 const isConfirmationWillMatch = computed(() => gte(transactionRef.value.confirmations.length + 1, actualRequiredSigner.value))
 
 const isNonseq = computed(() => transactionRef.value.nonce == '-1')
-const isNonceNotMatch = computed(() => isNonseq.value ? false : transactionRef.value.nonce !== String(currentNonce.value))
+const isNonceNotMatch = computed(() => {
+  if (isUndefined(currentNonce.value))
+    return false
+  return isNonseq.value ? false : transactionRef.value.nonce !== String(currentNonce.value)
+})
 const isTransactionExecuted = computed(() => checkTransactionExecuted(transactionRef.value))
 const isSignedAlready = computed(() => account.value ? transactionRef.value.confirmations.some(item => getAddress(item.address) === getAddress(account.value)) : false)
 
