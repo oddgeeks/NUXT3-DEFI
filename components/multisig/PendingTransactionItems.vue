@@ -15,6 +15,12 @@ const route = useRoute()
 const page = ref(1)
 const containerRef = ref<HTMLElement | null>(null)
 
+const isDetailsOpen = useCookie<boolean>(`multisig-collapse-${route.params.safe}-${props.chainId}`, {
+  default: () => false,
+  watch: 'shallow',
+  expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
+})
+
 const { data, refresh } = useAsyncData(`multisig-${route.params.safe}-${props.chainId}`, async () => {
   const isCompleted = props.activeTab === 'completed'
 
@@ -105,10 +111,15 @@ watch(lastModal, () => {
   if (!lastModal.value)
     refreshAll()
 })
+
+function handleToggle(e: Event) {
+  const target = e.target as HTMLDetailsElement
+  isDetailsOpen.value = target.open
+}
 </script>
 
 <template>
-  <details v-if="data?.data?.length" ref="containerRef" class="dark:bg-gray-850 rounded-2xl bg-slate-50 sm:open:pb-0 group">
+  <details v-if="data?.data?.length" ref="containerRef" :open="isDetailsOpen" class="dark:bg-gray-850 rounded-2xl bg-slate-50 sm:open:pb-0 group" @toggle="handleToggle">
     <summary class="py-4 flex cursor-pointer items-center gap-2.5 px-5 text-xs font-medium leading-5 text-slate-400">
       <ChainLogo class="w-5 h-5" :chain="chainId" />
       <span class="text-white">
