@@ -23,7 +23,7 @@ const { getContactNameByAddress } = useContacts()
 const { parseTransactionError } = useErrorHandler()
 const { account } = useWeb3()
 const currentNonce = ref<number>()
-const [signAndExecute, toggle] = useToggle(true)
+const [signAndExecute, toggle] = useToggle(false)
 
 const router = useRouter()
 
