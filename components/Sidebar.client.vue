@@ -8,6 +8,11 @@ const { safeAddress } = useAvocadoSafe()
 const { isSafeMultisig } = storeToRefs(useMultisig())
 const { navigations } = useNavigation()
 
+const width = 340
+const collapsedWidth = 120
+
+const actualWidth = computed(() => opened.value ? width : collapsedWidth)
+
 const tippyOptions = {
   arrow: true,
   arrowType: 'round',
@@ -19,7 +24,8 @@ const tippyOptions = {
 <template>
   <div class="relative">
     <button
-      class="w-7 h-7 absolute top-7.5 -right-[14px] z-10 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
+      :style="{ left: `${actualWidth - 14}px` }"
+      class="w-7 h-7 fixed top-7.5  z-10 rounded-full items-center transition-[width] justify-center flex dark:bg-slate-800 bg-slate-100"
       @click="toggleSidebar"
     >
       <ArrowRight
@@ -27,7 +33,7 @@ const tippyOptions = {
         :class="{ 'rotate-180': opened }"
       />
     </button>
-    <aside style="scrollbar-gutter:stable;overflow-y:overlay;" class="hidden shrink-0 sticky top-0 h-screen sm:flex overflow-y-auto scroll-style dark:bg-gray-850 bg-slate-50 transition-[width]" :class="{ 'w-[340px]': opened, 'w-[120px]': !opened }">
+    <aside :style="{ width: `${actualWidth}px` }" style="scrollbar-gutter:stable;overflow-y:overlay;" class="hidden shrink-0 sticky top-0 h-screen sm:flex overflow-y-auto scroll-style dark:bg-gray-850 bg-slate-50 transition-[width]">
       <div v-if="opened" class="flex flex-col w-full">
         <div class="flex flex-col gap-6 pt-7.5 pb-6 px-7.5">
           <div class="flex items-center justify-between gap-2.5">

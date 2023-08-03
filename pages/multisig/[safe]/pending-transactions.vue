@@ -8,7 +8,7 @@ useAccountTrack(undefined, () => {
 })
 
 const activeTab = computed(() => {
-  return route.query?.tab ? route.query.tab as string : 'nonseq'
+  return route.query?.tab ? route.query.tab as string : 'seq'
 })
 
 const { data: nonSeqResponse, refresh: refreshNonSeq } = useAsyncData<IMultisigTransactionResponse>(`${route.params.safe}-non-seq-count`, async () => {
