@@ -11,6 +11,8 @@ const {
 const { data: allNetworkVersions } = useNuxtData('allNetworkVersions')
 const route = useRoute()
 const router = useRouter()
+const { migrateOldContacts } = useContacts()
+
 const lastNoticeShowDate = useLocalStorage<Date>('last_update_notice_show_date', new Date(0, 0))
 const ignore_version = useLocalStorage('ignore_version', [])
 
@@ -44,6 +46,8 @@ watch(showVersionUpdateBanner, async () => {
 onMounted(() => {
   if (!welcomeMessageShow.value)
     openWelcomeModal()
+
+  migrateOldContacts()
 })
 </script>
 

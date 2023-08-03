@@ -2,6 +2,7 @@ import { isAddress } from '@ethersproject/address'
 import { getAddress } from 'ethers/lib/utils'
 
 const contacts = useLocalStorage<IContact[]>('safe-contacts', [])
+const oldContacts = useLocalStorage<Record<string, IContact[]>>('contacts', {})
 
 export function useContacts() {
   const { safeAddress } = useAvocadoSafe()
@@ -52,10 +53,8 @@ export function useContacts() {
         && item.chainId == contact.chainId,
     )
 
-    if (index > -1)
-      throw new Error('Contact already exists')
-
-    contacts.value.push(contact)
+    if (index === -1)
+      contacts.value.push(contact)
   }
 
   const editContact = (oldContact: IContact, newContact: IContact) => {
@@ -123,6 +122,26 @@ export function useContacts() {
     return ''
   }
 
+  function migrateOldContacts() {
+    const isOldContactsExist = Object.keys(oldContacts.value || {}).length > 0
+
+    if (isOldContactsExist) {
+      const oldContactsArray = Object.keys(oldContacts.value).reduce(
+        (acc: IContact[], safeAddress) => {
+          const contacts = oldContacts.value[safeAddress]
+          return [...acc, ...contacts]
+        }
+        , [],
+      )
+
+      for (const contact of oldContactsArray)
+        addContact(contact)
+
+      // clear old contacts
+      oldContacts.value = {}
+    }
+  }
+
   return {
     ownerContact,
     safeContacts,
@@ -132,5 +151,6 @@ export function useContacts() {
     deleteContact,
     transferCounts,
     getSentTimes,
+    migrateOldContacts,
   }
 }
