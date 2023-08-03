@@ -52,13 +52,13 @@ const {
             return true
           if (!isAddress(value || ''))
             return true
-          if (!contacts.value[safeAddress.value])
+          if (!contacts.value)
             return true
 
           if (value?.toLocaleLowerCase() === account.value?.toLowerCase())
             return false
 
-          return !contacts.value[safeAddress.value].some(
+          return !contacts.value.some(
             contact =>
               contact.address.toLowerCase() === value?.toLowerCase()
               && contact.chainId == parent.chainId,

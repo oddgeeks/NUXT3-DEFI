@@ -1,7 +1,7 @@
 import { isAddress } from '@ethersproject/address'
 import { getAddress } from 'ethers/lib/utils'
 
-const contacts = useLocalStorage<Record<string, IContact[]>>('contacts', {})
+const contacts = useLocalStorage<IContact[]>('safe-contacts', [])
 
 export function useContacts() {
   const { safeAddress } = useAvocadoSafe()
@@ -21,51 +21,52 @@ export function useContacts() {
   })
 
   const safeContacts = computed(() => {
-    if (!safeAddress.value)
-      return []
+    if (!ownerContact.value)
+      return contacts.value
 
-    const _contacts = contacts.value[safeAddress.value] || []
-
-    return [ownerContact.value, ..._contacts] as IContact[]
+    return [ownerContact.value, ...contacts.value || []] as IContact[]
   })
 
   const deleteContact = (contact: IContact) => {
     if (contact.owner)
       return
 
-    if (!contacts.value[safeAddress.value])
+    if (!contacts.value)
       return
 
-    const index = contacts.value[safeAddress.value].findIndex(
+    const index = contacts.value.findIndex(
       (item: any) =>
         item.address.toLowerCase() === contact.address.toLowerCase()
         && item.chainId === contact.chainId,
     )
     if (index > -1)
-      contacts.value[safeAddress.value].splice(index, 1)
+      contacts.value.splice(index, 1)
   }
 
   const addContact = (contact: IContact) => {
     contact.address = getAddress(contact.address)
 
-    if (contacts.value[safeAddress.value])
-      contacts.value[safeAddress.value].push(contact)
-    else
-      contacts.value[safeAddress.value] = [contact]
+    const index = contacts.value.findIndex(
+      (item: any) =>
+        getAddress(item.address) === contact.address
+        && item.chainId == contact.chainId,
+    )
+
+    if (index > -1)
+      throw new Error('Contact already exists')
+
+    contacts.value.push(contact)
   }
 
   const editContact = (oldContact: IContact, newContact: IContact) => {
-    if (!contacts.value[safeAddress.value])
-      return
-
-    const index = contacts.value[safeAddress.value].findIndex(
+    const index = contacts.value.findIndex(
       (_contact: IContact) =>
         _contact.address.toLowerCase() === oldContact.address.toLowerCase()
         && _contact.chainId === oldContact.chainId,
     )
     if (index > -1) {
       newContact.address = getAddress(newContact.address)
-      contacts.value[safeAddress.value][index] = newContact
+      contacts.value[index] = newContact
     }
   }
 

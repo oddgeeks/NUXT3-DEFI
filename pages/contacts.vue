@@ -98,14 +98,18 @@ const filteredContacts = computed(() => {
                 </th>
               </tr>
             </thead>
-            <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
-              <ContactRow v-for="contact in filteredContacts" :key="contact.address + contact.chainId + contact.name" :contact="contact" />
-            </tbody>
+            <ClientOnly>
+              <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
+                <ContactRow v-for="contact in filteredContacts" :key="contact.address + contact.chainId + contact.name" :contact="contact" />
+              </tbody>
+            </ClientOnly>
           </table>
-          <MobileContactRow
-            v-for="contact in filteredContacts"
-            :key="contact.address + contact.chainId + contact.name" :contact="contact"
-          />
+          <ClientOnly>
+            <MobileContactRow
+              v-for="contact in filteredContacts"
+              :key="contact.address + contact.chainId + contact.name" :contact="contact"
+            />
+          </ClientOnly>
         </template>
       </div>
     </div>
