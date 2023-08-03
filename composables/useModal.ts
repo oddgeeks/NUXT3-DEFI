@@ -65,7 +65,7 @@ async function openModal({
   const destroy = () => {
     modals.value = modals.value.filter(m => m.id !== id)
 
-    if (!modals.value.length)
+    if (!modals.value?.length)
       repositionScroll()
   }
 
