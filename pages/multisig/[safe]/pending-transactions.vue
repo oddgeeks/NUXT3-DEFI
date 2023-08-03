@@ -44,18 +44,18 @@ const { data: seqResponse, refresh: refreshSeq } = useAsyncData<IMultisigTransac
 const tabs = computed(() => {
   return [
     {
-      value: 'nonseq',
-      query: 'nonseq',
-      label: `Non-Sequential (${nonSeqResponse.value?.meta?.total || 0})`,
-      mobileLabel: 'Non-Seq',
-      title: 'Non-Sequential transactions can be executed in any order.',
-    },
-    {
       value: 'seq',
       query: 'seq',
       mobileLabel: 'Seq',
       label: `Sequential (${seqResponse.value?.meta?.total || 0})`,
       title: 'Sequential transactions need to be executed in the order they were proposed in.',
+    },
+    {
+      value: 'nonseq',
+      query: 'nonseq',
+      label: `Non-Sequential (${nonSeqResponse.value?.meta?.total || 0})`,
+      mobileLabel: 'Non-Seq',
+      title: 'Non-Sequential transactions can be executed in any order.',
     },
     {
       value: undefined,

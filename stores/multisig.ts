@@ -35,14 +35,16 @@ export const useMultisig = defineStore('multisig', () => {
       if (!safe?.signers)
         return []
 
-      const signers = safe?.signers[network.chainId] || []
+      const safeSigners = safe?.signers[network.chainId]
+
+      const signers = safeSigners.length ? safeSigners : [safe.owner_address]
 
       try {
         const count = await getRequiredSigner(safe.safe_address, network.chainId)
 
         return {
           chainId: network.chainId,
-          requiredSignerCount: count,
+          requiredSignerCount: count || 1,
           signerCount: signers.length,
           signers,
         }
