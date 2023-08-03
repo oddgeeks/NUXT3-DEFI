@@ -11,6 +11,7 @@ const emit = defineEmits(['destroy', 'update:modelValue'])
 
 const pending = ref(false)
 const signed = ref(false)
+const executed = ref(false)
 
 const { addSignersWithThreshold } = useAvocadoSafe()
 const { selectedSafe } = storeToRefs(useSafe())
@@ -48,8 +49,10 @@ async function handleSign() {
       }
     }
 
-    if (txHash)
+    if (txHash) {
+      executed.value = true
       showPendingTransactionModal(txHash, props.chainId)
+    }
 
     signed.value = true
 
@@ -76,8 +79,8 @@ async function handleSign() {
       <ChainLogo class="w-[26px] h-[26px]" :chain="chainId" />
       {{ chainIdToName(chainId) }}
     </span>
-    <CommonButton :disabled="pending || signed" :loading="pending" @click="handleSign">
-      {{ signed ? 'Signed' : 'Sign' }}
+    <CommonButton :disabled="pending || signed || executed" :loading="pending" @click="handleSign">
+      {{ executed ? 'Executed' : signed ? 'Signed' : 'Sign' }}
     </CommonButton>
   </li>
 </template>

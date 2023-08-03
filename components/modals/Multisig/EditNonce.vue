@@ -24,7 +24,7 @@ const nonce = ref<number | undefined>(recommendedNonce)
 const note = ref<string | undefined>(undefined)
 const detailsRef = ref<HTMLDetailsElement>()
 const [simulationStatus, toggle] = useToggle()
-const [signAndExecute, signAndExecuteToggle] = useToggle(false)
+const [signAndExecute, signAndExecuteToggle] = useToggle(true)
 
 const requiredSignersByChain = computed(() => requiredSigners.value.find(i => i.chainId == props.chainId))
 
