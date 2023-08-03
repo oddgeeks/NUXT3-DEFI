@@ -1,7 +1,8 @@
 import { isAddress } from '@ethersproject/address'
 import { getAddress } from 'ethers/lib/utils'
 
-const contacts = useLocalStorage<Record<string, IContact[]>>('contacts', {})
+const contacts = useLocalStorage<IContact[]>('safe-contacts', [])
+const oldContacts = useLocalStorage<Record<string, IContact[]>>('contacts', {})
 
 export function useContacts() {
   const { safeAddress } = useAvocadoSafe()
@@ -21,57 +22,50 @@ export function useContacts() {
   })
 
   const safeContacts = computed(() => {
-    if (!safeAddress.value || !ownerContact.value)
-      return []
+    if (!ownerContact.value)
+      return contacts.value
 
-    const address = getAddress(safeAddress.value)
-
-    const _contacts = contacts.value[address] || []
-
-    return [ownerContact.value, ..._contacts] as IContact[]
+    return [ownerContact.value, ...contacts.value || []] as IContact[]
   })
 
   const deleteContact = (contact: IContact) => {
     if (contact.owner)
       return
 
-    const address = getAddress(safeAddress.value)
-
-    if (!contacts.value[address])
+    if (!contacts.value)
       return
 
-    const index = contacts.value[address].findIndex(
+    const index = contacts.value.findIndex(
       (item: any) =>
         item.address.toLowerCase() === contact.address.toLowerCase()
         && item.chainId === contact.chainId,
     )
     if (index > -1)
-      contacts.value[address].splice(index, 1)
+      contacts.value.splice(index, 1)
   }
 
   const addContact = (contact: IContact) => {
     contact.address = getAddress(contact.address)
 
-    if (contacts.value[safeAddress.value])
-      contacts.value[safeAddress.value].push(contact)
-    else
-      contacts.value[safeAddress.value] = [contact]
+    const index = contacts.value.findIndex(
+      (item: any) =>
+        getAddress(item.address) === contact.address
+        && item.chainId == contact.chainId,
+    )
+
+    if (index === -1)
+      contacts.value.push(contact)
   }
 
   const editContact = (oldContact: IContact, newContact: IContact) => {
-    if (!contacts.value[safeAddress.value])
-      return
-
-    const address = getAddress(safeAddress.value)
-
-    const index = contacts.value[address].findIndex(
+    const index = contacts.value.findIndex(
       (_contact: IContact) =>
         _contact.address.toLowerCase() === oldContact.address.toLowerCase()
         && _contact.chainId === oldContact.chainId,
     )
     if (index > -1) {
       newContact.address = getAddress(newContact.address)
-      contacts.value[safeAddress.value][index] = newContact
+      contacts.value[index] = newContact
     }
   }
 
@@ -128,22 +122,24 @@ export function useContacts() {
     return ''
   }
 
-  function getContactNameByAddress(address: string, ownerName = 'You') {
-    if (!address)
-      return ''
+  function migrateOldContacts() {
+    const isOldContactsExist = Object.keys(oldContacts.value || {}).length > 0
 
-    const contact = safeContacts.value.find(
-      contact => getAddress(contact.address) === getAddress(address),
-    )
+    if (isOldContactsExist) {
+      const oldContactsArray = Object.keys(oldContacts.value).reduce(
+        (acc: IContact[], safeAddress) => {
+          const contacts = oldContacts.value[safeAddress]
+          return [...acc, ...contacts]
+        }
+        , [],
+      )
 
-    if (contact) {
-      if (contact.owner)
-        return ownerName
+      for (const contact of oldContactsArray)
+        addContact(contact)
 
-      return contact.name
+      // clear old contacts
+      oldContacts.value = {}
     }
-
-    return ''
   }
 
   return {
@@ -155,6 +151,6 @@ export function useContacts() {
     deleteContact,
     transferCounts,
     getSentTimes,
-    getContactNameByAddress,
+    migrateOldContacts,
   }
 }

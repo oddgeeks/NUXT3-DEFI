@@ -284,6 +284,7 @@ async function fetchSwapDetails() {
         .toString()
     }
 
+    bestRoute.value = best
     swapDetails.value.data = data
     swapDetails.value.pending = false
     swapDetails.value.error = ''
@@ -297,9 +298,7 @@ async function fetchSwapDetails() {
   }
 }
 
-const bestRoute = computed(
-  () => swapDetails.value?.data?.aggregators[0] || null,
-)
+const bestRoute = ref<IAggregator>()
 
 const priceImpact = computed(() =>
   toBN(bestRoute?.value?.data?.priceImpact || 0)
@@ -542,10 +541,20 @@ watch(inputUSDToggle, async () => {
 const { pause, resume } = useInterval(10000, {
   controls: true,
   callback: () => {
+    if (bestRoute.value?.name !== swapDetails.value.data?.aggregators[0]?.name)
+      return
+
     refreshing.value = true
     fetchSwapDetails()
   },
 })
+
+function setAnotherRoute() {
+  const route = swapDetails.value.data?.aggregators?.find(i => i.name !== bestRoute.value?.name)
+
+  if (route)
+    bestRoute.value = route
+}
 
 function lc(s: string) {
   return s.toLocaleLowerCase()
@@ -890,11 +899,53 @@ onUnmounted(() => {
                   class="rounded-lg loading-box"
                 />
                 <span
-                  v-else-if="bestRoute?.name"
+                  v-else-if="!!bestRoute && swapDetails.data?.aggregators?.length"
                   class="capitalize hidden sm:flex items-center gap-2.5"
                 >
-                  <ProtocolLogo class="w-5 h-5" :name="bestRoute.name" />
-                  {{ formatProtocol(bestRoute.name) }}
+                  <Menu v-slot="{ open }" as="div" class="relative">
+                    <MenuButton class="flex items-center gap-2.5 rounded-xl px-3 py-2 border border-slate-150 dark:border-slate-750">
+                      <ProtocolLogo class="w-5 h-5" :name="bestRoute.name" />
+                      {{ formatProtocol(bestRoute.name) }}
+                      <SvgoChevronDown class="w-4" :class="open ? 'rotate-180' : ''" />
+                    </MenuButton>
+                    <transition
+                      enter-active-class="transition duration-100 ease-out"
+                      enter-from-class="transform scale-95 opacity-0"
+                      enter-to-class="transform scale-100 opacity-100"
+                      leave-active-class="transition duration-75 ease-out"
+                      leave-from-class="transform scale-100 opacity-100"
+                      leave-to-class="transform scale-95 opacity-0"
+                    >
+                      <MenuItems
+                        class="absolute rounded-5 z-20 py-4 top-12 left-1/2 -translate-x-1/2 w-[300px] origin-center dark:bg-gray-850 border-slate-150 border bg-slate-50 dark:border-slate-700"
+                      >
+                        <template v-for="aggr, i in swapDetails.data?.aggregators" :key="aggr.name">
+                          <MenuItem as="button" type="button" class="font-medium w-full text-left px-4 py-[14px] first:pt-0 last-of-type:pb-0" @click="bestRoute = aggr">
+                            <div class="flex gap-2">
+                              <ProtocolLogo class="w-5 h-5" :name="aggr.name" />
+                              <div class="flex flex-col gap-1 w-full">
+                                <div class="flex justify-between w-full">
+                                  <span class="text-white">
+                                    {{ formatProtocol(aggr.name) }}
+                                  </span>
+                                  <span v-if="i === 0" class="rounded-lg px-2 leading-5 text-[10px] uppercase bg-primary bg-opacity-10 text-primary">
+                                    Best Rate
+                                  </span>
+                                  <SvgoCheckCircle v-else-if="aggr.name === bestRoute.name" class="w-4 success-circle" />
+                                </div>
+                                <span class="text-xs text-slate-400">
+                                  {{ formatDecimal(fromWei(aggr.data.buyTokenAmount, aggr.data.buyToken.decimals).toFixed()) }}
+                                  {{ aggr.data.buyToken.symbol }}
+                                  ({{ formatUsd(times(fromWei(aggr.data.buyTokenAmount, aggr.data.buyToken.decimals), aggr.data.buyToken.price)) }})</span>
+                              </div>
+                            </div>
+                          </MenuItem>
+                          <hr class="last:hidden dark:border-slate-800 border-slate-100">
+                        </template>
+                      </MenuItems>
+                    </transition>
+                  </Menu>
+
                 </span>
                 <span v-else>
                   -
@@ -935,7 +986,19 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
+      <CommonNotification
+        v-if="!!error"
+        type="error"
+        :text="error"
+      >
+        <template #action>
+          <button v-if="swapDetails.data?.aggregators?.length! > 1 " type="button" class="text-xs" @click="setAnotherRoute">
+            <span>Retry</span>
+          </button>
+        </template>
+      </CommonNotification>
       <EstimatedFee
+        v-else
         :chain-id="toChainId"
         :loading="feePending"
         :data="data"
