@@ -98,7 +98,7 @@ async function handleClick(item: IMultisigTransaction) {
         <span class="flex-1 flex-col flex gap-2 max-w-sm truncate">
           <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" v-once :key="metadata" class="text-left whitespace-nowrap" compact :chain_id="item.chain_id" :metadata="metadata" />
         </span>
-        <span class="whitespace-nowrap">
+        <span class="whitespace-nowrap text-left">
           {{ formatTimeAgo(new Date(activeTab === 'completed' ? item.executed_at : item.created_at)) }}
         </span>
         <span class="flex items-center gap-2.5  whitespace-nowrap">
@@ -207,7 +207,7 @@ async function handleClick(item: IMultisigTransaction) {
 
 <style scoped>
 .grid-item {
-  grid-template-columns: 145px 1fr 100px 160px minmax(130px, max-content);
+  grid-template-columns: 145px 1fr 130px 120px 200px;
   @apply gap-8;
 }
 </style>

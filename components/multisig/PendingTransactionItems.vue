@@ -143,7 +143,7 @@ watch(lastModal, () => {
       <ul v-for="items, key in groupedData" v-else :key="key">
         <li>
           <ul :class="checkIsGroup(key, items) ? 'p-4 my-4 sm:p-0 border sm:block flex gap-5 flex-col border-slate-300 dark:border-slate-750 rounded-5 dark:bg-slate-850 bg-slate-150' : ''" class="flex flex-col">
-            <p v-if="checkIsGroup(key, items)" class="text-xs sm:p-4 flex items-center gap-2.5 sm:pb-0 font-medium  text-slate-500 dark:text-slate-400">
+            <p v-if="checkIsGroup(key, items)" class="text-xs border-b border-slate-150 dark:border-slate-800 sm:p-4 flex items-center gap-2.5 sm:pb-4 font-medium  text-slate-500 dark:text-slate-400">
               <SvgoInfo2 />
               You can complete one of the transactions below. The other will be cancelled automatically.
             </p>
