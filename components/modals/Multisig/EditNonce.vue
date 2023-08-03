@@ -24,7 +24,7 @@ const nonce = ref<number | undefined>(recommendedNonce)
 const note = ref<string | undefined>(undefined)
 const detailsRef = ref<HTMLDetailsElement>()
 const [simulationStatus, toggle] = useToggle()
-const [signAndExecute, signAndExecuteToggle] = useToggle(true)
+const [signAndExecute, signAndExecuteToggle] = useToggle(false)
 
 const requiredSignersByChain = computed(() => requiredSigners.value.find(i => i.chainId == props.chainId))
 
@@ -53,6 +53,11 @@ const isExecuteReady = computed(() => {
   if (!requiredSignersByChain.value)
     return false
   return requiredSignersByChain.value?.requiredSignerCount === 1 && !isExecutionNotAvailable.value
+})
+
+whenever(isExecuteReady, () => {
+  if (isExecuteReady.value)
+    signAndExecuteToggle(true)
 })
 
 const { data, error, pending: feePending } = useEstimatedFee(ref(props.actions), ref(props.chainId), {
