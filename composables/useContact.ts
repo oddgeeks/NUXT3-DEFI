@@ -24,7 +24,9 @@ export function useContacts() {
     if (!safeAddress.value || !ownerContact.value)
       return []
 
-    const _contacts = contacts.value[safeAddress.value] || []
+    const address = getAddress(safeAddress.value)
+
+    const _contacts = contacts.value[address] || []
 
     return [ownerContact.value, ..._contacts] as IContact[]
   })
@@ -33,16 +35,18 @@ export function useContacts() {
     if (contact.owner)
       return
 
-    if (!contacts.value[safeAddress.value])
+    const address = getAddress(safeAddress.value)
+
+    if (!contacts.value[address])
       return
 
-    const index = contacts.value[safeAddress.value].findIndex(
+    const index = contacts.value[address].findIndex(
       (item: any) =>
         item.address.toLowerCase() === contact.address.toLowerCase()
         && item.chainId === contact.chainId,
     )
     if (index > -1)
-      contacts.value[safeAddress.value].splice(index, 1)
+      contacts.value[address].splice(index, 1)
   }
 
   const addContact = (contact: IContact) => {
@@ -58,7 +62,9 @@ export function useContacts() {
     if (!contacts.value[safeAddress.value])
       return
 
-    const index = contacts.value[safeAddress.value].findIndex(
+    const address = getAddress(safeAddress.value)
+
+    const index = contacts.value[address].findIndex(
       (_contact: IContact) =>
         _contact.address.toLowerCase() === oldContact.address.toLowerCase()
         && _contact.chainId === oldContact.chainId,
