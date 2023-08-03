@@ -97,6 +97,11 @@ function sortItems(items: IMultisigTransaction[]) {
   return items.sort((a, b) => a.created_at > b.created_at ? -1 : 1)
 }
 
+function handleToggle(e: Event) {
+  const target = e.target as HTMLDetailsElement
+  isDetailsOpen.value = target.open
+}
+
 function refreshAll() {
   refresh()
   refreshSigner()
@@ -104,18 +109,13 @@ function refreshAll() {
 
 useIntervalFn(() => {
   refreshAll()
-}, 10000)
+}, 5000)
 
 watch(lastModal, () => {
   // Refresh data when modal is closed
   if (!lastModal.value)
     refreshAll()
 })
-
-function handleToggle(e: Event) {
-  const target = e.target as HTMLDetailsElement
-  isDetailsOpen.value = target.open
-}
 </script>
 
 <template>
