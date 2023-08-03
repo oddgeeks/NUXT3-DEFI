@@ -647,6 +647,9 @@ export function openExecuteTransactionModal(chainId: string | number, data: any,
       data,
       isGasTopup,
     },
+    options: {
+      wrapperClass: '!max-w-[560px]',
+    },
     async: true,
   })
 }
