@@ -227,6 +227,15 @@ async function handleReject(transaction: IMultisigTransaction) {
     pending.value.reject = true
     await rejectMultisigTransaction(transaction)
   }
+  catch (e: any) {
+    const message = parseTransactionError(e)
+    openDialogModal({
+      title: 'Error',
+      content: message.formatted || 'Something went wrong. Please try again later.',
+      type: 'error',
+    })
+    console.error(e)
+  }
   finally {
     pending.value.reject = false
   }

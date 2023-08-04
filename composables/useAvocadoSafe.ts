@@ -430,6 +430,26 @@ export function useAvocadoSafe() {
 
     const metadata = encodeRejectionMetadata(tx.id)
 
+    const params = isNonseq
+      ? {
+          rejection_id: tx.id,
+          status: 'pending',
+        }
+      : {
+          nonce: tx.nonce,
+          status: 'pending',
+        }
+
+    const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${tx.safe_address}/transactions`, {
+      params,
+      baseURL: multisigURL,
+    })
+
+    const isRejectionAlreadyExist = isNonseq ? data.meta.total > 0 : data.meta.total > 1
+
+    if (isRejectionAlreadyExist)
+      throw new Error('A rejection proposal for this txn already exists')
+
     const actions = isNonseq
       ? [
           {
