@@ -80,6 +80,7 @@ export function useAvocadoSafe() {
       const txHash = await createProposalOrSignDirecty({
         chainId: transaction.chainId,
         metadata: options.metadata,
+        options,
         actions,
       })
 
@@ -123,7 +124,7 @@ export function useAvocadoSafe() {
       throw new Error('Safe not initialized')
 
     if (isSafeMultisig.value) {
-      const txHash = await createProposalOrSignDirecty({ chainId, actions: transactions, metadata: options.metadata })
+      const txHash = await createProposalOrSignDirecty({ chainId, actions: transactions, metadata: options.metadata, options })
 
       if (txHash)
         return txHash
@@ -153,8 +154,8 @@ export function useAvocadoSafe() {
     )
   }
 
-  async function generateMultisigSignatureAndSign({ chainId, actions, nonce, metadata }: IGenerateMultisigSignatureParams) {
-    const data = await generateMultisigSignatureMessage({ chainId, actions, nonce, metadata })
+  async function generateMultisigSignatureAndSign({ chainId, actions, nonce, metadata, options }: IGenerateMultisigSignatureParams) {
+    const data = await generateMultisigSignatureMessage({ chainId, actions, nonce, metadata, options })
     const signature = await signMultisigData({ chainId, data })
 
     return {
@@ -248,7 +249,7 @@ export function useAvocadoSafe() {
   }
 
   async function createProposalOrSignDirecty(args: IGenerateMultisigSignatureParams) {
-    const { chainId, actions, nonce, metadata, clearModals = true, estimatedFee = false, rejection, rejectionId, transactionType = 'others' } = args
+    const { chainId, actions, nonce, metadata, clearModals = true, estimatedFee = false, rejection, rejectionId, options, transactionType = 'others' } = args
 
     const { success, payload } = await openEditNonceModal({ chainId, actions, defaultNonce: nonce, estimatedFee, rejection, rejectionId, transactionType })
 
@@ -259,7 +260,7 @@ export function useAvocadoSafe() {
 
     const signOnly = payload.signOnly
 
-    const params = await generateMultisigSignatureAndSign({ chainId, actions, nonce: actualNonce, note: payload.note, metadata })
+    const params = await generateMultisigSignatureAndSign({ chainId, actions, nonce: actualNonce, note: payload.note, metadata, options })
 
     // generate proposal
     const { data } = await axios.post<IMultisigTransaction>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {
