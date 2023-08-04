@@ -56,22 +56,32 @@ function handleInput() {
           class="-mr-2 shrink-0"
         />
         <span class="sm:block hidden">
-          <span v-if="contactName" class="text-white">
-            ({{ contactName }})
+          <span class="text-white flex flex-col items-baseline gap-1">
+            <span>
+              <span v-if="contactName">
+                {{ contactName }}
+              </span>
+              <button v-else class="text-sm text-primary font-medium" @click="openAddContactModal(undefined, address)">
+                Save as Contact
+              </button>
+              <span v-if="owner" class="text-slate-400">
+                (Owner)
+              </span>
+            </span>
             <span class="text-slate-400">
               {{ address }}
             </span>
           </span>
-          <span v-else>
-            {{ address }}
-          </span>
         </span>
-        <span class="dark:text-white text-xs flex text-slate-900 sm:hidden flex-col sm:ml-0 ml-2.5">
-
+        <span class="dark:text-white text-xs flex text-slate-900 sm:hidden flex-col sm:ml-0 ml-2.5 min-w-[135px] gap-1">
           <span>
             <span v-if="contactName" class="text-slate-400">
               {{ contactName }}
             </span>
+
+            <button v-else class="text-sm text-primary font-medium" @click="openAddContactModal(undefined, address)">
+              Save as Contact
+            </button>
 
             <span v-if="owner" class="text-slate-400">
               (Owner)
@@ -92,14 +102,6 @@ function handleInput() {
         <NuxtLink external target="_blank" :to="getExplorerUrl(chainId, `/address/${address}`)" class="dark:bg-slate-800 items-center justify-center bg-slate-150 rounded-full w-7.5 h-7.5 flex">
           <SvgoExternalLink class="text-slate-400 w-4" />
         </NuxtLink>
-
-        <span v-if="owner" class="sm:block hidden">
-          (Owner)
-        </span>
-
-        <button v-if="!contactName" class="text-sm text-primary font-medium" @click="openAddContactModal(undefined, address)">
-          Save as Contact
-        </button>
       </div>
       <label
         v-if="!owner" v-tippy="{
