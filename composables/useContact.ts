@@ -14,7 +14,7 @@ export function useContacts() {
       return null
 
     return {
-      name: 'Owner',
+      name: 'Your EOA address',
       address: account.value,
       chainId: '',
       owner: true,
