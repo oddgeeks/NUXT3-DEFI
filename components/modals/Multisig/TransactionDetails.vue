@@ -76,6 +76,18 @@ const isSafeDoesntMatch = computed(() => {
 })
 const proposalOwnerAddress = computed(() => transactionRef.value.confirmations.length ? transactionRef.value.confirmations[0].address : null)
 
+const sameNonceExistMessage = computed(() => {
+  if (isGeneralLoading.value)
+    return undefined
+  return isSameNonceExist.value ? 'A rejection proposal for this txn already exists' : undefined
+})
+
+const nonceNotMatchMessage = computed(() => {
+  if (isGeneralLoading.value)
+    return undefined
+  return isNonceNotMatch.value ? `Please execute transaction #${currentNonce.value} first.` : errorMessage.value
+})
+
 const { data: isSameNonceExist } = useAsyncData(`${transactionRef.value.id}-same-nonce`, async () => {
   const params = isNonseq.value
     ? {
@@ -501,14 +513,14 @@ onUnmounted(() => {
           </button>
 
           <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch || !canSign || isGeneralLoading" class="grid grid-cols-2 gap-2.5 items-center">
-            <Tippy v-if="!isRejection" :content="isSameNonceExist ? 'A rejection proposal for this txn already exists' : undefined" tag="div">
+            <Tippy v-if="!isRejection" :content="sameNonceExistMessage" tag="div">
               <CommonButton color="red" :disabled="isRejection || !!isSameNonceExist" :loading="pending.reject" size="lg" class="justify-center w-full" @click="handleReject(transactionRef)">
                 Reject
               </CommonButton>
             </Tippy>
             <div
               v-if="isConfirmationsMatch && isSignedAlready" v-tippy="{
-                content: isNonceNotMatch ? `Please execute transaction #${currentNonce} first.` : errorMessage,
+                content: nonceNotMatchMessage,
               }"
             >
               <CommonButton
