@@ -356,6 +356,7 @@ onUnmounted(() => {
             <div class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
               <span class="text-slate-400 text-xs">Avocado Multisig Hash</span>
               <span class="text-sm flex items-center gap-2 font-medium">
+                {{ isNonseq ? 'Non-Sequential' : 'Sequential' }} /
                 {{ shortenHash(transactionRef.id) }}
                 <Copy icon-only :text="transactionRef.id" />
 
