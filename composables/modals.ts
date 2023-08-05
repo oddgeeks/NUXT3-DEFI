@@ -43,6 +43,7 @@ import SignSigner from '~/components/modals/Multisig/SignSigner.vue'
 import DeleteSigner from '~/components/modals/Multisig/DeleteSigner.vue'
 import SignDeleteSigner from '~/components/modals/Multisig/SignDeleteSigner.vue'
 import UpdateThreshold from '~/components/modals/Multisig/UpdateThreshold.vue'
+import FetchGnosisSafe from '~/components/modals/Multisig/FetchGnosisSafe.vue'
 import MultisigSelectNetwork from '~/components/modals/Multisig/SelectNetwork.vue'
 import UpdateNoticeModal from '~/components/modals/UpdateNotice.vue'
 import WelcomeModal from '~/components/modals/Welcome.vue'
@@ -651,6 +652,19 @@ export function openExecuteTransactionModal(chainId: string | number, data: any,
       wrapperClass: '!max-w-[560px]',
     },
     async: true,
+  })
+}
+
+export function openFetchGnosisSafeModal(address?: string) {
+  return openModal({
+    component: FetchGnosisSafe,
+    componentProps: {
+      address,
+    },
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[560px]',
+    },
   })
 }
 

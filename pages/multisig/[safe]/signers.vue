@@ -126,6 +126,9 @@ useIntervalFn(async () => {
       <h2 class="text-base">
         Manage Multisig Signers
       </h2>
+      <button @click="openFetchGnosisSafeModal()">
+        Gnosis Setup Now
+      </button>
       <div class="flex justify-between flex-wrap gap-5">
         <span class="text-xs text-slate-400 leading-5">
           Signers are addresses that are required to sign transactions before they can be executed on<br> the blockchain.
