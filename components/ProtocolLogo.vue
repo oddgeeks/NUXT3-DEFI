@@ -1,6 +1,6 @@
 <script setup lang="ts">
 defineProps < {
-  name: '1inch-v5' | '0x-v1' | 'paraswap-v5' | 'kyber-v1'
+  name: '1inch-v5' | '0x-v1' | 'paraswap-v5' | 'kyber-v1' | string
 }>()
 </script>
 
