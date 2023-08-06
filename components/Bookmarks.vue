@@ -37,7 +37,7 @@ function handleOpenBookmark(bookmark: IBookmark) {
 <template>
   <div class="relative">
     <div :class="safeBookmarks?.length > 3 ? 'px-10' : ''">
-      <Splide :options="{ pagination: false, gap: '16px', autoWidth: true, arrows: safeBookmarks?.length > 3, arrowPath: 'M2 20.9997L40 20.9997M40 20.9997L21 2M40 20.9997L21 40' }">
+      <Splide v-if="safeBookmarks?.length" :options="{ pagination: false, gap: '16px', autoWidth: true, arrows: safeBookmarks?.length > 3, arrowPath: 'M2 20.9997L40 20.9997M40 20.9997L21 2M40 20.9997L21 40' }">
         <SplideSlide v-for="bookmark in safeBookmarks" :key="bookmark.name">
           <li class="dark:bg-gray-850 flex items-center gap-[14px] rounded-10 bg-slate-50">
             <button
@@ -60,6 +60,9 @@ function handleOpenBookmark(bookmark: IBookmark) {
           </li>
         </SplideSlide>
       </Splide>
+      <p v-else class="font-medium text-sm text-slate-400">
+        Bookmark your most used transactions with Transaction Shortcuts to quickly execute common actions. Find the bookmark on the transaction confirmation panel.
+      </p>
     </div>
   </div>
 </template>
