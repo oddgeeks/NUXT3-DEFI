@@ -23,6 +23,12 @@ const isDetailsOpen = useCookie<boolean>(`multisig-collapse-${route.params.safe}
   expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
 })
 
+const { resume, pause } = useIntervalFn(() => {
+  refreshAll()
+}, 5000, {
+  immediate: false,
+})
+
 const { data, refresh, pending } = useAsyncData(`multisig-${route.params.safe}-${props.chainId}-${props.activeTab}`, async () => {
   try {
     if (abortController.value)
@@ -65,6 +71,7 @@ const { data, refresh, pending } = useAsyncData(`multisig-${route.params.safe}-$
     return axiosData
   }
   catch (e: any) {
+    console.log(e)
     if (e.message === 'canceled')
       return
 
@@ -129,12 +136,6 @@ function refreshAll() {
   refresh()
   refreshSigner()
 }
-
-const { resume, pause } = useIntervalFn(() => {
-  refreshAll()
-}, 5000, {
-  immediate: false,
-})
 
 watch(lastModal, () => {
   // Refresh data when modal is closed
