@@ -15,7 +15,7 @@ const { sendTransaction, tokenBalances, safeAddress }
   = useAvocadoSafe()
 const { authorisedNetworks } = useAuthorities()
 const { parseTransactionError } = useErrorHandler()
-const { getTokenByAddress } = useTokens()
+const { tokens } = storeToRefs(useTokens())
 const [isGiftActive, toggleGift] = useToggle(false)
 const isDefaultTokenSet = ref(false)
 
@@ -30,7 +30,14 @@ const usdcTokens = computed(() => {
   return chainUsdcAddresses
     .filter(usdc => usdc.chainId != 250 && authorisedNetworks.value?.some(n => n.chainId == usdc.chainId))
     .map((usdc: any) => {
-      const tk = getTokenByAddress(usdc.address, usdc.chainId)!
+      const tk = tokens.value.find(
+        t =>
+          String(t.chainId) === String(usdc.chainId)
+          && t.address.toLowerCase() === usdc.address.toLowerCase())
+
+      if (!tk)
+        return
+
       return {
         id: computeId(tk),
         ...tk,
@@ -38,6 +45,7 @@ const usdcTokens = computed(() => {
         balance: getUSDCBalance(usdc.chainId, usdc.address)?.balance,
       }
     })
+    .filter(Boolean)
     .sort((a: any, b: any) => toBN(b.balance).minus(a.balance).toNumber())
 })
 

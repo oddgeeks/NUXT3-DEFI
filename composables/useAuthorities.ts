@@ -25,7 +25,7 @@ export function useAuthorities() {
     }
     else {
       if (!requiredSigners.value?.length)
-        return []
+        return availableNetworks
 
       return availableNetworks.filter(i => isAccountCanSign(i.chainId, account.value, selectedSafe.value?.owner_address))
     }

@@ -96,7 +96,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
         }
         catch (e) {
           const err = serialize(e)
-          console.log(err, 'selam')
+          console.log(err)
           reject(e)
         }
       })

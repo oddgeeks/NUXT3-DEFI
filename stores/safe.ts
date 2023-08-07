@@ -571,8 +571,6 @@ export const useSafe = defineStore('safe', () => {
       if (!account.value)
         return
 
-      console.log('selam')
-
       try {
         pending.value.global = true
 
