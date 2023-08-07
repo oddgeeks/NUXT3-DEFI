@@ -113,19 +113,23 @@ async function handleSelectContact(key: number) {
 
 <template>
   <form @submit="onSubmit">
-    <div class="flex gap-[14px] sm:p-7.5 p-5">
-      <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
-        1
+    <div class="flex flex-col sm:p-7.5 p-5 gap-7.5">
+      <div class="flex gap-[14px]">
+        <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
+          1
+        </div>
+        <div class="flex flex-col gap-1">
+          <h1 class="text-lg leading-10">
+            Add New Signer(s)
+          </h1>
+          <h2 class="text-xs leading-5 text-slate-400 font-medium">
+            Signers can approve/reject transaction. Signers are automatically saved as contacts.
+          </h2>
+        </div>
       </div>
-      <div class="flex flex-col gap-1">
-        <h1 class="text-lg leading-10">
-          Add New Signer(s)
-        </h1>
-        <h2 class="text-xs leading-5 text-slate-400 font-medium">
-          Signers can approve/reject transaction. Signers are automatically saved as contacts.
-        </h2>
-      </div>
+      <Steps :total-steps="4" :current-step="1" />
     </div>
+
     <hr class="border-slate-150 dark:border-slate-800">
     <div class="sm:p-7.5 p-5 flex flex-col sm:gap-5 gap-7.5">
       <fieldset

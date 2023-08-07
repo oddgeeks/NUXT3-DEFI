@@ -4,6 +4,8 @@ import { storeToRefs } from 'pinia'
 const props = defineProps<{
   chainId: number | string
   additionalCount: number
+  activeStep?: number
+  totalSteps?: number
 }>()
 
 defineEmits(['resolve'])
@@ -34,17 +36,20 @@ onMounted(() => {
 
 <template>
   <div>
-    <div class="sm:p-7.5 p-6">
-      <h2 class="text-lg">
-        Update Treshold
-      </h2>
-      <h3 class="text-sm text-slate-400">
-        <span v-if="isRemove">After deleting signer(s), any transaction requires confirmation of</span>
-        <span v-else-if="isAdd">After adding signer(s), any transaction requires confirmation of</span>
-        <span v-else>
-          Any transaction requires the confirmation of
-        </span>
-      </h3>
+    <div class="sm:p-7.5 p-5 flex flex-col gap-7.5">
+      <div>
+        <h2 class="text-lg">
+          Update Treshold
+        </h2>
+        <h3 class="text-sm text-slate-400">
+          <span v-if="isRemove">After deleting signer(s), any transaction requires confirmation of</span>
+          <span v-else-if="isAdd">After adding signer(s), any transaction requires confirmation of</span>
+          <span v-else>
+            Any transaction requires the confirmation of
+          </span>
+        </h3>
+      </div>
+      <Steps v-if="activeStep && totalSteps" :current-step="activeStep" :total-steps="totalSteps" />
     </div>
 
     <hr class="border-slate-150 dark:border-slate-800">

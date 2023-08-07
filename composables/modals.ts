@@ -583,12 +583,17 @@ export function openSignAuthorityModal(authority: IAuthority, transactions: IAut
   })
 }
 
-export function openUpdateThresholdModal(chainId: number | string, additionalCount: number) {
+export function openUpdateThresholdModal(chainId: number | string, additionalCount: number, {
+  activeStep = 0,
+  totalSteps = 0,
+} = {}) {
   return openModal({
     component: UpdateThreshold,
     componentProps: {
       chainId,
       additionalCount,
+      activeStep,
+      totalSteps,
     },
     options: {
       contentClass: '!p-0',
@@ -631,11 +636,12 @@ export async function openMultisigTransactionDetails(transaction: IMultisigTrans
   })
 }
 
-export function openMultisigSelectNetworkModal(addresses: ISignerAddress[]) {
+export function openMultisigSelectNetworkModal(addresses: ISignerAddress[], defaultSelectedNetworks?: number[]) {
   return openModal({
     component: MultisigSelectNetwork,
     componentProps: {
       addresses,
+      defaultSelectedNetworks,
     },
     options: {
       contentClass: '!p-0',

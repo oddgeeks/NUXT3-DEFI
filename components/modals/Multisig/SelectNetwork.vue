@@ -3,30 +3,32 @@ import { major } from 'semver'
 
 const props = defineProps<{
   addresses: ISignerAddress[]
+  defaultSelectedNetworks?: number[]
 }>()
 
 const emit = defineEmits(['destroy', 'resolve'])
 
 const { data: networkVersions } = useNuxtData('allNetworkVersions')
 
-const selectedNetworks = ref<string[]>([])
+const selectedNetworks = ref<number[]>(props.defaultSelectedNetworks || [])
 
 const deployedNetworks = computed(() => networkVersions.value?.filter((network: any) => gte(major(network?.currentVersion || '0'), 3)))
 const nonDeployedNetworks = computed(() => networkVersions.value?.filter((network: any) => lt(major(network?.currentVersion || '0'), 3)))
 
-function toggleNetworkChainId(chainId: string) {
+function toggleNetworkChainId(chainId: number) {
   if (selectedNetworks.value.includes(chainId))
-    selectedNetworks.value = selectedNetworks.value.filter((id: string) => id !== chainId)
+    selectedNetworks.value = selectedNetworks.value.filter(id => id !== chainId)
   else
     selectedNetworks.value = [...selectedNetworks.value, chainId]
 }
 
-function isSelected(chainId: string) {
+function isSelected(chainId: number) {
   return selectedNetworks.value.includes(chainId)
 }
 
 function handleSubmit() {
-  emit('resolve', true, selectedNetworks.value)
+  emit('destroy')
+  openSignSignerModal(props.addresses, selectedNetworks.value)
 }
 
 function handleBack() {
@@ -37,15 +39,18 @@ function handleBack() {
 
 <template>
   <form @submit.prevent="handleSubmit">
-    <div class="flex gap-[14px] sm:p-7.5 p-5">
-      <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
-        3
+    <div class="flex flex-col gap-7.5 sm:p-7.5 p-5">
+      <div class="flex gap-[14px]">
+        <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
+          3
+        </div>
+        <div class="flex gap-1">
+          <h1>
+            Select networks where new signers will be added
+          </h1>
+        </div>
       </div>
-      <div class="flex gap-1">
-        <h1>
-          Select networks where new signers will be added
-        </h1>
-      </div>
+      <Steps :total-steps="4" :current-step="3" />
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <div class="sm:p-7.5 py-5 px-6">
