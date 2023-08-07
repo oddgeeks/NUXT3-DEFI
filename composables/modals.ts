@@ -457,12 +457,15 @@ export function openAddAuthorityModal() {
   })
 }
 
-export function openAddSignerModal(addresses?: ISignerAddress[], threshold?: number) {
+export function openAddSignerModal(params?: IAddSignerModalParams) {
+  const { addresses, threshold, options = {}, gnosisAddress } = params || {}
   return openModal({
     component: AddSigner,
     componentProps: {
       addresses,
       defaultThreshold: threshold,
+      options,
+      gnosisAddress,
     },
     options: {
       wrapperClass: 'max-w-[560px]',
@@ -471,11 +474,12 @@ export function openAddSignerModal(addresses?: ISignerAddress[], threshold?: num
   })
 }
 
-export function openReviewSignerModal(addresses: ISignerAddress[]) {
+export function openReviewSignerModal(addresses: ISignerAddress[], gnosisAddress?: string) {
   return openModal({
     component: ReviewSigner,
     componentProps: {
       addresses,
+      gnosisAddress,
     },
     options: {
       wrapperClass: 'max-w-[560px]',
@@ -484,12 +488,13 @@ export function openReviewSignerModal(addresses: ISignerAddress[]) {
   })
 }
 
-export function openSignSignerModal(addresses: ISignerAddress[], chainIds: number[]) {
+export function openSignSignerModal(addresses: ISignerAddress[], chainIds: number[], gnosisAddress?: string) {
   return openModal({
     component: SignSigner,
     componentProps: {
       addresses,
       chainIds,
+      gnosisAddress,
     },
     options: {
       wrapperClass: 'max-w-[560px]',
@@ -639,12 +644,13 @@ export async function openMultisigTransactionDetails(transaction: IMultisigTrans
   })
 }
 
-export function openMultisigSelectNetworkModal(addresses: ISignerAddress[], defaultSelectedNetworks?: number[]) {
+export function openMultisigSelectNetworkModal(addresses: ISignerAddress[], defaultSelectedNetworks?: number[], gnosisAddress?: string) {
   return openModal({
     component: MultisigSelectNetwork,
     componentProps: {
       addresses,
       defaultSelectedNetworks,
+      gnosisAddress,
     },
     options: {
       contentClass: '!p-0',
@@ -683,11 +689,11 @@ export async function openCreateBookmarkModal(props: CreateBookmarkProps) {
   })
 }
 
-export function openFetchGnosisSafeModal(address?: string) {
+export function openFetchGnosisSafeModal(gnosisAddress?: string) {
   return openModal({
     component: FetchGnosisSafe,
     componentProps: {
-      address,
+      address: gnosisAddress,
     },
     options: {
       contentClass: '!p-0',

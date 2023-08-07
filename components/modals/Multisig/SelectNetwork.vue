@@ -4,6 +4,7 @@ import { major } from 'semver'
 const props = defineProps<{
   addresses: ISignerAddress[]
   defaultSelectedNetworks?: number[]
+  gnosisAddress?: string
 }>()
 
 const emit = defineEmits(['destroy', 'resolve'])
@@ -28,12 +29,12 @@ function isSelected(chainId: number) {
 
 function handleSubmit() {
   emit('destroy')
-  openSignSignerModal(props.addresses, selectedNetworks.value)
+  openSignSignerModal(props.addresses, selectedNetworks.value, props.gnosisAddress)
 }
 
 function handleBack() {
   emit('destroy')
-  openReviewSignerModal(props.addresses)
+  openReviewSignerModal(props.addresses, props.gnosisAddress)
 }
 </script>
 

@@ -128,3 +128,15 @@ interface IOpenExecuteModalParams {
   isGasTopup: boolean
   options?: any
 }
+
+interface IAddSignerModalParams {
+  addresses?: ISignerAddress[]
+  gnosisAddress?: string
+  threshold?: number
+  options?: {
+    title?: string
+    subtitle?: string
+    currentStep?: number
+    totalSteps?: number
+  }
+}

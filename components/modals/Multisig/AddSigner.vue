@@ -6,6 +6,11 @@ import { useFieldArray, useForm } from 'vee-validate'
 const props = defineProps<{
   addresses?: ISignerAddress[]
   defaultThreshold?: number
+  gnosisAddress?: string
+  options: {
+    totalSteps?: number
+    currentStep?: number
+  }
 }>()
 
 const emit = defineEmits(['destroy'])
@@ -13,6 +18,8 @@ const emit = defineEmits(['destroy'])
 const { account } = useWeb3()
 const { getContactNameByAddress } = useContacts()
 const contactSelections = ref<number[]>([])
+
+const isGnosisMigration = computed(() => !!props.gnosisAddress)
 
 const {
   handleSubmit,
@@ -82,7 +89,7 @@ function getErrorMessage(errors: any, errorKey: string) {
 const onSubmit = handleSubmit(async () => {
   const addresses = fields.value.map(field => field.value)
 
-  openReviewSignerModal(addresses)
+  openReviewSignerModal(addresses, props.gnosisAddress)
   emit('destroy')
 })
 
@@ -109,6 +116,13 @@ async function handleSelectContact(key: number) {
     contactSelections.value.push(key)
   }
 }
+
+function handleBackClick() {
+  emit('destroy')
+
+  if (isGnosisMigration.value)
+    openFetchGnosisSafeModal(props.gnosisAddress)
+}
 </script>
 
 <template>
@@ -116,7 +130,7 @@ async function handleSelectContact(key: number) {
     <div class="flex flex-col sm:p-7.5 p-5 gap-7.5">
       <div class="flex gap-[14px]">
         <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
-          1
+          {{ options.currentStep || 1 }}
         </div>
         <div class="flex flex-col gap-1">
           <h1 class="text-lg leading-10">
@@ -127,7 +141,7 @@ async function handleSelectContact(key: number) {
           </h2>
         </div>
       </div>
-      <Steps :total-steps="4" :current-step="1" />
+      <Steps :total-steps="options.totalSteps || 4" :current-step="options.currentStep || 1" />
     </div>
 
     <hr class="border-slate-150 dark:border-slate-800">
@@ -156,10 +170,10 @@ async function handleSelectContact(key: number) {
           <div class="flex justify-between items-center w-full">
             <span class="text-xs font-medium leading-5 text-slate-400 flex items-center gap-2.5">
               <span class="sm:hidden inline">{{ key + 1 }}</span> Signer Address
-              <SvgoInfo2 v-tippy="'Please make sure you enter the EOA address and not Avocado address.'" class="text-orange" />
+              <SvgoInfo2 v-if="!isGnosisMigration" v-tippy="'Please make sure you enter the EOA address and not Avocado address.'" class="text-orange" />
             </span>
             <button
-              v-if="fields.length > 1" class="h-5 w-5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
+              v-if="fields.length > 1 && !isGnosisMigration" class="h-5 w-5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
               @click="remove(key as number)"
             >
               <SvgoX class="w-3 h-3" />
@@ -168,7 +182,7 @@ async function handleSelectContact(key: number) {
           <CommonInput
             v-model="field.value.address"
             :name="`addresses[${key}].address`"
-            :disabled="contactSelections.includes(key)"
+            :disabled="contactSelections.includes(key) || isGnosisMigration"
             :error-message="getErrorMessage(errors, `addresses[${key}].address`)"
             placeholder="Enter Address"
           >
@@ -182,7 +196,7 @@ async function handleSelectContact(key: number) {
                 <SvgoBack class="text-slate-400" />
               </button>
               <button
-                v-else
+                v-else-if="!isGnosisMigration"
                 v-tippy="'Select contact'"
                 type="button"
                 class="ml-3"
@@ -194,7 +208,7 @@ async function handleSelectContact(key: number) {
           </CommonInput>
         </div>
       </fieldset>
-      <button class="flex items-center text-primary gap-3 text-xs" @click="push({ address: '', name: '' })">
+      <button v-if="!isGnosisMigration" class="flex items-center text-primary gap-3 text-xs" @click="push({ address: '', name: '' })">
         <div class="bg-primary w-4 h-4 rounded-full flex">
           <SvgoPlus class="text-white m-auto w-2 h-2" />
         </div>
@@ -203,7 +217,7 @@ async function handleSelectContact(key: number) {
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <div class="p-7.5 grid grid-cols-2 gap-4">
-      <CommonButton class="justify-center" size="lg" color="white" @click="$emit('destroy')">
+      <CommonButton class="justify-center" size="lg" color="white" @click="handleBackClick">
         Back
       </CommonButton>
       <CommonButton type="submit" :disabled="disabled" class="justify-center" size="lg">

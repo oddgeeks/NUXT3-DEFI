@@ -2,6 +2,7 @@
 const props = defineProps<{
   addresses: ISignerAddress[]
   chainIds: number[]
+  gnosisAddress?: string
 }>()
 
 const emit = defineEmits(['destroy'])
@@ -11,7 +12,7 @@ const allSigned = computed(() => props.chainIds.length === signs.value.length)
 
 async function handleBack() {
   emit('destroy')
-  openMultisigSelectNetworkModal(props.addresses, props.chainIds)
+  openMultisigSelectNetworkModal(props.addresses, props.chainIds, props.gnosisAddress)
 }
 </script>
 

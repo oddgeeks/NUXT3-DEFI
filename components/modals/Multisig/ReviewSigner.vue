@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
   addresses: ISignerAddress[]
+  gnosisAddress?: string
 }>()
 
 const emit = defineEmits(['destroy'])
@@ -11,13 +12,16 @@ const { selectedSafe } = storeToRefs(useSafe())
 
 function handleBack() {
   emit('destroy')
-  openAddSignerModal(props.addresses)
+  openAddSignerModal({
+    addresses: props.addresses,
+    gnosisAddress: props.gnosisAddress,
+  })
 }
 
 async function handleNext() {
   emit('destroy')
 
-  openMultisigSelectNetworkModal(props.addresses)
+  openMultisigSelectNetworkModal(props.addresses, undefined, props.gnosisAddress)
 }
 </script>
 
