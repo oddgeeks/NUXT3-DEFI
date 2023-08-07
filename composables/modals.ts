@@ -653,13 +653,15 @@ export function openMultisigSelectNetworkModal(addresses: ISignerAddress[], defa
   })
 }
 
-export function openExecuteTransactionModal(chainId: string | number, data: any, isGasTopup = false) {
+export function openExecuteTransactionModal(params: IOpenExecuteModalParams) {
+  const { chainId, actions, isGasTopup = false, options } = params
   return openModal({
     component: ExecuteTransaction,
     componentProps: {
       chainId,
-      data,
+      actions,
       isGasTopup,
+      options,
     },
     options: {
       wrapperClass: '!max-w-[560px]',

@@ -98,7 +98,7 @@ const {
 async function handleSubmit() {
   try {
     toggle(true)
-    const id = getActualId(transactions.value)
+    const id = getActualId(transactions.value, options.value?.id)
 
     const transactionHash = await sendTransactions(
       transactions.value,
@@ -170,7 +170,7 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
     if (networksSimulationNotSupported.includes(Number(props.chainId)))
       throw new Error('Simulation not supported on this network.')
 
-    const id = getActualId(transactions.value)
+    const id = getActualId(transactions.value, options.value?.id)
 
     return http('/api/simulate', {
       method: 'POST',
@@ -185,7 +185,7 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
         }),
         avocadoSafe: safeAddress.value,
         chainId: props.chainId,
-        id: id || options.value?.id,
+        id,
       },
     }) as Promise<ISimulation>
   },

@@ -121,3 +121,10 @@ interface IOpenNonceModalParams {
   metadata?: string
   options?: any
 }
+
+interface IOpenExecuteModalParams {
+  chainId: string | number
+  actions: any
+  isGasTopup: boolean
+  options?: any
+}

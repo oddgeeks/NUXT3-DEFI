@@ -156,8 +156,6 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
     if (networksSimulationNotSupported.includes(Number(transactionRef.value.chain_id)))
       throw new Error('Simulation not supported on this network.')
 
-    const id = getActualId(transactionRef.value.data.params.actions)
-
     return http('/api/simulate', {
       method: 'POST',
       body: {
@@ -171,7 +169,7 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
         }),
         avocadoSafe: transactionRef.value.safe_address,
         chainId: transactionRef.value.chain_id,
-        id,
+        id: transactionRef.value.data.params.id,
       },
     }) as Promise<ISimulation>
   },
@@ -279,7 +277,15 @@ async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
 
   try {
     const isGasTopup = actionType.value === 'gas-topup'
-    const { success } = await openExecuteTransactionModal(transaction.chain_id, transaction.data.params.actions, isGasTopup)
+
+    const { success } = await openExecuteTransactionModal({
+      chainId: transaction.chain_id,
+      actions: transaction.data.params.actions,
+      isGasTopup,
+      options: {
+        id: transaction.data.params.id,
+      },
+    })
 
     if (success)
       await handleExecute(transaction)

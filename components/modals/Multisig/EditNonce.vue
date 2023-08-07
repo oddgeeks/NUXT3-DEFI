@@ -32,6 +32,7 @@ const [simulationStatus, toggle] = useToggle()
 const [signAndExecute, signAndExecuteToggle] = useToggle(false)
 
 const requiredSignersByChain = computed(() => requiredSigners.value.find(i => i.chainId == props.chainId))
+const isSignOnly = computed(() => !signAndExecute.value && !isExecuteReady.value)
 
 const { data: seqResponse } = useAsyncData<IMultisigTransactionResponse>(`${safeAddress.value}-seq-count`, async () => {
   const { data } = await axios.get(`/safes/${safeAddress.value}/transactions`, {
@@ -61,8 +62,7 @@ const isExecuteReady = computed(() => {
 })
 
 whenever(isExecuteReady, () => {
-  if (isExecuteReady.value)
-    signAndExecuteToggle(true)
+  signAndExecuteToggle(true)
 }, {
   immediate: true,
 })
@@ -89,7 +89,7 @@ async function onSubmit() {
     const payload = {
       nonce: nonce.value,
       note: note.value,
-      signOnly: !signAndExecute.value,
+      signOnly: !(signAndExecute.value && isExecuteReady.value),
     }
 
     const actualNonce = !isUndefined(props.defaultNonce) ? props.defaultNonce : payload?.nonce
@@ -132,6 +132,7 @@ async function onSubmit() {
     }
   }
   catch (e: any) {
+    console.log(e)
     const parsed = parseTransactionError(e)
 
     openSnackbar({
@@ -158,7 +159,7 @@ const { data: simulationDetails, error: simulationError, pending } = useAsyncDat
       }
     }) as any
 
-    const id = getActualId(actions)
+    const id = getActualId(actions, props.options?.id)
 
     return http('/api/simulate', {
       method: 'POST',
@@ -378,7 +379,7 @@ function getNonceTooltip(value: number | undefined) {
       I want to sign & execute in the same txn
     </button>
     <CommonButton :disabled="feePending || isSubmitting" :loading="feePending || isSubmitting" class="justify-center mx-7.5 my-5" size="lg" type="submit">
-      {{ signAndExecute ? 'Sign and Execute Transaction' : 'Sign and Send for Approval' }}
+      {{ signAndExecute && isExecuteReady ? 'Sign and Execute Transaction' : 'Sign and Send for Approval' }}
     </CommonButton>
   </form>
 </template>

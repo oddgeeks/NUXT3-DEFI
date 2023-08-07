@@ -339,10 +339,8 @@ export function useAvocadoSafe() {
 
   async function signMultisigData({ chainId, data }: any) {
     await switchToAvocadoNetwork()
-    const providerWithSigner = library.value
 
-    await providerWithSigner.send('eth_requestAccounts', [])
-    const avoSigner = providerWithSigner.getSigner()
+    const avoSigner = library.value.getSigner()
 
     const contract = AvoMultisigImplementation__factory.connect(safeAddress.value, getRpcProvider(chainId))
 
@@ -583,10 +581,10 @@ export function useAvocadoSafe() {
     return Math.max(maxNonce, currentNonce - 1) + 1
   }
 
-  function getActualId(tx: any[]) {
+  function getActualId(tx: any[], defaultId = 0) {
     const isDelegateCall = tx.some(i => i?.operation == '1')
 
-    return isSafeMultisig.value && isDelegateCall ? '1' : undefined
+    return isSafeMultisig.value && isDelegateCall ? '1' : defaultId
   }
 
   function checkTransactionExecuted(tx: IMultisigTransaction) {
