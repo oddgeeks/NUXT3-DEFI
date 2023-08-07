@@ -38,7 +38,7 @@ const filteredContacts = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-[30px] flex-1">
+  <div class="flex flex-col gap-7.5 flex-1">
     <div class="flex gap-5 flex-col flex-1">
       <h2 class="sm:text-base text-sm font-semibold inline-flex items-center">
         Contacts
@@ -98,14 +98,18 @@ const filteredContacts = computed(() => {
                 </th>
               </tr>
             </thead>
-            <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
-              <ContactRow v-for="contact in filteredContacts" :key="contact.address + contact.chainId + contact.name" :contact="contact" />
-            </tbody>
+            <ClientOnly>
+              <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
+                <ContactRow v-for="contact in filteredContacts" :key="contact.address + contact.chainId + contact.name" :contact="contact" />
+              </tbody>
+            </ClientOnly>
           </table>
-          <MobileContactRow
-            v-for="contact in filteredContacts"
-            :key="contact.address + contact.chainId + contact.name" :contact="contact"
-          />
+          <ClientOnly>
+            <MobileContactRow
+              v-for="contact in filteredContacts"
+              :key="contact.address + contact.chainId + contact.name" :contact="contact"
+            />
+          </ClientOnly>
         </template>
       </div>
     </div>
