@@ -118,4 +118,13 @@ interface IOpenNonceModalParams {
   rejection?: boolean
   rejectionId?: string
   transactionType: 'add-signers' | 'remove-signers' | 'others'
+  metadata?: string
+  options?: any
+}
+
+interface IOpenExecuteModalParams {
+  chainId: string | number
+  actions: any
+  isGasTopup: boolean
+  options?: any
 }

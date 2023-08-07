@@ -11,21 +11,24 @@ const allSigned = computed(() => props.chainIds.length === signs.value.length)
 
 async function handleBack() {
   emit('destroy')
-  openReviewSignerModal(props.addresses)
+  openMultisigSelectNetworkModal(props.addresses, props.chainIds)
 }
 </script>
 
 <template>
   <div>
-    <div class="flex gap-[14px] sm:p-7.5 p-5">
-      <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
-        4
+    <div class="sm:p-7.5 p-5 flex flex-col gap-7.5">
+      <div class="flex gap-[14px]">
+        <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
+          4
+        </div>
+        <div class="flex flex-col gap-1">
+          <h1 class="text-lg leading-10">
+            Sign on networks to proceed
+          </h1>
+        </div>
       </div>
-      <div class="flex flex-col gap-1">
-        <h1 class="text-lg leading-10">
-          Sign on networks to proceed
-        </h1>
-      </div>
+      <Steps :total-steps="4" :current-step="4" />
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <ul class="p-7.5 flex flex-col gap-7">

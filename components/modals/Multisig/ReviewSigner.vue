@@ -17,31 +17,27 @@ function handleBack() {
 async function handleNext() {
   emit('destroy')
 
-  const { payload: selectedNetworks } = await openMultisigSelectNetworkModal(props.addresses)
-
-  console.log(selectedNetworks)
-
-  if (!selectedNetworks)
-    return
-
-  openSignSignerModal(props.addresses, selectedNetworks)
+  openMultisigSelectNetworkModal(props.addresses)
 }
 </script>
 
 <template>
   <div>
-    <div class="flex gap-[14px] sm:p-7.5 p-5">
-      <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
-        2
+    <div class="flex flex-col gap-7.5 sm:p-7.5 p-5">
+      <div class="flex gap-[14px]">
+        <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
+          2
+        </div>
+        <div class="flex flex-col gap-1">
+          <h1 class="text-lg leading-10">
+            Review Details
+          </h1>
+          <h2 class="text-xs leading-5 text-slate-400 font-medium">
+            It might take a few minutes for new signers to be synced
+          </h2>
+        </div>
       </div>
-      <div class="flex flex-col gap-1">
-        <h1 class="text-lg leading-10">
-          Review Details
-        </h1>
-        <h2 class="text-xs leading-5 text-slate-400 font-medium">
-          It might take a few minutes for new signers to be synced
-        </h2>
-      </div>
+      <Steps :total-steps="4" :current-step="2" />
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
 

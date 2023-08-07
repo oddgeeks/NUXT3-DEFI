@@ -9,10 +9,11 @@ import SVGClockCircle from '~/assets/images/icons/clock-circle.svg?component'
 const props = defineProps<{
   payload: any
   chainId: string
-  sessionV2?: SessionTypes.Struct
+  sessionV2: SessionTypes.Struct
   metadata: string
   isSign?: boolean
   signMessageDetails?: any
+  bookmark?: IBookmark
 }>()
 
 const emit = defineEmits(['resolve', 'reject'])
@@ -32,6 +33,8 @@ const nonAuthorised = computed(() => {
 const submitDisabled = computed(
   () => submitting.value || pending.value || !!error.value || nonAuthorised.value,
 )
+
+const reactiveBookmark = ref(props.bookmark)
 
 const peerURL = computed(() => {
   return props.sessionV2?.peer?.metadata?.url
@@ -78,7 +81,7 @@ const transactions = computed(() => {
 })
 
 const options = computed(() => {
-  const [transactionOrTransactions, chainId, options] = props.payload.params
+  const [_, __, options] = props.payload.params
 
   return options || {}
 })
@@ -95,7 +98,7 @@ const {
 async function handleSubmit() {
   try {
     toggle(true)
-    const id = getActualId(transactions.value)
+    const id = getActualId(transactions.value, options.value?.id)
 
     const transactionHash = await sendTransactions(
       transactions.value,
@@ -167,7 +170,7 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
     if (networksSimulationNotSupported.includes(Number(props.chainId)))
       throw new Error('Simulation not supported on this network.')
 
-    const id = getActualId(transactions.value)
+    const id = getActualId(transactions.value, options.value?.id)
 
     return http('/api/simulate', {
       method: 'POST',
@@ -182,7 +185,7 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
         }),
         avocadoSafe: safeAddress.value,
         chainId: props.chainId,
-        id: id || options.value?.id,
+        id,
       },
     }) as Promise<ISimulation>
   },
@@ -214,6 +217,31 @@ function handleReject() {
   emit('reject')
 }
 
+async function handleCreateBookmark() {
+  const { success, payload } = await openCreateBookmarkModal({
+    chainId: props.chainId,
+    payload: props.payload,
+    session: props.sessionV2,
+    metadata: props.metadata,
+    type: 'wc',
+  })
+
+  if (success && payload) {
+    console.log(payload)
+    reactiveBookmark.value = payload
+  }
+}
+
+async function handleUpdateBookmark() {
+  const { success, payload } = await openCreateBookmarkModal({
+    ...props.bookmark,
+    edit: true,
+  })
+
+  if (success)
+    reactiveBookmark.value = payload
+}
+
 onUnmounted(() => {
   clearNuxtData('simulationDetails')
 })
@@ -221,7 +249,7 @@ onUnmounted(() => {
 
 <template>
   <form class="flex flex-col gap-7.5" @submit.prevent="handleSubmit">
-    <audio src="/audio/alert.mp3" autoplay />
+    <audio v-if="!bookmark" src="/audio/alert.mp3" autoplay />
     <div class="font-semibold leading-[30px] text-center sm:text-left">
       <span v-if="isSign">Send Transaction: Permit2 Approval</span>
       <span v-else>Send Transaction</span>
@@ -316,5 +344,6 @@ onUnmounted(() => {
         Submit
       </CommonButton>
     </div>
+    <ManageBookmark :bookmark="reactiveBookmark" @update-bookmark="handleUpdateBookmark" @create-bookmark="handleCreateBookmark" />
   </form>
 </template>

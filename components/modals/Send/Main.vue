@@ -1,22 +1,16 @@
 <script setup lang='ts'>
-const props = defineProps({
-  chainId: {
-    type: [String, Number],
-    required: true,
-  },
-  address: {
-    type: String,
-    required: false,
-  },
-  contact: {
-    type: Object as PropType<IContact>,
-    required: false,
-  },
-})
+const props = defineProps<{
+  chainId: string | number
+  address?: string
+  contact?: IContact
+  bookmark?: IBookmark
+}>()
 
 const emit = defineEmits(['destroy'])
 
-const { initialize, reset, isCrossChain, data, steps, activeStep } = useSend()
+const { initialize, reset, isCrossChain, data, actualAddress, steps, activeStep } = useSend(props.bookmark?.sendData)
+
+const reactiveBookmark = ref(props.bookmark)
 
 const contact = ref<IContact | undefined>(props.contact)
 
@@ -27,6 +21,34 @@ initialize({
   address: props.address,
   contact: props.contact,
 })
+
+async function handleUpdateBookmark() {
+  const { success, payload } = await openCreateBookmarkModal({
+    ...props.bookmark,
+    edit: true,
+    sendData: {
+      ...data.value,
+      address: actualAddress.value,
+    },
+  })
+
+  if (success)
+    reactiveBookmark.value = payload
+}
+
+async function handleCreateBookmark() {
+  const { success, payload } = await openCreateBookmarkModal({
+    chainId: props.chainId,
+    sendData: {
+      ...data.value,
+      address: actualAddress.value,
+    },
+    type: 'transfer',
+  })
+
+  if (success && payload)
+    reactiveBookmark.value = payload
+}
 
 async function handleEdit() {
   if (!props.contact)
@@ -92,5 +114,7 @@ onUnmounted(() => {
     </div>
 
     <component :is="steps[activeStep].component" />
+
+    <ManageBookmark v-if="activeStep === 1" class="mt-5" :bookmark="reactiveBookmark" @update-bookmark="handleUpdateBookmark" @create-bookmark="handleCreateBookmark" />
   </div>
 </template>

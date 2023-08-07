@@ -3,18 +3,20 @@ import SVGQuestionCircle from '~/assets/images/icons/question-circle.svg?compone
 
 const props = defineProps<{
   chainId: number | string
-  data: any
+  actions: any
   isGasTopup?: boolean
+  options?: any
 }>()
 
 const emit = defineEmits(['resolve', 'reject'])
 
 const { data, pending, error } = useEstimatedFee(
-  ref(props.data),
+  ref(props.actions),
   ref(String(props.chainId)),
   {
     immediate: true,
     disabled: () => props.isGasTopup,
+    options: props.options || {},
   },
 )
 

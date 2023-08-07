@@ -16,6 +16,20 @@ const { account } = useWeb3()
 const { selectedSafe } = storeToRefs(useSafe())
 const { checkTransactionExecuted } = useAvocadoSafe()
 const { isAccountCanSign } = useMultisig()
+const { tokens } = storeToRefs(useTokens())
+
+const transformedTokens = computed(() => {
+  if (!tokens.value)
+    return []
+
+  return tokens.value.map((i) => {
+    return {
+      ...i,
+      chain_id: i.chainId,
+      logo_url: i.logoURI,
+    }
+  })
+})
 
 const actualRequiredSigner = computed(() => props.activeTab === 'completed' ? props.item.confirmations_required : props.requiredSigner || 1)
 
@@ -96,7 +110,7 @@ async function handleClick(item: IMultisigTransaction) {
           />
         </span>
         <span class="flex-1 flex-col flex gap-2 max-w-sm truncate">
-          <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" v-once :key="metadata" class="text-left whitespace-nowrap" compact :chain_id="item.chain_id" :metadata="metadata" />
+          <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" :key="metadata" v-memo="[tokens]" :tokens="transformedTokens" class="text-left whitespace-nowrap" compact :chain_id="item.chain_id" :metadata="metadata" />
         </span>
         <span class="whitespace-nowrap text-left">
           {{ formatTimeAgo(new Date(activeTab === 'completed' ? item.executed_at : item.created_at)) }}
@@ -160,7 +174,7 @@ async function handleClick(item: IMultisigTransaction) {
         </div>
         <hr class="border-slate-150 w-full dark:border-slate-800">
         <div class="py-3 px-4">
-          <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" v-once :key="metadata" class="text-left text-xs" compact :chain_id="item.chain_id" :metadata="metadata" />
+          <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" :key="metadata" v-memo="[tokens]" :tokens="transformedTokens" class="text-left text-xs" compact :chain_id="item.chain_id" :metadata="metadata" />
         </div>
         <hr class="border-slate-150 w-full dark:border-slate-800">
         <div class="flex items-center py-3 px-4 gap-2.5 whitespace-nowrap text-xs">

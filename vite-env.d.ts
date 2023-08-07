@@ -541,56 +541,14 @@ type IDefiToken = {
   price?: string;
   tokenAddress: string;
 }
- interface ISafe {
-  fully_deployed: number
-  id: number
-  safe_address: string
-  owner_address: string
-  created_at: string
-  updated_at: string
-  multisig: 0 | 1
-  deployed: Record<string, boolean>,
-  version: Record<string, string>
-  authorities: Record<string, string[]>
-  signers: Record<string, string[]>
- }
-
-interface IRequiredSigners {
-  chainId: number | string
-  requiredSignerCount: number
-  signerCount: number
-  signers: string[]
- }
-
-
-interface IAuthority {
-  address: string
-  chainIds: string[]
-  type?: 'personal' | 'multisig'
-}
-
-interface ISigner {
-  address: string
-  chainIds: string[]
-}
-
-interface IManageAuthorityModalParams {
-  authorityAddress: string
-  chainIds?: string[]
-}
-
-interface IAuthorityTx {
-  to: string
-  data: string
-  value: string
-  operation: string
-  chainId: number
-}
-
-type ChainFees = Record<string, ICalculatedFee>
-type ChainFeeErrors = Record<string, string>
 
 interface ISignerAddress {
   name: string
   address: string
+}
+
+interface INavigationTab {
+  label: string;
+  value: 'dapps' | 'balances' | 'bookmarks';
+  query?: string;
 }

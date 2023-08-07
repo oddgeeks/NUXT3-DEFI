@@ -2,7 +2,6 @@
 import { storeToRefs } from 'pinia'
 import LinkSVG from '~/assets/images/icons/external-link.svg?raw'
 import CheckCircle from '~/assets/images/icons/check-circle.svg?component'
-import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg?component'
 import GroupIconSVG from '~/assets/images/icons/group.svg?component'
 import IndividualIconSVG from '~/assets/images/icons/individual.svg?component'
 
@@ -40,22 +39,25 @@ function selectType(type: string) {
 </script>
 
 <template>
-  <div class="flex flex-col gap-[30px] flex-1">
+  <div class="flex flex-col gap-7.5 flex-1">
     <TotalBalance />
     <div class="flex flex-col gap-3.5">
-      <DApps />
+      <Tabs />
       <YourWallet />
     </div>
+    <DApps v-if="$route.query.tab === undefined" />
+    <Bookmarks v-if="$route.query.tab === 'bookmarks'" />
+
     <div class="flex gap-5 lg:flex-row flex-col flex-1">
       <div class="flex relative flex-col w-full gap-5">
         <div class="flex flex-col gap-5">
-          <WarningsUnstableDappVersion v-if="unstableDappNetworks.length" />
+          <WarningsUnstableDappVersion v-if="unstableDappNetworks?.length" />
           <div class="flex justify-between sm:pr-7.5">
             <div class="flex gap-7.5">
               <h2 class="font-semibold inline-flex gap-2.5 items-center">
                 Balances
                 <button v-if="account" @click="handleOpenDialog">
-                  <QuestionCircleSVG class="w-5 h-5 text-primary" />
+                  <SvgoQuestionCircle class="w-5 h-5 text-primary" />
                 </button>
               </h2>
               <ClientOnly v-if="account">

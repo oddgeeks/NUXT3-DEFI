@@ -4,7 +4,7 @@ import { HeadlessUiResolver } from 'unplugin-vue-components/resolvers'
 const meta = {
   title: 'Avocado',
   description:
-    'The multi-network gas and account abstraction allowing you to experience web3 more seamlessly.',
+    'The web3 superwallet - making your web3 interactions much simpler & safer',
   image: 'https://avocado.instadapp.io/logo.png',
 }
 

@@ -38,7 +38,7 @@
     "@walletconnect/ethereum-provider": "^2.8.6",
     "@walletconnect/modal": "^2.5.9",
     "@walletconnect/types": "^2.8.6",
-    "@walletconnect/web3wallet": "^1.8.5",
+    "@walletconnect/web3wallet": "^1.8.8",
     "@web3-react/injected-connector": "^6.0.7",
     "@web3-react/network-connector": "^6.2.9",
     "@web3-react/torus-connector": "^6.2.9",
@@ -74,7 +74,8 @@
     "yup": "^0.32.11"
   },
   "dependencies": {
-    "@instadapp/avocado-base": "0.0.43",
+    "@instadapp/avocado-base": "0.0.47",
+    "@splidejs/vue-splide": "^0.6.12",
     "@walletconnect/utils": "^2.8.6",
     "alchemy-sdk": "^2.7.4",
     "canvas-confetti": "^1.6.0",

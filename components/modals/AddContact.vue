@@ -15,7 +15,6 @@ const emit = defineEmits(['resolve', 'reject'])
 
 const { contacts, addContact, editContact } = useContacts()
 const { account } = useWeb3()
-const { safeAddress } = useAvocadoSafe()
 
 const networks = [
   {
@@ -59,16 +58,24 @@ const {
             return false
 
           return !contacts.value.some(
-            contact =>
-              contact.address.toLowerCase() === value?.toLowerCase()
-              && contact.chainId == parent.chainId,
+            (contact) => {
+              const isAddressMatch = contact.address.toLowerCase() === value?.toLowerCase()
+
+              if (!isAddressMatch)
+                return false
+
+              if (contact.chainId === '' || parent.chainId === '')
+                return true
+
+              return contact.chainId == parent.chainId
+            },
           )
         },
       ),
   }),
 })
 
-const { value: chainId, setValue: setChainId } = useField<string>(
+const { value: chainId } = useField<string>(
   'chainId',
   undefined,
   {

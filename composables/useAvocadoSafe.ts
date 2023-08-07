@@ -251,48 +251,18 @@ export function useAvocadoSafe() {
   async function createProposalOrSignDirecty(args: IGenerateMultisigSignatureParams) {
     const { chainId, actions, nonce, metadata, clearModals = true, estimatedFee = false, rejection, rejectionId, options, transactionType = 'others' } = args
 
-    const { success, payload } = await openEditNonceModal({ chainId, actions, defaultNonce: nonce, estimatedFee, rejection, rejectionId, transactionType })
-
-    const actualNonce = !isUndefined(nonce) ? nonce : payload?.nonce
+    const { success, payload } = await openEditNonceModal({ chainId, actions, defaultNonce: nonce, estimatedFee, rejection, rejectionId, transactionType, metadata, options })
 
     if (!success)
-      throw new Error('Transaction canceled')
+      return
 
-    const signOnly = payload.signOnly
+    if (payload.txHash)
+      return payload.txHash
 
-    const params = await generateMultisigSignatureAndSign({ chainId, actions, nonce: actualNonce, note: payload.note, metadata, options })
+    if (clearModals)
+      clearAllModals()
 
-    // generate proposal
-    const { data } = await axios.post<IMultisigTransaction>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {
-      chain_id: String(chainId),
-      status: 'pending',
-      signer: params?.signatureParams,
-      data: params?.castParams,
-      note: payload.note,
-      nonce,
-    }, {
-      baseURL: multisigURL,
-    })
-
-    if (data.confirmations_required === 1 && !signOnly) {
-      const txHash = await multisigBroadcast({
-        proposalId: data.id,
-        confirmations: data.confirmations,
-        message: data.data,
-        owner: selectedSafe.value?.owner_address!,
-        safe: selectedSafe.value?.safe_address!,
-        targetChainId: chainId,
-      })
-
-      return txHash
-    }
-    else {
-      // handle multisig flow
-      if (clearModals)
-        clearAllModals()
-
-      openReviewMultisigTransaction(data.id, rejection)
-    }
+    openReviewMultisigTransaction(payload.id, rejection)
   }
 
   async function signExecutionData(params: IMultisigBroadcastParams, sortedSignatures: any[]) {
@@ -369,10 +339,8 @@ export function useAvocadoSafe() {
 
   async function signMultisigData({ chainId, data }: any) {
     await switchToAvocadoNetwork()
-    const providerWithSigner = library.value
 
-    await providerWithSigner.send('eth_requestAccounts', [])
-    const avoSigner = providerWithSigner.getSigner()
+    const avoSigner = library.value.getSigner()
 
     const contract = AvoMultisigImplementation__factory.connect(safeAddress.value, getRpcProvider(chainId))
 
@@ -434,10 +402,12 @@ export function useAvocadoSafe() {
       ? {
           rejection_id: tx.id,
           status: 'pending',
+          chain_id: tx.chain_id,
         }
       : {
           nonce: tx.nonce,
           status: 'pending',
+          chain_id: tx.chain_id,
         }
 
     const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${tx.safe_address}/transactions`, {
@@ -611,10 +581,10 @@ export function useAvocadoSafe() {
     return Math.max(maxNonce, currentNonce - 1) + 1
   }
 
-  function getActualId(tx: any[]) {
+  function getActualId(tx: any[], defaultId = 0) {
     const isDelegateCall = tx.some(i => i?.operation == '1')
 
-    return isSafeMultisig.value && isDelegateCall ? '1' : undefined
+    return isSafeMultisig.value && isDelegateCall ? '1' : defaultId
   }
 
   function checkTransactionExecuted(tx: IMultisigTransaction) {

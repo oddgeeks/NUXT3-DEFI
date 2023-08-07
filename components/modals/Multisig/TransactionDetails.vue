@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { wait } from '@instadapp/utils'
 import { formatTimeAgo } from '@vueuse/core'
 import { isUndefined } from '@walletconnect/utils'
 import axios from 'axios'
@@ -76,21 +75,37 @@ const isSafeDoesntMatch = computed(() => {
 })
 const proposalOwnerAddress = computed(() => transactionRef.value.confirmations.length ? transactionRef.value.confirmations[0].address : null)
 
+const sameNonceExistMessage = computed(() => {
+  if (isGeneralLoading.value)
+    return undefined
+  return isSameNonceExist.value ? 'A rejection proposal for this txn already exists' : undefined
+})
+
+const nonceNotMatchMessage = computed(() => {
+  if (isGeneralLoading.value)
+    return undefined
+  return isNonceNotMatch.value ? `Please execute transaction #${currentNonce.value} first.` : errorMessage.value
+})
+
 const { data: isSameNonceExist } = useAsyncData(`${transactionRef.value.id}-same-nonce`, async () => {
   const params = isNonseq.value
     ? {
         rejection_id: transactionRef.value.id,
         status: 'pending',
+        chain_id: transactionRef.value.chain_id,
       }
     : {
         nonce: transactionRef.value.nonce,
         status: 'pending',
+        chain_id: transactionRef.value.chain_id,
       }
 
   const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${transactionRef.value.safe_address}/transactions`, {
     params,
     baseURL: multisigURL,
   })
+
+  console.log(data)
 
   return isNonseq.value ? data.meta.total > 0 : data.meta.total > 1
 }, {
@@ -141,8 +156,6 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
     if (networksSimulationNotSupported.includes(Number(transactionRef.value.chain_id)))
       throw new Error('Simulation not supported on this network.')
 
-    const id = getActualId(transactionRef.value.data.params.actions)
-
     return http('/api/simulate', {
       method: 'POST',
       body: {
@@ -156,7 +169,7 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
         }),
         avocadoSafe: transactionRef.value.safe_address,
         chainId: transactionRef.value.chain_id,
-        id,
+        id: transactionRef.value.data.params.id,
       },
     }) as Promise<ISimulation>
   },
@@ -203,7 +216,6 @@ async function handleExecute(item: IMultisigTransaction) {
     })
 
     if (hash) {
-      wait(2000)
       emit('destroy')
       showPendingTransactionModal(hash, item.chain_id, 'send')
     }
@@ -225,7 +237,12 @@ async function handleExecute(item: IMultisigTransaction) {
 async function handleReject(transaction: IMultisigTransaction) {
   try {
     pending.value.reject = true
-    await rejectMultisigTransaction(transaction)
+    const txHash = await rejectMultisigTransaction(transaction)
+
+    if (txHash) {
+      emit('destroy')
+      showPendingTransactionModal(txHash, transaction.chain_id, 'send')
+    }
   }
   catch (e: any) {
     const message = parseTransactionError(e)
@@ -260,7 +277,15 @@ async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
 
   try {
     const isGasTopup = actionType.value === 'gas-topup'
-    const { success } = await openExecuteTransactionModal(transaction.chain_id, transaction.data.params.actions, isGasTopup)
+
+    const { success } = await openExecuteTransactionModal({
+      chainId: transaction.chain_id,
+      actions: transaction.data.params.actions,
+      isGasTopup,
+      options: {
+        id: transaction.data.params.id,
+      },
+    })
 
     if (success)
       await handleExecute(transaction)
@@ -344,6 +369,7 @@ onUnmounted(() => {
             <div class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
               <span class="text-slate-400 text-xs">Avocado Multisig Hash</span>
               <span class="text-sm flex items-center gap-2 font-medium">
+                {{ isNonseq ? 'Non-Sequential' : 'Sequential' }} /
                 {{ shortenHash(transactionRef.id) }}
                 <Copy icon-only :text="transactionRef.id" />
 
@@ -501,14 +527,14 @@ onUnmounted(() => {
           </button>
 
           <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch || !canSign || isGeneralLoading" class="grid grid-cols-2 gap-2.5 items-center">
-            <Tippy v-if="!isRejection" :content="isSameNonceExist ? 'A rejection proposal for this txn already exists' : undefined" tag="div">
+            <Tippy v-if="!isRejection" :content="sameNonceExistMessage" tag="div">
               <CommonButton color="red" :disabled="isRejection || !!isSameNonceExist" :loading="pending.reject" size="lg" class="justify-center w-full" @click="handleReject(transactionRef)">
                 Reject
               </CommonButton>
             </Tippy>
             <div
               v-if="isConfirmationsMatch && isSignedAlready" v-tippy="{
-                content: isNonceNotMatch ? `Please execute transaction #${currentNonce} first.` : errorMessage,
+                content: nonceNotMatchMessage,
               }"
             >
               <CommonButton

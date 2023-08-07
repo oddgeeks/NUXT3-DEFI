@@ -1792,10 +1792,10 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@instadapp/avocado-base@0.0.43":
-  version "0.0.43"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado-base/-/avocado-base-0.0.43.tgz#47838fffe8b8d3591090dbd247fc52cefc27ac79"
-  integrity sha512-nf4WBrVnDy8/6HUNwM565s/wE1SUk5vayZj0EgMqPOto7dwfnrKNwSaORlSj126nKRmyBW8aw8/9HicL442/GA==
+"@instadapp/avocado-base@0.0.47":
+  version "0.0.47"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado-base/-/avocado-base-0.0.47.tgz#6e8a990a47696fe4040c0f473d7d433000bbe7d9"
+  integrity sha512-DgfYFlnQAkm0RQ8AvJaBlCqG3+Ab+XwQw97v/WWjV9VgiSOuHx9Xh/VTSiAcvGmzRG+gZ7nbyeKpR0da35h6lw==
   dependencies:
     "@vueuse/nuxt" "^10.2.0"
     bignumber.js "^9.1.1"
@@ -2437,6 +2437,18 @@
     node-fetch "^2.6.12"
     rpc-websockets "^7.5.1"
     superstruct "^0.14.2"
+
+"@splidejs/splide@^4.1.3":
+  version "4.1.4"
+  resolved "https://registry.yarnpkg.com/@splidejs/splide/-/splide-4.1.4.tgz#02d029360569e7d75d28357a9727fc48322015a3"
+  integrity sha512-5I30evTJcAJQXt6vJ26g2xEkG+l1nXcpEw4xpKh0/FWQ8ozmAeTbtniVtVmz2sH1Es3vgfC4SS8B2X4o5JMptA==
+
+"@splidejs/vue-splide@^0.6.12":
+  version "0.6.12"
+  resolved "https://registry.yarnpkg.com/@splidejs/vue-splide/-/vue-splide-0.6.12.tgz#063731cf8ec2d1f9a14ffacbe3a315db63ab6ff2"
+  integrity sha512-eQb8pnGMN8Tr0FVaQo1PUMZlMHl8fSqHNXPTx79eeE2dkZqbsvq6jRzXoT9ZF7hFkxdOEmB6qYNp93SUwV684g==
+  dependencies:
+    "@splidejs/splide" "^4.1.3"
 
 "@stablelib/aead@^1.0.1":
   version "1.0.1"
@@ -3619,7 +3631,7 @@
     query-string "7.1.3"
     uint8arrays "^3.1.0"
 
-"@walletconnect/web3wallet@^1.8.5":
+"@walletconnect/web3wallet@^1.8.8":
   version "1.8.8"
   resolved "https://registry.yarnpkg.com/@walletconnect/web3wallet/-/web3wallet-1.8.8.tgz#f8424a96617cacecba633343cd21e0144cc734da"
   integrity sha512-/dkP5jOvoRIi5RggoeSoxGvsDfZCYvC0AgwwXpzVURZKcac/h2iN2DbMHnV4L95RmGmrlQ6Jcv59S3EqsVOk5w==
