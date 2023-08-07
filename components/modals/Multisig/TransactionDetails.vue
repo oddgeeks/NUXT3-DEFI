@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { wait } from '@instadapp/utils'
 import { formatTimeAgo } from '@vueuse/core'
 import { isUndefined } from '@walletconnect/utils'
 import axios from 'axios'
@@ -93,16 +92,20 @@ const { data: isSameNonceExist } = useAsyncData(`${transactionRef.value.id}-same
     ? {
         rejection_id: transactionRef.value.id,
         status: 'pending',
+        chain_id: transactionRef.value.chain_id,
       }
     : {
         nonce: transactionRef.value.nonce,
         status: 'pending',
+        chain_id: transactionRef.value.chain_id,
       }
 
   const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${transactionRef.value.safe_address}/transactions`, {
     params,
     baseURL: multisigURL,
   })
+
+  console.log(data)
 
   return isNonseq.value ? data.meta.total > 0 : data.meta.total > 1
 }, {
@@ -215,7 +218,6 @@ async function handleExecute(item: IMultisigTransaction) {
     })
 
     if (hash) {
-      wait(2000)
       emit('destroy')
       showPendingTransactionModal(hash, item.chain_id, 'send')
     }
@@ -237,7 +239,12 @@ async function handleExecute(item: IMultisigTransaction) {
 async function handleReject(transaction: IMultisigTransaction) {
   try {
     pending.value.reject = true
-    await rejectMultisigTransaction(transaction)
+    const txHash = await rejectMultisigTransaction(transaction)
+
+    if (txHash) {
+      emit('destroy')
+      showPendingTransactionModal(txHash, transaction.chain_id, 'send')
+    }
   }
   catch (e: any) {
     const message = parseTransactionError(e)

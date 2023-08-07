@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { isUndefined } from '@walletconnect/utils'
 import axios from 'axios'
 import { storeToRefs } from 'pinia'
 
@@ -10,16 +11,20 @@ const props = defineProps<{
   rejection?: boolean
   rejectionId?: string
   transactionType?: MultisigTransactionType
+  metadata?: string
+  options?: any
 }>()
 
-const emit = defineEmits(['resolve'])
+const emit = defineEmits(['resolve', 'destroy'])
 const { selectedSafe } = storeToRefs(useSafe())
-const { getActualId, safeAddress } = useAvocadoSafe()
+const { getActualId, safeAddress, generateMultisigSignatureAndSign, multisigBroadcast } = useAvocadoSafe()
 const { requiredSigners } = storeToRefs(useMultisig())
+const { parseTransactionError } = useErrorHandler()
 
 const isDeleteOrAddSigner = props.transactionType === 'remove-signers' || props.transactionType === 'add-signers'
 const recommendedNonce = isDeleteOrAddSigner ? -1 : undefined
 
+const isSubmitting = ref(false)
 const nonce = ref<number | undefined>(recommendedNonce)
 const note = ref<string | undefined>(undefined)
 const detailsRef = ref<HTMLDetailsElement>()
@@ -28,7 +33,7 @@ const [signAndExecute, signAndExecuteToggle] = useToggle(false)
 
 const requiredSignersByChain = computed(() => requiredSigners.value.find(i => i.chainId == props.chainId))
 
-const { data: seqResponse, status } = useAsyncData<IMultisigTransactionResponse>(`${safeAddress.value}-seq-count`, async () => {
+const { data: seqResponse } = useAsyncData<IMultisigTransactionResponse>(`${safeAddress.value}-seq-count`, async () => {
   const { data } = await axios.get(`/safes/${safeAddress.value}/transactions`, {
     params: {
       status: 'pending',
@@ -44,9 +49,9 @@ const { data: seqResponse, status } = useAsyncData<IMultisigTransactionResponse>
 })
 
 const isExecutionNotAvailable = computed(() => {
-  if (status.value === 'pending')
-    return true
-  return nonce.value === -1 ? false : gt(seqResponse.value?.meta?.total || 0, 0)
+  const actualNonce = props.rejection ? props.defaultNonce : nonce.value
+
+  return actualNonce === -1 ? false : gt(seqResponse.value?.meta?.total || 0, 0)
 })
 
 const isExecuteReady = computed(() => {
@@ -58,6 +63,8 @@ const isExecuteReady = computed(() => {
 whenever(isExecuteReady, () => {
   if (isExecuteReady.value)
     signAndExecuteToggle(true)
+}, {
+  immediate: true,
 })
 
 const { data, error, pending: feePending } = useEstimatedFee(ref(props.actions), ref(props.chainId), {
@@ -76,12 +83,65 @@ const transactionTypes = [
   },
 ]
 
-function onSubmit() {
-  emit('resolve', true, {
-    nonce: nonce.value,
-    note: note.value,
-    signOnly: !signAndExecute.value,
-  })
+async function onSubmit() {
+  try {
+    isSubmitting.value = true
+    const payload = {
+      nonce: nonce.value,
+      note: note.value,
+      signOnly: !signAndExecute.value,
+    }
+
+    const actualNonce = !isUndefined(props.defaultNonce) ? props.defaultNonce : payload?.nonce
+
+    const signOnly = payload.signOnly
+
+    const params = await generateMultisigSignatureAndSign({ chainId: props.chainId, actions: props.actions, nonce: actualNonce, note: payload.note, metadata: props.metadata, options: props.options })
+
+    // generate proposal
+    const { data } = await axios.post<IMultisigTransaction>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {
+      chain_id: String(props.chainId),
+      status: 'pending',
+      signer: params?.signatureParams,
+      data: params?.castParams,
+      note: payload.note,
+      nonce,
+    }, {
+      baseURL: multisigURL,
+    })
+
+    if (data.confirmations_required === 1 && !signOnly) {
+      const txHash = await multisigBroadcast({
+        proposalId: data.id,
+        confirmations: data.confirmations,
+        message: data.data,
+        owner: selectedSafe.value?.owner_address!,
+        safe: selectedSafe.value?.safe_address!,
+        targetChainId: props.chainId,
+      })
+
+      emit('resolve', true, {
+        id: data.id,
+        txHash,
+      })
+    }
+    else {
+      emit('resolve', true, {
+        id: data.id,
+      })
+    }
+  }
+  catch (e: any) {
+    const parsed = parseTransactionError(e)
+
+    openSnackbar({
+      message: parsed.formatted,
+      type: 'error',
+    })
+  }
+  finally {
+    isSubmitting.value = false
+  }
 }
 
 const { data: simulationDetails, error: simulationError, pending } = useAsyncData(
@@ -317,7 +377,7 @@ function getNonceTooltip(value: number | undefined) {
       />
       I want to sign & execute in the same txn
     </button>
-    <CommonButton :disabled="feePending" :loading="feePending" class="justify-center mx-7.5 my-5" size="lg" type="submit">
+    <CommonButton :disabled="feePending || isSubmitting" :loading="feePending || isSubmitting" class="justify-center mx-7.5 my-5" size="lg" type="submit">
       {{ signAndExecute ? 'Sign and Execute Transaction' : 'Sign and Send for Approval' }}
     </CommonButton>
   </form>

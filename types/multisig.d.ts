@@ -118,4 +118,6 @@ interface IOpenNonceModalParams {
   rejection?: boolean
   rejectionId?: string
   transactionType: 'add-signers' | 'remove-signers' | 'others'
+  metadata?: string
+  options?: any
 }
