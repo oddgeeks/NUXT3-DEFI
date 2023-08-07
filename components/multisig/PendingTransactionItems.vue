@@ -6,6 +6,8 @@ const props = defineProps<{
   activeTab: string | undefined
 }>()
 
+const abortController = ref<AbortController | null>(null)
+
 const { getRequiredSigner } = useMultisig()
 const { getCurrentNonce } = useAvocadoSafe()
 const { fetchSafe } = useSafe()
@@ -21,35 +23,56 @@ const isDetailsOpen = useCookie<boolean>(`multisig-collapse-${route.params.safe}
   expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
 })
 
-const { data, refresh } = useAsyncData(`multisig-${route.params.safe}-${props.chainId}`, async () => {
-  const isCompleted = props.activeTab === 'completed'
+const { data, refresh, pending } = useAsyncData(`multisig-${route.params.safe}-${props.chainId}-${props.activeTab}`, async () => {
+  try {
+    if (abortController.value)
+      abortController.value.abort()
 
-  const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${route.params.safe}/transactions`, {
-    params: {
-      status: isCompleted ? ['success', 'failed'] : 'pending',
-      chain_id: props.chainId,
-      nonce_type: isCompleted ? undefined : props.activeTab,
-      page: page.value,
-    },
-    baseURL: multisigURL,
-  })
+    pause()
 
-  data.data = data.data.map((i) => {
-    try {
-      const metadata = i.data.params?.metadata ? decodeMetadata(i.data.params.metadata) as string[] : []
-      const rejectionMetadata = metadata.find((i: any) => i?.type === 'rejection') as any
+    abortController.value = new AbortController()
 
-      return {
-        ...i,
-        groupKey: i.nonce != '-1' ? i.nonce : rejectionMetadata?.id ? rejectionMetadata.id : i.id,
+    const isCompleted = props.activeTab === 'completed'
+
+    const { data: axiosData } = await axios.get<IMultisigTransactionResponse>(`/safes/${route.params.safe}/transactions`, {
+      signal: abortController.value?.signal,
+      params: {
+        status: isCompleted ? ['success', 'failed'] : 'pending',
+        chain_id: props.chainId,
+        nonce_type: isCompleted ? undefined : props.activeTab,
+        page: page.value,
+      },
+      baseURL: multisigURL,
+    })
+
+    abortController.value = null
+
+    axiosData.data = axiosData.data.map((i) => {
+      try {
+        const metadata = i.data.params?.metadata ? decodeMetadata(i.data.params.metadata) as string[] : []
+        const rejectionMetadata = metadata.find((i: any) => i?.type === 'rejection') as any
+
+        return {
+          ...i,
+          groupKey: i.nonce != '-1' ? i.nonce : rejectionMetadata?.id ? rejectionMetadata.id : i.id,
+        }
       }
-    }
-    catch {
-      return i
-    }
-  })
+      catch {
+        return i
+      }
+    })
 
-  return data
+    return axiosData
+  }
+  catch (e: any) {
+    if (e.message === 'canceled')
+      return
+
+    throw e
+  }
+  finally {
+    resume()
+  }
 }, {
   watch: [() => props.activeTab, page],
   immediate: true,
@@ -107,9 +130,11 @@ function refreshAll() {
   refreshSigner()
 }
 
-useIntervalFn(() => {
+const { resume, pause } = useIntervalFn(() => {
   refreshAll()
-}, 5000)
+}, 5000, {
+  immediate: false,
+})
 
 watch(lastModal, () => {
   // Refresh data when modal is closed
@@ -124,11 +149,15 @@ watch(lastModal, () => {
       <ChainLogo class="w-5 h-5" :chain="chainId" />
       <span class="text-white">
         {{ chainIdToName(chainId) }}
+
       </span>
 
       <div>
         {{ data.meta.total }} total transaction{{ data.meta.total > 1 ? 's' : '' }}
       </div>
+
+      <SvgSpinner v-if="pending" class="text-primary" />
+
       <SvgoChevronDown
         class="w-5 text-slate-400 ml-auto group-open:rotate-180"
       />
