@@ -60,7 +60,7 @@ function handleOpenBookmark(bookmark: IBookmark) {
           </li>
         </SplideSlide>
       </Splide>
-      <p v-else class="font-medium text-sm text-slate-400">
+      <p v-else class="font-medium text-sm text-slate-400 leading-[22px]">
         Bookmark your most used transactions with Transaction Shortcuts to quickly execute common actions. Find the bookmark on the transaction confirmation panel.
       </p>
     </div>
