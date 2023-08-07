@@ -22,10 +22,10 @@ function defaultValues() {
 
 const activeStep = ref(0)
 
-const data = ref(defaultValues())
+const data = ref<ISendData>(defaultValues())
 const actualAddress = ref('')
 
-export function useSend() {
+export function useSend(initialSendData?: ISendData) {
   const steps = [
     {
       name: 'From',
@@ -163,6 +163,11 @@ export function useSend() {
 
     if (!actualTokenAddress) {
       console.error('No tokens found')
+      return
+    }
+
+    if (initialSendData) {
+      data.value = JSON.parse(JSON.stringify(initialSendData))
       return
     }
 

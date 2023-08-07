@@ -73,6 +73,9 @@ export async function getEtherTransfersByEtherscan(from: string,
   do {
     const res: any = await $fetch(
       `${baseUrl}/api?module=account&action=txlistinternal&address=${from}&sort=asc&startblock=0&page=${page}`,
+      {
+        retry: 3,
+      },
     )
 
     if (!res.result)
