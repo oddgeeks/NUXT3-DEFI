@@ -37,6 +37,7 @@ onMounted(() => {
 <template>
   <div>
     <div class="sm:p-7.5 p-5 flex flex-col gap-7.5">
+      <Steps v-if="activeStep && totalSteps" class="mr-10" :current-step="activeStep" :total-steps="totalSteps" />
       <div>
         <h2 class="text-lg">
           Update Treshold
@@ -49,7 +50,6 @@ onMounted(() => {
           </span>
         </h3>
       </div>
-      <Steps v-if="activeStep && totalSteps" :current-step="activeStep" :total-steps="totalSteps" />
     </div>
 
     <hr class="border-slate-150 dark:border-slate-800">

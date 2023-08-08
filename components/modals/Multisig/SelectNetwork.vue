@@ -40,6 +40,7 @@ function handleBack() {
 <template>
   <form @submit.prevent="handleSubmit">
     <div class="flex flex-col gap-7.5 sm:p-7.5 p-5">
+      <Steps class="mr-10" :total-steps="4" :current-step="3" />
       <div class="flex gap-[14px]">
         <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
           3
@@ -50,7 +51,6 @@ function handleBack() {
           </h1>
         </div>
       </div>
-      <Steps :total-steps="4" :current-step="3" />
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <div class="sm:p-7.5 py-5 px-6">

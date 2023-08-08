@@ -120,6 +120,8 @@ onMounted(() => {
 <template>
   <form @submit="onSubmit">
     <div class="flex flex-col sm:p-7.5 p-5 gap-7.5">
+      <Steps class="mr-10" :total-steps="4" :current-step="1" />
+
       <div class="flex gap-[14px]">
         <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
           1
@@ -133,7 +135,6 @@ onMounted(() => {
           </h2>
         </div>
       </div>
-      <Steps :total-steps="4" :current-step="1" />
     </div>
 
     <hr class="border-slate-150 dark:border-slate-800">
