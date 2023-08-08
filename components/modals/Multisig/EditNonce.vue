@@ -20,6 +20,7 @@ const { selectedSafe } = storeToRefs(useSafe())
 const { getActualId, safeAddress, generateMultisigSignatureAndSign, multisigBroadcast } = useAvocadoSafe()
 const { requiredSigners } = storeToRefs(useMultisig())
 const { parseTransactionError } = useErrorHandler()
+const { clearAllModals } = useModal()
 
 const isDeleteOrAddSigner = props.transactionType === 'remove-signers' || props.transactionType === 'add-signers'
 const recommendedNonce = isDeleteOrAddSigner ? -1 : undefined
@@ -134,6 +135,15 @@ async function onSubmit() {
   catch (e: any) {
     console.log(e)
     const parsed = parseTransactionError(e)
+
+    if (e.cause?.message === 'sign-execution-data-failed') {
+      clearAllModals()
+      return openDialogModal({
+        type: 'error',
+        title: 'Sign execution data failed',
+        content: 'Transaction successfully proposed and transaction execution signature got cancelled.',
+      })
+    }
 
     openSnackbar({
       message: parsed.formatted,

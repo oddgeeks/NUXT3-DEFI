@@ -191,13 +191,18 @@ export function useAvocadoSafe() {
     const signerCount = requiredSigners.value.find(i => i.chainId == params.targetChainId)?.signerCount || 1
 
     if (signerCount > 1) {
-      const executionSignature = await signExecutionData(params, sortedSignatures)
+      try {
+        const executionSignature = await signExecutionData(params, sortedSignatures)
 
-      console.log(executionSignature)
-
-      Object.assign(signatureObject, {
-        executionSignature,
-      })
+        Object.assign(signatureObject, {
+          executionSignature,
+        })
+      }
+      catch (e) {
+        throw new Error('Failed to sign execution data', {
+          cause: 'sign-execution-data-failed',
+        })
+      }
     }
 
     console.log(params)
