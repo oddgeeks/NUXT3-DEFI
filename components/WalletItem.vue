@@ -73,10 +73,10 @@ function handleClick() {
   >
     <div>
       <div class="flex items-center gap-[8px] mb-2.5">
-        <p v-if="safe.multisig" class="leading-[10px] text-purple text-sm">
+        <p v-if="safe.multisig" class="leading-[10px] text-purple text-sm font-medium">
           {{ walletName }}
         </p>
-        <p v-else class="leading-[10px] text-primary text-sm">
+        <p v-else class="leading-[10px] text-primary text-sm font-medium">
           {{ walletName }}
         </p>
 
@@ -85,7 +85,7 @@ function handleClick() {
         </button>
       </div>
 
-      <Copy class="text-sm leading-[18px] mb-[6px] dark:text-white text-slate-900" :text="safe?.safe_address">
+      <Copy class="text-sm leading-[18px] mb-[6px] dark:text-white text-slate-900 font-medium" :text="safe?.safe_address">
         <template #content>
           {{ shortenHash(safe?.safe_address) }}
         </template>
@@ -102,10 +102,11 @@ function handleClick() {
       </p>
     </div>
     <div class="flex flex-col justify-between items-end">
-      <p :class="safe.multisig ? 'bg-purple text-purple' : 'bg-primary text-primary'" class="rounded-full bg-opacity-[14%] text-xs py-0.5 px-2">
+      <p :class="safe.multisig ? 'bg-purple text-purple' : 'bg-primary text-primary'"
+      class="rounded-full bg-opacity-[14%] text-xs py-0.5 px-2 font-medium">
         {{ safe.multisig ? 'MULTISIG' : 'PERSONAL' }}
       </p>
-      <p class="text-orange text-xs">
+      <p class="text-orange text-xs font-medium">
         {{ safe.multisig === 1 && pendingTxnsCount ? `${pendingTxnsCount} Pending txns` : '' }}
       </p>
     </div>
