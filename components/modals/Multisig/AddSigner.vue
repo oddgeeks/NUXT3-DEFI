@@ -29,6 +29,15 @@ const {
           .test('is-valid-address', 'Incorrect address', (value) => {
             return value ? isAddress(value || '') : true
           })
+          .test(
+            'cannot-add-self',
+            'Cannot add self as signer',
+            (value) => {
+              if (!isAddress(value || ''))
+                return true
+              return account.value?.toLowerCase() !== value?.toLowerCase()
+            },
+          )
           .test('contact-already-exist', 'Contact already exists, please select from contacts list', (value, ctx) => {
             if (!isAddress(value || ''))
               return true
@@ -53,16 +62,8 @@ const {
 
               return true
             },
-          )
-          .test(
-            'cannot-add-self',
-            'Cannot add self as signer',
-            (value) => {
-              if (!isAddress(value || ''))
-                return true
-              return account.value?.toLowerCase() !== value?.toLowerCase()
-            },
           ),
+
       })),
 
   }),
