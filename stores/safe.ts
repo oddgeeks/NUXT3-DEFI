@@ -3,6 +3,7 @@ import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 import { wait } from '@instadapp/utils'
 import collect from 'collect.js'
 import { getAddress, isAddress } from 'ethers/lib/utils'
+import axios from 'axios'
 import type { IToken } from './tokens'
 import type { TokenBalanceResolver } from '~/contracts'
 import {
@@ -11,7 +12,6 @@ import {
   GaslessWallet__factory,
   TokenBalanceResolver__factory,
 } from '~/contracts'
-import axios from 'axios'
 
 export interface IBalance extends IToken {
   balance: string
@@ -377,6 +377,8 @@ export const useSafe = defineStore('safe', () => {
     }
   }
 
+  const throttledGetBalances = useThrottleFn(getBalances, 500)
+
   async function getBalances(address: string, signal?: AbortSignal, updateState = false) {
     return Promise.all(
       availableNetworks.map(async (network) => {
@@ -449,11 +451,13 @@ export const useSafe = defineStore('safe', () => {
 
       return
 
+    pause()
+
     try {
       balances.value.loading = true
       // balanceAborter.value = new AbortController();
 
-      const data = await getBalances(
+      const data = await throttledGetBalances(
         safeAddress.value,
         balanceAborter.value?.signal,
         true,
@@ -479,6 +483,7 @@ export const useSafe = defineStore('safe', () => {
     }
     finally {
       balances.value.loading = false
+      resume()
     }
   }
 
@@ -490,7 +495,7 @@ export const useSafe = defineStore('safe', () => {
     if (eoaBalances.value)
       return
 
-    const resp = await getBalances(account.value)
+    const resp = await throttledGetBalances(account.value)
 
     eoaBalances.value = resp.flat()
   }
@@ -570,17 +575,17 @@ export const useSafe = defineStore('safe', () => {
       })
       const txs: IMultisigTransactionResponse = resp.data
       return txs.meta.total
-    } catch (e: any) {
+    }
+    catch (e: any) {
       handleAxiosError(e, false)
     }
-    
   }
 
   useIntervalFn(fetchGasBalance, 15000, {
     immediate: true,
   })
 
-  useIntervalFn(fetchBalances, 15000)
+  const { pause, resume } = useIntervalFn(fetchBalances, 15000)
 
   watch(
     account,

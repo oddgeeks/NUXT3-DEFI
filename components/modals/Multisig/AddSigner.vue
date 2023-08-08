@@ -12,6 +12,7 @@ const emit = defineEmits(['destroy'])
 
 const { account } = useWeb3()
 const { getContactNameByAddress } = useContacts()
+const { setSelectedSafe } = useSafe()
 const contactSelections = ref<number[]>([])
 
 const {
@@ -110,6 +111,10 @@ async function handleSelectContact(key: number) {
     contactSelections.value.push(key)
   }
 }
+
+onMounted(() => {
+  setSelectedSafe()
+})
 </script>
 
 <template>
