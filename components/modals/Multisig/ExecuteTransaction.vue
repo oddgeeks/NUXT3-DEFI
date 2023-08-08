@@ -54,6 +54,9 @@ function handleReject() {
       :loading="pending"
       :error="error"
     />
+    <p v-if="!!error" class="text-orange text-sm flex items-center gap-2.5 w-full font-medium -my-2.5">
+      Error Occured. Do you still wish to proceed? <SvgoInfo2 v-tippy="'We expect this transaction to fail. You can cancel this transaction by creating rejection proposal or execute this transaction. In most cases, both actions will have the same outcome'" />
+    </p>
     <div
       class="flex w-full gap-4 items-center"
     >
@@ -67,7 +70,7 @@ function handleReject() {
       </CommonButton>
       <CommonButton
         :loading="pending"
-        :disabled="pending || !!error"
+        :disabled="pending"
         class="flex-1 justify-center"
         size="lg"
         @click="handleResolve()"
