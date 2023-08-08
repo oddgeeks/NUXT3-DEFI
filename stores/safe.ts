@@ -11,6 +11,7 @@ import {
   GaslessWallet__factory,
   TokenBalanceResolver__factory,
 } from '~/contracts'
+import axios from 'axios'
 
 export interface IBalance extends IToken {
   balance: string
@@ -559,6 +560,22 @@ export const useSafe = defineStore('safe', () => {
     }
   }
 
+  async function fetchPendingMultisigTxnsCount(multiSigAddress: string): Promise<number | undefined> {
+    try {
+      const resp = await axios.get(`/safes/${multiSigAddress}/transactions`, {
+        params: {
+          status: 'pending',
+        },
+        baseURL: multisigURL,
+      })
+      const txs: IMultisigTransactionResponse = resp.data
+      return txs.meta.total
+    } catch (e: any) {
+      handleAxiosError(e, false)
+    }
+    
+  }
+
   useIntervalFn(fetchGasBalance, 15000, {
     immediate: true,
   })
@@ -668,6 +685,7 @@ export const useSafe = defineStore('safe', () => {
     fetchSafe,
     isSelectedSafeSecondary,
     isMainSafeAvocadoSelected,
+    fetchPendingMultisigTxnsCount,
   }
 }, {
   persist: {

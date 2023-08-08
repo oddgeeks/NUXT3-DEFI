@@ -8,7 +8,7 @@ const route = useRoute()
 const router = useRouter()
 
 const { safeAddress } = useAvocadoSafe()
-const { getBalances } = useSafe()
+const { getBalances, fetchPendingMultisigTxnsCount } = useSafe()
 const walletName = useLocalStorage(`safe-${props.safe?.safe_address}`, props.safe.multisig ? 'Multisig' : 'Personal')
 
 const val = walletName.value?.trim()
@@ -30,6 +30,13 @@ const { data: balance, pending } = useAsyncData(`safe-balance-${props.safe.safe_
   )
 
   return balance.toFixed()
+})
+
+const { data: pendingTxnsCount } = useAsyncData(`safe-pending-multisig-txns-${props.safe.safe_address}`, async () => {
+  if (props.safe.multisig === 1) {
+    const pendingTxs = await fetchPendingMultisigTxnsCount(props.safe?.safe_address)
+    return pendingTxs
+  }
 })
 
 async function onEdit() {
@@ -59,7 +66,7 @@ function handleClick() {
 <template>
   <button
     :class="{
-      'dark:bg-slate-850 bg-slate-50': active,
+      'dark:bg-slate-800 dark:border-slate-800 bg-slate-50 border-slate-50': active,
       'dark:bg-gray-850 bg-slate-150': !active,
     }"
     class="px-4 w-full text-left items-stretch flex justify-between py-3.5 border rounded-2xl border-slate-150 dark:border-slate-750" @click="handleClick"
@@ -95,15 +102,11 @@ function handleClick() {
       </p>
     </div>
     <div class="flex flex-col justify-between items-end">
-      <SvgoCheckCircle
-        :class="{
-          'success-circle': active,
-          'svg-circle darker': !active,
-        }"
-        class="h-6 w-6"
-      />
       <p :class="safe.multisig ? 'bg-purple text-purple' : 'bg-primary text-primary'" class="rounded-full bg-opacity-[14%] text-xs py-0.5 px-2">
-        {{ safe.multisig ? 'Multisig' : 'Personal' }}
+        {{ safe.multisig ? 'MULTISIG' : 'PERSONAL' }}
+      </p>
+      <p class="text-orange text-xs">
+        {{ safe.multisig === 1 && pendingTxnsCount ? `${pendingTxnsCount} Pending txns` : '' }}
       </p>
     </div>
   </button>
