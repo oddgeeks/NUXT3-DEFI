@@ -560,7 +560,7 @@ export const useSafe = defineStore('safe', () => {
     }
   }
 
-  async function fetchPendingMultisigTxns(multiSigAddress: string): Promise<number | undefined> {
+  async function fetchPendingMultisigTxnsCount(multiSigAddress: string): Promise<number | undefined> {
     try {
       const resp = await axios.get(`/safes/${multiSigAddress}/transactions`, {
         params: {
@@ -685,7 +685,7 @@ export const useSafe = defineStore('safe', () => {
     fetchSafe,
     isSelectedSafeSecondary,
     isMainSafeAvocadoSelected,
-    fetchPendingMultisigTxns,
+    fetchPendingMultisigTxnsCount,
   }
 }, {
   persist: {

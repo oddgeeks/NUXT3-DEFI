@@ -8,7 +8,7 @@ const route = useRoute()
 const router = useRouter()
 
 const { safeAddress } = useAvocadoSafe()
-const { getBalances, fetchPendingMultisigTxns } = useSafe()
+const { getBalances, fetchPendingMultisigTxnsCount } = useSafe()
 const walletName = useLocalStorage(`safe-${props.safe?.safe_address}`, props.safe.multisig ? 'Multisig' : 'Personal')
 
 const val = walletName.value?.trim()
@@ -34,7 +34,7 @@ const { data: balance, pending } = useAsyncData(`safe-balance-${props.safe.safe_
 
 const { data: pendingTxns } = useAsyncData(`safe-pending-multisig-txns-${props.safe.safe_address}`, async () => {
   if (props.safe.multisig === 1) {
-    const pendingTxs = await fetchPendingMultisigTxns(props.safe?.safe_address)
+    const pendingTxs = await fetchPendingMultisigTxnsCount(props.safe?.safe_address)
     return pendingTxs
   }
 })
@@ -66,7 +66,7 @@ function handleClick() {
 <template>
   <button
     :class="{
-      'dark:bg-slate-750 bg-slate-50': active,
+      'dark:bg-slate-800 dark:border-slate-800 bg-slate-50 border-slate-50': active,
       'dark:bg-gray-850 bg-slate-150': !active,
     }"
     class="px-4 w-full text-left items-stretch flex justify-between py-3.5 border rounded-2xl border-slate-150 dark:border-slate-750" @click="handleClick"
