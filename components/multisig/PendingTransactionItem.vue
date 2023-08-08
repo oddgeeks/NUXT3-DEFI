@@ -109,7 +109,7 @@ async function handleClick(item: IMultisigTransaction) {
             }" class="text-slate-500"
           />
         </span>
-        <span class="flex-1 flex-col flex gap-2 max-w-sm truncate">
+        <span class="flex-1 flex-col flex gap-2 svg-shrink-none">
           <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" :key="metadata" v-memo="[tokens]" :tokens="transformedTokens" class="text-left whitespace-nowrap" compact :chain_id="item.chain_id" :metadata="metadata" />
         </span>
         <span class="whitespace-nowrap text-left">
@@ -221,7 +221,13 @@ async function handleClick(item: IMultisigTransaction) {
 
 <style scoped>
 .grid-item {
-  grid-template-columns: 145px 1fr 130px 120px 200px;
+  grid-template-columns: 135px 1fr 95px 120px 200px;
   @apply gap-8;
+}
+</style>
+
+<style>
+.svg-shrink-none svg {
+  flex-shrink: 0 !important;
 }
 </style>
