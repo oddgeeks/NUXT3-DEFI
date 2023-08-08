@@ -191,8 +191,8 @@ async function handleSign(item: IMultisigTransaction) {
       baseURL: multisigURL,
     })
 
-    if (data.confirmations.length === requiredSigner.value && signAndExecute.value)
-      await handleExecute(data)
+    if (isConfirmationWillMatch.value && signAndExecute.value)
+      await handleExecuteConfirmation(data)
 
     else
 
