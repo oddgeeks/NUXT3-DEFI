@@ -259,7 +259,7 @@ export function useAvocadoSafe() {
     const { success, payload } = await openEditNonceModal({ chainId, actions, defaultNonce: nonce, estimatedFee, rejection, rejectionId, transactionType, metadata, options })
 
     if (!success)
-      return
+      throw new Error('Transaction cancelled')
 
     if (payload.txHash)
       return payload.txHash

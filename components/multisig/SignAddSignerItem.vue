@@ -16,6 +16,7 @@ const executed = ref(false)
 const { addSignersWithThreshold } = useAvocadoSafe()
 const { selectedSafe } = storeToRefs(useSafe())
 const { addContact, safeContacts } = useContacts()
+const { parseTransactionError } = useErrorHandler()
 
 async function handleSign() {
   try {
@@ -60,10 +61,11 @@ async function handleSign() {
     modelValue.push(true)
     emit('update:modelValue', modelValue)
   }
-  catch (e) {
-    console.error(e)
+  catch (e: any) {
+    const parsed = parseTransactionError(e)
+
     openSnackbar({
-      message: 'Something went wrong',
+      message: parsed.formatted,
       type: 'error',
     })
   }
