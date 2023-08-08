@@ -12,7 +12,7 @@ const filteredSafes = computed(() => {
 <template>
   <div class="flex flex-col">
     <div v-if="mainSafe">
-      <h2 class="text-xs mb-3">
+      <h2 class="text-xs mb-3 font-medium">
         Generated wallets
       </h2>
       <div class="flex flex-col gap-2.5">
@@ -22,7 +22,7 @@ const filteredSafes = computed(() => {
     </div>
 
     <div v-if="!!filteredSafes?.length" class="mt-5">
-      <h2 class="text-xs mb-3">
+      <h2 class="text-xs mb-3 font-medium">
         Secondary wallets
       </h2>
       <ul class="flex flex-col gap-2.5">
