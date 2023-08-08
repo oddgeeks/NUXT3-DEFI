@@ -15,6 +15,7 @@ const { data, pending, error } = useEstimatedFee(
     immediate: true,
     disabled: () => props.isGasTopup,
     nonce: props.transaction.nonce,
+    metadata: props.transaction.data.params.metadata,
     options: {
       id: props.transaction.data.params.id || '0',
     },

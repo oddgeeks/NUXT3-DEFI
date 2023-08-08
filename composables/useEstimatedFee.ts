@@ -6,6 +6,7 @@ interface EstimatedFeeParams {
   cb?: () => void
   disabled?: () => boolean
   options?: any
+  metadata?: string
   nonce?: number | string
 }
 
@@ -82,7 +83,13 @@ export function useEstimatedFee(
         let message
 
         if (isSafeMultisig.value) {
-          message = await generateMultisigSignatureMessage({ chainId: chainId.value, actions: actualTx, options: params?.options, nonce: !isUndefined(params?.nonce) ? Number(params?.nonce) : undefined })
+          message = await generateMultisigSignatureMessage({
+            chainId: chainId.value,
+            actions: actualTx,
+            options: params?.options,
+            metadata: params?.metadata,
+            nonce: !isUndefined(params?.nonce) ? Number(params?.nonce) : undefined,
+          })
 
           console.log(message)
         }
