@@ -54,8 +54,8 @@ function handleReject() {
       :loading="pending"
       :error="error"
     />
-    <p v-if="!!error" class="text-orange text-sm flex items-center gap-2.5 w-full font-medium -my-2.5">
-      Error Occured. Do you still wish to proceed? <SvgoInfo2 v-tippy="'We expect this transaction to fail. You can cancel this transaction by creating rejection proposal or execute this transaction. In most cases, both actions will have the same outcome'" />
+    <p v-if="!!error" class="text-sm flex items-center gap-2.5 w-full font-medium -my-2.5">
+      Error Occured. Do you still wish to proceed? <SvgoInfo2 v-tippy="'We expect this transaction to fail. You can cancel this transaction by creating rejection proposal or execute this transaction. In most cases, both actions will have the same outcome'" class="text-slate-500" />
     </p>
     <div
       class="flex w-full gap-4 items-center"
