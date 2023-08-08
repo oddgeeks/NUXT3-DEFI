@@ -162,7 +162,7 @@ onMounted(() => {
         <div class="flex flex-1 basis-12 flex-col gap-2">
           <div class="flex justify-between items-center w-full">
             <span class="text-xs font-medium leading-5 text-slate-400 flex items-center gap-2.5">
-              <span class="sm:hidden inline">{{ key + 1 }}</span> Signer Address
+              <span class="sm:hidden inline">{{ key + 1 }}</span> Signer EOA Address
               <SvgoInfo2 v-tippy="'Please make sure you enter the EOA address and not Avocado address.'" class="text-orange" />
             </span>
             <button
