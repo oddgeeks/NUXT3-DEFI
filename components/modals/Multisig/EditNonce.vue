@@ -87,6 +87,8 @@ const transactionTypes = [
 ]
 
 async function onSubmit() {
+  let proposalId
+
   try {
     isSubmitting.value = true
     const payload = {
@@ -113,6 +115,8 @@ async function onSubmit() {
       baseURL: multisigURL,
     })
 
+    proposalId = data.id
+
     if (data.confirmations_required === 1 && !signOnly) {
       const txHash = await multisigBroadcast({
         proposalId: data.id,
@@ -138,13 +142,9 @@ async function onSubmit() {
     console.log(e)
     const parsed = parseTransactionError(e)
 
-    if (e.cause?.message === 'sign-execution-data-failed') {
+    if (e.cause?.message === 'sign-execution-data-failed' && proposalId && selectedSafe.value?.safe_address) {
       clearAllModals()
-      return openDialogModal({
-        type: 'error',
-        title: 'Sign execution data failed',
-        content: 'Transaction successfully proposed and transaction execution signature got cancelled.',
-      })
+      return openExecutionErrorModal(proposalId, selectedSafe.value?.safe_address)
     }
 
     openSnackbar({

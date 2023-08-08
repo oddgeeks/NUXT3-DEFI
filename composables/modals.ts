@@ -47,6 +47,7 @@ import MultisigSelectNetwork from '~/components/modals/Multisig/SelectNetwork.vu
 import UpdateNoticeModal from '~/components/modals/UpdateNotice.vue'
 import WelcomeModal from '~/components/modals/Welcome.vue'
 import CreateBookmark from '~/components/modals/CreateBookmark.vue'
+import ExecutionError from '~/components/modals/Multisig/ExecutionError.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -677,6 +678,17 @@ export async function openCreateBookmarkModal(props: CreateBookmarkProps) {
       wrapperClass: 'max-w-[600px]',
       contentClass: '!p-0',
     },
+  })
+}
+
+export async function openExecutionErrorModal(proposalId: string, safeAddress: string) {
+  return openModal({
+    component: ExecutionError,
+    componentProps: {
+      proposalId,
+      safeAddress,
+    },
+
   })
 }
 
