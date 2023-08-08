@@ -32,7 +32,7 @@ const { data: balance, pending } = useAsyncData(`safe-balance-${props.safe.safe_
   return balance.toFixed()
 })
 
-const { data: pendingTxns } = useAsyncData(`safe-pending-multisig-txns-${props.safe.safe_address}`, async () => {
+const { data: pendingTxnsCount } = useAsyncData(`safe-pending-multisig-txns-${props.safe.safe_address}`, async () => {
   if (props.safe.multisig === 1) {
     const pendingTxs = await fetchPendingMultisigTxnsCount(props.safe?.safe_address)
     return pendingTxs
@@ -106,7 +106,7 @@ function handleClick() {
         {{ safe.multisig ? 'MULTISIG' : 'PERSONAL' }}
       </p>
       <p class="text-orange text-xs">
-        {{ safe.multisig === 1 && pendingTxns ? `${pendingTxns} Pending txns` : '' }}
+        {{ safe.multisig === 1 && pendingTxnsCount ? `${pendingTxnsCount} Pending txns` : '' }}
       </p>
     </div>
   </button>
