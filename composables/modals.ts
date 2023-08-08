@@ -654,14 +654,12 @@ export function openMultisigSelectNetworkModal(addresses: ISignerAddress[], defa
 }
 
 export function openExecuteTransactionModal(params: IOpenExecuteModalParams) {
-  const { chainId, actions, isGasTopup = false, options } = params
+  const { isGasTopup = false, transaction } = params
   return openModal({
     component: ExecuteTransaction,
     componentProps: {
-      chainId,
-      actions,
+      transaction,
       isGasTopup,
-      options,
     },
     options: {
       wrapperClass: '!max-w-[560px]',

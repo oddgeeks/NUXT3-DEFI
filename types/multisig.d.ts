@@ -123,8 +123,6 @@ interface IOpenNonceModalParams {
 }
 
 interface IOpenExecuteModalParams {
-  chainId: string | number
-  actions: any
+  transaction: IMultisigTransaction
   isGasTopup: boolean
-  options?: any
 }

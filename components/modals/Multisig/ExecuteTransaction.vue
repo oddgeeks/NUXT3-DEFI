@@ -2,21 +2,22 @@
 import SVGQuestionCircle from '~/assets/images/icons/question-circle.svg?component'
 
 const props = defineProps<{
-  chainId: number | string
-  actions: any
+  transaction: IMultisigTransaction
   isGasTopup?: boolean
-  options?: any
 }>()
 
 const emit = defineEmits(['resolve', 'reject'])
 
 const { data, pending, error } = useEstimatedFee(
-  ref(props.actions),
-  ref(String(props.chainId)),
+  ref(props.transaction.data.params.actions),
+  ref(String(props.transaction.chain_id)),
   {
     immediate: true,
     disabled: () => props.isGasTopup,
-    options: props.options || {},
+    nonce: props.transaction.nonce,
+    options: {
+      id: props.transaction.data.params.id || '0',
+    },
   },
 )
 

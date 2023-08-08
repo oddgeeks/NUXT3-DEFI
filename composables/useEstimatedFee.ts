@@ -1,10 +1,12 @@
 import { isArray } from '@vue/shared'
+import { isUndefined } from '@walletconnect/utils'
 
 interface EstimatedFeeParams {
   immediate?: boolean
   cb?: () => void
   disabled?: () => boolean
   options?: any
+  nonce?: number | string
 }
 
 export function useEstimatedFee(
@@ -80,7 +82,7 @@ export function useEstimatedFee(
         let message
 
         if (isSafeMultisig.value) {
-          message = await generateMultisigSignatureMessage({ chainId: chainId.value, actions: actualTx, options: params?.options })
+          message = await generateMultisigSignatureMessage({ chainId: chainId.value, actions: actualTx, options: params?.options, nonce: !isUndefined(params?.nonce) ? Number(params?.nonce) : undefined })
 
           console.log(message)
         }

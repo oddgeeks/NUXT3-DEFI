@@ -71,6 +71,7 @@ whenever(isExecuteReady, () => {
 const { data, error, pending: feePending } = useEstimatedFee(ref(props.actions), ref(props.chainId), {
   immediate: true,
   disabled: () => !props.estimatedFee,
+  nonce: nonce.value,
 })
 
 const transactionTypes = [

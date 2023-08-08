@@ -279,12 +279,8 @@ async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
     const isGasTopup = actionType.value === 'gas-topup'
 
     const { success } = await openExecuteTransactionModal({
-      chainId: transaction.chain_id,
-      actions: transaction.data.params.actions,
+      transaction,
       isGasTopup,
-      options: {
-        id: transaction.data.params.id,
-      },
     })
 
     if (success)
