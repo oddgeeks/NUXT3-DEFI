@@ -571,7 +571,7 @@ export const useSafe = defineStore('safe', () => {
       const txs: IMultisigTransactionResponse = resp.data
       return txs.meta.total
     } catch (e: any) {
-      console.log(e)
+      handleAxiosError(e, false)
     }
     
   }
