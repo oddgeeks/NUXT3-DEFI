@@ -85,7 +85,7 @@ function handleClick() {
         </button>
       </div>
 
-      <Copy class="text-sm leading-[18px] mb-[6px]" :text="safe?.safe_address">
+      <Copy class="text-sm leading-[18px] mb-[6px] dark:text-white text-slate-900" :text="safe?.safe_address">
         <template #content>
           {{ shortenHash(safe?.safe_address) }}
         </template>
