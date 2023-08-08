@@ -22,7 +22,8 @@ async function handleSign() {
   try {
     pending.value = true
 
-    const existingSigners = selectedSafe.value?.signers[props.chainId] || []
+    const selectedSafeSigners = selectedSafe.value?.signers || {}
+    const existingSigners = selectedSafeSigners[props.chainId] || []
 
     const actualSigners = props.addresses.filter(address => !existingSigners.some(addr => getAddress(address.address) === getAddress(addr)))
 
