@@ -153,7 +153,6 @@ whenever(
                   <Copy :text="trackingAccount || account" :icon-only="true" />
                 </button>
 
-
                 <button
                   @click="closeConnection"
                   @mouseenter="hovered = true"
@@ -161,13 +160,10 @@ whenever(
                   class="w-7.5 h-7.5 rounded-full flex items-center justify-center overflow-hidden dark:bg-slate-800 bg-slate-150"
                   aria-label="Close Connection"
                 >
-                <div class="overflow-hidden absolute">
-                  <PowerOffSVG
-                    v-if="hovered"
-                    class="pointer-events-none"
-                  />
-                  <PowerOnSVG v-else class="pointer-events-none" />
-                </div>
+                  <div class="overflow-hidden absolute">
+                    <PowerOffSVG v-if="hovered" class="pointer-events-none" />
+                    <PowerOnSVG v-else class="pointer-events-none" />
+                  </div>
                 </button>
               </div>
               <button
