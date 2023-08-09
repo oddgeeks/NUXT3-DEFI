@@ -141,8 +141,8 @@ whenever(
                     <component :is="connectedProvider.logo" class="h-7.5 sm:h-9 w-7.5 sm:w-9" />
                   </div>
                   <div class="flex flex-col items-start gap-[6px]">
-                    <span class="text-xs text-slate-400 leading-[10px]">Owner's Address</span>
-                    <span class="text-lg leading-5">{{ addressLabel }}</span>
+                    <span class="text-xs text-slate-500 leading-[10px] font-medium">Owner's Address</span>
+                    <span class="text-lg leading-5 font-semibold">{{ addressLabel }}</span>
                   </div>
                 </div>
                 <button
