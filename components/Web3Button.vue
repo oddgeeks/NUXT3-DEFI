@@ -145,11 +145,20 @@ whenever(
                     <span class="text-lg leading-5 font-semibold">{{ addressLabel }}</span>
                   </div>
                 </div>
+
+                <button
+                  class="w-7.5 h-7.5 rounded-full flex items-center justify-center overflow-hidden dark:bg-slate-800 bg-slate-150"
+                  aria-label="Copy EOA"
+                >
+                  <Copy :text="trackingAccount || account" :icon-only="true" />
+                </button>
+
+
                 <button
                   @click="closeConnection"
                   @mouseenter="hovered = true"
                   @mouseleave="hovered = false"
-                  class="w-7.5 h-7.5 rounded-full flex items-center justify-center overflow-hidden dark:bg-slate-800 bg-slate-100"
+                  class="w-7.5 h-7.5 rounded-full flex items-center justify-center overflow-hidden dark:bg-slate-800 bg-slate-150"
                   aria-label="Close Connection"
                 >
                 <div class="overflow-hidden absolute">
@@ -162,7 +171,7 @@ whenever(
                 </button>
               </div>
               <button
-                class="h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
+                class="h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-150"
                 aria-label="Close EOA"
                 @click.stop="close"
               >
