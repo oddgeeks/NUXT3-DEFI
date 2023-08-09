@@ -10,9 +10,11 @@ const props = defineProps<{
   type: ITxType
 }>()
 
+const { getRpcProviderByChainId } = useShared()
+
 const encodedEvent = '0xacb5341cc21d71a005bd22634cec7391a7fd11ff2b563a7b301cac795f7a6a56'
 
-const provider = getRpcProvider(props.chainId)
+const provider = getRpcProviderByChainId(props.chainId)
 const transaction = ref<TransactionReceipt>()
 
 onMounted(async () => {

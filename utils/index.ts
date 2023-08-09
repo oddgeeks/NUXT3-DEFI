@@ -178,6 +178,7 @@ export function formatIPFSUri(ipfs: string) {
 export async function checkAddressIsDsa(
   dsaAddress: string,
   chainId: number,
+  provider: ethers.providers.Provider,
 ): Promise<boolean> {
   const abi = [
     'function accountID(address) external view returns (uint64)',
@@ -193,8 +194,6 @@ export async function checkAddressIsDsa(
   } as Record<number, string>
 
   const instaListAddress = instaListAddresses[chainId]
-
-  const provider = getRpcProvider(chainId)
 
   const instaList = new ethers.Contract(instaListAddress, abi, provider)
   const accountId = await instaList.accountID(dsaAddress)

@@ -20,6 +20,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
   const { fromWei, toWei } = useBignumber()
   const { tokenBalances, safeAddress } = useAvocadoSafe()
   const { tokens } = storeToRefs(useTokens())
+  const { getRpcProviderByChainId } = useShared()
 
   const fromChainId = computed(() => fromToken.value.chainId)
   const toChainId = ref(fromChainId.value == '137' ? '10' : '137')
@@ -270,7 +271,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
         if (userTx.approvalData) {
           const erc20 = Erc20__factory.connect(
             fromToken.value.address,
-            getRpcProvider(fromChainId.value),
+            getRpcProviderByChainId(fromChainId.value),
           )
           const { data } = await erc20.populateTransaction.approve(
             userTx.approvalData.allowanceTarget,
