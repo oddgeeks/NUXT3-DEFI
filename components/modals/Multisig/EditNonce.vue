@@ -256,35 +256,25 @@ function getNonceTooltip(value: number | undefined) {
         <span class="text-xs text-slate-400">
           Transaction type
         </span>
-        <CommonSelect
-          v-model="nonce"
-          label-key="name"
-          value-key="value"
-          :options="transactionTypes"
-        >
-          <template #button-suffix>
-            <SvgoInfo2 v-tippy="getNonceTooltip(nonce)" class="text-slate-500" />
-
-            <template v-if="nonce === recommendedNonce">
-              <span class="bg-primary bg-opacity-10 text-primary text-xs px-[6px] py-[5px] uppercase rounded-[10px]">
-                Recommended
-              </span>
-            </template>
-          </template>
-          <template #item="{ label, value }">
-            <span class="flex items-center gap-2.5">
-              {{ label }}
-
-              <SvgoInfo2
-                v-tippy="getNonceTooltip(value)" class="text-slate-500"
-              />
-
-              <span v-if="value === recommendedNonce" class="bg-primary bg-opacity-10 text-primary text-xs px-[6px] py-[5px] uppercase rounded-[10px]">
-                Recommended
-              </span>
-            </span>
-          </template>
-        </CommonSelect>
+        <div class="flex row gap-[16px]">
+            <CommonRadioSelect
+              v-for="(nonceType, index) in transactionTypes" :key="index"
+              :selected="nonceType.value === nonce"
+              :value="nonceType.value"
+              @select="(selected: number | undefined) => nonce = selected"
+            >
+              <template v-slot:content>
+                <div class="flex row items-center gap-[8px]">
+                  <span class="text-xs font-medium">{{ nonceType.name }}</span>
+                  <SvgoInfo2 v-tippy="getNonceTooltip(nonceType.value)" class="text-slate-500" />
+                </div>
+                  <span v-if="nonceType.value === recommendedNonce"
+                    class="ml-auto bg-primary bg-opacity-10 text-primary text-[10px] font-medium px-[6px] py-[5px] uppercase rounded-10">
+                    Recommended
+                  </span>
+              </template>
+            </CommonRadioSelect>
+        </div>
       </div>
 
       <div class="flex flex-col gap-2">
