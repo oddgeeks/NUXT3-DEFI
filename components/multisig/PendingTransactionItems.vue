@@ -6,6 +6,8 @@ const props = defineProps<{
   activeTab: string | undefined
 }>()
 
+const emit = defineEmits(['onToggle'])
+
 const abortController = ref<AbortController | null>(null)
 
 const { getRequiredSigner } = useMultisig()
@@ -13,8 +15,7 @@ const { getCurrentNonce } = useAvocadoSafe()
 const { fetchSafe } = useSafe()
 const { lastModal } = useModal()
 
-const isExpandAll = inject<Ref<boolean>>('isExpandAll', ref(false))
-
+const isCollapseAll = inject<Ref<boolean>>('isCollapseAll', ref(false))
 const route = useRoute()
 const page = ref(1)
 const containerRef = ref<HTMLElement | null>(null)
@@ -73,7 +74,6 @@ const { data, refresh, pending } = useAsyncData(`multisig-${route.params.safe}-$
     return axiosData
   }
   catch (e: any) {
-    console.log(e)
     if (e.message === 'canceled')
       return
 
@@ -133,6 +133,7 @@ function sortItems(items: IMultisigTransaction[]) {
 function handleToggle(e: Event) {
   const target = e.target as HTMLDetailsElement
   isDetailsOpen.value = target.open
+  emit('onToggle')
 }
 
 function refreshAll() {
@@ -146,8 +147,9 @@ watch(lastModal, () => {
     refreshAll()
 })
 
-watch(isExpandAll, () => {
-  isDetailsOpen.value = isExpandAll.value
+watch(isCollapseAll, () => {
+  if (isCollapseAll.value && data.value?.data?.length)
+    isDetailsOpen.value = false
 })
 </script>
 

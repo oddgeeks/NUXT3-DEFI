@@ -1,14 +1,27 @@
 <script setup lang="ts">
+import { wait } from '@instadapp/utils'
 import axios from 'axios'
 
 const route = useRoute()
-const [isExpandAll, toggle] = useToggle(false)
+const itemsRef = ref<HTMLElement | null>(null)
+const [isCollapseAll, toggle] = useToggle(false)
+const isCollapseAllDisabled = ref(false)
 
-provide('isExpandAll', isExpandAll)
+provide('isCollapseAll', isCollapseAll)
 
 useAccountTrack(undefined, () => {
   useEagerConnect()
 })
+
+function syncToggles() {
+  if (itemsRef.value) {
+    const details = itemsRef.value.querySelectorAll('details')
+    const someOpen = Array.from(details).some(i => i.hasAttribute('open'))
+
+    isCollapseAllDisabled.value = !someOpen
+    isCollapseAll.value = !someOpen
+  }
+}
 
 const activeTab = computed(() => {
   return route.query?.tab ? route.query.tab as string : 'seq'
@@ -78,6 +91,16 @@ useIntervalFn(() => {
   refreshNonSeq()
   refreshSeq()
 }, 5000)
+
+watch(activeTab, async () => {
+  await nextTick()
+  await wait(500)
+  syncToggles()
+})
+
+onMounted(() => {
+  syncToggles()
+})
 </script>
 
 <template>
@@ -102,16 +125,16 @@ useIntervalFn(() => {
             <span class="sm:hidden block"> {{ tab.mobileLabel || tab.label }}</span>
           </button>
         </div>
-        <button class="text-primary text-xs" type="button" @click="toggle()">
-          {{ isExpandAll ? 'Collapse' : 'Expand' }} All
+        <button :disabled="isCollapseAllDisabled" class="text-primary text-xs disabled:text-slate-400" type="button" @click="toggle(true)">
+          Collapse All
         </button>
       </div>
 
       <h2 v-if="title" class="text-xs leading-5 sm:text-left text-center">
         {{ title }}
       </h2>
-      <div class="gap-5 flex flex-col">
-        <MultisigPendingTransactionItems v-for="network in availableNetworks" :key="network.chainId" :active-tab="activeTab" :chain-id="network.chainId" />
+      <div ref="itemsRef" class="gap-5 flex flex-col">
+        <MultisigPendingTransactionItems v-for="network in availableNetworks" :key="network.chainId" :active-tab="activeTab" :chain-id="network.chainId" @on-toggle="syncToggles" />
       </div>
     </div>
   </div>
