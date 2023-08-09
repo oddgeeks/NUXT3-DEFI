@@ -266,10 +266,10 @@ function getNonceTooltip(value: number | undefined) {
               <template v-slot:content>
                 <div class="flex row items-center gap-[8px]">
                   <span class="text-xs font-medium">{{ nonceType.name }}</span>
-                  <SvgoInfo2 v-tippy="getNonceTooltip(nonceType.value)" class="text-slate-500" />
+                  <SvgoInfo2 v-tippy="getNonceTooltip(nonceType.value)" class="dark:text-slate-500 text-slate-300" />
                 </div>
                   <span v-if="nonceType.value === recommendedNonce"
-                    class="ml-auto bg-primary bg-opacity-10 text-primary text-[10px] font-medium px-[6px] py-[5px] uppercase rounded-10">
+                    class="ml-auto bg-primary bg-opacity-10 text-primary text-[10px] font-medium px-[6px] py-[4px] uppercase rounded-10">
                     Recommended
                   </span>
               </template>
@@ -292,11 +292,11 @@ function getNonceTooltip(value: number | undefined) {
             {{ shortenHash(rejectionId) }}
           </dd>
         </dl>
-        <span class="text-xs flex items-center gap-2 text-slate-400">
+        <span class="text-xs font-medium flex items-center gap-2 text-slate-400">
           Note (optional)
-          <SvgoInfo2 v-tippy="'Specify any details/instructions you want other signers to read before signing this transaction.'" class="w-4 h-4 text-slate-500" />
+          <SvgoInfo2 v-tippy="'Specify any details/instructions you want other signers to read before signing this transaction.'" class="w-4 h-4 dark:text-slate-500 text-slate-300" />
         </span>
-        <textarea v-model="note" v-focus placeholder="Visible to all signers" class="dark:bg-slate-800 placeholder:text-sm text-sm rounded-[14px] bg-slate-100 py-[15px] px-4 border-0 outline-none focus:border-0 focus:outline-none focus:ring-0" />
+        <textarea v-model="note" v-focus placeholder="Visible to all signers" class="dark:bg-slate-800 placeholder:text-sm placeholder:text-slate-400 text-sm font-medium rounded-[14px] bg-slate-100 py-[15px] px-4 border-0 outline-none focus:border-0 focus:outline-none focus:ring-0" />
       </div>
     </div>
     <template v-if="!estimatedFee">
