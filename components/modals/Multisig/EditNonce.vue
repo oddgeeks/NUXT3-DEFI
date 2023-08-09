@@ -251,40 +251,29 @@ function getNonceTooltip(value: number | undefined) {
       </div>
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
-    <div class="sm:px-7.5 px-5 py-5 flex flex-col gap-4">
+    <div class="sm:px-7.5 px-5 py-5 flex flex-col gap-5">
       <div v-if="!rejection" class="flex flex-col gap-2">
-        <span class="text-xs text-slate-400">
+        <span class="text-xs text-slate-400 font-medium">
           Transaction type
         </span>
-        <CommonSelect
-          v-model="nonce"
-          label-key="name"
-          value-key="value"
-          :options="transactionTypes"
-        >
-          <template #button-suffix>
-            <SvgoInfo2 v-tippy="getNonceTooltip(nonce)" class="text-slate-500" />
-
-            <template v-if="nonce === recommendedNonce">
-              <span class="bg-primary bg-opacity-10 text-primary text-xs px-[6px] py-[5px] uppercase rounded-[10px]">
-                Recommended
-              </span>
-            </template>
-          </template>
-          <template #item="{ label, value }">
-            <span class="flex items-center gap-2.5">
-              {{ label }}
-
-              <SvgoInfo2
-                v-tippy="getNonceTooltip(value)" class="text-slate-500"
-              />
-
-              <span v-if="value === recommendedNonce" class="bg-primary bg-opacity-10 text-primary text-xs px-[6px] py-[5px] uppercase rounded-[10px]">
-                Recommended
-              </span>
-            </span>
-          </template>
-        </CommonSelect>
+        <div class="flex row gap-4">
+            <CommonRadioSelect
+              v-for="(nonceType, index) in transactionTypes" :key="index"
+              :value="nonceType.value"
+              v-model="nonce"
+            >
+              <template v-slot:content>
+                <div class="flex row items-center gap-2">
+                  <span class="text-xs font-medium">{{ nonceType.name }}</span>
+                  <SvgoInfo2 v-tippy="getNonceTooltip(nonceType.value)" class="dark:text-slate-500 text-slate-300" />
+                </div>
+                  <span v-if="nonceType.value === recommendedNonce"
+                    class="ml-auto bg-primary bg-opacity-10 text-primary text-[0.625rem] font-medium px-1.5 py-1 uppercase rounded-10">
+                    Recommended
+                  </span>
+              </template>
+            </CommonRadioSelect>
+        </div>
       </div>
 
       <div class="flex flex-col gap-2">
@@ -302,11 +291,11 @@ function getNonceTooltip(value: number | undefined) {
             {{ shortenHash(rejectionId) }}
           </dd>
         </dl>
-        <span class="text-xs flex items-center gap-2 text-slate-400">
+        <span class="text-xs font-medium flex items-center gap-2 text-slate-400">
           Note (optional)
-          <SvgoInfo2 v-tippy="'Specify any details/instructions you want other signers to read before signing this transaction.'" class="w-4 h-4 text-slate-500" />
+          <SvgoInfo2 v-tippy="'Specify any details/instructions you want other signers to read before signing this transaction.'" class="w-4 h-4 dark:text-slate-500 text-slate-300" />
         </span>
-        <textarea v-model="note" v-focus placeholder="Visible to all signers" class="dark:bg-slate-800 placeholder:text-sm text-sm rounded-[14px] bg-slate-100 py-[15px] px-4 border-0 outline-none focus:border-0 focus:outline-none focus:ring-0" />
+        <textarea v-model="note" v-focus placeholder="Visible to all signers" class="dark:bg-slate-800 placeholder:text-sm placeholder:text-slate-400 text-sm font-medium rounded-[14px] bg-slate-100 py-[15px] px-4 border-0 outline-none focus:border-0 focus:outline-none focus:ring-0" />
       </div>
     </div>
     <template v-if="!estimatedFee">
