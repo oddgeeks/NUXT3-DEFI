@@ -5,11 +5,6 @@ export default defineNuxtPlugin(async () => {
       retry: 3,
     })
 
-    // temporary fix
-    data['1313161554'] = 'https://mainnet.aurora.dev'
-    data[AVO_PROD_CHAIN_ID] = AVO_PROD_RPC_URL
-    data[AVO_STAGING_CHAIN_ID] = AVO_STAGING_RPC_URL
-
     shared.rpcs = data as Record<string, string>
 
     return {
