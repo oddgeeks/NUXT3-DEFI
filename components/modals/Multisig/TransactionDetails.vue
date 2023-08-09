@@ -278,10 +278,15 @@ async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
   try {
     const isGasTopup = actionType.value === 'gas-topup'
 
-    const { success } = await openExecuteTransactionModal({
+    const { success, payload } = await openExecuteTransactionModal({
       transaction,
       isGasTopup,
     })
+
+    if (!success && payload.rejection) {
+      handleReject(transaction)
+      return
+    }
 
     if (success)
       await handleExecute(transaction)

@@ -6,7 +6,7 @@ const props = defineProps<{
   isGasTopup?: boolean
 }>()
 
-const emit = defineEmits(['resolve', 'reject'])
+const emit = defineEmits(['resolve', 'reject', 'destroy'])
 
 const { data, pending, error } = useEstimatedFee(
   ref(props.transaction.data.params.actions),
@@ -24,10 +24,6 @@ const { data, pending, error } = useEstimatedFee(
 
 function handleResolve() {
   return emit('resolve', true)
-}
-
-function handleReject() {
-  return emit('reject', false)
 }
 </script>
 
@@ -54,17 +50,28 @@ function handleReject() {
       :loading="pending"
       :error="error"
     />
-    <p v-if="!!error" class="text-sm flex items-center gap-2.5 w-full font-medium -my-2.5">
-      Error Occured. Do you still wish to proceed? <SvgoInfo2 v-tippy="'We expect this transaction to fail. You can cancel this transaction by creating rejection proposal or execute this transaction. In most cases, both actions will have the same outcome'" class="text-slate-500" />
-    </p>
+    <div v-if="!!error" class="flex w-full flex-col gap-7.5">
+      <p class="text-xs w-full font-medium -my-2.5 text-left">
+        This transaction will most likely fail on-chain.<br>
+        Please cancel this by creating a rejection transaction.
+      </p>
+      <CommonButton
+        size="lg" color="red" class="w-full justify-center" @click="$emit('resolve', false, {
+          rejection: true,
+        })"
+      >
+        Create rejection transaction
+      </CommonButton>
+    </div>
     <div
+      v-else
       class="flex w-full gap-4 items-center"
     >
       <CommonButton
         class="flex-1 justify-center"
         size="lg"
         color="white"
-        @click="handleReject()"
+        @click="$emit('reject', false)"
       >
         Cancel
       </CommonButton>
