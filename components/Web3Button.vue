@@ -161,8 +161,8 @@ whenever(
                   aria-label="Close Connection"
                 >
                   <div class="overflow-hidden absolute">
-                    <PowerOffSVG v-if="hovered" class="pointer-events-none" />
-                    <PowerOnSVG v-else class="pointer-events-none" />
+                    <PowerOffSVG v-if="hovered" class="pointer-events-none w-12 h-12" />
+                    <PowerOnSVG v-else class="pointer-events-none w-12 h-12" />
                   </div>
                 </button>
               </div>
