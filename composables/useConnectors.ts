@@ -1,3 +1,4 @@
+import { storeToRefs } from 'pinia'
 import { injected, walletconnect, walletlink } from '~~/connectors'
 
 const providers = {
@@ -9,6 +10,8 @@ const providers = {
 }
 
 export function useConnectors() {
+  const { rpcs } = storeToRefs(useShared())
+
   const cachedProviderName = useCookie('cachedProviderName', {
     expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
   })
@@ -20,8 +23,9 @@ export function useConnectors() {
   function getConnector(): any {
     if (!process.client)
       return
-    const provider = cachedProviderName.value
-    return provider ? (providers as any)[provider] : null
+    const cachedProvider = cachedProviderName.value
+
+    return cachedProvider ? (providers as any)[cachedProvider]?.(rpcs.value) : null
   }
 
   return {

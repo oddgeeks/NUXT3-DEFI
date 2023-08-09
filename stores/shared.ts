@@ -15,9 +15,19 @@ export const useShared = defineStore('shared', () => {
     )
   }
 
+  function getRpcURLByChainId(chainid: number | string) {
+    const rpcURL = rpcs.value[chainid]
+
+    if (!rpcURL)
+      throw new Error(`No RPC URL for chainId: ${chainid}`)
+
+    return rpcURL
+  }
+
   return {
     rpcs,
     getRpcProviderByChainId,
+    getRpcURLByChainId,
   }
 })
 
