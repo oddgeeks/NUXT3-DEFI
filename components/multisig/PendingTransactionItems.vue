@@ -13,6 +13,8 @@ const { getCurrentNonce } = useAvocadoSafe()
 const { fetchSafe } = useSafe()
 const { lastModal } = useModal()
 
+const isExpandAll = inject<Ref<boolean>>('isExpandAll', ref(false))
+
 const route = useRoute()
 const page = ref(1)
 const containerRef = ref<HTMLElement | null>(null)
@@ -142,6 +144,10 @@ watch(lastModal, () => {
   // Refresh data when modal is closed
   if (!lastModal.value)
     refreshAll()
+})
+
+watch(isExpandAll, () => {
+  isDetailsOpen.value = isExpandAll.value
 })
 </script>
 

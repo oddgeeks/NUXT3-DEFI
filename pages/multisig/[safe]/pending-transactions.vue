@@ -2,6 +2,9 @@
 import axios from 'axios'
 
 const route = useRoute()
+const [isExpandAll, toggle] = useToggle(false)
+
+provide('isExpandAll', isExpandAll)
 
 useAccountTrack(undefined, () => {
   useEagerConnect()
@@ -84,18 +87,23 @@ useIntervalFn(() => {
         Transactions
       </h1>
 
-      <div class="bg-slate-50 dark:bg-gray-850 rounded-10 p-1.5 flex w-fit sm:self-baseline self-center">
-        <button
-          v-for="tab in tabs"
-          :key="tab.label"
-          :class="
-            tab.query === activeTab ? 'dark:bg-slate-800 bg-slate-150' : 'text-slate-400'
-          "
-          class="px-4 justify-center flex-1 text-xs rounded-7.5 whitespace-nowrap py-2 laeding-5 flex items-center"
-          @click="$router.replace({ query: { tab: tab.query } })"
-        >
-          <span class="sm:block hidden"> {{ tab.label }}</span>
-          <span class="sm:hidden block"> {{ tab.mobileLabel || tab.label }}</span>
+      <div class="flex justify-between">
+        <div class="bg-slate-50 dark:bg-gray-850 rounded-10 p-1.5 flex w-fit sm:self-baseline self-center">
+          <button
+            v-for="tab in tabs"
+            :key="tab.label"
+            :class="
+              tab.query === activeTab ? 'dark:bg-slate-800 bg-slate-150' : 'text-slate-400'
+            "
+            class="px-4 justify-center flex-1 text-xs rounded-7.5 whitespace-nowrap py-2 laeding-5 flex items-center"
+            @click="$router.replace({ query: { tab: tab.query } })"
+          >
+            <span class="sm:block hidden"> {{ tab.label }}</span>
+            <span class="sm:hidden block"> {{ tab.mobileLabel || tab.label }}</span>
+          </button>
+        </div>
+        <button class="text-primary text-xs" type="button" @click="toggle()">
+          {{ isExpandAll ? 'Collapse' : 'Expand' }} All
         </button>
       </div>
 
