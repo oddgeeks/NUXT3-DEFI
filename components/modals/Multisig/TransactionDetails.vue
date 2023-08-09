@@ -365,13 +365,15 @@ onUnmounted(() => {
               <span class="text-slate-400 text-xs">Nonce</span>
               <div class="flex items-center gap-2">
                 #{{ transactionRef.nonce }}
-                <div
-                  v-if="isGeneralLoading"
-                  style="width: 80px; height: 16px"
-                  class="rounded-lg loading-box"
-                />
-                <span v-else-if="!isNonceNotMatch && isConfirmationsMatch" class="text-slate-400 text-xs">(next to be executed)</span>
-                <span v-else class="text-slate-400 text-xs">(execution unavailable, execute previous txns first)</span>
+                <template v-if="!isTransactionExecuted">
+                  <div
+                    v-if="isGeneralLoading"
+                    style="width: 80px; height: 16px"
+                    class="rounded-lg loading-box"
+                  />
+                  <span v-else-if="!isNonceNotMatch && isConfirmationsMatch" class="text-slate-400 text-xs">(next to be executed)</span>
+                  <span v-else class="text-slate-400 text-xs">(execution unavailable, execute previous txns first)</span>
+                </template>
               </div>
             </div>
             <div v-if="transactionRef.note" class="flex flex-col justify-between text-sm gap-2.5">
