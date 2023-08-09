@@ -13,7 +13,7 @@ const filteredSafes = computed(() => {
   <div class="flex flex-col">
     <div v-if="mainSafe">
       <h2 class="text-xs mb-3 font-medium">
-        Generated wallets
+        Your wallets
       </h2>
       <div class="flex flex-col gap-2.5">
         <WalletItem primary :safe="mainSafe" />
@@ -23,7 +23,7 @@ const filteredSafes = computed(() => {
 
     <div v-if="!!filteredSafes?.length" class="mt-5">
       <h2 class="text-xs mb-3 font-medium">
-        Secondary wallets
+        Other wallets
       </h2>
       <ul class="flex flex-col gap-2.5">
         <li v-for="safeItem in filteredSafes" :key="safeItem.safe_address">
