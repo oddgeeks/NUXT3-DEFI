@@ -259,9 +259,8 @@ function getNonceTooltip(value: number | undefined) {
         <div class="flex row gap-[16px]">
             <CommonRadioSelect
               v-for="(nonceType, index) in transactionTypes" :key="index"
-              :selected="nonceType.value === nonce"
               :value="nonceType.value"
-              @select="(selected: number | undefined) => nonce = selected"
+              v-model="nonce"
             >
               <template v-slot:content>
                 <div class="flex row items-center gap-[8px]">

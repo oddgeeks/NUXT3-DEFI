@@ -12,17 +12,19 @@
 </template>
 <script setup lang="ts">
 interface IProps {
-    selected: boolean;
+    modelValue?: any;
     value: any;
-    height?: number;
 }
 const props = defineProps<IProps>()
 
-const emit = defineEmits<{
-    select: [value: IProps['value']]
-}>()
+const emit = defineEmits(['update:modelValue'])
+
+const selected = computed({
+  get: () => props.modelValue === props.value,
+  set: value => emit('update:modelValue', value),
+})
 
 const onUpdateSelected = () => {
-    emit('select', props.value)
+    selected.value = props.value
 }
 </script>
