@@ -42,6 +42,7 @@ async function handleDeletingContact(contact: IContact) {
             :chain="contact.chainId"
           />
           <span>{{ shortenHash(contact.address) }}</span>
+          <Copy :text="contact.address" />
         </div>
         <span class="text-slate-400">{{
           getSentTimes(contact)
