@@ -97,11 +97,13 @@ async function handleClick(item: IMultisigTransaction) {
     <button class="w-full" @click.stop="handleClick(item)">
       <div class="hidden grid-row sm:grid grid-item focus:outline-none items-center w-full text-xs font-medium py-4 px-5">
         <span class="flex items-center gap-2.5 whitespace-nowrap">
-          <span v-if="activeTab !== 'nonseq'" :class="item.nonce === '-1' ? 'hidden' : ''">
-            {{ item.nonce }}
-          </span>
+
           <ActionLogo class="shrink-0" :action="actionType" />
-          <span>{{ formattedActionType }}</span>
+          <span>{{ formattedActionType }}
+            <span v-if="activeTab !== 'nonseq'" v-tippy="`Nonce #${item.nonce}`" :class="item.nonce === '-1' ? 'hidden' : ''">
+              ({{ item.nonce }})
+            </span>
+          </span>
           <SvgoInfo2
             v-if="actionType === 'rejection'" v-tippy="{
               content: 'Executing this will cancel the transaction(s) below',
