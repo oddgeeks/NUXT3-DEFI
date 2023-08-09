@@ -149,14 +149,16 @@ whenever(
                   @click="closeConnection"
                   @mouseenter="hovered = true"
                   @mouseleave="hovered = false"
+                  class="w-7.5 h-7.5 rounded-full flex items-center justify-center overflow-hidden dark:bg-slate-800 bg-slate-100"
+                  aria-label="Close Connection"
                 >
-                  <div class="-my-3 -mx-3 w-12 h-12 hidden sm:flex items-center justify-center">
-                    <PowerOffSVG
-                      v-if="hovered"
-                      class="pointer-events-none right-0"
-                    />
-                    <PowerOnSVG v-else class="pointer-events-none right-0" />
-                  </div>
+                <div class="overflow-hidden absolute">
+                  <PowerOffSVG
+                    v-if="hovered"
+                    class="pointer-events-none"
+                  />
+                  <PowerOnSVG v-else class="pointer-events-none" />
+                </div>
                 </button>
               </div>
               <button
