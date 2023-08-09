@@ -103,7 +103,7 @@ function handleClick() {
     </div>
     <div class="flex flex-col justify-between items-end">
       <p :class="safe.multisig ? 'bg-purple text-purple' : 'bg-primary text-primary'"
-      class="rounded-full bg-opacity-[14%] text-xs py-0.5 px-2 font-medium">
+      class="rounded-lg bg-opacity-[14%] text-xs py-0.5 px-2 font-medium">
         {{ safe.multisig ? 'MULTISIG' : 'PERSONAL' }}
       </p>
       <p class="text-orange text-xs font-medium">
