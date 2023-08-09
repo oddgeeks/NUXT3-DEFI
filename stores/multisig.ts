@@ -50,6 +50,7 @@ export const useMultisig = defineStore('multisig', () => {
         }
       }
       catch (e) {
+        console.trace(e)
         return {
           chainId: network.chainId,
           requiredSignerCount: 1,
@@ -72,6 +73,7 @@ export const useMultisig = defineStore('multisig', () => {
   async function setRequiredSigners() {
     if (!selectedSafe.value)
       return
+
     const signers = await getRequiredSigners(selectedSafe.value)
     requiredSigners.value = signers
   }
@@ -81,6 +83,9 @@ export const useMultisig = defineStore('multisig', () => {
       return
 
     setRequiredSigners()
+  }, {
+    deep: true,
+    immediate: true,
   })
 
   return {
