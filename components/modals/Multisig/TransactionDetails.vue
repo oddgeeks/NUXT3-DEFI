@@ -307,7 +307,7 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <div class="flex sm:flex-row flex-col">
+    <div class="flex sm:flex-row flex-col font-medium">
       <div class="flex-1 border-r dark:border-slate-800 border-slate-150">
         <div class="flex flex-col sm:max-h-[710px] overflow-auto scroll-style">
           <div class="sm:p-7.5 p-5 border-b dark:border-slate-800 border-slate-150">
@@ -360,6 +360,19 @@ onUnmounted(() => {
               <NuxtLink target="_blank" :to="`${avoExplorerURL}/tx/${transactionRef.transaction_hash}`" class="text-sm text-primary">
                 {{ shortenHash(transactionRef.transaction_hash) }}
               </NuxtLink>
+            </div>
+            <div v-if="!isNonseq" class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
+              <span class="text-slate-400 text-xs">Nonce</span>
+              <div class="flex items-center gap-2">
+                #{{ transactionRef.nonce }}
+                <div
+                  v-if="isGeneralLoading"
+                  style="width: 80px; height: 16px"
+                  class="rounded-lg loading-box"
+                />
+                <span v-else-if="!isNonceNotMatch && isConfirmationsMatch" class="text-slate-400 text-xs">(next to be executed)</span>
+                <span v-else class="text-slate-400 text-xs">(execution unavailable, execute previous txns first)</span>
+              </div>
             </div>
             <div v-if="transactionRef.note" class="flex flex-col justify-between text-sm gap-2.5">
               <span class="text-slate-400 text-xs">Note</span>
