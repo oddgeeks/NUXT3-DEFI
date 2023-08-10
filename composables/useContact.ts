@@ -8,6 +8,7 @@ export function useContacts() {
   const { safeAddress } = useAvocadoSafe()
   const { account } = useWeb3()
   const abortController = ref<AbortController | null>(null)
+  const { parseTransactionError } = useErrorHandler()
 
   const ownerContact = computed(() => {
     if (!account.value)
@@ -98,8 +99,16 @@ export function useContacts() {
       transferCounts.value = data
     }
 
-    catch (e) {
-      console.log(e, 'selam')
+    catch (e: any) {
+      const err = parseTransactionError(e)
+      if (err.parsed?.includes('aborted'))
+        return
+
+      logError({
+        error: e,
+        notifyUser: true,
+        notifyMessage: 'Failed to fetch transfer counts',
+      })
     }
   }
 
