@@ -8,7 +8,7 @@ To maintain semi/non-compatible dApps, we can add them to the list by including 
 
 ## Setup
 
-Make sure to install the dependencies:
+Make sure to install the dependencies:.
 
 ```bash
 # yarn
