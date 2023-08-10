@@ -9,7 +9,7 @@ definePageMeta({
 
 const { account } = useWeb3()
 const { safeAddress } = useAvocadoSafe()
-const { safeContacts } = useContacts()
+const { safeContacts, fetchTransferCounts } = useContacts()
 
 const searchQuery = ref('')
 
@@ -34,6 +34,15 @@ const filteredContacts = computed(() => {
   })
 
   return fuse.search(searchQuery.value).map(result => result.item)
+})
+
+watch(safeAddress, () => {
+  if (!safeAddress.value)
+    return
+
+  fetchTransferCounts()
+}, {
+  immediate: true,
 })
 </script>
 
