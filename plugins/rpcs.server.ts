@@ -1,3 +1,5 @@
+import { slackIt } from '~~/server/utils'
+
 export default defineNuxtPlugin(async () => {
   const shared = useShared()
 
@@ -16,6 +18,12 @@ export default defineNuxtPlugin(async () => {
   }
   catch (e) {
     // fallback rpc
+    slackIt('error', {
+      message: 'RPCs CDN failed, fallback to default',
+      title: 'CDN Failed',
+      chainId: '1',
+      address: '0x',
+    })
     const rpcMap = networks.reduce((acc, network) => {
       acc[network.chainId] = network.params.rpcUrls[0]
       return acc
