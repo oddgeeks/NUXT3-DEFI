@@ -18,7 +18,7 @@
     "@coinbase/wallet-sdk": "3.0.4",
     "@fontsource/source-code-pro": "^4.5.12",
     "@headlessui/vue": "^1.7.12",
-    "@instadapp/avocado": "^0.2.2",
+    "@instadapp/avocado": "^0.4.0",
     "@instadapp/avocado-dev": "npm:@instadapp/avocado@dev",
     "@instadapp/utils": "^0.4.6",
     "@instadapp/vue-web3-nuxt": "^0.10.1",
@@ -73,7 +73,7 @@
     "yup": "^0.32.11"
   },
   "dependencies": {
-    "@instadapp/avocado-base": "0.0.41",
+    "@instadapp/avocado-base": "0.0.49",
     "@splidejs/vue-splide": "^0.6.12",
     "@walletconnect/utils": "^2.8.6",
     "alchemy-sdk": "^2.7.4",
