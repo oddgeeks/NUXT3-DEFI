@@ -85,7 +85,7 @@ function handleClick() {
         </button>
       </div>
 
-      <Copy class="text-sm leading-[18px] mb-[6px] dark:text-white text-slate-900 font-medium" :text="safe?.safe_address">
+      <Copy class="text-sm leading-[18px] mb-[6px] dark:text-white text-slate-900" :text="safe?.safe_address">
         <template #content>
           {{ shortenHash(safe?.safe_address) }}
         </template>
@@ -97,13 +97,13 @@ function handleClick() {
         class="rounded-lg loading-box"
       />
 
-      <p v-else class="text-slate-400 leading-[18px] text-sm">
+      <p v-else class="text-slate-400 leading-[18px] text-sm font-medium">
         {{ formatUsd(balance) }}
       </p>
     </div>
     <div class="flex flex-col justify-between items-end">
       <p :class="safe.multisig ? 'bg-purple text-purple' : 'bg-primary text-primary'"
-      class="rounded-full bg-opacity-[14%] text-xs py-0.5 px-2 font-medium">
+      class="rounded-lg bg-opacity-[14%] text-xs py-0.5 px-2 font-medium">
         {{ safe.multisig ? 'MULTISIG' : 'PERSONAL' }}
       </p>
       <p class="text-orange text-xs font-medium">
