@@ -30,7 +30,7 @@ const slots = useSlots()
       />
       <slot v-else-if="slots.copy" name="copy" />
       <slot v-else name="copy-icon">
-        <CopySVG />
+        <CopySVG class="text-slate-400" />
       </slot>
     </Transition>
   </button>

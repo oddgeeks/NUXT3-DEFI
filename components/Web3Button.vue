@@ -141,26 +141,33 @@ whenever(
                     <component :is="connectedProvider.logo" class="h-7.5 sm:h-9 w-7.5 sm:w-9" />
                   </div>
                   <div class="flex flex-col items-start gap-[6px]">
-                    <span class="text-xs text-slate-400 leading-[10px]">Owner's Address</span>
-                    <span class="text-lg leading-5">{{ addressLabel }}</span>
+                    <span class="text-xs text-slate-500 leading-[10px] font-medium">Owner's Address</span>
+                    <span class="text-lg leading-5 font-semibold">{{ addressLabel }}</span>
                   </div>
                 </div>
+
+                <button
+                  class="w-7.5 h-7.5 rounded-full flex items-center justify-center overflow-hidden dark:bg-slate-800 bg-slate-150"
+                  aria-label="Copy EOA"
+                >
+                  <Copy :text="trackingAccount || account" :icon-only="true" />
+                </button>
+
                 <button
                   @click="closeConnection"
                   @mouseenter="hovered = true"
                   @mouseleave="hovered = false"
+                  class="w-7.5 h-7.5 rounded-full flex items-center justify-center overflow-hidden dark:bg-slate-800 bg-slate-150"
+                  aria-label="Close Connection"
                 >
-                  <div class="-my-3 -mx-3 w-12 h-12 hidden sm:flex items-center justify-center">
-                    <PowerOffSVG
-                      v-if="hovered"
-                      class="pointer-events-none right-0"
-                    />
-                    <PowerOnSVG v-else class="pointer-events-none right-0" />
+                  <div class="overflow-hidden absolute">
+                    <PowerOffSVG v-if="hovered" class="pointer-events-none w-12 h-12" />
+                    <PowerOnSVG v-else class="pointer-events-none w-12 h-12" />
                   </div>
                 </button>
               </div>
               <button
-                class="h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
+                class="h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-150"
                 aria-label="Close EOA"
                 @click.stop="close"
               >
