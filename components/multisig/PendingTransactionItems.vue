@@ -86,6 +86,7 @@ const { data, refresh, pending } = useAsyncData(`multisig-${route.params.safe}-$
   watch: [() => props.activeTab, page],
   immediate: true,
   lazy: true,
+  server: false,
 })
 
 const { data: currentNonce } = useAsyncData(`current-nonce-${route.params.safe}-${props.chainId}`, async () => {

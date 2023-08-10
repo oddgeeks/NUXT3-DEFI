@@ -14,10 +14,11 @@ const emit = defineEmits(['destroy'])
 
 const transactionRef = ref(props.transaction)
 
-const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurrentNonce, getActualId, checkTransactionExecuted } = useAvocadoSafe()
+const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurrentNonce, checkTransactionExecuted } = useAvocadoSafe()
 const { getRequiredSigner, isAccountCanSign } = useMultisig()
 const { requiredSigners } = storeToRefs(useMultisig())
 const { selectedSafe } = storeToRefs(useSafe())
+const { fetchSafe } = useSafe()
 const { getContactNameByAddress } = useContacts()
 const { parseTransactionError } = useErrorHandler()
 const { account } = useWeb3()
@@ -258,14 +259,6 @@ async function handleReject(transaction: IMultisigTransaction) {
   }
 }
 
-watch(selectedSafe, async () => {
-  if (!selectedSafe.value)
-    return
-  currentNonce.value = await getCurrentNonce(transactionRef.value.chain_id, selectedSafe.value?.owner_address)
-}, {
-  immediate: true,
-})
-
 const transactionURL = computed(() => {
   if (process.server)
     return ''
@@ -295,6 +288,20 @@ async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
     pending.value.execute = false
   }
 }
+
+async function setCurrentNonce() {
+  try {
+    const safe = await fetchSafe(transactionRef.value.safe_address)
+    currentNonce.value = await getCurrentNonce(transactionRef.value.chain_id, safe.owner_address)
+  }
+  catch (e) {
+    console.log(e)
+  }
+}
+
+onMounted(() => {
+  setCurrentNonce()
+})
 
 onUnmounted(() => {
   const currentRoute = router.currentRoute.value
@@ -371,7 +378,7 @@ onUnmounted(() => {
                     style="width: 80px; height: 16px"
                     class="rounded-lg loading-box"
                   />
-                  <span v-else-if="!isNonceNotMatch && isConfirmationsMatch" class="text-slate-400 text-xs">(next to be executed)</span>
+                  <span v-else-if="!isNonceNotMatch" class="text-slate-400 text-xs">(next to be executed)</span>
                   <span v-else class="text-slate-400 text-xs">(execution unavailable, execute previous txns first)</span>
                 </template>
               </div>
