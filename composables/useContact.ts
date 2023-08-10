@@ -1,4 +1,4 @@
-import { isAddress } from '@ethersproject/address'
+import axios from 'axios'
 import { getAddress } from 'ethers/lib/utils'
 
 const contacts = useLocalStorage<IContact[]>('safe-contacts', [])
@@ -8,6 +8,7 @@ export function useContacts() {
   const { safeAddress } = useAvocadoSafe()
   const { account } = useWeb3()
   const transferCounts = ref<ITransferCount[]>([])
+  const abortController = ref<AbortController | null>(null)
 
   const ownerContact = computed(() => {
     if (!account.value)
@@ -69,41 +70,34 @@ export function useContacts() {
     }
   }
 
-  watch(
-    [safeAddress, contacts],
-    async () => {
-      if (!safeAddress.value)
-        return
+  async function fetchTransferCounts() {
+    if (!safeAddress.value || !safeContacts.value.length)
+      return
 
-      if (!safeContacts.value || safeContacts.value.length === 0)
-        return []
+    try {
+      if (abortController.value)
+        abortController.value.abort()
 
-      let newContacts = safeContacts.value
+      abortController.value = new AbortController()
 
-      newContacts = safeContacts.value.filter(
-        contact =>
-          transferCounts.value.findIndex(
-            transfer =>
-              transfer.from === safeAddress.value
-              && transfer.to === contact?.address.toLowerCase()
-              && transfer.chainId == contact.chainId,
-          ) === -1 && isAddress(contact?.address),
-      )
+      const { data } = await axios.get('/api/transfers', {
+        signal: abortController.value.signal,
+        params: {
+          from: safeAddress.value,
+          to: safeContacts.value.map(_contact => _contact.address),
+          chainIds: safeContacts.value.map(_contact => Number(_contact.chainId)),
+        },
+      })
 
-      if (newContacts.length !== 0) {
-        const res = await http('/api/transfers', {
-          params: {
-            from: safeAddress.value,
-            to: newContacts.map(_contact => _contact.address),
-            chainIds: newContacts.map(_contact => Number(_contact.chainId)),
-          },
-        })
+      abortController.value = null
 
-        transferCounts.value = [...transferCounts.value, ...res]
-      }
-    },
-    { immediate: true },
-  )
+      transferCounts.value = data
+    }
+
+    catch (e) {
+      console.log(e, 'selam')
+    }
+  }
 
   const getSentTimes = (contact: IContact) => {
     if (transferCounts.value) {

@@ -29,6 +29,9 @@ export async function getTokenTransfersByEtherscan(from: string,
   do {
     const res: any = await $fetch(
       `${baseUrl}/api?module=account&action=tokentx&address=${from}&sort=asc&startblock=0&page=${page}`,
+      {
+        retry: 3,
+      },
     )
 
     if (!res.result)
