@@ -1,13 +1,12 @@
-import axios from 'axios'
 import { getAddress } from 'ethers/lib/utils'
 
 const contacts = useLocalStorage<IContact[]>('safe-contacts', [])
 const oldContacts = useLocalStorage<Record<string, IContact[]>>('contacts', {})
+const transferCounts = ref<ITransferCount[]>([])
 
 export function useContacts() {
   const { safeAddress } = useAvocadoSafe()
   const { account } = useWeb3()
-  const transferCounts = ref<ITransferCount[]>([])
   const abortController = ref<AbortController | null>(null)
 
   const ownerContact = computed(() => {
@@ -56,6 +55,8 @@ export function useContacts() {
 
     if (index === -1)
       contacts.value.push(contact)
+
+    fetchTransferCounts()
   }
 
   const editContact = (oldContact: IContact, newContact: IContact) => {
@@ -68,6 +69,8 @@ export function useContacts() {
       newContact.address = getAddress(newContact.address)
       contacts.value[index] = newContact
     }
+
+    fetchTransferCounts()
   }
 
   async function fetchTransferCounts() {
@@ -80,7 +83,7 @@ export function useContacts() {
 
       abortController.value = new AbortController()
 
-      const { data } = await axios.get('/api/transfers', {
+      const data = await $fetch<ITransferCount[]>('/api/transfers', {
         signal: abortController.value.signal,
         params: {
           from: safeAddress.value,
@@ -91,6 +94,7 @@ export function useContacts() {
 
       abortController.value = null
 
+      // update the contacts with transfer counts
       transferCounts.value = data
     }
 
@@ -100,19 +104,17 @@ export function useContacts() {
   }
 
   const getSentTimes = (contact: IContact) => {
-    if (transferCounts.value) {
-      const info = transferCounts.value.find(
-        item =>
-          item.to.toLowerCase() === contact.address.toLowerCase()
+    const info = transferCounts.value.find(
+      item =>
+        item.to.toLowerCase() === contact.address.toLowerCase()
           && item.chainId == contact.chainId,
-      )
-      if (!info)
-        return ''
+    )
+    if (!info)
+      return ''
 
-      return `Sent ${info.transferCount} ${
+    return `Sent ${info.transferCount} ${
         info.transferCount === 1 ? 'time' : 'times'
       }`
-    }
     return ''
   }
 
@@ -146,5 +148,6 @@ export function useContacts() {
     transferCounts,
     getSentTimes,
     migrateOldContacts,
+    fetchTransferCounts,
   }
 }
