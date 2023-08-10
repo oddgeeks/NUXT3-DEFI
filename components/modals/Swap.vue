@@ -565,6 +565,7 @@ onMounted(() => {
   const selltokenSymbol = lc(swap.value.sellToken.symbol)
   const usdc = availableBuyTokens.value.find(i => lc(i.symbol) === 'usdc')!
   const usdt = availableBuyTokens.value.find(i => lc(i.symbol) === 'usdt')!
+  const usdbc = availableBuyTokens.value.find(i => lc(i.symbol) === 'usdbc')!
 
   const defaultAlternative = 'eth'
 
@@ -574,13 +575,18 @@ onMounted(() => {
     usdc: 'eth',
     usdt: 'eth',
     dai: 'eth',
+    usdbc: 'eth',
   } as Record<string, string>
 
   const alternativeTokenSymbol = tokenAlternatives[selltokenSymbol] || defaultAlternative
 
   const alternativeToken = availableBuyTokens.value.find(i => lc(i.symbol) === alternativeTokenSymbol)
+  const fallback = availableBuyTokens.value[0]
 
-  swap.value.buyToken = alternativeToken || usdt || usdc
+  const token = alternativeToken || usdt || usdc || usdbc || fallback
+
+  if (token)
+    swap.value.buyToken = token
 
   if (props.amount) {
     setSellAmount({

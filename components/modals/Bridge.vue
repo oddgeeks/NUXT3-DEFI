@@ -58,7 +58,6 @@ const {
   form,
   nativeCurrency,
   nativeFee,
-  nativeFeeInUsd,
   isInsufficientBalance,
   bridgeToToken,
   disabled,
