@@ -21,8 +21,6 @@ export default defineNuxtPlugin(async () => {
     slackIt('error', {
       message: 'RPCs CDN failed, fallback to default',
       title: 'CDN Failed',
-      chainId: '1',
-      address: '0x',
     })
     const rpcMap = networks.reduce((acc, network) => {
       acc[network.chainId] = network.params.rpcUrls[0]
