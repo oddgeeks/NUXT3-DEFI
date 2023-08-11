@@ -9,6 +9,7 @@ const ETHERSCAN_BASE_URLS: Record<number, string> = {
   100: 'https://api.gnosisscan.io',
   43114: 'https://api.snowtrace.io',
   1101: 'https://api-zkevm.polygonscan.com',
+  8453: 'https://api.basescan.org',
 }
 
 export async function getTokenTransfersByEtherscan(from: string,
