@@ -108,7 +108,7 @@ async function handleClick(item: IMultisigTransaction) {
             v-if="actionType === 'rejection'" v-tippy="{
               content: 'Executing this will cancel the transaction(s) below',
               maxWidth: 'none',
-            }" class="text-slate-500"
+            }" class="text-slate-500 shrink-0"
           />
         </span>
         <span class="flex-1 flex-col flex gap-2 svg-shrink-none max-w-sm truncate">
@@ -170,7 +170,7 @@ async function handleClick(item: IMultisigTransaction) {
                 {
                   content: 'Executing this will cancel the transaction(s) below',
                   maxWidth: 'none',
-                }" class="text-slate-500"
+                }" class="text-slate-500 shrink-0"
             />
           </span>
         </div>
