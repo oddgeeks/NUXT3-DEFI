@@ -15,6 +15,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
   const { account } = useWeb3()
   const { parseTransactionError } = useErrorHandler()
   const { switchToAvocadoNetwork } = useNetworks()
+  const { getRpcURLByChainId } = useShared()
 
   const actualSessions = computed(() => sessions.value.filter((value) => {
     if (value.self.metadata.name === 'Avocado')

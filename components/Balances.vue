@@ -209,7 +209,7 @@ const { safeAddress, isSafeAddress } = useAvocadoSafe()
                 <template v-else>
                   <BalanceRow
                     v-for="(tokenBalance) in searchQuery.length > 0 ? filteredBalances : sortedBalances"
-                    :key="`${tokenBalance.chainId} - ${tokenBalance.symbol}`"
+                    :key="`${tokenBalance.chainId} - ${tokenBalance.symbol} - ${tokenBalance.address}`"
                     :token-balance="tokenBalance"
                     :summary="false"
                     :hide="false"

@@ -1,4 +1,5 @@
 import { ethers } from 'ethers'
+import { storeToRefs } from 'pinia'
 import {
   changeMetamaskNetwork,
   injected,
@@ -11,6 +12,7 @@ import SVGWalletConnect from '~/assets/images/wallet/wallet-connect.svg?componen
 
 export function useNetworks() {
   const { chainId, provider, library } = useWeb3()
+  const { rpcs } = storeToRefs(useShared())
 
   const providers: Provider[] = [
     {
@@ -21,7 +23,7 @@ export function useNetworks() {
         return await changeMetamaskNetwork(network)
       },
       connect: async () => {
-        return injected
+        return injected()
       },
     },
     {
@@ -32,7 +34,7 @@ export function useNetworks() {
         return await changeMetamaskNetwork(network)
       },
       connect: async () => {
-        return walletlink
+        return walletlink()
       },
     },
     {
@@ -43,7 +45,7 @@ export function useNetworks() {
         return await changeMetamaskNetwork(network)
       },
       connect: async () => {
-        return walletconnect
+        return walletconnect(rpcs.value)
       },
     },
   ]

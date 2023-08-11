@@ -15,14 +15,6 @@ export interface IBalance extends IToken {
   balanceInUSD: string | null
 }
 
-const balanceResolverContracts = availableNetworks.reduce((acc, curr) => {
-  acc[curr.chainId] = TokenBalanceResolver__factory.connect(
-    '0x3fb128aa5ac254c8539996b11c587e521ae0d3ab',
-    getRpcProvider(curr.chainId),
-  )
-  return acc
-}, {} as Record<string, TokenBalanceResolver>)
-
 export const useSafe = defineStore('safe', () => {
   // balance aborter
   const balanceAborter = ref<AbortController>()
@@ -33,13 +25,22 @@ export const useSafe = defineStore('safe', () => {
   const { fetchTokenByAddress } = useTokens()
   const documentVisibility = useDocumentVisibility()
   const { parseTransactionError } = useErrorHandler()
+  const { getRpcProviderByChainId } = useShared()
 
   const forwarderProxyContract = Forwarder__factory.connect(
     forwarderProxyAddress,
-    new ethers.providers.JsonRpcProvider(getRpcURLByChainId(137)),
+    getRpcProviderByChainId(137),
   )
 
-  const avoProvider = getRpcProvider(avoChainId)
+  const balanceResolverContracts = availableNetworks.reduce((acc, curr) => {
+    acc[curr.chainId] = TokenBalanceResolver__factory.connect(
+      '0x3fb128aa5ac254c8539996b11c587e521ae0d3ab',
+      getRpcProviderByChainId(curr.chainId),
+    )
+    return acc
+  }, {} as Record<string, TokenBalanceResolver>)
+
+  const avoProvider = getRpcProviderByChainId(avoChainId)
 
   const networkPreference = ref(
     availableNetworks.map(el => el.chainId),
@@ -205,12 +206,12 @@ export const useSafe = defineStore('safe', () => {
         try {
           const wallet = GaslessWallet__factory.connect(
             safeAddress.value,
-            getRpcProvider(network.chainId),
+            getRpcProviderByChainId(network.chainId),
           )
 
           const forwarderProxyContract = Forwarder__factory.connect(
             forwarderProxyAddress,
-            getRpcProvider(network.chainId),
+            getRpcProviderByChainId(network.chainId),
           )
 
           const latestVersion = await forwarderProxyContract.avoWalletVersion(

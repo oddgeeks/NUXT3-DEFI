@@ -17,6 +17,7 @@ const emit = defineEmits(['destroy'])
 const { safeAddress, sendTransactions } = useAvocadoSafe()
 const { account } = useWeb3()
 const { parseTransactionError } = useErrorHandler()
+const { getRpcProviderByChainId } = useShared()
 
 const actualAddress = ref('')
 
@@ -25,7 +26,7 @@ const addressIsDsa = computedAsync(async () => {
     return false
 
   try {
-    const isDSA = await checkAddressIsDsa(actualAddress.value, props.asset.chainId)
+    const isDSA = await checkAddressIsDsa(actualAddress.value, props.asset.chainId, getRpcProviderByChainId(props.asset.chainId))
 
     return isDSA
   }
@@ -56,7 +57,7 @@ const { handleSubmit, errors, meta, validate, isSubmitting }
 
           const resolvedAddress
             = value.endsWith('.eth') && props.asset.chainId == 1
-              ? await getRpcProvider(1).resolveName(value)
+              ? await getRpcProviderByChainId(1).resolveName(value)
               : null
 
           if (resolvedAddress) {

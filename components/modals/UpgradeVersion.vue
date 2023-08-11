@@ -16,6 +16,7 @@ const emit = defineEmits(['destroy'])
 const { safeAddress, sendTransaction } = useAvocadoSafe()
 const { forwarderProxyAddress } = useSafe()
 const { parseTransactionError } = useErrorHandler()
+const { getRpcProviderByChainId } = useShared()
 
 const { account } = useWeb3()
 const submitting = ref(false)
@@ -25,14 +26,14 @@ const avoWalletImpAddress = ref('')
 async function fetchAvowalletImpl() {
   const forwarderProxyContract = Forwarder__factory.connect(
     forwarderProxyAddress,
-    getRpcProvider(props.network.chainId),
+    getRpcProviderByChainId(props.network.chainId),
   )
 
   const avoFactory = await forwarderProxyContract.avoFactory()
 
   const avoFactoryProxyContract = AvoFactoryProxy__factory.connect(
     avoFactory,
-    getRpcProvider(props.network.chainId),
+    getRpcProviderByChainId(props.network.chainId),
   )
 
   const avoWalletImpl = await avoFactoryProxyContract.avoWalletImpl()
@@ -48,7 +49,7 @@ const { data: txData } = useAsyncData(
 
     const wallet = GaslessWallet__factory.connect(
       safeAddress.value,
-      getRpcProvider(props.network.chainId),
+      getRpcProviderByChainId(props.network.chainId),
     )
 
     const data = await wallet.populateTransaction.upgradeTo(

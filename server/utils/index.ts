@@ -1,8 +1,8 @@
 interface ISlackParams {
   title: string
   message: string
-  address: string
-  chainId: string | number | undefined
+  address?: string
+  chainId?: string | number | undefined
   userAddress?: string
 }
 
@@ -16,12 +16,16 @@ export async function slackIt(type: ISlackMessageType,
     userAddress,
     12,
   )}>`
-    : address
+    : address || ''
 
-  const msg = `${title}
-${'`user`'} ${accountLink}
-${'`network`'} ${chainId}
+  let msg = `${title}
 ${'`error`'}  ${message}`
+
+  if (accountLink)
+    msg += `${'`user`'} ${accountLink}`
+
+  if (chainId)
+    msg += `${'`network`'} ${chainId}`
 
   $fetch('/api/slack', {
     method: 'POST',
