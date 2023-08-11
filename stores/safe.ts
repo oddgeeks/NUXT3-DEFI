@@ -515,10 +515,14 @@ export const useSafe = defineStore('safe', () => {
     }
   }
 
-  const fetchSafes = async () => {
-    const resp = await avoProvider.send('api_getSafes', [{
-      address: account.value,
+  const getSafesByAddress = async (address: string): Promise<ISafesResponse> => {
+    return avoProvider.send('api_getSafes', [{
+      address,
     }])
+  }
+
+  const fetchSafes = async () => {
+    const resp = await getSafesByAddress(account.value)
 
     safes.value = resp?.data || []
   }
@@ -691,6 +695,7 @@ export const useSafe = defineStore('safe', () => {
     isSelectedSafeSecondary,
     isMainSafeAvocadoSelected,
     fetchPendingMultisigTxnsCount,
+    getSafesByAddress,
   }
 }, {
   persist: {

@@ -541,6 +541,13 @@ type IDefiToken = {
   price?: string;
   tokenAddress: string;
 }
+
+interface ISafesResponse {
+  data: ISafe[]
+  page: number
+  totoal
+}
+
  interface ISafe {
   fully_deployed: number
   id: number
