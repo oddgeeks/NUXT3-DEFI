@@ -223,7 +223,7 @@ async function handleClick(item: IMultisigTransaction) {
 
 <style scoped>
 .grid-item {
-  grid-template-columns: 135px 1fr 95px 120px 200px;
+  grid-template-columns: 145px 1fr 95px 120px 200px;
   @apply gap-8;
 }
 </style>

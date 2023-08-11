@@ -346,7 +346,7 @@ onUnmounted(() => {
                 Executing this transaction will reject transaction
               </span>
               <div v-once class="flex flex-1 flex-col gap-2">
-                <ActionMetadata v-for="metadata in decodedMetadata" :key="metadata" compact class="text-xs whitespace-nowrap" :chain_id="transactionRef.chain_id" :metadata="metadata" />
+                <ActionMetadata v-for="metadata in decodedMetadata" :key="metadata" class="text-xs whitespace-nowrap" :chain_id="transactionRef.chain_id" :metadata="metadata" />
               </div>
             </div>
           </div>
