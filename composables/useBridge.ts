@@ -104,8 +104,21 @@ export function useBridge(fromToken: Ref<IBalance>) {
     if (t)
       return t
 
-    return bridgeTokens.data.value?.find((t: any) =>
+    const mapping = {
+      usdbc: 'usdc',
+      weth: 'eth',
+    } as any
+
+    const fallback = bridgeTokens.data.value?.find((t: any) =>
       t.symbol.toLowerCase().includes(fromToken.value.symbol.toLowerCase()),
+    )
+
+    if (fallback)
+      return fallback
+
+    return bridgeTokens.data.value?.find(
+      (t: any) =>
+        t.symbol.toLowerCase() === mapping[fromToken.value.symbol.toLowerCase()],
     )
   })
 
@@ -144,6 +157,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
             params: {
               fromChainId: fromChainId.value,
               toChainId: toChainId.value,
+              isShortList: true,
             },
           },
         )

@@ -18,6 +18,7 @@ const { networkPreference } = storeToRefs(useSafe())
 const whitelistedSymbols = [
   'ETH',
   'USDC',
+  'USDBC',
   'USDT',
   'DAI',
   'INST',

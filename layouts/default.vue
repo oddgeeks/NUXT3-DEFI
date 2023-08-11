@@ -69,7 +69,7 @@ onMounted(() => {
         <TheFooter />
       </div>
     </div>
-    <div class="fixed bottom-0 sm:bottom-12 w-full z-40">
+    <div class="fixed bottom-0 sm:bottom-12 sm:w-auto w-full left-1/2 -translate-x-1/2 z-40">
       <BannerSwitchNetwork v-if="showIncorrectNetworkBanner" />
       <BannerOnboard
         v-else-if="showOnboardBanner && route.name !== 'claims-ens-drop'"
