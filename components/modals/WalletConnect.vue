@@ -66,7 +66,7 @@ const prepareAndConnect = handleSubmit(async () => {
     toggle(true)
     const version = wcStoreV2.getConnectionVersion(uri.value)
     if (version === 1) {
-      throw new Error('Version not supported')
+      throw new Error('Version not supported', { cause: 'version-error' })
     }
     else {
       const { approvedNamespaces, sessionProposal } = await wcStoreV2.prepareConnectV2(uri.value)
@@ -81,9 +81,7 @@ const prepareAndConnect = handleSubmit(async () => {
   catch (e: any) {
     const err = serialize(e)
 
-    console.log(err)
-
-    if (e.message == 'Version not supported') {
+    if (e.cause.message == 'version-error') {
       openDialogModal({
         title: err.message,
         content: `WalletConnect V1 is deprecated and not supported anymore`,
