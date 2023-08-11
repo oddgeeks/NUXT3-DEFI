@@ -106,6 +106,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
 
     const mapping = {
       usdbc: 'usdc',
+      weth: 'eth',
     } as any
 
     const fallback = bridgeTokens.data.value?.find((t: any) =>
