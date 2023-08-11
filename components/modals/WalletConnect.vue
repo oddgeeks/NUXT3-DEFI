@@ -81,7 +81,7 @@ const prepareAndConnect = handleSubmit(async () => {
   catch (e: any) {
     const err = serialize(e)
 
-    if (e.cause.message == 'version-error') {
+    if (err?.cause?.message == 'version-error') {
       openDialogModal({
         title: err.message,
         content: `WalletConnect V1 is deprecated and not supported anymore`,
