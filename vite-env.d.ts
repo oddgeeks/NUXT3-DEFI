@@ -401,6 +401,7 @@ interface Transaction {
 interface AppliedDiscountDetails extends DiscountDetails {
   discountAmountMin: number;
   discountAmount: number;
+  formattedDiscountAmount: string;
 }
 
 interface ICalculatedFee {

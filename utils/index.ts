@@ -85,10 +85,19 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
     maxAmountAfterDiscount -= discountAmount
     minAmountAfterDiscount -= discountAmountMin
 
+    const formattedDiscountAmountMin = formatDecimal(toBN(discountAmountMin).times(-1).toFixed(), 2)
+    const formattedDiscountAmountMax = formatDecimal(toBN(discountAmount).times(-1).toFixed(), 2)
+
+    const formattedDiscountAmount = discountAvailable
+      ? `${formattedDiscountAmountMin} — ${formattedDiscountAmountMax}`
+      : '0.00'
+
     return {
       ...discountDetail,
       discountAmountMin,
       discountAmount,
+      formattedDiscountAmountMin,
+      formattedDiscountAmount,
     }
   })
 
