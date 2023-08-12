@@ -19,6 +19,8 @@ const { providers } = useNetworks()
 const {
   showTrackingBanner,
 } = useBanner()
+const { getRpcProviderByChainId } = useShared()
+
 const router = useRouter()
 
 const addressLabel = computed(() =>
@@ -57,7 +59,7 @@ watch(() => active.value, () => {
 whenever(
   account,
   async () => {
-    ensName.value = await getRpcProvider(1).lookupAddress(account.value)
+    ensName.value = await getRpcProviderByChainId(1).lookupAddress(account.value)
   },
   { immediate: true },
 )

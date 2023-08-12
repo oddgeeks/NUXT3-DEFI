@@ -15,6 +15,7 @@ export function useAvocadoSafe() {
   const { switchToAvocadoNetwork } = useNetworks()
   const { library, account } = useWeb3()
   const { trackingAccount, isTrackingMode } = useAccountTrack()
+  const { getRpcProviderByChainId } = useShared()
   const { avoProvider } = useSafe()
   const { selectedSafe } = storeToRefs(useSafe())
   const { forwarderProxyContract } = useSafe()
@@ -309,7 +310,7 @@ export function useAvocadoSafe() {
       ],
     }
 
-    const provider = getRpcProvider(params.targetChainId)
+    const provider = getRpcProviderByChainId(params.targetChainId)
 
     const wallet = GaslessWallet__factory.connect(
       safeAddress.value,
@@ -347,7 +348,7 @@ export function useAvocadoSafe() {
 
     const avoSigner = library.value.getSigner()
 
-    const contract = AvoMultisigImplementation__factory.connect(safeAddress.value, getRpcProvider(chainId))
+    const contract = AvoMultisigImplementation__factory.connect(safeAddress.value, getRpcProviderByChainId(chainId))
 
     const [domainSeparatorName, domainSeparatorVersion] = await Promise.all([
       contract.DOMAIN_SEPARATOR_NAME().catch(() => 'Avocado-Multisig'),

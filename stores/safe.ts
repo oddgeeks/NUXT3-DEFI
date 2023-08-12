@@ -288,7 +288,7 @@ export const useSafe = defineStore('safe', () => {
         } as NetworkVersion
 
         try {
-          const provider = getRpcProvider(network.chainId)
+          const provider = getRpcProviderByChainId(network.chainId)
 
           const wallet = GaslessWallet__factory.connect(
             safeAddress.value,
@@ -310,7 +310,7 @@ export const useSafe = defineStore('safe', () => {
 
             const forwarderProxyContract = Forwarder__factory.connect(
               forwarderProxyAddress,
-              getRpcProvider(network.chainId),
+              getRpcProviderByChainId(network.chainId),
             )
 
             const avoFactory = await forwarderProxyContract.avoFactory()

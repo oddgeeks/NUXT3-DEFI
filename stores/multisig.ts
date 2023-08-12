@@ -6,6 +6,7 @@ import {
 
 export const useMultisig = defineStore('multisig', () => {
   const requiredSigners = ref<IRequiredSigners[]>([])
+  const { getRpcProviderByChainId } = useShared()
 
   const { selectedSafe } = storeToRefs(useSafe())
 
@@ -66,7 +67,7 @@ export const useMultisig = defineStore('multisig', () => {
   }
 
   async function getRequiredSigner(safeAddress: string, chainId: number | string) {
-    const instance = AvoMultisigImplementation__factory.connect(safeAddress, getRpcProvider(chainId))
+    const instance = AvoMultisigImplementation__factory.connect(safeAddress, getRpcProviderByChainId(chainId))
     return instance.requiredSigners()
   }
 

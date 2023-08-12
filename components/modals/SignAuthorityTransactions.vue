@@ -16,6 +16,7 @@ const { parseTransactionError } = useErrorHandler()
 const { sendTransaction } = useAvocadoSafe()
 const { setSelectedSafe } = useSafe()
 const { account } = useWeb3()
+const { getRpcProviderByChainId } = useShared()
 
 const txHashes = ref<ITxHash[]>([])
 const pending = ref(false)
@@ -34,7 +35,7 @@ async function sendTransactions() {
   txHashes.value = []
   for (const tx of props.transactions) {
     try {
-      const provider = getRpcProvider(tx.chainId)
+      const provider = getRpcProviderByChainId(tx.chainId)
 
       const metadata = encodeAuthMetadata({
         address: props.authority.address,
