@@ -15,6 +15,7 @@ defineProps({
 const { active, deactivate, account, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
 const { gasBalance } = storeToRefs(useSafe())
+const { getRpcProviderByChainId } = useShared()
 const { resetAccounts } = useSafe()
 const { setConnectorName, cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
@@ -62,7 +63,7 @@ function userSignOut() {
 whenever(
   account,
   async () => {
-    ensName.value = await getRpcProvider(1).lookupAddress(account.value)
+    ensName.value = await getRpcProviderByChainId(1).lookupAddress(account.value)
   },
   { immediate: true },
 )
@@ -154,11 +155,11 @@ whenever(
                 </button>
 
                 <button
+                  class="w-7.5 h-7.5 rounded-full flex items-center justify-center overflow-hidden dark:bg-slate-800 bg-slate-150"
+                  aria-label="Close Connection"
                   @click="closeConnection"
                   @mouseenter="hovered = true"
                   @mouseleave="hovered = false"
-                  class="w-7.5 h-7.5 rounded-full flex items-center justify-center overflow-hidden dark:bg-slate-800 bg-slate-150"
-                  aria-label="Close Connection"
                 >
                   <div class="overflow-hidden absolute">
                     <PowerOffSVG v-if="hovered" class="pointer-events-none w-12 h-12" />

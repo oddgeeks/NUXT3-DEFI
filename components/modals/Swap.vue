@@ -81,6 +81,7 @@ function defaultSwapDetails() {
 const swapDetails = ref(defaultSwapDetails())
 const [swapped, toggleSwapped] = useToggle()
 const [isBuyAmountDirty, toggleDirty] = useToggle(false)
+const { getRpcProviderByChainId } = useShared()
 const sellInputWrapperRef = ref<HTMLDivElement>()
 
 const refreshing = ref(false)
@@ -404,7 +405,7 @@ const { data: txs } = useAsyncData(
 
     const erc20 = Erc20__factory.connect(
       address,
-      getRpcProvider(toChainId.value),
+      getRpcProviderByChainId(toChainId.value),
     )
 
     const txs = []

@@ -9,6 +9,7 @@ const ETHERSCAN_BASE_URLS: Record<number, string> = {
   100: 'https://api.gnosisscan.io',
   43114: 'https://api.snowtrace.io',
   1101: 'https://api-zkevm.polygonscan.com',
+  8453: 'https://api.basescan.org',
 }
 
 export async function getTokenTransfersByEtherscan(from: string,
@@ -29,6 +30,9 @@ export async function getTokenTransfersByEtherscan(from: string,
   do {
     const res: any = await $fetch(
       `${baseUrl}/api?module=account&action=tokentx&address=${from}&sort=asc&startblock=0&page=${page}`,
+      {
+        retry: 3,
+      },
     )
 
     if (!res.result)

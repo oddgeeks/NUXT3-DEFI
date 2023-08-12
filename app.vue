@@ -1,8 +1,10 @@
 <script setup lang="ts">
 useTokens()
 useSafe()
+const { library } = useWeb3()
 
 onMounted(() => {
+  (window as any).library = library
   const hideAllTooltipsOnScroll = useThrottleFn(() => {
     [...document.querySelectorAll('[data-tippy-root]')].forEach(e =>
     // @ts-expect-error

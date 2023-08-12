@@ -7,6 +7,7 @@ const { activate, account } = useWeb3()
 
 const { providers } = useNetworks()
 const { setConnectorName } = useConnectors()
+const { getRpcProviderByChainId } = useShared()
 
 const loading = ref<Record<string, boolean>>({})
 
@@ -38,7 +39,7 @@ function isProviderVisible(provider: Provider) {
 whenever(
   account,
   async () => {
-    ensName.value = await getRpcProvider(1).lookupAddress(account.value)
+    ensName.value = await getRpcProviderByChainId(1).lookupAddress(account.value)
   },
   { immediate: true },
 )

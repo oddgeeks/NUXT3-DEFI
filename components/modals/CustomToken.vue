@@ -11,8 +11,9 @@ const props = defineProps<{
   address: string
 }>()
 
-const { handleAddToken } = useTokens()
+const { handleAddToken, fetchTokenByAddress } = useTokens()
 const { tokens } = storeToRefs(useTokens())
+const { getRpcProviderByChainId } = useShared()
 const { fetchBalances } = useSafe()
 
 const balance = ref('0')
@@ -59,19 +60,23 @@ const {
   pending,
   error,
 } = useAsyncData(
-  'custom-token',
+  `custom-token-${props.address}`,
   async () => {
     const { valid } = await validate()
 
     if (valid) {
       const contract = Erc20__factory.connect(
         address.value,
-        getRpcProvider(chainId.value),
+        getRpcProviderByChainId(chainId.value),
       )
 
       const symbol = await contract.symbol()
       const name = await contract.name()
       const decimals = await contract.decimals()
+
+      const tokens = await fetchTokenByAddress([address.value], chainId.value)
+
+      const token = tokens?.[0]
 
       const data = await fetchBalances()
 
@@ -91,9 +96,9 @@ const {
         name,
         decimals,
         coingeckoId: '',
-        logoURI: '',
-        price: 0,
-        sparklinePrice7d: [],
+        logoURI: token?.logo_url,
+        price: token?.price || 0,
+        sparklinePrice7d: token?.sparkline_price_7d || [],
       } as IToken
     }
   },

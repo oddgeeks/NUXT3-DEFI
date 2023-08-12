@@ -308,12 +308,12 @@ const onSubmit = form.handleSubmit(async () => {
                   v-else
                   class="dark:bg-gray-800 bg-slate-100 w-full px-3 flex py-3 items-center gap-2.5 rounded-2xl"
                 >
-                  <SafeTokenLogo class="h-6 w-6" :url="fromToken.logoURI" />
+                  <SafeTokenLogo class="h-6 w-6" :url="bridgeToToken?.logoURI || fromToken.logoURI" />
                   <span
                     class="text-sm w-full leading-5 text-shadow overflow-hidden whitespace-nowrap"
                   >
-                    {{ fromToken.name }}
-                    <span class="uppercase"> ({{ fromToken.symbol }})</span>
+                    {{ bridgeToToken?.name || fromToken.name }}
+                    <span class="uppercase"> ({{ bridgeToToken?.symbol || fromToken.symbol }})</span>
                   </span>
                 </div>
               </div>
