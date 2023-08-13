@@ -107,6 +107,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
 
     const mapping = {
       usdbc: 'usdc',
+      usdc: 'usdbc',
       weth: 'eth',
     } as any
 
