@@ -13,6 +13,7 @@ export interface IToken {
   coingeckoId: string | null
   sparklinePrice7d: number[]
   isCustomToken?: boolean
+  notsupported?: boolean
 }
 
 export const useTokens = defineStore('tokens', () => {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getAddress } from 'ethers/lib/utils'
 import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 
 const props = defineProps({
@@ -24,8 +25,17 @@ const { toWei } = useBignumber()
 const { parseTransactionError } = useErrorHandler()
 
 const fromChainId = ref<string>(props.chainId)
-const availableTokens = computed(() =>
-  tokenBalances.value.filter(t => t.chainId == fromChainId.value),
+
+const availableTokens = computed(() => {
+  return tokenBalances.value.filter(t => t.chainId == fromChainId.value).map((i) => {
+    const isSupported = fromTokens.data.value?.some(f => getAddress(f.address) === getAddress(i.address) && String(f.chainId) == String(i.chainId))
+
+    return {
+      ...i,
+      notsupported: fromTokens.data.value?.length ? !isSupported : false,
+    }
+  })
+},
 )
 const fromToken = ref(
   tokenBalances.value.find(
@@ -64,6 +74,7 @@ const {
   selectableChains,
   handleSwapToken,
   bridgeTokens,
+  fromTokens,
 } = useBridge(fromToken)
 const { pending, error, data } = useEstimatedFee(
   transactions.data,
@@ -186,7 +197,7 @@ const onSubmit = form.handleSubmit(async () => {
 <template>
   <form class="flex gap-7.5 flex-col" @submit="onSubmit">
     <div class="flex gap-[14px]">
-      <div class="w-10 h-10 rounded-full items-center flex justify-center bg-primary">
+      <div class="w-10 h-10 rounded-full items-center flex justify-center bg-primary shrink-0">
         <SvgoBridge />
       </div>
       <div class="flex flex-col gap-1">

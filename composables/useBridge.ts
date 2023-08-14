@@ -16,6 +16,7 @@ interface IFee {
 export function useBridge(fromToken: Ref<IBalance>) {
   let txController: AbortController | null = null
   let tokensController: AbortController | null = null
+  let fromController: AbortController | null = null
   let routesController: AbortController | null = null
 
   const { account } = useWeb3()
@@ -80,7 +81,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
   )
 
   const bridgeTokens = useAsyncData(
-    'bridge-tokens',
+    `bridge-tokens-${fromChainId.value}-${toChainId.value}`,
     async () => {
       try {
         if (tokensController)
@@ -112,6 +113,41 @@ export function useBridge(fromToken: Ref<IBalance>) {
       server: false,
       immediate: true,
       default: () => [],
+      watch: [fromChainId, toChainId],
+    },
+  )
+
+  const fromTokens = useAsyncData(
+    `from-tokens-${fromChainId.value}-${toChainId.value}`,
+    async () => {
+      try {
+        if (fromController)
+          fromController.abort()
+
+        fromController = new AbortController()
+
+        const { result }: IBridgeTokensResponse = await http(
+          '/api/socket/v2/token-lists/from-token-list',
+          {
+            signal: fromController.signal,
+            params: {
+              fromChainId: fromChainId.value,
+              toChainId: toChainId.value,
+            },
+          },
+        )
+
+        fromController = null
+
+        return result
+      }
+      catch (e) {
+        console.log(e)
+      }
+    },
+    {
+      server: false,
+      immediate: true,
       watch: [fromChainId, toChainId],
     },
   )
@@ -415,7 +451,15 @@ export function useBridge(fromToken: Ref<IBalance>) {
     return [
       ...sortedByMatch.map(i => i.item),
       ...list,
-    ]
+    ].filter((i) => {
+      const token = tokens.value.find(
+        t =>
+          getAddress(t.address) === getAddress(i.address)
+            && String(t.chainId) == String(i.chainId),
+      )
+
+      return !!token
+    })
   }
 
   const selectableChains = computed(() =>
@@ -461,7 +505,6 @@ export function useBridge(fromToken: Ref<IBalance>) {
 
   onUnmounted(() => {
     clearNuxtData('bridge-transactions')
-    clearNuxtData('bridge-tokens')
     clearNuxtData('bridge-routes')
   })
 
@@ -487,5 +530,6 @@ export function useBridge(fromToken: Ref<IBalance>) {
     recivedValueInUsd,
     recievedAmount,
     bridgeTokens,
+    fromTokens,
   }
 }
