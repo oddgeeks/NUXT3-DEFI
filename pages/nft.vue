@@ -16,7 +16,7 @@ const { NFT } = useNft()
 const route = useRoute()
 
 const networkPreferences = ref(
-  [1, 137, 10, 42161, 56, 43114, 250],
+  [137, 42161, 1, 10, 56, 43114, 250],
 )
 
 useAccountTrack(undefined, () => {
