@@ -217,10 +217,10 @@ function onToggleCrossChain() {
         />
         <!-- {{ sendDescription }} -->
         <div v-if="isCrossChain" class="flex items-center">
-          Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;from&nbsp;<ChainLogo class="w-5 h-5 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}&nbsp;to Receiver on&nbsp;<ChainLogo class="w-5 h-5 shrink-0" :chain="data.toChainId" />&nbsp;{{ targetNetwork }}
+          Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;from&nbsp;<ChainLogo class="w-4 h-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}&nbsp;to Receiver on&nbsp;<ChainLogo class="w-4 h-4 shrink-0" :chain="data.toChainId" />&nbsp;{{ targetNetwork }}
         </div>
         <div v-else class="flex items-center">
-          Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;on&nbsp;<ChainLogo class="w-5 h-5 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}
+          Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;on&nbsp;<ChainLogo class="w-4 h-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}
         </div>
       </div>
     </Transition>
