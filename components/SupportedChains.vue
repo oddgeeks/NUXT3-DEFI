@@ -5,16 +5,13 @@ const props = defineProps({
     required: false,
   },
 })
-
-const { sortedNetworks } = useNetworks()
-
 const { safeAddress } = useAvocadoSafe()
 
 const visibleNetworks = computed(() => {
   if (props.maxCount)
-    return sortedNetworks.value.slice(0, props.maxCount)
+    return availableNetworks.slice(0, props.maxCount)
 
-  return sortedNetworks.value
+  return availableNetworks
 })
 </script>
 
@@ -49,8 +46,8 @@ const visibleNetworks = computed(() => {
         :chain="network.chainId"
       />
     </li>
-    <button v-if="props.maxCount && sortedNetworks.length > props.maxCount" class="w-6 h-6 text-xs bg-primary text-white rounded-full flex items-center justify-center" @click="openSupportedNetworks">
-      +{{ sortedNetworks.length - props.maxCount }}
+    <button v-if="props.maxCount && availableNetworks.length > props.maxCount" class="w-6 h-6 text-xs bg-primary text-white rounded-full flex items-center justify-center" @click="openSupportedNetworks">
+      +{{ availableNetworks.length - props.maxCount }}
     </button>
   </ul>
 </template>
