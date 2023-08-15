@@ -66,14 +66,6 @@ export function useNavigation() {
         to: `${avoExplorerURL}/address/${safeAddress.value}`,
         tooltip: 'History',
       },
-
-      {
-        label: 'Authorities',
-        icon: 'SvgoAuthorities',
-        to: '/authorities',
-        tooltip: 'Authorities',
-        hidden: isSafeMultisig.value,
-      },
       {
         label: 'Signers',
         icon: 'SvgoUserCircle',

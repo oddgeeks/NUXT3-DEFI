@@ -57,6 +57,7 @@ const isExecutionNotAvailable = computed(() => {
 })
 
 const isExecuteReady = computed(() => {
+  console.log(requiredSignersByChain.value, requiredSigners.value)
   if (!requiredSignersByChain.value)
     return false
   return requiredSignersByChain.value?.requiredSignerCount === 1 && !isExecutionNotAvailable.value
@@ -257,22 +258,24 @@ function getNonceTooltip(value: number | undefined) {
           Transaction type
         </span>
         <div class="flex row gap-4">
-            <CommonRadioSelect
-              v-for="(nonceType, index) in transactionTypes" :key="index"
-              :value="nonceType.value"
-              v-model="nonce"
-            >
-              <template v-slot:content>
-                <div class="flex row items-center gap-2">
-                  <span class="text-xs font-medium">{{ nonceType.name }}</span>
-                  <SvgoInfo2 v-tippy="getNonceTooltip(nonceType.value)" class="dark:text-slate-500 text-slate-300" />
-                </div>
-                  <span v-if="nonceType.value === recommendedNonce"
-                    class="ml-auto bg-primary bg-opacity-10 text-primary text-[0.625rem] font-medium px-1.5 py-1 uppercase rounded-10">
-                    Recommended
-                  </span>
-              </template>
-            </CommonRadioSelect>
+          <CommonRadioSelect
+            v-for="(nonceType, index) in transactionTypes" :key="index"
+            v-model="nonce"
+            :value="nonceType.value"
+          >
+            <template #content>
+              <div class="flex row items-center gap-2">
+                <span class="text-xs font-medium">{{ nonceType.name }}</span>
+                <SvgoInfo2 v-tippy="getNonceTooltip(nonceType.value)" class="dark:text-slate-500 text-slate-300" />
+              </div>
+              <span
+                v-if="nonceType.value === recommendedNonce"
+                class="ml-auto bg-primary bg-opacity-10 text-primary text-[0.625rem] font-medium px-1.5 py-1 uppercase rounded-10"
+              >
+                Recommended
+              </span>
+            </template>
+          </CommonRadioSelect>
         </div>
       </div>
 
@@ -379,6 +382,7 @@ function getNonceTooltip(value: number | undefined) {
       />
       I want to sign & execute in the same txn
     </button>
+    {{ isExecuteReady }}
     <CommonButton :disabled="feePending || isSubmitting" :loading="feePending || isSubmitting" class="justify-center mx-7.5 my-5" size="lg" type="submit">
       {{ signAndExecute && isExecuteReady ? 'Sign and Execute Transaction' : 'Sign and Send for Approval' }}
     </CommonButton>

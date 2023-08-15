@@ -7,27 +7,18 @@ export function useAuthorities() {
 
   const { account } = useWeb3()
 
-  const authorities = computed(() => {
-    if (!selectedSafe.value)
-      return []
-
-    return formatAuthorities(selectedSafe.value.authorities)
-  })
-
   const authorisedNetworks = computed(() => {
     if (!account.value || !safeAddress?.value || !selectedSafe.value || !isSelectedSafeSecondary.value)
       return availableNetworks
 
-    if (!isSafeMultisig.value) {
-      const auth = authorities.value.find(i => i.address === account.value)
-
-      return auth?.chainIds.map(i => getNetworkByChainId(i))
-    }
-    else {
+    if (isSafeMultisig.value) {
       if (!requiredSigners.value?.length)
         return availableNetworks
 
       return availableNetworks.filter(i => isAccountCanSign(i.chainId, account.value, selectedSafe.value?.owner_address))
+    }
+    else {
+      return availableNetworks
     }
   })
 
@@ -36,7 +27,6 @@ export function useAuthorities() {
   }
 
   return {
-    authorities,
     authorisedNetworks,
     checkNetworkIsAuthorised,
     isWalletSecondary,
