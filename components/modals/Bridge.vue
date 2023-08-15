@@ -27,13 +27,12 @@ const { parseTransactionError } = useErrorHandler()
 const fromChainId = ref<string>(props.chainId)
 
 const availableTokens = computed(() => {
-  return tokenBalances.value.filter(t => t.chainId == fromChainId.value).map((i) => {
-    const isSupported = fromTokens.data.value?.some(f => getAddress(f.address) === getAddress(i.address) && String(f.chainId) == String(i.chainId))
+  return tokenBalances.value.filter((i) => {
+    const isChainMatch = i.chainId == fromChainId.value
+    const isSupportedTokensExist = !!fromTokens.data.value?.length
+    const isSupported = isSupportedTokensExist ? fromTokens.data.value?.some(f => getAddress(f.address) === getAddress(i.address) && String(f.chainId) == String(i.chainId)) : true
 
-    return {
-      ...i,
-      notsupported: fromTokens.data.value?.length ? !isSupported : false,
-    }
+    return isChainMatch && isSupported
   })
 },
 )

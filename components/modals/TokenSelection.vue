@@ -40,18 +40,6 @@ const tokensWithBalance = computed(() => {
       if (!props.sort)
         return 0
 
-      const isANotSupported = a.notsupported
-      const isBNotSupported = b.notsupported
-
-      if (isANotSupported && isBNotSupported)
-        return 0
-
-      if (isANotSupported)
-        return 1
-
-      if (isBNotSupported)
-        return -1
-
       const populars = ['eth', 'usdc', 'usdt', 'dai', 'wbtc', 'matic']
 
       if (toBN(b.balance).gt(toBN(a.balance)))
@@ -119,9 +107,6 @@ onMounted(() => {
             <span class="text-slate-400 font-medium text-sm">
               {{ formatDecimal(token.balance) }}
               <span class="uppercase"> {{ token.symbol }}</span>
-              <span v-if="token.notsupported">
-                <span> (not supported) </span>
-              </span>
             </span>
           </div>
           <SVGSuccess
