@@ -473,6 +473,7 @@ interface ITokenPrice {
 }
 
 interface ILogBalanceParams {
+  isPublic?: boolean
   chainId: number;
   isOnboard: boolean;
 }

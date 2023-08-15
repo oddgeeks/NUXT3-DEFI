@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
-import { wait } from '@instadapp/utils'
 import collect from 'collect.js'
+import { wait } from '@instadapp/utils'
 import type { IToken } from './tokens'
 import type { TokenBalanceResolver } from '~/contracts'
 import {
@@ -78,7 +78,7 @@ export const useSafe = defineStore('safe', () => {
     return new Set(eoaBalances.value?.filter(item => toBN(item?.balance ?? 0).toNumber() !== 0).map(item => item.chainId.toString())).size
   })
 
-  const fetchSafeddress = async () => {
+  const fetchSafeAddress = async () => {
     if (!account.value) {
       safeAddress.value = undefined
       return
@@ -286,22 +286,19 @@ export const useSafe = defineStore('safe', () => {
           .filter(t => String(t.chainId) == String(network.chainId))
           .map(t => t.address)
 
-        try {
-          return getChainBalances(String(network.chainId), address, [
-            ...tokens.value
-              .filter(t => t.chainId == String(network.chainId))
-              .map(t => t.address),
-            ...customTokenAddress,
-          ]).then((data) => {
-            logBalance({ isPublic: true, chainId: network.chainId, isOnboard: !updateState })
+        return getChainBalances(String(network.chainId), address, [
+          ...tokens.value
+            .filter(t => t.chainId == String(network.chainId))
+            .map(t => t.address),
+          ...customTokenAddress,
+        ]).then((data) => {
+          logBalance({ isPublic: true, chainId: network.chainId, isOnboard: !updateState })
 
-            if (updateState)
-              updateBalances(data)
+          if (updateState)
+            updateBalances(data)
 
-            return data
-          })
-        }
-        catch (error) {
+          return data
+        }).catch(async () => {
           try {
             const params: any = {
               userAddress: account.value,
@@ -330,7 +327,7 @@ export const useSafe = defineStore('safe', () => {
             })
             return []
           }
-        }
+        })
       }),
     )
   }
@@ -424,7 +421,7 @@ export const useSafe = defineStore('safe', () => {
       try {
         pending.value.global = true
         safeAddress.value = undefined
-        await fetchSafeddress()
+        await fetchSafeAddress()
         fetchGasBalance()
       }
       finally {
