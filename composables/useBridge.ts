@@ -81,7 +81,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
   )
 
   const bridgeTokens = useAsyncData(
-    `bridge-tokens-${fromChainId.value}-${toChainId.value}`,
+    'bridge-to-tokens',
     async () => {
       try {
         if (tokensController)
@@ -118,7 +118,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
   )
 
   const fromTokens = useAsyncData(
-    `from-tokens-${fromChainId.value}-${toChainId.value}`,
+    'bridge-from-tokens',
     async () => {
       try {
         if (fromController)
@@ -417,7 +417,6 @@ export function useBridge(fromToken: Ref<IBalance>) {
   }
 
   function sortTokensBestMatch(list: IBridgeTokensResult[], search: string) {
-    // sort tokens by closest to fromToken, use fuse search
     const fuse = new Fuse(list, {
       keys: ['symbol', 'name'],
       threshold: 0.3,
@@ -427,7 +426,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
 
     const sortedByMatch = fuse.search(search)
 
-    list = list.map((token: IBridgeTokensResult) => {
+    const sortedByBalance = list.map((token: IBridgeTokensResult) => {
       const internalToken = tokenBalances.value.find(
         i =>
           getAddress(i.address) === getAddress(token.address)
@@ -448,10 +447,12 @@ export function useBridge(fromToken: Ref<IBalance>) {
       .sort((a, b) => toBN(b.balance || 0).minus(a.balance || 0).toNumber())
       .filter(i => !i.score)
 
-    return [
+    const finalList = [
       ...sortedByMatch.map(i => i.item),
-      ...list,
-    ].filter((i) => {
+      ...sortedByBalance,
+    ]
+
+    return finalList.filter((i) => {
       const token = tokens.value.find(
         t =>
           getAddress(t.address) === getAddress(i.address)
@@ -465,8 +466,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
   const selectableChains = computed(() =>
     availableNetworks.filter(
       c =>
-        String(c.chainId) !== fromChainId.value
-        && c.chainId !== avoChainId,
+        String(c.chainId) !== fromChainId.value,
     ),
   )
 
@@ -506,6 +506,8 @@ export function useBridge(fromToken: Ref<IBalance>) {
   onUnmounted(() => {
     clearNuxtData('bridge-transactions')
     clearNuxtData('bridge-routes')
+    clearNuxtData('bridge-to-tokens')
+    clearNuxtData('bridge-from-tokens')
   })
 
   return {
