@@ -38,13 +38,6 @@ const disabled = computed(() => {
   return !actualAddress.value || !!errors.value.length || !!addressErrors.value.length || !amount.value || tokenlistPending.value
 })
 
-const sendDescription = computed(() => {
-  if (isCrossChain.value)
-    return `Sending ${token.value?.symbol.toUpperCase()} from ${fromNetwork.value} to Receiver on ${targetNetwork.value}`
-  else
-    return `Sending ${token.value?.symbol.toUpperCase()} on ${fromNetwork.value}`
-})
-
 const { data: totalTransfers } = useAsyncData(
   'total-transfers',
   async () => {
@@ -218,12 +211,18 @@ function onToggleCrossChain() {
     </div>
 
     <Transition name="fade">
-      <p class="text-slate-400 font-medium leading-6 flex items-center text-xs">
+      <div class="text-slate-400 font-medium leading-6 flex items-center text-xs flex">
         <SvgoInfo2
           class="mr-2.5 h-4 w-4 svg-gray-info rounded-full"
         />
-        {{ sendDescription }}
-      </p>
+        <!-- {{ sendDescription }} -->
+        <div v-if="isCrossChain" class="flex items-center">
+          Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;from&nbsp;<ChainLogo class="w-4 h-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}&nbsp;to Receiver on&nbsp;<ChainLogo class="w-4 h-4 shrink-0" :chain="data.toChainId" />&nbsp;{{ targetNetwork }}
+        </div>
+        <div v-else class="flex items-center">
+          Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;on&nbsp;<ChainLogo class="w-4 h-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}
+        </div>
+      </div>
     </Transition>
     <div class="flex gap-2.5 items-center">
       <button
