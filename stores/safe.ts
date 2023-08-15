@@ -46,6 +46,11 @@ export const useSafe = defineStore('safe', () => {
     getRpcProviderByChainId(137),
   )
 
+  const multisigForwarderProxyContract = Forwarder__factory.connect(
+    multisigForwarderProxyAddress,
+    getRpcProviderByChainId(137),
+  )
+
   const balanceResolverContracts = availableNetworks.reduce((acc, curr) => {
     acc[curr.chainId] = TokenBalanceResolver__factory.connect(
       '0x3fb128aa5ac254c8539996b11c587e521ae0d3ab',
@@ -176,7 +181,7 @@ export const useSafe = defineStore('safe', () => {
     if (!account.value)
       return
 
-    const multiSigAddress = await forwarderProxyContract.computeAddressMultisig(
+    const multiSigAddress = await multisigForwarderProxyContract.computeAddressMultisig(
       account.value,
     )
 
