@@ -381,7 +381,6 @@ function getNonceTooltip(value: number | undefined) {
       />
       I want to sign & execute in the same txn
     </button>
-    {{ isExecuteReady }}
     <CommonButton :disabled="feePending || isSubmitting" :loading="feePending || isSubmitting" class="justify-center mx-7.5 my-5" size="lg" type="submit">
       {{ signAndExecute && isExecuteReady ? 'Sign and Execute Transaction' : 'Sign and Send for Approval' }}
     </CommonButton>
