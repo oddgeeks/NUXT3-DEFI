@@ -452,6 +452,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
       ...sortedByBalance,
     ]
 
+    // filter tokens that are not in the Avocado Tokens
     return finalList.filter((i) => {
       const token = tokens.value.find(
         t =>
