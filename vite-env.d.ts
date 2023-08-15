@@ -403,6 +403,7 @@ interface Transaction {
 interface AppliedDiscountDetails extends DiscountDetails {
   discountAmountMin: number;
   discountAmount: number;
+  formattedDiscountAmount: string;
 }
 
 interface ICalculatedFee {
@@ -470,6 +471,7 @@ interface ITokenPrice {
 }
 
 interface ILogBalanceParams {
+  isPublic?: boolean
   chainId: number;
   isOnboard: boolean;
   isPublic: boolean;

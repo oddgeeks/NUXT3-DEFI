@@ -148,7 +148,7 @@ function openBridge() {
           class="bg-opacity-[14%] !text-primary hover:bg-opacity-20 py-2"
           :to="avoOnboardURL"
         >
-          Migrate to Avocado
+          Transfer funds into your Avocado Wallet
         </CommonButton>
       </div>
     </div>

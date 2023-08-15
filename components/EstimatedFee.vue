@@ -84,9 +84,7 @@ const discountAvailable = computed(() => {
             </p>
           </div>
           <p>
-            {{
-              formatDecimal(toBN(detail.discountAmount).times(-1).toFixed(), 2)
-            }}
+            {{ detail.formattedDiscountAmount }}
             USDC
           </p>
         </div>

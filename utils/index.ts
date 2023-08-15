@@ -88,10 +88,19 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
     maxAmountAfterDiscount -= discountAmount
     minAmountAfterDiscount -= discountAmountMin
 
+    const formattedDiscountAmountMin = formatDecimal(discountAmountMin, 2)
+    const formattedDiscountAmountMax = formatDecimal(discountAmount, 2)
+
+    const formattedDiscountAmount = discountAvailable
+      ? `${formattedDiscountAmountMin} — ${formattedDiscountAmountMax}`
+      : '0.00'
+
     return {
       ...discountDetail,
       discountAmountMin,
       discountAmount,
+      formattedDiscountAmountMin,
+      formattedDiscountAmount,
     }
   })
 
@@ -102,11 +111,11 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
 
   const formatted = isEqual
     ? formattedMax
-    : `${formattedMin} - ${formattedMax}`
+    : `${formattedMin} — ${formattedMax}`
 
   const formattedAmountAfterDiscount = isEqual
     ? formattedDiscountedAmount
-    : `${formattedDiscountedAmountMin} - ${formattedDiscountedAmount}`
+    : `${formattedDiscountedAmountMin} — ${formattedDiscountedAmount}`
 
   return {
     discountAvailable,
@@ -162,11 +171,11 @@ export function calculateMultipleEstimatedFee(...params: ICalculatedFee[]): ICal
 
   mergedFees.formatted = isEqual
     ? formattedMax
-    : `${formattedMin} - ${formattedMax}`
+    : `${formattedMin} — ${formattedMax}`
 
   mergedFees.formattedAmountAfterDiscount = isEqual
     ? formattedDiscountedAmount
-    : `${formattedDiscountedAmountMin} - ${formattedDiscountedAmount}`
+    : `${formattedDiscountedAmountMin} — ${formattedDiscountedAmount}`
 
   return mergedFees
 }

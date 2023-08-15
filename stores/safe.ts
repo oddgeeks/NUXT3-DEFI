@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
-import { wait } from '@instadapp/utils'
 import collect from 'collect.js'
+import { wait } from '@instadapp/utils'
 import { getAddress, isAddress } from 'ethers/lib/utils'
 import axios from 'axios'
 import type { IToken } from './tokens'
@@ -106,7 +106,7 @@ export const useSafe = defineStore('safe', () => {
     return new Set(eoaBalances.value?.filter(item => toBN(item?.balance ?? 0).toNumber() !== 0).map(item => item.chainId.toString())).size
   })
 
-  const fetchSafe = async (address: string): Promise<ISafe> => {
+  const fetchSafeA = async (address: string): Promise<ISafe> => {
     return avoProvider.send('api_getSafe', [address])
   }
 
@@ -392,25 +392,19 @@ export const useSafe = defineStore('safe', () => {
           .filter(t => String(t.chainId) == String(network.chainId))
           .map(t => t.address)
 
-        try {
-          return getChainBalances(String(network.chainId), address, [
-            ...tokens.value
-              .filter(t => t.chainId == String(network.chainId))
-              .map(t => t.address),
-            ...customTokenAddress,
-          ]).then((data) => {
-            logBalance({ isPublic: true, chainId: network.chainId, isOnboard: !updateState })
+        return getChainBalances(String(network.chainId), address, [
+          ...tokens.value
+            .filter(t => t.chainId == String(network.chainId))
+            .map(t => t.address),
+          ...customTokenAddress,
+        ]).then((data) => {
+          logBalance({ isPublic: true, chainId: network.chainId, isOnboard: !updateState })
 
-            if (updateState)
-              updateBalances(data)
+          if (updateState)
+            updateBalances(data)
 
-            return data
-          }).catch((error) => {
-            console.log(error)
-            return []
-          })
-        }
-        catch (error) {
+          return data
+        }).catch(async () => {
           try {
             const params: any = {
               userAddress: account.value,
@@ -439,7 +433,7 @@ export const useSafe = defineStore('safe', () => {
             })
             return []
           }
-        }
+        })
       }),
     )
   }
@@ -606,7 +600,7 @@ export const useSafe = defineStore('safe', () => {
       try {
         pending.value.global = true
 
-        await fetchSafeAddress()
+        await fetchSafeAAddress()
         await fetchMultiSigSafeAddress()
 
         await setMainSafe()
