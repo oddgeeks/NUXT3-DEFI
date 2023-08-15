@@ -51,7 +51,6 @@ export const useMultisig = defineStore('multisig', () => {
         }
       }
       catch (e) {
-        console.trace(e)
         return {
           chainId: network.chainId,
           requiredSignerCount: 1,

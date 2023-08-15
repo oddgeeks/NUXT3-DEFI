@@ -106,7 +106,7 @@ export const useSafe = defineStore('safe', () => {
     return new Set(eoaBalances.value?.filter(item => toBN(item?.balance ?? 0).toNumber() !== 0).map(item => item.chainId.toString())).size
   })
 
-  const fetchSafeA = async (address: string): Promise<ISafe> => {
+  const fetchSafe = async (address: string): Promise<ISafe> => {
     return avoProvider.send('api_getSafe', [address])
   }
 
@@ -600,7 +600,7 @@ export const useSafe = defineStore('safe', () => {
       try {
         pending.value.global = true
 
-        await fetchSafeAAddress()
+        await fetchSafeAddress()
         await fetchMultiSigSafeAddress()
 
         await setMainSafe()
