@@ -57,7 +57,6 @@ const isExecutionNotAvailable = computed(() => {
 })
 
 const isExecuteReady = computed(() => {
-  console.log(requiredSignersByChain.value, requiredSigners.value)
   if (!requiredSignersByChain.value)
     return false
   return requiredSignersByChain.value?.requiredSignerCount === 1 && !isExecutionNotAvailable.value
