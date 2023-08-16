@@ -18,7 +18,7 @@ export function useAvocadoSafe() {
   const { getRpcProviderByChainId } = useShared()
   const { avoProvider } = useSafe()
   const { selectedSafe } = storeToRefs(useSafe())
-  const { forwarderProxyContract } = useSafe()
+  const { forwarderProxyContract, multisigForwarderProxyContract } = useSafe()
   const { clearAllModals } = useModal()
 
   const { isSafeMultisig, requiredSigners } = storeToRefs(useMultisig())
@@ -322,8 +322,8 @@ export function useAvocadoSafe() {
       name = await wallet.DOMAIN_SEPARATOR_NAME()
     }
     catch (error) {
-      version = await forwarderProxyContract.avoWalletVersion('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE')
-      name = await forwarderProxyContract.avoWalletVersionName('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE')
+      version = await multisigForwarderProxyContract.avoWalletVersion('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE')
+      name = await multisigForwarderProxyContract.avoWalletVersionName('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE')
     }
 
     const domain = {
@@ -455,12 +455,12 @@ export function useAvocadoSafe() {
 
   async function getCurrentNonce(chainId: number | string, ownerAddress: string) {
     const underlyingProvider = new ethers.providers.JsonRpcProvider(getRpcURLByChainId(chainId))
-    const forwarderProxyContract = Forwarder__factory.connect(
-      forwarderProxyAddress,
+    const multisigForwarderProxyContract = Forwarder__factory.connect(
+      multisigForwarderProxyAddress,
       underlyingProvider,
     )
 
-    const currentNonce = (await forwarderProxyContract.avoSafeNonceMultisig(ownerAddress)).toNumber()
+    const currentNonce = (await multisigForwarderProxyContract.avoSafeNonceMultisig(ownerAddress)).toNumber()
 
     return currentNonce
   }

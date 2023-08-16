@@ -276,7 +276,7 @@ async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
       isGasTopup,
     })
 
-    if (!success && payload.rejection) {
+    if (!success && payload?.rejection) {
       handleReject(transaction)
       return
     }

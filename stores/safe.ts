@@ -716,6 +716,7 @@ export const useSafe = defineStore('safe', () => {
     fundedEoaNetworks,
     forwarderProxyContract,
     resetAccounts,
+    multisigForwarderProxyContract,
     setSelectedSafe,
     accountSafeMapping,
     fetchSafe,
