@@ -110,7 +110,7 @@ async function onSubmit() {
       signer: params?.signatureParams,
       data: params?.castParams,
       note: payload.note,
-      nonce,
+      nonce: params.castParams.params.avoSafeNonce,
     }, {
       baseURL: multisigURL,
     })
