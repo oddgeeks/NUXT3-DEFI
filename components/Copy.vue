@@ -12,6 +12,7 @@ const slots = useSlots()
 
 <template>
   <button
+    type="button"
     class="text-slate-400 font-semibold inline-flex items-center gap-2.5"
     @click="copy(text)"
   >
