@@ -111,7 +111,7 @@ onMounted(() => {
       </h1>
 
       <div class="flex justify-between">
-        <div class="bg-slate-50 dark:bg-gray-850 rounded-10 p-1.5 flex w-fit sm:self-baseline self-center">
+        <div class="bg-slate-50 dark:bg-gray-850 rounded-10 p-1.5 flex w-fit sm:self-baseline self-center font-medium">
           <button
             v-for="tab in tabs"
             :key="tab.label"
@@ -130,7 +130,7 @@ onMounted(() => {
         </button>
       </div>
 
-      <h2 v-if="title" class="text-xs leading-5 sm:text-left text-center">
+      <h2 v-if="title" class="text-xs leading-5 sm:text-left text-center font-medium">
         {{ title }}
       </h2>
       <div ref="itemsRef" class="gap-5 flex flex-col">
