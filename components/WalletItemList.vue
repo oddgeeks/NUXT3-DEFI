@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const { mainSafe, multiSigSafe, safes } = storeToRefs(useSafe())
+const { mainSafe, multiSigSafe, safes, legacySafe } = storeToRefs(useSafe())
 
 const filteredSafes = computed(() => {
   if (!safes.value)
@@ -16,6 +16,7 @@ const filteredSafes = computed(() => {
         Your wallets
       </h2>
       <div class="flex flex-col gap-2.5">
+        <WalletItem v-if="legacySafe" :safe="legacySafe" />
         <WalletItem primary :safe="mainSafe" />
         <WalletItem v-if="multiSigSafe" primary :safe="multiSigSafe" />
       </div>

@@ -21,6 +21,7 @@ export interface IBalance extends IToken {
 export const useSafe = defineStore('safe', () => {
   // balance aborter
   const balanceAborter = ref<AbortController>()
+  const legacySafeAddress = ref()
   const safeAddress = ref()
   const mainSafeAddress = ref()
   const multiSigSafeAddress = ref()
@@ -31,6 +32,7 @@ export const useSafe = defineStore('safe', () => {
 
   const selectedSafe = ref<ISafe>()
   const mainSafe = ref<ISafe>()
+  const legacySafe = ref<ISafe>()
   const multiSigSafe = ref<ISafe>()
 
   const { account, connector } = useWeb3()
@@ -125,6 +127,16 @@ export const useSafe = defineStore('safe', () => {
       mainSafe.value = resp
   }
 
+  async function setLegacySafe() {
+    const resp = await fetchSafe(legacySafeAddress.value)
+
+    if (!resp)
+      legacySafe.value = getDefaultSafe(legacySafeAddress.value, 0)
+
+    else
+      legacySafe.value = resp
+  }
+
   async function setSelectedSafe() {
     const resp = await fetchSafe(safeAddress.value)
 
@@ -161,17 +173,26 @@ export const useSafe = defineStore('safe', () => {
     if ((mainSafeAddress.value || safeAddress.value) && !cachedSafeAddress)
       return
 
-    const address = await forwarderProxyContract.computeAddress(
+    const oldSafeAddress = await forwarderProxyContract.computeAddress(
       account.value,
     )
 
-    if (address === incorrectAddress) {
+    const address = await multisigForwarderProxyContract.computeAddress(
+      account.value,
+    )
+
+    const isLegacySafeAvailable = await fetchSafe(oldSafeAddress)
+
+    if (oldSafeAddress === incorrectAddress) {
       notify({
         type: 'error',
         message: 'Safe Address is not valid',
         duration: 15000,
       })
     }
+
+    if (isLegacySafeAvailable)
+      legacySafeAddress.value = oldSafeAddress
 
     mainSafeAddress.value = address
     safeAddress.value = cachedSafeAddress || address
@@ -608,6 +629,7 @@ export const useSafe = defineStore('safe', () => {
         await fetchSafeAddress()
         await fetchMultiSigSafeAddress()
 
+        await setLegacySafe()
         await setMainSafe()
         await setMultiSigSafe()
         await fetchSafes()
@@ -700,6 +722,7 @@ export const useSafe = defineStore('safe', () => {
     isSelectedSafeSecondary,
     isMainSafeAvocadoSelected,
     fetchPendingMultisigTxnsCount,
+    legacySafe,
     getSafesByAddress,
   }
 }, {
