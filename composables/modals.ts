@@ -29,7 +29,6 @@ import SupportedNetworks from '~/components/modals/SupportedNetworks.vue'
 import PendingCrossTransaction from '~/components/modals/PendingCrossTransaction.vue'
 import DefiPositionDetails from '~/components/modals/DefiPositionDetails.vue'
 import QrCode from '~/components/modals/QrCode.vue'
-import AddAuthority from '~/components/modals/AddAuthority.vue'
 import AddSigner from '~/components/modals/Multisig/AddSigner.vue'
 import ReviewSigner from '~/components/modals/Multisig/ReviewSigner.vue'
 import ManageAuthority from '~/components/modals/ManageAuthority.vue'
@@ -448,12 +447,6 @@ export function openWelcomeModal() {
       wrapperClass: 'md:min-w-[560px]',
       contentClass: '!p-0',
     },
-  })
-}
-
-export function openAddAuthorityModal() {
-  return openModal({
-    component: AddAuthority,
   })
 }
 
