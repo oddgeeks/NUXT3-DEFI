@@ -1,7 +1,6 @@
 import { ethers } from 'ethers'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 import collect from 'collect.js'
-import { wait } from '@instadapp/utils'
 import type { IToken } from './tokens'
 import type { TokenBalanceResolver } from '~/contracts'
 import {
@@ -16,7 +15,6 @@ export interface IBalance extends IToken {
 }
 
 export const useSafe = defineStore('safe', () => {
-  // balance aborter
   const balanceAborter = ref<AbortController>()
   const safeAddress = ref()
 
@@ -255,12 +253,6 @@ export const useSafe = defineStore('safe', () => {
     },
   )
 
-  onMounted(async () => {
-    await wait(1000)
-
-    await fetchGasBalance()
-  })
-
   function updateBalances(data: IBalance[]) {
     for (const balance of data) {
       const currentBalances = balances.value.data || []
@@ -339,17 +331,14 @@ export const useSafe = defineStore('safe', () => {
       return
     if (documentVisibility.value === 'hidden')
       return
-    // if (balanceAborter.value) balanceAborter.value.abort();
 
     if (safeAddress.value === incorrectAddress)
-
       return
 
     pause()
 
     try {
       balances.value.loading = true
-      // balanceAborter.value = new AbortController();
 
       const data = await getBalances(
         safeAddress.value,
@@ -395,7 +384,7 @@ export const useSafe = defineStore('safe', () => {
   }
 
   async function fetchGasBalance() {
-    if (!account.value)
+    if (!safeAddress.value)
       return
 
     try {
@@ -409,39 +398,33 @@ export const useSafe = defineStore('safe', () => {
     }
   }
 
-  useIntervalFn(fetchGasBalance, 15000, {
-    immediate: true,
-  })
+  useIntervalFn(fetchGasBalance, 15000)
 
   const { pause, resume } = useIntervalFn(fetchBalances, 15000)
 
-  watch(
-    [account],
+  watchThrottled(account,
     async () => {
-      try {
-        pending.value.global = true
-        safeAddress.value = undefined
-        await fetchSafeAddress()
-        fetchGasBalance()
-      }
-      finally {
-        pending.value.global = false
-      }
+      safeAddress.value = undefined
+      eoaBalances.value = undefined
+
+      await fetchSafeAddress()
+
+      await until(tokens).toMatch(t => t.length > 0)
+      Promise.all([
+        fetchGasBalance(),
+        fetchEoaBalances(),
+      ])
     },
-    { immediate: true },
+    { throttle: 500 },
   )
 
-  watch([safeAddress, account, tokens], () => {
-    fetchBalances()
-    fetchEoaBalances()
-  }, {
-    immediate: true,
-  })
-
-  watch(safeAddress, () => {
-    // reset balances
+  watchThrottled(safeAddress, async () => {
     balances.value.data = undefined
-    eoaBalances.value = undefined
+
+    await until(tokens).toMatch(t => t.length > 0)
+    fetchBalances()
+  }, {
+    throttle: 500,
   })
 
   return {
