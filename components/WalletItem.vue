@@ -9,7 +9,10 @@ const router = useRouter()
 
 const { safeAddress } = useAvocadoSafe()
 const { fetchPendingMultisigTxnsCount } = useSafe()
+const { safeTotalBalanceMapping } = storeToRefs(useSafe())
 const walletName = useLocalStorage(`safe-${props.safe?.safe_address}`, props.safe.multisig ? 'Multisig' : 'Personal')
+
+const balance = computed(() => safeTotalBalanceMapping.value[props.safe?.safe_address])
 
 const val = walletName.value?.trim()
 if (!val)
@@ -79,7 +82,7 @@ function handleClick() {
       </Copy>
 
       <p class="text-slate-400 leading-[18px] text-sm font-medium">
-        {{ formatUsd(0) }}
+        {{ balance ? formatUsd(balance) : '' }}
       </p>
     </div>
     <div class="flex flex-col justify-between items-end">

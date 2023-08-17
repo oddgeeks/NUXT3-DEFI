@@ -26,6 +26,7 @@ export const useSafe = defineStore('safe', () => {
   const mainSafeAddress = ref()
   const multiSigSafeAddress = ref()
   const accountSafeMapping = ref<Record<string, string>>({})
+  const safeTotalBalanceMapping = ref<Record<string, string>>({})
   const route = useRoute()
 
   const safes = ref<ISafe[]>([])
@@ -495,6 +496,16 @@ export const useSafe = defineStore('safe', () => {
 
       balances.value.error = null
 
+      const total = !data
+        ? toBN('0')
+        : data.flat().reduce(
+          (acc, curr) => acc.plus(curr.balanceInUSD || '0'),
+          toBN(0) || toBN(0),
+        )
+
+      // cache latest balances
+      safeTotalBalanceMapping.value[safeAddress.value] = total.toFixed()
+
       return balances.value.data
     }
     catch (e: any) {
@@ -717,16 +728,18 @@ export const useSafe = defineStore('safe', () => {
     multisigForwarderProxyContract,
     setSelectedSafe,
     accountSafeMapping,
+    safeTotalBalanceMapping,
     fetchSafe,
     isSelectedSafeSecondary,
     isMainSafeAvocadoSelected,
     fetchPendingMultisigTxnsCount,
     legacySafe,
     getSafesByAddress,
+
   }
 }, {
   persist: {
-    paths: ['safeAddress', 'mainSafeAddress', 'accountSafeMapping'],
+    paths: ['safeAddress', 'mainSafeAddress', 'accountSafeMapping', 'safeTotalBalanceMapping'],
     storage: persistedState.cookiesWithOptions({
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 * 10),
     }),

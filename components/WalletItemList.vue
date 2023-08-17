@@ -1,11 +1,19 @@
 <script lang="ts" setup>
+import { getAddress } from 'ethers/lib/utils'
+
 const { mainSafe, multiSigSafe, safes, legacySafe } = storeToRefs(useSafe())
 
 const filteredSafes = computed(() => {
   if (!safes.value)
     return []
 
-  return safes.value.filter(safe => safe.safe_address !== mainSafe.value?.safe_address && safe.safe_address !== multiSigSafe.value?.safe_address)
+  const excludedAddresses = [
+    mainSafe.value?.safe_address,
+    multiSigSafe.value?.safe_address,
+    legacySafe.value?.safe_address,
+  ].filter(address => !!address)
+
+  return safes.value.filter(safe => !excludedAddresses.includes(getAddress(safe.safe_address)))
 })
 </script>
 
