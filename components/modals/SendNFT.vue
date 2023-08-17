@@ -81,16 +81,16 @@ const { handleSubmit, errors, meta, validate, isSubmitting }
 const {
   value: address,
   meta: addressMeta,
-  setState: setAddress,
+  setValue,
 } = useField<string>('address')
 
 async function handleSelectContact() {
-  const result = await openSelectContactModal()
+  const result = await openSelectContactModal(props.asset.chainId)
 
   if (result.success) {
     const _contact = result.payload as IContact
 
-    setAddress({ value: _contact.address })
+    setValue(_contact.address)
   }
 }
 
