@@ -8,7 +8,7 @@ const route = useRoute()
 const router = useRouter()
 
 const { safeAddress } = useAvocadoSafe()
-const { getBalances, fetchPendingMultisigTxnsCount } = useSafe()
+const { fetchPendingMultisigTxnsCount } = useSafe()
 const walletName = useLocalStorage(`safe-${props.safe?.safe_address}`, props.safe.multisig ? 'Multisig' : 'Personal')
 
 const val = walletName.value?.trim()
@@ -17,19 +17,6 @@ if (!val)
 
 const active = computed(() => {
   return safeAddress.value === props.safe?.safe_address
-})
-
-const { data: balance, pending } = useAsyncData(`safe-balance-${props.safe.safe_address}`, async () => {
-  const resp = await getBalances(props.safe?.safe_address)
-
-  const balances = resp.flat()
-
-  const balance = balances?.reduce(
-    (acc, curr) => acc.plus(curr.balanceInUSD || '0'),
-    toBN(0) || toBN(0),
-  )
-
-  return balance.toFixed()
 })
 
 const { data: pendingTxnsCount } = useAsyncData(`safe-pending-multisig-txns-${props.safe.safe_address}`, async () => {
@@ -91,19 +78,15 @@ function handleClick() {
         </template>
       </Copy>
 
-      <div
-        v-if="!balance && pending"
-        style="width: 80px; height: 18px"
-        class="rounded-lg loading-box"
-      />
-
-      <p v-else class="text-slate-400 leading-[18px] text-sm font-medium">
-        {{ formatUsd(balance) }}
+      <p class="text-slate-400 leading-[18px] text-sm font-medium">
+        {{ formatUsd(0) }}
       </p>
     </div>
     <div class="flex flex-col justify-between items-end">
-      <p :class="safe.multisig ? 'bg-purple text-purple' : 'bg-primary text-primary'"
-      class="rounded-lg bg-opacity-[14%] text-xs py-0.5 px-2 font-medium">
+      <p
+        :class="safe.multisig ? 'bg-purple text-purple' : 'bg-primary text-primary'"
+        class="rounded-lg bg-opacity-[14%] text-xs py-0.5 px-2 font-medium"
+      >
         {{ safe.multisig ? 'MULTISIG' : 'PERSONAL' }}
       </p>
       <p class="text-orange text-xs font-medium">

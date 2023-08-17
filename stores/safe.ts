@@ -409,8 +409,6 @@ export const useSafe = defineStore('safe', () => {
     }
   }
 
-  const throttledGetBalances = useThrottleFn(getBalances, 500)
-
   async function getBalances(address: string, signal?: AbortSignal, updateState = false) {
     return Promise.all(
       availableNetworks.map(async (network) => {
@@ -483,7 +481,7 @@ export const useSafe = defineStore('safe', () => {
       balances.value.loading = true
       // balanceAborter.value = new AbortController();
 
-      const data = await throttledGetBalances(
+      const data = await getBalances(
         safeAddress.value,
         balanceAborter.value?.signal,
         true,
@@ -521,7 +519,7 @@ export const useSafe = defineStore('safe', () => {
     if (eoaBalances.value)
       return
 
-    const resp = await throttledGetBalances(account.value)
+    const resp = await getBalances(account.value)
 
     eoaBalances.value = resp.flat()
   }
