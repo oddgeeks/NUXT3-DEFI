@@ -81,7 +81,7 @@ const { handleSubmit, errors, meta, validate, isSubmitting }
 const {
   value: address,
   meta: addressMeta,
-  setState: setAddress,
+  setValue,
 } = useField<string>('address')
 
 async function handleSelectContact() {
@@ -90,7 +90,7 @@ async function handleSelectContact() {
   if (result.success) {
     const _contact = result.payload as IContact
 
-    setAddress({ value: _contact.address })
+    setValue(_contact.address)
   }
 }
 

@@ -1,7 +1,6 @@
 import { ethers } from 'ethers'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 import collect from 'collect.js'
-import { wait } from '@instadapp/utils'
 import { getAddress, isAddress } from 'ethers/lib/utils'
 import axios from 'axios'
 import type { IToken } from './tokens'
@@ -19,7 +18,6 @@ export interface IBalance extends IToken {
 }
 
 export const useSafe = defineStore('safe', () => {
-  // balance aborter
   const balanceAborter = ref<AbortController>()
   const legacySafeAddress = ref()
   const safeAddress = ref()
@@ -386,12 +384,6 @@ export const useSafe = defineStore('safe', () => {
     },
   )
 
-  onMounted(async () => {
-    await wait(1000)
-
-    await fetchGasBalance()
-  })
-
   function updateBalances(data: IBalance[]) {
     for (const balance of data) {
       const currentBalances = balances.value.data || []
@@ -470,17 +462,14 @@ export const useSafe = defineStore('safe', () => {
       return
     if (documentVisibility.value === 'hidden')
       return
-    // if (balanceAborter.value) balanceAborter.value.abort();
 
     if (safeAddress.value === incorrectAddress)
-
       return
 
     pause()
 
     try {
       balances.value.loading = true
-      // balanceAborter.value = new AbortController();
 
       const data = await getBalances(
         safeAddress.value,
@@ -626,7 +615,7 @@ export const useSafe = defineStore('safe', () => {
 
   const { pause, resume } = useIntervalFn(fetchBalances, 15000)
 
-  watch(
+  watchThrottled(
     account,
     async () => {
       if (!account.value)
@@ -649,10 +638,13 @@ export const useSafe = defineStore('safe', () => {
         pending.value.global = false
       }
     },
-    { immediate: true },
+    { throttle: 500 },
   )
 
-  watch([safeAddress, account, tokens], () => {
+  watchThrottled(safeAddress, async () => {
+    balances.value.data = undefined
+
+    await until(tokens).toMatch(t => t.length > 0)
     fetchBalances()
     fetchEoaBalances()
     fetchGasBalance()
