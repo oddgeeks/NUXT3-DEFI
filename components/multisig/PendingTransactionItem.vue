@@ -81,6 +81,8 @@ const firstActionMetadata = computed<any>(() => {
 
 const actionType = computed(() => firstActionMetadata.value?.type || '')
 
+const decodedMetadata = computed(() => decodeMetadata(props.item.data.params.metadata))
+
 const formattedActionType = computed(() => {
   return formatTxType(actionType.value || '')
 })
@@ -111,9 +113,11 @@ async function handleClick(item: IMultisigTransaction) {
             }" class="text-slate-500 shrink-0"
           />
         </span>
-        <span class="flex-1 flex-col flex gap-2 svg-shrink-none max-w-sm truncate">
-          <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" :key="metadata" v-memo="[tokens]" :tokens="transformedTokens" class="text-left whitespace-nowrap" compact :chain_id="item.chain_id" :metadata="metadata" />
-        </span>
+        <ul :class="`${(decodedMetadata || [])?.length > 1 ? 'list-decimal pl-5 text-xs' : ''}`" class="flex-1 flex-col flex gap-2 svg-shrink-none max-w-sm truncate">
+          <li v-for="(metadata, index) in decodeMetadata(item.data.params.metadata)" :key="index" v-memo="[tokens]">
+            <ActionMetadata :key="metadata" :tokens="transformedTokens as any" class="text-left whitespace-nowrap" compact :chain_id="item.chain_id" :metadata="metadata" />
+          </li>
+        </ul>
         <span class="whitespace-nowrap text-left">
           {{ formatTimeAgo(new Date(activeTab === 'completed' ? item.executed_at : item.created_at)) }}
         </span>
@@ -176,7 +180,11 @@ async function handleClick(item: IMultisigTransaction) {
         </div>
         <hr class="border-slate-150 w-full dark:border-slate-800">
         <div class="py-3 px-4">
-          <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" :key="metadata" v-memo="[tokens]" :tokens="transformedTokens" class="text-left text-xs" compact :chain_id="item.chain_id" :metadata="metadata" />
+          <ul :class="`${(decodedMetadata || [])?.length > 1 ? 'list-decimal pl-5 text-xs' : ''}`" class="flex-1 text-xs flex-col flex gap-2 svg-shrink-none max-w-sm truncate">
+            <li v-for="(metadata, index) in decodeMetadata(item.data.params.metadata)" :key="index" v-memo="[tokens]">
+              <ActionMetadata :key="metadata" :tokens="transformedTokens as any" class="text-left whitespace-nowrap" compact :chain_id="item.chain_id" :metadata="metadata" />
+            </li>
+          </ul>
         </div>
         <hr class="border-slate-150 w-full dark:border-slate-800">
         <div class="flex items-center py-3 px-4 gap-2.5 whitespace-nowrap text-xs">
