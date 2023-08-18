@@ -74,10 +74,6 @@ export const useSafe = defineStore('safe', () => {
   })
 
   const gasBalance = ref()
-  const pending = ref<Record<string, boolean>>({
-    gasBalance: false,
-    global: false,
-  })
 
   const totalBalance = computed(() =>
     tokenBalances.value?.reduce(
@@ -93,13 +89,6 @@ export const useSafe = defineStore('safe', () => {
     )
   },
   )
-
-  const isMainSafeAvocadoSelected = computed(() => {
-    if (!safeAddress.value || !mainSafeAddress.value)
-      return false
-
-    return getAddress(safeAddress.value) === getAddress(mainSafeAddress.value)
-  })
 
   const isSelectedSafeSecondary = computed(() => {
     if (!safeAddress.value || !multiSigSafeAddress.value || !mainSafeAddress.value)
@@ -137,17 +126,23 @@ export const useSafe = defineStore('safe', () => {
   }
 
   async function setSelectedSafe() {
-    const resp = await fetchSafe(safeAddress.value)
+    pause()
+    try {
+      const resp = await fetchSafe(safeAddress.value)
 
-    if (!resp) {
-      const isMultiSafe = getAddress(safeAddress.value) === getAddress(multiSigSafeAddress.value)
-      selectedSafe.value = getDefaultSafe(safeAddress.value, isMultiSafe ? 1 : 0)
-    }
-    else {
-      selectedSafe.value = resp
-    }
+      if (!resp) {
+        const isMultiSafe = getAddress(safeAddress.value) === getAddress(multiSigSafeAddress.value)
+        selectedSafe.value = getDefaultSafe(safeAddress.value, isMultiSafe ? 1 : 0)
+      }
+      else {
+        selectedSafe.value = resp
+      }
 
-    accountSafeMapping.value[account.value] = safeAddress.value
+      accountSafeMapping.value[account.value] = safeAddress.value
+    }
+    finally {
+      resume()
+    }
   }
 
   async function setMultiSigSafe() {
@@ -511,12 +506,19 @@ export const useSafe = defineStore('safe', () => {
     }
   }
 
+  const throlledFetchEoaBalances = useThrottleFn(fetchEoaBalances, 5000)
+
   async function fetchEoaBalances() {
     if (!account.value)
       return
     if (!tokens.value.length)
       return
     if (eoaBalances.value)
+      return
+
+    await until(selectedSafe).toMatch(s => !!s)
+
+    if (selectedSafe.value?.multisig === 1)
       return
 
     const resp = await getBalances(account.value)
@@ -528,15 +530,9 @@ export const useSafe = defineStore('safe', () => {
     if (!safeAddress.value)
       return
 
-    try {
-      pending.value.gasBalance = true
-      const b = await avoProvider.getBalance(safeAddress.value).then(toBN)
+    const b = await avoProvider.getBalance(safeAddress.value).then(toBN)
 
-      gasBalance.value = b.div(10 ** 18).toFixed()
-    }
-    finally {
-      pending.value.gasBalance = false
-    }
+    gasBalance.value = b.div(10 ** 18).toFixed()
   }
 
   const getSafesByAddress = async (address: string): Promise<ISafesResponse> => {
@@ -609,9 +605,7 @@ export const useSafe = defineStore('safe', () => {
     }
   }
 
-  useIntervalFn(fetchGasBalance, 15000, {
-    immediate: true,
-  })
+  useIntervalFn(fetchGasBalance, 15000)
 
   const { pause, resume } = useIntervalFn(fetchBalances, 15000)
 
@@ -621,22 +615,21 @@ export const useSafe = defineStore('safe', () => {
       if (!account.value)
         return
 
-      try {
-        pending.value.global = true
+      eoaBalances.value = undefined
 
-        await fetchSafeAddress()
-        await fetchMultiSigSafeAddress()
+      await Promise.all([
+        fetchSafeAddress(),
+        fetchSafes(),
+        fetchMultiSigSafeAddress(),
+      ])
 
-        await setLegacySafe()
-        await setMainSafe()
-        await setMultiSigSafe()
-        await fetchSafes()
+      await Promise.all([
+        setLegacySafe(),
+        setMainSafe(),
+        setMultiSigSafe(),
+      ])
 
-        setMultisigParamSafe()
-      }
-      finally {
-        pending.value.global = false
-      }
+      setMultisigParamSafe()
     },
     { throttle: 500 },
   )
@@ -646,28 +639,27 @@ export const useSafe = defineStore('safe', () => {
 
     await until(tokens).toMatch(t => t.length > 0)
     fetchBalances()
-    fetchEoaBalances()
     fetchGasBalance()
+
+    // fetch eoa balances after 5 seconds to avoid rate limit
+    setTimeout(() => {
+      throlledFetchEoaBalances()
+    }, 5000)
   }, {
-    immediate: true,
+    throttle: 500,
   })
 
-  watch(safeAddress, () => {
-    // reset balances
-    balances.value.data = undefined
-    eoaBalances.value = undefined
-  })
-
-  watch([safeAddress, multiSigSafeAddress], async () => {
-    if (!safeAddress.value || !multiSigSafeAddress.value)
+  watchThrottled(safeAddress, async () => {
+    if (!safeAddress.value)
       return
 
     setSelectedSafe()
   }, {
+    throttle: 500,
     immediate: true,
   })
 
-  watch(connector, () => {
+  watchThrottled(connector, () => {
     if (!connector.value)
       return
     connector.value.on('Web3ReactUpdate', async (params) => {
@@ -685,6 +677,7 @@ export const useSafe = defineStore('safe', () => {
     })
   }, {
     immediate: true,
+    throttle: 500,
   })
 
   onBeforeUnmount(() => {
@@ -704,7 +697,6 @@ export const useSafe = defineStore('safe', () => {
     tokenBalances,
     totalBalance,
     fetchGasBalance,
-    pending,
     balances,
     eoaBalances,
     totalEoaBalance,
@@ -723,7 +715,6 @@ export const useSafe = defineStore('safe', () => {
     safeTotalBalanceMapping,
     fetchSafe,
     isSelectedSafeSecondary,
-    isMainSafeAvocadoSelected,
     fetchPendingMultisigTxnsCount,
     legacySafe,
     getSafesByAddress,
