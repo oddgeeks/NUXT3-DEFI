@@ -341,12 +341,16 @@ onUnmounted(() => {
             </div>
           </div>
           <div v-if="decodedMetadata" class="sm:p-7.5 p-5 border-b flex gap-2.5 dark:border-slate-800 border-slate-150">
-            <div class="max-w-2xl scroll-style overflow-auto flex gap-2.5">
+            <div class="max-w-2xl flex gap-2.5">
               <span v-if="isRejection" class="text-xs inline-flex whitespace-nowrap">
                 Executing this transaction will reject transaction
               </span>
               <div v-once class="flex flex-1 flex-col gap-2">
-                <ActionMetadata v-for="metadata in decodedMetadata" :key="metadata" class="text-xs whitespace-nowrap" :chain_id="transactionRef.chain_id" :metadata="metadata" />
+                <ul :class="`${decodedMetadata.length > 1 ? 'list-decimal pl-5 py-1 text-xs' : ''}`">
+                  <li v-for="(metadata, index) in decodedMetadata" :key="index" class="mt-5 first:mt-0">
+                    <ActionMetadata class="text-xs whitespace-nowrap" :chain_id="transactionRef.chain_id" :metadata="metadata" />
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
