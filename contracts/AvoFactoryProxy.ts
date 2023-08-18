@@ -28,58 +28,32 @@ import type {
 
 export interface AvoFactoryProxyInterface extends utils.Interface {
   functions: {
-    "avoMultiSafeBytecode()": FunctionFragment;
-    "avoMultisigImpl()": FunctionFragment;
     "avoSafeBytecode()": FunctionFragment;
-    "avoSafeCreationCode()": FunctionFragment;
     "avoVersionsRegistry()": FunctionFragment;
     "avoWalletImpl()": FunctionFragment;
     "computeAddress(address)": FunctionFragment;
-    "computeAddressMultisig(address)": FunctionFragment;
     "deploy(address)": FunctionFragment;
-    "deployMultisig(address)": FunctionFragment;
-    "deployMultisigWithVersion(address,address)": FunctionFragment;
     "deployWithVersion(address,address)": FunctionFragment;
     "initialize()": FunctionFragment;
     "isAvoSafe(address)": FunctionFragment;
-    "setAvoMultisigImpl(address)": FunctionFragment;
     "setAvoWalletImpl(address)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "avoMultiSafeBytecode"
-      | "avoMultisigImpl"
       | "avoSafeBytecode"
-      | "avoSafeCreationCode"
       | "avoVersionsRegistry"
       | "avoWalletImpl"
       | "computeAddress"
-      | "computeAddressMultisig"
       | "deploy"
-      | "deployMultisig"
-      | "deployMultisigWithVersion"
       | "deployWithVersion"
       | "initialize"
       | "isAvoSafe"
-      | "setAvoMultisigImpl"
       | "setAvoWalletImpl"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "avoMultiSafeBytecode",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "avoMultisigImpl",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "avoSafeBytecode",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "avoSafeCreationCode",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -95,20 +69,8 @@ export interface AvoFactoryProxyInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "computeAddressMultisig",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "deploy",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "deployMultisig",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "deployMultisigWithVersion",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "deployWithVersion",
@@ -123,28 +85,12 @@ export interface AvoFactoryProxyInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setAvoMultisigImpl",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setAvoWalletImpl",
     values: [PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "avoMultiSafeBytecode",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "avoMultisigImpl",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "avoSafeBytecode",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "avoSafeCreationCode",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -159,19 +105,7 @@ export interface AvoFactoryProxyInterface extends utils.Interface {
     functionFragment: "computeAddress",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "computeAddressMultisig",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "deploy", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "deployMultisig",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "deployMultisigWithVersion",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "deployWithVersion",
     data: BytesLike
@@ -179,55 +113,20 @@ export interface AvoFactoryProxyInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isAvoSafe", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setAvoMultisigImpl",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setAvoWalletImpl",
     data: BytesLike
   ): Result;
 
   events: {
-    "AvoMultiSafeDeployed(address,address)": EventFragment;
-    "AvoMultiSafeDeployedWithVersion(address,address,address)": EventFragment;
     "AvoSafeDeployed(address,address)": EventFragment;
     "AvoSafeDeployedWithVersion(address,address,address)": EventFragment;
     "Initialized(uint8)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AvoMultiSafeDeployed"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "AvoMultiSafeDeployedWithVersion"
-  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AvoSafeDeployed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AvoSafeDeployedWithVersion"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
 }
-
-export interface AvoMultiSafeDeployedEventObject {
-  owner: string;
-  avoMultiSafe: string;
-}
-export type AvoMultiSafeDeployedEvent = TypedEvent<
-  [string, string],
-  AvoMultiSafeDeployedEventObject
->;
-
-export type AvoMultiSafeDeployedEventFilter =
-  TypedEventFilter<AvoMultiSafeDeployedEvent>;
-
-export interface AvoMultiSafeDeployedWithVersionEventObject {
-  owner: string;
-  avoMultiSafe: string;
-  version: string;
-}
-export type AvoMultiSafeDeployedWithVersionEvent = TypedEvent<
-  [string, string, string],
-  AvoMultiSafeDeployedWithVersionEventObject
->;
-
-export type AvoMultiSafeDeployedWithVersionEventFilter =
-  TypedEventFilter<AvoMultiSafeDeployedWithVersionEvent>;
 
 export interface AvoSafeDeployedEventObject {
   owner: string;
@@ -287,13 +186,7 @@ export interface AvoFactoryProxy extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    avoMultiSafeBytecode(overrides?: CallOverrides): Promise<[string]>;
-
-    avoMultisigImpl(overrides?: CallOverrides): Promise<[string]>;
-
     avoSafeBytecode(overrides?: CallOverrides): Promise<[string]>;
-
-    avoSafeCreationCode(overrides?: CallOverrides): Promise<[string]>;
 
     avoVersionsRegistry(overrides?: CallOverrides): Promise<[string]>;
 
@@ -302,26 +195,10 @@ export interface AvoFactoryProxy extends BaseContract {
     computeAddress(
       owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[string] & { computedAddress_: string }>;
-
-    computeAddressMultisig(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[string] & { computedAddress_: string }>;
+    ): Promise<[string]>;
 
     deploy(
       owner_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    deployMultisig(
-      owner_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    deployMultisigWithVersion(
-      owner_: PromiseOrValue<string>,
-      avoMultisigVersion_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -340,24 +217,13 @@ export interface AvoFactoryProxy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    setAvoMultisigImpl(
-      avoMultisigImpl_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     setAvoWalletImpl(
       avoWalletImpl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
-  avoMultiSafeBytecode(overrides?: CallOverrides): Promise<string>;
-
-  avoMultisigImpl(overrides?: CallOverrides): Promise<string>;
-
   avoSafeBytecode(overrides?: CallOverrides): Promise<string>;
-
-  avoSafeCreationCode(overrides?: CallOverrides): Promise<string>;
 
   avoVersionsRegistry(overrides?: CallOverrides): Promise<string>;
 
@@ -368,24 +234,8 @@ export interface AvoFactoryProxy extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  computeAddressMultisig(
-    owner_: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   deploy(
     owner_: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  deployMultisig(
-    owner_: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  deployMultisigWithVersion(
-    owner_: PromiseOrValue<string>,
-    avoMultisigVersion_: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -404,24 +254,13 @@ export interface AvoFactoryProxy extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  setAvoMultisigImpl(
-    avoMultisigImpl_: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   setAvoWalletImpl(
     avoWalletImpl_: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    avoMultiSafeBytecode(overrides?: CallOverrides): Promise<string>;
-
-    avoMultisigImpl(overrides?: CallOverrides): Promise<string>;
-
     avoSafeBytecode(overrides?: CallOverrides): Promise<string>;
-
-    avoSafeCreationCode(overrides?: CallOverrides): Promise<string>;
 
     avoVersionsRegistry(overrides?: CallOverrides): Promise<string>;
 
@@ -432,24 +271,8 @@ export interface AvoFactoryProxy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    computeAddressMultisig(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     deploy(
       owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    deployMultisig(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    deployMultisigWithVersion(
-      owner_: PromiseOrValue<string>,
-      avoMultisigVersion_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -466,11 +289,6 @@ export interface AvoFactoryProxy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    setAvoMultisigImpl(
-      avoMultisigImpl_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setAvoWalletImpl(
       avoWalletImpl_: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -478,26 +296,6 @@ export interface AvoFactoryProxy extends BaseContract {
   };
 
   filters: {
-    "AvoMultiSafeDeployed(address,address)"(
-      owner?: PromiseOrValue<string> | null,
-      avoMultiSafe?: PromiseOrValue<string> | null
-    ): AvoMultiSafeDeployedEventFilter;
-    AvoMultiSafeDeployed(
-      owner?: PromiseOrValue<string> | null,
-      avoMultiSafe?: PromiseOrValue<string> | null
-    ): AvoMultiSafeDeployedEventFilter;
-
-    "AvoMultiSafeDeployedWithVersion(address,address,address)"(
-      owner?: PromiseOrValue<string> | null,
-      avoMultiSafe?: PromiseOrValue<string> | null,
-      version?: PromiseOrValue<string> | null
-    ): AvoMultiSafeDeployedWithVersionEventFilter;
-    AvoMultiSafeDeployedWithVersion(
-      owner?: PromiseOrValue<string> | null,
-      avoMultiSafe?: PromiseOrValue<string> | null,
-      version?: PromiseOrValue<string> | null
-    ): AvoMultiSafeDeployedWithVersionEventFilter;
-
     "AvoSafeDeployed(address,address)"(
       owner?: PromiseOrValue<string> | null,
       avoSafe?: PromiseOrValue<string> | null
@@ -523,13 +321,7 @@ export interface AvoFactoryProxy extends BaseContract {
   };
 
   estimateGas: {
-    avoMultiSafeBytecode(overrides?: CallOverrides): Promise<BigNumber>;
-
-    avoMultisigImpl(overrides?: CallOverrides): Promise<BigNumber>;
-
     avoSafeBytecode(overrides?: CallOverrides): Promise<BigNumber>;
-
-    avoSafeCreationCode(overrides?: CallOverrides): Promise<BigNumber>;
 
     avoVersionsRegistry(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -540,24 +332,8 @@ export interface AvoFactoryProxy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    computeAddressMultisig(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     deploy(
       owner_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    deployMultisig(
-      owner_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    deployMultisigWithVersion(
-      owner_: PromiseOrValue<string>,
-      avoMultisigVersion_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -576,11 +352,6 @@ export interface AvoFactoryProxy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    setAvoMultisigImpl(
-      avoMultisigImpl_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     setAvoWalletImpl(
       avoWalletImpl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -588,17 +359,7 @@ export interface AvoFactoryProxy extends BaseContract {
   };
 
   populateTransaction: {
-    avoMultiSafeBytecode(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    avoMultisigImpl(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     avoSafeBytecode(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    avoSafeCreationCode(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     avoVersionsRegistry(
       overrides?: CallOverrides
@@ -611,24 +372,8 @@ export interface AvoFactoryProxy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    computeAddressMultisig(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     deploy(
       owner_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    deployMultisig(
-      owner_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    deployMultisigWithVersion(
-      owner_: PromiseOrValue<string>,
-      avoMultisigVersion_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -645,11 +390,6 @@ export interface AvoFactoryProxy extends BaseContract {
     isAvoSafe(
       avoSafe_: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    setAvoMultisigImpl(
-      avoMultisigImpl_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setAvoWalletImpl(

@@ -24,7 +24,7 @@ export function useAvocadoSafe() {
   const { isSafeMultisig, requiredSigners } = storeToRefs(useMultisig())
 
   // check if we have a cached safe address
-  const { safeAddress, mainSafeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks, multiSigSafeAddress } = storeToRefs(useSafe())
+  const { safeAddress, mainSafeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks } = storeToRefs(useSafe())
 
   const safe = shallowRef<ReturnType<typeof avocado.createSafe>>()
   const signer = computed(() => (safe.value ? safe.value.getSigner() : null))
@@ -460,7 +460,7 @@ export function useAvocadoSafe() {
       underlyingProvider,
     )
 
-    const currentNonce = (await multisigForwarderProxyContract.avoSafeNonceMultisig(ownerAddress)).toNumber()
+    const currentNonce = (await multisigForwarderProxyContract.avoSafeNonce(ownerAddress)).toNumber()
 
     return currentNonce
   }
@@ -615,7 +615,6 @@ export function useAvocadoSafe() {
     generateMultisigSignatureMessage,
     generateMultisigSignatureAndSign,
     multisigBroadcast,
-    multiSigSafeAddress,
     createProposalOrSignDirecty,
     rejectMultisigTransaction,
     getCurrentNonce,

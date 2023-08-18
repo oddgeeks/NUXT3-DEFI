@@ -28,7 +28,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export declare namespace IGaslessSmartWallet {
+export declare namespace IAvoWallet {
   export type ActionStruct = {
     target: PromiseOrValue<string>;
     data: PromiseOrValue<BytesLike>;
@@ -51,12 +51,13 @@ export interface GaslessWalletInterface extends utils.Interface {
     "DOMAIN_SEPARATOR_VERSION()": FunctionFragment;
     "TYPE_HASH()": FunctionFragment;
     "_callTargets((address,bytes,uint256)[])": FunctionFragment;
+    "avoForwarder()": FunctionFragment;
+    "avoSafeNonce()": FunctionFragment;
+    "avoVersionsRegistry()": FunctionFragment;
     "cast((address,bytes,uint256)[],uint256,uint256,address,bytes,bytes)": FunctionFragment;
     "domainSeparatorV4()": FunctionFragment;
-    "gswForwarder()": FunctionFragment;
-    "gswNonce()": FunctionFragment;
-    "gswVersionsRegistry()": FunctionFragment;
     "initialize(address)": FunctionFragment;
+    "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes,bool)": FunctionFragment;
@@ -72,12 +73,13 @@ export interface GaslessWalletInterface extends utils.Interface {
       | "DOMAIN_SEPARATOR_VERSION"
       | "TYPE_HASH"
       | "_callTargets"
+      | "avoForwarder"
+      | "avoSafeNonce"
+      | "avoVersionsRegistry"
       | "cast"
       | "domainSeparatorV4"
-      | "gswForwarder"
-      | "gswNonce"
-      | "gswVersionsRegistry"
       | "initialize"
+      | "onERC721Received"
       | "owner"
       | "upgradeTo"
       | "upgradeToAndCall"
@@ -107,12 +109,24 @@ export interface GaslessWalletInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "TYPE_HASH", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "_callTargets",
-    values: [IGaslessSmartWallet.ActionStruct[]]
+    values: [IAvoWallet.ActionStruct[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "avoForwarder",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "avoSafeNonce",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "avoVersionsRegistry",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "cast",
     values: [
-      IGaslessSmartWallet.ActionStruct[],
+      IAvoWallet.ActionStruct[],
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
@@ -125,17 +139,17 @@ export interface GaslessWalletInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "gswForwarder",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "gswNonce", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "gswVersionsRegistry",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "initialize",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "onERC721Received",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -153,7 +167,7 @@ export interface GaslessWalletInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "verify",
     values: [
-      IGaslessSmartWallet.ActionStruct[],
+      IAvoWallet.ActionStruct[],
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
@@ -187,21 +201,28 @@ export interface GaslessWalletInterface extends utils.Interface {
     functionFragment: "_callTargets",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "avoForwarder",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "avoSafeNonce",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "avoVersionsRegistry",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "cast", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "domainSeparatorV4",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "gswForwarder",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "gswNonce", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "gswVersionsRegistry",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "onERC721Received",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
   decodeFunctionResult(
@@ -256,7 +277,7 @@ export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface UpgradedEventObject {
-  gswImpl: string;
+  avoWalletImpl: string;
 }
 export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
 
@@ -302,12 +323,18 @@ export interface GaslessWallet extends BaseContract {
     TYPE_HASH(overrides?: CallOverrides): Promise<[string]>;
 
     _callTargets(
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    avoForwarder(overrides?: CallOverrides): Promise<[string]>;
+
+    avoSafeNonce(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    avoVersionsRegistry(overrides?: CallOverrides): Promise<[string]>;
+
     cast(
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       validUntil_: PromiseOrValue<BigNumberish>,
       gas_: PromiseOrValue<BigNumberish>,
       source_: PromiseOrValue<string>,
@@ -318,33 +345,35 @@ export interface GaslessWallet extends BaseContract {
 
     domainSeparatorV4(overrides?: CallOverrides): Promise<[string]>;
 
-    gswForwarder(overrides?: CallOverrides): Promise<[string]>;
-
-    gswNonce(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    gswVersionsRegistry(overrides?: CallOverrides): Promise<[string]>;
-
     initialize(
       owner_: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    onERC721Received(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     upgradeTo(
-      gswImpl_: PromiseOrValue<string>,
+      avoWalletImpl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     upgradeToAndCall(
-      gswImpl_: PromiseOrValue<string>,
+      avoWalletImpl_: PromiseOrValue<string>,
       data_: PromiseOrValue<BytesLike>,
       forceCall_: PromiseOrValue<boolean>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     verify(
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       validUntil_: PromiseOrValue<BigNumberish>,
       gas_: PromiseOrValue<BigNumberish>,
       source_: PromiseOrValue<string>,
@@ -367,12 +396,18 @@ export interface GaslessWallet extends BaseContract {
   TYPE_HASH(overrides?: CallOverrides): Promise<string>;
 
   _callTargets(
-    actions_: IGaslessSmartWallet.ActionStruct[],
+    actions_: IAvoWallet.ActionStruct[],
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  avoForwarder(overrides?: CallOverrides): Promise<string>;
+
+  avoSafeNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+  avoVersionsRegistry(overrides?: CallOverrides): Promise<string>;
+
   cast(
-    actions_: IGaslessSmartWallet.ActionStruct[],
+    actions_: IAvoWallet.ActionStruct[],
     validUntil_: PromiseOrValue<BigNumberish>,
     gas_: PromiseOrValue<BigNumberish>,
     source_: PromiseOrValue<string>,
@@ -383,33 +418,35 @@ export interface GaslessWallet extends BaseContract {
 
   domainSeparatorV4(overrides?: CallOverrides): Promise<string>;
 
-  gswForwarder(overrides?: CallOverrides): Promise<string>;
-
-  gswNonce(overrides?: CallOverrides): Promise<BigNumber>;
-
-  gswVersionsRegistry(overrides?: CallOverrides): Promise<string>;
-
   initialize(
     owner_: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  onERC721Received(
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<string>,
+    arg2: PromiseOrValue<BigNumberish>,
+    arg3: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
   upgradeTo(
-    gswImpl_: PromiseOrValue<string>,
+    avoWalletImpl_: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   upgradeToAndCall(
-    gswImpl_: PromiseOrValue<string>,
+    avoWalletImpl_: PromiseOrValue<string>,
     data_: PromiseOrValue<BytesLike>,
     forceCall_: PromiseOrValue<boolean>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   verify(
-    actions_: IGaslessSmartWallet.ActionStruct[],
+    actions_: IAvoWallet.ActionStruct[],
     validUntil_: PromiseOrValue<BigNumberish>,
     gas_: PromiseOrValue<BigNumberish>,
     source_: PromiseOrValue<string>,
@@ -432,12 +469,18 @@ export interface GaslessWallet extends BaseContract {
     TYPE_HASH(overrides?: CallOverrides): Promise<string>;
 
     _callTargets(
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
+    avoForwarder(overrides?: CallOverrides): Promise<string>;
+
+    avoSafeNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+    avoVersionsRegistry(overrides?: CallOverrides): Promise<string>;
+
     cast(
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       validUntil_: PromiseOrValue<BigNumberish>,
       gas_: PromiseOrValue<BigNumberish>,
       source_: PromiseOrValue<string>,
@@ -450,33 +493,35 @@ export interface GaslessWallet extends BaseContract {
 
     domainSeparatorV4(overrides?: CallOverrides): Promise<string>;
 
-    gswForwarder(overrides?: CallOverrides): Promise<string>;
-
-    gswNonce(overrides?: CallOverrides): Promise<BigNumber>;
-
-    gswVersionsRegistry(overrides?: CallOverrides): Promise<string>;
-
     initialize(
       owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
+    onERC721Received(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     upgradeTo(
-      gswImpl_: PromiseOrValue<string>,
+      avoWalletImpl_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     upgradeToAndCall(
-      gswImpl_: PromiseOrValue<string>,
+      avoWalletImpl_: PromiseOrValue<string>,
       data_: PromiseOrValue<BytesLike>,
       forceCall_: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     verify(
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       validUntil_: PromiseOrValue<BigNumberish>,
       gas_: PromiseOrValue<BigNumberish>,
       source_: PromiseOrValue<string>,
@@ -515,9 +560,11 @@ export interface GaslessWallet extends BaseContract {
     Initialized(version?: null): InitializedEventFilter;
 
     "Upgraded(address)"(
-      gswImpl?: PromiseOrValue<string> | null
+      avoWalletImpl?: PromiseOrValue<string> | null
     ): UpgradedEventFilter;
-    Upgraded(gswImpl?: PromiseOrValue<string> | null): UpgradedEventFilter;
+    Upgraded(
+      avoWalletImpl?: PromiseOrValue<string> | null
+    ): UpgradedEventFilter;
   };
 
   estimateGas: {
@@ -534,12 +581,18 @@ export interface GaslessWallet extends BaseContract {
     TYPE_HASH(overrides?: CallOverrides): Promise<BigNumber>;
 
     _callTargets(
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    avoForwarder(overrides?: CallOverrides): Promise<BigNumber>;
+
+    avoSafeNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+    avoVersionsRegistry(overrides?: CallOverrides): Promise<BigNumber>;
+
     cast(
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       validUntil_: PromiseOrValue<BigNumberish>,
       gas_: PromiseOrValue<BigNumberish>,
       source_: PromiseOrValue<string>,
@@ -550,33 +603,35 @@ export interface GaslessWallet extends BaseContract {
 
     domainSeparatorV4(overrides?: CallOverrides): Promise<BigNumber>;
 
-    gswForwarder(overrides?: CallOverrides): Promise<BigNumber>;
-
-    gswNonce(overrides?: CallOverrides): Promise<BigNumber>;
-
-    gswVersionsRegistry(overrides?: CallOverrides): Promise<BigNumber>;
-
     initialize(
       owner_: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    onERC721Received(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     upgradeTo(
-      gswImpl_: PromiseOrValue<string>,
+      avoWalletImpl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     upgradeToAndCall(
-      gswImpl_: PromiseOrValue<string>,
+      avoWalletImpl_: PromiseOrValue<string>,
       data_: PromiseOrValue<BytesLike>,
       forceCall_: PromiseOrValue<boolean>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     verify(
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       validUntil_: PromiseOrValue<BigNumberish>,
       gas_: PromiseOrValue<BigNumberish>,
       source_: PromiseOrValue<string>,
@@ -604,12 +659,20 @@ export interface GaslessWallet extends BaseContract {
     TYPE_HASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _callTargets(
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    avoForwarder(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    avoSafeNonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    avoVersionsRegistry(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     cast(
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       validUntil_: PromiseOrValue<BigNumberish>,
       gas_: PromiseOrValue<BigNumberish>,
       source_: PromiseOrValue<string>,
@@ -620,35 +683,35 @@ export interface GaslessWallet extends BaseContract {
 
     domainSeparatorV4(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    gswForwarder(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    gswNonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    gswVersionsRegistry(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     initialize(
       owner_: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    onERC721Received(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     upgradeTo(
-      gswImpl_: PromiseOrValue<string>,
+      avoWalletImpl_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     upgradeToAndCall(
-      gswImpl_: PromiseOrValue<string>,
+      avoWalletImpl_: PromiseOrValue<string>,
       data_: PromiseOrValue<BytesLike>,
       forceCall_: PromiseOrValue<boolean>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     verify(
-      actions_: IGaslessSmartWallet.ActionStruct[],
+      actions_: IAvoWallet.ActionStruct[],
       validUntil_: PromiseOrValue<BigNumberish>,
       gas_: PromiseOrValue<BigNumberish>,
       source_: PromiseOrValue<string>,

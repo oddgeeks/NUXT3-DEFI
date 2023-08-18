@@ -6,9 +6,9 @@ import axios from 'axios'
 import type { IToken } from './tokens'
 import type { TokenBalanceResolver } from '~/contracts'
 import {
-  AvoFactoryProxy__factory,
   Forwarder__factory,
   GaslessWallet__factory,
+  MultisigForwarder__factory,
   TokenBalanceResolver__factory,
 } from '~/contracts'
 
@@ -47,7 +47,7 @@ export const useSafe = defineStore('safe', () => {
     getRpcProviderByChainId(137),
   )
 
-  const multisigForwarderProxyContract = Forwarder__factory.connect(
+  const multisigForwarderProxyContract = MultisigForwarder__factory.connect(
     multisigForwarderProxyAddress,
     getRpcProviderByChainId(137),
   )
@@ -171,8 +171,9 @@ export const useSafe = defineStore('safe', () => {
       account.value,
     )
 
-    const address = await multisigForwarderProxyContract.computeAddress(
+    const address = await multisigForwarderProxyContract.computeAvocado(
       account.value,
+      0,
     )
 
     const isLegacySafeAvailable = await fetchSafe(oldSafeAddress)
@@ -196,8 +197,9 @@ export const useSafe = defineStore('safe', () => {
     if (!account.value)
       return
 
-    const multiSigAddress = await multisigForwarderProxyContract.computeAddressMultisig(
+    const multiSigAddress = await multisigForwarderProxyContract.computeAvocado(
       account.value,
+      1,
     )
 
     multiSigSafeAddress.value = multiSigAddress
@@ -308,8 +310,6 @@ export const useSafe = defineStore('safe', () => {
         } as NetworkVersion
 
         try {
-          const provider = getRpcProviderByChainId(network.chainId)
-
           const wallet = GaslessWallet__factory.connect(
             safeAddress.value,
             getRpcProviderByChainId(network.chainId),
@@ -327,24 +327,6 @@ export const useSafe = defineStore('safe', () => {
           try {
             const currentVersion = await wallet.DOMAIN_SEPARATOR_VERSION()
             obj.currentVersion = currentVersion
-
-            const forwarderProxyContract = Forwarder__factory.connect(
-              forwarderProxyAddress,
-              getRpcProviderByChainId(network.chainId),
-            )
-
-            const avoFactory = await forwarderProxyContract.avoFactory()
-
-            const avoFactoryProxyContract = AvoFactoryProxy__factory.connect(
-              avoFactory,
-              provider,
-            )
-
-            const currentImplementationAddress = `0x${(await provider.getStorageAt(safeAddress.value, 0)).slice(-40)}`
-            const latestImplementationAddress = selectedSafe.value?.multisig === 1 ? await avoFactoryProxyContract.avoMultisigImpl() : await avoFactoryProxyContract.avoWalletImpl()
-
-            obj.currentImplementationAddress = currentImplementationAddress
-            obj.latestImplementationAddress = latestImplementationAddress
           }
           catch (e) {
             obj.notdeployed = true
