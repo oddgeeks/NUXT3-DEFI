@@ -346,7 +346,7 @@ onUnmounted(() => {
                 Executing this transaction will reject transaction
               </span>
               <div v-once class="flex flex-1 flex-col gap-2">
-                <ul class="list-decimal pl-5 py-1 text-xs">
+                <ul :class="`${decodedMetadata.length > 1 ? 'list-decimal pl-5 py-1 text-xs' : ''}`">
                   <li v-for="(metadata, index) in decodedMetadata" :key="index" class="mt-5 first:mt-0">
                     <ActionMetadata class="text-xs whitespace-nowrap" :chain_id="transactionRef.chain_id" :metadata="metadata" />
                   </li>
