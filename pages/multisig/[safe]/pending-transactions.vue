@@ -105,7 +105,7 @@ onMounted(() => {
 
 <template>
   <div class="flex-1">
-    <div class="flex flex-col gap-5">
+    <div class="flex flex-col gap-5 sm:mb-0 mb-5">
       <h1 class="text-center sm:text-left">
         Transactions
       </h1>

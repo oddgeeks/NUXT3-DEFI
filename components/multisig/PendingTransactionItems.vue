@@ -192,6 +192,6 @@ watch(isCollapseAll, () => {
         </li>
       </ul>
     </div>
-    <Pagination class="sm:px-0 px-4" :auto-navigate="false" :current="data.meta.current_page" :limit="data.meta.per_page" :total="data.meta.total" @update:current="handleCurrentUpdate" />
+    <Pagination class="sm:px-0 px-4 pb-4" :auto-navigate="false" :current="data.meta.current_page" :limit="data.meta.per_page" :total="data.meta.total" @update:current="handleCurrentUpdate" />
   </details>
 </template>
