@@ -187,7 +187,7 @@ export function useAvocadoSafe() {
       owner: params.owner,
       safe: params.safe,
       targetChainId: String(params.targetChainId),
-      index: selectedSafe.value?.multisig_index || 0,
+      index: String(selectedSafe.value?.multisig_index || 0),
     }
 
     const signerCount = requiredSigners.value.find(i => i.chainId == params.targetChainId)?.signerCount || 1

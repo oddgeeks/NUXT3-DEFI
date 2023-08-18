@@ -101,7 +101,7 @@ export function useEstimatedFee(
           )
         }
 
-        const signatureParams = { message, targetChainId: chainId.value, safe: safeAddress.value, owner: selectedSafe.value?.owner_address || account.value, index: selectedSafe.value?.multisig_index || 0 }
+        const signatureParams = { message, targetChainId: chainId.value, safe: safeAddress.value, owner: selectedSafe.value?.owner_address || account.value, index: String(selectedSafe.value?.multisig_index || 0) }
         const signatureMethod = isSafeMultisig.value ? 'txn_multisigEstimateFeeWithoutSignature' : 'txn_estimateFeeWithoutSignature'
 
         const data = await avoProvider.send(signatureMethod, [

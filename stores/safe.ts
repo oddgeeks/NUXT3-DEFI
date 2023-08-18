@@ -121,7 +121,7 @@ export const useSafe = defineStore('safe', () => {
     const resp = await fetchSafe(legacySafeAddress.value)
 
     if (!resp)
-      legacySafe.value = getDefaultSafe(legacySafeAddress.value, 0)
+      legacySafe.value = getDefaultSafe(legacySafeAddress.value, 0, undefined)
 
     else
       legacySafe.value = resp
@@ -132,11 +132,14 @@ export const useSafe = defineStore('safe', () => {
     try {
       const resp = await fetchSafe(safeAddress.value)
 
-      if (!resp)
-        selectedSafe.value = getDefaultSafe(safeAddress.value, 1)
+      if (!resp) {
+        const isMultisig = getAddress(safeAddress.value) === getAddress(multiSigSafeAddress.value)
+        const isMainSafe = getAddress(safeAddress.value) === getAddress(mainSafeAddress.value)
 
-      else
-        selectedSafe.value = resp
+        selectedSafe.value = getDefaultSafe(safeAddress.value, 1, isMultisig ? 1 : isMainSafe ? 0 : undefined)
+      }
+
+      else { selectedSafe.value = resp }
 
       accountSafeMapping.value[account.value] = safeAddress.value
     }
@@ -150,7 +153,7 @@ export const useSafe = defineStore('safe', () => {
       const resp = await fetchSafe(multiSigSafeAddress.value)
 
       if (!resp)
-        multiSigSafe.value = getDefaultSafe(multiSigSafeAddress.value, 1)
+        multiSigSafe.value = getDefaultSafe(multiSigSafeAddress.value, 1, 1)
       else
         multiSigSafe.value = resp
     }
@@ -555,7 +558,7 @@ export const useSafe = defineStore('safe', () => {
     mainSafeAddress.value = undefined
   }
 
-  function getDefaultSafe(address: string, multisig: 0 | 1 = 0): ISafe {
+  function getDefaultSafe(address: string, multisig: 0 | 1 = 0, multisig_index = 0): ISafe {
     return {
       safe_address: address,
       authorities: {},
@@ -568,7 +571,7 @@ export const useSafe = defineStore('safe', () => {
       version: {},
       multisig,
       signers: {},
-      multisig_index: 0,
+      multisig_index,
     }
   }
 
