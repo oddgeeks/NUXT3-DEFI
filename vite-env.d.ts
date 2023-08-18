@@ -562,6 +562,7 @@ interface ISafesResponse {
   version: Record<string, string>
   authorities: Record<string, string[]>
   signers: Record<string, string[]>
+  multisig_index: number;
  }
 
 interface IRequiredSigners {

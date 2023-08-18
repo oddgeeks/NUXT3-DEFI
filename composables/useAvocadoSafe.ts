@@ -6,7 +6,7 @@ import { isUndefined } from '@walletconnect/utils'
 import { GaslessWallet__factory } from '@instadapp/avocado-base/contracts'
 import {
   AvoMultisigImplementation__factory,
-  Forwarder__factory,
+  MultisigForwarder__factory,
 } from '@/contracts'
 
 const executedTransactions = ref<string[]>([])
@@ -38,7 +38,7 @@ export function useAvocadoSafe() {
       }
       else {
         safe.value = library.value
-          ? avocado.createSafe(library.value.getSigner().connectUnchecked(), undefined, selectedSafe?.value?.owner_address || account.value)
+          ? avocado.createSafe(library.value.getSigner().connectUnchecked())
           : undefined
       }
     },
@@ -187,6 +187,7 @@ export function useAvocadoSafe() {
       owner: params.owner,
       safe: params.safe,
       targetChainId: String(params.targetChainId),
+      index: selectedSafe.value?.multisig_index || 0,
     }
 
     const signerCount = requiredSigners.value.find(i => i.chainId == params.targetChainId)?.signerCount || 1
@@ -229,12 +230,12 @@ export function useAvocadoSafe() {
 
     const latestAvosafeNonce = await getLatestAvosafeNonce(chainId)
 
-    const avoSafeNonce = !isUndefined(nonce) ? nonce : latestAvosafeNonce
+    const avoNonce = !isUndefined(nonce) ? nonce : latestAvosafeNonce
 
     const params = {
       actions,
       id: 0,
-      avoSafeNonce,
+      avoNonce,
       salt: ethers.utils.defaultAbiCoder.encode(['uint256'], [Date.now()]),
       source: verifyingContract,
       metadata: metadata || '0x00',
@@ -246,6 +247,7 @@ export function useAvocadoSafe() {
       gasPrice: '0',
       validUntil: '0',
       validAfter: '0',
+      value: '0',
     }
 
     return {
@@ -256,6 +258,25 @@ export function useAvocadoSafe() {
 
   async function createProposalOrSignDirecty(args: IGenerateMultisigSignatureParams) {
     const { chainId, actions, nonce, metadata, clearModals = true, estimatedFee = false, rejection, rejectionId, options, transactionType = 'others' } = args
+
+    if (selectedSafe.value && selectedSafe.value?.multisig_index === 0) {
+      const params = await generateMultisigSignatureAndSign({ chainId, actions, metadata, options })
+
+      const txHash = await multisigBroadcast({
+        proposalId: '',
+        confirmations: [{
+          address: params.signatureParams.address,
+          signature: params.signatureParams.signature,
+          created_at: new Date().getTime(),
+        }],
+        message: params.castParams,
+        owner: selectedSafe.value?.owner_address!,
+        safe: selectedSafe.value?.safe_address!,
+        targetChainId: chainId,
+      })
+
+      return txHash
+    }
 
     const { success, payload } = await openEditNonceModal({ chainId, actions, defaultNonce: nonce, estimatedFee, rejection, rejectionId, transactionType, metadata, options })
 
@@ -282,12 +303,11 @@ export function useAvocadoSafe() {
       Cast: [
         { name: 'params', type: 'CastParams' },
         { name: 'forwardParams', type: 'CastForwardParams' },
-        { name: 'signatures', type: 'SignatureParams[]' },
       ],
       CastParams: [
         { name: 'actions', type: 'Action[]' },
         { name: 'id', type: 'uint256' },
-        { name: 'avoSafeNonce', type: 'int256' },
+        { name: 'avoNonce', type: 'int256' },
         { name: 'salt', type: 'bytes32' },
         { name: 'source', type: 'address' },
         { name: 'metadata', type: 'bytes' },
@@ -303,6 +323,7 @@ export function useAvocadoSafe() {
         { name: 'gasPrice', type: 'uint256' },
         { name: 'validAfter', type: 'uint256' },
         { name: 'validUntil', type: 'uint256' },
+        { name: 'value', type: 'uint256' },
       ],
       SignatureParams: [
         { name: 'signature', type: 'bytes' },
@@ -334,6 +355,8 @@ export function useAvocadoSafe() {
       verifyingContract: selectedSafe.value?.safe_address,
     }
 
+    console.log(domain)
+
     const value = {
       params: params.message.params,
       forwardParams: params.message.forwardParams,
@@ -349,13 +372,32 @@ export function useAvocadoSafe() {
     const avoSigner = library.value.getSigner()
 
     const contract = AvoMultisigImplementation__factory.connect(safeAddress.value, getRpcProviderByChainId(chainId))
+    const networkForwarderProxyContract = MultisigForwarder__factory.connect(
+      multisigForwarderProxyAddress,
+      getRpcProviderByChainId(chainId),
+    )
 
-    const [domainSeparatorName, domainSeparatorVersion] = await Promise.all([
-      contract.DOMAIN_SEPARATOR_NAME().catch(() => 'Avocado-Multisig'),
-      contract.DOMAIN_SEPARATOR_VERSION().catch(() => '3.0.0'),
-    ])
+    let domainSeparatorName: string
+    let domainSeparatorVersion: string
 
-    console.log(domainSeparatorName, domainSeparatorVersion)
+    try {
+      [domainSeparatorName, domainSeparatorVersion] = await Promise.all([
+        contract.DOMAIN_SEPARATOR_NAME(),
+        contract.DOMAIN_SEPARATOR_VERSION(),
+      ])
+    }
+    catch (error) {
+      [domainSeparatorName, domainSeparatorVersion] = await Promise.all([
+        networkForwarderProxyContract.avocadoVersionName(
+          '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+          0,
+        ),
+        networkForwarderProxyContract.avocadoVersion(
+          '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+          0,
+        ),
+      ])
+    }
 
     const verifyingContract = selectedSafe.value?.safe_address!
 
@@ -367,6 +409,8 @@ export function useAvocadoSafe() {
       salt: ethers.utils.solidityKeccak256(['uint256'], [chainId]),
     }
 
+    console.log({ domain })
+
     // The named list of all type definitions
     const types = {
       Cast: [
@@ -376,7 +420,7 @@ export function useAvocadoSafe() {
       CastParams: [
         { name: 'actions', type: 'Action[]' },
         { name: 'id', type: 'uint256' },
-        { name: 'avoSafeNonce', type: 'int256' },
+        { name: 'avoNonce', type: 'int256' },
         { name: 'salt', type: 'bytes32' },
         { name: 'source', type: 'address' },
         { name: 'metadata', type: 'bytes' },
@@ -392,6 +436,7 @@ export function useAvocadoSafe() {
         { name: 'gasPrice', type: 'uint256' },
         { name: 'validAfter', type: 'uint256' },
         { name: 'validUntil', type: 'uint256' },
+        { name: 'value', type: 'uint256' },
       ],
     }
 
@@ -455,12 +500,12 @@ export function useAvocadoSafe() {
 
   async function getCurrentNonce(chainId: number | string, ownerAddress: string) {
     const underlyingProvider = new ethers.providers.JsonRpcProvider(getRpcURLByChainId(chainId))
-    const multisigForwarderProxyContract = Forwarder__factory.connect(
+    const multisigForwarderProxyContract = MultisigForwarder__factory.connect(
       multisigForwarderProxyAddress,
       underlyingProvider,
     )
 
-    const currentNonce = (await multisigForwarderProxyContract.avoSafeNonce(ownerAddress)).toNumber()
+    const currentNonce = (await multisigForwarderProxyContract.avoNonce(ownerAddress, 0)).toNumber()
 
     return currentNonce
   }

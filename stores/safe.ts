@@ -108,8 +108,10 @@ export const useSafe = defineStore('safe', () => {
   async function setMainSafe() {
     const resp = await fetchSafe(mainSafeAddress.value)
 
+    console.log(resp, mainSafeAddress.value)
+
     if (!resp)
-      mainSafe.value = getDefaultSafe(mainSafeAddress.value, 0)
+      mainSafe.value = getDefaultSafe(mainSafeAddress.value, 1)
 
     else
       mainSafe.value = resp
@@ -130,13 +132,11 @@ export const useSafe = defineStore('safe', () => {
     try {
       const resp = await fetchSafe(safeAddress.value)
 
-      if (!resp) {
-        const isMultiSafe = getAddress(safeAddress.value) === getAddress(multiSigSafeAddress.value)
-        selectedSafe.value = getDefaultSafe(safeAddress.value, isMultiSafe ? 1 : 0)
-      }
-      else {
+      if (!resp)
+        selectedSafe.value = getDefaultSafe(safeAddress.value, 1)
+
+      else
         selectedSafe.value = resp
-      }
 
       accountSafeMapping.value[account.value] = safeAddress.value
     }
@@ -568,6 +568,7 @@ export const useSafe = defineStore('safe', () => {
       version: {},
       multisig,
       signers: {},
+      multisig_index: 0,
     }
   }
 
