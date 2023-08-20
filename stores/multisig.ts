@@ -17,7 +17,7 @@ export const useMultisig = defineStore('multisig', () => {
     return formatSigners(selectedSafe.value.signers)
   })
 
-  const isSafeMultisig = computed(() => selectedSafe.value?.multisig === 1)
+  const isSafeMultisig = computed(() => checkSafeIsActualMultisig(selectedSafe.value!))
 
   function isAccountCanSign(chainId: number | string, account?: string, multisigOwner?: string) {
     if (!account || !multisigOwner || !chainId || !requiredSigners.value?.length)
@@ -78,6 +78,13 @@ export const useMultisig = defineStore('multisig', () => {
     requiredSigners.value = signers
   }
 
+  function checkSafeIsActualMultisig(safe: ISafe) {
+    if (!safe)
+      return false
+
+    return safe.multisig === 1 && safe.multisig_index > 0
+  }
+
   watch(selectedSafe, async () => {
     if (!selectedSafe.value)
       return
@@ -96,6 +103,7 @@ export const useMultisig = defineStore('multisig', () => {
     setRequiredSigners,
     getRequiredSigner,
     isAccountCanSign,
+    checkSafeIsActualMultisig,
   }
 })
 

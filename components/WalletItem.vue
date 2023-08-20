@@ -2,6 +2,8 @@
 const props = defineProps<{
   safe: ISafe
   primary?: boolean
+  tooltip?: string
+  v2?: boolean
 }>()
 
 const route = useRoute()
@@ -9,21 +11,22 @@ const router = useRouter()
 
 const { safeAddress } = useAvocadoSafe()
 const { fetchPendingMultisigTxnsCount } = useSafe()
-const { safeTotalBalanceMapping } = storeToRefs(useSafe())
-const walletName = useLocalStorage(`safe-${props.safe?.safe_address}`, props.safe.multisig ? 'Multisig' : 'Personal')
+const { safeTotalBalanceMapping, legacySafeAddress } = storeToRefs(useSafe())
+const { checkSafeIsActualMultisig } = useMultisig()
+
+const isMultisig = computed(() => checkSafeIsActualMultisig(props.safe))
+const walletName = useLocalStorage(`safe-${props.safe?.safe_address}`, isMultisig.value ? 'Multisig' : 'Personal')
+
+const isLegacySafeExist = computed(() => !!legacySafeAddress.value)
 
 const balance = computed(() => safeTotalBalanceMapping.value[props.safe?.safe_address])
-
-const val = walletName.value?.trim()
-if (!val)
-  walletName.value = 'Personal'
 
 const active = computed(() => {
   return safeAddress.value === props.safe?.safe_address
 })
 
 const { data: pendingTxnsCount } = useAsyncData(`safe-pending-multisig-txns-${props.safe.safe_address}`, async () => {
-  if (props.safe.multisig === 1) {
+  if (isMultisig.value) {
     const pendingTxs = await fetchPendingMultisigTxnsCount(props.safe?.safe_address)
     return pendingTxs
   }
@@ -37,7 +40,7 @@ function handleClick() {
   const safe = route.params?.safe as string
 
   if (safe) {
-    if (props.safe.multisig === 1) {
+    if (isMultisig.value) {
       router.replace({
         params: {
           safe: props.safe.safe_address,
@@ -63,7 +66,7 @@ function handleClick() {
   >
     <div>
       <div class="flex items-center gap-[8px] mb-2.5">
-        <p v-if="safe.multisig" class="leading-[10px] text-purple text-sm font-medium">
+        <p v-if="isMultisig" class="leading-[10px] text-purple text-sm font-medium">
           {{ walletName }}
         </p>
         <p v-else class="leading-[10px] text-primary text-sm font-medium">
@@ -86,14 +89,17 @@ function handleClick() {
       </p>
     </div>
     <div class="flex flex-col justify-between items-end">
-      <p
-        :class="safe.multisig ? 'bg-purple text-purple' : 'bg-primary text-primary'"
-        class="rounded-lg bg-opacity-[14%] text-xs py-0.5 px-2 font-medium"
-      >
-        {{ safe.multisig ? 'MULTISIG' : 'PERSONAL' }}
-      </p>
+      <div class="flex items-center gap-2">
+        <p
+          :class="isMultisig ? 'bg-purple text-purple' : 'bg-primary text-primary'"
+          class="rounded-lg bg-opacity-[14%] text-xs py-0.5 px-2 font-medium"
+        >
+          {{ isMultisig ? 'MULTISIG' : 'PERSONAL' }} <span v-if="v2 && isLegacySafeExist">V2</span>
+        </p>
+        <SvgoInfo2 v-if="tooltip && isLegacySafeExist" v-tippy="tooltip" class="text-slate-500" />
+      </div>
       <p class="text-orange text-xs font-medium">
-        {{ safe.multisig === 1 && pendingTxnsCount ? `${pendingTxnsCount} Pending txns` : '' }}
+        {{ isMultisig && pendingTxnsCount ? `${pendingTxnsCount} Pending txns` : '' }}
       </p>
     </div>
   </button>

@@ -503,7 +503,7 @@ export const useSafe = defineStore('safe', () => {
 
     await until(selectedSafe).toMatch(s => !!s)
 
-    if (selectedSafe.value?.multisig === 1)
+    if (selectedSafe.value?.multisig === 1 && selectedSafe.value?.multisig_index > 0)
       return
 
     const resp = await getBalances(account.value)
@@ -554,8 +554,10 @@ export const useSafe = defineStore('safe', () => {
 
   const resetAccounts = () => {
     trackingAccount.value = ''
+
     safeAddress.value = undefined
     mainSafeAddress.value = undefined
+    legacySafeAddress.value = undefined
   }
 
   function getDefaultSafe(address: string, multisig: 0 | 1 = 0, multisig_index = 0): ISafe {
@@ -703,6 +705,7 @@ export const useSafe = defineStore('safe', () => {
     isSelectedSafeSecondary,
     fetchPendingMultisigTxnsCount,
     legacySafe,
+    legacySafeAddress,
     getSafesByAddress,
 
   }
