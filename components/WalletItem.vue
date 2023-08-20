@@ -95,6 +95,7 @@ function handleClick() {
           class="rounded-lg bg-opacity-[14%] text-xs py-0.5 px-2 font-medium"
         >
           {{ isMultisig ? 'MULTISIG' : 'PERSONAL' }} <span v-if="v2 && isLegacySafeExist">V2</span>
+          <span v-if="!v2 && isLegacySafeExist">V1</span>
         </p>
         <SvgoInfo2 v-if="tooltip && isLegacySafeExist" v-tippy="tooltip" class="text-slate-500" />
       </div>
