@@ -22,6 +22,7 @@ export function useAvocadoSafe() {
   const { clearAllModals } = useModal()
 
   const { isSafeMultisig, requiredSigners } = storeToRefs(useMultisig())
+  const { getRequiredSigner } = useMultisig()
 
   // check if we have a cached safe address
   const { safeAddress, mainSafeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks } = storeToRefs(useSafe())
@@ -261,12 +262,11 @@ export function useAvocadoSafe() {
   async function createProposalOrSignDirecty(args: IGenerateMultisigSignatureParams) {
     const { chainId, actions, nonce, metadata, clearModals = true, estimatedFee = false, rejection, rejectionId, options, transactionType = 'others' } = args
 
-    const signers = selectedSafe.value?.signers || {}
-    const networkSigners = signers[chainId] || []
+    const requiredSigner = await getRequiredSigner(selectedSafe.value?.safe_address!, chainId)
 
-    const isSingleSigner = networkSigners.length === 0 || networkSigners.length === 1
+    console.log({ requiredSigner })
 
-    if (selectedSafe.value && isSingleSigner) {
+    if (selectedSafe.value && requiredSigner === 1) {
       const params = await generateMultisigSignatureAndSign({ chainId, actions, metadata, options })
 
       const txHash = await multisigBroadcast({
