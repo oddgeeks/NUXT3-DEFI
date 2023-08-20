@@ -17,8 +17,8 @@ export function useAvocadoSafe() {
   const { trackingAccount, isTrackingMode } = useAccountTrack()
   const { getRpcProviderByChainId } = useShared()
   const { avoProvider } = useSafe()
-  const { selectedSafe } = storeToRefs(useSafe())
-  const { forwarderProxyContract, multisigForwarderProxyContract } = useSafe()
+  const { selectedSafe, isSelectedSafeLegacy } = storeToRefs(useSafe())
+  const { multisigForwarderProxyContract } = useSafe()
   const { clearAllModals } = useModal()
 
   const { isSafeMultisig, requiredSigners } = storeToRefs(useMultisig())
@@ -68,7 +68,18 @@ export function useAvocadoSafe() {
     if (!signer.value)
       throw new Error('Safe not initialized')
 
-    if (isSafeMultisig.value) {
+    if (isSelectedSafeLegacy.value) {
+      const tx = await signer.value.sendTransaction(
+        {
+          ...transaction,
+          chainId: Number(transaction.chainId),
+        },
+        { source: '0xE8385fB3A5F15dED06EB5E20E5A81BF43115eb8E', ...options },
+      )
+
+      return tx.hash!
+    }
+    else {
       const actions = [
         {
           to: transaction.to,
@@ -87,17 +98,6 @@ export function useAvocadoSafe() {
 
       if (txHash)
         return txHash
-    }
-    else {
-      const tx = await signer.value.sendTransaction(
-        {
-          ...transaction,
-          chainId: Number(transaction.chainId),
-        },
-        { source: '0xE8385fB3A5F15dED06EB5E20E5A81BF43115eb8E', ...options },
-      )
-
-      return tx.hash!
     }
   }
 
@@ -124,13 +124,7 @@ export function useAvocadoSafe() {
     if (!signer.value)
       throw new Error('Safe not initialized')
 
-    if (isSafeMultisig.value) {
-      const txHash = await createProposalOrSignDirecty({ chainId, actions: transactions, metadata: options.metadata, options })
-
-      if (txHash)
-        return txHash
-    }
-    else {
+    if (isSelectedSafeLegacy.value) {
       const tx = await signer.value.sendTransactions(
         transactions,
         Number(chainId),
@@ -138,6 +132,12 @@ export function useAvocadoSafe() {
       )
 
       return tx.hash!
+    }
+    else {
+      const txHash = await createProposalOrSignDirecty({ chainId, actions: transactions, metadata: options.metadata, options })
+
+      if (txHash)
+        return txHash
     }
   }
 
@@ -259,7 +259,12 @@ export function useAvocadoSafe() {
   async function createProposalOrSignDirecty(args: IGenerateMultisigSignatureParams) {
     const { chainId, actions, nonce, metadata, clearModals = true, estimatedFee = false, rejection, rejectionId, options, transactionType = 'others' } = args
 
-    if (selectedSafe.value && selectedSafe.value?.multisig_index === 0) {
+    const signers = selectedSafe.value?.signers || {}
+    const networkSigners = signers[chainId] || []
+
+    const isSingleSigner = networkSigners.length === 0 || networkSigners.length === 1
+
+    if (selectedSafe.value && isSingleSigner) {
       const params = await generateMultisigSignatureAndSign({ chainId, actions, metadata, options })
 
       const txHash = await multisigBroadcast({
@@ -498,14 +503,14 @@ export function useAvocadoSafe() {
     })
   }
 
-  async function getCurrentNonce(chainId: number | string, ownerAddress: string) {
+  async function getCurrentNonce(chainId: number | string, ownerAddress: string, multisafeIndex = 0) {
     const underlyingProvider = new ethers.providers.JsonRpcProvider(getRpcURLByChainId(chainId))
     const multisigForwarderProxyContract = MultisigForwarder__factory.connect(
       multisigForwarderProxyAddress,
       underlyingProvider,
     )
 
-    const currentNonce = (await multisigForwarderProxyContract.avoNonce(ownerAddress, 0)).toNumber()
+    const currentNonce = (await multisigForwarderProxyContract.avoNonce(ownerAddress, multisafeIndex)).toNumber()
 
     return currentNonce
   }
@@ -617,7 +622,7 @@ export function useAvocadoSafe() {
     if (!selectedSafe.value?.owner_address)
       return
 
-    const currentNonce = await getCurrentNonce(chainId, selectedSafe.value?.owner_address)
+    const currentNonce = await getCurrentNonce(chainId, selectedSafe.value?.owner_address, selectedSafe.value.multisig_index)
 
     const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {
       params: {

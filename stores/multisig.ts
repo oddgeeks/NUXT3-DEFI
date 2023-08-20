@@ -82,7 +82,7 @@ export const useMultisig = defineStore('multisig', () => {
     if (!safe)
       return false
 
-    return safe.multisig === 1 && safe.multisig_index > 0
+    return safe.multisig === 1 && safe?.multisig_index > 0
   }
 
   watch(selectedSafe, async () => {

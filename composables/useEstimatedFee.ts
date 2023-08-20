@@ -17,10 +17,8 @@ export function useEstimatedFee(
 ) {
   const { avoProvider } = useSafe()
   const { account } = useWeb3()
-  const { trackingAccount, isTrackingMode } = useAccountTrack()
   const { safe, generateMultisigSignatureMessage } = useAvocadoSafe()
-  const { gasBalance, safeAddress, selectedSafe } = storeToRefs(useSafe())
-  const { isSafeMultisig } = storeToRefs(useMultisig())
+  const { gasBalance, safeAddress, selectedSafe, isSelectedSafeLegacy } = storeToRefs(useSafe())
   const { parseTransactionError } = useErrorHandler()
 
   const immediate = !!params?.immediate
@@ -82,7 +80,14 @@ export function useEstimatedFee(
 
         let message
 
-        if (isSafeMultisig.value) {
+        if (isSelectedSafeLegacy.value) {
+          message = await safe.value?.generateSignatureMessage(
+            actualTx,
+            +chainId.value,
+            params?.options,
+          )
+        }
+        else {
           message = await generateMultisigSignatureMessage({
             chainId: chainId.value,
             actions: actualTx,
@@ -90,19 +95,19 @@ export function useEstimatedFee(
             metadata: params?.metadata,
             nonce: !isUndefined(params?.nonce) ? Number(params?.nonce) : undefined,
           })
-
-          console.log(message)
-        }
-        else {
-          message = await safe.value?.generateSignatureMessage(
-            actualTx,
-            +chainId.value,
-            params?.options,
-          )
         }
 
-        const signatureParams = { message, targetChainId: chainId.value, safe: safeAddress.value, owner: selectedSafe.value?.owner_address || account.value, index: String(selectedSafe.value?.multisig_index || 0) }
-        const signatureMethod = isSafeMultisig.value ? 'txn_multisigEstimateFeeWithoutSignature' : 'txn_estimateFeeWithoutSignature'
+        console.log({ message })
+
+        const signatureParams = { message, targetChainId: chainId.value, safe: safeAddress.value, owner: selectedSafe.value?.owner_address || account.value }
+
+        if (!isSelectedSafeLegacy.value) {
+          Object.assign(signatureParams, {
+            index: String(selectedSafe.value?.multisig_index || 0),
+          })
+        }
+
+        const signatureMethod = isSelectedSafeLegacy.value ? 'txn_estimateFeeWithoutSignature' : 'txn_multisigEstimateFeeWithoutSignature'
 
         const data = await avoProvider.send(signatureMethod, [
           signatureParams,

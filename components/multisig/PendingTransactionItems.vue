@@ -92,7 +92,7 @@ const { data, refresh, pending } = useAsyncData(`multisig-${route.params.safe}-$
 const { data: currentNonce } = useAsyncData(`current-nonce-${route.params.safe}-${props.chainId}`, async () => {
   const safe = await fetchSafe(route.params.safe as string)
 
-  return getCurrentNonce(props.chainId, safe.owner_address)
+  return getCurrentNonce(props.chainId, safe.owner_address, safe.multisig_index)
 })
 
 const { data: requiredSigner, refresh: refreshSigner } = useAsyncData<number>(`multisig-required-signer-${route.params.safe}-${props.chainId}`, async () => {

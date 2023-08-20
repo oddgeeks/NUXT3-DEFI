@@ -90,6 +90,10 @@ export const useSafe = defineStore('safe', () => {
   },
   )
 
+  const isSelectedSafeLegacy = computed(() => {
+    return selectedSafe.value?.multisig === 0
+  })
+
   const isSelectedSafeSecondary = computed(() => {
     if (!safeAddress.value || !multiSigSafeAddress.value || !mainSafeAddress.value)
       return false
@@ -707,7 +711,7 @@ export const useSafe = defineStore('safe', () => {
     legacySafe,
     legacySafeAddress,
     getSafesByAddress,
-
+    isSelectedSafeLegacy,
   }
 }, {
   persist: {
