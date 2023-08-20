@@ -202,6 +202,7 @@ export function useAvocadoSafe() {
         })
       }
       catch (e) {
+        console.log(e)
         throw new Error('Failed to sign execution data', {
           cause: 'sign-execution-data-failed',
         })
@@ -310,6 +311,7 @@ export function useAvocadoSafe() {
       Cast: [
         { name: 'params', type: 'CastParams' },
         { name: 'forwardParams', type: 'CastForwardParams' },
+        { name: 'signatures', type: 'SignatureParams[]' },
       ],
       CastParams: [
         { name: 'actions', type: 'Action[]' },
@@ -369,6 +371,8 @@ export function useAvocadoSafe() {
       forwardParams: params.message.forwardParams,
       signatures: sortedSignatures,
     }
+
+    console.log({ domain, types, value })
 
     return signer.value._signTypedData(domain, types, value)
   }
@@ -447,6 +451,8 @@ export function useAvocadoSafe() {
       ],
     }
 
+    console.log({ domain, types, data })
+
     return avoSigner._signTypedData(domain, types, data)
   }
 
@@ -524,9 +530,10 @@ export function useAvocadoSafe() {
   }
 
   async function addSignersWithThreshold(addresses: ISignerAddress[], threshold: string, chainId: number | string) {
-    const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
+    const avoMultisigInstance = AvoMultisigImplementation__factory.connect(selectedSafe.value?.safe_address!, getRpcProviderByChainId(chainId))
 
-    const currentThreshold = requiredSigners.value.find(i => i.chainId == chainId)?.requiredSignerCount
+    const currentThreshold = requiredSigners.value.find(i => i.chainId == chainId)?.requiredSignerCount || 1
+    const actualThreshold = threshold || currentThreshold
 
     const signers = addresses.map(address => address.address)
 
@@ -544,28 +551,11 @@ export function useAvocadoSafe() {
     const actions = [
       {
         target: selectedSafe.value?.safe_address,
-        data: avoMultsigInterface.encodeFunctionData('addSigners', [sortedSigners]),
+        data: (await avoMultisigInstance.populateTransaction.addSigners(sortedSigners, actualThreshold)).data,
         value: '0',
         operation: '0',
       },
     ] as any[]
-
-    if (threshold && currentThreshold) {
-      const isThresholdIncreased = toBN(threshold).gt(currentThreshold)
-
-      const action = {
-        target: selectedSafe.value?.safe_address,
-        data: avoMultsigInterface.encodeFunctionData('setRequiredSigners', [threshold]),
-        value: '0',
-        operation: '0',
-      }
-
-      if (isThresholdIncreased)
-        actions.push(action)
-
-      else
-        actions.unshift(action)
-    }
 
     return createProposalOrSignDirecty({ chainId, actions, clearModals: false, estimatedFee: true, metadata, transactionType: 'add-signers' })
   }
@@ -573,11 +563,12 @@ export function useAvocadoSafe() {
   async function changeThreshold(threshold: string, chainId: string | number) {
     const metadata = encodeChangeThresholdMetadata(threshold)
 
-    const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
+    const avoMultisigInstance = AvoMultisigImplementation__factory.connect(selectedSafe.value?.safe_address!, getRpcProviderByChainId(chainId))
+
     const actions = [
       {
         target: selectedSafe.value?.safe_address,
-        data: avoMultsigInterface.encodeFunctionData('setRequiredSigners', [threshold]),
+        data: (await avoMultisigInstance.populateTransaction.setRequiredSigners(threshold))?.data,
         value: '0',
         operation: '0',
       },
@@ -587,9 +578,10 @@ export function useAvocadoSafe() {
   }
 
   async function removeSignerWithThreshold(addresses: string[], chainId: number | string, threshold: number) {
-    const avoMultsigInterface = AvoMultisigImplementation__factory.createInterface()
+    const avoMultisigInstance = AvoMultisigImplementation__factory.connect(selectedSafe.value?.safe_address!, getRpcProviderByChainId(chainId))
 
-    const currentThreshold = requiredSigners.value.find(i => i.chainId == chainId)?.requiredSignerCount
+    const currentThreshold = requiredSigners.value.find(i => i.chainId == chainId)?.requiredSignerCount || 1
+    const actualThreshold = threshold || currentThreshold
 
     const sortedAddress = addresses.sort((left, right) =>
       left.toLowerCase().localeCompare(right.toLowerCase()),
@@ -600,28 +592,11 @@ export function useAvocadoSafe() {
     const actions: any[] = [
       {
         target: selectedSafe.value?.safe_address,
-        data: avoMultsigInterface.encodeFunctionData('removeSigners', [sortedAddress]),
+        data: (await avoMultisigInstance.populateTransaction.removeSigners(sortedAddress, actualThreshold)).data,
         value: '0',
         operation: '0',
       },
     ]
-
-    if (threshold && currentThreshold) {
-      const isThresholdIncreased = toBN(threshold).gt(currentThreshold)
-
-      const action = {
-        target: selectedSafe.value?.safe_address,
-        data: avoMultsigInterface.encodeFunctionData('setRequiredSigners', [threshold]),
-        value: '0',
-        operation: '0',
-      }
-
-      if (isThresholdIncreased)
-        actions.push(action)
-
-      else
-        actions.unshift(action)
-    }
 
     return createProposalOrSignDirecty({ chainId, actions, clearModals: false, estimatedFee: true, metadata, transactionType: 'remove-signers' })
   }
