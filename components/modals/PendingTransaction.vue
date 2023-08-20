@@ -11,8 +11,12 @@ const props = defineProps<{
 }>()
 
 const { getRpcProviderByChainId } = useShared()
+const { isSelectedSafeLegacy } = storeToRefs(useSafe())
 
 const encodedEvent = '0xacb5341cc21d71a005bd22634cec7391a7fd11ff2b563a7b301cac795f7a6a56'
+const encodedEventMultisig = '0xdaf1e6e151973de199f3ea25b9c6a7c3d94299dc85e269cfd20e48e517ecf704'
+
+const actualEncodedEvent = computed(() => isSelectedSafeLegacy.value ? encodedEvent : encodedEventMultisig)
 
 const provider = getRpcProviderByChainId(props.chainId)
 const transaction = ref<TransactionReceipt>()
@@ -27,7 +31,7 @@ const isSuccess = computed(() => {
   if (!transaction.value?.status)
     return false
 
-  if (transaction.value.logs.some(i => i.topics.length && i.topics[0] === encodedEvent))
+  if (transaction.value.logs.some(i => i.topics.length && i.topics[0] === actualEncodedEvent.value))
     return true
 
   return false
