@@ -230,6 +230,8 @@ export function useAvocadoSafe() {
 
     const latestAvosafeNonce = await getLatestAvosafeNonce(chainId)
 
+    console.log({ latestAvosafeNonce })
+
     const avoNonce = !isUndefined(nonce) ? nonce : latestAvosafeNonce
 
     const params = {
@@ -629,6 +631,8 @@ export function useAvocadoSafe() {
       return
 
     const currentNonce = await getCurrentNonce(chainId, selectedSafe.value?.owner_address, selectedSafe.value.multisig_index)
+
+    console.log({ currentNonce, owner: selectedSafe.value?.owner_address, index: selectedSafe.value.multisig_index })
 
     const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {
       params: {
