@@ -191,7 +191,7 @@ export function useAvocadoSafe() {
       index: String(selectedSafe.value?.multisig_index || 0),
     }
 
-    const signerCount = requiredSigners.value.find(i => i.chainId == params.targetChainId)?.signerCount || 1
+    const signerCount = await getRequiredSigner(selectedSafe.value?.safe_address!, params.targetChainId) || 1
 
     if (signerCount > 1) {
       try {
