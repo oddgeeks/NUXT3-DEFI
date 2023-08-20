@@ -348,8 +348,8 @@ export function useAvocadoSafe() {
       name = await wallet.DOMAIN_SEPARATOR_NAME()
     }
     catch (error) {
-      version = await multisigForwarderProxyContract.avoWalletVersion('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE')
-      name = await multisigForwarderProxyContract.avoWalletVersionName('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE')
+      version = await multisigForwarderProxyContract.avocadoVersion('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', selectedSafe.value?.multisig_index || 0)
+      name = await multisigForwarderProxyContract.avocadoVersionName('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', selectedSafe.value?.multisig_index || 0)
     }
 
     const domain = {
