@@ -82,7 +82,18 @@ export const useMultisig = defineStore('multisig', () => {
     if (!safe)
       return false
 
-    return safe.multisig === 1 && safe?.multisig_index > 0
+    if (safe?.multisig_index > 0)
+      return true
+
+    const signers = safe?.signers || {}
+
+    const hasSomeSigner = Object.keys(signers).some((chainId) => {
+      const chainSigners = signers[chainId]
+
+      return chainSigners.length > 1
+    })
+
+    return safe.multisig === 1 && hasSomeSigner
   }
 
   watch(selectedSafe, async () => {
