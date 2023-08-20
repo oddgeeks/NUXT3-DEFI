@@ -24,8 +24,8 @@ const filteredSafes = computed(() => {
         Your wallets
       </h2>
       <div class="flex flex-col gap-2.5">
-        <WalletItem v-if="legacySafeAddress && legacySafe" tooltip="Placeholder" :safe="legacySafe" />
-        <WalletItem v2 tooltip="Placeholder" primary :safe="mainSafe" />
+        <WalletItem v-if="legacySafeAddress && legacySafe" tooltip="Personal wallet v1 will not receive any future updates. We recommend you migrate funds to your Personal v2 wallet for a more secure & upgraded experience" :safe="legacySafe" />
+        <WalletItem v2 primary :safe="mainSafe" />
         <WalletItem v-if="multiSigSafe" primary :safe="multiSigSafe" />
       </div>
     </div>
