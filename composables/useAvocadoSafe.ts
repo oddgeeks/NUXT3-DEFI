@@ -395,11 +395,11 @@ export function useAvocadoSafe() {
       [domainSeparatorName, domainSeparatorVersion] = await Promise.all([
         networkForwarderProxyContract.avocadoVersionName(
           '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-          0,
+          selectedSafe.value?.multisig_index || 0,
         ),
         networkForwarderProxyContract.avocadoVersion(
           '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-          0,
+          selectedSafe.value?.multisig_index || 0,
         ),
       ])
     }
@@ -504,15 +504,21 @@ export function useAvocadoSafe() {
   }
 
   async function getCurrentNonce(chainId: number | string, ownerAddress: string, multisafeIndex = 0) {
-    const underlyingProvider = new ethers.providers.JsonRpcProvider(getRpcURLByChainId(chainId))
-    const multisigForwarderProxyContract = MultisigForwarder__factory.connect(
-      multisigForwarderProxyAddress,
-      underlyingProvider,
-    )
+    try {
+      const underlyingProvider = new ethers.providers.JsonRpcProvider(getRpcURLByChainId(chainId))
+      const multisigForwarderProxyContract = MultisigForwarder__factory.connect(
+        multisigForwarderProxyAddress,
+        underlyingProvider,
+      )
 
-    const currentNonce = (await multisigForwarderProxyContract.avoNonce(ownerAddress, multisafeIndex)).toNumber()
+      const currentNonce = (await multisigForwarderProxyContract.avoNonce(ownerAddress, multisafeIndex)).toNumber()
 
-    return currentNonce
+      return currentNonce
+    }
+    catch (error) {
+      console.log(error)
+      return 0
+    }
   }
 
   async function addSignersWithThreshold(addresses: ISignerAddress[], threshold: string, chainId: number | string) {
