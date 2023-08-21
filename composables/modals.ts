@@ -31,9 +31,6 @@ import DefiPositionDetails from '~/components/modals/DefiPositionDetails.vue'
 import QrCode from '~/components/modals/QrCode.vue'
 import AddSigner from '~/components/modals/Multisig/AddSigner.vue'
 import ReviewSigner from '~/components/modals/Multisig/ReviewSigner.vue'
-import ManageAuthority from '~/components/modals/ManageAuthority.vue'
-import EstimateAuthority from '~/components/modals/EstimateAuthority.vue'
-import SignAuthorityTransactions from '~/components/modals/SignAuthorityTransactions.vue'
 import WalletNameEdit from '~/components/modals/WalletNameEdit.vue'
 import ReviewMultisigTransaction from '~/components/modals/Multisig/ReviewTransaction.vue'
 import MultisigTransactionDetail from '~/components/modals/Multisig/TransactionDetails.vue'
@@ -540,42 +537,6 @@ export async function openEditNonceModal(params: IOpenNonceModalParams) {
       contentClass: '!p-0',
     },
     async: true,
-  })
-}
-
-export function openManageAuthorityModal(authority: IAuthority, chainIds?: number[], isNewAuthority = false) {
-  return openModal({
-    component: ManageAuthority,
-    componentProps: {
-      authority,
-      chainIds,
-      isNewAuthority,
-    },
-  })
-}
-
-export function openEstimateAuthorityModal(authority: IAuthority, chainIds: number[] | string[], remove = false) {
-  return openModal({
-    component: EstimateAuthority,
-    componentProps: {
-      authority,
-      chainIds,
-      remove,
-    },
-    options: {
-      wrapperClass: '!max-w-[510px]',
-    },
-  })
-}
-
-export function openSignAuthorityModal(authority: IAuthority, transactions: IAuthorityTx[], remove = false) {
-  return openModal({
-    component: SignAuthorityTransactions,
-    componentProps: {
-      transactions,
-      authority,
-      remove,
-    },
   })
 }
 

@@ -136,6 +136,8 @@ export const useSafe = defineStore('safe', () => {
     try {
       const resp = await fetchSafe(safeAddress.value)
 
+      console.log(resp, safeAddress.value)
+
       if (!resp) {
         const isMultisig = getAddress(safeAddress.value) === getAddress(multiSigSafeAddress.value)
         const isMainSafe = getAddress(safeAddress.value) === getAddress(mainSafeAddress.value)
@@ -174,6 +176,9 @@ export const useSafe = defineStore('safe', () => {
     if ((mainSafeAddress.value || safeAddress.value) && !cachedSafeAddress)
       return
 
+    const availableSafes = (await getSafesByAddress(account.value)).data || []
+    const isCachedSafeAvailable = !cachedSafeAddress ? false : availableSafes.some(i => getAddress(i.safe_address) === getAddress(cachedSafeAddress)) || getAddress(cachedSafeAddress) === getAddress(multiSigSafeAddress.value) || getAddress(cachedSafeAddress) === getAddress(mainSafeAddress.value)
+
     const oldSafeAddress = await forwarderProxyContract.computeAddress(
       account.value,
     )
@@ -197,7 +202,7 @@ export const useSafe = defineStore('safe', () => {
       legacySafeAddress.value = oldSafeAddress
 
     mainSafeAddress.value = address
-    safeAddress.value = cachedSafeAddress || address
+    safeAddress.value = isCachedSafeAvailable ? cachedSafeAddress : address
   }
 
   const fetchMultiSigSafeAddress = async () => {

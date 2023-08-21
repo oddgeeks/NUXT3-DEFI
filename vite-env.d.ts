@@ -572,29 +572,9 @@ interface IRequiredSigners {
   signers: string[]
  }
 
-
-interface IAuthority {
-  address: string
-  chainIds: string[]
-  type?: 'personal' | 'multisig'
-}
-
 interface ISigner {
   address: string
   chainIds: string[]
-}
-
-interface IManageAuthorityModalParams {
-  authorityAddress: string
-  chainIds?: string[]
-}
-
-interface IAuthorityTx {
-  to: string
-  data: string
-  value: string
-  operation: string
-  chainId: number
 }
 
 type ChainFees = Record<string, ICalculatedFee>

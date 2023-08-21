@@ -292,6 +292,7 @@ async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
 async function setCurrentNonce() {
   try {
     const safe = await fetchSafe(transactionRef.value.safe_address)
+    console.log(safe, 'selam')
     currentNonce.value = await getCurrentNonce(transactionRef.value.chain_id, safe?.owner_address || account.value, safe.multisig_index)
   }
   catch (e) {
