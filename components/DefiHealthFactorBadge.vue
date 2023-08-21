@@ -7,11 +7,11 @@ const { calculateHealthFactor } = useDefi()
 
 const status = calculateHealthFactor(props.healthFactor)
 const healthFactorFormatted = computed(() => {
-  if (props.healthFactor === '∞')
-    return '∞'
-
+  if (isNaN(toBN(props.healthFactor).toNumber()))
+    return props.healthFactor
   const formatter = new Intl.NumberFormat('en', { notation: 'compact', compactDisplay: 'short', maximumFractionDigits: 2 })
-  return formatter.format(toBN(props.healthFactor).toNumber())
+  const value = formatter.format(toBN(props.healthFactor).toNumber())
+  return value
 })
 </script>
 
