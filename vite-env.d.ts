@@ -75,6 +75,8 @@ interface IAvocadoTransaction {
   to: string;
   data: string;
   fee: string;
+  effective_fee: string;
+  balance_transactions: IAvocadoBalanceTransaction[];
   confirmations: number;
   status: "pending" | "confirming" | "success" | "failed" | "dropped";
   revert_reason?: string;
@@ -86,9 +88,20 @@ interface IAvocadoTransaction {
   metadata: {
     safe?: string;
     signer?: string;
+    multisig: boolean;
+    multisig_index: number;
+    multisig_signers: string[];
+    multisig_hash?: string;
+    owner?: string;
+    source?: string;
   };
   created_at: string;
   updated_at: string;
+  decodedMetadata?: any;
+  isBridge?: boolean;
+  crosschain_transaction: ICrosschainTransaction | null;
+  crosschain_transaction_id: string | null;
+  cross: true;
 }
 
 interface IBridgeResponse {

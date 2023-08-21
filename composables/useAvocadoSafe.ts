@@ -212,17 +212,30 @@ export function useAvocadoSafe() {
 
     const transactionHash = await avoProvider.send('txn_broadcast', [signatureObject])
 
-    // @todo: change URL later on
-    const message = `${'`Multisig Hash`'} <https://avocado-git-f-multisafe-instadapp-eng.vercel.app/multisig/${params.safe}/pending-transactions/${params.proposalId}| ${shortenHash(params.proposalId)}>`
+    if (transactionHash) {
+      setTimeout(() => {
+        avoProvider.send('api_getTransactionByHash', [
+          transactionHash,
+        ]).then((tx: IAvocadoTransaction) => {
+          const hash = params.proposalId || tx.metadata.multisig_hash
 
-    logActionToSlack({
-      account: account.value,
-      action: 'multisig',
-      chainId: String(params.targetChainId),
-      message,
-      txHash: transactionHash,
-      type: 'success',
-    })
+          if (!hash)
+            return
+
+          // @todo: change URL later on
+          const message = `\n${'`Multisig Hash`'} <https://avocado-git-f-multisafe-instadapp-eng.vercel.app/multisig/${params.safe}/pending-transactions/${hash}| ${shortenHash(hash)}>`
+
+          logActionToSlack({
+            account: account.value,
+            action: 'multisig',
+            chainId: String(params.targetChainId),
+            message,
+            txHash: transactionHash,
+            type: 'success',
+          })
+        })
+      }, 5000)
+    }
 
     executedTransactions.value.push(params.proposalId)
 
