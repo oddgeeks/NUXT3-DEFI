@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { StaticJsonRpcRetryProvider } from '@instadapp/utils'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 
 export const useShared = defineStore('shared', () => {
@@ -10,9 +10,9 @@ export const useShared = defineStore('shared', () => {
     if (!rpcURL)
       throw new Error(`No RPC URL for chainId: ${chainId}`)
 
-    return new ethers.providers.StaticJsonRpcProvider(
-      rpcURL,
-    )
+    return new StaticJsonRpcRetryProvider(rpcURL, {
+      delay: 50,
+    })
   }
 
   function getRpcURLByChainId(chainid: number | string) {
