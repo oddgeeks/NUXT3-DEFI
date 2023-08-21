@@ -6,11 +6,15 @@ const props = defineProps<{
 const { calculateHealthFactor } = useDefi()
 
 const status = calculateHealthFactor(props.healthFactor)
+const healthFactorFormatted = computed(() => {
+  const formatter = new Intl.NumberFormat('en', { notation: 'compact', compactDisplay: 'short', maximumFractionDigits: 2 })
+  return formatter.format(toBN(props.healthFactor).toNumber())
+})
 </script>
 
 <template>
   <span class="flex items-center gap-2.5">
-    {{ healthFactor }}
+    {{ healthFactorFormatted }}
 
     <CommonBadge
       :color="
