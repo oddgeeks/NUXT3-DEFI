@@ -175,12 +175,14 @@ export function openWalletDetailsModalV2(session: SessionTypes.Struct) {
 }
 
 export async function openTokenSelectionModal(params: any) {
+  const { tokens = [], selectedToken = null, sort = true } = params || {}
   return openModal({
     component: TokenSelection,
     async: true,
     componentProps: {
-      tokens: params?.tokens || [],
-      selectedToken: params?.selectedToken || null,
+      tokens,
+      selectedToken,
+      sort,
     },
     options: {
       contentClass: '!px-2.5',

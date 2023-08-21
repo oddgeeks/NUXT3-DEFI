@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getAddress } from 'ethers/lib/utils'
 import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 
 const props = defineProps({
@@ -25,8 +26,16 @@ const { parseTransactionError } = useErrorHandler()
 const { authorisedNetworks } = useAuthorities()
 
 const fromChainId = ref<string>(props.chainId)
-const availableTokens = computed(() =>
-  tokenBalances.value.filter(t => t.chainId == fromChainId.value),
+
+const availableTokens = computed(() => {
+  return tokenBalances.value.filter((i) => {
+    const isChainMatch = i.chainId == fromChainId.value
+    const isSupportedTokensExist = !!fromTokens.data.value?.length
+    const isSupported = isSupportedTokensExist ? fromTokens.data.value?.some(f => getAddress(f.address) === getAddress(i.address) && String(f.chainId) == String(i.chainId)) : true
+
+    return isChainMatch && isSupported
+  })
+},
 )
 const fromToken = ref(
   tokenBalances.value.find(
@@ -51,8 +60,6 @@ const {
   txRoute,
   toChainId,
   amount,
-  toTokenAddress,
-  selectableToTokens,
   recivedValueInUsd,
   recievedAmount,
   form,
@@ -67,6 +74,8 @@ const {
   bridgeFee,
   selectableChains,
   handleSwapToken,
+  bridgeTokens,
+  fromTokens,
 } = useBridge(fromToken)
 const { pending, error, data } = useEstimatedFee(
   transactions.data,
@@ -93,8 +102,6 @@ function setMax() {
 const feeInfoMessage = computed(() => {
   if (!bridgeFee.value?.asset || !nativeFee.value)
     return
-
-  console.log(bridgeFee.value, nativeFee.value)
 
   const amounts = [
     {
@@ -125,7 +132,7 @@ const feeInfoMessage = computed(() => {
 })
 
 const onSubmit = form.handleSubmit(async () => {
-  if (!txRoute.value)
+  if (!txRoute.value || !bridgeToToken.value)
     return
 
   try {
@@ -191,7 +198,7 @@ const onSubmit = form.handleSubmit(async () => {
 <template>
   <form class="flex gap-7.5 flex-col" @submit="onSubmit">
     <div class="flex gap-[14px]">
-      <div class="w-10 h-10 rounded-full items-center flex justify-center bg-primary">
+      <div class="w-10 h-10 rounded-full items-center flex justify-center bg-primary shrink-0">
         <SvgoBridge />
       </div>
       <div class="flex flex-col gap-1">
@@ -218,7 +225,7 @@ const onSubmit = form.handleSubmit(async () => {
               <span class="text-sm">Coin</span>
               <TokenSelection
                 v-model="fromToken"
-                class="relative w-full flex items-center gap-2.5 max-h-12 rounded-2xl border-2 dark:border-slate-700 border-slate-150 !bg-slate-50 dark:!bg-gray-850 px-4 py-3 text-left"
+                class="relative w-full flex items-center gap-2.5 max-h-12 rounded-2xl border dark:border-slate-700 border-slate-150 !bg-slate-50 dark:!bg-gray-850 px-4 py-3 text-left"
                 :tokens="availableTokens"
               />
             </div>
@@ -259,6 +266,7 @@ const onSubmit = form.handleSubmit(async () => {
             <CommonInput
               v-model="amount"
               type="numeric"
+              autofocus
               :error-message="
                 form.meta.value.dirty ? form.errors.value.amount : ''
               "
@@ -296,26 +304,13 @@ const onSubmit = form.handleSubmit(async () => {
               <div class="flex flex-col gap-2.5">
                 <span class="text-sm">Coin</span>
 
-                <CommonSelect
-                  v-if="selectableToTokens.length"
-                  v-model="toTokenAddress"
-                  icon-key="logoURI"
-                  value-key="address"
-                  label-key="name"
-                  :options="selectableToTokens"
+                <TokenSelection
+                  v-model="bridgeToToken"
+                  :sort="false"
+                  :pending="bridgeTokens.pending.value"
+                  class="relative flex items-center gap-2.5 max-h-12 rounded-2xl border dark:border-slate-700 border-slate-150 !bg-slate-50 dark:!bg-gray-850 px-4 py-3 text-left"
+                  :tokens="bridgeTokens.data"
                 />
-                <div
-                  v-else
-                  class="dark:bg-gray-800 bg-slate-100 w-full px-3 flex py-3 items-center gap-2.5 rounded-2xl"
-                >
-                  <SafeTokenLogo class="h-6 w-6" :url="bridgeToToken?.logoURI || fromToken.logoURI" />
-                  <span
-                    class="text-sm w-full leading-5 text-shadow overflow-hidden whitespace-nowrap"
-                  >
-                    {{ bridgeToToken?.name || fromToken.name }}
-                    <span class="uppercase"> ({{ bridgeToToken?.symbol || fromToken.symbol }})</span>
-                  </span>
-                </div>
               </div>
 
               <div class="flex flex-col gap-2.5">
@@ -335,7 +330,6 @@ const onSubmit = form.handleSubmit(async () => {
                 </CommonSelect>
               </div>
             </div>
-
             <div class="flex flex-col gap-2 sm:gap-2.5">
               <div class="flex justify-between items-center">
                 <span class="text-sm text-slate-400 font-medium">
@@ -392,63 +386,62 @@ const onSubmit = form.handleSubmit(async () => {
                 <span>{{ formatDecimal(recievedAmount) }}
                   {{ bridgeToToken?.symbol || fromToken.symbol }}</span>
 
-                {{}}
                 <span class="text-slate-400 text-sm">({{ formatUsd(recivedValueInUsd) }})</span>
               </span>
             </div>
           </div>
         </div>
+
+        <EstimatedFee :loading="pending" :data="data" :error="error" />
+
+        <Transition name="fade">
+          <p v-if="feeInfoMessage" class="text-slate-400 mt-1 font-medium leading-6 flex items-start text-xs">
+            <SvgoExclamationCircle class="mr-2.5 mt-1 h-4.5 w-4.5 shrink-0 text-slate-500" />
+            <span class="block">
+              {{ feeInfoMessage }}
+            </span>
+          </p>
+        </Transition>
+
+        <CommonNotification
+          v-if="transactions.error.value"
+          type="error"
+          :text="transactions.error.value?.message"
+        />
+        <CommonNotification
+          v-if="isInsufficientBalance"
+          type="error"
+          :text="`Not enough ${nativeCurrency?.symbol.toUpperCase()} balance`"
+        >
+          <template #action>
+            <CommonButton
+              size="sm"
+              class="flex gap-[6px] items-center justify-center"
+              @click="handleSwapToken"
+            >
+              <RefreshSVG class="w-[14px] h-[14px]" />
+              Swap Token
+            </CommonButton>
+          </template>
+        </CommonNotification>
+        <CommonNotification
+          v-if="routes.error.value"
+          type="warning"
+          :text="routes.error.value?.message"
+        />
       </div>
 
-      <EstimatedFee :loading="pending" :data="data" :error="error" />
-
-      <Transition name="fade">
-        <p v-if="feeInfoMessage" class="text-slate-400 mt-1 font-medium leading-6 flex items-start text-xs">
-          <SvgoExclamationCircle class="mr-2.5 mt-1 h-4.5 w-4.5 shrink-0 text-slate-500" />
-          <span class="block">
-            {{ feeInfoMessage }}
-          </span>
-        </p>
-      </Transition>
-
-      <CommonNotification
-        v-if="transactions.error.value"
-        type="error"
-        :text="transactions.error.value?.message"
-      />
-      <CommonNotification
-        v-if="isInsufficientBalance"
-        type="error"
-        :text="`Not enough ${nativeCurrency?.symbol.toUpperCase()} balance`"
-      >
-        <template #action>
-          <CommonButton
-            size="sm"
-            class="flex gap-[6px] items-center justify-center"
-            @click="handleSwapToken"
-          >
-            <RefreshSVG class="w-[14px] h-[14px]" />
-            Swap Token
-          </CommonButton>
-        </template>
-      </CommonNotification>
-      <CommonNotification
-        v-if="routes.error.value"
-        type="warning"
-        :text="routes.error.value?.message"
-      />
-    </div>
-
-    <div class="flex gap-4 flex-col">
-      <CommonButton
-        type="submit"
-        :disabled="disabled || pending || !!error"
-        :loading="loading || pending"
-        class="justify-center w-full"
-        size="lg"
-      >
-        Bridge
-      </CommonButton>
+      <div class="flex gap-4 flex-col">
+        <CommonButton
+          type="submit"
+          :disabled="disabled || pending || !!error"
+          :loading="loading || pending"
+          class="justify-center w-full"
+          size="lg"
+        >
+          Bridge
+        </CommonButton>
+      </div>
     </div>
   </form>
 </template>

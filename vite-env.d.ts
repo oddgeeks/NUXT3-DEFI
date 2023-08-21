@@ -110,7 +110,11 @@ interface IBridgeTokensResult {
   decimals: number;
   symbol: string;
   logoURI: string;
+  chainId: number;
   chainAgnosticId: string;
+  balance?: string;
+  price?: number;
+  score?: number;
 }
 
 interface IBridgeTokensResponse {
