@@ -214,8 +214,7 @@ export function useAvocadoSafe() {
     const transactionHash = await avoProvider.send('txn_broadcast', [signatureObject])
 
     // @todo: change URL later on
-    const message = `Multisig transaction broadcasted
-${'`Multisig Hash`'} <https://avocado-git-f-multisafe-instadapp-eng.vercel.app/multisig/${params.safe}/pending-transactions/${params.proposalId}| ${shortenHash(params.proposalId)}>`
+    const message = `${'`Multisig Hash`'} <https://avocado-git-f-multisafe-instadapp-eng.vercel.app/multisig/${params.safe}/pending-transactions/${params.proposalId}| ${shortenHash(params.proposalId)}>`
 
     logActionToSlack({
       account: account.value,
@@ -274,7 +273,7 @@ ${'`Multisig Hash`'} <https://avocado-git-f-multisafe-instadapp-eng.vercel.app/m
   }
 
   async function createProposalOrSignDirecty(args: IGenerateMultisigSignatureParams) {
-    const { chainId, actions, nonce, metadata, clearModals = true, estimatedFee = false, rejection, rejectionId, options, transactionType = 'others' } = args
+    const { chainId, actions, nonce, metadata, estimatedFee = false, rejection, rejectionId, options, transactionType = 'others' } = args
 
     const requiredSigner = await getRequiredSigner(selectedSafe.value?.safe_address!, chainId)
 
@@ -306,9 +305,6 @@ ${'`Multisig Hash`'} <https://avocado-git-f-multisafe-instadapp-eng.vercel.app/m
 
     if (payload.txHash)
       return payload.txHash
-
-    if (clearModals)
-      clearAllModals()
 
     openReviewMultisigTransaction(payload.id, rejection)
   }
@@ -565,7 +561,7 @@ ${'`Multisig Hash`'} <https://avocado-git-f-multisafe-instadapp-eng.vercel.app/m
       },
     ] as any[]
 
-    return createProposalOrSignDirecty({ chainId, actions, clearModals: false, estimatedFee: true, metadata, transactionType: 'add-signers' })
+    return createProposalOrSignDirecty({ chainId, actions, estimatedFee: true, metadata, transactionType: 'add-signers' })
   }
 
   async function changeThreshold(threshold: string, chainId: string | number) {
@@ -606,7 +602,7 @@ ${'`Multisig Hash`'} <https://avocado-git-f-multisafe-instadapp-eng.vercel.app/m
       },
     ]
 
-    return createProposalOrSignDirecty({ chainId, actions, clearModals: false, estimatedFee: true, metadata, transactionType: 'remove-signers' })
+    return createProposalOrSignDirecty({ chainId, actions, estimatedFee: true, metadata, transactionType: 'remove-signers' })
   }
 
   const getLatestAvosafeNonce = async (chainId: string | number) => {

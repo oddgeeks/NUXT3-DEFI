@@ -103,7 +103,6 @@ interface IGenerateMultisigSignatureParams {
   nonce?: number
   metadata?: string
   note?: string
-  clearModals?: boolean
   estimatedFee?: boolean
   options?: any
   rejection?: boolean
