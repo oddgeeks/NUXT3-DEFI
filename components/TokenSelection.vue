@@ -1,10 +1,11 @@
 <script lang="ts" setup>
+import type { IBalance } from 'stores/safe'
 import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
 import type { IToken } from '~~/stores/tokens'
 
 const props = withDefaults(
   defineProps<{
-    tokens: IToken[] | any
+    tokens: IToken[] | IBalance[] | any
     modelValue: IToken | any
     chainId?: string | number
     networkLogoClass?: string
