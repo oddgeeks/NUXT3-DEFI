@@ -66,8 +66,14 @@ export const useMultisig = defineStore('multisig', () => {
   }
 
   async function getRequiredSigner(safeAddress: string, chainId: number | string) {
-    const instance = AvoMultisigImplementation__factory.connect(safeAddress, getRpcProviderByChainId(chainId))
-    return instance.requiredSigners()
+    try {
+      const instance = AvoMultisigImplementation__factory.connect(safeAddress, getRpcProviderByChainId(chainId))
+      const requiredSigner = await instance.requiredSigners()
+      return requiredSigner
+    }
+    catch (e) {
+      return 1
+    }
   }
 
   async function setRequiredSigners() {
