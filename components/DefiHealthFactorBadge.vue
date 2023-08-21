@@ -7,6 +7,9 @@ const { calculateHealthFactor } = useDefi()
 
 const status = calculateHealthFactor(props.healthFactor)
 const healthFactorFormatted = computed(() => {
+  if (props.healthFactor === '∞')
+    return '∞'
+
   const formatter = new Intl.NumberFormat('en', { notation: 'compact', compactDisplay: 'short', maximumFractionDigits: 2 })
   return formatter.format(toBN(props.healthFactor).toNumber())
 })
