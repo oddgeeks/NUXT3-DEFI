@@ -19,7 +19,6 @@ export function useAvocadoSafe() {
   const { avoProvider } = useSafe()
   const { selectedSafe, isSelectedSafeLegacy } = storeToRefs(useSafe())
   const { multisigForwarderProxyContract } = useSafe()
-  const { clearAllModals } = useModal()
 
   const { isSafeMultisig, requiredSigners } = storeToRefs(useMultisig())
   const { getRequiredSigner } = useMultisig()
@@ -313,6 +312,11 @@ export function useAvocadoSafe() {
     if (!signer.value)
       throw new Error('Safe not initialized')
 
+    const networkMultisigForwarderProxy = MultisigForwarder__factory.connect(
+      multisigForwarderProxyAddress,
+      getRpcProviderByChainId(params.targetChainId),
+    )
+
     let name
     let version
 
@@ -393,6 +397,11 @@ export function useAvocadoSafe() {
 
     const contract = AvoMultisigImplementation__factory.connect(safeAddress.value, getRpcProviderByChainId(chainId))
 
+    const networkMultisigForwarderProxy = MultisigForwarder__factory.connect(
+      multisigForwarderProxyAddress,
+      getRpcProviderByChainId(chainId),
+    )
+
     let domainSeparatorName: string
     let domainSeparatorVersion: string
 
@@ -404,11 +413,11 @@ export function useAvocadoSafe() {
     }
     catch (error) {
       [domainSeparatorName, domainSeparatorVersion] = await Promise.all([
-        multisigForwarderProxyContract.avocadoVersionName(
+        networkMultisigForwarderProxy.avocadoVersionName(
           '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
           selectedSafe.value?.multisig_index || 0,
         ),
-        multisigForwarderProxyContract.avocadoVersion(
+        networkMultisigForwarderProxy.avocadoVersion(
           '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
           selectedSafe.value?.multisig_index || 0,
         ),
