@@ -289,9 +289,7 @@ export function useAvocadoSafe() {
 
     const requiredSigner = await getRequiredSigner(selectedSafe.value?.safe_address!, chainId)
 
-    console.log({ requiredSigner })
-
-    if (selectedSafe.value && requiredSigner === 1) {
+    if (selectedSafe.value && selectedSafe.value.multisig_index === 0 && requiredSigner === 1) {
       const params = await generateMultisigSignatureAndSign({ chainId, actions, metadata, options })
 
       const txHash = await multisigBroadcast({
@@ -547,6 +545,10 @@ export function useAvocadoSafe() {
       )
 
       const currentNonce = (await multisigForwarderProxyContract.avoNonce(ownerAddress, multisafeIndex)).toNumber()
+
+      console.log({
+        currentNonce,
+      })
 
       return currentNonce
     }

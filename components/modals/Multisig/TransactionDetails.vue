@@ -291,9 +291,7 @@ async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
 
 async function setCurrentNonce() {
   try {
-    const safe = await fetchSafe(transactionRef.value.safe_address)
-    console.log(safe, 'selam')
-    currentNonce.value = await getCurrentNonce(transactionRef.value.chain_id, safe?.owner_address || account.value, safe.multisig_index)
+    currentNonce.value = await getCurrentNonce(transactionRef.value.chain_id, transactionRef.value.owner, transactionRef.value.index)
   }
   catch (e) {
     console.log(e)
@@ -316,6 +314,7 @@ onUnmounted(() => {
 <template>
   <div>
     <div class="flex sm:flex-row flex-col font-medium">
+      {{ currentNonce }}
       <div class="flex-1 border-r dark:border-slate-800 border-slate-150">
         <div class="flex flex-col sm:max-h-[710px] overflow-auto scroll-style">
           <div class="sm:p-7.5 p-5 border-b dark:border-slate-800 border-slate-150">

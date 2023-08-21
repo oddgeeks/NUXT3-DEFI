@@ -21,6 +21,7 @@ const { getActualId, safeAddress, generateMultisigSignatureAndSign, multisigBroa
 const { requiredSigners } = storeToRefs(useMultisig())
 const { parseTransactionError } = useErrorHandler()
 const { clearAllModals } = useModal()
+const { account } = useWeb3()
 
 const isDeleteOrAddSigner = props.transactionType === 'remove-signers' || props.transactionType === 'add-signers'
 const recommendedNonce = isDeleteOrAddSigner ? -1 : undefined
@@ -33,7 +34,6 @@ const [simulationStatus, toggle] = useToggle()
 const [signAndExecute, signAndExecuteToggle] = useToggle(false)
 
 const requiredSignersByChain = computed(() => requiredSigners.value.find(i => i.chainId == props.chainId))
-const isSignOnly = computed(() => !signAndExecute.value && !isExecuteReady.value)
 
 const { data: seqResponse } = useAsyncData<IMultisigTransactionResponse>(`${safeAddress.value}-seq-count`, async () => {
   const { data } = await axios.get(`/safes/${safeAddress.value}/transactions`, {
@@ -108,6 +108,8 @@ async function onSubmit() {
       chain_id: String(props.chainId),
       status: 'pending',
       signer: params?.signatureParams,
+      owner: selectedSafe.value?.owner_address,
+      index: String(selectedSafe.value?.multisig_index),
       data: params?.castParams,
       note: payload.note,
       nonce: params.castParams.params.avoSafeNonce,
@@ -150,6 +152,13 @@ async function onSubmit() {
     openSnackbar({
       message: parsed.formatted,
       type: 'error',
+    })
+
+    logActionToSlack({
+      action: 'multisig',
+      account: account.value,
+      type: 'error',
+      message: parsed.formatted,
     })
   }
   finally {

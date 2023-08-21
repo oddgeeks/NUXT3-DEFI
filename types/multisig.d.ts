@@ -3,6 +3,8 @@ interface IMultisigTransaction {
   id: string
   chain_id: string
   nonce: string
+  index: number
+  owner: string
   safe_address: string
   signers: string[]
   confirmations: Confirmation[]
