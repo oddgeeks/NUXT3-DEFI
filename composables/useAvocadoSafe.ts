@@ -383,10 +383,6 @@ export function useAvocadoSafe() {
     const avoSigner = library.value.getSigner()
 
     const contract = AvoMultisigImplementation__factory.connect(safeAddress.value, getRpcProviderByChainId(chainId))
-    const networkForwarderProxyContract = MultisigForwarder__factory.connect(
-      multisigForwarderProxyAddress,
-      getRpcProviderByChainId(chainId),
-    )
 
     let domainSeparatorName: string
     let domainSeparatorVersion: string
@@ -399,11 +395,11 @@ export function useAvocadoSafe() {
     }
     catch (error) {
       [domainSeparatorName, domainSeparatorVersion] = await Promise.all([
-        networkForwarderProxyContract.avocadoVersionName(
+        multisigForwarderProxyContract.avocadoVersionName(
           '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
           selectedSafe.value?.multisig_index || 0,
         ),
-        networkForwarderProxyContract.avocadoVersion(
+        multisigForwarderProxyContract.avocadoVersion(
           '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
           selectedSafe.value?.multisig_index || 0,
         ),
