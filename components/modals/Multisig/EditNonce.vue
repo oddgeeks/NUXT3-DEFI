@@ -249,10 +249,10 @@ function getNonceTooltip(value: number | undefined) {
   <form class="flex flex-col" @submit.prevent="onSubmit">
     <div class="px-7.5 pt-7.5 pb-5 flex flex-col gap-2.5">
       <h1 v-if="rejection" class="text-lg">
-        Submit Reject Transaction Proposal
+        Submit Reject Transaction
       </h1>
       <h1 v-else class="text-lg">
-        Submit Transaction Proposal
+        Submit Transaction
       </h1>
       <div class="text-slate-500 flex items-center gap-2 text-xs font-medium">
         <ChainLogo class="w-5 h-5" :chain="chainId" />

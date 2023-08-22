@@ -66,7 +66,7 @@ function handleBack() {
         <h2 class="text-sm mb-4 flex items-center gap-2.5">
           Not deployed <SvgoInfo2 v-tippy="'You can also deploy anytime in future on any chain at the same address'" class="text-slate-500" />
         </h2>
-        <ul class="flex flex-col gap-4 max-h-[210px] scroll-style overflow-auto">
+        <ul class="flex flex-col gap-4 max-h-[450px] scroll-style overflow-auto">
           <MultisigSelectNetworkItem v-for="network in nonDeployedNetworks" :key="network.chainId" :addresses="addresses" :selected="isSelected(network.chainId)" :network="network" @on-select="toggleNetworkChainId(network.chainId)" />
         </ul>
       </template>
