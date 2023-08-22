@@ -158,12 +158,12 @@ async function onSubmit() {
             </span>
           </dd>
         </dl>
-        <dl class="flex items-center justify-between">
+        <dl class="flex items-center justify-between flex-wrap">
           <dt class="text-slate-400 whitespace-nowrap">
             To address
           </dt>
           <dd>
-            <NuxtLink target="_blank" class="text-primary font-medium" :to="getExplorerUrl(data.toChainId, `/address/${actualAddress}`)" external>
+            <NuxtLink target="_blank" class="text-primary font-medium sm:text-sm text-xs" :to="getExplorerUrl(data.toChainId, `/address/${actualAddress}`)" external>
               {{ actualAddress }}
             </NuxtLink>
           </dd>
@@ -171,7 +171,7 @@ async function onSubmit() {
       </div>
       <div class="ticket-divider w-full my-4" />
 
-      <div class="flex justify-between items-center font-semibold md:text-2xl text-md">
+      <div class="flex justify-between items-center font-semibold sm:text-2xl text-md">
         <span>
           Amount
         </span>
