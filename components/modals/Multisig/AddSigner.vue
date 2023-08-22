@@ -201,8 +201,8 @@ onMounted(() => {
           </CommonInput>
         </div>
       </fieldset>
-      <button class="flex items-center text-primary gap-3 text-xs" @click="push({ address: '', name: '' })">
-        <div class="bg-primary w-4 h-4 rounded-full flex">
+      <button class="flex items-center text-primary gap-3 text-xs disabled:text-slate-500" :disabled="!meta.valid" @click="push({ address: '', name: '' })">
+        <div :class="!meta.valid ? 'bg-slate-500' : ''" class="bg-primary w-4 h-4 rounded-full flex">
           <SvgoPlus class="text-white m-auto w-2 h-2" />
         </div>
         Add more signer(s)
