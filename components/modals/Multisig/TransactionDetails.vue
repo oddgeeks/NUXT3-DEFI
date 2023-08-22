@@ -18,7 +18,6 @@ const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurre
 const { getRequiredSigner, isAccountCanSign } = useMultisig()
 const { requiredSigners } = storeToRefs(useMultisig())
 const { selectedSafe } = storeToRefs(useSafe())
-const { fetchSafe } = useSafe()
 const { getContactNameByAddress } = useContacts()
 const { parseTransactionError } = useErrorHandler()
 const { account } = useWeb3()
@@ -31,6 +30,12 @@ const pending = ref({
   reject: false,
   execute: false,
   sign: false,
+})
+
+const executing = useCookie(`executing-${props.transaction.id}`, {
+  default() {
+    return false
+  },
 })
 
 const { data: requiredSigner } = useAsyncData<number>(`multisig-required-signer-${transactionRef.value.safe_address}-${transactionRef.value.chain_id}`, async () => {
@@ -85,7 +90,7 @@ const sameNonceExistMessage = computed(() => {
 const nonceNotMatchMessage = computed(() => {
   if (isGeneralLoading.value)
     return undefined
-  return isNonceNotMatch.value ? `Please execute transaction #${currentNonce.value} first.` : errorMessage.value
+  return isNonceNotMatch.value && !isTransactionExecuted.value ? `Please execute transaction #${currentNonce.value} first.` : errorMessage.value
 })
 
 const { data: isSameNonceExist } = useAsyncData(`${transactionRef.value.id}-same-nonce`, async () => {
@@ -120,6 +125,9 @@ const errorMessage = computed(() => {
 
   if (isSafeDoesntMatch.value)
     message = 'This transaction is not for your safe.'
+
+  if (executing.value)
+    message = 'This transaction is being executed.'
 
   if (isUndefined(currentNonce.value))
     return null
@@ -552,7 +560,7 @@ onUnmounted(() => {
             I want to sign & execute in the same txn
           </button>
 
-          <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch || !canSign || isGeneralLoading" class="grid grid-cols-2 gap-2.5 items-center">
+          <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch || !canSign || isGeneralLoading || executing" class="grid grid-cols-2 gap-2.5 items-center">
             <Tippy v-if="!isRejection" :content="sameNonceExistMessage" tag="div">
               <CommonButton color="red" :disabled="isRejection || !!isSameNonceExist" :loading="pending.reject" size="lg" class="justify-center w-full" @click="handleReject(transactionRef)">
                 Reject
@@ -567,7 +575,7 @@ onUnmounted(() => {
                 :color="isColorRed ? 'red' : 'primary'"
                 :disabled="!!errorMessage || pending.execute || isNonceNotMatch" :loading="pending.execute || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" error-message @click="handleExecuteConfirmation(transactionRef)"
               >
-                Execute
+                {{ executing && !isTransactionExecuted ? 'Executing' : 'Execute' }}
               </CommonButton>
             </div>
             <div v-else v-tippy="errorMessage">

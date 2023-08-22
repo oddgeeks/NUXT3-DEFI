@@ -18,6 +18,12 @@ const { checkTransactionExecuted } = useAvocadoSafe()
 const { isAccountCanSign } = useMultisig()
 const { tokens } = storeToRefs(useTokens())
 
+const executing = useCookie(`executing-${props.item.id}`, {
+  default() {
+    return false
+  },
+})
+
 const transformedTokens = computed(() => {
   if (!tokens.value)
     return []
@@ -130,7 +136,11 @@ async function handleClick(item: IMultisigTransaction) {
 
         <div>
           <div :class="isConfirmationsMatch ? 'text-primary' : 'text-orange-400'">
-            <span v-if="isTransactionFailed" class="flex items-center text-red-alert gap-2 justify-end">
+            <span v-if="executing && !isTransactionExecuted" class="items-center flex gap-2 justify-items-end justify-end">
+              Executing
+              <SvgoClockCircle class="w-5 h-5" />
+            </span>
+            <span v-else-if="isTransactionFailed" class="flex items-center text-red-alert gap-2 justify-end">
               Failed
               <SvgoErrorCircle class="text-white w-4.5 h-4.5" />
             </span>
@@ -196,7 +206,11 @@ async function handleClick(item: IMultisigTransaction) {
         <hr class="border-slate-150 w-full dark:border-slate-800">
         <div class="text-xs px-4 pt-4 pb-3 flex justify-between items-center w-full">
           <div class="font-medium" :class="isConfirmationsMatch ? 'text-primary' : 'text-orange-400'">
-            <span v-if="isTransactionFailed" class="flex items-center text-red-alert gap-2 justify-end">
+            <span v-if="executing && !isTransactionExecuted" class="flex items-center gap-2">
+              Executing
+              <SvgoClockCircle class="w-5 h-5" />
+            </span>
+            <span v-else-if="isTransactionFailed" class="flex items-center text-red-alert gap-2 justify-end">
               Failed
               <SvgoErrorCircle class="text-white w-4.5 h-4.5" />
             </span>

@@ -9,8 +9,6 @@ import {
   MultisigForwarder__factory,
 } from '@/contracts'
 
-const executedTransactions = ref<string[]>([])
-
 export function useAvocadoSafe() {
   const { switchToAvocadoNetwork } = useNetworks()
   const { library, account } = useWeb3()
@@ -224,7 +222,12 @@ export function useAvocadoSafe() {
       })
     }
 
-    executedTransactions.value.push(params.proposalId)
+    const executing = useCookie<boolean>(`executing-${params.proposalId}`, {
+      // 2 mins expiry
+      expires: new Date(Date.now() + 1000 * 60 * 2),
+    })
+
+    executing.value = true
 
     return transactionHash
   }
@@ -646,7 +649,7 @@ export function useAvocadoSafe() {
   }
 
   function checkTransactionExecuted(tx: IMultisigTransaction) {
-    return executedTransactions.value.some(i => i == tx.id) || tx.executed_at !== null
+    return tx.executed_at !== null
   }
 
   function isSafeEligableToSingleExecution(requiredSigner: number, safe?: ISafe) {
@@ -679,7 +682,6 @@ export function useAvocadoSafe() {
     removeSignerWithThreshold,
     changeThreshold,
     getActualId,
-    executedTransactions,
     checkTransactionExecuted,
   }
 }
