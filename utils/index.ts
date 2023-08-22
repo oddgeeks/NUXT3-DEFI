@@ -1,4 +1,5 @@
 import { ethers } from 'ethers'
+import { getAddress } from 'ethers/lib/utils'
 
 // @ts-expect-error
 import * as XXH from 'xxhashjs'
@@ -301,4 +302,10 @@ export function groupBy<T>(array: T[], predicate: (v: T) => string) {
     (acc[predicate(value)] ||= []).push(value)
     return acc
   }, {} as { [key: string]: T[] })
+}
+
+export function isAddressEqual(a?: string, b?: string) {
+  if (!a || !b)
+    return false
+  return getAddress(a) === getAddress(b)
 }

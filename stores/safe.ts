@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 import collect from 'collect.js'
-import { getAddress, isAddress } from 'ethers/lib/utils'
+import { isAddress } from 'ethers/lib/utils'
 import axios from 'axios'
 import type { IToken } from './tokens'
 import type { TokenBalanceResolver } from '~/contracts'
@@ -33,6 +33,8 @@ export const useSafe = defineStore('safe', () => {
   const mainSafe = ref<ISafe>()
   const legacySafe = ref<ISafe>()
   const multiSigSafe = ref<ISafe>()
+
+  const safesLoading = ref(false)
 
   const { account, connector } = useWeb3()
   const { tokens, customTokens } = storeToRefs(useTokens())
@@ -94,13 +96,6 @@ export const useSafe = defineStore('safe', () => {
     return selectedSafe.value?.multisig === 0
   })
 
-  const isSelectedSafeSecondary = computed(() => {
-    if (!safeAddress.value || !multiSigSafeAddress.value || !mainSafeAddress.value)
-      return false
-
-    return getAddress(safeAddress.value) !== getAddress(multiSigSafeAddress.value) && getAddress(safeAddress.value) !== getAddress(mainSafeAddress.value)
-  })
-
   const fundedEoaNetworks = computed(() => {
     return new Set(eoaBalances.value?.filter(item => toBN(item?.balance ?? 0).toNumber() !== 0).map(item => item.chainId.toString())).size
   })
@@ -111,8 +106,6 @@ export const useSafe = defineStore('safe', () => {
 
   async function setMainSafe() {
     const resp = await fetchSafe(mainSafeAddress.value)
-
-    console.log(resp, mainSafeAddress.value)
 
     if (!resp)
       mainSafe.value = getDefaultSafe(mainSafeAddress.value, 1)
@@ -136,11 +129,9 @@ export const useSafe = defineStore('safe', () => {
     try {
       const resp = await fetchSafe(safeAddress.value)
 
-      console.log(resp, safeAddress.value)
-
       if (!resp) {
-        const isMultisig = getAddress(safeAddress.value) === getAddress(multiSigSafeAddress.value)
-        const isMainSafe = getAddress(safeAddress.value) === getAddress(mainSafeAddress.value)
+        const isMultisig = isAddressEqual(safeAddress.value, multiSigSafeAddress.value)
+        const isMainSafe = isAddressEqual(safeAddress.value, mainSafeAddress.value)
 
         selectedSafe.value = getDefaultSafe(safeAddress.value, 1, isMultisig ? 1 : isMainSafe ? 0 : undefined)
       }
@@ -177,7 +168,10 @@ export const useSafe = defineStore('safe', () => {
       return
 
     const availableSafes = (await getSafesByAddress(account.value)).data || []
-    const isCachedSafeAvailable = !cachedSafeAddress ? false : availableSafes.some(i => getAddress(i.safe_address) === getAddress(cachedSafeAddress)) || getAddress(cachedSafeAddress) === getAddress(multiSigSafeAddress.value) || getAddress(cachedSafeAddress) === getAddress(mainSafeAddress.value)
+
+    const isCachedSafeAvailable = availableSafes.some(i => isAddressEqual(cachedSafeAddress, i.safe_address))
+      || isAddressEqual(cachedSafeAddress, multiSigSafeAddress.value)
+      || isAddressEqual(cachedSafeAddress, mainSafeAddress.value)
 
     const oldSafeAddress = await forwarderProxyContract.computeAddress(
       account.value,
@@ -538,6 +532,8 @@ export const useSafe = defineStore('safe', () => {
   const fetchSafes = async () => {
     const resp = await getSafesByAddress(account.value)
 
+    console.log('fetchSafes', resp)
+
     safes.value = resp?.data || []
   }
 
@@ -552,8 +548,8 @@ export const useSafe = defineStore('safe', () => {
 
     // check if paramSafe is a valid multisig safe
     const isValidMultiSigSafe = !!safes.value.find(
-      safe => getAddress(safe.safe_address) === getAddress(paramSafe),
-    ) || getAddress(paramSafe) === getAddress(multiSigSafeAddress.value)
+      safe => isAddressEqual(safe.safe_address, paramSafe),
+    ) || isAddressEqual(multiSigSafeAddress.value, paramSafe)
 
     if (!isValidMultiSigSafe)
       return
@@ -612,21 +608,34 @@ export const useSafe = defineStore('safe', () => {
       if (!account.value)
         return
 
-      eoaBalances.value = undefined
+      try {
+        safesLoading.value = true
 
-      await Promise.all([
-        fetchSafeAddress(),
-        fetchSafes(),
-        fetchMultiSigSafeAddress(),
-      ])
+        await Promise.all([
+          fetchSafeAddress(),
+          fetchSafes(),
+          fetchMultiSigSafeAddress(),
+        ])
 
-      await Promise.all([
-        setLegacySafe(),
-        setMainSafe(),
-        setMultiSigSafe(),
-      ])
+        await Promise.all([
+          setLegacySafe(),
+          setMainSafe(),
+          setMultiSigSafe(),
+        ])
 
-      setMultisigParamSafe()
+        setMultisigParamSafe()
+
+        safesLoading.value = false
+      }
+      catch (e: any) {
+        const error = parseTransactionError(e)
+        logActionToSlack({
+          account: account.value,
+          action: 'network',
+          message: error.formatted,
+          type: 'error',
+        })
+      }
     },
     { throttle: 500 },
   )
@@ -711,16 +720,16 @@ export const useSafe = defineStore('safe', () => {
     accountSafeMapping,
     safeTotalBalanceMapping,
     fetchSafe,
-    isSelectedSafeSecondary,
     fetchPendingMultisigTxnsCount,
     legacySafe,
     legacySafeAddress,
     getSafesByAddress,
     isSelectedSafeLegacy,
+    safesLoading,
   }
 }, {
   persist: {
-    paths: ['safeAddress', 'mainSafeAddress', 'accountSafeMapping', 'safeTotalBalanceMapping'],
+    paths: ['accountSafeMapping', 'safeTotalBalanceMapping'],
     storage: persistedState.cookiesWithOptions({
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 * 10),
     }),

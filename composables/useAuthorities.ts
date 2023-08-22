@@ -1,5 +1,5 @@
 export function useAuthorities() {
-  const { selectedSafe, mainSafe, safeAddress, isSelectedSafeSecondary } = storeToRefs(useSafe())
+  const { selectedSafe, mainSafe, safeAddress } = storeToRefs(useSafe())
   const { isSafeMultisig, requiredSigners } = storeToRefs(useMultisig())
   const { isAccountCanSign } = useMultisig()
 
@@ -8,7 +8,7 @@ export function useAuthorities() {
   const { account } = useWeb3()
 
   const authorisedNetworks = computed(() => {
-    if (!account.value || !safeAddress?.value || !selectedSafe.value || !isSelectedSafeSecondary.value)
+    if (!account.value || !safeAddress?.value || !selectedSafe.value)
       return availableNetworks
 
     if (isSafeMultisig.value) {

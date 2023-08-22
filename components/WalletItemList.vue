@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { getAddress } from 'ethers/lib/utils'
 
-const { mainSafe, multiSigSafe, safes, legacySafe, legacySafeAddress } = storeToRefs(useSafe())
+const { mainSafe, multiSigSafe, safes, legacySafe, legacySafeAddress, safesLoading } = storeToRefs(useSafe())
 
 const filteredSafes = computed(() => {
   if (!safes.value)
@@ -19,26 +19,28 @@ const filteredSafes = computed(() => {
 
 <template>
   <div class="flex flex-col">
-    <div v-if="mainSafe">
-      <h2 class="text-xs mb-3 font-medium">
-        Your wallets
-      </h2>
+    <h2 class="text-xs mb-3 font-medium items-center flex gap-3">
+      Your wallets
+
+      <SvgSpinner v-if="safesLoading" class="text-primary" />
+    </h2>
+    <template v-if="!safesLoading">
       <div class="flex flex-col gap-2.5">
         <WalletItem v-if="legacySafeAddress && legacySafe" tooltip="Personal wallet v1 will not receive any future updates. We recommend you migrate funds to your Personal v2 wallet for a more secure & upgraded experience" :safe="legacySafe" />
-        <WalletItem v2 primary :safe="mainSafe" />
+        <WalletItem v-if="mainSafe" v2 primary :safe="mainSafe" />
         <WalletItem v-if="multiSigSafe" primary :safe="multiSigSafe" />
       </div>
-    </div>
 
-    <div v-if="!!filteredSafes?.length" class="mt-5">
-      <h2 class="text-xs mb-3 font-medium">
-        Other wallets
-      </h2>
-      <ul class="flex flex-col gap-2.5">
-        <li v-for="safeItem in filteredSafes" :key="safeItem.safe_address">
-          <WalletItem :safe="safeItem" />
-        </li>
-      </ul>
-    </div>
+      <div v-if="!!filteredSafes?.length" class="mt-5">
+        <h2 class="text-xs mb-3 font-medium">
+          Other wallets
+        </h2>
+        <ul class="flex flex-col gap-2.5">
+          <li v-for="safeItem in filteredSafes" :key="safeItem.safe_address">
+            <WalletItem :safe="safeItem" />
+          </li>
+        </ul>
+      </div>
+    </template>
   </div>
 </template>

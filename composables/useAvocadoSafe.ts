@@ -19,6 +19,7 @@ export function useAvocadoSafe() {
   const { avoProvider } = useSafe()
   const { selectedSafe, isSelectedSafeLegacy } = storeToRefs(useSafe())
   const { multisigForwarderProxyContract } = useSafe()
+  const { clearAllModals } = useModal()
 
   const { isSafeMultisig, requiredSigners } = storeToRefs(useMultisig())
   const { getRequiredSigner } = useMultisig()
@@ -316,6 +317,8 @@ export function useAvocadoSafe() {
     if (payload.txHash)
       return payload.txHash
 
+    clearAllModals()
+
     openReviewMultisigTransaction(payload.id, rejection)
   }
 
@@ -376,8 +379,8 @@ export function useAvocadoSafe() {
       name = await wallet.DOMAIN_SEPARATOR_NAME()
     }
     catch (error) {
-      version = await multisigForwarderProxyContract.avocadoVersion('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', selectedSafe.value?.multisig_index || 0)
-      name = await multisigForwarderProxyContract.avocadoVersionName('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', selectedSafe.value?.multisig_index || 0)
+      version = await networkMultisigForwarderProxy.avocadoVersion('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', selectedSafe.value?.multisig_index || 0)
+      name = await networkMultisigForwarderProxy.avocadoVersionName('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', selectedSafe.value?.multisig_index || 0)
     }
 
     const domain = {
