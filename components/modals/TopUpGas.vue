@@ -296,7 +296,7 @@ watch(usdcTokens, () => {
         >
           <span>Amount</span>
           <SvgSpinner v-if="!usdcTokens?.length" class="text-primary" />
-          <span v-else class="uppercase">{{ formatDecimal(token?.balance) }} {{ token?.symbol }}</span>
+          <span v-else class="uppercase">{{ formatDecimal(token?.balance || 0) }} {{ token?.symbol }}</span>
         </div>
         <CommonInput
           v-model="amount"
@@ -304,6 +304,7 @@ watch(usdcTokens, () => {
           :error-message="amountMeta.dirty ? errors.amount : ''"
           name="amount"
           placeholder="Enter amount"
+          autofocus
         >
           <template #suffix>
             <button
