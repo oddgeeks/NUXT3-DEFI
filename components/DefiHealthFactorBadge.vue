@@ -10,7 +10,7 @@ const status = calculateHealthFactor(props.healthFactor)
 
 <template>
   <span class="flex items-center gap-2.5">
-    {{ healthFactor }}
+    {{ formatHealthFactor(healthFactor) }}
 
     <CommonBadge
       :color="

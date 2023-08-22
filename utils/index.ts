@@ -239,3 +239,12 @@ export function formatProtocol(protocol: string) {
     ]).get(protocol) || protocol
   )
 }
+
+export function formatHealthFactor(healthFactor: string | number) {
+  if (isNaN(toBN(healthFactor).toNumber()))
+    return healthFactor
+
+  const formatter = new Intl.NumberFormat('en', { notation: 'compact', compactDisplay: 'short', maximumFractionDigits: 2 })
+  const value = formatter.format(toBN(healthFactor).toNumber())
+  return value
+}
