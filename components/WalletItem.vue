@@ -95,7 +95,7 @@ function handleClick() {
           :class="isMultisig ? 'bg-purple text-purple' : !v2 ? 'bg-slate-400 text-slate-400' : 'bg-primary text-primary'"
           class="rounded-lg bg-opacity-[14%] text-xs py-0.5 px-2 font-medium"
         >
-          {{ isMultisig ? 'MULTISIG' : v2 ? 'PERSONAL' : "LEGACY" }} <span v-if="v2 && isLegacySafeExist">V2</span>
+          {{ isMultisig ? 'MULTISIG' : v2 ? 'PERSONAL' : "LEGACY" }}
         </p>
       </div>
       <p class="text-orange text-xs font-medium">
