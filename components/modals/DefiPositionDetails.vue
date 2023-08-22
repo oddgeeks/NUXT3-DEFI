@@ -1,15 +1,7 @@
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   position: Positions
 }>()
-
-const healthFactorFormatted = computed(() => {
-  if (isNaN(toBN(props.position.healthFactor).toNumber()))
-    return props.position.healthFactor
-  const formatter = new Intl.NumberFormat('en', { notation: 'compact', compactDisplay: 'short', maximumFractionDigits: 2 })
-  const value = formatter.format(toBN(props.position.healthFactor).toNumber())
-  return value
-})
 </script>
 
 <template>
@@ -42,7 +34,7 @@ const healthFactorFormatted = computed(() => {
       </div>
       <div class="flex flex-col gap-1 px-5 py-4 dark:bg-gray-850 bg-slate-50 rounded-5">
         <p class="text-[26px] leading-[30px]">
-          {{ healthFactorFormatted }}
+          {{ formatHealthFactor(position.healthFactor) }}
         </p>
         <p class="text-xs text-slate-500">
           Health Factor
