@@ -76,9 +76,7 @@ onUnmounted(() => {
 <template>
   <div>
     <div class="flex gap-[14px] mb-7.5">
-      <div class="w-10 h-10 rounded-full items-center flex justify-center bg-primary">
-        <SvgoArrowRight class="-rotate-45" />
-      </div>
+      <IconsSend />
       <div class="flex flex-col gap-1">
         <h1 class="text-lg leading-[20px]">
           {{ isCrossChain ? 'Cross-chain Send' : 'Send' }}
