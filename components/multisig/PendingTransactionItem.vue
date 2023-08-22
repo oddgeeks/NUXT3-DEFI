@@ -136,7 +136,7 @@ async function handleClick(item: IMultisigTransaction) {
 
         <div>
           <div :class="isConfirmationsMatch ? 'text-primary' : 'text-orange-400'">
-            <span v-if="executing && !isTransactionExecuted" class="items-center flex gap-2 justify-items-end justify-end">
+            <span v-if="executing && !isTransactionExecuted" class="items-center flex gap-2 justify-between">
               Executing
               <SvgoClockCircle class="w-5 h-5" />
             </span>
