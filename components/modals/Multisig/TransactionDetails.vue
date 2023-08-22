@@ -314,7 +314,6 @@ onUnmounted(() => {
 <template>
   <div>
     <div class="flex sm:flex-row flex-col font-medium">
-      {{ currentNonce }}
       <div class="flex-1 border-r dark:border-slate-800 border-slate-150">
         <div class="flex flex-col sm:max-h-[710px] overflow-auto scroll-style">
           <div class="sm:p-7.5 p-5 border-b dark:border-slate-800 border-slate-150">
