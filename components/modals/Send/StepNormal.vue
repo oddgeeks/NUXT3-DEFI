@@ -171,7 +171,7 @@ async function onSubmit() {
       </div>
       <div class="ticket-divider w-full my-4" />
 
-      <div class="flex justify-between items-center font-semibold text-2xl">
+      <div class="flex justify-between items-center font-semibold md:text-2xl text-md">
         <span>
           Amount
         </span>

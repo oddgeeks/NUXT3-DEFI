@@ -667,11 +667,11 @@ onMounted(() => {
       </div>
       <div class="ticket-divider w-full my-4" />
       <div class="flex flex-col gap-4">
-        <div class="flex justify-between leading-5 items-center">
-          <span class="font-medium text-2xl">
+        <div class="flex justify-between leading-5 items-center md:text-2xl text-md">
+          <span class="font-medium">
             Amount
           </span>
-          <p class="flex items-center gap-2.5 text-2xl">
+          <p class="flex items-center gap-2.5">
             <span class="uppercase">
               {{ formatDecimal(data.amount) }} {{ targetToken?.symbol || token?.symbol }}
             </span>
