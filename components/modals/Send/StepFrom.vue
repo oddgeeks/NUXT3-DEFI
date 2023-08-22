@@ -12,7 +12,7 @@ const { authorisedNetworks } = useAuthorities()
 
 const { isCrossChain, data, token, availableTokens, actualAddress, stepForward, tokenlistPending } = useSend()
 
-const toCrossChainNetworks = computed(() => !authorisedNetworks.value ? [] : authorisedNetworks.value.filter(network => network.chainId !== data.value.fromChainId))
+const toCrossChainNetworks = computed(() => authorisedNetworks.value.filter(network => network.chainId !== data.value.fromChainId))
 const fromNetwork = computed(() => chainIdToName(data.value.fromChainId))
 const targetNetwork = computed(() => chainIdToName(data.value.toChainId))
 
@@ -213,7 +213,7 @@ function onToggleCrossChain() {
     </div>
 
     <Transition name="fade">
-      <div class="text-slate-400 font-medium leading-6 flex items-center text-xs flex">
+      <div class="text-slate-400 font-medium leading-6 flex items-center text-xs">
         <SvgoInfo2
           class="mr-2.5 h-4 w-4 svg-gray-info rounded-full"
         />
