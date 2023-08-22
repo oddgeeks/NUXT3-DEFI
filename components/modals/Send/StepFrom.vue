@@ -85,7 +85,7 @@ function handleContinue() {
 }
 
 function onToggleCrossChain() {
-  if (!isCrossChain.value)
+  if (!isCrossChain.value && toCrossChainNetworks.value.length > 0)
     data.value.toChainId = toCrossChainNetworks.value[0].chainId
 
   else
@@ -226,7 +226,7 @@ function onToggleCrossChain() {
         </div>
       </div>
     </Transition>
-    <div class="flex gap-2.5 items-center">
+    <div v-if="toCrossChainNetworks?.length > 1" class="flex gap-2.5 items-center">
       <button
         :class="{
           'dark:text-white text-slate-900': isCrossChain,
