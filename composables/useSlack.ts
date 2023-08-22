@@ -38,6 +38,8 @@ const ignoredMessages = [
 ]
 
 export function logActionToSlack(slackMessage: ISlackMessage) {
+  const { isSafeMultisig } = storeToRefs(useMultisig())
+
   const build = useBuildInfo()
 
   let {
@@ -83,6 +85,9 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
   logMessage += `\n${'`Commit`'} ${build.commit}`
   logMessage += `\n${'`Env`'} ${build.env}`
   logMessage += `\n${'`Branch`'} ${build.branch}`
+
+  if (isSafeMultisig.value)
+    logMessage += `\n${'`Multisig`'}`
 
   if (errorDetails)
     logMessage += `\n${'`Error details`'} ${errorDetails}`

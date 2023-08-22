@@ -18,13 +18,11 @@ export function useAvocadoSafe() {
   const { getRpcProviderByChainId } = useShared()
   const { avoProvider } = useSafe()
   const { selectedSafe, isSelectedSafeLegacy } = storeToRefs(useSafe())
-  const { multisigForwarderProxyContract } = useSafe()
   const { clearAllModals } = useModal()
 
   const { isSafeMultisig, requiredSigners } = storeToRefs(useMultisig())
   const { getRequiredSigner } = useMultisig()
 
-  // check if we have a cached safe address
   const { safeAddress, mainSafeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks } = storeToRefs(useSafe())
 
   const safe = shallowRef<ReturnType<typeof avocado.createSafe>>()
@@ -191,9 +189,9 @@ export function useAvocadoSafe() {
       index: String(selectedSafe.value?.multisig_index || 0),
     }
 
-    const signerCount = await getRequiredSigner(selectedSafe.value?.safe_address!, params.targetChainId) || 1
+    const requiredSigner = await getRequiredSigner(selectedSafe.value?.safe_address!, params.targetChainId) || 1
 
-    if (signerCount > 1) {
+    if (requiredSigner > 1) {
       try {
         const executionSignature = await signExecutionData(params, sortedSignatures)
 
@@ -213,12 +211,12 @@ export function useAvocadoSafe() {
 
     const transactionHash = await avoProvider.send('txn_broadcast', [signatureObject])
 
-    if (transactionHash) {
+    if (transactionHash && !params.proposalId) {
       setTimeout(() => {
         avoProvider.send('api_getTransactionByHash', [
           transactionHash,
         ]).then((tx: IAvocadoTransaction) => {
-          const hash = params.proposalId || tx.metadata.multisig_hash
+          const hash = tx.metadata.multisig_hash
 
           if (!hash)
             return
@@ -290,7 +288,7 @@ export function useAvocadoSafe() {
 
     const requiredSigner = await getRequiredSigner(selectedSafe.value?.safe_address!, chainId)
 
-    if (selectedSafe.value && selectedSafe.value.multisig_index === 0 && requiredSigner === 1) {
+    if (isSafeEligableToSingleExecution(requiredSigner, selectedSafe.value)) {
       const params = await generateMultisigSignatureAndSign({ chainId, actions, metadata, options })
 
       const txHash = await multisigBroadcast({
@@ -661,6 +659,10 @@ export function useAvocadoSafe() {
 
   function checkTransactionExecuted(tx: IMultisigTransaction) {
     return executedTransactions.value.some(i => i == tx.id) || tx.executed_at !== null
+  }
+
+  function isSafeEligableToSingleExecution(requiredSigner: number, safe?: ISafe) {
+    return safe && safe.multisig_index === 0 && requiredSigner === 1
   }
 
   return {
