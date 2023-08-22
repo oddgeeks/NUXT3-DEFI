@@ -109,10 +109,6 @@ async function handleSubmit() {
         id,
       },
     )
-    if (!transactionHash) {
-      toggle(false)
-      return
-    }
 
     if (props.sessionV2 && web3WalletV2.value) {
       web3WalletV2.value.respondSessionRequest({
@@ -123,6 +119,11 @@ async function handleSubmit() {
           jsonrpc: '2.0',
         },
       })
+    }
+
+    if (!transactionHash) {
+      toggle(false)
+      return
     }
 
     logActionToSlack({
