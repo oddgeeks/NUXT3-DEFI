@@ -17,6 +17,7 @@ export function useAvocadoSafe() {
   const { avoProvider } = useSafe()
   const { selectedSafe, isSelectedSafeLegacy } = storeToRefs(useSafe())
   const { clearAllModals } = useModal()
+  const dryRun = useCookie<boolean | undefined>('dry-run')
 
   const { isSafeMultisig, requiredSigners } = storeToRefs(useMultisig())
   const { getRequiredSigner } = useMultisig()
@@ -207,7 +208,18 @@ export function useAvocadoSafe() {
 
     console.log(params)
 
+    if (dryRun.value) {
+      Object.assign(signatureObject, {
+        dryRun: true,
+      })
+    }
+
     const transactionHash = await avoProvider.send('txn_broadcast', [signatureObject])
+
+    if (dryRun.value) {
+      alert(`Dry run value: ${transactionHash}`)
+      return
+    }
 
     if (transactionHash && params.proposalId) {
       const message = `\n${'`Multisig Hash`'} <https://avocado-git-f-multisafe-instadapp-eng.vercel.app/multisig/${params.safe}/pending-transactions/${params.proposalId}| ${shortenHash(params.proposalId)}>`
