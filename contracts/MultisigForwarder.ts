@@ -122,11 +122,12 @@ export interface MultisigForwarderInterface extends utils.Interface {
     "avocadoVersionName(address,uint32)": FunctionFragment;
     "computeAvocado(address,uint32)": FunctionFragment;
     "executeV1(address,uint32,((address,bytes,uint256,uint256)[],uint256,int256,bytes32,address,bytes),(uint256,uint256,uint256,uint256,uint256),(bytes,address)[])": FunctionFragment;
-    "initialize(address)": FunctionFragment;
+    "initialize(address,address[])": FunctionFragment;
     "isAuth(address)": FunctionFragment;
     "isBroadcaster(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "simulateV1(address,uint32,((address,bytes,uint256,uint256)[],uint256,int256,bytes32,address,bytes),(uint256,uint256,uint256,uint256,uint256),(bytes,address)[])": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "updateAuths((address,bool)[])": FunctionFragment;
     "updateBroadcasters((address,bool)[])": FunctionFragment;
@@ -147,6 +148,7 @@ export interface MultisigForwarderInterface extends utils.Interface {
       | "isBroadcaster"
       | "owner"
       | "renounceOwnership"
+      | "simulateV1"
       | "transferOwnership"
       | "updateAuths"
       | "updateBroadcasters"
@@ -189,7 +191,7 @@ export interface MultisigForwarderInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "isAuth",
@@ -203,6 +205,16 @@ export interface MultisigForwarderInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "simulateV1",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      AvocadoMultisigStructs.CastParamsStruct,
+      AvocadoMultisigStructs.CastForwardParamsStruct,
+      AvocadoMultisigStructs.SignatureParamsStruct[]
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -257,6 +269,7 @@ export interface MultisigForwarderInterface extends utils.Interface {
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "simulateV1", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -425,6 +438,7 @@ export interface MultisigForwarder extends BaseContract {
 
     initialize(
       owner_: PromiseOrValue<string>,
+      allowedBroadcasters_: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -441,6 +455,15 @@ export interface MultisigForwarder extends BaseContract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<[void]>;
+
+    simulateV1(
+      from_: PromiseOrValue<string>,
+      index_: PromiseOrValue<BigNumberish>,
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -506,6 +529,7 @@ export interface MultisigForwarder extends BaseContract {
 
   initialize(
     owner_: PromiseOrValue<string>,
+    allowedBroadcasters_: PromiseOrValue<string>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -522,6 +546,15 @@ export interface MultisigForwarder extends BaseContract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+  simulateV1(
+    from_: PromiseOrValue<string>,
+    index_: PromiseOrValue<BigNumberish>,
+    params_: AvocadoMultisigStructs.CastParamsStruct,
+    forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
+    signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   transferOwnership(
     newOwner: PromiseOrValue<string>,
@@ -587,6 +620,7 @@ export interface MultisigForwarder extends BaseContract {
 
     initialize(
       owner_: PromiseOrValue<string>,
+      allowedBroadcasters_: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -603,6 +637,23 @@ export interface MultisigForwarder extends BaseContract {
     owner(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    simulateV1(
+      from_: PromiseOrValue<string>,
+      index_: PromiseOrValue<BigNumberish>,
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, boolean, boolean, string] & {
+        castGasUsed_: BigNumber;
+        deploymentGasUsed_: BigNumber;
+        isDeployed_: boolean;
+        success_: boolean;
+        revertReason_: string;
+      }
+    >;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -733,6 +784,7 @@ export interface MultisigForwarder extends BaseContract {
 
     initialize(
       owner_: PromiseOrValue<string>,
+      allowedBroadcasters_: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -749,6 +801,15 @@ export interface MultisigForwarder extends BaseContract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<BigNumber>;
+
+    simulateV1(
+      from_: PromiseOrValue<string>,
+      index_: PromiseOrValue<BigNumberish>,
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -815,6 +876,7 @@ export interface MultisigForwarder extends BaseContract {
 
     initialize(
       owner_: PromiseOrValue<string>,
+      allowedBroadcasters_: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -831,6 +893,15 @@ export interface MultisigForwarder extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    simulateV1(
+      from_: PromiseOrValue<string>,
+      index_: PromiseOrValue<BigNumberish>,
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,

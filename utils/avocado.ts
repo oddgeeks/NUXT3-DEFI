@@ -14,8 +14,8 @@ export const avoChainName = isProd
   : AVO_STAGING_CHAIN_NAME
 
 export const multisigForwarderProxyAddress = isProd
-  ? '0xDeF4573cAAF8C4dCBA898B90bEc5d7D8310dAF00' // TODO: update
-  : '0xDeF4573cAAF8C4dCBA898B90bEc5d7D8310dAF00'
+  ? '0x6f444b80f944FA5Ce3f74cC0e4e1371844B5F91e' // TODO: update contract address for prod
+  : '0x6f444b80f944FA5Ce3f74cC0e4e1371844B5F91e'
 
 export const forwarderProxyAddress = isProd
   ? AVO_PROD_FORWARDER_ADDR

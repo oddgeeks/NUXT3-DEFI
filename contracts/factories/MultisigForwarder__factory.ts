@@ -446,6 +446,11 @@ const _abi = [
         name: "owner_",
         type: "address",
       },
+      {
+        internalType: "address[]",
+        name: "allowedBroadcasters_",
+        type: "address[]",
+      },
     ],
     name: "initialize",
     outputs: [],
@@ -508,6 +513,158 @@ const _abi = [
     name: "renounceOwnership",
     outputs: [],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "from_",
+        type: "address",
+      },
+      {
+        internalType: "uint32",
+        name: "index_",
+        type: "uint32",
+      },
+      {
+        components: [
+          {
+            components: [
+              {
+                internalType: "address",
+                name: "target",
+                type: "address",
+              },
+              {
+                internalType: "bytes",
+                name: "data",
+                type: "bytes",
+              },
+              {
+                internalType: "uint256",
+                name: "value",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "operation",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct AvocadoMultisigStructs.Action[]",
+            name: "actions",
+            type: "tuple[]",
+          },
+          {
+            internalType: "uint256",
+            name: "id",
+            type: "uint256",
+          },
+          {
+            internalType: "int256",
+            name: "avoNonce",
+            type: "int256",
+          },
+          {
+            internalType: "bytes32",
+            name: "salt",
+            type: "bytes32",
+          },
+          {
+            internalType: "address",
+            name: "source",
+            type: "address",
+          },
+          {
+            internalType: "bytes",
+            name: "metadata",
+            type: "bytes",
+          },
+        ],
+        internalType: "struct AvocadoMultisigStructs.CastParams",
+        name: "params_",
+        type: "tuple",
+      },
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "gas",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "gasPrice",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "validAfter",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "validUntil",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "value",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct AvocadoMultisigStructs.CastForwardParams",
+        name: "forwardParams_",
+        type: "tuple",
+      },
+      {
+        components: [
+          {
+            internalType: "bytes",
+            name: "signature",
+            type: "bytes",
+          },
+          {
+            internalType: "address",
+            name: "signer",
+            type: "address",
+          },
+        ],
+        internalType: "struct AvocadoMultisigStructs.SignatureParams[]",
+        name: "signaturesParams_",
+        type: "tuple[]",
+      },
+    ],
+    name: "simulateV1",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "castGasUsed_",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "deploymentGasUsed_",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "isDeployed_",
+        type: "bool",
+      },
+      {
+        internalType: "bool",
+        name: "success_",
+        type: "bool",
+      },
+      {
+        internalType: "string",
+        name: "revertReason_",
+        type: "string",
+      },
+    ],
+    stateMutability: "payable",
     type: "function",
   },
   {
