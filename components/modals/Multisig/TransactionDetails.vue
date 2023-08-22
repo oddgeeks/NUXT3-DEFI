@@ -57,6 +57,8 @@ const confirmationNeeded = computed(() => actualRequiredSigner.value - transacti
 
 const isConfirmationWillMatch = computed(() => gte(transactionRef.value.confirmations.length + 1, actualRequiredSigner.value))
 
+const isSignAndExecuteToggleVisible = computed(() => !isSignedAlready.value && isConfirmationWillMatch.value && !isNonceNotMatch.value)
+
 const isNonseq = computed(() => transactionRef.value.nonce == '-1')
 const isNonceNotMatch = computed(() => {
   if (isUndefined(currentNonce.value))
@@ -69,6 +71,8 @@ const isSignedAlready = computed(() => account.value ? transactionRef.value.conf
 const canSign = computed(() => isAccountCanSign(transactionRef.value.chain_id, account.value, selectedSafe.value?.owner_address))
 const decodedMetadata = computed(() => decodeMetadata(transactionRef.value.data.params.metadata))
 const isGeneralLoading = computed(() => !selectedSafe.value || !requiredSigners.value?.length || isUndefined(currentNonce.value))
+
+const isFieldsetDisabled = computed(() => isTransactionExecuted.value || isSafeDoesntMatch.value || !canSign.value || isGeneralLoading.value || executing.value)
 
 const isSafeDoesntMatch = computed(() => {
   if (!selectedSafe.value?.safe_address)
@@ -121,7 +125,7 @@ const { data: isSameNonceExist } = useAsyncData(`${transactionRef.value.id}-same
 })
 
 const errorMessage = computed(() => {
-  let message = null
+  let message
 
   if (isSafeDoesntMatch.value)
     message = 'This transaction is not for your safe.'
@@ -130,7 +134,7 @@ const errorMessage = computed(() => {
     message = 'This transaction is being executed.'
 
   if (isUndefined(currentNonce.value))
-    return null
+    return undefined
 
   else if (isTransactionExecuted.value)
     message = 'This transaction has already been executed.'
@@ -139,7 +143,7 @@ const errorMessage = computed(() => {
     message = 'You have already signed this transaction.'
 
   else
-    message = null
+    message = undefined
 
   return message
 })
@@ -543,7 +547,7 @@ onUnmounted(() => {
           </details>
 
           <button
-            v-if="!isSignedAlready && isConfirmationWillMatch && !isNonceNotMatch"
+            v-if="isSignAndExecuteToggleVisible"
             :class="{
               'dark:text-white text-slate-900': signAndExecute,
             }"
@@ -560,7 +564,7 @@ onUnmounted(() => {
             I want to sign & execute in the same txn
           </button>
 
-          <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch || !canSign || isGeneralLoading || executing" class="grid grid-cols-2 gap-2.5 items-center">
+          <fieldset :disabled="isFieldsetDisabled" class="grid grid-cols-2 gap-2.5 items-center">
             <Tippy v-if="!isRejection" :content="sameNonceExistMessage" tag="div">
               <CommonButton color="red" :disabled="isRejection || !!isSameNonceExist" :loading="pending.reject" size="lg" class="justify-center w-full" @click="handleReject(transactionRef)">
                 Reject
@@ -578,11 +582,11 @@ onUnmounted(() => {
                 {{ executing && !isTransactionExecuted ? 'Executing' : 'Execute' }}
               </CommonButton>
             </div>
-            <div v-else v-tippy="errorMessage">
+            <Tippy v-else :content="errorMessage">
               <CommonButton :disabled="!!errorMessage || pending.sign" :loading="pending.sign || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center !leading-5" :class="signAndExecute ? '!px-2 text-xs' : ''" @click="handleSign(transactionRef)">
                 {{ signAndExecute ? 'Sign & Execute' : isSignedAlready ? 'Signed' : 'Sign' }}
               </CommonButton>
-            </div>
+            </Tippy>
           </fieldset>
           <div v-if="isTransactionExecuted" class="text-xs leading-5 flex gap-2 text-primary font-medium">
             <SvgoInfo2 class="w-5 h-5 text-primary" />
