@@ -57,7 +57,7 @@ const confirmationNeeded = computed(() => actualRequiredSigner.value - transacti
 
 const isConfirmationWillMatch = computed(() => gte(transactionRef.value.confirmations.length + 1, actualRequiredSigner.value))
 
-const isSignAndExecuteToggleVisible = computed(() => !isSignedAlready.value && isConfirmationWillMatch.value && !isNonceNotMatch.value)
+const isSignAndExecuteToggleVisible = computed(() => !isSignedAlready.value && isConfirmationWillMatch.value && !isNonceNotMatch.value && !isTransactionExecuted.value)
 
 const isNonseq = computed(() => transactionRef.value.nonce == '-1')
 const isNonceNotMatch = computed(() => {
