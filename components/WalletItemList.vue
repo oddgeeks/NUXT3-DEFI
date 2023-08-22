@@ -26,7 +26,7 @@ const filteredSafes = computed(() => {
     </h2>
     <template v-if="!safesLoading">
       <div class="flex flex-col gap-2.5">
-        <WalletItem v-if="legacySafeAddress && legacySafe" tooltip="Personal wallet v1 will not receive any future updates. We recommend you migrate funds to your Personal v2 wallet for a more secure & upgraded experience" :safe="legacySafe" />
+        <WalletItem v-if="legacySafeAddress && legacySafe" tooltip="Your legacy wallet will not receive any future updates. We recommend migrating funds to Personal or Multisig for enhanced security & features" :safe="legacySafe" />
         <WalletItem v-if="mainSafe" v2 primary :safe="mainSafe" />
         <WalletItem v-if="multiSigSafe" primary :safe="multiSigSafe" />
       </div>
