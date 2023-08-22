@@ -254,8 +254,6 @@ export function useAvocadoSafe() {
       }
     }) as any
 
-    const verifyingContract = selectedSafe.value?.safe_address!
-
     const latestAvosafeNonce = await getLatestAvosafeNonce(chainId)
 
     console.log({ latestAvosafeNonce })
@@ -267,7 +265,7 @@ export function useAvocadoSafe() {
       id: 0,
       avoNonce,
       salt: ethers.utils.defaultAbiCoder.encode(['uint256'], [Date.now()]),
-      source: verifyingContract,
+      source: '0xE8385fB3A5F15dED06EB5E20E5A81BF43115eb8E',
       metadata: metadata || '0x00',
       ...options,
     }
