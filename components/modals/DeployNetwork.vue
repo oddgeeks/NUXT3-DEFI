@@ -35,7 +35,7 @@ async function handleDeploy() {
 
     const transactionHash = await sendTransaction(transaction.value, {
       metadata,
-    })
+    }, 'deploy')
 
     if (!transactionHash)
       return

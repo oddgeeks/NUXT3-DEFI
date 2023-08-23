@@ -108,6 +108,7 @@ async function handleSubmit() {
         ...options.value,
         id,
       },
+      'wc',
     )
 
     if (!transactionHash) {

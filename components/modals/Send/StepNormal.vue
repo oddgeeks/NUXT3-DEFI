@@ -88,6 +88,7 @@ async function onSubmit() {
       {
         metadata,
       },
+      'send',
     ) as string
 
     if (!transactionHash)

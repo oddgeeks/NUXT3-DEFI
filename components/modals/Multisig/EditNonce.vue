@@ -10,7 +10,7 @@ const props = defineProps<{
   estimatedFee?: boolean
   rejection?: boolean
   rejectionId?: string
-  transactionType?: MultisigTransactionType
+  transactionType?: 'add-signers' | 'remove-signers' | 'change-threshold' | 'topup'
   metadata?: string
   options?: any
 }>()
@@ -23,8 +23,8 @@ const { parseTransactionError } = useErrorHandler()
 const { clearAllModals } = useModal()
 const { account } = useWeb3()
 
-const isDeleteOrAddSigner = props.transactionType === 'remove-signers' || props.transactionType === 'add-signers'
-const recommendedNonce = isDeleteOrAddSigner ? -1 : undefined
+const shouldNonSeqByDefault = props.transactionType === 'remove-signers' || props.transactionType === 'add-signers' || props.transactionType === 'topup'
+const recommendedNonce = shouldNonSeqByDefault ? -1 : undefined
 
 const isSubmitting = ref(false)
 const nonce = ref<number | undefined>(recommendedNonce)

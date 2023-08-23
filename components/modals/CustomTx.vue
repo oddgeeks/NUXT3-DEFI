@@ -37,6 +37,7 @@ async function onSubmit() {
       {
         id: id.value,
       },
+      'others',
     )
 
     if (!transactionHash)

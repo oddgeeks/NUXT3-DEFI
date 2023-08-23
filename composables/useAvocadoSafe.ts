@@ -52,6 +52,7 @@ export function useAvocadoSafe() {
       operation?: string
     },
     options: { metadata?: string; id?: string } = {},
+    transactionType: TransactionActionType,
   ) => {
     if (isTrackingMode.value) {
       openSnackbar({
@@ -90,6 +91,7 @@ export function useAvocadoSafe() {
       const txHash = await createProposalOrSignDirecty({
         chainId: transaction.chainId,
         metadata: options.metadata,
+        transactionType,
         options,
         actions,
       })
@@ -108,6 +110,7 @@ export function useAvocadoSafe() {
     }[],
     chainId: number | string,
     options: { metadata?: string; id?: string } = {},
+    transactionType: TransactionActionType,
   ) => {
     if (isTrackingMode.value) {
       openSnackbar({
@@ -132,7 +135,7 @@ export function useAvocadoSafe() {
       return tx.hash!
     }
     else {
-      const txHash = await createProposalOrSignDirecty({ chainId, actions: transactions, metadata: options.metadata, options })
+      const txHash = await createProposalOrSignDirecty({ chainId, actions: transactions, metadata: options.metadata, options, transactionType })
 
       if (txHash)
         return txHash

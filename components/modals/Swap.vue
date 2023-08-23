@@ -467,6 +467,7 @@ const onSubmit = handleSubmit(async () => {
       {
         metadata,
       },
+      'swap',
     )
 
     if (!transactionHash)

@@ -102,6 +102,7 @@ async function handleSubmit() {
       {
         metadata,
       },
+      'upgrade',
     )
 
     if (!transactionHash)

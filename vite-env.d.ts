@@ -296,7 +296,7 @@ type IOptions = {
   sheetPosition?: "top" | "bottom";
 };
 
-type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim";
+type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim" | 'deploy' | 'upgrade' | 'nft' | 'wc';
 
 type ISlackMessageType = "danger" | "error" | "success" | "banner";
 

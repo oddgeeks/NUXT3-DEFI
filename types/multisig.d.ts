@@ -97,8 +97,6 @@ interface IMultisigTransactionResponse {
   data: IMultisigTransaction[]
 }
 
-type MultisigTransactionType = 'add-signers' | 'remove-signers' | 'others'
-
 interface IGenerateMultisigSignatureParams {
   chainId: string | number
   actions: TransactionsAction[]
@@ -109,7 +107,7 @@ interface IGenerateMultisigSignatureParams {
   options?: any
   rejection?: boolean
   rejectionId?: string
-  transactionType?: 'add-signers' | 'remove-signers' | 'others'
+  transactionType?: TransactionActionType
 }
 
 interface IOpenNonceModalParams {
@@ -118,7 +116,7 @@ interface IOpenNonceModalParams {
   estimatedFee?: boolean
   rejection?: boolean
   rejectionId?: string
-  transactionType: 'add-signers' | 'remove-signers' | 'others'
+  transactionType: TransactionActionType
   metadata?: string
   options?: any
 }
@@ -127,3 +125,7 @@ interface IOpenExecuteModalParams {
   transaction: IMultisigTransaction
   isGasTopup: boolean
 }
+
+type IMultisigAction = "add-signers" | "remove-signers" | "change-threshold";
+
+type TransactionActionType = IWeb3Action | IMultisigAction | 'others';

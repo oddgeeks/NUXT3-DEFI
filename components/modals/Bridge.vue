@@ -152,6 +152,7 @@ const onSubmit = form.handleSubmit(async () => {
       {
         metadata,
       },
+      'bridge',
     )
     if (!transactionHash) {
       // tracking mode
