@@ -93,6 +93,9 @@ const { data: currentNonce } = useAsyncData(`current-nonce-${route.params.safe}-
   const safe = await fetchSafe(route.params.safe as string)
 
   return getCurrentNonce(props.chainId, safe.owner_address, safe.multisig_index)
+}, {
+  server: false,
+  lazy: true,
 })
 
 const { data: requiredSigner, refresh: refreshSigner } = useAsyncData<number>(`multisig-required-signer-${route.params.safe}-${props.chainId}`, async () => {
@@ -100,6 +103,8 @@ const { data: requiredSigner, refresh: refreshSigner } = useAsyncData<number>(`m
   return getRequiredSigner(multisigAddress, props.chainId)
 }, {
   immediate: true,
+  server: false,
+  lazy: true,
 })
 
 const groupedData = computed(() => {
