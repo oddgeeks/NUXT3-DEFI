@@ -1,13 +1,13 @@
 <script setup lang="ts">
-const emit = defineEmits(['destroy'])
 defineProps<{
   buttonClass?: string
 }>()
-
+const emit = defineEmits(['destroy'])
 const { activate, account } = useWeb3()
 
 const { providers } = useNetworks()
 const { setConnectorName } = useConnectors()
+const { getRpcProviderByChainId } = useShared()
 
 const loading = ref<Record<string, boolean>>({})
 
@@ -39,7 +39,7 @@ function isProviderVisible(provider: Provider) {
 whenever(
   account,
   async () => {
-    ensName.value = await getRpcProvider(1).lookupAddress(account.value)
+    ensName.value = await getRpcProviderByChainId(1).lookupAddress(account.value)
   },
   { immediate: true },
 )
@@ -63,7 +63,7 @@ whenever(
               provider.name === 'Metamask'
                 ? 'dark:hover:bg-[#282125] hover:bg-[#FEF1E8]'
                 : 'dark:hover:bg-[#15233C] hover:bg-[#EBF2FE]',
-              buttonClass
+              buttonClass,
             ]
           "
           @click="connect(provider)"

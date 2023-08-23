@@ -13,6 +13,7 @@ const props = defineProps<{
 
 const { handleAddToken, fetchTokenByAddress } = useTokens()
 const { tokens } = storeToRefs(useTokens())
+const { getRpcProviderByChainId } = useShared()
 const { fetchBalances } = useSafe()
 
 const balance = ref('0')
@@ -66,7 +67,7 @@ const {
     if (valid) {
       const contract = Erc20__factory.connect(
         address.value,
-        getRpcProvider(chainId.value),
+        getRpcProviderByChainId(chainId.value),
       )
 
       const symbol = await contract.symbol()

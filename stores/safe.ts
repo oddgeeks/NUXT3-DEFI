@@ -1,6 +1,5 @@
 import { ethers } from 'ethers'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
-import { wait } from '@instadapp/utils'
 import collect from 'collect.js'
 import type { IToken } from './tokens'
 import type { TokenBalanceResolver } from '~/contracts'
@@ -15,16 +14,7 @@ export interface IBalance extends IToken {
   balanceInUSD: string | null
 }
 
-const balanceResolverContracts = availableNetworks.reduce((acc, curr) => {
-  acc[curr.chainId] = TokenBalanceResolver__factory.connect(
-    '0x3fb128aa5ac254c8539996b11c587e521ae0d3ab',
-    getRpcProvider(curr.chainId),
-  )
-  return acc
-}, {} as Record<string, TokenBalanceResolver>)
-
 export const useSafe = defineStore('safe', () => {
-  // balance aborter
   const balanceAborter = ref<AbortController>()
   const safeAddress = ref()
 
@@ -33,13 +23,22 @@ export const useSafe = defineStore('safe', () => {
   const { fetchTokenByAddress } = useTokens()
   const documentVisibility = useDocumentVisibility()
   const { parseTransactionError } = useErrorHandler()
+  const { getRpcProviderByChainId } = useShared()
 
   const forwarderProxyContract = Forwarder__factory.connect(
     forwarderProxyAddress,
-    new ethers.providers.JsonRpcProvider(getRpcURLByChainId(137)),
+    getRpcProviderByChainId(137),
   )
 
-  const avoProvider = getRpcProvider(avoChainId)
+  const balanceResolverContracts = availableNetworks.reduce((acc, curr) => {
+    acc[curr.chainId] = TokenBalanceResolver__factory.connect(
+      '0x3fb128aa5ac254c8539996b11c587e521ae0d3ab',
+      getRpcProviderByChainId(curr.chainId),
+    )
+    return acc
+  }, {} as Record<string, TokenBalanceResolver>)
+
+  const avoProvider = getRpcProviderByChainId(avoChainId)
 
   const networkPreference = ref(
     availableNetworks.map(el => el.chainId),
@@ -77,7 +76,7 @@ export const useSafe = defineStore('safe', () => {
     return new Set(eoaBalances.value?.filter(item => toBN(item?.balance ?? 0).toNumber() !== 0).map(item => item.chainId.toString())).size
   })
 
-  const fetchSafeddress = async () => {
+  const fetchSafeAddress = async () => {
     if (!account.value) {
       safeAddress.value = undefined
       return
@@ -205,12 +204,12 @@ export const useSafe = defineStore('safe', () => {
         try {
           const wallet = GaslessWallet__factory.connect(
             safeAddress.value,
-            getRpcProvider(network.chainId),
+            getRpcProviderByChainId(network.chainId),
           )
 
           const forwarderProxyContract = Forwarder__factory.connect(
             forwarderProxyAddress,
-            getRpcProvider(network.chainId),
+            getRpcProviderByChainId(network.chainId),
           )
 
           const latestVersion = await forwarderProxyContract.avoWalletVersion(
@@ -254,12 +253,6 @@ export const useSafe = defineStore('safe', () => {
     },
   )
 
-  onMounted(async () => {
-    await wait(1000)
-
-    await fetchGasBalance()
-  })
-
   function updateBalances(data: IBalance[]) {
     for (const balance of data) {
       const currentBalances = balances.value.data || []
@@ -285,22 +278,19 @@ export const useSafe = defineStore('safe', () => {
           .filter(t => String(t.chainId) == String(network.chainId))
           .map(t => t.address)
 
-        try {
-          return getChainBalances(String(network.chainId), address, [
-            ...tokens.value
-              .filter(t => t.chainId == String(network.chainId))
-              .map(t => t.address),
-            ...customTokenAddress,
-          ]).then((data) => {
-            logBalance({ isPublic: true, chainId: network.chainId, isOnboard: !updateState })
+        return getChainBalances(String(network.chainId), address, [
+          ...tokens.value
+            .filter(t => t.chainId == String(network.chainId))
+            .map(t => t.address),
+          ...customTokenAddress,
+        ]).then((data) => {
+          logBalance({ isPublic: true, chainId: network.chainId, isOnboard: !updateState })
 
-            if (updateState)
-              updateBalances(data)
+          if (updateState)
+            updateBalances(data)
 
-            return data
-          })
-        }
-        catch (error) {
+          return data
+        }).catch(async () => {
           try {
             const params: any = {
               userAddress: account.value,
@@ -329,7 +319,7 @@ export const useSafe = defineStore('safe', () => {
             })
             return []
           }
-        }
+        })
       }),
     )
   }
@@ -341,17 +331,14 @@ export const useSafe = defineStore('safe', () => {
       return
     if (documentVisibility.value === 'hidden')
       return
-    // if (balanceAborter.value) balanceAborter.value.abort();
 
     if (safeAddress.value === incorrectAddress)
-
       return
 
     pause()
 
     try {
       balances.value.loading = true
-      // balanceAborter.value = new AbortController();
 
       const data = await getBalances(
         safeAddress.value,
@@ -397,7 +384,7 @@ export const useSafe = defineStore('safe', () => {
   }
 
   async function fetchGasBalance() {
-    if (!account.value)
+    if (!safeAddress.value)
       return
 
     try {
@@ -411,39 +398,33 @@ export const useSafe = defineStore('safe', () => {
     }
   }
 
-  useIntervalFn(fetchGasBalance, 15000, {
-    immediate: true,
-  })
+  useIntervalFn(fetchGasBalance, 15000)
 
   const { pause, resume } = useIntervalFn(fetchBalances, 15000)
 
-  watch(
-    [account],
+  watchThrottled(account,
     async () => {
-      try {
-        pending.value.global = true
-        safeAddress.value = undefined
-        await fetchSafeddress()
-        fetchGasBalance()
-      }
-      finally {
-        pending.value.global = false
-      }
+      safeAddress.value = undefined
+      eoaBalances.value = undefined
+
+      await fetchSafeAddress()
+
+      await until(tokens).toMatch(t => t.length > 0)
+      Promise.all([
+        fetchGasBalance(),
+        fetchEoaBalances(),
+      ])
     },
-    { immediate: true },
+    { throttle: 500 },
   )
 
-  watch([safeAddress, account, tokens], () => {
-    fetchBalances()
-    fetchEoaBalances()
-  }, {
-    immediate: true,
-  })
-
-  watch(safeAddress, () => {
-    // reset balances
+  watchThrottled(safeAddress, async () => {
     balances.value.data = undefined
-    eoaBalances.value = undefined
+
+    await until(tokens).toMatch(t => t.length > 0)
+    fetchBalances()
+  }, {
+    throttle: 500,
   })
 
   return {

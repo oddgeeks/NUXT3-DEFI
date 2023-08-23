@@ -15,8 +15,8 @@ const { totalEoaBalance, eoaBalances, fundedEoaNetworks } = useAvocadoSafe()
       <WaveSVG class="w-8 h-8" />
       <p class="leading-5 w-5/6 sm:w-fit">
         Welcome to Avocado 🥑 You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets
-        spread across {{ fundedEoaNetworks }} networks on your wallet (EOA). Import
-        the assets to your Avocado wallet to begin transacting.
+        spread across {{ fundedEoaNetworks }} networks on your wallet (EOA). Transfer
+        assets to your Avocado wallet to begin transacting.
       </p>
     </div>
     <div class="flex space-x-5 items-center w-full sm:w-fit">
@@ -27,7 +27,7 @@ const { totalEoaBalance, eoaBalances, fundedEoaNetworks } = useAvocadoSafe()
         size="sm"
         class="w-full sm:w-fit h-7.5 sm:h-fit justify-center"
       >
-        Import
+        Transfer
       </CommonButton>
       <button
         class="w-5 h-5 rounded-full flex items-center justify-center bg-white bg-opacity-20"

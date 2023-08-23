@@ -39,6 +39,7 @@ export function useSend(initialSendData?: ISendData) {
   ]
 
   const { tokenBalances } = storeToRefs(useSafe())
+  const { getRpcProviderByChainId } = useShared()
 
   const availableTokens = computed(() =>
     tokenBalances.value.filter(
@@ -137,7 +138,7 @@ export function useSend(initialSendData?: ISendData) {
 
           const resolvedAddress
             = value.endsWith('.eth') && data.value.toChainId === 1
-              ? await getRpcProvider(1).resolveName(value)
+              ? await getRpcProviderByChainId(1).resolveName(value)
               : null
 
           if (resolvedAddress) {

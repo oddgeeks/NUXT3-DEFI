@@ -108,7 +108,11 @@ interface IBridgeTokensResult {
   decimals: number;
   symbol: string;
   logoURI: string;
+  chainId: number;
   chainAgnosticId: string;
+  balance?: string;
+  price?: number;
+  score?: number;
 }
 
 interface IBridgeTokensResponse {
@@ -401,6 +405,7 @@ interface Transaction {
 interface AppliedDiscountDetails extends DiscountDetails {
   discountAmountMin: number;
   discountAmount: number;
+  formattedDiscountAmount: string;
 }
 
 interface ICalculatedFee {
@@ -468,6 +473,7 @@ interface ITokenPrice {
 }
 
 interface ILogBalanceParams {
+  isPublic?: boolean
   chainId: number;
   isOnboard: boolean;
 }

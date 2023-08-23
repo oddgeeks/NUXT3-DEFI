@@ -1,4 +1,5 @@
 import { ethers } from 'ethers'
+import { storeToRefs } from 'pinia'
 import {
   changeMetamaskNetwork,
   injected,
@@ -11,6 +12,7 @@ import SVGWalletConnect from '~/assets/images/wallet/wallet-connect.svg?componen
 
 export function useNetworks() {
   const { chainId, provider, library } = useWeb3()
+  const { rpcs } = storeToRefs(useShared())
 
   const providers: Provider[] = [
     {
@@ -21,7 +23,7 @@ export function useNetworks() {
         return await changeMetamaskNetwork(network)
       },
       connect: async () => {
-        return injected
+        return injected()
       },
     },
     {
@@ -32,7 +34,7 @@ export function useNetworks() {
         return await changeMetamaskNetwork(network)
       },
       connect: async () => {
-        return walletlink
+        return walletlink()
       },
     },
     {
@@ -43,7 +45,7 @@ export function useNetworks() {
         return await changeMetamaskNetwork(network)
       },
       connect: async () => {
-        return walletconnect
+        return walletconnect(rpcs.value)
       },
     },
   ]
@@ -80,20 +82,6 @@ export function useNetworks() {
         console.log('Failed to change network', e)
       }
     },
-  })
-
-  const sortedNetworks = computed(() => {
-    const priorNetworks = [1, 137, 42161, 10, 56, 43114, 100]
-
-    return availableNetworks.sort((a, b) => {
-      const aIndex = priorNetworks.indexOf(a.chainId)
-      const bIndex = priorNetworks.indexOf(b.chainId)
-
-      if (aIndex === -1 || bIndex === -1)
-        return 0
-
-      return aIndex - bIndex
-    })
   })
 
   const switchNetworkByChainId = async (chainId: number) => {
@@ -144,7 +132,6 @@ export function useNetworks() {
   return {
     providers,
     currentNetwork,
-    sortedNetworks,
     switchNetworkByChainId,
     switchToAvocadoNetwork,
   }

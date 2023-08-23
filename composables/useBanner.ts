@@ -1,10 +1,11 @@
+import { isUndefined } from '@walletconnect/utils'
 import { storeToRefs } from 'pinia'
 import { gt } from 'semver'
 
 const isVersionUpdateBannerHidden = ref(false)
 
 export function useBanner() {
-  const { gasBalance, pending } = storeToRefs(useSafe())
+  const { gasBalance } = storeToRefs(useSafe())
   const { account, chainId } = useWeb3()
 
   const wcStoreV2 = useWalletConnectV2()
@@ -25,7 +26,7 @@ export function useBanner() {
   })
 
   const showInsufficientGasBanner = computed(() => {
-    if (pending.value.global)
+    if (isUndefined(gasBalance.value))
       return false
 
     return (
@@ -39,17 +40,6 @@ export function useBanner() {
     () =>
       !trackingAccount.value && account.value && chainId.value !== avoChainId,
   )
-
-  const showGasGiftBanner = computed(() => {
-    if (!account.value)
-      return false
-    if (chainId.value !== avoChainId)
-      return false
-    if (pending.value.global)
-      return false
-
-    return true
-  })
 
   const showOnboardBanner = computed(() => {
     if (!account.value)
@@ -90,7 +80,6 @@ export function useBanner() {
     showWelcomeBanner,
     showInsufficientGasBanner,
     showIncorrectNetworkBanner,
-    showGasGiftBanner,
     showOnboardBanner,
     isVersionUpdateBannerHidden,
     showVersionUpdateBanner,

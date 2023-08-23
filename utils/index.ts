@@ -85,10 +85,19 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
     maxAmountAfterDiscount -= discountAmount
     minAmountAfterDiscount -= discountAmountMin
 
+    const formattedDiscountAmountMin = formatDecimal(discountAmountMin, 2)
+    const formattedDiscountAmountMax = formatDecimal(discountAmount, 2)
+
+    const formattedDiscountAmount = discountAvailable
+      ? `${formattedDiscountAmountMin} — ${formattedDiscountAmountMax}`
+      : '0.00'
+
     return {
       ...discountDetail,
       discountAmountMin,
       discountAmount,
+      formattedDiscountAmountMin,
+      formattedDiscountAmount,
     }
   })
 
@@ -99,11 +108,11 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
 
   const formatted = isEqual
     ? formattedMax
-    : `${formattedMin} - ${formattedMax}`
+    : `${formattedMin} — ${formattedMax}`
 
   const formattedAmountAfterDiscount = isEqual
     ? formattedDiscountedAmount
-    : `${formattedDiscountedAmountMin} - ${formattedDiscountedAmount}`
+    : `${formattedDiscountedAmountMin} — ${formattedDiscountedAmount}`
 
   return {
     discountAvailable,
@@ -159,11 +168,11 @@ export function calculateMultipleEstimatedFee(...params: ICalculatedFee[]): ICal
 
   mergedFees.formatted = isEqual
     ? formattedMax
-    : `${formattedMin} - ${formattedMax}`
+    : `${formattedMin} — ${formattedMax}`
 
   mergedFees.formattedAmountAfterDiscount = isEqual
     ? formattedDiscountedAmount
-    : `${formattedDiscountedAmountMin} - ${formattedDiscountedAmount}`
+    : `${formattedDiscountedAmountMin} — ${formattedDiscountedAmount}`
 
   return mergedFees
 }
@@ -178,6 +187,7 @@ export function formatIPFSUri(ipfs: string) {
 export async function checkAddressIsDsa(
   dsaAddress: string,
   chainId: number,
+  provider: ethers.providers.Provider,
 ): Promise<boolean> {
   const abi = [
     'function accountID(address) external view returns (uint64)',
@@ -193,8 +203,6 @@ export async function checkAddressIsDsa(
   } as Record<number, string>
 
   const instaListAddress = instaListAddresses[chainId]
-
-  const provider = getRpcProvider(chainId)
 
   const instaList = new ethers.Contract(instaListAddress, abi, provider)
   const accountId = await instaList.accountID(dsaAddress)
@@ -230,4 +238,13 @@ export function formatProtocol(protocol: string) {
       ['kyber-v1', 'Kyber Network'],
     ]).get(protocol) || protocol
   )
+}
+
+export function formatHealthFactor(healthFactor: string | number) {
+  if (isNaN(toBN(healthFactor).toNumber()))
+    return healthFactor
+
+  const formatter = new Intl.NumberFormat('en', { notation: 'compact', compactDisplay: 'short', maximumFractionDigits: 2 })
+  const value = formatter.format(toBN(healthFactor).toNumber())
+  return value
 }
