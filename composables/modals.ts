@@ -295,6 +295,9 @@ export function openDeployNetworkModal(network: Network) {
     componentProps: {
       network,
     },
+    options: {
+      wrapperClass: '!max-w-[560px]',
+    },
   })
 }
 

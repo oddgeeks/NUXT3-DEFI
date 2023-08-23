@@ -48,9 +48,13 @@ async function handleDeploy() {
       account: account.value,
     })
 
-    emit('destroy')
+    await showPendingTransactionModal(transactionHash, props.network.chainId, 'send')
 
-    showPendingTransactionModal(transactionHash, props.network.chainId, 'send')
+    setTimeout(() => {
+      refreshNuxtData('allNetworkVersions')
+    }, 5000)
+
+    emit('destroy')
   }
   catch (e: any) {
     const err = parseTransactionError(e)

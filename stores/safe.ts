@@ -315,20 +315,30 @@ export const useSafe = defineStore('safe', () => {
           ...network,
         } as NetworkVersion
 
+        if (!selectedSafe.value)
+          return
+
         try {
           const wallet = GaslessWallet__factory.connect(
-            safeAddress.value,
+            selectedSafe.value?.safe_address,
             getRpcProviderByChainId(network.chainId),
           )
 
-          const forwarderProxyContract = Forwarder__factory.connect(
-            forwarderProxyAddress,
-            getRpcProviderByChainId(network.chainId),
-          )
+          function getLatestVersion() {
+            const multisigForwarder = MultisigForwarder__factory.connect(
+              multisigForwarderProxyAddress,
+              getRpcProviderByChainId(network.chainId),
+            )
 
-          const latestVersion = await forwarderProxyContract.avoWalletVersion(
-            '0x0000000000000000000000000000000000000001',
-          )
+            if (selectedSafe.value?.multisig === 1)
+              return multisigForwarder.avocadoVersion('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', selectedSafe.value?.multisig_index || 0)
+
+            return forwarderProxyContract.avoWalletVersion(
+              '0x0000000000000000000000000000000000000001',
+            )
+          }
+
+          const latestVersion = await getLatestVersion()
 
           try {
             const currentVersion = await wallet.DOMAIN_SEPARATOR_VERSION()
@@ -363,7 +373,7 @@ export const useSafe = defineStore('safe', () => {
     },
     {
       immediate: true,
-      watch: [safeAddress],
+      watch: [selectedSafe],
     },
   )
 

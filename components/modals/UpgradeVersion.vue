@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { utils } from 'ethers'
+import { MultisigForwarder__factory } from '@instadapp/avocado-base/contracts'
 import {
   AvoFactoryProxy__factory,
   Forwarder__factory,
@@ -30,14 +31,26 @@ async function fetchAvowalletImpl() {
     getRpcProviderByChainId(props.network.chainId),
   )
 
+  const multisigForarderContract = MultisigForwarder__factory.connect(
+    multisigForwarderProxyAddress,
+    getRpcProviderByChainId(props.network.chainId),
+  )
+
   const avoFactory = await forwarderProxyContract.avoFactory()
+
+  const avoMultisigFactory = await multisigForarderContract.avoFactory()
 
   const avoFactoryProxyContract = AvoFactoryProxy__factory.connect(
     avoFactory,
     getRpcProviderByChainId(props.network.chainId),
   )
 
-  const avoWalletImpl = isSafeMultisig.value ? await avoFactoryProxyContract.avoMultisigImpl() : await avoFactoryProxyContract.avoWalletImpl()
+  const multisigAvoFactoryProxyContract = AvoFactoryProxy__factory.connect(
+    avoMultisigFactory,
+    getRpcProviderByChainId(props.network.chainId),
+  )
+
+  const avoWalletImpl = isSafeMultisig.value ? await multisigAvoFactoryProxyContract.avoWalletImpl() : await avoFactoryProxyContract.avoWalletImpl()
 
   console.log(avoWalletImpl, { isSafeMultisig: isSafeMultisig.value })
 
@@ -103,7 +116,9 @@ async function handleSubmit() {
       true,
     )
 
-    refreshNuxtData('allNetworkVersions')
+    setTimeout(() => {
+      refreshNuxtData('allNetworkVersions')
+    }, 5000)
 
     logActionToSlack({
       action: 'upgrade',
