@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { getAddress } from 'ethers/lib/utils'
 import { lt } from 'semver'
+import { Tippy } from 'vue-tippy'
 
 const props = defineProps<{
   network: NetworkVersion
@@ -8,6 +9,11 @@ const props = defineProps<{
 }>()
 
 const { switchToAvocadoNetwork } = useNetworks()
+const { authorisedNetworks } = useAuthorities()
+
+const isNetworkNotAuthorised = computed(() => {
+  return !authorisedNetworks.value?.find(i => String(i.chainId) == String(props.network.chainId))
+})
 
 const isUpgradeAvailable = computed(() => {
   if (lt(props.network.currentVersion, props.network.latestVersion))
@@ -49,29 +55,33 @@ async function handleUpgrade(network: NetworkVersion) {
       </span>
     </td>
     <td class="px-4.5 pb-6.5 sm:pr-7.5 sm:pb-0 sm:pl-0 sm:w-[221px]">
-      <CommonButton
-        v-if="network.notdeployed"
-        class="!px-[19px] w-full items-center justify-center"
-        @click="openDeployNetworkModal(network)"
-      >
-        Deploy
-      </CommonButton>
+      <Tippy :content="isNetworkNotAuthorised ? `You are not authorized to interact on ${network.name}` : undefined">
+        <fieldset :disabled="isNetworkNotAuthorised">
+          <CommonButton
+            v-if="network.notdeployed"
+            class="!px-[19px] w-full items-center justify-center"
+            @click="openDeployNetworkModal(network)"
+          >
+            Deploy
+          </CommonButton>
 
-      <CommonButton
-        v-else-if="isUpgradeAvailable"
-        class="w-full text-center justify-center"
-        @click="handleUpgrade(network)"
-      >
-        Upgrade Now
-      </CommonButton>
+          <CommonButton
+            v-else-if="isUpgradeAvailable"
+            class="w-full text-center justify-center"
+            @click="handleUpgrade(network)"
+          >
+            Upgrade Now
+          </CommonButton>
 
-      <CommonButton
-        v-else
-        disabled
-        class="!px-[19px] w-full items-center justify-center"
-      >
-        Already up to date
-      </CommonButton>
+          <CommonButton
+            v-else
+            disabled
+            class="!px-[19px] w-full items-center justify-center"
+          >
+            Already up to date
+          </CommonButton>
+        </fieldset>
+      </Tippy>
     </td>
   </tr>
 </template>
