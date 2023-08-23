@@ -82,6 +82,10 @@ async function handleTresholdChange(chainId: string | number) {
 
     if (txHash)
       showPendingTransactionModal(txHash, chainId)
+
+    setTimeout(() => {
+      refreshAll()
+    }, 5000)
   }
 }
 
@@ -107,7 +111,16 @@ async function handleDeleteSigner() {
 
     selectedAddresses.value = []
     selectedChainId.value = undefined
+
+    setTimeout(() => {
+      refreshAll()
+    }, 5000)
   }
+}
+
+function refreshAll() {
+  setRequiredSigners()
+  refresh()
 }
 
 watch(selectedAddresses, () => {
@@ -117,10 +130,11 @@ watch(selectedAddresses, () => {
   }, 0)
 })
 
-useIntervalFn(async () => {
-  setRequiredSigners()
-  refresh()
-}, 5000)
+useIntervalFn(() => {
+  refreshAll()
+}, 30000, {
+  immediate: false,
+})
 </script>
 
 <template>

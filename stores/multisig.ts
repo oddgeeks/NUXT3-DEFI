@@ -48,7 +48,6 @@ export const useMultisig = defineStore('multisig', () => {
         }
       }
       catch (e) {
-        console.log('selam', e)
         return {
           chainId: network.chainId,
           requiredSignerCount: 1,
@@ -59,8 +58,6 @@ export const useMultisig = defineStore('multisig', () => {
     })
 
     const results = await Promise.all(promises)
-
-    console.log(results)
 
     return results.filter(r => r !== null) as IRequiredSigners[]
   }
@@ -102,14 +99,14 @@ export const useMultisig = defineStore('multisig', () => {
     return safe.multisig === 1 && hasSomeSigner
   }
 
-  watch(selectedSafe, async () => {
+  watchThrottled(selectedSafe, async () => {
     if (!selectedSafe.value)
       return
 
     setRequiredSigners()
   }, {
-    deep: true,
     immediate: true,
+    throttle: 500,
   })
 
   return {

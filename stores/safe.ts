@@ -307,7 +307,7 @@ export const useSafe = defineStore('safe', () => {
   const networkVersions = useAsyncData(
     'allNetworkVersions',
     async () => {
-      if (!safeAddress.value)
+      if (!selectedSafe.value)
         return
 
       const promises = availableNetworks.map(async (network) => {
@@ -315,12 +315,9 @@ export const useSafe = defineStore('safe', () => {
           ...network,
         } as NetworkVersion
 
-        if (!selectedSafe.value)
-          return
-
         try {
           const wallet = GaslessWallet__factory.connect(
-            selectedSafe.value?.safe_address,
+            selectedSafe.value?.safe_address!,
             getRpcProviderByChainId(network.chainId),
           )
 
