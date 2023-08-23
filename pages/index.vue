@@ -39,7 +39,7 @@ function selectType(type: string) {
 </script>
 
 <template>
-  <div class="flex flex-col gap-7.5 flex-1">
+  <div class="flex flex-col gap-7.5 flex-1 px-4">
     <TotalBalance />
     <div class="flex flex-col gap-3.5">
       <Tabs />
@@ -82,7 +82,7 @@ function selectType(type: string) {
             </div>
             <div v-if="account" class="flex gap-[10px]">
               <ClientOnly v-if="account">
-                <div class="flex gap-[16px] items-center">
+                <div class="hidden md:flex gap-[16px] items-center">
                   <button v-tippy="'Individual View'" @click="() => selectType('individual')">
                     <IndividualIconSVG :class="`${listType === 'individual' ? 'type-icon-selected' : 'type-icon-unselected'} cursor-pointer w-[20px] h-[20px]`" />
                   </button>
