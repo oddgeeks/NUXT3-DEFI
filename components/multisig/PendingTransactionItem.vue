@@ -138,7 +138,7 @@ async function handleClick(item: IMultisigTransaction) {
           <div :class="isConfirmationsMatch ? 'text-primary' : 'text-orange-400'">
             <span v-if="executing && !isTransactionExecuted" class="items-center flex gap-2 justify-between">
               Executing
-              <SvgoClockCircle class="w-5 h-5" />
+              <SvgSpinner class="w-5 h-5" />
             </span>
             <span v-else-if="isTransactionFailed" class="flex items-center text-red-alert gap-2 justify-end">
               Failed
@@ -208,7 +208,7 @@ async function handleClick(item: IMultisigTransaction) {
           <div class="font-medium" :class="isConfirmationsMatch ? 'text-primary' : 'text-orange-400'">
             <span v-if="executing && !isTransactionExecuted" class="flex items-center gap-2">
               Executing
-              <SvgoClockCircle class="w-5 h-5" />
+              <SvgSpinner class="w-5 h-5" />
             </span>
             <span v-else-if="isTransactionFailed" class="flex items-center text-red-alert gap-2 justify-end">
               Failed
