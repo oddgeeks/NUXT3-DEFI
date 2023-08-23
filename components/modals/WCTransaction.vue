@@ -121,7 +121,19 @@ async function handleSubmit() {
       })
     }
 
-    if (!transactionHash) {
+    if (!transactionHash && web3WalletV2.value) {
+      web3WalletV2.value.respondSessionRequest({
+        topic: props.sessionV2.topic,
+        response: {
+          id: props.payload.id,
+          jsonrpc: '2.0',
+          error: {
+            code: 7002,
+            message: 'Proposal created but not executed.',
+          },
+        },
+      })
+
       toggle(false)
       return
     }
