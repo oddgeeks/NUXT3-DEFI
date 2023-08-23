@@ -110,6 +110,11 @@ async function handleSubmit() {
       },
     )
 
+    if (!transactionHash) {
+      toggle(false)
+      return
+    }
+
     if (props.sessionV2 && web3WalletV2.value) {
       web3WalletV2.value.respondSessionRequest({
         topic: props.sessionV2.topic,
@@ -119,23 +124,6 @@ async function handleSubmit() {
           jsonrpc: '2.0',
         },
       })
-    }
-
-    if (!transactionHash && web3WalletV2.value) {
-      web3WalletV2.value.respondSessionRequest({
-        topic: props.sessionV2.topic,
-        response: {
-          id: props.payload.id,
-          jsonrpc: '2.0',
-          error: {
-            code: 7002,
-            message: 'Proposal created but not executed.',
-          },
-        },
-      })
-
-      toggle(false)
-      return
     }
 
     logActionToSlack({
