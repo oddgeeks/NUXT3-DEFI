@@ -89,6 +89,10 @@ function onToggleCrossChain() {
   else
     data.value.toChainId = data.value.fromChainId
 }
+
+onMounted(() => {
+  validate()
+})
 </script>
 
 <template>
