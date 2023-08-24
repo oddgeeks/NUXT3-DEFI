@@ -469,7 +469,8 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
   const selectableChains = computed(() =>
     availableNetworks.filter(
       c =>
-        String(c.chainId) !== fromChainId.value,
+        String(c.chainId) !== fromChainId.value
+        && !bridgeDisabledChains.some(i => String(i) == String(c.chainId)),
     ),
   )
 
