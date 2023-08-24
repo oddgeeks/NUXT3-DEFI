@@ -1,10 +1,14 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 import { getAddress } from 'ethers/lib/utils'
+import type { Provider } from '@ethersproject/providers'
+import { serialize } from 'error-serializer'
+import { AvoMultisigImplementation__factory } from '@/contracts'
 
 export const useMultisig = defineStore('multisig', () => {
   const requiredSigners = ref<IRequiredSigners[]>([])
 
   const { selectedSafe } = storeToRefs(useSafe())
+  const { getRpcProviderByChainId } = useShared()
 
   const signers = computed(() => {
     if (!selectedSafe.value)
@@ -59,13 +63,34 @@ export const useMultisig = defineStore('multisig', () => {
   }
 
   async function getRequiredSigner(safeAddress: string, chainId: number | string) {
-    return http('/api/rpc/threshold', {
-      params: {
-        address: safeAddress,
-        chainId: String(chainId),
-        rpcURL: getRpcURLByChainId(chainId),
-      },
-    })
+    const publicProvider = getRpcProviderByChainId(chainId)
+
+    try {
+      const requiredSigner = await getRequiredSignerByProvider(safeAddress, publicProvider)
+      return requiredSigner
+    }
+    catch (e) {
+      const error = serialize(e)
+
+      // return default if the multisig is not deployed
+      if (error?.code === 'CALL_EXCEPTION')
+        return 1
+
+      const requiredSigner = await http('/api/rpc/threshold', {
+        params: {
+          address: safeAddress,
+          chainId: String(chainId),
+        },
+      })
+
+      return requiredSigner
+    }
+  }
+
+  async function getRequiredSignerByProvider(address: string, provider: Provider) {
+    const instance = AvoMultisigImplementation__factory.connect(address, provider)
+    const requiredSigner = await instance.requiredSigners()
+    return requiredSigner
   }
 
   async function setRequiredSigners() {
