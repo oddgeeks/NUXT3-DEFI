@@ -19,7 +19,7 @@ const {
   interactable,
   priceDiffClass,
   priceDiffInPercent,
-  temporaryDisabled,
+  isSwapDisabled,
   fetchLiteAPY,
 } = useGraph(balance)
 
@@ -78,7 +78,7 @@ onMounted(async () => {
             animation: 'fade',
             content: 'Swap',
           }"
-          :disabled="!interactable || temporaryDisabled"
+          :disabled="!interactable || isSwapDisabled"
           class="!h-[46px] !w-[45px] rounded-full !p-0 items-center justify-center"
           @click="openBridgeModal(balance.address, balance.chainId)"
         >
@@ -95,7 +95,7 @@ onMounted(async () => {
             animation: 'fade',
             content: 'Bridge',
           }"
-          :disabled="!interactable || temporaryDisabled"
+          :disabled="!interactable || isSwapDisabled"
           class="!h-[46px] !w-[45px] rounded-full !p-0 items-center justify-center"
           @click="openSwapModal(balance.address, balance.chainId)"
         >
