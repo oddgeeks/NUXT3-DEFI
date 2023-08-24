@@ -5,6 +5,8 @@ export function useGraph(balance: Ref<IBalance>) {
 
   const isSwapDisabled = computed(() => false)
 
+  const isBridgeDisabled = computed(() => bridgeDisabledChains.some(i => String(i) == String(balance.value.chainId)))
+
   const priceDiffColor = computed(() => {
     if (!priceDiffInPercent.value)
       return 'rgb(148 163 184)'
@@ -61,5 +63,6 @@ export function useGraph(balance: Ref<IBalance>) {
     priceDiffClass,
     isSwapDisabled,
     fetchLiteAPY,
+    isBridgeDisabled,
   }
 }
