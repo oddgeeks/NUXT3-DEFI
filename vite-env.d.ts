@@ -549,4 +549,5 @@ interface INavigationTab {
   label: string;
   value: 'dapps' | 'balances' | 'bookmarks';
   query?: string;
+  count: number;
 }
