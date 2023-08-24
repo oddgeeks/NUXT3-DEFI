@@ -27,6 +27,8 @@ export const useSafe = defineStore('safe', () => {
   const safeTotalBalanceMapping = ref<Record<string, string>>({})
   const route = useRoute()
 
+  const allNetworkVersions = ref<NetworkVersion[]>([])
+
   const safes = ref<ISafe[]>([])
 
   const selectedSafe = ref<ISafe>()
@@ -101,6 +103,7 @@ export const useSafe = defineStore('safe', () => {
   })
 
   async function fetchNetworkVersions() {
+    console.log('Fetching network versions...')
     const promises = availableNetworks.map(async (network) => {
       const obj = {
         ...network,
@@ -157,7 +160,7 @@ export const useSafe = defineStore('safe', () => {
       })
       .filter(Boolean)
 
-    return arr as NetworkVersion[]
+    allNetworkVersions.value = arr as NetworkVersion[]
   }
 
   const fetchSafe = async (address: string): Promise<ISafe> => {
@@ -491,8 +494,7 @@ export const useSafe = defineStore('safe', () => {
     }
   }
 
-  const throlledFetchEoaBalances = useThrottleFn(fetchEoaBalances, 60000)
-  const throlledFetchNetworkVersions = useThrottleFn(fetchNetworkVersions, 500)
+  const debouncedFetchEoaBalances = useDebounceFn(fetchEoaBalances, 60000)
 
   async function fetchEoaBalances() {
     if (!account.value)
@@ -599,25 +601,17 @@ export const useSafe = defineStore('safe', () => {
 
   useIntervalFn(fetchGasBalance, 15000)
 
-  const { pause, resume, isActive } = useIntervalFn(fetchBalances, 15000)
+  const { pause, resume } = useIntervalFn(fetchBalances, 15000)
 
-  const networkVersions = useAsyncData(
-    'allNetworkVersions',
-    async () => {
-      if (!selectedSafe.value)
-        return
+  watchDebounced(selectedSafe, () => {
+    if (!selectedSafe.value)
+      return
 
-      if (!isActive.value)
-        return
-
-      return throlledFetchNetworkVersions()
-    },
-    {
-      server: false,
-      lazy: true,
-      watch: [selectedSafe],
-    },
-  )
+    fetchNetworkVersions()
+  }, {
+    debounce: 10000,
+    immediate: false,
+  })
 
   watchThrottled(
     account,
@@ -664,10 +658,7 @@ export const useSafe = defineStore('safe', () => {
     fetchBalances()
     fetchGasBalance()
 
-    // fetch eoa balances after 1min to avoid rate limit
-    setTimeout(() => {
-      throlledFetchEoaBalances()
-    }, 60000)
+    debouncedFetchEoaBalances()
   }, {
     throttle: 500,
   })
@@ -725,7 +716,6 @@ export const useSafe = defineStore('safe', () => {
     totalEoaBalance,
     fetchBalances,
     forwarderProxyAddress,
-    networkVersions,
     networkPreference,
     avoProvider,
     getBalances,
@@ -743,6 +733,8 @@ export const useSafe = defineStore('safe', () => {
     getSafesByAddress,
     isSelectedSafeLegacy,
     safesLoading,
+    allNetworkVersions,
+    fetchNetworkVersions,
   }
 }, {
   persist: {

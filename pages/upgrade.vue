@@ -6,20 +6,30 @@ definePageMeta({
 })
 
 const { account } = useWeb3()
-const { data } = useNuxtData('allNetworkVersions')
+const { allNetworkVersions, selectedSafe } = storeToRefs(useSafe())
+const { fetchNetworkVersions } = useSafe()
 
 useEagerConnect()
 
 const sortByVersion = computed(() => {
-  return data.value?.sort((a: NetworkVersion, b: NetworkVersion) => {
+  return allNetworkVersions.value?.sort((a, b) => {
     return gt(a.latestVersion || '0.0.0', b.latestVersion || '0.0.0') ? -1 : 1
   })
 })
 
 const mostRecentVersion = computed(() => {
-  return data.value?.sort((a: NetworkVersion, b: NetworkVersion) => {
+  return allNetworkVersions.value?.sort((a, b) => {
     return gt(a.latestVersion || '0.0.0', b.latestVersion || '0.0.0') ? -1 : 1
   })[0]?.latestVersion
+})
+
+watchThrottled(selectedSafe, () => {
+  if (!selectedSafe.value && allNetworkVersions.value?.length)
+    return
+
+  fetchNetworkVersions()
+}, {
+  throttle: 300,
 })
 </script>
 
@@ -36,7 +46,7 @@ const mostRecentVersion = computed(() => {
     </div>
     <div class="h-full relative mb-7.5 sm:mb-0">
       <div
-        :class="{ 'blur h-full': !account || !data }"
+        :class="{ 'blur h-full': !account || !allNetworkVersions }"
         class="dark:bg-gray-850 bg-slate-50 rounded-5 sm:rounded-[25px] flex-1 relative"
       >
         <table class="table w-full">

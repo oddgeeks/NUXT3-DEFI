@@ -8,7 +8,7 @@ import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 
 const { isProd } = useAppConfig()
 const { token, stepBack, data, actualAddress, targetToken } = useSend()
-const { gasBalance } = storeToRefs(useSafe())
+const { gasBalance, allNetworkVersions } = storeToRefs(useSafe())
 const { account } = useWeb3()
 const { toWei, fromWei } = useBignumber()
 const { safeAddress, safe, tokenBalances } = useAvocadoSafe()
@@ -31,8 +31,6 @@ const targetMessage = ref()
 const sourceMessage = ref()
 
 const destroyModal = inject('destroy') as () => void
-
-const { data: networkVersions } = useNuxtData('allNetworkVersions')
 
 const defaultFee = calculateEstimatedFee({
   chainId: String(data.value.toChainId),
@@ -384,8 +382,8 @@ async function fetchCrossFee() {
 
     crossFee.value.pending = true
 
-    const source = networkVersions.value.find((i: any) => i.chainId == data.value.fromChainId)
-    const target = networkVersions.value.find((i: any) => i.chainId == data.value.toChainId)
+    const source = allNetworkVersions.value.find(i => i.chainId == data.value.fromChainId)
+    const target = allNetworkVersions.value.find(i => i.chainId == data.value.toChainId)
 
     const sourceVersion = source?.notdeployed ? source?.latestVersion : source?.currentVersion
     const targetVersion = target?.notdeployed ? target?.latestVersion : target?.currentVersion

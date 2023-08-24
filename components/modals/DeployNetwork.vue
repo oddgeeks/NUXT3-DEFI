@@ -6,6 +6,7 @@ const props = defineProps<{
 const emit = defineEmits(['destroy'])
 
 const { safeAddress, sendTransaction } = useAvocadoSafe()
+const { fetchNetworkVersions } = useSafe()
 const { parseTransactionError } = useErrorHandler()
 const { account } = useWeb3()
 
@@ -51,8 +52,8 @@ async function handleDeploy() {
     await showPendingTransactionModal(transactionHash, props.network.chainId, 'send')
 
     setTimeout(() => {
-      refreshNuxtData('allNetworkVersions')
-    }, 5000)
+      fetchNetworkVersions()
+    }, 10000)
 
     emit('destroy')
   }

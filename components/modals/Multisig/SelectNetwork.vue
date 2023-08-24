@@ -7,13 +7,12 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['destroy', 'resolve'])
-
-const { data: networkVersions } = useNuxtData('allNetworkVersions')
+const { allNetworkVersions } = storeToRefs(useSafe())
 
 const selectedNetworks = ref<number[]>(props.defaultSelectedNetworks || [])
 
-const deployedNetworks = computed(() => networkVersions.value?.filter((network: any) => gte(major(network?.currentVersion || '0.0.0'), 1)))
-const nonDeployedNetworks = computed(() => networkVersions.value?.filter((network: any) => lt(major(network?.currentVersion || '0.0.0'), 1)))
+const deployedNetworks = computed(() => allNetworkVersions.value?.filter(network => gte(major(network?.currentVersion || '0.0.0'), 1)))
+const nonDeployedNetworks = computed(() => allNetworkVersions.value?.filter(network => lt(major(network?.currentVersion || '0.0.0'), 1)))
 
 function toggleNetworkChainId(chainId: number) {
   if (selectedNetworks.value.includes(chainId))

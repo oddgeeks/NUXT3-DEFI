@@ -16,7 +16,7 @@ const emit = defineEmits(['destroy'])
 
 const { safeAddress, sendTransaction } = useAvocadoSafe()
 const { isSafeMultisig } = storeToRefs(useMultisig())
-const { forwarderProxyAddress } = useSafe()
+const { forwarderProxyAddress, fetchNetworkVersions } = useSafe()
 const { parseTransactionError } = useErrorHandler()
 const { getRpcProviderByChainId } = useShared()
 
@@ -108,25 +108,25 @@ async function handleSubmit() {
     if (!transactionHash)
       return
 
-    emit('destroy')
-
-    await showPendingTransactionModal(
-      transactionHash!,
-      props.network.chainId,
-      'upgrade',
-      true,
-    )
-
-    setTimeout(() => {
-      refreshNuxtData('allNetworkVersions')
-    }, 5000)
-
     logActionToSlack({
       action: 'upgrade',
       chainId: String(props.network.chainId),
       account: account.value,
       message: `Upgraded to ${props.network.latestVersion}`,
     })
+
+    setTimeout(() => {
+      fetchNetworkVersions()
+    }, 10000)
+
+    emit('destroy')
+
+    showPendingTransactionModal(
+      transactionHash!,
+      props.network.chainId,
+      'upgrade',
+      true,
+    )
   }
   catch (e: any) {
     const err = parseTransactionError(e)

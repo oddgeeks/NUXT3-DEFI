@@ -8,13 +8,14 @@ const {
   showOnboardBanner,
   showVersionUpdateBanner,
 } = useBanner()
-const { data: allNetworkVersions } = useNuxtData('allNetworkVersions')
+
 const route = useRoute()
 const router = useRouter()
 const { migrateOldContacts } = useContacts()
+const { allNetworkVersions } = storeToRefs(useSafe())
 
 const lastNoticeShowDate = useLocalStorage<Date>('last_update_notice_show_date', new Date(0, 0))
-const ignore_version = useLocalStorage('ignore_version', [])
+const ignore_version = useLocalStorage<NetworkVersion[]>('ignore_version', [])
 
 function isIgnoreVersion() {
   return !(allNetworkVersions.value.some((network) => {
