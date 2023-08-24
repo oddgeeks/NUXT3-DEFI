@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { getAddress } from 'ethers/lib/utils'
 import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 
 const props = defineProps({
@@ -26,33 +25,12 @@ const { parseTransactionError } = useErrorHandler()
 
 const fromChainId = ref<string>(props.chainId)
 
-const availableTokens = computed(() => {
-  return tokenBalances.value.filter((i) => {
-    const isChainMatch = i.chainId == fromChainId.value
-    const isSupportedTokensExist = !!fromTokens.data.value?.length
-    const isSupported = isSupportedTokensExist ? fromTokens.data.value?.some(f => getAddress(f.address) === getAddress(i.address) && String(f.chainId) == String(i.chainId)) : true
-
-    return isChainMatch && isSupported
-  })
-},
-)
 const fromToken = ref(
   tokenBalances.value.find(
     t => t.chainId == fromChainId.value && t.address === props.address,
   )!,
 )
 
-watch(
-  () => fromChainId.value,
-  () => {
-    if (availableTokens.value.length > 0) {
-      fromToken.value = availableTokens.value.find(
-        _token =>
-          _token.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-      )
-    }
-  },
-)
 // eslint-disable-next-line vue/no-dupe-keys
 const {
   txRoute,
@@ -74,7 +52,8 @@ const {
   handleSwapToken,
   bridgeTokens,
   fromTokens,
-} = useBridge(fromToken)
+  sortTokensBestMatch,
+} = useBridge(fromToken, fromChainId)
 const { pending, error, data } = useEstimatedFee(
   transactions.data,
   ref(props.chainId),
@@ -82,6 +61,31 @@ const { pending, error, data } = useEstimatedFee(
     disabled: () => isInsufficientBalance.value,
   },
 )
+
+const availableTokens = computed(() => {
+  return tokenBalances.value.filter((i) => {
+    const isChainMatch = i.chainId == fromChainId.value
+    const isSupportedTokensExist = !!fromTokens.data.value?.length
+
+    const isSupported = isSupportedTokensExist ? fromTokens.data.value?.some(f => f.address?.toLocaleLowerCase() === i.address?.toLowerCase() && String(f.chainId) == String(i.chainId)) : true
+
+    return isChainMatch && isSupported
+  })
+},
+)
+
+watchThrottled(fromTokens.data, () => {
+  const isTokenAvailable = availableTokens.value.some(i =>
+    i.address?.toLocaleLowerCase() === fromToken.value.address?.toLocaleLowerCase()
+    && String(i.chainId) == String(fromToken.value.chainId))
+
+  if (!isTokenAvailable && availableTokens.value?.length) {
+    const sortedTokens = sortTokensBestMatch(availableTokens.value, fromToken.value.symbol)
+    fromToken.value = sortedTokens[0]
+  }
+}, {
+  throttle: 1000,
+})
 
 const bridgeProtocol = computed<Protocol>(() => {
   if (!txRoute.value?.userTxs?.length)
@@ -265,9 +269,7 @@ const onSubmit = form.handleSubmit(async () => {
               v-model="amount"
               type="numeric"
               autofocus
-              :error-message="
-                form.meta.value.dirty ? form.errors.value.amount : ''
-              "
+              :error-message="form.errors.value.amount"
               name="amount"
               placeholder="Enter amount"
             >

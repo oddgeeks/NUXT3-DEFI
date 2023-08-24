@@ -13,7 +13,7 @@ interface IFee {
   asset: IToken
 }
 
-export function useBridge(fromToken: Ref<IBalance>) {
+export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
   let txController: AbortController | null = null
   let tokensController: AbortController | null = null
   let fromController: AbortController | null = null
@@ -25,7 +25,6 @@ export function useBridge(fromToken: Ref<IBalance>) {
   const { tokens } = storeToRefs(useTokens())
   const { getRpcProviderByChainId } = useShared()
 
-  const fromChainId = computed(() => fromToken.value.chainId)
   const toChainId = ref(fromChainId.value == '137' ? '10' : '137')
   const bridgeToToken = ref<IBridgeTokensResult>()
 
@@ -106,7 +105,6 @@ export function useBridge(fromToken: Ref<IBalance>) {
         return sortTokensBestMatch(result, fromToken.value.symbol)
       }
       catch (e) {
-        console.log(e)
       }
     },
     {
@@ -142,12 +140,12 @@ export function useBridge(fromToken: Ref<IBalance>) {
         return result
       }
       catch (e) {
-        console.log(e)
       }
     },
     {
       server: false,
       immediate: true,
+      lazy: true,
       watch: [fromChainId, toChainId],
     },
   )
@@ -168,6 +166,8 @@ export function useBridge(fromToken: Ref<IBalance>) {
         }
         else { return }
       }
+
+      console.log('selammmmmmmmmm')
 
       const transferAmount = toWei(
         amount.value || '0',
@@ -227,7 +227,6 @@ export function useBridge(fromToken: Ref<IBalance>) {
         return data
       }
       catch (error: any) {
-        console.log(error)
         throw new Error(
           error.cause
             ? error.message
@@ -238,6 +237,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
     {
       server: false,
       immediate: false,
+      lazy: true,
       watch: [amount, fromToken, bridgeToToken],
     },
   )
@@ -299,6 +299,8 @@ export function useBridge(fromToken: Ref<IBalance>) {
     },
     {
       watch: [txRoute],
+      server: false,
+      lazy: true,
     },
   )
 
@@ -416,7 +418,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
     )
   }
 
-  function sortTokensBestMatch(list: IBridgeTokensResult[], search: string) {
+  function sortTokensBestMatch(list: IBridgeTokensResult[] | IBalance[] | any[], search: string) {
     const fuse = new Fuse(list, {
       keys: ['symbol', 'name'],
       threshold: 0.3,
@@ -426,7 +428,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
 
     const sortedByMatch = fuse.search(search)
 
-    const sortedByBalance = list.map((token: IBridgeTokensResult) => {
+    const sortedByBalance = list.map((token) => {
       const internalToken = tokenBalances.value.find(
         i =>
           getAddress(i.address) === getAddress(token.address)
@@ -491,17 +493,21 @@ export function useBridge(fromToken: Ref<IBalance>) {
       || bridgeTokens.pending.value,
   )
 
-  watch(bridgeTokens.data, () => {
+  watchThrottled(bridgeTokens.data, () => {
     if (bridgeTokens.data.value?.length) {
       const [token] = bridgeTokens.data.value
 
       bridgeToToken.value = token
     }
+  }, {
+    throttle: 500,
   })
 
-  watch(fromChainId, () => {
+  watchThrottled(fromChainId, () => {
     if (fromChainId.value == toChainId.value)
       toChainId.value = fromChainId.value == '137' ? '10' : '137'
+  }, {
+    throttle: 500,
   })
 
   onUnmounted(() => {
@@ -509,6 +515,16 @@ export function useBridge(fromToken: Ref<IBalance>) {
     clearNuxtData('bridge-routes')
     clearNuxtData('bridge-to-tokens')
     clearNuxtData('bridge-from-tokens')
+
+    // abort controllers if they are still running
+    const controllers = [txController, tokensController, fromController, routesController]
+
+    controllers.forEach((controller) => {
+      if (controller) {
+        controller.abort()
+        controller = null
+      }
+    })
   })
 
   return {
@@ -534,5 +550,6 @@ export function useBridge(fromToken: Ref<IBalance>) {
     recievedAmount,
     bridgeTokens,
     fromTokens,
+    sortTokensBestMatch,
   }
 }
