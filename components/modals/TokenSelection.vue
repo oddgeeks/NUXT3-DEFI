@@ -29,6 +29,8 @@ function getTokenBalance(address: string, chainId: string) {
 const computeId = (token: IToken) => `${token.address}-${token.name}-${token.chainId}`
 
 const tokensWithBalance = computed(() => {
+  if (!tokens.value)
+    return []
   return tokens.value
     .map((i) => {
       return {
