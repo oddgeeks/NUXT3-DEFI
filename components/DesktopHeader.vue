@@ -9,7 +9,7 @@ const route = useRoute()
 const dryRun = useCookie<boolean | undefined>('dry-run', {
   expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
   default: () => {
-    return !!route.query?.dryRun
+    return route.query?.dryRun ? true : undefined
   },
 })
 
