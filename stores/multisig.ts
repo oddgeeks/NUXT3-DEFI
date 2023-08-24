@@ -1,12 +1,8 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 import { getAddress } from 'ethers/lib/utils'
-import {
-  AvoMultisigImplementation__factory,
-} from '@/contracts'
 
 export const useMultisig = defineStore('multisig', () => {
   const requiredSigners = ref<IRequiredSigners[]>([])
-  const { getRpcProviderByChainId } = useShared()
 
   const { selectedSafe } = storeToRefs(useSafe())
 
@@ -63,14 +59,13 @@ export const useMultisig = defineStore('multisig', () => {
   }
 
   async function getRequiredSigner(safeAddress: string, chainId: number | string) {
-    try {
-      const instance = AvoMultisigImplementation__factory.connect(safeAddress, getRpcProviderByChainId(chainId))
-      const requiredSigner = await instance.requiredSigners()
-      return requiredSigner
-    }
-    catch (e) {
-      return 1
-    }
+    return http('/api/rpc/threshold', {
+      params: {
+        address: safeAddress,
+        chainId: String(chainId),
+        rpcURL: getRpcURLByChainId(chainId),
+      },
+    })
   }
 
   async function setRequiredSigners() {

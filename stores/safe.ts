@@ -501,7 +501,7 @@ export const useSafe = defineStore('safe', () => {
     }
   }
 
-  const throlledFetchEoaBalances = useThrottleFn(fetchEoaBalances, 5000)
+  const throlledFetchEoaBalances = useThrottleFn(fetchEoaBalances, 60000)
 
   async function fetchEoaBalances() {
     if (!account.value)
@@ -512,6 +512,7 @@ export const useSafe = defineStore('safe', () => {
       return
 
     await until(selectedSafe).toMatch(s => !!s)
+    await until(isActive).toMatch(s => s)
 
     if (selectedSafe.value?.multisig === 1 && selectedSafe.value?.multisig_index > 0)
       return
@@ -607,7 +608,7 @@ export const useSafe = defineStore('safe', () => {
 
   useIntervalFn(fetchGasBalance, 15000)
 
-  const { pause, resume } = useIntervalFn(fetchBalances, 15000)
+  const { pause, resume, isActive } = useIntervalFn(fetchBalances, 15000)
 
   watchThrottled(
     account,
@@ -654,10 +655,10 @@ export const useSafe = defineStore('safe', () => {
     fetchBalances()
     fetchGasBalance()
 
-    // fetch eoa balances after 5 seconds to avoid rate limit
+    // fetch eoa balances after 1min to avoid rate limit
     setTimeout(() => {
       throlledFetchEoaBalances()
-    }, 5000)
+    }, 60000)
   }, {
     throttle: 500,
   })
