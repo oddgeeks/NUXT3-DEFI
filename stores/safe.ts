@@ -100,6 +100,66 @@ export const useSafe = defineStore('safe', () => {
     return new Set(eoaBalances.value?.filter(item => toBN(item?.balance ?? 0).toNumber() !== 0).map(item => item.chainId.toString())).size
   })
 
+  async function fetchNetworkVersions() {
+    const promises = availableNetworks.map(async (network) => {
+      const obj = {
+        ...network,
+      } as NetworkVersion
+
+      try {
+        const wallet = GaslessWallet__factory.connect(
+          selectedSafe.value?.safe_address!,
+          getRpcProviderByChainId(network.chainId),
+        )
+
+        function getLatestVersion() {
+          const multisigForwarder = MultisigForwarder__factory.connect(
+            multisigForwarderProxyAddress,
+            getRpcProviderByChainId(network.chainId),
+          )
+
+          if (selectedSafe.value?.multisig === 1)
+            return multisigForwarder.avocadoVersion('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', selectedSafe.value?.multisig_index || 0)
+
+          return forwarderProxyContract.avoWalletVersion(
+            '0x0000000000000000000000000000000000000001',
+          )
+        }
+
+        const latestVersion = await getLatestVersion()
+
+        try {
+          const currentVersion = await wallet.DOMAIN_SEPARATOR_VERSION()
+          obj.currentVersion = currentVersion
+        }
+        catch (e) {
+          obj.notdeployed = true
+          obj.currentVersion = '0.0.0'
+        }
+
+        obj.latestVersion = latestVersion
+
+        return obj
+      }
+      catch (e) {
+        obj.notdeployed = true
+
+        return obj
+      }
+    })
+
+    const results = await Promise.allSettled(promises)
+
+    const arr = results
+      .map((result) => {
+        if (result.status === 'fulfilled')
+          return result.value
+      })
+      .filter(Boolean)
+
+    return arr as NetworkVersion[]
+  }
+
   const fetchSafe = async (address: string): Promise<ISafe> => {
     return avoProvider.send('api_getSafe', [address])
   }
@@ -304,76 +364,6 @@ export const useSafe = defineStore('safe', () => {
       )
   })
 
-  const networkVersions = useAsyncData(
-    'allNetworkVersions',
-    async () => {
-      if (!selectedSafe.value)
-        return
-
-      const promises = availableNetworks.map(async (network) => {
-        const obj = {
-          ...network,
-        } as NetworkVersion
-
-        try {
-          const wallet = GaslessWallet__factory.connect(
-            selectedSafe.value?.safe_address!,
-            getRpcProviderByChainId(network.chainId),
-          )
-
-          function getLatestVersion() {
-            const multisigForwarder = MultisigForwarder__factory.connect(
-              multisigForwarderProxyAddress,
-              getRpcProviderByChainId(network.chainId),
-            )
-
-            if (selectedSafe.value?.multisig === 1)
-              return multisigForwarder.avocadoVersion('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', selectedSafe.value?.multisig_index || 0)
-
-            return forwarderProxyContract.avoWalletVersion(
-              '0x0000000000000000000000000000000000000001',
-            )
-          }
-
-          const latestVersion = await getLatestVersion()
-
-          try {
-            const currentVersion = await wallet.DOMAIN_SEPARATOR_VERSION()
-            obj.currentVersion = currentVersion
-          }
-          catch (e) {
-            obj.notdeployed = true
-            obj.currentVersion = '0.0.0'
-          }
-
-          obj.latestVersion = latestVersion
-
-          return obj
-        }
-        catch (e) {
-          obj.notdeployed = true
-
-          return obj
-        }
-      })
-
-      const results = await Promise.allSettled(promises)
-
-      const arr = results
-        .map((result) => {
-          if (result.status === 'fulfilled')
-            return result.value
-        })
-        .filter(Boolean)
-
-      return arr as NetworkVersion[]
-    },
-    {
-      immediate: true,
-      watch: [selectedSafe],
-    },
-  )
-
   function updateBalances(data: IBalance[]) {
     for (const balance of data) {
       const currentBalances = balances.value.data || []
@@ -502,6 +492,7 @@ export const useSafe = defineStore('safe', () => {
   }
 
   const throlledFetchEoaBalances = useThrottleFn(fetchEoaBalances, 60000)
+  const throlledFetchNetworkVersions = useThrottleFn(fetchNetworkVersions, 500)
 
   async function fetchEoaBalances() {
     if (!account.value)
@@ -512,7 +503,7 @@ export const useSafe = defineStore('safe', () => {
       return
 
     await until(selectedSafe).toMatch(s => !!s)
-    await until(isActive).toMatch(s => s)
+    await until(balances.value.loading).toMatch(s => !s)
 
     if (selectedSafe.value?.multisig === 1 && selectedSafe.value?.multisig_index > 0)
       return
@@ -609,6 +600,24 @@ export const useSafe = defineStore('safe', () => {
   useIntervalFn(fetchGasBalance, 15000)
 
   const { pause, resume, isActive } = useIntervalFn(fetchBalances, 15000)
+
+  const networkVersions = useAsyncData(
+    'allNetworkVersions',
+    async () => {
+      if (!selectedSafe.value)
+        return
+
+      if (!isActive.value)
+        return
+
+      return throlledFetchNetworkVersions()
+    },
+    {
+      server: false,
+      lazy: true,
+      watch: [selectedSafe],
+    },
+  )
 
   watchThrottled(
     account,
