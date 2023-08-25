@@ -110,7 +110,5 @@ export async function getSafeOptionsByChain(safe: ISafe, chainId: string | numbe
   obj.safeAddress = safe.safe_address
   obj.ownerAddress = safe.owner_address
 
-  console.log(obj)
-
   return obj
 }

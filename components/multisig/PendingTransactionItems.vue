@@ -29,7 +29,7 @@ const { resume, pause } = useIntervalFn(() => {
   immediate: false,
 })
 
-const { data, refresh, pending } = useAsyncData(`multisig-${route.params.safe}-${props.chainId}-${props.activeTab}`, async () => {
+const { data, refresh, pending } = useAsyncData(`multisig-${route.params.safe}-${props.chainId}-${props.activeTab}-${page.value}`, async () => {
   try {
     if (abortController.value)
       abortController.value.abort()
@@ -135,6 +135,8 @@ watch(isCollapseAll, () => {
   if (isCollapseAll.value && data.value?.data?.length)
     isDetailsOpen.value = false
 })
+
+onUnmounted(() => pause())
 </script>
 
 <template>

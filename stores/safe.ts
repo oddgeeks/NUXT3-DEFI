@@ -601,12 +601,14 @@ export const useSafe = defineStore('safe', () => {
     if (!selectedSafe.value)
       return
 
+    console.log('running safe options')
+
     const opts = await getSafeOptions(selectedSafe.value)
 
     if (opts)
       safeOptions.value = opts
   }, {
-    debounce: 1000,
+    debounce: 2800,
   })
 
   watchThrottled(
