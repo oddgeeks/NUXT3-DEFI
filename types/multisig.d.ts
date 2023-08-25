@@ -108,6 +108,7 @@ interface IGenerateMultisigSignatureParams {
   rejection?: boolean
   rejectionId?: string
   transactionType?: TransactionActionType
+  clearModals?: boolean
 }
 
 interface IOpenNonceModalParams {
