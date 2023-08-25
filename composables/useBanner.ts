@@ -5,7 +5,7 @@ import { gt } from 'semver'
 const isVersionUpdateBannerHidden = ref(false)
 
 export function useBanner() {
-  const { gasBalance, allNetworkVersions } = storeToRefs(useSafe())
+  const { gasBalance, safeOptions } = storeToRefs(useSafe())
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { account, chainId } = useWeb3()
 
@@ -54,7 +54,7 @@ export function useBanner() {
   const showVersionUpdateBanner = computed(() => {
     if (!account.value)
       return false
-    const allVersions = allNetworkVersions.value
+    const allVersions = safeOptions.value
     if (!allVersions?.length)
       return false
     if (isVersionUpdateBannerHidden.value)
@@ -72,7 +72,7 @@ export function useBanner() {
   const unstableDappNetworks = computed(() => {
     if (!wcStoreV2.sessions?.length)
       return []
-    if (!allNetworkVersions.value?.length)
+    if (!safeOptions.value?.length)
       return []
 
     return false

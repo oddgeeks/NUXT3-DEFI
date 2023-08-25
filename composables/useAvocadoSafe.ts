@@ -15,11 +15,11 @@ export function useAvocadoSafe() {
   const { trackingAccount, isTrackingMode } = useAccountTrack()
   const { getRpcProviderByChainId } = useShared()
   const { avoProvider } = useSafe()
-  const { selectedSafe, isSelectedSafeLegacy } = storeToRefs(useSafe())
+  const { selectedSafe, isSelectedSafeLegacy, safeOptions } = storeToRefs(useSafe())
   const { clearAllModals } = useModal()
   const dryRun = useCookie<boolean | undefined>('dry-run')
 
-  const { isSafeMultisig, requiredSigners } = storeToRefs(useMultisig())
+  const { isSafeMultisig } = storeToRefs(useMultisig())
   const { getRequiredSigner } = useMultisig()
 
   const { safeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks } = storeToRefs(useSafe())
@@ -565,7 +565,7 @@ export function useAvocadoSafe() {
   async function addSignersWithThreshold(addresses: ISignerAddress[], threshold: string, chainId: number | string) {
     const avoMultisigInstance = AvoMultisigImplementation__factory.connect(selectedSafe.value?.safe_address!, getRpcProviderByChainId(chainId))
 
-    const currentThreshold = requiredSigners.value.find(i => i.chainId == chainId)?.requiredSignerCount || 1
+    const currentThreshold = safeOptions.value.find(i => i.chainId == chainId)?.threshold || 1
     const actualThreshold = threshold || currentThreshold
 
     const signers = addresses.map(address => address.address)
@@ -613,7 +613,7 @@ export function useAvocadoSafe() {
   async function removeSignerWithThreshold(addresses: string[], chainId: number | string, threshold: number) {
     const avoMultisigInstance = AvoMultisigImplementation__factory.connect(selectedSafe.value?.safe_address!, getRpcProviderByChainId(chainId))
 
-    const currentThreshold = requiredSigners.value.find(i => i.chainId == chainId)?.requiredSignerCount || 1
+    const currentThreshold = safeOptions.value.find(i => i.chainId == chainId)?.threshold || 1
     const actualThreshold = threshold || currentThreshold
 
     const sortedAddress = addresses.sort((left, right) =>

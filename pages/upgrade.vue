@@ -6,7 +6,7 @@ definePageMeta({
 })
 
 const { account } = useWeb3()
-const { allNetworkVersions, safeOptions } = storeToRefs(useSafe())
+const { safeOptions } = storeToRefs(useSafe())
 
 useEagerConnect()
 
@@ -36,7 +36,7 @@ const mostRecentVersion = computed(() => {
     </div>
     <div class="h-full relative mb-7.5 sm:mb-0">
       <div
-        :class="{ 'blur h-full': !account || !allNetworkVersions }"
+        :class="{ 'blur h-full': !account || !safeOptions }"
         class="dark:bg-gray-850 bg-slate-50 rounded-5 sm:rounded-[25px] flex-1 relative"
       >
         <table class="table w-full">

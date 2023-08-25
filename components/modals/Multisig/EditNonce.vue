@@ -16,9 +16,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['resolve', 'destroy'])
-const { selectedSafe } = storeToRefs(useSafe())
+const { selectedSafe, safeOptions } = storeToRefs(useSafe())
 const { getActualId, safeAddress, generateMultisigSignatureAndSign, multisigBroadcast } = useAvocadoSafe()
-const { requiredSigners } = storeToRefs(useMultisig())
 const { parseTransactionError } = useErrorHandler()
 const { clearAllModals } = useModal()
 const { account } = useWeb3()
@@ -33,7 +32,7 @@ const detailsRef = ref<HTMLDetailsElement>()
 const [simulationStatus, toggle] = useToggle()
 const [signAndExecute, signAndExecuteToggle] = useToggle(false)
 
-const requiredSignersByChain = computed(() => requiredSigners.value.find(i => i.chainId == props.chainId))
+const optionsByChain = computed(() => safeOptions.value.find(i => i.chainId == props.chainId))
 
 const { data: seqResponse } = useAsyncData<IMultisigTransactionResponse>(`${safeAddress.value}-seq-count`, async () => {
   const { data } = await axios.get(`/safes/${safeAddress.value}/transactions`, {
@@ -57,9 +56,9 @@ const isExecutionNotAvailable = computed(() => {
 })
 
 const isExecuteReady = computed(() => {
-  if (!requiredSignersByChain.value)
+  if (!optionsByChain.value)
     return false
-  return requiredSignersByChain.value?.requiredSignerCount === 1 && !isExecutionNotAvailable.value
+  return optionsByChain.value?.threshold === 1 && !isExecutionNotAvailable.value
 })
 
 whenever(isExecuteReady, () => {

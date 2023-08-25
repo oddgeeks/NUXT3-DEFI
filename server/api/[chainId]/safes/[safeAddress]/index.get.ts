@@ -27,13 +27,14 @@ export default defineEventHandler(async (event) => {
     multisig_index: Yup.number().required(),
     multisig: Yup.number().required(),
     owner_address: Yup.string().required(),
+    deployed: Yup.object(),
   })
 
   await schema.validate(query)
 
-  const { multisig, multisig_index, owner_address } = schema.cast(query)
+  const { multisig, multisig_index = 0, owner_address, deployed = {} } = schema.cast(query)
 
-  if (!multisig || !multisig_index || !owner_address) {
+  if (!multisig || !owner_address) {
     return createError({
       message: 'Failed to parse query',
       statusCode: 500,
@@ -63,12 +64,11 @@ export default defineEventHandler(async (event) => {
 
   const provider = getServerBatchedRpcProvider(chainId)
 
-  const selam = await getSafeOptionsByChain({
+  return getSafeOptionsByChain({
     multisig,
     multisig_index,
     owner_address,
     safe_address: safeAddress,
+    deployed,
   }, chainId, provider)
-
-  return selam
 })

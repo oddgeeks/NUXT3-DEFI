@@ -8,7 +8,6 @@ import { getSafeOptionsByChain } from '~/server/utils/safe'
 import type { TokenBalanceResolver } from '~/contracts'
 import {
   Forwarder__factory,
-  GaslessWallet__factory,
   MultisigForwarder__factory,
   TokenBalanceResolver__factory,
 } from '~/contracts'
@@ -28,8 +27,6 @@ export const useSafe = defineStore('safe', () => {
   const safeTotalBalanceMapping = ref<Record<string, string>>({})
   const route = useRoute()
   const ensName = ref()
-
-  const allNetworkVersions = ref<NetworkVersion[]>([])
 
   const safes = ref<ISafe[]>([])
   const safeOptions = ref<ISafeOptions[]>([])
@@ -207,67 +204,6 @@ export const useSafe = defineStore('safe', () => {
   const fundedEoaNetworks = computed(() => {
     return new Set(eoaBalances.value?.filter(item => toBN(item?.balance ?? 0).toNumber() !== 0).map(item => item.chainId.toString())).size
   })
-
-  async function fetchNetworkVersions() {
-    console.log('Fetching network versions...')
-    const promises = availableNetworks.map(async (network) => {
-      const obj = {
-        ...network,
-      } as NetworkVersion
-
-      try {
-        const wallet = GaslessWallet__factory.connect(
-          selectedSafe.value?.safe_address!,
-          getRpcProviderByChainId(network.chainId),
-        )
-
-        function getLatestVersion() {
-          const multisigForwarder = MultisigForwarder__factory.connect(
-            multisigForwarderProxyAddress,
-            getRpcProviderByChainId(network.chainId),
-          )
-
-          if (selectedSafe.value?.multisig === 1)
-            return multisigForwarder.avocadoVersion('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', selectedSafe.value?.multisig_index || 0)
-
-          return forwarderProxyContract.avoWalletVersion(
-            '0x0000000000000000000000000000000000000001',
-          )
-        }
-
-        const latestVersion = await getLatestVersion()
-
-        try {
-          const currentVersion = await wallet.DOMAIN_SEPARATOR_VERSION()
-          obj.currentVersion = currentVersion
-        }
-        catch (e) {
-          obj.notdeployed = true
-          obj.currentVersion = '0.0.0'
-        }
-
-        obj.latestVersion = latestVersion
-
-        return obj
-      }
-      catch (e) {
-        obj.notdeployed = true
-
-        return obj
-      }
-    })
-
-    const results = await Promise.allSettled(promises)
-
-    const arr = results
-      .map((result) => {
-        if (result.status === 'fulfilled')
-          return result.value
-      })
-      .filter(Boolean)
-
-    allNetworkVersions.value = arr as NetworkVersion[]
-  }
 
   const getGasBalance = async (address: string) => {
     return avoBatchProvider.getBalance(address)
@@ -546,7 +482,7 @@ export const useSafe = defineStore('safe', () => {
     }])
   }
 
-  async function setSafeOptions(safe: ISafe) {
+  async function getSafeOptions(safe: ISafe) {
     try {
       await until(balances.value.loading).toMatch(s => !s)
 
@@ -578,7 +514,7 @@ export const useSafe = defineStore('safe', () => {
         }),
       )
 
-      safeOptions.value = options
+      return options as ISafeOptions[]
     }
     catch (e: any) {
       const msg = 'Failed to get safe options over public and private provider'
@@ -665,7 +601,10 @@ export const useSafe = defineStore('safe', () => {
     if (!selectedSafe.value)
       return
 
-    setSafeOptions(selectedSafe.value)
+    const opts = await getSafeOptions(selectedSafe.value)
+
+    if (opts)
+      safeOptions.value = opts
   }, {
     debounce: 1000,
   })
@@ -789,10 +728,9 @@ export const useSafe = defineStore('safe', () => {
     getSafes,
     isSelectedSafeLegacy,
     safesLoading,
-    allNetworkVersions,
-    fetchNetworkVersions,
     ensName,
     safeOptions,
+    getSafeOptions,
   }
 }, {
   persist: {

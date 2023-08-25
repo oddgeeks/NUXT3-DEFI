@@ -16,7 +16,7 @@ const emit = defineEmits(['destroy'])
 
 const { safeAddress, sendTransaction } = useAvocadoSafe()
 const { isSafeMultisig } = storeToRefs(useMultisig())
-const { forwarderProxyAddress, fetchNetworkVersions } = useSafe()
+const { forwarderProxyAddress } = useSafe()
 const { parseTransactionError } = useErrorHandler()
 const { getRpcProviderByChainId } = useShared()
 
@@ -114,10 +114,6 @@ async function handleSubmit() {
       account: account.value,
       message: `Upgraded to ${props.options.latestVersion}`,
     })
-
-    setTimeout(() => {
-      fetchNetworkVersions()
-    }, 10000)
 
     emit('destroy')
 

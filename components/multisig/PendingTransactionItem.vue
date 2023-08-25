@@ -6,14 +6,12 @@ import { AvoMultisigImplementation__factory } from '@/contracts'
 const props = defineProps<{
   item: IMultisigTransaction
   activeTab: string | undefined
-  requiredSigner: number | null
   insideGroup: boolean
-  currentNonce: number | null
 }>()
 
 const route = useRoute()
 const { account } = useWeb3()
-const { selectedSafe } = storeToRefs(useSafe())
+const { selectedSafe, safeOptions } = storeToRefs(useSafe())
 const { checkTransactionExecuted } = useAvocadoSafe()
 const { isAccountCanSign } = useMultisig()
 const { tokens } = storeToRefs(useTokens())
@@ -37,14 +35,22 @@ const transformedTokens = computed(() => {
   })
 })
 
-const actualRequiredSigner = computed(() => props.activeTab === 'completed' ? props.item.confirmations_required : props.requiredSigner || 1)
-
 const canSign = computed(() => isAccountCanSign(props.item.chain_id, account.value, selectedSafe.value?.owner_address))
 
 const isNonseq = computed(() => props.item.nonce == '-1')
-const isNonceNotMatch = computed(() => isNonseq.value ? false : props.item.nonce !== String(props.currentNonce))
+const isNonceNotMatch = computed(() => {
+  if (isNonseq.value)
+    return false
 
-const isConfirmationsMatch = computed(() => gte(props.item.confirmations.length, actualRequiredSigner.value))
+  if (isSafeDoesntMatch.value)
+    return false
+
+  const nonce = safeOptions.value.find(i => i.chainId == props.item.chain_id)?.nonce
+
+  return props.item.nonce !== String(nonce)
+})
+
+const isConfirmationsMatch = computed(() => gte(props.item.confirmations.length, props.item.confirmations_required))
 const isYourSignNeeded = computed(() => {
   if (isSafeDoesntMatch.value || !account.value || !canSign.value)
     return false
@@ -130,7 +136,7 @@ async function handleClick(item: IMultisigTransaction) {
         <span class="flex items-center gap-2.5  whitespace-nowrap">
           <SvgoUserCircle :class="isConfirmationsMatch ? 'text-primary' : 'text-slate-400'" />
           <span :class="isConfirmationsMatch ? 'text-primary' : ''">
-            {{ item.confirmations.length }} out of {{ actualRequiredSigner }}
+            {{ item.confirmations.length }} out of {{ item.confirmations_required }}
           </span>
         </span>
 
@@ -200,7 +206,7 @@ async function handleClick(item: IMultisigTransaction) {
         <div class="flex items-center py-3 px-4 gap-2.5 whitespace-nowrap text-xs">
           <SvgoUserCircle :class="isConfirmationsMatch ? 'text-primary' : 'text-slate-400'" />
           <span :class="isConfirmationsMatch ? 'text-primary' : ''">
-            {{ item.confirmations.length }} out of {{ actualRequiredSigner }}
+            {{ item.confirmations.length }} out of {{ item.confirmations_required }}
           </span>
         </div>
         <hr class="border-slate-150 w-full dark:border-slate-800">

@@ -6,7 +6,6 @@ const props = defineProps<{
 const emit = defineEmits(['destroy'])
 
 const { safeAddress, sendTransaction } = useAvocadoSafe()
-const { fetchNetworkVersions } = useSafe()
 const { parseTransactionError } = useErrorHandler()
 const { account } = useWeb3()
 
@@ -50,10 +49,6 @@ async function handleDeploy() {
     })
 
     await showPendingTransactionModal(transactionHash, props.option.chainId, 'send')
-
-    setTimeout(() => {
-      fetchNetworkVersions()
-    }, 10000)
 
     emit('destroy')
   }

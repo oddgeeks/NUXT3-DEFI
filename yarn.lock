@@ -1811,7 +1811,7 @@
     semver "^7.3.8"
     tiny-warning "^1.0.3"
 
-"@instadapp/avocado@^0.4.5":
+"@instadapp/avocado@^0.4.2":
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.4.2.tgz#2182034406a2ab0bb216a5b66ff26ab0535b76c6"
   integrity sha512-MmcyNIz+XxsS16q8AD+qAl+2JKg1jzff6zNHZNmj6e+vnpdOIDeFfbhcPZ9hMRzTBCQSlgz7WWm52P96JH/8Pg==
