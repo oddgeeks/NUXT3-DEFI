@@ -67,3 +67,5 @@ export const bannedDapps = ['https://www.orbiter.finance', 'https://mirror.xyz',
 
 export const bridgeDisabledChains = [250]
 export const multisigURL = isProd ? multisigURLProd : multisigURLStaging
+
+console.log('t')
