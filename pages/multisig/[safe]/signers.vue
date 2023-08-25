@@ -15,10 +15,10 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const { fetchSafe } = useSafe()
+const { getSafe } = useSafe()
 const { account } = useWeb3()
-const { selectedSafe } = storeToRefs(useSafe())
-const { getRequiredSigners, setRequiredSigners, isAccountCanSign } = useMultisig()
+const { selectedSafe, safeOptions } = storeToRefs(useSafe())
+const { isAccountCanSign } = useMultisig()
 const { changeThreshold, removeSignerWithThreshold } = useAvocadoSafe()
 
 const selectedAddresses = ref<string[]>([])
@@ -32,20 +32,12 @@ const isSafeDoesNotMatch = computed(() => {
   return getAddress(safe) !== getAddress(selectedSafe.value?.safe_address)
 })
 
-const { data: multisigSafe, refresh } = useAsyncData<ISafe>(`${route.params.safe}-signers`, async () => {
+const { data: multisigSafe } = useAsyncData(`${route.params.safe}-signers`, async () => {
   const safeAddress = route.params.safe as string
-  const resp = await fetchSafe(safeAddress)
+  const safe = await getSafe(safeAddress)
 
-  return resp
-})
-
-const { data: requiredSigners } = useAsyncData(`${route.params.safe}-required-signers`, async () => {
-  if (!multisigSafe.value)
-    return
-
-  return getRequiredSigners(multisigSafe.value)
+  return safe
 }, {
-  watch: [multisigSafe],
   server: false,
 })
 
@@ -67,11 +59,18 @@ const availableSigners = computed(() => {
   }, [])
 })
 
+function getSignerCount(chainId: string | number) {
+  if (!multisigSafe.value)
+    return 0
+
+  return multisigSafe.value.signers[chainId]?.length || 0
+}
+
 provide('selectedAddresses', selectedAddresses)
 provide('selectedChainId', selectedChainId)
 
-function getSignerInfo(chainId: string | number) {
-  return requiredSigners.value?.find((signer: any) => signer.chainId == chainId)
+function getSignerInfo(chainId: string | number): ISafeOptions | undefined {
+  return safeOptions.value?.find(option => option.chainId == chainId)
 }
 
 async function handleTresholdChange(chainId: string | number) {
@@ -82,10 +81,6 @@ async function handleTresholdChange(chainId: string | number) {
 
     if (txHash)
       showPendingTransactionModal(txHash, chainId)
-
-    setTimeout(() => {
-      refreshAll()
-    }, 5000)
   }
 }
 
@@ -111,16 +106,7 @@ async function handleDeleteSigner() {
 
     selectedAddresses.value = []
     selectedChainId.value = undefined
-
-    setTimeout(() => {
-      refreshAll()
-    }, 5000)
   }
-}
-
-function refreshAll() {
-  setRequiredSigners()
-  refresh()
 }
 
 watch(selectedAddresses, () => {
@@ -128,12 +114,6 @@ watch(selectedAddresses, () => {
     if (selectedAddresses.value.length === 0)
       selectedChainId.value = undefined
   }, 0)
-})
-
-useIntervalFn(() => {
-  refreshAll()
-}, 30000, {
-  immediate: false,
 })
 </script>
 
@@ -176,14 +156,14 @@ useIntervalFn(() => {
                   <div v-if="!getSignerInfo(item.chainId)" class="loading-box rounded-5 w-36 h-5" />
                   <span v-else class="flex items-center gap-2.5">
                     <SvgoUsers class="shrink-0" />
-                    {{ getSignerInfo(item.chainId)?.signerCount }}
+                    {{ getSignerCount(item.chainId) }}
                     <span class="sm:block hidden">total signers</span>
                     <span class="sm:hidden block whitespace-nowrap">total sign.</span>
                   </span>
                   <div v-if="!getSignerInfo(item.chainId)" class="loading-box rounded-5 w-36 h-5" />
                   <span v-else class="flex items-center gap-2.5">
                     <SvgoStamp />
-                    {{ getSignerInfo(item.chainId)?.requiredSignerCount }}
+                    {{ getSignerInfo(item.chainId)?.threshold }}
                     <span class="sm:block hidden">confirmations required</span>
                     <span class="sm:hidden block whitespace-nowrap">confirm. req.</span>
                   </span>
@@ -202,7 +182,7 @@ useIntervalFn(() => {
               <span v-else class="flex items-center gap-2.5 sm:text-sm text-xs">
                 <SvgoUserCircle class="text-slate-400" />
                 <span>
-                  {{ getSignerInfo(item.chainId)?.requiredSignerCount }} out of {{ getSignerInfo(item.chainId)?.signerCount }}
+                  {{ getSignerInfo(item.chainId)?.threshold }} out of {{ getSignerCount(item.chainId) }}
                 </span>
                 <button :disabled="isSafeDoesNotMatch || !isAccountCanSign(item.chainId, account, selectedSafe?.owner_address)" class="text-primary disabled:text-slate-400 ml-4 text-xs" @click="handleTresholdChange(item.chainId)">
                   Change

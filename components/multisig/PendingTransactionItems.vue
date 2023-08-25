@@ -10,9 +10,6 @@ const emit = defineEmits(['onToggle'])
 
 const abortController = ref<AbortController | null>(null)
 
-const { getRequiredSigner } = useMultisig()
-const { getCurrentNonce } = useAvocadoSafe()
-const { getSafe } = useSafe()
 const { lastModal } = useModal()
 
 const isCollapseAll = inject<Ref<boolean>>('isCollapseAll', ref(false))
@@ -89,24 +86,6 @@ const { data, refresh, pending } = useAsyncData(`multisig-${route.params.safe}-$
   server: false,
 })
 
-const { data: currentNonce } = useAsyncData(`current-nonce-${route.params.safe}-${props.chainId}`, async () => {
-  const safe = await getSafe(route.params.safe as string)
-
-  return getCurrentNonce(props.chainId, safe.owner_address, safe.multisig_index)
-}, {
-  server: false,
-  lazy: true,
-})
-
-const { data: requiredSigner, refresh: refreshSigner } = useAsyncData<number>(`multisig-required-signer-${route.params.safe}-${props.chainId}`, async () => {
-  const multisigAddress = route.params.safe as string
-  return getRequiredSigner(multisigAddress, props.chainId)
-}, {
-  immediate: true,
-  server: false,
-  lazy: true,
-})
-
 const groupedData = computed(() => {
   const groupedData = groupBy(data.value?.data || [], (item) => {
     return item.groupKey || item.nonce
@@ -144,7 +123,6 @@ function handleToggle(e: Event) {
 
 function refreshAll() {
   refresh()
-  refreshSigner()
 }
 
 watch(lastModal, () => {
@@ -182,7 +160,7 @@ watch(isCollapseAll, () => {
     <div class="flex flex-col sm:gap-0 gap-4 sm:p-0 p-5">
       <ul v-if="activeTab === 'completed'">
         <li>
-          <MultisigPendingTransactionItem v-for="item in data.data" :key="item.id" :current-nonce="currentNonce" :inside-group="false" :required-signer="requiredSigner" :active-tab="activeTab" :item="item" />
+          <MultisigPendingTransactionItem v-for="item in data.data" :key="item.id" :inside-group="false" :active-tab="activeTab" :item="item" />
         </li>
       </ul>
       <ul v-for="items, key in groupedData" v-else :key="key">
@@ -192,7 +170,7 @@ watch(isCollapseAll, () => {
               <SvgoInfo2 class="text-slate-500" />
               You can complete one of the transactions below. The other will be cancelled automatically.
             </p>
-            <MultisigPendingTransactionItem v-for="item in sortItems(items)" :key="item.id" :current-nonce="currentNonce" :inside-group="checkIsGroup(key, items)" :required-signer="requiredSigner" :active-tab="activeTab" :item="item" />
+            <MultisigPendingTransactionItem v-for="item in sortItems(items)" :key="item.id" :inside-group="checkIsGroup(key, items)" :active-tab="activeTab" :item="item" />
           </ul>
         </li>
       </ul>

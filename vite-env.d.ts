@@ -67,6 +67,17 @@ interface NetworkVersion extends Network {
   latestImplementationAddress?: string;
 }
 
+interface ISafeOptions {
+  chainId: string | number,
+  threshold: number,
+  nonce: number,
+  latestVersion: string,
+  currentVersion: string,
+  safeAddress: string,
+  ownerAddress: string,
+  notdeployed: boolean,
+}
+
 interface IAvocadoTransaction {
   id: number;
   chain_id: string;

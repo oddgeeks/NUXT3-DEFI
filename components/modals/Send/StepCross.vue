@@ -8,7 +8,7 @@ import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 
 const { isProd } = useAppConfig()
 const { token, stepBack, data, actualAddress, targetToken } = useSend()
-const { gasBalance, allNetworkVersions } = storeToRefs(useSafe())
+const { gasBalance, safeOptions } = storeToRefs(useSafe())
 const { account } = useWeb3()
 const { toWei, fromWei } = useBignumber()
 const { safeAddress, safe, tokenBalances } = useAvocadoSafe()
@@ -382,8 +382,8 @@ async function fetchCrossFee() {
 
     crossFee.value.pending = true
 
-    const source = allNetworkVersions.value.find(i => i.chainId == data.value.fromChainId)
-    const target = allNetworkVersions.value.find(i => i.chainId == data.value.toChainId)
+    const source = safeOptions.value.find(i => i.chainId == data.value.fromChainId)
+    const target = safeOptions.value.find(i => i.chainId == data.value.toChainId)
 
     const sourceVersion = source?.notdeployed ? source?.latestVersion : source?.currentVersion
     const targetVersion = target?.notdeployed ? target?.latestVersion : target?.currentVersion

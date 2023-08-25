@@ -6,30 +6,20 @@ definePageMeta({
 })
 
 const { account } = useWeb3()
-const { allNetworkVersions, selectedSafe } = storeToRefs(useSafe())
-const { fetchNetworkVersions } = useSafe()
+const { safeOptions } = storeToRefs(useSafe())
 
 useEagerConnect()
 
 const sortByVersion = computed(() => {
-  return allNetworkVersions.value?.sort((a, b) => {
+  return safeOptions.value?.sort((a, b) => {
     return gt(a.latestVersion || '0.0.0', b.latestVersion || '0.0.0') ? -1 : 1
   })
 })
 
 const mostRecentVersion = computed(() => {
-  return allNetworkVersions.value?.sort((a, b) => {
+  return safeOptions.value?.sort((a, b) => {
     return gt(a.latestVersion || '0.0.0', b.latestVersion || '0.0.0') ? -1 : 1
   })[0]?.latestVersion
-})
-
-watchThrottled(selectedSafe, () => {
-  if (!selectedSafe.value && allNetworkVersions.value?.length)
-    return
-
-  fetchNetworkVersions()
-}, {
-  throttle: 300,
 })
 </script>
 
@@ -46,7 +36,7 @@ watchThrottled(selectedSafe, () => {
     </div>
     <div class="h-full relative mb-7.5 sm:mb-0">
       <div
-        :class="{ 'blur h-full': !account || !allNetworkVersions }"
+        :class="{ 'blur h-full': !account || !safeOptions }"
         class="dark:bg-gray-850 bg-slate-50 rounded-5 sm:rounded-[25px] flex-1 relative"
       >
         <table class="table w-full">
@@ -67,9 +57,9 @@ watchThrottled(selectedSafe, () => {
           </thead>
           <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
             <NetworkUpgradeRow
-              v-for="network in sortByVersion"
-              :key="network.chainId"
-              :network="network"
+              v-for="options in sortByVersion"
+              :key="options.chainId"
+              :options="options"
               :recent-version="mostRecentVersion"
             />
           </tbody>

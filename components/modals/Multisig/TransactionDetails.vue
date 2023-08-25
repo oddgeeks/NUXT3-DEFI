@@ -16,8 +16,7 @@ const transactionRef = ref(props.transaction)
 
 const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurrentNonce, checkTransactionExecuted } = useAvocadoSafe()
 const { getRequiredSigner, isAccountCanSign } = useMultisig()
-const { requiredSigners } = storeToRefs(useMultisig())
-const { selectedSafe } = storeToRefs(useSafe())
+const { selectedSafe, safeOptions } = storeToRefs(useSafe())
 const { getContactNameByAddress } = useContacts()
 const { parseTransactionError } = useErrorHandler()
 const { account } = useWeb3()
@@ -70,7 +69,7 @@ const isSignedAlready = computed(() => account.value ? transactionRef.value.conf
 
 const canSign = computed(() => isAccountCanSign(transactionRef.value.chain_id, account.value, selectedSafe.value?.owner_address))
 const decodedMetadata = computed(() => decodeMetadata(transactionRef.value.data.params.metadata))
-const isGeneralLoading = computed(() => !selectedSafe.value || !requiredSigners.value?.length || isUndefined(currentNonce.value))
+const isGeneralLoading = computed(() => !selectedSafe.value || !safeOptions.value?.length || isUndefined(currentNonce.value))
 
 const isFieldsetDisabled = computed(() => isTransactionExecuted.value || isSafeDoesntMatch.value || !canSign.value || isGeneralLoading.value || executing.value)
 
@@ -78,7 +77,7 @@ const isSafeDoesntMatch = computed(() => {
   if (!selectedSafe.value?.safe_address)
     return
 
-  if (!requiredSigners.value)
+  if (!safeOptions.value)
     return
 
   return getAddress(transactionRef.value.safe_address) !== getAddress(selectedSafe.value?.safe_address!)
