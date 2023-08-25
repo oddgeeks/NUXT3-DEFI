@@ -42,7 +42,7 @@ const swapAggregatorURLProd = 'https://swap-aggregator.instadapp.io'
 const swapAggregatorURLStaging = 'https://swap-aggregator.instad.app'
 
 const multisigURLStaging = 'https://multisig.api.avocado.instad.app'
-const multisigURLProd = 'https://multisig.api.avocado.instadapp.io'
+const multisigURLProd = 'https://multisig-api.avocado.instadapp.io'
 
 const swapAggregatorTokenProd = 'hxBA1uxwaGWN0xcpPOncVJ3Tk7FdFxY7g3NX28R14C'
 const swapAggregatorTokenStaging = 'tZIvMelWpiGgfZyDHJLVEygCvXC'
