@@ -7,6 +7,7 @@ import type { IToken } from '~/stores/tokens'
 defineEmits(['destroy'])
 
 const { safeAddress } = useAvocadoSafe()
+const { isSelectedSafeLegacy } = storeToRefs(useSafe())
 
 const { authorisedNetworks } = useAuthorities()
 
@@ -230,7 +231,7 @@ onMounted(() => {
         </div>
       </div>
     </Transition>
-    <div v-if="toCrossChainNetworks?.length > 1" class="flex gap-2.5 items-center">
+    <div v-if="toCrossChainNetworks?.length > 1 && isSelectedSafeLegacy" class="flex gap-2.5 items-center">
       <button
         :class="{
           'dark:text-white text-slate-900': isCrossChain,
