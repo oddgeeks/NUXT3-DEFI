@@ -20,46 +20,15 @@ export const useMultisig = defineStore('multisig', () => {
   const isSafeMultisig = computed(() => checkSafeIsActualMultisig(selectedSafe.value!))
 
   function isAccountCanSign(chainId: number | string, account?: string, multisigOwner?: string) {
-    if (!account || !multisigOwner || !chainId || !requiredSigners.value?.length)
+    if (!account || !multisigOwner || !chainId)
       return
 
-    const signers = requiredSigners.value.find(s => s.chainId == chainId)?.signers || []
+    const signers = selectedSafe.value?.signers?.[chainId] || []
 
     if (getAddress(multisigOwner) === getAddress(account))
       return true
 
     return signers.some(s => getAddress(s) === getAddress(account))
-  }
-
-  async function getRequiredSigners(safe: ISafe) {
-    const promises = availableNetworks.map(async (network) => {
-      const safeSigners = (safe?.signers || {})[network.chainId] || []
-
-      const signers = safeSigners.length ? safeSigners : [safe.owner_address]
-
-      try {
-        const count = await getRequiredSigner(safe.safe_address, network.chainId)
-
-        return {
-          chainId: network.chainId,
-          requiredSignerCount: count || 1,
-          signerCount: signers.length,
-          signers,
-        }
-      }
-      catch (e) {
-        return {
-          chainId: network.chainId,
-          requiredSignerCount: 1,
-          signerCount: signers.length,
-          signers,
-        }
-      }
-    })
-
-    const results = await Promise.all(promises)
-
-    return results.filter(r => r !== null) as IRequiredSigners[]
   }
 
   async function getRequiredSigner(safeAddress: string, chainId: number | string) {
@@ -93,14 +62,6 @@ export const useMultisig = defineStore('multisig', () => {
     return requiredSigner
   }
 
-  async function setRequiredSigners() {
-    if (!selectedSafe.value)
-      return
-
-    const signers = await getRequiredSigners(selectedSafe.value)
-    requiredSigners.value = signers
-  }
-
   function checkSafeIsActualMultisig(safe: ISafe) {
     if (!safe)
       return false
@@ -119,22 +80,10 @@ export const useMultisig = defineStore('multisig', () => {
     return safe.multisig === 1 && hasSomeSigner
   }
 
-  watchThrottled(selectedSafe, async () => {
-    if (!selectedSafe.value)
-      return
-
-    setRequiredSigners()
-  }, {
-    immediate: true,
-    throttle: 500,
-  })
-
   return {
     isSafeMultisig,
     signers,
     requiredSigners,
-    getRequiredSigners,
-    setRequiredSigners,
     getRequiredSigner,
     isAccountCanSign,
     checkSafeIsActualMultisig,

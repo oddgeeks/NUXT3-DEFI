@@ -7,22 +7,22 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['destroy', 'resolve'])
-const { allNetworkVersions } = storeToRefs(useSafe())
+const { safeOptions } = storeToRefs(useSafe())
 
 const selectedNetworks = ref<number[]>(props.defaultSelectedNetworks || [])
 
-const deployedNetworks = computed(() => allNetworkVersions.value?.filter(network => gte(major(network?.currentVersion || '0.0.0'), 1)))
-const nonDeployedNetworks = computed(() => allNetworkVersions.value?.filter(network => lt(major(network?.currentVersion || '0.0.0'), 1)))
+const deployedNetworks = computed(() => safeOptions.value?.filter(option => gte(major(option?.currentVersion || '0.0.0'), 1)))
+const nonDeployedNetworks = computed(() => safeOptions.value?.filter(option => lt(major(option?.currentVersion || '0.0.0'), 1)))
 
-function toggleNetworkChainId(chainId: number) {
-  if (selectedNetworks.value.includes(chainId))
+function toggleNetworkChainId(chainId: number | string) {
+  if (selectedNetworks.value.includes(Number(chainId)))
     selectedNetworks.value = selectedNetworks.value.filter(id => id !== chainId)
   else
-    selectedNetworks.value = [...selectedNetworks.value, chainId]
+    selectedNetworks.value = [...selectedNetworks.value, Number(chainId)]
 }
 
-function isSelected(chainId: number) {
-  return selectedNetworks.value.includes(chainId)
+function isSelected(chainId: number | string) {
+  return selectedNetworks.value.includes(Number(chainId))
 }
 
 function handleSubmit() {
@@ -58,7 +58,7 @@ function handleBack() {
           Deployed
         </h2>
         <ul class="mb-4 flex flex-col gap-4">
-          <MultisigSelectNetworkItem v-for="network in deployedNetworks" :key="network.chainId" :addresses="addresses" :selected="isSelected(network.chainId)" :network="network" @on-select="toggleNetworkChainId(network.chainId)" />
+          <MultisigSelectNetworkItem v-for="option in deployedNetworks" :key="option.chainId" :addresses="addresses" :selected="isSelected(option.chainId)" :option="option" @on-select="toggleNetworkChainId(option.chainId)" />
         </ul>
       </template>
       <template v-if="nonDeployedNetworks?.length">
@@ -66,7 +66,7 @@ function handleBack() {
           Not deployed <SvgoInfo2 v-tippy="'You can also deploy anytime in future on any chain at the same address'" class="text-slate-500" />
         </h2>
         <ul class="flex flex-col gap-4 max-h-[450px] scroll-style overflow-auto">
-          <MultisigSelectNetworkItem v-for="network in nonDeployedNetworks" :key="network.chainId" :addresses="addresses" :selected="isSelected(network.chainId)" :network="network" @on-select="toggleNetworkChainId(network.chainId)" />
+          <MultisigSelectNetworkItem v-for="option in nonDeployedNetworks" :key="option.chainId" :addresses="addresses" :selected="isSelected(option.chainId)" :option="option" @on-select="toggleNetworkChainId(option.chainId)" />
         </ul>
       </template>
     </div>

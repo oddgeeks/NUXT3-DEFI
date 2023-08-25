@@ -4,10 +4,10 @@ import collect from 'collect.js'
 import { isAddress } from 'ethers/lib/utils'
 import axios from 'axios'
 import type { IToken } from './tokens'
+import { getSafeOptionsByChain } from '~/server/utils/safe'
 import type { TokenBalanceResolver } from '~/contracts'
 import {
   Forwarder__factory,
-  GaslessWallet__factory,
   MultisigForwarder__factory,
   TokenBalanceResolver__factory,
 } from '~/contracts'
@@ -28,9 +28,8 @@ export const useSafe = defineStore('safe', () => {
   const route = useRoute()
   const ensName = ref()
 
-  const allNetworkVersions = ref<NetworkVersion[]>([])
-
   const safes = ref<ISafe[]>([])
+  const safeOptions = ref<ISafeOptions[]>([])
 
   const selectedSafe = ref<ISafe>()
   const mainSafe = ref<ISafe>()
@@ -60,12 +59,12 @@ export const useSafe = defineStore('safe', () => {
 
   const forwarderProxyContract = Forwarder__factory.connect(
     forwarderProxyAddress,
-    getRpcProviderByChainId(137),
+    getRpcBatchProviderByChainId(137),
   )
 
   const multisigForwarderProxyContract = MultisigForwarder__factory.connect(
     multisigForwarderProxyAddress,
-    getRpcProviderByChainId(137),
+    getRpcBatchProviderByChainId(137),
   )
 
   const balanceResolverContracts = availableNetworks.reduce((acc, curr) => {
@@ -205,67 +204,6 @@ export const useSafe = defineStore('safe', () => {
   const fundedEoaNetworks = computed(() => {
     return new Set(eoaBalances.value?.filter(item => toBN(item?.balance ?? 0).toNumber() !== 0).map(item => item.chainId.toString())).size
   })
-
-  async function fetchNetworkVersions() {
-    console.log('Fetching network versions...')
-    const promises = availableNetworks.map(async (network) => {
-      const obj = {
-        ...network,
-      } as NetworkVersion
-
-      try {
-        const wallet = GaslessWallet__factory.connect(
-          selectedSafe.value?.safe_address!,
-          getRpcProviderByChainId(network.chainId),
-        )
-
-        function getLatestVersion() {
-          const multisigForwarder = MultisigForwarder__factory.connect(
-            multisigForwarderProxyAddress,
-            getRpcProviderByChainId(network.chainId),
-          )
-
-          if (selectedSafe.value?.multisig === 1)
-            return multisigForwarder.avocadoVersion('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', selectedSafe.value?.multisig_index || 0)
-
-          return forwarderProxyContract.avoWalletVersion(
-            '0x0000000000000000000000000000000000000001',
-          )
-        }
-
-        const latestVersion = await getLatestVersion()
-
-        try {
-          const currentVersion = await wallet.DOMAIN_SEPARATOR_VERSION()
-          obj.currentVersion = currentVersion
-        }
-        catch (e) {
-          obj.notdeployed = true
-          obj.currentVersion = '0.0.0'
-        }
-
-        obj.latestVersion = latestVersion
-
-        return obj
-      }
-      catch (e) {
-        obj.notdeployed = true
-
-        return obj
-      }
-    })
-
-    const results = await Promise.allSettled(promises)
-
-    const arr = results
-      .map((result) => {
-        if (result.status === 'fulfilled')
-          return result.value
-      })
-      .filter(Boolean)
-
-    allNetworkVersions.value = arr as NetworkVersion[]
-  }
 
   const getGasBalance = async (address: string) => {
     return avoBatchProvider.getBalance(address)
@@ -544,6 +482,54 @@ export const useSafe = defineStore('safe', () => {
     }])
   }
 
+  async function getSafeOptions(safe: ISafe) {
+    try {
+      await until(balances.value.loading).toMatch(s => !s)
+
+      const options = await Promise.all(
+        availableNetworks.map((network) => {
+          const provider = getRpcBatchProviderByChainId(network.chainId)
+
+          return getSafeOptionsByChain(safe, network.chainId, provider).catch((e) => {
+            const msg = 'Failed to get safe options by public provider'
+            console.log(msg, e)
+
+            const error = parseTransactionError(e)
+
+            logActionToSlack({
+              account: account.value,
+              message: `${msg}: ${error.formatted}`,
+              type: 'error',
+              action: 'network',
+            })
+
+            return http(`/api/${network.chainId}/safes/${safe.safe_address}`, {
+              params: {
+                multisig_index: safe.multisig_index,
+                multisig: safe.multisig,
+                owner_address: safe.owner_address,
+              },
+            })
+          })
+        }),
+      )
+
+      return options as ISafeOptions[]
+    }
+    catch (e: any) {
+      const msg = 'Failed to get safe options over public and private provider'
+      console.log(msg, e)
+      const error = parseTransactionError(e)
+
+      logActionToSlack({
+        account: account.value,
+        message: `${msg}: ${error.formatted}`,
+        type: 'error',
+        action: 'network',
+      })
+    }
+  }
+
   const setMultisigParamSafe = async () => {
     const paramSafe = route.params.safe as string
 
@@ -611,14 +597,16 @@ export const useSafe = defineStore('safe', () => {
 
   const { pause, resume } = useIntervalFn(fetchBalances, 15000)
 
-  watchDebounced(selectedSafe, () => {
+  watchDebounced(selectedSafe, async () => {
     if (!selectedSafe.value)
       return
 
-    fetchNetworkVersions()
+    const opts = await getSafeOptions(selectedSafe.value)
+
+    if (opts)
+      safeOptions.value = opts
   }, {
-    debounce: 10000,
-    immediate: false,
+    debounce: 1000,
   })
 
   watchThrottled(
@@ -740,9 +728,9 @@ export const useSafe = defineStore('safe', () => {
     getSafes,
     isSelectedSafeLegacy,
     safesLoading,
-    allNetworkVersions,
-    fetchNetworkVersions,
     ensName,
+    safeOptions,
+    getSafeOptions,
   }
 }, {
   persist: {

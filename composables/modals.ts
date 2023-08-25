@@ -269,12 +269,12 @@ export async function openDialogModal({
   })
 }
 
-export async function openUpgradeModal(network: NetworkVersion) {
+export async function openUpgradeModal(options: ISafeOptions) {
   return openModal({
     component: UpgradeVersion,
     async: true,
     componentProps: {
-      network,
+      options,
     },
     options: {
       contentClass: 'sm:!p-7.5',
@@ -289,11 +289,11 @@ export function openCustomTxModal() {
   })
 }
 
-export function openDeployNetworkModal(network: Network) {
+export function openDeployNetworkModal(option: ISafeOptions) {
   openModal({
     component: DeployNetwork,
     componentProps: {
-      network,
+      option,
     },
     options: {
       wrapperClass: '!max-w-[560px]',

@@ -12,13 +12,13 @@ const {
 const route = useRoute()
 const router = useRouter()
 const { migrateOldContacts } = useContacts()
-const { allNetworkVersions } = storeToRefs(useSafe())
+const { safeOptions } = storeToRefs(useSafe())
 
 const lastNoticeShowDate = useLocalStorage<Date>('last_update_notice_show_date', new Date(0, 0))
-const ignore_version = useLocalStorage<NetworkVersion[]>('ignore_version', [])
+const ignore_version = useLocalStorage<ISafeOptions[]>('ignore_version', [])
 
 function isIgnoreVersion() {
-  return !(allNetworkVersions.value.some((network) => {
+  return !(safeOptions.value.some((network) => {
     if (network.notdeployed)
       return false
 
@@ -39,7 +39,7 @@ watch(showVersionUpdateBanner, async () => {
     if (differenceInDays >= 3 && router.currentRoute.value.name !== 'upgrade' && !isIgnoreVersion()) {
       const res = await openUpdateNoticeModal()
       if (!res.success)
-        ignore_version.value = allNetworkVersions.value
+        ignore_version.value = safeOptions.value
     }
   }
 })
