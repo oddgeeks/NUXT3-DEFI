@@ -45,6 +45,7 @@ export const useSafe = defineStore('safe', () => {
   })
 
   const safesLoading = ref(false)
+  const optionsLoading = ref(false)
 
   const { account, connector } = useWeb3()
   const { tokens, customTokens } = storeToRefs(useTokens())
@@ -601,14 +602,19 @@ export const useSafe = defineStore('safe', () => {
     if (!selectedSafe.value)
       return
 
-    console.log('running safe options')
+    try {
+      optionsLoading.value = true
 
-    const opts = await getSafeOptions(selectedSafe.value)
+      const opts = await getSafeOptions(selectedSafe.value)
 
-    console.log(opts)
+      console.log(opts)
 
-    if (opts)
-      safeOptions.value = opts
+      if (opts)
+        safeOptions.value = opts
+    }
+    finally {
+      optionsLoading.value = false
+    }
   }, {
     debounce: 2800,
   })
@@ -735,6 +741,7 @@ export const useSafe = defineStore('safe', () => {
     ensName,
     safeOptions,
     getSafeOptions,
+    optionsLoading,
   }
 }, {
   persist: {

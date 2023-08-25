@@ -6,7 +6,7 @@ definePageMeta({
 })
 
 const { account } = useWeb3()
-const { safeOptions } = storeToRefs(useSafe())
+const { safeOptions, optionsLoading } = storeToRefs(useSafe())
 
 useEagerConnect()
 
@@ -26,8 +26,9 @@ const mostRecentVersion = computed(() => {
 <template>
   <div class="px-5 sm:mx-auto max-w-[880px] w-full flex-1 mt-3">
     <div class="mb-5 sm:mb-7.5 max-w-[796px] w-full">
-      <h1 class="text-xl sm:text-3xl font-bold leading-7.5 mb-2.5">
+      <h1 class="text-xl flex items-center gap-2 sm:text-3xl font-bold leading-7.5 mb-2.5">
         Upgrade your Avocado Wallet
+        <SvgSpinner v-if="optionsLoading" class="text-primary" />
       </h1>
       <h2 class="text-slate-400 leading-6 font-medium text-xs sm:text-sm">
         Avocado wallet is a Smart Contract wallet, it is recommended that you
