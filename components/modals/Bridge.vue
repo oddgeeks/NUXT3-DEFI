@@ -49,7 +49,7 @@ const {
   transactions,
   routes,
   bridgeFee,
-  selectableChains,
+  selectableToChains,
   handleSwapToken,
   bridgeTokens,
   fromTokens,
@@ -314,14 +314,13 @@ const onSubmit = form.handleSubmit(async () => {
                   :tokens="bridgeTokens.data"
                 />
               </div>
-
               <div class="flex flex-col gap-2.5">
                 <span class="text-sm">Network</span>
                 <CommonSelect
                   v-model="toChainId"
                   value-key="chainId"
                   label-key="name"
-                  :options="selectableChains"
+                  :options="selectableToChains"
                 >
                   <template #button-prefix>
                     <ChainLogo class="w-6 h-6" :chain="toChainId" />

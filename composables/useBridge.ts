@@ -24,6 +24,7 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
   const { tokenBalances, safeAddress } = useAvocadoSafe()
   const { tokens } = storeToRefs(useTokens())
   const { getRpcProviderByChainId } = useShared()
+  const { authorisedNetworks } = useAuthorities()
 
   const toChainId = ref(fromChainId.value == '137' ? '10' : '137')
   const bridgeToToken = ref<IBridgeTokensResult>()
@@ -466,8 +467,8 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
     })
   }
 
-  const selectableChains = computed(() =>
-    availableNetworks.filter(
+  const selectableToChains = computed(() =>
+    authorisedNetworks.value.filter(
       c =>
         String(c.chainId) !== fromChainId.value
         && !bridgeDisabledChains.some(i => String(i) == String(c.chainId)),
@@ -511,6 +512,13 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
     throttle: 500,
   })
 
+  onMounted(() => {
+    const firstSelectableChain = selectableToChains.value[0]
+
+    if (firstSelectableChain)
+      toChainId.value = String(firstSelectableChain.chainId)
+  })
+
   onUnmounted(() => {
     clearNuxtData('bridge-transactions')
     clearNuxtData('bridge-routes')
@@ -545,7 +553,7 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
     nativeFee,
     nativeFeeInUsd,
     isInsufficientBalance,
-    selectableChains,
+    selectableToChains,
     handleSwapToken,
     recivedValueInUsd,
     recievedAmount,
