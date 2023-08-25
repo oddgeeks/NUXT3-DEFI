@@ -222,6 +222,7 @@ async function handleExecute(item: IMultisigTransaction) {
       proposalId: item.id,
       owner: selectedSafe.value?.owner_address!,
       confirmations: item.confirmations,
+      signers: item.signers,
       message: item.data,
       safe: selectedSafe.value?.safe_address!,
       targetChainId: item.chain_id,

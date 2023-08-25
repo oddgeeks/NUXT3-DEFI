@@ -65,6 +65,7 @@ interface IMultisigBroadcastParams {
   message: Data
   owner: string
   safe: string
+  signers: string[]
   targetChainId: string | number
 }
 

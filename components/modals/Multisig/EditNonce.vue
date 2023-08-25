@@ -122,6 +122,7 @@ async function onSubmit() {
       const txHash = await multisigBroadcast({
         proposalId: data.id,
         confirmations: data.confirmations,
+        signers: data.signers,
         message: data.data,
         owner: selectedSafe.value?.owner_address!,
         safe: selectedSafe.value?.safe_address!,

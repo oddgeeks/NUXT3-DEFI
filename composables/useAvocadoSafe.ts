@@ -191,9 +191,7 @@ export function useAvocadoSafe() {
       index: String(selectedSafe.value?.multisig_index || 0),
     }
 
-    const requiredSigner = await getRequiredSigner(selectedSafe.value?.safe_address!, params.targetChainId) || 1
-
-    if (requiredSigner > 1) {
+    if (params.signers?.length > 1) {
       try {
         const executionSignature = await signExecutionData(params, sortedSignatures)
 
@@ -302,6 +300,7 @@ export function useAvocadoSafe() {
           signature: params.signatureParams.signature,
           created_at: new Date().getTime(),
         }],
+        signers: [params.signatureParams.address],
         message: params.castParams,
         owner: selectedSafe.value?.owner_address!,
         safe: selectedSafe.value?.safe_address!,

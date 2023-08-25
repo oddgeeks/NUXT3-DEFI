@@ -605,6 +605,8 @@ export const useSafe = defineStore('safe', () => {
 
     const opts = await getSafeOptions(selectedSafe.value)
 
+    console.log(opts)
+
     if (opts)
       safeOptions.value = opts
   }, {
