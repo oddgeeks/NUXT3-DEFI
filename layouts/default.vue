@@ -59,16 +59,13 @@ onMounted(() => {
       <Sidebar />
 
       <div
-        class="flex flex-1 flex-col sm:px-10 max-w-7xl mx-auto min-w-0"
+        class="flex flex-1 flex-col sm:px-10 max-w-7xl mx-auto min-w-0 px-4"
       >
         <TheHeader />
-        <div class="container flex flex-col gap-4 mt-24 sm:mt-0">
+        <div class="container flex flex-col gap-4 mt-[104px] sm:mt-0">
           <WarningsGasBalance v-if="showInsufficientGasBanner" />
         </div>
-        <div class="flex flex-col md:hidden">
-          <MobileNavigation class="px-4" />
-          <hr class="border-slate-150 dark:border-slate-700 my-[10px]">
-        </div>
+        <MobileNavigation />
         <slot />
         <TheFooter />
       </div>

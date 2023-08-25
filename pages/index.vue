@@ -39,7 +39,7 @@ function selectType(type: string) {
 </script>
 
 <template>
-  <div class="flex flex-col gap-7.5 flex-1 px-4">
+  <div class="flex flex-col gap-7.5 flex-1">
     <TotalBalance />
     <div class="flex flex-col gap-3.5">
       <Tabs />

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import CheckCircle from '~/assets/images/icons/check-circle.svg?component'
-import GroupIconSVG from '~/assets/images/icons/group.svg?component'
-import IndividualIconSVG from '~/assets/images/icons/individual.svg?component'
 
 const { networkPreference } = storeToRefs(useSafe())
 const isHideZeroBalances = useLocalStorage('hide-zero-balances', false)
@@ -63,7 +61,7 @@ function selectType(type: string) {
         }"
         @click="() => selectType('group')"
       >
-        <GroupIconSVG :class="`${listType === 'group' ? 'type-icon-selected' : 'type-icon-unselected'} cursor-pointer w-[22px] h-[22px]`" />
+        <SvgoGroup :class="`${listType === 'group' ? 'type-icon-selected' : 'type-icon-unselected'} cursor-pointer w-[22px] h-[22px]`" />
         Group view
         <CheckCircle
           v-if="listType === 'group'"
@@ -81,7 +79,7 @@ function selectType(type: string) {
         }"
         @click="() => selectType('individual')"
       >
-        <IndividualIconSVG :class="`${listType === 'individual' ? 'type-icon-selected' : 'type-icon-unselected'} cursor-pointer w-[20px] h-[20px]`" />
+        <SvgoIndividual :class="`${listType === 'individual' ? 'type-icon-selected' : 'type-icon-unselected'} cursor-pointer w-[20px] h-[20px]`" />
         Individual view
         <CheckCircle
           v-if="listType === 'individual'"
