@@ -36,8 +36,6 @@ export async function getSafeOptionsByChain(safe: ISafe, chainId: string | numbe
   )
 
   function currentVersion(): Promise<string> {
-    if (!deployed)
-      return new Promise (resolve => resolve('0.0.0'))
     return gaslessWalletInstance.DOMAIN_SEPARATOR_VERSION()
   }
 

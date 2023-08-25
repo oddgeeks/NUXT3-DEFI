@@ -59,7 +59,7 @@ async function fetchAvowalletImpl() {
 }
 
 const { data: txData } = useAsyncData(
-  'upgrade-tx',
+  `upgrade-tx-${props.options.chainId}`,
   async () => {
     await fetchAvowalletImpl()
 
