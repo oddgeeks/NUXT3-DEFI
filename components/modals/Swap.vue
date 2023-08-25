@@ -250,7 +250,7 @@ async function fetchSwapDetails() {
     const name = getNetworkByChainId(toChainId.value).name
 
     const actualName
-    = name === 'Ethereum' ? 'mainnet' : name.toLocaleLowerCase()
+      = name === 'Ethereum' ? 'mainnet' : name.replaceAll(' ', '-').toLowerCase()
 
     const data: ISwapResponse = await http('/swap',
       {
