@@ -135,7 +135,7 @@ export const useSafe = defineStore('safe', () => {
 
     mainSafeAddress.value = address
     multiSigSafeAddress.value = multisigAddress
-    safeAddress.value = isCachedSafeAvailable ? cachedSafeAddress : oldSafeAddress || address
+    safeAddress.value = isCachedSafeAvailable ? cachedSafeAddress : legacySafeInstance ? oldSafeAddress : address
   }
 
   async function fetchSafeInstanceses() {
