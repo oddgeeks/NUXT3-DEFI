@@ -12,7 +12,7 @@ function hasAvailableTokens() {
 
 <template>
   <div>
-    <h2 class="text-slate-400 text-sm font-semibold mb-2.5 flex items-center gap-2">
+    <h2 class="text-slate-400 font-semibold mb-2.5 flex items-center gap-2">
       Total balance
 
       <SvgSpinner v-if="balances.loading" class="text-primary" />

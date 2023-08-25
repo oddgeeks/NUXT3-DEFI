@@ -3,7 +3,9 @@ import type { IBalance } from '~~/stores/safe'
 export function useGraph(balance: Ref<IBalance>) {
   const interactable = computed(() => toBN(balance.value.balance).gt(0))
 
-  const temporaryDisabled = computed(() => balance.value.chainId == '1101')
+  const isSwapDisabled = computed(() => false)
+
+  const isBridgeDisabled = computed(() => bridgeDisabledChains.some(i => String(i) == String(balance.value.chainId)))
 
   const priceDiffColor = computed(() => {
     if (!priceDiffInPercent.value)
@@ -59,7 +61,8 @@ export function useGraph(balance: Ref<IBalance>) {
     priceDiffColor,
     priceDiffInPercent,
     priceDiffClass,
-    temporaryDisabled,
+    isSwapDisabled,
     fetchLiteAPY,
+    isBridgeDisabled,
   }
 }

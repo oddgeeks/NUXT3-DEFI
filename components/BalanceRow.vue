@@ -22,7 +22,8 @@ const liteAPY = ref('')
 const {
   priceDiffColor,
   interactable,
-  temporaryDisabled,
+  isBridgeDisabled,
+  isSwapDisabled,
   priceDiffClass,
   priceDiffInPercent,
   fetchLiteAPY,
@@ -153,7 +154,7 @@ function onClick() {
             animation: 'fade',
             content: 'Swap',
           }"
-          :disabled="!interactable || temporaryDisabled"
+          :disabled="!interactable || isSwapDisabled"
           class="!h-9 !w-9 !p-0 items-center justify-center"
           @click="openSwapModal(tokenBalance.address, tokenBalance.chainId)"
         >
@@ -167,7 +168,7 @@ function onClick() {
             animation: 'fade',
             content: 'Bridge',
           }"
-          :disabled="!interactable"
+          :disabled="!interactable || isBridgeDisabled"
           class="!h-9 !w-9 !p-0 items-center justify-center"
           @click="openBridgeModal(tokenBalance.address, tokenBalance.chainId)"
         >

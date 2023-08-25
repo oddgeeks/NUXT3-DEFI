@@ -11,7 +11,7 @@ definePageMeta({
 
 const { account } = useWeb3()
 const { unstableDappNetworks } = useBanner()
-const { networkPreference } = storeToRefs(useSafe())
+const { networkPreference, tokenBalances } = storeToRefs(useSafe())
 
 const listType = useLocalStorage('listType', 'individual')
 
@@ -20,6 +20,12 @@ useAccountTrack(undefined, () => {
 })
 
 const isHideZeroBalances = useLocalStorage('hide-zero-balances', false)
+
+const balancesTokenCount = computed(() => {
+  if (!tokenBalances.value)
+    return 0
+  return tokenBalances.value.filter(token => gt(token.balance || 0, 0))?.length
+})
 
 function handleOpenDialog() {
   openDialogModal({
@@ -54,8 +60,10 @@ function selectType(type: string) {
           <WarningsUnstableDappVersion v-if="unstableDappNetworks?.length" />
           <div class="flex justify-between sm:pr-7.5">
             <div class="flex gap-7.5">
-              <h2 class="font-semibold inline-flex gap-2.5 items-center">
-                Balances
+              <h2 class="font-semibold inline-flex gap-2 items-center">
+                Balances <span class="sm:block hidden">
+                  ({{ balancesTokenCount }})
+                </span>
                 <button v-if="account" @click="handleOpenDialog">
                   <SvgoQuestionCircle class="w-5 h-5 text-primary" />
                 </button>
