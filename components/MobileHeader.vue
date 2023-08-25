@@ -10,8 +10,8 @@ import InstadappSVG from '@/assets/images/logo/instadapp.svg?component'
 const { active, deactivate, connector, account } = useWeb3()
 const { trackingAccount } = useAccountTrack()
 const { safeAddress } = useAvocadoSafe()
-const ensName = ref()
 const { resetAccounts } = useSafe()
+const { ensName } = storeToRefs(useSafe())
 const [opened, toggle] = useToggle(false)
 const [walletListOpened, toggleWalletList] = useToggle(false)
 const { setConnectorName, cachedProviderName } = useConnectors()
@@ -19,7 +19,6 @@ const { providers } = useNetworks()
 const {
   showTrackingBanner,
 } = useBanner()
-const { getRpcProviderByChainId } = useShared()
 
 const router = useRouter()
 
@@ -55,14 +54,6 @@ watch(() => active.value, () => {
   if (!active.value)
     toggle(false)
 })
-
-whenever(
-  account,
-  async () => {
-    ensName.value = await getRpcProviderByChainId(1).lookupAddress(account.value)
-  },
-  { immediate: true },
-)
 </script>
 
 <template>

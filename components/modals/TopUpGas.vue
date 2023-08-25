@@ -162,6 +162,10 @@ const onSubmit = handleSubmit(async () => {
       'topup',
     )
 
+    setTimeout(() => {
+      refreshNuxtData('pending-deposit')
+    }, 1000)
+
     if (!transactionHash)
       return
 

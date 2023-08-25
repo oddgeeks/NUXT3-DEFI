@@ -10,7 +10,7 @@ const route = useRoute()
 const router = useRouter()
 
 const { safeAddress } = useAvocadoSafe()
-const { fetchPendingMultisigTxnsCount } = useSafe()
+const { fetchPendingMultisigTxnsCount, setGasBalance } = useSafe()
 const { safeTotalBalanceMapping, legacySafeAddress } = storeToRefs(useSafe())
 const { checkSafeIsActualMultisig } = useMultisig()
 
@@ -53,6 +53,7 @@ function handleClick() {
   }
 
   safeAddress.value = props.safe.safe_address
+  setGasBalance()
 }
 </script>
 

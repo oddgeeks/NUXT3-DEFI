@@ -1,5 +1,10 @@
 import { StaticJsonRpcRetryProvider } from '@instadapp/utils'
 import { acceptHMRUpdate, defineStore } from 'pinia'
+import type { ethers } from 'ethers'
+import { StaticJsonRpcBatchProvider } from '@/server/utils/staticJsonRpcBatchProvider'
+
+const rpcBatchInstances: Record<string, ethers.providers.StaticJsonRpcProvider> = {}
+const rpcInstances: Record<string, ethers.providers.StaticJsonRpcProvider> = {}
 
 export const useShared = defineStore('shared', () => {
   const rpcs = ref<Record<string, string>>({})
@@ -10,9 +15,25 @@ export const useShared = defineStore('shared', () => {
     if (!rpcURL)
       throw new Error(`No RPC URL for chainId: ${chainId}`)
 
-    return new StaticJsonRpcRetryProvider(rpcURL, {
-      delay: 50,
-    })
+    if (!rpcInstances[chainId]) {
+      rpcInstances[chainId] = new StaticJsonRpcRetryProvider(rpcURL, {
+        delay: 50,
+      })
+    }
+
+    return rpcInstances[chainId]
+  }
+
+  function getRpcBatchProviderByChainId(chainId: number | string) {
+    const rpcURL = rpcs.value[chainId]
+
+    if (!rpcURL)
+      throw new Error(`No RPC URL for chainId: ${chainId}`)
+
+    if (!rpcBatchInstances[chainId])
+      rpcBatchInstances[chainId] = new StaticJsonRpcBatchProvider(rpcURL)
+
+    return rpcBatchInstances[chainId]
   }
 
   function getRpcURLByChainId(chainid: number | string) {
@@ -28,6 +49,7 @@ export const useShared = defineStore('shared', () => {
     rpcs,
     getRpcProviderByChainId,
     getRpcURLByChainId,
+    getRpcBatchProviderByChainId,
   }
 })
 

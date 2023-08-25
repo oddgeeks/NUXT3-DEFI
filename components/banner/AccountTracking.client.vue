@@ -4,7 +4,7 @@ import { getAddress } from 'ethers/lib/utils'
 const router = useRouter()
 const route = useRoute()
 const { trackingAccount } = useAccountTrack()
-const { getSafesByAddress } = useSafe()
+const { getSafes } = useSafe()
 const { accountSafeMapping } = storeToRefs(useSafe())
 
 async function disconnect() {
@@ -12,7 +12,7 @@ async function disconnect() {
   const paramSafe = route.params.safe as string
 
   if (paramSafe && selectedEOAAddress) {
-    const { data: safes } = await getSafesByAddress(selectedEOAAddress)
+    const { data: safes } = await getSafes(selectedEOAAddress)
 
     const isSafeExist = safes.some(safe => safe.multisig === 1 && getAddress(safe.safe_address) === getAddress(paramSafe))
     const fallbackMultisigSafe = safes.find(safe => safe.multisig === 1)

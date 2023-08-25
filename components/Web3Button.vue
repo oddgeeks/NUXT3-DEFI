@@ -14,14 +14,12 @@ defineProps({
 
 const { active, deactivate, account, connector } = useWeb3()
 const { trackingAccount } = useAccountTrack()
-const { gasBalance } = storeToRefs(useSafe())
-const { getRpcProviderByChainId } = useShared()
+const { gasBalance, ensName } = storeToRefs(useSafe())
 const { resetAccounts } = useSafe()
 const { setConnectorName, cachedProviderName } = useConnectors()
 const { providers } = useNetworks()
 const router = useRouter()
 
-const ensName = ref()
 const open = ref(false)
 const hovered = ref(false)
 
@@ -59,14 +57,6 @@ const connectedProvider = computed(() => {
 function userSignOut() {
   router.push('/login')
 }
-
-whenever(
-  account,
-  async () => {
-    ensName.value = await getRpcProviderByChainId(1).lookupAddress(account.value)
-  },
-  { immediate: true },
-)
 </script>
 
 <template>
