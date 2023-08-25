@@ -8,7 +8,8 @@ export const useMultisig = defineStore('multisig', () => {
   const requiredSigners = ref<IRequiredSigners[]>([])
 
   const { selectedSafe } = storeToRefs(useSafe())
-  const { getRpcProviderByChainId } = useShared()
+  const { forwarderProxyContract } = useSafe()
+  const { getRpcProviderByChainId, getRpcBatchProviderByChainId } = useShared()
 
   const signers = computed(() => {
     if (!selectedSafe.value)

@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { getAddress } from 'ethers/lib/utils'
 import { lt } from 'semver'
 import { Tippy } from 'vue-tippy'
 
 const props = defineProps<{
-  network: NetworkVersion
+  options: ISafeOptions
   recentVersion: string
 }>()
 
@@ -12,22 +11,19 @@ const { switchToAvocadoNetwork } = useNetworks()
 const { authorisedNetworks } = useAuthorities()
 
 const isNetworkNotAuthorised = computed(() => {
-  return !authorisedNetworks.value?.find(i => String(i.chainId) == String(props.network.chainId))
+  return !authorisedNetworks.value?.find(i => String(i.chainId) == String(props.options.chainId))
 })
 
 const isUpgradeAvailable = computed(() => {
-  if (lt(props.network.currentVersion, props.network.latestVersion))
+  if (lt(props.options.currentVersion, props.options.latestVersion))
     return true
-
-  if (props.network.latestImplementationAddress && props.network.currentImplementationAddress)
-    return getAddress(props.network.latestImplementationAddress) !== getAddress(props.network.currentImplementationAddress)
 },
 )
 
-async function handleUpgrade(network: NetworkVersion) {
+async function handleUpgrade() {
   await switchToAvocadoNetwork()
 
-  openUpgradeModal(network)
+  openUpgradeModal(props.options)
 }
 </script>
 
@@ -35,32 +31,32 @@ async function handleUpgrade(network: NetworkVersion) {
   <tr class="flex flex-col sm:table-row">
     <td class="pt-5 sm:py-[26px] pb-4 sm:pl-7.5 pl-4.5">
       <div class="flex gap-3 items-center">
-        <ChainLogo class="w-11 h-11" :chain="network.chainId" />
+        <ChainLogo class="w-11 h-11" :chain="options.chainId" />
         <div class="flex flex-col gap-1">
           <span>
-            {{ network.name }}
+            {{ chainIdToName(options.chainId) }}
           </span>
           <span class="text-slate-400 font-medium text-sm">
-            {{ network.currentVersion }}
+            {{ options.currentVersion }}
           </span>
         </div>
       </div>
     </td>
     <td class="hidden sm:table-cell">
-      <span v-if="network.notdeployed">
+      <span v-if="options.notdeployed">
         {{ recentVersion }}
       </span>
       <span v-else>
-        {{ network.latestVersion }}
+        {{ options.latestVersion }}
       </span>
     </td>
     <td class="px-4.5 pb-6.5 sm:pr-7.5 sm:pb-0 sm:pl-0 sm:w-[221px]">
-      <Tippy :content="isNetworkNotAuthorised ? `You are not authorized to interact on ${network.name}` : undefined">
+      <Tippy :content="isNetworkNotAuthorised ? `You are not authorized to interact on ${chainIdToName(options.chainId)}` : undefined">
         <fieldset :disabled="isNetworkNotAuthorised">
           <CommonButton
-            v-if="network.notdeployed"
+            v-if="options.notdeployed"
             class="!px-[19px] w-full items-center justify-center"
-            @click="openDeployNetworkModal(network)"
+            @click="openDeployNetworkModal(options)"
           >
             Deploy
           </CommonButton>
@@ -68,7 +64,7 @@ async function handleUpgrade(network: NetworkVersion) {
           <CommonButton
             v-else-if="isUpgradeAvailable"
             class="w-full text-center justify-center"
-            @click="handleUpgrade(network)"
+            @click="handleUpgrade()"
           >
             Upgrade Now
           </CommonButton>
