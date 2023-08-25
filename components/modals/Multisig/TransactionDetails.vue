@@ -583,7 +583,7 @@ onUnmounted(() => {
               </CommonButton>
             </div>
             <Tippy v-else :content="errorMessage">
-              <CommonButton :disabled="!!errorMessage || pending.sign" :loading="pending.sign || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center !leading-5" :class="signAndExecute ? '!px-2 text-xs' : ''" @click="handleSign(transactionRef)">
+              <CommonButton :color="isColorRed ? 'red' : 'primary'" :disabled="!!errorMessage || pending.sign" :loading="pending.sign || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center !leading-5" :class="signAndExecute ? '!px-2 text-xs' : ''" @click="handleSign(transactionRef)">
                 {{ signAndExecute ? 'Sign & Execute' : isSignedAlready ? 'Signed' : 'Sign' }}
               </CommonButton>
             </Tippy>
