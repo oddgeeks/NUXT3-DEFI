@@ -141,6 +141,7 @@ async function getChainBalances(chainId: string,
           addresses,
         ),
         $fetch<ITokenPrice[]>(`${blockQueryURL}/${chainId}/tokens`, {
+          retry: 3,
           params: {
             sparkline: false,
             addresses,
