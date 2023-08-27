@@ -59,6 +59,11 @@ interface ISignatureParams {
   signer: string
 }
 
+interface IAvailableSigner {
+  chainId: string | number
+  addresses: string[]
+}
+
 interface IMultisigBroadcastParams {
   proposalId: string
   confirmations: Confirmation[]

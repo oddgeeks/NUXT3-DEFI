@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import { getAddress, isAddress } from 'ethers/lib/utils'
 
-interface IAvailableSigner {
-  chainId: string | number
-  addresses: string[]
-}
-
 const route = useRoute()
 
 if (!route.params.safe || !isAddress(route.params.safe as string))
@@ -16,10 +11,8 @@ useAccountTrack(undefined, () => {
 })
 
 const { getSafe, getSafeOptions, refreshSelectedSafe } = useSafe()
-const { account } = useWeb3()
-const { selectedSafe, safeOptions } = storeToRefs(useSafe())
-const { isAccountCanSign } = useMultisig()
-const { changeThreshold, removeSignerWithThreshold } = useAvocadoSafe()
+const { selectedSafe } = storeToRefs(useSafe())
+const { removeSignerWithThreshold } = useAvocadoSafe()
 
 const selectedAddresses = ref<string[]>([])
 const selectedChainId = ref<string | number>()
@@ -39,6 +32,7 @@ const { data: multisigSafe, refresh: refreshMultisigSafe } = useAsyncData(`${rou
   return safe
 }, {
   server: false,
+  immediate: true,
 })
 
 const availableSigners = computed(() => {
@@ -59,37 +53,8 @@ const availableSigners = computed(() => {
   }, [])
 })
 
-function getSignerCount(chainId: string | number) {
-  if (!multisigSafe.value)
-    return 0
-
-  return multisigSafe.value.signers[chainId]?.length || 0
-}
-
 provide('selectedAddresses', selectedAddresses)
 provide('selectedChainId', selectedChainId)
-
-function getSignerInfo(chainId: string | number): ISafeOptions | undefined {
-  return safeOptions.value?.find(option => option.chainId == chainId)
-}
-
-async function handleTresholdChange(chainId: string | number) {
-  const { success, payload } = await openUpdateThresholdModal(chainId, 0)
-
-  if (success && payload) {
-    const txHash = await changeThreshold(payload, chainId)
-
-    if (txHash) {
-      setTimeout(() => {
-        refreshMultisigSafe()
-        refreshSelectedSafe()
-        getSafeOptions(selectedSafe.value!)
-      }, 7000)
-
-      showPendingTransactionModal(txHash, chainId)
-    }
-  }
-}
 
 async function handleDeleteSigner() {
   if (!selectedChainId.value)
@@ -158,57 +123,7 @@ watch(selectedAddresses, () => {
     <div class="flex flex-col gap-2">
       <div class="flex flex-col gap-5">
         <template v-for="item in availableSigners" :key="item.chainId">
-          <details class="rounded-[25px] group text-sm dark:bg-gray-850 bg-slate-50">
-            <summary class="flex justify-between flex-wrap sm:gap-0 gap-4.5 p-[18px] sm:py-6.5 sm:px-7.5 cursor-pointer group-open:border-b-1 last:border-b-0 border-slate-150 dark:border-slate-800 items-center">
-              <h2 class="flex items-center gap-3 sm:w-auto w-full">
-                <ChainLogo class="w-7.5 h-7.5" :chain="item.chainId" />
-                {{ chainIdToName(item.chainId) }}
-                <SvgoChevronDown class="w-5 shrink-0 sm:hidden block ml-auto text-slate-400 group-open:rotate-180" />
-              </h2>
-              <div class="flex flex-wrap flex-1 justify-between sm:gap-[142px] items-center">
-                <div class="flex items-center sm:gap-[100px] gap-5 flex-1 justify-end text-sm text-slate-400 font-medium">
-                  <div v-if="!getSignerInfo(item.chainId)" class="loading-box rounded-5 w-36 h-5" />
-                  <span v-else class="flex items-center gap-2.5">
-                    <SvgoUsers class="shrink-0" />
-                    {{ getSignerCount(item.chainId) }}
-                    <span class="sm:block hidden">total signers</span>
-                    <span class="sm:hidden block whitespace-nowrap">total sign.</span>
-                  </span>
-                  <div v-if="!getSignerInfo(item.chainId)" class="loading-box rounded-5 w-36 h-5" />
-                  <span v-else class="flex items-center gap-2.5">
-                    <SvgoStamp />
-                    {{ getSignerInfo(item.chainId)?.threshold }}
-                    <span class="sm:block hidden">confirmations required</span>
-                    <span class="sm:hidden block whitespace-nowrap">confirm. req.</span>
-                  </span>
-                </div>
-                <SvgoChevronDown class="w-5 hidden sm:block shrink-0 text-slate-400 group-open:rotate-180" />
-              </div>
-            </summary>
-            <MultisigSafeItems v-if="multisigSafe" :multisig-safe="multisigSafe" :addresses="item.addresses" :chain-id="item.chainId" />
-            <div class="flex flex-col gap-4 px-[18px] py-5 sm:py-6.5 sm:px-7.5">
-              <h2 class="text-xs font-medium text-slate-400">
-                Any transaction requires the confirmation of:
-              </h2>
-
-              <div v-if="!getSignerInfo(item.chainId)" class="loading-box rounded-5 w-36 h-5" />
-
-              <span v-else class="flex items-center gap-2.5 sm:text-sm text-xs">
-                <SvgoUserCircle class="text-slate-400" />
-                <span>
-                  {{ getSignerInfo(item.chainId)?.threshold }} out of {{ getSignerCount(item.chainId) }}
-                </span>
-                <button :disabled="isSafeDoesNotMatch || !isAccountCanSign(item.chainId, account, selectedSafe?.owner_address)" class="text-primary disabled:text-slate-400 ml-4 text-xs" @click="handleTresholdChange(item.chainId)">
-                  Change
-                </button>
-              </span>
-
-              <p v-if="!isAccountCanSign(item.chainId, account, selectedSafe?.owner_address)" class="text-orange font-medium gap-2 text-xs flex items-center">
-                <SvgoInfo2 />
-                You are not a signer on this chain.
-              </p>
-            </div>
-          </details>
+          <MultisigSignersItem v-if="multisigSafe" :chain-id="item.chainId" :multisig-safe="multisigSafe" :item="item" />
         </template>
       </div>
     </div>

@@ -14,7 +14,7 @@ export function useAvocadoSafe() {
   const { library, account } = useWeb3()
   const { trackingAccount, isTrackingMode } = useAccountTrack()
   const { getRpcProviderByChainId } = useShared()
-  const { avoProvider } = useSafe()
+  const { avoProvider, getSafeOptions, refreshSelectedSafe } = useSafe()
   const { selectedSafe, isSelectedSafeLegacy, safeOptions } = storeToRefs(useSafe())
   const { clearAllModals } = useModal()
   const dryRun = useCookie<boolean | undefined>('dry-run')
@@ -241,6 +241,13 @@ export function useAvocadoSafe() {
     })
 
     executing.value = true
+
+    setTimeout(() => {
+      refreshNuxtData(`${selectedSafe.value?.safe_address}-signers`)
+      refreshNuxtData(`${selectedSafe.value?.safe_address}-${params.targetChainId}-threshold`)
+      refreshSelectedSafe()
+      getSafeOptions(selectedSafe.value!)
+    }, 10000)
 
     return transactionHash
   }
