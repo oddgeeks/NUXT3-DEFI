@@ -17,6 +17,9 @@ const signers = computed(() => {
   const allSigners = selectedSafe.value?.signers || {}
   const signers = allSigners[props.option.chainId] || []
 
+  if (!signers.length)
+    signers.push(account.value)
+
   return signers
 })
 

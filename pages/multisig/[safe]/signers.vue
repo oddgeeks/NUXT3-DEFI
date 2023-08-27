@@ -15,7 +15,7 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const { getSafe, getSafeOptions } = useSafe()
+const { getSafe, getSafeOptions, refreshSelectedSafe } = useSafe()
 const { account } = useWeb3()
 const { selectedSafe, safeOptions } = storeToRefs(useSafe())
 const { isAccountCanSign } = useMultisig()
@@ -32,7 +32,7 @@ const isSafeDoesNotMatch = computed(() => {
   return getAddress(safe) !== getAddress(selectedSafe.value?.safe_address)
 })
 
-const { data: multisigSafe } = useAsyncData(`${route.params.safe}-signers`, async () => {
+const { data: multisigSafe, refresh: refreshMultisigSafe } = useAsyncData(`${route.params.safe}-signers`, async () => {
   const safeAddress = route.params.safe as string
   const safe = await getSafe(safeAddress)
 
@@ -79,12 +79,15 @@ async function handleTresholdChange(chainId: string | number) {
   if (success && payload) {
     const txHash = await changeThreshold(payload, chainId)
 
-    setTimeout(() => {
-      getSafeOptions(selectedSafe.value!)
-    }, 3000)
+    if (txHash) {
+      setTimeout(() => {
+        refreshMultisigSafe()
+        refreshSelectedSafe()
+        getSafeOptions(selectedSafe.value!)
+      }, 7000)
 
-    if (txHash)
       showPendingTransactionModal(txHash, chainId)
+    }
   }
 }
 
@@ -103,14 +106,17 @@ async function handleDeleteSigner() {
     if (!thresholdSuccess)
       return
 
-    setTimeout(() => {
-      getSafeOptions(selectedSafe.value!)
-    }, 3000)
-
     const txHash = await removeSignerWithThreshold(addresses, selectedChainId.value, threshold)
 
-    if (txHash)
+    if (txHash) {
       showPendingTransactionModal(txHash, selectedChainId.value)
+
+      setTimeout(() => {
+        refreshMultisigSafe()
+        refreshSelectedSafe()
+        getSafeOptions(selectedSafe.value!)
+      }, 7000)
+    }
 
     selectedAddresses.value = []
     selectedChainId.value = undefined

@@ -224,6 +224,16 @@ export const useSafe = defineStore('safe', () => {
     accountSafeMapping.value[account.value] = safeAddress.value
   }
 
+  async function refreshSelectedSafe() {
+    if (!safeAddress.value)
+      return
+
+    const safe = await getSafe(safeAddress.value)
+
+    if (safe)
+      selectedSafe.value = safe
+  }
+
   async function getChainBalances(chainId: string,
     address: string,
     tokens: string[] = []) {
@@ -757,6 +767,7 @@ export const useSafe = defineStore('safe', () => {
     safeOptions,
     getSafeOptions,
     optionsLoading,
+    refreshSelectedSafe,
   }
 }, {
   persist: {
