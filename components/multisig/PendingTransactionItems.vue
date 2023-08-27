@@ -17,6 +17,8 @@ const route = useRoute()
 const page = ref(1)
 const containerRef = ref<HTMLElement | null>(null)
 
+const key = computed(() => `multisig-${route.params.safe}-${props.chainId}-${props.activeTab}-${page.value}`)
+
 const isDetailsOpen = useCookie<boolean>(`multisig-collapse-${route.params.safe}-${props.chainId}`, {
   default: () => false,
   watch: 'shallow',
@@ -29,7 +31,7 @@ const { resume, pause } = useIntervalFn(() => {
   immediate: false,
 })
 
-const { data, refresh, pending } = useAsyncData(`multisig-${route.params.safe}-${props.chainId}-${props.activeTab}-${page.value}`, async () => {
+const { data, refresh, pending } = useAsyncData(`${key.value}`, async () => {
   try {
     if (abortController.value)
       abortController.value.abort()
@@ -136,7 +138,9 @@ watch(isCollapseAll, () => {
     isDetailsOpen.value = false
 })
 
-onUnmounted(() => pause())
+onUnmounted(() => {
+  clearNuxtData(key.value)
+})
 </script>
 
 <template>
