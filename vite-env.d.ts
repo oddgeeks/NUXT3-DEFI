@@ -501,7 +501,7 @@ interface ITokenPrice {
 interface ILogBalanceParams {
   isPublic?: boolean
   chainId: number;
-  isOnboard: boolean;
+  type: 'eoa-balances' | 'safe-balances' | 'options'
   isPublic: boolean;
 }
  

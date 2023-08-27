@@ -15,7 +15,7 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const { getSafe } = useSafe()
+const { getSafe, getSafeOptions } = useSafe()
 const { account } = useWeb3()
 const { selectedSafe, safeOptions } = storeToRefs(useSafe())
 const { isAccountCanSign } = useMultisig()
@@ -79,6 +79,10 @@ async function handleTresholdChange(chainId: string | number) {
   if (success && payload) {
     const txHash = await changeThreshold(payload, chainId)
 
+    setTimeout(() => {
+      getSafeOptions(selectedSafe.value!)
+    }, 3000)
+
     if (txHash)
       showPendingTransactionModal(txHash, chainId)
   }
@@ -98,6 +102,10 @@ async function handleDeleteSigner() {
 
     if (!thresholdSuccess)
       return
+
+    setTimeout(() => {
+      getSafeOptions(selectedSafe.value!)
+    }, 3000)
 
     const txHash = await removeSignerWithThreshold(addresses, selectedChainId.value, threshold)
 

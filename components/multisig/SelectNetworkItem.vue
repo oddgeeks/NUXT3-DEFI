@@ -8,12 +8,10 @@ const props = defineProps<{
   addresses: ISignerAddress[]
 }>()
 defineEmits(['onSelect'])
-const { selectedSafe, safeOptions } = storeToRefs(useSafe())
+const { selectedSafe } = storeToRefs(useSafe())
 const { isAccountCanSign } = useMultisig()
 const { getContactNameByAddress } = useContacts()
 const { account } = useWeb3()
-
-const option = computed(() => safeOptions.value.find((signer: any) => signer.chainId == props.option.chainId))
 
 const signers = computed(() => {
   const allSigners = selectedSafe.value?.signers || {}
