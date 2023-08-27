@@ -321,7 +321,7 @@ export function useAvocadoSafe() {
     if (clearModals)
       clearAllModals()
 
-    openReviewMultisigTransaction(payload.id, rejection)
+    openReviewMultisigTransaction(payload.id, chainId, rejection)
   }
 
   async function signExecutionData(params: IMultisigBroadcastParams, sortedSignatures: any[]) {

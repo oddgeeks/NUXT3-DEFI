@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 defineProps<{
   transactionId: string
   rejection?: boolean
+  chainId: number | string
 }>()
 
 defineEmits(['destroy'])
@@ -14,28 +15,33 @@ const { selectedSafe } = storeToRefs(useSafe())
 <template>
   <div>
     <div
-      class="inline-flex gap-7.5 flex-col items-center justify-center text-center w-full"
+      class="inline-flex gap-5 flex-col items-center justify-center text-center w-full"
     >
       <SvgoCheckCircle
-        class="text-white success-circle"
+        class="text-white w-10 h-10 success-circle"
       />
 
-      <div class="flex flex-col gap-[15px]">
+      <div class="flex flex-col gap-5 w-full">
         <h1 class="text-lg font-semibold">
           <template v-if="!rejection">
-            Your transaction was successfully proposed.
+            Transaction Proposed
           </template>
           <template v-else>
-            Your transaction rejection was submitted
+            Rejection Transaction Proposed
           </template>
         </h1>
-        <NuxtLink
-          :to="`/multisig/${selectedSafe?.safe_address}/pending-transactions/${transactionId}`"
-          class="text-slate-400 text-xs text-center leading-5 font-medium"
-          @click="$emit('destroy')"
+
+        <div
+          class="dark:bg-slate-800 w-full bg-slate-100 bg px-[18px] py-[14px] rounded-5 flex items-center justify-between"
         >
-          View transaction
-        </NuxtLink>
+          <p class="flex gap-3 items-center">
+            <ChainLogo class="w-[26px] h-[26px]" :chain="chainId" />
+            <span class="text-sm text-slate-400">{{ chainIdToName(chainId) }}</span>
+          </p>
+          <CommonButton as="NuxtLink" :to="`/multisig/${selectedSafe?.safe_address}/pending-transactions/${transactionId}`" size="sm" @click="$emit('destroy')">
+            View Transaction
+          </CommonButton>
+        </div>
       </div>
     </div>
   </div>
