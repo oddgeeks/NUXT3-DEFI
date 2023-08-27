@@ -140,14 +140,11 @@ export const useSafe = defineStore('safe', () => {
   }
 
   async function fetchSafeInstanceses() {
-    const [_selectedSafe, _mainSafe, _multisigSafe, _gasBalance] = await Promise.all([
+    const [_selectedSafe, _mainSafe, _multisigSafe] = await Promise.all([
       getSafe(safeAddress.value),
       getSafe(mainSafeAddress.value),
       getSafe(multiSigSafeAddress.value),
-      getGasBalance(safeAddress.value),
     ])
-
-    gasBalance.value = toBN(_gasBalance).div(10 ** 18).toFixed()
 
     if (!_selectedSafe) {
       const isMultisig = isAddressEqual(safeAddress.value, multiSigSafeAddress.value)
@@ -207,7 +204,7 @@ export const useSafe = defineStore('safe', () => {
   })
 
   const getGasBalance = async (address: string) => {
-    return avoBatchProvider.getBalance(address)
+    return avoProvider.getBalance(address)
   }
 
   const getSafe = async (address: string): Promise<ISafe> => {
@@ -472,6 +469,8 @@ export const useSafe = defineStore('safe', () => {
     if (!safeAddress.value)
       return
 
+    gasBalance.value = undefined
+
     const b = await getGasBalance(safeAddress.value).then(toBN)
 
     gasBalance.value = b.div(10 ** 18).toFixed()
@@ -665,6 +664,7 @@ export const useSafe = defineStore('safe', () => {
       return
 
     setSelectedSafe()
+    setGasBalance()
   }, {
     throttle: 500,
   })
