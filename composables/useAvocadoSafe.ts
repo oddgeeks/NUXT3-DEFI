@@ -179,7 +179,7 @@ export function useAvocadoSafe() {
       }
     })
 
-    if (!signer.value)
+    if (!selectedSafe.value)
       throw new Error('Safe not initialized')
 
     const signatureObject = {
@@ -191,7 +191,7 @@ export function useAvocadoSafe() {
       index: String(selectedSafe.value?.multisig_index || 0),
     }
 
-    if (params.signers?.length > 1) {
+    if (selectedSafe.value.multisig_index > 0 || params.signers.length > 1) {
       try {
         const executionSignature = await signExecutionData(params, sortedSignatures)
 
