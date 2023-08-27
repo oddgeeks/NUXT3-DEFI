@@ -15,9 +15,6 @@ interface ISafe {
 export async function getSafeOptionsByChain(safe: ISafe, chainId: string | number, provider: ethers.providers.StaticJsonRpcProvider): Promise<ISafeOptions> {
   const obj = {} as ISafeOptions
 
-  const deployedChains = safe?.deployed || {}
-  const deployed = !!deployedChains[chainId]
-
   const implInstance = AvoMultisigImplementation__factory.connect(safe.safe_address, provider)
 
   const multisigForwarderInstance = MultisigForwarder__factory.connect(
@@ -49,14 +46,10 @@ export async function getSafeOptionsByChain(safe: ISafe, chainId: string | numbe
   }
 
   function nonce(): Promise<number> {
-    if (!deployed)
-      return new Promise (resolve => resolve(0))
     return multisigForwarderInstance.avoNonce(safe.owner_address, safe.multisig_index).then(nonce => toBN(nonce).toNumber())
   }
 
   function threshold(): Promise<number> {
-    if (!deployed)
-      return new Promise(resolve => resolve(1))
     return implInstance.requiredSigners()
   }
 
