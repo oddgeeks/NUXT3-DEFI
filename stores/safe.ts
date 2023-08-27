@@ -348,7 +348,7 @@ export const useSafe = defineStore('safe', () => {
             .map(t => t.address),
           ...customTokenAddress,
         ]).then((data) => {
-          logBalance({ isPublic: true, chainId: network.chainId, isOnboard: !updateState })
+          logBalance({ isPublic: true, chainId: network.chainId, type: !updateState ? 'eoa-balances' : 'safe-balances' })
 
           if (updateState)
             updateBalances(data)
@@ -367,7 +367,7 @@ export const useSafe = defineStore('safe', () => {
               params,
             }) as IBalance[]
 
-            logBalance({ isPublic: false, chainId: network.chainId, isOnboard: !updateState })
+            logBalance({ isPublic: false, chainId: network.chainId, type: !updateState ? 'eoa-balances' : 'safe-balances' })
 
             if (updateState)
               updateBalances(data)
@@ -509,7 +509,22 @@ export const useSafe = defineStore('safe', () => {
                 multisig: safe.multisig,
                 owner_address: safe.owner_address,
               },
+            }).then((e) => {
+              logBalance({
+                chainId: network.chainId,
+                type: 'options',
+                isPublic: false,
+              })
+
+              return e
             })
+          }).then((e) => {
+            logBalance({
+              chainId: network.chainId,
+              type: 'options',
+              isPublic: true,
+            })
+            return e
           })
         }),
       )
