@@ -284,9 +284,9 @@ export function logBalance(params: ILogBalanceParams) {
   const { isPublic, chainId, type } = params
 
   const prefix = {
-    'eoa-balances': 'Eoa Balance',
-    'safe-balances': 'Main Balance',
-    'options': 'Options',
+    'eoa-balances': 'EOA Balance',
+    'safe-balances': 'Safe Balance',
+    'options': 'MS Config',
   } as Record<ILogBalanceParams['type'], string>
 
   const prefixText = prefix[type]
