@@ -465,7 +465,7 @@ export const useSafe = defineStore('safe', () => {
       return
 
     await until(selectedSafe).toMatch(s => !!s)
-    await until(balances.value.loading).toMatch(s => !s)
+    await until(() => balances.value.loading).toMatch(s => !s)
 
     if (selectedSafe.value?.multisig === 1 && selectedSafe.value?.multisig_index > 0)
       return
@@ -494,7 +494,7 @@ export const useSafe = defineStore('safe', () => {
 
   async function getSafeOptions(safe: ISafe) {
     try {
-      await until(balances.value.loading).toMatch(s => !s)
+      await until(() => balances.value.loading).toMatch(s => !s)
 
       const options = await Promise.all(
         availableNetworks.map((network) => {
@@ -640,7 +640,7 @@ export const useSafe = defineStore('safe', () => {
       optionsLoading.value = false
     }
   }, {
-    debounce: 2800,
+    debounce: 1500,
   })
 
   watchThrottled(
