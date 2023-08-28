@@ -295,12 +295,14 @@ async function fetchBestRoute() {
         chainId: data.value.toChainId,
         actions: targetActions,
         metadata,
+        nonce: -1,
       })
 
       sMessage = await generateMultisigSignatureMessage({
         chainId: data.value.fromChainId,
         actions: sourceActions,
         metadata,
+        nonce: -1,
       })
     }
 
