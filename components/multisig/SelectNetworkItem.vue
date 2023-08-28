@@ -24,6 +24,9 @@ const signers = computed(() => {
 })
 
 const disabled = computed(() => {
+  if (isAllSignersDuplicate.value)
+    return true
+
   const [address] = props.addresses
 
   return props.addresses?.length === 1 && signers.value.some(i => getAddress(i) === getAddress(address.address))
@@ -31,6 +34,10 @@ const disabled = computed(() => {
 
 const duplicateAddresses = computed(() => {
   return props.addresses.filter(address => signers.value.some(i => getAddress(i) === getAddress(address.address)))
+})
+
+const isAllSignersDuplicate = computed(() => {
+  return duplicateAddresses.value.length === props.addresses.length
 })
 
 const canSign = computed(() => {
