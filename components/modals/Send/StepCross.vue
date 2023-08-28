@@ -279,7 +279,6 @@ async function fetchBestRoute() {
         data.value.toChainId,
         {
           metadata,
-          version: '2.0.0',
         },
       )
 
@@ -288,7 +287,6 @@ async function fetchBestRoute() {
         data.value.fromChainId,
         {
           metadata,
-          version: '2.0.0',
         },
       )
     }
