@@ -12,7 +12,7 @@ interface ISafe {
   deployed: Record<string, boolean>
 }
 
-export async function getSafeOptionsByChain(safe: ISafe, chainId: string | number, provider: ethers.providers.StaticJsonRpcProvider): Promise<ISafeOptions> {
+export async function getSafeOptionsByChain(safe: ISafe, chainId: string | number, provider: ethers.providers.StaticJsonRpcProvider, server = false): Promise<ISafeOptions> {
   const obj = {} as ISafeOptions
 
   const implInstance = AvoMultisigImplementation__factory.connect(safe.safe_address, provider)
@@ -100,6 +100,7 @@ export async function getSafeOptionsByChain(safe: ISafe, chainId: string | numbe
   obj.currentVersion = _currentVersion
   obj.safeAddress = safe.safe_address
   obj.ownerAddress = safe.owner_address
+  obj.server = server
 
   return obj
 }

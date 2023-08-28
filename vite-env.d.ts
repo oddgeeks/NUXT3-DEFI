@@ -76,6 +76,7 @@ interface ISafeOptions {
   safeAddress: string,
   ownerAddress: string,
   notdeployed: boolean,
+  server: boolean,
 }
 
 interface IAvocadoTransaction {
