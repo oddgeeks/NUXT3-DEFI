@@ -15,7 +15,7 @@ const { safeTotalBalanceMapping, legacySafeAddress } = storeToRefs(useSafe())
 const { checkSafeIsActualMultisig } = useMultisig()
 
 const isMultisig = computed(() => checkSafeIsActualMultisig(props.safe))
-const walletName = useLocalStorage(`safe-${props.safe?.safe_address}`, isMultisig.value ? 'Multisig' : 'Personal')
+const walletName = useLocalStorage(`safe-label-${props.safe?.safe_address}`, isMultisig.value ? 'MultiSig' : 'Personal')
 
 const isLegacySafeExist = computed(() => !!legacySafeAddress.value)
 
@@ -96,7 +96,7 @@ function handleClick() {
           :class="isMultisig ? 'bg-purple text-purple' : !v2 ? 'bg-slate-400 text-slate-400' : 'bg-primary text-primary'"
           class="rounded-lg bg-opacity-[14%] text-xs py-0.5 px-2 font-medium"
         >
-          {{ isMultisig ? 'MULTISIG' : v2 ? 'PERSONAL' : "LEGACY" }}
+          {{ isMultisig ? 'TEAM' : v2 ? 'PERSONAL' : "LEGACY" }}
         </p>
       </div>
       <p class="text-orange text-xs font-medium">
