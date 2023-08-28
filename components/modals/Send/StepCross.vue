@@ -390,6 +390,7 @@ async function fetchCrossFee() {
 
     // @ts-expect-error
     const resp = await $fetch('/api/cross-chain/estimate', {
+      retry: 3,
       method: 'POST',
       body: {
         staging: !isProd,
