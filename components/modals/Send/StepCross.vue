@@ -8,10 +8,10 @@ import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 
 const { isProd } = useAppConfig()
 const { token, stepBack, data, actualAddress, targetToken } = useSend()
-const { gasBalance, safeOptions } = storeToRefs(useSafe())
+const { gasBalance, safeOptions, isSelectedSafeLegacy, selectedSafe } = storeToRefs(useSafe())
 const { account } = useWeb3()
 const { toWei, fromWei } = useBignumber()
-const { safeAddress, safe, tokenBalances } = useAvocadoSafe()
+const { safeAddress, safe, tokenBalances, generateMultisigSignatureMessage } = useAvocadoSafe()
 const { avoProvider } = useSafe()
 const { parseTransactionError } = useErrorHandler()
 
@@ -262,11 +262,6 @@ async function fetchBestRoute() {
       })
     }
 
-    const tMessage = await safe.value?.generateSignatureMessage(
-      targetActions,
-      data.value.toChainId,
-    )
-
     const metadata = encodeCrossTransferMetadata({
       fromToken: token.value?.address,
       toToken: targetToken.value?.address,
@@ -275,13 +270,39 @@ async function fetchBestRoute() {
       receiver: actualAddress.value,
     })
 
-    const sMessage = await safe.value?.generateSignatureMessage(
-      sourceActions,
-      data.value.fromChainId,
-      {
+    let tMessage
+    let sMessage
+
+    if (isSelectedSafeLegacy.value) {
+      tMessage = await safe.value?.generateSignatureMessage(
+        targetActions,
+        data.value.toChainId,
+        {
+          metadata,
+        },
+      )
+
+      sMessage = await safe.value?.generateSignatureMessage(
+        sourceActions,
+        data.value.fromChainId,
+        {
+          metadata,
+        },
+      )
+    }
+    else {
+      tMessage = await generateMultisigSignatureMessage({
+        chainId: data.value.toChainId,
+        actions: targetActions,
         metadata,
-      },
-    )
+      })
+
+      sMessage = await generateMultisigSignatureMessage({
+        chainId: data.value.fromChainId,
+        actions: sourceActions,
+        metadata,
+      })
+    }
 
     targetMessage.value = tMessage
     sourceMessage.value = sMessage
@@ -388,24 +409,38 @@ async function fetchCrossFee() {
     const sourceVersion = source?.notdeployed ? source?.latestVersion : source?.currentVersion
     const targetVersion = target?.notdeployed ? target?.latestVersion : target?.currentVersion
 
-    // @ts-expect-error
-    const resp = await $fetch('/api/cross-chain/estimate', {
-      method: 'POST',
-      body: {
-        staging: !isProd,
-        sourceChainId: String(data.value.fromChainId),
-        targetChainId: String(data.value.toChainId),
-        target: targetMessage.value,
-        source: sourceMessage.value,
-        bridge: {
-          token: targetToken.value?.address,
-          amount: toWei(data.value.amount, targetToken.value?.decimals!),
-        },
-        signer: account.value,
-        avocadoSafe: safeAddress.value,
-        sourceVersion: parse(sourceVersion)?.major,
-        targetVersion: parse(targetVersion)?.major,
+    const body = {
+      staging: !isProd,
+      sourceChainId: String(data.value.fromChainId),
+      targetChainId: String(data.value.toChainId),
+      target: targetMessage.value,
+      source: sourceMessage.value,
+      bridge: {
+        token: targetToken.value?.address,
+        amount: toWei(data.value.amount, targetToken.value?.decimals!),
       },
+      avocadoSafe: safeAddress.value,
+      sourceVersion: parse(sourceVersion)?.major,
+      targetVersion: parse(targetVersion)?.major,
+    }
+
+    if (isSelectedSafeLegacy.value) {
+      Object.assign(body, {
+        signer: account.value,
+      })
+    }
+    else {
+      Object.assign(body, {
+        owner: selectedSafe.value?.owner_address,
+        index: String(selectedSafe.value?.multisig_index),
+      })
+    }
+
+    // @ts-expect-error
+    const resp = await $fetch(`/api/cross-chain/${isSelectedSafeLegacy.value ? 'estimate' : 'multisig-estimate'}`, {
+      retry: 3,
+      method: 'POST',
+      body,
     }) as ICrossEstimatedFee
 
     if (toBN(resp.target?.fee).isNaN() || toBN(resp.source?.fee).isNaN()) {
