@@ -1794,9 +1794,9 @@
     xxhashjs "^0.2.2"
 
 "@instadapp/avocado-dev@npm:@instadapp/avocado@dev":
-  version "0.0.0-dev.606d1e6"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.606d1e6.tgz#88a5d7a631a8ec54c9ed1195826cb30b3da02e52"
-  integrity sha512-sDFRGxArLTNxKN16b7MYuOvX2mja2vp0LC3eQKYxmkfRCbURgPoLRZzWw0kEN5dZIT4bUCS/uZE80w3ZqoX/uQ==
+  version "0.0.0-dev.624a33c"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.624a33c.tgz#15ec27f28b0f3e9bcfdacd6e9523b77e50f58428"
+  integrity sha512-yvWW0i21snFTt53h7nW1MboJO0rhdsHzj/dr6v394GJwyYh+/5MiKEQLSMTRhKwm2oHf432olphh00Z2dgl8Rg==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/bytes" "^5.7.0"
