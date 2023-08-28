@@ -994,19 +994,7 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
-      <CommonNotification
-        v-if="!!error"
-        type="error"
-        :text="error"
-      >
-        <template #action>
-          <button v-if="swapDetails.data?.aggregators?.length! > 1 " type="button" class="text-xs" @click="setAnotherRoute">
-            <span>Retry</span>
-          </button>
-        </template>
-      </CommonNotification>
       <EstimatedFee
-        v-else
         :chain-id="toChainId"
         :loading="feePending"
         :data="data"
