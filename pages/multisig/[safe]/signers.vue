@@ -81,6 +81,15 @@ async function handleDeleteSigner() {
   }
 }
 
+function handleAddSignerModal() {
+  // clear all signed states
+  for (const network of availableNetworks) {
+    clearNuxtState(`signed-${network.chainId}`)
+    clearNuxtState(`executed-${network.chainId}`)
+  }
+  openAddSignerModal()
+}
+
 watch(selectedAddresses, () => {
   setTimeout(() => {
     if (selectedAddresses.value.length === 0)
@@ -100,7 +109,7 @@ watch(selectedAddresses, () => {
           Signers are addresses that are required to sign transactions before they can be executed on<br> the blockchain.
         </span>
         <fieldset :disabled="isSafeDoesNotMatch" class="flex items-center gap-7.5 sm:w-auto w-full justify-between self-start">
-          <button class="flex items-center text-xs disabled:text-slate-400 text-primary gap-2.5 whitespace-nowrap" @click="openAddSignerModal()">
+          <button class="flex items-center text-xs disabled:text-slate-400 text-primary gap-2.5 whitespace-nowrap" @click="handleAddSignerModal()">
             <div class="bg-current w-4.5 h-4.5 rounded-full flex">
               <SvgoPlus class="text-white m-auto w-2 h-2" />
             </div>

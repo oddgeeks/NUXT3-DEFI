@@ -247,7 +247,7 @@ export function useAvocadoSafe() {
       refreshNuxtData(`${selectedSafe.value?.safe_address}-${params.targetChainId}-threshold`)
       refreshSelectedSafe()
       getSafeOptions(selectedSafe.value!)
-    }, 10000)
+    }, 15000)
 
     return transactionHash
   }

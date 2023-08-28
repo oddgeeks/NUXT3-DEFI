@@ -10,12 +10,11 @@ const props = defineProps<{
 const emit = defineEmits(['destroy', 'update:modelValue'])
 
 const pending = ref(false)
-const signed = ref(false)
-const executed = ref(false)
+const signed = useState(`signed-${props.chainId}`, () => false)
+const executed = useState(`executed-${props.chainId}`, () => false)
 
 const { addSignersWithThreshold } = useAvocadoSafe()
 const { selectedSafe } = storeToRefs(useSafe())
-const { getSafeOptions, refreshSelectedSafe } = useSafe()
 const { addContact, safeContacts } = useContacts()
 const { parseTransactionError } = useErrorHandler()
 
@@ -54,11 +53,6 @@ async function handleSign() {
 
     if (txHash) {
       executed.value = true
-      setTimeout(async () => {
-        refreshNuxtData(`${selectedSafe.value?.safe_address}-signers`)
-        refreshSelectedSafe()
-        getSafeOptions(selectedSafe.value!)
-      }, 7000)
 
       showPendingTransactionModal(txHash, props.chainId)
     }
