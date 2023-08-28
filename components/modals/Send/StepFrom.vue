@@ -7,7 +7,7 @@ import type { IToken } from '~/stores/tokens'
 defineEmits(['destroy'])
 
 const { safeAddress } = useAvocadoSafe()
-const { isSelectedSafeLegacy } = storeToRefs(useSafe())
+const { isSafeMultisig } = storeToRefs(useMultisig())
 
 const { authorisedNetworks } = useAuthorities()
 
@@ -222,7 +222,6 @@ onMounted(() => {
         <SvgoInfo2
           class="mr-2.5 h-4 w-4 svg-gray-info rounded-full"
         />
-        <!-- {{ sendDescription }} -->
         <div v-if="isCrossChain" class="flex items-center">
           Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;from&nbsp;<ChainLogo class="w-4 h-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}&nbsp;to Receiver on&nbsp;<ChainLogo class="w-4 h-4 shrink-0" :chain="data.toChainId" />&nbsp;{{ targetNetwork }}
         </div>
@@ -231,7 +230,7 @@ onMounted(() => {
         </div>
       </div>
     </Transition>
-    <div v-if="toCrossChainNetworks?.length > 1 && isSelectedSafeLegacy" class="flex gap-2.5 items-center">
+    <div v-if="toCrossChainNetworks?.length > 1 && !isSafeMultisig" class="flex gap-2.5 items-center">
       <button
         :class="{
           'dark:text-white text-slate-900': isCrossChain,

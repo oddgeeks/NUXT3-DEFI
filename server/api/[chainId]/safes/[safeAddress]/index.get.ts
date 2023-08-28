@@ -70,5 +70,5 @@ export default defineEventHandler(async (event) => {
     owner_address,
     safe_address: safeAddress,
     deployed,
-  }, chainId, provider)
+  }, chainId, provider, true)
 })

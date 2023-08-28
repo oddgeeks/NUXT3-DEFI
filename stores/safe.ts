@@ -500,42 +500,36 @@ export const useSafe = defineStore('safe', () => {
         availableNetworks.map((network) => {
           const provider = getRpcBatchProviderByChainId(network.chainId)
 
-          return getSafeOptionsByChain(safe, network.chainId, provider).catch((e) => {
-            const msg = 'Failed to get safe options by public provider'
-            console.log(msg, e)
+          return getSafeOptionsByChain(safe, network.chainId, provider)
+            .catch((e) => {
+              const msg = 'Failed to get safe options by public provider'
+              console.log(msg, e)
 
-            const error = parseTransactionError(e)
+              const error = parseTransactionError(e)
 
-            logActionToSlack({
-              account: account.value,
-              message: `${msg}: ${error.formatted}`,
-              type: 'error',
-              action: 'network',
+              logActionToSlack({
+                account: account.value,
+                message: `${msg}: ${error.formatted}`,
+                type: 'error',
+                action: 'network',
+              })
+
+              return http(`/api/${network.chainId}/safes/${safe.safe_address}`, {
+                params: {
+                  multisig_index: safe.multisig_index,
+                  multisig: safe.multisig,
+                  owner_address: safe.owner_address,
+                },
+              })
             })
-
-            return http(`/api/${network.chainId}/safes/${safe.safe_address}`, {
-              params: {
-                multisig_index: safe.multisig_index,
-                multisig: safe.multisig,
-                owner_address: safe.owner_address,
-              },
-            }).then((e) => {
+            .then((e) => {
               logBalance({
                 chainId: network.chainId,
                 type: 'options',
-                isPublic: false,
+                isPublic: !e?.server,
               })
-
               return e
             })
-          }).then((e) => {
-            logBalance({
-              chainId: network.chainId,
-              type: 'options',
-              isPublic: true,
-            })
-            return e
-          })
         }),
       )
 
