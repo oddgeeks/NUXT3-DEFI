@@ -65,7 +65,7 @@ async function openModal({
   const destroy = () => {
     modals.value = modals.value.filter(m => m.id !== id)
 
-    if (!modals.value.length)
+    if (!modals.value?.length)
       repositionScroll()
   }
 
@@ -117,6 +117,11 @@ async function openModal({
   })
 }
 
+function clearAllModals() {
+  modals.value = []
+  repositionScroll()
+}
+
 function adjustScroll() {
   const scrollBarWidth = window.innerWidth - document.body.clientWidth
 
@@ -135,5 +140,6 @@ export function useModal() {
     openSnackbar,
     openModal,
     lastModal,
+    clearAllModals,
   }
 }

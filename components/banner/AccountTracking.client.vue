@@ -1,8 +1,44 @@
 <script setup lang="ts">
-const router = useRouter()
-const { trackingAccount } = useAccountTrack()
+import { getAddress } from 'ethers/lib/utils'
 
-function disconnect() {
+const router = useRouter()
+const route = useRoute()
+const { trackingAccount } = useAccountTrack()
+const { getSafes } = useSafe()
+const { accountSafeMapping } = storeToRefs(useSafe())
+
+async function disconnect() {
+  const selectedEOAAddress = window.ethereum.selectedAddress
+  const paramSafe = route.params.safe as string
+
+  if (paramSafe && selectedEOAAddress) {
+    const { data: safes } = await getSafes(selectedEOAAddress)
+
+    const isSafeExist = safes.some(safe => safe.multisig === 1 && getAddress(safe.safe_address) === getAddress(paramSafe))
+    const fallbackMultisigSafe = safes.find(safe => safe.multisig === 1)
+    const cachedSafeAddress = accountSafeMapping.value[getAddress(selectedEOAAddress)]
+
+    if (isSafeExist) {
+      trackingAccount.value = ''
+      router.go(0)
+      return
+    }
+    else if (cachedSafeAddress || fallbackMultisigSafe) {
+      const actualSafeAddress = cachedSafeAddress || fallbackMultisigSafe?.safe_address!
+      const matched = route.matched[0]?.path || ''
+      const path = matched.replace(':safe()', actualSafeAddress)
+
+      trackingAccount.value = ''
+
+      if (path)
+        window.location.assign(path)
+      else
+        window.location.assign('/')
+
+      return
+    }
+  }
+
   trackingAccount.value = ''
   router.go(0)
 }

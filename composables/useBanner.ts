@@ -5,7 +5,8 @@ import { gt } from 'semver'
 const isVersionUpdateBannerHidden = ref(false)
 
 export function useBanner() {
-  const { gasBalance } = storeToRefs(useSafe())
+  const { gasBalance, safeOptions } = storeToRefs(useSafe())
+  const { isSafeMultisig } = storeToRefs(useMultisig())
   const { account, chainId } = useWeb3()
 
   const wcStoreV2 = useWalletConnectV2()
@@ -14,8 +15,6 @@ export function useBanner() {
   const isHideWelcomeBanner = useLocalStorage('hide-welcome-banner', false)
   const isHideRabbyBanner = useLocalStorage('hide-rabby-banner', false)
   const isOnboardHidden = useLocalStorage('hide-onboard', false)
-
-  const allNetworkVersions = useNuxtData('allNetworkVersions')
 
   const showWelcomeBanner = computed(() => {
     if (!account.value)
@@ -46,13 +45,16 @@ export function useBanner() {
       return false
     if (isOnboardHidden.value)
       return false
+    if (isSafeMultisig.value)
+      return false
+
     return true
   })
 
   const showVersionUpdateBanner = computed(() => {
     if (!account.value)
       return false
-    const allVersions = allNetworkVersions.data.value as NetworkVersion[]
+    const allVersions = safeOptions.value
     if (!allVersions?.length)
       return false
     if (isVersionUpdateBannerHidden.value)
@@ -70,7 +72,7 @@ export function useBanner() {
   const unstableDappNetworks = computed(() => {
     if (!wcStoreV2.sessions?.length)
       return []
-    if (!allNetworkVersions.data.value?.length)
+    if (!safeOptions.value?.length)
       return []
 
     return false

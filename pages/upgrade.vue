@@ -6,18 +6,18 @@ definePageMeta({
 })
 
 const { account } = useWeb3()
-const { data } = useNuxtData('allNetworkVersions')
+const { safeOptions, optionsLoading } = storeToRefs(useSafe())
 
 useEagerConnect()
 
 const sortByVersion = computed(() => {
-  return data.value?.sort((a: NetworkVersion, b: NetworkVersion) => {
+  return safeOptions.value?.sort((a, b) => {
     return gt(a.latestVersion || '0.0.0', b.latestVersion || '0.0.0') ? -1 : 1
   })
 })
 
 const mostRecentVersion = computed(() => {
-  return data.value?.sort((a: NetworkVersion, b: NetworkVersion) => {
+  return safeOptions.value?.sort((a, b) => {
     return gt(a.latestVersion || '0.0.0', b.latestVersion || '0.0.0') ? -1 : 1
   })[0]?.latestVersion
 })
@@ -26,8 +26,9 @@ const mostRecentVersion = computed(() => {
 <template>
   <div class="px-5 sm:mx-auto max-w-[880px] w-full flex-1 mt-3">
     <div class="mb-5 sm:mb-7.5 max-w-[796px] w-full">
-      <h1 class="text-xl sm:text-3xl font-bold leading-7.5 mb-2.5">
+      <h1 class="text-xl flex items-center gap-2 sm:text-3xl font-bold leading-7.5 mb-2.5">
         Upgrade your Avocado Wallet
+        <SvgSpinner v-if="optionsLoading" class="text-primary" />
       </h1>
       <h2 class="text-slate-400 leading-6 font-medium text-xs sm:text-sm">
         Avocado wallet is a Smart Contract wallet, it is recommended that you
@@ -36,7 +37,7 @@ const mostRecentVersion = computed(() => {
     </div>
     <div class="h-full relative mb-7.5 sm:mb-0">
       <div
-        :class="{ 'blur h-full': !account || !data }"
+        :class="{ 'blur h-full': !account || !safeOptions }"
         class="dark:bg-gray-850 bg-slate-50 rounded-5 sm:rounded-[25px] flex-1 relative"
       >
         <table class="table w-full">
@@ -57,9 +58,9 @@ const mostRecentVersion = computed(() => {
           </thead>
           <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
             <NetworkUpgradeRow
-              v-for="network in sortByVersion"
-              :key="network.chainId"
-              :network="network"
+              v-for="options in sortByVersion"
+              :key="options.chainId"
+              :options="options"
               :recent-version="mostRecentVersion"
             />
           </tbody>

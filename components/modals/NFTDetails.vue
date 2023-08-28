@@ -7,10 +7,16 @@ const props = defineProps<{
 }>()
 defineEmits(['destroy'])
 
+const { checkNetworkIsAuthorised } = useAuthorities()
+
 const [expanded, toggle] = useToggle(false)
 
 provide('expanded', expanded)
 provide('toggle', toggle)
+
+const isNotAuthorised = computed(() => {
+  return !checkNetworkIsAuthorised(props.asset.chainId)
+})
 
 // const isContractERC1155 = computed(() => props.asset.contractType === 'ERC1155')
 
@@ -60,9 +66,15 @@ provide('toggle', toggle)
           </ul>
         </div>
       </details>
-      <CommonButton class="justify-center w-full" size="lg" @click="$emit('destroy'), openSendNFTModal(asset)">
-        Send NFT
-      </CommonButton>
+      <div
+        v-tippy="{
+          content: isNotAuthorised ? `You are not authorized to interact with tokens on ${chainIdToName(asset.chainId)}` : undefined,
+        }"
+      >
+        <CommonButton :disabled="isNotAuthorised" class="justify-center w-full" size="lg" @click="$emit('destroy'), openSendNFTModal(asset)">
+          Send NFT
+        </CommonButton>
+      </div>
     </template>
   </div>
 </template>

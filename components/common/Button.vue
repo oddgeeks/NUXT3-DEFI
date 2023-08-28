@@ -4,6 +4,7 @@ interface ButtonProps {
   size?: 'md' | 'lg' | 'sm'
   loading?: boolean
   as?: 'button' | 'a' | 'NuxtLink'
+  disabled?: boolean
 }
 
 const props = withDefaults(defineProps<ButtonProps>(), {
@@ -56,7 +57,7 @@ const componentToShow = computed(() => {
       },
     ]"
     class="font-semibold inline-flex disabled:pointer-events-none disabled:select-none"
-    :disabled="loading"
+    :disabled="disabled || loading"
   >
     <slot name="prefix" />
     <slot v-if="!loading" />

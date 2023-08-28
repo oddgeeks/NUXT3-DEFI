@@ -1,4 +1,8 @@
 import { ethers } from 'ethers'
+import { getAddress } from 'ethers/lib/utils'
+
+// @ts-expect-error
+import * as XXH from 'xxhashjs'
 
 export const injectFavicon = function (src: string) {
   const head = document.querySelector('head')!
@@ -101,8 +105,8 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
     }
   })
 
-  const formattedDiscountedAmountMin = formatDecimal(minAmountAfterDiscount, 2)
-  const formattedDiscountedAmount = formatDecimal(maxAmountAfterDiscount, 2)
+  const formattedDiscountedAmountMin = formatDecimal(minAmountAfterDiscount)
+  const formattedDiscountedAmount = formatDecimal(maxAmountAfterDiscount)
 
   const isEqual = formattedMin === formattedMax
 
@@ -229,6 +233,32 @@ export const signingMethods = [
   'wallet_scanQRCode',
 ]
 
+export function generateColor(address: string): string {
+  const hash = XXH.h32(address, 0xABCD).toNumber()
+
+  const hue = hash % 360
+  const saturation = 80 + (hash % 30)
+  const lightness = 70 + (hash % 20)
+
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`
+}
+
+export function formatSigners(input: ISafe['signers']): ISigner[] {
+  const result = Object.entries(input || {}).reduce((acc: ISigner[], [key, value]: [string, string[]]) => {
+    value.forEach((address: string) => {
+      let existing = acc.find((item: ISigner) => item.address === address)
+      if (!existing) {
+        existing = { address, chainIds: [] }
+        acc.push(existing)
+      }
+      existing.chainIds.push(key)
+    })
+    return acc
+  }, [])
+
+  return result
+}
+
 export function formatProtocol(protocol: string) {
   return (
     new Map([
@@ -238,6 +268,54 @@ export function formatProtocol(protocol: string) {
       ['kyber-v1', 'Kyber Network'],
     ]).get(protocol) || protocol
   )
+}
+
+export const networksSimulationNotSupported = [1313161554]
+
+export function generateNumber(min: number, max: number) {
+  const numbers = []
+  for (let i = min; i <= max; i++)
+    numbers.push(i)
+
+  return numbers
+}
+
+export function logBalance(params: ILogBalanceParams) {
+  const { isPublic, chainId, type } = params
+
+  const prefix = {
+    'eoa-balances': 'EOA Balance',
+    'safe-balances': 'Safe Balance',
+    'options': 'MS Config',
+  } as Record<ILogBalanceParams['type'], string>
+
+  const prefixText = prefix[type]
+
+  const style1 = 'color: #fff; background: #3c3c3c; padding: 4px 8px; border-radius: 4px; font-weight: bold;margin-right: 4px'
+  const style2 = 'color: #fff; background: #007bff; padding: 4px 8px; border-radius: 4px; font-weight: bold;margin-right: 4px'
+  const style3 = 'color: #fff; background: #16A34A; padding: 4px 8px; border-radius: 4px; font-weight: bold;'
+
+  console.log(
+    `%c${isPublic ? 'Public' : 'Private'}%c${prefixText}%c${chainIdToName(chainId)}`,
+    style1,
+    style2,
+    style3,
+  )
+}
+
+export const arrayFormatter = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' })
+
+export function groupBy<T>(array: T[], predicate: (v: T) => string) {
+  return array.reduce((acc, value) => {
+    (acc[predicate(value)] ||= []).push(value)
+    return acc
+  }, {} as { [key: string]: T[] })
+}
+
+export function isAddressEqual(a?: string, b?: string) {
+  if (!a || !b)
+    return false
+  return getAddress(a) === getAddress(b)
 }
 
 export function formatHealthFactor(healthFactor: string | number) {

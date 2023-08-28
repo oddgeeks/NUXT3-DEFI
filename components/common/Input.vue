@@ -4,9 +4,10 @@ import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
 const props = withDefaults(
   defineProps<{
     modelValue?: string | number | boolean | null | undefined
-    placeholder: string
+    placeholder?: string
     inputClasses?: string
     containerClasses?: string
+    disabled?: boolean
     name: string
     errorMessage?: string
     type?: 'text' | 'number' | 'numeric' | 'password' | 'email' | 'tel' | 'url' | 'search'
@@ -100,6 +101,7 @@ function handleBeforeInput(e: any) {
         :placeholder="placeholder"
         :step="step"
         :name="name"
+        :disabled="disabled"
         :min="min"
         class="placeholder-slate-400 focus-visible:!outline-none placeholder:text-sm border-none shadow-none focus:ring-0 focus:border-none bg-inherit rounded-[inherit] px-0 py-[13px] w-full"
         :class="[inputClasses]"
@@ -118,7 +120,7 @@ function handleBeforeInput(e: any) {
         'text-orange-500': errorType === 'warning',
       }"
     >
-      <SVGInfo />
+      <SVGInfo class="shrink-0" />
       {{ errorMessage }}</span>
   </div>
 </template>

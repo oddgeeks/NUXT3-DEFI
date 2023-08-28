@@ -13,9 +13,11 @@ const emit = defineEmits(['destroy'])
 const { library, account } = useWeb3()
 const { sendTransaction, tokenBalances, safeAddress }
   = useAvocadoSafe()
+const { authorisedNetworks } = useAuthorities()
 const { parseTransactionError } = useErrorHandler()
-const { getTokenByAddress } = useTokens()
+const { tokens } = storeToRefs(useTokens())
 const [isGiftActive, toggleGift] = useToggle(false)
+const isDefaultTokenSet = ref(false)
 
 const { gasBalance } = storeToRefs(useSafe())
 function computeId(usdc: IToken) {
@@ -26,9 +28,16 @@ const pendingGasAmount = useNuxtData('pending-deposit')
 
 const usdcTokens = computed(() => {
   return chainUsdcAddresses
-    .filter(usdc => usdc.chainId != 250)
+    .filter(usdc => usdc.chainId != 250 && authorisedNetworks.value?.some(n => n.chainId == usdc.chainId))
     .map((usdc: any) => {
-      const tk = getTokenByAddress(usdc.address, usdc.chainId)!
+      const tk = tokens.value.find(
+        t =>
+          String(t.chainId) === String(usdc.chainId)
+          && t.address.toLowerCase() === usdc.address.toLowerCase())
+
+      if (!tk)
+        return
+
       return {
         id: computeId(tk),
         ...tk,
@@ -36,6 +45,7 @@ const usdcTokens = computed(() => {
         balance: getUSDCBalance(usdc.chainId, usdc.address)?.balance,
       }
     })
+    .filter(Boolean)
     .sort((a: any, b: any) => toBN(b.balance).minus(a.balance).toNumber())
 })
 
@@ -68,11 +78,7 @@ const { handleSubmit, errors, meta, resetForm } = useForm({
 const { value: amount, meta: amountMeta } = useField<string>('amount')
 const { value: id, setValue } = useField<string>(
   'id',
-  {},
-  { initialValue: usdcTokens.value[0].id },
 )
-
-console.log(id.value)
 
 // TODO:
 const token = computed(() => usdcTokens.value.find((tk: any) => tk.id === id.value))
@@ -153,7 +159,15 @@ const onSubmit = handleSubmit(async () => {
       {
         metadata,
       },
+      'topup',
     )
+
+    setTimeout(() => {
+      refreshNuxtData('pending-deposit')
+    }, 1000)
+
+    if (!transactionHash)
+      return
 
     logActionToSlack({
       action: 'topup',
@@ -191,10 +205,17 @@ const onSubmit = handleSubmit(async () => {
   loading.value = false
 })
 
-onMounted(() => {
-  const mostBalancedChain = usdcTokens.value[0].id
-  if (mostBalancedChain)
-    setValue(mostBalancedChain)
+watch(usdcTokens, () => {
+  if (usdcTokens.value?.length > 0 && !isDefaultTokenSet.value) {
+    const mostBalancedChain = usdcTokens.value[0]?.id
+
+    if (mostBalancedChain) {
+      setValue(mostBalancedChain)
+      isDefaultTokenSet.value = true
+    }
+  }
+}, {
+  immediate: true,
 })
 </script>
 
@@ -279,7 +300,8 @@ onMounted(() => {
           class="flex justify-between items-center leading-5 text-sm sm:text-base"
         >
           <span>Amount</span>
-          <span class="uppercase">{{ formatDecimal(token?.balance) }} {{ token?.symbol }}</span>
+          <SvgSpinner v-if="!usdcTokens?.length" class="text-primary" />
+          <span v-else class="uppercase">{{ formatDecimal(token?.balance || 0) }} {{ token?.symbol }}</span>
         </div>
         <CommonInput
           v-model="amount"
@@ -287,6 +309,7 @@ onMounted(() => {
           :error-message="amountMeta.dirty ? errors.amount : ''"
           name="amount"
           placeholder="Enter amount"
+          autofocus
         >
           <template #suffix>
             <button

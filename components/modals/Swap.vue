@@ -49,12 +49,13 @@ const { tokens } = storeToRefs(useTokens())
 const { toWei, fromWei } = useBignumber()
 const { parseTransactionError } = useErrorHandler()
 const { account } = useWeb3()
+const { authorisedNetworks } = useAuthorities()
 
 const toChainId = ref<string>(props.chainId)
 const tokenAddress = ref<string>(props.address)
-const networks = availableNetworks.filter(
+const networks = computed(() => authorisedNetworks.value?.filter(
   network => network.chainId !== 1101,
-)
+))
 
 const slippages = [
   { value: '0.1', label: '0.1%' },
@@ -466,12 +467,11 @@ const onSubmit = handleSubmit(async () => {
       {
         metadata,
       },
+      'swap',
     )
 
-    if (!transactionHash) {
-      // tracking mode
+    if (!transactionHash)
       return
-    }
 
     const buyAmt = fromWei(
       swapDetails.value?.data?.data.buyTokenAmount || 0,
@@ -994,19 +994,7 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
-      <CommonNotification
-        v-if="!!error"
-        type="error"
-        :text="error"
-      >
-        <template #action>
-          <button v-if="swapDetails.data?.aggregators?.length! > 1 " type="button" class="text-xs" @click="setAnotherRoute">
-            <span>Retry</span>
-          </button>
-        </template>
-      </CommonNotification>
       <EstimatedFee
-        v-else
         :chain-id="toChainId"
         :loading="feePending"
         :data="data"

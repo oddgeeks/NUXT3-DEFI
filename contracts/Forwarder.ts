@@ -42,76 +42,6 @@ export declare namespace IAvoWalletV1 {
   };
 }
 
-export declare namespace AvoCoreStructs {
-  export type ActionStruct = {
-    target: PromiseOrValue<string>;
-    data: PromiseOrValue<BytesLike>;
-    value: PromiseOrValue<BigNumberish>;
-    operation: PromiseOrValue<BigNumberish>;
-  };
-
-  export type ActionStructOutput = [string, string, BigNumber, BigNumber] & {
-    target: string;
-    data: string;
-    value: BigNumber;
-    operation: BigNumber;
-  };
-
-  export type CastParamsStruct = {
-    actions: AvoCoreStructs.ActionStruct[];
-    id: PromiseOrValue<BigNumberish>;
-    avoSafeNonce: PromiseOrValue<BigNumberish>;
-    salt: PromiseOrValue<BytesLike>;
-    source: PromiseOrValue<string>;
-    metadata: PromiseOrValue<BytesLike>;
-  };
-
-  export type CastParamsStructOutput = [
-    AvoCoreStructs.ActionStructOutput[],
-    BigNumber,
-    BigNumber,
-    string,
-    string,
-    string
-  ] & {
-    actions: AvoCoreStructs.ActionStructOutput[];
-    id: BigNumber;
-    avoSafeNonce: BigNumber;
-    salt: string;
-    source: string;
-    metadata: string;
-  };
-
-  export type CastForwardParamsStruct = {
-    gas: PromiseOrValue<BigNumberish>;
-    gasPrice: PromiseOrValue<BigNumberish>;
-    validAfter: PromiseOrValue<BigNumberish>;
-    validUntil: PromiseOrValue<BigNumberish>;
-  };
-
-  export type CastForwardParamsStructOutput = [
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber
-  ] & {
-    gas: BigNumber;
-    gasPrice: BigNumber;
-    validAfter: BigNumber;
-    validUntil: BigNumber;
-  };
-
-  export type SignatureParamsStruct = {
-    signature: PromiseOrValue<BytesLike>;
-    signer: PromiseOrValue<string>;
-  };
-
-  export type SignatureParamsStructOutput = [string, string] & {
-    signature: string;
-    signer: string;
-  };
-}
-
 export declare namespace IAvoWalletV2 {
   export type ActionStruct = {
     target: PromiseOrValue<string>;
@@ -150,109 +80,43 @@ export declare namespace IAvoWalletV2 {
   };
 }
 
-export declare namespace AvoForwarderStructs {
-  export type AddressBoolStruct = {
-    addr: PromiseOrValue<string>;
-    value: PromiseOrValue<boolean>;
-  };
-
-  export type AddressBoolStructOutput = [string, boolean] & {
-    addr: string;
-    value: boolean;
-  };
-}
-
 export interface ForwarderInterface extends utils.Interface {
   functions: {
-    "auths(address)": FunctionFragment;
     "avoFactory()": FunctionFragment;
-    "avoMultiSafeBytecode()": FunctionFragment;
-    "avoMultisigVersion(address)": FunctionFragment;
-    "avoMultisigVersionName(address)": FunctionFragment;
     "avoSafeBytecode()": FunctionFragment;
     "avoSafeNonce(address)": FunctionFragment;
-    "avoSafeNonceMultisig(address)": FunctionFragment;
     "avoWalletVersion(address)": FunctionFragment;
     "avoWalletVersionName(address)": FunctionFragment;
-    "broadcasters(address)": FunctionFragment;
     "computeAddress(address)": FunctionFragment;
-    "computeAddressMultisig(address)": FunctionFragment;
     "execute(address,(address,bytes,uint256)[],uint256,uint256,address,bytes,bytes)": FunctionFragment;
-    "executeMultisigV3(address,((address,bytes,uint256,uint256)[],uint256,int256,bytes32,address,bytes),(uint256,uint256,uint256,uint256),(bytes,address)[])": FunctionFragment;
     "executeV1(address,(address,bytes,uint256)[],uint256,uint256,address,bytes,bytes)": FunctionFragment;
     "executeV2(address,(address,bytes,uint256,uint256)[],(uint256,uint256,address,uint256,bytes),bytes)": FunctionFragment;
-    "executeV3(address,((address,bytes,uint256,uint256)[],uint256,int256,bytes32,address,bytes),(uint256,uint256,uint256,uint256),(bytes,address))": FunctionFragment;
-    "initialize(address)": FunctionFragment;
-    "isAuth(address)": FunctionFragment;
-    "isBroadcaster(address)": FunctionFragment;
-    "owner()": FunctionFragment;
-    "reinitialize(address,address[])": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-    "updateAuths((address,bool)[])": FunctionFragment;
-    "updateBroadcasters((address,bool)[])": FunctionFragment;
+    "initialize()": FunctionFragment;
     "verify(address,(address,bytes,uint256)[],uint256,uint256,address,bytes,bytes)": FunctionFragment;
-    "verifyMultisigV3(address,((address,bytes,uint256,uint256)[],uint256,int256,bytes32,address,bytes),(uint256,uint256,uint256,uint256),(bytes,address)[])": FunctionFragment;
     "verifyV1(address,(address,bytes,uint256)[],uint256,uint256,address,bytes,bytes)": FunctionFragment;
     "verifyV2(address,(address,bytes,uint256,uint256)[],(uint256,uint256,address,uint256,bytes),bytes)": FunctionFragment;
-    "verifyV3(address,((address,bytes,uint256,uint256)[],uint256,int256,bytes32,address,bytes),(uint256,uint256,uint256,uint256),(bytes,address))": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "auths"
       | "avoFactory"
-      | "avoMultiSafeBytecode"
-      | "avoMultisigVersion"
-      | "avoMultisigVersionName"
       | "avoSafeBytecode"
       | "avoSafeNonce"
-      | "avoSafeNonceMultisig"
       | "avoWalletVersion"
       | "avoWalletVersionName"
-      | "broadcasters"
       | "computeAddress"
-      | "computeAddressMultisig"
       | "execute"
-      | "executeMultisigV3"
       | "executeV1"
       | "executeV2"
-      | "executeV3"
       | "initialize"
-      | "isAuth"
-      | "isBroadcaster"
-      | "owner"
-      | "reinitialize"
-      | "renounceOwnership"
-      | "transferOwnership"
-      | "updateAuths"
-      | "updateBroadcasters"
       | "verify"
-      | "verifyMultisigV3"
       | "verifyV1"
       | "verifyV2"
-      | "verifyV3"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "auths",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "avoFactory",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "avoMultiSafeBytecode",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "avoMultisigVersion",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "avoMultisigVersionName",
-    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "avoSafeBytecode",
@@ -260,10 +124,6 @@ export interface ForwarderInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "avoSafeNonce",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "avoSafeNonceMultisig",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -275,15 +135,7 @@ export interface ForwarderInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "broadcasters",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "computeAddress",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "computeAddressMultisig",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -296,15 +148,6 @@ export interface ForwarderInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<BytesLike>,
       PromiseOrValue<BytesLike>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "executeMultisigV3",
-    values: [
-      PromiseOrValue<string>,
-      AvoCoreStructs.CastParamsStruct,
-      AvoCoreStructs.CastForwardParamsStruct,
-      AvoCoreStructs.SignatureParamsStruct[]
     ]
   ): string;
   encodeFunctionData(
@@ -329,46 +172,8 @@ export interface ForwarderInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "executeV3",
-    values: [
-      PromiseOrValue<string>,
-      AvoCoreStructs.CastParamsStruct,
-      AvoCoreStructs.CastForwardParamsStruct,
-      AvoCoreStructs.SignatureParamsStruct
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "initialize",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isAuth",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isBroadcaster",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "reinitialize",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateAuths",
-    values: [AvoForwarderStructs.AddressBoolStruct[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateBroadcasters",
-    values: [AvoForwarderStructs.AddressBoolStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "verify",
@@ -380,15 +185,6 @@ export interface ForwarderInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<BytesLike>,
       PromiseOrValue<BytesLike>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "verifyMultisigV3",
-    values: [
-      PromiseOrValue<string>,
-      AvoCoreStructs.CastParamsStruct,
-      AvoCoreStructs.CastForwardParamsStruct,
-      AvoCoreStructs.SignatureParamsStruct[]
     ]
   ): string;
   encodeFunctionData(
@@ -412,40 +208,14 @@ export interface ForwarderInterface extends utils.Interface {
       PromiseOrValue<BytesLike>
     ]
   ): string;
-  encodeFunctionData(
-    functionFragment: "verifyV3",
-    values: [
-      PromiseOrValue<string>,
-      AvoCoreStructs.CastParamsStruct,
-      AvoCoreStructs.CastForwardParamsStruct,
-      AvoCoreStructs.SignatureParamsStruct
-    ]
-  ): string;
 
-  decodeFunctionResult(functionFragment: "auths", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "avoFactory", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "avoMultiSafeBytecode",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "avoMultisigVersion",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "avoMultisigVersionName",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "avoSafeBytecode",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "avoSafeNonce",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "avoSafeNonceMultisig",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -457,100 +227,27 @@ export interface ForwarderInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "broadcasters",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "computeAddress",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "computeAddressMultisig",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "executeMultisigV3",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "executeV1", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "executeV2", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "executeV3", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "isAuth", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "isBroadcaster",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "reinitialize",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateAuths",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateBroadcasters",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "verify", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "verifyMultisigV3",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "verifyV1", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "verifyV2", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "verifyV3", data: BytesLike): Result;
 
   events: {
-    "AuthUpdated(address,bool)": EventFragment;
-    "BroadcasterUpdated(address,bool)": EventFragment;
     "ExecuteFailed(address,address,address,bytes,string)": EventFragment;
     "Executed(address,address,address,bytes)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AuthUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BroadcasterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ExecuteFailed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Executed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
-
-export interface AuthUpdatedEventObject {
-  auth: string;
-  status: boolean;
-}
-export type AuthUpdatedEvent = TypedEvent<
-  [string, boolean],
-  AuthUpdatedEventObject
->;
-
-export type AuthUpdatedEventFilter = TypedEventFilter<AuthUpdatedEvent>;
-
-export interface BroadcasterUpdatedEventObject {
-  broadcaster: string;
-  status: boolean;
-}
-export type BroadcasterUpdatedEvent = TypedEvent<
-  [string, boolean],
-  BroadcasterUpdatedEventObject
->;
-
-export type BroadcasterUpdatedEventFilter =
-  TypedEventFilter<BroadcasterUpdatedEvent>;
 
 export interface ExecuteFailedEventObject {
   avoSafeOwner: string;
@@ -586,18 +283,6 @@ export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
-export interface OwnershipTransferredEventObject {
-  previousOwner: string;
-  newOwner: string;
-}
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  OwnershipTransferredEventObject
->;
-
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
-
 export interface Forwarder extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -625,33 +310,11 @@ export interface Forwarder extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    auths(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     avoFactory(overrides?: CallOverrides): Promise<[string]>;
-
-    avoMultiSafeBytecode(overrides?: CallOverrides): Promise<[string]>;
-
-    avoMultisigVersion(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    avoMultisigVersionName(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
 
     avoSafeBytecode(overrides?: CallOverrides): Promise<[string]>;
 
     avoSafeNonce(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    avoSafeNonceMultisig(
       owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -666,17 +329,7 @@ export interface Forwarder extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    broadcasters(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     computeAddress(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    computeAddressMultisig(
       owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string]>;
@@ -689,14 +342,6 @@ export interface Forwarder extends BaseContract {
       source_: PromiseOrValue<string>,
       metadata_: PromiseOrValue<BytesLike>,
       signature_: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    executeMultisigV3(
-      from_: PromiseOrValue<string>,
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -719,53 +364,7 @@ export interface Forwarder extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    executeV3(
-      from_: PromiseOrValue<string>,
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signatureParams_: AvoCoreStructs.SignatureParamsStruct,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     initialize(
-      owner_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    isAuth(
-      auth_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    isBroadcaster(
-      broadcaster_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    owner(overrides?: CallOverrides): Promise<[string]>;
-
-    reinitialize(
-      owner_: PromiseOrValue<string>,
-      allowedBroadcasters_: PromiseOrValue<string>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    updateAuths(
-      authsStatus_: AvoForwarderStructs.AddressBoolStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    updateBroadcasters(
-      broadcastersStatus_: AvoForwarderStructs.AddressBoolStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -777,14 +376,6 @@ export interface Forwarder extends BaseContract {
       source_: PromiseOrValue<string>,
       metadata_: PromiseOrValue<BytesLike>,
       signature_: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    verifyMultisigV3(
-      from_: PromiseOrValue<string>,
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -806,43 +397,13 @@ export interface Forwarder extends BaseContract {
       signature_: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    verifyV3(
-      from_: PromiseOrValue<string>,
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signatureParams_: AvoCoreStructs.SignatureParamsStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
   };
 
-  auths(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   avoFactory(overrides?: CallOverrides): Promise<string>;
-
-  avoMultiSafeBytecode(overrides?: CallOverrides): Promise<string>;
-
-  avoMultisigVersion(
-    owner_: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  avoMultisigVersionName(
-    owner_: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<string>;
 
   avoSafeBytecode(overrides?: CallOverrides): Promise<string>;
 
   avoSafeNonce(
-    owner_: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  avoSafeNonceMultisig(
     owner_: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -857,17 +418,7 @@ export interface Forwarder extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  broadcasters(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   computeAddress(
-    owner_: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  computeAddressMultisig(
     owner_: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<string>;
@@ -880,14 +431,6 @@ export interface Forwarder extends BaseContract {
     source_: PromiseOrValue<string>,
     metadata_: PromiseOrValue<BytesLike>,
     signature_: PromiseOrValue<BytesLike>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  executeMultisigV3(
-    from_: PromiseOrValue<string>,
-    params_: AvoCoreStructs.CastParamsStruct,
-    forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-    signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -910,53 +453,7 @@ export interface Forwarder extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  executeV3(
-    from_: PromiseOrValue<string>,
-    params_: AvoCoreStructs.CastParamsStruct,
-    forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-    signatureParams_: AvoCoreStructs.SignatureParamsStruct,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   initialize(
-    owner_: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  isAuth(
-    auth_: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  isBroadcaster(
-    broadcaster_: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  reinitialize(
-    owner_: PromiseOrValue<string>,
-    allowedBroadcasters_: PromiseOrValue<string>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  renounceOwnership(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  transferOwnership(
-    newOwner: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  updateAuths(
-    authsStatus_: AvoForwarderStructs.AddressBoolStruct[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  updateBroadcasters(
-    broadcastersStatus_: AvoForwarderStructs.AddressBoolStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -968,14 +465,6 @@ export interface Forwarder extends BaseContract {
     source_: PromiseOrValue<string>,
     metadata_: PromiseOrValue<BytesLike>,
     signature_: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  verifyMultisigV3(
-    from_: PromiseOrValue<string>,
-    params_: AvoCoreStructs.CastParamsStruct,
-    forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-    signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -998,42 +487,12 @@ export interface Forwarder extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  verifyV3(
-    from_: PromiseOrValue<string>,
-    params_: AvoCoreStructs.CastParamsStruct,
-    forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-    signatureParams_: AvoCoreStructs.SignatureParamsStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
-    auths(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     avoFactory(overrides?: CallOverrides): Promise<string>;
-
-    avoMultiSafeBytecode(overrides?: CallOverrides): Promise<string>;
-
-    avoMultisigVersion(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    avoMultisigVersionName(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<string>;
 
     avoSafeBytecode(overrides?: CallOverrides): Promise<string>;
 
     avoSafeNonce(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    avoSafeNonceMultisig(
       owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1048,17 +507,7 @@ export interface Forwarder extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    broadcasters(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     computeAddress(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    computeAddressMultisig(
       owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -1071,14 +520,6 @@ export interface Forwarder extends BaseContract {
       source_: PromiseOrValue<string>,
       metadata_: PromiseOrValue<BytesLike>,
       signature_: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    executeMultisigV3(
-      from_: PromiseOrValue<string>,
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1101,53 +542,7 @@ export interface Forwarder extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    executeV3(
-      from_: PromiseOrValue<string>,
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signatureParams_: AvoCoreStructs.SignatureParamsStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    initialize(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    isAuth(
-      auth_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    isBroadcaster(
-      broadcaster_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    reinitialize(
-      owner_: PromiseOrValue<string>,
-      allowedBroadcasters_: PromiseOrValue<string>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateAuths(
-      authsStatus_: AvoForwarderStructs.AddressBoolStruct[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateBroadcasters(
-      broadcastersStatus_: AvoForwarderStructs.AddressBoolStruct[],
-      overrides?: CallOverrides
-    ): Promise<void>;
+    initialize(overrides?: CallOverrides): Promise<void>;
 
     verify(
       from_: PromiseOrValue<string>,
@@ -1157,14 +552,6 @@ export interface Forwarder extends BaseContract {
       source_: PromiseOrValue<string>,
       metadata_: PromiseOrValue<BytesLike>,
       signature_: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    verifyMultisigV3(
-      from_: PromiseOrValue<string>,
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1186,35 +573,9 @@ export interface Forwarder extends BaseContract {
       signature_: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    verifyV3(
-      from_: PromiseOrValue<string>,
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signatureParams_: AvoCoreStructs.SignatureParamsStruct,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
   };
 
   filters: {
-    "AuthUpdated(address,bool)"(
-      auth?: PromiseOrValue<string> | null,
-      status?: PromiseOrValue<boolean> | null
-    ): AuthUpdatedEventFilter;
-    AuthUpdated(
-      auth?: PromiseOrValue<string> | null,
-      status?: PromiseOrValue<boolean> | null
-    ): AuthUpdatedEventFilter;
-
-    "BroadcasterUpdated(address,bool)"(
-      broadcaster?: PromiseOrValue<string> | null,
-      status?: PromiseOrValue<boolean> | null
-    ): BroadcasterUpdatedEventFilter;
-    BroadcasterUpdated(
-      broadcaster?: PromiseOrValue<string> | null,
-      status?: PromiseOrValue<boolean> | null
-    ): BroadcasterUpdatedEventFilter;
-
     "ExecuteFailed(address,address,address,bytes,string)"(
       avoSafeOwner?: PromiseOrValue<string> | null,
       avoSafeAddress?: PromiseOrValue<string> | null,
@@ -1245,36 +606,10 @@ export interface Forwarder extends BaseContract {
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
-
-    "OwnershipTransferred(address,address)"(
-      previousOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      previousOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
   };
 
   estimateGas: {
-    auths(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     avoFactory(overrides?: CallOverrides): Promise<BigNumber>;
-
-    avoMultiSafeBytecode(overrides?: CallOverrides): Promise<BigNumber>;
-
-    avoMultisigVersion(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    avoMultisigVersionName(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     avoSafeBytecode(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1283,11 +618,6 @@ export interface Forwarder extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    avoSafeNonceMultisig(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     avoWalletVersion(
       owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1298,17 +628,7 @@ export interface Forwarder extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    broadcasters(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     computeAddress(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    computeAddressMultisig(
       owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1321,14 +641,6 @@ export interface Forwarder extends BaseContract {
       source_: PromiseOrValue<string>,
       metadata_: PromiseOrValue<BytesLike>,
       signature_: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    executeMultisigV3(
-      from_: PromiseOrValue<string>,
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1351,53 +663,7 @@ export interface Forwarder extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    executeV3(
-      from_: PromiseOrValue<string>,
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signatureParams_: AvoCoreStructs.SignatureParamsStruct,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     initialize(
-      owner_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    isAuth(
-      auth_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isBroadcaster(
-      broadcaster_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    reinitialize(
-      owner_: PromiseOrValue<string>,
-      allowedBroadcasters_: PromiseOrValue<string>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    updateAuths(
-      authsStatus_: AvoForwarderStructs.AddressBoolStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    updateBroadcasters(
-      broadcastersStatus_: AvoForwarderStructs.AddressBoolStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1409,14 +675,6 @@ export interface Forwarder extends BaseContract {
       source_: PromiseOrValue<string>,
       metadata_: PromiseOrValue<BytesLike>,
       signature_: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    verifyMultisigV3(
-      from_: PromiseOrValue<string>,
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1438,37 +696,10 @@ export interface Forwarder extends BaseContract {
       signature_: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    verifyV3(
-      from_: PromiseOrValue<string>,
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signatureParams_: AvoCoreStructs.SignatureParamsStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    auths(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     avoFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    avoMultiSafeBytecode(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    avoMultisigVersion(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    avoMultisigVersionName(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     avoSafeBytecode(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1477,11 +708,6 @@ export interface Forwarder extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    avoSafeNonceMultisig(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     avoWalletVersion(
       owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1492,17 +718,7 @@ export interface Forwarder extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    broadcasters(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     computeAddress(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    computeAddressMultisig(
       owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1515,14 +731,6 @@ export interface Forwarder extends BaseContract {
       source_: PromiseOrValue<string>,
       metadata_: PromiseOrValue<BytesLike>,
       signature_: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    executeMultisigV3(
-      from_: PromiseOrValue<string>,
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1545,53 +753,7 @@ export interface Forwarder extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    executeV3(
-      from_: PromiseOrValue<string>,
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signatureParams_: AvoCoreStructs.SignatureParamsStruct,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     initialize(
-      owner_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    isAuth(
-      auth_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isBroadcaster(
-      broadcaster_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    reinitialize(
-      owner_: PromiseOrValue<string>,
-      allowedBroadcasters_: PromiseOrValue<string>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateAuths(
-      authsStatus_: AvoForwarderStructs.AddressBoolStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateBroadcasters(
-      broadcastersStatus_: AvoForwarderStructs.AddressBoolStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1603,14 +765,6 @@ export interface Forwarder extends BaseContract {
       source_: PromiseOrValue<string>,
       metadata_: PromiseOrValue<BytesLike>,
       signature_: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    verifyMultisigV3(
-      from_: PromiseOrValue<string>,
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1630,14 +784,6 @@ export interface Forwarder extends BaseContract {
       actions_: IAvoWalletV2.ActionStruct[],
       params_: IAvoWalletV2.CastParamsStruct,
       signature_: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    verifyV3(
-      from_: PromiseOrValue<string>,
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signatureParams_: AvoCoreStructs.SignatureParamsStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

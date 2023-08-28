@@ -2,12 +2,22 @@
 import GasSVG from '~/assets/images/icons/gas.svg?component'
 import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg?component'
 
-defineProps<{
+const props = defineProps<{
   data: ICalculatedFee
   loading?: boolean
   error?: string
   wrapperClass?: string
+  showNetworkInfo?: boolean
+  hideErrorInfo?: boolean
+  hideDiscount?: boolean
 }>()
+
+const discountAvailable = computed(() => {
+  if (props.hideDiscount)
+    return false
+
+  return props.data?.discountAvailable
+})
 </script>
 
 <template>
@@ -17,7 +27,12 @@ defineProps<{
       class="flex flex-col gap-3 items-center min-h-12 justify-between bg-slate-50 dark:bg-gray-850 px-5 py-[15px] rounded-5"
     >
       <div class="flex justify-between w-full">
+        <span v-if="showNetworkInfo" class="text-xs flex items-center gap-3">
+          <ChainLogo class="w-6 h-6" :chain="data.chainId" />
+          {{ chainIdToName(data.chainId) }}
+        </span>
         <span
+          v-else
           class="text-xs text-slate-400 font-medium gap-2 inline-flex items-center"
         >
           <GasSVG class="w-4" />
@@ -27,13 +42,13 @@ defineProps<{
         <template v-else-if="data">
           <span
             :class="[
-              data.discountAvailable ? 'text-slate-400' : '',
+              discountAvailable ? 'text-slate-400' : '',
               { 'text-red-alert': error },
             ]"
             class="text-xs inline-flex items-center gap-2.5"
           >
             <img
-              v-if="!data.discountAvailable"
+              v-if="!discountAvailable"
               class="w-[18px] h-[18px]"
               width="18"
               height="18"
@@ -44,7 +59,7 @@ defineProps<{
         </template>
       </div>
 
-      <template v-if="data.discountAvailable && !loading">
+      <template v-if="discountAvailable && !loading">
         <div
           v-for="detail in data.discountDetails"
           :key="detail.name"
@@ -89,9 +104,9 @@ defineProps<{
         </div>
       </template>
     </div>
-    <CommonNotification v-if="error" type="error" :text="error">
+    <CommonNotification v-if="error && !hideErrorInfo" type="error" :text="error">
       <template v-if="error.includes('gas')" #action>
-        <CommonButton size="sm" @click="openTopUpGasModal()">
+        <CommonButton class="whitespace-nowrap" size="sm" @click="openTopUpGasModal()">
           Top-up
         </CommonButton>
       </template>

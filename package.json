@@ -18,12 +18,13 @@
     "@coinbase/wallet-sdk": "3.0.4",
     "@fontsource/source-code-pro": "^4.5.12",
     "@headlessui/vue": "^1.7.12",
-    "@instadapp/avocado": "^0.4.4",
+    "@instadapp/avocado": "^0.4.5",
     "@instadapp/avocado-dev": "npm:@instadapp/avocado@dev",
     "@instadapp/utils": "^0.4.6",
     "@instadapp/vue-web3-nuxt": "^0.10.1",
     "@nuxtjs/color-mode": "^3.3.0",
     "@nuxtjs/tailwindcss": "^6.8.0",
+    "@pinia-plugin-persistedstate/nuxt": "^1.1.1",
     "@pinia/nuxt": "^0.4.11",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.3",
@@ -73,7 +74,7 @@
     "yup": "^0.32.11"
   },
   "dependencies": {
-    "@instadapp/avocado-base": "0.0.61",
+    "@instadapp/avocado-base": "0.0.67",
     "@splidejs/vue-splide": "^0.6.12",
     "@walletconnect/utils": "^2.9.2",
     "alchemy-sdk": "^2.7.4",
@@ -81,6 +82,7 @@
     "d3": "^7.8.4",
     "error-serializer": "^5.1.0",
     "fuse.js": "^6.6.2",
-    "semver": "^7.3.8"
+    "semver": "^7.3.8",
+    "xxhashjs": "^0.2.2"
   }
 }

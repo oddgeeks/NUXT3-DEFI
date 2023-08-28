@@ -13,6 +13,10 @@ export const avoChainName = isProd
   ? AVO_PROD_CHAIN_NAME
   : AVO_STAGING_CHAIN_NAME
 
+export const multisigForwarderProxyAddress = isProd
+  ? '0x46978CD477A496028A18c02F07ab7F35EDBa5A54'
+  : '0x6f444b80f944FA5Ce3f74cC0e4e1371844B5F91e'
+
 export const forwarderProxyAddress = isProd
   ? AVO_PROD_FORWARDER_ADDR
   : AVO_STAGING_FORWARDER_ADDR
@@ -37,6 +41,9 @@ export const blockQueryURL = 'https://blockquery.instadapp.io'
 const swapAggregatorURLProd = 'https://swap-aggregator.instadapp.io'
 const swapAggregatorURLStaging = 'https://swap-aggregator.instad.app'
 
+const multisigURLStaging = 'https://multisig.api.avocado.instad.app'
+const multisigURLProd = 'https://multisig-api.avocado.instadapp.io'
+
 const swapAggregatorTokenProd = 'hxBA1uxwaGWN0xcpPOncVJ3Tk7FdFxY7g3NX28R14C'
 const swapAggregatorTokenStaging = 'tZIvMelWpiGgfZyDHJLVEygCvXC'
 
@@ -59,3 +66,4 @@ export const warnedDapps = ['https://app.safe.global', 'https://mint.fun', 'http
 export const bannedDapps = ['https://www.orbiter.finance', 'https://mirror.xyz', 'https://blog.summer.fi', 'https://summer.fi', 'https://opensea.io']
 
 export const bridgeDisabledChains = [250]
+export const multisigURL = isProd ? multisigURLProd : multisigURLStaging

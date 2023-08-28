@@ -33,7 +33,9 @@ export interface AvoFactoryProxyInterface extends utils.Interface {
     "avoWalletImpl()": FunctionFragment;
     "computeAddress(address)": FunctionFragment;
     "deploy(address)": FunctionFragment;
+    "deployWithVersion(address,address)": FunctionFragment;
     "initialize()": FunctionFragment;
+    "isAvoSafe(address)": FunctionFragment;
     "setAvoWalletImpl(address)": FunctionFragment;
   };
 
@@ -44,7 +46,9 @@ export interface AvoFactoryProxyInterface extends utils.Interface {
       | "avoWalletImpl"
       | "computeAddress"
       | "deploy"
+      | "deployWithVersion"
       | "initialize"
+      | "isAvoSafe"
       | "setAvoWalletImpl"
   ): FunctionFragment;
 
@@ -69,8 +73,16 @@ export interface AvoFactoryProxyInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "deployWithVersion",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "initialize",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isAvoSafe",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setAvoWalletImpl",
@@ -94,7 +106,12 @@ export interface AvoFactoryProxyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "deploy", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "deployWithVersion",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "isAvoSafe", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setAvoWalletImpl",
     data: BytesLike
@@ -102,10 +119,12 @@ export interface AvoFactoryProxyInterface extends utils.Interface {
 
   events: {
     "AvoSafeDeployed(address,address)": EventFragment;
+    "AvoSafeDeployedWithVersion(address,address,address)": EventFragment;
     "Initialized(uint8)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AvoSafeDeployed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AvoSafeDeployedWithVersion"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
 }
 
@@ -119,6 +138,19 @@ export type AvoSafeDeployedEvent = TypedEvent<
 >;
 
 export type AvoSafeDeployedEventFilter = TypedEventFilter<AvoSafeDeployedEvent>;
+
+export interface AvoSafeDeployedWithVersionEventObject {
+  owner: string;
+  avoSafe: string;
+  version: string;
+}
+export type AvoSafeDeployedWithVersionEvent = TypedEvent<
+  [string, string, string],
+  AvoSafeDeployedWithVersionEventObject
+>;
+
+export type AvoSafeDeployedWithVersionEventFilter =
+  TypedEventFilter<AvoSafeDeployedWithVersionEvent>;
 
 export interface InitializedEventObject {
   version: number;
@@ -170,9 +202,20 @@ export interface AvoFactoryProxy extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    deployWithVersion(
+      owner_: PromiseOrValue<string>,
+      avoWalletVersion_: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    isAvoSafe(
+      avoSafe_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     setAvoWalletImpl(
       avoWalletImpl_: PromiseOrValue<string>,
@@ -196,9 +239,20 @@ export interface AvoFactoryProxy extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  deployWithVersion(
+    owner_: PromiseOrValue<string>,
+    avoWalletVersion_: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   initialize(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  isAvoSafe(
+    avoSafe_: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   setAvoWalletImpl(
     avoWalletImpl_: PromiseOrValue<string>,
@@ -222,7 +276,18 @@ export interface AvoFactoryProxy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    deployWithVersion(
+      owner_: PromiseOrValue<string>,
+      avoWalletVersion_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     initialize(overrides?: CallOverrides): Promise<void>;
+
+    isAvoSafe(
+      avoSafe_: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     setAvoWalletImpl(
       avoWalletImpl_: PromiseOrValue<string>,
@@ -239,6 +304,17 @@ export interface AvoFactoryProxy extends BaseContract {
       owner?: PromiseOrValue<string> | null,
       avoSafe?: PromiseOrValue<string> | null
     ): AvoSafeDeployedEventFilter;
+
+    "AvoSafeDeployedWithVersion(address,address,address)"(
+      owner?: PromiseOrValue<string> | null,
+      avoSafe?: PromiseOrValue<string> | null,
+      version?: PromiseOrValue<string> | null
+    ): AvoSafeDeployedWithVersionEventFilter;
+    AvoSafeDeployedWithVersion(
+      owner?: PromiseOrValue<string> | null,
+      avoSafe?: PromiseOrValue<string> | null,
+      version?: PromiseOrValue<string> | null
+    ): AvoSafeDeployedWithVersionEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
@@ -261,8 +337,19 @@ export interface AvoFactoryProxy extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    deployWithVersion(
+      owner_: PromiseOrValue<string>,
+      avoWalletVersion_: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    isAvoSafe(
+      avoSafe_: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     setAvoWalletImpl(
@@ -290,8 +377,19 @@ export interface AvoFactoryProxy extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    deployWithVersion(
+      owner_: PromiseOrValue<string>,
+      avoWalletVersion_: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    isAvoSafe(
+      avoSafe_: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     setAvoWalletImpl(

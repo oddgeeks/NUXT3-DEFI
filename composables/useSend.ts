@@ -1,4 +1,3 @@
-import { storeToRefs } from 'pinia'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { isAddress } from '@ethersproject/address'
@@ -40,11 +39,12 @@ export function useSend(initialSendData?: ISendData) {
 
   const { tokenBalances } = storeToRefs(useSafe())
   const { getRpcProviderByChainId } = useShared()
+  const { checkNetworkIsAuthorised } = useAuthorities()
 
   const availableTokens = computed(() =>
     tokenBalances.value.filter(
       t =>
-        gt(t.balance, '0'),
+        gt(t.balance, '0') && checkNetworkIsAuthorised(t.chainId),
     ),
   )
 
@@ -83,8 +83,6 @@ export function useSend(initialSendData?: ISendData) {
       t.symbol.toLowerCase().includes(selectedTokenSymbol),
     )
   })
-
-  const toAvailableNetworks = computed(() => availableNetworks)
 
   const { data: toTokenList, pending: tokenlistPending } = useAsyncData(async () => {
     if (data.value.fromChainId == data.value.toChainId)
@@ -210,6 +208,5 @@ export function useSend(initialSendData?: ISendData) {
     availableTokens,
     tokenlistPending,
     actualAddress,
-    toAvailableNetworks,
   }
 }

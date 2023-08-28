@@ -1,4 +1,5 @@
 import type { SessionTypes } from '@walletconnect/types'
+import ExecuteTransaction from '~~/components/modals/Multisig/ExecuteTransaction.vue'
 import Bridge from '~~/components/modals/Bridge.vue'
 import Swap from '~~/components/modals/Swap.vue'
 import PendingTransaction from '~~/components/modals/PendingTransaction.vue'
@@ -28,9 +29,21 @@ import SupportedNetworks from '~/components/modals/SupportedNetworks.vue'
 import PendingCrossTransaction from '~/components/modals/PendingCrossTransaction.vue'
 import DefiPositionDetails from '~/components/modals/DefiPositionDetails.vue'
 import QrCode from '~/components/modals/QrCode.vue'
+import AddSigner from '~/components/modals/Multisig/AddSigner.vue'
+import ReviewSigner from '~/components/modals/Multisig/ReviewSigner.vue'
+import WalletNameEdit from '~/components/modals/WalletNameEdit.vue'
+import ReviewMultisigTransaction from '~/components/modals/Multisig/ReviewTransaction.vue'
+import MultisigTransactionDetail from '~/components/modals/Multisig/TransactionDetails.vue'
+import EditNonce from '~/components/modals/Multisig/EditNonce.vue'
+import SignSigner from '~/components/modals/Multisig/SignSigner.vue'
+import DeleteSigner from '~/components/modals/Multisig/DeleteSigner.vue'
+import SignDeleteSigner from '~/components/modals/Multisig/SignDeleteSigner.vue'
+import UpdateThreshold from '~/components/modals/Multisig/UpdateThreshold.vue'
+import MultisigSelectNetwork from '~/components/modals/Multisig/SelectNetwork.vue'
 import UpdateNoticeModal from '~/components/modals/UpdateNotice.vue'
 import WelcomeModal from '~/components/modals/Welcome.vue'
 import CreateBookmark from '~/components/modals/CreateBookmark.vue'
+import ExecutionError from '~/components/modals/Multisig/ExecutionError.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -59,7 +72,7 @@ interface IWcTransactionModal {
 
 export function showPendingTransactionModal(hash: string,
   chainId: number | string,
-  type: ITxType,
+  type?: ITxType,
   async = false) {
   return openModal({
     component: PendingTransaction,
@@ -256,12 +269,16 @@ export async function openDialogModal({
   })
 }
 
-export async function openUpgradeModal(network: NetworkVersion) {
+export async function openUpgradeModal(options: ISafeOptions) {
   return openModal({
     component: UpgradeVersion,
     async: true,
     componentProps: {
-      network,
+      options,
+    },
+    options: {
+      contentClass: 'sm:!p-7.5',
+      wrapperClass: '!max-w-[510px]',
     },
   })
 }
@@ -272,11 +289,14 @@ export function openCustomTxModal() {
   })
 }
 
-export function openDeployNetworkModal(network: Network) {
+export function openDeployNetworkModal(option: ISafeOptions) {
   openModal({
     component: DeployNetwork,
     componentProps: {
-      network,
+      option,
+    },
+    options: {
+      wrapperClass: '!max-w-[560px]',
     },
   })
 }
@@ -337,7 +357,7 @@ export async function openDeleteContactModal() {
   })
 }
 
-export async function openSelectContactModal(chainId: string | number) {
+export async function openSelectContactModal(chainId?: string | number) {
   return openModal({
     component: SelectContact,
     async: true,
@@ -353,7 +373,6 @@ export function openNFTDetailsModal(NFTData: NFTData) {
     componentProps: {
       asset: NFTData,
     },
-
   })
 }
 
@@ -433,6 +452,183 @@ export function openWelcomeModal() {
   })
 }
 
+export function openAddSignerModal(addresses?: ISignerAddress[], threshold?: number) {
+  return openModal({
+    component: AddSigner,
+    componentProps: {
+      addresses,
+      defaultThreshold: threshold,
+    },
+    options: {
+      wrapperClass: 'max-w-[560px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export function openReviewSignerModal(addresses: ISignerAddress[]) {
+  return openModal({
+    component: ReviewSigner,
+    componentProps: {
+      addresses,
+    },
+    options: {
+      wrapperClass: 'max-w-[560px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export function openSignSignerModal(addresses: ISignerAddress[], chainIds: number[]) {
+  return openModal({
+    component: SignSigner,
+    componentProps: {
+      addresses,
+      chainIds,
+    },
+    options: {
+      wrapperClass: 'max-w-[560px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export function openDeleteSignerSign(address: string, chainId: number | string) {
+  return openModal({
+    component: SignDeleteSigner,
+    componentProps: {
+      address,
+      chainId,
+    },
+    options: {
+      wrapperClass: 'max-w-[560px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export function openDeleteSigner(addresses: string[], chainId: number | string) {
+  return openModal({
+    component: DeleteSigner,
+    componentProps: {
+      addresses,
+      chainId,
+    },
+    async: true,
+    options: {
+      wrapperClass: 'max-w-[560px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export async function openEditNonceModal(params: IOpenNonceModalParams) {
+  const { chainId, actions, defaultNonce, estimatedFee, rejection, rejectionId, transactionType, options = {}, metadata } = params
+  return openModal({
+    component: EditNonce,
+    componentProps: {
+      chainId,
+      actions,
+      defaultNonce,
+      estimatedFee,
+      rejection,
+      rejectionId,
+      transactionType,
+      options,
+      metadata,
+    },
+    options: {
+      wrapperClass: 'max-w-[560px]',
+      contentClass: '!p-0',
+    },
+    async: true,
+  })
+}
+
+export function openUpdateThresholdModal(chainId: number | string, additionalCount: number, {
+  activeStep = 0,
+  totalSteps = 0,
+} = {}) {
+  return openModal({
+    component: UpdateThreshold,
+    componentProps: {
+      chainId,
+      additionalCount,
+      activeStep,
+      totalSteps,
+    },
+    options: {
+      contentClass: '!p-0',
+    },
+    async: true,
+  })
+}
+
+export function openWalletNameEditModal(safe: ISafe) {
+  return openModal({
+    component: WalletNameEdit,
+    async: true,
+    componentProps: {
+      safe,
+    },
+  })
+}
+
+export function openReviewMultisigTransaction(transactionId: string, chainId: string | number, rejection = false) {
+  return openModal({
+    component: ReviewMultisigTransaction,
+    componentProps: {
+      transactionId,
+      rejection,
+      chainId,
+    },
+  })
+}
+
+export async function openMultisigTransactionDetails(transaction: IMultisigTransaction) {
+  return openModal({
+    component: MultisigTransactionDetail,
+    componentProps: {
+      transaction,
+    },
+    async: true,
+    options: {
+      wrapperClass: '!max-w-[1080px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export function openMultisigSelectNetworkModal(addresses: ISignerAddress[], defaultSelectedNetworks?: number[]) {
+  return openModal({
+    component: MultisigSelectNetwork,
+    componentProps: {
+      addresses,
+      defaultSelectedNetworks,
+    },
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[560px]',
+    },
+    async: true,
+  })
+}
+
+export function openExecuteTransactionModal(params: IOpenExecuteModalParams) {
+  const { isGasTopup = false, transaction } = params
+  return openModal({
+    component: ExecuteTransaction,
+    componentProps: {
+      transaction,
+      isGasTopup,
+    },
+    options: {
+      wrapperClass: '!max-w-[560px]',
+    },
+    async: true,
+  })
+}
+
 export async function openCreateBookmarkModal(props: CreateBookmarkProps) {
   return openModal({
     component: CreateBookmark,
@@ -442,6 +638,17 @@ export async function openCreateBookmarkModal(props: CreateBookmarkProps) {
       wrapperClass: 'max-w-[600px]',
       contentClass: '!p-0',
     },
+  })
+}
+
+export async function openExecutionErrorModal(proposalId: string, safeAddress: string) {
+  return openModal({
+    component: ExecutionError,
+    componentProps: {
+      proposalId,
+      safeAddress,
+    },
+
   })
 }
 

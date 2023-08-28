@@ -5,9 +5,17 @@ const props = defineProps<{
   targetChainId: number
   sourceChainId: number
 }>()
+
 const emit = defineEmits(['resolve'])
+
+interface SignatureType {
+  source: string | null
+  target: string | null
+}
+
 const { account } = useWeb3()
-const signatures = ref({
+const { isSelectedSafeLegacy } = storeToRefs(useSafe())
+const signatures = ref<SignatureType>({
   source: null,
   target: null,
 })
@@ -17,7 +25,7 @@ const loading = ref({
   target: false,
 })
 
-const { safe } = useAvocadoSafe()
+const { safe, signMultisigData } = useAvocadoSafe()
 const { switchToAvocadoNetwork } = useNetworks()
 
 async function handleSign(source: boolean) {
@@ -29,8 +37,10 @@ async function handleSign(source: boolean) {
   try {
     loading.value[source ? 'source' : 'target'] = true
 
-    // @ts-expect-error
-    const signature = await safe.value?.buildSignature(message, chainId)
+    const signature = isSelectedSafeLegacy.value ? await safe.value?.buildSignature(message, chainId) : await signMultisigData({ chainId, data: message })
+
+    if (!signature)
+      return
 
     if (source)
       signatures.value.source = signature
