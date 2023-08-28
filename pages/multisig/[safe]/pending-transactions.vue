@@ -63,15 +63,17 @@ const tabs = computed(() => {
       value: 'seq',
       query: 'seq',
       mobileLabel: 'Seq',
-      label: `Sequential (${seqResponse.value?.meta?.total || 0})`,
+      label: 'Sequential',
       title: 'Sequential transactions need to be executed in the order they were proposed in.',
+      count: seqResponse.value?.meta?.total || 0,
     },
     {
       value: 'nonseq',
       query: 'nonseq',
-      label: `Non-Sequential (${nonSeqResponse.value?.meta?.total || 0})`,
+      label: 'Non-Sequential',
       mobileLabel: 'Non-Seq',
       title: 'Non-Sequential transactions can be executed in any order.',
+      count: nonSeqResponse.value?.meta?.total || 0,
     },
     {
       value: undefined,
@@ -118,11 +120,14 @@ onMounted(() => {
             :class="
               tab.query === activeTab ? 'dark:bg-slate-800 bg-slate-150' : 'text-slate-400'
             "
-            class="px-4 justify-center flex-1 text-xs rounded-7.5 whitespace-nowrap py-2 laeding-5 flex items-center"
+            class="px-4 justify-center flex-1 text-xs rounded-7.5 gap-2.5 whitespace-nowrap py-2 laeding-5 flex items-center"
             @click="$router.replace({ query: { tab: tab.query } })"
           >
             <span class="sm:block hidden"> {{ tab.label }}</span>
             <span class="sm:hidden block"> {{ tab.mobileLabel || tab.label }}</span>
+            <span v-if="tab?.count" class="flex items-center justify-center min-w-[20px] h-5 px-[5px] bg-slate-500 text-xs rounded-full text-white">
+              {{ tab?.count }}
+            </span>
           </button>
         </div>
         <button :disabled="isCollapseAllDisabled" class="text-primary text-xs disabled:text-slate-400" type="button" @click="toggle(true)">

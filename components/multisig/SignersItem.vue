@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { wait } from '@instadapp/utils'
 import { getAddress } from 'ethers/lib/utils'
 
 const props = defineProps<{
@@ -10,9 +11,8 @@ const props = defineProps<{
 const { account } = useWeb3()
 const { isAccountCanSign, getRequiredSigner } = useMultisig()
 const { changeThreshold } = useAvocadoSafe()
-const { refreshSelectedSafe, getSafeOptions } = useSafe()
 
-const { selectedSafe, safeOptions } = storeToRefs(useSafe())
+const { selectedSafe, safeOptions, balances, optionsLoading } = storeToRefs(useSafe())
 
 const route = useRoute()
 
@@ -36,16 +36,22 @@ async function getActualThreshold() {
 
   const safe = route.params.safe as string
 
-  if (isSafeDoesNotMatch.value)
+  if (isSafeDoesNotMatch.value) {
+    await until(() => balances.value.loading).toMatch(s => !s)
+    await until(optionsLoading).toMatch(s => !!s)
+    await until(optionsLoading).toMatch(s => !s)
+    await wait(500)
+
     return getRequiredSigner(safe, props.chainId)
+  }
 }
 
 const throlledGetActualThreshold = useThrottleFn(getActualThreshold, 1000)
 
-const { data: threshold, refresh: refreshThreshold } = useAsyncData(`${route.params.safe}-${props.chainId}-threshold`, async () => {
+const { data: threshold } = useAsyncData(`${route.params.safe}-${props.chainId}-threshold`, async () => {
   return throlledGetActualThreshold()
 }, {
-  watch: [selectedSafe],
+  watch: [selectedSafe, isSafeDoesNotMatch],
   immediate: true,
   server: false,
   lazy: true,
@@ -61,21 +67,10 @@ async function handleTresholdChange(chainId: string | number) {
   if (success && payload) {
     const txHash = await changeThreshold(payload, chainId)
 
-    if (txHash) {
-      setTimeout(() => {
-        refreshAll()
-      }, 10000)
+    if (txHash)
 
       showPendingTransactionModal(txHash, chainId)
-    }
   }
-}
-
-async function refreshAll() {
-  refreshThreshold()
-  refreshNuxtData(`${route.params.safe}-signers`)
-  refreshSelectedSafe()
-  getSafeOptions(selectedSafe.value!)
 }
 </script>
 

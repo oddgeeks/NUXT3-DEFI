@@ -72,6 +72,9 @@ function openBridge() {
         >
           <component :is="nav.icon" class="w-4 h-4" />
           {{ nav.label }}
+          <span v-if="nav?.count" class="flex items-center justify-center min-w-[20px] h-5 px-[5px] bg-slate-500 text-xs rounded-full text-white">
+            {{ nav?.count }}
+          </span>
         </NuxtLink>
       </template>
     </div>

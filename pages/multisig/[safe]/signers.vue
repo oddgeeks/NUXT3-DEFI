@@ -10,7 +10,7 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const { getSafe, getSafeOptions, refreshSelectedSafe } = useSafe()
+const { getSafe } = useSafe()
 const { selectedSafe } = storeToRefs(useSafe())
 const { removeSignerWithThreshold } = useAvocadoSafe()
 
@@ -25,7 +25,7 @@ const isSafeDoesNotMatch = computed(() => {
   return getAddress(safe) !== getAddress(selectedSafe.value?.safe_address)
 })
 
-const { data: multisigSafe, refresh: refreshMultisigSafe } = useAsyncData(`${route.params.safe}-signers`, async () => {
+const { data: multisigSafe } = useAsyncData(`${route.params.safe}-signers`, async () => {
   const safeAddress = route.params.safe as string
   const safe = await getSafe(safeAddress)
 
@@ -73,15 +73,8 @@ async function handleDeleteSigner() {
 
     const txHash = await removeSignerWithThreshold(addresses, selectedChainId.value, threshold)
 
-    if (txHash) {
+    if (txHash)
       showPendingTransactionModal(txHash, selectedChainId.value)
-
-      setTimeout(() => {
-        refreshMultisigSafe()
-        refreshSelectedSafe()
-        getSafeOptions(selectedSafe.value!)
-      }, 7000)
-    }
 
     selectedAddresses.value = []
     selectedChainId.value = undefined
