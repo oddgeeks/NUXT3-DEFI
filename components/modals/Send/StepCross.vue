@@ -497,6 +497,24 @@ async function onSubmit() {
       message: targetMessage.value,
     })
 
+    if (!isSelectedSafeLegacy.value) {
+      Object.assign(crossSignatures.value.source, {
+        index: String(selectedSafe.value?.multisig_index),
+        signatures: [{
+          signature: crossSignatures.value.source.signature,
+          signer: account.value,
+        }],
+      })
+
+      Object.assign(crossSignatures.value.target, {
+        index: String(selectedSafe.value?.multisig_index),
+        signatures: [{
+          signature: crossSignatures.value.target.signature,
+          signer: account.value,
+        }],
+      })
+    }
+
     const avocadoHash = await avoProvider.send('api_requestCrosschainTransaction', [crossSignatures.value.source, crossSignatures.value.target])
 
     if (!avocadoHash) {
