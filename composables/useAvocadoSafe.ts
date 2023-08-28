@@ -270,8 +270,8 @@ export function useAvocadoSafe() {
 
     const params = {
       actions,
-      id: 0,
-      avoNonce,
+      id: '0',
+      avoNonce: String(avoNonce),
       salt: ethers.utils.defaultAbiCoder.encode(['uint256'], [Date.now()]),
       source: '0xE8385fB3A5F15dED06EB5E20E5A81BF43115eb8E',
       metadata: metadata || '0x00',
