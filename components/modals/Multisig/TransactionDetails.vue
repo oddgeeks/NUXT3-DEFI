@@ -14,14 +14,15 @@ const emit = defineEmits(['destroy'])
 
 const transactionRef = ref(props.transaction)
 
-const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurrentNonce, checkTransactionExecuted } = useAvocadoSafe()
+const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, checkTransactionExecuted } = useAvocadoSafe()
 const { getRequiredSigner, isAccountCanSign } = useMultisig()
 const { selectedSafe, safeOptions } = storeToRefs(useSafe())
 const { getContactNameByAddress } = useContacts()
 const { parseTransactionError } = useErrorHandler()
 const { account } = useWeb3()
-const currentNonce = ref<number>()
 const [signAndExecute, toggle] = useToggle(false)
+
+const currentNonce = computed(() => safeOptions.value?.find(i => i.chainId == props.transaction.chain_id)?.nonce)
 
 const router = useRouter()
 
@@ -301,19 +302,6 @@ async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
   }
 }
 
-async function setCurrentNonce() {
-  try {
-    currentNonce.value = await getCurrentNonce(transactionRef.value.chain_id, transactionRef.value.owner, transactionRef.value.index)
-  }
-  catch (e) {
-    console.log(e)
-  }
-}
-
-onMounted(() => {
-  setCurrentNonce()
-})
-
 onUnmounted(() => {
   const currentRoute = router.currentRoute.value
   router.push({
@@ -570,10 +558,9 @@ onUnmounted(() => {
                 Reject
               </CommonButton>
             </Tippy>
-            <div
-              v-if="isConfirmationsMatch && isSignedAlready" v-tippy="{
-                content: nonceNotMatchMessage,
-              }"
+            <Tippy
+              v-if="isConfirmationsMatch && isSignedAlready"
+              :content="nonceNotMatchMessage"
             >
               <CommonButton
                 :color="isColorRed ? 'red' : 'primary'"
@@ -581,7 +568,7 @@ onUnmounted(() => {
               >
                 {{ executing && !isTransactionExecuted ? 'Executing' : 'Execute' }}
               </CommonButton>
-            </div>
+            </Tippy>
             <Tippy v-else :content="errorMessage">
               <CommonButton :color="isColorRed ? 'red' : 'primary'" :disabled="!!errorMessage || pending.sign" :loading="pending.sign || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center !leading-5" :class="signAndExecute ? '!px-2 text-xs' : ''" @click="handleSign(transactionRef)">
                 {{ signAndExecute ? 'Sign & Execute' : isSignedAlready ? 'Signed' : 'Sign' }}
