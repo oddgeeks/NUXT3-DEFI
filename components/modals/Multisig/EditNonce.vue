@@ -39,6 +39,7 @@ const { data: seqResponse } = useAsyncData<IMultisigTransactionResponse>(`${safe
     params: {
       status: 'pending',
       nonce_type: 'seq',
+      chain_id: props.chainId,
     },
     baseURL: multisigURL,
   })
