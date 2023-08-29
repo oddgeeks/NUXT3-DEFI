@@ -467,11 +467,6 @@ export const useSafe = defineStore('safe', () => {
     await until(() => balances.value.loading).toMatch(s => !s)
     await wait(1000)
 
-    if ((selectedSafe.value?.multisig === 1 && selectedSafe.value?.multisig_index > 0)
-      || (selectedSafe.value?.multisig === 0 && selectedSafe.value?.multisig_index === 0)
-    )
-      return
-
     const resp = await getBalances(account.value)
 
     eoaBalances.value = resp.flat()
@@ -697,12 +692,14 @@ export const useSafe = defineStore('safe', () => {
     throttle: 1000,
   })
 
-  watchDebounced(account, () => {
+  const fetchDebouncedEOABalance = useDebounceFn(fetchEoaBalances, 60000)
+
+  watchThrottled(account, () => {
     eoaBalances.value = undefined
 
-    fetchEoaBalances()
+    fetchDebouncedEOABalance()
   }, {
-    debounce: 60000,
+    throttle: 1000,
   })
 
   watchThrottled(connector, () => {
