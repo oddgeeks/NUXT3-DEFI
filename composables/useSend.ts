@@ -1,6 +1,8 @@
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
-import { isAddress } from '@ethersproject/address'
+import Fuse from 'fuse.js'
+import { getAddress, isAddress } from '@ethersproject/address'
+import type { IBalance } from 'stores/safe'
 import StepFrom from '~~/components/modals/Send/StepFrom.vue'
 import StepSubmit from '~~/components/modals/Send/StepSubmit.vue'
 
@@ -26,6 +28,8 @@ const data = ref<ISendData>(defaultValues())
 const actualAddress = ref('')
 
 export function useSend(initialSendData?: ISendData) {
+  const { tokens } = storeToRefs(useTokens())
+
   const steps = [
     {
       name: 'From',
@@ -55,33 +59,7 @@ export function useSend(initialSendData?: ISendData) {
   })
 
   const targetToken = computed(() => {
-    const selectedTokenSymbol = token.value?.symbol.toLowerCase()
-
-    const ethToken = tokenBalances.value.find(t =>
-      +t.chainId == data.value.toChainId
-      && t.symbol.toLowerCase() === 'eth')
-
-    if (selectedTokenSymbol === 'weth' && ethToken)
-      return ethToken
-
-    const toToken = tokenBalances.value.find(t =>
-      +t.chainId == data.value.toChainId
-      && (token.value && t.symbol.toLowerCase() === selectedTokenSymbol))
-
-    if (toToken)
-      return toToken
-
-    const t = toTokenList.value?.find(
-      (t: any) =>
-        t.symbol.toLowerCase() === selectedTokenSymbol,
-    )
-
-    if (t)
-      return t
-
-    return toTokenList.value?.find((t: any) =>
-      t.symbol.toLowerCase().includes(selectedTokenSymbol),
-    )
+    return toTokenList.value ? toTokenList.value[0] : null
   })
 
   const { data: toTokenList, pending: tokenlistPending } = useAsyncData(async () => {
@@ -94,11 +72,12 @@ export function useSend(initialSendData?: ISendData) {
         params: {
           fromChainId: data.value.fromChainId,
           toChainId: data.value.toChainId,
+          isShortList: true,
         },
       },
     )
 
-    return result
+    return filterAndSortTokens(result, token.value?.symbol!)
   }, {
     watch: [() => data.value.toChainId],
   })
@@ -192,6 +171,29 @@ export function useSend(initialSendData?: ISendData) {
 
   const stepForward = () => {
     activeStep.value = Math.min(steps.length - 1, activeStep.value + 1)
+  }
+
+  function filterAndSortTokens(list: IBridgeTokensResult[] | IBalance[] | any[], search: string) {
+    const fuse = new Fuse(list, {
+      keys: ['symbol', 'name'],
+      threshold: 0.4,
+      shouldSort: true,
+      includeScore: true,
+    })
+
+    const sortedByMatch = fuse.search(search)
+
+    const items = sortedByMatch.map(i => i.item)
+
+    return items.filter((i) => {
+      const token = tokens.value.find(
+        t =>
+          getAddress(t.address) === getAddress(i.address)
+            && String(t.chainId) == String(i.chainId),
+      )
+
+      return !!token
+    })
   }
 
   return {

@@ -59,6 +59,13 @@ const nativeFee = computed(() => {
   return v
 })
 
+const displayTargetToken = computed(() => {
+  if (token.value?.symbol.toLowerCase() === targetToken.value?.symbol.toLowerCase())
+    return token.value
+
+  return targetToken.value
+})
+
 const nativeFeeInUsd = computed(() => {
   if (!nativeFee.value)
     return '0'
@@ -263,9 +270,9 @@ async function fetchBestRoute() {
     }
 
     const metadata = encodeCrossTransferMetadata({
-      fromToken: token.value?.address,
+      fromToken: token.value?.address!,
       toToken: targetToken.value?.address,
-      toChainId: data.value.toChainId,
+      toChainId: String(data.value.toChainId),
       amount: bestRoute.value.toAmount,
       receiver: actualAddress.value,
     })
@@ -636,12 +643,12 @@ onMounted(() => {
             <template v-if="targetToken && token?.symbol !== targetToken?.symbol">
               <ArrowRight class="text-slate-400 w-4" />
               <dd class=" items-center flex gap-2">
-                <SafeTokenLogo class="w-[18px] h-[18px]" :url="targetToken?.logoURI" />
+                <SafeTokenLogo class="w-[18px] h-[18px]" :url="displayTargetToken?.logoURI" />
                 <span class="uppercase">
-                  {{ targetToken?.symbol }}
+                  {{ displayTargetToken?.symbol }}
                 </span>
-                <span v-tippy="targetToken?.name" class="text-slate-400 max-w-[200px] truncate">
-                  ({{ targetToken?.name }})
+                <span v-tippy="displayTargetToken?.name" class="text-slate-400 max-w-[200px] truncate">
+                  ({{ displayTargetToken?.name }})
                 </span>
               </dd>
             </template>
