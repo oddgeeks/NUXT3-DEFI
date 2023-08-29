@@ -88,7 +88,11 @@ async function onSubmit() {
       {
         metadata,
       },
+      'send',
     ) as string
+
+    if (!transactionHash)
+      return
 
     logActionToSlack({
       message: `${formatDecimal(data.value.amount)} ${formatSymbol(

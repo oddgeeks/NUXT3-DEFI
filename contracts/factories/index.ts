@@ -2,8 +2,11 @@
 /* tslint:disable */
 /* eslint-disable */
 export { AvoFactoryProxy__factory } from "./AvoFactoryProxy__factory";
+export { AvoMultisigImplementation__factory } from "./AvoMultisigImplementation__factory";
+export { AvoSafeImplementation__factory } from "./AvoSafeImplementation__factory";
 export { BalanceResolver__factory } from "./BalanceResolver__factory";
 export { Erc20__factory } from "./Erc20__factory";
 export { Forwarder__factory } from "./Forwarder__factory";
 export { GaslessWallet__factory } from "./GaslessWallet__factory";
+export { MultisigForwarder__factory } from "./MultisigForwarder__factory";
 export { TokenBalanceResolver__factory } from "./TokenBalanceResolver__factory";

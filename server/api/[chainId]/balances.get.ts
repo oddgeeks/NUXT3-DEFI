@@ -2,6 +2,7 @@ import { BigNumber } from 'bignumber.js'
 import type { H3Event } from 'h3'
 import { AnkrProvider } from '@ankr.com/ankr.js'
 import collect from 'collect.js'
+import { ethers } from 'ethers'
 import type { TokenBalanceResolver } from '~~/contracts'
 import {
   TokenBalanceResolver__factory,
@@ -9,7 +10,6 @@ import {
 import type { IToken } from '~~/stores/tokens'
 import { slackIt } from '~~/server/utils'
 import { blockQueryURL } from '~~/utils/avocado'
-import { ethers } from 'ethers'
 
 let tokens: any[] = []
 let lastUpdateTokens = 0
@@ -141,6 +141,7 @@ async function getChainBalances(chainId: string,
           addresses,
         ),
         $fetch<ITokenPrice[]>(`${blockQueryURL}/${chainId}/tokens`, {
+          retry: 3,
           params: {
             sparkline: false,
             addresses,
@@ -193,10 +194,10 @@ function getQueryCustomTokens(event: H3Event) {
     : []
 }
 
-export default defineEventHandler<IBalance[]>(async (event) => {
+export default defineEventHandler<Promise<IBalance[]>>(async (event) => {
   const query = getQuery(event)
   const chainId = getRouterParam(event, 'chainId')
-  const network = availableNetworks.find(n => n.chainId == chainId)
+  const network = availableNetworks.find(n => String(n.chainId) == String(chainId))
 
   if (!network)
     return []

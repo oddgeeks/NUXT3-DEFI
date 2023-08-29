@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { Tippy } from 'vue-tippy'
 import type { IBalance } from '~/stores/safe'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 import BridgeSVG from '~/assets/images/icons/bridge.svg?component'
@@ -27,6 +28,7 @@ const {
   priceDiffClass,
   priceDiffInPercent,
   fetchLiteAPY,
+  nonAuthorised,
 } = useGraph(balance)
 
 onMounted(async () => {
@@ -132,7 +134,11 @@ function onClick() {
       </div>
     </td>
     <td class="text-right py-6 min-w-[138px]">
-      <div v-if="!summary" class="flex items-center gap-[15px] justify-center">
+      <Tippy
+        v-if="!summary"
+        :content="nonAuthorised ? `You are not authorized to interact with tokens on ${chainIdToName(balance.chainId)}` : undefined"
+        tag="div" class="flex items-center gap-[15px] justify-center"
+      >
         <CommonButton
           v-tippy="{
             arrow: true,
@@ -174,7 +180,7 @@ function onClick() {
         >
           <BridgeSVG />
         </CommonButton>
-      </div>
+      </Tippy>
       <div v-else class="flex justify-end pr-[30px]">
         <ChevronDownSVG v-if="!collapse" class="text-slate-400 w-[14px] h-[14px]" />
         <ChevronDownSVG v-else class="text-slate-400 w-[14px] h-[14px] rotate-180" />

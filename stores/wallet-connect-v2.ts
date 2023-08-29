@@ -63,12 +63,15 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
 
           const requiredChains = params.requiredNamespaces.eip155.chains ?? []
           const requiredEvents = params.requiredNamespaces.eip155.events ?? []
+          const requiredMethods = params.requiredNamespaces.eip155.methods ?? []
 
           const mergedChains = [...new Set([...chains, ...requiredChains])]
 
           const accounts = mergedChains.map((network) => {
             return `${network}:${safe.safeAddress.value}`
           })
+
+          console.log(params, requiredMethods)
 
           const approvedNamespaces = buildApprovedNamespaces({
             proposal: params,
@@ -78,7 +81,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
                 accounts,
                 methods: [
                   ...signingMethods,
-                  ...requiredEvents,
+                  ...requiredMethods,
                   'eth_sendAvocadoTransaction',
                   'eth_sendAvocadoTransactions',
                   'eth_getBalance',
@@ -86,7 +89,10 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
                   'avocado_sendTransactions',
                   'avocado_getOwner',
                 ],
-                events: ['accountsChanged', 'chainChanged'],
+                events: [
+                  ...requiredEvents,
+                  'accountsChanged',
+                  'chainChanged'],
               },
             },
           })
@@ -97,7 +103,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
         }
         catch (e) {
           const err = serialize(e)
-          console.log(err, 'selam')
+          console.log(err)
           reject(e)
         }
       })
@@ -460,6 +466,11 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
   onMounted(async () => {
     await init()
 
+    syncActiveSessions()
+  })
+
+  watch(safe.safeAddress, async () => {
+    await disconnectAll()
     syncActiveSessions()
   })
 

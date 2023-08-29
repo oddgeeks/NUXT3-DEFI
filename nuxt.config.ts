@@ -25,9 +25,14 @@ export default defineNuxtConfig({
   },
   nitro: {
     routeRules: {
-      '/api/cross-chain/estimate': {
-        proxy: 'https://microservices.instadapp.io/api/avocado/cross-chain/estimate',
-      },
+      // '/api/cross-chain/estimate': {
+      //   proxy: {
+      //     to: 'https://microservices.instadapp.io/api/avocado/cross-chain/estimate',
+      //     onResponse: (response) => {
+      //       console.log(response)
+      //     },
+      //   },
+      // },
       '/**': {
         headers: {
           'Content-Security-Policy': 'frame-ancestors \'none\'',
@@ -175,6 +180,7 @@ export default defineNuxtConfig({
     '@instadapp/vue-web3-nuxt',
     '@vueuse/nuxt',
     '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt',
     [
       'unplugin-vue-inspector/nuxt',
       {
@@ -194,7 +200,13 @@ export default defineNuxtConfig({
     '@fontsource/source-code-pro/600.css',
     '~/assets/css/app.css',
   ],
-
+  pinia: {
+    autoImports: [
+      'storeToRefs',
+      'defineStore',
+      'acceptHMRUpdate',
+    ],
+  },
   imports: {
     dirs: ['./stores'],
   },

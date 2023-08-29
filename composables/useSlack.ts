@@ -1,6 +1,6 @@
 interface ISlackMessage {
   message: string
-  action: IWeb3Action | 'wc' | 'add-token' | 'upgrade' | 'deploy' | 'network' | 'nft'
+  action: IWeb3Action | 'wc' | 'add-token' | 'upgrade' | 'deploy' | 'network' | 'nft' | 'add-auth' | 'remove-auth' | 'multisig'
   account: string
   type?: ISlackMessageType
   txHash?: string
@@ -23,6 +23,9 @@ const prefixes: Record<ISlackMessage['action'], string> = {
   'deploy': 'Deployed:',
   'network': 'Network',
   'nft': 'NFT Transfer',
+  'add-auth': 'Added Authority',
+  'remove-auth': 'Removed Authority',
+  'multisig': 'Executed Multisig Transaction',
 }
 
 const ignoredMessages = [
@@ -35,6 +38,8 @@ const ignoredMessages = [
 ]
 
 export function logActionToSlack(slackMessage: ISlackMessage) {
+  const { isSafeMultisig } = storeToRefs(useMultisig())
+
   const build = useBuildInfo()
 
   let {
@@ -80,6 +85,9 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
   logMessage += `\n${'`Commit`'} ${build.commit}`
   logMessage += `\n${'`Env`'} ${build.env}`
   logMessage += `\n${'`Branch`'} ${build.branch}`
+
+  if (isSafeMultisig.value)
+    logMessage += `\n${'`Multisig`'}`
 
   if (errorDetails)
     logMessage += `\n${'`Error details`'} ${errorDetails}`

@@ -11,6 +11,8 @@ const props = defineProps<{
 }>()
 
 const { balances } = storeToRefs(useSafe())
+const { isSafeMultisig } = storeToRefs(useMultisig())
+const { isOnboardBannerVisible } = useBanner()
 const { totalBalance, tokenBalances, totalEoaBalance, fundedEoaNetworks } = useAvocadoSafe()
 const { account } = useWeb3()
 const { networkPreference } = storeToRefs(useSafe())
@@ -265,7 +267,7 @@ const { safeAddress, isSafeAddress } = useAvocadoSafe()
               <SupportedChains class="!flex" />
             </div>
           </div>
-          <div v-if="gt(totalEoaBalance || '0', 1)" class="bg-[#4CA0541A] w-2/3 rounded-[30px] px-[16px] py-[10px] flex flex-rows gap-[10px] items-center justify-center">
+          <div v-if="gt(totalEoaBalance || '0', 1) && isOnboardBannerVisible" class="bg-[#4CA0541A] w-2/3 rounded-[30px] px-[16px] py-[10px] flex flex-rows gap-[10px] items-center justify-center">
             <InfoSVG />
             <p class="text-[12px] text-[#4CA054] flex-1">
               You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet (EOA)
@@ -299,7 +301,7 @@ const { safeAddress, isSafeAddress } = useAvocadoSafe()
             </span>
             <SupportedChains class="!flex justify-between" :max-count="5" />
           </div>
-          <div v-if="gt(totalEoaBalance || '0', 1)" class="bg-[#4CA0541A] rounded-[20px] p-[16px] flex flex-col gap-[12px]">
+          <div v-if="gt(totalEoaBalance || '0', 1) && isOnboardBannerVisible" class="bg-[#4CA0541A] rounded-[20px] p-[16px] flex flex-col gap-[12px]">
             <p class="text-[12px] text-[#4CA054] flex-1">
               You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet (EOA)
             </p>

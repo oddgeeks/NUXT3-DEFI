@@ -1,7 +1,13 @@
 import type { IBalance } from '~~/stores/safe'
 
 export function useGraph(balance: Ref<IBalance>) {
-  const interactable = computed(() => toBN(balance.value.balance).gt(0))
+  const { authorisedNetworks } = useAuthorities()
+
+  const nonAuthorised = computed(() => !authorisedNetworks.value?.find(i => String(i.chainId) == String(balance.value.chainId)))
+
+  const interactable = computed(() => {
+    return toBN(balance.value.balance).gt(0) && !nonAuthorised.value
+  })
 
   const isSwapDisabled = computed(() => false)
 
@@ -64,5 +70,6 @@ export function useGraph(balance: Ref<IBalance>) {
     isSwapDisabled,
     fetchLiteAPY,
     isBridgeDisabled,
+    nonAuthorised,
   }
 }

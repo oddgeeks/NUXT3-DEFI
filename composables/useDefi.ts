@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { storeToRefs } from 'pinia'
+
 import AaveV2Url from '~/assets/images/protocols/aave-v2.svg?url'
 import CompoundUrl from '~/assets/images/protocols/compound.svg?url'
 import MakerUrl from '~/assets/images/protocols/makerdao.svg?url'

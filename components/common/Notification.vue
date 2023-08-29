@@ -28,11 +28,11 @@ const typeClass = computed(() => {
 <template>
   <div
     :class="typeClass"
-    class="rounded-7.5 flex items-center justify-between px-4 py-2.5 h-[50px] bg-opacity-10 overflow-hidden"
+    class="rounded-7.5 flex items-center justify-between px-4 py-2.5 max-h-[100px] min-h-[50px] bg-opacity-10 overflow-hidden"
   >
     <div class="flex items-center gap-2.5">
       <SVGInfo class="w-[18px] h-[18px] shrink-0" />
-      <span class="text-xs"> {{ text }}</span>
+      <span class="text-xs whitespace-pre-line"> {{ text }}</span>
     </div>
     <slot name="action" />
   </div>

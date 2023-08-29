@@ -9,7 +9,7 @@ import SVGX from '~/assets/images/icons/x.svg?component'
 const emit = defineEmits(['close'])
 const { parseTransactionError } = useErrorHandler()
 const { account, provider } = useWeb3()
-const { fetchGasBalance, avoProvider } = useSafe()
+const { setGasBalance, avoProvider } = useSafe()
 const { safeAddress, gasBalance } = storeToRefs(useSafe())
 const {
   handleSubmit,
@@ -84,7 +84,7 @@ Issued At: ${new Date().toISOString()}`
 
       await wait(3000)
 
-      await fetchGasBalance()
+      await setGasBalance()
 
       const giftedAmount = toBN(gasBalance.value).minus(oldGasBalance).toFixed()
 

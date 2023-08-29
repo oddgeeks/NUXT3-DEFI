@@ -1,11 +1,13 @@
 import { isArray } from '@vue/shared'
-import { storeToRefs } from 'pinia'
+import { isUndefined } from '@walletconnect/utils'
 
 interface EstimatedFeeParams {
   immediate?: boolean
   cb?: () => void
   disabled?: () => boolean
   options?: any
+  metadata?: string
+  nonce?: number | string
 }
 
 export function useEstimatedFee(
@@ -15,9 +17,9 @@ export function useEstimatedFee(
 ) {
   const { avoProvider } = useSafe()
   const { account } = useWeb3()
-  const { trackingAccount, isTrackingMode } = useAccountTrack()
-  const { safe } = useAvocadoSafe()
-  const { gasBalance } = storeToRefs(useSafe())
+  const { safe, generateMultisigSignatureMessage } = useAvocadoSafe()
+  const { gasBalance, safeAddress, selectedSafe, isSelectedSafeLegacy } = storeToRefs(useSafe())
+  const { parseTransactionError } = useErrorHandler()
 
   const immediate = !!params?.immediate
 
@@ -41,8 +43,11 @@ export function useEstimatedFee(
     const message = 'Something went wrong. Please try again!'
     if (pending.value)
       return
-    if (error.value)
-      return message
+    if (error.value) {
+      const formatted = parseTransactionError(error.value)?.formatted
+
+      return formatted || message
+    }
 
     if (rawData.value && (!rawData.value?.fee || !rawData.value?.multiplier))
       return message
@@ -56,14 +61,12 @@ export function useEstimatedFee(
     error,
     pending,
   } = useAsyncData<IEstimatedFeeData>(
-    'estimated-fee',
+    `estimated-fee-${chainId.value}`,
     async () => {
       try {
         const disabled = params?.disabled?.()
         if (disabled)
           return
-
-        console.log(chainId.value)
 
         if (!txData.value)
           return
@@ -75,21 +78,45 @@ export function useEstimatedFee(
 
         const actualTx = isArray(txData.value) ? txData.value : [txData.value]
 
-        const message = await safe.value?.generateSignatureMessage(
-          actualTx,
-          +chainId.value,
-          params?.options,
-        )
+        let message
 
-        const actualAccount = isTrackingMode.value ? trackingAccount.value : account.value
+        if (isSelectedSafeLegacy.value) {
+          message = await safe.value?.generateSignatureMessage(
+            actualTx,
+            +chainId.value,
+            params?.options,
+          )
+        }
+        else {
+          message = await generateMultisigSignatureMessage({
+            chainId: chainId.value,
+            actions: actualTx,
+            options: params?.options,
+            metadata: params?.metadata,
+            nonce: !isUndefined(params?.nonce) ? Number(params?.nonce) : undefined,
+          })
+        }
 
-        const data = await avoProvider.send('txn_estimateFeeWithoutSignature', [
-          message,
-          actualAccount,
-          chainId.value,
+        console.log({ message })
+
+        const signatureParams = { message, targetChainId: chainId.value, safe: safeAddress.value, owner: selectedSafe.value?.owner_address || account.value }
+
+        if (!isSelectedSafeLegacy.value) {
+          Object.assign(signatureParams, {
+            index: String(selectedSafe.value?.multisig_index || 0),
+          })
+        }
+
+        const signatureMethod = isSelectedSafeLegacy.value ? 'txn_estimateFeeWithoutSignature' : 'txn_multisigEstimateFeeWithoutSignature'
+
+        const data = await avoProvider.send(signatureMethod, [
+          signatureParams,
         ])
 
         return data
+      }
+      catch (err: any) {
+        throw err?.error || err
       }
       finally {
         params?.cb?.()

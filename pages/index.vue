@@ -90,7 +90,7 @@ function selectType(type: string) {
             </div>
             <div v-if="account" class="flex gap-[10px]">
               <ClientOnly v-if="account">
-                <div class="flex gap-[16px] items-center">
+                <div class="hidden md:flex gap-[16px] items-center">
                   <button v-tippy="'Individual View'" @click="() => selectType('individual')">
                     <IndividualIconSVG :class="`${listType === 'individual' ? 'type-icon-selected' : 'type-icon-unselected'} cursor-pointer w-[20px] h-[20px]`" />
                   </button>

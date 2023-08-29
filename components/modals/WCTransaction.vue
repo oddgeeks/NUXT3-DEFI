@@ -18,17 +18,21 @@ const props = defineProps<{
 
 const emit = defineEmits(['resolve', 'reject'])
 
-const { sendTransactions, safeAddress } = useAvocadoSafe()
+const { sendTransactions, safeAddress, getActualId } = useAvocadoSafe()
 const { account } = useWeb3()
 const [submitting, toggle] = useToggle()
 const { parseTransactionError } = useErrorHandler()
 const { web3WalletV2 } = storeToRefs(useWalletConnectV2())
 
-const submitDisabled = computed(
-  () => submitting.value || pending.value || !!error.value,
-)
+const { authorisedNetworks } = useAuthorities()
 
-const networksSimulationNotSupported = [1313161554]
+const nonAuthorised = computed(() => {
+  return !authorisedNetworks.value?.find(i => String(i.chainId) == String(props.chainId))
+})
+
+const submitDisabled = computed(
+  () => submitting.value || pending.value || !!error.value || nonAuthorised.value,
+)
 
 const reactiveBookmark = ref(props.bookmark)
 
@@ -94,6 +98,7 @@ const {
 async function handleSubmit() {
   try {
     toggle(true)
+    const id = getActualId(transactions.value, options.value?.id)
 
     const transactionHash = await sendTransactions(
       transactions.value,
@@ -101,10 +106,12 @@ async function handleSubmit() {
       {
         metadata: props.metadata,
         ...options.value,
+        id,
       },
+      'wc',
     )
+
     if (!transactionHash) {
-      // tracking mode
       toggle(false)
       return
     }
@@ -165,11 +172,12 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
     if (networksSimulationNotSupported.includes(Number(props.chainId)))
       throw new Error('Simulation not supported on this network.')
 
+    const id = getActualId(transactions.value, options.value?.id)
+
     return http('/api/simulate', {
       method: 'POST',
       body: {
         actions: transactions.value.map((i) => {
-          console.log(i)
           return {
             target: i.to,
             data: i.data,
@@ -179,7 +187,7 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
         }),
         avocadoSafe: safeAddress.value,
         chainId: props.chainId,
-        id: options.value?.id,
+        id,
       },
     }) as Promise<ISimulation>
   },
@@ -313,6 +321,10 @@ onUnmounted(() => {
       <SVGInfoCircle class="w-3" />
 
       {{ simulationError.message }}
+    </p>
+    <p v-if="nonAuthorised" class="text-xs leading-5 text-orange-400 flex gap-2">
+      <SvgoExclamationCircle class="w-3 shrink-0 mt-1" />
+      You are not authorised to sign transactions on {{ chainIdToName(chainId) }} network.
     </p>
     <div class="flex justify-between items-center gap-4">
       <CommonButton

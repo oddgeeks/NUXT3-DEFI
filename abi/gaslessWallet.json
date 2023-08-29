@@ -2,28 +2,44 @@
   {
     "inputs": [
       {
-        "internalType": "contract IGSWVersionsRegistry",
-        "name": "gswVersionsRegistry_",
+        "internalType": "contract IAvoVersionsRegistry",
+        "name": "avoVersionsRegistry_",
         "type": "address"
       },
-      { "internalType": "address", "name": "gswForwarder_", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "avoForwarder_",
+        "type": "address"
+      }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
-  { "inputs": [], "name": "GaslessSmartWallet__Expired", "type": "error" },
   {
     "inputs": [],
-    "name": "GaslessSmartWallet__InvalidParams",
+    "name": "AvoWallet__Expired",
     "type": "error"
   },
   {
     "inputs": [],
-    "name": "GaslessSmartWallet__InvalidSignature",
+    "name": "AvoWallet__InvalidParams",
     "type": "error"
   },
-  { "inputs": [], "name": "GaslessSmartWallet__Unauthorized", "type": "error" },
-  { "inputs": [], "name": "SelfUpgradeable__Unauthorized", "type": "error" },
+  {
+    "inputs": [],
+    "name": "AvoWallet__InvalidSignature",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "AvoWallet__Unauthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SelfUpgradeable__Unauthorized",
+    "type": "error"
+  },
   {
     "anonymous": false,
     "inputs": [
@@ -99,7 +115,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "gswImpl",
+        "name": "avoWalletImpl",
         "type": "address"
       }
     ],
@@ -109,42 +125,78 @@
   {
     "inputs": [],
     "name": "ACTION_TYPE_HASH",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "CAST_TYPE_HASH",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "DEFAULT_CHAIN_ID",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "DOMAIN_SEPARATOR_NAME",
-    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "DOMAIN_SEPARATOR_VERSION",
-    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "TYPE_HASH",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -152,11 +204,23 @@
     "inputs": [
       {
         "components": [
-          { "internalType": "address", "name": "target", "type": "address" },
-          { "internalType": "bytes", "name": "data", "type": "bytes" },
-          { "internalType": "uint256", "name": "value", "type": "uint256" }
+          {
+            "internalType": "address",
+            "name": "target",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          },
+          {
+            "internalType": "uint256",
+            "name": "value",
+            "type": "uint256"
+          }
         ],
-        "internalType": "struct IGaslessSmartWallet.Action[]",
+        "internalType": "struct IAvoWallet.Action[]",
         "name": "actions_",
         "type": "tuple[]"
       }
@@ -167,58 +231,37 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "components": [
-          { "internalType": "address", "name": "target", "type": "address" },
-          { "internalType": "bytes", "name": "data", "type": "bytes" },
-          { "internalType": "uint256", "name": "value", "type": "uint256" }
-        ],
-        "internalType": "struct IGaslessSmartWallet.Action[]",
-        "name": "actions_",
-        "type": "tuple[]"
-      },
-      { "internalType": "uint256", "name": "validUntil_", "type": "uint256" },
-      { "internalType": "uint256", "name": "gas_", "type": "uint256" },
-      { "internalType": "address", "name": "source_", "type": "address" },
-      { "internalType": "bytes", "name": "metadata_", "type": "bytes" },
-      { "internalType": "bytes", "name": "signature_", "type": "bytes" }
-    ],
-    "name": "cast",
-    "outputs": [
-      { "internalType": "bool", "name": "success_", "type": "bool" },
-      { "internalType": "string", "name": "revertReason_", "type": "string" }
-    ],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
     "inputs": [],
-    "name": "domainSeparatorV4",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "gswForwarder",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "gswNonce",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "gswVersionsRegistry",
+    "name": "avoForwarder",
     "outputs": [
       {
-        "internalType": "contract IGSWVersionsRegistry",
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "avoSafeNonce",
+    "outputs": [
+      {
+        "internalType": "uint96",
+        "name": "",
+        "type": "uint96"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "avoVersionsRegistry",
+    "outputs": [
+      {
+        "internalType": "contract IAvoVersionsRegistry",
         "name": "",
         "type": "address"
       }
@@ -228,7 +271,90 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "owner_", "type": "address" }
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "target",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          },
+          {
+            "internalType": "uint256",
+            "name": "value",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IAvoWallet.Action[]",
+        "name": "actions_",
+        "type": "tuple[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "validUntil_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "gas_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "source_",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "metadata_",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes",
+        "name": "signature_",
+        "type": "bytes"
+      }
+    ],
+    "name": "cast",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "success_",
+        "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "revertReason_",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "domainSeparatorV4",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner_",
+        "type": "address"
+      }
     ],
     "name": "initialize",
     "outputs": [],
@@ -236,15 +362,59 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "name": "onERC721Received",
+    "outputs": [
+      {
+        "internalType": "bytes4",
+        "name": "",
+        "type": "bytes4"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "owner",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "gswImpl_", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "avoWalletImpl_",
+        "type": "address"
+      }
     ],
     "name": "upgradeTo",
     "outputs": [],
@@ -253,9 +423,21 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "gswImpl_", "type": "address" },
-      { "internalType": "bytes", "name": "data_", "type": "bytes" },
-      { "internalType": "bool", "name": "forceCall_", "type": "bool" }
+      {
+        "internalType": "address",
+        "name": "avoWalletImpl_",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data_",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bool",
+        "name": "forceCall_",
+        "type": "bool"
+      }
     ],
     "name": "upgradeToAndCall",
     "outputs": [],
@@ -266,24 +448,65 @@
     "inputs": [
       {
         "components": [
-          { "internalType": "address", "name": "target", "type": "address" },
-          { "internalType": "bytes", "name": "data", "type": "bytes" },
-          { "internalType": "uint256", "name": "value", "type": "uint256" }
+          {
+            "internalType": "address",
+            "name": "target",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "data",
+            "type": "bytes"
+          },
+          {
+            "internalType": "uint256",
+            "name": "value",
+            "type": "uint256"
+          }
         ],
-        "internalType": "struct IGaslessSmartWallet.Action[]",
+        "internalType": "struct IAvoWallet.Action[]",
         "name": "actions_",
         "type": "tuple[]"
       },
-      { "internalType": "uint256", "name": "validUntil_", "type": "uint256" },
-      { "internalType": "uint256", "name": "gas_", "type": "uint256" },
-      { "internalType": "address", "name": "source_", "type": "address" },
-      { "internalType": "bytes", "name": "metadata_", "type": "bytes" },
-      { "internalType": "bytes", "name": "signature_", "type": "bytes" }
+      {
+        "internalType": "uint256",
+        "name": "validUntil_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "gas_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "source_",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "metadata_",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes",
+        "name": "signature_",
+        "type": "bytes"
+      }
     ],
     "name": "verify",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
-  { "stateMutability": "payable", "type": "receive" }
+  {
+    "stateMutability": "payable",
+    "type": "receive"
+  }
 ]

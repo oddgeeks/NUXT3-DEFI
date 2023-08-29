@@ -134,7 +134,12 @@ const onSubmit = handleSubmit(async () => {
     const transactionHash = await sendTransactions(
       txs.value,
       props.asset.chainId,
+      undefined,
+      'nft',
     )
+
+    if (!transactionHash)
+      return
 
     emit('destroy')
 
