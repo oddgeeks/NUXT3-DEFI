@@ -467,7 +467,9 @@ export const useSafe = defineStore('safe', () => {
     await until(selectedSafe).toMatch(s => !!s)
     await until(() => balances.value.loading).toMatch(s => !s)
 
-    if (selectedSafe.value?.multisig === 1 && selectedSafe.value?.multisig_index > 0)
+    if ((selectedSafe.value?.multisig === 1 && selectedSafe.value?.multisig_index > 0)
+      || (selectedSafe.value?.multisig === 0 && selectedSafe.value?.multisig_index === 0)
+    )
       return
 
     const resp = await getBalances(account.value)
