@@ -3,6 +3,7 @@ import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 import collect from 'collect.js'
 import { isAddress } from 'ethers/lib/utils'
 import axios from 'axios'
+import { wait } from '@instadapp/utils'
 import type { IToken } from './tokens'
 import { getSafeOptionsByChain } from '~/server/utils/safe'
 import type { TokenBalanceResolver } from '~/contracts'
@@ -454,8 +455,6 @@ export const useSafe = defineStore('safe', () => {
     }
   }
 
-  const debouncedFetchEoaBalances = useDebounceFn(fetchEoaBalances, 60000)
-
   async function fetchEoaBalances() {
     if (!account.value)
       return
@@ -466,6 +465,7 @@ export const useSafe = defineStore('safe', () => {
 
     await until(selectedSafe).toMatch(s => !!s)
     await until(() => balances.value.loading).toMatch(s => !s)
+    await wait(1000)
 
     if ((selectedSafe.value?.multisig === 1 && selectedSafe.value?.multisig_index > 0)
       || (selectedSafe.value?.multisig === 0 && selectedSafe.value?.multisig_index === 0)
@@ -674,8 +674,6 @@ export const useSafe = defineStore('safe', () => {
 
     await until(tokens).toMatch(t => t.length > 0)
     fetchBalances()
-
-    debouncedFetchEoaBalances()
   }, {
     throttle: 500,
   })
@@ -697,6 +695,14 @@ export const useSafe = defineStore('safe', () => {
     ensName.value = await getRpcProviderByChainId(1).lookupAddress(account.value)
   }, {
     throttle: 1000,
+  })
+
+  watchDebounced(account, () => {
+    eoaBalances.value = undefined
+
+    fetchEoaBalances()
+  }, {
+    debounce: 60000,
   })
 
   watchThrottled(connector, () => {

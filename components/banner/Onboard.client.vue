@@ -2,13 +2,13 @@
 import SVGX from '~/assets/images/icons/x.svg?component'
 import WaveSVG from '~/assets/images/icons/wave.svg?component'
 
-const { hideOnboardBanner } = useBanner()
+const { hideOnboardBanner, isOnboardBannerVisible } = useBanner()
 const { totalEoaBalance, eoaBalances, fundedEoaNetworks } = useAvocadoSafe()
 </script>
 
 <template>
   <div
-    v-if="eoaBalances && eoaBalances.length > 0"
+    v-if="eoaBalances && eoaBalances.length > 0 && isOnboardBannerVisible"
     class="w-full max-w-[832px] mx-auto text-xs relative bg-[#4CA054] bg-opacity-60 py-[15px] px-5 sm:rounded-5 backdrop-blur shrink-0 flex flex-col sm:flex-row justify-between items-center gap-[15px]"
   >
     <div class="flex space-x-[25px] items-start sm:items-center">

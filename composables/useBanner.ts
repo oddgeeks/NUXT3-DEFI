@@ -5,7 +5,7 @@ import { gt } from 'semver'
 const isVersionUpdateBannerHidden = ref(false)
 
 export function useBanner() {
-  const { gasBalance, safeOptions } = storeToRefs(useSafe())
+  const { gasBalance, safeOptions, selectedSafe } = storeToRefs(useSafe())
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { account, chainId } = useWeb3()
 
@@ -69,6 +69,13 @@ export function useBanner() {
     )
   })
 
+  const isOnboardBannerVisible = computed<boolean>(() => {
+    if (!selectedSafe.value)
+      return false
+
+    return selectedSafe.value.multisig === 1 && selectedSafe.value.multisig_index === 0
+  })
+
   const unstableDappNetworks = computed(() => {
     if (!wcStoreV2.sessions?.length)
       return []
@@ -87,6 +94,7 @@ export function useBanner() {
     showVersionUpdateBanner,
     unstableDappNetworks,
     isHideRabbyBanner,
+    isOnboardBannerVisible,
     showTrackingBanner: computed(() => !!trackingAccount.value),
     toggleWelcomeBanner: (val: boolean) => (isHideWelcomeBanner.value = !val),
     hideOnboardBanner: () => (isOnboardHidden.value = true),
