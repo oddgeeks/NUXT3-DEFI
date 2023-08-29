@@ -1,6 +1,4 @@
 <script setup lang=ts>
-import axios from 'axios'
-
 const props = defineProps<{
   chainId: string | number
   activeTab: string | undefined
@@ -27,7 +25,7 @@ const isDetailsOpen = useCookie<boolean>(`multisig-collapse-${route.params.safe}
 
 const { resume, pause } = useIntervalFn(() => {
   refreshAll()
-}, 5000, {
+}, 7500, {
   immediate: false,
 })
 
@@ -42,7 +40,8 @@ const { data, refresh, pending } = useAsyncData(`${key.value}`, async () => {
 
     const isCompleted = props.activeTab === 'completed'
 
-    const { data: axiosData } = await axios.get<IMultisigTransactionResponse>(`/safes/${route.params.safe}/transactions`, {
+    const response = await http<IMultisigTransactionResponse>(`/safes/${route.params.safe}/transactions`, {
+      retry: 3,
       signal: abortController.value?.signal,
       params: {
         status: isCompleted ? ['success', 'failed'] : 'pending',
@@ -55,7 +54,7 @@ const { data, refresh, pending } = useAsyncData(`${key.value}`, async () => {
 
     abortController.value = null
 
-    axiosData.data = axiosData.data.map((i) => {
+    response.data = response.data.map((i) => {
       try {
         const metadata = i.data.params?.metadata ? decodeMetadata(i.data.params.metadata) as string[] : []
         const rejectionMetadata = metadata.find((i: any) => i?.type === 'rejection') as any
@@ -70,7 +69,7 @@ const { data, refresh, pending } = useAsyncData(`${key.value}`, async () => {
       }
     })
 
-    return axiosData
+    return response
   }
   catch (e: any) {
     if (e.message === 'canceled')
@@ -140,6 +139,10 @@ watch(isCollapseAll, () => {
 
 onUnmounted(() => {
   clearNuxtData(key.value)
+  if (abortController.value) {
+    abortController.value.abort()
+    abortController.value = null
+  }
 })
 </script>
 
