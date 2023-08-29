@@ -32,9 +32,9 @@ export default defineEventHandler(async (event) => {
 
   await schema.validate(query)
 
-  const { multisig, multisig_index = 0, owner_address, deployed = {} } = schema.cast(query)
+  const { multisig = 0, multisig_index = 0, owner_address, deployed = {} } = schema.cast(query)
 
-  if (!multisig || !owner_address) {
+  if (!owner_address) {
     return createError({
       message: 'Failed to parse query',
       statusCode: 500,

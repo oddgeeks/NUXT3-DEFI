@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 import collect from 'collect.js'
-import { isAddress } from 'ethers/lib/utils'
+import { getAddress, isAddress } from 'ethers/lib/utils'
 import axios from 'axios'
 import { wait } from '@instadapp/utils'
 import type { IToken } from './tokens'
@@ -212,7 +212,7 @@ export const useSafe = defineStore('safe', () => {
     return avoBatchProvider.send('api_getSafe', [address])
   }
 
-  function setSelectedSafe() {
+  async function setSelectedSafe() {
     const availableSafe = availableSafeInstances.value.find(i => isAddressEqual(i.safe_address, safeAddress.value))
     const safe = safes.value.find(i => isAddressEqual(i.safe_address, safeAddress.value))
 
@@ -221,6 +221,9 @@ export const useSafe = defineStore('safe', () => {
 
     else if (safe)
       selectedSafe.value = safe
+
+    else
+      selectedSafe.value = await getSafe(safeAddress.value)
 
     accountSafeMapping.value[account.value] = safeAddress.value
   }
@@ -553,6 +556,9 @@ export const useSafe = defineStore('safe', () => {
       return
 
     if (!isAddress(paramSafe))
+      return
+
+    if (getAddress(paramSafe) === getAddress(safeAddress.value))
       return
 
     // check if paramSafe is a valid multisig safe
