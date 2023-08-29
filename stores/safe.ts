@@ -416,6 +416,8 @@ export const useSafe = defineStore('safe', () => {
     pause()
 
     try {
+      await until(optionsLoading).toMatch(s => !s)
+
       balances.value.loading = true
 
       const data = await getBalances(
@@ -492,6 +494,27 @@ export const useSafe = defineStore('safe', () => {
     }])
   }
 
+  async function getSafeOptionsFromServer(safe: ISafe) {
+    return Promise.all(
+      availableNetworks.map((network) => {
+        return http(`/api/${network.chainId}/safes/${safe.safe_address}`, {
+          params: {
+            multisig_index: safe.multisig_index,
+            multisig: safe.multisig,
+            owner_address: safe.owner_address,
+          },
+        }).then((e) => {
+          logBalance({
+            chainId: network.chainId,
+            type: 'options',
+            isPublic: false,
+          })
+          return e
+        })
+      }),
+    )
+  }
+
   async function getSafeOptions(safe: ISafe) {
     try {
       await until(() => balances.value.loading).toMatch(s => !s)
@@ -546,6 +569,8 @@ export const useSafe = defineStore('safe', () => {
         type: 'error',
         action: 'network',
       })
+
+      return getSafeOptionsFromServer(safe)
     }
   }
 
