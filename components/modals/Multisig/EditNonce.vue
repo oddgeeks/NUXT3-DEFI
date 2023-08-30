@@ -16,11 +16,15 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['resolve', 'destroy'])
+
+const { public: config } = useRuntimeConfig()
 const { selectedSafe, safeOptions } = storeToRefs(useSafe())
 const { getActualId, safeAddress, generateMultisigSignatureAndSign, multisigBroadcast } = useAvocadoSafe()
 const { parseTransactionError } = useErrorHandler()
 const { clearAllModals } = useModal()
 const { account } = useWeb3()
+
+const isSimulationDisabled = computed(() => networksSimulationNotSupported.includes(Number(props.chainId)))
 
 const shouldNonSeqByDefault = props.transactionType === 'remove-signers' || props.transactionType === 'add-signers' || props.transactionType === 'topup'
 const recommendedNonce = shouldNonSeqByDefault ? -1 : undefined
@@ -117,6 +121,14 @@ async function onSubmit() {
       baseURL: multisigURL,
     })
 
+    const message = `\n${'`Multisig Hash`'} <${config.domainURL}/multisig/${data.safe_address}/pending-transactions/${data.id}| ${shortenHash(data.id)}>`
+
+    logActionToSlack({
+      account: account.value,
+      action: 'proposal',
+      message,
+    })
+
     proposalId = data.id
 
     if (data.confirmations_required === 1 && !signOnly) {
@@ -169,7 +181,7 @@ async function onSubmit() {
 
 const { data: simulationDetails, error: simulationError, pending } = useAsyncData(
   () => {
-    if (networksSimulationNotSupported.includes(Number(props.chainId)))
+    if (isSimulationDisabled.value)
       throw new Error('Simulation not supported on this network.')
 
     const actions = props.actions.map((action) => {
@@ -309,64 +321,66 @@ function getNonceTooltip(value: number | undefined) {
         <textarea v-model="note" v-focus placeholder="Visible to all signers" class="dark:bg-slate-800 placeholder:text-sm placeholder:text-slate-400 text-sm font-medium rounded-[14px] bg-slate-100 py-[15px] px-4 border-0 outline-none focus:border-0 focus:outline-none focus:ring-0" />
       </div>
     </div>
-    <template v-if="!estimatedFee">
-      <hr class="border-slate-150 dark:border-slate-800">
-      <div v-if="!simulationStatus" class="sm:px-7.5 px-5 py-5 text-sm flex justify-between items-center">
-        Simulate Transaction
-        <div class="flex items-center gap-2.5">
-          <SvgSpinner v-if="pending" class="text-primary" />
-          <button :disabled="pending" type="button" class="text-primary disabled:text-slate-400" @click="toggle()">
-            Simulate
-          </button>
+    <template v-if="!isSimulationDisabled">
+      <template v-if="!estimatedFee">
+        <hr class="border-slate-150 dark:border-slate-800">
+        <div v-if="!simulationStatus" class="sm:px-7.5 px-5 py-5 text-sm flex justify-between items-center">
+          Simulate Transaction
+          <div class="flex items-center gap-2.5">
+            <SvgSpinner v-if="pending" class="text-primary" />
+            <button :disabled="pending" type="button" class="text-primary disabled:text-slate-400" @click="toggle()">
+              Simulate
+            </button>
+          </div>
         </div>
-      </div>
-      <div v-else :class="simulationDetails?.transaction?.status ? 'bg-primary' : 'bg-red-alert'" class="bg-opacity-10 items-baseline justify-between rounded-[14px] text-sm p-4 sm:mx-7.5 mx-5 my-5 font-medium flex gap-3">
-        <div class="flex gap-3 flex-col flex-1">
-          <div class="flex gap-3">
-            <template v-if="isTransactionFailed">
-              <SvgoErrorCircle class="w-4.5 h-4.5" />
-              This transaction will most likely fail
-            </template>
-            <template v-else>
-              <SvgoCheckCircle class="success-circle w-4.5 h-4.5" />
-              This transaction will most likely succeed
-            </template>
+        <div v-else :class="simulationDetails?.transaction?.status ? 'bg-primary' : 'bg-red-alert'" class="bg-opacity-10 items-baseline justify-between rounded-[14px] text-sm p-4 sm:mx-7.5 mx-5 my-5 font-medium flex gap-3">
+          <div class="flex gap-3 flex-col flex-1">
+            <div class="flex gap-3">
+              <template v-if="isTransactionFailed">
+                <SvgoErrorCircle class="w-4.5 h-4.5" />
+                This transaction will most likely fail
+              </template>
+              <template v-else>
+                <SvgoCheckCircle class="success-circle w-4.5 h-4.5" />
+                This transaction will most likely succeed
+              </template>
+            </div>
+
+            <p v-if="simulationDetails?.transaction.simulationId" class="text-xs text-slate-400 font-medium">
+              View complete simulation report
+              <NuxtLink target="_blank" class="inline-flex items-center gap-2 text-primary" external :to="`https://dashboard.tenderly.co/public/InstaDApp/avocado/simulator/${simulationDetails?.transaction.simulationId}?hideSidebar=true`">
+                on Tenderly
+                <SvgoExternalLink />
+              </NuxtLink>
+            </p>
           </div>
 
-          <p v-if="simulationDetails?.transaction.simulationId" class="text-xs text-slate-400 font-medium">
-            View complete simulation report
-            <NuxtLink target="_blank" class="inline-flex items-center gap-2 text-primary" external :to="`https://dashboard.tenderly.co/public/InstaDApp/avocado/simulator/${simulationDetails?.transaction.simulationId}?hideSidebar=true`">
-              on Tenderly
-              <SvgoExternalLink />
-            </NuxtLink>
-          </p>
+          <button @click="toggle()">
+            <SvgoX />
+          </button>
         </div>
+        <hr class="border-slate-150 dark:border-slate-800">
+        <details ref="detailsRef" class="group sm:px-7.5 px-5 py-5">
+          <summary class="text-orange-400 flex justify-between text-sm leading-5 cursor-pointer">
+            <span class="group-open:hidden block font-medium">View transaction breakdown</span>
+            <span class="group-open:block hidden font-medium">Hide transaction breakdown</span>
 
-        <button @click="toggle()">
-          <SvgoX />
-        </button>
-      </div>
+            <SvgoChevronDown class="group-open:rotate-180" />
+          </summary>
+          <div class="mt-5">
+            <SimulationDetails
+              v-if="simulationDetails"
+              :chain-id="String(chainId)"
+              :details="simulationDetails"
+              :has-error="!!simulationError"
+              title-hidden
+              wrapper-class="sm:!flex flex-col"
+            />
+          </div>
+        </details>
+      </template>
       <hr class="border-slate-150 dark:border-slate-800">
-      <details ref="detailsRef" class="group sm:px-7.5 px-5 py-5">
-        <summary class="text-orange-400 flex justify-between text-sm leading-5 cursor-pointer">
-          <span class="group-open:hidden block font-medium">View transaction breakdown</span>
-          <span class="group-open:block hidden font-medium">Hide transaction breakdown</span>
-
-          <SvgoChevronDown class="group-open:rotate-180" />
-        </summary>
-        <div class="mt-5">
-          <SimulationDetails
-            v-if="simulationDetails"
-            :chain-id="String(chainId)"
-            :details="simulationDetails"
-            :has-error="!!simulationError"
-            title-hidden
-            wrapper-class="sm:!flex flex-col"
-          />
-        </div>
-      </details>
     </template>
-    <hr class="border-slate-150 dark:border-slate-800">
 
     <div v-if="estimatedFee" class="sm:px-7.5 px-5 py-5">
       <EstimatedFee :data="data" :loading="feePending" :error="error" />

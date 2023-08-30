@@ -1,7 +1,8 @@
 <script setup lang=ts>
 const props = defineProps<{
-  chainId: string | number
+  chainId?: string | number
   activeTab: string | undefined
+  networkCellVisible?: boolean
 }>()
 
 const emit = defineEmits(['onToggle'])
@@ -14,8 +15,8 @@ const isCollapseAll = inject<Ref<boolean>>('isCollapseAll', ref(false))
 const route = useRoute()
 const page = ref(1)
 const containerRef = ref<HTMLElement | null>(null)
-
-const key = computed(() => `multisig-${route.params.safe}-${props.chainId}-${props.activeTab}-${page.value}`)
+const data = ref<IMultisigTransactionResponse | null>(null)
+const pending = ref(false)
 
 const isDetailsOpen = useCookie<boolean>(`multisig-collapse-${route.params.safe}-${props.chainId}`, {
   default: () => false,
@@ -29,12 +30,14 @@ const { resume, pause } = useIntervalFn(() => {
   immediate: false,
 })
 
-const { data, refresh, pending } = useAsyncData(`${key.value}`, async () => {
+async function fetchTransactions() {
   try {
     if (abortController.value)
       abortController.value.abort()
 
     pause()
+
+    pending.value = true
 
     abortController.value = new AbortController()
 
@@ -69,7 +72,7 @@ const { data, refresh, pending } = useAsyncData(`${key.value}`, async () => {
       }
     })
 
-    return response
+    data.value = response
   }
   catch (e: any) {
     if (e.message === 'canceled')
@@ -79,12 +82,15 @@ const { data, refresh, pending } = useAsyncData(`${key.value}`, async () => {
   }
   finally {
     resume()
+    pending.value = false
   }
+}
+
+watchThrottled([page, () => props.activeTab], () => {
+  fetchTransactions()
 }, {
-  watch: [() => props.activeTab, page],
+  throttle: 500,
   immediate: true,
-  lazy: true,
-  server: false,
 })
 
 const groupedData = computed(() => {
@@ -123,7 +129,7 @@ function handleToggle(e: Event) {
 }
 
 function refreshAll() {
-  refresh()
+  fetchTransactions()
 }
 
 watch(lastModal, () => {
@@ -138,7 +144,6 @@ watch(isCollapseAll, () => {
 })
 
 onUnmounted(() => {
-  clearNuxtData(key.value)
   if (abortController.value) {
     abortController.value.abort()
     abortController.value = null
@@ -147,30 +152,23 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <details v-if="data?.data?.length" ref="containerRef" :open="isDetailsOpen" class="dark:bg-gray-850 rounded-2xl bg-slate-50 sm:open:pb-0 group" @toggle="handleToggle">
-    <summary class="py-4 flex cursor-pointer items-center gap-2.5 px-5 text-xs font-medium leading-5 text-slate-400">
+  <component :is="chainId ? 'details' : 'div'" v-if="data?.data?.length" ref="containerRef" :open="isDetailsOpen" class="dark:bg-gray-850 rounded-2xl bg-slate-50 sm:open:pb-0 group" @toggle="handleToggle">
+    <summary v-if="chainId" class="py-4 flex cursor-pointer items-center gap-2.5 px-5 text-xs font-medium leading-5 text-slate-400">
       <ChainLogo class="w-5 h-5" :chain="chainId" />
-      <span class="text-white">
+      <span v-if="chainId" class="text-white">
         {{ chainIdToName(chainId) }}
-
       </span>
-
       <div>
         {{ data.meta.total }} total transaction{{ data.meta.total > 1 ? 's' : '' }}
       </div>
-
       <SvgSpinner v-if="pending" class="text-primary" />
-
       <SvgoChevronDown
         class="w-5 text-slate-400 ml-auto group-open:rotate-180"
       />
     </summary>
-
     <div class="flex flex-col sm:gap-0 gap-4 sm:p-0 p-5">
-      <ul v-if="activeTab === 'completed'">
-        <li>
-          <MultisigPendingTransactionItem v-for="item in data.data" :key="item.id" :inside-group="false" :active-tab="activeTab" :item="item" />
-        </li>
+      <ul v-if="activeTab === 'completed'" class="sm:block flex flex-col gap-4">
+        <MultisigPendingTransactionItem v-for="item in data.data" :key="item.id" network-cell-visible :inside-group="false" :active-tab="activeTab" :item="item" />
       </ul>
       <ul v-for="items, key in groupedData" v-else :key="key">
         <li>
@@ -185,5 +183,5 @@ onUnmounted(() => {
       </ul>
     </div>
     <Pagination class="sm:px-0 px-4 pb-4" :auto-navigate="false" :current="data.meta.current_page" :limit="data.meta.per_page" :total="data.meta.total" @update:current="handleCurrentUpdate" />
-  </details>
+  </component>
 </template>
