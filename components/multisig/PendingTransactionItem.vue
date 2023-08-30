@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { formatTimeAgo } from '@vueuse/core'
 import { getAddress } from 'ethers/lib/utils'
+import { Tippy } from 'vue-tippy'
 import { AvoMultisigImplementation__factory } from '@/contracts'
 
 const props = defineProps<{
   item: IMultisigTransaction
   activeTab: string | undefined
-  insideGroup: boolean
+  insideGroup?: boolean
+  networkCellVisible?: boolean
 }>()
 
 const route = useRoute()
@@ -107,13 +109,21 @@ async function handleClick(item: IMultisigTransaction) {
 </script>
 
 <template>
-  <li :class="insideGroup ? 'last:!border-b-0' : ''" class="w-full border-b border-slate-150 dark:border-slate-800">
+  <li :class="insideGroup ? 'last:!border-b-0' : ''" class="w-full sm:border-b border-slate-150 dark:border-slate-800">
     <button class="w-full" @click.stop="handleClick(item)">
-      <div class="hidden grid-row sm:grid grid-item focus:outline-none items-center w-full text-xs font-medium py-4 px-5">
+      <div :class="networkCellVisible ? 'grid-network-item' : 'grid-item'" class="hidden grid-row sm:grid focus:outline-none items-center w-full text-xs font-medium py-4 px-5">
+        <div v-if="networkCellVisible" class="flex items-center gap-3">
+          <Tippy :content="chainIdToName(item.chain_id)">
+            <ChainLogo class="w-5 h-5" :chain="item.chain_id" />
+          </Tippy>
+          <span class="sm:hidden 2xl:inline-block">
+            {{ chainIdToName(item.chain_id) }}
+          </span>
+        </div>
         <span class="flex items-center gap-2.5 whitespace-nowrap">
-
           <ActionLogo class="shrink-0" :action="actionType" />
-          <span>{{ formattedActionType }}
+          <span>
+            {{ formattedActionType }}
             <span v-if="activeTab !== 'nonseq'" v-tippy="`Nonce #${item.nonce}`" :class="item.nonce === '-1' ? 'hidden' : ''">
               ({{ item.nonce }})
             </span>
@@ -125,7 +135,7 @@ async function handleClick(item: IMultisigTransaction) {
             }" class="text-slate-500 shrink-0"
           />
         </span>
-        <ul :class="`${(decodedMetadata || [])?.length > 1 ? 'list-decimal pl-5 text-xs' : ''}`" class="flex-1 flex-col flex gap-2 svg-shrink-none max-w-sm truncate">
+        <ul :class="(decodedMetadata || [])?.length > 1 ? 'list-decimal pl-5 text-xs' : ''" class="flex-1 flex-col flex gap-2 svg-shrink-none max-w-sm truncate">
           <li v-for="(metadata, index) in decodeMetadata(item.data.params.metadata)" :key="index" v-memo="[tokens]">
             <ActionMetadata :key="metadata" :tokens="transformedTokens as any" class="text-left whitespace-nowrap" compact :chain_id="item.chain_id" :metadata="metadata" />
           </li>
@@ -178,6 +188,11 @@ async function handleClick(item: IMultisigTransaction) {
         </div>
       </div>
       <div class="sm:hidden flex flex-col items-baseline dark:bg-gray-850 bg-slate-50 ring-slate-150 dark:ring-slate-800 ring-1 rounded-5">
+        <div v-if="networkCellVisible" class="flex px-4 py-4 text-xs items-center gap-3">
+          <ChainLogo class="w-4 h-4" :chain="item.chain_id" />
+          {{ chainIdToName(item.chain_id) }}
+        </div>
+        <hr v-if="networkCellVisible" class="border-slate-150 w-full dark:border-slate-800">
         <div class="px-4 pt-4 pb-3 flex items-center gap-5">
           <span v-if="activeTab !== 'nonseq'" :class="item.nonce === '-1' ? 'hidden' : ''">
             {{ item.nonce }}
@@ -251,8 +266,11 @@ async function handleClick(item: IMultisigTransaction) {
 
 <style scoped>
 .grid-item {
-  grid-template-columns: 145px 1fr 95px 120px 200px;
-  @apply gap-8;
+  @apply sm:gap-4 2xl:gap-8 grid-cols-[145px_1fr_95px_120px_200px];
+}
+
+.grid-network-item {
+  @apply sm:gap-4 2xl:gap-8 sm:grid-cols-[20px_145px_1fr_95px_120px_200px] 2xl:grid-cols-[100px_145px_1fr_95px_120px_200px];
 }
 </style>
 

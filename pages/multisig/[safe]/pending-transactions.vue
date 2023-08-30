@@ -145,7 +145,7 @@ onMounted(() => {
             </span>
           </button>
         </div>
-        <button :disabled="isCollapseAllDisabled" class="text-primary text-xs disabled:text-slate-400" type="button" @click="toggle(true)">
+        <button v-if="activeTab !== 'completed'" :disabled="isCollapseAllDisabled" class="text-primary text-xs disabled:text-slate-400" type="button" @click="toggle(true)">
           Collapse All
         </button>
       </div>
@@ -154,7 +154,10 @@ onMounted(() => {
         {{ title }}
       </h2>
       <div ref="itemsRef" class="gap-5 flex flex-col">
-        <MultisigPendingTransactionItems v-for="network in availableNetworks" :key="network.chainId" :active-tab="activeTab" :chain-id="network.chainId" @on-toggle="syncToggles" />
+        <template v-if="activeTab === 'completed'">
+          <MultisigPendingTransactionItems network-cell-visible :active-tab="activeTab" @on-toggle="syncToggles" />
+        </template>
+        <MultisigPendingTransactionItems v-for="network in availableNetworks" v-else :key="network.chainId" :active-tab="activeTab" :chain-id="network.chainId" @on-toggle="syncToggles" />
       </div>
     </div>
   </div>
