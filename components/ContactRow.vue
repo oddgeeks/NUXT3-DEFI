@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 import DeleteSVG from '~/assets/images/icons/delete.svg?component'
 
 const props = defineProps({
@@ -73,15 +72,11 @@ async function handleDeletingContact(contact: IContact) {
               "
             >
               Send
-              <div
-                class="rounded-full bg-primary p-1.5 text-white"
-                :class="{
-                  'dark:bg-slate-600 bg-slate-300 dark:!text-slate-500 !text-slate-400':
-                    !!contact.chainId && !hasAvailableTokens(contact.chainId),
-                }"
-              >
-                <ArrowRight class="-rotate-45 w-3.5 h-3.5" />
-              </div>
+              <IconsTransaction class="p-1.5" :disabled="!!contact.chainId && !hasAvailableTokens(contact.chainId)" color="light">
+                <template #icon>
+                  <SvgoArrowRight class="-rotate-45 w-3.5 h-3.5" />
+                </template>
+              </IconsTransaction>
             </CommonButton>
           </div>
           <button class="disabled:text-slate-400 disabled:opacity-40 text-red-alert" :disabled="contact.owner" @click="handleDeletingContact(contact)">

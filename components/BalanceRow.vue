@@ -150,7 +150,11 @@ function onClick() {
           class="!h-9 !w-9 !p-0 items-center justify-center"
           @click="openSendModal(tokenBalance.chainId, tokenBalance.address)"
         >
-          <ArrowRight class="-rotate-45" />
+          <IconsTransaction :disabled="!interactable" :hoverable="true">
+            <template #icon>
+              <ArrowRight class="-rotate-45" />
+            </template>
+          </IconsTransaction>
         </CommonButton>
 
         <CommonButton

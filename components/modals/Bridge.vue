@@ -202,9 +202,11 @@ const onSubmit = form.handleSubmit(async () => {
 <template>
   <form class="flex gap-7.5 flex-col" @submit="onSubmit">
     <div class="flex gap-[14px]">
-      <div class="w-10 h-10 rounded-full items-center flex justify-center bg-primary shrink-0">
-        <SvgoBridge />
-      </div>
+      <IconsTransaction class="w-10 h-10">
+        <template #icon>
+          <SvgoBridge />
+        </template>
+      </IconsTransaction>
       <div class="flex flex-col gap-1">
         <h1 class="text-lg leading-[20px]">
           Bridge
