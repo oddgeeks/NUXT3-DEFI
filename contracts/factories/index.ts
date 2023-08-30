@@ -9,4 +9,5 @@ export { Erc20__factory } from "./Erc20__factory";
 export { Forwarder__factory } from "./Forwarder__factory";
 export { GaslessWallet__factory } from "./GaslessWallet__factory";
 export { GnosisSafe__factory } from "./GnosisSafe__factory";
+export { MultisigForwarder__factory } from "./MultisigForwarder__factory";
 export { TokenBalanceResolver__factory } from "./TokenBalanceResolver__factory";

@@ -1,13 +1,12 @@
 <script setup>
 import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
 
-const { safeAddress, isSafeAddress } = useAvocadoSafe()
+const { safeAddress } = useAvocadoSafe()
+const { selectedSafe } = storeToRefs(useSafe())
 const account = computed(() => safeAddress.value || '0x000000000000000')
 
-const { data: isValidAddress } = useAsyncData(() => isSafeAddress(safeAddress.value), {
-  watch: [safeAddress],
-  immediate: true,
-  default: () => false,
+const isSafeDeployed = computed(() => {
+  return Object.values(selectedSafe.value?.deployed || {}).some(deployed => deployed)
 })
 </script>
 
@@ -39,7 +38,7 @@ const { data: isValidAddress } = useAsyncData(() => isSafeAddress(safeAddress.va
         </div>
       </div>
       <NuxtLink
-        v-if="isValidAddress"
+        v-if="isSafeDeployed"
         :href="`/w/${account}`"
         external
         target="_blank"

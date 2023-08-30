@@ -2,30 +2,28 @@
 import SVGQuestionCircle from '~/assets/images/icons/question-circle.svg?component'
 
 const props = defineProps<{
-  chainId: number | string
-  actions: any
+  transaction: IMultisigTransaction
   isGasTopup?: boolean
-  options?: any
 }>()
 
-const emit = defineEmits(['resolve', 'reject'])
+const emit = defineEmits(['resolve', 'reject', 'destroy'])
 
 const { data, pending, error } = useEstimatedFee(
-  ref(props.actions),
-  ref(String(props.chainId)),
+  ref(props.transaction.data.params.actions),
+  ref(String(props.transaction.chain_id)),
   {
     immediate: true,
     disabled: () => props.isGasTopup,
-    options: props.options || {},
+    nonce: props.transaction.nonce,
+    metadata: props.transaction.data.params.metadata,
+    options: {
+      id: props.transaction.data.params.id || '0',
+    },
   },
 )
 
 function handleResolve() {
   return emit('resolve', true)
-}
-
-function handleReject() {
-  return emit('reject', false)
 }
 </script>
 
@@ -52,20 +50,34 @@ function handleReject() {
       :loading="pending"
       :error="error"
     />
+    <div v-if="!!error" class="flex w-full flex-col gap-7.5">
+      <p class="text-xs w-full font-medium -my-2.5 text-left">
+        This transaction will most likely fail on-chain.<br>
+        Please cancel this by creating a rejection transaction.
+      </p>
+      <CommonButton
+        size="lg" color="red" class="w-full justify-center" @click="$emit('resolve', false, {
+          rejection: true,
+        })"
+      >
+        Create rejection transaction
+      </CommonButton>
+    </div>
     <div
+      v-else
       class="flex w-full gap-4 items-center"
     >
       <CommonButton
         class="flex-1 justify-center"
         size="lg"
         color="white"
-        @click="handleReject()"
+        @click="$emit('reject', false)"
       >
         Cancel
       </CommonButton>
       <CommonButton
         :loading="pending"
-        :disabled="pending || !!error"
+        :disabled="pending"
         class="flex-1 justify-center"
         size="lg"
         @click="handleResolve()"

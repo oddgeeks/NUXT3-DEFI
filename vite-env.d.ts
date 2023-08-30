@@ -67,6 +67,18 @@ interface NetworkVersion extends Network {
   latestImplementationAddress?: string;
 }
 
+interface ISafeOptions {
+  chainId: string | number,
+  threshold: number,
+  nonce: number,
+  latestVersion: string,
+  currentVersion: string,
+  safeAddress: string,
+  ownerAddress: string,
+  notdeployed: boolean,
+  server: boolean,
+}
+
 interface IAvocadoTransaction {
   id: number;
   chain_id: string;
@@ -75,6 +87,8 @@ interface IAvocadoTransaction {
   to: string;
   data: string;
   fee: string;
+  effective_fee: string;
+  balance_transactions: IAvocadoBalanceTransaction[];
   confirmations: number;
   status: "pending" | "confirming" | "success" | "failed" | "dropped";
   revert_reason?: string;
@@ -86,9 +100,20 @@ interface IAvocadoTransaction {
   metadata: {
     safe?: string;
     signer?: string;
+    multisig: boolean;
+    multisig_index: number;
+    multisig_signers: string[];
+    multisig_hash?: string;
+    owner?: string;
+    source?: string;
   };
   created_at: string;
   updated_at: string;
+  decodedMetadata?: any;
+  isBridge?: boolean;
+  crosschain_transaction: ICrosschainTransaction | null;
+  crosschain_transaction_id: string | null;
+  cross: true;
 }
 
 interface IBridgeResponse {
@@ -110,7 +135,11 @@ interface IBridgeTokensResult {
   decimals: number;
   symbol: string;
   logoURI: string;
+  chainId: number;
   chainAgnosticId: string;
+  balance?: string;
+  price?: number;
+  score?: number;
 }
 
 interface IBridgeTokensResponse {
@@ -279,7 +308,7 @@ type IOptions = {
   sheetPosition?: "top" | "bottom";
 };
 
-type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim";
+type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim" | 'deploy' | 'upgrade' | 'nft' | 'wc';
 
 type ISlackMessageType = "danger" | "error" | "success" | "banner";
 
@@ -403,6 +432,7 @@ interface Transaction {
 interface AppliedDiscountDetails extends DiscountDetails {
   discountAmountMin: number;
   discountAmount: number;
+  formattedDiscountAmount: string;
 }
 
 interface ICalculatedFee {
@@ -470,8 +500,9 @@ interface ITokenPrice {
 }
 
 interface ILogBalanceParams {
+  isPublic?: boolean
   chainId: number;
-  isOnboard: boolean;
+  type: 'eoa-balances' | 'safe-balances' | 'options'
   isPublic: boolean;
 }
  
@@ -542,6 +573,42 @@ type IDefiToken = {
   tokenAddress: string;
 }
 
+interface ISafesResponse {
+  data: ISafe[]
+  page: number
+  totoal
+}
+
+ interface ISafe {
+  fully_deployed: number
+  id: number
+  safe_address: string
+  owner_address: string
+  created_at: string
+  updated_at: string
+  multisig: 0 | 1
+  deployed: Record<string, boolean>,
+  version: Record<string, string>
+  authorities: Record<string, string[]>
+  signers: Record<string, string[]>
+  multisig_index: number;
+ }
+
+interface IRequiredSigners {
+  chainId: number | string
+  requiredSignerCount: number
+  signerCount: number
+  signers: string[]
+ }
+
+interface ISigner {
+  address: string
+  chainIds: string[]
+}
+
+type ChainFees = Record<string, ICalculatedFee>
+type ChainFeeErrors = Record<string, string>
+
 interface ISignerAddress {
   name: string
   address: string
@@ -551,4 +618,5 @@ interface INavigationTab {
   label: string;
   value: 'dapps' | 'balances' | 'bookmarks';
   query?: string;
+  count: number;
 }

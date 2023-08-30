@@ -22,6 +22,8 @@ watch(reactiveAddresses, () => {
 <template>
   <div class="flex flex-col">
     <div class="p-6 sm:p-7.5 flex flex-col gap-7.5">
+      <Steps class="mr-10" :current-step="1" :total-steps="3" />
+
       <div class="text-lg flex gap-[14px]">
         <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
           1
@@ -34,7 +36,6 @@ watch(reactiveAddresses, () => {
             On <ChainLogo class="w-5 h-5 shrink-0 inline-block" :chain="chainId" />  {{ chainIdToName(chainId) }}</span>
         </div>
       </div>
-      <Steps :current-step="1" :total-steps="3" />
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <ul class="text-sm flex gap-[26px] p-6 sm:p-7.5 flex-col">

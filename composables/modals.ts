@@ -29,12 +29,8 @@ import SupportedNetworks from '~/components/modals/SupportedNetworks.vue'
 import PendingCrossTransaction from '~/components/modals/PendingCrossTransaction.vue'
 import DefiPositionDetails from '~/components/modals/DefiPositionDetails.vue'
 import QrCode from '~/components/modals/QrCode.vue'
-import AddAuthority from '~/components/modals/AddAuthority.vue'
 import AddSigner from '~/components/modals/Multisig/AddSigner.vue'
 import ReviewSigner from '~/components/modals/Multisig/ReviewSigner.vue'
-import ManageAuthority from '~/components/modals/ManageAuthority.vue'
-import EstimateAuthority from '~/components/modals/EstimateAuthority.vue'
-import SignAuthorityTransactions from '~/components/modals/SignAuthorityTransactions.vue'
 import WalletNameEdit from '~/components/modals/WalletNameEdit.vue'
 import ReviewMultisigTransaction from '~/components/modals/Multisig/ReviewTransaction.vue'
 import MultisigTransactionDetail from '~/components/modals/Multisig/TransactionDetails.vue'
@@ -48,6 +44,7 @@ import MultisigSelectNetwork from '~/components/modals/Multisig/SelectNetwork.vu
 import UpdateNoticeModal from '~/components/modals/UpdateNotice.vue'
 import WelcomeModal from '~/components/modals/Welcome.vue'
 import CreateBookmark from '~/components/modals/CreateBookmark.vue'
+import ExecutionError from '~/components/modals/Multisig/ExecutionError.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -179,12 +176,14 @@ export function openWalletDetailsModalV2(session: SessionTypes.Struct) {
 }
 
 export async function openTokenSelectionModal(params: any) {
+  const { tokens = [], selectedToken = null, sort = true } = params || {}
   return openModal({
     component: TokenSelection,
     async: true,
     componentProps: {
-      tokens: params?.tokens || [],
-      selectedToken: params?.selectedToken || null,
+      tokens,
+      selectedToken,
+      sort,
     },
     options: {
       contentClass: '!px-2.5',
@@ -271,12 +270,12 @@ export async function openDialogModal({
   })
 }
 
-export async function openUpgradeModal(network: NetworkVersion) {
+export async function openUpgradeModal(options: ISafeOptions) {
   return openModal({
     component: UpgradeVersion,
     async: true,
     componentProps: {
-      network,
+      options,
     },
     options: {
       contentClass: 'sm:!p-7.5',
@@ -291,11 +290,14 @@ export function openCustomTxModal() {
   })
 }
 
-export function openDeployNetworkModal(network: Network) {
+export function openDeployNetworkModal(option: ISafeOptions) {
   openModal({
     component: DeployNetwork,
     componentProps: {
-      network,
+      option,
+    },
+    options: {
+      wrapperClass: '!max-w-[560px]',
     },
   })
 }
@@ -451,12 +453,6 @@ export function openWelcomeModal() {
   })
 }
 
-export function openAddAuthorityModal() {
-  return openModal({
-    component: AddAuthority,
-  })
-}
-
 export function openAddSignerModal(params?: IAddSignerModalParams) {
   const { addresses, threshold, options = {}, gnosisAddress } = params || {}
   return openModal({
@@ -555,42 +551,6 @@ export async function openEditNonceModal(params: IOpenNonceModalParams) {
   })
 }
 
-export function openManageAuthorityModal(authority: IAuthority, chainIds?: number[], isNewAuthority = false) {
-  return openModal({
-    component: ManageAuthority,
-    componentProps: {
-      authority,
-      chainIds,
-      isNewAuthority,
-    },
-  })
-}
-
-export function openEstimateAuthorityModal(authority: IAuthority, chainIds: number[] | string[], remove = false) {
-  return openModal({
-    component: EstimateAuthority,
-    componentProps: {
-      authority,
-      chainIds,
-      remove,
-    },
-    options: {
-      wrapperClass: '!max-w-[510px]',
-    },
-  })
-}
-
-export function openSignAuthorityModal(authority: IAuthority, transactions: IAuthorityTx[], remove = false) {
-  return openModal({
-    component: SignAuthorityTransactions,
-    componentProps: {
-      transactions,
-      authority,
-      remove,
-    },
-  })
-}
-
 export function openUpdateThresholdModal(chainId: number | string, additionalCount: number, {
   activeStep = 0,
   totalSteps = 0,
@@ -620,12 +580,13 @@ export function openWalletNameEditModal(safe: ISafe) {
   })
 }
 
-export function openReviewMultisigTransaction(transactionId: string, rejection = false) {
+export function openReviewMultisigTransaction(transactionId: string, chainId: string | number, rejection = false) {
   return openModal({
     component: ReviewMultisigTransaction,
     componentProps: {
       transactionId,
       rejection,
+      chainId,
     },
   })
 }
@@ -661,14 +622,12 @@ export function openMultisigSelectNetworkModal(addresses: ISignerAddress[], defa
 }
 
 export function openExecuteTransactionModal(params: IOpenExecuteModalParams) {
-  const { chainId, actions, isGasTopup = false, options } = params
+  const { isGasTopup = false, transaction } = params
   return openModal({
     component: ExecuteTransaction,
     componentProps: {
-      chainId,
-      actions,
+      transaction,
       isGasTopup,
-      options,
     },
     options: {
       wrapperClass: '!max-w-[560px]',
@@ -699,6 +658,17 @@ export function openFetchGnosisSafeModal(gnosisAddress?: string) {
       contentClass: '!p-0',
       wrapperClass: '!max-w-[560px]',
     },
+  })
+}
+
+export async function openExecutionErrorModal(proposalId: string, safeAddress: string) {
+  return openModal({
+    component: ExecutionError,
+    componentProps: {
+      proposalId,
+      safeAddress,
+    },
+
   })
 }
 

@@ -2,7 +2,7 @@
 import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 import DeleteSVG from '~/assets/images/icons/delete.svg?component'
 
-defineProps({
+const props = defineProps({
   contact: {
     type: Object as PropType<IContact>,
     required: true,
@@ -11,6 +11,8 @@ defineProps({
 
 const { deleteContact, getSentTimes } = useContacts()
 const { tokenBalances } = useAvocadoSafe()
+
+const sentTimes = computed(() => getSentTimes(props.contact))
 
 function hasAvailableTokens(chainId: number | string) {
   return tokenBalances.value.filter(t => t.chainId == chainId).length > 0
@@ -42,10 +44,9 @@ async function handleDeletingContact(contact: IContact) {
             :chain="contact.chainId"
           />
           <span>{{ shortenHash(contact.address) }}</span>
+          <Copy :text="contact.address" />
         </div>
-        <span class="text-slate-400">{{
-          getSentTimes(contact)
-        }}</span>
+        <span class="text-slate-400">{{ sentTimes }}</span>
         <div class="flex items-center gap-9">
           <div class="flex gap-4">
             <CommonButton

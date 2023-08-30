@@ -15,7 +15,7 @@ export function useErrorHandler() {
 
     const errorMessage = parsedError.message || ''
 
-    console.log(errorMessage)
+    console.error(errorMessage)
 
     let formatted
       = parsedError?.error?.message

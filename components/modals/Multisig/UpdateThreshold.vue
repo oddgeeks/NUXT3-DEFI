@@ -10,16 +10,21 @@ const props = defineProps<{
 
 defineEmits(['resolve'])
 
-const { requiredSigners } = storeToRefs(useMultisig())
+const { safeOptions, selectedSafe } = storeToRefs(useSafe())
 
-const requiredSignersByChain = computed(() => requiredSigners.value.find(i => i.chainId == props.chainId))
+const requiredSignersByChain = computed(() => safeOptions.value.find(i => i.chainId == props.chainId))
 
-const defaultThreshold = computed(() => requiredSignersByChain.value?.requiredSignerCount || 1)
+const defaultThreshold = computed(() => requiredSignersByChain.value?.threshold || 1)
 
 const threshold = ref(defaultThreshold.value)
 
 const minCount = 1
-const maxCount = computed(() => (requiredSignersByChain.value?.signerCount || 1) + props.additionalCount)
+const maxCount = computed(() => {
+  const signers = selectedSafe.value?.signers || {}
+  const chainSignerCount = signers[props.chainId] || []
+
+  return (chainSignerCount.length || 1) + props.additionalCount
+})
 
 const availableThresholds = computed(() => generateNumber(minCount, maxCount.value))
 
@@ -37,6 +42,7 @@ onMounted(() => {
 <template>
   <div>
     <div class="sm:p-7.5 p-5 flex flex-col gap-7.5">
+      <Steps v-if="activeStep && totalSteps" class="mr-10" :current-step="activeStep" :total-steps="totalSteps" />
       <div>
         <h2 class="text-lg">
           Update Treshold
@@ -49,7 +55,6 @@ onMounted(() => {
           </span>
         </h3>
       </div>
-      <Steps v-if="activeStep && totalSteps" :current-step="activeStep" :total-steps="totalSteps" />
     </div>
 
     <hr class="border-slate-150 dark:border-slate-800">

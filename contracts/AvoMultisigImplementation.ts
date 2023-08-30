@@ -28,7 +28,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export declare namespace AvoCoreStructs {
+export declare namespace AvocadoMultisigStructs {
   export type ActionStruct = {
     target: PromiseOrValue<string>;
     data: PromiseOrValue<BytesLike>;
@@ -44,25 +44,25 @@ export declare namespace AvoCoreStructs {
   };
 
   export type CastParamsStruct = {
-    actions: AvoCoreStructs.ActionStruct[];
+    actions: AvocadoMultisigStructs.ActionStruct[];
     id: PromiseOrValue<BigNumberish>;
-    avoSafeNonce: PromiseOrValue<BigNumberish>;
+    avoNonce: PromiseOrValue<BigNumberish>;
     salt: PromiseOrValue<BytesLike>;
     source: PromiseOrValue<string>;
     metadata: PromiseOrValue<BytesLike>;
   };
 
   export type CastParamsStructOutput = [
-    AvoCoreStructs.ActionStructOutput[],
+    AvocadoMultisigStructs.ActionStructOutput[],
     BigNumber,
     BigNumber,
     string,
     string,
     string
   ] & {
-    actions: AvoCoreStructs.ActionStructOutput[];
+    actions: AvocadoMultisigStructs.ActionStructOutput[];
     id: BigNumber;
-    avoSafeNonce: BigNumber;
+    avoNonce: BigNumber;
     salt: string;
     source: string;
     metadata: string;
@@ -73,9 +73,11 @@ export declare namespace AvoCoreStructs {
     gasPrice: PromiseOrValue<BigNumberish>;
     validAfter: PromiseOrValue<BigNumberish>;
     validUntil: PromiseOrValue<BigNumberish>;
+    value: PromiseOrValue<BigNumberish>;
   };
 
   export type CastForwardParamsStructOutput = [
+    BigNumber,
     BigNumber,
     BigNumber,
     BigNumber,
@@ -85,6 +87,7 @@ export declare namespace AvoCoreStructs {
     gasPrice: BigNumber;
     validAfter: BigNumber;
     validUntil: BigNumber;
+    value: BigNumber;
   };
 
   export type SignatureParamsStruct = {
@@ -133,41 +136,40 @@ export interface AvoMultisigImplementationInterface extends utils.Interface {
     "DOMAIN_SEPARATOR_VERSION()": FunctionFragment;
     "MAX_SIGNERS_COUNT()": FunctionFragment;
     "TYPE_HASH()": FunctionFragment;
+    "_afterUpgradeHook(address,bytes)": FunctionFragment;
     "_callTargets((address,bytes,uint256,uint256)[],uint256)": FunctionFragment;
-    "_getSigDigest(((address,bytes,uint256,uint256)[],uint256,int256,bytes32,address,bytes),bytes32,bytes32)": FunctionFragment;
-    "addSigners(address[])": FunctionFragment;
+    "addSigners(address[],uint8)": FunctionFragment;
     "avoForwarder()": FunctionFragment;
-    "avoSafeNonce()": FunctionFragment;
+    "avoNonce()": FunctionFragment;
+    "avoRegistry()": FunctionFragment;
     "avoSignersList()": FunctionFragment;
-    "avoVersionsRegistry()": FunctionFragment;
-    "cast(((address,bytes,uint256,uint256)[],uint256,int256,bytes32,address,bytes),(uint256,uint256,uint256,uint256),(bytes,address)[])": FunctionFragment;
+    "cast(((address,bytes,uint256,uint256)[],uint256,int256,bytes32,address,bytes),(uint256,uint256,uint256,uint256,uint256),(bytes,address)[])": FunctionFragment;
     "castAuthorized(((address,bytes,uint256,uint256)[],uint256,int256,bytes32,address,bytes),(uint256,uint256,uint256,uint256),(bytes,address)[])": FunctionFragment;
     "domainSeparatorV4()": FunctionFragment;
     "executeOperation(address[],uint256[],uint256[],address,bytes)": FunctionFragment;
-    "getSigDigest(((address,bytes,uint256,uint256)[],uint256,int256,bytes32,address,bytes),(uint256,uint256,uint256,uint256))": FunctionFragment;
+    "getSigDigest(((address,bytes,uint256,uint256)[],uint256,int256,bytes32,address,bytes),(uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
     "getSigDigestAuthorized(((address,bytes,uint256,uint256)[],uint256,int256,bytes32,address,bytes),(uint256,uint256,uint256,uint256))": FunctionFragment;
-    "initialize(address)": FunctionFragment;
-    "initializeWithVersion(address,address)": FunctionFragment;
+    "index()": FunctionFragment;
+    "initialize()": FunctionFragment;
     "isSigner(address)": FunctionFragment;
     "isValidSignature(bytes32,bytes)": FunctionFragment;
     "nonSequentialNonces(bytes32)": FunctionFragment;
-    "occupyAvoSafeNonces(uint88[])": FunctionFragment;
+    "occupyAvoNonces(uint88[])": FunctionFragment;
     "occupyNonSequentialNonces(bytes32[])": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "removeSignedMessage(bytes32)": FunctionFragment;
-    "removeSigners(address[])": FunctionFragment;
+    "removeSigners(address[],uint8)": FunctionFragment;
     "requiredSigners()": FunctionFragment;
     "setRequiredSigners(uint8)": FunctionFragment;
     "signMessage(bytes32)": FunctionFragment;
     "signers()": FunctionFragment;
     "signersCount()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
-    "upgradeTo(address)": FunctionFragment;
-    "upgradeToAndCall(address,bytes,bool)": FunctionFragment;
-    "verify(((address,bytes,uint256,uint256)[],uint256,int256,bytes32,address,bytes),(uint256,uint256,uint256,uint256),(bytes,address)[])": FunctionFragment;
+    "upgradeTo(address,bytes)": FunctionFragment;
+    "verify(((address,bytes,uint256,uint256)[],uint256,int256,bytes32,address,bytes),(uint256,uint256,uint256,uint256,uint256),(bytes,address)[])": FunctionFragment;
     "verifyAuthorized(((address,bytes,uint256,uint256)[],uint256,int256,bytes32,address,bytes),(uint256,uint256,uint256,uint256),(bytes,address)[])": FunctionFragment;
   };
 
@@ -187,25 +189,25 @@ export interface AvoMultisigImplementationInterface extends utils.Interface {
       | "DOMAIN_SEPARATOR_VERSION"
       | "MAX_SIGNERS_COUNT"
       | "TYPE_HASH"
+      | "_afterUpgradeHook"
       | "_callTargets"
-      | "_getSigDigest"
       | "addSigners"
       | "avoForwarder"
-      | "avoSafeNonce"
+      | "avoNonce"
+      | "avoRegistry"
       | "avoSignersList"
-      | "avoVersionsRegistry"
       | "cast"
       | "castAuthorized"
       | "domainSeparatorV4"
       | "executeOperation"
       | "getSigDigest"
       | "getSigDigestAuthorized"
+      | "index"
       | "initialize"
-      | "initializeWithVersion"
       | "isSigner"
       | "isValidSignature"
       | "nonSequentialNonces"
-      | "occupyAvoSafeNonces"
+      | "occupyAvoNonces"
       | "occupyNonSequentialNonces"
       | "onERC1155BatchReceived"
       | "onERC1155Received"
@@ -220,7 +222,6 @@ export interface AvoMultisigImplementationInterface extends utils.Interface {
       | "signersCount"
       | "supportsInterface"
       | "upgradeTo"
-      | "upgradeToAndCall"
       | "verify"
       | "verifyAuthorized"
   ): FunctionFragment;
@@ -279,27 +280,27 @@ export interface AvoMultisigImplementationInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "TYPE_HASH", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "_callTargets",
-    values: [AvoCoreStructs.ActionStruct[], PromiseOrValue<BigNumberish>]
+    functionFragment: "_afterUpgradeHook",
+    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getSigDigest",
+    functionFragment: "_callTargets",
     values: [
-      AvoCoreStructs.CastParamsStruct,
-      PromiseOrValue<BytesLike>,
-      PromiseOrValue<BytesLike>
+      AvocadoMultisigStructs.ActionStruct[],
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "addSigners",
-    values: [PromiseOrValue<string>[]]
+    values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "avoForwarder",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "avoNonce", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "avoSafeNonce",
+    functionFragment: "avoRegistry",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -307,23 +308,19 @@ export interface AvoMultisigImplementationInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "avoVersionsRegistry",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "cast",
     values: [
-      AvoCoreStructs.CastParamsStruct,
-      AvoCoreStructs.CastForwardParamsStruct,
-      AvoCoreStructs.SignatureParamsStruct[]
+      AvocadoMultisigStructs.CastParamsStruct,
+      AvocadoMultisigStructs.CastForwardParamsStruct,
+      AvocadoMultisigStructs.SignatureParamsStruct[]
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "castAuthorized",
     values: [
-      AvoCoreStructs.CastParamsStruct,
-      AvoCoreStructs.CastAuthorizedParamsStruct,
-      AvoCoreStructs.SignatureParamsStruct[]
+      AvocadoMultisigStructs.CastParamsStruct,
+      AvocadoMultisigStructs.CastAuthorizedParamsStruct,
+      AvocadoMultisigStructs.SignatureParamsStruct[]
     ]
   ): string;
   encodeFunctionData(
@@ -343,24 +340,21 @@ export interface AvoMultisigImplementationInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getSigDigest",
     values: [
-      AvoCoreStructs.CastParamsStruct,
-      AvoCoreStructs.CastForwardParamsStruct
+      AvocadoMultisigStructs.CastParamsStruct,
+      AvocadoMultisigStructs.CastForwardParamsStruct
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "getSigDigestAuthorized",
     values: [
-      AvoCoreStructs.CastParamsStruct,
-      AvoCoreStructs.CastAuthorizedParamsStruct
+      AvocadoMultisigStructs.CastParamsStruct,
+      AvocadoMultisigStructs.CastAuthorizedParamsStruct
     ]
   ): string;
+  encodeFunctionData(functionFragment: "index", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "initializeWithVersion",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "isSigner",
@@ -375,7 +369,7 @@ export interface AvoMultisigImplementationInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "occupyAvoSafeNonces",
+    functionFragment: "occupyAvoNonces",
     values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
@@ -418,7 +412,7 @@ export interface AvoMultisigImplementationInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "removeSigners",
-    values: [PromiseOrValue<string>[]]
+    values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "requiredSigners",
@@ -443,30 +437,22 @@ export interface AvoMultisigImplementationInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "upgradeTo",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "upgradeToAndCall",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BytesLike>,
-      PromiseOrValue<boolean>
-    ]
+    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "verify",
     values: [
-      AvoCoreStructs.CastParamsStruct,
-      AvoCoreStructs.CastForwardParamsStruct,
-      AvoCoreStructs.SignatureParamsStruct[]
+      AvocadoMultisigStructs.CastParamsStruct,
+      AvocadoMultisigStructs.CastForwardParamsStruct,
+      AvocadoMultisigStructs.SignatureParamsStruct[]
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "verifyAuthorized",
     values: [
-      AvoCoreStructs.CastParamsStruct,
-      AvoCoreStructs.CastAuthorizedParamsStruct,
-      AvoCoreStructs.SignatureParamsStruct[]
+      AvocadoMultisigStructs.CastParamsStruct,
+      AvocadoMultisigStructs.CastAuthorizedParamsStruct,
+      AvocadoMultisigStructs.SignatureParamsStruct[]
     ]
   ): string;
 
@@ -524,11 +510,11 @@ export interface AvoMultisigImplementationInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "TYPE_HASH", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "_callTargets",
+    functionFragment: "_afterUpgradeHook",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getSigDigest",
+    functionFragment: "_callTargets",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "addSigners", data: BytesLike): Result;
@@ -536,16 +522,13 @@ export interface AvoMultisigImplementationInterface extends utils.Interface {
     functionFragment: "avoForwarder",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "avoNonce", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "avoSafeNonce",
+    functionFragment: "avoRegistry",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "avoSignersList",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "avoVersionsRegistry",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "cast", data: BytesLike): Result;
@@ -569,11 +552,8 @@ export interface AvoMultisigImplementationInterface extends utils.Interface {
     functionFragment: "getSigDigestAuthorized",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "index", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "initializeWithVersion",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "isSigner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isValidSignature",
@@ -584,7 +564,7 @@ export interface AvoMultisigImplementationInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "occupyAvoSafeNonces",
+    functionFragment: "occupyAvoNonces",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -634,10 +614,6 @@ export interface AvoMultisigImplementationInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "upgradeToAndCall",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "verify", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "verifyAuthorized",
@@ -645,12 +621,13 @@ export interface AvoMultisigImplementationInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "AvoSafeNonceOccupied(uint256)": EventFragment;
+    "AvoNonceOccupied(uint256)": EventFragment;
     "CastExecuted(address,address,address[],bytes)": EventFragment;
     "CastFailed(address,address,address[],string,bytes)": EventFragment;
     "FeePaid(uint256)": EventFragment;
     "FeePayFailed(uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
+    "ListSyncFailed()": EventFragment;
     "NonSequentialNonceOccupied(bytes32)": EventFragment;
     "RemoveSignedMessage(bytes32)": EventFragment;
     "RequiredSignersSet(uint8)": EventFragment;
@@ -660,12 +637,13 @@ export interface AvoMultisigImplementationInterface extends utils.Interface {
     "Upgraded(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AvoSafeNonceOccupied"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AvoNonceOccupied"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "CastExecuted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "CastFailed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeePaid"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeePayFailed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ListSyncFailed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NonSequentialNonceOccupied"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RemoveSignedMessage"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RequiredSignersSet"): EventFragment;
@@ -675,16 +653,16 @@ export interface AvoMultisigImplementationInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
-export interface AvoSafeNonceOccupiedEventObject {
-  occupiedAvoSafeNonce: BigNumber;
+export interface AvoNonceOccupiedEventObject {
+  occupiedAvoNonce: BigNumber;
 }
-export type AvoSafeNonceOccupiedEvent = TypedEvent<
+export type AvoNonceOccupiedEvent = TypedEvent<
   [BigNumber],
-  AvoSafeNonceOccupiedEventObject
+  AvoNonceOccupiedEventObject
 >;
 
-export type AvoSafeNonceOccupiedEventFilter =
-  TypedEventFilter<AvoSafeNonceOccupiedEvent>;
+export type AvoNonceOccupiedEventFilter =
+  TypedEventFilter<AvoNonceOccupiedEvent>;
 
 export interface CastExecutedEventObject {
   source: string;
@@ -736,6 +714,11 @@ export interface InitializedEventObject {
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+
+export interface ListSyncFailedEventObject {}
+export type ListSyncFailedEvent = TypedEvent<[], ListSyncFailedEventObject>;
+
+export type ListSyncFailedEventFilter = TypedEventFilter<ListSyncFailedEvent>;
 
 export interface NonSequentialNonceOccupiedEventObject {
   occupiedNonSequentialNonce: string;
@@ -855,43 +838,43 @@ export interface AvoMultisigImplementation extends BaseContract {
 
     TYPE_HASH(overrides?: CallOverrides): Promise<[string]>;
 
+    _afterUpgradeHook(
+      fromImplementation_: PromiseOrValue<string>,
+      data_: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     _callTargets(
-      actions_: AvoCoreStructs.ActionStruct[],
+      actions_: AvocadoMultisigStructs.ActionStruct[],
       id_: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    _getSigDigest(
-      params_: AvoCoreStructs.CastParamsStruct,
-      functionTypeHash_: PromiseOrValue<BytesLike>,
-      customStructHash_: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     addSigners(
       addSigners_: PromiseOrValue<string>[],
+      requiredSigners_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     avoForwarder(overrides?: CallOverrides): Promise<[string]>;
 
-    avoSafeNonce(overrides?: CallOverrides): Promise<[BigNumber]>;
+    avoNonce(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    avoRegistry(overrides?: CallOverrides): Promise<[string]>;
 
     avoSignersList(overrides?: CallOverrides): Promise<[string]>;
 
-    avoVersionsRegistry(overrides?: CallOverrides): Promise<[string]>;
-
     cast(
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     castAuthorized(
-      params_: AvoCoreStructs.CastParamsStruct,
-      authorizedParams_: AvoCoreStructs.CastAuthorizedParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      authorizedParams_: AvocadoMultisigStructs.CastAuthorizedParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -907,25 +890,20 @@ export interface AvoMultisigImplementation extends BaseContract {
     ): Promise<ContractTransaction>;
 
     getSigDigest(
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     getSigDigestAuthorized(
-      params_: AvoCoreStructs.CastParamsStruct,
-      authorizedParams_: AvoCoreStructs.CastAuthorizedParamsStruct,
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      authorizedParams_: AvocadoMultisigStructs.CastAuthorizedParamsStruct,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    initialize(
-      owner_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    index(overrides?: CallOverrides): Promise<[number]>;
 
-    initializeWithVersion(
-      owner_: PromiseOrValue<string>,
-      avoMultisigVersion_: PromiseOrValue<string>,
+    initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -945,8 +923,8 @@ export interface AvoMultisigImplementation extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    occupyAvoSafeNonces(
-      avoSafeNonces_: PromiseOrValue<BigNumberish>[],
+    occupyAvoNonces(
+      avoNonces_: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -990,6 +968,7 @@ export interface AvoMultisigImplementation extends BaseContract {
 
     removeSigners(
       removeSigners_: PromiseOrValue<string>[],
+      requiredSigners_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1017,28 +996,22 @@ export interface AvoMultisigImplementation extends BaseContract {
     ): Promise<[boolean]>;
 
     upgradeTo(
-      avoMultisigImpl_: PromiseOrValue<string>,
+      avoImplementation_: PromiseOrValue<string>,
+      afterUpgradeHookData_: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    upgradeToAndCall(
-      avoImplementation_: PromiseOrValue<string>,
-      data_: PromiseOrValue<BytesLike>,
-      forceCall_: PromiseOrValue<boolean>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     verify(
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     verifyAuthorized(
-      params_: AvoCoreStructs.CastParamsStruct,
-      authorizedParams_: AvoCoreStructs.CastAuthorizedParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      authorizedParams_: AvocadoMultisigStructs.CastAuthorizedParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
@@ -1071,43 +1044,43 @@ export interface AvoMultisigImplementation extends BaseContract {
 
   TYPE_HASH(overrides?: CallOverrides): Promise<string>;
 
+  _afterUpgradeHook(
+    fromImplementation_: PromiseOrValue<string>,
+    data_: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   _callTargets(
-    actions_: AvoCoreStructs.ActionStruct[],
+    actions_: AvocadoMultisigStructs.ActionStruct[],
     id_: PromiseOrValue<BigNumberish>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  _getSigDigest(
-    params_: AvoCoreStructs.CastParamsStruct,
-    functionTypeHash_: PromiseOrValue<BytesLike>,
-    customStructHash_: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   addSigners(
     addSigners_: PromiseOrValue<string>[],
+    requiredSigners_: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   avoForwarder(overrides?: CallOverrides): Promise<string>;
 
-  avoSafeNonce(overrides?: CallOverrides): Promise<BigNumber>;
+  avoNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+  avoRegistry(overrides?: CallOverrides): Promise<string>;
 
   avoSignersList(overrides?: CallOverrides): Promise<string>;
 
-  avoVersionsRegistry(overrides?: CallOverrides): Promise<string>;
-
   cast(
-    params_: AvoCoreStructs.CastParamsStruct,
-    forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-    signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+    params_: AvocadoMultisigStructs.CastParamsStruct,
+    forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
+    signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   castAuthorized(
-    params_: AvoCoreStructs.CastParamsStruct,
-    authorizedParams_: AvoCoreStructs.CastAuthorizedParamsStruct,
-    signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+    params_: AvocadoMultisigStructs.CastParamsStruct,
+    authorizedParams_: AvocadoMultisigStructs.CastAuthorizedParamsStruct,
+    signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1123,25 +1096,20 @@ export interface AvoMultisigImplementation extends BaseContract {
   ): Promise<ContractTransaction>;
 
   getSigDigest(
-    params_: AvoCoreStructs.CastParamsStruct,
-    forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
+    params_: AvocadoMultisigStructs.CastParamsStruct,
+    forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
     overrides?: CallOverrides
   ): Promise<string>;
 
   getSigDigestAuthorized(
-    params_: AvoCoreStructs.CastParamsStruct,
-    authorizedParams_: AvoCoreStructs.CastAuthorizedParamsStruct,
+    params_: AvocadoMultisigStructs.CastParamsStruct,
+    authorizedParams_: AvocadoMultisigStructs.CastAuthorizedParamsStruct,
     overrides?: CallOverrides
   ): Promise<string>;
 
-  initialize(
-    owner_: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  index(overrides?: CallOverrides): Promise<number>;
 
-  initializeWithVersion(
-    owner_: PromiseOrValue<string>,
-    avoMultisigVersion_: PromiseOrValue<string>,
+  initialize(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1161,8 +1129,8 @@ export interface AvoMultisigImplementation extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  occupyAvoSafeNonces(
-    avoSafeNonces_: PromiseOrValue<BigNumberish>[],
+  occupyAvoNonces(
+    avoNonces_: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1206,6 +1174,7 @@ export interface AvoMultisigImplementation extends BaseContract {
 
   removeSigners(
     removeSigners_: PromiseOrValue<string>[],
+    requiredSigners_: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1231,28 +1200,22 @@ export interface AvoMultisigImplementation extends BaseContract {
   ): Promise<boolean>;
 
   upgradeTo(
-    avoMultisigImpl_: PromiseOrValue<string>,
+    avoImplementation_: PromiseOrValue<string>,
+    afterUpgradeHookData_: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  upgradeToAndCall(
-    avoImplementation_: PromiseOrValue<string>,
-    data_: PromiseOrValue<BytesLike>,
-    forceCall_: PromiseOrValue<boolean>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   verify(
-    params_: AvoCoreStructs.CastParamsStruct,
-    forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-    signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+    params_: AvocadoMultisigStructs.CastParamsStruct,
+    forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
+    signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   verifyAuthorized(
-    params_: AvoCoreStructs.CastParamsStruct,
-    authorizedParams_: AvoCoreStructs.CastAuthorizedParamsStruct,
-    signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+    params_: AvocadoMultisigStructs.CastParamsStruct,
+    authorizedParams_: AvocadoMultisigStructs.CastAuthorizedParamsStruct,
+    signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -1287,45 +1250,45 @@ export interface AvoMultisigImplementation extends BaseContract {
 
     TYPE_HASH(overrides?: CallOverrides): Promise<string>;
 
+    _afterUpgradeHook(
+      fromImplementation_: PromiseOrValue<string>,
+      data_: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     _callTargets(
-      actions_: AvoCoreStructs.ActionStruct[],
+      actions_: AvocadoMultisigStructs.ActionStruct[],
       id_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    _getSigDigest(
-      params_: AvoCoreStructs.CastParamsStruct,
-      functionTypeHash_: PromiseOrValue<BytesLike>,
-      customStructHash_: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     addSigners(
       addSigners_: PromiseOrValue<string>[],
+      requiredSigners_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     avoForwarder(overrides?: CallOverrides): Promise<string>;
 
-    avoSafeNonce(overrides?: CallOverrides): Promise<BigNumber>;
+    avoNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+    avoRegistry(overrides?: CallOverrides): Promise<string>;
 
     avoSignersList(overrides?: CallOverrides): Promise<string>;
 
-    avoVersionsRegistry(overrides?: CallOverrides): Promise<string>;
-
     cast(
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
       overrides?: CallOverrides
     ): Promise<
       [boolean, string] & { success_: boolean; revertReason_: string }
     >;
 
     castAuthorized(
-      params_: AvoCoreStructs.CastParamsStruct,
-      authorizedParams_: AvoCoreStructs.CastAuthorizedParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      authorizedParams_: AvocadoMultisigStructs.CastAuthorizedParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
       overrides?: CallOverrides
     ): Promise<
       [boolean, string] & { success_: boolean; revertReason_: string }
@@ -1343,27 +1306,20 @@ export interface AvoMultisigImplementation extends BaseContract {
     ): Promise<boolean>;
 
     getSigDigest(
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
       overrides?: CallOverrides
     ): Promise<string>;
 
     getSigDigestAuthorized(
-      params_: AvoCoreStructs.CastParamsStruct,
-      authorizedParams_: AvoCoreStructs.CastAuthorizedParamsStruct,
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      authorizedParams_: AvocadoMultisigStructs.CastAuthorizedParamsStruct,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    initialize(
-      owner_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    index(overrides?: CallOverrides): Promise<number>;
 
-    initializeWithVersion(
-      owner_: PromiseOrValue<string>,
-      avoMultisigVersion_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    initialize(overrides?: CallOverrides): Promise<void>;
 
     isSigner(
       signer_: PromiseOrValue<string>,
@@ -1381,8 +1337,8 @@ export interface AvoMultisigImplementation extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    occupyAvoSafeNonces(
-      avoSafeNonces_: PromiseOrValue<BigNumberish>[],
+    occupyAvoNonces(
+      avoNonces_: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1426,6 +1382,7 @@ export interface AvoMultisigImplementation extends BaseContract {
 
     removeSigners(
       removeSigners_: PromiseOrValue<string>[],
+      requiredSigners_: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1451,39 +1408,33 @@ export interface AvoMultisigImplementation extends BaseContract {
     ): Promise<boolean>;
 
     upgradeTo(
-      avoMultisigImpl_: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    upgradeToAndCall(
       avoImplementation_: PromiseOrValue<string>,
-      data_: PromiseOrValue<BytesLike>,
-      forceCall_: PromiseOrValue<boolean>,
+      afterUpgradeHookData_: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     verify(
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     verifyAuthorized(
-      params_: AvoCoreStructs.CastParamsStruct,
-      authorizedParams_: AvoCoreStructs.CastAuthorizedParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      authorizedParams_: AvocadoMultisigStructs.CastAuthorizedParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
 
   filters: {
-    "AvoSafeNonceOccupied(uint256)"(
-      occupiedAvoSafeNonce?: PromiseOrValue<BigNumberish> | null
-    ): AvoSafeNonceOccupiedEventFilter;
-    AvoSafeNonceOccupied(
-      occupiedAvoSafeNonce?: PromiseOrValue<BigNumberish> | null
-    ): AvoSafeNonceOccupiedEventFilter;
+    "AvoNonceOccupied(uint256)"(
+      occupiedAvoNonce?: PromiseOrValue<BigNumberish> | null
+    ): AvoNonceOccupiedEventFilter;
+    AvoNonceOccupied(
+      occupiedAvoNonce?: PromiseOrValue<BigNumberish> | null
+    ): AvoNonceOccupiedEventFilter;
 
     "CastExecuted(address,address,address[],bytes)"(
       source?: PromiseOrValue<string> | null,
@@ -1527,6 +1478,9 @@ export interface AvoMultisigImplementation extends BaseContract {
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
+
+    "ListSyncFailed()"(): ListSyncFailedEventFilter;
+    ListSyncFailed(): ListSyncFailedEventFilter;
 
     "NonSequentialNonceOccupied(bytes32)"(
       occupiedNonSequentialNonce?: PromiseOrValue<BytesLike> | null
@@ -1609,43 +1563,43 @@ export interface AvoMultisigImplementation extends BaseContract {
 
     TYPE_HASH(overrides?: CallOverrides): Promise<BigNumber>;
 
+    _afterUpgradeHook(
+      fromImplementation_: PromiseOrValue<string>,
+      data_: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     _callTargets(
-      actions_: AvoCoreStructs.ActionStruct[],
+      actions_: AvocadoMultisigStructs.ActionStruct[],
       id_: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    _getSigDigest(
-      params_: AvoCoreStructs.CastParamsStruct,
-      functionTypeHash_: PromiseOrValue<BytesLike>,
-      customStructHash_: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     addSigners(
       addSigners_: PromiseOrValue<string>[],
+      requiredSigners_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     avoForwarder(overrides?: CallOverrides): Promise<BigNumber>;
 
-    avoSafeNonce(overrides?: CallOverrides): Promise<BigNumber>;
+    avoNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+    avoRegistry(overrides?: CallOverrides): Promise<BigNumber>;
 
     avoSignersList(overrides?: CallOverrides): Promise<BigNumber>;
 
-    avoVersionsRegistry(overrides?: CallOverrides): Promise<BigNumber>;
-
     cast(
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     castAuthorized(
-      params_: AvoCoreStructs.CastParamsStruct,
-      authorizedParams_: AvoCoreStructs.CastAuthorizedParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      authorizedParams_: AvocadoMultisigStructs.CastAuthorizedParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1661,25 +1615,20 @@ export interface AvoMultisigImplementation extends BaseContract {
     ): Promise<BigNumber>;
 
     getSigDigest(
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getSigDigestAuthorized(
-      params_: AvoCoreStructs.CastParamsStruct,
-      authorizedParams_: AvoCoreStructs.CastAuthorizedParamsStruct,
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      authorizedParams_: AvocadoMultisigStructs.CastAuthorizedParamsStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    initialize(
-      owner_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
+    index(overrides?: CallOverrides): Promise<BigNumber>;
 
-    initializeWithVersion(
-      owner_: PromiseOrValue<string>,
-      avoMultisigVersion_: PromiseOrValue<string>,
+    initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1699,8 +1648,8 @@ export interface AvoMultisigImplementation extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    occupyAvoSafeNonces(
-      avoSafeNonces_: PromiseOrValue<BigNumberish>[],
+    occupyAvoNonces(
+      avoNonces_: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1744,6 +1693,7 @@ export interface AvoMultisigImplementation extends BaseContract {
 
     removeSigners(
       removeSigners_: PromiseOrValue<string>[],
+      requiredSigners_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1769,28 +1719,22 @@ export interface AvoMultisigImplementation extends BaseContract {
     ): Promise<BigNumber>;
 
     upgradeTo(
-      avoMultisigImpl_: PromiseOrValue<string>,
+      avoImplementation_: PromiseOrValue<string>,
+      afterUpgradeHookData_: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    upgradeToAndCall(
-      avoImplementation_: PromiseOrValue<string>,
-      data_: PromiseOrValue<BytesLike>,
-      forceCall_: PromiseOrValue<boolean>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     verify(
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     verifyAuthorized(
-      params_: AvoCoreStructs.CastParamsStruct,
-      authorizedParams_: AvoCoreStructs.CastAuthorizedParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      authorizedParams_: AvocadoMultisigStructs.CastAuthorizedParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -1842,45 +1786,43 @@ export interface AvoMultisigImplementation extends BaseContract {
 
     TYPE_HASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    _afterUpgradeHook(
+      fromImplementation_: PromiseOrValue<string>,
+      data_: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     _callTargets(
-      actions_: AvoCoreStructs.ActionStruct[],
+      actions_: AvocadoMultisigStructs.ActionStruct[],
       id_: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    _getSigDigest(
-      params_: AvoCoreStructs.CastParamsStruct,
-      functionTypeHash_: PromiseOrValue<BytesLike>,
-      customStructHash_: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     addSigners(
       addSigners_: PromiseOrValue<string>[],
+      requiredSigners_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     avoForwarder(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    avoSafeNonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    avoNonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    avoRegistry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     avoSignersList(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    avoVersionsRegistry(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     cast(
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     castAuthorized(
-      params_: AvoCoreStructs.CastParamsStruct,
-      authorizedParams_: AvoCoreStructs.CastAuthorizedParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      authorizedParams_: AvocadoMultisigStructs.CastAuthorizedParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1896,25 +1838,20 @@ export interface AvoMultisigImplementation extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getSigDigest(
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getSigDigestAuthorized(
-      params_: AvoCoreStructs.CastParamsStruct,
-      authorizedParams_: AvoCoreStructs.CastAuthorizedParamsStruct,
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      authorizedParams_: AvocadoMultisigStructs.CastAuthorizedParamsStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    initialize(
-      owner_: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    index(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    initializeWithVersion(
-      owner_: PromiseOrValue<string>,
-      avoMultisigVersion_: PromiseOrValue<string>,
+    initialize(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1934,8 +1871,8 @@ export interface AvoMultisigImplementation extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    occupyAvoSafeNonces(
-      avoSafeNonces_: PromiseOrValue<BigNumberish>[],
+    occupyAvoNonces(
+      avoNonces_: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1979,6 +1916,7 @@ export interface AvoMultisigImplementation extends BaseContract {
 
     removeSigners(
       removeSigners_: PromiseOrValue<string>[],
+      requiredSigners_: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2004,28 +1942,22 @@ export interface AvoMultisigImplementation extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     upgradeTo(
-      avoMultisigImpl_: PromiseOrValue<string>,
+      avoImplementation_: PromiseOrValue<string>,
+      afterUpgradeHookData_: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    upgradeToAndCall(
-      avoImplementation_: PromiseOrValue<string>,
-      data_: PromiseOrValue<BytesLike>,
-      forceCall_: PromiseOrValue<boolean>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     verify(
-      params_: AvoCoreStructs.CastParamsStruct,
-      forwardParams_: AvoCoreStructs.CastForwardParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      forwardParams_: AvocadoMultisigStructs.CastForwardParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     verifyAuthorized(
-      params_: AvoCoreStructs.CastParamsStruct,
-      authorizedParams_: AvoCoreStructs.CastAuthorizedParamsStruct,
-      signaturesParams_: AvoCoreStructs.SignatureParamsStruct[],
+      params_: AvocadoMultisigStructs.CastParamsStruct,
+      authorizedParams_: AvocadoMultisigStructs.CastAuthorizedParamsStruct,
+      signaturesParams_: AvocadoMultisigStructs.SignatureParamsStruct[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

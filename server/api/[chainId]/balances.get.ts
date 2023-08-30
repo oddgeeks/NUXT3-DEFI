@@ -141,6 +141,7 @@ async function getChainBalances(chainId: string,
           addresses,
         ),
         $fetch<ITokenPrice[]>(`${blockQueryURL}/${chainId}/tokens`, {
+          retry: 3,
           params: {
             sparkline: false,
             addresses,
@@ -193,10 +194,10 @@ function getQueryCustomTokens(event: H3Event) {
     : []
 }
 
-export default defineEventHandler<IBalance[]>(async (event) => {
+export default defineEventHandler<Promise<IBalance[]>>(async (event) => {
   const query = getQuery(event)
   const chainId = getRouterParam(event, 'chainId')
-  const network = availableNetworks.find(n => n.chainId == chainId)
+  const network = availableNetworks.find(n => String(n.chainId) == String(chainId))
 
   if (!network)
     return []

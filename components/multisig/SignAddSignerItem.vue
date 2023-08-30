@@ -10,18 +10,20 @@ const props = defineProps<{
 const emit = defineEmits(['destroy', 'update:modelValue'])
 
 const pending = ref(false)
-const signed = ref(false)
-const executed = ref(false)
+const signed = useState(`signed-${props.chainId}`, () => false)
+const executed = useState(`executed-${props.chainId}`, () => false)
 
 const { addSignersWithThreshold } = useAvocadoSafe()
 const { selectedSafe } = storeToRefs(useSafe())
 const { addContact, safeContacts } = useContacts()
+const { parseTransactionError } = useErrorHandler()
 
 async function handleSign() {
   try {
     pending.value = true
 
-    const existingSigners = selectedSafe.value?.signers[props.chainId] || []
+    const selectedSafeSigners = selectedSafe.value?.signers || {}
+    const existingSigners = selectedSafeSigners[props.chainId] || []
 
     const actualSigners = props.addresses.filter(address => !existingSigners.some(addr => getAddress(address.address) === getAddress(addr)))
 
@@ -51,6 +53,7 @@ async function handleSign() {
 
     if (txHash) {
       executed.value = true
+
       showPendingTransactionModal(txHash, props.chainId)
     }
 
@@ -60,10 +63,11 @@ async function handleSign() {
     modelValue.push(true)
     emit('update:modelValue', modelValue)
   }
-  catch (e) {
-    console.error(e)
+  catch (e: any) {
+    const parsed = parseTransactionError(e)
+
     openSnackbar({
-      message: 'Something went wrong',
+      message: parsed.formatted,
       type: 'error',
     })
   }

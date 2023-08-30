@@ -3,14 +3,12 @@ defineProps<{
   buttonClass?: string
 }>()
 const emit = defineEmits(['destroy'])
-const { activate, account } = useWeb3()
+const { activate } = useWeb3()
 
 const { providers } = useNetworks()
 const { setConnectorName } = useConnectors()
 
 const loading = ref<Record<string, boolean>>({})
-
-const ensName = ref()
 
 async function connect(provider: any) {
   try {
@@ -34,14 +32,6 @@ function isProviderVisible(provider: Provider) {
     return true
   }
 }
-
-whenever(
-  account,
-  async () => {
-    ensName.value = await getRpcProvider(1).lookupAddress(account.value)
-  },
-  { immediate: true },
-)
 </script>
 
 <template>

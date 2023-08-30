@@ -13,8 +13,8 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract IAvoVersionsRegistry",
-        name: "avoVersionsRegistry_",
+        internalType: "contract IAvoRegistry",
+        name: "avoRegistry_",
         type: "address",
       },
       {
@@ -54,22 +54,32 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "AvoCore__InsufficientBalance",
+    name: "AvocadoMultisig__InsufficientBalance",
     type: "error",
   },
   {
     inputs: [],
-    name: "AvoCore__InvalidEIP1271Signature",
+    name: "AvocadoMultisig__InsufficientGasSent",
     type: "error",
   },
   {
     inputs: [],
-    name: "AvoCore__InvalidParams",
+    name: "AvocadoMultisig__InvalidEIP1271Signature",
     type: "error",
   },
   {
     inputs: [],
-    name: "AvoCore__InvalidTiming",
+    name: "AvocadoMultisig__InvalidParams",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "AvocadoMultisig__InvalidSignature",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "AvocadoMultisig__InvalidTiming",
     type: "error",
   },
   {
@@ -85,37 +95,17 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "AvoCore__MaxFee",
+    name: "AvocadoMultisig__MaxFee",
     type: "error",
   },
   {
     inputs: [],
-    name: "AvoCore__OutOfGas",
+    name: "AvocadoMultisig__ToHexDigit",
     type: "error",
   },
   {
     inputs: [],
-    name: "AvoCore__Unauthorized",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "AvoMultisig__InsufficientGasSent",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "AvoMultisig__InvalidParams",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "AvoMultisig__InvalidSignature",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "AvoMultisig__Unauthorized",
+    name: "AvocadoMultisig__Unauthorized",
     type: "error",
   },
   {
@@ -124,11 +114,11 @@ const _abi = [
       {
         indexed: true,
         internalType: "uint256",
-        name: "occupiedAvoSafeNonce",
+        name: "occupiedAvoNonce",
         type: "uint256",
       },
     ],
-    name: "AvoSafeNonceOccupied",
+    name: "AvoNonceOccupied",
     type: "event",
   },
   {
@@ -236,6 +226,12 @@ const _abi = [
       },
     ],
     name: "Initialized",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [],
+    name: "ListSyncFailed",
     type: "event",
   },
   {
@@ -514,6 +510,24 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "fromImplementation_",
+        type: "address",
+      },
+      {
+        internalType: "bytes",
+        name: "data_",
+        type: "bytes",
+      },
+    ],
+    name: "_afterUpgradeHook",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         components: [
           {
             internalType: "address",
@@ -536,7 +550,7 @@ const _abi = [
             type: "uint256",
           },
         ],
-        internalType: "struct AvoCoreStructs.Action[]",
+        internalType: "struct AvocadoMultisigStructs.Action[]",
         name: "actions_",
         type: "tuple[]",
       },
@@ -554,92 +568,14 @@ const _abi = [
   {
     inputs: [
       {
-        components: [
-          {
-            components: [
-              {
-                internalType: "address",
-                name: "target",
-                type: "address",
-              },
-              {
-                internalType: "bytes",
-                name: "data",
-                type: "bytes",
-              },
-              {
-                internalType: "uint256",
-                name: "value",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "operation",
-                type: "uint256",
-              },
-            ],
-            internalType: "struct AvoCoreStructs.Action[]",
-            name: "actions",
-            type: "tuple[]",
-          },
-          {
-            internalType: "uint256",
-            name: "id",
-            type: "uint256",
-          },
-          {
-            internalType: "int256",
-            name: "avoSafeNonce",
-            type: "int256",
-          },
-          {
-            internalType: "bytes32",
-            name: "salt",
-            type: "bytes32",
-          },
-          {
-            internalType: "address",
-            name: "source",
-            type: "address",
-          },
-          {
-            internalType: "bytes",
-            name: "metadata",
-            type: "bytes",
-          },
-        ],
-        internalType: "struct AvoCoreStructs.CastParams",
-        name: "params_",
-        type: "tuple",
-      },
-      {
-        internalType: "bytes32",
-        name: "functionTypeHash_",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes32",
-        name: "customStructHash_",
-        type: "bytes32",
-      },
-    ],
-    name: "_getSigDigest",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "address[]",
         name: "addSigners_",
         type: "address[]",
+      },
+      {
+        internalType: "uint8",
+        name: "requiredSigners_",
+        type: "uint8",
       },
     ],
     name: "addSigners",
@@ -662,12 +598,25 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "avoSafeNonce",
+    name: "avoNonce",
     outputs: [
       {
-        internalType: "uint88",
+        internalType: "uint256",
         name: "",
-        type: "uint88",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "avoRegistry",
+    outputs: [
+      {
+        internalType: "contract IAvoRegistry",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -679,19 +628,6 @@ const _abi = [
     outputs: [
       {
         internalType: "contract IAvoSignersList",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "avoVersionsRegistry",
-    outputs: [
-      {
-        internalType: "contract IAvoVersionsRegistry",
         name: "",
         type: "address",
       },
@@ -726,7 +662,7 @@ const _abi = [
                 type: "uint256",
               },
             ],
-            internalType: "struct AvoCoreStructs.Action[]",
+            internalType: "struct AvocadoMultisigStructs.Action[]",
             name: "actions",
             type: "tuple[]",
           },
@@ -737,7 +673,7 @@ const _abi = [
           },
           {
             internalType: "int256",
-            name: "avoSafeNonce",
+            name: "avoNonce",
             type: "int256",
           },
           {
@@ -756,7 +692,7 @@ const _abi = [
             type: "bytes",
           },
         ],
-        internalType: "struct AvoCoreStructs.CastParams",
+        internalType: "struct AvocadoMultisigStructs.CastParams",
         name: "params_",
         type: "tuple",
       },
@@ -782,8 +718,13 @@ const _abi = [
             name: "validUntil",
             type: "uint256",
           },
+          {
+            internalType: "uint256",
+            name: "value",
+            type: "uint256",
+          },
         ],
-        internalType: "struct AvoCoreStructs.CastForwardParams",
+        internalType: "struct AvocadoMultisigStructs.CastForwardParams",
         name: "forwardParams_",
         type: "tuple",
       },
@@ -800,7 +741,7 @@ const _abi = [
             type: "address",
           },
         ],
-        internalType: "struct AvoCoreStructs.SignatureParams[]",
+        internalType: "struct AvocadoMultisigStructs.SignatureParams[]",
         name: "signaturesParams_",
         type: "tuple[]",
       },
@@ -848,7 +789,7 @@ const _abi = [
                 type: "uint256",
               },
             ],
-            internalType: "struct AvoCoreStructs.Action[]",
+            internalType: "struct AvocadoMultisigStructs.Action[]",
             name: "actions",
             type: "tuple[]",
           },
@@ -859,7 +800,7 @@ const _abi = [
           },
           {
             internalType: "int256",
-            name: "avoSafeNonce",
+            name: "avoNonce",
             type: "int256",
           },
           {
@@ -878,7 +819,7 @@ const _abi = [
             type: "bytes",
           },
         ],
-        internalType: "struct AvoCoreStructs.CastParams",
+        internalType: "struct AvocadoMultisigStructs.CastParams",
         name: "params_",
         type: "tuple",
       },
@@ -905,7 +846,7 @@ const _abi = [
             type: "uint256",
           },
         ],
-        internalType: "struct AvoCoreStructs.CastAuthorizedParams",
+        internalType: "struct AvocadoMultisigStructs.CastAuthorizedParams",
         name: "authorizedParams_",
         type: "tuple",
       },
@@ -922,7 +863,7 @@ const _abi = [
             type: "address",
           },
         ],
-        internalType: "struct AvoCoreStructs.SignatureParams[]",
+        internalType: "struct AvocadoMultisigStructs.SignatureParams[]",
         name: "signaturesParams_",
         type: "tuple[]",
       },
@@ -1022,7 +963,7 @@ const _abi = [
                 type: "uint256",
               },
             ],
-            internalType: "struct AvoCoreStructs.Action[]",
+            internalType: "struct AvocadoMultisigStructs.Action[]",
             name: "actions",
             type: "tuple[]",
           },
@@ -1033,7 +974,7 @@ const _abi = [
           },
           {
             internalType: "int256",
-            name: "avoSafeNonce",
+            name: "avoNonce",
             type: "int256",
           },
           {
@@ -1052,7 +993,7 @@ const _abi = [
             type: "bytes",
           },
         ],
-        internalType: "struct AvoCoreStructs.CastParams",
+        internalType: "struct AvocadoMultisigStructs.CastParams",
         name: "params_",
         type: "tuple",
       },
@@ -1078,8 +1019,13 @@ const _abi = [
             name: "validUntil",
             type: "uint256",
           },
+          {
+            internalType: "uint256",
+            name: "value",
+            type: "uint256",
+          },
         ],
-        internalType: "struct AvoCoreStructs.CastForwardParams",
+        internalType: "struct AvocadoMultisigStructs.CastForwardParams",
         name: "forwardParams_",
         type: "tuple",
       },
@@ -1122,7 +1068,7 @@ const _abi = [
                 type: "uint256",
               },
             ],
-            internalType: "struct AvoCoreStructs.Action[]",
+            internalType: "struct AvocadoMultisigStructs.Action[]",
             name: "actions",
             type: "tuple[]",
           },
@@ -1133,7 +1079,7 @@ const _abi = [
           },
           {
             internalType: "int256",
-            name: "avoSafeNonce",
+            name: "avoNonce",
             type: "int256",
           },
           {
@@ -1152,7 +1098,7 @@ const _abi = [
             type: "bytes",
           },
         ],
-        internalType: "struct AvoCoreStructs.CastParams",
+        internalType: "struct AvocadoMultisigStructs.CastParams",
         name: "params_",
         type: "tuple",
       },
@@ -1179,7 +1125,7 @@ const _abi = [
             type: "uint256",
           },
         ],
-        internalType: "struct AvoCoreStructs.CastAuthorizedParams",
+        internalType: "struct AvocadoMultisigStructs.CastAuthorizedParams",
         name: "authorizedParams_",
         type: "tuple",
       },
@@ -1196,32 +1142,21 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
+    inputs: [],
+    name: "index",
+    outputs: [
       {
-        internalType: "address",
-        name: "owner_",
-        type: "address",
+        internalType: "uint32",
+        name: "",
+        type: "uint32",
       },
     ],
-    name: "initialize",
-    outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "owner_",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "avoMultisigVersion_",
-        type: "address",
-      },
-    ],
-    name: "initializeWithVersion",
+    inputs: [],
+    name: "initialize",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1292,11 +1227,11 @@ const _abi = [
     inputs: [
       {
         internalType: "uint88[]",
-        name: "avoSafeNonces_",
+        name: "avoNonces_",
         type: "uint88[]",
       },
     ],
-    name: "occupyAvoSafeNonces",
+    name: "occupyAvoNonces",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1459,6 +1394,11 @@ const _abi = [
         name: "removeSigners_",
         type: "address[]",
       },
+      {
+        internalType: "uint8",
+        name: "requiredSigners_",
+        type: "uint8",
+      },
     ],
     name: "removeSigners",
     outputs: [],
@@ -1553,36 +1493,18 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "avoMultisigImpl_",
-        type: "address",
-      },
-    ],
-    name: "upgradeTo",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
         name: "avoImplementation_",
         type: "address",
       },
       {
         internalType: "bytes",
-        name: "data_",
+        name: "afterUpgradeHookData_",
         type: "bytes",
       },
-      {
-        internalType: "bool",
-        name: "forceCall_",
-        type: "bool",
-      },
     ],
-    name: "upgradeToAndCall",
+    name: "upgradeTo",
     outputs: [],
-    stateMutability: "payable",
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -1612,7 +1534,7 @@ const _abi = [
                 type: "uint256",
               },
             ],
-            internalType: "struct AvoCoreStructs.Action[]",
+            internalType: "struct AvocadoMultisigStructs.Action[]",
             name: "actions",
             type: "tuple[]",
           },
@@ -1623,7 +1545,7 @@ const _abi = [
           },
           {
             internalType: "int256",
-            name: "avoSafeNonce",
+            name: "avoNonce",
             type: "int256",
           },
           {
@@ -1642,7 +1564,7 @@ const _abi = [
             type: "bytes",
           },
         ],
-        internalType: "struct AvoCoreStructs.CastParams",
+        internalType: "struct AvocadoMultisigStructs.CastParams",
         name: "params_",
         type: "tuple",
       },
@@ -1668,8 +1590,13 @@ const _abi = [
             name: "validUntil",
             type: "uint256",
           },
+          {
+            internalType: "uint256",
+            name: "value",
+            type: "uint256",
+          },
         ],
-        internalType: "struct AvoCoreStructs.CastForwardParams",
+        internalType: "struct AvocadoMultisigStructs.CastForwardParams",
         name: "forwardParams_",
         type: "tuple",
       },
@@ -1686,7 +1613,7 @@ const _abi = [
             type: "address",
           },
         ],
-        internalType: "struct AvoCoreStructs.SignatureParams[]",
+        internalType: "struct AvocadoMultisigStructs.SignatureParams[]",
         name: "signaturesParams_",
         type: "tuple[]",
       },
@@ -1729,7 +1656,7 @@ const _abi = [
                 type: "uint256",
               },
             ],
-            internalType: "struct AvoCoreStructs.Action[]",
+            internalType: "struct AvocadoMultisigStructs.Action[]",
             name: "actions",
             type: "tuple[]",
           },
@@ -1740,7 +1667,7 @@ const _abi = [
           },
           {
             internalType: "int256",
-            name: "avoSafeNonce",
+            name: "avoNonce",
             type: "int256",
           },
           {
@@ -1759,7 +1686,7 @@ const _abi = [
             type: "bytes",
           },
         ],
-        internalType: "struct AvoCoreStructs.CastParams",
+        internalType: "struct AvocadoMultisigStructs.CastParams",
         name: "params_",
         type: "tuple",
       },
@@ -1786,7 +1713,7 @@ const _abi = [
             type: "uint256",
           },
         ],
-        internalType: "struct AvoCoreStructs.CastAuthorizedParams",
+        internalType: "struct AvocadoMultisigStructs.CastAuthorizedParams",
         name: "authorizedParams_",
         type: "tuple",
       },
@@ -1803,7 +1730,7 @@ const _abi = [
             type: "address",
           },
         ],
-        internalType: "struct AvoCoreStructs.SignatureParams[]",
+        internalType: "struct AvocadoMultisigStructs.SignatureParams[]",
         name: "signaturesParams_",
         type: "tuple[]",
       },

@@ -24,7 +24,6 @@ export function useNavigation() {
 
   const navigations = computed(() => {
     const totalPendingTransactions = data.value?.meta?.total || 0
-    const pendingTransactionsLabel = totalPendingTransactions ? `Pending Transactions (${totalPendingTransactions})` : 'Pending Transactions'
 
     return [
       {
@@ -40,11 +39,12 @@ export function useNavigation() {
         tooltip: 'View your DeFi Positions',
       },
       {
-        label: pendingTransactionsLabel,
+        label: 'Pending Transactions',
         icon: 'SvgoStopwatch',
         to: `/multisig/${safeAddress.value}/pending-transactions`,
-        tooltip: pendingTransactionsLabel,
+        tooltip: 'Pending Transactions',
         hidden: !isSafeMultisig.value,
+        count: totalPendingTransactions,
       },
       {
         label: 'NFT',
@@ -65,14 +65,6 @@ export function useNavigation() {
         target: '_blank',
         to: `${avoExplorerURL}/address/${safeAddress.value}`,
         tooltip: 'History',
-      },
-
-      {
-        label: 'Authorities',
-        icon: 'SvgoAuthorities',
-        to: '/authorities',
-        tooltip: 'Authorities',
-        hidden: isSafeMultisig.value,
       },
       {
         label: 'Signers',

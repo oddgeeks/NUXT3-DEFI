@@ -8,7 +8,6 @@ import { WalletLinkConnector } from './custom/walletlink'
 import { WalletConnectConnector } from './custom/walletconnect'
 
 // const { networks } = useNetworks();
-
 const POLLING_INTERVAL = 12000
 
 function getLibrary(provider: any) {
@@ -19,28 +18,30 @@ function getLibrary(provider: any) {
 
 setWeb3LibraryCallback(getLibrary)
 
-export const injected = new InjectedConnector({
+export function injected() {
+  return new InjectedConnector({
   // supportedChainIds: [1, 3, 4, 5, 42, 56, 137]
-})
+  })
+}
 
-export const walletlink = new WalletLinkConnector({
-  appName: 'Avocado',
-  url: 'https://avocado.instadapp.io',
-  appLogoUrl:
+export function walletlink() {
+  return new WalletLinkConnector({
+    appName: 'Avocado',
+    url: 'https://avocado.instadapp.io',
+    appLogoUrl:
     'https://raw.githubusercontent.com/InstaDApp/brand/master/instadapp%20logo%20only%20filled.svg?component',
-  darkMode: false,
-})
+    darkMode: false,
+  })
+}
 
-export const walletconnect = new WalletConnectConnector({
-  supportedChainIds: networkIds,
-  projectId: '42e9e3b646c9102371bd147b3e960c39',
-  rpcMap: networkIds.reduce((acc, chainId) => {
-    acc[chainId] = getRpcURLByChainId(chainId)
-
-    return acc
-  }, {} as any),
-  methods: ['eth_signTypedData_v4', 'eth_signTypedData', 'eth_sign', 'wallet_addEthereumChain', 'wallet_switchEthereumChain'],
-})
+export function walletconnect(rpcMap: Record<string, string>) {
+  return new WalletConnectConnector({
+    supportedChainIds: networkIds,
+    projectId: '42e9e3b646c9102371bd147b3e960c39',
+    rpcMap,
+    methods: ['eth_signTypedData_v4', 'eth_signTypedData', 'eth_sign', 'wallet_addEthereumChain', 'wallet_switchEthereumChain'],
+  })
+}
 
 export const network = new NetworkConnector({
   urls: RPCMap,

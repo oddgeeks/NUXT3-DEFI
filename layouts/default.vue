@@ -8,16 +8,17 @@ const {
   showOnboardBanner,
   showVersionUpdateBanner,
 } = useBanner()
-const { data: allNetworkVersions } = useNuxtData('allNetworkVersions')
+
 const route = useRoute()
 const router = useRouter()
 const { migrateOldContacts } = useContacts()
+const { safeOptions } = storeToRefs(useSafe())
 
 const lastNoticeShowDate = useLocalStorage<Date>('last_update_notice_show_date', new Date(0, 0))
-const ignore_version = useLocalStorage('ignore_version', [])
+const ignore_version = useLocalStorage<ISafeOptions[]>('ignore_version', [])
 
 function isIgnoreVersion() {
-  return !(allNetworkVersions.value.some((network) => {
+  return !(safeOptions.value.some((network) => {
     if (network.notdeployed)
       return false
 
@@ -38,7 +39,7 @@ watch(showVersionUpdateBanner, async () => {
     if (differenceInDays >= 3 && router.currentRoute.value.name !== 'upgrade' && !isIgnoreVersion()) {
       const res = await openUpdateNoticeModal()
       if (!res.success)
-        ignore_version.value = allNetworkVersions.value
+        ignore_version.value = safeOptions.value
     }
   }
 })
@@ -59,17 +60,18 @@ onMounted(() => {
       <Sidebar />
 
       <div
-        class="flex flex-1 flex-col sm:px-10 px-4 max-w-7xl mx-auto min-w-0"
+        class="flex flex-1 flex-col sm:px-10 max-w-7xl mx-auto min-w-0 px-4"
       >
         <TheHeader />
-        <div class="container flex flex-col gap-4 mt-32 sm:mt-0">
+        <div class="container flex flex-col gap-4 mt-[104px] sm:mt-0">
           <WarningsGasBalance v-if="showInsufficientGasBanner" />
         </div>
+        <MobileNavigation />
         <slot />
         <TheFooter />
       </div>
     </div>
-    <div class="fixed bottom-0 sm:bottom-12 w-full z-40">
+    <div class="fixed bottom-0 sm:bottom-12 sm:w-auto w-full left-1/2 -translate-x-1/2 z-40">
       <BannerSwitchNetwork v-if="showIncorrectNetworkBanner" />
       <BannerOnboard
         v-else-if="showOnboardBanner && route.name !== 'claims-ens-drop'"

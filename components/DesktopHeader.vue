@@ -1,10 +1,17 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 
-const { showVersionUpdateBanner } = useBanner()
 const { safeAddress } = storeToRefs(useSafe())
 const { fromWei } = useBignumber()
 const { avoProvider } = useSafe()
+const route = useRoute()
+
+const dryRun = useCookie<boolean | undefined>('dry-run', {
+  expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+  default: () => {
+    return route.query?.dryRun ? true : undefined
+  },
+})
 
 const { refresh } = useAsyncData(
   'pending-deposit',
@@ -26,11 +33,14 @@ const { refresh } = useAsyncData(
   },
 )
 
-useIntervalFn(refresh, 30000)
+useIntervalFn(refresh, 15000)
 </script>
 
 <template>
   <div class="items-center justify-end py-8 hidden sm:flex">
+    <button v-if="dryRun" class="text-sm text-orange mr-4" @click="dryRun = undefined">
+      Disable Dry Run
+    </button>
     <nav class="flex items-center gap-7.5 relative">
       <div class="flex items-center gap-5">
         <ColorModeSwitcher />

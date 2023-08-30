@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { utils } from 'ethers'
+import { MultisigForwarder__factory } from '@instadapp/avocado-base/contracts'
 import {
   AvoFactoryProxy__factory,
   Forwarder__factory,
@@ -8,7 +9,7 @@ import {
 import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 
 const props = defineProps<{
-  network: NetworkVersion
+  options: ISafeOptions
 }>()
 
 const emit = defineEmits(['destroy'])
@@ -17,6 +18,7 @@ const { safeAddress, sendTransaction } = useAvocadoSafe()
 const { isSafeMultisig } = storeToRefs(useMultisig())
 const { forwarderProxyAddress } = useSafe()
 const { parseTransactionError } = useErrorHandler()
+const { getRpcProviderByChainId } = useShared()
 
 const { account } = useWeb3()
 const submitting = ref(false)
@@ -26,17 +28,29 @@ const avoWalletImpAddress = ref('')
 async function fetchAvowalletImpl() {
   const forwarderProxyContract = Forwarder__factory.connect(
     forwarderProxyAddress,
-    getRpcProvider(props.network.chainId),
+    getRpcProviderByChainId(props.options.chainId),
+  )
+
+  const multisigForarderContract = MultisigForwarder__factory.connect(
+    multisigForwarderProxyAddress,
+    getRpcProviderByChainId(props.options.chainId),
   )
 
   const avoFactory = await forwarderProxyContract.avoFactory()
 
+  const avoMultisigFactory = await multisigForarderContract.avoFactory()
+
   const avoFactoryProxyContract = AvoFactoryProxy__factory.connect(
     avoFactory,
-    getRpcProvider(props.network.chainId),
+    getRpcProviderByChainId(props.options.chainId),
   )
 
-  const avoWalletImpl = isSafeMultisig.value ? await avoFactoryProxyContract.avoMultisigImpl() : await avoFactoryProxyContract.avoWalletImpl()
+  const multisigAvoFactoryProxyContract = AvoFactoryProxy__factory.connect(
+    avoMultisigFactory,
+    getRpcProviderByChainId(props.options.chainId),
+  )
+
+  const avoWalletImpl = isSafeMultisig.value ? await multisigAvoFactoryProxyContract.avoWalletImpl() : await avoFactoryProxyContract.avoWalletImpl()
 
   console.log(avoWalletImpl, { isSafeMultisig: isSafeMultisig.value })
 
@@ -45,13 +59,13 @@ async function fetchAvowalletImpl() {
 }
 
 const { data: txData } = useAsyncData(
-  'upgrade-tx',
+  `upgrade-tx-${props.options.chainId}`,
   async () => {
     await fetchAvowalletImpl()
 
     const wallet = GaslessWallet__factory.connect(
       safeAddress.value,
-      getRpcProvider(props.network.chainId),
+      getRpcProviderByChainId(props.options.chainId),
     )
 
     const data = await wallet.populateTransaction.upgradeTo(
@@ -67,7 +81,7 @@ const { data: txData } = useAsyncData(
 
 const { pending, data, error } = useEstimatedFee(
   txData,
-  ref(String(props.network.chainId)),
+  ref(String(props.options.chainId)),
 )
 
 async function handleSubmit() {
@@ -75,41 +89,40 @@ async function handleSubmit() {
     submitting.value = true
 
     const metadata = encodeUpgradeMetadata({
-      version: utils.formatBytes32String(props.network.latestVersion || ''),
+      version: utils.formatBytes32String(props.options.latestVersion || ''),
       walletImpl: avoWalletImpAddress.value,
     })
 
     const transactionHash = await sendTransaction(
       {
         data: txData.value?.data,
-        chainId: props.network.chainId,
+        chainId: props.options.chainId,
         to: safeAddress.value,
       },
       {
         metadata,
       },
+      'upgrade',
     )
 
     if (!transactionHash)
       return
 
+    logActionToSlack({
+      action: 'upgrade',
+      chainId: String(props.options.chainId),
+      account: account.value,
+      message: `Upgraded to ${props.options.latestVersion}`,
+    })
+
     emit('destroy')
 
-    await showPendingTransactionModal(
+    showPendingTransactionModal(
       transactionHash!,
-      props.network.chainId,
+      props.options.chainId,
       'upgrade',
       true,
     )
-
-    refreshNuxtData('allNetworkVersions')
-
-    logActionToSlack({
-      action: 'upgrade',
-      chainId: String(props.network.chainId),
-      account: account.value,
-      message: `Upgraded to ${props.network.latestVersion}`,
-    })
   }
   catch (e: any) {
     const err = parseTransactionError(e)
@@ -122,7 +135,7 @@ async function handleSubmit() {
     logActionToSlack({
       type: 'error',
       action: 'upgrade',
-      chainId: String(props.network.chainId),
+      chainId: String(props.options.chainId),
       account: account.value,
       message: err.parsed,
     })
@@ -140,24 +153,24 @@ onUnmounted(() => {
 <template>
   <div class="text-center flex gap-7.5 flex-col">
     <div class="flex flex-col justify-center gap-7.5 items-center">
-      <ChainLogo class="w-10 h-10" :chain="network.chainId" />
-      <span class="text-lg leading-5">{{ chainIdToName(network.chainId) }} Upgrade</span>
+      <ChainLogo class="w-10 h-10" :chain="options.chainId" />
+      <span class="text-lg leading-5">{{ chainIdToName(options.chainId) }} Upgrade</span>
     </div>
     <div class="flex items-center justify-center gap-3">
       <span
         class="bg-slate-800 py-2 px-4 rounded-5 items-center justify-center flex text-sm"
       >
-        v{{ network.currentVersion }}
+        v{{ options.currentVersion }}
       </span>
       <ArrowRight class="w-[18px] h-[18px] text-slate-400" />
       <span
         class="bg-slate-800 py-2 px-4 rounded-5 items-center justify-center flex text-sm"
       >
-        v{{ network.latestVersion }}
+        v{{ options.latestVersion }}
       </span>
     </div>
     <EstimatedFee
-      :chain-id="String(network.chainId)"
+      :chain-id="String(options.chainId)"
       :loading="pending"
       :data="data"
       :error="error"

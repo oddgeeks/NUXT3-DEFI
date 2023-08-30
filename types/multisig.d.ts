@@ -3,6 +3,8 @@ interface IMultisigTransaction {
   id: string
   chain_id: string
   nonce: string
+  index: number
+  owner: string
   safe_address: string
   signers: string[]
   confirmations: Confirmation[]
@@ -57,12 +59,18 @@ interface ISignatureParams {
   signer: string
 }
 
+interface IAvailableSigner {
+  chainId: string | number
+  addresses: string[]
+}
+
 interface IMultisigBroadcastParams {
   proposalId: string
   confirmations: Confirmation[]
   message: Data
   owner: string
   safe: string
+  signers: string[]
   targetChainId: string | number
 }
 
@@ -95,20 +103,18 @@ interface IMultisigTransactionResponse {
   data: IMultisigTransaction[]
 }
 
-type MultisigTransactionType = 'add-signers' | 'remove-signers' | 'others'
-
 interface IGenerateMultisigSignatureParams {
   chainId: string | number
   actions: TransactionsAction[]
   nonce?: number
   metadata?: string
   note?: string
-  clearModals?: boolean
   estimatedFee?: boolean
   options?: any
   rejection?: boolean
   rejectionId?: string
-  transactionType?: 'add-signers' | 'remove-signers' | 'others'
+  transactionType?: TransactionActionType
+  clearModals?: boolean
 }
 
 interface IOpenNonceModalParams {
@@ -117,16 +123,14 @@ interface IOpenNonceModalParams {
   estimatedFee?: boolean
   rejection?: boolean
   rejectionId?: string
-  transactionType: 'add-signers' | 'remove-signers' | 'others'
+  transactionType: TransactionActionType
   metadata?: string
   options?: any
 }
 
 interface IOpenExecuteModalParams {
-  chainId: string | number
-  actions: any
+  transaction: IMultisigTransaction
   isGasTopup: boolean
-  options?: any
 }
 
 interface IAddSignerModalParams {
@@ -140,3 +144,7 @@ interface IAddSignerModalParams {
     totalSteps?: number
   }
 }
+
+type IMultisigAction = "add-signers" | "remove-signers" | "change-threshold";
+
+type TransactionActionType = IWeb3Action | IMultisigAction | 'others';

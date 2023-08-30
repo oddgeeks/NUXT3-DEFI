@@ -18,7 +18,7 @@ function handleOpenSendModal() {
 
 <template>
   <div>
-    <h2 class="text-slate-400 text-sm font-semibold mb-2.5 flex items-center gap-2">
+    <h2 class="text-slate-400 font-semibold mb-2.5 flex items-center gap-2">
       Total balance
 
       <SvgSpinner v-if="balances.loading" class="text-primary" />
@@ -27,9 +27,36 @@ function handleOpenSendModal() {
       <div v-if="!balances.data" class="h-10 w-40 flex items-center">
         <div class="loading-box rounded-[12px] w-full h-[34px]" />
       </div>
-      <div v-else class="flex flex-col sm:flex-row sm:items-center sm:gap-7.5 gap-4">
-        <span class="sm:text-[40px] text-[32px]">{{ formatUsd(totalBalance.toNumber()) }}</span>
-        <div class="flex items-center gap-[15px]">
+      <div v-else class="flex flex-row sm:items-center sm:gap-7.5 gap-4">
+        <span class="sm:text-[40px] flex-1 md:flex-none text-[32px]">{{ formatUsd(totalBalance.toNumber()) }}</span>
+        <div class="flex md:hidden items-center gap-[15px]">
+          <button
+            class="h-10"
+            :disabled="!hasAvailableTokens()"
+            @click="openSendModal(1)"
+          >
+            <div
+              class="rounded-full bg-primary p-1.5 text-white"
+              :class="{
+                'dark:bg-slate-600 bg-slate-300 dark:!text-slate-500 !text-slate-400':
+                  !hasAvailableTokens(),
+              }"
+            >
+              <ArrowRight class="-rotate-45 w-3.5 h-3.5" />
+            </div>
+          </button>
+          <button
+            class="h-10"
+            @click="openQrCode"
+          >
+            <div
+              class="rounded-full bg-primary p-1.5 text-white"
+            >
+              <ArrowRight class="rotate-[135deg] w-3.5 h-3.5" />
+            </div>
+          </button>
+        </div>
+        <div class="hidden md:flex items-center gap-[15px]">
           <CommonButton
             color="white"
             class="flex-1 sm:flex-none items-center justify-center gap-2.5 h-10 !px-4"

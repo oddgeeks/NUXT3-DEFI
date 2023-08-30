@@ -7,6 +7,7 @@ import type { IToken } from '~~/stores/tokens'
 const props = defineProps<{
   tokens: IToken[]
   selectedToken: IToken
+  sort?: boolean
 }>()
 
 defineEmits(['resolve', 'reject', 'update:modelValue'])
@@ -28,6 +29,8 @@ function getTokenBalance(address: string, chainId: string) {
 const computeId = (token: IToken) => `${token.address}-${token.name}-${token.chainId}`
 
 const tokensWithBalance = computed(() => {
+  if (!tokens.value)
+    return []
   return tokens.value
     .map((i) => {
       return {
@@ -36,6 +39,9 @@ const tokensWithBalance = computed(() => {
       }
     })
     .sort((a, b) => {
+      if (!props.sort)
+        return 0
+
       const populars = ['eth', 'usdc', 'usdt', 'dai', 'wbtc', 'matic']
 
       if (toBN(b.balance).gt(toBN(a.balance)))

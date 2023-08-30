@@ -1,4 +1,5 @@
 import { ethers } from 'ethers'
+import { getAddress } from 'ethers/lib/utils'
 
 // @ts-expect-error
 import * as XXH from 'xxhashjs'
@@ -88,10 +89,19 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
     maxAmountAfterDiscount -= discountAmount
     minAmountAfterDiscount -= discountAmountMin
 
+    const formattedDiscountAmountMin = formatDecimal(discountAmountMin, 2)
+    const formattedDiscountAmountMax = formatDecimal(discountAmount, 2)
+
+    const formattedDiscountAmount = discountAvailable
+      ? `${formattedDiscountAmountMin} — ${formattedDiscountAmountMax}`
+      : '0.00'
+
     return {
       ...discountDetail,
       discountAmountMin,
       discountAmount,
+      formattedDiscountAmountMin,
+      formattedDiscountAmount,
     }
   })
 
@@ -102,11 +112,11 @@ export function calculateEstimatedFee(params: CalculateFeeProps): ICalculatedFee
 
   const formatted = isEqual
     ? formattedMax
-    : `${formattedMin} - ${formattedMax}`
+    : `${formattedMin} — ${formattedMax}`
 
   const formattedAmountAfterDiscount = isEqual
     ? formattedDiscountedAmount
-    : `${formattedDiscountedAmountMin} - ${formattedDiscountedAmount}`
+    : `${formattedDiscountedAmountMin} — ${formattedDiscountedAmount}`
 
   return {
     discountAvailable,
@@ -162,11 +172,11 @@ export function calculateMultipleEstimatedFee(...params: ICalculatedFee[]): ICal
 
   mergedFees.formatted = isEqual
     ? formattedMax
-    : `${formattedMin} - ${formattedMax}`
+    : `${formattedMin} — ${formattedMax}`
 
   mergedFees.formattedAmountAfterDiscount = isEqual
     ? formattedDiscountedAmount
-    : `${formattedDiscountedAmountMin} - ${formattedDiscountedAmount}`
+    : `${formattedDiscountedAmountMin} — ${formattedDiscountedAmount}`
 
   return mergedFees
 }
@@ -181,6 +191,7 @@ export function formatIPFSUri(ipfs: string) {
 export async function checkAddressIsDsa(
   dsaAddress: string,
   chainId: number,
+  provider: ethers.providers.Provider,
 ): Promise<boolean> {
   const abi = [
     'function accountID(address) external view returns (uint64)',
@@ -196,8 +207,6 @@ export async function checkAddressIsDsa(
   } as Record<number, string>
 
   const instaListAddress = instaListAddresses[chainId]
-
-  const provider = getRpcProvider(chainId)
 
   const instaList = new ethers.Contract(instaListAddress, abi, provider)
   const accountId = await instaList.accountID(dsaAddress)
@@ -232,22 +241,6 @@ export function generateColor(address: string): string {
   const lightness = 70 + (hash % 20)
 
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`
-}
-
-export function formatAuthorities(input: ISafe['authorities']): IAuthority[] {
-  const result = Object.entries(input || {}).reduce((acc: IAuthority[], [key, value]: [string, string[]]) => {
-    value.forEach((address: string) => {
-      let existing = acc.find((item: IAuthority) => item.address === address)
-      if (!existing) {
-        existing = { address, chainIds: [], type: 'personal' }
-        acc.push(existing)
-      }
-      existing.chainIds.push(key)
-    })
-    return acc
-  }, [])
-
-  return result
 }
 
 export function formatSigners(input: ISafe['signers']): ISigner[] {
@@ -288,14 +281,22 @@ export function generateNumber(min: number, max: number) {
 }
 
 export function logBalance(params: ILogBalanceParams) {
-  const { isOnboard, isPublic, chainId } = params
+  const { isPublic, chainId, type } = params
+
+  const prefix = {
+    'eoa-balances': 'EOA Balance',
+    'safe-balances': 'Safe Balance',
+    'options': 'MS Config',
+  } as Record<ILogBalanceParams['type'], string>
+
+  const prefixText = prefix[type]
 
   const style1 = 'color: #fff; background: #3c3c3c; padding: 4px 8px; border-radius: 4px; font-weight: bold;margin-right: 4px'
   const style2 = 'color: #fff; background: #007bff; padding: 4px 8px; border-radius: 4px; font-weight: bold;margin-right: 4px'
   const style3 = 'color: #fff; background: #16A34A; padding: 4px 8px; border-radius: 4px; font-weight: bold;'
 
   console.log(
-    `%c${isPublic ? 'Public' : 'Private'}%c${isOnboard ? 'Onboarding' : 'Main'}%c${chainIdToName(chainId)}`,
+    `%c${isPublic ? 'Public' : 'Private'}%c${prefixText}%c${chainIdToName(chainId)}`,
     style1,
     style2,
     style3,
@@ -309,4 +310,19 @@ export function groupBy<T>(array: T[], predicate: (v: T) => string) {
     (acc[predicate(value)] ||= []).push(value)
     return acc
   }, {} as { [key: string]: T[] })
+}
+
+export function isAddressEqual(a?: string, b?: string) {
+  if (!a || !b)
+    return false
+  return getAddress(a) === getAddress(b)
+}
+
+export function formatHealthFactor(healthFactor: string | number) {
+  if (isNaN(toBN(healthFactor).toNumber()))
+    return healthFactor
+
+  const formatter = new Intl.NumberFormat('en', { notation: 'compact', compactDisplay: 'short', maximumFractionDigits: 2 })
+  const value = formatter.format(toBN(healthFactor).toNumber())
+  return value
 }

@@ -10,13 +10,13 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract IGSWVersionsRegistry",
-        name: "gswVersionsRegistry_",
+        internalType: "contract IAvoVersionsRegistry",
+        name: "avoVersionsRegistry_",
         type: "address",
       },
       {
         internalType: "address",
-        name: "gswForwarder_",
+        name: "avoForwarder_",
         type: "address",
       },
     ],
@@ -25,22 +25,22 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "GaslessSmartWallet__Expired",
+    name: "AvoWallet__Expired",
     type: "error",
   },
   {
     inputs: [],
-    name: "GaslessSmartWallet__InvalidParams",
+    name: "AvoWallet__InvalidParams",
     type: "error",
   },
   {
     inputs: [],
-    name: "GaslessSmartWallet__InvalidSignature",
+    name: "AvoWallet__InvalidSignature",
     type: "error",
   },
   {
     inputs: [],
-    name: "GaslessSmartWallet__Unauthorized",
+    name: "AvoWallet__Unauthorized",
     type: "error",
   },
   {
@@ -123,7 +123,7 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "gswImpl",
+        name: "avoWalletImpl",
         type: "address",
       },
     ],
@@ -228,7 +228,7 @@ const _abi = [
             type: "uint256",
           },
         ],
-        internalType: "struct IGaslessSmartWallet.Action[]",
+        internalType: "struct IAvoWallet.Action[]",
         name: "actions_",
         type: "tuple[]",
       },
@@ -236,6 +236,45 @@ const _abi = [
     name: "_callTargets",
     outputs: [],
     stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "avoForwarder",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "avoSafeNonce",
+    outputs: [
+      {
+        internalType: "uint96",
+        name: "",
+        type: "uint96",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "avoVersionsRegistry",
+    outputs: [
+      {
+        internalType: "contract IAvoVersionsRegistry",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -258,7 +297,7 @@ const _abi = [
             type: "uint256",
           },
         ],
-        internalType: "struct IGaslessSmartWallet.Action[]",
+        internalType: "struct IAvoWallet.Action[]",
         name: "actions_",
         type: "tuple[]",
       },
@@ -318,45 +357,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "gswForwarder",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "gswNonce",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "gswVersionsRegistry",
-    outputs: [
-      {
-        internalType: "contract IGSWVersionsRegistry",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "address",
@@ -366,6 +366,40 @@ const _abi = [
     ],
     name: "initialize",
     outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "bytes",
+        name: "",
+        type: "bytes",
+      },
+    ],
+    name: "onERC721Received",
+    outputs: [
+      {
+        internalType: "bytes4",
+        name: "",
+        type: "bytes4",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -386,7 +420,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "gswImpl_",
+        name: "avoWalletImpl_",
         type: "address",
       },
     ],
@@ -399,7 +433,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "gswImpl_",
+        name: "avoWalletImpl_",
         type: "address",
       },
       {
@@ -438,7 +472,7 @@ const _abi = [
             type: "uint256",
           },
         ],
-        internalType: "struct IGaslessSmartWallet.Action[]",
+        internalType: "struct IAvoWallet.Action[]",
         name: "actions_",
         type: "tuple[]",
       },

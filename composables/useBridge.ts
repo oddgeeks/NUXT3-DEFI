@@ -1,6 +1,8 @@
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 
+import Fuse from 'fuse.js'
+import { getAddress } from 'ethers/lib/utils'
 import type { IToken } from '~~/stores/tokens'
 import type { IBalance } from '~~/stores/safe'
 import { Erc20__factory } from '~~/contracts'
@@ -11,24 +13,21 @@ interface IFee {
   asset: IToken
 }
 
-export function useBridge(fromToken: Ref<IBalance>) {
+export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
   let txController: AbortController | null = null
   let tokensController: AbortController | null = null
+  let fromController: AbortController | null = null
   let routesController: AbortController | null = null
 
   const { account } = useWeb3()
   const { fromWei, toWei } = useBignumber()
   const { tokenBalances, safeAddress } = useAvocadoSafe()
   const { tokens } = storeToRefs(useTokens())
+  const { getRpcProviderByChainId } = useShared()
+  const { authorisedNetworks } = useAuthorities()
 
-  const fromChainId = computed(() => fromToken.value.chainId)
   const toChainId = ref(fromChainId.value == '137' ? '10' : '137')
-  const toTokenAddress = ref()
-
-  watch(fromChainId, () => {
-    if (fromChainId.value == toChainId.value)
-      toChainId.value = fromChainId.value == '137' ? '10' : '137'
-  })
+  const bridgeToToken = ref<IBridgeTokensResult>()
 
   const form = useForm({
     validationSchema: yup.object({
@@ -51,32 +50,6 @@ export function useBridge(fromToken: Ref<IBalance>) {
 
   const amount = form.useFieldModel('amount')
 
-  const selectableToTokens = computed(() => {
-    // allow to users to select eth and weth in case of bridging to mainnet
-    if (toChainId.value == '1' && fromToken.value.symbol === 'weth') {
-      const availableTokens = tokens.value.filter(
-        i =>
-          (i.symbol === 'eth' || i.symbol === 'weth')
-          && i.chainId == toChainId.value,
-      )
-
-      if (!toTokenAddress.value) {
-        const eth = tokens.value.find(
-          i => i.symbol === 'eth' && i.chainId == toChainId.value,
-        )
-
-        toTokenAddress.value = eth?.address
-      }
-
-      return availableTokens
-    }
-    else {
-      toTokenAddress.value = undefined
-    }
-
-    return []
-  })
-
   const nativeCurrency = computed(() => {
     const nativeTokenMeta = getNetworkByChainId(+fromChainId.value).params
       .nativeCurrency
@@ -85,27 +58,6 @@ export function useBridge(fromToken: Ref<IBalance>) {
       t =>
         t.chainId == fromChainId.value
         && t.symbol.toLowerCase() === nativeTokenMeta?.symbol?.toLowerCase(),
-    )
-  })
-
-  const bridgeToToken = computed(() => {
-    const toToken = tokens.value.find(
-      i => i.address === toTokenAddress.value && i.chainId == toChainId.value,
-    )
-
-    if (toToken)
-      return toToken
-
-    const t = bridgeTokens.data.value?.find(
-      (t: any) =>
-        t.symbol.toLowerCase() === fromToken.value.symbol.toLowerCase(),
-    )
-
-    if (t)
-      return t
-
-    return bridgeTokens.data.value?.find((t: any) =>
-      t.symbol.toLowerCase().includes(fromToken.value.symbol.toLowerCase()),
     )
   })
 
@@ -119,7 +71,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
   )
 
   const recivedValueInUsd = computed(() => {
-    return toBN(recievedAmount.value).times(fromToken.value?.price || '0')
+    return toBN(recievedAmount.value).times(bridgeToToken.value?.price || '0')
   },
   )
 
@@ -129,7 +81,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
   )
 
   const bridgeTokens = useAsyncData(
-    'bridge-tokens',
+    'bridge-to-tokens',
     async () => {
       try {
         if (tokensController)
@@ -144,23 +96,58 @@ export function useBridge(fromToken: Ref<IBalance>) {
             params: {
               fromChainId: fromChainId.value,
               toChainId: toChainId.value,
+              isShortList: true,
             },
           },
         )
 
         tokensController = null
 
-        return result
+        return sortTokensBestMatch(result, fromToken.value.symbol)
       }
       catch (e) {
-        console.log(e)
       }
     },
     {
       server: false,
       immediate: true,
       default: () => [],
-      watch: [toChainId],
+      watch: [fromChainId, toChainId],
+    },
+  )
+
+  const fromTokens = useAsyncData(
+    'bridge-from-tokens',
+    async () => {
+      try {
+        if (fromController)
+          fromController.abort()
+
+        fromController = new AbortController()
+
+        const { result }: IBridgeTokensResponse = await http(
+          '/api/socket/v2/token-lists/from-token-list',
+          {
+            signal: fromController.signal,
+            params: {
+              fromChainId: fromChainId.value,
+              toChainId: toChainId.value,
+            },
+          },
+        )
+
+        fromController = null
+
+        return result
+      }
+      catch (e) {
+      }
+    },
+    {
+      server: false,
+      immediate: true,
+      lazy: true,
+      watch: [fromChainId, toChainId],
     },
   )
 
@@ -180,6 +167,8 @@ export function useBridge(fromToken: Ref<IBalance>) {
         }
         else { return }
       }
+
+      console.log('selammmmmmmmmm')
 
       const transferAmount = toWei(
         amount.value || '0',
@@ -221,8 +210,10 @@ export function useBridge(fromToken: Ref<IBalance>) {
           if (minAmountError) {
             const [_, error] = minAmountError
 
+            const minAmountLabel = `${fromWei(error.minAmount, fromToken.value.decimals)} ${fromToken.value.symbol.toUpperCase()}`
+
             if (!form.errors.value.amount)
-              form.setFieldError('amount', `Minimum bridge amount is ${fromWei(error.minAmount, fromToken.value.decimals)} ${fromToken.value.symbol.toUpperCase()}`)
+              form.setFieldError('amount', `Minimum bridge amount is ${error?.minAmount ? minAmountLabel : 'not met'}`)
           }
           else {
             throw new Error(
@@ -237,7 +228,6 @@ export function useBridge(fromToken: Ref<IBalance>) {
         return data
       }
       catch (error: any) {
-        console.log(error)
         throw new Error(
           error.cause
             ? error.message
@@ -248,6 +238,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
     {
       server: false,
       immediate: false,
+      lazy: true,
       watch: [amount, fromToken, bridgeToToken],
     },
   )
@@ -270,7 +261,7 @@ export function useBridge(fromToken: Ref<IBalance>) {
         if (userTx.approvalData) {
           const erc20 = Erc20__factory.connect(
             fromToken.value.address,
-            getRpcProvider(fromChainId.value),
+            getRpcProviderByChainId(fromChainId.value),
           )
           const { data } = await erc20.populateTransaction.approve(
             userTx.approvalData.allowanceTarget,
@@ -309,6 +300,8 @@ export function useBridge(fromToken: Ref<IBalance>) {
     },
     {
       watch: [txRoute],
+      server: false,
+      lazy: true,
     },
   )
 
@@ -426,11 +419,59 @@ export function useBridge(fromToken: Ref<IBalance>) {
     )
   }
 
-  const selectableChains = computed(() =>
-    availableNetworks.filter(
+  function sortTokensBestMatch(list: IBridgeTokensResult[] | IBalance[] | any[], search: string) {
+    const fuse = new Fuse(list, {
+      keys: ['symbol', 'name'],
+      threshold: 0.3,
+      shouldSort: true,
+      includeScore: true,
+    })
+
+    const sortedByMatch = fuse.search(search)
+
+    const sortedByBalance = list.map((token) => {
+      const internalToken = tokenBalances.value.find(
+        i =>
+          getAddress(i.address) === getAddress(token.address)
+              && String(i.chainId) == String(token.chainId),
+      )
+
+      token.balance = internalToken?.balance || '0'
+      token.price = internalToken?.price || 0
+
+      const matched = sortedByMatch.find(
+        i => i.item.symbol === token.symbol,
+      )
+
+      token.score = matched?.score
+
+      return token
+    })
+      .sort((a, b) => toBN(b.balance || 0).minus(a.balance || 0).toNumber())
+      .filter(i => !i.score)
+
+    const finalList = [
+      ...sortedByMatch.map(i => i.item),
+      ...sortedByBalance,
+    ]
+
+    // filter tokens that are not in the Avocado Tokens
+    return finalList.filter((i) => {
+      const token = tokens.value.find(
+        t =>
+          getAddress(t.address) === getAddress(i.address)
+            && String(t.chainId) == String(i.chainId),
+      )
+
+      return !!token
+    })
+  }
+
+  const selectableToChains = computed(() =>
+    authorisedNetworks.value.filter(
       c =>
         String(c.chainId) !== fromChainId.value
-        && c.chainId !== avoChainId,
+        && !bridgeDisabledChains.some(i => String(i) == String(c.chainId)),
     ),
   )
 
@@ -454,10 +495,45 @@ export function useBridge(fromToken: Ref<IBalance>) {
       || bridgeTokens.pending.value,
   )
 
+  watchThrottled(bridgeTokens.data, () => {
+    if (bridgeTokens.data.value?.length) {
+      const [token] = bridgeTokens.data.value
+
+      bridgeToToken.value = token
+    }
+  }, {
+    throttle: 500,
+  })
+
+  watchThrottled(fromChainId, () => {
+    if (fromChainId.value == toChainId.value)
+      toChainId.value = fromChainId.value == '137' ? '10' : '137'
+  }, {
+    throttle: 500,
+  })
+
+  onMounted(() => {
+    const firstSelectableChain = selectableToChains.value[0]
+
+    if (firstSelectableChain)
+      toChainId.value = String(firstSelectableChain.chainId)
+  })
+
   onUnmounted(() => {
     clearNuxtData('bridge-transactions')
-    clearNuxtData('bridge-tokens')
     clearNuxtData('bridge-routes')
+    clearNuxtData('bridge-to-tokens')
+    clearNuxtData('bridge-from-tokens')
+
+    // abort controllers if they are still running
+    const controllers = [txController, tokensController, fromController, routesController]
+
+    controllers.forEach((controller) => {
+      if (controller) {
+        controller.abort()
+        controller = null
+      }
+    })
   })
 
   return {
@@ -477,11 +553,12 @@ export function useBridge(fromToken: Ref<IBalance>) {
     nativeFee,
     nativeFeeInUsd,
     isInsufficientBalance,
-    selectableChains,
+    selectableToChains,
     handleSwapToken,
     recivedValueInUsd,
     recievedAmount,
-    toTokenAddress,
-    selectableToTokens,
+    bridgeTokens,
+    fromTokens,
+    sortTokensBestMatch,
   }
 }

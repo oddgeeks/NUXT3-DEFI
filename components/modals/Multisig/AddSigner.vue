@@ -36,6 +36,15 @@ const {
           .test('is-valid-address', 'Incorrect address', (value) => {
             return value ? isAddress(value || '') : true
           })
+          .test(
+            'cannot-add-self',
+            'Cannot add self as signer',
+            (value) => {
+              if (!isAddress(value || ''))
+                return true
+              return account.value?.toLowerCase() !== value?.toLowerCase()
+            },
+          )
           .test('contact-already-exist', 'Contact already exists, please select from contacts list', (value, ctx) => {
             if (!isAddress(value || ''))
               return true
@@ -60,16 +69,8 @@ const {
 
               return true
             },
-          )
-          .test(
-            'cannot-add-self',
-            'Cannot add self as signer',
-            (value) => {
-              if (!isAddress(value || ''))
-                return true
-              return account.value?.toLowerCase() !== value?.toLowerCase()
-            },
           ),
+
       })),
 
   }),
@@ -128,6 +129,8 @@ function handleBackClick() {
 <template>
   <form @submit="onSubmit">
     <div class="flex flex-col sm:p-7.5 p-5 gap-7.5">
+      <Steps class="mr-10" :total-steps="4" :current-step="1" />
+
       <div class="flex gap-[14px]">
         <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
           {{ options.currentStep || 1 }}
@@ -169,7 +172,7 @@ function handleBackClick() {
         <div class="flex flex-1 basis-12 flex-col gap-2">
           <div class="flex justify-between items-center w-full">
             <span class="text-xs font-medium leading-5 text-slate-400 flex items-center gap-2.5">
-              <span class="sm:hidden inline">{{ key + 1 }}</span> Signer Address
+              <span class="sm:hidden inline">{{ key + 1 }}</span> Signer EOA Address
               <SvgoInfo2 v-if="!isGnosisMigration" v-tippy="'Please make sure you enter the EOA address and not Avocado address.'" class="text-orange" />
             </span>
             <button
@@ -208,8 +211,8 @@ function handleBackClick() {
           </CommonInput>
         </div>
       </fieldset>
-      <button v-if="!isGnosisMigration" class="flex items-center text-primary gap-3 text-xs" @click="push({ address: '', name: '' })">
-        <div class="bg-primary w-4 h-4 rounded-full flex">
+      <button v-if="!isGnosisMigration" class="flex items-center text-primary gap-3 text-xs disabled:text-slate-500" :disabled="!meta.valid" @click="push({ address: '', name: '' })">
+        <div :class="!meta.valid ? 'bg-slate-500' : ''" class="bg-primary w-4 h-4 rounded-full flex">
           <SvgoPlus class="text-white m-auto w-2 h-2" />
         </div>
         Add more signer(s)

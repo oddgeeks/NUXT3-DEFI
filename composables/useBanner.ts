@@ -1,9 +1,11 @@
+import { isUndefined } from '@walletconnect/utils'
+import { storeToRefs } from 'pinia'
 import { gt } from 'semver'
 
 const isVersionUpdateBannerHidden = ref(false)
 
 export function useBanner() {
-  const { gasBalance, pending } = storeToRefs(useSafe())
+  const { gasBalance, safeOptions, selectedSafe } = storeToRefs(useSafe())
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { account, chainId } = useWeb3()
 
@@ -14,8 +16,6 @@ export function useBanner() {
   const isHideRabbyBanner = useLocalStorage('hide-rabby-banner', false)
   const isOnboardHidden = useLocalStorage('hide-onboard', false)
 
-  const allNetworkVersions = useNuxtData('allNetworkVersions')
-
   const showWelcomeBanner = computed(() => {
     if (!account.value)
       return false
@@ -25,7 +25,7 @@ export function useBanner() {
   })
 
   const showInsufficientGasBanner = computed(() => {
-    if (pending.value.global)
+    if (isUndefined(gasBalance.value))
       return false
 
     return (
@@ -39,17 +39,6 @@ export function useBanner() {
     () =>
       !trackingAccount.value && account.value && chainId.value !== avoChainId,
   )
-
-  const showGasGiftBanner = computed(() => {
-    if (!account.value)
-      return false
-    if (chainId.value !== avoChainId)
-      return false
-    if (pending.value.global)
-      return false
-
-    return true
-  })
 
   const showOnboardBanner = computed(() => {
     if (!account.value)
@@ -65,7 +54,7 @@ export function useBanner() {
   const showVersionUpdateBanner = computed(() => {
     if (!account.value)
       return false
-    const allVersions = allNetworkVersions.data.value as NetworkVersion[]
+    const allVersions = safeOptions.value
     if (!allVersions?.length)
       return false
     if (isVersionUpdateBannerHidden.value)
@@ -80,10 +69,17 @@ export function useBanner() {
     )
   })
 
+  const isOnboardBannerVisible = computed<boolean>(() => {
+    if (!selectedSafe.value)
+      return false
+
+    return selectedSafe.value.multisig === 1 && selectedSafe.value.multisig_index === 0
+  })
+
   const unstableDappNetworks = computed(() => {
     if (!wcStoreV2.sessions?.length)
       return []
-    if (!allNetworkVersions.data.value?.length)
+    if (!safeOptions.value?.length)
       return []
 
     return false
@@ -93,12 +89,12 @@ export function useBanner() {
     showWelcomeBanner,
     showInsufficientGasBanner,
     showIncorrectNetworkBanner,
-    showGasGiftBanner,
     showOnboardBanner,
     isVersionUpdateBannerHidden,
     showVersionUpdateBanner,
     unstableDappNetworks,
     isHideRabbyBanner,
+    isOnboardBannerVisible,
     showTrackingBanner: computed(() => !!trackingAccount.value),
     toggleWelcomeBanner: (val: boolean) => (isHideWelcomeBanner.value = !val),
     hideOnboardBanner: () => (isOnboardHidden.value = true),

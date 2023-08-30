@@ -86,7 +86,7 @@ function handleBeforeInput(e: any) {
         },
         transparent
           ? 'bg-transparent'
-          : 'dark:bg-slate-800  bg-slate-100 focus-within:ring-2 dark:focus-within:bg-gray-850 focus-within:bg-slate-50 dark:focus-within:ring-slate-750 focus-within:ring-slate-100',
+          : 'dark:bg-slate-800  bg-slate-100 focus-within:ring-1 dark:focus-within:bg-gray-850 focus-within:bg-slate-50 dark:focus-within:ring-slate-750 focus-within:ring-slate-100',
       ]"
       class="relative flex items-center focus-within:outline-none px-5 rounded-[15px]"
     >

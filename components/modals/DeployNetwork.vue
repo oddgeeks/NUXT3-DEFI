@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
-  network: Network
+  option: ISafeOptions
 }>()
 
 const emit = defineEmits(['destroy'])
@@ -15,13 +15,13 @@ const transaction = computed(() => ({
   to: safeAddress.value,
   data: '0x',
   value: '0',
-  chainId: Number(props.network.chainId),
+  chainId: Number(props.option.chainId),
   operation: '0',
 }))
 
 const { data, pending, error } = useEstimatedFee(
   transaction,
-  ref(String(props.network.chainId)),
+  ref(String(props.option.chainId)),
   {
     immediate: true,
   },
@@ -35,22 +35,22 @@ async function handleDeploy() {
 
     const transactionHash = await sendTransaction(transaction.value, {
       metadata,
-    })
+    }, 'deploy')
 
     if (!transactionHash)
       return
 
     logActionToSlack({
-      message: ` ${props.network.name}`,
+      message: ` ${chainIdToName(props.option.chainId)}`,
       action: 'deploy',
       txHash: transactionHash,
-      chainId: String(props.network.chainId),
+      chainId: String(props.option.chainId),
       account: account.value,
     })
 
-    emit('destroy')
+    await showPendingTransactionModal(transactionHash, props.option.chainId, 'send')
 
-    showPendingTransactionModal(transactionHash, props.network.chainId, 'send')
+    emit('destroy')
   }
   catch (e: any) {
     const err = parseTransactionError(e)
@@ -76,10 +76,10 @@ async function handleDeploy() {
 
 <template>
   <div class="flex gap-7.5 flex-col">
-    <ChainLogo class="w-10 h-10 mx-auto" :chain="network.chainId" />
+    <ChainLogo class="w-10 h-10 mx-auto" :chain="option.chainId" />
     <div>
       <h1 class="font-lg text-center leading-5 mb-3">
-        {{ network.name }}
+        {{ chainIdToName(option.chainId) }}
       </h1>
       <h2 class="font-medium text-xs text-slate-400 leading-5 text-center">
         In order to interact with dapps on your requested network, please deploy

@@ -10,19 +10,20 @@ const props = defineProps<{
   estimatedFee?: boolean
   rejection?: boolean
   rejectionId?: string
-  transactionType?: MultisigTransactionType
+  transactionType?: 'add-signers' | 'remove-signers' | 'change-threshold' | 'topup'
   metadata?: string
   options?: any
 }>()
 
 const emit = defineEmits(['resolve', 'destroy'])
-const { selectedSafe } = storeToRefs(useSafe())
+const { selectedSafe, safeOptions } = storeToRefs(useSafe())
 const { getActualId, safeAddress, generateMultisigSignatureAndSign, multisigBroadcast } = useAvocadoSafe()
-const { requiredSigners } = storeToRefs(useMultisig())
 const { parseTransactionError } = useErrorHandler()
+const { clearAllModals } = useModal()
+const { account } = useWeb3()
 
-const isDeleteOrAddSigner = props.transactionType === 'remove-signers' || props.transactionType === 'add-signers'
-const recommendedNonce = isDeleteOrAddSigner ? -1 : undefined
+const shouldNonSeqByDefault = props.transactionType === 'remove-signers' || props.transactionType === 'add-signers' || props.transactionType === 'topup'
+const recommendedNonce = shouldNonSeqByDefault ? -1 : undefined
 
 const isSubmitting = ref(false)
 const nonce = ref<number | undefined>(recommendedNonce)
@@ -31,14 +32,14 @@ const detailsRef = ref<HTMLDetailsElement>()
 const [simulationStatus, toggle] = useToggle()
 const [signAndExecute, signAndExecuteToggle] = useToggle(false)
 
-const requiredSignersByChain = computed(() => requiredSigners.value.find(i => i.chainId == props.chainId))
-const isSignOnly = computed(() => !signAndExecute.value && !isExecuteReady.value)
+const optionsByChain = computed(() => safeOptions.value.find(i => i.chainId == props.chainId))
 
 const { data: seqResponse } = useAsyncData<IMultisigTransactionResponse>(`${safeAddress.value}-seq-count`, async () => {
   const { data } = await axios.get(`/safes/${safeAddress.value}/transactions`, {
     params: {
       status: 'pending',
       nonce_type: 'seq',
+      chain_id: props.chainId,
     },
     baseURL: multisigURL,
   })
@@ -56,9 +57,9 @@ const isExecutionNotAvailable = computed(() => {
 })
 
 const isExecuteReady = computed(() => {
-  if (!requiredSignersByChain.value)
+  if (!optionsByChain.value)
     return false
-  return requiredSignersByChain.value?.requiredSignerCount === 1 && !isExecutionNotAvailable.value
+  return optionsByChain.value?.threshold === 1 && !isExecutionNotAvailable.value
 })
 
 whenever(isExecuteReady, () => {
@@ -70,6 +71,8 @@ whenever(isExecuteReady, () => {
 const { data, error, pending: feePending } = useEstimatedFee(ref(props.actions), ref(props.chainId), {
   immediate: true,
   disabled: () => !props.estimatedFee,
+  metadata: props.metadata,
+  nonce: nonce.value,
 })
 
 const transactionTypes = [
@@ -84,6 +87,8 @@ const transactionTypes = [
 ]
 
 async function onSubmit() {
+  let proposalId
+
   try {
     isSubmitting.value = true
     const payload = {
@@ -103,17 +108,22 @@ async function onSubmit() {
       chain_id: String(props.chainId),
       status: 'pending',
       signer: params?.signatureParams,
+      owner: selectedSafe.value?.owner_address,
+      index: String(selectedSafe.value?.multisig_index),
       data: params?.castParams,
       note: payload.note,
-      nonce,
+      nonce: params.castParams.params.avoSafeNonce,
     }, {
       baseURL: multisigURL,
     })
+
+    proposalId = data.id
 
     if (data.confirmations_required === 1 && !signOnly) {
       const txHash = await multisigBroadcast({
         proposalId: data.id,
         confirmations: data.confirmations,
+        signers: data.signers,
         message: data.data,
         owner: selectedSafe.value?.owner_address!,
         safe: selectedSafe.value?.safe_address!,
@@ -135,9 +145,21 @@ async function onSubmit() {
     console.log(e)
     const parsed = parseTransactionError(e)
 
+    if (e.cause?.message === 'sign-execution-data-failed' && proposalId && selectedSafe.value?.safe_address) {
+      clearAllModals()
+      return openExecutionErrorModal(proposalId, selectedSafe.value?.safe_address)
+    }
+
     openSnackbar({
       message: parsed.formatted,
       type: 'error',
+    })
+
+    logActionToSlack({
+      action: 'multisig',
+      account: account.value,
+      type: 'error',
+      message: parsed.formatted,
     })
   }
   finally {
@@ -188,12 +210,11 @@ const isTransactionFailed = computed(() => !simulationDetails.value?.transaction
 
 function getNonceTooltip(value: number | undefined) {
   let message = ''
-  const articleLink = 'https://help.avocado.instadapp.io/en/articles/8117229-sequential-vs-non-sequential-transactions'
   if (value === undefined)
-    message = `Sequential transactions need to be executed in the order they were proposed in. <a target="_blank" class=\'text-primary\' href=\'${articleLink}\'>Learn more</a>`
+    message = 'Sequential transactions need to be executed in the order they were proposed in.'
 
   else if (value === -1)
-    message = `Non-Sequential transactions can be executed in any order. <a target="_blank" class=\'text-primary\' href=\'${articleLink}\'>Learn more</a>`
+    message = 'Non-Sequential transactions can be executed in any order.'
 
   return message
     ? {
@@ -228,10 +249,10 @@ function getNonceTooltip(value: number | undefined) {
   <form class="flex flex-col" @submit.prevent="onSubmit">
     <div class="px-7.5 pt-7.5 pb-5 flex flex-col gap-2.5">
       <h1 v-if="rejection" class="text-lg">
-        Submit Reject Transaction Proposal
+        Submit Reject Transaction
       </h1>
       <h1 v-else class="text-lg">
-        Submit Transaction Proposal
+        Submit Transaction
       </h1>
       <div class="text-slate-500 flex items-center gap-2 text-xs font-medium">
         <ChainLogo class="w-5 h-5" :chain="chainId" />
@@ -239,40 +260,31 @@ function getNonceTooltip(value: number | undefined) {
       </div>
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
-    <div class="sm:px-7.5 px-5 py-5 flex flex-col gap-4">
+    <div class="sm:px-7.5 px-5 py-5 flex flex-col gap-5">
       <div v-if="!rejection" class="flex flex-col gap-2">
-        <span class="text-xs text-slate-400">
+        <span class="text-xs text-slate-400 font-medium">
           Transaction type
         </span>
-        <CommonSelect
-          v-model="nonce"
-          label-key="name"
-          value-key="value"
-          :options="transactionTypes"
-        >
-          <template #button-suffix>
-            <SvgoInfo2 v-tippy="getNonceTooltip(nonce)" class="text-slate-500" />
-
-            <template v-if="nonce === recommendedNonce">
-              <span class="bg-primary bg-opacity-10 text-primary text-xs px-[6px] py-[5px] uppercase rounded-[10px]">
+        <div class="flex row gap-4">
+          <CommonRadioSelect
+            v-for="(nonceType, index) in transactionTypes" :key="index"
+            v-model="nonce"
+            :value="nonceType.value"
+          >
+            <template #content>
+              <div class="flex row items-center gap-2">
+                <span class="text-xs font-medium">{{ nonceType.name }}</span>
+                <SvgoInfo2 v-tippy="getNonceTooltip(nonceType.value)" class="dark:text-slate-500 text-slate-300" />
+              </div>
+              <span
+                v-if="nonceType.value === recommendedNonce"
+                class="ml-auto bg-primary bg-opacity-10 text-primary text-[0.625rem] font-medium px-1.5 py-1 uppercase rounded-10"
+              >
                 Recommended
               </span>
             </template>
-          </template>
-          <template #item="{ label, value }">
-            <span class="flex items-center gap-2.5">
-              {{ label }}
-
-              <SvgoInfo2
-                v-tippy="getNonceTooltip(value)" class="text-slate-500"
-              />
-
-              <span v-if="value === recommendedNonce" class="bg-primary bg-opacity-10 text-primary text-xs px-[6px] py-[5px] uppercase rounded-[10px]">
-                Recommended
-              </span>
-            </span>
-          </template>
-        </CommonSelect>
+          </CommonRadioSelect>
+        </div>
       </div>
 
       <div class="flex flex-col gap-2">
@@ -290,11 +302,11 @@ function getNonceTooltip(value: number | undefined) {
             {{ shortenHash(rejectionId) }}
           </dd>
         </dl>
-        <span class="text-xs flex items-center gap-2 text-slate-400">
+        <span class="text-xs font-medium flex items-center gap-2 text-slate-400">
           Note (optional)
-          <SvgoInfo2 v-tippy="'Specify any details/instructions you want other signers to read before signing this transaction.'" class="w-4 h-4 text-slate-500" />
+          <SvgoInfo2 v-tippy="'Specify any details/instructions you want other signers to read before signing this transaction.'" class="w-4 h-4 dark:text-slate-500 text-slate-300" />
         </span>
-        <textarea v-model="note" v-focus placeholder="Visible to all signers" class="dark:bg-slate-800 placeholder:text-sm text-sm rounded-[14px] bg-slate-100 py-[15px] px-4 border-0 outline-none focus:border-0 focus:outline-none focus:ring-0" />
+        <textarea v-model="note" v-focus placeholder="Visible to all signers" class="dark:bg-slate-800 placeholder:text-sm placeholder:text-slate-400 text-sm font-medium rounded-[14px] bg-slate-100 py-[15px] px-4 border-0 outline-none focus:border-0 focus:outline-none focus:ring-0" />
       </div>
     </div>
     <template v-if="!estimatedFee">

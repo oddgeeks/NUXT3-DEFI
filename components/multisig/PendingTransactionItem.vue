@@ -6,17 +6,21 @@ import { AvoMultisigImplementation__factory } from '@/contracts'
 const props = defineProps<{
   item: IMultisigTransaction
   activeTab: string | undefined
-  requiredSigner: number | null
   insideGroup: boolean
-  currentNonce: number | null
 }>()
 
 const route = useRoute()
 const { account } = useWeb3()
-const { selectedSafe } = storeToRefs(useSafe())
+const { selectedSafe, safeOptions } = storeToRefs(useSafe())
 const { checkTransactionExecuted } = useAvocadoSafe()
 const { isAccountCanSign } = useMultisig()
 const { tokens } = storeToRefs(useTokens())
+
+const executing = useCookie(`executing-${props.item.id}`, {
+  default() {
+    return false
+  },
+})
 
 const transformedTokens = computed(() => {
   if (!tokens.value)
@@ -31,14 +35,22 @@ const transformedTokens = computed(() => {
   })
 })
 
-const actualRequiredSigner = computed(() => props.activeTab === 'completed' ? props.item.confirmations_required : props.requiredSigner || 1)
-
 const canSign = computed(() => isAccountCanSign(props.item.chain_id, account.value, selectedSafe.value?.owner_address))
 
 const isNonseq = computed(() => props.item.nonce == '-1')
-const isNonceNotMatch = computed(() => isNonseq.value ? false : props.item.nonce !== String(props.currentNonce))
+const isNonceNotMatch = computed(() => {
+  if (isNonseq.value)
+    return false
 
-const isConfirmationsMatch = computed(() => gte(props.item.confirmations.length, actualRequiredSigner.value))
+  if (isSafeDoesntMatch.value)
+    return false
+
+  const nonce = safeOptions.value.find(i => i.chainId == props.item.chain_id)?.nonce
+
+  return props.item.nonce !== String(nonce)
+})
+
+const isConfirmationsMatch = computed(() => gte(props.item.confirmations.length, props.item.confirmations_required))
 const isYourSignNeeded = computed(() => {
   if (isSafeDoesntMatch.value || !account.value || !canSign.value)
     return false
@@ -81,6 +93,8 @@ const firstActionMetadata = computed<any>(() => {
 
 const actionType = computed(() => firstActionMetadata.value?.type || '')
 
+const decodedMetadata = computed(() => decodeMetadata(props.item.data.params.metadata))
+
 const formattedActionType = computed(() => {
   return formatTxType(actionType.value || '')
 })
@@ -97,34 +111,42 @@ async function handleClick(item: IMultisigTransaction) {
     <button class="w-full" @click.stop="handleClick(item)">
       <div class="hidden grid-row sm:grid grid-item focus:outline-none items-center w-full text-xs font-medium py-4 px-5">
         <span class="flex items-center gap-2.5 whitespace-nowrap">
-          <span v-if="activeTab !== 'nonseq'" :class="item.nonce === '-1' ? 'hidden' : ''">
-            {{ item.nonce }}
-          </span>
+
           <ActionLogo class="shrink-0" :action="actionType" />
-          <span>{{ formattedActionType }}</span>
+          <span>{{ formattedActionType }}
+            <span v-if="activeTab !== 'nonseq'" v-tippy="`Nonce #${item.nonce}`" :class="item.nonce === '-1' ? 'hidden' : ''">
+              ({{ item.nonce }})
+            </span>
+          </span>
           <SvgoInfo2
             v-if="actionType === 'rejection'" v-tippy="{
               content: 'Executing this will cancel the transaction(s) below',
               maxWidth: 'none',
-            }" class="text-slate-500"
+            }" class="text-slate-500 shrink-0"
           />
         </span>
-        <span class="flex-1 flex-col flex gap-2 max-w-sm truncate">
-          <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" :key="metadata" v-memo="[tokens]" :tokens="transformedTokens" class="text-left whitespace-nowrap" compact :chain_id="item.chain_id" :metadata="metadata" />
-        </span>
+        <ul :class="`${(decodedMetadata || [])?.length > 1 ? 'list-decimal pl-5 text-xs' : ''}`" class="flex-1 flex-col flex gap-2 svg-shrink-none max-w-sm truncate">
+          <li v-for="(metadata, index) in decodeMetadata(item.data.params.metadata)" :key="index" v-memo="[tokens]">
+            <ActionMetadata :key="metadata" :tokens="transformedTokens as any" class="text-left whitespace-nowrap" compact :chain_id="item.chain_id" :metadata="metadata" />
+          </li>
+        </ul>
         <span class="whitespace-nowrap text-left">
           {{ formatTimeAgo(new Date(activeTab === 'completed' ? item.executed_at : item.created_at)) }}
         </span>
         <span class="flex items-center gap-2.5  whitespace-nowrap">
           <SvgoUserCircle :class="isConfirmationsMatch ? 'text-primary' : 'text-slate-400'" />
           <span :class="isConfirmationsMatch ? 'text-primary' : ''">
-            {{ item.confirmations.length }} out of {{ actualRequiredSigner }}
+            {{ item.confirmations.length }} out of {{ item.confirmations_required }}
           </span>
         </span>
 
         <div>
           <div :class="isConfirmationsMatch ? 'text-primary' : 'text-orange-400'">
-            <span v-if="isTransactionFailed" class="flex items-center text-red-alert gap-2 justify-end">
+            <span v-if="executing && !isTransactionExecuted" class="items-center flex gap-2 justify-between">
+              Executing
+              <SvgSpinner class="w-5 h-5" />
+            </span>
+            <span v-else-if="isTransactionFailed" class="flex items-center text-red-alert gap-2 justify-end">
               Failed
               <SvgoErrorCircle class="text-white w-4.5 h-4.5" />
             </span>
@@ -168,25 +190,33 @@ async function handleClick(item: IMultisigTransaction) {
                 {
                   content: 'Executing this will cancel the transaction(s) below',
                   maxWidth: 'none',
-                }" class="text-slate-500"
+                }" class="text-slate-500 shrink-0"
             />
           </span>
         </div>
         <hr class="border-slate-150 w-full dark:border-slate-800">
         <div class="py-3 px-4">
-          <ActionMetadata v-for="metadata in decodeMetadata(item.data.params.metadata)" :key="metadata" v-memo="[tokens]" :tokens="transformedTokens" class="text-left text-xs" compact :chain_id="item.chain_id" :metadata="metadata" />
+          <ul :class="`${(decodedMetadata || [])?.length > 1 ? 'list-decimal pl-5 text-xs' : ''}`" class="flex-1 text-xs flex-col flex gap-2 svg-shrink-none max-w-sm truncate">
+            <li v-for="(metadata, index) in decodeMetadata(item.data.params.metadata)" :key="index" v-memo="[tokens]">
+              <ActionMetadata :key="metadata" :tokens="transformedTokens as any" class="text-left whitespace-nowrap" compact :chain_id="item.chain_id" :metadata="metadata" />
+            </li>
+          </ul>
         </div>
         <hr class="border-slate-150 w-full dark:border-slate-800">
         <div class="flex items-center py-3 px-4 gap-2.5 whitespace-nowrap text-xs">
           <SvgoUserCircle :class="isConfirmationsMatch ? 'text-primary' : 'text-slate-400'" />
           <span :class="isConfirmationsMatch ? 'text-primary' : ''">
-            {{ item.confirmations.length }} out of {{ actualRequiredSigner }}
+            {{ item.confirmations.length }} out of {{ item.confirmations_required }}
           </span>
         </div>
         <hr class="border-slate-150 w-full dark:border-slate-800">
         <div class="text-xs px-4 pt-4 pb-3 flex justify-between items-center w-full">
           <div class="font-medium" :class="isConfirmationsMatch ? 'text-primary' : 'text-orange-400'">
-            <span v-if="isTransactionFailed" class="flex items-center text-red-alert gap-2 justify-end">
+            <span v-if="executing && !isTransactionExecuted" class="flex items-center gap-2">
+              Executing
+              <SvgSpinner class="w-5 h-5" />
+            </span>
+            <span v-else-if="isTransactionFailed" class="flex items-center text-red-alert gap-2 justify-end">
               Failed
               <SvgoErrorCircle class="text-white w-4.5 h-4.5" />
             </span>
@@ -221,7 +251,13 @@ async function handleClick(item: IMultisigTransaction) {
 
 <style scoped>
 .grid-item {
-  grid-template-columns: 145px 1fr 130px 120px 200px;
+  grid-template-columns: 145px 1fr 95px 120px 200px;
   @apply gap-8;
+}
+</style>
+
+<style>
+.svg-shrink-none svg {
+  flex-shrink: 0 !important;
 }
 </style>

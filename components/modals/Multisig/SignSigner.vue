@@ -19,6 +19,7 @@ async function handleBack() {
 <template>
   <div>
     <div class="sm:p-7.5 p-5 flex flex-col gap-7.5">
+      <Steps class="mr-10" :total-steps="4" :current-step="4" />
       <div class="flex gap-[14px]">
         <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
           4
@@ -29,7 +30,6 @@ async function handleBack() {
           </h1>
         </div>
       </div>
-      <Steps :total-steps="4" :current-step="4" />
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <ul class="p-7.5 flex flex-col gap-7">

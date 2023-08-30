@@ -19,8 +19,9 @@ const {
   interactable,
   priceDiffClass,
   priceDiffInPercent,
-  temporaryDisabled,
+  isSwapDisabled,
   fetchLiteAPY,
+  isBridgeDisabled,
 } = useGraph(balance)
 
 onMounted(async () => {
@@ -78,13 +79,13 @@ onMounted(async () => {
             animation: 'fade',
             content: 'Swap',
           }"
-          :disabled="!interactable || temporaryDisabled"
+          :disabled="!interactable || isSwapDisabled"
           class="!h-[46px] !w-[45px] rounded-full !p-0 items-center justify-center"
-          @click="openBridgeModal(balance.address, balance.chainId)"
+          @click="openSwapModal(balance.address, balance.chainId)"
         >
           <RefreshSVG />
         </CommonButton>
-        <span class="text-slate-400 text-sm">Bridge</span>
+        <span class="text-slate-400 text-sm">Swap</span>
       </div>
 
       <div class="flex flex-col items-center gap-2">
@@ -95,13 +96,13 @@ onMounted(async () => {
             animation: 'fade',
             content: 'Bridge',
           }"
-          :disabled="!interactable || temporaryDisabled"
+          :disabled="!interactable || isBridgeDisabled"
           class="!h-[46px] !w-[45px] rounded-full !p-0 items-center justify-center"
-          @click="openSwapModal(balance.address, balance.chainId)"
+          @click="openBridgeModal(balance.address, balance.chainId)"
         >
           <BridgeSVG />
         </CommonButton>
-        <span class="text-slate-400 text-sm">Swap</span>
+        <span class="text-slate-400 text-sm">Bridge</span>
       </div>
     </div>
 

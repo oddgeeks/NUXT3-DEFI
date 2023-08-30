@@ -14,15 +14,15 @@ const emit = defineEmits(['destroy'])
 
 const transactionRef = ref(props.transaction)
 
-const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, getCurrentNonce, getActualId, checkTransactionExecuted } = useAvocadoSafe()
+const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, checkTransactionExecuted } = useAvocadoSafe()
 const { getRequiredSigner, isAccountCanSign } = useMultisig()
-const { requiredSigners } = storeToRefs(useMultisig())
-const { selectedSafe } = storeToRefs(useSafe())
+const { selectedSafe, safeOptions } = storeToRefs(useSafe())
 const { getContactNameByAddress } = useContacts()
 const { parseTransactionError } = useErrorHandler()
 const { account } = useWeb3()
-const currentNonce = ref<number>()
 const [signAndExecute, toggle] = useToggle(false)
+
+const currentNonce = computed(() => safeOptions.value?.find(i => i.chainId == props.transaction.chain_id)?.nonce)
 
 const router = useRouter()
 
@@ -30,6 +30,12 @@ const pending = ref({
   reject: false,
   execute: false,
   sign: false,
+})
+
+const executing = useCookie(`executing-${props.transaction.id}`, {
+  default() {
+    return false
+  },
 })
 
 const { data: requiredSigner } = useAsyncData<number>(`multisig-required-signer-${transactionRef.value.safe_address}-${transactionRef.value.chain_id}`, async () => {
@@ -51,6 +57,8 @@ const confirmationNeeded = computed(() => actualRequiredSigner.value - transacti
 
 const isConfirmationWillMatch = computed(() => gte(transactionRef.value.confirmations.length + 1, actualRequiredSigner.value))
 
+const isSignAndExecuteToggleVisible = computed(() => !isSignedAlready.value && isConfirmationWillMatch.value && !isNonceNotMatch.value && !isTransactionExecuted.value)
+
 const isNonseq = computed(() => transactionRef.value.nonce == '-1')
 const isNonceNotMatch = computed(() => {
   if (isUndefined(currentNonce.value))
@@ -62,13 +70,15 @@ const isSignedAlready = computed(() => account.value ? transactionRef.value.conf
 
 const canSign = computed(() => isAccountCanSign(transactionRef.value.chain_id, account.value, selectedSafe.value?.owner_address))
 const decodedMetadata = computed(() => decodeMetadata(transactionRef.value.data.params.metadata))
-const isGeneralLoading = computed(() => !selectedSafe.value || !requiredSigners.value?.length || isUndefined(currentNonce.value))
+const isGeneralLoading = computed(() => !selectedSafe.value || !safeOptions.value?.length || isUndefined(currentNonce.value))
+
+const isFieldsetDisabled = computed(() => isTransactionExecuted.value || isSafeDoesntMatch.value || !canSign.value || isGeneralLoading.value || executing.value)
 
 const isSafeDoesntMatch = computed(() => {
   if (!selectedSafe.value?.safe_address)
     return
 
-  if (!requiredSigners.value)
+  if (!safeOptions.value)
     return
 
   return getAddress(transactionRef.value.safe_address) !== getAddress(selectedSafe.value?.safe_address!)
@@ -84,7 +94,7 @@ const sameNonceExistMessage = computed(() => {
 const nonceNotMatchMessage = computed(() => {
   if (isGeneralLoading.value)
     return undefined
-  return isNonceNotMatch.value ? `Please execute transaction #${currentNonce.value} first.` : errorMessage.value
+  return isNonceNotMatch.value && !isTransactionExecuted.value ? `Please execute transaction #${currentNonce.value} first.` : errorMessage.value
 })
 
 const { data: isSameNonceExist } = useAsyncData(`${transactionRef.value.id}-same-nonce`, async () => {
@@ -115,13 +125,16 @@ const { data: isSameNonceExist } = useAsyncData(`${transactionRef.value.id}-same
 })
 
 const errorMessage = computed(() => {
-  let message = null
+  let message
 
   if (isSafeDoesntMatch.value)
     message = 'This transaction is not for your safe.'
 
+  if (executing.value)
+    message = 'This transaction is being executed.'
+
   if (isUndefined(currentNonce.value))
-    return null
+    return undefined
 
   else if (isTransactionExecuted.value)
     message = 'This transaction has already been executed.'
@@ -130,7 +143,7 @@ const errorMessage = computed(() => {
     message = 'You have already signed this transaction.'
 
   else
-    message = null
+    message = undefined
 
   return message
 })
@@ -191,8 +204,8 @@ async function handleSign(item: IMultisigTransaction) {
       baseURL: multisigURL,
     })
 
-    if (data.confirmations.length === requiredSigner.value && signAndExecute.value)
-      await handleExecute(data)
+    if (isConfirmationWillMatch.value && signAndExecute.value)
+      await handleExecuteConfirmation(data)
 
     else
 
@@ -210,6 +223,7 @@ async function handleExecute(item: IMultisigTransaction) {
       proposalId: item.id,
       owner: selectedSafe.value?.owner_address!,
       confirmations: item.confirmations,
+      signers: item.signers,
       message: item.data,
       safe: selectedSafe.value?.safe_address!,
       targetChainId: item.chain_id,
@@ -258,14 +272,6 @@ async function handleReject(transaction: IMultisigTransaction) {
   }
 }
 
-watch(selectedSafe, async () => {
-  if (!selectedSafe.value)
-    return
-  currentNonce.value = await getCurrentNonce(transactionRef.value.chain_id, selectedSafe.value?.owner_address)
-}, {
-  immediate: true,
-})
-
 const transactionURL = computed(() => {
   if (process.server)
     return ''
@@ -278,14 +284,15 @@ async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
   try {
     const isGasTopup = actionType.value === 'gas-topup'
 
-    const { success } = await openExecuteTransactionModal({
-      chainId: transaction.chain_id,
-      actions: transaction.data.params.actions,
+    const { success, payload } = await openExecuteTransactionModal({
+      transaction,
       isGasTopup,
-      options: {
-        id: transaction.data.params.id,
-      },
     })
+
+    if (!success && payload?.rejection) {
+      handleReject(transaction)
+      return
+    }
 
     if (success)
       await handleExecute(transaction)
@@ -306,7 +313,7 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <div class="flex sm:flex-row flex-col">
+    <div class="flex sm:flex-row flex-col font-medium">
       <div class="flex-1 border-r dark:border-slate-800 border-slate-150">
         <div class="flex flex-col sm:max-h-[710px] overflow-auto scroll-style">
           <div class="sm:p-7.5 p-5 border-b dark:border-slate-800 border-slate-150">
@@ -333,12 +340,16 @@ onUnmounted(() => {
             </div>
           </div>
           <div v-if="decodedMetadata" class="sm:p-7.5 p-5 border-b flex gap-2.5 dark:border-slate-800 border-slate-150">
-            <div class="max-w-2xl scroll-style overflow-auto flex gap-2.5">
+            <div class="max-w-2xl flex gap-2.5">
               <span v-if="isRejection" class="text-xs inline-flex whitespace-nowrap">
                 Executing this transaction will reject transaction
               </span>
               <div v-once class="flex flex-1 flex-col gap-2">
-                <ActionMetadata v-for="metadata in decodedMetadata" :key="metadata" compact class="text-xs whitespace-nowrap" :chain_id="transactionRef.chain_id" :metadata="metadata" />
+                <ul :class="`${decodedMetadata.length > 1 ? 'list-decimal pl-5 py-1 text-xs' : ''}`">
+                  <li v-for="(metadata, index) in decodedMetadata" :key="index" class="mt-5 first:mt-0">
+                    <ActionMetadata class="text-xs whitespace-nowrap" :chain_id="transactionRef.chain_id" :metadata="metadata" />
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
@@ -359,6 +370,21 @@ onUnmounted(() => {
               <NuxtLink target="_blank" :to="`${avoExplorerURL}/tx/${transactionRef.transaction_hash}`" class="text-sm text-primary">
                 {{ shortenHash(transactionRef.transaction_hash) }}
               </NuxtLink>
+            </div>
+            <div v-if="!isNonseq" class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
+              <span class="text-slate-400 text-xs">Nonce</span>
+              <div class="flex items-center gap-2">
+                #{{ transactionRef.nonce }}
+                <template v-if="!isTransactionExecuted">
+                  <div
+                    v-if="isGeneralLoading"
+                    style="width: 80px; height: 16px"
+                    class="rounded-lg loading-box"
+                  />
+                  <span v-else-if="!isNonceNotMatch" class="text-slate-400 text-xs">(next to be executed)</span>
+                  <span v-else class="text-slate-400 text-xs">(execution unavailable, execute previous txns first)</span>
+                </template>
+              </div>
             </div>
             <div v-if="transactionRef.note" class="flex flex-col justify-between text-sm gap-2.5">
               <span class="text-slate-400 text-xs">Note</span>
@@ -509,7 +535,7 @@ onUnmounted(() => {
           </details>
 
           <button
-            v-if="!isSignedAlready && isConfirmationWillMatch && !isNonceNotMatch"
+            v-if="isSignAndExecuteToggleVisible"
             :class="{
               'dark:text-white text-slate-900': signAndExecute,
             }"
@@ -526,29 +552,28 @@ onUnmounted(() => {
             I want to sign & execute in the same txn
           </button>
 
-          <fieldset :disabled="isTransactionExecuted || isSafeDoesntMatch || !canSign || isGeneralLoading" class="grid grid-cols-2 gap-2.5 items-center">
+          <fieldset :disabled="isFieldsetDisabled" class="grid grid-cols-2 gap-2.5 items-center">
             <Tippy v-if="!isRejection" :content="sameNonceExistMessage" tag="div">
               <CommonButton color="red" :disabled="isRejection || !!isSameNonceExist" :loading="pending.reject" size="lg" class="justify-center w-full" @click="handleReject(transactionRef)">
                 Reject
               </CommonButton>
             </Tippy>
-            <div
-              v-if="isConfirmationsMatch && isSignedAlready" v-tippy="{
-                content: nonceNotMatchMessage,
-              }"
+            <Tippy
+              v-if="isConfirmationsMatch && isSignedAlready"
+              :content="nonceNotMatchMessage"
             >
               <CommonButton
                 :color="isColorRed ? 'red' : 'primary'"
                 :disabled="!!errorMessage || pending.execute || isNonceNotMatch" :loading="pending.execute || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center" error-message @click="handleExecuteConfirmation(transactionRef)"
               >
-                Execute
+                {{ executing && !isTransactionExecuted ? 'Executing' : 'Execute' }}
               </CommonButton>
-            </div>
-            <div v-else v-tippy="errorMessage">
-              <CommonButton :disabled="!!errorMessage || pending.sign" :loading="pending.sign || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center !leading-5" :class="signAndExecute ? '!px-2 text-xs' : ''" @click="handleSign(transactionRef)">
+            </Tippy>
+            <Tippy v-else :content="errorMessage">
+              <CommonButton :color="isColorRed ? 'red' : 'primary'" :disabled="!!errorMessage || pending.sign" :loading="pending.sign || (isGeneralLoading && !isSafeDoesntMatch)" size="lg" class="w-full justify-center !leading-5" :class="signAndExecute ? '!px-2 text-xs' : ''" @click="handleSign(transactionRef)">
                 {{ signAndExecute ? 'Sign & Execute' : isSignedAlready ? 'Signed' : 'Sign' }}
               </CommonButton>
-            </div>
+            </Tippy>
           </fieldset>
           <div v-if="isTransactionExecuted" class="text-xs leading-5 flex gap-2 text-primary font-medium">
             <SvgoInfo2 class="w-5 h-5 text-primary" />

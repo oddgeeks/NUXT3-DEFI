@@ -1,19 +1,21 @@
 <script setup lang=ts>
-import axios from 'axios'
-
 const props = defineProps<{
   chainId: string | number
   activeTab: string | undefined
 }>()
 
-const { getRequiredSigner } = useMultisig()
-const { getCurrentNonce } = useAvocadoSafe()
-const { fetchSafe } = useSafe()
+const emit = defineEmits(['onToggle'])
+
+const abortController = ref<AbortController | null>(null)
+
 const { lastModal } = useModal()
 
+const isCollapseAll = inject<Ref<boolean>>('isCollapseAll', ref(false))
 const route = useRoute()
 const page = ref(1)
 const containerRef = ref<HTMLElement | null>(null)
+
+const key = computed(() => `multisig-${route.params.safe}-${props.chainId}-${props.activeTab}-${page.value}`)
 
 const isDetailsOpen = useCookie<boolean>(`multisig-collapse-${route.params.safe}-${props.chainId}`, {
   default: () => false,
@@ -21,51 +23,68 @@ const isDetailsOpen = useCookie<boolean>(`multisig-collapse-${route.params.safe}
   expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
 })
 
-const { data, refresh } = useAsyncData(`multisig-${route.params.safe}-${props.chainId}`, async () => {
-  const isCompleted = props.activeTab === 'completed'
+const { resume, pause } = useIntervalFn(() => {
+  refreshAll()
+}, 7500, {
+  immediate: false,
+})
 
-  const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${route.params.safe}/transactions`, {
-    params: {
-      status: isCompleted ? ['success', 'failed'] : 'pending',
-      chain_id: props.chainId,
-      nonce_type: isCompleted ? undefined : props.activeTab,
-      page: page.value,
-    },
-    baseURL: multisigURL,
-  })
+const { data, refresh, pending } = useAsyncData(`${key.value}`, async () => {
+  try {
+    if (abortController.value)
+      abortController.value.abort()
 
-  data.data = data.data.map((i) => {
-    try {
-      const metadata = i.data.params?.metadata ? decodeMetadata(i.data.params.metadata) as string[] : []
-      const rejectionMetadata = metadata.find((i: any) => i?.type === 'rejection') as any
+    pause()
 
-      return {
-        ...i,
-        groupKey: i.nonce != '-1' ? i.nonce : rejectionMetadata?.id ? rejectionMetadata.id : i.id,
+    abortController.value = new AbortController()
+
+    const isCompleted = props.activeTab === 'completed'
+
+    const response = await http<IMultisigTransactionResponse>(`/safes/${route.params.safe}/transactions`, {
+      retry: 3,
+      signal: abortController.value?.signal,
+      params: {
+        status: isCompleted ? ['success', 'failed'] : 'pending',
+        chain_id: props.chainId,
+        nonce_type: isCompleted ? undefined : props.activeTab,
+        page: page.value,
+      },
+      baseURL: multisigURL,
+    })
+
+    abortController.value = null
+
+    response.data = response.data.map((i) => {
+      try {
+        const metadata = i.data.params?.metadata ? decodeMetadata(i.data.params.metadata) as string[] : []
+        const rejectionMetadata = metadata.find((i: any) => i?.type === 'rejection') as any
+
+        return {
+          ...i,
+          groupKey: i.nonce != '-1' ? i.nonce : rejectionMetadata?.id ? rejectionMetadata.id : i.id,
+        }
       }
-    }
-    catch {
-      return i
-    }
-  })
+      catch {
+        return i
+      }
+    })
 
-  return data
+    return response
+  }
+  catch (e: any) {
+    if (e.message === 'canceled')
+      return
+
+    throw e
+  }
+  finally {
+    resume()
+  }
 }, {
   watch: [() => props.activeTab, page],
   immediate: true,
-})
-
-const { data: currentNonce } = useAsyncData(`current-nonce-${route.params.safe}-${props.chainId}`, async () => {
-  const safe = await fetchSafe(route.params.safe as string)
-
-  return getCurrentNonce(props.chainId, safe.owner_address)
-})
-
-const { data: requiredSigner, refresh: refreshSigner } = useAsyncData<number>(`multisig-required-signer-${route.params.safe}-${props.chainId}`, async () => {
-  const multisigAddress = route.params.safe as string
-  return getRequiredSigner(multisigAddress, props.chainId)
-}, {
-  immediate: true,
+  lazy: true,
+  server: false,
 })
 
 const groupedData = computed(() => {
@@ -100,21 +119,30 @@ function sortItems(items: IMultisigTransaction[]) {
 function handleToggle(e: Event) {
   const target = e.target as HTMLDetailsElement
   isDetailsOpen.value = target.open
+  emit('onToggle')
 }
 
 function refreshAll() {
   refresh()
-  refreshSigner()
 }
-
-useIntervalFn(() => {
-  refreshAll()
-}, 5000)
 
 watch(lastModal, () => {
   // Refresh data when modal is closed
   if (!lastModal.value)
     refreshAll()
+})
+
+watch(isCollapseAll, () => {
+  if (isCollapseAll.value && data.value?.data?.length)
+    isDetailsOpen.value = false
+})
+
+onUnmounted(() => {
+  clearNuxtData(key.value)
+  if (abortController.value) {
+    abortController.value.abort()
+    abortController.value = null
+  }
 })
 </script>
 
@@ -124,11 +152,15 @@ watch(lastModal, () => {
       <ChainLogo class="w-5 h-5" :chain="chainId" />
       <span class="text-white">
         {{ chainIdToName(chainId) }}
+
       </span>
 
       <div>
         {{ data.meta.total }} total transaction{{ data.meta.total > 1 ? 's' : '' }}
       </div>
+
+      <SvgSpinner v-if="pending" class="text-primary" />
+
       <SvgoChevronDown
         class="w-5 text-slate-400 ml-auto group-open:rotate-180"
       />
@@ -137,21 +169,21 @@ watch(lastModal, () => {
     <div class="flex flex-col sm:gap-0 gap-4 sm:p-0 p-5">
       <ul v-if="activeTab === 'completed'">
         <li>
-          <MultisigPendingTransactionItem v-for="item in data.data" :key="item.id" :current-nonce="currentNonce" :inside-group="false" :required-signer="requiredSigner" :active-tab="activeTab" :item="item" />
+          <MultisigPendingTransactionItem v-for="item in data.data" :key="item.id" :inside-group="false" :active-tab="activeTab" :item="item" />
         </li>
       </ul>
       <ul v-for="items, key in groupedData" v-else :key="key">
         <li>
           <ul :class="checkIsGroup(key, items) ? 'p-4 my-4 sm:p-0 border sm:block flex gap-5 flex-col border-slate-300 dark:border-slate-750 rounded-5 dark:bg-slate-850 bg-slate-150' : ''" class="flex flex-col">
             <p v-if="checkIsGroup(key, items)" class="text-xs border-b border-slate-150 dark:border-slate-800 sm:p-4 flex items-center gap-2.5 sm:pb-4 font-medium  text-slate-500 dark:text-slate-400">
-              <SvgoInfo2 />
+              <SvgoInfo2 class="text-slate-500" />
               You can complete one of the transactions below. The other will be cancelled automatically.
             </p>
-            <MultisigPendingTransactionItem v-for="item in sortItems(items)" :key="item.id" :current-nonce="currentNonce" :inside-group="checkIsGroup(key, items)" :required-signer="requiredSigner" :active-tab="activeTab" :item="item" />
+            <MultisigPendingTransactionItem v-for="item in sortItems(items)" :key="item.id" :inside-group="checkIsGroup(key, items)" :active-tab="activeTab" :item="item" />
           </ul>
         </li>
       </ul>
     </div>
-    <Pagination class="sm:px-0 px-4" :auto-navigate="false" :current="data.meta.current_page" :limit="data.meta.per_page" :total="data.meta.total" @update:current="handleCurrentUpdate" />
+    <Pagination class="sm:px-0 px-4 pb-4" :auto-navigate="false" :current="data.meta.current_page" :limit="data.meta.per_page" :total="data.meta.total" @update:current="handleCurrentUpdate" />
   </details>
 </template>

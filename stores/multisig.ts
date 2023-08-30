@@ -1,13 +1,14 @@
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 import { getAddress } from 'ethers/lib/utils'
-import {
-  AvoMultisigImplementation__factory,
-} from '@/contracts'
+import type { Provider } from '@ethersproject/providers'
+import { serialize } from 'error-serializer'
+import { AvoMultisigImplementation__factory } from '@/contracts'
 
 export const useMultisig = defineStore('multisig', () => {
   const requiredSigners = ref<IRequiredSigners[]>([])
 
   const { selectedSafe } = storeToRefs(useSafe())
+  const { getRpcProviderByChainId } = useShared()
 
   const signers = computed(() => {
     if (!selectedSafe.value)
@@ -16,13 +17,13 @@ export const useMultisig = defineStore('multisig', () => {
     return formatSigners(selectedSafe.value.signers)
   })
 
-  const isSafeMultisig = computed(() => selectedSafe.value?.multisig === 1)
+  const isSafeMultisig = computed(() => checkSafeIsActualMultisig(selectedSafe.value!))
 
   function isAccountCanSign(chainId: number | string, account?: string, multisigOwner?: string) {
-    if (!account || !multisigOwner || !chainId || !requiredSigners.value?.length)
+    if (!account || !multisigOwner || !chainId)
       return
 
-    const signers = requiredSigners.value.find(s => s.chainId == chainId)?.signers || []
+    const signers = selectedSafe.value?.signers?.[chainId] || []
 
     if (getAddress(multisigOwner) === getAddress(account))
       return true
@@ -30,67 +31,62 @@ export const useMultisig = defineStore('multisig', () => {
     return signers.some(s => getAddress(s) === getAddress(account))
   }
 
-  async function getRequiredSigners(safe: ISafe) {
-    const promises = availableNetworks.map(async (network) => {
-      if (!safe?.signers)
-        return []
+  async function getRequiredSigner(safeAddress: string, chainId: number | string) {
+    const publicProvider = getRpcProviderByChainId(chainId)
 
-      const safeSigners = safe?.signers[network.chainId]
+    try {
+      const requiredSigner = await getRequiredSignerByProvider(safeAddress, publicProvider)
+      return requiredSigner
+    }
+    catch (e) {
+      const error = serialize(e)
 
-      const signers = safeSigners.length ? safeSigners : [safe.owner_address]
+      // return default if the multisig is not deployed
+      if (error?.code === 'CALL_EXCEPTION')
+        return 1
 
-      try {
-        const count = await getRequiredSigner(safe.safe_address, network.chainId)
+      const requiredSigner = await http('/api/rpc/threshold', {
+        params: {
+          address: safeAddress,
+          chainId: String(chainId),
+        },
+      })
 
-        return {
-          chainId: network.chainId,
-          requiredSignerCount: count || 1,
-          signerCount: signers.length,
-          signers,
-        }
-      }
-      catch (e) {
-        return {
-          chainId: network.chainId,
-          requiredSignerCount: 1,
-          signerCount: signers.length,
-          signers,
-        }
-      }
+      return requiredSigner
+    }
+  }
+
+  async function getRequiredSignerByProvider(address: string, provider: Provider) {
+    const instance = AvoMultisigImplementation__factory.connect(address, provider)
+    const requiredSigner = await instance.requiredSigners()
+    return requiredSigner
+  }
+
+  function checkSafeIsActualMultisig(safe: ISafe) {
+    if (!safe)
+      return false
+
+    if (safe?.multisig_index > 0)
+      return true
+
+    const signers = safe?.signers || {}
+
+    const hasSomeSigner = Object.keys(signers).some((chainId) => {
+      const chainSigners = signers[chainId]
+
+      return chainSigners.length > 1
     })
 
-    const results = await Promise.all(promises)
-
-    return results.filter(r => r !== null) as IRequiredSigners[]
+    return safe.multisig === 1 && hasSomeSigner
   }
-
-  async function getRequiredSigner(safeAddress: string, chainId: number | string) {
-    const instance = AvoMultisigImplementation__factory.connect(safeAddress, getRpcProvider(chainId))
-    return instance.requiredSigners()
-  }
-
-  async function setRequiredSigners() {
-    if (!selectedSafe.value)
-      return
-    const signers = await getRequiredSigners(selectedSafe.value)
-    requiredSigners.value = signers
-  }
-
-  watch(selectedSafe, async () => {
-    if (!selectedSafe.value)
-      return
-
-    setRequiredSigners()
-  })
 
   return {
     isSafeMultisig,
     signers,
     requiredSigners,
-    getRequiredSigners,
-    setRequiredSigners,
     getRequiredSigner,
     isAccountCanSign,
+    checkSafeIsActualMultisig,
   }
 })
 

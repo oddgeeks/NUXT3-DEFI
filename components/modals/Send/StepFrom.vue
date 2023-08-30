@@ -7,12 +7,13 @@ import type { IToken } from '~/stores/tokens'
 defineEmits(['destroy'])
 
 const { safeAddress } = useAvocadoSafe()
+const { isSafeMultisig } = storeToRefs(useMultisig())
 
 const { authorisedNetworks } = useAuthorities()
 
 const { isCrossChain, data, token, availableTokens, actualAddress, stepForward, tokenlistPending } = useSend()
 
-const toCrossChainNetworks = computed(() => !authorisedNetworks.value ? [] : authorisedNetworks.value.filter(network => network.chainId !== data.value.fromChainId))
+const toCrossChainNetworks = computed(() => authorisedNetworks.value.filter(network => network.chainId !== data.value.fromChainId))
 const fromNetwork = computed(() => chainIdToName(data.value.fromChainId))
 const targetNetwork = computed(() => chainIdToName(data.value.toChainId))
 
@@ -38,13 +39,6 @@ const {
 
 const disabled = computed(() => {
   return !actualAddress.value || !!errors.value.length || !!addressErrors.value.length || !amount.value || tokenlistPending.value
-})
-
-const sendDescription = computed(() => {
-  if (isCrossChain.value)
-    return `Sending ${token.value?.symbol.toUpperCase()} from ${fromNetwork.value} to Receiver on ${targetNetwork.value}`
-  else
-    return `Sending ${token.value?.symbol.toUpperCase()} on ${fromNetwork.value}`
 })
 
 const { data: totalTransfers } = useAsyncData(
@@ -92,12 +86,16 @@ function handleContinue() {
 }
 
 function onToggleCrossChain() {
-  if (!isCrossChain.value)
+  if (!isCrossChain.value && toCrossChainNetworks.value.length > 0)
     data.value.toChainId = toCrossChainNetworks.value[0].chainId
 
   else
     data.value.toChainId = data.value.fromChainId
 }
+
+onMounted(() => {
+  validate()
+})
 </script>
 
 <template>
@@ -220,14 +218,19 @@ function onToggleCrossChain() {
     </div>
 
     <Transition name="fade">
-      <p class="text-slate-400 font-medium leading-6 flex items-center text-xs">
+      <div class="text-slate-400 font-medium leading-6 flex items-center text-xs">
         <SvgoInfo2
           class="mr-2.5 h-4 w-4 svg-gray-info rounded-full"
         />
-        {{ sendDescription }}
-      </p>
+        <div v-if="isCrossChain" class="flex items-center">
+          Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;from&nbsp;<ChainLogo class="w-4 h-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}&nbsp;to Receiver on&nbsp;<ChainLogo class="w-4 h-4 shrink-0" :chain="data.toChainId" />&nbsp;{{ targetNetwork }}
+        </div>
+        <div v-else class="flex items-center">
+          Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;on&nbsp;<ChainLogo class="w-4 h-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}
+        </div>
+      </div>
     </Transition>
-    <div class="flex gap-2.5 items-center">
+    <div v-if="toCrossChainNetworks?.length > 1 && !isSafeMultisig" class="flex gap-2.5 items-center">
       <button
         :class="{
           'dark:text-white text-slate-900': isCrossChain,

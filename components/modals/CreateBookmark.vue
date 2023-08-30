@@ -15,6 +15,7 @@ const props = defineProps<{
   chainId: number | string
   sendData?: ISendData
   edit?: boolean
+  metadata?: string
 }>()
 
 const emit = defineEmits(['destroy', 'resolve'])
@@ -47,6 +48,7 @@ const onSubmit = handleSubmit(() => {
     sendData: props.sendData,
     session: props.session,
     type: props.type,
+    metadata: props.metadata,
   }
   try {
     if (props.edit)

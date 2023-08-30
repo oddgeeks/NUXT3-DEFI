@@ -10,9 +10,14 @@ const props = defineProps<{
   type: ITxType
 }>()
 
-const encodedEvent = '0xacb5341cc21d71a005bd22634cec7391a7fd11ff2b563a7b301cac795f7a6a56'
+const { getRpcProviderByChainId } = useShared()
 
-const provider = getRpcProvider(props.chainId)
+const events = [
+  '0xacb5341cc21d71a005bd22634cec7391a7fd11ff2b563a7b301cac795f7a6a56',
+  '0xdaf1e6e151973de199f3ea25b9c6a7c3d94299dc85e269cfd20e48e517ecf704',
+]
+
+const provider = getRpcProviderByChainId(props.chainId)
 const transaction = ref<TransactionReceipt>()
 
 onMounted(async () => {
@@ -25,7 +30,7 @@ const isSuccess = computed(() => {
   if (!transaction.value?.status)
     return false
 
-  if (transaction.value.logs.some(i => i.topics.length && i.topics[0] === encodedEvent))
+  if (transaction.value.logs.some(i => i.topics.length && events.includes(i.topics[0])))
     return true
 
   return false

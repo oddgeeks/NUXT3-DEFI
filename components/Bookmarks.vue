@@ -45,7 +45,7 @@ function handleOpenBookmark(bookmark: IBookmark) {
               @click="handleOpenBookmark(bookmark)"
             >
               <SafeTokenLogo network-logo-class="!w-5 !h-5" class="w-[28px] h-[28px]" :chain-id="bookmark.chainId" :url="getIcon(bookmark)" />
-              <span class="text-sm overflow-hidden text-left whitespace-nowrap truncate sm:w-[148px] w-[200px]">
+              <span class="text-sm overflow-hidden text-left whitespace-nowrap truncate sm:max-w-[500px] max-w-[200px]">
                 {{ bookmark.name }}
               </span>
             </button>
@@ -60,7 +60,7 @@ function handleOpenBookmark(bookmark: IBookmark) {
           </li>
         </SplideSlide>
       </Splide>
-      <p v-else class="font-medium text-sm text-slate-400">
+      <p v-else class="font-medium text-sm text-slate-400 leading-[22px]">
         Bookmark your most used transactions with Transaction Shortcuts to quickly execute common actions. Find the bookmark on the transaction confirmation panel.
       </p>
     </div>

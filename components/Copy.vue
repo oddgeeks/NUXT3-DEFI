@@ -13,6 +13,7 @@ const slots = useSlots()
 
 <template>
   <button
+    type="button"
     class="text-slate-400 font-semibold inline-flex items-center gap-2.5"
     @click.stop="copy(text)"
   >
@@ -30,7 +31,7 @@ const slots = useSlots()
       />
       <slot v-else-if="slots.copy" name="copy" />
       <slot v-else name="copy-icon">
-        <CopySVG />
+        <CopySVG class="text-slate-400" />
       </slot>
     </Transition>
   </button>
