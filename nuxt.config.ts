@@ -20,6 +20,7 @@ export default defineNuxtConfig({
     slackErrorKey: process.env.SLACK_ERROR_KEY,
     slackStagingKey: process.env.SLACK_STAGING_KEY,
     public: {
+      domainURL: process.env.VERCEL_BRANCH_URL || 'https://avocado.instadapp.io',
       googleAnalyticsId: process.env.GA_ID,
     },
   },
