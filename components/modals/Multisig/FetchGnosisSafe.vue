@@ -146,7 +146,6 @@ const onSubmit = handleSubmit(() => {
   openAddSignerModal({
     addresses: transformedOwners.value,
     gnosisAddress: parseAddress(gnosisAddress.value).address,
-    defaultSelectedNetworks: availableNetworks.map(i => i.chainId),
   })
 })
 </script>

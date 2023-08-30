@@ -28,6 +28,14 @@ function isSelected(chainId: number | string) {
   return selectedNetworks.value.includes(Number(chainId))
 }
 
+function handleSelectAll() {
+  selectedNetworks.value = availableNetworks.map(i => i.chainId)
+}
+
+function handleDeselectAll() {
+  selectedNetworks.value = []
+}
+
 function handleSubmit() {
   steps.value.currentStep += 1
   emit('destroy')
@@ -63,6 +71,13 @@ function handleBack() {
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <div class="sm:p-7.5 py-5 px-6">
+      <button v-if="selectedNetworks.length === availableNetworks.length" class="text-xs absolute right-7.5 text-primary" type="button" @click="handleDeselectAll">
+        Deselect all
+      </button>
+
+      <button v-else class="text-xs absolute right-7.5 text-primary" type="button" @click="handleSelectAll">
+        Select all
+      </button>
       <template v-if="deployedNetworks?.length">
         <h2 class="text-sm mb-4">
           Deployed
