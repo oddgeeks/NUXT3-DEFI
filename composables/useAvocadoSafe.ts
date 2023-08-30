@@ -243,12 +243,17 @@ export function useAvocadoSafe() {
 
     executing.value = true
 
-    setTimeout(() => {
-      refreshNuxtData(`${selectedSafe.value?.safe_address}-signers`)
-      refreshNuxtData(`${selectedSafe.value?.safe_address}-${params.targetChainId}-threshold`)
-      refreshSelectedSafe()
-      getSafeOptions(selectedSafe.value!)
-    }, 15000)
+    const provider = getRpcProviderByChainId(params.targetChainId)
+
+    provider.waitForTransaction(transactionHash).then((tx) => {
+      console.log(tx)
+      setTimeout(() => {
+        refreshNuxtData(`${selectedSafe.value?.safe_address}-signers`)
+        refreshNuxtData(`${selectedSafe.value?.safe_address}-${params.targetChainId}-threshold`)
+        refreshSelectedSafe()
+        getSafeOptions(selectedSafe.value!)
+      }, 15000)
+    })
 
     return transactionHash
   }
