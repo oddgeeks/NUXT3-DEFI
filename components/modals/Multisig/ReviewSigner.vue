@@ -4,35 +4,45 @@ import { storeToRefs } from 'pinia'
 const props = defineProps<{
   addresses: ISignerAddress[]
   gnosisAddress?: string
+  defaultSelectedNetworks?: number[]
 }>()
 
 const emit = defineEmits(['destroy'])
 
+const steps = useState<SignerSteps>('signer-steps')
+
 const { selectedSafe } = storeToRefs(useSafe())
 
 function handleBack() {
+  steps.value.currentStep -= 1
   emit('destroy')
   openAddSignerModal({
     addresses: props.addresses,
     gnosisAddress: props.gnosisAddress,
+    defaultSelectedNetworks: props.defaultSelectedNetworks,
   })
 }
 
 async function handleNext() {
+  steps.value.currentStep += 1
   emit('destroy')
 
-  openMultisigSelectNetworkModal(props.addresses, undefined, props.gnosisAddress)
+  openMultisigSelectNetworkModal({
+    addresses: props.addresses,
+    gnosisAddress: props.gnosisAddress,
+    defaultSelectedNetworks: props.defaultSelectedNetworks,
+  })
 }
 </script>
 
 <template>
   <div>
     <div class="flex flex-col gap-7.5 sm:p-7.5 p-5">
-      <Steps class="mr-10" :total-steps="4" :current-step="2" />
+      <Steps class="mr-10" :total-steps="steps?.totalSteps || 4" :current-step="steps?.currentStep || 2" />
 
       <div class="flex gap-[14px]">
         <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
-          2
+          {{ steps.currentStep }}
         </div>
         <div class="flex flex-col gap-1">
           <h1 class="text-lg leading-10">
@@ -71,7 +81,10 @@ async function handleNext() {
             <ul class="flex flex-col gap-5">
               <li v-for="address in addresses" :key="address.address" class="flex gap-3 items-center">
                 <AuthorityAvatar :address="address.address" />
-                ({{ address.name }})
+
+                <span v-if="address.name">
+                  ({{ address.name }})
+                </span>
                 <span class="text-slate-400">
                   {{ shortenHash(address.address) }}
                 </span>

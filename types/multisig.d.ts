@@ -133,16 +133,35 @@ interface IOpenExecuteModalParams {
   isGasTopup: boolean
 }
 
-interface IAddSignerModalParams {
-  addresses?: ISignerAddress[]
-  gnosisAddress?: string
-  threshold?: number
-  options?: {
+type SignerOptions = {
     title?: string
     subtitle?: string
     currentStep?: number
     totalSteps?: number
-  }
+}
+
+type SignerSteps = {
+  currentStep: number
+  totalSteps: number
+}
+
+interface IAddSignerModalParams {
+  addresses?: ISignerAddress[]
+  gnosisAddress?: string
+  threshold?: number
+  defaultSelectedNetworks?: number[]
+}
+
+interface ISelectSignerNetworkModalParams {
+  addresses: ISignerAddress[]
+  defaultSelectedNetworks?: number[]
+  gnosisAddress?: string
+}
+
+interface IReviewSignerModalParams {
+  addresses: ISignerAddress[],
+  gnosisAddress?: string
+  defaultSelectedNetworks?: number[]
 }
 
 type IMultisigAction = "add-signers" | "remove-signers" | "change-threshold";

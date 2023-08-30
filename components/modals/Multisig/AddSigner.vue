@@ -7,10 +7,7 @@ const props = defineProps<{
   addresses?: ISignerAddress[]
   defaultThreshold?: number
   gnosisAddress?: string
-  options: {
-    totalSteps?: number
-    currentStep?: number
-  }
+  defaultSelectedNetworks?: number[]
 }>()
 
 const emit = defineEmits(['destroy'])
@@ -18,6 +15,8 @@ const emit = defineEmits(['destroy'])
 const { account } = useWeb3()
 const { getContactNameByAddress } = useContacts()
 const contactSelections = ref<number[]>([])
+
+const steps = useState<SignerSteps>('signer-steps')
 
 const isGnosisMigration = computed(() => !!props.gnosisAddress)
 
@@ -29,8 +28,7 @@ const {
   validationSchema: yup.object({
     addresses: yup
       .array(yup.object({
-        name: yup.string()
-          .required(''),
+        name: yup.string(),
         address: yup.string()
           .required('')
           .test('is-valid-address', 'Incorrect address', (value) => {
@@ -88,9 +86,14 @@ function getErrorMessage(errors: any, errorKey: string) {
 }
 
 const onSubmit = handleSubmit(async () => {
+  steps.value.currentStep += 1
   const addresses = fields.value.map(field => field.value)
 
-  openReviewSignerModal(addresses, props.gnosisAddress)
+  openReviewSignerModal({
+    addresses,
+    gnosisAddress: props.gnosisAddress,
+    defaultSelectedNetworks: props.defaultSelectedNetworks,
+  })
   emit('destroy')
 })
 
@@ -119,6 +122,7 @@ async function handleSelectContact(key: number) {
 }
 
 function handleBackClick() {
+  steps.value.currentStep -= 1
   emit('destroy')
 
   if (isGnosisMigration.value)
@@ -129,11 +133,10 @@ function handleBackClick() {
 <template>
   <form @submit="onSubmit">
     <div class="flex flex-col sm:p-7.5 p-5 gap-7.5">
-      <Steps class="mr-10" :total-steps="4" :current-step="1" />
-
+      <Steps class="mr-10" :total-steps="steps?.totalSteps || 4" :current-step="steps?.currentStep || 1" />
       <div class="flex gap-[14px]">
         <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
-          {{ options.currentStep || 1 }}
+          {{ steps?.currentStep || 1 }}
         </div>
         <div class="flex flex-col gap-1">
           <h1 class="text-lg leading-10">
@@ -144,7 +147,6 @@ function handleBackClick() {
           </h2>
         </div>
       </div>
-      <Steps :total-steps="options.totalSteps || 4" :current-step="options.currentStep || 1" />
     </div>
 
     <hr class="border-slate-150 dark:border-slate-800">
@@ -176,7 +178,7 @@ function handleBackClick() {
               <SvgoInfo2 v-if="!isGnosisMigration" v-tippy="'Please make sure you enter the EOA address and not Avocado address.'" class="text-orange" />
             </span>
             <button
-              v-if="fields.length > 1 && !isGnosisMigration" class="h-5 w-5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
+              v-if="fields.length > 1" class="h-5 w-5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
               @click="remove(key as number)"
             >
               <SvgoX class="w-3 h-3" />

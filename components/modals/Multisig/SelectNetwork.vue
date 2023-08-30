@@ -10,6 +10,8 @@ const props = defineProps<{
 const emit = defineEmits(['destroy', 'resolve'])
 const { safeOptions } = storeToRefs(useSafe())
 
+const steps = useState<SignerSteps>('signer-steps')
+
 const selectedNetworks = ref<number[]>(props.defaultSelectedNetworks || [])
 
 const deployedNetworks = computed(() => safeOptions.value?.filter(option => gte(major(option?.currentVersion || '0.0.0'), 1)))
@@ -27,23 +29,30 @@ function isSelected(chainId: number | string) {
 }
 
 function handleSubmit() {
+  steps.value.currentStep += 1
   emit('destroy')
   openSignSignerModal(props.addresses, selectedNetworks.value, props.gnosisAddress)
 }
 
 function handleBack() {
+  steps.value.currentStep -= 1
   emit('destroy')
-  openReviewSignerModal(props.addresses, props.gnosisAddress)
+
+  openReviewSignerModal({
+    addresses: props.addresses,
+    gnosisAddress: props.gnosisAddress,
+    defaultSelectedNetworks: props.defaultSelectedNetworks,
+  })
 }
 </script>
 
 <template>
   <form @submit.prevent="handleSubmit">
     <div class="flex flex-col gap-7.5 sm:p-7.5 p-5">
-      <Steps class="mr-10" :total-steps="4" :current-step="3" />
+      <Steps class="mr-10" :total-steps="steps?.totalSteps" :current-step=" steps?.currentStep" />
       <div class="flex gap-[14px]">
         <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
-          3
+          {{ steps.currentStep }}
         </div>
         <div class="flex gap-1">
           <h1>

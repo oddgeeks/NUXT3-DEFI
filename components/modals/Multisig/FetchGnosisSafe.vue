@@ -12,6 +12,9 @@ const emit = defineEmits(['destroy'])
 const { getContactNameByAddress } = useContacts()
 const owners = ref<string[]>([])
 
+const pending = ref(false)
+const steps = useState<SignerSteps>('signer-steps')
+
 const transformedOwners = computed<ISignerAddress[]>(() => {
   return owners.value.map((i) => {
     return {
@@ -38,6 +41,7 @@ const {
           return false
 
         try {
+          pending.value = true
           const contract = GnosisSafe__factory.connect(gnosisAddress.value, getRpcProvider(chainId.value))
 
           const addresses = await contract.getOwners()
@@ -49,6 +53,9 @@ const {
         catch (e) {
           console.log(e)
           return false
+        }
+        finally {
+          pending.value = false
         }
       }),
 
@@ -67,14 +74,14 @@ const { value: chainId } = useField<string>(
 )
 
 const onSubmit = handleSubmit(() => {
+  steps.value.currentStep += 1
+
   emit('destroy')
+
   openAddSignerModal({
     addresses: transformedOwners.value,
     gnosisAddress: gnosisAddress.value,
-    options: {
-      currentStep: 2,
-      totalSteps: 5,
-    },
+    defaultSelectedNetworks: [Number(chainId.value)],
   })
 })
 </script>
@@ -90,7 +97,7 @@ const onSubmit = handleSubmit(() => {
           Enter the Gnosis safe wallet details
         </h1>
       </div>
-      <Steps :current-step="1" :total-steps="5" />
+      <Steps :current-step="steps?.currentStep || 1" :total-steps="steps?.totalSteps || 5" />
     </div>
     <div class="px-7.5 flex gap-5">
       <CommonInput v-model="gnosisAddress" autofocus :error-message="errorMessage" name="gnosisAddress" placeholder="Gnosis safe address" class="flex-1" />
@@ -111,7 +118,7 @@ const onSubmit = handleSubmit(() => {
       </CommonSelect>
     </div>
     <div class="p-7.5">
-      <CommonButton :disabled="!meta.valid || !owners.length" class="w-full justify-center" size="lg" type="submit">
+      <CommonButton :loading="pending" :disabled="!meta.valid || !owners.length" class="w-full justify-center" size="lg" type="submit">
         Continue
       </CommonButton>
     </div>

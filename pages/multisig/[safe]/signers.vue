@@ -17,6 +17,15 @@ const { removeSignerWithThreshold } = useAvocadoSafe()
 const selectedAddresses = ref<string[]>([])
 const selectedChainId = ref<string | number>()
 
+function defaultSteps() {
+  return {
+    currentStep: 1,
+    totalSteps: 4,
+  }
+}
+
+const signerSteps = useState('signer-steps', defaultSteps)
+
 const isSafeDoesNotMatch = computed(() => {
   const safe = route.params.safe as string
   if (!selectedSafe.value || !safe)
@@ -87,7 +96,18 @@ function handleAddSignerModal() {
     clearNuxtState(`signed-${network.chainId}`)
     clearNuxtState(`executed-${network.chainId}`)
   }
+
+  signerSteps.value.currentStep = 1
+  signerSteps.value.totalSteps = 4
+
   openAddSignerModal()
+}
+
+function handleGnosisSetup() {
+  signerSteps.value.currentStep = 1
+  signerSteps.value.totalSteps = 5
+
+  openFetchGnosisSafeModal()
 }
 
 watch(selectedAddresses, () => {
@@ -95,6 +115,10 @@ watch(selectedAddresses, () => {
     if (selectedAddresses.value.length === 0)
       selectedChainId.value = undefined
   }, 0)
+})
+
+onMounted(() => {
+  signerSteps.value = defaultSteps()
 })
 </script>
 
@@ -121,7 +145,25 @@ watch(selectedAddresses, () => {
           </button>
         </fieldset>
       </div>
+      <div class="dark:bg-gray-850 mb-2.5 justify-between font-medium flex bg-slate-50 p-[18px] rounded-[25px] sm:py-6.5 sm:px-7.5 items-center">
+        <div class="flex gap-3 items-center">
+          <ChainLogo class="w-7.5 h-7.5" :chain="100" />
+          <div class="flex flex-col gap-1.5">
+            Clone your Gnosis safe wallet on Avocado in just 1 click!
+            <span class="text-xs flex items-center gap-1.5">
+              <SvgoGift />
+              <span class="text-slate-400">
+                $50 USDC Gas Bonus for eligible wallets.
+              </span>
+            </span>
+          </div>
+        </div>
+        <CommonButton @click="handleGnosisSetup">
+          Setup Now
+        </CommonButton>
+      </div>
     </div>
+
     <div class="flex flex-col gap-2">
       <div class="flex flex-col gap-5">
         <template v-for="item in availableSigners" :key="item.chainId">

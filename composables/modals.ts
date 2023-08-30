@@ -454,14 +454,14 @@ export function openWelcomeModal() {
 }
 
 export function openAddSignerModal(params?: IAddSignerModalParams) {
-  const { addresses, threshold, options = {}, gnosisAddress } = params || {}
+  const { addresses, threshold, gnosisAddress, defaultSelectedNetworks } = params || {}
   return openModal({
     component: AddSigner,
     componentProps: {
       addresses,
       defaultThreshold: threshold,
-      options,
       gnosisAddress,
+      defaultSelectedNetworks,
     },
     options: {
       wrapperClass: 'max-w-[560px]',
@@ -470,12 +470,14 @@ export function openAddSignerModal(params?: IAddSignerModalParams) {
   })
 }
 
-export function openReviewSignerModal(addresses: ISignerAddress[], gnosisAddress?: string) {
+export function openReviewSignerModal(props: IReviewSignerModalParams) {
+  const { addresses, gnosisAddress, defaultSelectedNetworks } = props
   return openModal({
     component: ReviewSigner,
     componentProps: {
       addresses,
       gnosisAddress,
+      defaultSelectedNetworks,
     },
     options: {
       wrapperClass: 'max-w-[560px]',
@@ -605,7 +607,9 @@ export async function openMultisigTransactionDetails(transaction: IMultisigTrans
   })
 }
 
-export function openMultisigSelectNetworkModal(addresses: ISignerAddress[], defaultSelectedNetworks?: number[], gnosisAddress?: string) {
+export function openMultisigSelectNetworkModal(params: ISelectSignerNetworkModalParams) {
+  const { addresses, defaultSelectedNetworks, gnosisAddress } = params
+
   return openModal({
     component: MultisigSelectNetwork,
     componentProps: {
