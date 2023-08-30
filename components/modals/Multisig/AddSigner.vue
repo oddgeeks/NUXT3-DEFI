@@ -159,7 +159,7 @@ function handleBackClick() {
         <div class="flex flex-1 flex-col gap-2">
           <div class="flex justify-between items-center w-full">
             <span class="text-xs font-medium leading-5 text-slate-400">
-              <span class="sm:hidden inline">{{ key + 1 }}</span> Signer name
+              <span class="sm:hidden inline">{{ key + 1 }}</span> Signer Name
             </span>
           </div>
           <CommonInput
@@ -167,7 +167,8 @@ function handleBackClick() {
             :disabled="contactSelections.includes(key as number)"
             autofocus
             :name="`addresses[${key}].name`"
-            placeholder="Signer Name"
+            placeholder="Signer Name (Optional)"
+            input-classes="placeholder:text-xs"
             :error-message="getErrorMessage(errors, `addresses[${key}].name`)"
           />
         </div>
