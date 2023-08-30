@@ -1,7 +1,7 @@
 // Setup provider AnkrProvider
 
 import { ethers } from 'ethers'
-import { isAddress } from 'ethers/lib/utils'
+import { isAddress } from '@ethersproject/address'
 import * as Yup from 'yup'
 
 const serverRpcInstances = {} as Record<string, ethers.providers.StaticJsonRpcProvider>
