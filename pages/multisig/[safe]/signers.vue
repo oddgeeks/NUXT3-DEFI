@@ -147,15 +147,9 @@ onMounted(() => {
       </div>
       <div class="dark:bg-gray-850 mb-2.5 justify-between font-medium flex bg-slate-50 p-[18px] rounded-[25px] sm:py-6.5 sm:px-7.5 items-center">
         <div class="flex gap-3 items-center">
-          <ChainLogo class="w-7.5 h-7.5" :chain="100" />
+          <SvgoSafe class="w-7.5 h-7.5" />
           <div class="flex flex-col gap-1.5">
-            Clone your Gnosis safe wallet on Avocado in just 1 click!
-            <span class="text-xs flex items-center gap-1.5">
-              <SvgoGift />
-              <span class="text-slate-400">
-                $50 USDC Gas Bonus for eligible wallets.
-              </span>
-            </span>
+            Clone your existing Safe on Avocado in just 1 click!
           </div>
         </div>
         <CommonButton @click="handleGnosisSetup">

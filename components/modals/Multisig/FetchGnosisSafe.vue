@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { isAddress } from 'ethers/lib/utils'
+import { getAddress, isAddress } from 'ethers/lib/utils'
 import * as yup from 'yup'
 import { useField, useForm } from 'vee-validate'
-import { GnosisSafe__factory } from '~~/contracts'
+import { GnosisSafe__factory } from '@/contracts'
 
 const props = defineProps<{
   address?: string
@@ -10,10 +10,47 @@ const props = defineProps<{
 
 const emit = defineEmits(['destroy'])
 const { getContactNameByAddress } = useContacts()
+const { signers } = storeToRefs(useMultisig())
 const owners = ref<string[]>([])
 
 const pending = ref(false)
 const steps = useState<SignerSteps>('signer-steps')
+const { account } = useWeb3()
+
+const gnosisNetworkMapping: Record<string, string> = {
+  'eth': '1',
+  'gno': '100',
+  'matic': '137',
+  'bnb': '56',
+  'arb1': '42161',
+  'aurora': '1313161554',
+  'base': '8453',
+  'avax': '43114',
+  'celo': '42220',
+  'oeth': '10',
+  'base-gor': '84531',
+  'gor': '5',
+}
+
+function parseAddress(addrr: string) {
+  const hasColon = addrr ? addrr.includes(':') : false
+  const defaultResult = { chainId: null, address: addrr, valid: true }
+
+  if (hasColon) {
+    const [mapping, address] = addrr.split(/:(.+)/)
+    const gnosisChain = gnosisNetworkMapping[mapping]
+
+    const valid = availableNetworks.some(i => String(i.chainId) == String(gnosisChain))
+
+    return {
+      chainId: valid ? gnosisChain : null,
+      address,
+      valid,
+    }
+  }
+
+  return defaultResult
+}
 
 const transformedOwners = computed<ISignerAddress[]>(() => {
   return owners.value.map((i) => {
@@ -31,22 +68,50 @@ const {
   validationSchema: yup.object({
     gnosisAddress: yup.string()
       .required('')
-      .test('is-valid-address', 'Incorrect safe address', async (value) => {
+      .test('is-valid-address', 'Incorrect safe address', async (value, { createError }) => {
         owners.value = []
 
         if (!value)
           return true
 
-        if (!isAddress(value))
+        const parsedValue = parseAddress(value)
+
+        if (!parsedValue.valid)
+          return false
+
+        if (parsedValue?.chainId)
+          setState({ value: parsedValue.chainId, touched: false })
+
+        if (!isAddress(parsedValue.address))
           return false
 
         try {
           pending.value = true
-          const contract = GnosisSafe__factory.connect(gnosisAddress.value, getRpcProvider(chainId.value))
+
+          const contract = GnosisSafe__factory.connect(parsedValue.address, getRpcProvider(chainId.value))
 
           const addresses = await contract.getOwners()
 
-          owners.value = addresses
+          const isOwner = addresses.some(i => getAddress(i) === getAddress(account.value))
+
+          if (!isOwner) {
+            return createError({
+              message: 'You are not a signer of this safe',
+              path: 'gnosisAddress',
+            })
+          }
+
+          const filteredAddresses = addresses.filter(i => !signers.value.some(s => getAddress(s.address) === getAddress(i)),
+          )
+
+          if (!filteredAddresses.length) {
+            return createError({
+              message: 'All owners of this safe are already signers',
+              path: 'gnosisAddress',
+            })
+          }
+
+          owners.value = filteredAddresses
 
           return true
         }
@@ -66,7 +131,7 @@ const { value: gnosisAddress, errorMessage } = useField<string>('gnosisAddress',
   initialValue: props.address,
 })
 
-const { value: chainId } = useField<string>(
+const { value: chainId, setState } = useField<string>(
   'chainId',
   undefined, {
     initialValue: '137',
@@ -80,8 +145,8 @@ const onSubmit = handleSubmit(() => {
 
   openAddSignerModal({
     addresses: transformedOwners.value,
-    gnosisAddress: gnosisAddress.value,
-    defaultSelectedNetworks: [Number(chainId.value)],
+    gnosisAddress: parseAddress(gnosisAddress.value).address,
+    defaultSelectedNetworks: availableNetworks.map(i => i.chainId),
   })
 })
 </script>
@@ -100,7 +165,7 @@ const onSubmit = handleSubmit(() => {
       <Steps :current-step="steps?.currentStep || 1" :total-steps="steps?.totalSteps || 5" />
     </div>
     <div class="px-7.5 flex gap-5">
-      <CommonInput v-model="gnosisAddress" autofocus :error-message="errorMessage" name="gnosisAddress" placeholder="Gnosis safe address" class="flex-1" />
+      <CommonInput v-model="gnosisAddress" autofocus :error-message="errorMessage" name="gnosisAddress" placeholder="Gnosis safe address" />
       <CommonSelect
         v-model="chainId"
         name="chainId"
