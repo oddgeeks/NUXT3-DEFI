@@ -10,6 +10,7 @@ import {
 } from '@/contracts'
 
 export function useAvocadoSafe() {
+  const { public: config } = useRuntimeConfig()
   const { switchToAvocadoNetwork } = useNetworks()
   const { library, account } = useWeb3()
   const { trackingAccount, isTrackingMode } = useAccountTrack()
@@ -223,7 +224,7 @@ export function useAvocadoSafe() {
     }
 
     if (transactionHash && params.proposalId) {
-      const message = `\n${'`Multisig Hash`'} <https://avocado-git-f-multisafe-instadapp-eng.vercel.app/multisig/${params.safe}/pending-transactions/${params.proposalId}| ${shortenHash(params.proposalId)}>`
+      const message = `\n${'`Multisig Hash`'} <${config.domainURL}/multisig/${params.safe}/pending-transactions/${params.proposalId}| ${shortenHash(params.proposalId)}>`
 
       logActionToSlack({
         account: account.value,
@@ -242,12 +243,17 @@ export function useAvocadoSafe() {
 
     executing.value = true
 
-    setTimeout(() => {
-      refreshNuxtData(`${selectedSafe.value?.safe_address}-signers`)
-      refreshNuxtData(`${selectedSafe.value?.safe_address}-${params.targetChainId}-threshold`)
-      refreshSelectedSafe()
-      getSafeOptions(selectedSafe.value!)
-    }, 15000)
+    const provider = getRpcProviderByChainId(params.targetChainId)
+
+    provider.waitForTransaction(transactionHash).then((tx) => {
+      console.log(tx)
+      setTimeout(() => {
+        refreshNuxtData(`${selectedSafe.value?.safe_address}-signers`)
+        refreshNuxtData(`${selectedSafe.value?.safe_address}-${params.targetChainId}-threshold`)
+        refreshSelectedSafe()
+        getSafeOptions(selectedSafe.value!)
+      }, 15000)
+    })
 
     return transactionHash
   }
