@@ -7,11 +7,25 @@ const itemsRef = ref<HTMLElement | null>(null)
 const [isCollapseAll, toggle] = useToggle(false)
 const isCollapseAllDisabled = ref(false)
 
+const { getSafeOptions } = useSafe()
+const { selectedSafe, safeOptions } = storeToRefs(useSafe())
+
 provide('isCollapseAll', isCollapseAll)
 
 useAccountTrack(undefined, () => {
   useEagerConnect()
 })
+
+async function syncOptions() {
+  await until(selectedSafe).toMatch(s => !!s)
+
+  if (!safeOptions.value?.length)
+    return
+
+  await wait(1000)
+
+  getSafeOptions(selectedSafe.value)
+}
 
 function syncToggles() {
   if (itemsRef.value) {
@@ -102,6 +116,7 @@ watch(activeTab, async () => {
 
 onMounted(() => {
   syncToggles()
+  syncOptions()
 })
 </script>
 
