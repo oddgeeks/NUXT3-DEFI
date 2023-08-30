@@ -270,7 +270,7 @@ export function formatProtocol(protocol: string) {
   )
 }
 
-export const networksSimulationNotSupported = [1313161554]
+export const networksSimulationNotSupported = [1313161554, 1101]
 
 export function generateNumber(min: number, max: number) {
   const numbers = []
