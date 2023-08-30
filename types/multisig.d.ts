@@ -133,13 +133,6 @@ interface IOpenExecuteModalParams {
   isGasTopup: boolean
 }
 
-type SignerOptions = {
-    title?: string
-    subtitle?: string
-    currentStep?: number
-    totalSteps?: number
-}
-
 type SignerSteps = {
   currentStep: number
   totalSteps: number
