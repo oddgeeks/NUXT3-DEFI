@@ -17,7 +17,10 @@ useAccountTrack(undefined, () => {
 })
 
 async function syncOptions() {
-  await until(selectedSafe).toMatch(s => !!s)
+  if (!selectedSafe.value)
+    return
+
+  await until(selectedSafe).toMatch(s => !!s?.safe_address)
 
   if (!safeOptions.value?.length)
     return
