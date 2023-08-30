@@ -16,6 +16,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['resolve', 'destroy'])
+
+const { public: config } = useRuntimeConfig()
 const { selectedSafe, safeOptions } = storeToRefs(useSafe())
 const { getActualId, safeAddress, generateMultisigSignatureAndSign, multisigBroadcast } = useAvocadoSafe()
 const { parseTransactionError } = useErrorHandler()
@@ -117,6 +119,14 @@ async function onSubmit() {
       nonce: params.castParams.params.avoSafeNonce,
     }, {
       baseURL: multisigURL,
+    })
+
+    const message = `\n${'`Multisig Hash`'} <${config.domainURL}/multisig/${data.safe_address}/pending-transactions/${data.id}| ${shortenHash(data.id)}>`
+
+    logActionToSlack({
+      account: account.value,
+      action: 'proposal',
+      message,
     })
 
     proposalId = data.id
