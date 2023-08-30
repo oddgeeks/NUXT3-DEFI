@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { Tippy } from 'vue-tippy'
 import type { IBalance } from '~/stores/safe'
-import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 import BridgeSVG from '~/assets/images/icons/bridge.svg?component'
 import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
@@ -150,11 +149,11 @@ function onClick() {
           class="!h-9 !w-9 !p-0 items-center justify-center"
           @click="openSendModal(tokenBalance.chainId, tokenBalance.address)"
         >
-          <IconsTransaction :disabled="!interactable" :hoverable="true">
+          <CommonTxTypeIcon :disabled="!interactable" :hoverable="true">
             <template #icon>
-              <ArrowRight class="-rotate-45" />
+              <SvgoArrowRight class="-rotate-45" />
             </template>
-          </IconsTransaction>
+          </CommonTxTypeIcon>
         </CommonButton>
 
         <CommonButton

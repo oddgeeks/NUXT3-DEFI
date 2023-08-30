@@ -625,11 +625,11 @@ onUnmounted(() => {
     <div class="flex flex-col items-center justify-center">
       <div class="flex flex-col gap-[15px] w-full">
         <div class="flex gap-[14px]">
-          <IconsTransaction class="w-10 h-10">
+          <CommonTxTypeIcon class="w-10 h-10">
             <template #icon>
               <SvgoRefresh class="-rotate-45" />
             </template>
-          </IconsTransaction>
+          </CommonTxTypeIcon>
           <div class="flex flex-col gap-1">
             <h1 class="text-lg leading-[20px]">
               Swap

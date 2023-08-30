@@ -80,12 +80,11 @@ async function handleDeletingContact(contact: IContact) {
         @click="openSendModal(contact.chainId || 1, undefined, contact)"
       >
         Send
-
-        <IconsTransaction class="p-1" :disabled="!!contact.chainId && !hasAvailableTokens(contact.chainId)" color="light">
+        <CommonTxTypeIcon class="p-1" :disabled="!!contact.chainId && !hasAvailableTokens(contact.chainId)" color="light">
           <template #icon>
             <SvgoArrowRight class="-rotate-45 w-3 h-3" />
           </template>
-        </IconsTransaction>
+        </CommonTxTypeIcon>
       </CommonButton>
     </div>
   </div>

@@ -64,11 +64,11 @@ function handleOpenSendModal() {
             @click="handleOpenSendModal"
           >
             Send
-            <IconsTransaction class="p-1.5" :disabled="!hasAvailableTokens()" color="light">
+            <CommonTxTypeIcon class="p-1.5" :disabled="!hasAvailableTokens()" color="light">
               <template #icon>
                 <SvgoArrowRight class="-rotate-45 w-3.5 h-3.5" />
               </template>
-            </IconsTransaction>
+            </CommonTxTypeIcon>
           </CommonButton>
           
           <CommonButton

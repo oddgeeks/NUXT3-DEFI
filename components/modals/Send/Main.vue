@@ -76,11 +76,11 @@ onUnmounted(() => {
 <template>
   <div>
     <div class="flex gap-[14px] mb-7.5">
-      <IconsTransaction class="w-10 h-10">
+      <CommonTxTypeIcon class="w-10 h-10">
         <template #icon>
           <SvgoArrowRight class="-rotate-45" />
         </template>
-      </IconsTransaction>
+      </CommonTxTypeIcon>
       <div class="flex flex-col gap-1">
         <h1 class="text-lg leading-[20px]">
           {{ isCrossChain ? 'Cross-chain Send' : 'Send' }}
