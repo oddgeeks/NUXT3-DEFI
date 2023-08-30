@@ -247,12 +247,16 @@ export function useAvocadoSafe() {
 
     provider.waitForTransaction(transactionHash).then((tx) => {
       console.log(tx)
-      setTimeout(() => {
-        refreshNuxtData(`${selectedSafe.value?.safe_address}-signers`)
-        refreshNuxtData(`${selectedSafe.value?.safe_address}-${params.targetChainId}-threshold`)
+      setTimeout(async () => {
+        await until(selectedSafe).toMatch(i => !!i)
+        if (!selectedSafe.value)
+          return
+
+        refreshNuxtData(`${selectedSafe.value.safe_address}-signers`)
+        refreshNuxtData(`${selectedSafe.value.safe_address}-${params.targetChainId}-threshold`)
         refreshSelectedSafe()
-        getSafeOptions(selectedSafe.value!)
-      }, 15000)
+        getSafeOptions(selectedSafe.value)
+      }, 5000)
     })
 
     return transactionHash
