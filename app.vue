@@ -25,6 +25,7 @@ onMounted(() => {
   </NuxtLayout>
 
   <BannerNewVersion />
+  <BannerMultisigOnboard />
   <Notifications />
   <Modals />
 </template>
