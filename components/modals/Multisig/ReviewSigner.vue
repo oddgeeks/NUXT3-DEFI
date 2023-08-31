@@ -15,6 +15,7 @@ const steps = useState<SignerSteps>('signer-steps')
 const { selectedSafe } = storeToRefs(useSafe())
 
 const { signers } = storeToRefs(useMultisig())
+const { account } = useWeb3()
 
 function handleBack() {
   steps.value.currentStep -= 1
@@ -84,14 +85,25 @@ async function handleNext() {
               Existing Signers
             </span>
             <ul class="flex flex-col gap-5">
-              <li v-for="signer in signers" :key="signer.address" class="flex gap-3 items-center">
-                <AuthorityAvatar :address="signer.address" />
+              <li v-if="!signers?.length" class="flex gap-3 items-center">
+                <AuthorityAvatar :address="account" />
 
                 <span class="text-slate-400">
-                  {{ shortenHash(signer.address) }}
+                  {{ shortenHash(account) }}
                 </span>
-                <Copy icon-only :text="signer.address" />
+                <Copy icon-only :text="account" />
               </li>
+
+              <template v-else>
+                <li v-for="signer in signers" :key="signer.address" class="flex gap-3 items-center">
+                  <AuthorityAvatar :address="signer.address" />
+
+                  <span class="text-slate-400">
+                    {{ shortenHash(signer.address) }}
+                  </span>
+                  <Copy icon-only :text="signer.address" />
+                </li>
+              </template>
             </ul>
           </td>
         </tr>
