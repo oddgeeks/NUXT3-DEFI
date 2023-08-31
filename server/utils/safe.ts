@@ -1,6 +1,6 @@
 import { MultisigForwarder__factory } from '@instadapp/avocado-base/contracts'
 import { serialize } from 'error-serializer'
-import type { ethers } from 'ethers'
+import { ethers } from 'ethers'
 import { forwarderProxyAddress, multisigForwarderProxyAddress } from '@/utils/avocado'
 import { AvoMultisigImplementation__factory, Forwarder__factory, GaslessWallet__factory } from '@/contracts'
 
@@ -10,6 +10,19 @@ interface ISafe {
   multisig: number
   owner_address: string
   deployed: Record<string, boolean>
+}
+
+const serverRpcInstances = {} as Record<string, ethers.providers.StaticJsonRpcProvider>
+
+export function getServerBatchedRpcProvider(chainId: number | string) {
+  if (!serverRpcInstances[chainId]) {
+    const network = networks.find(n => n.chainId == chainId)
+    serverRpcInstances[chainId] = new ethers.providers.JsonRpcBatchProvider(
+      network?.serverRpcUrl,
+    )
+  }
+
+  return serverRpcInstances[chainId]
 }
 
 export async function getSafeOptionsByChain(safe: ISafe, chainId: string | number, provider: ethers.providers.StaticJsonRpcProvider, server = false): Promise<ISafeOptions> {
@@ -103,4 +116,38 @@ export async function getSafeOptionsByChain(safe: ISafe, chainId: string | numbe
   obj.server = server
 
   return obj
+}
+
+export async function getComputedAddresses(provider: ethers.providers.StaticJsonRpcProvider, accountAddress: string) {
+  const legacyProvider = Forwarder__factory.connect(
+    forwarderProxyAddress,
+    provider,
+  )
+
+  const multisigProvider = MultisigForwarder__factory.connect(
+    multisigForwarderProxyAddress,
+    provider,
+  )
+
+  const [oldSafeAddress, address, multisigAddress] = await Promise.all(
+    [
+      legacyProvider.computeAddress(
+        accountAddress,
+      ),
+      multisigProvider.computeAvocado(
+        accountAddress,
+        0,
+      ),
+      multisigProvider.computeAvocado(
+        accountAddress,
+        1,
+      ),
+    ],
+  )
+
+  return {
+    oldSafeAddress,
+    address,
+    multisigAddress,
+  }
 }

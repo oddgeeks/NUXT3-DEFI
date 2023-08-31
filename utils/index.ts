@@ -287,6 +287,7 @@ export function logBalance(params: ILogBalanceParams) {
     'eoa-balances': 'EOA Balance',
     'safe-balances': 'Safe Balance',
     'options': 'MS Config',
+    'compute': 'Compute Addresses',
   } as Record<ILogBalanceParams['type'], string>
 
   const prefixText = prefix[type]

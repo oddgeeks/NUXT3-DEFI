@@ -1,21 +1,8 @@
 // Setup provider AnkrProvider
 
-import { ethers } from 'ethers'
 import { isAddress } from '@ethersproject/address'
 import * as Yup from 'yup'
-
-const serverRpcInstances = {} as Record<string, ethers.providers.StaticJsonRpcProvider>
-
-function getServerBatchedRpcProvider(chainId: number | string) {
-  if (!serverRpcInstances[chainId]) {
-    const network = networks.find(n => n.chainId == chainId)
-    serverRpcInstances[chainId] = new ethers.providers.JsonRpcBatchProvider(
-      network?.serverRpcUrl,
-    )
-  }
-
-  return serverRpcInstances[chainId]
-}
+import { getServerBatchedRpcProvider } from '@/server/utils/safe'
 
 export default defineEventHandler(async (event) => {
   const chainId = getRouterParam(event, 'chainId')
