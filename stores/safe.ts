@@ -53,11 +53,11 @@ export const useSafe = defineStore('safe', () => {
   const { fetchTokenByAddress } = useTokens()
   const documentVisibility = useDocumentVisibility()
   const { parseTransactionError } = useErrorHandler()
-  const { getRpcProviderByChainId, getRpcBatchProviderByChainId } = useShared()
+  const { getRpcProviderByChainId, getRpcBatchProviderByChainId, getRpcBatchRetryProviderByChainId } = useShared()
   const { trackingAccount } = useAccountTrack()
 
   const avoProvider = getRpcProviderByChainId(avoChainId)
-  const avoBatchProvider = getRpcBatchProviderByChainId(avoChainId)
+  const avoBatchProvider = getRpcBatchRetryProviderByChainId(avoChainId)
 
   const forwarderProxyContract = Forwarder__factory.connect(
     forwarderProxyAddress,
@@ -223,22 +223,6 @@ export const useSafe = defineStore('safe', () => {
 
   const getSafe = async (address: string): Promise<ISafe> => {
     return avoBatchProvider.send('api_getSafe', [address])
-  }
-
-  async function setSelectedSafe() {
-    const availableSafe = availableSafeInstances.value.find(i => isAddressEqual(i.safe_address, safeAddress.value))
-    const safe = safes.value.find(i => isAddressEqual(i.safe_address, safeAddress.value))
-
-    if (availableSafe)
-      selectedSafe.value = availableSafe
-
-    else if (safe)
-      selectedSafe.value = safe
-
-    else
-      selectedSafe.value = await getSafe(safeAddress.value)
-
-    accountSafeMapping.value[account.value] = safeAddress.value
   }
 
   async function refreshSelectedSafe() {
@@ -721,8 +705,8 @@ export const useSafe = defineStore('safe', () => {
     if (!safeAddress.value)
       return
 
-    setSelectedSafe()
     setGasBalance()
+    accountSafeMapping.value[account.value] = safeAddress.value
   }, {
     throttle: 500,
   })
@@ -796,7 +780,6 @@ export const useSafe = defineStore('safe', () => {
     forwarderProxyContract,
     resetAccounts,
     multisigForwarderProxyContract,
-    setSelectedSafe,
     accountSafeMapping,
     safeTotalBalanceMapping,
     getSafe,

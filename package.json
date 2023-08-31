@@ -20,7 +20,7 @@
     "@headlessui/vue": "^1.7.12",
     "@instadapp/avocado": "^0.4.5",
     "@instadapp/avocado-dev": "npm:@instadapp/avocado@dev",
-    "@instadapp/utils": "^0.4.6",
+    "@instadapp/utils": "^0.4.7",
     "@instadapp/vue-web3-nuxt": "^0.10.1",
     "@nuxtjs/color-mode": "^3.3.0",
     "@nuxtjs/tailwindcss": "^6.8.0",

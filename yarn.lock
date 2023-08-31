@@ -1829,10 +1829,10 @@
     semver "^7.3.8"
     tiny-warning "^1.0.3"
 
-"@instadapp/utils@^0.4.6":
-  version "0.4.6"
-  resolved "https://registry.yarnpkg.com/@instadapp/utils/-/utils-0.4.6.tgz#9b9be8c7ba5da94d14ec745df0c1a7c974b1c2bc"
-  integrity sha512-VE/SS4mMCMeLfez0qPOJwgdsS9j/uaK9OqsF3lZ3Q0GsxwlEkEuxgEuBgLmD+3uFxY9usAafPxuoyK6FIlZQyQ==
+"@instadapp/utils@^0.4.7":
+  version "0.4.7"
+  resolved "https://registry.yarnpkg.com/@instadapp/utils/-/utils-0.4.7.tgz#3441eece53712e71320eb21b55a049f605fb228d"
+  integrity sha512-NCceEXDoH4BZ/fzyCHEjVIk2GW7mmpViAoVjM3KskwpcC2qErTnBo1eokODic+IeWrsQNvhBLmKkRgUTpgv9wA==
   dependencies:
     "@ethersproject/address" "^5.6.1"
     "@ethersproject/contracts" "^5.6.2"
