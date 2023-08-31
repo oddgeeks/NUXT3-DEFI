@@ -13,7 +13,6 @@ const props = defineProps<{
 const emit = defineEmits(['destroy'])
 
 const { account } = useWeb3()
-const { getContactNameByAddress } = useContacts()
 const contactSelections = ref<number[]>([])
 
 const steps = useState<SignerSteps>('signer-steps')
@@ -43,16 +42,6 @@ const {
               return account.value?.toLowerCase() !== value?.toLowerCase()
             },
           )
-          .test('contact-already-exist', 'Contact already exists, please select from contacts list', (value, ctx) => {
-            if (!isAddress(value || ''))
-              return true
-
-            const contactName = ctx.parent?.name
-
-            const contact = getContactNameByAddress(value || '', 'Owner')
-
-            return contact ? contact?.toLowerCase() === contactName?.toLowerCase() : true
-          })
           .test(
             'duplicate-address',
             'Signer already added',

@@ -15,7 +15,7 @@ const executed = useState(`executed-${props.chainId}`, () => false)
 
 const { addSignersWithThreshold } = useAvocadoSafe()
 const { selectedSafe } = storeToRefs(useSafe())
-const { addContact, safeContacts } = useContacts()
+const { addContact, safeContacts, editContact } = useContacts()
 const { parseTransactionError } = useErrorHandler()
 
 async function handleSign() {
@@ -42,13 +42,17 @@ async function handleSign() {
     for (const signer of actualSigners) {
       const contact = safeContacts.value.find(contact => getAddress(contact.address) === getAddress(signer.address))
 
-      if (!contact) {
-        addContact({
-          address: signer.address,
-          name: signer.name,
-          chainId: '', // all chains
-        })
+      const newContact = {
+        address: signer.address,
+        name: signer.name,
+        chainId: '', // all chains
       }
+
+      if (!contact)
+        addContact(newContact)
+
+      else if (contact && signer.name)
+        editContact(contact, newContact)
     }
 
     if (txHash) {
