@@ -10,9 +10,15 @@ const { isMultisigOnboardBannerVisible, hideMultisigOnboardBanner } = useBanner(
       <p class="text-xs leading-5 flex-1 dark:text-white text-slate-900">
         Configure your multisig wallet to get access to all the features
       </p>
-      <CommonButton as="NuxtLink" :to="`/multisig/${selectedSafe?.safe_address}/signers`" @click="hideMultisigOnboardBanner">
+      <CommonButton as="NuxtLink" :to="`/multisig/${selectedSafe?.safe_address}/signers`">
         Setup
       </CommonButton>
+      <button
+        class="w-5 h-5 rounded-full flex items-center justify-center bg-white bg-opacity-20"
+        @click="hideMultisigOnboardBanner"
+      >
+        <SvgoX class="dark:text-white text-slate-500" />
+      </button>
     </div>
   </Transition>
 </template>

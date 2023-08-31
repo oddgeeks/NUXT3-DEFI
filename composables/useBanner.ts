@@ -16,7 +16,6 @@ export function useBanner() {
   const isHideWelcomeBanner = useLocalStorage('hide-welcome-banner', false)
   const isHideRabbyBanner = useLocalStorage('hide-rabby-banner', false)
   const isOnboardHidden = useLocalStorage('hide-onboard', false)
-  const isMultisigOnboardHidden = useLocalStorage('multisig-hide-onboard', false)
 
   const showWelcomeBanner = computed(() => {
     if (!account.value)
@@ -78,6 +77,8 @@ export function useBanner() {
     if (signers.value?.length > 1)
       return false
 
+    const isMultisigOnboardHidden = useLocalStorage(`multisig-hide-onboard-${selectedSafe.value.safe_address}`, false)
+
     return isSafeMultisig.value && !isMultisigOnboardHidden.value
   })
 
@@ -110,7 +111,13 @@ export function useBanner() {
     isMultisigOnboardBannerVisible,
     showTrackingBanner: computed(() => !!trackingAccount.value),
     toggleWelcomeBanner: (val: boolean) => (isHideWelcomeBanner.value = !val),
-    hideMultisigOnboardBanner: () => (isMultisigOnboardHidden.value = true),
+    hideMultisigOnboardBanner: () => {
+      if (!selectedSafe.value)
+        return
+
+      const isMultisigOnboardHidden = useLocalStorage(`multisig-hide-onboard-${selectedSafe.value.safe_address}`, false)
+      isMultisigOnboardHidden.value = true
+    },
     hideOnboardBanner: () => (isOnboardHidden.value = true),
     hideRabbyBanner: () => (isHideRabbyBanner.value = true),
     hideVersionUpdateBanner: () => (isVersionUpdateBannerHidden.value = true),
