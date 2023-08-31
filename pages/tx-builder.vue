@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { TransactionBuilder } from '@instadapp/transaction-builder'
+import { useForm } from 'vee-validate'
 
 definePageMeta({
   middleware: 'auth',
@@ -23,6 +24,12 @@ function isJsonString(str: string) {
 }
 
 const builder = computed(() => isJsonString(ABI.value) ? new TransactionBuilder(JSON.parse(JSON.stringify(ABI.value))) : null)
+
+const { handleSubmit } = useForm()
+
+const onSubmit = handleSubmit(async (values) => {
+  console.log(values)
+})
 </script>
 
 <template>
@@ -46,9 +53,12 @@ const builder = computed(() => isJsonString(ABI.value) ? new TransactionBuilder(
         </template>
 
         <template v-if="builder && method">
-          <div v-for="input in builder.getMethodInputs(method)" :key="input">
-            <BuilderInput :method="method" :builder="builder" :input="input" />
-          </div>
+          <form @submit="onSubmit">
+            <BuilderInput v-for="input in builder.getMethodInputs(method)" :key="input.name" :method="method" :builder="builder" :input="input" />
+            <button>
+              submit ulan
+            </button>
+          </form>
         </template>
       </div>
     </div>

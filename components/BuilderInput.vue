@@ -10,13 +10,33 @@ const props = defineProps<{
   builder: TransactionBuilder
 }>()
 
+function safeParse(s: string) {
+  try {
+    return JSON.parse(s)
+  }
+  catch (e) {
+    return s
+  }
+}
+
 const { value, errorMessage } = useField<any>(() => props.input.name, (val) => {
+  const isInputTypeArray = props.input.type.includes('[]')
+
+  val = safeParse(val)
+
+  console.log(val)
+
+  if (isInputTypeArray && !Array.isArray(val))
+    return 'input must be an array'
+
   try {
     props.builder.validateMethodInput(props.method, props.input.name, val)
+    return true
   }
   catch (e) {
     const parsed = serialize(e)
-    return parsed.message
+
+    return parsed?.reason || parsed.message
   }
 })
 </script>
