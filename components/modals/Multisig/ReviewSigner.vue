@@ -66,7 +66,7 @@ async function handleNext() {
       <tbody class="text-sm font-medium">
         <tr>
           <td class="text-slate-400 leading-[30px] hidden sm:block">
-            Address
+            Multisig Address
           </td>
           <td>
             <span class="text-xs font-medium mb-2 block sm:hidden">Address</span>
