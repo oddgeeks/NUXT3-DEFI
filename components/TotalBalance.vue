@@ -64,16 +64,13 @@ function handleOpenSendModal() {
             @click="handleOpenSendModal"
           >
             Send
-            <div
-              class="rounded-full bg-primary p-1.5 text-white"
-              :class="{
-                'dark:bg-slate-600 bg-slate-300 dark:!text-slate-500 !text-slate-400':
-                  !hasAvailableTokens(),
-              }"
-            >
-              <ArrowRight class="-rotate-45 w-3.5 h-3.5" />
-            </div>
+            <CommonTxTypeIcon class="p-1.5" :disabled="!hasAvailableTokens()" color="light">
+              <template #icon>
+                <SvgoArrowRight class="-rotate-45 w-3.5 h-3.5" />
+              </template>
+            </CommonTxTypeIcon>
           </CommonButton>
+          
           <CommonButton
             color="white"
             class="flex-1 sm:flex-none items-center justify-center gap-2.5 h-10 !px-4"
