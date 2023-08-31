@@ -111,6 +111,13 @@ const {
             ),
           )
 
+          if (!filteredAddresses.length) {
+            return createError({
+              message: 'All signers of this safe are already added',
+              path: 'gnosisAddress',
+            })
+          }
+
           console.log({
             addresses,
             threshold,
