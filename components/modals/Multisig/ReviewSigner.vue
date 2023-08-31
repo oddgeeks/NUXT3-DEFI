@@ -14,9 +14,6 @@ const steps = useState<SignerSteps>('signer-steps')
 
 const { selectedSafe } = storeToRefs(useSafe())
 
-const { signers } = storeToRefs(useMultisig())
-const { account } = useWeb3()
-
 function handleBack() {
   steps.value.currentStep -= 1
   emit('destroy')
@@ -66,7 +63,7 @@ async function handleNext() {
       <tbody class="text-sm font-medium">
         <tr>
           <td class="text-slate-400 leading-[30px] hidden sm:block">
-            Address
+            Multisig Address
           </td>
           <td>
             <span class="text-xs font-medium mb-2 block sm:hidden">Address</span>
@@ -74,37 +71,6 @@ async function handleNext() {
               {{ shortenHash(selectedSafe?.safe_address!) }}
               <Copy icon-only :text="selectedSafe?.safe_address!" />
             </span>
-          </td>
-        </tr>
-        <tr>
-          <td class="text-slate-400 hidden sm:block sm:pr-[60px] leading-[30px] align-baseline">
-            Existing Signers
-          </td>
-          <td>
-            <span class="mb-2 block sm:hidden text-xs leading-[30px] align-baseline">
-              Existing Signers
-            </span>
-            <ul class="flex flex-col gap-5">
-              <li v-if="!signers?.length" class="flex gap-3 items-center">
-                <AuthorityAvatar :address="account" />
-
-                <span class="text-slate-400">
-                  {{ shortenHash(account) }}
-                </span>
-                <Copy icon-only :text="account" />
-              </li>
-
-              <template v-else>
-                <li v-for="signer in signers" :key="signer.address" class="flex gap-3 items-center">
-                  <AuthorityAvatar :address="signer.address" />
-
-                  <span class="text-slate-400">
-                    {{ shortenHash(signer.address) }}
-                  </span>
-                  <Copy icon-only :text="signer.address" />
-                </li>
-              </template>
-            </ul>
           </td>
         </tr>
         <tr>
