@@ -667,9 +667,9 @@ onMounted(() => {
       </div>
       <div class="ticket-divider w-full my-4" />
       <div class="flex flex-col gap-4">
-        <div class="flex justify-between leading-5 items-center sm:text-2xl text-md">
-          <span class="font-medium">
-            Amount
+        <div class="flex justify-between leading-5 items-center">
+          <span v-tippy="'This recepient will receive this exact amount'" class="font-medium text-2xl inline-flex gap-3">
+            Amount on <ChainLogo class="w-8" :chain="data.toChainId" />
           </span>
           <p class="flex items-center gap-2.5">
             <span class="uppercase">
