@@ -9,6 +9,7 @@ export function useBanner() {
   const { isSafeMultisig, signers } = storeToRefs(useMultisig())
   const { account, chainId } = useWeb3()
   const { $pwa } = useNuxtApp()
+  const route = useRoute()
 
   const wcStoreV2 = useWalletConnectV2()
 
@@ -79,7 +80,7 @@ export function useBanner() {
 
     const isMultisigOnboardHidden = useLocalStorage(`multisig-hide-onboard-${selectedSafe.value.safe_address}`, false)
 
-    return isSafeMultisig.value && !isMultisigOnboardHidden.value
+    return route.path === '/' && isSafeMultisig.value && !isMultisigOnboardHidden.value
   })
 
   const isOnboardBannerVisible = computed<boolean>(() => {
