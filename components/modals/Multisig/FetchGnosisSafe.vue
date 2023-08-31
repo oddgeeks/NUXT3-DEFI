@@ -123,6 +123,7 @@ const {
             threshold,
             filteredAddresses,
             signers: signers.value,
+            account: account.value,
           })
 
           owners.value = filteredAddresses
