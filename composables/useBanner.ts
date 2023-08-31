@@ -6,7 +6,7 @@ const isVersionUpdateBannerHidden = ref(false)
 
 export function useBanner() {
   const { gasBalance, safeOptions, selectedSafe } = storeToRefs(useSafe())
-  const { isSafeMultisig } = storeToRefs(useMultisig())
+  const { isSafeMultisig, signers } = storeToRefs(useMultisig())
   const { account, chainId } = useWeb3()
   const { $pwa } = useNuxtApp()
 
@@ -73,6 +73,9 @@ export function useBanner() {
 
   const isMultisigOnboardBannerVisible = computed(() => {
     if (!selectedSafe.value)
+      return false
+
+    if (signers.value?.length > 1)
       return false
 
     return isSafeMultisig.value && !isMultisigOnboardHidden.value
