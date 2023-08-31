@@ -104,3 +104,37 @@ export async function getSafeOptionsByChain(safe: ISafe, chainId: string | numbe
 
   return obj
 }
+
+export async function getComputedAddresses(provider: ethers.providers.StaticJsonRpcProvider, accountAddress: string) {
+  const legacyProvider = Forwarder__factory.connect(
+    forwarderProxyAddress,
+    provider,
+  )
+
+  const multisigProvider = MultisigForwarder__factory.connect(
+    multisigForwarderProxyAddress,
+    provider,
+  )
+
+  const [oldSafeAddress, address, multisigAddress] = await Promise.all(
+    [
+      legacyProvider.computeAddress(
+        accountAddress,
+      ),
+      multisigProvider.computeAvocado(
+        accountAddress,
+        0,
+      ),
+      multisigProvider.computeAvocado(
+        accountAddress,
+        1,
+      ),
+    ],
+  )
+
+  return {
+    oldSafeAddress,
+    address,
+    multisigAddress,
+  }
+}

@@ -5,7 +5,7 @@ import { getAddress, isAddress } from 'ethers/lib/utils'
 import axios from 'axios'
 import { wait } from '@instadapp/utils'
 import type { IToken } from './tokens'
-import { getSafeOptionsByChain } from '~/server/utils/safe'
+import { getComputedAddresses, getSafeOptionsByChain } from '~/server/utils/safe'
 import type { TokenBalanceResolver } from '~/contracts'
 import {
   Forwarder__factory,
@@ -77,37 +77,50 @@ export const useSafe = defineStore('safe', () => {
     return acc
   }, {} as Record<string, TokenBalanceResolver>)
 
+  async function computeAddresses() {
+    try {
+      const polygonProvider = getRpcBatchProviderByChainId(137)
+      const { address, multisigAddress, oldSafeAddress } = await getComputedAddresses(polygonProvider, account.value)
+
+      logBalance({
+        chainId: 137,
+        type: 'compute',
+        isPublic: true,
+      })
+
+      return {
+        address,
+        multisigAddress,
+        oldSafeAddress,
+      }
+    }
+    catch (e) {
+      const { address, multisigAddress, oldSafeAddress } = await http<IComputeAddresses>('/api/rpc/compute', {
+        params: {
+          address: account.value,
+        },
+        retry: 3,
+      })
+
+      logBalance({
+        chainId: 137,
+        type: 'compute',
+        isPublic: false,
+      })
+
+      return {
+        address,
+        multisigAddress,
+        oldSafeAddress,
+      }
+    }
+  }
+
   async function fetchComputedAddresses() {
     if (!account.value)
       return
 
-    const polygonProvider = getRpcBatchProviderByChainId(137)
-
-    const legacyProvider = Forwarder__factory.connect(
-      forwarderProxyAddress,
-      polygonProvider,
-    )
-
-    const multisigProvider = MultisigForwarder__factory.connect(
-      multisigForwarderProxyAddress,
-      polygonProvider,
-    )
-
-    const [oldSafeAddress, address, multisigAddress] = await Promise.all(
-      [
-        legacyProvider.computeAddress(
-          account.value,
-        ),
-        multisigProvider.computeAvocado(
-          account.value,
-          0,
-        ),
-        multisigProvider.computeAvocado(
-          account.value,
-          1,
-        ),
-      ],
-    )
+    const { address, multisigAddress, oldSafeAddress } = await computeAddresses()
 
     const cachedSafeAddress = accountSafeMapping.value[account.value]
 
