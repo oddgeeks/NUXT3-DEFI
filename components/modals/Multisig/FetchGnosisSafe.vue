@@ -12,6 +12,7 @@ const emit = defineEmits(['destroy'])
 const { getContactNameByAddress } = useContacts()
 const { signers } = storeToRefs(useMultisig())
 const owners = ref<string[]>([])
+const defaultThreshold = ref(0)
 
 const pending = ref(false)
 const steps = useState<SignerSteps>('signer-steps')
@@ -91,6 +92,9 @@ const {
           const contract = GnosisSafe__factory.connect(parsedValue.address, getRpcProvider(chainId.value))
 
           const addresses = await contract.getOwners()
+          const threshold = await contract.getThreshold()
+
+          defaultThreshold.value = threshold.toNumber()
 
           const isOwner = addresses.some(i => getAddress(i) === getAddress(account.value))
 
@@ -107,12 +111,12 @@ const {
             ),
           )
 
-          if (!filteredAddresses.length) {
-            return createError({
-              message: 'All owners of this safe are already signers',
-              path: 'gnosisAddress',
-            })
-          }
+          console.log({
+            addresses,
+            threshold,
+            filteredAddresses,
+            signers: signers.value,
+          })
 
           owners.value = filteredAddresses
 
