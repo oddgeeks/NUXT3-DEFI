@@ -106,8 +106,7 @@ const {
           }
 
           const filteredAddresses = addresses.filter(i =>
-            !signers.value.some(s => getAddress(s.address) === getAddress(i))
-            || !(getAddress(i) === getAddress(account.value)),
+            getAddress(i) !== getAddress(account.value),
           )
 
           if (!filteredAddresses.length) {
@@ -160,6 +159,7 @@ const onSubmit = handleSubmit(() => {
   openAddSignerModal({
     addresses: transformedOwners.value,
     gnosisAddress: parseAddress(gnosisAddress.value).address,
+    threshold: defaultThreshold.value,
   })
 })
 </script>
