@@ -133,7 +133,7 @@ async function onSubmit() {
 
 <template>
   <form class="flex flex-col gap-7.5 sm:w-[520px] w-full" @submit.prevent="onSubmit">
-    <div class="bg-slate-50 dark:bg-gray-850 rounded-5 py-[14px] px-5 text-sm">
+    <div class="bg-slate-50 dark:bg-gray-850 rounded-5 py-[14px] sm:px-5 px-3 text-sm sm:mx-0 mx-[-0.75rem]">
       <div class="flex flex-col gap-2.5 font-medium">
         <dl class="flex items-center justify-between">
           <dt class="text-slate-400">
@@ -158,12 +158,12 @@ async function onSubmit() {
             </span>
           </dd>
         </dl>
-        <dl class="flex items-center justify-between">
+        <dl class="flex items-center justify-between flex-wrap">
           <dt class="text-slate-400 whitespace-nowrap">
             To address
           </dt>
           <dd>
-            <NuxtLink target="_blank" class="text-primary font-medium" :to="getExplorerUrl(data.toChainId, `/address/${actualAddress}`)" external>
+            <NuxtLink target="_blank" class="text-primary font-medium sm:text-sm text-xs" :to="getExplorerUrl(data.toChainId, `/address/${actualAddress}`)" external>
               {{ actualAddress }}
             </NuxtLink>
           </dd>
@@ -171,7 +171,7 @@ async function onSubmit() {
       </div>
       <div class="ticket-divider w-full my-4" />
 
-      <div class="flex justify-between items-center font-semibold text-2xl">
+      <div class="flex justify-between items-center font-semibold sm:text-2xl text-md">
         <span>
           Amount
         </span>

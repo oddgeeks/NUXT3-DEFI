@@ -61,9 +61,9 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
             return `eip155:${network.chainId}`
           })
 
-          const requiredChains = params.requiredNamespaces.eip155.chains ?? []
-          const requiredEvents = params.requiredNamespaces.eip155.events ?? []
-          const requiredMethods = params.requiredNamespaces.eip155.methods ?? []
+          const requiredChains = params.requiredNamespaces.eip155?.chains ?? []
+          const requiredEvents = params.requiredNamespaces.eip155?.events ?? []
+          const requiredMethods = params.requiredNamespaces.eip155?.methods ?? []
 
           const mergedChains = [...new Set([...chains, ...requiredChains])]
 

@@ -612,7 +612,7 @@ onMounted(() => {
 
 <template>
   <form class="flex flex-col gap-7.5 sm:w-[600px] w-full" @submit.prevent="onSubmit">
-    <div class="bg-slate-50 dark:bg-gray-850 rounded-5 py-[14px] px-5 text-sm">
+    <div class="bg-slate-50 dark:bg-gray-850 rounded-5 py-[14px] sm:px-5 px-3 text-sm sm:mx-0 mx-[-0.75rem]">
       <div class="flex flex-col gap-2.5 font-medium">
         <dl class="flex items-center justify-between">
           <dt class="text-slate-400">
@@ -654,12 +654,12 @@ onMounted(() => {
             </template>
           </div>
         </dl>
-        <dl class="flex items-center justify-between">
+        <dl class="flex items-center justify-between flex-wrap">
           <dt class="text-slate-400 whitespace-nowrap">
             To address
           </dt>
           <dd>
-            <NuxtLink target="_blank" class="text-primary font-medium" :to="getExplorerUrl(data.toChainId, `/address/${actualAddress}`)" external>
+            <NuxtLink target="_blank" class="text-primary font-medium sm:text-sm text-xs" :to="getExplorerUrl(data.toChainId, `/address/${actualAddress}`)" external>
               {{ actualAddress }}
             </NuxtLink>
           </dd>
@@ -668,10 +668,10 @@ onMounted(() => {
       <div class="ticket-divider w-full my-4" />
       <div class="flex flex-col gap-4">
         <div class="flex justify-between leading-5 items-center">
-          <span class="font-medium text-2xl">
-            Amount
+          <span v-tippy="'This recepient will receive this exact amount'" class="font-medium text-2xl inline-flex gap-3">
+            Amount on <ChainLogo class="w-8" :chain="data.toChainId" />
           </span>
-          <p class="flex items-center gap-2.5 text-2xl">
+          <p class="flex items-center gap-2.5">
             <span class="uppercase">
               {{ formatDecimal(data.amount) }} {{ targetToken?.symbol || token?.symbol }}
             </span>
