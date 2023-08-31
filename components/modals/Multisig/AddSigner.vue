@@ -82,6 +82,7 @@ const onSubmit = handleSubmit(async () => {
     addresses,
     gnosisAddress: props.gnosisAddress,
     defaultSelectedNetworks: props.defaultSelectedNetworks,
+    defaultThreshold: props.defaultThreshold,
   })
   emit('destroy')
 })

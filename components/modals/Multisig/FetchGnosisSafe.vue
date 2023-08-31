@@ -107,7 +107,7 @@ const {
 
           const filteredAddresses = addresses.filter(i =>
             getAddress(i) !== getAddress(account.value),
-          )
+          ).filter(i => !signers.value.some(j => getAddress(j.address) === getAddress(i)))
 
           if (!filteredAddresses.length) {
             return createError({

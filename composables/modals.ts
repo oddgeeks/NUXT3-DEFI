@@ -471,13 +471,14 @@ export function openAddSignerModal(params?: IAddSignerModalParams) {
 }
 
 export function openReviewSignerModal(props: IReviewSignerModalParams) {
-  const { addresses, gnosisAddress, defaultSelectedNetworks } = props
+  const { addresses, gnosisAddress, defaultSelectedNetworks, defaultThreshold } = props
   return openModal({
     component: ReviewSigner,
     componentProps: {
       addresses,
       gnosisAddress,
       defaultSelectedNetworks,
+      defaultThreshold,
     },
     options: {
       wrapperClass: 'max-w-[560px]',
@@ -486,13 +487,14 @@ export function openReviewSignerModal(props: IReviewSignerModalParams) {
   })
 }
 
-export function openSignSignerModal(addresses: ISignerAddress[], chainIds: number[], gnosisAddress?: string) {
+export function openSignSignerModal(addresses: ISignerAddress[], chainIds: number[], gnosisAddress?: string, defaultThreshold?: number) {
   return openModal({
     component: SignSigner,
     componentProps: {
       addresses,
       chainIds,
       gnosisAddress,
+      defaultThreshold,
     },
     options: {
       wrapperClass: 'max-w-[560px]',
@@ -556,6 +558,7 @@ export async function openEditNonceModal(params: IOpenNonceModalParams) {
 export function openUpdateThresholdModal(chainId: number | string, additionalCount: number, {
   activeStep = 0,
   totalSteps = 0,
+  defaultThreshold = undefined,
 } = {}) {
   return openModal({
     component: UpdateThreshold,
@@ -564,6 +567,7 @@ export function openUpdateThresholdModal(chainId: number | string, additionalCou
       additionalCount,
       activeStep,
       totalSteps,
+      thresholdDefault: defaultThreshold,
     },
     options: {
       contentClass: '!p-0',
@@ -608,7 +612,7 @@ export async function openMultisigTransactionDetails(transaction: IMultisigTrans
 }
 
 export function openMultisigSelectNetworkModal(params: ISelectSignerNetworkModalParams) {
-  const { addresses, defaultSelectedNetworks, gnosisAddress } = params
+  const { addresses, defaultSelectedNetworks, gnosisAddress, defaultThreshold } = params
 
   return openModal({
     component: MultisigSelectNetwork,
@@ -616,6 +620,7 @@ export function openMultisigSelectNetworkModal(params: ISelectSignerNetworkModal
       addresses,
       defaultSelectedNetworks,
       gnosisAddress,
+      defaultThreshold,
     },
     options: {
       contentClass: '!p-0',

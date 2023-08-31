@@ -5,6 +5,7 @@ const props = defineProps<{
   addresses: ISignerAddress[]
   gnosisAddress?: string
   defaultSelectedNetworks?: number[]
+  defaultThreshold?: number
 }>()
 
 const emit = defineEmits(['destroy'])
@@ -13,6 +14,8 @@ const steps = useState<SignerSteps>('signer-steps')
 
 const { selectedSafe } = storeToRefs(useSafe())
 
+const { signers } = storeToRefs(useMultisig())
+
 function handleBack() {
   steps.value.currentStep -= 1
   emit('destroy')
@@ -20,6 +23,7 @@ function handleBack() {
     addresses: props.addresses,
     gnosisAddress: props.gnosisAddress,
     defaultSelectedNetworks: props.defaultSelectedNetworks,
+    threshold: props.defaultThreshold,
   })
 }
 
@@ -31,6 +35,7 @@ async function handleNext() {
     addresses: props.addresses,
     gnosisAddress: props.gnosisAddress,
     defaultSelectedNetworks: props.defaultSelectedNetworks,
+    defaultThreshold: props.defaultThreshold,
   })
 }
 </script>
@@ -68,6 +73,26 @@ async function handleNext() {
               {{ shortenHash(selectedSafe?.safe_address!) }}
               <Copy icon-only :text="selectedSafe?.safe_address!" />
             </span>
+          </td>
+        </tr>
+        <tr>
+          <td class="text-slate-400 hidden sm:block sm:pr-[60px] leading-[30px] align-baseline">
+            Existing Signers
+          </td>
+          <td>
+            <span class="mb-2 block sm:hidden text-xs leading-[30px] align-baseline">
+              Existing Signers
+            </span>
+            <ul class="flex flex-col gap-5">
+              <li v-for="signer in signers" :key="signer.address" class="flex gap-3 items-center">
+                <AuthorityAvatar :address="signer.address" />
+
+                <span class="text-slate-400">
+                  {{ shortenHash(signer.address) }}
+                </span>
+                <Copy icon-only :text="signer.address" />
+              </li>
+            </ul>
           </td>
         </tr>
         <tr>

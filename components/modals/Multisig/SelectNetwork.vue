@@ -4,6 +4,7 @@ import { major } from 'semver'
 const props = defineProps<{
   addresses: ISignerAddress[]
   defaultSelectedNetworks?: number[]
+  defaultThreshold?: number
   gnosisAddress?: string
 }>()
 
@@ -39,7 +40,7 @@ function handleDeselectAll() {
 function handleSubmit() {
   steps.value.currentStep += 1
   emit('destroy')
-  openSignSignerModal(props.addresses, selectedNetworks.value, props.gnosisAddress)
+  openSignSignerModal(props.addresses, selectedNetworks.value, props.gnosisAddress, props.defaultThreshold)
 }
 
 function handleBack() {
@@ -50,6 +51,7 @@ function handleBack() {
     addresses: props.addresses,
     gnosisAddress: props.gnosisAddress,
     defaultSelectedNetworks: props.defaultSelectedNetworks,
+    defaultThreshold: props.defaultThreshold,
   })
 }
 </script>

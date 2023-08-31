@@ -148,6 +148,7 @@ interface IAddSignerModalParams {
 interface ISelectSignerNetworkModalParams {
   addresses: ISignerAddress[]
   defaultSelectedNetworks?: number[]
+  defaultThreshold?: number
   gnosisAddress?: string
 }
 
@@ -155,6 +156,7 @@ interface IReviewSignerModalParams {
   addresses: ISignerAddress[],
   gnosisAddress?: string
   defaultSelectedNetworks?: number[]
+  defaultThreshold?: number
 }
 
 type IMultisigAction = "add-signers" | "remove-signers" | "change-threshold";

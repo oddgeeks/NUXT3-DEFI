@@ -3,6 +3,7 @@ const props = defineProps<{
   addresses: ISignerAddress[]
   chainIds: number[]
   gnosisAddress?: string
+  defaultThreshold?: number
 }>()
 
 const emit = defineEmits(['destroy'])
@@ -20,6 +21,7 @@ async function handleBack() {
     addresses: props.addresses,
     defaultSelectedNetworks: props.chainIds,
     gnosisAddress: props.gnosisAddress,
+    defaultThreshold: props.defaultThreshold,
   })
 }
 </script>
@@ -41,7 +43,7 @@ async function handleBack() {
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <ul class="p-7.5 flex flex-col gap-7">
-      <MultisigSignAddSignerItem v-for="chainId in chainIds" :key="chainId" v-model="signs" :chain-id="chainId" :addresses="addresses" />
+      <MultisigSignAddSignerItem v-for="chainId in chainIds" :key="chainId" v-model="signs" :default-threshold="defaultThreshold" :chain-id="chainId" :addresses="addresses" />
     </ul>
     <div class="p-7.5 grid grid-cols-2 gap-4">
       <CommonButton class="justify-center" size="lg" color="white" @click="handleBack">

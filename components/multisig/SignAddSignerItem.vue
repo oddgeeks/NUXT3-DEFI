@@ -5,6 +5,7 @@ const props = defineProps<{
   addresses: ISignerAddress[]
   chainId: string | number
   modelValue: boolean[]
+  defaultThreshold?: number
 }>()
 
 const emit = defineEmits(['destroy', 'update:modelValue'])
@@ -32,7 +33,11 @@ async function handleSign() {
       return
     }
 
-    const { payload, success } = await openUpdateThresholdModal(props.chainId, actualSigners.length)
+    console.log(props.defaultThreshold)
+
+    const { payload, success } = await openUpdateThresholdModal(props.chainId, actualSigners.length, {
+      defaultThreshold: props.defaultThreshold,
+    })
 
     if (!success)
       return
