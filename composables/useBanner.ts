@@ -72,7 +72,7 @@ export function useBanner() {
   })
 
   const isMultisigOnboardBannerVisible = computed(() => {
-    if (!selectedSafe.value)
+    if (!selectedSafe.value || $pwa.needRefresh || showIncorrectNetworkBanner.value)
       return false
 
     if (signers.value?.length > 1)
@@ -82,7 +82,7 @@ export function useBanner() {
   })
 
   const isOnboardBannerVisible = computed<boolean>(() => {
-    if (!selectedSafe.value || $pwa.needRefresh)
+    if (!selectedSafe.value)
       return false
 
     return selectedSafe.value.multisig === 1 && selectedSafe.value.multisig_index === 0
