@@ -26,8 +26,8 @@ const filteredSafes = computed(() => {
     </h2>
     <template v-if="!safesLoading">
       <div class="flex flex-col gap-2.5">
-        <WalletItem v-if="legacySafeAddress && legacySafe" tooltip="Please migrate your funds to new Avocado Personal to enjoy exciting updates in the future. Your legacy wallet will stay functional & secure forever." :safe="legacySafe" />
         <WalletItem v-if="mainSafe" v2 primary :safe="mainSafe" />
+        <WalletItem v-if="legacySafeAddress && legacySafe" tooltip="Please migrate your funds to new Avocado Personal to enjoy exciting updates in the future. Your legacy wallet will stay functional & secure forever." :safe="legacySafe" />
         <WalletItem v-if="multiSigSafe" primary :safe="multiSigSafe" />
       </div>
 
