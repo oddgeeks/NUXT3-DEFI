@@ -65,7 +65,7 @@ onMounted(() => {
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <div class="sm:p-7.5 p-6">
-      <CommonButton class="w-full justify-center" size="lg" @click="$emit('resolve', true, defaultThreshold === threshold ? undefined : threshold)">
+      <CommonButton class="w-full justify-center" size="lg" @click="$emit('resolve', true, threshold)">
         Continue
       </CommonButton>
     </div>

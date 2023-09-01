@@ -23,7 +23,7 @@ export function useAvocadoSafe() {
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { getRequiredSigner } = useMultisig()
 
-  const { safeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks } = storeToRefs(useSafe())
+  const { safeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks, networkOrderedBySumTokens } = storeToRefs(useSafe())
 
   const safe = shallowRef<ReturnType<typeof avocado.createSafe>>()
   const signer = computed(() => (safe.value ? safe.value.getSigner() : null))
@@ -712,5 +712,6 @@ export function useAvocadoSafe() {
     changeThreshold,
     getActualId,
     checkTransactionExecuted,
+    networkOrderedBySumTokens,
   }
 }
