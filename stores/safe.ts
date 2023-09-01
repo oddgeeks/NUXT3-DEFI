@@ -113,13 +113,26 @@ export const useSafe = defineStore('safe', () => {
     }
   }
 
+  const getCachedSafeAddress = (eoa: string) => {
+    try {
+      const cachedSafeAddress = accountSafeMapping.value[eoa]
+
+      return cachedSafeAddress
+    }
+    catch {
+      return undefined
+    }
+  }
+
   async function fetchComputedAddresses() {
     if (!account.value)
       return
 
     const { address, multisigAddress, oldSafeAddress } = await computeAddresses()
 
-    const cachedSafeAddress = accountSafeMapping.value[account.value]
+    const cachedSafeAddress = getCachedSafeAddress(account.value)
+
+    console.log({ cachedSafeAddress })
 
     const [availableSafes, legacySafeInstance] = await Promise.all([
       getSafes(account.value),
@@ -434,7 +447,7 @@ export const useSafe = defineStore('safe', () => {
           toBN(0) || toBN(0),
         )
 
-      const clonedSafeTotalBalanceMapping = cloneDeep(safeTotalBalanceMapping.value)
+      const clonedSafeTotalBalanceMapping = cloneDeep(safeTotalBalanceMapping.value || {})
 
       clonedSafeTotalBalanceMapping[safeAddress.value] = total.toFixed()
 
@@ -705,7 +718,7 @@ export const useSafe = defineStore('safe', () => {
       return
 
     setGasBalance()
-    const cloneMapped = cloneDeep(accountSafeMapping.value)
+    const cloneMapped = cloneDeep(accountSafeMapping.value || {})
 
     cloneMapped[account.value] = safeAddress.value
 
