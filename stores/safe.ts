@@ -24,8 +24,13 @@ export const useSafe = defineStore('safe', () => {
   const safeAddress = ref()
   const mainSafeAddress = ref()
   const multiSigSafeAddress = ref()
-  const accountSafeMapping = ref<Record<string, string>>({})
-  const safeTotalBalanceMapping = ref<Record<string, string>>({})
+  const accountSafeMapping = useCookie<Record<string, string>>('account-safe-mapping', {
+    maxAge: 60 * 60 * 24 * 365 * 10,
+  })
+  const safeTotalBalanceMapping = useCookie<Record<string, string>>('safe-balance-mapping', {
+    maxAge: 60 * 60 * 24 * 365 * 10,
+  })
+
   const route = useRoute()
   const ensName = ref()
 
@@ -37,14 +42,6 @@ export const useSafe = defineStore('safe', () => {
   const legacySafe = ref<ISafe>()
   const multiSigSafe = ref<ISafe>()
 
-  const availableSafeInstances = computed(() => {
-    return [
-      mainSafe.value,
-      multiSigSafe.value,
-      legacySafe.value,
-    ].filter(Boolean) as ISafe[]
-  })
-
   const safesLoading = ref(false)
   const optionsLoading = ref(false)
 
@@ -53,11 +50,11 @@ export const useSafe = defineStore('safe', () => {
   const { fetchTokenByAddress } = useTokens()
   const documentVisibility = useDocumentVisibility()
   const { parseTransactionError } = useErrorHandler()
-  const { getRpcProviderByChainId, getRpcBatchProviderByChainId } = useShared()
+  const { getRpcProviderByChainId, getRpcBatchProviderByChainId, getRpcBatchRetryProviderByChainId } = useShared()
   const { trackingAccount } = useAccountTrack()
 
   const avoProvider = getRpcProviderByChainId(avoChainId)
-  const avoBatchProvider = getRpcBatchProviderByChainId(avoChainId)
+  const avoBatchProvider = getRpcBatchRetryProviderByChainId(avoChainId)
 
   const forwarderProxyContract = Forwarder__factory.connect(
     forwarderProxyAddress,
@@ -116,13 +113,26 @@ export const useSafe = defineStore('safe', () => {
     }
   }
 
+  const getCachedSafeAddress = (eoa: string) => {
+    try {
+      const cachedSafeAddress = accountSafeMapping.value[eoa]
+
+      return cachedSafeAddress
+    }
+    catch {
+      return undefined
+    }
+  }
+
   async function fetchComputedAddresses() {
     if (!account.value)
       return
 
     const { address, multisigAddress, oldSafeAddress } = await computeAddresses()
 
-    const cachedSafeAddress = accountSafeMapping.value[account.value]
+    const cachedSafeAddress = getCachedSafeAddress(account.value)
+
+    console.log({ cachedSafeAddress })
 
     const [availableSafes, legacySafeInstance] = await Promise.all([
       getSafes(account.value),
@@ -134,6 +144,7 @@ export const useSafe = defineStore('safe', () => {
     const isCachedSafeAvailable = availableSafes.data.some(i => isAddressEqual(cachedSafeAddress, i.safe_address))
       || isAddressEqual(cachedSafeAddress, multisigAddress)
       || isAddressEqual(cachedSafeAddress, address)
+      || isAddressEqual(cachedSafeAddress, oldSafeAddress)
 
     if (address === incorrectAddress) {
       notify({
@@ -143,10 +154,8 @@ export const useSafe = defineStore('safe', () => {
       })
     }
 
-    if (legacySafeInstance) {
-      legacySafeAddress.value = oldSafeAddress
-      legacySafe.value = legacySafeInstance
-    }
+    legacySafeAddress.value = oldSafeAddress
+    legacySafe.value = legacySafeInstance || getDefaultSafe(oldSafeAddress, 0)
 
     mainSafeAddress.value = address
     multiSigSafeAddress.value = multisigAddress
@@ -223,22 +232,6 @@ export const useSafe = defineStore('safe', () => {
 
   const getSafe = async (address: string): Promise<ISafe> => {
     return avoBatchProvider.send('api_getSafe', [address])
-  }
-
-  async function setSelectedSafe() {
-    const availableSafe = availableSafeInstances.value.find(i => isAddressEqual(i.safe_address, safeAddress.value))
-    const safe = safes.value.find(i => isAddressEqual(i.safe_address, safeAddress.value))
-
-    if (availableSafe)
-      selectedSafe.value = availableSafe
-
-    else if (safe)
-      selectedSafe.value = safe
-
-    else
-      selectedSafe.value = await getSafe(safeAddress.value)
-
-    accountSafeMapping.value[account.value] = safeAddress.value
   }
 
   async function refreshSelectedSafe() {
@@ -454,8 +447,11 @@ export const useSafe = defineStore('safe', () => {
           toBN(0) || toBN(0),
         )
 
-      // cache latest balances
-      safeTotalBalanceMapping.value[safeAddress.value] = total.toFixed()
+      const clonedSafeTotalBalanceMapping = cloneDeep(safeTotalBalanceMapping.value || {})
+
+      clonedSafeTotalBalanceMapping[safeAddress.value] = total.toFixed()
+
+      safeTotalBalanceMapping.value = clonedSafeTotalBalanceMapping
 
       return balances.value.data
     }
@@ -721,8 +717,12 @@ export const useSafe = defineStore('safe', () => {
     if (!safeAddress.value)
       return
 
-    setSelectedSafe()
     setGasBalance()
+    const cloneMapped = cloneDeep(accountSafeMapping.value || {})
+
+    cloneMapped[account.value] = safeAddress.value
+
+    accountSafeMapping.value = cloneMapped
   }, {
     throttle: 500,
   })
@@ -796,7 +796,6 @@ export const useSafe = defineStore('safe', () => {
     forwarderProxyContract,
     resetAccounts,
     multisigForwarderProxyContract,
-    setSelectedSafe,
     accountSafeMapping,
     safeTotalBalanceMapping,
     getSafe,
@@ -812,13 +811,6 @@ export const useSafe = defineStore('safe', () => {
     optionsLoading,
     refreshSelectedSafe,
   }
-}, {
-  persist: {
-    paths: ['accountSafeMapping', 'safeTotalBalanceMapping'],
-    storage: persistedState.cookiesWithOptions({
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 * 10),
-    }),
-  },
 })
 
 if (import.meta.hot)
