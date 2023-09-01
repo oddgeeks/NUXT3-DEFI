@@ -181,7 +181,6 @@ export default defineNuxtConfig({
     '@instadapp/vue-web3-nuxt',
     '@vueuse/nuxt',
     '@pinia/nuxt',
-    '@pinia-plugin-persistedstate/nuxt',
     [
       'unplugin-vue-inspector/nuxt',
       {

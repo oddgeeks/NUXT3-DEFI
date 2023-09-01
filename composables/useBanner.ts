@@ -6,8 +6,10 @@ const isVersionUpdateBannerHidden = ref(false)
 
 export function useBanner() {
   const { gasBalance, safeOptions, selectedSafe } = storeToRefs(useSafe())
-  const { isSafeMultisig } = storeToRefs(useMultisig())
+  const { isSafeMultisig, signers } = storeToRefs(useMultisig())
   const { account, chainId } = useWeb3()
+  const { $pwa } = useNuxtApp()
+  const route = useRoute()
 
   const wcStoreV2 = useWalletConnectV2()
 
@@ -69,6 +71,18 @@ export function useBanner() {
     )
   })
 
+  const isMultisigOnboardBannerVisible = computed(() => {
+    if (!selectedSafe.value || $pwa.needRefresh || showIncorrectNetworkBanner.value)
+      return false
+
+    if (signers.value?.length > 1)
+      return false
+
+    const isMultisigOnboardHidden = useLocalStorage(`multisig-hide-onboard-${selectedSafe.value.safe_address}`, false)
+
+    return route.path === '/' && isSafeMultisig.value && !isMultisigOnboardHidden.value
+  })
+
   const isOnboardBannerVisible = computed<boolean>(() => {
     if (!selectedSafe.value)
       return false
@@ -95,8 +109,16 @@ export function useBanner() {
     unstableDappNetworks,
     isHideRabbyBanner,
     isOnboardBannerVisible,
+    isMultisigOnboardBannerVisible,
     showTrackingBanner: computed(() => !!trackingAccount.value),
     toggleWelcomeBanner: (val: boolean) => (isHideWelcomeBanner.value = !val),
+    hideMultisigOnboardBanner: () => {
+      if (!selectedSafe.value)
+        return
+
+      const isMultisigOnboardHidden = useLocalStorage(`multisig-hide-onboard-${selectedSafe.value.safe_address}`, false)
+      isMultisigOnboardHidden.value = true
+    },
     hideOnboardBanner: () => (isOnboardHidden.value = true),
     hideRabbyBanner: () => (isHideRabbyBanner.value = true),
     hideVersionUpdateBanner: () => (isVersionUpdateBannerHidden.value = true),

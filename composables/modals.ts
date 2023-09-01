@@ -39,6 +39,7 @@ import SignSigner from '~/components/modals/Multisig/SignSigner.vue'
 import DeleteSigner from '~/components/modals/Multisig/DeleteSigner.vue'
 import SignDeleteSigner from '~/components/modals/Multisig/SignDeleteSigner.vue'
 import UpdateThreshold from '~/components/modals/Multisig/UpdateThreshold.vue'
+import FetchGnosisSafe from '~/components/modals/Multisig/FetchGnosisSafe.vue'
 import MultisigSelectNetwork from '~/components/modals/Multisig/SelectNetwork.vue'
 import UpdateNoticeModal from '~/components/modals/UpdateNotice.vue'
 import WelcomeModal from '~/components/modals/Welcome.vue'
@@ -452,12 +453,15 @@ export function openWelcomeModal() {
   })
 }
 
-export function openAddSignerModal(addresses?: ISignerAddress[], threshold?: number) {
+export function openAddSignerModal(params?: IAddSignerModalParams) {
+  const { addresses, threshold, gnosisAddress, defaultSelectedNetworks } = params || {}
   return openModal({
     component: AddSigner,
     componentProps: {
       addresses,
       defaultThreshold: threshold,
+      gnosisAddress,
+      defaultSelectedNetworks,
     },
     options: {
       wrapperClass: 'max-w-[560px]',
@@ -466,11 +470,15 @@ export function openAddSignerModal(addresses?: ISignerAddress[], threshold?: num
   })
 }
 
-export function openReviewSignerModal(addresses: ISignerAddress[]) {
+export function openReviewSignerModal(props: IReviewSignerModalParams) {
+  const { addresses, gnosisAddress, defaultSelectedNetworks, defaultThreshold } = props
   return openModal({
     component: ReviewSigner,
     componentProps: {
       addresses,
+      gnosisAddress,
+      defaultSelectedNetworks,
+      defaultThreshold,
     },
     options: {
       wrapperClass: 'max-w-[560px]',
@@ -479,12 +487,14 @@ export function openReviewSignerModal(addresses: ISignerAddress[]) {
   })
 }
 
-export function openSignSignerModal(addresses: ISignerAddress[], chainIds: number[]) {
+export function openSignSignerModal(addresses: ISignerAddress[], chainIds: number[], gnosisAddress?: string, defaultThreshold?: number) {
   return openModal({
     component: SignSigner,
     componentProps: {
       addresses,
       chainIds,
+      gnosisAddress,
+      defaultThreshold,
     },
     options: {
       wrapperClass: 'max-w-[560px]',
@@ -548,6 +558,7 @@ export async function openEditNonceModal(params: IOpenNonceModalParams) {
 export function openUpdateThresholdModal(chainId: number | string, additionalCount: number, {
   activeStep = 0,
   totalSteps = 0,
+  defaultThreshold = undefined,
 } = {}) {
   return openModal({
     component: UpdateThreshold,
@@ -556,6 +567,7 @@ export function openUpdateThresholdModal(chainId: number | string, additionalCou
       additionalCount,
       activeStep,
       totalSteps,
+      thresholdDefault: defaultThreshold,
     },
     options: {
       contentClass: '!p-0',
@@ -599,12 +611,16 @@ export async function openMultisigTransactionDetails(transaction: IMultisigTrans
   })
 }
 
-export function openMultisigSelectNetworkModal(addresses: ISignerAddress[], defaultSelectedNetworks?: number[]) {
+export function openMultisigSelectNetworkModal(params: ISelectSignerNetworkModalParams) {
+  const { addresses, defaultSelectedNetworks, gnosisAddress, defaultThreshold } = params
+
   return openModal({
     component: MultisigSelectNetwork,
     componentProps: {
       addresses,
       defaultSelectedNetworks,
+      gnosisAddress,
+      defaultThreshold,
     },
     options: {
       contentClass: '!p-0',
@@ -637,6 +653,19 @@ export async function openCreateBookmarkModal(props: CreateBookmarkProps) {
     options: {
       wrapperClass: 'max-w-[600px]',
       contentClass: '!p-0',
+    },
+  })
+}
+
+export function openFetchGnosisSafeModal(gnosisAddress?: string) {
+  return openModal({
+    component: FetchGnosisSafe,
+    componentProps: {
+      address: gnosisAddress,
+    },
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[560px]',
     },
   })
 }
