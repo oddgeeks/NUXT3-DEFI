@@ -15,13 +15,6 @@ withDefaults(defineProps<{
 const colors = {
   success: 'bg-green-400',
   error: 'bg-red-alert',
-  info: 'bg-blue-400',
-}
-
-const svgCircleColors = {
-  success: '[&>path]:stroke-green-400',
-  error: '[&>path]:stroke-red-alert',
-  info: '[&>path]:stroke-blue-400',
 }
 
 </script>
@@ -37,9 +30,14 @@ const svgCircleColors = {
         style="word-break: break-word"
         class="text-xs flex gap-2 max-h-20 overflow-auto"
       >
+
         <SVGErrorCircle
-          class="h-4 w-4 shrink-0 [&>rect]:fill-white"
-          :class="svgCircleColors[type]"
+          v-if="type === 'error'"
+          class="h-4 w-4 shrink-0 [&>rect]:fill-white [&>path]:stroke-red-alert"
+        />
+        <SVGCheckCircle
+          v-else
+          class="h-4 w-4 shrink-0 [&>rect]:fill-white [&>path]:stroke-green-400"
         />
 
         {{ message }}

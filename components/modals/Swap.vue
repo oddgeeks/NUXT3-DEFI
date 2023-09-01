@@ -453,7 +453,7 @@ const createRouteBasedTxActions = async (route?: IAggregator): Promise<Transacti
 
 const retryCount = ref(0)
 
-const sendTransactionsWithRetry = async (metadata: string) => {
+const sendTransactionsWithRetry = async (metadata: string): Promise<any> => {
   try {
     const actionsToSend = txActions.value || await createRouteBasedTxActions(selectedRoute.value)
     if (!actionsToSend)
@@ -478,12 +478,9 @@ const sendTransactionsWithRetry = async (metadata: string) => {
     const potentialRoutes = fallbackRoutes.value.length
     if (potentialRoutes > 0 && retryCount.value < potentialRoutes) {
       const nextRoute = fallbackRoutes.value[retryCount.value]
-      openSnackbar({
-        message: `The route through ${selectedRoute.value?.name} is unavailable. Changing to ${nextRoute.name}`,
-        type: 'info',
-      })
       selectedRoute.value = nextRoute
       retryCount.value++
+      return await sendTransactionsWithRetry(metadata)
     } else {
       throw e
     }
