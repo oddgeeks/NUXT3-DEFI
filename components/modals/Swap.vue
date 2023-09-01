@@ -476,7 +476,7 @@ const sendTransactionsWithRetry = async (metadata: string): Promise<any> => {
     }
 
     const potentialRoutes = fallbackRoutes.value.length
-    if (potentialRoutes > 0 && retryCount.value < potentialRoutes) {
+    if (potentialRoutes > 0 && retryCount.value < 1) {
       const nextRoute = fallbackRoutes.value[retryCount.value]
       selectedRoute.value = nextRoute
       retryCount.value++
