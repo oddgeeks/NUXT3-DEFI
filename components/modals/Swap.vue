@@ -285,7 +285,9 @@ async function fetchSwapDetails() {
         .toString()
     }
 
-    bestRoute.value = best
+    selectedRoute.value = best
+    fallbackRoutes.value = data?.aggregators.slice(1)
+    aggregators.value = data?.aggregators
     swapDetails.value.data = data
     swapDetails.value.pending = false
     swapDetails.value.error = ''
@@ -299,10 +301,18 @@ async function fetchSwapDetails() {
   }
 }
 
-const bestRoute = ref<IAggregator>()
+const aggregators = ref<IAggregator[]>([])
+const selectedRoute = ref<IAggregator>()
+const fallbackRoutes = ref<IAggregator[]>([])
+
+const changeRoute = (route: IAggregator) => {
+  selectedRoute.value = route
+  retryCount.value = 0
+  fallbackRoutes.value = aggregators.value.filter(i => i.name !== route.name)
+}
 
 const priceImpact = computed(() =>
-  toBN(bestRoute?.value?.data?.priceImpact || 0)
+  toBN(selectedRoute?.value?.data?.priceImpact || 0)
     .abs()
     .toFixed(),
 )
@@ -390,59 +400,102 @@ function swapTokens() {
   toggleSwapped()
 }
 
-const { data: txs } = useAsyncData(
+const { data: txActions } = useAsyncData(
   async () => {
-    const { valid } = await validate()
-
-    if (!valid)
+    if (!selectedRoute.value)
       return
-    if (!bestRoute.value)
-      throw new Error('Route not found')
-
-    pause()
-
-    const address = bestRoute.value?.data.to
-
-    const erc20 = Erc20__factory.connect(
-      address,
-      getRpcProviderByChainId(toChainId.value),
-    )
-
-    const txs = []
-
-    if (
-      swap.value.sellToken.address
-      !== '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-    ) {
-      const { data } = await erc20.populateTransaction.approve(
-        bestRoute.value.data.allowanceSpender || address,
-        bestRoute.value.data.sellTokenAmount,
-      )
-
-      txs.push({
-        to: swap.value.sellToken.address,
-        data,
-      })
-    }
-
-    txs.push({
-      to: address,
-      data: bestRoute.value?.data.calldata,
-      value: bestRoute.value?.data.value,
-    })
-    return txs
+    return await createRouteBasedTxActions(selectedRoute.value)
   },
   {
-    watch: [bestRoute],
+    watch: [selectedRoute],
     server: false,
   },
 )
+
+const createRouteBasedTxActions = async (route?: IAggregator): Promise<TransactionsAction[]> => {
+  const { valid } = await validate()
+
+  if (!valid)
+    throw new Error('Some input data is missing or invalid')
+
+  if (!route)
+    throw new Error('Route not found')
+
+  const address = route.data.to
+
+  const erc20 = Erc20__factory.connect(
+    address,
+    getRpcProviderByChainId(toChainId.value),
+  )
+
+  const txActions: TransactionsAction[] = []
+  if (swap.value.sellToken.address !== '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
+    const { data } = await erc20.populateTransaction.approve(
+      route.data.allowanceSpender || address,
+      route.data.sellTokenAmount,
+    )
+
+    txActions.push({
+      to: swap.value.sellToken.address,
+      data,
+    })
+  }
+
+  txActions.push({
+    to: address,
+    data: route.data.calldata,
+    value: route.data.value,
+  })
+
+  return txActions
+
+}
+
+const retryCount = ref(0)
+
+const sendTransactionsWithRetry = async (metadata: string) => {
+  try {
+    const actionsToSend = txActions.value || await createRouteBasedTxActions(selectedRoute.value)
+    if (!actionsToSend)
+      throw new Error('Could not create tx actions')
+
+    const txHash = await sendTransactions(
+      actionsToSend,
+      toChainId.value,
+      {
+        metadata
+      },
+      'swap',
+    )
+    return txHash
+  }
+  catch (e: any) {
+    const err = parseTransactionError(e)
+    if (err.formatted?.includes('Signing rejected')) {
+      throw e
+    }
+
+    const potentialRoutes = fallbackRoutes.value.length
+    if (potentialRoutes > 0 && retryCount.value < potentialRoutes) {
+      const nextRoute = fallbackRoutes.value[retryCount.value]
+      openSnackbar({
+        message: `The route through ${selectedRoute.value?.name} is unavailable. Changing to ${nextRoute.name}`,
+        type: 'info',
+      })
+      selectedRoute.value = nextRoute
+      retryCount.value++
+    } else {
+      throw e
+    }
+  }
+}
+
 
 const {
   data,
   pending: feePending,
   error,
-} = useEstimatedFee(txs, toChainId, {
+} = useEstimatedFee(txActions, toChainId, {
   cb: () => {
     resume()
     refreshing.value = false
@@ -458,17 +511,10 @@ const onSubmit = handleSubmit(async () => {
       buyToken: swapDetails.value?.data?.data.buyToken.address!,
       sellToken: swap.value.sellToken.address,
       receiver: account.value,
-      protocol: utils.formatBytes32String(bestRoute?.value?.name || ''),
+      protocol: utils.formatBytes32String(selectedRoute?.value?.name || ''),
     })
 
-    const transactionHash = await sendTransactions(
-      txs.value!,
-      +toChainId.value,
-      {
-        metadata,
-      },
-      'swap',
-    )
+    const transactionHash = await sendTransactionsWithRetry(metadata)
 
     if (!transactionHash)
       return
@@ -543,7 +589,7 @@ watch(inputUSDToggle, async () => {
 const { pause, resume } = useInterval(10000, {
   controls: true,
   callback: () => {
-    if (bestRoute.value?.name !== swapDetails.value.data?.aggregators[0]?.name)
+    if (selectedRoute.value?.name !== swapDetails.value.data?.aggregators[0]?.name)
       return
 
     refreshing.value = true
@@ -552,10 +598,10 @@ const { pause, resume } = useInterval(10000, {
 })
 
 function setAnotherRoute() {
-  const route = swapDetails.value.data?.aggregators?.find(i => i.name !== bestRoute.value?.name)
+  const route = swapDetails.value.data?.aggregators?.find(i => i.name !== selectedRoute.value?.name)
 
   if (route)
-    bestRoute.value = route
+    selectedRoute.value = route
 }
 
 function lc(s: string) {
@@ -909,13 +955,13 @@ onUnmounted(() => {
                   class="rounded-lg loading-box"
                 />
                 <span
-                  v-else-if="!!bestRoute && swapDetails.data?.aggregators?.length"
+                  v-else-if="!!selectedRoute && swapDetails.data?.aggregators?.length"
                   class="capitalize hidden sm:flex items-center gap-2.5"
                 >
                   <Menu v-slot="{ open }" as="div" class="relative">
                     <MenuButton class="flex items-center gap-2.5 rounded-xl px-3 py-2 border border-slate-150 dark:border-slate-750">
-                      <ProtocolLogo class="w-5 h-5" :name="bestRoute.name" />
-                      {{ formatProtocol(bestRoute.name) }}
+                      <ProtocolLogo class="w-5 h-5" :name="selectedRoute.name" />
+                      {{ formatProtocol(selectedRoute.name) }}
                       <SvgoChevronDown class="w-4" :class="open ? 'rotate-180' : ''" />
                     </MenuButton>
                     <transition
@@ -930,7 +976,7 @@ onUnmounted(() => {
                         class="absolute rounded-5 z-20 py-4 top-12 left-1/2 -translate-x-1/2 w-[300px] origin-center dark:bg-gray-850 border-slate-150 border bg-slate-50 dark:border-slate-700"
                       >
                         <template v-for="aggr, i in swapDetails.data?.aggregators" :key="aggr.name">
-                          <MenuItem as="button" type="button" class="font-medium w-full text-left px-4 py-[14px] first:pt-0 last-of-type:pb-0" @click="bestRoute = aggr">
+                          <MenuItem as="button" type="button" class="font-medium w-full text-left px-4 py-[14px] first:pt-0 last-of-type:pb-0" @click="changeRoute(aggr)">
                             <div class="flex gap-2">
                               <ProtocolLogo class="w-5 h-5" :name="aggr.name" />
                               <div class="flex flex-col gap-1 w-full">
@@ -941,7 +987,7 @@ onUnmounted(() => {
                                   <span v-if="i === 0" class="rounded-lg px-2 leading-5 text-[10px] uppercase bg-primary bg-opacity-10 text-primary">
                                     Best Rate
                                   </span>
-                                  <SvgoCheckCircle v-else-if="aggr.name === bestRoute.name" class="w-4 success-circle" />
+                                  <SvgoCheckCircle v-else-if="aggr.name === selectedRoute.name" class="w-4 success-circle" />
                                 </div>
                                 <span class="text-xs text-slate-400">
                                   {{ formatDecimal(fromWei(aggr.data.buyTokenAmount, aggr.data.buyToken.decimals).toFixed()) }}

@@ -103,12 +103,7 @@ export function useAvocadoSafe() {
   }
 
   const sendTransactions = async (
-    transactions: {
-      to: string
-      value?: string
-      data?: string
-      operation?: string
-    }[],
+    transactions: TransactionsAction[],
     chainId: number | string,
     options: { metadata?: string; id?: string } = {},
     transactionType: TransactionActionType,

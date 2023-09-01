@@ -294,7 +294,7 @@ interface IModal {
 
 type ISnackOptions = {
   message: string;
-  type: "success" | "error";
+  type: "success" | "error" | "info";
   open?: boolean;
   timeout?: number;
 };
