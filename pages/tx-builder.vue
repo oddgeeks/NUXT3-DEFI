@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { TransactionBuilder } from '@instadapp/transaction-builder'
+import { AbiFetcher } from '@instadapp/utils'
+import { isAddress } from 'ethers/lib/utils'
 import { useForm } from 'vee-validate'
 
 definePageMeta({
@@ -12,6 +14,7 @@ useAccountTrack(undefined, () => {
 
 const method = ref()
 const ABI = ref()
+const contractAddress = ref()
 
 function isJsonString(str: string) {
   try {
@@ -30,6 +33,19 @@ const { handleSubmit } = useForm()
 const onSubmit = handleSubmit(async (values) => {
   console.log(values)
 })
+
+watchDebounced(contractAddress, async () => {
+  if (!isAddress(contractAddress.value))
+    return
+
+  const fetcher = new AbiFetcher()
+
+  const selam = await fetcher.get(contractAddress.value, 'polygon')
+
+  ABI.value = JSON.stringify(selam, null, 2)
+}, {
+  debounce: 1000,
+})
 </script>
 
 <template>
@@ -40,7 +56,7 @@ const onSubmit = handleSubmit(async (values) => {
       </h1>
 
       <div class="flex flex-col gap-4">
-        <CommonInput placeholder="Enter Address or ENS Name" />
+        <CommonInput v-model="contractAddress" name="contractAddress" placeholder="Enter Address or ENS Name" />
 
         <textarea v-model="ABI" rows="5" placeholder="Enter ABI" class="dark:bg-slate-800  bg-slate-100 focus-within:ring-1 dark:focus-within:bg-gray-850 focus-within:bg-slate-50 dark:focus-within:ring-slate-750 focus-within:ring-slate-100" />
         <template v-if="builder">

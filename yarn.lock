@@ -1829,17 +1829,17 @@
     semver "^7.3.8"
     tiny-warning "^1.0.3"
 
-"@instadapp/transaction-builder@^0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@instadapp/transaction-builder/-/transaction-builder-0.0.9.tgz#87840a0b45ee991fe45eb5c3e753149fea41c2b3"
-  integrity sha512-k5cGEBq89gtxpdCvAu+EQNFZTxFRUCe9NDvF/1h2bNIb8K+Xj84cwyWQpYoF8f/MHW6/+bQDYBHfqbFInkryPg==
+"@instadapp/transaction-builder@^0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@instadapp/transaction-builder/-/transaction-builder-0.0.10.tgz#103633ccef5ecec36732cc21b21bba21cbed2269"
+  integrity sha512-PHDsUEgMtyujmmRZVwRPc3xgFOWvFV3tWEnR2zi7D4ZW0B1iKp/gOhLua+ma66m6Pkg+PqdajyfJgMpBEsqKPg==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
 
-"@instadapp/utils@^0.4.7":
-  version "0.4.7"
-  resolved "https://registry.yarnpkg.com/@instadapp/utils/-/utils-0.4.7.tgz#3441eece53712e71320eb21b55a049f605fb228d"
-  integrity sha512-NCceEXDoH4BZ/fzyCHEjVIk2GW7mmpViAoVjM3KskwpcC2qErTnBo1eokODic+IeWrsQNvhBLmKkRgUTpgv9wA==
+"@instadapp/utils@^0.4.8":
+  version "0.4.9"
+  resolved "https://registry.yarnpkg.com/@instadapp/utils/-/utils-0.4.9.tgz#81ca8d53f2f66e3202817f75ed320ec4e2691aca"
+  integrity sha512-ae6njKZ+AmvtA3kWPQE2egN5XsqHRmbkCVzAkjVr1RuWBptg5Q5cW8MkJnh11IkfRRBtr8yZ8tumdjUyj7469w==
   dependencies:
     "@ethersproject/address" "^5.6.1"
     "@ethersproject/contracts" "^5.6.2"

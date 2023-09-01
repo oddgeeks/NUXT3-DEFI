@@ -24,8 +24,6 @@ const { value, errorMessage } = useField<any>(() => props.input.name, (val) => {
 
   val = safeParse(val)
 
-  console.log(val)
-
   if (isInputTypeArray && !Array.isArray(val))
     return 'input must be an array'
 
