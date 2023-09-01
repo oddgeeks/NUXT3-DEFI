@@ -3,7 +3,7 @@ import { getAddress } from 'ethers/lib/utils'
 
 const { mainSafe, multiSigSafe, safes, legacySafe, legacySafeAddress, safesLoading, safeAddress, selectedSafe } = storeToRefs(useSafe())
 
-const hideLegacySafe = useLocalStorage('hide-legacy-safe', true)
+const hideLegacySafe = useLocalStorage('hide-legacy-safe', false)
 
 const filteredSafes = computed(() => {
   if (!safes.value)
