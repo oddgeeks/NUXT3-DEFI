@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 import collect from 'collect.js'
-import { getAddress, isAddress } from 'ethers/lib/utils'
+import { deepCopy, getAddress, isAddress } from 'ethers/lib/utils'
 import axios from 'axios'
 import { wait } from '@instadapp/utils'
 import type { IToken } from './tokens'
@@ -193,6 +193,27 @@ export const useSafe = defineStore('safe', () => {
   const networkPreference = ref(
     availableNetworks.map(el => el.chainId),
   )
+
+  const networkOrderedBySumTokens = computed(() => {
+    const networks = deepCopy(availableNetworks)
+    const sortedBySumTokens = networks.map((network) => {
+      const balanceInNetwork = balances.value.data?.reduce(
+        (acc, curr) => {
+          if (curr.chainId === network.chainId.toString())
+            return acc.plus(curr.balanceInUSD || '0')
+          return acc
+        }, toBN(0)) || toBN(0)
+
+      return {
+        ...network,
+        sumBalanceInUsd: balanceInNetwork.toString(),
+      }
+    })
+    .sort((a, b) => {
+      return toBN(b.sumBalanceInUsd).minus(a.sumBalanceInUsd).toNumber()
+    })
+    return sortedBySumTokens
+  })
 
   const eoaBalances = ref<IBalance[]>()
   const balances = ref({
@@ -810,6 +831,7 @@ export const useSafe = defineStore('safe', () => {
     getSafeOptions,
     optionsLoading,
     refreshSelectedSafe,
+    networkOrderedBySumTokens,
   }
 })
 

@@ -5,13 +5,13 @@ const props = defineProps({
     required: false,
   },
 })
-const { safeAddress } = useAvocadoSafe()
+const { safeAddress, networkOrderedBySumTokens } = useAvocadoSafe()
 
 const visibleNetworks = computed(() => {
   if (props.maxCount)
-    return availableNetworks.slice(0, props.maxCount)
+    return networkOrderedBySumTokens.value.slice(0, props.maxCount)
 
-  return availableNetworks
+  return networkOrderedBySumTokens.value
 })
 </script>
 
