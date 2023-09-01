@@ -121,7 +121,8 @@ async function onSubmit() {
       baseURL: multisigURL,
     })
 
-    const message = `\n${'`Multisig Hash`'} <${config.domainURL}/multisig/${data.safe_address}/pending-transactions/${data.id}| ${shortenHash(data.id)}>`
+    const message = `\n${'`Transaction Type`'} ${props.transactionType}
+${'`Multisig Hash`'} <${config.domainURL}/multisig/${data.safe_address}/pending-transactions/${data.id}| ${shortenHash(data.id)}>`
 
     logActionToSlack({
       account: account.value,

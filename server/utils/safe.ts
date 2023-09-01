@@ -1,8 +1,7 @@
-import { MultisigForwarder__factory } from '@instadapp/avocado-base/contracts'
 import { serialize } from 'error-serializer'
 import { ethers } from 'ethers'
 import { forwarderProxyAddress, multisigForwarderProxyAddress } from '@/utils/avocado'
-import { AvoMultisigImplementation__factory, Forwarder__factory, GaslessWallet__factory } from '@/contracts'
+import { AvoMultisigImplementation__factory, Forwarder__factory, GaslessWallet__factory, MultisigForwarder__factory } from '@/contracts'
 
 interface ISafe {
   safe_address: string
