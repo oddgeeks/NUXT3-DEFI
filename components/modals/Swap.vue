@@ -471,9 +471,8 @@ const sendTransactionsWithRetry = async (metadata: string): Promise<any> => {
   }
   catch (e: any) {
     const err = parseTransactionError(e)
-    if (err.formatted?.includes('Signing rejected')) {
+    if (err.formatted?.includes('Signing rejected'))
       throw e
-    }
 
     const potentialRoutes = fallbackRoutes.value.length
     if (potentialRoutes > 0 && retryCount.value < 1) {
@@ -481,9 +480,8 @@ const sendTransactionsWithRetry = async (metadata: string): Promise<any> => {
       selectedRoute.value = nextRoute
       retryCount.value++
       return await sendTransactionsWithRetry(metadata)
-    } else {
-      throw e
     }
+    throw e
   }
 }
 
