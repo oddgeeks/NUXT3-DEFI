@@ -479,6 +479,8 @@ const sendTransactionsWithRetry = async (metadata: string): Promise<any> => {
       const nextRoute = fallbackRoutes.value[retryCount.value]
       selectedRoute.value = nextRoute
       retryCount.value++
+      console.log(`Switching to route ${nextRoute.name}`)
+      await createRouteBasedTxActions(nextRoute)
       return await sendTransactionsWithRetry(metadata)
     }
     throw e
