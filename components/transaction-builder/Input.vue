@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { InputType, TransactionBuilder } from '@instadapp/transaction-builder'
 import { ethers } from 'ethers'
+import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
 
 const props = defineProps<{
   input: InputType
@@ -57,9 +58,10 @@ function onInput(value: any) {
 
       <CommonInput :placeholder="input.type" @input="onInput($event.target.value)" />
 
-      <p v-if="error" class="text-sm text-red-alert">
+      <span v-if="error" class="text-xs flex gap-2 items-center text-left mt-2 text-red-alert">
+        <SVGInfo class="shrink-0" />
         {{ error }}
-      </p>
+      </span>
     </div>
   </div>
 </template>
