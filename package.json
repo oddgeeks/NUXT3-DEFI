@@ -20,7 +20,7 @@
     "@headlessui/vue": "^1.7.12",
     "@instadapp/avocado": "^0.4.5",
     "@instadapp/avocado-dev": "npm:@instadapp/avocado@dev",
-    "@instadapp/transaction-builder": "^0.0.11",
+    "@instadapp/transaction-builder": "^0.0.0-dev.da2da31",
     "@instadapp/utils": "^0.4.7",
     "@instadapp/vue-web3-nuxt": "^0.10.1",
     "@nuxtjs/color-mode": "^3.3.0",

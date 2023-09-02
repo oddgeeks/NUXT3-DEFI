@@ -12,15 +12,29 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['update:modelValue'])
-const newType = props.input.type.replace('[]', '')
+const newInputShape = {
+  ...props.input,
+  type: props.input.type.replace('[]', ''),
+}
 const error = ref('')
 </script>
 
 <template>
   <div class="space-y-4">
-    <CommonInput :placeholder="newType" />
-    <CommonInput :placeholder="newType" />
-    <CommonInput :placeholder="newType" />
-    <CommonInput :placeholder="newType" />
+    <div>
+      <TransactionBuilderInput
+        :input="newInputShape" :index="0"
+        :tx-builder="txBuilder"
+      />
+    </div>
+
+    <hr class="border-slate-150 dark:border-slate-800 my-5">
+
+    <div>
+      <TransactionBuilderInput
+        :input="newInputShape" :index="0"
+        :tx-builder="txBuilder"
+      />
+    </div>
   </div>
 </template>
