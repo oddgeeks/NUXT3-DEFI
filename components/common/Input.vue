@@ -8,7 +8,7 @@ const props = withDefaults(
     inputClasses?: string
     containerClasses?: string
     disabled?: boolean
-    name: string
+    name?: string
     errorMessage?: string
     type?: 'text' | 'number' | 'numeric' | 'password' | 'email' | 'tel' | 'url' | 'search'
     errorType?: 'error' | 'warning'
