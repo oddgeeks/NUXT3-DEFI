@@ -1829,10 +1829,10 @@
     semver "^7.3.8"
     tiny-warning "^1.0.3"
 
-"@instadapp/transaction-builder@^0.0.0-dev.da2da31":
-  version "0.0.0-dev.da2da31"
-  resolved "https://registry.yarnpkg.com/@instadapp/transaction-builder/-/transaction-builder-0.0.0-dev.da2da31.tgz#0c10cf6ffef6b04d6dd686115a0de655bc20aecd"
-  integrity sha512-jM78317qImdYh3ArWpVC5yoHU4sEHcvrV/Z+oXIDM3Gn4igJkjKkAlhBbwpfysQOYH8VIKhjLcQ/oCwcO1URfw==
+"@instadapp/transaction-builder@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@instadapp/transaction-builder/-/transaction-builder-0.0.12.tgz#fe9af3efa90a449c566691e4286c4b8218fd20e4"
+  integrity sha512-ZFRrltjfDmsi5N4dTYUSkZM+XZVC6GigfQfz08wI54zhzh4fCnLx/mfncn+JFgvG82Fa08N4nnq2xKmJxDvc2w==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
 
