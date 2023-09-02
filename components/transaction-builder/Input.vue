@@ -35,7 +35,7 @@ function onInput(value: any) {
 </script>
 
 <template>
-  <div class="border px-4 py-3 rounded-lg border-gray-500">
+  <div class="border px-4 py-3 rounded-lg border-gray-800">
     <div v-if="input.type === 'tuple'" class="space-y-3">
       <label>{{ input.name }}</label>
 
