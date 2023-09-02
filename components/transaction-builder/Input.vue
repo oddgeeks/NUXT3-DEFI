@@ -45,7 +45,7 @@ function onInput(value: any) {
       />
     </div>
     <div v-else-if="input.type.includes('[]')" class="space-y-3">
-      <label>{{ input.name }}</label>
+      <label>{{ input.name }} (array)</label>
 
       <TransactionBuilderInputArray :key="input.type" :index="index" :input="input" :tx-builder="txBuilder" />
     </div>
