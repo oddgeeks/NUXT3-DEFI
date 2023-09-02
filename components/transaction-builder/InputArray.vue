@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import type { StructType, TransactionBuilder } from '@instadapp/transaction-builder'
+import type { InputType, TransactionBuilder } from '@instadapp/transaction-builder'
 
-type InputType = ReturnType<TransactionBuilder['getMethodInputs']>[number]
 const props = defineProps<{
-  input: InputType | StructType
+  input: InputType
   index: number
   method?: string
   txBuilder: TransactionBuilder
@@ -16,14 +15,13 @@ const newInputShape = {
   ...props.input,
   type: props.input.type.replace('[]', ''),
 }
-const error = ref('')
 </script>
 
 <template>
   <div class="space-y-4">
     <div>
       <TransactionBuilderInput
-        :input="newInputShape" :index="0"
+        :input="{ ...newInputShape, name: `${newInputShape.name} 0` }" :index="0"
         :tx-builder="txBuilder"
       />
     </div>
@@ -32,9 +30,20 @@ const error = ref('')
 
     <div>
       <TransactionBuilderInput
-        :input="newInputShape" :index="0"
+        :input="{ ...newInputShape, name: `${newInputShape.name} 1` }" :index="0"
         :tx-builder="txBuilder"
       />
     </div>
+
+    <hr class="border-slate-150 dark:border-slate-800 my-5">
+
+    <div>
+      <TransactionBuilderInput
+        :input="{ ...newInputShape, name: `${newInputShape.name} 2` }" :index="0"
+        :tx-builder="txBuilder"
+      />
+    </div>
+
+    <!-- ... -->
   </div>
 </template>
