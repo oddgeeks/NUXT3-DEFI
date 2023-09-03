@@ -305,10 +305,16 @@ const aggregators = ref<IAggregator[]>([])
 const selectedRoute = ref<IAggregator>()
 const fallbackRoutes = ref<IAggregator[]>([])
 
-const changeRoute = (route: IAggregator) => {
+const userChangeRoute = (route: IAggregator) => {
   selectedRoute.value = route
-  retryCount.value = 0
   fallbackRoutes.value = aggregators.value.filter(i => i.name !== route.name)
+  resetRetryCounts()
+}
+
+
+const resetRetryCounts = () => {
+  txRetryCount.value = 0
+  esimatedFeeRetryCount.value = 0
 }
 
 const priceImpact = computed(() =>
@@ -412,6 +418,10 @@ const { data: txActions } = useAsyncData(
   },
 )
 
+/**
+ * Creates a set of txActions based on the selected route
+ * @param route
+ */
 const createRouteBasedTxActions = async (route?: IAggregator): Promise<TransactionsAction[]> => {
   const { valid } = await validate()
 
@@ -451,8 +461,14 @@ const createRouteBasedTxActions = async (route?: IAggregator): Promise<Transacti
 
 }
 
-const retryCount = ref(0)
+const txRetryCount = ref(0)
 
+/**
+ * This functions retrys the swap tx if it fails for any reason.
+ * The retry triggers a change in the selectedRoutes and creates a set of new txActions
+ * @param metadata
+ * @returns txHash as a string
+ */
 const sendTransactionsWithRetry = async (metadata: string): Promise<any> => {
   try {
     const actionsToSend = txActions.value || await createRouteBasedTxActions(selectedRoute.value)
@@ -474,30 +490,57 @@ const sendTransactionsWithRetry = async (metadata: string): Promise<any> => {
     if (err.formatted?.includes('Signing rejected'))
       throw e
 
-    const potentialRoutes = fallbackRoutes.value.length
-    if (potentialRoutes > 0 && retryCount.value < 1) {
-      const nextRoute = fallbackRoutes.value[retryCount.value]
-      selectedRoute.value = nextRoute
-      retryCount.value++
-      console.log(`Switching to route ${nextRoute.name}`)
+
+    const nextRoute = changeRouteForRetry(txRetryCount, 1)
+    if (nextRoute) {
+      txRetryCount.value++
       await createRouteBasedTxActions(nextRoute)
       return await sendTransactionsWithRetry(metadata)
     }
+
     throw e
   }
 }
 
+
+const totalRetries = computed(() => {
+  return txRetryCount.value + esimatedFeeRetryCount.value
+})
+
+/**
+ * Changes the route if the current route fails for any reason and increments the retryCount
+ * The current implementation supports cycling through all the fallback routes
+ * Retry policy is set to 1
+ */
+const changeRouteForRetry = (retryCount: Ref<number>, maxRetry = 1) => {
+  if (fallbackRoutes.value.length > totalRetries.value && retryCount.value < maxRetry) {
+    const nextRoute = fallbackRoutes.value[totalRetries.value]
+    selectedRoute.value = nextRoute
+    retryCount.value++
+    console.log(`Switching to route ${nextRoute.name}`)
+    return nextRoute
+  }
+}
+
+const esimatedFeeRetryCount = ref(0)
 
 const {
   data,
   pending: feePending,
   error,
 } = useEstimatedFee(txActions, toChainId, {
-  cb: () => {
-    resume()
-    refreshing.value = false
+    cb: () => {
+      resume()
+      refreshing.value = false
+    },
   },
-})
+  {
+    active: true,
+    count: esimatedFeeRetryCount,
+    max: 1,
+    cb: changeRouteForRetry
+  }
+)
 
 const onSubmit = handleSubmit(async () => {
   try {
@@ -594,13 +637,6 @@ const { pause, resume } = useInterval(10000, {
   },
 })
 
-function setAnotherRoute() {
-  const route = swapDetails.value.data?.aggregators?.find(i => i.name !== selectedRoute.value?.name)
-
-  if (route)
-    selectedRoute.value = route
-}
-
 function lc(s: string) {
   return s.toLocaleLowerCase()
 }
@@ -656,6 +692,7 @@ watch(slippage, () => {
 
 watch([sellAmount, swapped, actualSlippage, toChainId], () => {
   fetchSwapDetails()
+  resetRetryCounts()
 })
 
 onUnmounted(() => {
@@ -973,7 +1010,7 @@ onUnmounted(() => {
                         class="absolute rounded-5 z-20 py-4 top-12 left-1/2 -translate-x-1/2 w-[300px] origin-center dark:bg-gray-850 border-slate-150 border bg-slate-50 dark:border-slate-700"
                       >
                         <template v-for="aggr, i in swapDetails.data?.aggregators" :key="aggr.name">
-                          <MenuItem as="button" type="button" class="font-medium w-full text-left px-4 py-[14px] first:pt-0 last-of-type:pb-0" @click="changeRoute(aggr)">
+                          <MenuItem as="button" type="button" class="font-medium w-full text-left px-4 py-[14px] first:pt-0 last-of-type:pb-0" @click="userChangeRoute(aggr)">
                             <div class="flex gap-2">
                               <ProtocolLogo class="w-5 h-5" :name="aggr.name" />
                               <div class="flex flex-col gap-1 w-full">
