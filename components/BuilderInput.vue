@@ -1,49 +1,105 @@
 <script setup lang="ts">
-import type { TransactionBuilder } from '@instadapp/transaction-builder'
+import type { InputType, TransactionBuilder } from '@instadapp/transaction-builder'
 import { serialize } from 'error-serializer'
+import { ethers } from 'ethers'
 
-import { useField } from 'vee-validate'
+import { useField, useFieldArray } from 'vee-validate'
 
 const props = defineProps<{
-  input: any
+  input: InputType
   method: string
   builder: TransactionBuilder
+  name: string
 }>()
 
-function safeParse(s: string) {
-  try {
-    return JSON.parse(s)
+const isArr = computed(() => props.input.type.includes('[]'))
+const isTuple = computed(() => props.input.type === 'tuple')
+
+const actualComponents = computed(() => {
+  if (isArr.value && !props.input.components?.length) {
+    const type = props.input.type.replace('[]', '')
+    return [
+      {
+        baseType: type,
+        type,
+        name: props.input.name,
+        components: [],
+      },
+    ]
   }
-  catch (e) {
-    return s
+  else {
+    return props.input.components
   }
+})
+
+const actualType = computed(() => props.input.type.replace('[]', ''))
+
+function getActualInputName(input: InputType, index?: number): string {
+  const rootInputName = props.name
+
+  return isArr.value
+    ? !input.components?.length && input.baseType == 'tuple' ? `${rootInputName}[${index}]` : `${rootInputName}[${index}].${input.name}`
+    : isTuple.value
+      ? `${rootInputName}.${input.name}`
+      : rootInputName
 }
 
-const { value, errorMessage } = useField<any>(() => props.input.name, (val) => {
-  const isInputTypeArray = props.input.type.includes('[]')
+const { fields, push, remove } = useFieldArray(props.input.type)
 
-  val = safeParse(val)
+const { value, errorMessage } = isArr.value || isTuple.value
+  ? ({ value: undefined, errorMessage: '' })
+  : useField<any>(() => getActualInputName(props.input), (val) => {
+    try {
+      ethers.utils.defaultAbiCoder.encode([props.input.type], [val])
+      return true
+    }
+    catch (e) {
+      const parsed = serialize(e)
 
-  if (isInputTypeArray && !Array.isArray(val))
-    return 'input must be an array'
+      return parsed?.reason || parsed.message
+    }
+  })
 
-  try {
-    props.builder.validateMethodInput(props.method, props.input.name, val)
-    return true
-  }
-  catch (e) {
-    const parsed = serialize(e)
-
-    return parsed?.reason || parsed.message
-  }
+onMounted(() => {
+  if (isArr.value && !fields.value.length)
+    push({})
 })
 </script>
 
 <template>
-  <div>
-    <label class="text-sm mb-2 block">
-      {{ input.name }} ({{ input.type }})
-    </label>
-    <CommonInput v-model="value" :error-message="errorMessage" :name="input.name" />
+  <div class="flex flex-col gap-2">
+    <div v-if="actualComponents && actualComponents.length > 0" class="flex flex-col gap-4 rounded-lg">
+      <template v-if="input.type === 'tuple'">
+        <BuilderInput
+          v-for="i in actualComponents"
+          :key="i.name"
+          :name="getActualInputName(i)"
+          :builder="builder" :method="method" :input="i"
+        />
+      </template>
+      <template v-else>
+        <div v-for="field, t in fields" :key="t" class="relative rounded-lg ring-1 p-4">
+          <button v-if="t === 0" class="w-5 absolute right-2 top-0 h-5 flex items-center justify-center self-end bg-primary rounded-full" type="button" @click="push({})">
+            <SvgoPlus />
+          </button>
+          <button v-else class="w-5 absolute right-2 top-0 h-5 flex items-center justify-center self-end bg-red-alert rounded-full" type="button" @click="remove(t)">
+            -
+          </button>
+          <BuilderInput
+            v-for="i in actualComponents" :key="i.name"
+            :name="getActualInputName(i, t)"
+            :builder="builder" :method="method" :input="i"
+          />
+        </div>
+      </template>
+    </div>
+
+    <template v-else>
+      <label class="text-sm mb-2 block">
+        {{ input.name }} ({{ actualType }})
+      </label>
+      <CommonToggle v-if="actualType === 'bool'" v-model="value" :name="name" />
+      <CommonInput v-else v-model="value" :error-message="errorMessage" :name="name" />
+    </template>
   </div>
 </template>

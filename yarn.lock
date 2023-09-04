@@ -1836,7 +1836,7 @@
   dependencies:
     "@ethersproject/abi" "^5.7.0"
 
-"@instadapp/utils@^0.4.8":
+"@instadapp/utils@^0.4.7":
   version "0.4.9"
   resolved "https://registry.yarnpkg.com/@instadapp/utils/-/utils-0.4.9.tgz#81ca8d53f2f66e3202817f75ed320ec4e2691aca"
   integrity sha512-ae6njKZ+AmvtA3kWPQE2egN5XsqHRmbkCVzAkjVr1RuWBptg5Q5cW8MkJnh11IkfRRBtr8yZ8tumdjUyj7469w==

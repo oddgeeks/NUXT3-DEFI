@@ -4,7 +4,8 @@ import { SlickItem, SlickList } from 'vue-slicksort'
 import { TransactionBuilder } from '@instadapp/transaction-builder'
 import { AbiFetcher } from '@instadapp/utils'
 import { isAddress } from 'ethers/lib/utils'
-import { useForm } from 'vee-validate'
+import { useField, useForm } from 'vee-validate'
+import { serialize } from 'error-serializer'
 
 definePageMeta({
   middleware: 'auth',
@@ -15,14 +16,19 @@ useAccountTrack(undefined, () => {
 })
 
 const method = ref()
-const ABI = ref()
-const contractAddress = ref()
+const ABI = ref('[{"inputs":[{"internalType":"address","name":"addr1","type":"address"}],"name":"typeAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"addr1Array","type":"address[]"}],"name":"typeArrayAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bool[]","name":"bool1Array","type":"bool[]"}],"name":"typeArrayBoolean","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes[]","name":"bytesTypeArray","type":"bytes[]"}],"name":"typeArrayBytes","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32[]","name":"bytesType32Array","type":"bytes32[]"}],"name":"typeArrayBytes32","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4[]","name":"bytesType4Array","type":"bytes4[]"}],"name":"typeArrayBytes4","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"int256[]","name":"num1Array","type":"int256[]"}],"name":"typeArrayInt256","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"int256","name":"num2","type":"int256"},{"internalType":"address","name":"addr","type":"address"},{"internalType":"bool","name":"boolean","type":"bool"},{"internalType":"bytes32","name":"bytes32Data","type":"bytes32"},{"internalType":"bytes4","name":"bytes4Data","type":"bytes4"},{"internalType":"bytes","name":"bytesData","type":"bytes"},{"internalType":"uint8","name":"numUint8","type":"uint8"}],"internalType":"struct TxBuilder.Common[]","name":"common","type":"tuple[]"}],"name":"typeArrayStuctCommon","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"components":[{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"int256","name":"num2","type":"int256"},{"internalType":"address","name":"addr","type":"address"},{"internalType":"bool","name":"boolean","type":"bool"},{"internalType":"bytes32","name":"bytes32Data","type":"bytes32"},{"internalType":"bytes4","name":"bytes4Data","type":"bytes4"},{"internalType":"bytes","name":"bytesData","type":"bytes"},{"internalType":"uint8","name":"numUint8","type":"uint8"}],"internalType":"struct TxBuilder.Common","name":"common","type":"tuple"},{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"uint8","name":"numUint8","type":"uint8"}],"internalType":"struct TxBuilder.CommonNested[]","name":"commonNested","type":"tuple[]"}],"name":"typeArrayStuctCommonNested","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"uint256[]","name":"num2","type":"uint256[]"}],"internalType":"struct TxBuilder.Uint256Array[]","name":"uint256Array","type":"tuple[]"}],"name":"typeArrayStuctUint256Array","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256[]","name":"num1Array","type":"uint256[]"}],"name":"typeArrayUint256","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint8[]","name":"num1Array","type":"uint8[]"}],"name":"typeArrayUint8","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bool","name":"bool1","type":"bool"}],"name":"typeBoolean","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes","name":"bytesType","type":"bytes"}],"name":"typeBytes","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"bytesType32","type":"bytes32"}],"name":"typeBytes32","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"bytesType4","type":"bytes4"}],"name":"typeBytes4","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"address","name":"addr","type":"address"},{"internalType":"bool","name":"boolean","type":"bool"},{"internalType":"bytes32","name":"hash","type":"bytes32"}],"name":"typeCommon","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"address[]","name":"addr","type":"address[]"},{"internalType":"bool[]","name":"boolean","type":"bool[]"},{"internalType":"bytes32","name":"hash","type":"bytes32"}],"name":"typeCommonArray","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"int256","name":"num1","type":"int256"}],"name":"typeInt256","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"int256","name":"num2","type":"int256"},{"internalType":"address","name":"addr","type":"address"},{"internalType":"bool","name":"boolean","type":"bool"},{"internalType":"bytes32","name":"bytes32Data","type":"bytes32"},{"internalType":"bytes4","name":"bytes4Data","type":"bytes4"},{"internalType":"bytes","name":"bytesData","type":"bytes"},{"internalType":"uint8","name":"numUint8","type":"uint8"}],"internalType":"struct TxBuilder.Common","name":"common","type":"tuple"}],"name":"typeStuctCommon","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"components":[{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"int256","name":"num2","type":"int256"},{"internalType":"address","name":"addr","type":"address"},{"internalType":"bool","name":"boolean","type":"bool"},{"internalType":"bytes32","name":"bytes32Data","type":"bytes32"},{"internalType":"bytes4","name":"bytes4Data","type":"bytes4"},{"internalType":"bytes","name":"bytesData","type":"bytes"},{"internalType":"uint8","name":"numUint8","type":"uint8"}],"internalType":"struct TxBuilder.Common","name":"common","type":"tuple"},{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"uint8","name":"numUint8","type":"uint8"}],"internalType":"struct TxBuilder.CommonNested","name":"commonNested","type":"tuple"}],"name":"typeStuctCommonNested","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"uint256[]","name":"num2","type":"uint256[]"}],"internalType":"struct TxBuilder.Uint256Array","name":"uint256Array","type":"tuple"}],"name":"typeStuctUint256Array","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"num1","type":"uint256"}],"name":"typeUint256","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint8","name":"num1","type":"uint8"}],"name":"typeUint8","outputs":[],"stateMutability":"nonpayable","type":"function"}]')
 const pending = ref(false)
 
-const transactions = ref<any>([])
-const actualTransactions = computed(() => transactions.value.map(i => i.tx))
+const { value: contractAddress, errorMessage } = useField<string>('contractAddress', val => isAddress(val!))
+const { value: toAddress, errorMessage: toAddressError } = useField<string>('toAddress', val => isAddress(val!))
+const { value: chainId } = useField<number>('chainId', val => !!val, {
+  initialValue: 137,
+})
 
-const { data, pending: estimatePending, error } = useEstimatedFee(actualTransactions, ref(137), {
+const transactions = ref<any>([])
+const actualTransactions = computed(() => transactions.value.map((i: any) => i.tx))
+
+const { data, pending: estimatePending, error } = useEstimatedFee(actualTransactions, chainId, {
   immediate: true,
 })
 
@@ -43,32 +49,43 @@ const builder = computed(() => isJsonString(ABI.value) ? new TransactionBuilder(
 const { handleSubmit, resetForm, meta } = useForm()
 
 const onSubmit = handleSubmit(async (values) => {
-  if (!builder.value)
-    return
+  try {
+    if (!builder.value)
+      return
 
-  const args = builder.value.getMethodInputs(method.value).map((i) => {
-    return values[i.name]
-  })
+    const args = builder.value.getMethodInputs(method.value).map((i) => {
+      const value = values[i?.name!]
 
-  console.log(args)
+      builder.value?.validateMethodInput(method.value, i?.name!, value)
+      return value
+    })
 
-  const data = await builder.value.build(method.value, args)
+    const data = await builder.value.build(method.value, args)
 
-  const tx = {
-    data,
-    value: 0,
-    operation: 0,
-    target: contractAddress.value,
+    const tx = {
+      data,
+      value: 0,
+      operation: 0,
+      target: contractAddress.value,
+    }
+
+    const arr = [{
+      tx,
+      method: method.value,
+    }]
+
+    transactions.value = arr.concat(transactions.value)
+
+    resetForm()
   }
+  catch (e) {
+    const parsed = serialize(e)
 
-  const arr = [{
-    tx,
-    method: method.value,
-  }]
-
-  transactions.value = arr.concat(transactions.value)
-
-  resetForm()
+    notify({
+      type: 'error',
+      message: parsed.message,
+    })
+  }
 })
 
 watchDebounced(contractAddress, async () => {
@@ -92,10 +109,10 @@ watchDebounced(contractAddress, async () => {
 })
 
 async function handleSendTransaction() {
-  const tx = await sendTransactions(transactions.value, 137, undefined, 'others')
+  const tx = await sendTransactions(transactions.value, chainId.value, undefined, 'others')
 
   if (tx)
-    showPendingTransactionModal(tx, 137)
+    showPendingTransactionModal(tx, chainId.value)
 }
 </script>
 
@@ -108,10 +125,33 @@ async function handleSendTransaction() {
           <SvgSpinner v-if="pending" />
         </h1>
 
-        <div class="flex flex-col gap-4">
-          <CommonInput v-model="contractAddress" name="contractAddress" placeholder="Enter Address or ENS Name" />
+        <form class="flex flex-col gap-4" @submit="onSubmit">
+          <div class="flex w-full gap-4">
+            <CommonInput v-model="contractAddress" class="flex-1" :error-message="errorMessage" name="contractAddress" placeholder="Enter Address" />
+
+            <CommonSelect
+              v-model="chainId"
+              value-key="chainId"
+              label-key="name"
+              :options="availableNetworks"
+            >
+              <template #button-prefix>
+                <ChainLogo class="w-6 h-6 shrink-0" :chain="chainId" />
+              </template>
+              <template #item-prefix="{ value }">
+                <ChainLogo class="w-6 h-6 shrink-0" :chain="value" />
+              </template>
+            </CommonSelect>
+          </div>
 
           <textarea v-model="ABI" rows="5" placeholder="Enter ABI" class="dark:bg-slate-800  bg-slate-100 focus-within:ring-1 dark:focus-within:bg-gray-850 focus-within:bg-slate-50 dark:focus-within:ring-slate-750 focus-within:ring-slate-100" />
+          <div>
+            <span>
+              To address
+            </span>
+            <CommonInput v-model="toAddress" :error-message="toAddressError" name="contractAddress" placeholder="Enter Address" />
+          </div>
+
           <template v-if="builder">
             <label for="">Write Methods</label>
             <select v-model="method" class="dark:bg-slate-800  bg-slate-100 focus-within:ring-1 dark:focus-within:bg-gray-850 focus-within:bg-slate-50 dark:focus-within:ring-slate-750 focus-within:ring-slate-100">
@@ -122,14 +162,12 @@ async function handleSendTransaction() {
           </template>
 
           <template v-if="builder && method">
-            <form @submit="onSubmit">
-              <BuilderInput v-for="input in builder.getMethodInputs(method)" :key="input.name" :method="method" :builder="builder" :input="input" />
-              <CommonButton :disabled="!meta.valid" type="submit" class="mt-8">
-                Add
-              </CommonButton>
-            </form>
+            <BuilderInput v-for="input in builder.getMethodInputs(method)" :key="input.name" :name="input.name || ''" :method="method" :builder="builder" :input="input" />
+            <CommonButton :disabled="!meta.valid" type="submit" class="mt-8">
+              Add
+            </CommonButton>
           </template>
-        </div>
+        </form>
       </div>
       <div class="flex flex-col gap-4">
         <h1>
