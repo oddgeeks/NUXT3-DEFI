@@ -43,6 +43,9 @@ const builder = computed(() => isJsonString(ABI.value) ? new TransactionBuilder(
 const { handleSubmit, resetForm, meta } = useForm()
 
 const onSubmit = handleSubmit(async (values) => {
+  if (!builder.value)
+    return
+
   const args = builder.value.getMethodInputs(method.value).map((i) => {
     return values[i.name]
   })
