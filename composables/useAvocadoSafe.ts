@@ -3,10 +3,8 @@ import { VoidSigner, ethers } from 'ethers'
 import axios from 'axios'
 
 import { isUndefined } from '@walletconnect/utils'
-import { GaslessWallet__factory } from '@instadapp/avocado-base/contracts'
 import {
   AvoMultisigImplementation__factory,
-  MultisigForwarder__factory,
 } from '@/contracts'
 
 export function useAvocadoSafe() {
@@ -15,7 +13,7 @@ export function useAvocadoSafe() {
   const { library, account } = useWeb3()
   const { trackingAccount, isTrackingMode } = useAccountTrack()
   const { getRpcProviderByChainId } = useShared()
-  const { avoProvider, getSafeOptions, refreshSelectedSafe } = useSafe()
+  const { avoProvider, getSafeOptions, refreshSelectedSafe, getFallbackSafeOptionsByChainId } = useSafe()
   const { selectedSafe, isSelectedSafeLegacy, safeOptions } = storeToRefs(useSafe())
   const { clearAllModals } = useModal()
   const dryRun = useCookie<boolean | undefined>('dry-run')
@@ -345,13 +343,10 @@ export function useAvocadoSafe() {
     if (!signer.value)
       throw new Error('Safe not initialized')
 
-    const networkMultisigForwarderProxy = MultisigForwarder__factory.connect(
-      multisigForwarderProxyAddress,
-      getRpcProviderByChainId(params.targetChainId),
-    )
+    const config = await getFallbackSafeOptionsByChainId(selectedSafe.value!, params.targetChainId)
 
-    let name
-    let version
+    if (!config)
+      throw new Error('Config not found')
 
     const types = {
       Cast: [
@@ -386,25 +381,9 @@ export function useAvocadoSafe() {
       ],
     }
 
-    const provider = getRpcProviderByChainId(params.targetChainId)
-
-    const wallet = GaslessWallet__factory.connect(
-      safeAddress.value,
-      provider,
-    )
-
-    try {
-      version = await wallet.DOMAIN_SEPARATOR_VERSION()
-      name = await wallet.DOMAIN_SEPARATOR_NAME()
-    }
-    catch (error) {
-      version = await networkMultisigForwarderProxy.avocadoVersion('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', selectedSafe.value?.multisig_index || 0)
-      name = await networkMultisigForwarderProxy.avocadoVersionName('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', selectedSafe.value?.multisig_index || 0)
-    }
-
     const domain = {
-      name,
-      version,
+      name: config.domainName,
+      version: config.domainVersion,
       chainId: String(avoChainId),
       salt: ethers.utils.solidityKeccak256(['uint256'], [params.targetChainId]),
       verifyingContract: selectedSafe.value?.safe_address,
@@ -428,40 +407,16 @@ export function useAvocadoSafe() {
 
     const avoSigner = library.value.getSigner()
 
-    const contract = AvoMultisigImplementation__factory.connect(safeAddress.value, getRpcProviderByChainId(chainId))
+    const config = await getFallbackSafeOptionsByChainId(selectedSafe.value!, chainId)
 
-    const networkMultisigForwarderProxy = MultisigForwarder__factory.connect(
-      multisigForwarderProxyAddress,
-      getRpcProviderByChainId(chainId),
-    )
-
-    let domainSeparatorName: string
-    let domainSeparatorVersion: string
-
-    try {
-      [domainSeparatorName, domainSeparatorVersion] = await Promise.all([
-        contract.DOMAIN_SEPARATOR_NAME(),
-        contract.DOMAIN_SEPARATOR_VERSION(),
-      ])
-    }
-    catch (error) {
-      [domainSeparatorName, domainSeparatorVersion] = await Promise.all([
-        networkMultisigForwarderProxy.avocadoVersionName(
-          '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-          selectedSafe.value?.multisig_index || 0,
-        ),
-        networkMultisigForwarderProxy.avocadoVersion(
-          '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-          selectedSafe.value?.multisig_index || 0,
-        ),
-      ])
-    }
+    if (!config)
+      throw new Error('Config not found')
 
     const verifyingContract = selectedSafe.value?.safe_address!
 
     const domain = {
-      name: domainSeparatorName,
-      version: domainSeparatorVersion,
+      name: config?.domainName,
+      version: config?.domainVersion,
       chainId: avoChainId,
       verifyingContract,
       salt: ethers.utils.solidityKeccak256(['uint256'], [chainId]),
@@ -558,23 +513,14 @@ export function useAvocadoSafe() {
     })
   }
 
-  async function getCurrentNonce(chainId: number | string, ownerAddress: string, multisafeIndex = 0) {
+  async function getCurrentNonce(chainId: number | string) {
     try {
-      const underlyingProvider = new ethers.providers.JsonRpcProvider(getRpcURLByChainId(chainId))
-      const multisigForwarderProxyContract = MultisigForwarder__factory.connect(
-        multisigForwarderProxyAddress,
-        underlyingProvider,
-      )
+      const config = await getFallbackSafeOptionsByChainId(selectedSafe.value!, chainId)
 
-      const currentNonce = (await multisigForwarderProxyContract.avoNonce(ownerAddress, multisafeIndex)).toNumber()
-
-      console.log({
-        currentNonce,
-      })
-
-      return currentNonce
+      return config.nonce
     }
     catch (error) {
+      console.log(error, 'Error while fetching nonce')
       return 0
     }
   }
@@ -655,7 +601,7 @@ export function useAvocadoSafe() {
     if (!selectedSafe.value?.owner_address)
       return
 
-    const currentNonce = await getCurrentNonce(chainId, selectedSafe.value?.owner_address, selectedSafe.value.multisig_index)
+    const currentNonce = await getCurrentNonce(chainId)
 
     console.log({ currentNonce, owner: selectedSafe.value?.owner_address, index: selectedSafe.value.multisig_index })
 
