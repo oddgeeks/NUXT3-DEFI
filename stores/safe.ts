@@ -209,9 +209,9 @@ export const useSafe = defineStore('safe', () => {
         sumBalanceInUsd: balanceInNetwork.toString(),
       }
     })
-    .sort((a, b) => {
-      return toBN(b.sumBalanceInUsd).minus(a.sumBalanceInUsd).toNumber()
-    })
+      .sort((a, b) => {
+        return toBN(b.sumBalanceInUsd).minus(a.sumBalanceInUsd).toNumber()
+      })
     return sortedBySumTokens
   })
 
@@ -545,6 +545,24 @@ export const useSafe = defineStore('safe', () => {
     )
   }
 
+  async function getFallbackSafeOptionsByChainId(safe: ISafe, chainId: number | string): Promise<ISafeOptions> {
+    try {
+      const config = await getSafeOptionsByChain(safe, chainId, getRpcBatchProviderByChainId(chainId))
+      return config
+    }
+    catch (e) {
+      const config = await http(`/api/${chainId}/safes/${safe.safe_address}`, {
+        params: {
+          multisig_index: safe.multisig_index,
+          multisig: safe.multisig,
+          owner_address: safe.owner_address,
+        },
+      })
+
+      return config
+    }
+  }
+
   async function getSafeOptions(safe: ISafe) {
     try {
       await until(() => balances.value.loading).toMatch(s => !s)
@@ -832,6 +850,7 @@ export const useSafe = defineStore('safe', () => {
     optionsLoading,
     refreshSelectedSafe,
     networkOrderedBySumTokens,
+    getFallbackSafeOptionsByChainId,
   }
 })
 
