@@ -57,6 +57,14 @@ export async function getSafeOptionsByChain(safe: ISafe, chainId: string | numbe
     )
   }
 
+  function domainName(): Promise<string> {
+    return implInstance.DOMAIN_SEPARATOR_NAME()
+  }
+
+  function domainVersion(): Promise<string> {
+    return implInstance.DOMAIN_SEPARATOR_VERSION()
+  }
+
   function nonce(): Promise<number> {
     return multisigForwarderInstance.avoNonce(safe.owner_address, safe.multisig_index).then(nonce => toBN(nonce).toNumber())
   }
@@ -65,7 +73,7 @@ export async function getSafeOptionsByChain(safe: ISafe, chainId: string | numbe
     return implInstance.requiredSigners()
   }
 
-  const [_threshold, _nonce, _latestVersion, _currentVersion] = await Promise.all([
+  const [_threshold, _nonce, _latestVersion, _currentVersion, _domainName, _domainVersion] = await Promise.all([
     threshold()
       .catch((e) => {
         const parsed = serialize(e)
@@ -103,6 +111,14 @@ export async function getSafeOptionsByChain(safe: ISafe, chainId: string | numbe
 
         throw e
       }),
+    domainName().catch(() => multisigForwarderInstance.avocadoVersionName(
+      '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+      safe.multisig_index,
+    )),
+    domainVersion().catch(() => multisigForwarderInstance.avocadoVersion(
+      '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+      safe.multisig_index,
+    )),
   ])
 
   obj.chainId = chainId
@@ -113,6 +129,8 @@ export async function getSafeOptionsByChain(safe: ISafe, chainId: string | numbe
   obj.safeAddress = safe.safe_address
   obj.ownerAddress = safe.owner_address
   obj.server = server
+  obj.domainName = _domainName
+  obj.domainVersion = _domainVersion
 
   return obj
 }
