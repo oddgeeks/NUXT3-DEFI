@@ -1829,10 +1829,10 @@
     semver "^7.3.8"
     tiny-warning "^1.0.3"
 
-"@instadapp/transaction-builder@^0.0.10":
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/@instadapp/transaction-builder/-/transaction-builder-0.0.10.tgz#103633ccef5ecec36732cc21b21bba21cbed2269"
-  integrity sha512-PHDsUEgMtyujmmRZVwRPc3xgFOWvFV3tWEnR2zi7D4ZW0B1iKp/gOhLua+ma66m6Pkg+PqdajyfJgMpBEsqKPg==
+"@instadapp/transaction-builder@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@instadapp/transaction-builder/-/transaction-builder-0.0.12.tgz#fe9af3efa90a449c566691e4286c4b8218fd20e4"
+  integrity sha512-ZFRrltjfDmsi5N4dTYUSkZM+XZVC6GigfQfz08wI54zhzh4fCnLx/mfncn+JFgvG82Fa08N4nnq2xKmJxDvc2w==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
 
@@ -11756,6 +11756,11 @@ vue-router@^4.2.4:
   integrity sha512-9PISkmaCO02OzPVOMq2w82ilty6+xJmQrarYZDkjZBfl4RvYAlt4PKnEX21oW4KTtWfa9OuO/b3qk1Od3AEdCQ==
   dependencies:
     "@vue/devtools-api" "^6.5.0"
+
+vue-slicksort@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/vue-slicksort/-/vue-slicksort-2.0.5.tgz#d080829de9d04b16e8d194ed8b4e219a501091a2"
+  integrity sha512-fXz1YrNjhUbJK7o0tMk27mIr4pMAZYLSYvtmLazCtfpvz+zafPCn34ILDL8B7hT7WLVZKreYs6JVe5VWymqmzA==
 
 vue-tippy@^6.0.0:
   version "6.3.1"

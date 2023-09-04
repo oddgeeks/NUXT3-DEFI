@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { SlickItem, SlickList } from 'vue-slicksort'
+
 import { TransactionBuilder } from '@instadapp/transaction-builder'
 import { AbiFetcher } from '@instadapp/utils'
 import { isAddress } from 'ethers/lib/utils'
@@ -18,8 +20,9 @@ const contractAddress = ref()
 const pending = ref(false)
 
 const transactions = ref<any>([])
+const actualTransactions = computed(() => transactions.value.map(i => i.tx))
 
-const { data, pending: estimatePending, error } = useEstimatedFee(transactions, ref(137), {
+const { data, pending: estimatePending, error } = useEstimatedFee(actualTransactions, ref(137), {
   immediate: true,
 })
 
@@ -37,10 +40,16 @@ function isJsonString(str: string) {
 
 const builder = computed(() => isJsonString(ABI.value) ? new TransactionBuilder(JSON.parse(JSON.stringify(ABI.value))) : null)
 
-const { handleSubmit, resetForm } = useForm()
+const { handleSubmit, resetForm, meta } = useForm()
 
 const onSubmit = handleSubmit(async (values) => {
-  const data = builder.value.build(method.value, Object.values(values).reverse())
+  const args = builder.value.getMethodInputs(method.value).map((i) => {
+    return values[i.name]
+  })
+
+  console.log(args)
+
+  const data = await builder.value.build(method.value, args)
 
   const tx = {
     data,
@@ -49,7 +58,10 @@ const onSubmit = handleSubmit(async (values) => {
     target: contractAddress.value,
   }
 
-  const arr = [tx]
+  const arr = [{
+    tx,
+    method: method.value,
+  }]
 
   transactions.value = arr.concat(transactions.value)
 
@@ -109,7 +121,7 @@ async function handleSendTransaction() {
           <template v-if="builder && method">
             <form @submit="onSubmit">
               <BuilderInput v-for="input in builder.getMethodInputs(method)" :key="input.name" :method="method" :builder="builder" :input="input" />
-              <CommonButton type="submit" class="mt-8">
+              <CommonButton :disabled="!meta.valid" type="submit" class="mt-8">
                 Add
               </CommonButton>
             </form>
@@ -120,15 +132,17 @@ async function handleSendTransaction() {
         <h1>
           Send Transaction
         </h1>
-        <ul v-if="transactions.length">
-          <li v-for="tx in transactions" :key="tx.data">
-            {{ shortenHash(tx.data) }}
-          </li>
+        <ul v-if="transactions.length" class="flex flex-col gap-4">
+          <SlickList v-model:list="transactions" axis="y">
+            <SlickItem v-for="(tx, i) in transactions" :key="tx.data" :index="i">
+              {{ tx.method }}
+            </SlickItem>
+          </SlickList>
         </ul>
 
         <EstimatedFee :data="data" :loading="estimatePending" :error="error" />
 
-        <CommonButton v-if="transactions.length" class="max-w-fit" type="button" @click="handleSendTransaction">
+        <CommonButton v-if="transactions.length" :disabled="estimatePending" class="max-w-fit" type="button" @click="handleSendTransaction">
           Send transaction
         </CommonButton>
       </div>
