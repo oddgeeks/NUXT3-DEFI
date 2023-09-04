@@ -1836,10 +1836,10 @@
   dependencies:
     "@ethersproject/abi" "^5.7.0"
 
-"@instadapp/utils@^0.4.7":
-  version "0.4.7"
-  resolved "https://registry.yarnpkg.com/@instadapp/utils/-/utils-0.4.7.tgz#3441eece53712e71320eb21b55a049f605fb228d"
-  integrity sha512-NCceEXDoH4BZ/fzyCHEjVIk2GW7mmpViAoVjM3KskwpcC2qErTnBo1eokODic+IeWrsQNvhBLmKkRgUTpgv9wA==
+"@instadapp/utils@^0.4.8":
+  version "0.4.9"
+  resolved "https://registry.yarnpkg.com/@instadapp/utils/-/utils-0.4.9.tgz#81ca8d53f2f66e3202817f75ed320ec4e2691aca"
+  integrity sha512-ae6njKZ+AmvtA3kWPQE2egN5XsqHRmbkCVzAkjVr1RuWBptg5Q5cW8MkJnh11IkfRRBtr8yZ8tumdjUyj7469w==
   dependencies:
     "@ethersproject/address" "^5.6.1"
     "@ethersproject/contracts" "^5.6.2"
@@ -11756,6 +11756,11 @@ vue-router@^4.2.4:
   integrity sha512-9PISkmaCO02OzPVOMq2w82ilty6+xJmQrarYZDkjZBfl4RvYAlt4PKnEX21oW4KTtWfa9OuO/b3qk1Od3AEdCQ==
   dependencies:
     "@vue/devtools-api" "^6.5.0"
+
+vue-slicksort@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/vue-slicksort/-/vue-slicksort-2.0.5.tgz#d080829de9d04b16e8d194ed8b4e219a501091a2"
+  integrity sha512-fXz1YrNjhUbJK7o0tMk27mIr4pMAZYLSYvtmLazCtfpvz+zafPCn34ILDL8B7hT7WLVZKreYs6JVe5VWymqmzA==
 
 vue-tippy@^6.0.0:
   version "6.3.1"

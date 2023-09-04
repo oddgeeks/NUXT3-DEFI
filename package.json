@@ -75,6 +75,7 @@
   },
   "dependencies": {
     "@instadapp/avocado-base": "0.0.67",
+    "@instadapp/transaction-builder": "^0.0.12",
     "@splidejs/vue-splide": "^0.6.12",
     "@walletconnect/utils": "^2.9.2",
     "alchemy-sdk": "^2.7.4",
@@ -83,6 +84,7 @@
     "error-serializer": "^5.1.0",
     "fuse.js": "^6.6.2",
     "semver": "^7.3.8",
+    "vue-slicksort": "^2.0.5",
     "xxhashjs": "^0.2.2"
   }
 }
