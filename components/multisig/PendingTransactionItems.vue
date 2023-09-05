@@ -1,5 +1,6 @@
 <script setup lang=ts>
 import axios from 'axios'
+import { getAddress } from 'ethers/lib/utils'
 
 const props = defineProps<{
   chainId: string | number
@@ -11,6 +12,11 @@ const emit = defineEmits(['onToggle'])
 const abortController = ref<AbortController | null>(null)
 
 const { lastModal } = useModal()
+
+const { account } = useWeb3()
+const { isAccountCanSign } = useMultisig()
+const { selectedSafe, safeOptions } = storeToRefs(useSafe())
+const { checkTransactionExecuted } = useAvocadoSafe()
 
 const isCollapseAll = inject<Ref<boolean>>('isCollapseAll', ref(false))
 const route = useRoute()
@@ -88,6 +94,8 @@ const { data, refresh, pending } = useAsyncData(`${key.value}`, async () => {
   server: false,
 })
 
+const canSign = computed(() => isAccountCanSign(props.chainId, account.value, selectedSafe.value?.owner_address))
+
 const groupedData = computed(() => {
   const groupedData = groupBy(data.value?.data || [], (item) => {
     return item.groupKey || item.nonce
@@ -127,6 +135,29 @@ function refreshAll() {
   refresh()
 }
 
+const isYourSignNeeded = computed(() => {
+  if (!selectedSafe.value?.safe_address || !account.value || !canSign.value)
+    return false
+
+  return data.value?.data.some((data_item) => {
+    const executing = useCookie(`executing-${data_item.id}`, {
+      default() {
+        return false
+      },
+    })
+    const isConfirmationsMatch = gte(data_item.confirmations.length, data_item.confirmations_required)
+    const isTransactionExecuted = checkTransactionExecuted(data_item)
+    const isTransactionFailed = data_item.status === 'failed'
+    console.log(executing, isTransactionExecuted, isConfirmationsMatch, isTransactionFailed)
+    if (executing.value || isTransactionExecuted || isConfirmationsMatch || isTransactionFailed)
+      return false
+    return getAddress(data_item.safe_address) === getAddress(selectedSafe.value?.safe_address || '')
+      && !data_item.confirmations.find(item =>
+        getAddress(account.value) === getAddress(item.address),
+      )
+  })
+})
+
 watch(lastModal, () => {
   // Refresh data when modal is closed
   if (!lastModal.value)
@@ -151,16 +182,22 @@ onUnmounted(() => {
         {{ chainIdToName(chainId) }}
 
       </span>
-
       <div>
         {{ data.meta.total }} total transaction{{ data.meta.total > 1 ? 's' : '' }}
       </div>
 
       <SvgSpinner v-if="pending" class="text-primary" />
-
-      <SvgoChevronDown
-        class="w-5 text-slate-400 ml-auto group-open:rotate-180"
-      />
+      <div class="ml-auto flex">
+        <div v-if="!canSign" class="text-red-alert bg-red-alert bg-opacity-10 text-xs px-3 py-1 rounded-full">
+          Unauthorized network
+        </div>
+        <div v-if="isYourSignNeeded" class="text-orange-400 text-xs">
+          Your Signers needed
+        </div>
+        <SvgoChevronDown
+          class="w-5 text-slate-400 ml-5 group-open:rotate-180"
+        />
+      </div>
     </summary>
 
     <div class="flex flex-col sm:gap-0 gap-4 sm:p-0 p-5">
