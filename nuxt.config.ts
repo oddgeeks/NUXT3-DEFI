@@ -5,7 +5,7 @@ const meta = {
   title: 'Avocado',
   description:
     'The web3 superwallet - making your web3 interactions much simpler & safer',
-  image: 'https://avocado.instadapp.io/logo.png',
+  image: 'https://avocado-git-logo-update-v2-instadapp-eng.vercel.app/logo.png',
 }
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
