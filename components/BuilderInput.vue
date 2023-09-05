@@ -13,7 +13,6 @@ const props = defineProps<{
 }>()
 
 const isArr = computed(() => props.input.type.includes('[]'))
-const isTuple = computed(() => props.input.type === 'tuple')
 
 const actualComponents = computed(() => {
   if (isArr.value && !props.input.components?.length) {
@@ -34,21 +33,21 @@ const actualComponents = computed(() => {
 
 const actualType = computed(() => props.input.type.replace('[]', ''))
 
-function getActualInputName(input: InputType, index?: number): string {
-  const rootInputName = props.name
+function getInputName(name: string, index?: number, fieldIndex?: string | number) {
+  if (index !== undefined)
+    name += `[${index}]`
 
-  return isArr.value
-    ? !input.components?.length && input.baseType == 'tuple' ? `${rootInputName}[${index}]` : `${rootInputName}[${index}].${input.name}`
-    : isTuple.value
-      ? `${rootInputName}.${input.name}`
-      : rootInputName
+  if (fieldIndex !== undefined)
+    name += `[${fieldIndex}]`
+
+  return name
 }
 
 const { fields, push, remove } = useFieldArray(props.input.type)
 
-const { value, errorMessage } = isArr.value || isTuple.value
+const { value, errorMessage } = actualComponents.value && actualComponents.value.length > 0
   ? ({ value: undefined, errorMessage: '' })
-  : useField<any>(() => getActualInputName(props.input), (val) => {
+  : useField<any>(() => props.name, (val) => {
     try {
       ethers.utils.defaultAbiCoder.encode([props.input.type], [val])
       return true
@@ -73,8 +72,10 @@ onMounted(() => {
         <BuilderInput
           v-for="i in actualComponents"
           :key="i.name"
-          :name="getActualInputName(i)"
-          :builder="builder" :method="method" :input="i"
+          :builder="builder"
+          :method="method"
+          :input="i"
+          :name="getInputName(name, undefined, i.type)"
         />
       </template>
       <template v-else>
@@ -85,11 +86,18 @@ onMounted(() => {
           <button v-else class="w-5 absolute right-2 top-0 h-5 flex items-center justify-center self-end bg-red-alert rounded-full" type="button" @click="remove(t)">
             -
           </button>
-          <BuilderInput
-            v-for="i in actualComponents" :key="i.name"
-            :name="getActualInputName(i, t)"
-            :builder="builder" :method="method" :input="i"
-          />
+
+          <template
+            v-for="i, k in actualComponents"
+            :key="i.name"
+          >
+            <BuilderInput
+              :builder="builder"
+              :method="method"
+              :name="getInputName(name, t, k)"
+              :input="i"
+            />
+          </template>
         </div>
       </template>
     </div>

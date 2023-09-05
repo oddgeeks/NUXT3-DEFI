@@ -65,7 +65,7 @@
     "unplugin-vue-inspector": "^0.3.0",
     "uuid": "^9.0.0",
     "uuidv4": "^6.2.13",
-    "vee-validate": "^4.7.4",
+    "vee-validate": "^4.11.3",
     "vue-currency-input": "^3.0.5",
     "vue-gtag-next": "^1.14.0",
     "vue-lite-youtube-embed": "^1.2.0",
