@@ -96,7 +96,7 @@ export default defineNuxtConfig({
           content: 'https://avocado.instadapp.io',
         },
         {
-          property: 'og:image',
+          name: 'og:image',
           content: meta.image,
         },
         {
