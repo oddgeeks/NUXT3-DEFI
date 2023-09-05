@@ -308,7 +308,6 @@ const fallbackRoutes = ref<IAggregator[]>([])
 const userChangeRoute = (route: IAggregator) => {
   selectedRoute.value = route
   fallbackRoutes.value = aggregators.value.filter(i => i.name !== route.name)
-  resetRetryCounts()
 }
 
 
