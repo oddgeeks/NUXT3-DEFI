@@ -28,7 +28,7 @@ function handleToggle() {
 }
 
 const displayLegacySafe = computed(() => {
-  return legacySafeAddress && legacySafe && !userToggleHideLegacy.value && legacySafeHasGas
+  return legacySafeAddress.value && legacySafe.value && !userToggleHideLegacy.value && legacySafeHasGas.value
 })
 </script>
 

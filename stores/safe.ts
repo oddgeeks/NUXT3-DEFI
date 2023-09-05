@@ -133,6 +133,8 @@ export const useSafe = defineStore('safe', () => {
 
     const cachedSafeAddress = getCachedSafeAddress(account.value)
 
+    console.log({ cachedSafeAddress })
+
     const [availableSafes, legacySafeInstance] = await Promise.all([
       getSafes(account.value),
       getSafe(oldSafeAddress),
