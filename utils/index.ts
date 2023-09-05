@@ -319,11 +319,14 @@ export function isAddressEqual(a?: string, b?: string) {
   return getAddress(a) === getAddress(b)
 }
 
-export function abbreviateNumber(healthFactor: string | number) {
-  if (isNaN(toBN(healthFactor).toNumber()))
-    return healthFactor
+export function abbreviateNumber(num: string | number) {
+  if (isNaN(toBN(num).toNumber()))
+    return num
+
+  if (toBN(num).toNumber() < 100000)
+    return formatDecimal(num)
 
   const formatter = new Intl.NumberFormat('en', { notation: 'compact', compactDisplay: 'short', maximumFractionDigits: 2 })
-  const value = formatter.format(toBN(healthFactor).toNumber())
+  const value = formatter.format(toBN(num).toNumber())
   return value
 }
