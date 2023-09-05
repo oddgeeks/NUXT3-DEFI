@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import WorldSVG from '~/assets/images/icons/world.svg?component'
 
-const { safeAddress } = useAvocadoSafe()
+const { safeAddress, networkOrderedBySumTokens } = useAvocadoSafe()
 
 const suffix = computed<any>(() => {
   if (safeAddress.value)
@@ -19,7 +19,7 @@ const suffix = computed<any>(() => {
     </div>
     <ul class="flex flex-col gap-5 bg-slate-50 dark:bg-gray-850 px-5 py-4 rounded-5">
       <li
-        v-for="network in availableNetworks"
+        v-for="network in networkOrderedBySumTokens"
         :key="network.chainId"
       >
         <a

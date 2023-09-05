@@ -7,11 +7,28 @@ const itemsRef = ref<HTMLElement | null>(null)
 const [isCollapseAll, toggle] = useToggle(false)
 const isCollapseAllDisabled = ref(false)
 
+const { getSafeOptions } = useSafe()
+const { selectedSafe, safeOptions } = storeToRefs(useSafe())
+
 provide('isCollapseAll', isCollapseAll)
 
 useAccountTrack(undefined, () => {
   useEagerConnect()
 })
+
+async function syncOptions() {
+  if (!selectedSafe.value)
+    return
+
+  await until(selectedSafe).toMatch(s => !!s?.safe_address)
+
+  if (!safeOptions.value?.length)
+    return
+
+  await wait(1000)
+
+  getSafeOptions(selectedSafe.value)
+}
 
 function syncToggles() {
   if (itemsRef.value) {
@@ -102,6 +119,7 @@ watch(activeTab, async () => {
 
 onMounted(() => {
   syncToggles()
+  syncOptions()
 })
 </script>
 
@@ -130,7 +148,7 @@ onMounted(() => {
             </span>
           </button>
         </div>
-        <button :disabled="isCollapseAllDisabled" class="text-primary text-xs disabled:text-slate-400" type="button" @click="toggle(true)">
+        <button v-if="activeTab !== 'completed'" :disabled="isCollapseAllDisabled" class="text-primary text-xs disabled:text-slate-400" type="button" @click="toggle(true)">
           Collapse All
         </button>
       </div>
@@ -139,7 +157,10 @@ onMounted(() => {
         {{ title }}
       </h2>
       <div ref="itemsRef" class="gap-5 flex flex-col">
-        <MultisigPendingTransactionItems v-for="network in availableNetworks" :key="network.chainId" :active-tab="activeTab" :chain-id="network.chainId" @on-toggle="syncToggles" />
+        <template v-if="activeTab === 'completed'">
+          <MultisigPendingTransactionItems network-cell-visible :active-tab="activeTab" @on-toggle="syncToggles" />
+        </template>
+        <MultisigPendingTransactionItems v-for="network in availableNetworks" v-else :key="network.chainId" :active-tab="activeTab" :chain-id="network.chainId" @on-toggle="syncToggles" />
       </div>
     </div>
   </div>

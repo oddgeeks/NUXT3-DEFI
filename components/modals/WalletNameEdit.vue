@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['destroy'])
-const walletName = useLocalStorage(`safe-${props.safe?.safe_address}`, 'Personal')
+const walletName = useLocalStorage(`safe-label-${props.safe?.safe_address}`, 'Personal')
 
 const {
   handleSubmit,

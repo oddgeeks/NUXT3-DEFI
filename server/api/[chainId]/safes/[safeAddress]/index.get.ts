@@ -1,21 +1,8 @@
 // Setup provider AnkrProvider
 
-import { ethers } from 'ethers'
-import { isAddress } from 'ethers/lib/utils'
+import { isAddress } from '@ethersproject/address'
 import * as Yup from 'yup'
-
-const serverRpcInstances = {} as Record<string, ethers.providers.StaticJsonRpcProvider>
-
-function getServerBatchedRpcProvider(chainId: number | string) {
-  if (!serverRpcInstances[chainId]) {
-    const network = networks.find(n => n.chainId == chainId)
-    serverRpcInstances[chainId] = new ethers.providers.JsonRpcBatchProvider(
-      network?.serverRpcUrl,
-    )
-  }
-
-  return serverRpcInstances[chainId]
-}
+import { getServerBatchedRpcProvider } from '@/server/utils/safe'
 
 export default defineEventHandler(async (event) => {
   const chainId = getRouterParam(event, 'chainId')
@@ -32,9 +19,9 @@ export default defineEventHandler(async (event) => {
 
   await schema.validate(query)
 
-  const { multisig, multisig_index = 0, owner_address, deployed = {} } = schema.cast(query)
+  const { multisig = 0, multisig_index = 0, owner_address, deployed = {} } = schema.cast(query)
 
-  if (!multisig || !owner_address) {
+  if (!owner_address) {
     return createError({
       message: 'Failed to parse query',
       statusCode: 500,

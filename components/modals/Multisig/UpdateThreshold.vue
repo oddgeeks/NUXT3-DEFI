@@ -6,6 +6,7 @@ const props = defineProps<{
   additionalCount: number
   activeStep?: number
   totalSteps?: number
+  thresholdDefault?: number
 }>()
 
 defineEmits(['resolve'])
@@ -14,7 +15,7 @@ const { safeOptions, selectedSafe } = storeToRefs(useSafe())
 
 const requiredSignersByChain = computed(() => safeOptions.value.find(i => i.chainId == props.chainId))
 
-const defaultThreshold = computed(() => requiredSignersByChain.value?.threshold || 1)
+const defaultThreshold = computed(() => props.thresholdDefault || requiredSignersByChain.value?.threshold || 1)
 
 const threshold = ref(defaultThreshold.value)
 
@@ -64,7 +65,7 @@ onMounted(() => {
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <div class="sm:p-7.5 p-6">
-      <CommonButton class="w-full justify-center" size="lg" @click="$emit('resolve', true, defaultThreshold === threshold ? undefined : threshold)">
+      <CommonButton class="w-full justify-center" size="lg" @click="$emit('resolve', true, threshold)">
         Continue
       </CommonButton>
     </div>

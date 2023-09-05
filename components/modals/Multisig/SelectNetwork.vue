@@ -4,10 +4,14 @@ import { major } from 'semver'
 const props = defineProps<{
   addresses: ISignerAddress[]
   defaultSelectedNetworks?: number[]
+  defaultThreshold?: number
+  gnosisAddress?: string
 }>()
 
 const emit = defineEmits(['destroy', 'resolve'])
 const { safeOptions } = storeToRefs(useSafe())
+
+const steps = useState<SignerSteps>('signer-steps')
 
 const selectedNetworks = ref<number[]>(props.defaultSelectedNetworks || [])
 
@@ -25,24 +29,40 @@ function isSelected(chainId: number | string) {
   return selectedNetworks.value.includes(Number(chainId))
 }
 
+function handleSelectAll() {
+  selectedNetworks.value = availableNetworks.map(i => i.chainId)
+}
+
+function handleDeselectAll() {
+  selectedNetworks.value = []
+}
+
 function handleSubmit() {
+  steps.value.currentStep += 1
   emit('destroy')
-  openSignSignerModal(props.addresses, selectedNetworks.value)
+  openSignSignerModal(props.addresses, selectedNetworks.value, props.gnosisAddress, props.defaultThreshold)
 }
 
 function handleBack() {
+  steps.value.currentStep -= 1
   emit('destroy')
-  openReviewSignerModal(props.addresses)
+
+  openReviewSignerModal({
+    addresses: props.addresses,
+    gnosisAddress: props.gnosisAddress,
+    defaultSelectedNetworks: props.defaultSelectedNetworks,
+    defaultThreshold: props.defaultThreshold,
+  })
 }
 </script>
 
 <template>
   <form @submit.prevent="handleSubmit">
     <div class="flex flex-col gap-7.5 sm:p-7.5 p-5">
-      <Steps class="mr-10" :total-steps="4" :current-step="3" />
+      <Steps class="mr-10" :total-steps="steps?.totalSteps" :current-step=" steps?.currentStep" />
       <div class="flex gap-[14px]">
         <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
-          3
+          {{ steps.currentStep }}
         </div>
         <div class="flex gap-1">
           <h1>
@@ -53,6 +73,13 @@ function handleBack() {
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <div class="sm:p-7.5 py-5 px-6">
+      <button v-if="selectedNetworks.length === availableNetworks.length" class="text-xs absolute right-7.5 text-primary" type="button" @click="handleDeselectAll">
+        Deselect all
+      </button>
+
+      <button v-else class="text-xs absolute right-7.5 text-primary" type="button" @click="handleSelectAll">
+        Select all
+      </button>
       <template v-if="deployedNetworks?.length">
         <h2 class="text-sm mb-4">
           Deployed

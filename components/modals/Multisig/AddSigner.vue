@@ -6,13 +6,18 @@ import { useFieldArray, useForm } from 'vee-validate'
 const props = defineProps<{
   addresses?: ISignerAddress[]
   defaultThreshold?: number
+  gnosisAddress?: string
+  defaultSelectedNetworks?: number[]
 }>()
 
 const emit = defineEmits(['destroy'])
 
 const { account } = useWeb3()
-const { getContactNameByAddress } = useContacts()
 const contactSelections = ref<number[]>([])
+
+const steps = useState<SignerSteps>('signer-steps')
+
+const isGnosisMigration = computed(() => !!props.gnosisAddress)
 
 const {
   handleSubmit,
@@ -22,8 +27,7 @@ const {
   validationSchema: yup.object({
     addresses: yup
       .array(yup.object({
-        name: yup.string()
-          .required(''),
+        name: yup.string(),
         address: yup.string()
           .required('')
           .test('is-valid-address', 'Incorrect address', (value) => {
@@ -38,16 +42,6 @@ const {
               return account.value?.toLowerCase() !== value?.toLowerCase()
             },
           )
-          .test('contact-already-exist', 'Contact already exists, please select from contacts list', (value, ctx) => {
-            if (!isAddress(value || ''))
-              return true
-
-            const contactName = ctx.parent?.name
-
-            const contact = getContactNameByAddress(value || '', 'Owner')
-
-            return contact ? contact?.toLowerCase() === contactName?.toLowerCase() : true
-          })
           .test(
             'duplicate-address',
             'Signer already added',
@@ -81,9 +75,15 @@ function getErrorMessage(errors: any, errorKey: string) {
 }
 
 const onSubmit = handleSubmit(async () => {
+  steps.value.currentStep += 1
   const addresses = fields.value.map(field => field.value)
 
-  openReviewSignerModal(addresses)
+  openReviewSignerModal({
+    addresses,
+    gnosisAddress: props.gnosisAddress,
+    defaultSelectedNetworks: props.defaultSelectedNetworks,
+    defaultThreshold: props.defaultThreshold,
+  })
   emit('destroy')
 })
 
@@ -110,16 +110,23 @@ async function handleSelectContact(key: number) {
     contactSelections.value.push(key)
   }
 }
+
+function handleBackClick() {
+  steps.value.currentStep -= 1
+  emit('destroy')
+
+  if (isGnosisMigration.value)
+    openFetchGnosisSafeModal(props.gnosisAddress)
+}
 </script>
 
 <template>
   <form @submit="onSubmit">
     <div class="flex flex-col sm:p-7.5 p-5 gap-7.5">
-      <Steps class="mr-10" :total-steps="4" :current-step="1" />
-
+      <Steps class="mr-10" :total-steps="steps?.totalSteps || 4" :current-step="steps?.currentStep || 1" />
       <div class="flex gap-[14px]">
         <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
-          1
+          {{ steps?.currentStep || 1 }}
         </div>
         <div class="flex flex-col gap-1">
           <h1 class="text-lg leading-10">
@@ -142,7 +149,7 @@ async function handleSelectContact(key: number) {
         <div class="flex flex-1 flex-col gap-2">
           <div class="flex justify-between items-center w-full">
             <span class="text-xs font-medium leading-5 text-slate-400">
-              <span class="sm:hidden inline">{{ key + 1 }}</span> Signer name
+              <span class="sm:hidden inline">{{ key + 1 }}</span> Signer Name
             </span>
           </div>
           <CommonInput
@@ -150,7 +157,8 @@ async function handleSelectContact(key: number) {
             :disabled="contactSelections.includes(key as number)"
             autofocus
             :name="`addresses[${key}].name`"
-            placeholder="Signer Name"
+            placeholder="Signer Name (Optional)"
+            input-classes="placeholder:text-xs"
             :error-message="getErrorMessage(errors, `addresses[${key}].name`)"
           />
         </div>
@@ -158,7 +166,7 @@ async function handleSelectContact(key: number) {
           <div class="flex justify-between items-center w-full">
             <span class="text-xs font-medium leading-5 text-slate-400 flex items-center gap-2.5">
               <span class="sm:hidden inline">{{ key + 1 }}</span> Signer EOA Address
-              <SvgoInfo2 v-tippy="'Please make sure you enter the EOA address and not Avocado address.'" class="text-orange" />
+              <SvgoInfo2 v-if="!isGnosisMigration" v-tippy="'Please make sure you enter the EOA address and not Avocado address.'" class="text-orange" />
             </span>
             <button
               v-if="fields.length > 1" class="h-5 w-5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
@@ -170,7 +178,7 @@ async function handleSelectContact(key: number) {
           <CommonInput
             v-model="field.value.address"
             :name="`addresses[${key}].address`"
-            :disabled="contactSelections.includes(key)"
+            :disabled="contactSelections.includes(key) || isGnosisMigration"
             :error-message="getErrorMessage(errors, `addresses[${key}].address`)"
             placeholder="Enter Address"
           >
@@ -184,7 +192,7 @@ async function handleSelectContact(key: number) {
                 <SvgoBack class="text-slate-400" />
               </button>
               <button
-                v-else
+                v-else-if="!isGnosisMigration"
                 v-tippy="'Select contact'"
                 type="button"
                 class="ml-3"
@@ -196,7 +204,7 @@ async function handleSelectContact(key: number) {
           </CommonInput>
         </div>
       </fieldset>
-      <button class="flex items-center text-primary gap-3 text-xs disabled:text-slate-500" :disabled="!meta.valid" @click="push({ address: '', name: '' })">
+      <button v-if="!isGnosisMigration" class="flex items-center text-primary gap-3 text-xs disabled:text-slate-500" :disabled="!meta.valid" @click="push({ address: '', name: '' })">
         <div :class="!meta.valid ? 'bg-slate-500' : ''" class="bg-primary w-4 h-4 rounded-full flex">
           <SvgoPlus class="text-white m-auto w-2 h-2" />
         </div>
@@ -205,7 +213,7 @@ async function handleSelectContact(key: number) {
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <div class="p-7.5 grid grid-cols-2 gap-4">
-      <CommonButton class="justify-center" size="lg" color="white" @click="$emit('destroy')">
+      <CommonButton class="justify-center" size="lg" color="white" @click="handleBackClick">
         Back
       </CommonButton>
       <CommonButton type="submit" :disabled="disabled" class="justify-center" size="lg">

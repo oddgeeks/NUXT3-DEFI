@@ -77,6 +77,8 @@ interface ISafeOptions {
   ownerAddress: string,
   notdeployed: boolean,
   server: boolean,
+  domainName: string,
+  domainVersion: string,
 }
 
 interface IAvocadoTransaction {
@@ -502,7 +504,7 @@ interface ITokenPrice {
 interface ILogBalanceParams {
   isPublic?: boolean
   chainId: number;
-  type: 'eoa-balances' | 'safe-balances' | 'options'
+  type: 'eoa-balances' | 'safe-balances' | 'options' | 'compute'
   isPublic: boolean;
 }
  
@@ -619,4 +621,10 @@ interface INavigationTab {
   value: 'dapps' | 'balances' | 'bookmarks';
   query?: string;
   count: number;
+}
+
+interface IComputeAddresses {
+  address: string
+  multisigAddress: string
+  oldSafeAddress: string
 }

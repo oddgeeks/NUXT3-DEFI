@@ -270,7 +270,7 @@ export function formatProtocol(protocol: string) {
   )
 }
 
-export const networksSimulationNotSupported = [1313161554]
+export const networksSimulationNotSupported = [1313161554, 1101]
 
 export function generateNumber(min: number, max: number) {
   const numbers = []
@@ -287,6 +287,7 @@ export function logBalance(params: ILogBalanceParams) {
     'eoa-balances': 'EOA Balance',
     'safe-balances': 'Safe Balance',
     'options': 'MS Config',
+    'compute': 'Compute Addresses',
   } as Record<ILogBalanceParams['type'], string>
 
   const prefixText = prefix[type]
