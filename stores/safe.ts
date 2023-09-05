@@ -156,10 +156,11 @@ export const useSafe = defineStore('safe', () => {
 
     legacySafeAddress.value = oldSafeAddress
     legacySafe.value = legacySafeInstance || getDefaultSafe(oldSafeAddress, 0)
+    const legacyHasGasBalance = await getGasBalance(oldSafeAddress).then(toBN).then(b => b.gt(0))
 
     mainSafeAddress.value = address
     multiSigSafeAddress.value = multisigAddress
-    safeAddress.value = isCachedSafeAvailable ? cachedSafeAddress : legacySafeInstance ? oldSafeAddress : address
+    safeAddress.value = legacySafeInstance && legacyHasGasBalance ? oldSafeAddress : isCachedSafeAvailable ? cachedSafeAddress : address
   }
 
   async function fetchSafeInstanceses() {
