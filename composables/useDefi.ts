@@ -377,13 +377,13 @@ export function useDefi() {
     return [
       {
         name: 'Supplied',
-        value: `$${formatHealthFactor(total.totalSupplyInUsd)}`,
+        value: `$${abbreviateNumber(total.totalSupplyInUsd)}`,
         color: 'bg-[#56CCF2]',
         icon: resolveComponent('SvgoMoneyLend'),
       },
       {
         name: 'Borrowed',
-        value: `$${formatHealthFactor(total.totalBorrowInUsd)}`,
+        value: `$${abbreviateNumber(total.totalBorrowInUsd)}`,
         color: 'bg-[#9B51E0]',
         icon: resolveComponent('SvgoMoneyBorrowed'),
       },

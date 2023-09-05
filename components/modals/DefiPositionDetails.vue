@@ -34,7 +34,7 @@ defineProps<{
       </div>
       <div class="flex flex-col gap-1 px-5 py-4 dark:bg-gray-850 bg-slate-50 rounded-5">
         <p class="text-[26px] leading-[30px]">
-          {{ formatHealthFactor(position.healthFactor) }}
+          {{ abbreviateNumber(position.healthFactor) }}
         </p>
         <p class="text-xs text-slate-500">
           Health Factor

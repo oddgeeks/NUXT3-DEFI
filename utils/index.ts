@@ -319,7 +319,7 @@ export function isAddressEqual(a?: string, b?: string) {
   return getAddress(a) === getAddress(b)
 }
 
-export function formatHealthFactor(healthFactor: string | number) {
+export function abbreviateNumber(healthFactor: string | number) {
   if (isNaN(toBN(healthFactor).toNumber()))
     return healthFactor
 
