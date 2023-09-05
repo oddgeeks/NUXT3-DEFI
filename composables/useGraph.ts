@@ -20,7 +20,7 @@ export function useGraph(balance: Ref<IBalance>) {
     if (priceDiffInPercent.value < 0)
       return '#EB5757'
 
-    return '#16A34A'
+    return '#07A65D'
   })
 
   const priceDiffInPercent = computed(() => {
