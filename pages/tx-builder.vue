@@ -60,7 +60,6 @@ const onSubmit = handleSubmit(async (values) => {
     const args = builder.value.getMethodInputs(method.value).map((i) => {
       const value = values[i?.name!]
 
-      builder.value?.validateMethodInput(method.value, i?.name!, value)
       return value
     })
 

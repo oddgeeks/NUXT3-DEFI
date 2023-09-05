@@ -33,14 +33,16 @@ const actualComponents = computed(() => {
 
 const actualType = computed(() => props.input.type.replace('[]', ''))
 
-function getInputName(name: string, index?: number, fieldIndex?: string | number) {
+function getInputName(index?: number, fieldIndex?: string | number) {
+  let base = props.name
+
   if (index !== undefined)
-    name += `[${index}]`
+    base += `[${index}]`
 
   if (fieldIndex !== undefined)
-    name += `[${fieldIndex}]`
+    base += `[${fieldIndex}]`
 
-  return name
+  return base
 }
 
 const { fields, push, remove } = useFieldArray(props.input.type)
@@ -75,7 +77,7 @@ onMounted(() => {
           :builder="builder"
           :method="method"
           :input="i"
-          :name="getInputName(name, undefined, i.type)"
+          :name="getInputName(undefined, i.type)"
         />
       </template>
       <template v-else>
@@ -94,7 +96,7 @@ onMounted(() => {
             <BuilderInput
               :builder="builder"
               :method="method"
-              :name="getInputName(name, t, k)"
+              :name="getInputName(t, k)"
               :input="i"
             />
           </template>
