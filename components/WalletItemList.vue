@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { getAddress } from 'ethers/lib/utils'
 
-const { mainSafe, multiSigSafe, safes, legacySafe, legacySafeAddress, safesLoading, safeAddress, selectedSafe } = storeToRefs(useSafe())
+const { mainSafe, multiSigSafe, safes, legacySafe, legacySafeAddress, safesLoading, safeAddress, selectedSafe, legacySafeHasGas } = storeToRefs(useSafe())
 
-const hideLegacySafe = useLocalStorage('hide-legacy-safe', false)
+const userToggleHideLegacy = useLocalStorage('hide-legacy-safe', false)
 
 const filteredSafes = computed(() => {
   if (!safes.value)
@@ -19,13 +19,17 @@ const filteredSafes = computed(() => {
 })
 
 function handleToggle() {
-  hideLegacySafe.value = !hideLegacySafe.value
+  userToggleHideLegacy.value = !userToggleHideLegacy.value
 
   if (selectedSafe.value?.safe_address === legacySafe.value?.safe_address) {
     safeAddress.value = mainSafe.value?.safe_address
     selectedSafe.value = mainSafe.value
   }
 }
+
+const displayLegacySafe = computed(() => {
+  return legacySafeAddress && legacySafe && !userToggleHideLegacy.value && legacySafeHasGas
+})
 </script>
 
 <template>
@@ -37,13 +41,13 @@ function handleToggle() {
         <SvgSpinner v-if="safesLoading" class="text-primary" />
       </h2>
       <button class="text-primary text-xs" type="button" @click="handleToggle">
-        {{ hideLegacySafe ? 'Show' : 'Hide' }} legacy safe
+        {{ !displayLegacySafe ? 'Show' : 'Hide' }} legacy safe
       </button>
     </div>
     <template v-if="!safesLoading">
       <div class="flex flex-col gap-2.5">
         <WalletItem v-if="mainSafe" v2 primary :safe="mainSafe" />
-        <WalletItem v-if="legacySafeAddress && legacySafe && !hideLegacySafe" tooltip="Please migrate your funds to new Avocado Personal to enjoy exciting updates in the future. Your legacy wallet will stay functional & secure forever." :safe="legacySafe" />
+        <WalletItem v-if="displayLegacySafe" tooltip="Please migrate your funds to new Avocado Personal to enjoy exciting updates in the future. Your legacy wallet will stay functional & secure forever." :safe="legacySafe" />
         <WalletItem v-if="multiSigSafe" primary :safe="multiSigSafe" />
       </div>
 

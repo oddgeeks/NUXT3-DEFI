@@ -40,6 +40,7 @@ export const useSafe = defineStore('safe', () => {
   const selectedSafe = ref<ISafe>()
   const mainSafe = ref<ISafe>()
   const legacySafe = ref<ISafe>()
+  const legacySafeHasGas = ref<boolean>()
   const multiSigSafe = ref<ISafe>()
 
   const safesLoading = ref(false)
@@ -132,8 +133,6 @@ export const useSafe = defineStore('safe', () => {
 
     const cachedSafeAddress = getCachedSafeAddress(account.value)
 
-    console.log({ cachedSafeAddress })
-
     const [availableSafes, legacySafeInstance] = await Promise.all([
       getSafes(account.value),
       getSafe(oldSafeAddress),
@@ -156,11 +155,13 @@ export const useSafe = defineStore('safe', () => {
 
     legacySafeAddress.value = oldSafeAddress
     legacySafe.value = legacySafeInstance || getDefaultSafe(oldSafeAddress, 0)
-    const legacyHasGasBalance = await getGasBalance(oldSafeAddress).then(toBN).then(b => b.gt(0))
+    legacySafeHasGas.value = await getGasBalance(oldSafeAddress).then(toBN).then(b => b.gt(0))
+    const userToggledHideLegacy = useLocalStorage('hide-legacy-safe', false)
+    const useLegacyAsDefault = !userToggledHideLegacy.value && legacySafeInstance && legacySafeHasGas.value
 
     mainSafeAddress.value = address
     multiSigSafeAddress.value = multisigAddress
-    safeAddress.value = legacySafeInstance && legacyHasGasBalance ? oldSafeAddress : isCachedSafeAvailable ? cachedSafeAddress : address
+    safeAddress.value = useLegacyAsDefault ? oldSafeAddress : isCachedSafeAvailable ? cachedSafeAddress : address
   }
 
   async function fetchSafeInstanceses() {
@@ -842,6 +843,7 @@ export const useSafe = defineStore('safe', () => {
     fetchPendingMultisigTxnsCount,
     legacySafe,
     legacySafeAddress,
+    legacySafeHasGas,
     getSafes,
     isSelectedSafeLegacy,
     safesLoading,
