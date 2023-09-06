@@ -34,6 +34,9 @@ const actualComponents = computed(() => {
 const actualType = computed(() => props.input.type.replace('[]', ''))
 
 function getInputName(index?: number, fieldIndex?: string | number) {
+  if (isArr.value && !props.input.components?.length)
+    return `${props.name}[${index}]`
+
   let base = props.name
 
   if (index !== undefined)
@@ -45,7 +48,7 @@ function getInputName(index?: number, fieldIndex?: string | number) {
   return base
 }
 
-const { fields, push, remove } = useFieldArray(props.input.type)
+const { fields, push, remove } = useFieldArray('arr')
 
 const { value, errorMessage } = actualComponents.value && actualComponents.value.length > 0
   ? ({ value: undefined, errorMessage: '' })
@@ -72,12 +75,12 @@ onMounted(() => {
     <div v-if="actualComponents && actualComponents.length > 0" class="flex flex-col gap-4 rounded-lg">
       <template v-if="input.type === 'tuple'">
         <BuilderInput
-          v-for="i in actualComponents"
+          v-for="i, k in actualComponents"
           :key="i.name"
           :builder="builder"
           :method="method"
           :input="i"
-          :name="getInputName(undefined, i.type)"
+          :name="getInputName(undefined, k)"
         />
       </template>
       <template v-else>

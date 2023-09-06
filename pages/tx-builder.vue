@@ -50,15 +50,24 @@ function isJsonString(str: string) {
 
 const builder = computed(() => isJsonString(ABI.value) ? new TransactionBuilder(JSON.parse(JSON.stringify(ABI.value))) : null)
 
-const { handleSubmit, resetForm, meta } = useForm()
+const { handleSubmit, values, meta } = useForm()
 
-const onSubmit = handleSubmit(async (values) => {
+const onSubmit = handleSubmit(async (values, ctx) => {
   try {
     if (!builder.value)
       return
 
+    console.log(values)
+
     const args = builder.value.getMethodInputs(method.value).map((i) => {
-      const value = values[i?.name!]
+      if (!i.name)
+        throw new Error('Invalid input')
+
+      const value = values[i.name]
+      // reset form input
+      ctx.setValues({
+        [i.name]: undefined,
+      }, false)
 
       return value
     })
@@ -80,8 +89,6 @@ const onSubmit = handleSubmit(async (values) => {
     }]
 
     transactions.value = arr.concat(transactions.value)
-
-    resetForm()
   }
   catch (e) {
     const parsed = serialize(e)
@@ -172,13 +179,15 @@ async function handleSendTransaction() {
 
           <template v-if="builder && method">
             <BuilderInput v-for="input in builder.getMethodInputs(method)" :key="input.name" :name="input.name" :method="method" :builder="builder" :input="input" />
-            <CommonButton type="submit" class="mt-8">
+            <CommonButton :disabled="!meta.valid" type="submit" class="mt-8 w-fit">
               Add
             </CommonButton>
           </template>
         </form>
       </div>
       <div class="flex flex-col gap-4">
+        {{ values }}
+
         <h1>
           Send Transaction
         </h1>
