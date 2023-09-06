@@ -72,8 +72,10 @@ const { value, errorMessage, name } = useField<any>(() => {
 
   const parsed = tryJsonParse(val)
 
+  const isNumb = typeof parsed === 'number' && !isNaN(parsed)
+
   try {
-    ethers.utils.defaultAbiCoder.encode([props.input.type], [String(parsed)])
+    ethers.utils.defaultAbiCoder.encode([props.input.type], [isNumb ? String(parsed) : parsed])
     return true
   }
   catch (e) {
