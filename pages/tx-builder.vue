@@ -114,7 +114,7 @@ const onSubmit = handleSubmit(async (values) => {
       data,
       value: 0,
       operation: 0,
-      target: contractAddress.value,
+      to: contractAddress.value,
     }
 
     const arr = [{
@@ -227,7 +227,7 @@ watch(mode, async (newMode, oldMode) => {
 })
 
 async function handleSendTransaction() {
-  const tx = await sendTransactions(transactions.value, chainId.value, undefined, 'others')
+  const tx = await sendTransactions(actualTransactions.value, chainId.value, undefined, 'others')
 
   if (tx)
     showPendingTransactionModal(tx, chainId.value)
