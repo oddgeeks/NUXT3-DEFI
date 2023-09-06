@@ -12,6 +12,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['destroy'])
 
+const { showInsufficientGasBanner } = useBanner()
 const { account } = useWeb3()
 const contactSelections = ref<number[]>([])
 
@@ -210,6 +211,17 @@ function handleBackClick() {
         </div>
         Add more signer(s)
       </button>
+      <div :class="`flex justify-between items-center ${showInsufficientGasBanner ? 'text-orange' : 'text-slate-400'}`">
+        <span class="inline-flex gap-3">
+          <SvgoInfo2 class="w-4 h-4" />
+          <p class="text-xs">
+            {{ `Adding signers requires gas.${showInsufficientGasBanner ? ' Please top. up beforehand' : ''}` }}
+          </p>
+        </span>
+        <button v-if="showInsufficientGasBanner" class="bg-primary rounded-full text-xs px-3 py-1 text-white">
+          Topup
+        </button>
+      </div>
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <div class="p-7.5 grid grid-cols-2 gap-4">
