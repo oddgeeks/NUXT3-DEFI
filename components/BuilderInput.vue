@@ -3,7 +3,7 @@ import type { InputType, TransactionBuilder } from '@instadapp/transaction-build
 import { serialize } from 'error-serializer'
 import { ethers } from 'ethers'
 
-import { useField } from 'vee-validate'
+import { useField, useFieldArray } from 'vee-validate'
 
 const props = defineProps<{
   input: InputType
@@ -13,7 +13,6 @@ const props = defineProps<{
 }>()
 
 const isArr = computed(() => props.input.type.includes('[]'))
-const fields = ref([] as any[])
 
 const mode = inject<Ref<TxBuilderModes>>('mode')
 
@@ -51,13 +50,11 @@ function getInputName(index?: number, fieldIndex?: string | number) {
   return base
 }
 
-function push(obj: any) {
-  fields.value.push(obj)
-}
-
-function remove(index: number) {
-  fields.value.splice(index, 1)
-}
+const { fields = [], push = () => {}, remove = () => {} } = mode?.value === 'super-collapse'
+  ? {} as any
+  : hasActualComponents.value && mode?.value === 'expand'
+    ? useFieldArray(props.input.type)
+    : {}
 
 const { value, errorMessage, name } = useField<any>(() => {
   if (mode?.value === 'super-collapse')
@@ -87,18 +84,11 @@ const { value, errorMessage, name } = useField<any>(() => {
 })
 
 watchThrottled(mode!, () => {
-  if (isArr.value) {
-    const defaultVal = value.value ? value.value[props.name] : null
-
-    if (defaultVal)
-      fields.value = defaultVal
-
-    else if (!fields.value?.length)
-      fields.value = [{}]
-  }
+  if (isArr.value && !fields.value?.length)
+    push({})
 }, {
   immediate: true,
-  throttle: 100,
+  throttle: 500,
 })
 </script>
 
