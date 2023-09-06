@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { isAddress } from '@ethersproject/address'
 import { useField } from 'vee-validate'
+import { useWindowSize } from '@vueuse/core'
 import CheckCircle from '~/assets/images/icons/check-circle.svg?component'
 import type { IToken } from '~/stores/tokens'
 
@@ -93,6 +94,13 @@ function onToggleCrossChain() {
     data.value.toChainId = data.value.fromChainId
 }
 
+const { width } = useWindowSize()
+const isMobile = computed(() => {
+  if (width.value < 450)
+    return true
+  return false
+})
+
 onMounted(() => {
   validate()
 })
@@ -139,7 +147,7 @@ onMounted(() => {
             autofocus
             class="!rounded-2xl w-full"
             input-classes="!py-3"
-            placeholder="Enter amount"
+            :placeholder="isMobile ? 'Enter' : 'Enter amount'"
           >
             <template #suffix>
               <span class="text-sm text-left text-slate-400 absolute right-5">
