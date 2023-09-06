@@ -9,13 +9,13 @@ import { ethers } from 'ethers'
 import { buildApprovedNamespaces, getSdkError } from '@walletconnect/utils'
 
 export const iProUrls = [
-  'https://defi.instadapp.io',
-  'https://polygon.instadapp.io',
-  'https://arbitrum.instadapp.io',
-  'https://avalanche.instadapp.io',
-  'https://optimism.instadapp.io',
-  'https://fantom.instadapp.io',
-  'https://base.instadapp.io',
+  'defi.instadapp.io',
+  'polygon.instadapp.io',
+  'arbitrum.instadapp.io',
+  'avalanche.instadapp.io',
+  'optimism.instadapp.io',
+  'fantom.instadapp.io',
+  'base.instadapp.io',
 ]
 
 export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
@@ -35,7 +35,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
   }))
 
   function isProUrl(url: string) {
-    return iProUrls.findIndex(purl => purl === url) > -1
+    return iProUrls.findIndex(purl => url.includes(purl)) > -1
   }
 
   function isSameOrigin(url1: string, url2: string) {
