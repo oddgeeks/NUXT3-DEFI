@@ -19,22 +19,8 @@ const method = ref('typeStuctCommonNested(((uint256,int256,address,bool,bytes32,
 const ABI = ref('[{"inputs":[{"internalType":"address","name":"addr1","type":"address"}],"name":"typeAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"addr1Array","type":"address[]"}],"name":"typeArrayAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bool[]","name":"bool1Array","type":"bool[]"}],"name":"typeArrayBoolean","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes[]","name":"bytesTypeArray","type":"bytes[]"}],"name":"typeArrayBytes","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32[]","name":"bytesType32Array","type":"bytes32[]"}],"name":"typeArrayBytes32","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4[]","name":"bytesType4Array","type":"bytes4[]"}],"name":"typeArrayBytes4","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"int256[]","name":"num1Array","type":"int256[]"}],"name":"typeArrayInt256","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"int256","name":"num2","type":"int256"},{"internalType":"address","name":"addr","type":"address"},{"internalType":"bool","name":"boolean","type":"bool"},{"internalType":"bytes32","name":"bytes32Data","type":"bytes32"},{"internalType":"bytes4","name":"bytes4Data","type":"bytes4"},{"internalType":"bytes","name":"bytesData","type":"bytes"},{"internalType":"uint8","name":"numUint8","type":"uint8"}],"internalType":"struct TxBuilder.Common[]","name":"common","type":"tuple[]"}],"name":"typeArrayStuctCommon","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"components":[{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"int256","name":"num2","type":"int256"},{"internalType":"address","name":"addr","type":"address"},{"internalType":"bool","name":"boolean","type":"bool"},{"internalType":"bytes32","name":"bytes32Data","type":"bytes32"},{"internalType":"bytes4","name":"bytes4Data","type":"bytes4"},{"internalType":"bytes","name":"bytesData","type":"bytes"},{"internalType":"uint8","name":"numUint8","type":"uint8"}],"internalType":"struct TxBuilder.Common","name":"common","type":"tuple"},{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"uint8","name":"numUint8","type":"uint8"}],"internalType":"struct TxBuilder.CommonNested[]","name":"commonNested","type":"tuple[]"}],"name":"typeArrayStuctCommonNested","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"uint256[]","name":"num2","type":"uint256[]"}],"internalType":"struct TxBuilder.Uint256Array[]","name":"uint256Array","type":"tuple[]"}],"name":"typeArrayStuctUint256Array","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256[]","name":"num1Array","type":"uint256[]"}],"name":"typeArrayUint256","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint8[]","name":"num1Array","type":"uint8[]"}],"name":"typeArrayUint8","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bool","name":"bool1","type":"bool"}],"name":"typeBoolean","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes","name":"bytesType","type":"bytes"}],"name":"typeBytes","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"bytesType32","type":"bytes32"}],"name":"typeBytes32","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"bytesType4","type":"bytes4"}],"name":"typeBytes4","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"address","name":"addr","type":"address"},{"internalType":"bool","name":"boolean","type":"bool"},{"internalType":"bytes32","name":"hash","type":"bytes32"}],"name":"typeCommon","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"address[]","name":"addr","type":"address[]"},{"internalType":"bool[]","name":"boolean","type":"bool[]"},{"internalType":"bytes32","name":"hash","type":"bytes32"}],"name":"typeCommonArray","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"int256","name":"num1","type":"int256"}],"name":"typeInt256","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"int256","name":"num2","type":"int256"},{"internalType":"address","name":"addr","type":"address"},{"internalType":"bool","name":"boolean","type":"bool"},{"internalType":"bytes32","name":"bytes32Data","type":"bytes32"},{"internalType":"bytes4","name":"bytes4Data","type":"bytes4"},{"internalType":"bytes","name":"bytesData","type":"bytes"},{"internalType":"uint8","name":"numUint8","type":"uint8"}],"internalType":"struct TxBuilder.Common","name":"common","type":"tuple"}],"name":"typeStuctCommon","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"components":[{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"int256","name":"num2","type":"int256"},{"internalType":"address","name":"addr","type":"address"},{"internalType":"bool","name":"boolean","type":"bool"},{"internalType":"bytes32","name":"bytes32Data","type":"bytes32"},{"internalType":"bytes4","name":"bytes4Data","type":"bytes4"},{"internalType":"bytes","name":"bytesData","type":"bytes"},{"internalType":"uint8","name":"numUint8","type":"uint8"}],"internalType":"struct TxBuilder.Common","name":"common","type":"tuple"},{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"uint8","name":"numUint8","type":"uint8"}],"internalType":"struct TxBuilder.CommonNested","name":"commonNested","type":"tuple"}],"name":"typeStuctCommonNested","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"internalType":"uint256","name":"num1","type":"uint256"},{"internalType":"uint256[]","name":"num2","type":"uint256[]"}],"internalType":"struct TxBuilder.Uint256Array","name":"uint256Array","type":"tuple"}],"name":"typeStuctUint256Array","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"num1","type":"uint256"}],"name":"typeUint256","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint8","name":"num1","type":"uint8"}],"name":"typeUint8","outputs":[],"stateMutability":"nonpayable","type":"function"}]')
 const pending = ref(false)
 
-const { value: contractAddress, errorMessage } = useField<string>('contractAddress', val => isAddress(val!), {
-  initialValue: '0xa039eee5d6f876be3859e3dfce00fb7ecccd65cb',
-})
-const { value: toAddress, errorMessage: toAddressError } = useField<string>('toAddress', val => isAddress(val!), {
-  initialValue: '0x9F60699cE23f1Ab86Ec3e095b477Ff79d4f409AD',
-})
-const { value: chainId } = useField<number>('chainId', val => !!val, {
-  initialValue: 137,
-})
-
 const transactions = ref<any>([])
 const actualTransactions = computed(() => transactions.value.map((i: any) => i.tx))
-
-const { data, pending: estimatePending, error } = useEstimatedFee(actualTransactions, chainId, {
-  immediate: true,
-})
 
 const { sendTransactions } = useAvocadoSafe()
 
@@ -47,18 +33,33 @@ const builder = computed(() => isJsonString(ABI.value) ? new TransactionBuilder(
 
 const { handleSubmit, values, meta, setValues, resetForm } = useForm()
 
+const { value: contractAddress, errorMessage } = useField<string>('contractAddress', val => isAddress(val!), {
+  initialValue: '0xa039eee5d6f876be3859e3dfce00fb7ecccd65cb',
+})
+const { value: toAddress, errorMessage: toAddressError } = useField<string>('toAddress', val => isAddress(val!), {
+  initialValue: '0x9F60699cE23f1Ab86Ec3e095b477Ff79d4f409AD',
+})
+const { value: chainId } = useField<number>('chainId', val => !!val, {
+  initialValue: 137,
+})
+
+const { data, pending: estimatePending, error } = useEstimatedFee(actualTransactions, chainId, {
+  immediate: true,
+})
+
 function cleanupFormValues(methods: any[]) {
+  resetForm()
+
   setValues({
     params: undefined,
   }, false)
 
   for (const inputs of methods) {
+    console.log(inputs.name)
     setValues({
       [inputs.name]: undefined,
     }, false)
   }
-
-  resetForm()
 }
 
 function transformParams(params: string) {
@@ -116,6 +117,11 @@ const onSubmit = handleSubmit(async (values, ctx) => {
       method: method.value,
     }]
 
+    console.log({
+      tx,
+      whole: arr,
+    })
+
     transactions.value = arr.concat(transactions.value)
   }
   catch (e) {
@@ -165,7 +171,6 @@ watch(mode, async (newMode, oldMode) => {
 
   if (!meta.value.valid) {
     cleanupFormValues(inputMethods)
-
     return
   }
 
@@ -201,6 +206,8 @@ watch(mode, async (newMode, oldMode) => {
     const actualValues = wasSuperCollapse && values.params ? transformParams(values.params) : values
 
     const value = actualValues[i.name]
+
+    console.log('selamm')
 
     setValues({
       [i.name]: isCollapseToExpand ? tryJsonParse(value) : isExpandToCollapse ? tryJsonStringfy(value) : undefined,
@@ -249,7 +256,7 @@ async function handleSendTransaction() {
             <span>
               To address
             </span>
-            <CommonInput v-model="toAddress" :error-message="toAddressError" name="contractAddress" placeholder="Enter Address" />
+            <CommonInput v-model="toAddress" :error-message="toAddressError" name="toAddress" placeholder="Enter Address" />
           </div>
 
           <template v-if="builder">
