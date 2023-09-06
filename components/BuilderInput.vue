@@ -76,7 +76,7 @@ const { value, errorMessage, name } = useField<any>(() => {
   const parsed = tryJsonParse(val)
 
   try {
-    ethers.utils.defaultAbiCoder.encode([props.input.type], [parsed])
+    ethers.utils.defaultAbiCoder.encode([props.input.type], [String(parsed)])
     return true
   }
   catch (e) {
