@@ -35,9 +35,10 @@ const { handleSubmit, values, meta, setFieldValue, resetForm, handleReset, reset
   keepValuesOnUnmount: true,
 })
 
-const { value: contractAddress, errorMessage } = useField<string>('contractAddress', val => isAddress(val!), {
-  initialValue: '0xa039eee5d6f876be3859e3dfce00fb7ecccd65cb',
-})
+const contractAddress = ref('0xa039eee5d6f876be3859e3dfce00fb7ecccd65cb')
+
+const contractErrorMessage = ref('')
+
 const { value: toAddress, errorMessage: toAddressError } = useField<string>('toAddress', val => isAddress(val!), {
   initialValue: '0x9F60699cE23f1Ab86Ec3e095b477Ff79d4f409AD',
 })
@@ -139,17 +140,28 @@ const onSubmit = handleSubmit(async (values) => {
 })
 
 watchDebounced(contractAddress, async () => {
-  if (!isAddress(contractAddress.value))
+  if (!isAddress(contractAddress.value)) {
+    contractErrorMessage.value = 'Invalid address'
     return
+  }
 
   try {
     pending.value = true
+
+    ABI.value = ''
+    method.value = ''
 
     const fetcher = new AbiFetcher()
 
     const selam = await fetcher.get(contractAddress.value, 'polygon')
 
     ABI.value = JSON.stringify(selam, null, 2)
+    contractErrorMessage.value = ''
+  }
+  catch (e) {
+    const parsed = serialize(e)
+
+    contractErrorMessage.value = parsed.message
   }
   finally {
     pending.value = false
@@ -233,7 +245,7 @@ async function handleSendTransaction() {
 
         <form class="flex flex-col gap-4" @submit="onSubmit">
           <div class="flex w-full gap-4">
-            <CommonInput v-model="contractAddress" class="flex-1" :error-message="errorMessage" name="contractAddress" placeholder="Enter Address" />
+            <CommonInput v-model="contractAddress" class="flex-1" :error-message="contractErrorMessage" name="contractAddress" placeholder="Enter Address" />
 
             <CommonSelect
               v-model="chainId"
