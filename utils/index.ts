@@ -327,3 +327,34 @@ export function formatHealthFactor(healthFactor: string | number) {
   const value = formatter.format(toBN(healthFactor).toNumber())
   return value
 }
+
+export function tryJsonParse(val: string) {
+  try {
+    if (typeof val === 'object')
+      return val
+
+    return JSON.parse(val)
+  }
+  catch (e) {
+    return val
+  }
+}
+
+export function tryJsonStringfy(val: any) {
+  try {
+    return JSON.stringify(val)
+  }
+  catch (e) {
+    return val
+  }
+}
+
+export function isJsonString(str: string) {
+  try {
+    JSON.parse(str)
+  }
+  catch (e) {
+    return false
+  }
+  return true
+}

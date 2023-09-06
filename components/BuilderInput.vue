@@ -3,7 +3,7 @@ import type { InputType, TransactionBuilder } from '@instadapp/transaction-build
 import { serialize } from 'error-serializer'
 import { ethers } from 'ethers'
 
-import { useField, useFieldArray } from 'vee-validate'
+import { useField } from 'vee-validate'
 
 const props = defineProps<{
   input: InputType
@@ -13,6 +13,9 @@ const props = defineProps<{
 }>()
 
 const isArr = computed(() => props.input.type.includes('[]'))
+const fields = ref([] as any[])
+
+const mode = inject<Ref<TxBuilderModes>>('mode')
 
 const actualComponents = computed(() => {
   if (isArr.value && !props.input.components?.length) {
@@ -31,10 +34,10 @@ const actualComponents = computed(() => {
   }
 })
 
-const actualType = computed(() => props.input.type.replace('[]', ''))
+const hasActualComponents = computed(() => actualComponents.value && actualComponents.value.length > 0)
 
 function getInputName(index?: number, fieldIndex?: string | number) {
-  if (isArr.value && !props.input.components?.length)
+  if (isArr.value && !props.input.components?.length && index !== undefined)
     return `${props.name}[${index}]`
 
   let base = props.name
@@ -48,31 +51,60 @@ function getInputName(index?: number, fieldIndex?: string | number) {
   return base
 }
 
-const { fields, push, remove } = useFieldArray('arr')
+function push(obj: any) {
+  fields.value.push(obj)
+}
 
-const { value, errorMessage } = actualComponents.value && actualComponents.value.length > 0
-  ? ({ value: undefined, errorMessage: '' })
-  : useField<any>(() => props.name, (val) => {
-    try {
-      ethers.utils.defaultAbiCoder.encode([props.input.type], [val])
-      return true
-    }
-    catch (e) {
-      const parsed = serialize(e)
+function remove(index: number) {
+  fields.value.splice(index, 1)
+}
 
-      return parsed?.reason || parsed.message
-    }
-  })
+const { value, errorMessage, name } = useField<any>(() => {
+  if (mode?.value === 'super-collapse')
+    return ''
 
-onMounted(() => {
-  if (isArr.value && !fields.value.length)
-    push({})
+  if (hasActualComponents.value && mode?.value === 'expand')
+    return ''
+  return props.name
+}, (val) => {
+  if (mode?.value === 'super-collapse')
+    return true
+
+  if (hasActualComponents.value && mode?.value === 'expand')
+    return true
+
+  const parsed = tryJsonParse(val)
+
+  try {
+    ethers.utils.defaultAbiCoder.encode([props.input.type], [parsed])
+    return true
+  }
+  catch (e) {
+    const parsed = serialize(e)
+
+    return parsed?.reason || parsed.message
+  }
+})
+
+watchThrottled(mode!, () => {
+  if (isArr.value) {
+    const defaultVal = value.value ? value.value[props.name] : null
+
+    if (defaultVal)
+      fields.value = defaultVal
+
+    else if (!fields.value?.length)
+      fields.value = [{}]
+  }
+}, {
+  immediate: true,
+  throttle: 100,
 })
 </script>
 
 <template>
   <div class="flex flex-col gap-2">
-    <div v-if="actualComponents && actualComponents.length > 0" class="flex flex-col gap-4 rounded-lg">
+    <div v-if="hasActualComponents && mode === 'expand'" class="flex flex-col gap-4 rounded-lg">
       <template v-if="input.type === 'tuple'">
         <BuilderInput
           v-for="i, k in actualComponents"
@@ -84,7 +116,7 @@ onMounted(() => {
         />
       </template>
       <template v-else>
-        <div v-for="field, t in fields" :key="t" class="relative rounded-lg ring-1 p-4">
+        <div v-for="_, t in fields" :key="t" class="relative rounded-lg ring-1 p-4">
           <button v-if="t === 0" class="w-5 absolute right-2 top-0 h-5 flex items-center justify-center self-end bg-primary rounded-full" type="button" @click="push({})">
             <SvgoPlus />
           </button>
@@ -109,9 +141,9 @@ onMounted(() => {
 
     <template v-else>
       <label class="text-sm mb-2 block">
-        {{ input.name }} ({{ actualType }})
+        {{ input.name }} ({{ input.type }})
       </label>
-      <CommonToggle v-if="actualType === 'bool'" v-model="value" :name="name" />
+      <CommonToggle v-if="input.type === 'bool'" v-model="value" :name="name" />
       <CommonInput v-else v-model="value" :error-message="errorMessage" :name="name" />
     </template>
   </div>

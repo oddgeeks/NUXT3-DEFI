@@ -626,3 +626,5 @@ interface IComputeAddresses {
   multisigAddress: string
   oldSafeAddress: string
 }
+
+type TxBuilderModes = 'expand' | 'collapse' | 'super-collapse'
