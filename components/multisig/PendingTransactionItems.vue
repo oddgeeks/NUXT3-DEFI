@@ -194,12 +194,12 @@ onUnmounted(() => {
         {{ data.meta.total }} total transaction{{ data.meta.total > 1 ? 's' : '' }}
       </div>
       <SvgSpinner v-if="pending" class="text-primary" />
-      <div class="ml-auto flex">
+      <div class="ml-auto flex items-center">
         <div v-if="!canSign" class="text-red-alert bg-red-alert bg-opacity-10 text-xs px-3 py-1 rounded-full">
           Unauthorized network
         </div>
         <div v-if="isYourSignNeeded" class="text-orange-400 text-xs">
-          Your Signers needed
+          Your signatures needed
         </div>
         <SvgoChevronDown
           class="w-5 text-slate-400 ml-5 group-open:rotate-180"
