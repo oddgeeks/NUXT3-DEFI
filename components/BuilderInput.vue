@@ -53,7 +53,7 @@ function getInputName(index?: number, fieldIndex?: string | number) {
 const { fields = [], push = () => {}, remove = () => {} } = mode?.value === 'super-collapse'
   ? {} as any
   : hasActualComponents.value && mode?.value === 'expand'
-    ? useFieldArray(props.input.type)
+    ? useFieldArray(props.name)
     : {}
 
 const { value, errorMessage, name } = useField<any>(() => {
@@ -85,7 +85,7 @@ const { value, errorMessage, name } = useField<any>(() => {
 
 watchThrottled(mode!, () => {
   if (isArr.value && !fields.value?.length)
-    push({})
+    push(undefined)
 }, {
   immediate: true,
   throttle: 500,
@@ -107,7 +107,7 @@ watchThrottled(mode!, () => {
       </template>
       <template v-else>
         <div v-for="_, t in fields" :key="t" class="relative rounded-lg ring-1 p-4">
-          <button v-if="t === 0" class="w-5 absolute right-2 top-0 h-5 flex items-center justify-center self-end bg-primary rounded-full" type="button" @click="push({})">
+          <button v-if="t === 0" class="w-5 absolute right-2 top-0 h-5 flex items-center justify-center self-end bg-primary rounded-full" type="button" @click="push(undefined)">
             <SvgoPlus />
           </button>
           <button v-else class="w-5 absolute right-2 top-0 h-5 flex items-center justify-center self-end bg-red-alert rounded-full" type="button" @click="remove(t)">
