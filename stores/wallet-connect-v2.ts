@@ -8,6 +8,16 @@ import type { SessionTypes } from '@walletconnect/types'
 import { ethers } from 'ethers'
 import { buildApprovedNamespaces, getSdkError } from '@walletconnect/utils'
 
+export const iProUrls = [
+  'defi.instadapp.io',
+  'polygon.instadapp.io',
+  'arbitrum.instadapp.io',
+  'avalanche.instadapp.io',
+  'optimism.instadapp.io',
+  'fantom.instadapp.io',
+  'base.instadapp.io',
+]
+
 export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
   const safe = useAvocadoSafe()
   const web3WalletV2 = shallowRef<IWeb3Wallet>()
@@ -23,6 +33,10 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
 
     return true
   }))
+
+  function isProUrl(url: string) {
+    return iProUrls.findIndex(purl => url.includes(purl)) > -1
+  }
 
   function isSameOrigin(url1: string, url2: string) {
     try {
@@ -503,6 +517,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
     getConnectionVersion,
     checkDappIsBanned,
     checkDappIsWarned,
+    isProUrl,
   }
 })
 

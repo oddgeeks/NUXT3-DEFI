@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 defineEmits(['connect', 'destroy'])
-const { checkDappIsBanned, checkDappIsWarned } = useWalletConnectV2()
+const { checkDappIsBanned, checkDappIsWarned, isProUrl } = useWalletConnectV2()
 
 const proposer = computed(() => props.proposal.params?.proposer)
 
@@ -25,7 +25,7 @@ const isConnectionWarned = computed(() => {
 })
 
 const isInstadappConnection = computed(() => {
-  return proposer.value?.metadata?.url?.includes('instadapp.io')
+  return isProUrl(proposer.value?.metadata?.url)
 })
 
 const iconURL = computed(() => {
