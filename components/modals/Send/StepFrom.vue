@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { isAddress } from '@ethersproject/address'
 import { useField } from 'vee-validate'
-import { useWindowSize } from '@vueuse/core'
+import { useBreakpoints, breakpointsTailwind } from '@vueuse/core'
 import CheckCircle from '~/assets/images/icons/check-circle.svg?component'
 import type { IToken } from '~/stores/tokens'
 
@@ -94,12 +94,8 @@ function onToggleCrossChain() {
     data.value.toChainId = data.value.fromChainId
 }
 
-const { width } = useWindowSize()
-const isMobile = computed(() => {
-  if (width.value < 450)
-    return true
-  return false
-})
+const breakPoints = useBreakpoints(breakpointsTailwind)
+const isMobile = breakPoints.smaller('sm')
 
 onMounted(() => {
   validate()
