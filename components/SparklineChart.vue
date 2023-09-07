@@ -6,7 +6,7 @@ const props = withDefaults(defineProps<{
   lineColor?: string
 }>(), {
   sparklineData: () => [],
-  lineColor: '#16A34A',
+  lineColor: '#07A65D',
 })
 
 const wrapperRef = ref<HTMLElement | null>(null)

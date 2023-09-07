@@ -20,7 +20,7 @@ onMounted(() => {
 
 <template>
   <NuxtLayout>
-    <NuxtLoadingIndicator color="#16A34A" :height="2" />
+    <NuxtLoadingIndicator color="#07A65D" :height="2" />
     <NuxtPage />
   </NuxtLayout>
 
