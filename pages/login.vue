@@ -48,9 +48,8 @@ function handleDestroy() {
     <ModalsWeb3 button-class="dark:bg-slate-800 bg-slate-100" @destroy="handleDestroy">
       <template #title>
         <div class="mb-7.5">
-          <div class="w-full flex justify-center">
-            <SvgAvocadoLogo />
-          </div>
+          <SvgoAvocadoLogoMini class="w-12 h-12 mx-auto" />
+
           <h1 class="mt-5 text-2xl leading-10 font-semibold text-center">
             Connect to Avocado
           </h1>

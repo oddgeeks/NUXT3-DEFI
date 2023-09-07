@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
-import Avocado from '@/assets/images/icons/avocado.svg?component'
 import QrSVG from '~/assets/images/icons/qr.svg?component'
 
 const { opened, toggleSidebar } = useSidebar()
@@ -38,7 +37,7 @@ const tippyOptions = {
         <div class="flex flex-col gap-6 pt-7.5 pb-6 px-7.5">
           <div class="flex items-center justify-between gap-2.5">
             <NuxtLink class="flex items-center gap-2.5" to="/">
-              <Logo />
+              <SvgoAvocadoLogo class="w-full h-full" />
               <MultisigBadge v-if="isSafeMultisig" />
             </NuxtLink>
           </div>
@@ -54,7 +53,7 @@ const tippyOptions = {
       <div v-else class="flex flex-col items-center w-full p-7.5 gap-6">
         <div class="flex flex-col items-center gap-5">
           <NuxtLink class="flex flex-col items-center gap-2.5" to="/">
-            <Avocado class="text-primary" />
+            <SvgoAvocadoLogoMini />
             <MultisigBadge v-if="isSafeMultisig" />
           </NuxtLink>
         </div>

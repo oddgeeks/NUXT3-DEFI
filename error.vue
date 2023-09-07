@@ -8,7 +8,7 @@ const parsedError = parseRequestError(error)
   <div class="flex flex-col h-full">
     <header class="flex justify-between items-center py-8 px-10">
       <NuxtLink to="/">
-        <Logo />
+        <SvgoAvocadoLogo />
       </NuxtLink>
 
       <nav class="flex items-center">
