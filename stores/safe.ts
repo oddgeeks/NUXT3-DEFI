@@ -574,7 +574,6 @@ export const useSafe = defineStore('safe', () => {
           return getSafeOptionsByChain(safe, network.chainId, provider)
             .catch((e) => {
               const msg = 'Failed to get safe options by public provider'
-              console.log(msg, e)
 
               const error = parseTransactionError(e)
 
@@ -608,7 +607,6 @@ export const useSafe = defineStore('safe', () => {
     }
     catch (e: any) {
       const msg = 'Failed to get safe options over public and private provider'
-      console.log(msg, e)
       const error = parseTransactionError(e)
 
       logActionToSlack({

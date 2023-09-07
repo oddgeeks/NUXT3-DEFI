@@ -335,6 +335,8 @@ export function useAvocadoSafe() {
   }
 
   async function signExecutionData(params: IMultisigBroadcastParams, sortedSignatures: any[]): Promise<string> {
+    await switchToAvocadoNetwork()
+
     if (!signer.value)
       throw new Error('Safe not initialized')
 
@@ -378,7 +380,7 @@ export function useAvocadoSafe() {
 
     const domain = {
       name: config.domainName,
-      version: config.domainVersion,
+      version: config.latestVersion,
       chainId: String(avoChainId),
       salt: ethers.utils.solidityKeccak256(['uint256'], [params.targetChainId]),
       verifyingContract: selectedSafe.value?.safe_address,
@@ -412,8 +414,6 @@ export function useAvocadoSafe() {
   async function signMultisigData({ chainId, data }: any): Promise<string> {
     await switchToAvocadoNetwork()
 
-    const avoSigner = library.value.getSigner()
-
     const config = await getFallbackSafeOptionsByChainId(selectedSafe.value!, chainId)
 
     if (!config)
@@ -423,7 +423,7 @@ export function useAvocadoSafe() {
 
     const domain = {
       name: config?.domainName,
-      version: config?.domainVersion,
+      version: config?.latestVersion,
       chainId: avoChainId,
       verifyingContract,
       salt: ethers.utils.solidityKeccak256(['uint256'], [chainId]),
