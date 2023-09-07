@@ -17,7 +17,6 @@ interface EstimatedFeeRetry {
   cb: (count: EstimatedFeeRetry['count'], max?: number) => void
 }
 
-
 /**
  * Called by components that need to know the estimated gas fees.
  * It is expected that the calling component will pass the transaction data, and upon changes to txData
@@ -155,7 +154,7 @@ export function useEstimatedFee(
   )
 
   onUnmounted(() => {
-    clearNuxtData('estimated-fee')
+    clearNuxtData(`estimated-fee-${chainId.value}`)
   })
 
   return {
