@@ -156,13 +156,24 @@ export const useSafe = defineStore('safe', () => {
 
     legacySafeAddress.value = oldSafeAddress
     legacySafe.value = legacySafeInstance || getDefaultSafe(oldSafeAddress, 0)
-    const legacySafeHasGas = await getGasBalance(oldSafeAddress).then(toBN).then(b => b.gt(0))
-    const userToggledHideLegacy = useLocalStorage('hide-legacy-safe', false)
-    const useLegacyAsDefault = !userToggledHideLegacy.value && legacySafeInstance && legacySafeHasGas
+    const legacyAsDefault = await legacySafeAsDefault(oldSafeAddress, legacySafeInstance)
 
     mainSafeAddress.value = address
     multiSigSafeAddress.value = multisigAddress
-    safeAddress.value = useLegacyAsDefault ? oldSafeAddress : isCachedSafeAvailable ? cachedSafeAddress : address
+    safeAddress.value = legacyAsDefault ? oldSafeAddress : isCachedSafeAvailable ? cachedSafeAddress : address
+  }
+
+  // If legacy safe exists and has gas set it as default
+  // If legacy safe is default, set the hide-legacy-safe to false
+  async function legacySafeAsDefault(oldSafeAddress?: string, legacySafeInstance?: ISafe) {
+    if (oldSafeAddress) {
+      const legacySafeHasGas = await getGasBalance(oldSafeAddress).then(toBN).then(b => b.gt(0))
+      const setLegacyAsDefault = isDefined(legacySafeInstance) && legacySafeHasGas
+      const hideLegacySafe = useLocalStorage('hide-legacy-safe', !legacySafeHasGas)
+      hideLegacySafe.value = setLegacyAsDefault ? false : hideLegacySafe.value
+      return setLegacyAsDefault
+    }
+    return false
   }
 
   async function fetchSafeInstanceses() {

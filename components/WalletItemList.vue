@@ -27,7 +27,6 @@ function handleToggle() {
   }
 }
 
-// Show legacy safe is it exists and user didn't click hide legacy safe
 const displayLegacySafe = computed(() => {
   return legacySafeAddress.value && legacySafe.value && !userToggleHideLegacy.value
 })
