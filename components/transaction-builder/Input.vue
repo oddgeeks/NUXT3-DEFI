@@ -10,6 +10,7 @@ const props = defineProps<{
   txBuilder: TransactionBuilder
   modelValue?: any
   root?: boolean
+  errorClasses?: string
 }>()
 const emit = defineEmits(['update:modelValue'])
 const error = ref('')
@@ -58,7 +59,7 @@ function onInput(value: any) {
 
       <CommonInput :placeholder="input.type" @input="onInput($event.target.value)" />
 
-      <span v-if="error" class="text-xs flex gap-2 items-center text-left mt-2 text-red-alert">
+      <span v-if="error" :class="errorClasses" class="text-xs flex gap-2 items-center text-left mt-2 text-red-alert">
         <SVGInfo class="shrink-0" />
         {{ error }}
       </span>

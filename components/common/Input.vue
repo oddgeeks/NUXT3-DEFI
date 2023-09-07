@@ -7,6 +7,7 @@ const props = withDefaults(
     placeholder?: string
     inputClasses?: string
     containerClasses?: string
+    errorClasses?: string
     disabled?: boolean
     name?: string
     errorMessage?: string
@@ -115,10 +116,13 @@ function handleBeforeInput(e: any) {
     <span
       v-if="!!errorMessage"
       class="text-xs flex gap-2 items-center text-left mt-2"
-      :class="{
-        'text-red-alert': errorType === 'error',
-        'text-orange-500': errorType === 'warning',
-      }"
+      :class="[
+        {
+          'text-red-alert': errorType === 'error',
+          'text-orange-500': errorType === 'warning',
+        },
+        errorClasses,
+      ]"
     >
       <SVGInfo class="shrink-0" />
       {{ errorMessage }}</span>

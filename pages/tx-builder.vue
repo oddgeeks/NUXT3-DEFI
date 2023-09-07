@@ -40,7 +40,7 @@ provide('mode', mode)
 
 const method = ref('')
 
-const { handleSubmit, values, meta, setFieldValue, resetForm, handleReset, resetField, setFieldError } = useForm({
+const { handleSubmit, values, meta, setFieldValue, resetField, setFieldError } = useForm({
   keepValuesOnUnmount: true,
 })
 
@@ -134,14 +134,12 @@ const onSubmit = handleSubmit(async (values) => {
         return value
       })
 
-    console.log(args, method.value)
-
     const data = await builder.value.build(method.value, args)
 
     const tx = {
       data,
-      value: 0,
       operation: 0,
+      value: ethValue.value || 0,
       to: contractAddress.value,
     }
 
@@ -269,12 +267,16 @@ async function handleSendTransaction() {
         </button>
       </li>
     </ul>
-    <div class="dark:bg-gray-850 bg-slate-50 rounded-[25px] p-7.5 flex flex-col">
-      <div class="grid grid-cols-3 gap-[60px] w-full max-w-full">
+    <div class="dark:bg-gray-850 bg-slate-50 rounded-[25px] py-7.5 flex flex-col">
+      <div class="grid grid-cols-3 gap-[60px] w-full max-w-full px-7.5">
         <form class="flex flex-col col-span-2 w-full gap-7.5">
           <div class="flex items-center w-full gap-7.5">
             <label class="text-sm font-medium text-slate-400 w-[200px]" for="input-contractAddress">Contract Address</label>
-            <CommonInput v-model="contractAddress" class="flex-1" :error-message="contractAddressError" name="contractAddress" placeholder="Enter Address" />
+            <CommonInput v-model="contractAddress" class="flex-1" :error-message="contractAddressError" name="contractAddress" placeholder="Enter Address">
+              <template #suffix>
+                <SvgSpinner v-if="pending" />
+              </template>
+            </CommonInput>
           </div>
 
           <div class="flex w-full gap-7.5">
@@ -306,11 +308,16 @@ async function handleSendTransaction() {
         </div>
       </div>
 
-      <form @submit="onSubmit">
+      <hr class="border-slate-150 dark:border-slate-800 my-7.5">
+
+      <form class="px-7.5" @submit="onSubmit">
         <template v-if="builder && method">
           <BuilderParamsInput v-if="mode === 'super-collapse'" :builder="builder" :method="method" />
 
-          <BuilderInput v-for="input in builder.getMethodInputs(method)" v-show="mode !== 'super-collapse'" :key="input.name" :name="input.name" :method="method" :builder="builder" :input="input" />
+          <BuilderInput
+            v-for="input in builder.getMethodInputs(method)" v-show="mode !== 'super-collapse'"
+            :key="input.name" :name="input.name" :method="method" :builder="builder" :input="input"
+          />
           <CommonButton :disabled="!meta.valid" type="submit" class="mt-8 w-fit">
             Add
           </CommonButton>

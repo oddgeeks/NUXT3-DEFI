@@ -10,6 +10,7 @@ const props = defineProps<{
   method: string
   builder: TransactionBuilder
   name: string
+  index?: number
 }>()
 
 const isArr = computed(() => props.input.type.includes('[]'))
@@ -96,7 +97,7 @@ watchThrottled(mode!, () => {
 
 <template>
   <div class="flex flex-col gap-2">
-    <div v-if="hasActualComponents && mode === 'expand'" class="flex flex-col gap-4 rounded-lg">
+    <ul v-if="hasActualComponents && mode === 'expand'" class="tree flex flex-col gap-4 max-w-[580px]">
       <template v-if="input.type === 'tuple'">
         <BuilderInput
           v-for="i, k in actualComponents"
@@ -108,14 +109,7 @@ watchThrottled(mode!, () => {
         />
       </template>
       <template v-else>
-        <div v-for="_, t in fields" :key="t" class="relative rounded-lg ring-1 p-4">
-          <button v-if="t === 0" class="w-5 absolute right-2 top-0 h-5 flex items-center justify-center self-end bg-primary rounded-full" type="button" @click="push(undefined)">
-            <SvgoPlus />
-          </button>
-          <button v-else class="w-5 absolute right-2 top-0 h-5 flex items-center justify-center self-end bg-red-alert rounded-full" type="button" @click="remove(t)">
-            -
-          </button>
-
+        <li v-for="_, t in fields" :key="t" class="relative flex flex-col gap-5">
           <template
             v-for="i, k in actualComponents"
             :key="i.name"
@@ -123,20 +117,41 @@ watchThrottled(mode!, () => {
             <BuilderInput
               :builder="builder"
               :method="method"
+              :index="t"
               :name="getInputName(t, k)"
               :input="i"
             />
           </template>
-        </div>
+        </li>
+        <li>
+          <button class="w-10 h-10 flex items-center justify-center bg-opacity-10 bg-primary rounded-full" type="button" @click="push(undefined)">
+            <SvgoPlus class="text-primary" />
+          </button>
+        </li>
       </template>
-    </div>
+    </ul>
 
-    <template v-else>
-      <label class="text-sm mb-2 block">
+    <div v-else class="flex items-center gap-7.5 w-full">
+      <label class="text-sm font-medium text-slate-400 w-[200px] shrink-0" :for="`input-${name}`">
         {{ input.name }} ({{ input.type }})
       </label>
-      <CommonToggle v-if="input.type === 'bool'" v-model="value" :name="name" />
-      <CommonInput v-else v-model="value" :error-message="errorMessage" :name="name" />
-    </template>
+      <div class="w-full flex items-center">
+        <CommonToggle v-if="input.type === 'bool'" v-model="value" :name="name" />
+        <CommonInput v-else v-model="value" class="w-full" error-classes="max-w-sm" :error-message="errorMessage" :name="name" />
+        <slot name="suffix" />
+      </div>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.tree {
+  --spacing : 1.5rem;
+  --radius  : 10px;
+}
+
+.tree li{
+  position     : relative;
+  padding-left : calc(2 * var(--spacing) - var(--radius) - 2px);
+}
+</style>
