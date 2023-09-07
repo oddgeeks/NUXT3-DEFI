@@ -45,7 +45,7 @@ export const useSafe = defineStore('safe', () => {
   const safesLoading = ref(false)
   const optionsLoading = ref(false)
 
-  const { account, connector } = useWeb3()
+  const { account } = useWeb3()
   const { tokens, customTokens } = storeToRefs(useTokens())
   const { fetchTokenByAddress } = useTokens()
   const documentVisibility = useDocumentVisibility()
@@ -783,32 +783,6 @@ export const useSafe = defineStore('safe', () => {
     fetchDebouncedEOABalance()
   }, {
     throttle: 1000,
-  })
-
-  watchThrottled(connector, () => {
-    if (!connector.value)
-      return
-    connector.value.on('Web3ReactUpdate', async (params) => {
-      // only reset accounts if account changed
-      if (params?.account) {
-        resetAccounts()
-
-        // if safepal available, tricky way to update account
-        if (window.ethereum.isSafePal) {
-          account.value = ''
-          await new Promise(resolve => setTimeout(resolve, 1))
-          account.value = params.account
-        }
-      }
-    })
-  }, {
-    immediate: true,
-    throttle: 500,
-  })
-
-  onBeforeUnmount(() => {
-    if (connector.value)
-      connector.value.off('Web3ReactUpdate', () => {})
   })
 
   return {
