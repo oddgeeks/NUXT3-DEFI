@@ -168,9 +168,9 @@ export const useSafe = defineStore('safe', () => {
   async function legacySafeAsDefault(oldSafeAddress?: string, legacySafeInstance?: ISafe) {
     if (oldSafeAddress) {
       const legacySafeHasGas = await getGasBalance(oldSafeAddress).then(toBN).then(b => b.gt(0))
-      const setLegacyAsDefault = isDefined(legacySafeInstance) && legacySafeHasGas
+      const setLegacyAsDefault = legacySafeInstance && legacySafeHasGas
       const hideLegacySafe = useLocalStorage('hide-legacy-safe', !legacySafeHasGas)
-      hideLegacySafe.value = setLegacyAsDefault ? false : hideLegacySafe.value
+      hideLegacySafe.value = !setLegacyAsDefault
       return setLegacyAsDefault
     }
     return false
