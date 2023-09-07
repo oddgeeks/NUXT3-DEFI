@@ -240,11 +240,11 @@ const { safeAddress, isSafeAddress } = useAvocadoSafe()
         </div>
       </div>
       <div v-else class="w-full">
-        <div class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] hidden sm:flex scroll-style flex flex-col items-center py-[100px] gap-[30px]">
-          <div class="flex flex-rows w-2/3 gap-[30px]">
+        <div class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] hidden sm:flex scroll-style flex-col items-center py-8 lg:py-[100px] gap-[30px]">
+          <div class="flex lg:flex-row flex-col w-2/3 lg:w-4/5 xl:w-2/3 gap-[30px]">
             <StyledQrCode
               :key="safeAddress"
-              class="rounded-5 bg-white flex items-center justify-center overflow-hidden"
+              class="rounded-5 bg-white self-center flex items-center justify-center overflow-hidden"
               :size="160"
               :margin="3"
               :data="safeAddress"

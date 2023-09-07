@@ -74,8 +74,8 @@
     "yup": "^0.32.11"
   },
   "dependencies": {
-    "@instadapp/avocado-base": "0.0.67",
     "@instadapp/transaction-builder": "^0.0.12",
+    "@instadapp/avocado-base": "0.0.71",
     "@splidejs/vue-splide": "^0.6.12",
     "@walletconnect/utils": "^2.9.2",
     "alchemy-sdk": "^2.7.4",

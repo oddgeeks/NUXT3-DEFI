@@ -10,10 +10,31 @@ interface EstimatedFeeParams {
   nonce?: number | string
 }
 
+interface EstimatedFeeRetry {
+  active: boolean
+  count: Ref<number>
+  max: number
+  cb: (count: EstimatedFeeRetry['count'], max?: number) => void
+}
+
+
+/**
+ * Called by components that need to know the estimated gas fees.
+ * It is expected that the calling component will pass the transaction data, and upon changes to txData
+ * this function will automatically recalculate the estimated fees.
+ * To implement retry logic pass in the retry param with a cb function that triggers a change in txData and increments the retry count.
+ * See usage in Swap modal for example of retry logic.
+ * @param txData The transaction data coming from the calling component
+ * @param chainId
+ * @param params CB functions and other params
+ * @param retry Used to implement retry logic from the calling component
+ * @returns Ref<CalculatedFee>
+ */
 export function useEstimatedFee(
   txData: Ref,
   chainId: Ref,
   params?: EstimatedFeeParams,
+  retry?: EstimatedFeeRetry,
 ) {
   const { avoProvider } = useSafe()
   const { account } = useWeb3()
@@ -116,6 +137,10 @@ export function useEstimatedFee(
         return data
       }
       catch (err: any) {
+        if (retry?.active === true && retry?.count?.value < retry?.max) {
+          console.log('Fee estimation failed, retrying')
+          retry.cb(retry.count, retry.max)
+        }
         throw err?.error || err
       }
       finally {
