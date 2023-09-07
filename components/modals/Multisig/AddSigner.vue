@@ -213,7 +213,7 @@ function handleBackClick() {
       </button>
       <div class="flex gap-3 items-center">
         <SvgoInfo2 class="w-5 h-5 rounded-full text-slate-500" />
-        <p class="text-xs text-white">
+        <p class="text-xs">
           Adding signers requires gas. Exact gas requirement will be available in the next steps
         </p>
       </div>
