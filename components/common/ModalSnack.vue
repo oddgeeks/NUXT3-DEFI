@@ -2,24 +2,35 @@
 import SVGCheckCircle from '~/assets/images/icons/check-circle.svg?component'
 import SVGErrorCircle from '~/assets/images/icons/error-circle.svg?component'
 
-defineProps<{
+withDefaults(defineProps<{
   open?: boolean
   type?: 'success' | 'error'
   message?: string
-}>()
+}>(), {
+  open: false,
+  type: 'success',
+  message: '',
+})
+
+const colors = {
+  success: 'bg-green-400',
+  error: 'bg-red-alert',
+}
+
 </script>
 
 <template>
   <Transition mode="out-in" name="slide-up">
     <div
       v-if="open"
-      :class="type === 'error' ? 'bg-red-alert' : 'bg-green-400'"
+      :class="colors[type]"
       class="absolute bottom-0 px-5 text-white rounded-b-7.5 min-h-[48px] flex-col w-full items-center justify-center flex gap-2 py-2"
     >
       <p
         style="word-break: break-word"
         class="text-xs flex gap-2 max-h-20 overflow-auto"
       >
+
         <SVGErrorCircle
           v-if="type === 'error'"
           class="h-4 w-4 shrink-0 [&>rect]:fill-white [&>path]:stroke-red-alert"
@@ -28,6 +39,7 @@ defineProps<{
           v-else
           class="h-4 w-4 shrink-0 [&>rect]:fill-white [&>path]:stroke-green-400"
         />
+
         {{ message }}
       </p>
     </div>

@@ -137,10 +137,10 @@ watch(safeAddress, () => {
                 </div>
               </td>
               <td>
-                {{ formatUsd(position.positions?.totalSupplyInUsd) }}
+                {{ `$${abbreviateNumber(position.positions?.totalSupplyInUsd)}` }}
               </td>
               <td class="py-5 pl-7.5">
-                {{ formatUsd(position.positions?.totalBorrowInUsd) }}
+                {{ `$${abbreviateNumber(position.positions?.totalBorrowInUsd)}` }}
               </td>
               <td class="pl-10">
                 {{ formatPercent(toBN(position.apy).div(100).toFixed()) }}
@@ -203,7 +203,7 @@ watch(safeAddress, () => {
                   Supplied
                 </dt>
                 <dd class="text-sm">
-                  {{ formatUsd(position.positions?.totalSupplyInUsd) }}
+                  {{ `$${abbreviateNumber(position.positions?.totalSupplyInUsd)}` }}
                 </dd>
               </div>
               <div class="border-b dark:border-slate-800 border-slate-150">
@@ -211,7 +211,7 @@ watch(safeAddress, () => {
                   Borrowed
                 </dt>
                 <dd class="text-sm">
-                  {{ formatUsd(position.positions?.totalBorrowInUsd) }}
+                  {{ `$${abbreviateNumber(position.positions?.totalBorrowInUsd)}` }}
                 </dd>
               </div>
               <div class="pb-4 px-5">

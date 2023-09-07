@@ -12,6 +12,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['destroy'])
 
+const { showInsufficientGasBanner } = useBanner()
 const { account } = useWeb3()
 const contactSelections = ref<number[]>([])
 
@@ -210,6 +211,12 @@ function handleBackClick() {
         </div>
         Add more signer(s)
       </button>
+      <div class="flex gap-3 items-center">
+        <SvgoInfo2 class="w-5 h-5 rounded-full text-slate-500" />
+        <p class="text-xs">
+          Adding signers requires gas. Exact gas requirement will be visible in the next steps
+        </p>
+      </div>
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <div class="p-7.5 grid grid-cols-2 gap-4">

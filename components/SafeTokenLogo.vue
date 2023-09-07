@@ -26,6 +26,7 @@ function onError() {
         :src="url"
         class="w-full h-full rounded-full"
         :onerror="onError"
+        loading="lazy"
       >
     </template>
 
