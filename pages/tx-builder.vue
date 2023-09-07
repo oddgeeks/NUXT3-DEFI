@@ -4,6 +4,7 @@ import { AbiFetcher } from '@instadapp/utils'
 import { isAddress } from 'ethers/lib/utils'
 import { useField, useForm } from 'vee-validate'
 import { serialize } from 'error-serializer'
+import { ethers } from 'ethers'
 
 definePageMeta({
   middleware: 'auth',
@@ -15,7 +16,6 @@ useAccountTrack(undefined, () => {
 
 const { sendTransactions } = useAvocadoSafe()
 
-const method = ref('typeCommonArray(uint256,address[],bool[],bytes32)')
 const pending = ref(false)
 const transactions = ref<any>([])
 
@@ -36,16 +36,15 @@ const modes: ITxBuilderMode[] = [{
 }]
 const mode = ref<TxBuilderModes>('expand')
 
-const builder = computed(() => isJsonString(ABI.value) ? new TransactionBuilder(JSON.parse(JSON.stringify(ABI.value))) : null)
-const actualTransactions = computed(() => transactions.value.map((i: any) => i.tx))
-
 provide('mode', mode)
 
-const { values: mainFormValues } = useForm({
+const method = ref('')
+
+const { handleSubmit, values, meta, setFieldValue, resetForm, handleReset, resetField, setFieldError } = useForm({
   keepValuesOnUnmount: true,
 })
 
-const { value: ABI, errorMessage: abiErrorMessage } = useField<string>('abi', val => isJsonString(val!), {
+const { value: ABI, errorMessage: abiErrorMessage, setState: setABI } = useField<string>('abi', val => isJsonString(val!), {
   initialValue: '',
 })
 
@@ -57,24 +56,32 @@ const { value: contractAddress, errorMessage: contractAddressError } = useField<
   initialValue: '0xa039eee5d6f876be3859e3dfce00fb7ecccd65cb',
 })
 
-const { value: ethValue, errorMessage: ethValueError } = useField<string>('ethValue')
+const { value: ethValue, errorMessage: ethValueError } = useField<string>('ethValue', (val) => {
+  // validate uint
+  try {
+    ethers.utils.defaultAbiCoder.encode(['uint'], [String(val)])
+    return true
+  }
+  catch (e) {
+    const parsed = serialize(e)
+    return parsed?.reason || parsed.message
+  }
+}, {
+  initialValue: 0,
+})
 
 const { value: chainId } = useField<number>('chainId', val => !!val, {
   initialValue: 137,
 })
 
-const { handleSubmit, values, meta, setFieldValue, resetForm, handleReset, resetField, setFieldError } = useForm({
-  keepValuesOnUnmount: true,
-})
+const builder = computed(() => isJsonString(ABI.value) ? new TransactionBuilder(JSON.parse(JSON.stringify(ABI.value))) : null)
+const actualTransactions = computed(() => transactions.value.map((i: any) => i.tx))
 
 const { data, pending: estimatePending, error } = useEstimatedFee(actualTransactions, chainId, {
   immediate: true,
 })
 
 function cleanupFormValues(methods: any[]) {
-  handleReset()
-  resetForm()
-
   setFieldError('params', undefined)
   resetField('params', {
     value: undefined,
@@ -167,21 +174,19 @@ watchDebounced(contractAddress, async () => {
   try {
     pending.value = true
 
-    ABI.value = ''
-    method.value = ''
-
     const fetcher = new AbiFetcher()
 
-    const selam = await fetcher.get(contractAddress.value, 'polygon')
+    const resp = await fetcher.get(contractAddress.value, 'polygon')
 
-    console.log(selam)
-
-    ABI.value = JSON.stringify(selam, null, 2)
+    setABI({ value: JSON.stringify(resp, null, 2), errors: [], touched: true })
   }
   catch (e) {
     const parsed = serialize(e)
 
-    alert(parsed.message)
+    notify({
+      message: parsed.message,
+      type: 'error',
+    })
   }
   finally {
     pending.value = false
