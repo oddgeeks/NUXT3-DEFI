@@ -117,9 +117,9 @@ export function useEstimatedFee(
           })
         }
 
-        console.log({ message })
-
         const signatureParams = { message, targetChainId: chainId.value, safe: safeAddress.value, owner: selectedSafe.value?.owner_address || account.value }
+
+        console.log({ message, signatureParams })
 
         if (!isSelectedSafeLegacy.value) {
           Object.assign(signatureParams, {
