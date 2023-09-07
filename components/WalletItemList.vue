@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { getAddress } from 'ethers/lib/utils'
 
-const { mainSafe, multiSigSafe, safes, legacySafe, legacySafeAddress, safesLoading, safeAddress, selectedSafe, legacySafeHasGas } = storeToRefs(useSafe())
+const { mainSafe, multiSigSafe, safes, legacySafe, legacySafeAddress, safesLoading, safeAddress, selectedSafe } = storeToRefs(useSafe())
 
 const userToggleHideLegacy = useLocalStorage('hide-legacy-safe', false)
 
@@ -27,8 +27,9 @@ function handleToggle() {
   }
 }
 
+// Show legacy safe is it exists and user didn't click hide legacy safe
 const displayLegacySafe = computed(() => {
-  return legacySafeAddress.value && legacySafe.value && !userToggleHideLegacy.value && legacySafeHasGas.value
+  return legacySafeAddress.value && legacySafe.value && !userToggleHideLegacy.value
 })
 </script>
 
@@ -40,14 +41,14 @@ const displayLegacySafe = computed(() => {
 
         <SvgSpinner v-if="safesLoading" class="text-primary" />
       </h2>
-      <button class="text-primary text-xs" type="button" @click="handleToggle">
+      <button v-if="legacySafeAddress && legacySafe" class="text-primary text-xs" type="button" @click="handleToggle">
         {{ !displayLegacySafe ? 'Show' : 'Hide' }} legacy safe
       </button>
     </div>
     <template v-if="!safesLoading">
       <div class="flex flex-col gap-2.5">
         <WalletItem v-if="mainSafe" v2 primary :safe="mainSafe" />
-        <WalletItem v-if="displayLegacySafe" tooltip="Please migrate your funds to new Avocado Personal to enjoy exciting updates in the future. Your legacy wallet will stay functional & secure forever." :safe="legacySafe" />
+        <WalletItem v-if="legacySafe && displayLegacySafe" tooltip="Please migrate your funds to new Avocado Personal to enjoy exciting updates in the future. Your legacy wallet will stay functional & secure forever." :safe="legacySafe" />
         <WalletItem v-if="multiSigSafe" primary :safe="multiSigSafe" />
       </div>
 

@@ -40,7 +40,6 @@ export const useSafe = defineStore('safe', () => {
   const selectedSafe = ref<ISafe>()
   const mainSafe = ref<ISafe>()
   const legacySafe = ref<ISafe>()
-  const legacySafeHasGas = ref<boolean>()
   const multiSigSafe = ref<ISafe>()
 
   const safesLoading = ref(false)
@@ -157,9 +156,9 @@ export const useSafe = defineStore('safe', () => {
 
     legacySafeAddress.value = oldSafeAddress
     legacySafe.value = legacySafeInstance || getDefaultSafe(oldSafeAddress, 0)
-    legacySafeHasGas.value = await getGasBalance(oldSafeAddress).then(toBN).then(b => b.gt(0))
+    const legacySafeHasGas = await getGasBalance(oldSafeAddress).then(toBN).then(b => b.gt(0))
     const userToggledHideLegacy = useLocalStorage('hide-legacy-safe', false)
-    const useLegacyAsDefault = !userToggledHideLegacy.value && legacySafeInstance && legacySafeHasGas.value
+    const useLegacyAsDefault = !userToggledHideLegacy.value && legacySafeInstance && legacySafeHasGas
 
     mainSafeAddress.value = address
     multiSigSafeAddress.value = multisigAddress
@@ -845,7 +844,6 @@ export const useSafe = defineStore('safe', () => {
     fetchPendingMultisigTxnsCount,
     legacySafe,
     legacySafeAddress,
-    legacySafeHasGas,
     getSafes,
     isSelectedSafeLegacy,
     safesLoading,
