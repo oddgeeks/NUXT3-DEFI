@@ -10,7 +10,7 @@ import {
 export function useAvocadoSafe() {
   const { public: config } = useRuntimeConfig()
   const { switchToAvocadoNetwork } = useNetworks()
-  const { library, account } = useWeb3()
+  const { library, account, provider } = useWeb3()
   const { trackingAccount, isTrackingMode } = useAccountTrack()
   const { getRpcProviderByChainId } = useShared()
   const { avoProvider, getSafeOptions, refreshSelectedSafe, getFallbackSafeOptionsByChainId } = useSafe()
@@ -334,7 +334,7 @@ export function useAvocadoSafe() {
     openReviewMultisigTransaction(payload.id, chainId, rejection)
   }
 
-  async function signExecutionData(params: IMultisigBroadcastParams, sortedSignatures: any[]) {
+  async function signExecutionData(params: IMultisigBroadcastParams, sortedSignatures: any[]): Promise<string> {
     if (!signer.value)
       throw new Error('Safe not initialized')
 
@@ -392,12 +392,24 @@ export function useAvocadoSafe() {
       signatures: sortedSignatures,
     }
 
-    console.log({ domain, types, value })
+    const { signature, cancelled } = await signTypedData(provider.value, account.value, {
+      domain,
+      types,
+      value,
+    })
 
-    return signer.value._signTypedData(domain, types, value)
+    if (cancelled)
+      throw new Error('Signature cancelled')
+
+    if (!signature)
+      throw new Error('Failed to get signature')
+
+    console.log({ domain, types, value, account: account.value, signature })
+
+    return signature
   }
 
-  async function signMultisigData({ chainId, data }: any) {
+  async function signMultisigData({ chainId, data }: any): Promise<string> {
     await switchToAvocadoNetwork()
 
     const avoSigner = library.value.getSigner()
@@ -448,9 +460,21 @@ export function useAvocadoSafe() {
       ],
     }
 
-    console.log({ domain, types, data })
+    const { signature, cancelled } = await signTypedData(provider.value, account.value, {
+      domain,
+      types,
+      value: data,
+    })
 
-    return avoSigner._signTypedData(domain, types, data)
+    if (cancelled)
+      throw new Error('Signature cancelled')
+
+    if (!signature)
+      throw new Error('Failed to get signature')
+
+    console.log({ domain, types, value: data, account: account.value, signature })
+
+    return signature
   }
 
   async function rejectMultisigTransaction(tx: IMultisigTransaction) {
