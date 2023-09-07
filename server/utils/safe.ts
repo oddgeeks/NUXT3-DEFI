@@ -39,18 +39,38 @@ export async function getSafeOptionsByChain(safe: ISafe, chainId: string | numbe
     provider,
   )
 
-  const gaslessWalletInstance = GaslessWallet__factory.connect(
-    safe.safe_address!,
-    provider,
-  )
-
   function currentVersion(): Promise<string> {
-    return gaslessWalletInstance.DOMAIN_SEPARATOR_VERSION()
+    if (safe.multisig == 1) {
+      return implInstance.DOMAIN_SEPARATOR_VERSION().catch(() => {
+        obj.notdeployed = true
+
+        return '0.0.0'
+      })
+    }
+    else {
+      const gaslessWalletInstance = GaslessWallet__factory.connect(
+        safe.safe_address!,
+        provider,
+      )
+
+      return gaslessWalletInstance.DOMAIN_SEPARATOR_VERSION().catch(() => {
+        obj.notdeployed = true
+
+        return '0.0.0'
+      })
+    }
   }
 
   function latestVersion(): Promise<string> {
-    if (safe.multisig === 1)
-      return multisigForwarderInstance.avocadoVersion('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', safe.multisig_index)
+    if (safe.multisig == 1) {
+      return implInstance.DOMAIN_SEPARATOR_VERSION().catch(() => {
+        obj.notdeployed = true
+
+        return multisigForwarderInstance.avocadoVersion(
+          '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+          safe.multisig_index)
+      })
+    }
 
     return legacyForwarderInstance.avoWalletVersion(
       '0x0000000000000000000000000000000000000001',
@@ -59,66 +79,41 @@ export async function getSafeOptionsByChain(safe: ISafe, chainId: string | numbe
 
   function domainName(): Promise<string> {
     return implInstance.DOMAIN_SEPARATOR_NAME()
-  }
-
-  function domainVersion(): Promise<string> {
-    return implInstance.DOMAIN_SEPARATOR_VERSION()
+      .catch(() => multisigForwarderInstance.avocadoVersionName(
+        '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+        safe.multisig_index,
+      ))
   }
 
   function nonce(): Promise<number> {
-    return multisigForwarderInstance.avoNonce(safe.owner_address, safe.multisig_index).then(nonce => toBN(nonce).toNumber())
+    return multisigForwarderInstance.avoNonce(safe.owner_address, safe.multisig_index)
+      .then(nonce => toBN(nonce).toNumber())
+      .catch((e) => {
+        const parsed = serialize(e)
+        if (parsed.code === 'CALL_EXCEPTION')
+          return 0
+
+        throw e
+      })
   }
 
   function threshold(): Promise<number> {
-    return implInstance.requiredSigners()
-  }
-
-  const [_threshold, _nonce, _latestVersion, _currentVersion, _domainName, _domainVersion] = await Promise.all([
-    threshold()
-      .catch((e) => {
-        const parsed = serialize(e)
-
-        if (parsed.code === 'CALL_EXCEPTION')
-          return 1
-
-        throw e
-      }),
-    nonce().catch((e) => {
+    return implInstance.requiredSigners().catch((e) => {
       const parsed = serialize(e)
+
       if (parsed.code === 'CALL_EXCEPTION')
-        return 0
+        return 1
 
       throw e
-    }),
-    latestVersion()
-      .catch((e) => {
-        const parsed = serialize(e)
-        if (parsed.code === 'CALL_EXCEPTION') {
-          obj.notdeployed = true
-          return '0.0.0'
-        }
+    })
+  }
 
-        throw e
-      }),
-    currentVersion()
-      .catch((e) => {
-        const parsed = serialize(e)
-
-        if (parsed.code === 'CALL_EXCEPTION') {
-          obj.notdeployed = true
-          return '0.0.0'
-        }
-
-        throw e
-      }),
-    domainName().catch(() => multisigForwarderInstance.avocadoVersionName(
-      '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-      safe.multisig_index,
-    )),
-    domainVersion().catch(() => multisigForwarderInstance.avocadoVersion(
-      '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-      safe.multisig_index,
-    )),
+  const [_threshold, _nonce, _latestVersion, _currentVersion, _domainName] = await Promise.all([
+    threshold(),
+    nonce(),
+    latestVersion(),
+    currentVersion(),
+    domainName(),
   ])
 
   obj.chainId = chainId
@@ -130,7 +125,6 @@ export async function getSafeOptionsByChain(safe: ISafe, chainId: string | numbe
   obj.ownerAddress = safe.owner_address
   obj.server = server
   obj.domainName = _domainName
-  obj.domainVersion = _domainVersion
 
   return obj
 }
