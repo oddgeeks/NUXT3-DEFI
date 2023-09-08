@@ -9,8 +9,7 @@ const props = defineProps<{
   input: InputType
   method: string
   builder: TransactionBuilder
-  name: string
-  index?: number
+  name?: string
 }>()
 
 const isArr = computed(() => props.input.type.includes('[]'))
@@ -53,7 +52,7 @@ function getInputName(index?: number, fieldIndex?: string | number) {
 
 const { fields = [], push = () => {}, remove = () => {} } = mode?.value === 'super-collapse'
   ? {} as any
-  : hasActualComponents.value && mode?.value === 'expand'
+  : hasActualComponents.value && mode?.value === 'expand' && props.name
     ? useFieldArray(props.name)
     : {}
 
@@ -110,13 +109,17 @@ watchThrottled(mode!, () => {
       </template>
       <template v-else>
         <li v-for="_, t in fields" :key="t" class="relative flex flex-col gap-5">
+          <button v-if="t" class="text-slate-400 absolute -right-6 top-4" type="button" @click="remove(t)">
+            <SvgoX />
+          </button>
           <template
             v-for="i, k in actualComponents"
-            :key="i.name"
+            :key="i.name + t"
           >
             <BuilderInput
               :builder="builder"
               :method="method"
+              arr
               :index="t"
               :name="getInputName(t, k)"
               :input="i"
@@ -138,7 +141,6 @@ watchThrottled(mode!, () => {
       <div class="w-full flex items-center">
         <CommonToggle v-if="input.type === 'bool'" v-model="value" :name="name" />
         <CommonInput v-else v-model="value" class="w-full" error-classes="max-w-sm" :error-message="errorMessage" :name="name" />
-        <slot name="suffix" />
       </div>
     </div>
   </div>
@@ -149,8 +151,7 @@ watchThrottled(mode!, () => {
   --spacing : 1.5rem;
   --radius  : 10px;
 }
-
-.tree li{
+.tree > li{
   position     : relative;
   padding-left : calc(2 * var(--spacing) - var(--radius) - 2px);
 }

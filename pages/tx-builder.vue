@@ -5,6 +5,7 @@ import { isAddress } from 'ethers/lib/utils'
 import { useField, useForm } from 'vee-validate'
 import { serialize } from 'error-serializer'
 import { ethers } from 'ethers'
+import { DragHandle, SlickItem, SlickList } from 'vue-slicksort'
 
 definePageMeta({
   middleware: 'auth',
@@ -16,8 +17,13 @@ useAccountTrack(undefined, () => {
 
 const { sendTransactions } = useAvocadoSafe()
 
+interface IBatch {
+  method: string
+  tx: TransactionsAction
+}
+
 const pending = ref(false)
-const transactions = ref<any>([])
+const batch = ref<IBatch[]>([])
 
 interface ITxBuilderMode {
   label: string
@@ -38,7 +44,7 @@ const mode = ref<TxBuilderModes>('expand')
 
 provide('mode', mode)
 
-const method = ref('')
+const method = ref('typeArrayStuctCommonNested(((uint256,int256,address,bool,bytes32,bytes4,bytes,uint8),uint256,uint8)[])')
 
 const { handleSubmit, values, meta, setFieldValue, resetField, setFieldError } = useForm({
   keepValuesOnUnmount: true,
@@ -75,7 +81,7 @@ const { value: chainId } = useField<number>('chainId', val => !!val, {
 })
 
 const builder = computed(() => isJsonString(ABI.value) ? new TransactionBuilder(JSON.parse(JSON.stringify(ABI.value))) : null)
-const actualTransactions = computed(() => transactions.value.map((i: any) => i.tx))
+const actualTransactions = computed(() => batch.value.map((i: any) => i.tx))
 
 const { data, pending: estimatePending, error } = useEstimatedFee(actualTransactions, chainId, {
   immediate: true,
@@ -93,6 +99,10 @@ function cleanupFormValues(methods: any[]) {
       value: undefined,
     })
   }
+}
+
+function deleteBatchItem(index: number) {
+  batch.value = batch.value.filter((_, i) => i !== index)
 }
 
 function transformParams(params: string) {
@@ -136,24 +146,19 @@ const onSubmit = handleSubmit(async (values) => {
 
     const data = await builder.value.build(method.value, args)
 
-    const tx = {
+    const tx: TransactionsAction = {
       data,
-      operation: 0,
-      value: ethValue.value || 0,
+      operation: '0',
+      value: String(ethValue.value || '0'),
       to: contractAddress.value,
     }
 
-    const arr = [{
+    const arr: IBatch[] = [{
       tx,
       method: method.value,
     }]
 
-    console.log({
-      tx,
-      whole: arr,
-    })
-
-    transactions.value = arr.concat(transactions.value)
+    batch.value = arr.concat(batch.value)
   }
   catch (e) {
     const parsed = serialize(e)
@@ -267,62 +272,118 @@ async function handleSendTransaction() {
         </button>
       </li>
     </ul>
-    <div class="dark:bg-gray-850 bg-slate-50 rounded-[25px] py-7.5 flex flex-col">
-      <div class="grid grid-cols-3 gap-[60px] w-full max-w-full px-7.5">
-        <form class="flex flex-col col-span-2 w-full gap-7.5">
-          <div class="flex items-center w-full gap-7.5">
-            <label class="text-sm font-medium text-slate-400 w-[200px]" for="input-contractAddress">Contract Address</label>
-            <CommonInput v-model="contractAddress" class="flex-1" :error-message="contractAddressError" name="contractAddress" placeholder="Enter Address">
-              <template #suffix>
-                <SvgSpinner v-if="pending" />
-              </template>
-            </CommonInput>
-          </div>
+    <form @submit="onSubmit">
+      <div class="dark:bg-gray-850 bg-slate-50 rounded-[25px] py-7.5 flex flex-col">
+        <div class="grid grid-cols-3 gap-10 w-full max-w-full px-7.5">
+          <div class="flex flex-col col-span-2 w-full gap-7.5">
+            <div class="flex items-center w-full gap-7.5">
+              <label class="text-sm font-medium text-slate-400 w-[200px]" for="input-contractAddress">Contract Address</label>
+              <CommonInput v-model="contractAddress" class="flex-1" :error-message="contractAddressError" name="contractAddress" placeholder="Enter Address">
+                <template #suffix>
+                  <SvgSpinner v-if="pending" />
+                </template>
+              </CommonInput>
+            </div>
 
-          <div class="flex w-full gap-7.5">
-            <label class="text-sm font-medium text-slate-400 w-[200px] shrink-0" for="input-abi">Enter ABI</label>
-            <CommonTextarea id="input-abi" v-model="ABI" :error-message="abiErrorMessage" rows="5" name="abi" placeholder="ABI []" />
-          </div>
+            <div class="flex items-center w-full gap-7.5">
+              <label class="text-sm font-medium text-slate-400 shrink-0 w-[200px]" for="input-contractAddress">Network</label>
+              <CommonSelect
+                v-model="chainId"
+                class="w-full"
+                value-key="chainId"
+                label-key="name"
+                icon-key="icon"
+                :options="availableNetworks"
+              >
+                <template #button-prefix>
+                  <ChainLogo class="w-6 h-6" :chain="chainId" />
+                </template>
+                <template #item-prefix="{ value }">
+                  <ChainLogo class="w-6 h-6" :chain="value" />
+                </template>
+              </CommonSelect>
+            </div>
 
-          <div class="flex items-center w-full gap-7.5">
-            <label class="text-sm font-medium text-slate-400 w-[200px] shrink-0" for="input-toAddress">To Address</label>
-            <CommonInput v-model="toAddress" class="w-full" :error-message="toAddressError" name="toAddress" placeholder="Enter Address" />
-          </div>
+            <div class="flex w-full gap-7.5">
+              <label class="text-sm font-medium text-slate-400 w-[200px] shrink-0" for="input-abi">Enter ABI</label>
+              <CommonTextarea id="input-abi" v-model="ABI" :error-message="abiErrorMessage" rows="5" name="abi" placeholder="ABI []" />
+            </div>
 
-          <div class="flex items-center w-full gap-7.5">
-            <label class="text-sm font-medium text-slate-400 w-[200px] shrink-0" for="input-ethValue">ETH Value</label>
-            <CommonInput v-model="ethValue" class="w-full" :error-message="ethValueError" name="ethValue" placeholder="uint" />
-          </div>
+            <div class="flex items-center w-full gap-7.5">
+              <label class="text-sm font-medium text-slate-400 w-[200px] shrink-0" for="input-toAddress">To Address</label>
+              <CommonInput v-model="toAddress" class="w-full" :error-message="toAddressError" name="toAddress" placeholder="Enter Address" />
+            </div>
 
-          <div v-if="builder" class="flex items-center w-full gap-7.5">
-            <label class="text-sm font-medium text-slate-400 w-[200px] shrink-0">Method</label>
-            <CommonSelect
-              v-model="method"
-              class="w-full"
-              :options="builder?.getWriteMethods()"
-            />
+            <div class="flex items-center w-full gap-7.5">
+              <label class="text-sm font-medium text-slate-400 w-[200px] shrink-0" for="input-ethValue">ETH Value</label>
+              <CommonInput v-model="ethValue" class="w-full" :error-message="ethValueError" name="ethValue" placeholder="uint" />
+            </div>
+
+            <div v-if="builder" class="flex items-center w-full gap-7.5">
+              <label class="text-sm font-medium text-slate-400 w-[200px] shrink-0">Method</label>
+              <CommonSelect
+                v-model="method"
+                class="w-full"
+                :options="builder?.getWriteMethods()"
+              />
+            </div>
           </div>
-        </form>
-        <div class="flex shrink-0">
-          batching goes hereeee
+          <div class="flex flex-col shrink-0 h-fit dark:bg-gray-950 bg-white rounded-[14px] p-5">
+            <h2 class="text-sm mb-5">
+              Transactions Batch
+            </h2>
+
+            <SlickList v-model:list="batch" use-drag-handle class="flex flex-col gap-5" tag="ul" axis="y">
+              <SlickItem v-for="(item, i) in batch" :key="item.method + i" class="flex items-center gap-4 w-full" tag="li" :index="i">
+                <div class="flex items-center gap-4 w-full">
+                  <span class="w-2 font-medium text-xs text-slate-400">
+                    {{ i + 1 }}
+                  </span>
+                  <div class="dark:bg-slate-850 flex items-center w-full gap-2.5 font-medium bg-slate-150 rounded-xl py-2.5 px-3 dark:ring-slate-750">
+                    <DragHandle class="cursor-grab">
+                      <SvgoHandler class="shrink-0" />
+                    </DragHandle>
+                    <div class="flex flex-col">
+                      <span class="text-xs text-slate-400">
+                        {{ shortenHash(item.tx.to) }}
+                      </span>
+                      <span class="text-xs leading-5">
+                        {{ item.method }}
+                      </span>
+                    </div>
+                    <button type="button" class="ml-auto" @click="deleteBatchItem(i)">
+                      <SvgoDelete class="text-slate-400 w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+              </SlickItem>
+            </SlickList>
+
+            <div class="ml-7.5 mt-5">
+              <CommonButton size="sm">
+                Create Batch
+              </CommonButton>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <hr class="border-slate-150 dark:border-slate-800 my-7.5">
+        <hr class="border-slate-150 dark:border-slate-800 my-7.5">
 
-      <form class="px-7.5" @submit="onSubmit">
-        <template v-if="builder && method">
-          <BuilderParamsInput v-if="mode === 'super-collapse'" :builder="builder" :method="method" />
+        <div class="gap-5 flex flex-col">
+          <template v-if="builder && method">
+            <BuilderParamsInput v-if="mode === 'super-collapse'" :builder="builder" :method="method" />
 
-          <BuilderInput
-            v-for="input in builder.getMethodInputs(method)" v-show="mode !== 'super-collapse'"
-            :key="input.name" :name="input.name" :method="method" :builder="builder" :input="input"
-          />
-          <CommonButton :disabled="!meta.valid" type="submit" class="mt-8 w-fit">
-            Add
-          </CommonButton>
-        </template>
-      </form>
+            <BuilderInput
+              v-for="input in builder.getMethodInputs(method)"
+              v-show="mode !== 'super-collapse'"
+              :key="input.name"
+              :name="input.name"
+              :method="method"
+              :builder="builder"
+              :input="input"
+            />
+          </template>
+        </div>
       <!-- <div class="flex flex-col gap-4">
         <h1>
           Send Transaction
@@ -342,6 +403,10 @@ async function handleSendTransaction() {
           Send transaction
         </CommonButton>
       </div> -->
-    </div>
+      </div>
+      <CommonButton :disabled="!meta.valid" type="submit" class="mt-8 w-fit mx-7.5">
+        Add Transaction
+      </CommonButton>
+    </form>
   </div>
 </template>
