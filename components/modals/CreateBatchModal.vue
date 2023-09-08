@@ -7,7 +7,7 @@ const props = defineProps<{
   chainId: number | string
 }>()
 
-defineEmits(['destroy'])
+const emit = defineEmits(['destroy'])
 
 const reactiveBatch = toRef(props.batch)
 const simulationDetails = ref<ISimulation>()
@@ -82,6 +82,8 @@ async function handleSubmit() {
 
   if (tx)
     showPendingTransactionModal(tx, props.chainId)
+
+  emit('destroy')
 }
 </script>
 
