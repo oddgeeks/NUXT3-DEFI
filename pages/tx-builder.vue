@@ -5,7 +5,8 @@ import { isAddress } from 'ethers/lib/utils'
 import { useField, useForm } from 'vee-validate'
 import { serialize } from 'error-serializer'
 import { ethers } from 'ethers'
-import { DragHandle, SlickItem, SlickList } from 'vue-slicksort'
+import { SlickList } from 'vue-slicksort'
+import PowerOffSVG from '~/assets/images/icons/power-off.svg?component'
 
 definePageMeta({
   middleware: 'auth',
@@ -14,13 +15,6 @@ definePageMeta({
 useAccountTrack(undefined, () => {
   useEagerConnect()
 })
-
-const { sendTransactions } = useAvocadoSafe()
-
-interface IBatch {
-  method: string
-  tx: TransactionsAction
-}
 
 const pending = ref(false)
 const batch = ref<IBatch[]>([])
@@ -44,8 +38,6 @@ const mode = ref<TxBuilderModes>('expand')
 
 provide('mode', mode)
 
-const method = ref('typeArrayStuctCommonNested(((uint256,int256,address,bool,bytes32,bytes4,bytes,uint8),uint256,uint8)[])')
-
 const { handleSubmit, values, meta, setFieldValue, resetField, setFieldError } = useForm({
   keepValuesOnUnmount: true,
 })
@@ -54,13 +46,9 @@ const { value: ABI, errorMessage: abiErrorMessage, setState: setABI } = useField
   initialValue: '',
 })
 
-const { value: toAddress, errorMessage: toAddressError } = useField<string>('toAddress', val => isAddress(val!), {
-  initialValue: '0x9F60699cE23f1Ab86Ec3e095b477Ff79d4f409AD',
-})
+const { value: toAddress, errorMessage: toAddressError } = useField<string>('toAddress', val => isAddress(val!))
 
-const { value: contractAddress, errorMessage: contractAddressError } = useField<string>('contractAddress', val => isAddress(val!), {
-  initialValue: '0xa039eee5d6f876be3859e3dfce00fb7ecccd65cb',
-})
+const { value: contractAddress, errorMessage: contractAddressError } = useField<string>('contractAddress', val => isAddress(val!))
 
 const { value: ethValue, errorMessage: ethValueError } = useField<string>('ethValue', (val) => {
   // validate uint
@@ -80,12 +68,11 @@ const { value: chainId } = useField<number>('chainId', val => !!val, {
   initialValue: 137,
 })
 
-const builder = computed(() => isJsonString(ABI.value) ? new TransactionBuilder(JSON.parse(JSON.stringify(ABI.value))) : null)
-const actualTransactions = computed(() => batch.value.map((i: any) => i.tx))
-
-const { data, pending: estimatePending, error } = useEstimatedFee(actualTransactions, chainId, {
-  immediate: true,
+const { value: method, setState: setMethod } = useField('method', val => !!val, {
+  initialValue: '',
 })
+
+const builder = computed(() => isJsonString(ABI.value) ? new TransactionBuilder(JSON.parse(JSON.stringify(ABI.value))) : null)
 
 function cleanupFormValues(methods: any[]) {
   setFieldError('params', undefined)
@@ -101,8 +88,24 @@ function cleanupFormValues(methods: any[]) {
   }
 }
 
-function deleteBatchItem(index: number) {
-  batch.value = batch.value.filter((_, i) => i !== index)
+async function handleDeleteBatchItem(index: number) {
+  const { success } = await openDialogModal({
+    title: 'Are you sure you want to Delete Batch?',
+    type: 'question',
+    cancelButtonText: 'Cancel',
+    isCancelButtonVisible: true,
+    headerIconComponent: h(PowerOffSVG),
+    buttonText: 'Delete',
+    buttonProps: {
+      color: 'red',
+    },
+    cancelButtonProps: {
+      color: 'white',
+    },
+  })
+
+  if (success)
+    batch.value = batch.value.filter((_, i) => i !== index)
 }
 
 function transformParams(params: string) {
@@ -176,6 +179,8 @@ watchDebounced(contractAddress, async () => {
 
   try {
     pending.value = true
+
+    setMethod({ value: '' })
 
     const fetcher = new AbiFetcher()
 
@@ -254,13 +259,6 @@ watch(mode, async (newMode, oldMode) => {
     setFieldValue(i.name, isCollapseToExpand ? tryJsonParse(value) : isExpandToCollapse ? tryJsonStringfy(value) : undefined, false)
   })
 })
-
-async function handleSendTransaction() {
-  const tx = await sendTransactions(actualTransactions.value, chainId.value, undefined, 'others')
-
-  if (tx)
-    showPendingTransactionModal(tx, chainId.value)
-}
 </script>
 
 <template>
@@ -328,39 +326,31 @@ async function handleSendTransaction() {
               />
             </div>
           </div>
-          <div class="flex flex-col shrink-0 h-fit dark:bg-gray-950 bg-white rounded-[14px] p-5">
+
+          <div v-if="!batch?.length" class="bg-primary font-medium border gap-2.5 flex-col border-primary border-dashed flex items-center justify-center bg-opacity-10 rounded-[14px] p-10 h-[360px]">
+            <SvgoFilePlus class="text-primary" />
+            <h2 class="text-sm">
+              Batching
+            </h2>
+            <p class="text-xs text-center leading-5">
+              Drag and drop a JSON file or <br>
+              <span class="text-primary">
+                chose a file
+              </span>
+            </p>
+          </div>
+
+          <div v-else class="flex flex-col shrink-0 h-fit dark:bg-gray-950 bg-white rounded-[14px] p-5">
             <h2 class="text-sm mb-5">
               Transactions Batch
             </h2>
 
-            <SlickList v-model:list="batch" use-drag-handle class="flex flex-col gap-5" tag="ul" axis="y">
-              <SlickItem v-for="(item, i) in batch" :key="item.method + i" class="flex items-center gap-4 w-full" tag="li" :index="i">
-                <div class="flex items-center gap-4 w-full">
-                  <span class="w-2 font-medium text-xs text-slate-400">
-                    {{ i + 1 }}
-                  </span>
-                  <div class="dark:bg-slate-850 flex items-center w-full gap-2.5 font-medium bg-slate-150 rounded-xl py-2.5 px-3 dark:ring-slate-750">
-                    <DragHandle class="cursor-grab">
-                      <SvgoHandler class="shrink-0" />
-                    </DragHandle>
-                    <div class="flex flex-col">
-                      <span class="text-xs text-slate-400">
-                        {{ shortenHash(item.tx.to) }}
-                      </span>
-                      <span class="text-xs leading-5">
-                        {{ item.method }}
-                      </span>
-                    </div>
-                    <button type="button" class="ml-auto" @click="deleteBatchItem(i)">
-                      <SvgoDelete class="text-slate-400 w-3 h-3" />
-                    </button>
-                  </div>
-                </div>
-              </SlickItem>
+            <SlickList v-model:list="batch" use-drag-handle class="flex flex-col gap-5 max-h-[450px] overflow-auto scroll-style" tag="ul" axis="y">
+              <BatchItem v-for="(item, i) in batch" :key="item.method + i" :item="item" :index="i" @delete-batch="handleDeleteBatchItem" />
             </SlickList>
 
             <div class="ml-7.5 mt-5">
-              <CommonButton size="sm">
+              <CommonButton size="sm" @click="openCreateBatchModal({ batch, chainId })">
                 Create Batch
               </CommonButton>
             </div>

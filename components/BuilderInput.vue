@@ -10,6 +10,7 @@ const props = defineProps<{
   method: string
   builder: TransactionBuilder
   name?: string
+  index?: number
 }>()
 
 const isArr = computed(() => props.input.type.includes('[]'))
@@ -119,7 +120,6 @@ watchThrottled(mode!, () => {
             <BuilderInput
               :builder="builder"
               :method="method"
-              arr
               :index="t"
               :name="getInputName(t, k)"
               :input="i"
@@ -134,7 +134,7 @@ watchThrottled(mode!, () => {
       </template>
     </ul>
 
-    <div v-else class="flex items-center gap-7.5 w-full">
+    <div v-else :class="index === undefined ? 'px-9 max-w-[580px]' : ''" class="flex items-center gap-7.5 w-full">
       <label class="text-sm font-medium text-slate-400 w-[200px] shrink-0" :for="`input-${name}`">
         {{ input.name }} ({{ input.type }})
       </label>

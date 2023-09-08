@@ -214,6 +214,16 @@ interface IBuyToken2 {
   sparklinePrice7d: number[];
 }
 
+interface IBatch {
+  method: string
+  tx: TransactionsAction
+}
+
+interface ICreateBatchModal{
+  chainId: number | string
+  batch: IBatch[]
+}
+
 interface IFromToken {
   symbol: string;
   name: string;
