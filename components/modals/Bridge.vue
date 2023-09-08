@@ -55,9 +55,10 @@ const {
   fromTokens,
   sortTokensBestMatch,
 } = useBridge(fromToken, fromChainId)
+
 const { pending, error, data } = useEstimatedFee(
   transactions.data,
-  ref(props.chainId),
+  fromChainId,
   {
     disabled: () => isInsufficientBalance.value,
   },

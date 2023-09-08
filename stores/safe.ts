@@ -45,7 +45,7 @@ export const useSafe = defineStore('safe', () => {
   const safesLoading = ref(false)
   const optionsLoading = ref(false)
 
-  const { account, connector } = useWeb3()
+  const { account } = useWeb3()
   const { tokens, customTokens } = storeToRefs(useTokens())
   const { fetchTokenByAddress } = useTokens()
   const documentVisibility = useDocumentVisibility()
@@ -156,10 +156,24 @@ export const useSafe = defineStore('safe', () => {
 
     legacySafeAddress.value = oldSafeAddress
     legacySafe.value = legacySafeInstance || getDefaultSafe(oldSafeAddress, 0)
+    const legacyAsDefault = await legacySafeAsDefault(oldSafeAddress, legacySafeInstance)
 
     mainSafeAddress.value = address
     multiSigSafeAddress.value = multisigAddress
-    safeAddress.value = isCachedSafeAvailable ? cachedSafeAddress : legacySafeInstance ? oldSafeAddress : address
+    safeAddress.value = legacyAsDefault ? oldSafeAddress : isCachedSafeAvailable ? cachedSafeAddress : address
+  }
+
+  // If legacy safe exists and has gas set it as default
+  // If legacy safe is default, set the hide-legacy-safe to false
+  async function legacySafeAsDefault(oldSafeAddress?: string, legacySafeInstance?: ISafe) {
+    if (oldSafeAddress) {
+      const legacySafeHasGas = await getGasBalance(oldSafeAddress).then(toBN).then(b => b.gt(0))
+      const setLegacyAsDefault = legacySafeInstance && legacySafeHasGas
+      const hideLegacySafe = useLocalStorage('hide-legacy-safe', !legacySafeHasGas)
+      hideLegacySafe.value = !setLegacyAsDefault
+      return setLegacyAsDefault
+    }
+    return false
   }
 
   async function fetchSafeInstanceses() {
@@ -574,7 +588,6 @@ export const useSafe = defineStore('safe', () => {
           return getSafeOptionsByChain(safe, network.chainId, provider)
             .catch((e) => {
               const msg = 'Failed to get safe options by public provider'
-              console.log(msg, e)
 
               const error = parseTransactionError(e)
 
@@ -608,7 +621,6 @@ export const useSafe = defineStore('safe', () => {
     }
     catch (e: any) {
       const msg = 'Failed to get safe options over public and private provider'
-      console.log(msg, e)
       const error = parseTransactionError(e)
 
       logActionToSlack({
@@ -783,32 +795,6 @@ export const useSafe = defineStore('safe', () => {
     fetchDebouncedEOABalance()
   }, {
     throttle: 1000,
-  })
-
-  watchThrottled(connector, () => {
-    if (!connector.value)
-      return
-    connector.value.on('Web3ReactUpdate', async (params) => {
-      // only reset accounts if account changed
-      if (params?.account) {
-        resetAccounts()
-
-        // if safepal available, tricky way to update account
-        if (window.ethereum.isSafePal) {
-          account.value = ''
-          await new Promise(resolve => setTimeout(resolve, 1))
-          account.value = params.account
-        }
-      }
-    })
-  }, {
-    immediate: true,
-    throttle: 500,
-  })
-
-  onBeforeUnmount(() => {
-    if (connector.value)
-      connector.value.off('Web3ReactUpdate', () => {})
   })
 
   return {

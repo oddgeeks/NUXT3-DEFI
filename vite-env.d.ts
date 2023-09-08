@@ -78,7 +78,6 @@ interface ISafeOptions {
   notdeployed: boolean,
   server: boolean,
   domainName: string,
-  domainVersion: string,
 }
 
 interface IAvocadoTransaction {

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import Avocado from '@/assets/images/icons/avocado.svg?component'
 import Hamburger from '@/assets/images/icons/hamburger.svg?component'
 import SVGX from '~/assets/images/icons/x.svg?component'
 import PowerSVG from '~/assets/images/icons/power.svg?component'
@@ -66,8 +65,8 @@ watch(() => active.value, () => {
   >
     <div class="flex justify-between items-center p-5">
       <NuxtLink to="/" class="flex items-center">
-        <div class="flex items-center justify-center w-10 h-10 rounded-[14px]">
-          <SvgoAvocado2 class="text-white w-6 h-6" />
+        <div class="flex items-center justify-center w-10 h-10">
+          <SvgoAvocadoLogoMini class="h-full w-full" />
         </div>
         <span v-if="!isActualActive" class="ml-2">Avocado</span>
       </NuxtLink>
@@ -137,7 +136,7 @@ watch(() => active.value, () => {
             <Copy :text="safeAddress">
               <template #content>
                 <div class="flex items-center gap-3">
-                  <Avocado class="text-primary" />
+                  <SvgoAvocadoLogoMini class="text-primary" />
                   <div class="flex flex-col">
                     <span class="text-left text-xs text-slate-500">Avo Address</span>
                     <span class="dark:text-white text-slate-900">{{ shortenHash(safeAddress) }}</span>
