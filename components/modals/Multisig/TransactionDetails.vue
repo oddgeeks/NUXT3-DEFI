@@ -490,6 +490,9 @@ onUnmounted(() => {
                   <span v-if="getContactNameByAddress(signer.address)" class="text-xs whitespace-nowrap truncate max-w-[150px]">
                     {{ getContactNameByAddress(signer.address) }}
                   </span>
+                  <button v-else class="text-xs text-primary font-medium" @click="openAddContactModal(undefined, signer.address)">
+                    Save as Contact
+                  </button>
                   <span :class="getContactNameByAddress(signer.address) ? 'text-slate-400' : ''" class="text-xs leading-5 font-medium">
                     {{ shortenHash(signer.address) }}
                   </span>
