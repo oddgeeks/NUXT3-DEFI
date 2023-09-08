@@ -104,6 +104,7 @@ watchThrottled(mode!, () => {
           :key="i.name"
           :builder="builder"
           :method="method"
+          :index="index"
           :input="i"
           :name="getInputName(undefined, k)"
         />
