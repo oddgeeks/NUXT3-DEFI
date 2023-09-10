@@ -106,6 +106,11 @@ const title = computed(() => {
   return tab?.title
 })
 
+const loadingTxns = ref(true)
+function toggleLoading(status: boolean) {
+  loadingTxns.value = status
+}
+
 useIntervalFn(() => {
   refreshNonSeq()
   refreshSeq()
@@ -158,9 +163,13 @@ onMounted(() => {
       </h2>
       <div ref="itemsRef" class="gap-5 flex flex-col">
         <template v-if="activeTab === 'completed'">
-          <MultisigPendingTransactionItems network-cell-visible :active-tab="activeTab" @on-toggle="syncToggles" />
+          <MultisigPendingTransactionItems network-cell-visible :active-tab="activeTab" @on-toggle="syncToggles" @loading="toggleLoading" />
+          <MultisigLoadingTransactionItems v-if="loadingTxns" />
         </template>
-        <MultisigPendingTransactionItems v-for="network in availableNetworks" v-else :key="network.chainId" :active-tab="activeTab" :chain-id="network.chainId" @on-toggle="syncToggles" />
+        <template v-else>
+          <MultisigPendingTransactionItems v-for="network in availableNetworks" :key="network.chainId" :active-tab="activeTab" :chain-id="network.chainId" @on-toggle="syncToggles" @loading="toggleLoading" />
+          <MultisigLoadingTransactionItems v-if="loadingTxns" />
+        </template>
       </div>
     </div>
   </div>

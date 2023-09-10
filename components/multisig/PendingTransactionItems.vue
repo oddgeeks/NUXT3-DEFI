@@ -7,7 +7,7 @@ const props = defineProps<{
   networkCellVisible?: boolean
 }>()
 
-const emit = defineEmits(['onToggle'])
+const emit = defineEmits(['onToggle', 'loading'])
 
 const abortController = ref<AbortController | null>(null)
 
@@ -43,6 +43,7 @@ async function fetchTransactions() {
       abortController.value.abort()
 
     pause()
+    emit('loading', true)
 
     pending.value = true
 
@@ -89,6 +90,7 @@ async function fetchTransactions() {
   }
   finally {
     resume()
+    emit('loading', false)
     pending.value = false
   }
 }
