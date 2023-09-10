@@ -43,7 +43,6 @@ async function fetchTransactions() {
       abortController.value.abort()
 
     pause()
-    emit('loading', true)
 
     pending.value = true
 

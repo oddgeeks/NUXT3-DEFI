@@ -118,6 +118,7 @@ useIntervalFn(() => {
 
 watch(activeTab, async () => {
   await nextTick()
+  toggleLoading(true)
   await wait(500)
   syncToggles()
 })
