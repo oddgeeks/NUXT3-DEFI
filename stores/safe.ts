@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { acceptHMRUpdate, defineStore, storeToRefs } from 'pinia'
 import collect from 'collect.js'
-import { deepCopy, getAddress, isAddress } from 'ethers/lib/utils'
+import { deepCopy, isAddress } from 'ethers/lib/utils'
 import axios from 'axios'
 import { wait } from '@instadapp/utils'
 import type { IToken } from './tokens'
@@ -161,24 +161,22 @@ export const useSafe = defineStore('safe', () => {
 
     const setLegacyAsDefault = await legacySafeAsDefault(oldSafeAddress, legacySafeInstance)
 
-    const route = useRoute()
     const paramSafe = route.params?.safe as string
-    if (paramSafe) {
-      if (isAddressEqual(multisigAddress, paramSafe)) {
-        // SafeAddress in param and it is multisafe in the current wallet
-        safeAddress.value = multisigAddress
-      }
-      else {
-        // param exists but is not a multisafe in the current wallet
-        const router = useRouter()
-        safeAddress.value = setLegacyAsDefault ? oldSafeAddress : isCachedSafeAvailable ? cachedSafeAddress : address
-        router.push('/')
-      }
-    }
-    else {
-      safeAddress.value = setLegacyAsDefault ? oldSafeAddress : isCachedSafeAvailable ? cachedSafeAddress : address
-    }
 
+    const isParamSafeValid = paramSafe && isAddress(paramSafe)
+
+    const isParamSafeAvailable = isParamSafeValid
+      ? isAddressEqual(paramSafe, multisigAddress)
+      || safes.value.some(i => i.multisig === 1 && isAddressEqual(paramSafe, i.safe_address))
+      : false
+
+    safeAddress.value = isParamSafeAvailable
+      ? paramSafe
+      : isCachedSafeAvailable
+        ? cachedSafeAddress
+        : setLegacyAsDefault
+          ? oldSafeAddress
+          : address
   }
 
   // If legacy safe exists and has gas set it as default
@@ -652,29 +650,6 @@ export const useSafe = defineStore('safe', () => {
     }
   }
 
-  const setMultisigParamSafe = async () => {
-    const paramSafe = route.params.safe as string
-
-    if (!paramSafe)
-      return
-
-    if (!isAddress(paramSafe))
-      return
-
-    if (getAddress(paramSafe) === getAddress(safeAddress.value))
-      return
-
-    // check if paramSafe is a valid multisig safe
-    const isValidMultiSigSafe = !!safes.value.find(
-      safe => isAddressEqual(safe.safe_address, paramSafe),
-    ) || isAddressEqual(multiSigSafeAddress.value, paramSafe)
-
-    if (!isValidMultiSigSafe)
-      return
-
-    safeAddress.value = paramSafe
-  }
-
   const resetAccounts = () => {
     trackingAccount.value = ''
 
@@ -755,8 +730,6 @@ export const useSafe = defineStore('safe', () => {
         await fetchComputedAddresses()
 
         await fetchSafeInstanceses()
-
-        setMultisigParamSafe()
 
         safesLoading.value = false
       }
