@@ -215,7 +215,15 @@ interface IBuyToken2 {
 }
 
 interface IBatch {
-  method: string
+  formValues: {
+    abi: string;
+    toAddress: string;
+    contractAddress: string;
+    ethValue: string;
+    chainId: string;
+    method: string;
+    [key: string]: any?;
+  },
   tx: TransactionsAction
 }
 

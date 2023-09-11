@@ -18,6 +18,9 @@ useAccountTrack(undefined, () => {
 
 const pending = ref(false)
 const batch = ref<IBatch[]>([])
+const batchIndex = ref()
+
+const editMode = computed(() => batchIndex.value !== undefined)
 
 interface ITxBuilderMode {
   label: string
@@ -38,7 +41,7 @@ const mode = ref<TxBuilderModes>('expand')
 
 provide('mode', mode)
 
-const { handleSubmit, values, meta, setFieldValue, resetField, setFieldError } = useForm({
+const { handleSubmit, values, meta, setFieldValue, resetField, setFieldError, setValues } = useForm({
   keepValuesOnUnmount: true,
 })
 
@@ -88,6 +91,13 @@ function cleanupFormValues(methods: any[]) {
   }
 }
 
+async function handleEditBatchItem(index: number) {
+  batchIndex.value = index
+  const batchItem = batch.value[index]
+
+  setValues(batchItem.formValues, true)
+}
+
 async function handleDeleteBatchItem(index: number) {
   const { success } = await openDialogModal({
     title: 'Are you sure you want to Delete Batch?',
@@ -104,8 +114,13 @@ async function handleDeleteBatchItem(index: number) {
     },
   })
 
-  if (success)
+  if (success) {
+    // reset edit index
+    if (index === batchIndex.value)
+      batchIndex.value = undefined
+
     batch.value = batch.value.filter((_, i) => i !== index)
+  }
 }
 
 function transformParams(params: string) {
@@ -156,12 +171,29 @@ const onSubmit = handleSubmit(async (values) => {
       to: contractAddress.value,
     }
 
-    const arr: IBatch[] = [{
+    const newVal = {
       tx,
-      method: method.value,
-    }]
+      formValues: values as any,
+    }
 
-    batch.value = arr.concat(batch.value)
+    if (editMode.value) {
+      batch.value[batchIndex.value] = newVal
+      batchIndex.value = undefined
+      notify({
+        type: 'success',
+        message: 'Transaction Updated Successfully',
+      })
+    }
+    else {
+      const arr: IBatch[] = [newVal]
+
+      batch.value = arr.concat(batch.value)
+
+      notify({
+        type: 'success',
+        message: 'Transaction Added Successfully',
+      })
+    }
   }
   catch (e) {
     const parsed = serialize(e)
@@ -347,7 +379,7 @@ watch(mode, async (newMode, oldMode) => {
             </h2>
 
             <SlickList v-model:list="batch" use-drag-handle class="flex flex-col gap-5 max-h-[450px] overflow-auto scroll-style" tag="ul" axis="y">
-              <BatchItem v-for="(item, i) in batch" :key="item.method + i" :item="item" :index="i" @delete-batch="handleDeleteBatchItem" />
+              <BatchItem v-for="(item, i) in batch" :key="item.formValues.method + i" :item="item" :index="i" @edit-batch="handleEditBatchItem" @delete-batch="handleDeleteBatchItem" />
             </SlickList>
 
             <div class="ml-7.5 mt-5">
@@ -377,7 +409,7 @@ watch(mode, async (newMode, oldMode) => {
         </div>
       </div>
       <CommonButton :disabled="!meta.valid" type="submit" class="mt-8 w-fit mx-7.5">
-        Add Transaction
+        {{ editMode ? "Edit" : 'Add' }} Transaction
       </CommonButton>
     </form>
   </div>
