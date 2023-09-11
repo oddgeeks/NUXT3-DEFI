@@ -21,7 +21,7 @@ defineEmits(['deleteBatch', 'editBatch'])
         </DragHandle>
         <div class="flex flex-col">
           <span class="text-xs text-slate-400">
-            {{ shortenHash(item.tx.to) }}
+            {{ shortenHash(item.formValues.toAddress) }}
           </span>
           <span v-tippy="item.formValues.method" class="text-xs leading-5 truncate max-w-full w-[200px]">
             {{ item.formValues.method }}

@@ -214,17 +214,24 @@ interface IBuyToken2 {
   sparklinePrice7d: number[];
 }
 
-interface IBatch {
-  formValues: {
+interface IBatchJson {
+  version: string;
+  batch: IBatch[];
+}
+
+type BatchFormValues = {
     abi: string;
     toAddress: string;
     contractAddress: string;
     ethValue: string;
     chainId: number;
     method: string;
+    params?: string;
     [key: string]: any?;
-  },
-  tx: TransactionsAction
+}
+
+interface IBatch {
+  formValues: BatchFormValues,
 }
 
 interface ICreateBatchModal{

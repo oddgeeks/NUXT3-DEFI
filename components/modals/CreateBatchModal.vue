@@ -20,7 +20,11 @@ const [simulationStatus, toggle] = useToggle()
 
 const isSimulationDisabled = computed(() => networksSimulationNotSupported.includes(Number(props.chainId)))
 const isTransactionFailed = computed(() => !simulationDetails.value?.transaction?.status)
-const actualTransactions = computed(() => reactiveBatch.value.map(i => i.tx))
+const actualTransactions = asyncComputed(async () => {
+  const txs = await Promise.all(reactiveBatch.value.map(i => parseTransactionObject(i.formValues, 'expand')))
+
+  return txs
+})
 
 const { data, pending, error } = useEstimatedFee(actualTransactions, ref(props.chainId), {
   immediate: true,

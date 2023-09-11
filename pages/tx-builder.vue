@@ -19,8 +19,12 @@ useAccountTrack(undefined, () => {
 const { getRpcProviderByChainId } = useShared()
 
 const pending = ref(false)
+const uploading = ref(false)
 const batch = ref<IBatch[]>([])
 const batchIndex = ref()
+const file = ref<File>()
+
+const isDragging = ref(false)
 
 const editMode = computed(() => batchIndex.value !== undefined)
 const deployedNetworks = ref(availableNetworks)
@@ -94,6 +98,24 @@ function cleanupFormValues(methods: any[]) {
   }
 }
 
+function downloadJson() {
+  const json: IBatchJson = {
+    batch: batch.value,
+    version: '1.0.0',
+  }
+
+  const stringify = JSON.stringify(json, null, 2)
+
+  const blob = new Blob([stringify], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'TransactionBatch'
+  a.click()
+  a.remove()
+}
+
 async function getContractNetworks(contractAddress: string) {
   const networks = []
   for (const network of availableNetworks) {
@@ -140,6 +162,41 @@ async function handleDeleteBatchItem(index: number) {
   }
 }
 
+async function setupJSONFile(file: File) {
+  try {
+    const parsed = await parseAndValidateJson(file)
+
+    batch.value = parsed.batch
+
+    notify({
+      type: 'success',
+      message: 'File uploaded successfully',
+    })
+  }
+  catch {
+    notify({
+      type: 'error',
+      message: 'Invalid file',
+    })
+  }
+}
+
+async function handleFileUpload(e: Event) {
+  try {
+    uploading.value = true
+    const target = e.target as HTMLInputElement
+    const file = target.files?.[0] as File
+
+    if (!file)
+      return
+
+    setupJSONFile(file)
+  }
+  finally {
+    uploading.value = false
+  }
+}
+
 function transformParams(params: string) {
   // convert params into object way
   const parsed = tryJsonParse(params)
@@ -163,6 +220,51 @@ function transformParams(params: string) {
   return obj
 }
 
+function dragender(e: any) {
+  e.preventDefault()
+  isDragging.value = true
+}
+
+function dragover(e: any) {
+  e.preventDefault()
+}
+
+function dragleave(e: any) {
+  e.preventDefault()
+  isDragging.value = false
+}
+
+async function parseAndValidateJson(file: File) {
+  const parsed = await parseJsonFile(file) as IBatchJson
+
+  console.log({
+    parsed,
+  })
+
+  if (!parsed.version || !parsed.batch || !Array.isArray(parsed.batch))
+
+    throw new Error('Invalid file')
+
+  return parsed
+}
+
+async function drop(e: any) {
+  try {
+    e.preventDefault()
+    const file = e.dataTransfer.files[0]
+
+    if (!file)
+      return
+
+    await setupJSONFile(file)
+
+    isDragging.value = false
+  }
+  finally {
+    isDragging.value = false
+  }
+}
+
 const onSubmit = handleSubmit(async (values) => {
   try {
     if (!builder.value)
@@ -174,29 +276,12 @@ const onSubmit = handleSubmit(async (values) => {
     if (!isSameNetwork)
       throw new Error('Can\'t add transaction from different network')
 
-    const args = mode.value === 'super-collapse'
-      ? tryJsonParse(values.params)
-      : builder.value.getMethodInputs(method.value).map((i) => {
-        if (!i.name)
-          throw new Error('Invalid input')
+    const tx = await parseTransactionObject(values as BatchFormValues, mode.value)
 
-        const value = tryJsonParse(values[i.name])
-
-        return value
-      })
-
-    const data = await builder.value.build(method.value, args)
-
-    const tx: TransactionsAction = {
-      data,
-      operation: '0',
-      value: String(ethValue.value || '0'),
-      to: contractAddress.value,
-    }
+    console.log({ tx })
 
     const newVal = {
-      tx,
-      formValues: values as any,
+      formValues: values as BatchFormValues,
     }
 
     if (editMode.value) {
@@ -208,9 +293,7 @@ const onSubmit = handleSubmit(async (values) => {
       })
     }
     else {
-      const arr: IBatch[] = [newVal]
-
-      batch.value = arr.concat(batch.value)
+      batch.value.push(newVal)
 
       notify({
         type: 'success',
@@ -229,7 +312,7 @@ const onSubmit = handleSubmit(async (values) => {
 })
 
 watchDebounced(contractAddress, async () => {
-  if (!isAddress(contractAddress.value))
+  if (!isAddress(contractAddress.value) || uploading.value || editMode.value)
     return
 
   try {
@@ -389,24 +472,49 @@ watch(mode, async (newMode, oldMode) => {
               />
             </div>
           </div>
-
-          <div v-if="!batch?.length" class="bg-primary font-medium border gap-2.5 flex-col border-primary border-dashed flex items-center justify-center bg-opacity-10 rounded-[14px] p-10 h-[360px]">
-            <SvgoFilePlus class="text-primary" />
-            <h2 class="text-sm">
-              Batching
-            </h2>
-            <p class="text-xs text-center leading-5">
-              Drag and drop a JSON file or <br>
-              <span class="text-primary">
-                chose a file
-              </span>
-            </p>
+          <div
+            v-if="!batch?.length"
+            class="bg-primary font-medium border gap-2.5 flex-col border-primary border-dashed flex items-center justify-center bg-opacity-10 rounded-[14px] p-10 h-[360px]"
+            @dragenter="dragender"
+            @dragleave="dragleave"
+            @dragover="dragover"
+            @drop="drop"
+          >
+            <SvgoFilePlus class="text-primary pointer-events-none" />
+            <span v-if="isDragging" class="pointer-events-none">
+              Drop a JSON file here
+            </span>
+            <template v-else>
+              <h2 class="text-sm pointer-events-none">
+                Batching
+              </h2>
+              <p class="text-xs text-center leading-5">
+                <span class="pointer-events-none"> Drag and drop a JSON file or</span>
+                <br>
+                <input
+                  id="json-file"
+                  ref="file"
+                  type="file"
+                  class="w-px h-px opacity-0 overflow-hidden absolute"
+                  accept="application/JSON"
+                  @change="handleFileUpload"
+                >
+                <label for="json-file" class="text-primary cursor-pointer">
+                  chose a file
+                </label>
+              </p>
+            </template>
           </div>
 
           <div v-else class="flex flex-col shrink-0 h-fit dark:bg-gray-950 bg-white rounded-[14px] p-5">
-            <h2 class="text-sm mb-5">
-              Transactions Batch
-            </h2>
+            <div class="flex items-center mb-5 justify-between">
+              <h2 class="text-sm">
+                Transactions Batch
+              </h2>
+              <button v-tippy="'Download'" class="flex items-center flex-col" type="button" @click="downloadJson">
+                <SvgoDownload class="w-5 h-5" />
+              </button>
+            </div>
 
             <SlickList v-model:list="batch" use-drag-handle class="flex flex-col gap-5 max-h-[450px] overflow-auto scroll-style" tag="ul" axis="y">
               <BatchItem v-for="(item, i) in batch" :key="item.formValues.method + i" :item="item" :index="i" @edit-batch="handleEditBatchItem" @delete-batch="handleDeleteBatchItem" />
