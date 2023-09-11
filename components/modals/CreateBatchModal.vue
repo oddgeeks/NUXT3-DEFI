@@ -12,6 +12,7 @@ const emit = defineEmits(['destroy'])
 const reactiveBatch = toRef(props.batch)
 const simulationDetails = ref<ISimulation>()
 const simulationLoading = ref(false)
+const isSubmitting = ref(false)
 
 const { selectedSafe } = storeToRefs(useSafe())
 
@@ -78,12 +79,25 @@ async function createSimulation() {
 }
 
 async function handleSubmit() {
-  const tx = await sendTransactions(actualTransactions.value, props.chainId, undefined, 'others')
+  try {
+    isSubmitting.value = true
+    const tx = await sendTransactions(actualTransactions.value, props.chainId, undefined, 'others')
 
-  if (tx)
-    showPendingTransactionModal(tx, props.chainId)
+    if (tx)
+      showPendingTransactionModal(tx, props.chainId)
 
-  emit('destroy')
+    emit('destroy')
+  }
+  catch (e) {
+    const parsed = serialize(e)
+    openSnackbar({
+      type: 'error',
+      message: parsed.message,
+    })
+  }
+  finally {
+    isSubmitting.value = false
+  }
 }
 </script>
 
@@ -106,7 +120,7 @@ async function handleSubmit() {
 
     <EstimatedFee :data="data" :loading="pending" :error="error" />
     <div class="flex gap-2.5">
-      <CommonButton :disabled="!!error || pending" @click="handleSubmit">
+      <CommonButton class="sm:w-[134px] items-center justify-center" :loading="isSubmitting" :disabled="!!error || pending" @click="handleSubmit">
         Send Batch
       </CommonButton>
       <CommonButton color="white" @click="$emit('destroy')">
