@@ -16,11 +16,14 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
+const { getRpcProviderByChainId } = useShared()
+
 const pending = ref(false)
 const batch = ref<IBatch[]>([])
 const batchIndex = ref()
 
 const editMode = computed(() => batchIndex.value !== undefined)
+const deployedNetworks = ref(availableNetworks)
 
 interface ITxBuilderMode {
   label: string
@@ -89,6 +92,20 @@ function cleanupFormValues(methods: any[]) {
       value: undefined,
     })
   }
+}
+
+async function getContractNetworks(contractAddress: string) {
+  const networks = []
+  for (const network of availableNetworks) {
+    const provider = getRpcProviderByChainId(network.chainId)
+
+    const code = await provider.getCode(contractAddress)
+
+    if (code !== '0x')
+      networks.push(network)
+  }
+
+  return networks
 }
 
 async function handleEditBatchItem(index: number) {
@@ -220,6 +237,13 @@ watchDebounced(contractAddress, async () => {
 
     setABI({ value: JSON.stringify(resp, null, 2), errors: [], touched: true })
     toAddress.value = contractAddress.value
+
+    const contractNetworks = await getContractNetworks(contractAddress.value)
+
+    if (contractNetworks.length) {
+      deployedNetworks.value = contractNetworks
+      chainId.value = contractNetworks[0].chainId
+    }
   }
   catch (e) {
     const parsed = serialize(e)
@@ -324,7 +348,7 @@ watch(mode, async (newMode, oldMode) => {
                 value-key="chainId"
                 label-key="name"
                 icon-key="icon"
-                :options="availableNetworks"
+                :options="deployedNetworks"
               >
                 <template #button-prefix>
                   <ChainLogo class="w-6 h-6" :chain="chainId" />
