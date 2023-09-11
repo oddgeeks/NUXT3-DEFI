@@ -187,6 +187,7 @@ watchDebounced(contractAddress, async () => {
     const resp = await fetcher.get(contractAddress.value, 'polygon')
 
     setABI({ value: JSON.stringify(resp, null, 2), errors: [], touched: true })
+    toAddress.value = contractAddress.value
   }
   catch (e) {
     const parsed = serialize(e)
@@ -374,25 +375,6 @@ watch(mode, async (newMode, oldMode) => {
             />
           </template>
         </div>
-      <!-- <div class="flex flex-col gap-4">
-        <h1>
-          Send Transaction
-        </h1>
-
-        <ul v-if="transactions.length" class="flex flex-col gap-4">
-          <SlickList v-model:list="transactions" axis="y">
-            <SlickItem v-for="(tx, i) in transactions" :key="tx.data" :index="i">
-              {{ tx.method }}
-            </SlickItem>
-          </SlickList>
-        </ul>
-
-        <EstimatedFee :data="data" :loading="estimatePending" :error="error" />
-
-        <CommonButton v-if="transactions.length" :disabled="estimatePending" class="max-w-fit" type="button" @click="handleSendTransaction">
-          Send transaction
-        </CommonButton>
-      </div> -->
       </div>
       <CommonButton :disabled="!meta.valid" type="submit" class="mt-8 w-fit mx-7.5">
         Add Transaction

@@ -111,7 +111,7 @@ watchThrottled(mode!, () => {
       </template>
       <template v-else>
         <li v-for="_, t in fields" :key="t" class="relative flex flex-col gap-5">
-          <button v-if="t" class="text-slate-400 absolute -right-6 top-4" type="button" @click="remove(t)">
+          <button v-if="fields.length > 1" class="text-slate-400 absolute -right-6 top-4" type="button" @click="remove(t)">
             <SvgoX />
           </button>
           <template

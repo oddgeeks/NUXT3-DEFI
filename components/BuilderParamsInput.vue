@@ -32,9 +32,9 @@ const { value, errorMessage } = useField<string>('params', (val) => {
 </script>
 
 <template>
-  <div class="w-full">
-    <label>Params</label>
-    <textarea v-model="value" name="params" rows="5" placeholder="Enter valid json" class="dark:bg-slate-800 w-full bg-slate-100 focus-within:ring-1 dark:focus-within:bg-gray-850 focus-within:bg-slate-50 dark:focus-within:ring-slate-750 focus-within:ring-slate-100" />
+  <div class="px-7.5 max-w-[820px] flex gap-7.5 w-full">
+    <label class="text-sm font-medium text-slate-400 w-[200px] shrink-0">Params</label>
+    <CommonTextarea v-model="value" name="params" rows="5" placeholder="Enter valid json" />
     <span
       v-if="!!errorMessage"
       class="text-xs flex gap-2 items-center text-left mt-2 text-red-alert"
