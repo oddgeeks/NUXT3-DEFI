@@ -1,5 +1,5 @@
 <template>
-    <div class="dark:bg-gray-850 rounded-2xl bg-slate-50 gap-5 flex flex-col animate-pulse">
+    <div class="dark:bg-gray-850 rounded-2xl bg-slate-50 gap-5 flex flex-col blur pointer-events-none">
       <div v-for="i in 3" :key="i" class="border-b border-slate-300 dark:border-slate-750">
         <MultisigLoadingTransactionItem />
       </div>
