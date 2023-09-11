@@ -4,7 +4,7 @@ export default defineNuxtPlugin(async () => {
   const shared = useShared()
 
   try {
-    const data = await $fetch<Record<string, string>>('https://cdn.instadapp.io/avocado/rpc.json', {
+    const data = await $fetch<Record<string, string>>('https://rpc.instadapp.io/rpc', {
       retry: 3,
     })
 

@@ -344,8 +344,7 @@ watch(usdcTokens, () => {
       Redeem Code
     </button>
     <p class="w-full text-xs text-orange-400 leading-5">
-      Deposited gas cannot be withdrawn at this time. Withdrawals will be
-      enabled in a future update.
+      Deposited gas cannot be withdrawn at this time. Please only top up what you plan to use.
     </p>
   </div>
 </template>
