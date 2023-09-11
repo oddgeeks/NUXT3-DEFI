@@ -168,6 +168,12 @@ const onSubmit = handleSubmit(async (values) => {
     if (!builder.value)
       return
 
+    // check network confict
+    const isSameNetwork = batch.value.every(i => i.formValues.chainId == chainId.value)
+
+    if (!isSameNetwork)
+      throw new Error('Can\'t add transaction from different network')
+
     const args = mode.value === 'super-collapse'
       ? tryJsonParse(values.params)
       : builder.value.getMethodInputs(method.value).map((i) => {

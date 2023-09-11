@@ -220,7 +220,7 @@ interface IBatch {
     toAddress: string;
     contractAddress: string;
     ethValue: string;
-    chainId: string;
+    chainId: number;
     method: string;
     [key: string]: any?;
   },
