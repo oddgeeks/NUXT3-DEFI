@@ -156,11 +156,29 @@ export const useSafe = defineStore('safe', () => {
 
     legacySafeAddress.value = oldSafeAddress
     legacySafe.value = legacySafeInstance || getDefaultSafe(oldSafeAddress, 0)
-    const legacyAsDefault = await legacySafeAsDefault(oldSafeAddress, legacySafeInstance)
-
     mainSafeAddress.value = address
     multiSigSafeAddress.value = multisigAddress
-    safeAddress.value = legacyAsDefault ? oldSafeAddress : isCachedSafeAvailable ? cachedSafeAddress : address
+
+    const setLegacyAsDefault = await legacySafeAsDefault(oldSafeAddress, legacySafeInstance)
+
+    const route = useRoute()
+    const paramSafe = route.params?.safe as string
+    if (paramSafe) {
+      if (isAddressEqual(multisigAddress, paramSafe)) {
+        // SafeAddress in param and it is multisafe in the current wallet
+        safeAddress.value = multisigAddress
+      }
+      else {
+        // param exists but is not a multisafe in the current wallet
+        const router = useRouter()
+        safeAddress.value = setLegacyAsDefault ? oldSafeAddress : isCachedSafeAvailable ? cachedSafeAddress : address
+        router.push('/')
+      }
+    }
+    else {
+      safeAddress.value = setLegacyAsDefault ? oldSafeAddress : isCachedSafeAvailable ? cachedSafeAddress : address
+    }
+
   }
 
   // If legacy safe exists and has gas set it as default
