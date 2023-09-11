@@ -131,10 +131,16 @@ async function getContractNetworks(contractAddress: string) {
 }
 
 async function handleEditBatchItem(index: number) {
-  batchIndex.value = index
   const batchItem = batch.value[index]
+  const _builder = new TransactionBuilder(JSON.parse(JSON.stringify(batchItem.formValues.abi)))
+  if (_builder) {
+    const inputs = _builder.getMethodInputs(batchItem.formValues.method)
+    cleanupFormValues(inputs)
 
-  setValues(batchItem.formValues, true)
+    batchIndex.value = index
+
+    setValues(batchItem.formValues, true)
+  }
 }
 
 async function handleDeleteBatchItem(index: number) {
@@ -155,9 +161,7 @@ async function handleDeleteBatchItem(index: number) {
 
   if (success) {
     // reset edit index
-    if (index === batchIndex.value)
-      batchIndex.value = undefined
-
+    batchIndex.value = undefined
     batch.value = batch.value.filter((_, i) => i !== index)
   }
 }

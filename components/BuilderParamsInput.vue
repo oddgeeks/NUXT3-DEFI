@@ -34,13 +34,6 @@ const { value, errorMessage } = useField<string>('params', (val) => {
 <template>
   <div class="px-7.5 max-w-[820px] flex gap-7.5 w-full">
     <label class="text-sm font-medium text-slate-400 w-[200px] shrink-0">Params</label>
-    <CommonTextarea v-model="value" name="params" rows="5" placeholder="Enter valid json" />
-    <span
-      v-if="!!errorMessage"
-      class="text-xs flex gap-2 items-center text-left mt-2 text-red-alert"
-    >
-      <SvgoInfo2 class="shrink-0" />
-      {{ errorMessage }}
-    </span>
+    <CommonTextarea v-model="value" :error-message="errorMessage" name="params" rows="5" placeholder="Enter valid json" />
   </div>
 </template>

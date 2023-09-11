@@ -18,6 +18,7 @@ const props = withDefaults(
     transparent?: boolean
     readonly?: boolean
     autofocus?: boolean
+    transformer?: (value: string) => string
   }>(),
   {
     modelValue: '',
@@ -47,6 +48,9 @@ function handleInput(e: any) {
 
   if (props.type === 'numeric')
     inputVal = inputVal.replace(',', '.')
+
+  if (props.transformer)
+    inputVal = props.transformer(inputVal)
 
   emit('update:modelValue', inputVal)
 }

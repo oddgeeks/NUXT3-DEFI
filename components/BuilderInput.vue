@@ -15,7 +15,12 @@ const props = defineProps<{
 
 const isArr = computed(() => props.input.type.includes('[]'))
 
+const multipiler = ref()
+const actualValue = ref()
+
 const mode = inject<Ref<TxBuilderModes>>('mode')
+
+const isTypeInteger = computed(() => mode?.value === 'expand' && props.input.type.includes('int'))
 
 const actualComponents = computed(() => {
   if (isArr.value && !props.input.components?.length) {
@@ -86,6 +91,11 @@ const { value, errorMessage, name } = useField<any>(() => {
   }
 })
 
+function handleInput() {
+  actualValue.value = undefined
+  multipiler.value = undefined
+}
+
 watchThrottled(mode!, () => {
   if (isArr.value && !fields.value?.length)
     push(undefined)
@@ -93,11 +103,33 @@ watchThrottled(mode!, () => {
   immediate: true,
   throttle: 500,
 })
+
+watch(multipiler, () => {
+  if (!isTypeInteger.value || !multipiler.value || !value.value)
+    return
+
+  if (!actualValue.value)
+    actualValue.value = value.value
+
+  value.value = toWei(actualValue.value, multipiler.value)
+})
+
+onMounted(() => {
+  if (!isTypeInteger.value || !value.value)
+    return
+
+  const digit = value.value?.length - 1
+
+  if (digit) {
+    multipiler.value = digit
+    actualValue.value = fromWei(value.value, digit)
+  }
+})
 </script>
 
 <template>
-  <div class="flex flex-col gap-2">
-    <ul v-if="hasActualComponents && mode === 'expand'" class="tree flex flex-col gap-4 max-w-[580px]">
+  <div class="flex flex-col gap-2 max-w-[600px]">
+    <ul v-if="hasActualComponents && mode === 'expand'" class="tree flex flex-col gap-4">
       <template v-if="input.type === 'tuple'">
         <BuilderInput
           v-for="i, k in actualComponents"
@@ -135,13 +167,30 @@ watchThrottled(mode!, () => {
       </template>
     </ul>
 
-    <div v-else :class="index === undefined ? 'px-9 max-w-[580px]' : ''" class="flex items-center gap-7.5 w-full">
-      <label class="text-sm font-medium text-slate-400 w-[200px] shrink-0" :for="`input-${name}`">
+    <div v-else :class="index === undefined ? 'pl-9 max-w-[580px]' : ''" class="flex gap-7.5 w-full">
+      <label class="text-sm font-medium text-slate-400 h-[50px] items-center flex w-[200px] shrink-0" :for="`input-${name}`">
         {{ input.name }} ({{ input.type }})
       </label>
       <div class="w-full flex items-center">
         <CommonToggle v-if="input.type === 'bool'" v-model="value" :name="name" />
-        <CommonInput v-else v-model="value" class="w-full" error-classes="max-w-sm" :error-message="errorMessage" :name="name" />
+        <div v-else class="w-full">
+          <CommonInput v-model="value" class="w-full" error-classes="max-w-sm" :error-message="errorMessage" :name="name" @input="handleInput" />
+          <fieldset v-if="isTypeInteger" class="flex items-center gap-4 mt-4">
+            <label v-for="i in ['6', '8', '18']" :key="i" class="w-full block" :for="`input-${name}-wei-${i}`">
+              <input :id="`input-${name}-wei-${i}`" v-model="multipiler" class="sr-only peer" :value="i" :name="`${name}-wei`" type="radio">
+              <div class="dark:bg-gray-850 peer-checked:dark:bg-gray-800 rounded-[14px] dark:border-slate-750 border border-slate-150 bg-slate-50 text-xs font-medium py-2.5 px-[14px] flex items-center justify-center">
+                10^{{ i }}
+              </div>
+            </label>
+            <CommonInput v-model="multipiler" :name="`${name}-wei-custom`" type="numeric" class="font-medium" container-classes="px-[14px]" input-classes="!py-2.5 text-xs !w-[50px]">
+              <template #prefix>
+                <span class="text-xs mr-1 pointer-events-none z-0">
+                  10^
+                </span>
+              </template>
+            </CommonInput>
+          </fieldset>
+        </div>
       </div>
     </div>
   </div>
