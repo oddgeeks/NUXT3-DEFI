@@ -106,10 +106,38 @@ const title = computed(() => {
   return tab?.title
 })
 
-const loadingTxns = ref(true)
-function toggleLoading(status: boolean) {
-  loadingTxns.value = status
+function toggleLoading(status: boolean, chainId?: number) {
+  if (chainId) {
+    loadingPendingTxns.value[chainId] = status
+    return
+  }
+  if (activeTab.value === 'completed') {
+    loadingCompletedTxns.value = status
+    return
+  }
+  if (activeTab.value === 'seq' || activeTab.value === 'nonseq') {
+    loadingPendingTxns.value = availableNetworks.reduce((acc, network) => {
+      acc[network.chainId] = status
+      return acc
+    }, {} as Record<number, boolean>)
+    return
+  }
 }
+
+const loadingCompletedTxns = ref(false)
+const loadingPendingTxns = ref(availableNetworks.reduce((acc, network) => {
+  acc[network.chainId] = false
+  return acc
+}, {} as Record<number, boolean>))
+
+const isLoadingPendingTxns = computed(() => {
+  return  activeTab.value !== 'completed' && Object.values(loadingPendingTxns.value).some(i => i);
+})
+
+const isLoadingCompletedTxns = computed(() => {
+  return activeTab.value === 'completed' && loadingCompletedTxns.value
+})
+
 
 useIntervalFn(() => {
   refreshNonSeq()
@@ -117,8 +145,8 @@ useIntervalFn(() => {
 }, 5000)
 
 watch(activeTab, async () => {
-  await nextTick()
   toggleLoading(true)
+  await nextTick()
   await wait(500)
   syncToggles()
 })
@@ -164,12 +192,12 @@ onMounted(() => {
       </h2>
       <div ref="itemsRef" class="gap-5 flex flex-col">
         <template v-if="activeTab === 'completed'">
-          <MultisigPendingTransactionItems network-cell-visible :active-tab="activeTab" @on-toggle="syncToggles" @loading="toggleLoading" />
-          <MultisigLoadingTransactionItems v-if="loadingTxns" />
+          <MultisigLoadingTransactionItems v-if="isLoadingCompletedTxns" />
+          <MultisigPendingTransactionItems :class="{'hidden': isLoadingCompletedTxns}" network-cell-visible :active-tab="activeTab" @on-toggle="syncToggles" @loading="toggleLoading" />
         </template>
         <template v-else>
-          <MultisigPendingTransactionItems v-for="network in availableNetworks" :key="network.chainId" :active-tab="activeTab" :chain-id="network.chainId" @on-toggle="syncToggles" @loading="toggleLoading" />
-          <MultisigLoadingTransactionItems v-if="loadingTxns" />
+          <MultisigLoadingTransactionItems v-if="isLoadingPendingTxns" />
+          <MultisigPendingTransactionItems :class="{'hidden': isLoadingPendingTxns}" v-for="network in availableNetworks" :key="network.chainId" :active-tab="activeTab" :chain-id="network.chainId" @on-toggle="syncToggles" @loading="(status) => toggleLoading(status, network.chainId)" />
         </template>
       </div>
     </div>
