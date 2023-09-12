@@ -152,7 +152,7 @@ const onSubmit = form.handleSubmit(async () => {
 
     const transactionHash = await sendTransactions(
       transactions.data.value!,
-      props.chainId,
+      fromChainId.value,
       {
         metadata,
       },
@@ -171,7 +171,7 @@ const onSubmit = form.handleSubmit(async () => {
         false,
       )} to ${formatSymbol(chainIdToName(toChainId.value), false)}`,
       action: 'bridge',
-      chainId: props.chainId,
+      chainId: fromChainId.value,
       txHash: transactionHash,
       account: account.value,
       amountInUsd: toBN(recivedValueInUsd.value).toString(),
@@ -180,7 +180,7 @@ const onSubmit = form.handleSubmit(async () => {
     form.resetForm()
     emit('destroy')
 
-    showPendingTransactionModal(transactionHash, props.chainId, 'bridge')
+    showPendingTransactionModal(transactionHash, fromChainId.value, 'bridge')
   }
   catch (e: any) {
     const err = parseTransactionError(e)
