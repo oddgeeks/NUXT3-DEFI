@@ -685,6 +685,7 @@ export async function openExecutionErrorModal(proposalId: string, safeAddress: s
 export async function openCreateBatchModal(params: ICreateBatchModal) {
   return openModal({
     component: CreateBatchModal,
+    async: true,
     componentProps: params,
     options: {
       contentClass: '!p-7.5',

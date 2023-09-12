@@ -160,7 +160,6 @@ async function handleDeleteBatchItem(index: number) {
   })
 
   if (success) {
-    // reset edit index
     batchIndex.value = undefined
     batch.value = batch.value.filter((_, i) => i !== index)
   }
@@ -266,6 +265,20 @@ async function drop(e: any) {
   }
   finally {
     isDragging.value = false
+  }
+}
+
+async function handleCreateBatchModal() {
+  const { success, payload } = await openCreateBatchModal({ batch: batch.value, chainId: chainId.value })
+
+  if (success) {
+    if (payload.edit)
+      return handleEditBatchItem(payload.index)
+
+    if (payload.batch) {
+      batch.value = payload.batch
+      batchIndex.value = undefined
+    }
   }
 }
 
@@ -525,7 +538,7 @@ watch(mode, async (newMode, oldMode) => {
             </SlickList>
 
             <div class="ml-7.5 mt-5">
-              <CommonButton size="sm" @click="openCreateBatchModal({ batch, chainId })">
+              <CommonButton size="sm" @click="handleCreateBatchModal">
                 Execute Batch
               </CommonButton>
             </div>

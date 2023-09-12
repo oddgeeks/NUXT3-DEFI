@@ -62,7 +62,7 @@ const { fields = [], push = () => {}, remove = () => {} } = mode?.value === 'sup
     ? useFieldArray(props.name)
     : {}
 
-const { value, errorMessage, name } = useField<any>(() => {
+const { value, errorMessage, name, setValue } = useField<any>(() => {
   if (mode?.value === 'super-collapse')
     return ''
 
@@ -111,7 +111,7 @@ watch(multipiler, () => {
   if (!actualValue.value)
     actualValue.value = value.value || '1'
 
-  value.value = toWei(actualValue.value, multipiler.value)
+  setValue(toWei(actualValue.value, multipiler.value), true)
 })
 
 onMounted(() => {
