@@ -42,19 +42,10 @@ async function createSimulation() {
     simulationLoading.value = true
     simulationStatus.value = true
 
-    const actions = actualTransactions.value.map((action) => {
-      return {
-        operation: action.operation ? String(action.operation) : '0',
-        target: action?.target || action.to,
-        data: action.data || '0x',
-        value: action.value || '0',
-      }
-    }) as any
-
     const resp = await http<ISimulation>('/api/simulate', {
       method: 'POST',
       body: {
-        actions: actions.map((i: any) => {
+        actions: actualTransactions.value.map((i: any) => {
           return {
             target: i?.target || i.to,
             data: i.data,
@@ -138,31 +129,52 @@ async function handleSubmit() {
         </span>
       </button>
     </div>
-    <div v-if="simulationDetails && simulationStatus" :class="simulationDetails?.transaction?.status ? 'bg-primary' : 'bg-red-alert'" class="bg-opacity-10 items-baseline justify-between rounded-[14px] text-sm p-4 font-medium flex gap-3">
-      <div class="flex gap-3 flex-col flex-1">
-        <div class="flex gap-3">
-          <template v-if="isTransactionFailed">
-            <SvgoErrorCircle class="w-4.5 h-4.5" />
-            This transaction will most likely fail
-          </template>
-          <template v-else>
-            <SvgoCheckCircle class="success-circle w-4.5 h-4.5" />
-            This transaction will most likely succeed
-          </template>
+    <div v-if="simulationDetails && simulationStatus">
+      <div :class="simulationDetails?.transaction?.status ? 'bg-primary' : 'bg-red-alert'" class="bg-opacity-10 items-baseline justify-between rounded-[14px] text-sm p-4 font-medium flex gap-3">
+        <div class="flex gap-3 flex-col flex-1">
+          <div class="flex gap-3">
+            <template v-if="isTransactionFailed">
+              <SvgoErrorCircle class="w-4.5 h-4.5" />
+              This transaction will most likely fail
+            </template>
+            <template v-else>
+              <SvgoCheckCircle class="success-circle w-4.5 h-4.5" />
+              This transaction will most likely succeed
+            </template>
+          </div>
+
+          <p v-if="simulationDetails?.transaction.simulationId" class="text-xs text-slate-400 font-medium">
+            View complete simulation report
+            <NuxtLink target="_blank" class="inline-flex items-center gap-2 text-primary" external :to="`https://dashboard.tenderly.co/public/InstaDApp/avocado/simulator/${simulationDetails?.transaction.simulationId}?hideSidebar=true`">
+              on Tenderly
+              <SvgoExternalLink />
+            </NuxtLink>
+          </p>
         </div>
 
-        <p v-if="simulationDetails?.transaction.simulationId" class="text-xs text-slate-400 font-medium">
-          View complete simulation report
-          <NuxtLink target="_blank" class="inline-flex items-center gap-2 text-primary" external :to="`https://dashboard.tenderly.co/public/InstaDApp/avocado/simulator/${simulationDetails?.transaction.simulationId}?hideSidebar=true`">
-            on Tenderly
-            <SvgoExternalLink />
-          </NuxtLink>
-        </p>
+        <button @click="toggle()">
+          <SvgoX />
+        </button>
       </div>
 
-      <button @click="toggle()">
-        <SvgoX />
-      </button>
+      <details class="group py-5">
+        <summary class="text-orange-400 flex justify-between text-sm leading-5 cursor-pointer">
+          <span class="group-open:hidden block font-medium">View transaction breakdown</span>
+          <span class="group-open:block hidden font-medium">Hide transaction breakdown</span>
+
+          <SvgoChevronDown class="group-open:rotate-180" />
+        </summary>
+        <div class="mt-5">
+          <SimulationDetails
+            v-if="simulationDetails"
+            :chain-id="String(chainId)"
+            :details="simulationDetails"
+            title-hidden
+            :has-error="false"
+            wrapper-class="sm:!flex flex-col"
+          />
+        </div>
+      </details>
     </div>
   </div>
 </template>

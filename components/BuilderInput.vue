@@ -105,11 +105,11 @@ watchThrottled(mode!, () => {
 })
 
 watch(multipiler, () => {
-  if (!isTypeInteger.value || !multipiler.value || !value.value)
+  if (!isTypeInteger.value || !multipiler.value)
     return
 
   if (!actualValue.value)
-    actualValue.value = value.value
+    actualValue.value = value.value || '1'
 
   value.value = toWei(actualValue.value, multipiler.value)
 })
@@ -128,7 +128,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 max-w-[600px]">
+  <div class="flex flex-col gap-2 max-w-[600px] w-full">
     <ul v-if="hasActualComponents && mode === 'expand'" class="tree flex flex-col gap-4">
       <template v-if="input.type === 'tuple'">
         <BuilderInput

@@ -526,7 +526,7 @@ watch(mode, async (newMode, oldMode) => {
 
             <div class="ml-7.5 mt-5">
               <CommonButton size="sm" @click="openCreateBatchModal({ batch, chainId })">
-                Create Batch
+                Execute Batch
               </CommonButton>
             </div>
           </div>
