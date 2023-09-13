@@ -200,8 +200,8 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
 const hasSimulationDetails = computed(() => {
   if (!simulationDetails.value)
     return false
-  return Object.values(simulationDetails.value.balanceChange).some(
-    (i: any[]) => i?.length > 0,
+  return Object.values(simulationDetails.value.simulation).some(
+    (i: any) => i?.length > 0,
   )
 })
 
@@ -312,7 +312,7 @@ onUnmounted(() => {
       </div>
     </div>
     <SimulationDetails
-      v-if="hasSimulationDetails"
+      v-if="simulationDetails && hasSimulationDetails"
       :chain-id="chainId"
       :details="simulationDetails"
       :has-error="!!error"

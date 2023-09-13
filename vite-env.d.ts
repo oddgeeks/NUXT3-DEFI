@@ -398,14 +398,15 @@ interface BuildInfo {
 }
 
 interface ISimulation {
-  balanceChange: BalanceChange;
   transaction: Transaction;
+  simulation: SimulationChange;
 }
 
-interface BalanceChange {
+interface ISimulationChange {
   approveTokens: SimulationToken[];
   sendTokens: SimulationToken[];
   receiveTokens: SimulationToken[];
+  revokeTokens?: SimulationToken[];
 }
 
 interface SimulationToken {
