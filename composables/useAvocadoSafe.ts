@@ -3,6 +3,7 @@ import { VoidSigner, ethers } from 'ethers'
 import axios from 'axios'
 
 import { isUndefined } from '@walletconnect/utils'
+import { serialize } from 'error-serializer'
 import {
   AvoMultisigImplementation__factory,
 } from '@/contracts'
@@ -266,8 +267,6 @@ export function useAvocadoSafe() {
     }) as any
 
     const latestAvosafeNonce = await getLatestAvosafeNonce(chainId)
-
-    console.log({ latestAvosafeNonce })
 
     const avoNonce = !isUndefined(nonce) ? nonce : latestAvosafeNonce
 
@@ -617,24 +616,32 @@ export function useAvocadoSafe() {
   }
 
   const getLatestAvosafeNonce = async (chainId: string | number) => {
-    if (!selectedSafe.value?.owner_address)
-      return
+    try {
+      const currentNonce = await getCurrentNonce(chainId)
 
-    const currentNonce = await getCurrentNonce(chainId)
+      const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {
+        params: {
+          status: 'pending',
+          chain_id: chainId,
+        },
+        baseURL: multisigURL,
+      })
 
-    console.log({ currentNonce, owner: selectedSafe.value?.owner_address, index: selectedSafe.value.multisig_index })
+      const maxNonce = Math.max(...data.data.map(i => Number(i.nonce)))
 
-    const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {
-      params: {
-        status: 'pending',
-        chain_id: chainId,
-      },
-      baseURL: multisigURL,
-    })
+      return Math.max(maxNonce, currentNonce - 1) + 1
+    }
+    catch (e) {
+      const parsed = serialize(e)
 
-    const maxNonce = Math.max(...data.data.map(i => Number(i.nonce)))
-
-    return Math.max(maxNonce, currentNonce - 1) + 1
+      logActionToSlack({
+        account: account.value,
+        action: 'fetch-nonce',
+        message: `Failed to fetch nonce for chainId: ${chainId}
+${parsed.message}`,
+      })
+      return 0
+    }
   }
 
   function getActualId(tx: any[], defaultId = 0) {
