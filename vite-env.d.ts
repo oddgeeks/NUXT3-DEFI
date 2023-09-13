@@ -399,7 +399,7 @@ interface BuildInfo {
 
 interface ISimulation {
   transaction: Transaction;
-  simulation: SimulationChange;
+  simulation: ISimulationChange;
 }
 
 interface ISimulationChange {

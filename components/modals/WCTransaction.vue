@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { SessionTypes } from '@walletconnect/types'
 import { storeToRefs } from 'pinia'
+import { Erc20__factory } from '@/contracts'
 import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg?component'
 import NetworkSVG from '~/assets/images/icons/network.svg?component'
 import FlowersSVG from '~/assets/images/icons/flowers.svg?component'
@@ -23,6 +24,8 @@ const { account } = useWeb3()
 const [submitting, toggle] = useToggle()
 const { parseTransactionError } = useErrorHandler()
 const { web3WalletV2 } = storeToRefs(useWalletConnectV2())
+const { tokens } = storeToRefs(useTokens())
+const { getRpcProviderByChainId } = useShared()
 
 const { authorisedNetworks } = useAuthorities()
 
@@ -33,6 +36,22 @@ const nonAuthorised = computed(() => {
 const submitDisabled = computed(
   () => submitting.value || pending.value || !!error.value || nonAuthorised.value,
 )
+
+const revokeTokens = computed(() => {
+  const revokeTokens = simulationDetails.value?.simulation?.revokeTokens
+
+  if (!revokeTokens)
+    return []
+
+  return revokeTokens.map((i) => {
+    const token = tokens.value?.find(j => j.chainId == props.chainId && isAddressEqual(j.address, i.token))
+
+    return {
+      ...i,
+      tokenObj: token,
+    }
+  })
+})
 
 const reactiveBookmark = ref(props.bookmark)
 
@@ -72,13 +91,15 @@ function calculateDate(timestamp: number) {
   return new Date(timestamp * 1000).toLocaleString()
 }
 
-const transactions = computed(() => {
+function getDefaultTransactions() {
   const [transactionOrTransactions] = props.payload.params
 
   return Array.isArray(transactionOrTransactions)
     ? transactionOrTransactions
     : [transactionOrTransactions]
-})
+}
+
+const transactions = ref(getDefaultTransactions())
 
 const options = computed(() => {
   const [_, __, options] = props.payload.params
@@ -90,6 +111,7 @@ const {
   data: fee,
   pending,
   error,
+  refresh,
 } = useEstimatedFee(transactions, ref(props.chainId), {
   immediate: true,
   options: options.value,
@@ -166,7 +188,7 @@ async function handleSubmit() {
   }
 }
 
-const { data: simulationDetails, error: simulationError } = useAsyncData(
+const { data: simulationDetails, error: simulationError, refresh: refreshSimulation } = useAsyncData(
   'simulationDetails',
   () => {
     if (networksSimulationNotSupported.includes(Number(props.chainId)))
@@ -244,6 +266,27 @@ async function handleUpdateBookmark() {
     reactiveBookmark.value = payload
 }
 
+async function addRevokeTransaction(tokenAddres: string, address: string) {
+  const erc20 = Erc20__factory.connect(
+    tokenAddres,
+    getRpcProviderByChainId(props.chainId),
+  )
+
+  const { data } = await erc20.populateTransaction.approve(address, '0')
+
+  const tx = {
+    to: tokenAddres,
+    data,
+    value: '0',
+    operation: '0',
+  }
+
+  transactions.value.push(tx)
+
+  refresh()
+  refreshSimulation()
+}
+
 onUnmounted(() => {
   clearNuxtData('simulationDetails')
 })
@@ -310,6 +353,19 @@ onUnmounted(() => {
           </div>
         </template>
       </div>
+    </div>
+    <div v-if="revokeTokens?.length">
+      <h2 class="mb-4">
+        <span class="text-xs leading-5 font-medium">Revoke Tokens</span>
+      </h2>
+      <ul class="bg-orange bg-opacity-[15%] text-orange-500 rounded-[25px] p-4">
+        <li v-for="i in revokeTokens" :key="i.from" class="text-xs">
+          {{ shortenHash(i.to) }}
+          <button class="text-primary" type="button" @click="addRevokeTransaction(i.token, i.to)">
+            Add revoke transaction
+          </button>
+        </li>
+      </ul>
     </div>
     <SimulationDetails
       v-if="simulationDetails && hasSimulationDetails"
