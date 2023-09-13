@@ -52,13 +52,28 @@ const { handleSubmit, values, meta, setFieldValue, resetField, setFieldError, se
   keepValuesOnUnmount: true,
 })
 
-const { value: ABI, errorMessage: abiErrorMessage, setState: setABI } = useField<string>('abi', val => isJsonString(val!), {
+const { value: ABI, errorMessage: abiErrorMessage, setState: setABI } = useField<string>('abi', (val) => {
+  if (!isJsonString(val!))
+    return 'invalid ABI'
+
+  return true
+}, {
   initialValue: '',
 })
 
-const { value: toAddress, errorMessage: toAddressError } = useField<string>('toAddress', val => isAddress(val!))
+const { value: toAddress, errorMessage: toAddressError } = useField<string>('toAddress', (val) => {
+  if (!isAddress(val!))
+    return 'invalid address'
 
-const { value: contractAddress, errorMessage: contractAddressError } = useField<string>('contractAddress', val => isAddress(val!))
+  return true
+})
+
+const { value: contractAddress, errorMessage: contractAddressError } = useField<string>('contractAddress', (val) => {
+  if (!isAddress(val!))
+    return 'invalid contract address'
+
+  return true
+})
 
 const { value: ethValue, errorMessage: ethValueError } = useField<string>('ethValue', (val) => {
   // validate uint
