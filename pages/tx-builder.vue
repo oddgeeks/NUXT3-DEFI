@@ -27,6 +27,14 @@ const file = ref<File>()
 const isDragging = ref(false)
 
 const editMode = computed(() => batchIndex.value !== undefined)
+const fetcherSupportedNetworks = ['polygon', 'mainnet', 'fantom', 'arbitrum', 'avalanche', 'optimism', 'bsc', 'gnosis']
+
+function formatNetworkName(n: string) {
+  return n === 'Ethereum' ? 'mainnet' : n.toLowerCase()
+}
+
+const abiFetcherNetworks = availableNetworks.filter(i => fetcherSupportedNetworks.includes(formatNetworkName(i.name)))
+
 const deployedNetworks = ref(availableNetworks)
 
 interface ITxBuilderMode {
@@ -344,7 +352,13 @@ const onSubmit = handleSubmit(async (values) => {
 })
 
 watchDebounced(contractAddress, async () => {
-  if (!isAddress(contractAddress.value) || uploading.value || editMode.value)
+  const isChainSupported = abiFetcherNetworks.some(i => i.chainId === chainId.value)
+
+  if (!contractAddress.value
+    || !isChainSupported
+    || !isAddress(contractAddress.value)
+    || uploading.value
+    || editMode.value)
     return
 
   try {
@@ -354,17 +368,22 @@ watchDebounced(contractAddress, async () => {
 
     const fetcher = new AbiFetcher()
 
-    const resp = await fetcher.get(contractAddress.value, 'polygon')
-
-    setABI({ value: JSON.stringify(resp, null, 2), errors: [], touched: true })
-    toAddress.value = contractAddress.value
-
     const contractNetworks = await getContractNetworks(contractAddress.value)
 
     if (contractNetworks.length) {
       deployedNetworks.value = contractNetworks
       chainId.value = contractNetworks[0].chainId
     }
+
+    const network = availableNetworks.find(i => i.chainId == chainId.value)
+
+    if (!network)
+      throw new Error('Invalid network')
+
+    const resp = await fetcher.get(contractAddress.value, formatNetworkName(network.name))
+
+    setABI({ value: JSON.stringify(resp, null, 2), errors: [], touched: true })
+    toAddress.value = contractAddress.value
   }
   catch (e) {
     const parsed = serialize(e)
