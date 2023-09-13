@@ -19,7 +19,7 @@ export async function parseTransactionObject(formValues: BatchFormValues, buildM
   const tx: TransactionsAction = {
     data,
     operation: '0',
-    value: String(formValues.ethValue || '0'),
+    value: String(formValues.value || '0'),
     to: formValues.toAddress,
   }
 

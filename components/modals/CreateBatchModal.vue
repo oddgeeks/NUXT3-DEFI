@@ -73,6 +73,13 @@ async function createSimulation() {
   }
 }
 
+function getTransactionDataByIndex(index: number) {
+  if (!actualTransactions.value?.length)
+    return
+
+  return actualTransactions.value[index]?.data
+}
+
 async function handleSubmit() {
   try {
     isSubmitting.value = true
@@ -118,7 +125,10 @@ watch(reactiveBatch, () => {
       </h2>
       <SlickList v-model:list="reactiveBatch" use-drag-handle class="flex flex-col gap-5 max-h-[450px] overflow-auto scroll-style" tag="ul" axis="y">
         <BatchItem
-          v-for="(item, i) in reactiveBatch" :key="item.formValues.method + i" class="z-[51] pl-2.5" :item="item" :index="i"
+          v-for="(item, i) in reactiveBatch"
+          :key="item.formValues.method + i"
+          :data="getTransactionDataByIndex(i)"
+          expandable class="z-[51] pl-2.5" :item="item" :index="i"
           @edit-batch="$emit('resolve', true, {
             edit: true,
             index: i,

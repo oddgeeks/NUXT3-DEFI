@@ -83,7 +83,7 @@ const { value: contractAddress, errorMessage: contractAddressError } = useField<
   return true
 })
 
-const { value: ethValue, errorMessage: ethValueError } = useField<string>('ethValue', (val) => {
+const { value: ethValue, errorMessage: ethValueError } = useField<string>('value', (val) => {
   // validate uint
   try {
     ethers.utils.defaultAbiCoder.encode(['uint'], [String(val)])
@@ -510,8 +510,8 @@ watch(mode, async (newMode, oldMode) => {
             </div>
 
             <div class="flex items-center w-full gap-7.5">
-              <label class="text-sm font-medium text-slate-400 w-[200px] shrink-0" for="input-ethValue">ETH Value</label>
-              <CommonInput v-model="ethValue" class="w-full" :error-message="ethValueError" name="ethValue" placeholder="uint" />
+              <label class="text-sm font-medium text-slate-400 w-[200px] shrink-0" for="input-value">ETH Value</label>
+              <CommonInput v-model="ethValue" class="w-full" :error-message="ethValueError" name="value" placeholder="uint" />
             </div>
 
             <div v-if="builder" class="flex items-center w-full gap-7.5">

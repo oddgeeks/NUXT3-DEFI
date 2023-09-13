@@ -223,7 +223,7 @@ type BatchFormValues = {
     abi: string;
     toAddress: string;
     contractAddress: string;
-    ethValue: string;
+    value: string;
     chainId: number;
     method: string;
     params?: string;
