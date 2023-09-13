@@ -66,9 +66,6 @@ const noBreakdownAvailable = computed(() => {
       <template v-for="(item, k) in details.simulation.sendTokens" :key="k">
         <SimulationTokenCard :class="itemClass" type="send" :chain-id="chainId" :payload="item" />
       </template>
-      <template v-for="(item, k) in details.simulation.revokeTokens" :key="k">
-        <SimulationTokenCard :class="itemClass" type="revoke" :chain-id="chainId" :payload="item" />
-      </template>
     </ul>
   </div>
 </template>
