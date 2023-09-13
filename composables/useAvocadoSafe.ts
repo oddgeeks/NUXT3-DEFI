@@ -619,6 +619,8 @@ export function useAvocadoSafe() {
     try {
       const currentNonce = await getCurrentNonce(chainId)
 
+      console.log({ nonce: currentNonce, safe: selectedSafe.value })
+
       const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {
         params: {
           status: 'pending',
