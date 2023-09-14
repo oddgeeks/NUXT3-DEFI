@@ -15,7 +15,7 @@ export const useShared = defineStore('shared', () => {
     if (rpcURL)
       return rpcURL
 
-    const network = availableNetworks.find(i => i.chainId === chainId)
+    const network = availableNetworks.find(i => i.chainId == chainId)
 
     if (network)
       return network.params.rpcUrls[0]
