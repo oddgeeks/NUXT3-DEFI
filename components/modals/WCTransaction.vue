@@ -361,7 +361,7 @@ onUnmounted(() => {
         <summary class="text-primary cursor-pointer flex items-center justify-between py-5">
           <span class="flex gap-2 items-center">
             Revoke Tokens
-            <SvgoInfo2 v-tippy="'tooltip'" />
+            <SvgoInfo2 v-tippy="'Revoke tokens approvals of this transaction'" />
           </span>
 
           <SvgoChevronDown
