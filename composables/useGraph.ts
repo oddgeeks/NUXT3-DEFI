@@ -2,11 +2,14 @@ import type { IBalance } from '~~/stores/safe'
 
 export function useGraph(balance: Ref<IBalance>) {
   const { authorisedNetworks } = useAuthorities()
+  const { isSelectedSafeLegacy } = storeToRefs(useSafe())
 
   const nonAuthorised = computed(() => !authorisedNetworks.value?.find(i => String(i.chainId) == String(balance.value.chainId)))
 
+  const fuseDisabled = computed(() => isSelectedSafeLegacy.value && String(balance.value.chainId) === '122')
+
   const interactable = computed(() => {
-    return toBN(balance.value.balance).gt(0) && !nonAuthorised.value
+    return toBN(balance.value.balance).gt(0) && !nonAuthorised.value && !fuseDisabled.value
   })
 
   const isSwapDisabled = computed(() => swapDisabledChains.some(i => String(i) == String(balance.value.chainId)))
@@ -71,5 +74,6 @@ export function useGraph(balance: Ref<IBalance>) {
     fetchLiteAPY,
     isBridgeDisabled,
     nonAuthorised,
+    fuseDisabled,
   }
 }
