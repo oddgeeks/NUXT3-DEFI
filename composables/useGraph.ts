@@ -9,7 +9,7 @@ export function useGraph(balance: Ref<IBalance>) {
     return toBN(balance.value.balance).gt(0) && !nonAuthorised.value
   })
 
-  const isSwapDisabled = computed(() => false)
+  const isSwapDisabled = computed(() => swapDisabledChains.some(i => String(i) == String(balance.value.chainId)))
 
   const isBridgeDisabled = computed(() => bridgeDisabledChains.some(i => String(i) == String(balance.value.chainId)))
 

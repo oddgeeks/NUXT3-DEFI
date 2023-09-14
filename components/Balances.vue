@@ -30,6 +30,7 @@ const whitelistedSymbols = [
   'BNB',
   'OP',
   'GNO',
+  'FUSE',
 ]
 
 const priorityChainIds = [1, 137, 42161, 10, 43114, 56, 100]

@@ -65,5 +65,6 @@ export const swapAggregatorAccessToken = isProd
 export const warnedDapps = ['https://app.safe.global', 'https://mint.fun', 'https://app.velodrome.finance', 'https://app.frax.finance', 'https://docs.frax.finance']
 export const bannedDapps = ['https://www.orbiter.finance', 'https://mirror.xyz', 'https://blog.summer.fi', 'https://summer.fi', 'https://opensea.io']
 
-export const bridgeDisabledChains = [250]
+export const bridgeDisabledChains = [250, 122]
+export const swapDisabledChains = [122]
 export const multisigURL = isProd ? multisigURLProd : multisigURLStaging
