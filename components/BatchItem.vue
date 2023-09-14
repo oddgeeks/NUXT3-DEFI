@@ -36,7 +36,7 @@ function formatValue(i: string) {
             <span v-tippy="item.formValues.toAddress" class="text-xs text-slate-400">
               {{ shortenHash(item.formValues.toAddress) }}
             </span>
-            <span v-tippy="item.formValues.method" class="text-xs leading-5 truncate max-w-full w-[200px]">
+            <span v-tippy="item.formValues.method" class="text-xs leading-5 truncate max-w-full w-[150px]">
               {{ item.formValues.method }}
             </span>
           </div>
@@ -64,7 +64,7 @@ function formatValue(i: string) {
           <hr class="border-slate-150 dark:border-slate-800 my-3">
           <ul class="flex flex-col gap-3 px-3 font-medium">
             <template v-for="i, k in item.formValues" :key="i">
-              <li v-if="!excludedKeys.includes(k as string)">
+              <li v-if="i !== undefined && !excludedKeys.includes(k as string)">
                 <dl class="flex">
                   <dt class="text-xs text-slate-400 w-[140px]">
                     {{ k }}

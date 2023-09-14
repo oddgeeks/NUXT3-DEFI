@@ -33,7 +33,7 @@ const { value, errorMessage } = useField<string>('params', (val) => {
 
 <template>
   <div class="px-7.5 max-w-[820px] flex gap-7.5 w-full">
-    <label class="text-sm font-medium text-slate-400 w-[200px] shrink-0">Params</label>
+    <label class="text-sm font-medium text-slate-400 w-[180px] shrink-0">Params</label>
     <CommonTextarea v-model="value" :error-message="errorMessage" name="params" rows="5" placeholder="Enter valid json" />
   </div>
 </template>

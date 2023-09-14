@@ -168,7 +168,7 @@ onMounted(() => {
     </ul>
 
     <div v-else :class="index === undefined ? 'pl-9 max-w-[580px]' : ''" class="flex gap-7.5 w-full">
-      <label class="text-sm font-medium text-slate-400 h-[50px] items-center flex w-[200px] shrink-0" :for="`input-${name}`">
+      <label class="text-sm font-medium text-slate-400 h-[50px] items-center flex w-[180px] shrink-0" :for="`input-${name}`">
         {{ input.name }} ({{ input.type }})
       </label>
       <div class="w-full flex items-center">
