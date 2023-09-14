@@ -551,7 +551,7 @@ watch(mode, async (newMode, oldMode) => {
                   @change="handleFileUpload"
                 >
                 <label for="json-file" class="text-primary cursor-pointer">
-                  chose a file
+                  Choose a file
                 </label>
               </p>
             </template>
