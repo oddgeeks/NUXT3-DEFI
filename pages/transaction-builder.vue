@@ -469,10 +469,10 @@ watch(mode, async (newMode, oldMode) => {
     </ul>
     <form @submit="onSubmit">
       <div class="dark:bg-gray-850 bg-slate-50 rounded-[25px] py-7.5 flex flex-col">
-        <div class="grid grid-cols-3 gap-10 w-full max-w-full px-7.5">
-          <div class="flex flex-col col-span-2 w-full gap-7.5">
-            <div class="flex items-center w-full gap-7.5">
-              <label class="text-sm font-medium text-slate-400 w-[180px]" for="input-contractAddress">Contract Address</label>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-10 w-full max-w-full px-7.5">
+          <div class="flex flex-col sm:col-span-2 w-full gap-7.5">
+            <div class="input-wrapper">
+              <label class="input-label" for="input-contractAddress">Contract Address</label>
               <CommonInput v-model="contractAddress" class="flex-1" :error-message="contractAddressError" name="contractAddress" placeholder="Enter Address">
                 <template #suffix>
                   <SvgSpinner v-if="pending" />
@@ -480,7 +480,7 @@ watch(mode, async (newMode, oldMode) => {
               </CommonInput>
             </div>
 
-            <div class="flex items-center w-full gap-7.5">
+            <div class="input-wrapper">
               <label class="text-sm font-medium text-slate-400 shrink-0 w-[180px]" for="input-contractAddress">Network</label>
               <CommonSelect
                 v-model="chainId"
@@ -499,23 +499,23 @@ watch(mode, async (newMode, oldMode) => {
               </CommonSelect>
             </div>
 
-            <div class="flex w-full gap-7.5">
-              <label class="text-sm font-medium text-slate-400 w-[180px] shrink-0" for="input-abi">Enter ABI</label>
+            <div class="input-wrapper">
+              <label class="input-label shrink-0" for="input-abi">Enter ABI</label>
               <CommonTextarea id="input-abi" v-model="ABI" :error-message="abiErrorMessage" rows="5" name="abi" placeholder="ABI []" />
             </div>
 
-            <div class="flex items-center w-full gap-7.5">
-              <label class="text-sm font-medium text-slate-400 w-[180px] shrink-0" for="input-toAddress">To Address</label>
+            <div class="input-wrapper">
+              <label class="input-label shrink-0" for="input-toAddress">To Address</label>
               <CommonInput v-model="toAddress" class="w-full" :error-message="toAddressError" name="toAddress" placeholder="Enter Address" />
             </div>
 
-            <div class="flex items-center w-full gap-7.5">
-              <label class="text-sm font-medium text-slate-400 w-[180px] shrink-0" for="input-value">ETH Value</label>
+            <div class="input-wrapper">
+              <label class="input-label shrink-0" for="input-value">ETH Value</label>
               <CommonInput v-model="ethValue" class="w-full" :error-message="ethValueError" name="value" placeholder="uint" />
             </div>
 
-            <div v-if="builder" class="flex items-center w-full gap-7.5">
-              <label class="text-sm font-medium text-slate-400 w-[180px] shrink-0">Method</label>
+            <div v-if="builder" class="input-wrapper">
+              <label class="input-label shrink-0">Method</label>
               <CommonSelect
                 v-model="method"
                 class="w-full"
@@ -603,3 +603,13 @@ watch(mode, async (newMode, oldMode) => {
     </form>
   </div>
 </template>
+
+<style scoped>
+.input-label {
+  @apply text-sm font-medium text-slate-400 sm:w-[180px]
+}
+
+.input-wrapper {
+  @apply flex sm:flex-row flex-col sm:items-center w-full gap-4 sm:gap-7.5
+}
+</style>
