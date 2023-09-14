@@ -225,6 +225,25 @@ interface IFromToken {
   tags: string[];
 }
 
+interface IOptionsSafe {
+  multisig: number;
+  multisig_index: number,
+  owner_address: string,
+  safe_address: string,
+}
+
+interface IOptionsParams {
+  safe: IOptionsSafe,
+  chainId: string | number,
+  provider: ethers.providers.StaticJsonRpcProvider
+  server?: boolean
+} 
+
+interface IComputeSafeParams {
+  provider: ethers.providers.StaticJsonRpcProvider
+  accountAddress: string
+}
+
 interface IToToken {
   symbol: string;
   name: string;
@@ -587,7 +606,7 @@ interface ISafesResponse {
   owner_address: string
   created_at: string
   updated_at: string
-  multisig: 0 | 1
+  multisig: 0 | 1 | number
   deployed: Record<string, boolean>,
   version: Record<string, string>
   authorities: Record<string, string[]>
