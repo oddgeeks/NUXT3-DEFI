@@ -1,20 +1,26 @@
 import { TransactionBuilder } from '@instadapp/transaction-builder'
 
+export const fallbackMethod = 'fallback()'
+
 export async function parseTransactionObject(formValues: BatchFormValues, buildMode: TxBuilderModes) {
   const _builder = new TransactionBuilder(JSON.parse(JSON.stringify(formValues.abi)))
 
-  const args = buildMode === 'super-collapse'
-    ? tryJsonParse(formValues.params || '')
-    : _builder.getMethodInputs(formValues.method).map((i) => {
-      if (!i.name)
-        throw new Error('Invalid input')
+  const isFallback = formValues.method === fallbackMethod
 
-      const value = tryJsonParse(formValues[i.name])
+  const args = isFallback
+    ? undefined
+    : buildMode === 'super-collapse'
+      ? tryJsonParse(formValues.params || '')
+      : _builder.getMethodInputs(formValues.method).map((i) => {
+        if (!i.name)
+          throw new Error('Invalid input')
 
-      return value
-    })
+        const value = tryJsonParse(formValues[i.name])
 
-  const data = await _builder.build(formValues.method, args)
+        return value
+      })
+
+  const data = isFallback ? '0x' : await _builder.build(formValues.method, args)
 
   const tx: TransactionsAction = {
     data,

@@ -107,6 +107,22 @@ const { value: method, setState: setMethod } = useField('method', val => !!val, 
 
 const builder = computed(() => isJsonString(ABI.value) ? new TransactionBuilder(JSON.parse(JSON.stringify(ABI.value))) : null)
 
+const isFallbackAvailable = computed(() => ABI.value.includes('"fallback"'))
+
+const methods = computed(() => {
+  if (!builder.value)
+    return []
+
+  const writeMethods = builder.value?.getWriteMethods()
+
+  if (isFallbackAvailable.value)
+    writeMethods.push(fallbackMethod)
+
+  return writeMethods
+})
+
+const methodInputs = computed(() => getMethodInputs(builder.value, method.value))
+
 function cleanupFormValues(methods: any[]) {
   setFieldError('params', undefined)
   resetField('params', {
@@ -157,7 +173,7 @@ async function handleEditBatchItem(index: number) {
   const batchItem = batch.value[index]
   const _builder = new TransactionBuilder(JSON.parse(JSON.stringify(batchItem.formValues.abi)))
   if (_builder) {
-    const inputs = _builder.getMethodInputs(batchItem.formValues.method)
+    const inputs = getMethodInputs(_builder, batchItem.formValues.method)
     cleanupFormValues(inputs)
 
     batchIndex.value = index
@@ -232,7 +248,7 @@ function transformParams(params: string) {
     params,
   })
 
-  const inputMethods = builder.value?.getMethodInputs(method.value) || []
+  const inputMethods = getMethodInputs(builder.value, method.value)
 
   const obj = inputMethods.reduce((acc, i, index) => {
     if (!i.name)
@@ -401,9 +417,16 @@ watchDebounced(contractAddress, async () => {
   immediate: true,
 })
 
+function getMethodInputs(_builder: any, _method: string) {
+  if (!_builder || _method === fallbackMethod)
+    return []
+
+  return _builder.getMethodInputs(_method)
+}
+
 watch(method, (_, oldMethod) => {
   if (oldMethod) {
-    const inputMethods = builder.value?.getMethodInputs(oldMethod) || []
+    const inputMethods = getMethodInputs(builder.value, oldMethod)
 
     cleanupFormValues(inputMethods)
   }
@@ -414,7 +437,7 @@ watch(mode, async (newMode, oldMode) => {
   if (!builder.value || !method.value)
     return
 
-  const inputMethods = builder.value?.getMethodInputs(method.value) || []
+  const inputMethods = getMethodInputs(builder.value, method.value)
 
   if (!meta.value.valid) {
     cleanupFormValues(inputMethods)
@@ -523,7 +546,7 @@ watch(mode, async (newMode, oldMode) => {
               <CommonSelect
                 v-model="method"
                 class="w-full"
-                :options="builder?.getWriteMethods()"
+                :options="methods"
               />
             </div>
           </div>
@@ -590,7 +613,7 @@ watch(mode, async (newMode, oldMode) => {
             <BuilderParamsInput v-if="mode === 'super-collapse'" :builder="builder" :method="method" />
 
             <BuilderInput
-              v-for="input in builder.getMethodInputs(method)"
+              v-for="input in methodInputs"
               v-show="mode !== 'super-collapse'"
               :key="input.name"
               :name="input.name"
