@@ -91,25 +91,28 @@ function handleBeforeInput(e: any) {
       class="relative flex items-center focus-within:outline-none px-5 rounded-[15px]"
     >
       <slot name="prefix" />
-      <input
-        :id="`input-${name}`"
-        v-focus="{ enabled: autofocus }"
-        autocomplete="off"
-        :readonly="readonly"
-        :type="htmlInputType"
-        :value="modelValue"
-        :placeholder="placeholder"
-        :step="step"
-        :name="name"
-        :disabled="disabled"
-        :min="min"
-        class="placeholder-slate-400 focus-visible:!outline-none placeholder:text-sm border-none shadow-none focus:ring-0 focus:border-none bg-inherit rounded-[inherit] px-0 py-[13px] w-full"
-        :class="[inputClasses]"
-        @beforeinput="handleBeforeInput"
-        @input="handleInput"
-        @focus="$emit('inputFocus')"
-        @blur="$emit('inputBlur')"
-      >
+      <slot name="input">
+        <input
+          :id="`input-${name}`"
+          v-focus="{ enabled: autofocus }"
+          autocomplete="off"
+          :readonly="readonly"
+          :type="htmlInputType"
+          :value="modelValue"
+          :placeholder="placeholder"
+          :step="step"
+          :name="name"
+          :disabled="disabled"
+          :min="min"
+          class="common-input"
+          :class="[inputClasses]"
+          @beforeinput="handleBeforeInput"
+          @input="handleInput"
+          @focus="$emit('inputFocus')"
+          @blur="$emit('inputBlur')"
+        >
+      </slot>
+
       <slot name="suffix" />
     </div>
     <span
