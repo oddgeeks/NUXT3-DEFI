@@ -84,7 +84,14 @@ function getTransactionDataByIndex(index: number) {
 async function handleSubmit() {
   try {
     isSubmitting.value = true
-    const tx = await sendTransactions(actualTransactions.value, props.chainId, undefined, 'others')
+
+    const metadata = encodeTransactionBuilderMetadata()
+
+    const tx = await sendTransactions(actualTransactions.value, props.chainId,
+      {
+        metadata,
+      },
+      'others')
 
     if (tx)
       showPendingTransactionModal(tx, props.chainId)
