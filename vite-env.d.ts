@@ -227,6 +227,7 @@ type BatchFormValues = {
     chainId: number;
     method: string;
     params?: string;
+    raw?: string;
     [key: string]: any?;
 }
 
@@ -237,6 +238,7 @@ interface IBatch {
 interface ICreateBatchModal{
   chainId: number | string
   batch: IBatch[]
+  mode: TxBuilderModes
 }
 
 interface IFromToken {
@@ -653,4 +655,4 @@ interface IComputeAddresses {
   oldSafeAddress: string
 }
 
-type TxBuilderModes = 'expand' | 'collapse' | 'super-collapse'
+type TxBuilderModes = 'expand' | 'collapse' | 'super-collapse' | 'raw'

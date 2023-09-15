@@ -51,12 +51,16 @@ const modes: ITxBuilderMode[] = [{
 }, {
   label: 'Super Collapse',
   value: 'super-collapse',
+},
+{
+  label: 'Raw',
+  value: 'raw',
 }]
 const mode = ref<TxBuilderModes>('expand')
 
 provide('mode', mode)
 
-const { handleSubmit, values, meta, setFieldValue, resetField, setFieldError, setValues } = useForm({
+const { handleSubmit, values, meta, setFieldValue, resetField, setFieldError, setValues, errors } = useForm({
   keepValuesOnUnmount: true,
 })
 
@@ -83,6 +87,16 @@ const { value: contractAddress, errorMessage: contractAddressError } = useField<
   return true
 })
 
+const { value: rawDataValue, errorMessage: rawDataErrorMessage, validate: validateRawData } = useField<string>('raw', (val) => {
+  if (mode.value !== 'raw')
+    return true
+
+  if (!val)
+    return 'Data is required'
+
+  return true
+})
+
 const { value: ethValue, errorMessage: ethValueError } = useField<string>('value', (val) => {
   // validate uint
   try {
@@ -101,7 +115,12 @@ const { value: chainId } = useField<number>('chainId', val => !!val, {
   initialValue: 137,
 })
 
-const { value: method, setState: setMethod } = useField('method', val => !!val, {
+const { value: method, setState: setMethod, validate: validateMethod } = useField('method', (val) => {
+  if (mode.value === 'raw')
+    return true
+
+  return !!val
+}, {
   initialValue: '',
 })
 
@@ -308,7 +327,7 @@ async function drop(e: any) {
 }
 
 async function handleCreateBatchModal() {
-  const { success, payload } = await openCreateBatchModal({ batch: batch.value, chainId: chainId.value })
+  const { success, payload } = await openCreateBatchModal({ batch: batch.value, chainId: chainId.value, mode: mode.value })
 
   if (success) {
     if (payload.edit)
@@ -434,8 +453,18 @@ watch(method, (_, oldMethod) => {
 )
 
 watch(mode, async (newMode, oldMode) => {
+  validateMethod()
+
   if (!builder.value || !method.value)
     return
+
+  if (newMode === 'raw') {
+    const tx = await parseTransactionObject(values as BatchFormValues, oldMode)
+
+    setFieldValue('raw', tx.data, false)
+
+    return
+  }
 
   const inputMethods = getMethodInputs(builder.value, method.value)
 
@@ -446,6 +475,7 @@ watch(mode, async (newMode, oldMode) => {
 
   const isCollapseToExpand = newMode === 'expand'
   const isExpandToCollapse = newMode === 'collapse'
+
   const isSuperCollapse = newMode === 'super-collapse'
   const wasSuperCollapse = oldMode === 'super-collapse'
 
@@ -541,7 +571,7 @@ watch(mode, async (newMode, oldMode) => {
               <CommonInput v-model="ethValue" class="w-full" :error-message="ethValueError" name="value" placeholder="uint" />
             </div>
 
-            <div v-if="builder" class="input-wrapper">
+            <div v-if="builder && mode !== 'raw'" class="input-wrapper">
               <label class="input-label shrink-0">Method</label>
               <CommonSelect
                 v-model="method"
@@ -609,7 +639,12 @@ watch(mode, async (newMode, oldMode) => {
         <hr class="border-slate-150 dark:border-slate-800 my-7.5">
 
         <div class="gap-5 flex flex-col">
-          <template v-if="builder && method">
+          <div v-if="mode === 'raw'" class="px-7.5 max-w-[820px] flex gap-7.5 w-full">
+            <label class="text-sm font-medium text-slate-400 w-[180px] shrink-0">Data</label>
+            <CommonTextarea v-model="rawDataValue" :error-message="rawDataErrorMessage" name="raw" rows="5" placeholder="Enter raw data" />
+          </div>
+
+          <template v-else-if="builder && method">
             <BuilderParamsInput v-if="mode === 'super-collapse'" :builder="builder" :method="method" />
 
             <BuilderInput

@@ -7,6 +7,18 @@ export async function parseTransactionObject(formValues: BatchFormValues, buildM
 
   const isFallback = formValues.method === fallbackMethod
 
+  if (buildMode === 'raw') {
+    if (!formValues.raw)
+      throw new Error('Invalid data')
+
+    return {
+      data: formValues.raw,
+      operation: '0',
+      value: String(formValues.value || '0'),
+      to: formValues.toAddress,
+    }
+  }
+
   const args = isFallback
     ? undefined
     : buildMode === 'super-collapse'

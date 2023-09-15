@@ -11,7 +11,7 @@ defineProps<{
 
 defineEmits(['deleteBatch', 'editBatch'])
 
-const excludedKeys = ['abi', 'params', 'chainId', 'method', 'toAddress', 'contractAddress']
+const excludedKeys = ['abi', 'params', 'chainId', 'method', 'toAddress', 'contractAddress', 'raw']
 
 function formatValue(i: string) {
   if (isAddress(i))

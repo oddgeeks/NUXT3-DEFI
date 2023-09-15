@@ -5,6 +5,7 @@ import { SlickList } from 'vue-slicksort'
 const props = defineProps<{
   batch: IBatch[]
   chainId: number | string
+  mode: TxBuilderModes
 }>()
 
 const emit = defineEmits(['destroy', 'resolve'])
@@ -21,7 +22,7 @@ const [simulationStatus, toggle] = useToggle()
 const isSimulationDisabled = computed(() => networksSimulationNotSupported.includes(Number(props.chainId)))
 const isTransactionFailed = computed(() => !simulationDetails.value?.transaction?.status)
 const actualTransactions = asyncComputed(async () => {
-  const txs = await Promise.all(reactiveBatch.value.map(i => parseTransactionObject(i.formValues, 'expand')))
+  const txs = await Promise.all(reactiveBatch.value.map(i => parseTransactionObject(i.formValues, props.mode)))
 
   return txs
 })
