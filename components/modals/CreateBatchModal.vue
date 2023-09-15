@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { serialize } from 'error-serializer'
+import { utils } from 'ethers'
 import { SlickList } from 'vue-slicksort'
 
 const props = defineProps<{
@@ -85,7 +86,9 @@ async function handleSubmit() {
   try {
     isSubmitting.value = true
 
-    const metadata = encodeTransactionBuilderMetadata()
+    const formatted = utils.formatBytes32String(String(actualTransactions.value.length))
+
+    const metadata = encodeTransactionBuilderMetadata(formatted)
 
     const tx = await sendTransactions(actualTransactions.value, props.chainId,
       {
