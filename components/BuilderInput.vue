@@ -130,17 +130,22 @@ onMounted(() => {
 <template>
   <div class="flex flex-col gap-2 max-w-[660px] w-full">
     <ul v-if="hasActualComponents && mode === 'expand'" class="tree flex flex-col gap-4">
-      <template v-if="input.type === 'tuple'">
-        <BuilderInput
-          v-for="i, k in actualComponents"
-          :key="i.name"
-          :builder="builder"
-          :method="method"
-          :index="index"
-          :input="i"
-          :name="getInputName(undefined, k)"
-        />
-      </template>
+      <fieldset v-if="input.type === 'tuple'" :class="index === undefined ? 'pb-2 ml-7.5' : 'pl-4'" class="border pr-4 dark:border-slate-750 rounded-xl">
+        <legend class="ml-9 capitalize font-medium">
+          {{ input.name }}
+        </legend>
+        <div class="space-y-4">
+          <BuilderInput
+            v-for="i, k in actualComponents"
+            :key="i.name"
+            :builder="builder"
+            :method="method"
+            :index="index"
+            :input="i"
+            :name="getInputName(undefined, k)"
+          />
+        </div>
+      </fieldset>
       <template v-else>
         <li v-for="_, t in fields" :key="t" class="relative flex flex-col gap-5 w-full">
           <button v-if="fields.length > 1" class="text-slate-400 absolute -right-6 top-4 z-[2]" type="button" @click="remove(t)">
