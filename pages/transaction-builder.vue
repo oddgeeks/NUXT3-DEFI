@@ -575,6 +575,7 @@ watch(mode, async (newMode, oldMode) => {
               <label class="input-label shrink-0">Method</label>
               <CommonSelect
                 v-model="method"
+                searchable
                 class="w-full"
                 :options="methods"
               />
