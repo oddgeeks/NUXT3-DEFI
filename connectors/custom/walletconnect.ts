@@ -71,27 +71,6 @@ export class WalletConnectConnector extends AbstractConnector {
     this.walletConnectProvider.on('disconnect', this.handleDisconnect)
     this.walletConnectProvider.on('display_uri', this.handleDisplayURI)
 
-    console.log()
-
-    if (process.client) {
-      // @ts-expect-error
-      window.wc_provider = this.walletConnectProvider
-      // @ts-expect-error
-      window.requestAccounts = async () => {
-        const accounts = await this.walletConnectProvider.request({ method: 'eth_requestAccounts' })
-        return accounts
-      }
-      // @ts-expect-error
-      window.requestOwner = async () => {
-        const ownerAddress: string = await this.walletConnectProvider.request({
-          method: 'avocado_getOwner',
-          params: [],
-        })
-
-        return ownerAddress
-      }
-    }
-
     try {
       const accounts = await this.walletConnectProvider.enable()
       let defaultAccount = accounts[0]
