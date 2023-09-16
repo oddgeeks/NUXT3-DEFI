@@ -131,8 +131,8 @@ onMounted(() => {
   <div class="flex flex-col gap-2 max-w-[660px] w-full">
     <ul v-if="hasActualComponents && mode === 'expand'" class="tree flex flex-col gap-4">
       <fieldset v-if="input.type === 'tuple'" :class="index === undefined ? 'pl-9' : 'gap-9'" class="flex w-full">
-        <div class="font-medium capitalize h-[50px] items-center flex shrink-0">
-          {{ input.name }}
+        <div class="text-sm font-medium text-slate-400 h-[50px] items-center flex shrink-0">
+          {{ input.name }} ({{ input.type }})
         </div>
         <div class="space-y-4 flex-1">
           <BuilderInput
