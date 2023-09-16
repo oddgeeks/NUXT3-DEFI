@@ -84,6 +84,10 @@ function setSelected(option: any, index: number) {
 function isSelected(option: any, index: number) {
   return getValue(option, index) == props.modelValue
 }
+
+whenever(open, () => {
+  search.value = ''
+})
 </script>
 
 <template>
