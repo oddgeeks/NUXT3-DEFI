@@ -197,6 +197,8 @@ async function handleEditBatchItem(index: number) {
 
     batchIndex.value = index
 
+    mode.value = 'expand'
+
     setValues(batchItem.formValues, true)
   }
 }
