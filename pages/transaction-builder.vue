@@ -514,7 +514,6 @@ watch(mode, async (newMode, oldMode) => {
 
 <template>
   <div class="flex-1 relative flex flex-col gap-5">
-    {{ values }}
     <div class="sm:hidden text-sm text-orange gap-2 flex">
       <SvgoInfo2 class="shrink-0 mt-1.5" />
       Transaction builder is not supported on mobile devices
