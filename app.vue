@@ -7,7 +7,7 @@ onMounted(() => {
   (window as any).library = library
   const hideAllTooltipsOnScroll = useThrottleFn(() => {
     [...document.querySelectorAll('[data-tippy-root]')].forEach(e =>
-    // @ts-expect-error
+      // @ts-expect-error
       e._tippy?.hide(),
     )
   }, 1000)
@@ -15,6 +15,23 @@ onMounted(() => {
   document.addEventListener('scroll', hideAllTooltipsOnScroll, true)
 
   return () => document.removeEventListener('scroll', hideAllTooltipsOnScroll)
+})
+
+onMounted(() => {
+  (function (d, t) {
+    const BASE_URL = 'https://app.chatwoot.com'
+    const g: any = d.createElement(t); const s: any = d.getElementsByTagName(t)[0]
+    g.src = `${BASE_URL}/packs/js/sdk.js`
+    g.defer = true
+    g.async = true
+    s.parentNode.insertBefore(g, s)
+    g.onload = function () {
+      (window as any).chatwootSDK.run({
+        websiteToken: 'pmgPtAUDhoeVv7h9nS2xk7PF',
+        baseUrl: BASE_URL,
+      })
+    }
+  })(document, 'script')
 })
 </script>
 
