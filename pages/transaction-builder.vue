@@ -27,13 +27,12 @@ const file = ref<File>()
 const isDragging = ref(false)
 
 const editMode = computed(() => batchIndex.value !== undefined)
-const fetcherSupportedNetworks = ['polygon', 'mainnet', 'fantom', 'arbitrum', 'avalanche', 'optimism', 'bsc', 'gnosis']
 
 function formatNetworkName(n: string) {
   return n === 'Ethereum' ? 'mainnet' : n.toLowerCase()
 }
 
-const abiFetcherNetworks = availableNetworks.filter(i => fetcherSupportedNetworks.includes(formatNetworkName(i.name)))
+const abiFetcherNetworks = availableNetworks.filter(i => ABIfetcherSupportedNetworks.includes(formatNetworkName(i.name)))
 
 const deployedNetworks = ref(availableNetworks)
 
@@ -87,7 +86,7 @@ const { value: contractAddress, errorMessage: contractAddressError } = useField<
   return true
 })
 
-const { value: rawDataValue, errorMessage: rawDataErrorMessage, validate: validateRawData } = useField<string>('raw', (val) => {
+const { value: rawDataValue, errorMessage: rawDataErrorMessage } = useField<string>('raw', (val) => {
   if (mode.value !== 'raw')
     return true
 
@@ -515,6 +514,7 @@ watch(mode, async (newMode, oldMode) => {
 
 <template>
   <div class="flex-1 relative flex flex-col gap-5">
+    {{ values }}
     <div class="sm:hidden text-sm text-orange gap-2 flex">
       <SvgoInfo2 class="shrink-0 mt-1.5" />
       Transaction builder is not supported on mobile devices

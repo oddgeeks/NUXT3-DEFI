@@ -43,6 +43,7 @@ import FetchGnosisSafe from '~/components/modals/Multisig/FetchGnosisSafe.vue'
 import MultisigSelectNetwork from '~/components/modals/Multisig/SelectNetwork.vue'
 import UpdateNoticeModal from '~/components/modals/UpdateNotice.vue'
 import CreateBatchModal from '~/components/modals/CreateBatchModal.vue'
+import ViewDecodedModal from '~/components/modals/Multisig/ViewDecodedModal.vue'
 import WelcomeModal from '~/components/modals/Welcome.vue'
 import CreateBookmark from '~/components/modals/CreateBookmark.vue'
 import ExecutionError from '~/components/modals/Multisig/ExecutionError.vue'
@@ -694,5 +695,18 @@ export async function openCreateBatchModal(params: ICreateBatchModal) {
   })
 }
 
+export async function openDecodedParamsModal(params: IDecodedParams) {
+  return openModal({
+    component: ViewDecodedModal,
+    async: true,
+    componentProps: {
+      decodedParams: params,
+    },
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[fit-content]',
+    },
+  })
+}
 // @ts-expect-error
 globalThis.openCustomTxModal = openCustomTxModal

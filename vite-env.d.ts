@@ -235,6 +235,13 @@ interface IBatch {
   formValues: BatchFormValues,
 }
 
+interface IDecodedParams {
+  method: string;
+  builder: any;
+  inputs: any;
+  args: any;
+}
+
 interface ICreateBatchModal{
   chainId: number | string
   batch: IBatch[]
