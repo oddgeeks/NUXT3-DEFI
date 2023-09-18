@@ -16,6 +16,18 @@ onMounted(() => {
 
   return () => document.removeEventListener('scroll', hideAllTooltipsOnScroll)
 })
+const { account } = useWeb3()
+watch(
+  () => account,
+  () => {
+    if (account.value) {
+      (window as any).$chatwoot.setUser(account.value.toLowerCase(), {
+        name: account.value.toLowerCase(),
+        email: account.value.toLowerCase(),
+      })
+    }
+  },
+)
 
 onMounted(() => {
   (function (d, t) {
