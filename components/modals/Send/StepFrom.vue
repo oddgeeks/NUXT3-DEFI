@@ -51,13 +51,13 @@ const amountInUsd = computed({
   get() {
     return toBN(token?.value?.price || 0)
       .times(amount.value || 0)
-      .decimalPlaces(2, 1).toNumber()
+      .decimalPlaces(3, 6).toNumber()
   },
   set(newValue) {
     const value = toBN(newValue || 0).div(token.value?.price || 0)
 
     setValue(toBN(value)
-      .decimalPlaces(2, 1)
+      .decimalPlaces(3, 6)
       .toString(), true)
   },
 })
