@@ -57,13 +57,13 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
     get() {
       return toBN(fromToken.value?.price || 0)
         .times(amount.value || 0)
-        .decimalPlaces(3, 6).toNumber()
+        .decimalPlaces(4, 6).toNumber()
     },
     set(newValue) {
       const value = toBN(newValue || 0).div(fromToken.value?.price || 0)
 
       setValue(toBN(value)
-        .decimalPlaces(3, 6)
+        .decimalPlaces(4, 6)
         .toString(), true)
     },
   })
