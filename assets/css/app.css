@@ -97,6 +97,10 @@
     background-size: 400% 400%;
     animation: gradient 1.5s ease-in-out 0.1s infinite;
   }
+  
+  .common-input {
+    @apply placeholder-slate-400 focus-visible:!outline-none placeholder:text-sm border-none shadow-none focus:ring-0 focus:border-none bg-inherit rounded-[inherit] px-0 py-[13px] w-full
+  }
 
   @keyframes gradient {
     0% {
