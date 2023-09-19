@@ -73,12 +73,12 @@ export function useNavigation() {
         tooltip: 'Signers',
         hidden: !isSafeMultisig.value,
       },
-      {
-        label: 'Transaction Builder',
-        icon: 'SvgoHammer',
-        to: '/transaction-builder',
-        tooltip: 'Transaction Builder',
-      },
+      // {
+      //   label: 'Transaction Builder',
+      //   icon: 'SvgoHammer',
+      //   to: '/transaction-builder',
+      //   tooltip: 'Transaction Builder',
+      // },
     ]
   })
 
