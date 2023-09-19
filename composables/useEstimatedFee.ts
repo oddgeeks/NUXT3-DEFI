@@ -80,6 +80,7 @@ export function useEstimatedFee(
     data: rawData,
     error,
     pending,
+    refresh,
   } = useAsyncData<IEstimatedFeeData>(
     `estimated-fee-${chainId.value}`,
     async () => {
@@ -162,5 +163,6 @@ export function useEstimatedFee(
     rawData,
     error: err,
     pending,
+    refresh,
   }
 }

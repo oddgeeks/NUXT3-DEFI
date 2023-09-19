@@ -206,7 +206,7 @@ export const openWCTransactionModal = useThrottleFn(
         bookmark: params?.bookmark,
       },
       options: {
-        contentClass: 'md:px-10 md:pt-[34px] md:pb-10',
+        contentClass: '!p-0',
         wrapperClass: '!max-w-[600px]',
       },
     })
