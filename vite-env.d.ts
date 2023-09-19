@@ -214,6 +214,40 @@ interface IBuyToken2 {
   sparklinePrice7d: number[];
 }
 
+interface IBatchJson {
+  version: string;
+  batch: IBatch[];
+}
+
+type BatchFormValues = {
+    abi: string;
+    toAddress: string;
+    contractAddress: string;
+    value: string;
+    chainId: number;
+    method: string;
+    params?: string;
+    raw?: string;
+    [key: string]: any?;
+}
+
+interface IBatch {
+  formValues: BatchFormValues,
+}
+
+interface IDecodedParams {
+  method: string;
+  builder: any;
+  inputs: any;
+  args: any;
+}
+
+interface ICreateBatchModal{
+  chainId: number | string
+  batch: IBatch[]
+  mode: TxBuilderModes
+}
+
 interface IFromToken {
   symbol: string;
   name: string;
@@ -628,3 +662,5 @@ interface IComputeAddresses {
   multisigAddress: string
   oldSafeAddress: string
 }
+
+type TxBuilderModes = 'expand' | 'collapse' | 'super-collapse' | 'raw'
