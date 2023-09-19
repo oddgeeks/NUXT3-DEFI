@@ -55,7 +55,7 @@ export default defineEventHandler(async (event) => {
 
     const data = resp.data as ISimulation
 
-    if (!data?.balanceChange) {
+    if (!data?.simulation) {
       throw createError({
         statusCode: 400,
         statusMessage: 'Bad Request',
@@ -64,8 +64,8 @@ export default defineEventHandler(async (event) => {
     }
 
     await Promise.all([
-      ...data.balanceChange.sendTokens.map(transformToken),
-      ...data.balanceChange.receiveTokens.map(transformToken),
+      ...data.simulation.sendTokens.map(transformToken),
+      ...data.simulation.receiveTokens.map(transformToken),
     ])
 
     return data
