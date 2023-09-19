@@ -1783,10 +1783,10 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@instadapp/avocado-base@0.0.71":
-  version "0.0.71"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado-base/-/avocado-base-0.0.71.tgz#3a0d6f4b34375db939c465a4acd5f1b92371f37a"
-  integrity sha512-HLVa65vG8/vuF2QQYGm+fD0zwr9xo2Cfavg/bSR5FlVKbii53ylNqHhnCmjfcD2uK8uliQu1xH3SajrVwmlv2w==
+"@instadapp/avocado-base@0.0.75":
+  version "0.0.75"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado-base/-/avocado-base-0.0.75.tgz#0b4b0c74df42f4fea3335e94db6c5aa769596df0"
+  integrity sha512-PI2W/kAAST66B5gCpwgpnQvRN9ouDYEheW0h0Augejo33xxL7S+bJ8FUc6792WumkXZJitIJokAssTNA4+RVGQ==
   dependencies:
     "@vueuse/nuxt" "^10.2.0"
     bignumber.js "^9.1.1"
@@ -1829,10 +1829,17 @@
     semver "^7.3.8"
     tiny-warning "^1.0.3"
 
+"@instadapp/transaction-builder@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@instadapp/transaction-builder/-/transaction-builder-0.0.12.tgz#fe9af3efa90a449c566691e4286c4b8218fd20e4"
+  integrity sha512-ZFRrltjfDmsi5N4dTYUSkZM+XZVC6GigfQfz08wI54zhzh4fCnLx/mfncn+JFgvG82Fa08N4nnq2xKmJxDvc2w==
+  dependencies:
+    "@ethersproject/abi" "^5.7.0"
+
 "@instadapp/utils@^0.4.7":
-  version "0.4.7"
-  resolved "https://registry.yarnpkg.com/@instadapp/utils/-/utils-0.4.7.tgz#3441eece53712e71320eb21b55a049f605fb228d"
-  integrity sha512-NCceEXDoH4BZ/fzyCHEjVIk2GW7mmpViAoVjM3KskwpcC2qErTnBo1eokODic+IeWrsQNvhBLmKkRgUTpgv9wA==
+  version "0.4.9"
+  resolved "https://registry.yarnpkg.com/@instadapp/utils/-/utils-0.4.9.tgz#81ca8d53f2f66e3202817f75ed320ec4e2691aca"
+  integrity sha512-ae6njKZ+AmvtA3kWPQE2egN5XsqHRmbkCVzAkjVr1RuWBptg5Q5cW8MkJnh11IkfRRBtr8yZ8tumdjUyj7469w==
   dependencies:
     "@ethersproject/address" "^5.6.1"
     "@ethersproject/contracts" "^5.6.2"
@@ -11104,10 +11111,10 @@ type-fest@^2.11.2:
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-2.19.0.tgz#88068015bb33036a598b952e55e9311a60fd3a9b"
   integrity sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==
 
-type-fest@^4.0.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-4.2.0.tgz#e259430307710e77721ecf6f545840acad72195f"
-  integrity sha512-5zknd7Dss75pMSED270A1RQS3KloqRJA9XbXLe0eCxyw7xXFb3rd+9B0UQ/0E+LQT6lnrLviEolYORlRWamn4w==
+type-fest@^4.2.0:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-4.3.1.tgz#5cb58cdab5120f7ab0b40cfdc35073fb9adb651d"
+  integrity sha512-pphNW/msgOUSkJbH58x8sqpq8uQj6b0ZKGxEsLKMUnGorRcDjrUaLS+39+/ub41JNTwrrMyJcUB8+YZs3mbwqw==
 
 type-is@^1.6.16:
   version "1.6.18"
@@ -11541,13 +11548,13 @@ vary@^1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
 
-vee-validate@^4.7.4:
-  version "4.11.1"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.11.1.tgz#82fb210fb23660eaa3710b594e3de0b5017e997d"
-  integrity sha512-NGL2qrhoXAng+pZvu9dgQRhCuNBKeXcusdUloN3jnXUxbmLUCJV2kgleS5Jr7yF2iTWvDlDQd5m+Qp6cP1wSgw==
+vee-validate@^4.11.3:
+  version "4.11.3"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.11.3.tgz#b95cff30c46bf49102ef49141fd77d36b96edf7f"
+  integrity sha512-YhWORdZRE1GL6vXKj3r9f+Y8fJH5JMwMUJ4DFS44+WcTtiNXggyE3pyJPlZBqS9AgYGZ47EOv4UczkLxHqufiw==
   dependencies:
     "@vue/devtools-api" "^6.5.0"
-    type-fest "^4.0.0"
+    type-fest "^4.2.0"
 
 vite-node@^0.33.0:
   version "0.33.0"
@@ -11749,6 +11756,11 @@ vue-router@^4.2.4:
   integrity sha512-9PISkmaCO02OzPVOMq2w82ilty6+xJmQrarYZDkjZBfl4RvYAlt4PKnEX21oW4KTtWfa9OuO/b3qk1Od3AEdCQ==
   dependencies:
     "@vue/devtools-api" "^6.5.0"
+
+vue-slicksort@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/vue-slicksort/-/vue-slicksort-2.0.5.tgz#d080829de9d04b16e8d194ed8b4e219a501091a2"
+  integrity sha512-fXz1YrNjhUbJK7o0tMk27mIr4pMAZYLSYvtmLazCtfpvz+zafPCn34ILDL8B7hT7WLVZKreYs6JVe5VWymqmzA==
 
 vue-tippy@^6.0.0:
   version "6.3.1"

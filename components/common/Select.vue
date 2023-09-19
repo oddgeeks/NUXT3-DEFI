@@ -14,6 +14,7 @@ const props = defineProps<{
   itemWrapperClasses?: string
   selectedLabelClasses?: string
   disabled?: boolean
+  searchable?: boolean
 }>()
 
 const emit = defineEmits(['update:modelValue'])
@@ -21,9 +22,17 @@ const emit = defineEmits(['update:modelValue'])
 const [open, toggle] = useToggle(false)
 
 const containerRef = ref(null)
+const search = ref('')
 
 onClickOutside(containerRef, () => {
   toggle(false)
+})
+
+const actualOptions = computed(() => {
+  if (props.searchable && !!search.value)
+    return props.options.filter(o => getLabel(o).toLowerCase().includes(search.value.toLowerCase()))
+
+  return props.options
 })
 
 const selected = computed({
@@ -75,6 +84,10 @@ function setSelected(option: any, index: number) {
 function isSelected(option: any, index: number) {
   return getValue(option, index) == props.modelValue
 }
+
+whenever(open, () => {
+  search.value = ''
+})
 </script>
 
 <template>
@@ -114,44 +127,46 @@ function isSelected(option: any, index: number) {
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <ul
-        v-if="open"
-        class="absolute w-full flex flex-col gap-1.5 px-1 py-[15px] max-h-60 border-1 dark:border-slate-700 border-slate-150 border-t-0 rounded-b-[14px] overflow-auto bg-slate-50 dark:bg-gray-850"
-      >
-        <li
-          v-for="(option, i) in options"
-          :key="i"
-          class="text-left text-sm hover:dark:bg-slate-800 hover:bg-slate-100 rounded-[14px]"
-          :class="{ 'dark:bg-slate-800 bg-slate-100': isSelected(option, i) }"
+      <div v-if="open">
+        <ul
+          class="absolute w-full flex flex-col gap-1.5 px-1 py-[15px] max-h-60 border-1 dark:border-slate-700 border-slate-150 border-t-0 rounded-b-[14px] overflow-auto bg-slate-50 dark:bg-gray-850"
         >
-          <button
-            type="button"
-            :class="itemWrapperClasses"
-            class="w-full flex gap-2.5 items-center text-left py-3 px-3"
-            @click="setSelected(option, i)"
+          <CommonInput v-if="searchable" v-model="search" autofocus placeholder="Search" name="search-input" class="!p-2 -mt-3" input-classes="!py-2" type="search" />
+          <li
+            v-for="(option, i) in actualOptions"
+            :key="i"
+            class="text-left text-sm hover:dark:bg-slate-800 hover:bg-slate-100 rounded-[14px]"
+            :class="{ 'dark:bg-slate-800 bg-slate-100': isSelected(option, i) }"
           >
-            <slot :value="getValue(option, i)" name="item-prefix">
-              <img
-                v-if="iconKey && getIcon(option)"
-                class="w-6 h-6"
-                :src="getIcon(option)"
-              >
-            </slot>
-            <slot
-              :label="getLabel(option)"
-              :value="getValue(option, i)"
-              :item="option"
-              name="item"
+            <button
+              type="button"
+              :class="itemWrapperClasses"
+              class="w-full flex gap-2.5 items-center text-left py-3 px-3"
+              @click="setSelected(option, i)"
             >
-              <span :class="itemTextClasses">{{ getLabel(option) }}</span>
-            </slot>
-            <SVGSuccess
-              v-if="isSelected(option, i)"
-              class="selected w-5 h-5 shrink-0 ml-auto text-white"
-            />
-          </button>
-        </li>
-      </ul>
+              <slot :value="getValue(option, i)" name="item-prefix">
+                <img
+                  v-if="iconKey && getIcon(option)"
+                  class="w-6 h-6"
+                  :src="getIcon(option)"
+                >
+              </slot>
+              <slot
+                :label="getLabel(option)"
+                :value="getValue(option, i)"
+                :item="option"
+                name="item"
+              >
+                <span :class="itemTextClasses">{{ getLabel(option) }}</span>
+              </slot>
+              <SVGSuccess
+                v-if="isSelected(option, i)"
+                class="selected w-5 h-5 shrink-0 ml-auto text-white"
+              />
+            </button>
+          </li>
+        </ul>
+      </div>
     </transition>
   </div>
 </template>

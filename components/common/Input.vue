@@ -7,8 +7,9 @@ const props = withDefaults(
     placeholder?: string
     inputClasses?: string
     containerClasses?: string
+    errorClasses?: string
     disabled?: boolean
-    name: string
+    name?: string
     errorMessage?: string
     type?: 'text' | 'number' | 'numeric' | 'password' | 'email' | 'tel' | 'url' | 'search'
     errorType?: 'error' | 'warning'
@@ -17,6 +18,7 @@ const props = withDefaults(
     transparent?: boolean
     readonly?: boolean
     autofocus?: boolean
+    transformer?: (value: string) => string
   }>(),
   {
     modelValue: '',
@@ -46,6 +48,9 @@ function handleInput(e: any) {
 
   if (props.type === 'numeric')
     inputVal = inputVal.replace(',', '.')
+
+  if (props.transformer)
+    inputVal = props.transformer(inputVal)
 
   emit('update:modelValue', inputVal)
 }
@@ -115,10 +120,13 @@ function handleBeforeInput(e: any) {
     <span
       v-if="!!errorMessage"
       class="text-xs flex gap-2 items-center text-left mt-2"
-      :class="{
-        'text-red-alert': errorType === 'error',
-        'text-orange-500': errorType === 'warning',
-      }"
+      :class="[
+        {
+          'text-red-alert': errorType === 'error',
+          'text-orange-500': errorType === 'warning',
+        },
+        errorClasses,
+      ]"
     >
       <SVGInfo class="shrink-0" />
       {{ errorMessage }}</span>

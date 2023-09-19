@@ -185,6 +185,8 @@ export function useSend(initialSendData?: ISendData) {
 
     const items = sortedByMatch.map(i => i.item)
 
+    console.log(items)
+
     return items.filter((i) => {
       const token = tokens.value.find(
         t =>
