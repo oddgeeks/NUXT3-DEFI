@@ -54,6 +54,10 @@ const {
   bridgeTokens,
   fromTokens,
   sortTokensBestMatch,
+  amountInUsd,
+  isInputUsd,
+  max,
+  toggleMax,
 } = useBridge(fromToken, fromChainId)
 
 const { pending, error, data } = useEstimatedFee(
@@ -101,6 +105,8 @@ const bridgeProtocol = computed<Protocol>(() => {
 
 function setMax() {
   amount.value = toBN(fromToken.value!.balance).decimalPlaces(6, 1).toString()
+
+  toggleMax()
 }
 
 const feeInfoMessage = computed(() => {
@@ -220,8 +226,10 @@ const onSubmit = form.handleSubmit(async () => {
 
     <div class="flex flex-col gap-5">
       <div class="space-y-2.5">
-        <h1 class="text-sm">
+        <h1 class="text-sm flex items-center justify-between">
           Transfer from
+
+          <CommonToggle v-model="isInputUsd" text="Input USD" />
         </h1>
 
         <div
@@ -270,7 +278,27 @@ const onSubmit = form.handleSubmit(async () => {
                 </button>
               </div>
             </div>
+
+            <CommonCurrencyInput
+              v-if="isInputUsd"
+              v-model="amountInUsd"
+              :dirty="max"
+              styled
+              input-classes="!py-3"
+              autofocus
+              :error-message="form.errors.value.amount"
+              name="amount-usd"
+              placeholder="Enter amount"
+            >
+              <template #suffix>
+                <span class="text-sm text-left text-slate-400 absolute right-5">
+                  {{ formatDecimal(amount) }}
+                </span>
+              </template>
+            </CommonCurrencyInput>
+
             <CommonInput
+              v-else
               v-model="amount"
               type="numeric"
               autofocus
@@ -280,13 +308,7 @@ const onSubmit = form.handleSubmit(async () => {
             >
               <template #suffix>
                 <span class="flex text-sm text-slate-400">
-                  {{
-                    formatUsd(
-                      toBN(fromToken.price || 0)
-                        .times(amount || 0)
-                        .decimalPlaces(2),
-                    )
-                  }}
+                  {{ formatUsd(amountInUsd) }}
                 </span>
               </template>
             </CommonInput>
