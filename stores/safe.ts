@@ -35,7 +35,7 @@ export const useSafe = defineStore('safe', () => {
   const ensName = ref()
 
   const safes = ref<ISafe[]>([])
-  const safeOptions = ref<ISafeOptions[]>([])
+  const safeOptions = shallowRef<ISafeOptions[]>([])
 
   const selectedSafe = ref<ISafe>()
   const mainSafe = ref<ISafe>()
