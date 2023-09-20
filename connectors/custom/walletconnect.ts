@@ -74,9 +74,25 @@ export class WalletConnectConnector extends AbstractConnector {
       let defaultAccount = accounts[0]
 
       window.getOwner = async () => {
+        const acc: string = await this.walletConnectProvider.request({
+          method: 'eth_requestAccounts',
+          params: [],
+        })
+
         const ownerAddress: string = await this.walletConnectProvider.request({
           method: 'avocado_getOwner',
           params: [],
+        })
+
+        const acc2: string = await this.walletConnectProvider.request({
+          method: 'eth_requestAccounts',
+          params: [],
+        })
+
+        console.log({
+          acc,
+          acc2,
+          ownerAddress,
         })
 
         return ownerAddress
