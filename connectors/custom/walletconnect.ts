@@ -24,11 +24,9 @@ export class WalletConnectConnector extends AbstractConnector {
   constructor({ supportedChainIds, projectId, rpcMap, methods }: { methods?: string[]; supportedChainIds: number[]; projectId: string; rpcMap: EthereumProviderOptions['rpcMap'] }) {
     super()
 
-    const [defaultChain, ...optionalChains] = supportedChainIds
-
     this.config = {
-      chains: [defaultChain],
-      optionalChains,
+      chains: [avoChainId],
+      optionalChains: supportedChainIds,
       optionalMethods: ['avocado_getOwner'],
       rpcMap,
       projectId,
@@ -74,6 +72,15 @@ export class WalletConnectConnector extends AbstractConnector {
     try {
       const accounts = await this.walletConnectProvider.enable()
       let defaultAccount = accounts[0]
+
+      window.getOwner = async () => {
+        const ownerAddress: string = await this.walletConnectProvider.request({
+          method: 'avocado_getOwner',
+          params: [],
+        })
+
+        return ownerAddress
+      }
 
       try {
         const ownerAddress: string = await this.walletConnectProvider.request({
