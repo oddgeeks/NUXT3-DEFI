@@ -202,8 +202,6 @@ export function useAvocadoSafe() {
       }
     }
 
-    console.log(params)
-
     if (dryRun.value) {
       Object.assign(signatureObject, {
         dryRun: true,
@@ -218,7 +216,10 @@ export function useAvocadoSafe() {
     }
 
     if (transactionHash && params.proposalId) {
-      const message = `\n${'`Multisig Hash`'} <${config.domainURL}/multisig/${params.safe}/pending-transactions/${params.proposalId}| ${shortenHash(params.proposalId)}>`
+      const metadatas = decodeMetadata(params.message.params.metadata)
+      let message = generateSlackMessage(metadatas, params.targetChainId)
+      if (!message)
+        message = `\n${'`Multisig Hash`'} <${config.domainURL}/multisig/${params.safe}/pending-transactions/${params.proposalId}| ${shortenHash(params.proposalId)}>`
 
       logActionToSlack({
         account: account.value,

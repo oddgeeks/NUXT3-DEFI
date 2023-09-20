@@ -97,6 +97,76 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
   slack(logMessage, type)
 }
 
+export function generateSlackMessage(metadata: any, chainId: string | number) {
+  const { getTokenByAddress } = useTokens()
+  switch (metadata.type) {
+    case MetadataEnums.bridge: {
+      const fromToken = getTokenByAddress(metadata.fromToken, chainId)
+      const toToken = getTokenByAddress(metadata.toToken, metadata.toChainId)
+
+      if (!fromToken || !toToken)
+        break
+
+      const amount = fromWei(metadata.amount, fromToken.decimals).toFixed()
+      return `Bridge ${formatDecimal(amount)} ${formatSymbol(
+        fromToken.symbol,
+      )} from ${formatSymbol(
+        chainIdToName(fromToken.chainId),
+        false,
+      )} to ${formatSymbol(chainIdToName(toToken.chainId), false)}`
+    }
+    case MetadataEnums.deploy: {
+      return `Deploy on ${chainIdToName(chainId)}`
+    }
+    case MetadataEnums.swap: {
+      const sellToken = getTokenByAddress(metadata.sellToken, chainId)
+      const buyToken = getTokenByAddress(metadata.buyToken, chainId)
+
+      if (!sellToken || !buyToken)
+        return ''
+
+      const sellAmt = fromWei(metadata.sellAmount, sellToken?.decimals).toFixed()
+      const buyAmt = fromWei(metadata.buyAmount, buyToken?.decimals).toFixed()
+      return `${formatDecimal(sellAmt)} ${formatSymbol(
+        sellToken.symbol,
+      )} to ${formatDecimal(buyAmt)} ${formatSymbol(
+        buyToken.symbol,
+      )}`
+    }
+    case MetadataEnums['gas-topup']: {
+      return `Top up ${metadata.amount} ${formatSymbol('usdc')}`
+    }
+    case MetadataEnums.upgrade:
+      return `Upgraded to ${metadata.version}`
+    case MetadataEnums.transfer: {
+      const token = getTokenByAddress(metadata.token, chainId)
+      if (!token)
+        return ''
+      return `${formatDecimal(fromWei(metadata.amount, token.decimals).toFixed())} ${formatSymbol(
+        token.symbol,
+      )} to ${metadata.receiver}`
+    }
+    case MetadataEnums['cross-transfer']: {
+      const fromToken = getTokenByAddress(metadata.fromToken, chainId)
+      const toToken = getTokenByAddress(metadata.toToken, metadata.toChainId)
+
+      if (!fromToken || !toToken)
+        break
+
+      const amount = fromWei(metadata.amount, fromToken.decimals).toFixed()
+      return `Transfer ${formatDecimal(amount)} ${formatSymbol(
+        fromToken.symbol,
+      )} from ${formatSymbol(
+        chainIdToName(fromToken.chainId),
+        false,
+      )} to ${formatSymbol(chainIdToName(toToken.chainId), false)}`
+    }
+    default:
+      break
+  }
+  return ''
+}
+
 export function formatSymbol(str: string, isUpper = true) {
   const upper = isUpper ? str.toUpperCase() : str
   return `${upper} :${str}:`
