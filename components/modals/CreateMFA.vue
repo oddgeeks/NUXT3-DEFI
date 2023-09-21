@@ -161,6 +161,8 @@ watch(otpValue, async () => {
 
   if (resp)
     alert('MFA enabled successfully!')
+  else
+    alert('MFA failed to enable!')
 })
 </script>
 
