@@ -153,7 +153,7 @@ watch(otpValue, async () => {
     code: String(otpValue.value),
   })
 
-  const resp = await avoProvider.send('mfa_verifyOtpAdd', [{
+  const resp = await avoProvider.send('mfa_verifyTotpAdd', [{
     owner: selectedSafe.value?.owner_address,
     index: String(selectedSafe.value?.multisig_index),
     code: otpValue.value,
