@@ -182,6 +182,7 @@ watch(otpValue, async () => {
       </CommonButton>
     </form>
     <div v-if="totpResponse" class="flex flex-col gap-7.5">
+      {{ totpResponse.uri }}
       <QrcodeVue :value="totpResponse.uri" :size="200" />
 
       <div>
