@@ -9801,7 +9801,7 @@ qrcode-generator@^1.4.4:
   resolved "https://registry.yarnpkg.com/qrcode-generator/-/qrcode-generator-1.4.4.tgz#63f771224854759329a99048806a53ed278740e7"
   integrity sha512-HM7yY8O2ilqhmULxGMpcHSF1EhJJ9yBj8gvDEuZ6M+KGJ0YY2hKpnXvRD+hZPLrDVck3ExIGhmPtSdcjC+guuw==
 
-qrcode.vue@^3.3.3:
+qrcode.vue@^3.4.1:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/qrcode.vue/-/qrcode.vue-3.4.1.tgz#dd8141da9c4ea07ee56b111cd13eadf123af822a"
   integrity sha512-wq/zHsifH4FJ1GXQi8/wNxD1KfQkckIpjK1KPTc/qwYU5/Bkd4me0w4xZSg6EXk6xLBkVDE0zxVagewv5EMAVA==
@@ -11768,6 +11768,11 @@ vue-tippy@^6.0.0:
   integrity sha512-U2jpGwmwg+u/a36/XDnGlOF+W944xHGlVELsrTNWmZ0nUi2E/VW0c/buBkzntFUwRh6BHwFWcKL8BHcyG2mogQ==
   dependencies:
     tippy.js "^6.3.7"
+
+vue3-otp-input@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/vue3-otp-input/-/vue3-otp-input-0.4.1.tgz#4757cc771bb0c723e34b78857424322079d07fae"
+  integrity sha512-wVl9i3DcWlO0C7fBI9V+RIP3crm/1tY72fuhvb3YM2JfbLoYofB96aPl5AgFhA0Cse5bQEMYtIvOeiqW3rfbAw==
 
 vue@^3.3.4:
   version "3.3.4"

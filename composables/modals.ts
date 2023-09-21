@@ -47,6 +47,7 @@ import ViewDecodedModal from '~/components/modals/Multisig/ViewDecodedModal.vue'
 import WelcomeModal from '~/components/modals/Welcome.vue'
 import CreateBookmark from '~/components/modals/CreateBookmark.vue'
 import ExecutionError from '~/components/modals/Multisig/ExecutionError.vue'
+import CreateMFA from '~/components/modals/CreateMFA.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -705,6 +706,17 @@ export async function openDecodedParamsModal(params: IDecodedParams) {
     options: {
       contentClass: '!p-0',
       wrapperClass: '!max-w-[fit-content]',
+    },
+  })
+}
+
+export async function openMfaCreateModal() {
+  return openModal({
+    component: CreateMFA,
+    async: true,
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[560px]',
     },
   })
 }

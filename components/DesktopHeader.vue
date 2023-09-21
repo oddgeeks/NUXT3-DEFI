@@ -41,6 +41,9 @@ useIntervalFn(refresh, 15000)
     <button v-if="dryRun" class="text-sm text-orange mr-4" @click="dryRun = undefined">
       Disable Dry Run
     </button>
+    <button @click="openMfaCreateModal()">
+      Enable MFA
+    </button>
     <nav class="flex items-center gap-7.5 relative">
       <div class="flex items-center gap-5">
         <ColorModeSwitcher />

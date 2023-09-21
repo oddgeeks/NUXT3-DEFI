@@ -55,7 +55,7 @@
     "nuxt-svgo": "^3.1.0",
     "ohmyfetch": "^0.4.21",
     "pinia": "^2.1.6",
-    "qrcode.vue": "^3.3.3",
+    "qrcode.vue": "^3.4.1",
     "rimraf": "^3.0.2",
     "simple-git": "^3.16.0",
     "styled-qr-code": "^1.0.0",
@@ -85,6 +85,7 @@
     "fuse.js": "^6.6.2",
     "semver": "^7.3.8",
     "vue-slicksort": "^2.0.5",
+    "vue3-otp-input": "^0.4.1",
     "xxhashjs": "^0.2.2"
   }
 }
