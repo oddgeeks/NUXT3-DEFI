@@ -82,9 +82,7 @@ export class WalletConnectConnector extends AbstractConnector {
         if (ownerAddress)
           defaultAccount = ownerAddress
       }
-      catch (e) {
-        console.log('Error getting owner address', e)
-      }
+      catch (e) {}
 
       return { provider: this.walletConnectProvider, account: defaultAccount }
     }
