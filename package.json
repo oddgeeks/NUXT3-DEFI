@@ -70,7 +70,7 @@
     "yup": "^0.32.11"
   },
   "dependencies": {
-    "@instadapp/avocado-base": "0.0.75",
+    "@instadapp/avocado-base": "0.0.76",
     "@instadapp/transaction-builder": "^0.0.12",
     "@splidejs/vue-splide": "^0.6.12",
     "@walletconnect/modal": "^2.6.1",
