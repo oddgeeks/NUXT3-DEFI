@@ -26,6 +26,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
   const { parseTransactionError } = useErrorHandler()
   const { switchToAvocadoNetwork } = useNetworks()
   const { getRpcURLByChainId } = useShared()
+  const { allSafes } = storeToRefs(useSafe())
 
   const actualSessions = computed(() => sessions.value.filter((value) => {
     if (value.self.metadata.name === 'Avocado')
@@ -81,8 +82,10 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
 
           const mergedChains = [...new Set([...chains, ...requiredChains])]
 
-          const accounts = mergedChains.map((network) => {
-            return `${network}:${safe.safeAddress.value}`
+          const accounts = allSafes.value.flatMap((safe) => {
+            return mergedChains.map((network) => {
+              return `${network}:${safe.safe_address}`
+            })
           })
 
           console.log(params, requiredMethods)
@@ -483,9 +486,19 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
     syncActiveSessions()
   })
 
-  watch(safe.safeAddress, async () => {
-    await disconnectAll()
-    syncActiveSessions()
+  watchThrottled(safe.safeAddress, () => {
+    for (const session of actualSessions.value) {
+      web3WalletV2.value?.emitSessionEvent({
+        topic: session.topic,
+        chainId: 'eip155:1',
+        event: {
+          name: 'accountsChanged',
+          data: [safe.safeAddress.value],
+        },
+      })
+    }
+  }, {
+    throttle: 500,
   })
 
   const normalizeChainId = (eip155ChainId: string) => {

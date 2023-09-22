@@ -155,7 +155,6 @@ const isYourSignNeeded = computed(() => {
     const isConfirmationsMatch = gte(data_item.confirmations.length, data_item.confirmations_required)
     const isTransactionExecuted = checkTransactionExecuted(data_item)
     const isTransactionFailed = data_item.status === 'failed'
-    console.log(executing, isTransactionExecuted, isConfirmationsMatch, isTransactionFailed)
     if (executing.value || isTransactionExecuted || isConfirmationsMatch || isTransactionFailed)
       return false
     return getAddress(data_item.safe_address) === getAddress(selectedSafe.value?.safe_address || '')

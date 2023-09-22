@@ -35,7 +35,7 @@ export const useSafe = defineStore('safe', () => {
   const ensName = ref()
 
   const safes = ref<ISafe[]>([])
-  const safeOptions = ref<ISafeOptions[]>([])
+  const safeOptions = shallowRef<ISafeOptions[]>([])
 
   const selectedSafe = ref<ISafe>()
   const mainSafe = ref<ISafe>()
@@ -44,6 +44,13 @@ export const useSafe = defineStore('safe', () => {
 
   const safesLoading = ref(false)
   const optionsLoading = ref(false)
+
+  const allSafes = computed<ISafe[]>(() => {
+    const primary = [selectedSafe.value, multiSigSafe.value].filter(Boolean)
+    const secondary = safes.value.filter(s => !primary.some(p => isAddressEqual(p?.safe_address, s?.safe_address)))
+
+    return [...primary, ...secondary] as ISafe[]
+  })
 
   const { account } = useWeb3()
   const { tokens, customTokens } = storeToRefs(useTokens())
@@ -77,7 +84,10 @@ export const useSafe = defineStore('safe', () => {
   async function computeAddresses() {
     try {
       const polygonProvider = getRpcBatchProviderByChainId(137)
-      const { address, multisigAddress, oldSafeAddress } = await getComputedAddresses(polygonProvider, account.value)
+      const { address, multisigAddress, oldSafeAddress } = await getComputedAddresses({
+        accountAddress: account.value,
+        provider: polygonProvider,
+      })
 
       logBalance({
         chainId: 137,
@@ -577,7 +587,11 @@ export const useSafe = defineStore('safe', () => {
 
   async function getFallbackSafeOptionsByChainId(safe: ISafe, chainId: number | string): Promise<ISafeOptions> {
     try {
-      const config = await getSafeOptionsByChain(safe, chainId, getRpcBatchProviderByChainId(chainId))
+      const config = await getSafeOptionsByChain({
+        safe,
+        chainId,
+        provider: getRpcBatchProviderByChainId(chainId),
+      })
       return config
     }
     catch (e) {
@@ -601,7 +615,11 @@ export const useSafe = defineStore('safe', () => {
         availableNetworks.map((network) => {
           const provider = getRpcBatchProviderByChainId(network.chainId)
 
-          return getSafeOptionsByChain(safe, network.chainId, provider)
+          return getSafeOptionsByChain({
+            safe,
+            chainId: network.chainId,
+            provider,
+          })
             .catch((e) => {
               const msg = 'Failed to get safe options by public provider'
 
@@ -828,6 +846,7 @@ export const useSafe = defineStore('safe', () => {
     refreshSelectedSafe,
     networkOrderedBySumTokens,
     getFallbackSafeOptionsByChainId,
+    allSafes,
   }
 })
 
