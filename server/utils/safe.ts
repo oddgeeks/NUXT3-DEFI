@@ -1,15 +1,7 @@
 import { serialize } from 'error-serializer'
 import { ethers } from 'ethers'
-import { forwarderProxyAddress, multisigForwarderProxyAddress } from '@/utils/avocado'
+import { AVO_PROD_MULTISIG_FORWARDER_ADDR, AVO_STAGING_MULTISIG_FORWARDER_ADDR } from '../../utils/avocado'
 import { AvoMultisigImplementation__factory, Forwarder__factory, GaslessWallet__factory, MultisigForwarder__factory } from '@/contracts'
-
-interface ISafe {
-  safe_address: string
-  multisig_index: number
-  multisig: number
-  owner_address: string
-  deployed: Record<string, boolean>
-}
 
 const serverRpcInstances = {} as Record<string, ethers.providers.StaticJsonRpcProvider>
 
@@ -24,18 +16,21 @@ export function getServerBatchedRpcProvider(chainId: number | string) {
   return serverRpcInstances[chainId]
 }
 
-export async function getSafeOptionsByChain(safe: ISafe, chainId: string | number, provider: ethers.providers.StaticJsonRpcProvider, server = false): Promise<ISafeOptions> {
+export async function getSafeOptionsByChain(params: IOptionsParams): Promise<ISafeOptions> {
+  const { safe, provider, chainId, server = false } = params
+  const { _forwarderProxyAddress, _multisigForwarderProxyAddress } = getContractAddresses()
+
   const obj = {} as ISafeOptions
 
   const implInstance = AvoMultisigImplementation__factory.connect(safe.safe_address, provider)
 
   const multisigForwarderInstance = MultisigForwarder__factory.connect(
-    multisigForwarderProxyAddress,
+    _multisigForwarderProxyAddress,
     provider,
   )
 
   const legacyForwarderInstance = Forwarder__factory.connect(
-    forwarderProxyAddress,
+    _forwarderProxyAddress,
     provider,
   )
 
@@ -68,13 +63,19 @@ export async function getSafeOptionsByChain(safe: ISafe, chainId: string | numbe
 
         return multisigForwarderInstance.avocadoVersion(
           '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-          safe.multisig_index)
+          safe.multisig_index).catch(() => {
+          return '1.0.0'
+        })
       })
     }
 
     return legacyForwarderInstance.avoWalletVersion(
       '0x0000000000000000000000000000000000000001',
-    )
+    ).catch(() => {
+      obj.notdeployed = true
+
+      return '0.0.0'
+    })
   }
 
   function domainName(): Promise<string> {
@@ -82,7 +83,9 @@ export async function getSafeOptionsByChain(safe: ISafe, chainId: string | numbe
       .catch(() => multisigForwarderInstance.avocadoVersionName(
         '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
         safe.multisig_index,
-      ))
+      ).catch(() => {
+        return 'Avocado-Multisig'
+      }))
   }
 
   function nonce(): Promise<number> {
@@ -129,14 +132,35 @@ export async function getSafeOptionsByChain(safe: ISafe, chainId: string | numbe
   return obj
 }
 
-export async function getComputedAddresses(provider: ethers.providers.StaticJsonRpcProvider, accountAddress: string) {
+function getContractAddresses() {
+  const config = useAppConfig()
+
+  const multisigForwarderProxyAddress = config.isProd
+    ? AVO_PROD_MULTISIG_FORWARDER_ADDR
+    : AVO_STAGING_MULTISIG_FORWARDER_ADDR
+
+  const forwarderProxyAddress = config.isProd
+    ? AVO_PROD_FORWARDER_ADDR
+    : AVO_STAGING_FORWARDER_ADDR
+
+  return {
+    _multisigForwarderProxyAddress: multisigForwarderProxyAddress,
+    _forwarderProxyAddress: forwarderProxyAddress,
+  }
+}
+
+export async function getComputedAddresses(params: IComputeSafeParams) {
+  const { accountAddress, provider } = params
+
+  const { _forwarderProxyAddress, _multisigForwarderProxyAddress } = getContractAddresses()
+
   const legacyProvider = Forwarder__factory.connect(
-    forwarderProxyAddress,
+    _forwarderProxyAddress,
     provider,
   )
 
   const multisigProvider = MultisigForwarder__factory.connect(
-    multisigForwarderProxyAddress,
+    _multisigForwarderProxyAddress,
     provider,
   )
 

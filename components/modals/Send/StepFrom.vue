@@ -66,6 +66,10 @@ const disabled = computed(() => {
   return !actualAddress.value || !!errors.value.length || !!addressErrors.value.length || !amount.value || tokenlistPending.value
 })
 
+const isCrossChainEnable = computed(() => {
+  return toCrossChainNetworks.value?.length > 1 && !isSafeMultisig.value && !bridgeDisabledChains.includes(data.value.fromChainId)
+})
+
 const { data: totalTransfers } = useAsyncData(
   'total-transfers',
   async () => {
@@ -292,7 +296,7 @@ onMounted(() => {
         </div>
       </div>
     </Transition>
-    <div v-if="toCrossChainNetworks?.length > 1 && !isSafeMultisig" class="flex gap-2.5 items-center">
+    <div v-if="isCrossChainEnable" class="flex gap-2.5 items-center">
       <button
         :class="{
           'dark:text-white text-slate-900': isCrossChain,

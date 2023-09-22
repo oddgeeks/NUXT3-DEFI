@@ -21,5 +21,8 @@ export default defineEventHandler(async (event) => {
 
   const provider = getServerBatchedRpcProvider(137)
 
-  return getComputedAddresses(provider, address)
+  return getComputedAddresses({
+    accountAddress: address,
+    provider,
+  })
 })
