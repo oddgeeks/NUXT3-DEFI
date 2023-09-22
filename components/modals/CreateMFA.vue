@@ -217,9 +217,9 @@ async function verify() {
       </template>
     </form>
     <div v-if="mfaRequestResponse?.uri" class="flex flex-col gap-5">
-      <Copy :text="mfaRequestResponse.uri">
+      <Copy :text="mfaRequestResponse.secret">
         <template #content>
-          Copy MFA URI
+          Copy Secret
         </template>
       </Copy>
       <CommonQrImage :url="mfaRequestResponse.uri" />
