@@ -128,6 +128,10 @@ interface IOpenNonceModalParams {
   options?: any
 }
 
+interface ICreateBatchModal{
+  
+}
+
 interface IOpenExecuteModalParams {
   transaction: IMultisigTransaction
   isGasTopup: boolean

@@ -4,7 +4,7 @@ import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg?componen
 
 const props = defineProps<{
   payload: SimulationToken
-  type: 'approve' | 'recieve' | 'send'
+  type: 'approve' | 'recieve' | 'send' | 'revoke'
   chainId: string
 }>()
 
@@ -12,6 +12,7 @@ enum Types {
   Approve = 'approve',
   Recieve = 'recieve',
   Send = 'send',
+  Revoke = 'revoke',
 }
 
 enum TypeTitles {
@@ -61,6 +62,8 @@ const actualType = computed(() => {
       return TypeTitles.In
     case Types.Send:
       return TypeTitles.Out
+    case Types.Revoke:
+      return TypeTitles.RevokedAllowance
   }
 })
 

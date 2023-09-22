@@ -7,8 +7,9 @@ const props = withDefaults(
     placeholder?: string
     inputClasses?: string
     containerClasses?: string
+    errorClasses?: string
     disabled?: boolean
-    name: string
+    name?: string
     errorMessage?: string
     type?: 'text' | 'number' | 'numeric' | 'password' | 'email' | 'tel' | 'url' | 'search'
     errorType?: 'error' | 'warning'
@@ -17,6 +18,7 @@ const props = withDefaults(
     transparent?: boolean
     readonly?: boolean
     autofocus?: boolean
+    transformer?: (value: string) => string
   }>(),
   {
     modelValue: '',
@@ -46,6 +48,9 @@ function handleInput(e: any) {
 
   if (props.type === 'numeric')
     inputVal = inputVal.replace(',', '.')
+
+  if (props.transformer)
+    inputVal = props.transformer(inputVal)
 
   emit('update:modelValue', inputVal)
 }
@@ -91,34 +96,40 @@ function handleBeforeInput(e: any) {
       class="relative flex items-center focus-within:outline-none px-5 rounded-[15px]"
     >
       <slot name="prefix" />
-      <input
-        :id="`input-${name}`"
-        v-focus="{ enabled: autofocus }"
-        autocomplete="off"
-        :readonly="readonly"
-        :type="htmlInputType"
-        :value="modelValue"
-        :placeholder="placeholder"
-        :step="step"
-        :name="name"
-        :disabled="disabled"
-        :min="min"
-        class="placeholder-slate-400 focus-visible:!outline-none placeholder:text-sm border-none shadow-none focus:ring-0 focus:border-none bg-inherit rounded-[inherit] px-0 py-[13px] w-full"
-        :class="[inputClasses]"
-        @beforeinput="handleBeforeInput"
-        @input="handleInput"
-        @focus="$emit('inputFocus')"
-        @blur="$emit('inputBlur')"
-      >
+      <slot name="input">
+        <input
+          :id="`input-${name}`"
+          v-focus="{ enabled: autofocus }"
+          autocomplete="off"
+          :readonly="readonly"
+          :type="htmlInputType"
+          :value="modelValue"
+          :placeholder="placeholder"
+          :step="step"
+          :name="name"
+          :disabled="disabled"
+          :min="min"
+          class="common-input"
+          :class="[inputClasses]"
+          @beforeinput="handleBeforeInput"
+          @input="handleInput"
+          @focus="$emit('inputFocus')"
+          @blur="$emit('inputBlur')"
+        >
+      </slot>
+
       <slot name="suffix" />
     </div>
     <span
       v-if="!!errorMessage"
       class="text-xs flex gap-2 items-center text-left mt-2"
-      :class="{
-        'text-red-alert': errorType === 'error',
-        'text-orange-500': errorType === 'warning',
-      }"
+      :class="[
+        {
+          'text-red-alert': errorType === 'error',
+          'text-orange-500': errorType === 'warning',
+        },
+        errorClasses,
+      ]"
     >
       <SVGInfo class="shrink-0" />
       {{ errorMessage }}</span>
