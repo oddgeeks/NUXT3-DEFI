@@ -623,6 +623,9 @@ interface ISafesResponse {
   created_at: string
   updated_at: string
   multisig: 0 | 1
+  mfa_email_verified: 0 | 1
+  mfa_phone_verified : 0 | 1
+  mfa_totp_verified : 0 | 1
   deployed: Record<string, boolean>,
   version: Record<string, string>
   authorities: Record<string, string[]>
