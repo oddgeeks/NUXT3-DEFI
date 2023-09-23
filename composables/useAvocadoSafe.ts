@@ -393,7 +393,9 @@ export function useAvocadoSafe() {
       signatures: sortedSignatures,
     }
 
-    const { signature, cancelled } = await signTypedData(provider.value, account.value, {
+    const web3Provider = new ethers.providers.Web3Provider(provider.value)
+
+    const { signature, cancelled } = await signTypedData(web3Provider, account.value, {
       domain,
       types,
       value,
@@ -459,7 +461,9 @@ export function useAvocadoSafe() {
       ],
     }
 
-    const { signature, cancelled } = await signTypedData(provider.value, account.value, {
+    const web3Provider = new ethers.providers.Web3Provider(provider.value)
+
+    const { signature, cancelled } = await signTypedData(web3Provider, account.value, {
       domain,
       types,
       value: data,
