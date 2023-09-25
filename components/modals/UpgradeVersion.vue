@@ -112,7 +112,7 @@ async function handleSubmit() {
       action: 'upgrade',
       chainId: String(props.options.chainId),
       account: account.value,
-      message: `Upgraded to ${props.options.latestVersion}`,
+      message: generateSlackMessage(metadata, props.options.chainId),
     })
 
     emit('destroy')

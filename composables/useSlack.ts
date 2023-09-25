@@ -97,7 +97,13 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
   slack(logMessage, type)
 }
 
-export function generateSlackMessage(metadata: any, chainId: string | number) {
+export function generateSlackMessage(metadatas: any, chainId: string | number) {
+  const metadatalist = decodeMetadata(metadatas)
+  if (!metadatalist)
+    return ''
+  if (metadatalist.length == 0)
+    return ''
+  const metadata = metadatalist.at(0)
   const { getTokenByAddress } = useTokens()
   switch (metadata.type) {
     case MetadataEnums.bridge: {
@@ -108,7 +114,7 @@ export function generateSlackMessage(metadata: any, chainId: string | number) {
         break
 
       const amount = fromWei(metadata.amount, fromToken.decimals).toFixed()
-      return `Bridge ${formatDecimal(amount)} ${formatSymbol(
+      return `${formatDecimal(amount)} ${formatSymbol(
         fromToken.symbol,
       )} from ${formatSymbol(
         chainIdToName(fromToken.chainId),
@@ -116,7 +122,7 @@ export function generateSlackMessage(metadata: any, chainId: string | number) {
       )} to ${formatSymbol(chainIdToName(toToken.chainId), false)}`
     }
     case MetadataEnums.deploy: {
-      return `Deploy on ${chainIdToName(chainId)}`
+      return `${chainIdToName(chainId)}`
     }
     case MetadataEnums.swap: {
       const sellToken = getTokenByAddress(metadata.sellToken, chainId)
@@ -134,7 +140,7 @@ export function generateSlackMessage(metadata: any, chainId: string | number) {
       )}`
     }
     case MetadataEnums['gas-topup']: {
-      return `Top up ${metadata.amount} ${formatSymbol('usdc')}`
+      return `Gas Top up ${metadata.amount} ${formatSymbol('usdc')}`
     }
     case MetadataEnums.upgrade:
       return `Upgraded to ${metadata.version}`
@@ -154,7 +160,7 @@ export function generateSlackMessage(metadata: any, chainId: string | number) {
         break
 
       const amount = fromWei(metadata.amount, fromToken.decimals).toFixed()
-      return `Transfer ${formatDecimal(amount)} ${formatSymbol(
+      return `${formatDecimal(amount)} ${formatSymbol(
         fromToken.symbol,
       )} from ${formatSymbol(
         chainIdToName(fromToken.chainId),

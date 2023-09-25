@@ -216,8 +216,7 @@ export function useAvocadoSafe() {
     }
 
     if (transactionHash && params.proposalId) {
-      const metadatas = decodeMetadata(params.message.params.metadata)
-      let message = generateSlackMessage(metadatas, params.targetChainId)
+      let message = generateSlackMessage(params.message.params.metadata, params.targetChainId)
       if (!message)
         message = `\n${'`Multisig Hash`'} <${config.domainURL}/multisig/${params.safe}/pending-transactions/${params.proposalId}| ${shortenHash(params.proposalId)}>`
 

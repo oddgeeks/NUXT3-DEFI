@@ -305,13 +305,12 @@ const aggregators = ref<IAggregator[]>([])
 const selectedRoute = ref<IAggregator>()
 const fallbackRoutes = ref<IAggregator[]>([])
 
-const userChangeRoute = (route: IAggregator) => {
+function userChangeRoute(route: IAggregator) {
   selectedRoute.value = route
   fallbackRoutes.value = aggregators.value.filter(i => i.name !== route.name)
 }
 
-
-const resetRetryCounts = () => {
+function resetRetryCounts() {
   txRetryCount.value = 0
   esimatedFeeRetryCount.value = 0
 }
@@ -421,7 +420,7 @@ const { data: txActions } = useAsyncData(
  * Creates a set of txActions based on the selected route
  * @param route
  */
-const createRouteBasedTxActions = async (route?: IAggregator): Promise<TransactionsAction[]> => {
+async function createRouteBasedTxActions(route?: IAggregator): Promise<TransactionsAction[]> {
   const { valid } = await validate()
 
   if (!valid)
@@ -457,7 +456,6 @@ const createRouteBasedTxActions = async (route?: IAggregator): Promise<Transacti
   })
 
   return txActions
-
 }
 
 const txRetryCount = ref(0)
@@ -468,7 +466,7 @@ const txRetryCount = ref(0)
  * @param metadata
  * @returns txHash as a string
  */
-const sendTransactionsWithRetry = async (metadata: string): Promise<any> => {
+async function sendTransactionsWithRetry(metadata: string): Promise<any> {
   try {
     const actionsToSend = txActions.value || await createRouteBasedTxActions(selectedRoute.value)
     if (!actionsToSend)
@@ -478,7 +476,7 @@ const sendTransactionsWithRetry = async (metadata: string): Promise<any> => {
       actionsToSend,
       toChainId.value,
       {
-        metadata
+        metadata,
       },
       'swap',
     )
@@ -488,7 +486,6 @@ const sendTransactionsWithRetry = async (metadata: string): Promise<any> => {
     const err = parseTransactionError(e)
     if (err.formatted?.includes('Signing rejected'))
       throw e
-
 
     const nextRoute = changeRouteForRetry(txRetryCount, 1)
     if (nextRoute) {
@@ -501,7 +498,6 @@ const sendTransactionsWithRetry = async (metadata: string): Promise<any> => {
   }
 }
 
-
 const totalRetries = computed(() => {
   return txRetryCount.value + esimatedFeeRetryCount.value
 })
@@ -511,7 +507,7 @@ const totalRetries = computed(() => {
  * The current implementation supports cycling through all the fallback routes
  * Retry policy is set to 1
  */
-const changeRouteForRetry = (retryCount: Ref<number>, maxRetry = 1) => {
+function changeRouteForRetry(retryCount: Ref<number>, maxRetry = 1) {
   if (fallbackRoutes.value.length > totalRetries.value && retryCount.value < maxRetry) {
     const nextRoute = fallbackRoutes.value[totalRetries.value]
     selectedRoute.value = nextRoute
@@ -528,17 +524,17 @@ const {
   pending: feePending,
   error,
 } = useEstimatedFee(txActions, toChainId, {
-    cb: () => {
-      resume()
-      refreshing.value = false
-    },
+  cb: () => {
+    resume()
+    refreshing.value = false
   },
-  {
-    active: true,
-    count: esimatedFeeRetryCount,
-    max: 1,
-    cb: changeRouteForRetry
-  }
+},
+{
+  active: true,
+  count: esimatedFeeRetryCount,
+  max: 1,
+  cb: changeRouteForRetry,
+},
 )
 
 const onSubmit = handleSubmit(async () => {
@@ -569,11 +565,7 @@ const onSubmit = handleSubmit(async () => {
     ).toFixed()
 
     logActionToSlack({
-      message: `${formatDecimal(sellAmt)} ${formatSymbol(
-        swap.value.sellToken.symbol,
-      )} to ${formatDecimal(buyAmt)} ${formatSymbol(
-        swap.value.buyToken.symbol,
-      )}`,
+      message: generateSlackMessage(metadata, toChainId.value),
       action: 'swap',
       account: account.value,
       chainId: toChainId.value,

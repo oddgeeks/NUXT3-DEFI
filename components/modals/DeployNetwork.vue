@@ -41,7 +41,7 @@ async function handleDeploy() {
       return
 
     logActionToSlack({
-      message: ` ${chainIdToName(props.option.chainId)}`,
+      message: generateSlackMessage(metadata, props.option.chainId),
       action: 'deploy',
       txHash: transactionHash,
       chainId: String(props.option.chainId),

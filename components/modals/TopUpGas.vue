@@ -171,7 +171,7 @@ const onSubmit = handleSubmit(async () => {
 
     logActionToSlack({
       action: 'topup',
-      message: `${amount.value} ${formatSymbol('usdc')}`,
+      message: generateSlackMessage(metadata, token.value.chainId),
       account: account.value,
       chainId: String(token.value.chainId),
       txHash: transactionHash,

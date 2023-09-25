@@ -95,9 +95,7 @@ async function onSubmit() {
       return
 
     logActionToSlack({
-      message: `${formatDecimal(data.value.amount)} ${formatSymbol(
-        token.value.symbol,
-      )} to ${actualAddress.value}`,
+      message: generateSlackMessage(metadata, data.value.toChainId),
       action: 'send',
       txHash: transactionHash,
       amountInUsd: amountInUsd.value.toFixed(),
