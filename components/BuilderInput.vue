@@ -81,7 +81,7 @@ const { value, errorMessage, name, setValue } = useField<any>(() => {
   const isNumb = typeof parsed === 'number' && !isNaN(parsed)
 
   try {
-    ethers.utils.defaultAbiCoder.encode([props.input.type], [isNumb ? String(parsed) : parsed])
+    ethers.utils.defaultAbiCoder.encode([props.input.type], [isNumb ? toBN(parsed).toFixed() : parsed])
     return true
   }
   catch (e) {
