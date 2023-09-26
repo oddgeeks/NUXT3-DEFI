@@ -14,7 +14,7 @@ const actualMfa = computed(() => props.mfaType)
 
 const phoneRegexp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
-const { selectedSafe, atLeastOneMfaVerifed } = storeToRefs(useSafe())
+const { selectedSafe } = storeToRefs(useSafe())
 const { provider, account } = useWeb3()
 const { avoProvider } = useSafe()
 
@@ -200,18 +200,5 @@ async function verify() {
         Verify
       </CommonButton>
     </form>
-
-    <button
-      v-if="atLeastOneMfaVerifed" class="text-primary text-sm" type="button" @click="openAddSignerModal({
-        addresses: [
-          {
-            address: '0xEA524E38e56c48789e27E78f9FF9F33BD0dd530E',
-            name: 'Instadapp Signer',
-          },
-        ],
-      })"
-    >
-      Add Signer to enable MFA
-    </button>
   </div>
 </template>
