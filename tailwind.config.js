@@ -53,6 +53,9 @@ module.exports = {
         sans: ['Source Code Pro', ...defaultTheme.fontFamily.sans],
       },
       colors: {
+        purple: {
+          DEFAULT: '#5D5FEF',
+        },
         lite: {
           DEFAULT: '#70A3F3',
         },
