@@ -31,7 +31,7 @@ async function handleActivate(mfa: IMfa) {
 </script>
 
 <template>
-  <div>
+  <div class="flex flex-col gap-7.5">
     <div class="flex flex-col gap-2.5">
       <h1 class="text-[30px] leading-10">
         Configure Avocado Protect ⚔️
@@ -65,6 +65,29 @@ async function handleActivate(mfa: IMfa) {
                   <span v-if="mfa.activated" class="flex items-center text-xs uppercase gap-2.5 text-primary">
                     <SvgoCheckCircle class="success-circle w-5" />
                     Active
+
+                    <Popover class="relative inline-flex items-center">
+                      <PopoverButton class="group">
+                        <SvgoDots />
+                      </PopoverButton>
+
+                      <transition
+                        enter-active-class="transition duration-200 ease-out"
+                        enter-from-class="translate-y-1 opacity-0"
+                        enter-to-class="translate-y-0 opacity-100"
+                        leave-active-class="transition duration-150 ease-in"
+                        leave-from-class="translate-y-0 opacity-100"
+                        leave-to-class="translate-y-1 opacity-0"
+                      >
+                        <PopoverPanel
+                          class="absolute left-1/2 z-10 -top-14 -translate-x-1/2 transform px-4 sm:px-0 lg:max-w-3xl"
+                        >
+                          <div class="dark:bg-slate-750 flex items-center gap-2.5 text-red-alert px-5 rounded-2xl py-4 bg-slate-150">
+                            <SvgoTrash2 /> Deactivate
+                          </div>
+                        </PopoverPanel>
+                      </transition>
+                    </Popover>
                   </span>
                   <CommonButton v-else @click="handleActivate(mfa)">
                     Activate Now

@@ -38,6 +38,7 @@ useIntervalFn(refresh, 15000)
 
 <template>
   <div class="items-center justify-end py-8 hidden sm:flex">
+    <SvgoAvocadoProtect v-if="$route.name === 'protect'" class="mr-auto" />
     <button v-if="dryRun" class="text-sm text-orange mr-4" @click="dryRun = undefined">
       Disable Dry Run
     </button>
