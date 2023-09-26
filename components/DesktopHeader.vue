@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 
-const { safeAddress } = storeToRefs(useSafe())
+const { safeAddress, isSelectedSafeLegacy } = storeToRefs(useSafe())
 const { fromWei } = useBignumber()
 const { avoProvider } = useSafe()
 const route = useRoute()
@@ -42,7 +42,7 @@ useIntervalFn(refresh, 15000)
     <button v-if="dryRun" class="text-sm text-orange mr-4" @click="dryRun = undefined">
       Disable Dry Run
     </button>
-    <NuxtLink to="/protect">
+    <NuxtLink v-if="!isSelectedSafeLegacy" to="/protect">
       Enable MFA
     </NuxtLink>
     <nav class="flex items-center gap-7.5 relative">
