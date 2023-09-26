@@ -48,8 +48,11 @@ import WelcomeModal from '~/components/modals/Welcome.vue'
 import CreateBookmark from '~/components/modals/CreateBookmark.vue'
 import ExecutionError from '~/components/modals/Multisig/ExecutionError.vue'
 import CreateMFA from '~/components/modals/CreateMFA.vue'
+import MFATerms from '~/components/modals/Mfa/Terms.vue'
 
 const { openModal } = useModal()
+const { mfaTermsAccepted } = useMfa()
+
 interface DialogModalProps {
   title?: string
   content?: string
@@ -710,7 +713,24 @@ export async function openDecodedParamsModal(params: IDecodedParams) {
   })
 }
 
+export async function openMfaTermsModal() {
+  return openModal({
+    component: MFATerms,
+    async: true,
+    options: {
+      contentClass: '!p-7.5',
+    },
+  })
+}
+
 export async function openMfaCreateModal() {
+  if (!mfaTermsAccepted.value) {
+    const { success } = await openMfaTermsModal()
+
+    if (!success)
+      return
+  }
+
   return openModal({
     component: CreateMFA,
     async: true,
