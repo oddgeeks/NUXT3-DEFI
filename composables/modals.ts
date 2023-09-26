@@ -47,6 +47,7 @@ import ViewDecodedModal from '~/components/modals/Multisig/ViewDecodedModal.vue'
 import WelcomeModal from '~/components/modals/Welcome.vue'
 import CreateBookmark from '~/components/modals/CreateBookmark.vue'
 import ExecutionError from '~/components/modals/Multisig/ExecutionError.vue'
+import Migration from '~/components/modals/Migration.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -704,6 +705,19 @@ export async function openDecodedParamsModal(params: IDecodedParams) {
     },
     options: {
       contentClass: '!p-0',
+      wrapperClass: '!max-w-[fit-content]',
+    },
+  })
+}
+
+export async function openMigrationModal(selectedSafe: ISafe) {
+  return openModal({
+    component: Migration,
+    async: true,
+    componentProps: {
+      selectedSafe,
+    },
+    options: {
       wrapperClass: '!max-w-[fit-content]',
     },
   })

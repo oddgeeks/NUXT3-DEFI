@@ -12,28 +12,27 @@
       </template>
     </UiInput> -->
 
-    <MigrationWalletItem v-if="mainSafe" v2 primary :safe="mainSafe" />
-    <MigrationWalletItem class="mt-4" v-if="multiSigSafe" primary :safe="multiSigSafe" />
-
-    <!-- <MigrateToModal
-      :show="!!(selectedWalletAddress?.length && selectedWallet && balances?.length && tokenList?.tokens?.length)"
-      :selectedWallet="selectedWallet"
-      :balances="balances"
-      :tokenList="tokenList?.tokens"
-      @close="selectedWalletAddress = ''"
-    /> -->
+    <MigrationWalletItem
+      v-if="mainSafe"
+      :safe="mainSafe"
+      v2
+      primary
+      @click="handleSelect(mainSafe)"
+    />
+    <MigrationWalletItem
+      v-if="multiSigSafe"
+      class="mt-4"
+      :safe="multiSigSafe"
+      primary
+      @click="handleSelect(multiSigSafe)"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 const { mainSafe, multiSigSafe } = storeToRefs(useSafe())
 
-const searchInput = ref('');
-const selectedWalletAddress = ref('');
-
-const selectWallet = (walletAddress: string) => {
-  selectedWalletAddress.value = walletAddress;
-};
-
-// const selectedWallet = computed(() => wallets.value.find((wallet) => wallet.address === selectedWalletAddress.value));
+const handleSelect = (safe: ISafe) => {
+  openMigrationModal(safe)
+}
 </script>

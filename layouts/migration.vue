@@ -4,7 +4,7 @@
 <template>
   <section class="flex flex-col">
     <div class="flex bg-slate-50 dark:bg-gray-950">
-      <div class="flex flex-1 flex-col sm:px-10 px-4 max-w-7xl mx-auto min-w-0">
+      <div class="flex flex-1 flex-col sm:px-10 px-4 max-w-7xl mx-auto min-w-0 h-screen">
         <div class="items-center justify-end py-8 flex">
           <NuxtLink class="mr-auto flex items-center gap-2.5" to="/migration">
             <SvgoAvocadoLogo />
@@ -19,7 +19,7 @@
         </div>
 
         <slot />
-        <TheFooter />
+        <TheFooter class="mt-[30px]" />
       </div>
     </div>
   </section>

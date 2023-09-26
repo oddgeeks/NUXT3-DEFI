@@ -31,10 +31,12 @@
 </template>
 
 <script setup lang="ts">
+import SVGX from '~/assets/images/icons/x.svg?component'
+
 const props = withDefaults(defineProps<{
   tokenBalance: IBalance
-  isChecked: boolean
-  showSelectedUi: boolean
+  isChecked?: boolean
+  showSelectedUi?: boolean
 }>(),
   {
     isChecked: false,

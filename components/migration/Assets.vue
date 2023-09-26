@@ -1,5 +1,5 @@
 <template>
-  <div class="h-[calc(100%-112px)]">
+  <div class="overflow-y-hidden">
     <MigrationTabs
       class="border-b-[1px] border-slate-750"
       :tabs="tabs"
@@ -7,7 +7,7 @@
       @updated="(newValue) => activeTab = newValue"
     />
 
-    <MigrationBalances class="h-[calc(100%-39px)] overflow-y-auto" v-show="activeTab === 'balances'" />
+    <MigrationBalances class="h-[calc(100%-39px)] overflow-y-auto scroll-style" v-show="activeTab === 'balances'" />
     <NFTs class="h-[calc(100%-39px)] overflow-y-auto" v-show="activeTab === 'nfts'" />
     <Defi class="h-[calc(100%-39px)] overflow-y-auto" v-show="activeTab === 'defi'" />
   </div>

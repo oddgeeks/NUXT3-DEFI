@@ -17,6 +17,7 @@ export interface IToken {
 
 export const useTokens = defineStore('tokens', () => {
   const tokens = ref<IToken[]>([])
+  const selectedTokensForMigration = ref<IToken[]>([])
   const customTokens = useStorageAsync<IToken[]>('custom-tokens', [])
 
   const fetchTokens = async () => {
@@ -132,6 +133,21 @@ export const useTokens = defineStore('tokens', () => {
     }
   }
 
+  const toggleSelectedTokenForMigration = (tokenForMigration: IToken) => {
+    const index = selectedTokensForMigration.value?.findIndex((selectedToken) => {
+      return `${selectedToken.address}-${selectedToken.chainId}` === `${tokenForMigration.address}-${tokenForMigration.chainId}`
+    })
+    if (index === -1) {
+      selectedTokensForMigration.value.push(tokenForMigration)
+    } else {
+      selectedTokensForMigration.value.splice(index, 1)
+    }
+  }
+
+  const setTokensForMigration = (tokensForMigration: IToken[]) => {
+    selectedTokensForMigration.value = [...tokensForMigration];
+  }
+
   useIntervalFn(handleTokenPrices, 10000)
 
   return {
@@ -142,6 +158,9 @@ export const useTokens = defineStore('tokens', () => {
     handleAddToken,
     handleDeleteToken,
     fetchTokenByAddress,
+    selectedTokensForMigration,
+    toggleSelectedTokenForMigration,
+    setTokensForMigration
   }
 })
 
