@@ -12,9 +12,12 @@ interface IMfaResponse {
 
 interface IMfa {
   value: Mfa
+  label: string
   requestMethod: string
   verifyMethod: string
-  disabled: boolean
+  activated: boolean
+  title: string
+  description: string
   types: {
     [key: string]: {
       name: string

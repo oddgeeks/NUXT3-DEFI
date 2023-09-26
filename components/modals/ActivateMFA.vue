@@ -4,9 +4,17 @@ import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import VOtpInput from 'vue3-otp-input'
 
+const props = defineProps<{
+  mfaType: IMfa
+}>()
+
+defineEmits(['destroy'])
+
+const actualMfa = computed(() => props.mfaType)
+
 const phoneRegexp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
-const { selectedSafe, mfaEmailVerifed, mfaPhoneVerifed, mfaTotpVerifed, atLeastOneMfaVerifed } = storeToRefs(useSafe())
+const { selectedSafe, atLeastOneMfaVerifed } = storeToRefs(useSafe())
 const { provider, account } = useWeb3()
 const { avoProvider } = useSafe()
 
@@ -22,54 +30,6 @@ function defaultSteps() {
 
 useState('signer-steps', defaultSteps)
 
-const mfas = computed(() =>
-  [
-    {
-      value: 'totp',
-      types: {
-        Totp: [
-          { name: 'owner', type: 'address' },
-          { name: 'index', type: 'uint32' },
-        ],
-      },
-      requestMethod: 'mfa_requestTotpAdd',
-      verifyMethod: 'mfa_verifyTotpAdd',
-      disabled: mfaTotpVerifed.value,
-    },
-    {
-      value: 'phone',
-      types: {
-        Phone: [
-          { name: 'owner', type: 'address' },
-          { name: 'index', type: 'uint32' },
-          { name: 'countryCode', type: 'uint256' },
-          { name: 'phone', type: 'uint256' },
-        ],
-      },
-      requestMethod: 'mfa_requestPhoneAdd',
-      verifyMethod: 'mfa_verifyPhoneAdd',
-      disabled: mfaPhoneVerifed.value,
-
-    }, {
-      value: 'email',
-      types: {
-        Email: [
-          { name: 'owner', type: 'address' },
-          { name: 'index', type: 'uint32' },
-          { name: 'email', type: 'string' },
-        ],
-      },
-      requestMethod: 'mfa_requestEmailAdd',
-      verifyMethod: 'mfa_verifyEmailAdd',
-      disabled: mfaEmailVerifed.value,
-    },
-  ] as IMfa[],
-)
-
-const enabledMfas = computed(() => mfas.value.filter(item => !item.disabled))
-
-const actualMfa = computed(() => mfas.value.find(item => item.value === mfa.value))
-
 const { handleSubmit, meta, isSubmitting } = useForm({
   validationSchema: yup.object({
     email: yup.string().email().when('mfa', {
@@ -82,15 +42,17 @@ const { handleSubmit, meta, isSubmitting } = useForm({
     }),
   }),
 })
-
-const { value: mfa } = useField<Mfa>('mfa', undefined, {
-  initialValue: enabledMfas.value[0]?.value,
+useField<Mfa>('mfa', undefined, {
+  initialValue: actualMfa.value.value,
 })
-
 const { value: email, errorMessage: emailErrorMessage } = useField('email')
 const { value: phone, errorMessage: phoneErrorMessage } = useField('phone')
 const { value: countryCode } = useField('countryCode', undefined, {
-  initialValue: '90',
+  initialValue: '1',
+})
+
+const country = computed(() => {
+  return countries.find(c => c.dialCode === countryCode.value)
 })
 
 const onSubmit = handleSubmit(async () => {
@@ -147,11 +109,6 @@ const onSubmit = handleSubmit(async () => {
   mfaRequestResponse.value = resp
 })
 
-watch(mfa, () => {
-  otpValue.value = ''
-  mfaRequestResponse.value = undefined
-})
-
 async function verify() {
   if (!actualMfa.value || !otpValue.value)
     return
@@ -180,40 +137,49 @@ async function verify() {
 
 <template>
   <div class="p-7.5 flex flex-col gap-5">
-    <form class="flex flex-col gap-5" @submit="onSubmit">
-      <fieldset name="mfa" class="flex gap-4">
-        <div v-for="item in mfas" :key="item.value" class="flex gap-2 items-center">
-          <input :id="item.value" v-model="mfa" class="peer" :disabled="item.disabled" :value="item.value" type="radio" name="mfa">
-          <label class="peer-disabled:text-slate-400" :for="item.value">{{ item.value }}</label>
-        </div>
-      </fieldset>
-      <template v-if="!mfaRequestResponse">
-        <div v-if="mfa === 'totp'">
-          <p class="text-sm font-medium">
-            After enabling MFA, you will be asked to scan a QR code with your authenticator app.
-          </p>
-        </div>
-        <div v-else-if="mfa === 'email'">
-          <label for="email">Email</label>
-          <CommonInput id="email" v-model="email" :error-message="emailErrorMessage" type="email" class="w-full" />
-        </div>
-        <div v-else-if="mfa === 'phone'" class="flex flex-col gap-5">
-          <div>
-            <label for="countryCode">Country Code</label>
-            <CommonSelect v-model="countryCode" searchable label-key="name" value-key="dialCode" :options="countries" />
-          </div>
-          <div>
-            <label for="phone">Phone</label>
-            <CommonInput id="phone" v-model="phone" :error-message="phoneErrorMessage" class="w-full" />
-          </div>
-        </div>
+    <form class="flex flex-col gap-7.5" @submit="onSubmit">
+      <div class="flex gap-1 flex-col">
+        <h1 class="text-lg">
+          {{ actualMfa.title }}
+        </h1>
+        <h2 class="text-xs text-slate-400 font-medium">
+          {{ actualMfa.description }}
+        </h2>
+      </div>
 
-        <div v-else>
-          All MFA methods are enabled
+      <template v-if="!mfaRequestResponse">
+        <div v-if="actualMfa.value === 'email'" class="flex flex-col gap-2.5">
+          <label class="text-sm leading-5" for="input-email">Email</label>
+          <CommonInput id="email" v-model="email" autofocus name="email" :error-message="emailErrorMessage" type="email" class="w-full" />
         </div>
-        <CommonButton :loading="isSubmitting" class="w-36 justify-center" :disabled="!meta.valid" type="submit">
-          Enable
-        </CommonButton>
+        <div v-else-if="actualMfa.value === 'phone'" class="flex flex-col gap-5">
+          <div class="flex flex-col gap-2.5">
+            <label class="text-sm leading-5" for="input-phone">Phone</label>
+            <div class="w-full flex items-baseline">
+              <CommonInput id="phone" v-model="phone" name="phone" autofocus placeholder="0000 0000" :error-message="phoneErrorMessage" container-classes="!px-0" class="w-full">
+                <template #prefix>
+                  <CommonSelect v-model="countryCode" container-classes="!py-0 !bg-transparent !border-0" list-classes="!w-[400%]" searchable label-key="name" value-key="dialCode" :options="countries">
+                    <template #button-label>
+                      <Flag v-if="country" class="w-5 h-5" :flag="country?.iso2.toUpperCase()" />
+                    </template>
+                    <template #item="{ item }">
+                      <Flag v-if="item" class="w-5 h-5" :flag="item?.iso2.toUpperCase()" />
+                      {{ item.name }}
+                    </template>
+                  </CommonSelect>
+                </template>
+              </CommonInput>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-center gap-4">
+          <CommonButton color="white" size="lg" class="flex-1 justify-center" @click="$emit('destroy')">
+            Close
+          </CommonButton>
+          <CommonButton size="lg" :loading="isSubmitting" class="flex-1 justify-center" :disabled="!meta.valid" type="submit">
+            {{ actualMfa.value === 'totp' ? 'Generate QR Code' : 'Continue' }}
+          </CommonButton>
+        </div>
       </template>
     </form>
     <div v-if="mfaRequestResponse?.uri" class="flex flex-col gap-5">

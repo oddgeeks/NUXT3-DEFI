@@ -3,7 +3,7 @@ import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
 
 const props = withDefaults(
   defineProps<{
-    modelValue?: string | number | boolean | null | undefined
+    modelValue?: string | number | boolean | null | undefined | unknown
     placeholder?: string
     inputClasses?: string
     containerClasses?: string
