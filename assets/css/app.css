@@ -249,6 +249,14 @@ input[type="search" i]::-webkit-search-cancel-button {
   @apply fill-slate-400 stroke-slate-400;
 }
 
+.stroke-slate-icon path {
+  @apply stroke-slate-400;
+}
+
+.stroke-white-icon path {
+  @apply stroke-white;
+}
+
 .type-icon-selected path {
   @apply fill-black stroke-black dark:fill-white dark:stroke-white;
 }

@@ -35,7 +35,7 @@ export default defineEventHandler<NFTData[]>(async (event) => {
       }
 
       const provider = new Alchemy(settings)
-      const resp = await provider.nft.getNftsForOwner(address!, params)
+      const resp = await provider.nft.getNftsForOwner(address!, { ...params, excludeFilters: [NftFilters.SPAM] })
 
       return resp.ownedNfts.map((i) => {
         const chainId = Object.keys(networks).find(
