@@ -74,63 +74,75 @@ async function migrate() {
   loading.value = true;
   const transactions = [];
   const chainIds = [];
-  try {
 
-    for (let i = 0; i < selectedTokensForMigration.value.length; i++) {
-      const selectedToken = selectedTokensForMigration.value[i];
+  for (let i = 0; i < selectedTokensForMigration.value.length; i++) {
+    const selectedToken = selectedTokensForMigration.value[i];
 
-      const txs = []
+    const txs = []
 
-      const transferAmount = toBN((selectedToken as IBalance).balance)
-        .times(10 ** selectedToken.decimals)
-        .toFixed()
+    const transferAmount = toBN((selectedToken as IBalance).balance)
+      .times(10 ** selectedToken.decimals)
+      .toFixed()
 
-      if (selectedToken.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
-        txs.push({
-          from: account.value,
-          to: props.selectedSafe?.safe_address,
-          value: transferAmount,
-          data: '0x',
-        })
-      } else {
-        const contract = Erc20__factory.connect(selectedToken.address, library.value)
+    if (selectedToken.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
+      txs.push({
+        from: account.value,
+        to: props.selectedSafe?.safe_address,
+        value: transferAmount,
+        data: '0x',
+      })
+    }
+    else {
+      const contract = Erc20__factory.connect(selectedToken.address, library.value)
 
-        const { data: transferData } = await contract.populateTransaction.transfer(
-          props.selectedSafe?.safe_address || '',
-          transferAmount,
-        )
-
-        txs.push({
-          from: account.value,
-          to: selectedToken.address,
-          value: '0',
-          data: transferData,
-        })
-      }
-
-      const metadata = encodeTransferMetadata(
-        {
-          token: selectedToken.address!,
-          amount: toWei((selectedToken as IBalance).balance, selectedToken.decimals),
-          receiver: props.selectedSafe?.safe_address || '',
-        },
-        true,
+      const { data: transferData } = await contract.populateTransaction.transfer(
+        props.selectedSafe?.safe_address || '',
+        transferAmount,
       )
 
-      chainIds.push(Number(selectedToken.chainId));
-
-      // logActionToSlack({
-      //   message: `${formatDecimal(data.value.amount)} ${formatSymbol(
-      //     token.value.symbol,
-      //   )} to ${actualAddress.value}`,
-      //   action: 'send',
-      //   txHash: transactionHash,
-      //   amountInUsd: amountInUsd.value.toFixed(),
-      //   chainId: String(data.value.toChainId),
-      //   account: account.value,
-      // })
+      txs.push({
+        from: account.value,
+        to: selectedToken.address,
+        value: '0',
+        data: transferData,
+      })
     }
 
+    const metadata = encodeTransferMetadata(
+      {
+        token: selectedToken.address!,
+        amount: toWei((selectedToken as IBalance).balance, selectedToken.decimals),
+        receiver: props.selectedSafe?.safe_address || '',
+      },
+      true,
+    )
+
+    chainIds.push(Number(selectedToken.chainId));
+
+    transactions.push(
+      sendTransactions(
+        txs!,
+        Number(selectedToken.chainId),
+        {
+          metadata,
+        },
+        'send',
+      )
+    )
+
+    // logActionToSlack({
+    //   message: `${formatDecimal(data.value.amount)} ${formatSymbol(
+    //     token.value.symbol,
+    //   )} to ${actualAddress.value}`,
+    //   action: 'send',
+    //   txHash: transactionHash,
+    //   amountInUsd: amountInUsd.value.toFixed(),
+    //   chainId: String(data.value.toChainId),
+    //   account: account.value,
+    // })
+  }
+
+  try {
     const hashes = await Promise.all(transactions)
     openPendingMigrationModal(hashes, chainIds)
   } catch (e: any) {
