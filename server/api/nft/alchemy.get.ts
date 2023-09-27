@@ -1,5 +1,5 @@
 import type { Network } from 'alchemy-sdk'
-import { Alchemy } from 'alchemy-sdk'
+import { Alchemy, NftFilters } from 'alchemy-sdk'
 import { mixed, object, string } from 'yup'
 
 export default defineEventHandler<NFTData[]>(async (event) => {
