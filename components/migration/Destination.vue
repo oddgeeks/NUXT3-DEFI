@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="text-white text-base font-semibold mb-5">Migrate To</h2>
+    <h2 class="text-white text-base font-semibold mb-5">Migrate to</h2>
 
     <!-- <UiInput
       placeholder="Search name"

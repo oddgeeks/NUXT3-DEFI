@@ -35,13 +35,19 @@
       </div> -->
     </div>
 
-    <button class="py-3 !bg-green-500 hover:!bg-opacity-90 transition-all mt-5 w-full rounded-[40px]" :loading="loading" @click="migrate">
-      <div class="flex items-center justify-center">
+    <CommonButton
+      class="mt-5 w-full"
+      size="lg"
+      :disabled="!selectedTokensForMigration?.length"
+      :loading="loading"
+      @click="migrate"
+    >
+      <div class="flex items-center justify-center w-full">
         <SvgoArrowRight class="rotate-90" />
         <span class="mx-[10px] text-sm text-white font-medium">Migrate</span>
         <SvgoArrowRight class="rotate-90" />
       </div>
-    </button>
+    </CommonButton>
 
     <MigrationWalletItem class="mt-4" v-if="selectedSafe" primary :safe="selectedSafe" />
   </div>
@@ -49,16 +55,101 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
+import { Erc20__factory } from '~/contracts';
+const { parseTransactionError } = useErrorHandler()
 
 interface MigrateToModalProps {
   selectedSafe: ISafe | undefined
 }
 
+const { sendTransactions } = useAvocadoSafe()
 const { toggleSelectedTokenForMigration } = useTokens()
 const { selectedTokensForMigration } = storeToRefs(useTokens())
+const { account, library } = useWeb3()
 
-defineProps<MigrateToModalProps>()
+const props = defineProps<MigrateToModalProps>()
 const loading = ref(false)
 
-const migrate = () => { return '' }
+async function migrate() {
+  loading.value = true;
+  const transactions = [];
+  const chainIds = [];
+  try {
+
+    for (let i = 0; i < selectedTokensForMigration.value.length; i++) {
+      const selectedToken = selectedTokensForMigration.value[i];
+
+      const txs = []
+
+      const transferAmount = toBN((selectedToken as IBalance).balance)
+        .times(10 ** selectedToken.decimals)
+        .toFixed()
+
+      if (selectedToken.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
+        txs.push({
+          from: account.value,
+          to: props.selectedSafe?.safe_address,
+          value: transferAmount,
+          data: '0x',
+        })
+      } else {
+        const contract = Erc20__factory.connect(selectedToken.address, library.value)
+
+        const { data: transferData } = await contract.populateTransaction.transfer(
+          props.selectedSafe?.safe_address || '',
+          transferAmount,
+        )
+
+        txs.push({
+          from: account.value,
+          to: selectedToken.address,
+          value: '0',
+          data: transferData,
+        })
+      }
+
+      const metadata = encodeTransferMetadata(
+        {
+          token: selectedToken.address!,
+          amount: toWei((selectedToken as IBalance).balance, selectedToken.decimals),
+          receiver: props.selectedSafe?.safe_address || '',
+        },
+        true,
+      )
+
+      chainIds.push(Number(selectedToken.chainId));
+
+      // logActionToSlack({
+      //   message: `${formatDecimal(data.value.amount)} ${formatSymbol(
+      //     token.value.symbol,
+      //   )} to ${actualAddress.value}`,
+      //   action: 'send',
+      //   txHash: transactionHash,
+      //   amountInUsd: amountInUsd.value.toFixed(),
+      //   chainId: String(data.value.toChainId),
+      //   account: account.value,
+      // })
+    }
+
+    const hashes = await Promise.all(transactions)
+    openPendingMigrationModal(hashes, chainIds)
+  } catch (e: any) {
+    const err = parseTransactionError(e)
+
+    openSnackbar({
+      message: err.formatted,
+      type: 'error',
+    })
+
+    // logActionToSlack({
+    //   message: err.formatted,
+    //   action: 'send',
+    //   type: 'error',
+    //   account: account.value,
+    //   errorDetails: err.parsed,
+    // })
+  } finally {
+    loading.value = false
+  }
+}
 </script>

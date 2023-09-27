@@ -48,6 +48,7 @@ import WelcomeModal from '~/components/modals/Welcome.vue'
 import CreateBookmark from '~/components/modals/CreateBookmark.vue'
 import ExecutionError from '~/components/modals/Multisig/ExecutionError.vue'
 import Migration from '~/components/modals/Migration.vue'
+import PendingMigration from '~/components/modals/PendingMigration.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -722,5 +723,21 @@ export async function openMigrationModal(selectedSafe: ISafe) {
     },
   })
 }
+
+export function openPendingMigrationModal(
+  hashes: string[],
+  chainIds: (number | string)[],
+  async = false
+) {
+  return openModal({
+    component: PendingMigration,
+    async,
+    componentProps: {
+      hashes,
+      chainIds,
+    },
+  })
+}
+
 // @ts-expect-error
 globalThis.openCustomTxModal = openCustomTxModal
