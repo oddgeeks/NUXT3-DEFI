@@ -35,6 +35,7 @@ watch(() => props.dirty, () => {
       <input
         ref="inputRef"
         v-focus="{ enabled: autofocus }"
+        v-bind="$attrs"
         :class="inputClasses"
         class="common-input"
         type="text"
@@ -48,6 +49,7 @@ watch(() => props.dirty, () => {
   <input
     v-else
     ref="inputRef"
+    v-bind="$attrs"
     class="bg-transparent p-0 outline-none border-0 font-medium focus:border-0 focus:ring-0"
     type="text"
   >
