@@ -214,6 +214,40 @@ interface IBuyToken2 {
   sparklinePrice7d: number[];
 }
 
+interface IBatchJson {
+  version: string;
+  batch: IBatch[];
+}
+
+type BatchFormValues = {
+    abi: string;
+    toAddress: string;
+    contractAddress: string;
+    value: string;
+    chainId: number;
+    method: string;
+    params?: string;
+    raw?: string;
+    [key: string]: any?;
+}
+
+interface IBatch {
+  formValues: BatchFormValues,
+}
+
+interface IDecodedParams {
+  method: string;
+  builder: any;
+  inputs: any;
+  args: any;
+}
+
+interface ICreateBatchModal{
+  chainId: number | string
+  batch: IBatch[]
+  mode: TxBuilderModes
+}
+
 interface IFromToken {
   symbol: string;
   name: string;
@@ -223,6 +257,25 @@ interface IFromToken {
   eip2612: boolean;
   domainVersion: string;
   tags: string[];
+}
+
+interface IOptionsSafe {
+  multisig: number;
+  multisig_index: number,
+  owner_address: string,
+  safe_address: string,
+}
+
+interface IOptionsParams {
+  safe: IOptionsSafe,
+  chainId: string | number,
+  provider: ethers.providers.StaticJsonRpcProvider
+  server?: boolean
+} 
+
+interface IComputeSafeParams {
+  provider: ethers.providers.StaticJsonRpcProvider
+  accountAddress: string
 }
 
 interface IToToken {
@@ -398,14 +451,15 @@ interface BuildInfo {
 }
 
 interface ISimulation {
-  balanceChange: BalanceChange;
   transaction: Transaction;
+  simulation: ISimulationChange;
 }
 
-interface BalanceChange {
+interface ISimulationChange {
   approveTokens: SimulationToken[];
   sendTokens: SimulationToken[];
   receiveTokens: SimulationToken[];
+  revokeTokens?: SimulationToken[];
 }
 
 interface SimulationToken {
@@ -587,7 +641,7 @@ interface ISafesResponse {
   owner_address: string
   created_at: string
   updated_at: string
-  multisig: 0 | 1
+  multisig: 0 | 1 | number
   deployed: Record<string, boolean>,
   version: Record<string, string>
   authorities: Record<string, string[]>
@@ -627,3 +681,5 @@ interface IComputeAddresses {
   multisigAddress: string
   oldSafeAddress: string
 }
+
+type TxBuilderModes = 'expand' | 'collapse' | 'super-collapse' | 'raw'

@@ -29,6 +29,7 @@ export class WalletConnectConnector extends AbstractConnector {
     this.config = {
       chains: [defaultChain],
       optionalChains,
+      optionalMethods: ['avocado_getOwner'],
       rpcMap,
       projectId,
       showQrModal: true,
@@ -69,9 +70,23 @@ export class WalletConnectConnector extends AbstractConnector {
     this.walletConnectProvider.on('accountsChanged', this.handleAccountsChanged)
     this.walletConnectProvider.on('disconnect', this.handleDisconnect)
     this.walletConnectProvider.on('display_uri', this.handleDisplayURI)
+
     try {
       const accounts = await this.walletConnectProvider.enable()
-      const defaultAccount = accounts[0]
+      let defaultAccount = accounts[0]
+
+      try {
+        const ownerAddress: string = await this.walletConnectProvider.request({
+          method: 'avocado_getOwner',
+          params: [],
+        })
+        console.log({ ownerAddress })
+
+        if (ownerAddress)
+          defaultAccount = ownerAddress
+      }
+      catch (e) {}
+
       return { provider: this.walletConnectProvider, account: defaultAccount }
     }
     catch (error: any) {

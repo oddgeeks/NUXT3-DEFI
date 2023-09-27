@@ -9,8 +9,20 @@ const rpcInstances: Record<string, ethers.providers.StaticJsonRpcProvider> = {}
 export const useShared = defineStore('shared', () => {
   const rpcs = ref<Record<string, string>>({})
 
-  function getRpcProviderByChainId(chainId: number | string) {
+  function getRpcFallbackUrl(chainId: string | number) {
     const rpcURL = rpcs.value[chainId]
+
+    if (rpcURL)
+      return rpcURL
+
+    const network = availableNetworks.find(i => i.chainId == chainId)
+
+    if (network)
+      return network.params.rpcUrls[0]
+  }
+
+  function getRpcProviderByChainId(chainId: number | string) {
+    const rpcURL = getRpcFallbackUrl(chainId)
 
     if (!rpcURL)
       throw new Error(`No RPC URL for chainId: ${chainId}`)
@@ -25,7 +37,7 @@ export const useShared = defineStore('shared', () => {
   }
 
   function getRpcBatchProviderByChainId(chainId: number | string) {
-    const rpcURL = rpcs.value[chainId]
+    const rpcURL = getRpcFallbackUrl(chainId)
 
     if (!rpcURL)
       throw new Error(`No RPC URL for chainId: ${chainId}`)
@@ -37,7 +49,7 @@ export const useShared = defineStore('shared', () => {
   }
 
   function getRpcBatchRetryProviderByChainId(chainId: number | string) {
-    const rpcURL = rpcs.value[chainId]
+    const rpcURL = getRpcFallbackUrl(chainId)
 
     if (!rpcURL)
       throw new Error(`No RPC URL for chainId: ${chainId}`)
@@ -51,11 +63,11 @@ export const useShared = defineStore('shared', () => {
     return rpcBatchRetryInstances[chainId]
   }
 
-  function getRpcURLByChainId(chainid: number | string) {
-    const rpcURL = rpcs.value[chainid]
+  function getRpcURLByChainId(chainId: number | string) {
+    const rpcURL = getRpcFallbackUrl(chainId)
 
     if (!rpcURL)
-      throw new Error(`No RPC URL for chainId: ${chainid}`)
+      throw new Error(`No RPC URL for chainId: ${chainId}`)
 
     return rpcURL
   }

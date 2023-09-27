@@ -1,4 +1,4 @@
-import { useForm } from 'vee-validate'
+import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 
 import Fuse from 'fuse.js'
@@ -18,6 +18,9 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
   let tokensController: AbortController | null = null
   let fromController: AbortController | null = null
   let routesController: AbortController | null = null
+
+  const { isInputUsd } = useInputUsd()
+  const [max, toggleMax] = useToggle(false)
 
   const { account } = useWeb3()
   const { fromWei, toWei } = useBignumber()
@@ -48,7 +51,22 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
     }),
   })
 
-  const amount = form.useFieldModel('amount')
+  const { value: amount, setValue } = useField<string>('amount')
+
+  const amountInUsd = computed({
+    get() {
+      return toBN(fromToken.value?.price || 0)
+        .times(amount.value || 0)
+        .decimalPlaces(4, 6).toNumber()
+    },
+    set(newValue) {
+      const value = toBN(newValue || 0).div(fromToken.value?.price || 0)
+
+      setValue(toBN(value)
+        .decimalPlaces(4, 6)
+        .toString(), true)
+    },
+  })
 
   const nativeCurrency = computed(() => {
     const nativeTokenMeta = getNetworkByChainId(+fromChainId.value).params
@@ -167,8 +185,6 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
         }
         else { return }
       }
-
-      console.log('selammmmmmmmmm')
 
       const transferAmount = toWei(
         amount.value || '0',
@@ -560,5 +576,9 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
     bridgeTokens,
     fromTokens,
     sortTokensBestMatch,
+    amountInUsd,
+    isInputUsd,
+    max,
+    toggleMax,
   }
 }

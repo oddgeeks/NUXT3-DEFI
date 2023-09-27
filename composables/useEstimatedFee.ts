@@ -74,12 +74,17 @@ export function useEstimatedFee(
 
     if (toBN(gasBalance.value).lt(data.value?.amountAfterDiscount!))
       return 'Not enough USDC gas'
+
+    if (toBN(gasBalance.value).lt(toBN(data.value?.amountAfterDiscount).times(1.1))) {
+      return 'Estimated gas and current balance are very close, due to market fluctuation tx might fail.'
+    }
   })
 
   const {
     data: rawData,
     error,
     pending,
+    refresh,
   } = useAsyncData<IEstimatedFeeData>(
     `estimated-fee-${chainId.value}`,
     async () => {
@@ -162,5 +167,6 @@ export function useEstimatedFee(
     rawData,
     error: err,
     pending,
+    refresh,
   }
 }
