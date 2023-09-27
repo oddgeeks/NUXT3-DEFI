@@ -75,6 +75,13 @@ interface IMultisigBroadcastParams {
   ignoreSlack?: boolean
 }
 
+interface IAddSignerParams {
+  addresses: ISignerAddress[]
+  threshold: string
+  chainId: number | string
+  metadata: string
+}
+
 type TransactionsAction = {
   to: string
   value?: string

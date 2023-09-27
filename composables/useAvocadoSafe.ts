@@ -551,7 +551,9 @@ export function useAvocadoSafe() {
     }
   }
 
-  async function addSignersWithThreshold(addresses: ISignerAddress[], threshold: string, chainId: number | string) {
+  async function addSignersWithThreshold(params: IAddSignerParams) {
+    const { chainId, addresses, threshold } = params || {}
+
     const avoMultisigInstance = AvoMultisigImplementation__factory.connect(selectedSafe.value?.safe_address!, getRpcProviderByChainId(chainId))
 
     const currentThreshold = safeOptions.value.find(i => i.chainId == chainId)?.threshold || 1

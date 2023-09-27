@@ -33,16 +33,28 @@ async function handleSign() {
       return
     }
 
-    console.log(props.defaultThreshold)
-
-    const { payload, success } = await openUpdateThresholdModal(props.chainId, actualSigners.length, {
+    const { payload: threshold, success } = await openUpdateThresholdModal(props.chainId, actualSigners.length, {
       defaultThreshold: props.defaultThreshold,
     })
 
     if (!success)
       return
 
-    const txHash = await addSignersWithThreshold(actualSigners, payload, props.chainId)
+    const signers = actualSigners.map(signer => signer.address)
+
+    const metadata = threshold
+      ? encodeMultipleActions(
+        encodeAddSignersMetadata(signers, false),
+        encodeChangeThresholdMetadata(threshold, false),
+      )
+      : encodeAddSignersMetadata(signers)
+
+    const txHash = await addSignersWithThreshold({
+      addresses: actualSigners,
+      threshold,
+      chainId: props.chainId,
+      metadata,
+    })
 
     for (const signer of actualSigners) {
       const contact = safeContacts.value.find(contact => getAddress(contact.address) === getAddress(signer.address))
