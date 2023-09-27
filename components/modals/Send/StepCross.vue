@@ -198,6 +198,16 @@ async function fetchQuoteWithGasFee() {
   throw new Error('Unable to fetch quote with acceptable gas fees after max retries')
 }
 
+function getMetadata() {
+  return encodeCrossTransferMetadata({
+    fromToken: token.value?.address!,
+    toToken: targetToken.value?.address,
+    toChainId: String(data.value.toChainId),
+    amount: bestRoute.value?.toAmount,
+    receiver: actualAddress.value,
+  })
+}
+
 async function fetchBestRoute() {
   error.value = ''
   buildTransaction.value = undefined
@@ -269,13 +279,7 @@ async function fetchBestRoute() {
       })
     }
 
-    const metadata = encodeCrossTransferMetadata({
-      fromToken: token.value?.address!,
-      toToken: targetToken.value?.address,
-      toChainId: String(data.value.toChainId),
-      amount: bestRoute.value.toAmount,
-      receiver: actualAddress.value,
-    })
+    const metadata = getMetadata()
 
     let tMessage
     let sMessage
@@ -531,11 +535,11 @@ async function onSubmit() {
       throw new Error('Something went wrong')
     }
 
+    const metadata = getMetadata()
+
     logActionToSlack({
-      message: `${formatDecimal(data.value.amount)} ${formatSymbol(
-        token.value.symbol,
-      )} to ${actualAddress.value}`,
-      action: 'send',
+      message: generateSlackMessage(metadata, data.value.toChainId),
+      action: 'cross-transfer',
       txHash: avocadoHash,
       chainId: String(data.value.toChainId),
       amountInUsd: times(data.value.amount, token.value.price || '0').toFixed(),
@@ -557,7 +561,7 @@ async function onSubmit() {
 
     logActionToSlack({
       message: err.formatted,
-      action: 'send',
+      action: 'cross-transfer',
       type: 'error',
       account: account.value,
       errorDetails: err.parsed,

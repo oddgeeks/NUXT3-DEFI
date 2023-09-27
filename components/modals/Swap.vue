@@ -554,16 +554,6 @@ const onSubmit = handleSubmit(async () => {
     if (!transactionHash)
       return
 
-    const buyAmt = fromWei(
-      swapDetails.value?.data?.data.buyTokenAmount || 0,
-      swapDetails.value?.data?.data.buyToken.decimals,
-    ).toFixed()
-
-    const sellAmt = fromWei(
-      swapDetails.value?.data?.data.sellTokenAmount || 0,
-      swapDetails.value?.data?.data.sellToken.decimals,
-    ).toFixed()
-
     logActionToSlack({
       message: generateSlackMessage(metadata, toChainId.value),
       action: 'swap',

@@ -1,6 +1,8 @@
+type MetadataTypes = typeof MetadataEnums[keyof typeof MetadataEnums]
+
 interface ISlackMessage {
   message: string
-  action: IWeb3Action | 'wc' | 'add-token' | 'upgrade' | 'deploy' | 'network' | 'nft' | 'add-auth' | 'remove-auth' | 'multisig' | 'proposal' | 'fetch-nonce'
+  action: IWeb3Action | MetadataTypes | 'add-token' | 'upgrade' | 'deploy' | 'network' | 'nft' | 'multisig' | 'proposal' | 'fetch-nonce'
   account: string
   type?: ISlackMessageType
   txHash?: string
@@ -12,22 +14,29 @@ interface ISlackMessage {
 
 const prefixes: Record<ISlackMessage['action'], string> = {
   'bridge': 'Bridged:',
-  'send': 'Sent:',
   'swap': 'Swapped:',
-  'topup': '💥 Topup Gas:',
+  'gas-topup': '💥 Topup Gas:',
+  'transfer': 'Transfer',
   'reedem': 'Reedemed:',
   'claim': 'Claimed:',
-  'wc': ':walletconnect:',
+  'dapp': ':walletconnect:',
   'add-token': 'Added Token:',
   'upgrade': '',
   'deploy': 'Deployed:',
   'network': 'Network',
   'nft': 'NFT Transfer',
-  'add-auth': 'Added Authority',
-  'remove-auth': 'Removed Authority',
   'multisig': 'Executed Multisig Transaction',
   'proposal': 'MS Proposal Created',
   'fetch-nonce': 'Fetched Nonce',
+  'add-signers': 'Added Signers',
+  'remove-signers': 'Removed Signers',
+  'change-threshold': 'Changed Threshold',
+  'cross-transfer': 'Cross Transfer',
+  'instadapp-pro': 'Instadapp Pro',
+  'tx-builder': 'Tx Builder',
+  'import': 'Import',
+  'permit2': 'Permit',
+  'rejection': 'Rejection',
 }
 
 const ignoredMessages = [
@@ -97,21 +106,50 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
   slack(logMessage, type)
 }
 
-export function generateSlackMessage(metadatas: any, chainId: string | number) {
-  const metadatalist = decodeMetadata(metadatas)
-  if (!metadatalist)
+export function generateSlackMessage(_metadata: string, chainId: string | number, additionalMessage?: string) {
+  const metadatalist = decodeMetadata(_metadata)
+
+  if (!metadatalist || metadatalist.length == 0)
     return ''
-  if (metadatalist.length == 0)
+
+  const [metadata] = metadatalist
+
+  const type = metadata?.type as MetadataTypes
+
+  if (!type)
     return ''
-  const metadata = metadatalist.at(0)
+
   const { getTokenByAddress } = useTokens()
-  switch (metadata.type) {
-    case MetadataEnums.bridge: {
+
+  const metadataMapping: Record<MetadataTypes, () => string> = {
+    'rejection': () => '',
+    'auth': () => '',
+    'change-threshold': () => `Changed threshold to ${metadata.count}`,
+    'deploy': () => `Deployed ${chainIdToName(chainId)}`,
+    'add-signers': () => `Added ${metadata?.addresses?.length} signers`,
+    'remove-signers': () => `Removed ${metadata?.addresses?.length} signers`,
+    'tx-builder': () => `Executed ${metadata?.actionCount} transactions`,
+    'instadapp-pro': () => metadata?.castDetails,
+    'gas-topup': () => `Gas Top up ${metadata.amount} ${formatSymbol('usdc')}`,
+    'upgrade': () => `Upgraded to ${metadata.version}`,
+    'dapp': () => `Txn on ${metadata.name} ${metadata.url}`,
+    'import': () => `Imported from ${metadata.protocol} ${formatUsd(metadata.valueInUsd)}`,
+    'permit2': () => {
+      const token = getTokenByAddress(metadata.token, chainId)
+      if (!token)
+        return ''
+
+      const amount = fromWei(metadata.amount, token.decimals).toFixed()
+      return `Permit ${formatDecimal(amount)} ${formatSymbol(
+        token.symbol,
+      )} to ${metadata.spender}`
+    },
+    'bridge': () => {
       const fromToken = getTokenByAddress(metadata.fromToken, chainId)
       const toToken = getTokenByAddress(metadata.toToken, metadata.toChainId)
 
       if (!fromToken || !toToken)
-        break
+        return ''
 
       const amount = fromWei(metadata.amount, fromToken.decimals).toFixed()
       return `${formatDecimal(amount)} ${formatSymbol(
@@ -120,11 +158,8 @@ export function generateSlackMessage(metadatas: any, chainId: string | number) {
         chainIdToName(fromToken.chainId),
         false,
       )} to ${formatSymbol(chainIdToName(toToken.chainId), false)}`
-    }
-    case MetadataEnums.deploy: {
-      return `${chainIdToName(chainId)}`
-    }
-    case MetadataEnums.swap: {
+    },
+    'swap': () => {
       const sellToken = getTokenByAddress(metadata.sellToken, chainId)
       const buyToken = getTokenByAddress(metadata.buyToken, chainId)
 
@@ -138,26 +173,21 @@ export function generateSlackMessage(metadatas: any, chainId: string | number) {
       )} to ${formatDecimal(buyAmt)} ${formatSymbol(
         buyToken.symbol,
       )}`
-    }
-    case MetadataEnums['gas-topup']: {
-      return `Gas Top up ${metadata.amount} ${formatSymbol('usdc')}`
-    }
-    case MetadataEnums.upgrade:
-      return `Upgraded to ${metadata.version}`
-    case MetadataEnums.transfer: {
+    },
+    'transfer': () => {
       const token = getTokenByAddress(metadata.token, chainId)
       if (!token)
         return ''
       return `${formatDecimal(fromWei(metadata.amount, token.decimals).toFixed())} ${formatSymbol(
         token.symbol,
       )} to ${metadata.receiver}`
-    }
-    case MetadataEnums['cross-transfer']: {
+    },
+    'cross-transfer': () => {
       const fromToken = getTokenByAddress(metadata.fromToken, chainId)
       const toToken = getTokenByAddress(metadata.toToken, metadata.toChainId)
 
       if (!fromToken || !toToken)
-        break
+        return ''
 
       const amount = fromWei(metadata.amount, fromToken.decimals).toFixed()
       return `${formatDecimal(amount)} ${formatSymbol(
@@ -166,16 +196,20 @@ export function generateSlackMessage(metadatas: any, chainId: string | number) {
         chainIdToName(fromToken.chainId),
         false,
       )} to ${formatSymbol(chainIdToName(toToken.chainId), false)}`
-    }
-    default:
-      break
+    },
   }
-  return ''
+
+  const message = metadataMapping[type]()
+
+  if (additionalMessage)
+    return `${message}\n${additionalMessage}`
+
+  return message
 }
 
 export function formatSymbol(str: string, isUpper = true) {
   const upper = isUpper ? str.toUpperCase() : str
-  return `${upper} :${str}:`
+  return `${upper} :${str?.replace('.', '')}:`
 }
 
 export function formatChainName(chainId: string | number) {

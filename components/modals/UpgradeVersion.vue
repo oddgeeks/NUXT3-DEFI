@@ -109,10 +109,10 @@ async function handleSubmit() {
       return
 
     logActionToSlack({
+      message: generateSlackMessage(metadata, props.options.chainId),
       action: 'upgrade',
       chainId: String(props.options.chainId),
       account: account.value,
-      message: generateSlackMessage(metadata, props.options.chainId),
     })
 
     emit('destroy')

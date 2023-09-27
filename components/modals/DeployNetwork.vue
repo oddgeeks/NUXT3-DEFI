@@ -48,7 +48,7 @@ async function handleDeploy() {
       account: account.value,
     })
 
-    await showPendingTransactionModal(transactionHash, props.option.chainId, 'send')
+    await showPendingTransactionModal(transactionHash, props.option.chainId, 'deploy')
 
     emit('destroy')
   }

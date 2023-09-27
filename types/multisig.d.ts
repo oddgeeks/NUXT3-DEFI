@@ -72,6 +72,7 @@ interface IMultisigBroadcastParams {
   safe: string
   signers: string[]
   targetChainId: string | number
+  ignoreSlack?: boolean
 }
 
 type TransactionsAction = {
@@ -107,7 +108,7 @@ interface IGenerateMultisigSignatureParams {
   chainId: string | number
   actions: TransactionsAction[]
   nonce?: number
-  metadata?: string
+  metadata: string
   note?: string
   estimatedFee?: boolean
   options?: any
@@ -124,7 +125,7 @@ interface IOpenNonceModalParams {
   rejection?: boolean
   rejectionId?: string
   transactionType: TransactionActionType
-  metadata?: string
+  metadata: string
   options?: any
 }
 

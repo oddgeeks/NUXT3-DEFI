@@ -90,7 +90,7 @@ export function useAvocadoSafe() {
 
       const txHash = await createProposalOrSignDirecty({
         chainId: transaction.chainId,
-        metadata: options.metadata,
+        metadata: options.metadata || '0x',
         transactionType,
         options,
         actions,
@@ -130,7 +130,7 @@ export function useAvocadoSafe() {
       return tx.hash!
     }
     else {
-      const txHash = await createProposalOrSignDirecty({ chainId, actions: transactions, metadata: options.metadata, options, transactionType })
+      const txHash = await createProposalOrSignDirecty({ chainId, actions: transactions, metadata: options.metadata || '0x', options, transactionType })
 
       if (txHash)
         return txHash
@@ -215,14 +215,17 @@ export function useAvocadoSafe() {
       return
     }
 
-    if (transactionHash && params.proposalId) {
+    if (transactionHash && params.proposalId && !params.ignoreSlack) {
+      const metadatalist = decodeMetadata(params.message.params.metadata) || []
+      const [metadata] = metadatalist
+
       let message = generateSlackMessage(params.message.params.metadata, params.targetChainId)
       if (!message)
         message = `\n${'`Multisig Hash`'} <${config.domainURL}/multisig/${params.safe}/pending-transactions/${params.proposalId}| ${shortenHash(params.proposalId)}>`
 
       logActionToSlack({
         account: account.value,
-        action: 'multisig',
+        action: metadata?.type || 'multisig',
         chainId: String(params.targetChainId),
         message,
         txHash: transactionHash,
@@ -304,6 +307,7 @@ export function useAvocadoSafe() {
 
       const txHash = await multisigBroadcast({
         proposalId: '',
+        ignoreSlack: true,
         confirmations: [{
           address: params.signatureParams.address,
           signature: params.signatureParams.signature,
