@@ -21,6 +21,7 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
 
   const { isInputUsd } = useInputUsd()
   const [max, toggleMax] = useToggle(false)
+  const [dirty, toggleDirty] = useToggle(false)
 
   const { account } = useWeb3()
   const { fromWei, toWei } = useBignumber()
@@ -60,6 +61,9 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
         .decimalPlaces(4, 6).toNumber()
     },
     set(newValue) {
+      if (max.value)
+        return
+
       const value = toBN(newValue || 0).div(fromToken.value?.price || 0)
 
       setValue(toBN(value)
@@ -580,5 +584,7 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
     isInputUsd,
     max,
     toggleMax,
+    dirty,
+    toggleDirty,
   }
 }
