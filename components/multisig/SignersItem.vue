@@ -65,11 +65,23 @@ async function handleTresholdChange(chainId: string | number) {
   const { success, payload } = await openUpdateThresholdModal(chainId, 0)
 
   if (success && payload) {
-    const txHash = await changeThreshold(payload, chainId)
+    const metadata = encodeChangeThresholdMetadata(payload)
 
-    if (txHash)
+    const txHash = await changeThreshold({
+      threshold: payload,
+      chainId,
+    })
 
+    if (txHash) {
+      logActionToSlack({
+        account: account.value,
+        message: generateSlackMessage(metadata, chainId),
+        action: 'change-threshold',
+        txHash,
+        chainId: String(chainId),
+      })
       showPendingTransactionModal(txHash, chainId)
+    }
   }
 }
 </script>

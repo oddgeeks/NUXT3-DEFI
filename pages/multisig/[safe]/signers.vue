@@ -13,6 +13,7 @@ useAccountTrack(undefined, () => {
 const { getSafe } = useSafe()
 const { selectedSafe } = storeToRefs(useSafe())
 const { removeSignerWithThreshold } = useAvocadoSafe()
+const { account } = useWeb3()
 
 const selectedAddresses = ref<string[]>([])
 const selectedChainId = ref<string | number>()
@@ -80,10 +81,24 @@ async function handleDeleteSigner() {
     if (!thresholdSuccess)
       return
 
-    const txHash = await removeSignerWithThreshold(addresses, selectedChainId.value, threshold)
+    const metadata = encodeRemoveSignersMetadata(addresses)
 
-    if (txHash)
+    const txHash = await removeSignerWithThreshold({
+      addresses,
+      chainId: selectedChainId.value,
+      threshold,
+    })
+
+    if (txHash) {
+      logActionToSlack({
+        action: 'remove-signers',
+        account: account.value,
+        txHash,
+        message: generateSlackMessage(metadata, selectedChainId.value),
+        chainId: String(selectedChainId.value),
+      })
       showPendingTransactionModal(txHash, selectedChainId.value)
+    }
 
     selectedAddresses.value = []
     selectedChainId.value = undefined

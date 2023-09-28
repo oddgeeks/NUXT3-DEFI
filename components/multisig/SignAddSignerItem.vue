@@ -6,6 +6,7 @@ const props = defineProps<{
   chainId: string | number
   modelValue: boolean[]
   defaultThreshold?: number
+  gnosisAddress?: string
 }>()
 
 const emit = defineEmits(['destroy', 'update:modelValue'])
@@ -18,6 +19,7 @@ const { addSignersWithThreshold } = useAvocadoSafe()
 const { selectedSafe } = storeToRefs(useSafe())
 const { addContact, safeContacts, editContact } = useContacts()
 const { parseTransactionError } = useErrorHandler()
+const { account } = useWeb3()
 
 async function handleSign() {
   try {
@@ -34,7 +36,7 @@ async function handleSign() {
     }
 
     const { payload: threshold, success } = await openUpdateThresholdModal(props.chainId, actualSigners.length, {
-      defaultThreshold: props.defaultThreshold,
+      defaultThreshold: props.defaultThreshold as any,
     })
 
     if (!success)
@@ -53,7 +55,6 @@ async function handleSign() {
       addresses: actualSigners,
       threshold,
       chainId: props.chainId,
-      metadata,
     })
 
     for (const signer of actualSigners) {
@@ -74,6 +75,16 @@ async function handleSign() {
 
     if (txHash) {
       executed.value = true
+
+      const additionalMessage = props.gnosisAddress ? `${'`Gnosis Import`'} ${props.gnosisAddress}` : ''
+
+      logActionToSlack({
+        account: account.value,
+        action: 'add-signers',
+        txHash,
+        message: generateSlackMessage(metadata, props.chainId, additionalMessage),
+        chainId: String(props.chainId),
+      })
 
       showPendingTransactionModal(txHash, props.chainId)
     }

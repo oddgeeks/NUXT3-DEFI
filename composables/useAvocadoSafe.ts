@@ -584,7 +584,9 @@ export function useAvocadoSafe() {
     return createProposalOrSignDirecty({ chainId, actions, estimatedFee: true, metadata, clearModals: false, transactionType: 'add-signers' })
   }
 
-  async function changeThreshold(threshold: string, chainId: string | number) {
+  async function changeThreshold(params: IChangeThresholdParams) {
+    const { chainId, threshold } = params || {}
+
     const metadata = encodeChangeThresholdMetadata(threshold)
 
     const avoMultisigInstance = AvoMultisigImplementation__factory.connect(selectedSafe.value?.safe_address!, getRpcProviderByChainId(chainId))
@@ -601,7 +603,9 @@ export function useAvocadoSafe() {
     return createProposalOrSignDirecty({ chainId, actions, estimatedFee: true, metadata })
   }
 
-  async function removeSignerWithThreshold(addresses: string[], chainId: number | string, threshold: number) {
+  async function removeSignerWithThreshold(params: IRemoveSignerParams) {
+    const { addresses, chainId, threshold } = params || {}
+
     const avoMultisigInstance = AvoMultisigImplementation__factory.connect(selectedSafe.value?.safe_address!, getRpcProviderByChainId(chainId))
 
     const currentThreshold = safeOptions.value.find(i => i.chainId == chainId)?.threshold || 1

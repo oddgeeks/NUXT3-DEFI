@@ -75,11 +75,21 @@ interface IMultisigBroadcastParams {
   ignoreSlack?: boolean
 }
 
+interface IChangeThresholdParams {
+  threshold: string
+  chainId: string | number
+}
+
+interface IRemoveSignerParams {
+  addresses: string[]
+  chainId: number | string
+  threshold: number
+}
+
 interface IAddSignerParams {
   addresses: ISignerAddress[]
   threshold: string
   chainId: number | string
-  metadata: string
 }
 
 type TransactionsAction = {

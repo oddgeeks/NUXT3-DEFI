@@ -124,10 +124,10 @@ export function generateSlackMessage(_metadata: string, chainId: string | number
   const metadataMapping: Record<MetadataTypes, () => string> = {
     'rejection': () => '',
     'auth': () => '',
-    'change-threshold': () => `Changed threshold to ${metadata.count}`,
+    'change-threshold': () => `${metadata.count}`,
     'deploy': () => `Deployed ${chainIdToName(chainId)}`,
-    'add-signers': () => `Added ${metadata?.addresses?.length} signers`,
-    'remove-signers': () => `Removed ${metadata?.addresses?.length} signers`,
+    'add-signers': () => `${metadata?.addresses?.length}`,
+    'remove-signers': () => `${metadata?.addresses?.length}`,
     'tx-builder': () => `Executed ${metadata?.actionCount} transactions`,
     'instadapp-pro': () => metadata?.castDetails,
     'gas-topup': () => `Gas Top up ${metadata.amount} ${formatSymbol('usdc')}`,
