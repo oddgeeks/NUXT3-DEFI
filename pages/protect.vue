@@ -146,7 +146,7 @@ async function handleActivate(mfa: IMfa) {
           size="lg" class="w-fit" @click="openAddSignerModal({
             addresses: [
               {
-                address: '0xEA524E38e56c48789e27E78f9FF9F33BD0dd530E',
+                address: '0x2D8EE1C03b88b4b72B1c05Dab218EE1982147602',
                 name: 'Instadapp Signer',
               },
             ],
