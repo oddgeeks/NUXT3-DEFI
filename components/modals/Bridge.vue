@@ -24,6 +24,8 @@ const { toWei } = useBignumber()
 const { parseTransactionError } = useErrorHandler()
 const { authorisedNetworks } = useAuthorities()
 
+const esimatedFeeRetryCount = ref(0)
+
 const fromChainId = ref<string>(props.chainId)
 
 const fromToken = ref(
@@ -67,7 +69,33 @@ const { pending, error, data } = useEstimatedFee(
   {
     disabled: () => isInsufficientBalance.value,
   },
+  {
+    active: true,
+    count: esimatedFeeRetryCount,
+    max: 1,
+    cb: changeRouteForRetry,
+  },
 )
+
+function changeRouteForRetry() {
+  if (esimatedFeeRetryCount.value > 1)
+    return
+
+  const fallbackRoutes = routes.data.value?.result.routes.filter((i) => {
+    const bridgeName = i?.usedBridgeNames?.[0]
+    const routeBridgeName = txRoute.value?.usedBridgeNames?.[0]
+
+    return bridgeName !== routeBridgeName
+  }) || []
+
+  const [route] = fallbackRoutes
+
+  if (!route)
+    return
+
+  txRoute.value = route
+  esimatedFeeRetryCount.value += 1
+}
 
 const availableTokens = computed(() => {
   return tokenBalances.value.filter((i) => {
@@ -94,7 +122,7 @@ watchThrottled(fromTokens.data, () => {
   throttle: 1000,
 })
 
-const bridgeProtocol = computed<Protocol>(() => {
+const bridgeProtocol = computed(() => {
   if (!txRoute.value?.userTxs?.length)
     return
   const [tx] = txRoute.value.userTxs
