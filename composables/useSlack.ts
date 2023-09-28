@@ -130,7 +130,16 @@ export function generateSlackMessage(_metadata: string, chainId: string | number
     'remove-signers': () => `${metadata?.addresses?.length}`,
     'tx-builder': () => `Executed ${metadata?.actionCount} transactions`,
     'instadapp-pro': () => metadata?.castDetails,
-    'gas-topup': () => `Gas Top up ${metadata.amount} ${formatSymbol('usdc')}`,
+    'gas-topup': () => {
+      const token = getTokenByAddress(metadata.token, chainId)
+
+      if (!token)
+        return ''
+
+      const amount = fromWei(metadata.amount, token.decimals).toFixed()
+
+      return `${amount} ${formatSymbol(token.symbol)}`
+    },
     'upgrade': () => `Upgraded to ${metadata.version}`,
     'dapp': () => `Txn on ${metadata.name} ${metadata.url}`,
     'import': () => `Imported from ${metadata.protocol} ${formatUsd(metadata.valueInUsd)}`,
