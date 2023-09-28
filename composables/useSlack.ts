@@ -197,14 +197,13 @@ export function generateSlackMessage(_metadata: string, chainId: string | number
 
       if (!fromToken || !toToken)
         return ''
-
       const amount = fromWei(metadata.amount, fromToken.decimals).toFixed()
       return `${formatDecimal(amount)} ${formatSymbol(
         fromToken.symbol,
       )} from ${formatSymbol(
-        chainIdToName(fromToken.chainId),
+        chainIdToName(chainId),
         false,
-      )} to ${formatSymbol(chainIdToName(toToken.chainId), false)}`
+      )} to ${formatSymbol(chainIdToName(metadata.toChainId), false)}`
     },
   }
 

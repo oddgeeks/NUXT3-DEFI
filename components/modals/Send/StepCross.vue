@@ -538,10 +538,10 @@ async function onSubmit() {
     const metadata = getMetadata()
 
     logActionToSlack({
-      message: generateSlackMessage(metadata, data.value.toChainId),
+      message: generateSlackMessage(metadata, data.value.fromChainId),
       action: 'cross-transfer',
       txHash: avocadoHash,
-      chainId: String(data.value.toChainId),
+      chainId: String(data.value.fromChainId),
       amountInUsd: times(data.value.amount, token.value.price || '0').toFixed(),
       account: account.value,
       network: formattedNetwork,
