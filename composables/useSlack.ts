@@ -130,6 +130,9 @@ export function generateSlackMessage(_metadata: string, chainId: string | number
     'remove-signers': () => `${metadata?.addresses?.length}`,
     'tx-builder': () => `Executed ${metadata?.actionCount} transactions`,
     'instadapp-pro': () => metadata?.castDetails,
+    'upgrade': () => `Upgraded to ${metadata.version}`,
+    'dapp': () => `Txn on ${metadata.name} ${metadata.url}`,
+    'import': () => `Imported from ${metadata.protocol} ${formatUsd(metadata.valueInUsd)}`,
     'gas-topup': () => {
       const token = getTokenByAddress(metadata.token, chainId)
 
@@ -140,9 +143,6 @@ export function generateSlackMessage(_metadata: string, chainId: string | number
 
       return `${amount} ${formatSymbol(token.symbol)}`
     },
-    'upgrade': () => `Upgraded to ${metadata.version}`,
-    'dapp': () => `Txn on ${metadata.name} ${metadata.url}`,
-    'import': () => `Imported from ${metadata.protocol} ${formatUsd(metadata.valueInUsd)}`,
     'permit2': () => {
       const token = getTokenByAddress(metadata.token, chainId)
       if (!token)
