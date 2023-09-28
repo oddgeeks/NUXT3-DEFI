@@ -87,6 +87,7 @@ export function useEstimatedFee(
     fetchEstimatedFee()
   }, {
     immediate,
+    throttle: 500,
   })
 
   async function fetchEstimatedFee() {
