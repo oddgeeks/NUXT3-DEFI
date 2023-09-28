@@ -33,6 +33,8 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
   const toChainId = ref(fromChainId.value == '137' ? '10' : '137')
   const bridgeToToken = ref<IBridgeTokensResult>()
 
+  const txRoute = ref<IRoute>()
+
   const form = useForm({
     validationSchema: yup.object({
       amount: yup
@@ -222,7 +224,7 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
 
         routesController = null
 
-        if (!data.result.routes.length) {
+        if (!data.result?.routes?.length) {
           const minAmountError: any = Object.entries(data.result.bridgeRouteErrors).find(([_, error]: any) => {
             return error?.status === 'MIN_AMOUNT_NOT_MET'
           })
@@ -245,6 +247,10 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
           }
         }
 
+        const [route] = data?.result?.routes || []
+
+        txRoute.value = route
+
         return data
       }
       catch (error: any) {
@@ -262,12 +268,6 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
       watch: [amount, fromToken, bridgeToToken],
     },
   )
-
-  const txRoute = computed(() => {
-    const [route] = routes.data.value?.result.routes || []
-
-    return route ?? null
-  })
 
   const transactions = useAsyncData(
     'bridge-transactions',
