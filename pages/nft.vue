@@ -57,7 +57,7 @@ useIntervalFn(() => {
 const filteredAssets = computed(() => {
   const items = data.value?.filter(item =>
     networkPreferences.value.some(i => i == item.chainId)
-    && (hideNFT.value ? hiddenNFTs.value.some(i => i.contractAddress !== item.contractAddress || i.tokenId !== item.tokenId) : true),
+    && (hideNFT.value ? !hiddenNFTs.value.some(i => i.contractAddress.toLowerCase() === item.contractAddress.toLowerCase() && i.tokenId === item.tokenId) : true),
   )
 
   if (!searchQuery.value)
