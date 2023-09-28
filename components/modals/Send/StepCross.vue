@@ -480,7 +480,7 @@ async function fetchCrossFee() {
     crossFee.value.data = mergedFees
   }
   catch (e: any) {
-    crossFee.value.error = e.data?.data?.message || e?.message || 'Something went wrong'
+    crossFee.value.error = e?.response?._data?.message || 'Failed to fetching estimated fee'
   }
   finally {
     crossFee.value.pending = false
