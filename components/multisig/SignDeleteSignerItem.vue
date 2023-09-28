@@ -20,7 +20,11 @@ async function handleSign() {
     if (!success)
       return
 
-    await removeSignerWithThreshold([props.address], props.chainId, threshold)
+    await removeSignerWithThreshold({
+      addresses: [props.address],
+      chainId: props.chainId,
+      threshold,
+    })
     signed.value = true
   }
   catch (e) {

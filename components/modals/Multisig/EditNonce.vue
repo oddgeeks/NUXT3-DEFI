@@ -10,8 +10,8 @@ const props = defineProps<{
   estimatedFee?: boolean
   rejection?: boolean
   rejectionId?: string
-  transactionType?: 'add-signers' | 'remove-signers' | 'change-threshold' | 'topup'
-  metadata?: string
+  transactionType?: 'add-signers' | 'remove-signers' | 'change-threshold' | 'gas-topup'
+  metadata: string
   options?: any
 }>()
 
@@ -26,7 +26,7 @@ const { account } = useWeb3()
 
 const isSimulationDisabled = computed(() => networksSimulationNotSupported.includes(Number(props.chainId)))
 
-const shouldNonSeqByDefault = props.transactionType === 'remove-signers' || props.transactionType === 'add-signers' || props.transactionType === 'topup'
+const shouldNonSeqByDefault = props.transactionType === 'remove-signers' || props.transactionType === 'add-signers' || props.transactionType === 'gas-topup'
 const recommendedNonce = shouldNonSeqByDefault ? -1 : undefined
 
 const isSubmitting = ref(false)
@@ -121,13 +121,12 @@ async function onSubmit() {
       baseURL: multisigURL,
     })
 
-    const message = `\n${'`Transaction Type`'} ${props.transactionType}
-${'`Multisig Hash`'} <${config.domainURL}/multisig/${data.safe_address}/pending-transactions/${data.id}| ${shortenHash(data.id)}>`
+    const message = `${'`Multisig Hash`'} <${config.domainURL}/multisig/${data.safe_address}/pending-transactions/${data.id}| ${shortenHash(data.id)}>`
 
     logActionToSlack({
       account: account.value,
       action: 'proposal',
-      message,
+      message: generateSlackMessage(props.metadata, props.chainId, message),
     })
 
     proposalId = data.id
@@ -135,6 +134,7 @@ ${'`Multisig Hash`'} <${config.domainURL}/multisig/${data.safe_address}/pending-
     if (data.confirmations_required === 1 && !signOnly) {
       const txHash = await multisigBroadcast({
         proposalId: data.id,
+        ignoreSlack: true,
         confirmations: data.confirmations,
         signers: data.signers,
         message: data.data,

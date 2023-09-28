@@ -15,6 +15,7 @@ const { authorisedNetworks } = useAuthorities()
 const { isCrossChain, data, token, availableTokens, actualAddress, stepForward, tokenlistPending } = useSend()
 
 const { isInputUsd } = useInputUsd()
+const [dirty, toggleDirty] = useToggle(false)
 const [max, toggleMax] = useToggle(false)
 
 const toCrossChainNetworks = computed(() => authorisedNetworks.value.filter(network => network.chainId !== data.value.fromChainId))
@@ -54,6 +55,9 @@ const amountInUsd = computed({
       .decimalPlaces(4, 6).toNumber()
   },
   set(newValue) {
+    if (max.value)
+      return
+
     const value = toBN(newValue || 0).div(token.value?.price || 0)
 
     setValue(toBN(value)
@@ -124,9 +128,10 @@ function onToggleCrossChain() {
 
 function handleSetMax() {
   setErrors('')
-  toggleMax()
+  toggleDirty()
+  toggleMax(true)
 
-  setValue(token.value?.balance || '0', false)
+  setValue(token.value?.balance || '0', true)
 }
 
 onMounted(() => {
@@ -180,13 +185,14 @@ onMounted(() => {
           <CommonCurrencyInput
             v-if="isInputUsd"
             v-model="amountInUsd"
-            :dirty="max"
+            :dirty="dirty"
             styled
             input-classes="!py-3"
             autofocus
             :error-message="errorMessage"
             name="amount-usd"
             :placeholder="amountPlaceholder"
+            @beforeinput="toggleMax(false)"
           >
             <template #suffix>
               <span class="text-sm text-left text-slate-400 absolute right-5">
@@ -205,6 +211,7 @@ onMounted(() => {
             class="!rounded-2xl w-full"
             input-classes="!py-3"
             :placeholder="amountPlaceholder"
+            @beforeinput="toggleMax(false)"
           >
             <template #suffix>
               <span class="text-sm text-left text-slate-400 absolute right-5">

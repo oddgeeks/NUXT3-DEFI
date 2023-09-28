@@ -56,8 +56,9 @@ const {
   sortTokensBestMatch,
   amountInUsd,
   isInputUsd,
-  max,
+  dirty,
   toggleMax,
+  toggleDirty,
 } = useBridge(fromToken, fromChainId)
 
 const { pending, error, data } = useEstimatedFee(
@@ -104,9 +105,10 @@ const bridgeProtocol = computed<Protocol>(() => {
 })
 
 function setMax() {
-  amount.value = toBN(fromToken.value!.balance).decimalPlaces(6, 1).toString()
+  toggleDirty()
+  toggleMax(true)
 
-  toggleMax()
+  amount.value = toBN(fromToken.value!.balance).toFixed()
 }
 
 const feeInfoMessage = computed(() => {
@@ -170,12 +172,7 @@ const onSubmit = form.handleSubmit(async () => {
     }
 
     logActionToSlack({
-      message: `${formatDecimal(amount.value)} ${formatSymbol(
-        fromToken.value.symbol,
-      )} from ${formatSymbol(
-        chainIdToName(fromToken.value.chainId),
-        false,
-      )} to ${formatSymbol(chainIdToName(toChainId.value), false)}`,
+      message: generateSlackMessage(metadata, fromChainId.value),
       action: 'bridge',
       chainId: fromChainId.value,
       txHash: transactionHash,
@@ -282,13 +279,14 @@ const onSubmit = form.handleSubmit(async () => {
             <CommonCurrencyInput
               v-if="isInputUsd"
               v-model="amountInUsd"
-              :dirty="max"
+              :dirty="dirty"
               styled
               input-classes="!py-3"
               autofocus
               :error-message="form.errors.value.amount"
               name="amount-usd"
               placeholder="Enter amount"
+              @beforeinput="toggleMax(false)"
             >
               <template #suffix>
                 <span class="text-sm text-left text-slate-400 absolute right-5">
@@ -305,6 +303,7 @@ const onSubmit = form.handleSubmit(async () => {
               :error-message="form.errors.value.amount"
               name="amount"
               placeholder="Enter amount"
+              @beforeinput="toggleMax(false)"
             >
               <template #suffix>
                 <span class="flex text-sm text-slate-400">
