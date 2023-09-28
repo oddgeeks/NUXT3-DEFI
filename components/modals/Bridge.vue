@@ -172,12 +172,7 @@ const onSubmit = form.handleSubmit(async () => {
     }
 
     logActionToSlack({
-      message: `${formatDecimal(amount.value)} ${formatSymbol(
-        fromToken.value.symbol,
-      )} from ${formatSymbol(
-        chainIdToName(fromToken.value.chainId),
-        false,
-      )} to ${formatSymbol(chainIdToName(toChainId.value), false)}`,
+      message: generateSlackMessage(metadata, fromChainId.value),
       action: 'bridge',
       chainId: fromChainId.value,
       txHash: transactionHash,

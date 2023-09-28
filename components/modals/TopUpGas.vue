@@ -159,7 +159,7 @@ const onSubmit = handleSubmit(async () => {
       {
         metadata,
       },
-      'topup',
+      'gas-topup',
     )
 
     setTimeout(() => {
@@ -170,8 +170,8 @@ const onSubmit = handleSubmit(async () => {
       return
 
     logActionToSlack({
-      action: 'topup',
-      message: `${amount.value} ${formatSymbol('usdc')}`,
+      action: 'gas-topup',
+      message: generateSlackMessage(metadata, token.value.chainId),
       account: account.value,
       chainId: String(token.value.chainId),
       txHash: transactionHash,
@@ -180,7 +180,7 @@ const onSubmit = handleSubmit(async () => {
 
     emit('destroy')
 
-    showPendingTransactionModal(transactionHash, token.value.chainId, 'topUpGas')
+    showPendingTransactionModal(transactionHash, token.value.chainId, 'gas-topup')
 
     resetForm()
   }
@@ -196,7 +196,7 @@ const onSubmit = handleSubmit(async () => {
     logActionToSlack({
       message: err.formatted,
       type: 'error',
-      action: 'topup',
+      action: 'gas-topup',
       account: account.value,
       errorDetails: err.parsed,
     })
