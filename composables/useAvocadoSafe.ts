@@ -1,9 +1,10 @@
 import { isAddress } from '@ethersproject/address'
-import { VoidSigner, ethers } from 'ethers'
+import { ethers } from 'ethers'
 import axios from 'axios'
 
 import { isUndefined } from '@walletconnect/utils'
 import { serialize } from 'error-serializer'
+import { gte, parse } from 'semver'
 import {
   AvoMultisigImplementation__factory,
 } from '@/contracts'
@@ -11,8 +12,8 @@ import {
 export function useAvocadoSafe() {
   const { public: config } = useRuntimeConfig()
   const { switchToAvocadoNetwork } = useNetworks()
-  const { library, account, provider } = useWeb3()
-  const { trackingAccount, isTrackingMode } = useAccountTrack()
+  const { account, provider } = useWeb3()
+  const { isTrackingMode } = useAccountTrack()
   const { getRpcProviderByChainId } = useShared()
   const { avoProvider, getSafeOptions, refreshSelectedSafe, getFallbackSafeOptionsByChainId } = useSafe()
   const { selectedSafe, isSelectedSafeLegacy, safeOptions } = storeToRefs(useSafe())
@@ -23,25 +24,6 @@ export function useAvocadoSafe() {
   const { getRequiredSigner } = useMultisig()
 
   const { safeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks, networkOrderedBySumTokens } = storeToRefs(useSafe())
-
-  const safe = shallowRef<ReturnType<typeof avocado.createSafe>>()
-  const signer = computed(() => (safe.value ? safe.value.getSigner() : null))
-
-  watch(
-    [library, account, isTrackingMode, selectedSafe],
-    () => {
-      if (isTrackingMode.value) {
-        const voidSigner = new VoidSigner(trackingAccount.value!, avoProvider)
-        safe.value = avocado.createSafe(voidSigner)
-      }
-      else {
-        safe.value = library.value
-          ? avocado.createSafe(library.value.getSigner().connectUnchecked())
-          : undefined
-      }
-    },
-    { immediate: true },
-  )
 
   const sendTransaction = async (
     transaction: {
@@ -64,19 +46,17 @@ export function useAvocadoSafe() {
 
     await switchToAvocadoNetwork()
 
-    if (!signer.value)
-      throw new Error('Safe not initialized')
-
     if (isSelectedSafeLegacy.value) {
-      const tx = await signer.value.sendTransaction(
-        {
-          ...transaction,
-          chainId: Number(transaction.chainId),
+      const txHash = await sendTransactionsLegacy({
+        actions: [transaction],
+        chainId: transaction.chainId,
+        options: {
+          source: '0xE8385fB3A5F15dED06EB5E20E5A81BF43115eb8E',
+          ...options,
         },
-        { source: '0xE8385fB3A5F15dED06EB5E20E5A81BF43115eb8E', ...options },
-      )
+      })
 
-      return tx.hash!
+      return txHash
     }
     else {
       const actions = [
@@ -117,17 +97,16 @@ export function useAvocadoSafe() {
 
     await switchToAvocadoNetwork()
 
-    if (!signer.value)
-      throw new Error('Safe not initialized')
-
     if (isSelectedSafeLegacy.value) {
-      const tx = await signer.value.sendTransactions(
-        transactions,
-        Number(chainId),
-        { source: '0xE8385fB3A5F15dED06EB5E20E5A81BF43115eb8E', ...options },
-      )
+      const txHash = await sendTransactionsLegacy({
+        actions: transactions,
+        chainId,
+        options: {
+          source: '0xE8385fB3A5F15dED06EB5E20E5A81BF43115eb8E', ...options,
+        },
+      })
 
-      return tx.hash!
+      return txHash
     }
     else {
       const txHash = await createProposalOrSignDirecty({ chainId, actions: transactions, metadata: options.metadata || '0x', options, transactionType })
@@ -161,6 +140,75 @@ export function useAvocadoSafe() {
         address: account.value,
       },
       castParams: data,
+    }
+  }
+
+  async function sendTransactionsLegacy(params: IGenerateSignatureMessageParams) {
+    const { chainId } = params || {}
+
+    const message = await generateSignatureMessage(params)
+
+    debugger
+
+    const { signature, digestHash } = await signLegacyData({
+      chainId,
+      message,
+    })
+
+    const transactionHash = await avoProvider.send('txn_broadcast', [
+      {
+        signature,
+        message,
+        owner: selectedSafe.value?.owner_address,
+        targetChainId: String(chainId),
+        dryRun: false,
+        safe: selectedSafe.value?.safe_address,
+        digestHash,
+      },
+    ])
+
+    return transactionHash
+  }
+
+  async function signLegacyData(params: ISignLegacyDataParams) {
+    const { chainId, message } = params || {}
+
+    const safeOptions = await getFallbackSafeOptionsByChainId(selectedSafe.value!, chainId)
+
+    const versionMajor = parse(safeOptions.currentVersion)?.major || 1
+
+    const domain = {
+      name: safeOptions.domainName,
+      version: safeOptions.currentVersion,
+      chainId: String(avoChainId),
+      salt: ethers.utils.solidityKeccak256(['uint256'], [chainId]),
+      verifyingContract: selectedSafe.value?.safe_address,
+    }
+
+    console.log({ domain })
+
+    const types = {
+      1: typesV1,
+      2: typesV2,
+    }[versionMajor] || {}
+
+    const web3Provider = new ethers.providers.Web3Provider(provider.value)
+
+    const { signature, cancelled } = await signTypedData(web3Provider, account.value, {
+      domain,
+      types,
+      value: message,
+    })
+
+    if (cancelled)
+      throw new Error('Signature cancelled')
+
+    if (!signature)
+      throw new Error('Failed to get signature')
+
+    return {
+      signature,
+      digestHash: ethers.utils._TypedDataEncoder.hash(domain, types, message),
     }
   }
 
@@ -259,6 +307,50 @@ export function useAvocadoSafe() {
     return transactionHash
   }
 
+  async function generateSignatureMessage(params: IGenerateSignatureMessageParams) {
+    const { actions, chainId, options } = params || {}
+
+    const safeOptions = await getFallbackSafeOptionsByChainId(selectedSafe.value!, chainId)
+
+    const isV2 = gte(safeOptions.currentVersion, '2.0.0')
+
+    if (isV2) {
+      return {
+        actions: actions.map(transaction => (
+          {
+            operation: transaction.operation || '0',
+            target: transaction.to,
+            data: transaction.data || '0x',
+            value: transaction.value ? transaction.value.toString() : '0',
+          }
+        )),
+        params: {
+          metadata: options && options.metadata ? options.metadata : '0x',
+          source: options && options.source ? options.source : '0x000000000000000000000000000000000000Cad0',
+          id: options && options.id ? options.id : '0',
+          validUntil: options && options.validUntil ? options.validUntil : '0',
+          gas: options && options.gas ? options.gas : '0',
+        },
+        avoSafeNonce: String(safeOptions.nonce),
+      }
+    }
+
+    return {
+      actions: actions.map(transaction => (
+        {
+          target: transaction.to,
+          data: transaction.data || '0x',
+          value: transaction.value ? transaction.value.toString() : '0',
+        }
+      )),
+      metadata: options && options.metadata ? options.metadata : '0x',
+      source: options && options.source ? options.source : '0x000000000000000000000000000000000000Cad0',
+      avoSafeNonce: String(safeOptions.nonce),
+      validUntil: options && options.validUntil ? options.validUntil : '0',
+      gas: options && options.gas ? options.gas : '0',
+    }
+  }
+
   async function generateMultisigSignatureMessage({ chainId, actions, nonce, metadata, options = {} }: IGenerateMultisigSignatureParams) {
     actions = actions.map((action) => {
       return {
@@ -339,9 +431,6 @@ export function useAvocadoSafe() {
 
   async function signExecutionData(params: IMultisigBroadcastParams, sortedSignatures: any[]): Promise<string> {
     await switchToAvocadoNetwork()
-
-    if (!signer.value)
-      throw new Error('Safe not initialized')
 
     const config = await getFallbackSafeOptionsByChainId(selectedSafe.value!, params.targetChainId)
 
@@ -675,8 +764,6 @@ ${parsed.message}`,
   }
 
   return {
-    safe,
-    signer,
     tokenBalances,
     totalEoaBalance,
     eoaBalances,
@@ -691,6 +778,7 @@ ${parsed.message}`,
     generateMultisigSignatureMessage,
     generateMultisigSignatureAndSign,
     multisigBroadcast,
+    signLegacyData,
     createProposalOrSignDirecty,
     rejectMultisigTransaction,
     getCurrentNonce,
@@ -701,5 +789,6 @@ ${parsed.message}`,
     getActualId,
     checkTransactionExecuted,
     networkOrderedBySumTokens,
+    generateSignatureMessage,
   }
 }

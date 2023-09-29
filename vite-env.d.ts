@@ -141,6 +141,18 @@ interface IBridgeTokensResult {
   score?: number;
 }
 
+interface IGenerateSignatureMessageParams {
+  chainId: string | number
+  actions: TransactionsAction[]
+  options?: any
+}
+
+interface ISignLegacyDataParams {
+  message: any
+  chainId: string | number
+}
+
+
 interface IBridgeTokensResponse {
   success: boolean;
   result: IBridgeTokensResult[];

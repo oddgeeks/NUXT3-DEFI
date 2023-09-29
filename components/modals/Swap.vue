@@ -460,44 +460,6 @@ async function createRouteBasedTxActions(route?: IAggregator): Promise<Transacti
 
 const txRetryCount = ref(0)
 
-/**
- * This functions retrys the swap tx if it fails for any reason.
- * The retry triggers a change in the selectedRoutes and creates a set of new txActions
- * @param metadata
- * @returns txHash as a string
- */
-async function sendTransactionsWithRetry(metadata: string): Promise<any> {
-  try {
-    const actionsToSend = txActions.value || await createRouteBasedTxActions(selectedRoute.value)
-    if (!actionsToSend)
-      throw new Error('Could not create tx actions')
-
-    const txHash = await sendTransactions(
-      actionsToSend,
-      toChainId.value,
-      {
-        metadata,
-      },
-      'swap',
-    )
-    return txHash
-  }
-  catch (e: any) {
-    const err = parseTransactionError(e)
-    if (err.formatted?.includes('Signing rejected'))
-      throw e
-
-    const nextRoute = changeRouteForRetry(txRetryCount, 1)
-    if (nextRoute) {
-      txRetryCount.value++
-      await createRouteBasedTxActions(nextRoute)
-      return await sendTransactionsWithRetry(metadata)
-    }
-
-    throw e
-  }
-}
-
 const totalRetries = computed(() => {
   return txRetryCount.value + esimatedFeeRetryCount.value
 })
@@ -549,7 +511,17 @@ const onSubmit = handleSubmit(async () => {
       protocol: utils.formatBytes32String(selectedRoute?.value?.name || ''),
     })
 
-    const transactionHash = await sendTransactionsWithRetry(metadata)
+    if (!txActions.value?.length)
+      throw new Error('No transaction actions found')
+
+    const transactionHash = await sendTransactions(
+      txActions.value,
+      toChainId.value,
+      {
+        metadata,
+      },
+      'swap',
+    )
 
     if (!transactionHash)
       return

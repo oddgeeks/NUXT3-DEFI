@@ -11,7 +11,7 @@ const { token, stepBack, data, actualAddress, targetToken } = useSend()
 const { gasBalance, safeOptions, isSelectedSafeLegacy, selectedSafe } = storeToRefs(useSafe())
 const { account } = useWeb3()
 const { toWei, fromWei } = useBignumber()
-const { safeAddress, safe, tokenBalances, generateMultisigSignatureMessage } = useAvocadoSafe()
+const { safeAddress, tokenBalances, generateMultisigSignatureMessage, generateSignatureMessage } = useAvocadoSafe()
 const { avoProvider } = useSafe()
 const { parseTransactionError } = useErrorHandler()
 
@@ -285,21 +285,21 @@ async function fetchBestRoute() {
     let sMessage
 
     if (isSelectedSafeLegacy.value) {
-      tMessage = await safe.value?.generateSignatureMessage(
-        targetActions,
-        data.value.toChainId,
-        {
+      tMessage = await generateSignatureMessage({
+        actions: targetActions,
+        chainId: data.value.toChainId,
+        options: {
           metadata,
         },
-      )
+      })
 
-      sMessage = await safe.value?.generateSignatureMessage(
-        sourceActions,
-        data.value.fromChainId,
-        {
+      sMessage = await generateSignatureMessage({
+        actions: sourceActions,
+        chainId: data.value.fromChainId,
+        options: {
           metadata,
         },
-      )
+      })
     }
     else {
       tMessage = await generateMultisigSignatureMessage({

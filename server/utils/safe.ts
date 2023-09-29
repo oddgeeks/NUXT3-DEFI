@@ -89,15 +89,27 @@ export async function getSafeOptionsByChain(params: IOptionsParams): Promise<ISa
   }
 
   function nonce(): Promise<number> {
-    return multisigForwarderInstance.avoNonce(safe.owner_address, safe.multisig_index)
-      .then(nonce => toBN(nonce).toNumber())
-      .catch((e) => {
+    if (safe.multisig == 1) {
+      return multisigForwarderInstance.avoNonce(safe.owner_address, safe.multisig_index)
+        .then(nonce => toBN(nonce).toNumber())
+        .catch((e) => {
+          const parsed = serialize(e)
+          if (parsed.code === 'CALL_EXCEPTION')
+            return 0
+
+          throw e
+        })
+    }
+    else {
+      return legacyForwarderInstance.avoSafeNonce(safe.owner_address).then(nonce => toBN(nonce).toNumber()).catch((e) => {
         const parsed = serialize(e)
         if (parsed.code === 'CALL_EXCEPTION')
           return 0
 
         throw e
-      })
+      },
+      )
+    }
   }
 
   function threshold(): Promise<number> {
