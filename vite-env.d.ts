@@ -121,7 +121,7 @@ interface IBridgeResponse {
 }
 
 interface IBridgeResult {
-  routes: Route[];
+  routes: IRoute[];
   fromAsset: FromAsset2;
   toAsset: ToAsset3;
   bridgeRouteErrors: BridgeRouteErrors;
@@ -140,6 +140,18 @@ interface IBridgeTokensResult {
   price?: number;
   score?: number;
 }
+
+interface IGenerateSignatureMessageParams {
+  chainId: string | number
+  actions: TransactionsAction[]
+  options?: any
+}
+
+interface ISignLegacyDataParams {
+  message: any
+  chainId: string | number
+}
+
 
 interface IBridgeTokensResponse {
   success: boolean;
@@ -346,7 +358,7 @@ interface IModal {
 
 type ISnackOptions = {
   message: string;
-  type: "success" | "error";
+  type: "success" | "error" | 'info';
   open?: boolean;
   timeout?: number;
 };

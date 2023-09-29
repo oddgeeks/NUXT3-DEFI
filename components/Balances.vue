@@ -11,7 +11,6 @@ const props = defineProps<{
 }>()
 
 const { balances } = storeToRefs(useSafe())
-const { isSafeMultisig } = storeToRefs(useMultisig())
 const { isOnboardBannerVisible } = useBanner()
 const { totalBalance, tokenBalances, totalEoaBalance, fundedEoaNetworks } = useAvocadoSafe()
 const { account } = useWeb3()
@@ -116,7 +115,7 @@ const groupedBalances = computed(() => {
 const search = useDebounceFn((event: Event) => {
   searchQuery.value = (<HTMLInputElement>event.target).value
 }, 200)
-const { safeAddress, isSafeAddress } = useAvocadoSafe()
+const { safeAddress } = useAvocadoSafe()
 </script>
 
 <template>
