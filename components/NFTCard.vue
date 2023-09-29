@@ -40,8 +40,8 @@ const isHidden = computed(() => {
       class="absolute right-5 top-5 w-7.5 h-7.5 flex justify-center items-center bg-[#0000004D] hover:bg-[#8888884D] rounded-full"
       @click="toggleNFT()"
     >
-      <SvgoEyeOff v-if="!isHidden" class="w-5 h-5 text-white" />
-      <SvgoEye v-if="isHidden" class="w-5 h-5 stroke-white-icon" />
+      <SvgoEyeOff v-if="isHidden" class="w-5 h-5 text-white" />
+      <SvgoEye v-if="!isHidden" class="w-5 h-5 stroke-white-icon" />
     </button>
   </li>
 </template>
