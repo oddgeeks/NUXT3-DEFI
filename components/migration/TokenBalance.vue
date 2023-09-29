@@ -1,11 +1,11 @@
 <template>
   <div class="p-5 flex items-center border-b-[1px] last:border-b-[0px] border-slate-750">
     <div class="relative basis-[30px] h-[30px] grow-0 shrink-0">
-      <SafeTokenLogo class="w-full h-full z-50" :url="tokenBalance.logoURI" />
+      <SafeTokenLogo class="w-full h-full" :url="tokenBalance.logoURI" />
       <ChainLogo
         v-tippy="chainIdToName(tokenBalance.chainId)"
         :stroke="true"
-        class="w-5.5 h-5.5 absolute right-0 top-0"
+        class="w-[18px] h-[18px] absolute -left-1 -bottom-1"
         :chain="tokenBalance.chainId"
       />
     </div>
