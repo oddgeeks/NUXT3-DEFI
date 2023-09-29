@@ -20,6 +20,8 @@ export async function getSafeOptionsByChain(params: IOptionsParams): Promise<ISa
   const { safe, provider, chainId, server = false } = params
   const { _forwarderProxyAddress, _multisigForwarderProxyAddress } = getContractAddresses()
 
+  debugger
+
   const obj = {} as ISafeOptions
 
   const implInstance = AvoMultisigImplementation__factory.connect(safe.safe_address, provider)
@@ -69,23 +71,39 @@ export async function getSafeOptionsByChain(params: IOptionsParams): Promise<ISa
       })
     }
 
-    return legacyForwarderInstance.avoWalletVersion(
-      '0x0000000000000000000000000000000000000001',
-    ).catch(() => {
+    const gaslessWalletInstance = GaslessWallet__factory.connect(
+      safe.safe_address!,
+      provider,
+    )
+
+    return gaslessWalletInstance.DOMAIN_SEPARATOR_VERSION().catch(() => {
       obj.notdeployed = true
 
-      return '0.0.0'
+      return legacyForwarderInstance
+        .avoWalletVersion('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE')
     })
   }
 
   function domainName(): Promise<string> {
-    return implInstance.DOMAIN_SEPARATOR_NAME()
-      .catch(() => multisigForwarderInstance.avocadoVersionName(
-        '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-        safe.multisig_index,
-      ).catch(() => {
-        return 'Avocado-Multisig'
-      }))
+    if (safe.multisig == 1) {
+      return implInstance.DOMAIN_SEPARATOR_NAME()
+        .catch(() => multisigForwarderInstance.avocadoVersionName(
+          '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+          safe.multisig_index,
+        ).catch(() => {
+          return 'Avocado-Multisig'
+        }))
+    }
+
+    const gaslessWalletInstance = GaslessWallet__factory.connect(
+      safe.safe_address!,
+      provider,
+    )
+
+    return gaslessWalletInstance.DOMAIN_SEPARATOR_VERSION()
+      .catch(() =>
+        legacyForwarderInstance
+          .avoWalletVersionName('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'))
   }
 
   function nonce(): Promise<number> {

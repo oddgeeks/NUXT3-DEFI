@@ -310,7 +310,9 @@ export function useAvocadoSafe() {
 
     const safeOptions = await getFallbackSafeOptionsByChainId(selectedSafe.value!, chainId)
 
-    const isV2 = gte(safeOptions.currentVersion, '2.0.0')
+    const actualVersion = safeOptions.notdeployed ? safeOptions.latestVersion : safeOptions.currentVersion
+
+    const isV2 = gte(actualVersion, '2.0.0')
 
     if (isV2) {
       return {
