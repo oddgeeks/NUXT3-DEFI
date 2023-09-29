@@ -68,6 +68,7 @@ const { selectedTokensForMigration } = storeToRefs(useTokens())
 const { account, library } = useWeb3()
 
 const props = defineProps<MigrateToModalProps>()
+const emit = defineEmits(['destroy'])
 const loading = ref(false)
 
 async function migrate() {
@@ -138,6 +139,7 @@ async function migrate() {
       hashes.push(hash);
       chainIds.push(transactions[i].chainId);
     }
+    emit('destroy')
     openPendingMigrationModal(hashes, chainIds)
   } catch (e: any) {
     const err = parseTransactionError(e)
