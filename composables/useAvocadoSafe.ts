@@ -12,7 +12,7 @@ import {
 export function useAvocadoSafe() {
   const { public: config } = useRuntimeConfig()
   const { switchToAvocadoNetwork } = useNetworks()
-  const { account, provider } = useWeb3()
+  const { account, library } = useWeb3()
   const { isTrackingMode } = useAccountTrack()
   const { getRpcProviderByChainId } = useShared()
   const { avoProvider, getSafeOptions, refreshSelectedSafe, getFallbackSafeOptionsByChainId } = useSafe()
@@ -190,9 +190,7 @@ export function useAvocadoSafe() {
       2: typesV2,
     }[versionMajor] || {}
 
-    const web3Provider = new ethers.providers.Web3Provider(provider.value)
-
-    const { signature, cancelled } = await signTypedData(web3Provider, account.value, {
+    const { signature, cancelled } = await signTypedData(library.value, account.value, {
       domain,
       types,
       value: message,
@@ -486,9 +484,7 @@ export function useAvocadoSafe() {
       signatures: sortedSignatures,
     }
 
-    const web3Provider = new ethers.providers.Web3Provider(provider.value)
-
-    const { signature, cancelled } = await signTypedData(web3Provider, account.value, {
+    const { signature, cancelled } = await signTypedData(library.value, account.value, {
       domain,
       types,
       value,
@@ -554,9 +550,7 @@ export function useAvocadoSafe() {
       ],
     }
 
-    const web3Provider = new ethers.providers.Web3Provider(provider.value)
-
-    const { signature, cancelled } = await signTypedData(web3Provider, account.value, {
+    const { signature, cancelled } = await signTypedData(library.value, account.value, {
       domain,
       types,
       value: data,
