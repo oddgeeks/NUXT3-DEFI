@@ -4,8 +4,15 @@
       <p class="text-white">Select tokens for migration</p>
       <button class="text-green-500" @click="() => setTokensForMigration(tokensWithBalances)">Select All</button>
     </div>
+    
+    <MigrationLoadingBalance
+      v-if="!account || !tokensWithBalances.length || !balances.data"
+      v-for="i in 4"
+      :key="i"
+    />
 
     <MigrationTokenBalance
+      v-else
       v-for="token in tokensWithBalances"
       :key="token.address + '-' + token.chainId"
       :token-balance="token"
@@ -20,6 +27,8 @@ import { storeToRefs } from 'pinia'
 
 const { toggleSelectedTokenForMigration, setTokensForMigration } = useTokens()
 const { selectedTokensForMigration } = storeToRefs(useTokens())
+const { balances } = storeToRefs(useSafe())
+const { account } = useWeb3()
 
 const { tokenBalances } = useAvocadoSafe()
 

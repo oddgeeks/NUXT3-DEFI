@@ -12,15 +12,18 @@
       </template>
     </UiInput> -->
 
+    <MigrationLoadingMultisigWallet v-if="!mainSafe" />
     <MigrationWalletItem
-      v-if="mainSafe"
+      v-else
       :safe="mainSafe"
       v2
       primary
       @click="handleSelect(mainSafe)"
     />
+    
+    <MigrationLoadingMultisigWallet v-if="!multiSigSafe" class="mt-4" />
     <MigrationWalletItem
-      v-if="multiSigSafe"
+      v-else
       class="mt-4"
       :safe="multiSigSafe"
       primary
