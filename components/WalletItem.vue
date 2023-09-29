@@ -4,6 +4,7 @@ const props = defineProps<{
   primary?: boolean
   tooltip?: string
   v2?: boolean
+  hideActiveState?: boolean
 }>()
 
 const route = useRoute()
@@ -37,6 +38,8 @@ async function onEdit() {
 }
 
 function handleClick() {
+  if (props.hideActiveState) return;
+
   const safe = route.params?.safe as string
 
   if (safe) {
@@ -61,8 +64,8 @@ function handleClick() {
 <template>
   <button
     :class="{
-      'dark:bg-slate-800 dark:border-slate-800 bg-slate-50 border-slate-50': active,
-      'dark:bg-gray-850 bg-slate-150': !active,
+      'dark:bg-slate-800 dark:border-slate-800 bg-slate-50 border-slate-50': active && !props.hideActiveState,
+      'dark:bg-gray-850 bg-slate-150': !active || props.hideActiveState,
     }"
     class="px-4 w-full text-left items-stretch flex justify-between py-3.5 border rounded-2xl border-slate-150 dark:border-slate-750" @click="handleClick"
   >

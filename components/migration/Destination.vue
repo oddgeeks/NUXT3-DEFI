@@ -13,20 +13,22 @@
     </UiInput> -->
 
     <MigrationLoadingMultisigWallet v-if="!mainSafe" />
-    <MigrationWalletItem
+    <WalletItem
       v-else
       :safe="mainSafe"
       v2
       primary
+      hide-active-state
       @click="handleSelect(mainSafe)"
     />
     
     <MigrationLoadingMultisigWallet v-if="!multiSigSafe" class="mt-4" />
-    <MigrationWalletItem
+    <WalletItem
       v-else
       class="mt-4"
       :safe="multiSigSafe"
       primary
+      hide-active-state
       @click="handleSelect(multiSigSafe)"
     />
   </div>
