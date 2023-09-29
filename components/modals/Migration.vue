@@ -49,7 +49,7 @@
       </div>
     </CommonButton>
 
-    <MigrationWalletItem class="mt-4" v-if="selectedSafe" primary :safe="selectedSafe" />
+    <MigrationWalletItem class="mt-4" v-if="selectedSafe" v2 primary :safe="selectedSafe" />
   </div>
 </template>
 
