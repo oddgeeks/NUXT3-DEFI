@@ -173,7 +173,7 @@ export function useAvocadoSafe() {
 
     const safeOptions = await getFallbackSafeOptionsByChainId(selectedSafe.value!, chainId)
 
-    const versionMajor = parse(safeOptions.currentVersion)?.major || 1
+    const versionMajor = parse(safeOptions.currentVersion)?.major || 2
 
     const domain = {
       name: safeOptions.domainName,
