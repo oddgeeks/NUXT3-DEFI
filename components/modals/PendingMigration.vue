@@ -39,34 +39,10 @@ const getIsSuccess = (transaction: TransactionReceipt) => {
 
 <template>
   <div class="text-center flex flex-col gap-7.5">
-
-    <div v-if="!transactions?.length" class="flex justify-center">
-      <svg
-        class="animate-spin h-10 w-10 text-green-500"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <circle
-          class="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          stroke-width="4"
-        />
-        <path
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          stroke-linecap="round"
-        />
-      </svg>
-    </div>
-
-    <div v-for="(transaction, index) in transactions" class="mt-4 first:mt-0">
-      <div class="flex justify-center">
+    <div v-for="(hash, index) in hashes" class="mt-4 first:mt-0">
+      <div v-if="transactions?.length && transactions[index]" class="flex justify-center">
         <SVGCheckCircle
-          v-if="getIsSuccess(transaction)"
+          v-if="getIsSuccess(transactions[index])"
           class="text-white w-10 h-10 success-circle"
         />
 
@@ -95,13 +71,35 @@ const getIsSuccess = (transaction: TransactionReceipt) => {
           />
         </svg>
       </div>
+      <div v-else class="flex justify-center">
+        <svg
+          class="animate-spin h-10 w-10 text-green-500"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+          <path
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            stroke-linecap="round"
+          />
+        </svg>
+      </div>
 
       <div>
         <h2 class="text-lg leading-5 my-4">
           Transaction
           {{
-            transaction
-              ? getIsSuccess(transaction)
+            transactions?.length && transactions[index]
+              ? getIsSuccess(transactions[index])
                 ? "Confirmed"
                 : "Failed"
               : "Pending"
@@ -109,7 +107,7 @@ const getIsSuccess = (transaction: TransactionReceipt) => {
         </h2>
 
         <p
-          v-if="transaction && !getIsSuccess(transaction)"
+          v-if="transactions?.length && transactions[index] && !getIsSuccess(transactions[index])"
           class="text-slate-400 text-xs mb-2"
         >
           Try again or return to the home page.
@@ -121,7 +119,7 @@ const getIsSuccess = (transaction: TransactionReceipt) => {
           <ChainLogo class="w-[26px] h-[26px]" :chain="chainIds[index]" />
           <span class="text-sm text-slate-400">{{ chainIdToName(chainIds[index]) }}</span>
         </p>
-        <CommonButton as="a" target="_blank" :href="`${avoExplorerURL}/tx/${hashes[index]}`" size="sm">
+        <CommonButton as="a" target="_blank" :href="`${avoExplorerURL}/tx/${hash}`" size="sm">
           View Explorer
         </CommonButton>
       </div>

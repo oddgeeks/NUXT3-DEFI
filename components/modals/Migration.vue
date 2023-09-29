@@ -72,25 +72,24 @@ const loading = ref(false)
 
 async function migrate() {
   loading.value = true;
-  const transactions = [];
-  const chainIds = [];
+  const transactions: any = [];
 
   for (let i = 0; i < selectedTokensForMigration.value.length; i++) {
     const selectedToken = selectedTokensForMigration.value[i];
 
-    const txs = []
+    let tx;
 
     const transferAmount = toBN((selectedToken as IBalance).balance)
       .times(10 ** selectedToken.decimals)
       .toFixed()
 
     if (selectedToken.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
-      txs.push({
+      tx = {
         from: account.value,
         to: props.selectedSafe?.safe_address,
         value: transferAmount,
         data: '0x',
-      })
+      }
     }
     else {
       const contract = Erc20__factory.connect(selectedToken.address, library.value)
@@ -100,50 +99,45 @@ async function migrate() {
         transferAmount,
       )
 
-      txs.push({
+      tx = {
         from: account.value,
         to: selectedToken.address,
         value: '0',
         data: transferData,
-      })
+      }
     }
 
-    const metadata = encodeTransferMetadata(
-      {
-        token: selectedToken.address!,
-        amount: toWei((selectedToken as IBalance).balance, selectedToken.decimals),
-        receiver: props.selectedSafe?.safe_address || '',
-      },
-      true,
-    )
-
-    chainIds.push(Number(selectedToken.chainId));
-
-    transactions.push(
-      sendTransactions(
-        txs!,
-        Number(selectedToken.chainId),
+    const index = transactions.findIndex((transaction: any) => transaction.chainId === selectedToken.chainId)
+    if (index === -1) {
+      transactions.push(
         {
-          metadata,
-        },
-        'send',
+          chainId: selectedToken.chainId,
+          txs: [tx]
+        }
       )
-    )
-
-    // logActionToSlack({
-    //   message: `${formatDecimal(data.value.amount)} ${formatSymbol(
-    //     token.value.symbol,
-    //   )} to ${actualAddress.value}`,
-    //   action: 'send',
-    //   txHash: transactionHash,
-    //   amountInUsd: amountInUsd.value.toFixed(),
-    //   chainId: String(data.value.toChainId),
-    //   account: account.value,
-    // })
+    } else {
+      transactions[index] = {
+        chainId: transactions[index].chainId,
+        txs: [...transactions[index].txs, tx]
+      }
+    }
   }
 
   try {
-    const hashes = await Promise.all(transactions)
+    const hashes = [];
+    const chainIds = [];
+
+    for (let i = 0; i < transactions.length; i++) {
+      const hash = await sendTransactions(
+        transactions[i].txs!,
+        Number(transactions[i].chainId),
+        {},
+        'send',
+      );
+
+      hashes.push(hash);
+      chainIds.push(transactions[i].chainId);
+    }
     openPendingMigrationModal(hashes, chainIds)
   } catch (e: any) {
     const err = parseTransactionError(e)
@@ -152,14 +146,6 @@ async function migrate() {
       message: err.formatted,
       type: 'error',
     })
-
-    // logActionToSlack({
-    //   message: err.formatted,
-    //   action: 'send',
-    //   type: 'error',
-    //   account: account.value,
-    //   errorDetails: err.parsed,
-    // })
   } finally {
     loading.value = false
   }
