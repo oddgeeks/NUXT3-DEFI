@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="p-5 flex items-center justify-between text-xs font-medium border-b-[1px] border-slate-750">
-      <p class="text-white">Select tokens for migration</p>
+    <div class="p-5 flex items-center justify-between text-xs font-medium border-b-[1px] dark:border-slate-750 border-white">
+      <p class="dark:text-white text-slate-900">Select tokens for migration</p>
       <button class="text-green-500" @click="() => setTokensForMigration(tokensWithBalances)">Select All</button>
     </div>
     

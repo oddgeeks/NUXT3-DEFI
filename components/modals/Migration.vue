@@ -6,15 +6,15 @@
           <SvgoArrowRight />
         </button>
         <div>
-          <h2 class="text-white text-lg font-semibold mb-1">Migrate</h2>
+          <h2 class="dark:text-white text-slate-900 text-lg font-semibold mb-1">Migrate</h2>
           <h3 class="text-slate-400 text-xs font-medium">Migrate to...</h3>
         </div>
       </div>
     </div>
 
-    <div class="p-5 mt-[30px] border-[1px] bg-gray-850 border-slate-750 rounded-5">
-      <h4 class="text-xs text-slate-400 font-medium mb-[10px]">Balances</h4>
-      <div class="w-[460px] bg-gray-850 border-slate-750 rounded-5" :class="selectedTokensForMigration?.length ? 'border-[1px]' : ''">
+    <div class="p-5 mt-[30px] border-[1px] dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5">
+      <h4 class="text-xs dark:text-white text-slate-900 font-medium mb-[10px]">Balances</h4>
+      <div class="w-[460px] dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5" :class="selectedTokensForMigration?.length ? 'border-[1px]' : ''">
         <MigrationTokenBalance
           v-for="token in selectedTokensForMigration"
           :key="token.address + '-' + token.chainId"

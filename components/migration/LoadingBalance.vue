@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-[77px] p-5 flex items-center justify-between border-b-[1px] last:border-b-[0px] border-slate-750">
+  <div class="w-full h-[77px] p-5 flex items-center justify-between border-b-[1px] last:border-b-[0px] dark:border-slate-750 border-white">
     <div class="flex items-center">
       <div class="w-[30px] h-[30px] rounded-full loading-box" />
       <div class="ml-[10px]">

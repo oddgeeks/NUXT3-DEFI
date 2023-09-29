@@ -1,7 +1,7 @@
 <template>
   <div class="overflow-y-hidden">
     <MigrationTabs
-      class="border-b-[1px] border-slate-750"
+      class="border-b-[1px] dark:border-slate-750 border-white"
       :tabs="tabs"
       :default-selected="activeTab"
       @updated="(newValue) => activeTab = newValue"

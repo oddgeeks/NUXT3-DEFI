@@ -1,5 +1,5 @@
 <template>
-  <div class="p-5 flex items-center border-b-[1px] last:border-b-[0px] border-slate-750">
+  <div class="p-5 flex items-center border-b-[1px] last:border-b-[0px] dark:border-slate-750 border-white">
     <div class="relative basis-[30px] h-[30px] grow-0 shrink-0">
       <SafeTokenLogo class="w-full h-full" :url="tokenBalance.logoURI" />
       <ChainLogo
@@ -11,11 +11,11 @@
     </div>
 
     <div class="ml-[10px] grow">
-      <div class="text-sm text-white font-medium">{{ tokenBalance.name }}</div>
+      <div class="text-sm dark:text-white text-slate-900 font-medium">{{ tokenBalance.name }}</div>
       <div class="text-xs text-slate-400 font-medium">{{ tokenBalance.balance }} {{ tokenBalance.symbol.toUpperCase() }}</div>
     </div>
 
-    <div class="text-xs font-medium text-white ml-[10px]">{{ formatUsd(tokenBalance.balanceInUSD) }}</div>
+    <div class="text-xs font-medium dark:text-white text-slate-900 ml-[10px]">{{ formatUsd(tokenBalance.balanceInUSD) }}</div>
 
     <input
       v-if="!props.showSelectedUi"

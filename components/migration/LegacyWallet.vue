@@ -3,7 +3,7 @@ const { legacySafe } = storeToRefs(useSafe());
 </script>
 
 <template>
-  <div class="bg-gray-850 border-slate-750 border-[1px] rounded-5 flex flex-col overflow-hidden">
+  <div class="dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white border-[1px] rounded-5 flex flex-col overflow-hidden">
     <MigrationLoadingLegacyWallet v-if="!legacySafe" />
     <MigrationWalletItem
       v-else
