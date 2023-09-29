@@ -98,7 +98,7 @@ export async function getSafeOptionsByChain(params: IOptionsParams): Promise<ISa
       provider,
     )
 
-    return gaslessWalletInstance.DOMAIN_SEPARATOR_VERSION()
+    return gaslessWalletInstance.DOMAIN_SEPARATOR_NAME()
       .catch(() =>
         legacyForwarderInstance
           .avoWalletVersionName('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'))
