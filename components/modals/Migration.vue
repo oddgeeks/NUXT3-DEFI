@@ -14,7 +14,7 @@
 
     <div class="p-5 mt-[30px] border-[1px] dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5">
       <h4 class="text-xs dark:text-white text-slate-900 font-medium mb-[10px]">Balances</h4>
-      <div class="w-[460px] dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5" :class="selectedTokensForMigration?.length ? 'border-[1px]' : ''">
+      <div class="w-[460px] max-w-full dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5" :class="selectedTokensForMigration?.length ? 'border-[1px]' : ''">
         <MigrationTokenBalance
           v-for="token in selectedTokensForMigration"
           :key="token.address + '-' + token.chainId"
