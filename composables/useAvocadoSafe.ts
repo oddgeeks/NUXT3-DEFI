@@ -148,8 +148,6 @@ export function useAvocadoSafe() {
 
     const message = await generateSignatureMessage(params)
 
-    debugger
-
     const { signature, digestHash } = await signLegacyData({
       chainId,
       message,
