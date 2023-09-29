@@ -25,12 +25,12 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 
+const { setGasBalance } = useSafe()
 const { toggleSelectedTokenForMigration, setTokensForMigration } = useTokens()
 const { selectedTokensForMigration } = storeToRefs(useTokens())
-const { balances } = storeToRefs(useSafe())
+const { legacySafe, balances, selectedSafe } = storeToRefs(useSafe())
 const { account } = useWeb3()
-
-const { tokenBalances } = useAvocadoSafe()
+const { safeAddress, tokenBalances } = useAvocadoSafe()
 
 const tokensWithBalances = computed(() =>
   tokenBalances.value.filter((tb) => toBN(tb.balance).gt(0))
@@ -42,4 +42,13 @@ const isChecked = (token: IToken) => {
   })
   return index > -1
 }
+
+watch([selectedSafe, legacySafe], () => {
+  // Set legacy safe as the selected one to show correct balances
+  if (selectedSafe.value && legacySafe.value) {
+    selectedSafe.value = legacySafe.value
+    safeAddress.value = legacySafe.value.safe_address
+    setGasBalance()
+  }
+})
 </script>
