@@ -85,7 +85,7 @@ const fallbackRoutes = computed(() => availableRoutes.value.filter(i => getRoute
 function handleEstimatedError(e: any) {
   const err = serialize(e)
 
-  const message = `Bridge Estimated fee failed: ${err.message}
+  const message = `Estimated fee failed: ${err.message}
 <@UK9L88BS7>, <@U02NZML3JJ0>
 ${'`Route`'} ${JSON.stringify(txRoute.value)}
 `
