@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { serialize } from 'error-serializer'
 import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 
 const props = defineProps({
@@ -74,11 +75,29 @@ const { pending, error, data } = useEstimatedFee(
     count: esimatedFeeRetryCount,
     max: 1,
     cb: changeRouteForRetry,
+    onError: handleEstimatedError,
   },
 )
 
 const availableRoutes = computed(() => routes.data.value?.result?.routes || [])
 const fallbackRoutes = computed(() => availableRoutes.value.filter(i => getRouteProvider(i)?.displayName !== bridgeProtocol.value?.displayName))
+
+function handleEstimatedError(e: any) {
+  const err = serialize(e)
+
+  const message = `Bridge Estimated fee failed: ${err.message}
+<@UK9L88BS7>, <@U02NZML3JJ0>
+${'`Route`'} ${JSON.stringify(txRoute.value)}
+`
+
+  logActionToSlack({
+    account: account.value,
+    action: 'bridge',
+    type: 'error',
+    message,
+    chainId: fromChainId.value,
+  })
+}
 
 function changeRouteForRetry() {
   if (esimatedFeeRetryCount.value > 1)

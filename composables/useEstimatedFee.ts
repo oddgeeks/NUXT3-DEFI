@@ -15,6 +15,7 @@ interface EstimatedFeeRetry {
   count: Ref<number>
   max: number
   cb: (count: EstimatedFeeRetry['count'], max?: number) => void
+  onError?: (err: any) => void
 }
 
 /**
@@ -146,12 +147,13 @@ export function useEstimatedFee(
       rawData.value = data
     }
     catch (err: any) {
-      if (retry?.active === true && retry?.count?.value < retry?.max) {
-        console.log('Fee estimation failed, retrying')
-        retry.cb(retry.count, retry.max)
-      }
+      if (retry?.active === true && retry?.count?.value < retry?.max)
+        return retry.cb(retry.count, retry.max)
 
       error.value = err?.error || err
+
+      if (typeof retry?.onError === 'function')
+        retry.onError(err)
     }
     finally {
       pending.value = false
