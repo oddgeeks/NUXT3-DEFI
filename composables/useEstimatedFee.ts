@@ -37,7 +37,7 @@ export function useEstimatedFee(
 ) {
   const { avoProvider } = useSafe()
   const { account } = useWeb3()
-  const { safe, generateMultisigSignatureMessage } = useAvocadoSafe()
+  const { generateMultisigSignatureMessage, generateSignatureMessage } = useAvocadoSafe()
   const { gasBalance, safeAddress, selectedSafe, isSelectedSafeLegacy } = storeToRefs(useSafe())
   const { parseTransactionError } = useErrorHandler()
 
@@ -109,18 +109,20 @@ export function useEstimatedFee(
       let message
 
       if (isSelectedSafeLegacy.value) {
-        message = await safe.value?.generateSignatureMessage(
-          actualTx,
-          +chainId.value,
-          params?.options,
-        )
+        message = await generateSignatureMessage({
+          actions: actualTx,
+          chainId: chainId.value,
+          options: params?.options,
+        })
+
+        console.log({ message })
       }
       else {
         message = await generateMultisigSignatureMessage({
           chainId: chainId.value,
           actions: actualTx,
           options: params?.options,
-          metadata: params?.metadata,
+          metadata: params?.metadata || '0x',
           nonce: !isUndefined(params?.nonce) ? Number(params?.nonce) : undefined,
         })
       }

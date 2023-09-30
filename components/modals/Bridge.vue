@@ -77,18 +77,19 @@ const { pending, error, data } = useEstimatedFee(
   },
 )
 
+const availableRoutes = computed(() => routes.data.value?.result?.routes || [])
+const fallbackRoutes = computed(() => availableRoutes.value.filter(i => getRouteProvider(i)?.displayName !== bridgeProtocol.value?.displayName))
+
 function changeRouteForRetry() {
   if (esimatedFeeRetryCount.value > 1)
     return
 
-  const fallbackRoutes = routes.data.value?.result.routes.filter((i) => {
-    const bridgeName = i?.usedBridgeNames?.[0]
-    const routeBridgeName = txRoute.value?.usedBridgeNames?.[0]
+  openSnackbar({
+    message: 'Retrying with another route...',
+    type: 'info',
+  })
 
-    return bridgeName !== routeBridgeName
-  }) || []
-
-  const [route] = fallbackRoutes
+  const [route] = fallbackRoutes.value
 
   if (!route)
     return
@@ -122,15 +123,7 @@ watchThrottled(fromTokens.data, () => {
   throttle: 1000,
 })
 
-const bridgeProtocol = computed(() => {
-  if (!txRoute.value?.userTxs?.length)
-    return
-  const [tx] = txRoute.value.userTxs
-
-  const bridge = tx?.steps?.find((i: any) => i.type === 'bridge')
-
-  return bridge?.protocol
-})
+const bridgeProtocol = computed(() => getRouteProvider(txRoute.value))
 
 function setMax() {
   toggleDirty()
@@ -170,6 +163,16 @@ const feeInfoMessage = computed(() => {
 
   return `The third-party bridge provider will charge an additional fee of ${formattedString} for their bridging service.`
 })
+
+function getRouteProvider(route?: IRoute) {
+  if (!route?.userTxs?.length)
+    return
+  const [tx] = route.userTxs
+
+  const bridge = tx?.steps?.find((i: any) => i.type === 'bridge')
+
+  return bridge?.protocol
+}
 
 const onSubmit = form.handleSubmit(async () => {
   if (!txRoute.value || !bridgeToToken.value)
@@ -400,20 +403,61 @@ const onSubmit = form.handleSubmit(async () => {
                 class="items-center justify-between hidden text-sm font-medium sm:flex text-slate-400"
               >
                 <span>
-                  Bridge Route
+                  Route Through
                 </span>
-
                 <div
                   v-if="routes.pending.value"
                   style="width: 140px; height: 20px"
                   class="rounded-lg loading-box"
                 />
                 <span
-                  v-else-if="bridgeProtocol?.displayName"
+                  v-else-if="!!txRoute && !!availableRoutes?.length"
                   class="capitalize hidden sm:flex items-center gap-2.5"
                 >
-                  <img class="w-5 h-5" :src="bridgeProtocol.icon">
-                  {{ bridgeProtocol.displayName }}
+                  <Menu v-slot="{ open }" as="div" class="relative">
+                    <MenuButton class="flex items-center gap-2.5 rounded-xl px-3 py-2 border border-slate-150 dark:border-slate-750">
+                      <img :src="bridgeProtocol?.icon" class="w-5 h-5">
+                      {{ bridgeProtocol?.displayName }}
+                      <SvgoChevronDown class="w-4" :class="open ? 'rotate-180' : ''" />
+                    </MenuButton>
+                    <transition
+                      enter-active-class="transition duration-100 ease-out"
+                      enter-from-class="transform scale-95 opacity-0"
+                      enter-to-class="transform scale-100 opacity-100"
+                      leave-active-class="transition duration-75 ease-out"
+                      leave-from-class="transform scale-100 opacity-100"
+                      leave-to-class="transform scale-95 opacity-0"
+                    >
+                      <MenuItems
+                        class="absolute rounded-5 z-20 py-4 top-12 left-1/2 -translate-x-1/2 w-[300px] origin-center dark:bg-gray-850 border-slate-150 border bg-slate-50 dark:border-slate-700"
+                      >
+                        <template v-for="route, i in availableRoutes" :key="route.routeId">
+                          <MenuItem as="button" type="button" class="font-medium w-full text-left px-4 py-[14px] first:pt-0 last-of-type:pb-0" @click="txRoute = route">
+                            <div class="flex gap-2">
+                              <img width="20" height="20" :src="getRouteProvider(route)?.icon" class="w-5 h-5">
+                              <div class="flex flex-col gap-1 w-full">
+                                <div class="flex justify-between w-full">
+                                  <span class="text-white">
+                                    {{ getRouteProvider(route)?.displayName }}
+                                  </span>
+                                  <span v-if="i === 0" class="rounded-lg px-2 leading-5 text-[10px] uppercase bg-primary bg-opacity-10 text-primary">
+                                    Best Rate
+                                  </span>
+                                  <SvgoCheckCircle v-else-if="txRoute.routeId === route.routeId" class="w-4 success-circle" />
+                                </div>
+                                <span class="text-xs text-slate-400">
+                                  {{ formatDecimal(fromWei(route?.toAmount || '0', bridgeToToken?.decimals).toFixed()) }}
+                                  {{ bridgeToToken?.symbol }}
+                                  ({{ formatUsd(times(fromWei(route?.toAmount || '0', bridgeToToken?.decimals), bridgeToToken?.price || '0')) }})</span>
+                              </div>
+                            </div>
+                          </MenuItem>
+                          <hr class="last:hidden dark:border-slate-800 border-slate-100">
+                        </template>
+                      </MenuItems>
+                    </transition>
+                  </Menu>
+
                 </span>
                 <span v-else>
                   -

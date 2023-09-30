@@ -247,6 +247,8 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
           }
         }
 
+        data?.result?.routes.sort((a, b) => toBN(b?.toAmount || '0').minus(toBN(a?.toAmount || '0')).toNumber())
+
         const [route] = data?.result?.routes || []
 
         txRoute.value = route
