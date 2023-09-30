@@ -26,19 +26,32 @@
         <div v-if="!selectedTokensForMigration?.length" class="text-xs text-slate-400 font-medium">No balances selected.</div>
       </div>
 
-      <!-- <h4 class="text-xs text-slate-400 font-medium mb-[10px] mt-5">NFTs</h4>
-      <div>
+      <h4 class="text-xs dark:text-white text-slate-900 font-medium mb-[10px] mt-5">NFTs</h4>
+      <div class="w-[460px] max-w-full dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5" :class="selectedNFTsForMigration?.length ? 'border-[1px]' : ''">
+        <MigrationNFTCard
+          v-for="asset in selectedNFTsForMigration"
+          :key="asset.tokenId + '-' + asset.chainId"
+          :asset="asset"
+          is-checked
+          show-selected-ui
+          @toggleCheck="() => toggleSelectedNFTsForMigration(asset)"
+        />
+        <div v-if="!selectedNFTsForMigration?.length" class="text-xs text-slate-400 font-medium">No NFTs selected.</div>
       </div>
 
-      <h4 class="text-xs text-slate-400 font-medium mb-[10px] mt-5">DeFi Positions</h4>
+      <!-- <h4 class="text-xs text-slate-400 font-medium mb-[10px] mt-5">DeFi Positions</h4>
       <div>
       </div> -->
     </div>
 
+    <!-- <EstimatedFee :loading="pending" :data="data" :error="error" /> -->
+
+    <!-- <MigrationEstimatedFee /> -->
+
     <CommonButton
       class="mt-5 w-full"
       size="lg"
-      :disabled="!selectedTokensForMigration?.length"
+      :disabled="!selectedTokensForMigration?.length && !selectedNFTsForMigration?.length"
       :loading="loading"
       @click="migrate"
     >
@@ -55,6 +68,7 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
+import { ethers } from 'ethers'
 import { Erc20__factory } from '~/contracts';
 const { parseTransactionError } = useErrorHandler()
 
@@ -63,13 +77,61 @@ interface MigrateToModalProps {
 }
 
 const { sendTransactions } = useAvocadoSafe()
-const { toggleSelectedTokenForMigration } = useTokens()
-const { selectedTokensForMigration } = storeToRefs(useTokens())
+const { legacySafeAddress } = storeToRefs(useSafe())
+const { toggleSelectedTokenForMigration, toggleSelectedNFTsForMigration } = useTokens()
+const { selectedTokensForMigration, selectedNFTsForMigration } = storeToRefs(useTokens())
 const { account, library } = useWeb3()
 
 const props = defineProps<MigrateToModalProps>()
 const emit = defineEmits(['destroy'])
 const loading = ref(false)
+
+const nftChainIds = computed(() => selectedNFTsForMigration.value?.map((nft) => nft.chainId))
+
+const nftTxs = computed(() => {
+  const chainIds = []
+  const txs = []
+
+  const erc712ABI = [
+    'function transferFrom(address from, address to, uint256 tokenId)',
+  ]
+
+  const contractInterface = new ethers.utils.Interface(erc712ABI)
+
+  for (let i = 0; i < selectedNFTsForMigration.value?.length; i++) {
+    const nft = selectedNFTsForMigration.value[i]
+    const calldata = contractInterface.encodeFunctionData('transferFrom', [legacySafeAddress.value, props.selectedSafe?.safe_address, nft.tokenId])
+
+    chainIds.push(nft.chainId)
+    
+    txs.push([{
+      to: nft.contractAddress,
+      data: calldata,
+      operation: '0',
+      value: '0'
+    }])
+  }
+
+  return txs
+})
+
+const migrateNfts = async () => {
+  const hashes: string[] = []
+
+  for (let i = 0; i < selectedNFTsForMigration.value?.length; i++) {
+    hashes.push(await sendTransactions(
+      nftTxs.value[i],
+      nftChainIds.value[i],
+      undefined,
+      'nft',
+    ))
+  }
+
+  if (!hashes?.length)
+    return
+
+  return hashes
+}
 
 async function migrate() {
   loading.value = true;
@@ -91,8 +153,7 @@ async function migrate() {
         value: transferAmount,
         data: '0x',
       }
-    }
-    else {
+    } else {
       const contract = Erc20__factory.connect(selectedToken.address, library.value)
 
       const { data: transferData } = await contract.populateTransaction.transfer(
@@ -139,8 +200,11 @@ async function migrate() {
       hashes.push(hash);
       chainIds.push(transactions[i].chainId);
     }
+
+    const nftHashes = await migrateNfts()
+
     emit('destroy')
-    openPendingMigrationModal(hashes, chainIds)
+    openPendingMigrationModal([...hashes, ...nftHashes || []], [...chainIds, ...nftChainIds.value])
   } catch (e: any) {
     const err = parseTransactionError(e)
 

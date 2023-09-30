@@ -8,7 +8,7 @@
     />
 
     <MigrationBalances class="h-[calc(100%-39px)] overflow-y-auto scroll-style" v-show="activeTab === 'balances'" />
-    <NFTs class="h-[calc(100%-39px)] overflow-y-auto" v-show="activeTab === 'nfts'" />
+    <MigrationNFTs class="h-[calc(100%-39px)] overflow-y-auto" v-show="activeTab === 'nfts'" />
     <Defi class="h-[calc(100%-39px)] overflow-y-auto" v-show="activeTab === 'defi'" />
   </div>
 </template>
@@ -21,11 +21,11 @@ const tabs = [
     name: 'Balances',
     value: 'balances',
   },
-  // TODO: hide NFTs and DeFi while it's not implemented yet
-  // {
-  //   name: 'NFTs',
-  //   value: 'nfts',
-  // },
+  {
+    name: 'NFTs',
+    value: 'nfts',
+  },
+  // TODO: hide DeFi while it's not implemented yet
   // {
   //   name: 'DeFi Positions',
   //   value: 'defi',

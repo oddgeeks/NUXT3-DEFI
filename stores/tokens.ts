@@ -18,6 +18,7 @@ export interface IToken {
 export const useTokens = defineStore('tokens', () => {
   const tokens = ref<IToken[]>([])
   const selectedTokensForMigration = ref<IToken[]>([])
+  const selectedNFTsForMigration = ref<NFTData[]>([])
   const customTokens = useStorageAsync<IToken[]>('custom-tokens', [])
 
   const fetchTokens = async () => {
@@ -144,8 +145,23 @@ export const useTokens = defineStore('tokens', () => {
     }
   }
 
+  const toggleSelectedNFTsForMigration = (NFTForMigration: NFTData) => {
+    const index = selectedNFTsForMigration.value?.findIndex((selectedNFT) => {
+      return `${selectedNFT.tokenId}-${selectedNFT.chainId}` === `${NFTForMigration.tokenId}-${NFTForMigration.chainId}`
+    })
+    if (index === -1) {
+      selectedNFTsForMigration.value.push(NFTForMigration)
+    } else {
+      selectedNFTsForMigration.value.splice(index, 1)
+    }
+  }
+
   const setTokensForMigration = (tokensForMigration: IToken[]) => {
     selectedTokensForMigration.value = [...tokensForMigration];
+  }
+
+  const setNFTsForMigration = (NFTsForMigration: NFTData[]) => {
+    selectedNFTsForMigration.value = [...NFTsForMigration];
   }
 
   useIntervalFn(handleTokenPrices, 10000)
@@ -160,7 +176,10 @@ export const useTokens = defineStore('tokens', () => {
     fetchTokenByAddress,
     selectedTokensForMigration,
     toggleSelectedTokenForMigration,
-    setTokensForMigration
+    setTokensForMigration,
+    selectedNFTsForMigration,
+    toggleSelectedNFTsForMigration,
+    setNFTsForMigration,
   }
 })
 
