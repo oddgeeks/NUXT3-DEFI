@@ -18,7 +18,7 @@ onMounted(() => {
 })
 const { account } = useWeb3()
 watch(
-  () => account,
+  account,
   () => {
     if (account.value) {
       (window as any).$chatwoot.setUser(account.value.toLowerCase(), {
@@ -26,8 +26,7 @@ watch(
         email: account.value.toLowerCase(),
       })
     }
-  },
-)
+  }, { immediate: true })
 
 onMounted(() => {
   (function (d, t) {
