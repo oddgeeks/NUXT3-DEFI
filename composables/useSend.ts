@@ -2,7 +2,7 @@ import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import Fuse from 'fuse.js'
 import { getAddress, isAddress } from '@ethersproject/address'
-import type { IBalance } from 'stores/safe'
+import type { IBalance } from '~/stores/safe'
 import StepFrom from '~~/components/modals/Send/StepFrom.vue'
 import StepSubmit from '~~/components/modals/Send/StepSubmit.vue'
 
@@ -184,6 +184,8 @@ export function useSend(initialSendData?: ISendData) {
     const sortedByMatch = fuse.search(search)
 
     const items = sortedByMatch.map(i => i.item)
+
+    console.log(items)
 
     return items.filter((i) => {
       const token = tokens.value.find(

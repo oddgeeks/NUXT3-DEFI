@@ -231,7 +231,7 @@ async function handleExecute(item: IMultisigTransaction) {
 
     if (hash) {
       emit('destroy')
-      showPendingTransactionModal(hash, item.chain_id, 'send')
+      showPendingTransactionModal(hash, item.chain_id, 'transfer')
     }
   }
   catch (e: any) {
@@ -255,7 +255,7 @@ async function handleReject(transaction: IMultisigTransaction) {
 
     if (txHash) {
       emit('destroy')
-      showPendingTransactionModal(txHash, transaction.chain_id, 'send')
+      showPendingTransactionModal(txHash, transaction.chain_id, 'transfer')
     }
   }
   catch (e: any) {
@@ -416,54 +416,9 @@ onUnmounted(() => {
             <span class="sm:px-7.5 px-5 text-sm mb-5">
               Actions ({{ transactionRef.data.params.actions.length }})
             </span>
-            <template v-for="action in transactionRef.data.params.actions" :key="action.data">
-              <details class="group px-5 sm:px-7.5">
-                <summary class="text-xs flex items-center justify-between cursor-pointer">
-                  <dl class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center w-full">
-                    <dt class="text-slate-400">
-                      Target
-                    </dt>
-                    <dd class="flex justify-between items-center gap-2 break-all sm:w-[420px]">
-                      {{ action.target }}
-                      <SvgoChevronDown
-                        class="w-5 text-slate-400 group-open:rotate-180"
-                      />
-                    </dd>
-                  </dl>
-                </summary>
-                <div class="flex flex-col gap-2.5 mt-5">
-                  <div v-if="String(action.operation) === '1'" class="flex px-4 items-center py-2 mb-2.5 gap-2.5 justify-between text-sm border w-fit dark:border-slate-700 rounded-[14px]">
-                    <SvgoInfo2 class="text-slate-500" />
-                    This is a delegate call transaction
-                  </div>
-                  <dl class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
-                    <dt class="text-slate-400">
-                      Data
-                    </dt>
-                    <dd class="flex items-center gap-2 break-all sm:w-[420px]">
-                      {{ action.data }}
-                    </dd>
-                  </dl>
-                  <dl class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
-                    <dt class="text-slate-400">
-                      Operation
-                    </dt>
-                    <dd class="flex items-center gap-2 break-all sm:w-[420px]">
-                      {{ action.operation }}
-                    </dd>
-                  </dl>
-                  <dl class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
-                    <dt class="text-slate-400">
-                      Value
-                    </dt>
-                    <dd class="flex items-center gap-2 break-all sm:w-[420px]">
-                      {{ action.value }}
-                    </dd>
-                  </dl>
-                </div>
-              </details>
-              <hr class="border-slate-150 my-5 last:hidden dark:border-slate-800">
-            </template>
+            <div class="flex flex-col gap-5">
+              <MultisigTransactionActionItem v-for="action, i in transactionRef.data.params.actions" :key="action.data + i" :chain-id="transactionRef.chain_id" :action="action" />
+            </div>
           </div>
         </div>
       </div>
@@ -513,7 +468,7 @@ onUnmounted(() => {
             {{ confirmationNeeded }} more confirmations needed for execution
           </div>
         </div>
-        <div v-if="account" class="sm:p-7.5 p-5 flex flex-col gap-5">
+        <div v-if="account" class="sm:p-7.5 p-5 flex flex-col gap-7.5">
           <details v-if="!isTransactionExecuted" class="group">
             <summary class="text-primary text-xs leading-5 cursor-pointer flex items-center justify-between">
               <span class="group-open:hidden block">View transaction breakdown</span>

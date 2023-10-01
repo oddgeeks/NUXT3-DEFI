@@ -52,10 +52,14 @@ export default defineEventHandler(async (event) => {
   const provider = getServerBatchedRpcProvider(chainId)
 
   return getSafeOptionsByChain({
-    multisig,
-    multisig_index,
-    owner_address,
-    safe_address: safeAddress,
-    deployed,
-  }, chainId, provider, true)
+    safe: {
+      multisig,
+      multisig_index,
+      owner_address,
+      safe_address: safeAddress,
+    },
+    chainId,
+    provider,
+    server: true,
+  })
 })

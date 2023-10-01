@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { isAddress } from '@ethersproject/address'
 import { useField } from 'vee-validate'
-import { useBreakpoints, breakpointsTailwind } from '@vueuse/core'
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import CheckCircle from '~/assets/images/icons/check-circle.svg?component'
 import type { IToken } from '~/stores/tokens'
 
@@ -14,15 +14,25 @@ const { authorisedNetworks } = useAuthorities()
 
 const { isCrossChain, data, token, availableTokens, actualAddress, stepForward, tokenlistPending } = useSend()
 
+const { isInputUsd } = useInputUsd()
+const [dirty, toggleDirty] = useToggle(false)
+const [max, toggleMax] = useToggle(false)
+
 const toCrossChainNetworks = computed(() => authorisedNetworks.value.filter(network => network.chainId !== data.value.fromChainId))
 const fromNetwork = computed(() => chainIdToName(data.value.fromChainId))
 const targetNetwork = computed(() => chainIdToName(data.value.toChainId))
+
+const breakPoints = useBreakpoints(breakpointsTailwind)
+const isMobile = computed(() => breakPoints.smaller('sm').value)
+
+const amountPlaceholder = computed(() => isMobile.value ? 'Enter' : 'Enter amount')
 
 const {
   value: amount,
   errorMessage,
   validate,
   setValue,
+  setErrors,
   errors,
 } = useField<string>('amount', undefined, {
   initialValue: !isZero(data.value.amount) ? data.value.amount : undefined,
@@ -38,8 +48,30 @@ const {
   initialValue: data.value.address || actualAddress.value,
 })
 
+const amountInUsd = computed({
+  get() {
+    return toBN(token?.value?.price || 0)
+      .times(amount.value || 0)
+      .decimalPlaces(4, 6).toNumber()
+  },
+  set(newValue) {
+    if (max.value)
+      return
+
+    const value = toBN(newValue || 0).div(token.value?.price || 0)
+
+    setValue(toBN(value)
+      .decimalPlaces(4, 6)
+      .toString(), true)
+  },
+})
+
 const disabled = computed(() => {
   return !actualAddress.value || !!errors.value.length || !!addressErrors.value.length || !amount.value || tokenlistPending.value
+})
+
+const isCrossChainEnable = computed(() => {
+  return toCrossChainNetworks.value?.length > 1 && !isSafeMultisig.value && !bridgeDisabledChains.includes(data.value.fromChainId)
 })
 
 const { data: totalTransfers } = useAsyncData(
@@ -94,8 +126,13 @@ function onToggleCrossChain() {
     data.value.toChainId = data.value.fromChainId
 }
 
-const breakPoints = useBreakpoints(breakpointsTailwind)
-const isMobile = breakPoints.smaller('sm')
+function handleSetMax() {
+  setErrors('')
+  toggleDirty()
+  toggleMax(true)
+
+  setValue(token.value?.balance || '0', true)
+}
 
 onMounted(() => {
   validate()
@@ -104,6 +141,15 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col gap-[26px] w-full md:w-[450px]">
+    <div
+      class="flex gap-2 justify-between items-center w-full mx-auto rounded-full"
+    >
+      <p class="text-xs py-1 px-5 rounded-full border border-[#1e293b]">
+        <span class="sm:inline hidden"> Processing on the</span> <ChainLogo class="w-6 h-6 inline" :chain="data.fromChainId" />
+        {{ chainIdToName(data.fromChainId) }}
+      </p>
+      <CommonToggle v-model="isInputUsd" text="Input USD" />
+    </div>
     <div class="flex flex-col gap-2.5 font-medium">
       <div class="flex justify-between gap-5">
         <div class="flex flex-col gap-2.5">
@@ -129,13 +175,34 @@ onMounted(() => {
               <button
                 type="button"
                 class="text-primary hover:text-primary"
-                @click="setValue(token?.balance || '0')"
+                @click="handleSetMax"
               >
                 MAX
               </button>
             </div>
           </div>
+
+          <CommonCurrencyInput
+            v-if="isInputUsd"
+            v-model="amountInUsd"
+            :dirty="dirty"
+            styled
+            input-classes="!py-3"
+            autofocus
+            :error-message="errorMessage"
+            name="amount-usd"
+            :placeholder="amountPlaceholder"
+            @beforeinput="toggleMax(false)"
+          >
+            <template #suffix>
+              <span class="text-sm text-left text-slate-400 absolute right-5">
+                {{ formatDecimal(amount) }}
+              </span>
+            </template>
+          </CommonCurrencyInput>
+
           <CommonInput
+            v-else
             v-model="amount"
             type="numeric"
             :error-message="errorMessage"
@@ -143,11 +210,13 @@ onMounted(() => {
             autofocus
             class="!rounded-2xl w-full"
             input-classes="!py-3"
-            :placeholder="isMobile ? 'Enter' : 'Enter amount'"
+            :placeholder="amountPlaceholder"
+            @beforeinput="toggleMax(false)"
           >
             <template #suffix>
               <span class="text-sm text-left text-slate-400 absolute right-5">
-                {{ formatUsd(toBN(token?.price || 0).times(amount || 0).toFixed()) }}</span>
+                {{ formatUsd(amountInUsd) }}
+              </span>
             </template>
           </CommonInput>
         </div>
@@ -234,7 +303,7 @@ onMounted(() => {
         </div>
       </div>
     </Transition>
-    <div v-if="toCrossChainNetworks?.length > 1 && !isSafeMultisig" class="flex gap-2.5 items-center">
+    <div v-if="isCrossChainEnable" class="flex gap-2.5 items-center">
       <button
         :class="{
           'dark:text-white text-slate-900': isCrossChain,

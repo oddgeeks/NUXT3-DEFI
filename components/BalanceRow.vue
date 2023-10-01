@@ -28,7 +28,16 @@ const {
   priceDiffInPercent,
   fetchLiteAPY,
   nonAuthorised,
+  fuseDisabled,
 } = useGraph(balance)
+
+const errorMessage = computed(() => {
+  if (nonAuthorised.value)
+    return `You are not authorized to interact with tokens on ${chainIdToName(balance.value.chainId)}`
+
+  if (fuseDisabled.value)
+    return 'Fuse network is not supported legacy safes'
+})
 
 onMounted(async () => {
   const apy = await fetchLiteAPY(props.tokenBalance)
@@ -90,9 +99,7 @@ function onClick() {
             v-tippy="`${sum} ${tokenBalance.symbol?.toUpperCase()}`"
             class="text-sm font-medium text-slate-400 max-w-[256px] uppercase"
           >
-            {{
-              formatDecimal(sum)
-            }}
+            {{ formatDecimal(sum || 0) }}
             {{ tokenBalance.symbol }}
           </span>
         </div>
@@ -135,7 +142,7 @@ function onClick() {
     <td class="text-right py-6 min-w-[138px]">
       <Tippy
         v-if="!summary"
-        :content="nonAuthorised ? `You are not authorized to interact with tokens on ${chainIdToName(balance.chainId)}` : undefined"
+        :content="errorMessage"
         tag="div" class="flex items-center gap-[15px] justify-center"
       >
         <CommonButton

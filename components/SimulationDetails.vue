@@ -11,9 +11,10 @@ const props = defineProps<{
 const noBreakdownAvailable = computed(() => {
   const details = props.details
 
-  return details.balanceChange.approveTokens?.length === 0
-    && details.balanceChange.receiveTokens?.length === 0
-    && details.balanceChange.sendTokens?.length === 0
+  return details.simulation.approveTokens?.length === 0
+    && details.simulation.receiveTokens?.length === 0
+    && details.simulation.sendTokens?.length === 0
+    && details.simulation.revokeTokens?.length === 0
 })
 </script>
 
@@ -41,7 +42,7 @@ const noBreakdownAvailable = computed(() => {
       class="grid grid-cols-1 sm:grid-cols-2 -mr-3 gap-x-[10px] gap-y-5 scroll-style max-h-[239px] overflow-y-auto"
     >
       <template
-        v-for="(item, k) in details.balanceChange.approveTokens"
+        v-for="(item, k) in details.simulation.approveTokens"
         :key="k"
       >
         <SimulationTokenCard
@@ -52,7 +53,7 @@ const noBreakdownAvailable = computed(() => {
         />
       </template>
       <template
-        v-for="(item, k) in details.balanceChange.receiveTokens"
+        v-for="(item, k) in details.simulation.receiveTokens"
         :key="k"
       >
         <SimulationTokenCard
@@ -62,7 +63,7 @@ const noBreakdownAvailable = computed(() => {
           :class="itemClass"
         />
       </template>
-      <template v-for="(item, k) in details.balanceChange.sendTokens" :key="k">
+      <template v-for="(item, k) in details.simulation.sendTokens" :key="k">
         <SimulationTokenCard :class="itemClass" type="send" :chain-id="chainId" :payload="item" />
       </template>
     </ul>

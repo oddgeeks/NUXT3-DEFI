@@ -24,8 +24,6 @@ declare module '*.svg?skipsvgo' {
   export default src
 }
 
-type ITxType = "send" | "swap" | "bridge" | "topUpGas" | "wc" | "upgrade";
-
 type ChainId = 1 | 137 | 42161 | 10 | 56 | 43114 | 100 | 1101 | 634 | 63400;
 
 interface Provider {
@@ -123,7 +121,7 @@ interface IBridgeResponse {
 }
 
 interface IBridgeResult {
-  routes: Route[];
+  routes: IRoute[];
   fromAsset: FromAsset2;
   toAsset: ToAsset3;
   bridgeRouteErrors: BridgeRouteErrors;
@@ -142,6 +140,18 @@ interface IBridgeTokensResult {
   price?: number;
   score?: number;
 }
+
+interface IGenerateSignatureMessageParams {
+  chainId: string | number
+  actions: TransactionsAction[]
+  options?: any
+}
+
+interface ISignLegacyDataParams {
+  message: any
+  chainId: string | number
+}
+
 
 interface IBridgeTokensResponse {
   success: boolean;
@@ -214,6 +224,40 @@ interface IBuyToken2 {
   sparklinePrice7d: number[];
 }
 
+interface IBatchJson {
+  version: string;
+  batch: IBatch[];
+}
+
+type BatchFormValues = {
+    abi: string;
+    toAddress: string;
+    contractAddress: string;
+    value: string;
+    chainId: number;
+    method: string;
+    params?: string;
+    raw?: string;
+    [key: string]: any?;
+}
+
+interface IBatch {
+  formValues: BatchFormValues,
+}
+
+interface IDecodedParams {
+  method: string;
+  builder: any;
+  inputs: any;
+  args: any;
+}
+
+interface ICreateBatchModal{
+  chainId: number | string
+  batch: IBatch[]
+  mode: TxBuilderModes
+}
+
 interface IFromToken {
   symbol: string;
   name: string;
@@ -223,6 +267,25 @@ interface IFromToken {
   eip2612: boolean;
   domainVersion: string;
   tags: string[];
+}
+
+interface IOptionsSafe {
+  multisig: number;
+  multisig_index: number,
+  owner_address: string,
+  safe_address: string,
+}
+
+interface IOptionsParams {
+  safe: IOptionsSafe,
+  chainId: string | number,
+  provider: ethers.providers.StaticJsonRpcProvider
+  server?: boolean
+} 
+
+interface IComputeSafeParams {
+  provider: ethers.providers.StaticJsonRpcProvider
+  accountAddress: string
 }
 
 interface IToToken {
@@ -295,7 +358,7 @@ interface IModal {
 
 type ISnackOptions = {
   message: string;
-  type: "success" | "error";
+  type: "success" | "error" | 'info';
   open?: boolean;
   timeout?: number;
 };
@@ -309,7 +372,7 @@ type IOptions = {
   sheetPosition?: "top" | "bottom";
 };
 
-type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim" | 'deploy' | 'upgrade' | 'nft' | 'wc';
+type IWeb3Action = "transfer" | "bridge" | "swap" | "gas-topup" | "reedem" | "claim" | 'deploy' | 'upgrade' | 'nft' | 'dapp';
 
 type ISlackMessageType = "danger" | "error" | "success" | "banner";
 
@@ -398,14 +461,15 @@ interface BuildInfo {
 }
 
 interface ISimulation {
-  balanceChange: BalanceChange;
   transaction: Transaction;
+  simulation: ISimulationChange;
 }
 
-interface BalanceChange {
+interface ISimulationChange {
   approveTokens: SimulationToken[];
   sendTokens: SimulationToken[];
   receiveTokens: SimulationToken[];
+  revokeTokens?: SimulationToken[];
 }
 
 interface SimulationToken {
@@ -587,7 +651,7 @@ interface ISafesResponse {
   owner_address: string
   created_at: string
   updated_at: string
-  multisig: 0 | 1
+  multisig: 0 | 1 | number
   deployed: Record<string, boolean>,
   version: Record<string, string>
   authorities: Record<string, string[]>
@@ -627,3 +691,5 @@ interface IComputeAddresses {
   multisigAddress: string
   oldSafeAddress: string
 }
+
+type TxBuilderModes = 'expand' | 'collapse' | 'super-collapse' | 'raw'

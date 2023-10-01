@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { utils } from 'ethers'
-import { MultisigForwarder__factory } from '@instadapp/avocado-base/contracts'
 import {
   AvoFactoryProxy__factory,
   Forwarder__factory,
   GaslessWallet__factory,
+  MultisigForwarder__factory,
 } from '@/contracts'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 
@@ -109,10 +109,10 @@ async function handleSubmit() {
       return
 
     logActionToSlack({
+      message: generateSlackMessage(metadata, props.options.chainId),
       action: 'upgrade',
       chainId: String(props.options.chainId),
       account: account.value,
-      message: `Upgraded to ${props.options.latestVersion}`,
     })
 
     emit('destroy')

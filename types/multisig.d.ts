@@ -72,6 +72,24 @@ interface IMultisigBroadcastParams {
   safe: string
   signers: string[]
   targetChainId: string | number
+  ignoreSlack?: boolean
+}
+
+interface IChangeThresholdParams {
+  threshold: string
+  chainId: string | number
+}
+
+interface IRemoveSignerParams {
+  addresses: string[]
+  chainId: number | string
+  threshold: number
+}
+
+interface IAddSignerParams {
+  addresses: ISignerAddress[]
+  threshold: string
+  chainId: number | string
 }
 
 type TransactionsAction = {
@@ -107,7 +125,7 @@ interface IGenerateMultisigSignatureParams {
   chainId: string | number
   actions: TransactionsAction[]
   nonce?: number
-  metadata?: string
+  metadata: string
   note?: string
   estimatedFee?: boolean
   options?: any
@@ -124,8 +142,12 @@ interface IOpenNonceModalParams {
   rejection?: boolean
   rejectionId?: string
   transactionType: TransactionActionType
-  metadata?: string
+  metadata: string
   options?: any
+}
+
+interface ICreateBatchModal{
+  
 }
 
 interface IOpenExecuteModalParams {

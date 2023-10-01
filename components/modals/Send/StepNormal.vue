@@ -88,17 +88,15 @@ async function onSubmit() {
       {
         metadata,
       },
-      'send',
+      'transfer',
     ) as string
 
     if (!transactionHash)
       return
 
     logActionToSlack({
-      message: `${formatDecimal(data.value.amount)} ${formatSymbol(
-        token.value.symbol,
-      )} to ${actualAddress.value}`,
-      action: 'send',
+      message: generateSlackMessage(metadata, data.value.toChainId),
+      action: 'transfer',
       txHash: transactionHash,
       amountInUsd: amountInUsd.value.toFixed(),
       chainId: String(data.value.toChainId),
@@ -107,7 +105,7 @@ async function onSubmit() {
 
     destroyModal()
 
-    showPendingTransactionModal(transactionHash, data.value.toChainId, 'send')
+    showPendingTransactionModal(transactionHash, data.value.toChainId, 'transfer')
   }
   catch (e: any) {
     const err = parseTransactionError(e)
@@ -119,7 +117,7 @@ async function onSubmit() {
 
     logActionToSlack({
       message: err.formatted,
-      action: 'send',
+      action: 'transfer',
       type: 'error',
       account: account.value,
       errorDetails: err.parsed,
