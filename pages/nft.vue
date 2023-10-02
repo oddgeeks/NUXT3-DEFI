@@ -11,8 +11,7 @@ const searchQuery = ref()
 const { account } = useWeb3()
 const { safeAddress } = useAvocadoSafe()
 
-const { NFT, isNFTHidden } = useNft()
-const [hideNFT, toggle] = useToggle(false)
+const { NFT, isNFTHidden, hideNFT } = useNft()
 
 const route = useRoute()
 
@@ -77,11 +76,13 @@ const filteredAssets = computed(() => {
       <h1 class="flex-1">
         Your NFTs <span v-if="data">({{ data?.length }})</span>
       </h1>
-      <button class="flex gap-2.5 items-center" @click="toggle()">
-        <span>{{ hideNFT ? 'Unhide All' : 'Hide' }}</span>
-        <SvgoEyeOff v-if="hideNFT" class="stroke-slate-icon w-5 h-5" />
-        <SvgoEye v-if="!hideNFT" class="text-slate-400 w-5 h-5" />
-      </button>
+      <ClientOnly>
+        <button class="flex gap-2.5 items-center" @click="hideNFT = !hideNFT">
+          <span>{{ hideNFT ? 'Unhide All' : 'Hide' }}</span>
+          <SvgoEyeOff v-if="hideNFT" class="stroke-slate-icon w-5 h-5" />
+          <SvgoEye v-if="!hideNFT" class="text-slate-400 w-5 h-5" />
+        </button>
+      </ClientOnly>
       <MultipleNetworkFilter v-if="account" v-model:networks="networkPreferences" container-class="!left-[10px]" :show-supported-networks="false" :filters="false" />
     </div>
     <CommonInput

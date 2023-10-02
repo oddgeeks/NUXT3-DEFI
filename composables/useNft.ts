@@ -1,4 +1,5 @@
-const hiddenNFTs = useLocalStorage<NFTData[]>('hiddenNFTs', [])
+const hiddenNFTs = useLocalStorage<NFTData[]>('hidden-nfts', [])
+const hideNFT = useLocalStorage<boolean>('hide-nft', false)
 
 export function useNft() {
   class NFT {
@@ -74,5 +75,6 @@ export function useNft() {
     NFT,
     isNFTHidden,
     hiddenNFTs,
+    hideNFT,
   }
 }
