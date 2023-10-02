@@ -1603,7 +1603,7 @@
   dependencies:
     "@ethersproject/logger" "^5.7.0"
 
-"@ethersproject/providers@5.7.2", "@ethersproject/providers@^5.6.8", "@ethersproject/providers@^5.7.0", "@ethersproject/providers@^5.7.2":
+"@ethersproject/providers@5.7.2", "@ethersproject/providers@^5.6.8", "@ethersproject/providers@^5.7.0":
   version "5.7.2"
   resolved "https://registry.yarnpkg.com/@ethersproject/providers/-/providers-5.7.2.tgz#f8b1a4f275d7ce58cf0a2eec222269a08beb18cb"
   integrity sha512-g34EWZ1WWAVgr4aptGlVBF8mhl3VWjv+8hoAnzStu8Ah22VHBsuGzP17eb6xDVRzw895G4W7vvx60lFFur/1Rg==
@@ -1666,7 +1666,7 @@
     elliptic "6.5.4"
     hash.js "1.1.7"
 
-"@ethersproject/solidity@5.7.0", "@ethersproject/solidity@^5.7.0":
+"@ethersproject/solidity@5.7.0":
   version "5.7.0"
   resolved "https://registry.yarnpkg.com/@ethersproject/solidity/-/solidity-5.7.0.tgz#5e9c911d8a2acce2a5ebb48a5e2e0af20b631cb8"
   integrity sha512-HmabMd2Dt/raavyaGukF4XxizWKhKQ24DoLtdNbBmNKUOPqwjsKQSdV9GQtj9CBEea9DlzETlVER1gYeXXBGaA==
@@ -1792,42 +1792,6 @@
     bignumber.js "^9.1.1"
     ethers "^5.7.2"
     xxhashjs "^0.2.2"
-
-"@instadapp/avocado-dev@npm:@instadapp/avocado@dev":
-  version "0.0.0-dev.5daf0e4"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.0.0-dev.5daf0e4.tgz#78453e8ea991f9dacb1d0398a2107fb35daa7aec"
-  integrity sha512-vIHdL0p+FHr0FvepphmK2w9MwrmE1n3lio/ea/+M25V8vbMr2/wIr+TDvGGDp1HYAimh+F5FnTQBvsvkz51tBQ==
-  dependencies:
-    "@ethersproject/abi" "^5.7.0"
-    "@ethersproject/bytes" "^5.7.0"
-    "@ethersproject/providers" "^5.7.2"
-    "@ethersproject/solidity" "^5.7.0"
-    "@ethersproject/strings" "^5.7.0"
-    "@vue/runtime-dom" "^3.2.45"
-    "@web3-react/abstract-connector" "^6.0.7"
-    ethers "^5.7.2"
-    events "^3.3.0"
-    mitt "^3.0.0"
-    semver "^7.3.8"
-    tiny-warning "^1.0.3"
-
-"@instadapp/avocado@^0.4.5":
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado/-/avocado-0.4.5.tgz#d0ce1930dabb6b6c4dcaf16ae6bd4039717dd89d"
-  integrity sha512-Pjdx8iRqATt7E+eHCeYCVJjFGA6917pCDQlJGzh0ovXNc9vbqFjW2R+tSBq15TkZ2CRR14xO1iut/ZF+e1hzXA==
-  dependencies:
-    "@ethersproject/abi" "^5.7.0"
-    "@ethersproject/bytes" "^5.7.0"
-    "@ethersproject/providers" "^5.7.2"
-    "@ethersproject/solidity" "^5.7.0"
-    "@ethersproject/strings" "^5.7.0"
-    "@vue/runtime-dom" "^3.2.45"
-    "@web3-react/abstract-connector" "^6.0.7"
-    ethers "^5.7.2"
-    events "^3.3.0"
-    mitt "^3.0.0"
-    semver "^7.3.8"
-    tiny-warning "^1.0.3"
 
 "@instadapp/transaction-builder@^0.0.12":
   version "0.0.12"
@@ -3407,7 +3371,7 @@
     "@vue/reactivity" "3.3.4"
     "@vue/shared" "3.3.4"
 
-"@vue/runtime-dom@3.3.4", "@vue/runtime-dom@^3.2.45":
+"@vue/runtime-dom@3.3.4":
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/@vue/runtime-dom/-/runtime-dom-3.3.4.tgz#992f2579d0ed6ce961f47bbe9bfe4b6791251566"
   integrity sha512-Aj5bTJ3u5sFsUckRghsNjVTtxZQ1OyMWCr5dZRAPijF/0Vy4xEoRCwLyHXcj4D0UFbJ4lbx3gPTgg06K/GnPnQ==
@@ -8428,11 +8392,6 @@ minizlib@^2.1.1:
   dependencies:
     minipass "^3.0.0"
     yallist "^4.0.0"
-
-mitt@^3.0.0:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/mitt/-/mitt-3.0.1.tgz#ea36cf0cc30403601ae074c8f77b7092cdab36d1"
-  integrity sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==
 
 mkdirp-promise@4:
   version "4.0.1"

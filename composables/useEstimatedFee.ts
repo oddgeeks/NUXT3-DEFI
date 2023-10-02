@@ -37,11 +37,15 @@ export function useEstimatedFee(
 ) {
   const { avoProvider } = useSafe()
   const { account } = useWeb3()
-  const { safe, generateMultisigSignatureMessage } = useAvocadoSafe()
+  const { generateMultisigSignatureMessage, generateSignatureMessage } = useAvocadoSafe()
   const { gasBalance, safeAddress, selectedSafe, isSelectedSafeLegacy } = storeToRefs(useSafe())
   const { parseTransactionError } = useErrorHandler()
 
   const immediate = !!params?.immediate
+
+  const rawData = ref<IEstimatedFeeData>()
+  const pending = ref(false)
+  const error = ref()
 
   const data = computed(() => {
     const discountDetails: DiscountDetails = {
@@ -75,98 +79,91 @@ export function useEstimatedFee(
     if (toBN(gasBalance.value).lt(data.value?.amountAfterDiscount!))
       return 'Not enough USDC gas'
 
-    if (toBN(gasBalance.value).lt(toBN(data.value?.amountAfterDiscount).times(1.1))) {
+    if (toBN(gasBalance.value).lt(toBN(data.value?.amountAfterDiscount).times(1.1)))
       return 'Estimated gas and current balance are very close, due to market fluctuation tx might fail.'
+  })
+
+  watchThrottled(txData, () => {
+    fetchEstimatedFee()
+  }, {
+    immediate,
+    throttle: 500,
+  })
+
+  async function fetchEstimatedFee() {
+    try {
+      const disabled = params?.disabled?.()
+      if (disabled || !txData.value)
+        return
+
+      const isArr = isArray(txData.value)
+
+      if (isArr && txData.value.length === 0)
+        return
+
+      pending.value = true
+      error.value = undefined
+
+      const actualTx = isArr ? txData.value : [txData.value]
+
+      let message
+
+      if (isSelectedSafeLegacy.value) {
+        message = await generateSignatureMessage({
+          actions: actualTx,
+          chainId: chainId.value,
+          options: params?.options,
+        })
+
+        console.log({ message })
+      }
+      else {
+        message = await generateMultisigSignatureMessage({
+          chainId: chainId.value,
+          actions: actualTx,
+          options: params?.options,
+          metadata: params?.metadata || '0x',
+          nonce: !isUndefined(params?.nonce) ? Number(params?.nonce) : undefined,
+        })
+      }
+
+      const signatureParams = { message, targetChainId: chainId.value, safe: safeAddress.value, owner: selectedSafe.value?.owner_address || account.value }
+
+      console.log({ message, signatureParams })
+
+      if (!isSelectedSafeLegacy.value) {
+        Object.assign(signatureParams, {
+          index: String(selectedSafe.value?.multisig_index || 0),
+        })
+      }
+
+      const signatureMethod = isSelectedSafeLegacy.value ? 'txn_estimateFeeWithoutSignature' : 'txn_multisigEstimateFeeWithoutSignature'
+
+      const data = await avoProvider.send(signatureMethod, [
+        signatureParams,
+      ])
+
+      rawData.value = data
     }
-  })
-
-  const {
-    data: rawData,
-    error,
-    pending,
-    refresh,
-  } = useAsyncData<IEstimatedFeeData>(
-    `estimated-fee-${chainId.value}`,
-    async () => {
-      try {
-        const disabled = params?.disabled?.()
-        if (disabled)
-          return
-
-        if (!txData.value)
-          return
-
-        const isArr = isArray(txData.value)
-
-        if (isArr && txData.value.length === 0)
-          return
-
-        const actualTx = isArray(txData.value) ? txData.value : [txData.value]
-
-        let message
-
-        if (isSelectedSafeLegacy.value) {
-          message = await safe.value?.generateSignatureMessage(
-            actualTx,
-            +chainId.value,
-            params?.options,
-          )
-        }
-        else {
-          message = await generateMultisigSignatureMessage({
-            chainId: chainId.value,
-            actions: actualTx,
-            options: params?.options,
-            metadata: params?.metadata,
-            nonce: !isUndefined(params?.nonce) ? Number(params?.nonce) : undefined,
-          })
-        }
-
-        const signatureParams = { message, targetChainId: chainId.value, safe: safeAddress.value, owner: selectedSafe.value?.owner_address || account.value }
-
-        console.log({ message, signatureParams })
-
-        if (!isSelectedSafeLegacy.value) {
-          Object.assign(signatureParams, {
-            index: String(selectedSafe.value?.multisig_index || 0),
-          })
-        }
-
-        const signatureMethod = isSelectedSafeLegacy.value ? 'txn_estimateFeeWithoutSignature' : 'txn_multisigEstimateFeeWithoutSignature'
-
-        const data = await avoProvider.send(signatureMethod, [
-          signatureParams,
-        ])
-
-        return data
+    catch (err: any) {
+      if (retry?.active === true && retry?.count?.value < retry?.max) {
+        console.log('Fee estimation failed, retrying')
+        retry.cb(retry.count, retry.max)
       }
-      catch (err: any) {
-        if (retry?.active === true && retry?.count?.value < retry?.max) {
-          console.log('Fee estimation failed, retrying')
-          retry.cb(retry.count, retry.max)
-        }
-        throw err?.error || err
-      }
-      finally {
-        params?.cb?.()
-      }
-    },
-    {
-      server: false,
-      immediate,
-      watch: [txData],
-    },
-  )
 
-  onUnmounted(() => {
-    clearNuxtData(`estimated-fee-${chainId.value}`)
-  })
+      error.value = err?.error || err
+    }
+    finally {
+      pending.value = false
+      params?.cb?.()
+    }
+  }
 
   return {
     data,
     rawData,
     error: err,
     pending,
-    refresh,
+    refresh: fetchEstimatedFee,
   }
 }

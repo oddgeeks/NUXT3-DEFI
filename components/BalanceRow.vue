@@ -16,8 +16,6 @@ const props = defineProps<{
   count?: number
 }>()
 
-const { isSelectedSafeLegacy } = storeToRefs(useSafe())
-
 const balance = computed(() => props.tokenBalance as IBalance)
 const liteAPY = ref('')
 
@@ -101,9 +99,7 @@ function onClick() {
             v-tippy="`${sum} ${tokenBalance.symbol?.toUpperCase()}`"
             class="text-sm font-medium text-slate-400 max-w-[256px] uppercase"
           >
-            {{
-              formatDecimal(sum)
-            }}
+            {{ formatDecimal(sum || 0) }}
             {{ tokenBalance.symbol }}
           </span>
         </div>

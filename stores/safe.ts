@@ -592,6 +592,7 @@ export const useSafe = defineStore('safe', () => {
         chainId,
         provider: getRpcBatchProviderByChainId(chainId),
       })
+
       return config
     }
     catch (e) {

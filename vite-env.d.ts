@@ -24,8 +24,6 @@ declare module '*.svg?skipsvgo' {
   export default src
 }
 
-type ITxType = "send" | "swap" | "bridge" | "topUpGas" | "wc" | "upgrade";
-
 type ChainId = 1 | 137 | 42161 | 10 | 56 | 43114 | 100 | 1101 | 634 | 63400;
 
 interface Provider {
@@ -123,7 +121,7 @@ interface IBridgeResponse {
 }
 
 interface IBridgeResult {
-  routes: Route[];
+  routes: IRoute[];
   fromAsset: FromAsset2;
   toAsset: ToAsset3;
   bridgeRouteErrors: BridgeRouteErrors;
@@ -142,6 +140,18 @@ interface IBridgeTokensResult {
   price?: number;
   score?: number;
 }
+
+interface IGenerateSignatureMessageParams {
+  chainId: string | number
+  actions: TransactionsAction[]
+  options?: any
+}
+
+interface ISignLegacyDataParams {
+  message: any
+  chainId: string | number
+}
+
 
 interface IBridgeTokensResponse {
   success: boolean;
@@ -348,7 +358,7 @@ interface IModal {
 
 type ISnackOptions = {
   message: string;
-  type: "success" | "error";
+  type: "success" | "error" | 'info';
   open?: boolean;
   timeout?: number;
 };
@@ -362,7 +372,7 @@ type IOptions = {
   sheetPosition?: "top" | "bottom";
 };
 
-type IWeb3Action = "send" | "bridge" | "swap" | "topup" | "reedem" | "claim" | 'deploy' | 'upgrade' | 'nft' | 'wc';
+type IWeb3Action = "transfer" | "bridge" | "swap" | "gas-topup" | "reedem" | "claim" | 'deploy' | 'upgrade' | 'nft' | 'dapp';
 
 type ISlackMessageType = "danger" | "error" | "success" | "banner";
 
