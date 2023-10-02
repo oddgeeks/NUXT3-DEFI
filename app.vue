@@ -2,6 +2,23 @@
 useTokens()
 useSafe()
 const { library } = useWeb3()
+const isChatwoodReady = ref(false)
+
+useScriptTag('https://app.chatwoot.com/packs/js/sdk.js', () => {
+  // @ts-expect-error
+  if (!window.chatwootSDK)
+    return
+
+  // @ts-expect-error
+  window.chatwootSDK.run({
+    websiteToken: 'pmgPtAUDhoeVv7h9nS2xk7PF',
+    baseUrl: 'https://app.chatwoot.com',
+  })
+}, {
+  async: true,
+  defer: true,
+  immediate: true,
+})
 
 onMounted(() => {
   (window as any).library = library
@@ -18,31 +35,27 @@ onMounted(() => {
 })
 const { account } = useWeb3()
 watch(
-  account,
+  [account, isChatwoodReady],
   () => {
-    if (account.value) {
-      (window as any).$chatwoot.setUser(account.value.toLowerCase(), {
-        name: account.value.toLowerCase(),
-        email: account.value.toLowerCase(),
-      })
-    }
+    if (!account.value || !isChatwoodReady.value)
+      return
+
+    const identifier = account.value.toLowerCase()
+
+    // @ts-expect-error
+    window.$chatwoot.setUser(identifier, {
+      name: identifier,
+      email: identifier,
+    })
   }, { immediate: true })
 
 onMounted(() => {
-  (function (d, t) {
-    const BASE_URL = 'https://app.chatwoot.com'
-    const g: any = d.createElement(t); const s: any = d.getElementsByTagName(t)[0]
-    g.src = `${BASE_URL}/packs/js/sdk.js`
-    g.defer = true
-    g.async = true
-    s.parentNode.insertBefore(g, s)
-    g.onload = function () {
-      (window as any).chatwootSDK.run({
-        websiteToken: 'pmgPtAUDhoeVv7h9nS2xk7PF',
-        baseUrl: BASE_URL,
-      })
-    }
-  })(document, 'script')
+  if (process.server)
+    return
+
+  window.addEventListener('chatwoot:ready', async () => {
+    isChatwoodReady.value = true
+  })
 })
 </script>
 
