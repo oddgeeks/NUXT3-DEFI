@@ -11,9 +11,8 @@ const searchQuery = ref()
 const { account } = useWeb3()
 const { safeAddress } = useAvocadoSafe()
 
-const { NFT } = useNft()
+const { NFT, isNFTHidden } = useNft()
 const [hideNFT, toggle] = useToggle(false)
-const hiddenNFTs = useLocalStorage<NFTData[]>('hiddenNFTs', [])
 
 const route = useRoute()
 
@@ -57,7 +56,7 @@ useIntervalFn(() => {
 const filteredAssets = computed(() => {
   const items = data.value?.filter(item =>
     networkPreferences.value.some(i => i == item.chainId)
-    && (hideNFT.value ? !hiddenNFTs.value.some(i => i.contractAddress.toLowerCase() === item.contractAddress.toLowerCase() && i.tokenId === item.tokenId) : true),
+    && (hideNFT.value ? !isNFTHidden(item).hidden : true),
   )
 
   if (!searchQuery.value)

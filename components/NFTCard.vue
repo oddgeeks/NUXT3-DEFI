@@ -2,16 +2,18 @@
 const props = defineProps<{
   asset: NFTData
 }>()
-const hiddenNFTs = useLocalStorage<NFTData[]>('hiddenNFTs', [])
+
+const { isNFTHidden, hiddenNFTs } = useNft()
+
 function toggleNFT() {
-  const index = hiddenNFTs.value.findIndex(nft => nft.contractAddress.toLowerCase() === props.asset.contractAddress.toLowerCase() && nft.tokenId === props.asset.tokenId)
-  if (index > -1)
-    hiddenNFTs.value.splice(index, 1)
+  const nft = isNFTHidden(props.asset)
+  if (nft.hidden)
+    hiddenNFTs.value.splice(nft.index, 1)
   else
     hiddenNFTs.value.push(props.asset)
 }
 const isHidden = computed(() => {
-  return hiddenNFTs.value.findIndex(nft => nft.contractAddress.toLowerCase() === props.asset.contractAddress.toLowerCase() && nft.tokenId === props.asset.tokenId) > -1
+  return isNFTHidden(props.asset).hidden
 })
 </script>
 

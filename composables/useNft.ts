@@ -1,3 +1,5 @@
+const hiddenNFTs = useLocalStorage<NFTData[]>('hiddenNFTs', [])
+
 export function useNft() {
   class NFT {
     owner: string
@@ -59,7 +61,18 @@ export function useNft() {
     }
   }
 
+  function isNFTHidden(asset: NFTData) {
+    const index = hiddenNFTs.value.findIndex(nft => nft.contractAddress.toLowerCase() === asset.contractAddress.toLowerCase() && nft.tokenId === asset.tokenId)
+
+    return {
+      hidden: index !== -1,
+      index,
+    }
+  }
+
   return {
     NFT,
+    isNFTHidden,
+    hiddenNFTs,
   }
 }
