@@ -33,7 +33,7 @@ const props = withDefaults(
   },
 )
 
-const emit = defineEmits(['update:modelValue', 'inputFocus', 'inputBlur'])
+const emit = defineEmits(['update:modelValue', 'inputFocus', 'inputBlur', 'beforeinput'])
 
 const seperator = '.'
 const htmlInputType = computed(() => {
@@ -77,6 +77,7 @@ function handleBeforeInput(e: any) {
     if (key && toBN(computedValue).isNaN())
       return e.preventDefault()
   }
+  emit('beforeinput', e)
 }
 </script>
 

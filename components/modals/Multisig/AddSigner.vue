@@ -12,7 +12,6 @@ const props = defineProps<{
 
 const emit = defineEmits(['destroy'])
 
-const { showInsufficientGasBanner } = useBanner()
 const { account } = useWeb3()
 const contactSelections = ref<number[]>([])
 

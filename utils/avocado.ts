@@ -1,12 +1,8 @@
-import * as Avocado from '@instadapp/avocado'
-import * as AvocadoDev from '@instadapp/avocado-dev'
 import { _getAppConfig } from 'nuxt/app'
 
 const config = _getAppConfig()
 
 const isProd = config.isProd
-
-export default isProd ? Avocado : AvocadoDev
 
 export const avoChainId = isProd ? AVO_PROD_CHAIN_ID : AVO_STAGING_CHAIN_ID
 export const avoChainName = isProd

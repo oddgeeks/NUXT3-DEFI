@@ -150,11 +150,9 @@ async function handleSubmit() {
     }
 
     logActionToSlack({
-      message: `${props.isSign ? 'Permit2 Approval' : 'Txn'} on ${
-       peerURL.value
-      }`,
+      message: generateSlackMessage(props.metadata, props.chainId),
       type: 'success',
-      action: 'wc',
+      action: 'dapp',
       txHash: transactionHash,
       chainId: props.chainId,
       account: account.value,
@@ -177,7 +175,7 @@ async function handleSubmit() {
         peerURL.value
       } ${err.formatted}`,
       type: 'error',
-      action: 'wc',
+      action: 'dapp',
       chainId: props.chainId,
       account: account.value,
       errorDetails: err.parsed,
