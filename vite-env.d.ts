@@ -518,6 +518,11 @@ interface NFTAttributes {
   value: string;
 }
 
+interface IGasBalanceMigration {
+  safe: ISafe;
+  amount: string;
+}
+
 interface NFTData {
   imageUrl: string;
   thumbnailUrl: string;

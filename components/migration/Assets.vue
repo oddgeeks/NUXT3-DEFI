@@ -10,6 +10,10 @@ const tabs = [
     name: 'NFTs',
     value: 'nfts',
   },
+  {
+    name: 'Gas',
+    value: 'gas',
+  },
   // TODO: hide DeFi while it's not implemented yet
   // {
   //   name: 'DeFi Positions',
@@ -27,8 +31,9 @@ const tabs = [
       @updated="(newValue) => activeTab = newValue"
     />
 
-    <MigrationBalances v-show="activeTab === 'balances'" class="h-[calc(100%-39px)] overflow-y-auto scroll-style" />
-    <MigrationNFTs v-show="activeTab === 'nfts'" class="h-[calc(100%-39px)] overflow-y-auto" />
+    <MigrationBalances v-if="activeTab === 'balances'" class="h-[calc(100%-39px)] overflow-y-auto scroll-style" />
+    <MigrationNFTs v-else-if="activeTab === 'nfts'" class="h-[calc(100%-39px)] overflow-y-auto" />
+    <MigrationGas v-else-if="activeTab === 'gas'" />
     <!-- <Defi v-show="activeTab === 'defi'" class="h-[calc(100%-39px)] overflow-y-auto" /> -->
   </div>
 </template>

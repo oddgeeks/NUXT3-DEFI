@@ -1,75 +1,12 @@
-<template>
-  <div>
-    <div class="flex items-start justify-between">
-      <div class="flex items-center">
-        <button class="bg-green-500 p-[10px] rounded-full relative flex items-center justify-center mr-[14px]">
-          <SvgoArrowRight />
-        </button>
-        <div>
-          <h2 class="dark:text-white text-slate-900 text-lg font-semibold mb-1">Migrate</h2>
-          <h3 class="text-slate-400 text-xs font-medium">Migrate to...</h3>
-        </div>
-      </div>
-    </div>
-
-    <div class="p-5 mt-[30px] border-[1px] dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5">
-      <h4 class="text-xs dark:text-white text-slate-900 font-medium mb-[10px]">Balances</h4>
-      <div class="w-[460px] max-w-full dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5" :class="selectedTokensForMigration?.length ? 'border-[1px]' : ''">
-        <MigrationTokenBalance
-          v-for="token in selectedTokensForMigration"
-          :key="token.address + '-' + token.chainId"
-          :token-balance="(token as IBalance)"
-          is-checked
-          show-selected-ui
-          @toggleCheck="() => toggleSelectedTokenForMigration(token)"
-        />
-        <div v-if="!selectedTokensForMigration?.length" class="text-xs text-slate-400 font-medium">No balances selected.</div>
-      </div>
-
-      <h4 class="text-xs dark:text-white text-slate-900 font-medium mb-[10px] mt-5">NFTs</h4>
-      <div class="w-[460px] max-w-full dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5" :class="selectedNFTsForMigration?.length ? 'border-[1px]' : ''">
-        <MigrationNFTCard
-          v-for="asset in selectedNFTsForMigration"
-          :key="asset.tokenId + '-' + asset.chainId"
-          :asset="asset"
-          is-checked
-          show-selected-ui
-          @toggleCheck="() => toggleSelectedNFTsForMigration(asset)"
-        />
-        <div v-if="!selectedNFTsForMigration?.length" class="text-xs text-slate-400 font-medium">No NFTs selected.</div>
-      </div>
-
-      <!-- <h4 class="text-xs text-slate-400 font-medium mb-[10px] mt-5">DeFi Positions</h4>
-      <div>
-      </div> -->
-    </div>
-
-    <!-- <EstimatedFee :loading="pending" :data="data" :error="error" /> -->
-
-    <!-- <MigrationEstimatedFee /> -->
-
-    <CommonButton
-      class="mt-5 w-full"
-      size="lg"
-      :disabled="!selectedTokensForMigration?.length && !selectedNFTsForMigration?.length"
-      :loading="loading"
-      @click="migrate"
-    >
-      <div class="flex items-center justify-center w-full">
-        <SvgoArrowRight class="rotate-90" />
-        <span class="mx-[10px] text-sm text-white font-medium">Migrate</span>
-        <SvgoArrowRight class="rotate-90" />
-      </div>
-    </CommonButton>
-
-    <WalletItem class="mt-4" v-if="selectedSafe" v2 primary hide-active-state :safe="selectedSafe" />
-  </div>
-</template>
-
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { ethers } from 'ethers'
-import { Erc20__factory } from '~/contracts';
+import { Erc20__factory } from '~/contracts'
+
+const props = defineProps<MigrateToModalProps>()
+
+const emit = defineEmits(['destroy'])
+
 const { parseTransactionError } = useErrorHandler()
 
 interface MigrateToModalProps {
@@ -79,14 +16,12 @@ interface MigrateToModalProps {
 const { sendTransactions } = useAvocadoSafe()
 const { legacySafeAddress } = storeToRefs(useSafe())
 const { toggleSelectedTokenForMigration, toggleSelectedNFTsForMigration } = useTokens()
-const { selectedTokensForMigration, selectedNFTsForMigration } = storeToRefs(useTokens())
+const { selectedTokensForMigration, selectedNFTsForMigration, selectedGasBalanceForMigration } = storeToRefs(useTokens())
 const { account, library } = useWeb3()
 
-const props = defineProps<MigrateToModalProps>()
-const emit = defineEmits(['destroy'])
 const loading = ref(false)
 
-const nftChainIds = computed(() => selectedNFTsForMigration.value?.map((nft) => nft.chainId))
+const nftChainIds = computed(() => selectedNFTsForMigration.value?.map(nft => nft.chainId))
 
 const nftTxs = computed(() => {
   const chainIds = []
@@ -103,19 +38,19 @@ const nftTxs = computed(() => {
     const calldata = contractInterface.encodeFunctionData('transferFrom', [legacySafeAddress.value, props.selectedSafe?.safe_address, nft.tokenId])
 
     chainIds.push(nft.chainId)
-    
+
     txs.push([{
       to: nft.contractAddress,
       data: calldata,
       operation: '0',
-      value: '0'
+      value: '0',
     }])
   }
 
   return txs
 })
 
-const migrateNfts = async () => {
+async function migrateNfts() {
   const hashes: string[] = []
 
   for (let i = 0; i < selectedNFTsForMigration.value?.length; i++) {
@@ -134,13 +69,13 @@ const migrateNfts = async () => {
 }
 
 async function migrate() {
-  loading.value = true;
-  const transactions: any = [];
+  loading.value = true
+  const transactions: any = []
 
   for (let i = 0; i < selectedTokensForMigration.value.length; i++) {
-    const selectedToken = selectedTokensForMigration.value[i];
+    const selectedToken = selectedTokensForMigration.value[i]
 
-    let tx;
+    let tx
 
     const transferAmount = toBN((selectedToken as IBalance).balance)
       .times(10 ** selectedToken.decimals)
@@ -153,7 +88,8 @@ async function migrate() {
         value: transferAmount,
         data: '0x',
       }
-    } else {
+    }
+    else {
       const contract = Erc20__factory.connect(selectedToken.address, library.value)
 
       const { data: transferData } = await contract.populateTransaction.transfer(
@@ -174,46 +110,168 @@ async function migrate() {
       transactions.push(
         {
           chainId: selectedToken.chainId,
-          txs: [tx]
-        }
+          txs: [tx],
+        },
       )
-    } else {
+    }
+    else {
       transactions[index] = {
         chainId: transactions[index].chainId,
-        txs: [...transactions[index].txs, tx]
+        txs: [...transactions[index].txs, tx],
       }
     }
   }
 
   try {
-    const hashes = [];
-    const chainIds = [];
+    const hashes = []
+    const chainIds = []
 
     for (let i = 0; i < transactions.length; i++) {
       const hash = await sendTransactions(
         transactions[i].txs!,
         Number(transactions[i].chainId),
         {},
-        'send',
-      );
+        'transfer',
+      )
 
-      hashes.push(hash);
-      chainIds.push(transactions[i].chainId);
+      hashes.push(hash)
+      chainIds.push(transactions[i].chainId)
     }
 
     const nftHashes = await migrateNfts()
 
     emit('destroy')
     openPendingMigrationModal([...hashes, ...nftHashes || []], [...chainIds, ...nftChainIds.value])
-  } catch (e: any) {
+  }
+  catch (e: any) {
     const err = parseTransactionError(e)
 
     openSnackbar({
       message: err.formatted,
       type: 'error',
     })
-  } finally {
+  }
+  finally {
     loading.value = false
   }
 }
+
+async function handleMigrateGasBalance() {
+  const gasBalanceManagerAddress = '0x847b123EB1Ed2f51bC8A5ed7D5C9091595793ae7'
+  const gasBalanceManagerAbi = [{ inputs: [{ internalType: 'address', name: 'avoFactory_', type: 'address' }, { internalType: 'address', name: 'avoMultisigFactory_', type: 'address' }, { internalType: 'address', name: 'owner_', type: 'address' }], stateMutability: 'nonpayable', type: 'constructor' }, { inputs: [], name: 'AvoGasBalanceManager__InvalidParams', type: 'error' }, { inputs: [], name: 'AvoGasBalanceManager__Unauthorized', type: 'error' }, { anonymous: false, inputs: [{ indexed: true, internalType: 'address', name: 'fromAvo', type: 'address' }, { indexed: true, internalType: 'address', name: 'toAvo', type: 'address' }, { indexed: false, internalType: 'address', name: 'toAvoOwner', type: 'address' }, { indexed: false, internalType: 'uint256', name: 'toAvoIndex', type: 'uint256' }, { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' }], name: 'AvoTransfer', type: 'event' }, { anonymous: false, inputs: [{ indexed: true, internalType: 'address', name: 'previousOwner', type: 'address' }, { indexed: true, internalType: 'address', name: 'newOwner', type: 'address' }], name: 'OwnershipTransferred', type: 'event' }, { anonymous: false, inputs: [{ indexed: false, internalType: 'address', name: 'account', type: 'address' }], name: 'Paused', type: 'event' }, { anonymous: false, inputs: [{ indexed: false, internalType: 'address', name: 'account', type: 'address' }], name: 'Unpaused', type: 'event' }, { inputs: [], name: 'avoFactory', outputs: [{ internalType: 'contract IAvoFactory', name: '', type: 'address' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'avoMultisigFactory', outputs: [{ internalType: 'contract IAvoMultisigFactory', name: '', type: 'address' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'owner', outputs: [{ internalType: 'address', name: '', type: 'address' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'pause', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [], name: 'paused', outputs: [{ internalType: 'bool', name: '', type: 'bool' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'renounceOwnership', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [{ internalType: 'address', name: 'toAvoOwner_', type: 'address' }, { internalType: 'uint256', name: 'toAvoIndex_', type: 'uint256' }, { internalType: 'uint256', name: 'amount_', type: 'uint256' }], name: 'transfer', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [{ internalType: 'address', name: 'toAvo_', type: 'address' }, { internalType: 'uint256', name: 'amount_', type: 'uint256' }], name: 'transfer', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [{ internalType: 'address', name: 'newOwner', type: 'address' }], name: 'transferOwnership', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [], name: 'unpause', outputs: [], stateMutability: 'nonpayable', type: 'function' }]
+
+  const signer = library.value.getSigner()
+
+  const gasBalanceManagerInstance = new ethers.Contract(gasBalanceManagerAddress, gasBalanceManagerAbi, signer)
+
+  const actions = []
+
+  for (const gasBalance of selectedGasBalanceForMigration.value) {
+    const data = (await gasBalanceManagerInstance.populateTransaction['transfer(address,uint256,uint256)'](account.value, gasBalance.safe.multisig_index, gasBalance.amount)).data
+
+    const tx = {
+      to: gasBalanceManagerAddress,
+      data,
+      value: '0',
+      operation: '0',
+    }
+
+    actions.push(tx)
+  }
+
+  const hash = await sendTransactions(
+    actions,
+    137,
+    undefined,
+    'transfer',
+  )
+
+  showPendingTransactionModal(hash, 137)
+}
 </script>
+
+<template>
+  <div>
+    <div class="flex items-start justify-between">
+      <div class="flex items-center">
+        <button class="bg-green-500 p-[10px] rounded-full relative flex items-center justify-center mr-[14px]">
+          <SvgoArrowRight />
+        </button>
+        <div>
+          <h2 class="dark:text-white text-slate-900 text-lg font-semibold mb-1">
+            Migrate
+          </h2>
+          <h3 class="text-slate-400 text-xs font-medium">
+            Migrate to...
+          </h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-5 mt-[30px] border-[1px] dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5">
+      <h4 class="text-xs dark:text-white text-slate-900 font-medium mb-[10px]">
+        Balances
+      </h4>
+      <div class="w-[460px] max-w-full dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5" :class="selectedTokensForMigration?.length ? 'border-[1px]' : ''">
+        <MigrationTokenBalance
+          v-for="token in selectedTokensForMigration"
+          :key="`${token.address}-${token.chainId}`"
+          :token-balance="token as IBalance"
+          is-checked
+          show-selected-ui
+          @toggle-check="() => toggleSelectedTokenForMigration(token)"
+        />
+        <div v-if="!selectedTokensForMigration?.length" class="text-xs text-slate-400 font-medium">
+          No balances selected.
+        </div>
+      </div>
+
+      <h4 class="text-xs dark:text-white text-slate-900 font-medium mb-[10px] mt-5">
+        NFTs
+      </h4>
+      <div class="w-[460px] max-w-full dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5" :class="selectedNFTsForMigration?.length ? 'border-[1px]' : ''">
+        <MigrationNFTCard
+          v-for="asset in selectedNFTsForMigration"
+          :key="`${asset.tokenId}-${asset.chainId}`"
+          :asset="asset"
+          is-checked
+          show-selected-ui
+          @toggleCheck="() => toggleSelectedNFTsForMigration(asset)"
+        />
+        <div v-if="!selectedNFTsForMigration?.length" class="text-xs text-slate-400 font-medium">
+          No NFTs selected.
+        </div>
+      </div>
+
+      <h4 class="text-xs dark:text-white text-slate-900 font-medium mb-[10px] mt-5">
+        Gas balances
+      </h4>
+      <div class="w-[460px] max-w-full dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5" :class="selectedGasBalanceForMigration?.length ? 'border-[1px]' : ''">
+        <MigrationGasCard v-for="asset in selectedGasBalanceForMigration" :key="asset.safe.safe_address" :safe="asset.safe" :balance="asset.amount" />
+        <div v-if="!selectedGasBalanceForMigration?.length" class="text-xs text-slate-400 font-medium">
+          No Gas selected.
+        </div>
+      </div>
+    </div>
+
+    <CommonButton
+      class="mt-5 w-full"
+      size="lg"
+      :disabled="!selectedTokensForMigration?.length && !selectedNFTsForMigration?.length"
+      :loading="loading"
+      @click="migrate"
+    >
+      <div class="flex items-center justify-center w-full">
+        <SvgoArrowRight class="rotate-90" />
+        <span class="mx-[10px] text-sm text-white font-medium">Migrate</span>
+        <SvgoArrowRight class="rotate-90" />
+      </div>
+    </CommonButton>
+
+    <CommonButton :disabled="!selectedGasBalanceForMigration.length" size="lg" class="w-full mt-4 justify-center" @click="handleMigrateGasBalance">
+      Migrate Gas balance
+    </CommonButton>
+
+    <WalletItem v-if="selectedSafe" class="mt-4" v2 primary hide-active-state :safe="selectedSafe" />
+  </div>
+</template>
