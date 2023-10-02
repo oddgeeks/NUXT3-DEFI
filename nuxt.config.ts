@@ -20,7 +20,6 @@ export default defineNuxtConfig({
     slackErrorKey: process.env.SLACK_ERROR_KEY,
     slackStagingKey: process.env.SLACK_STAGING_KEY,
     public: {
-      chatwootUserIdentificationKey: process.env.CHATWOOT_USER_IDENTIFICATION_KEY || 'faEq2wUpvuFEeeC1NgqBdGsQ',
       domainURL: process.env.VERCEL_BRANCH_URL ? `https://${process.env.VERCEL_BRANCH_URL}` : 'https://avocado.instadapp.io',
       googleAnalyticsId: process.env.GA_ID,
     },
