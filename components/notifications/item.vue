@@ -29,7 +29,7 @@ onMounted(() => deleteItem(props.item.id, props.item.duration))
       aria-label="Hide notification"
       @click="deleteItem(item.id, 0)"
     >
-      <SVGX class="inline-flex h-2.5 w-2.5 flex-shrink-0 text-slate-400" />
+      <SVGX class="inline-flex h-2.5 w-2.5 shrink-0 text-slate-400" />
     </button>
   </li>
 </template>

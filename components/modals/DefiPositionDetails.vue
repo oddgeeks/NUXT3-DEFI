@@ -5,9 +5,9 @@ defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-col gap-7.5 items-center justify-center">
+  <div class="flex flex-col items-center justify-center gap-7.5">
     <div
-      class="relative inline-block h-7.5 w-7.5 rounded-full flex-shrink-0"
+      class="relative inline-block h-7.5 w-7.5 shrink-0 rounded-full"
     >
       <img
         class="h-7.5 w-7.5 rounded-full"
@@ -17,14 +17,14 @@ defineProps<{
 
       <ChainLogo
         :stroke="true"
-        class="absolute w-4 h-4 -right-1 -bottom-1"
+        class="absolute -bottom-1 -right-1 h-4 w-4"
         :chain="position.chainId"
       />
     </div>
     <h1> {{ position.label }}</h1>
 
     <div class="grid w-full grid-cols-2 gap-5">
-      <div class="flex flex-col gap-1 px-5 py-4 dark:bg-gray-850 bg-slate-50 rounded-5">
+      <div class="flex flex-col gap-1 rounded-5 bg-slate-50 px-5 py-4 dark:bg-gray-850">
         <p class="text-[26px] leading-[30px]">
           {{ formatPercent(toBN(position.apy).div(100).toFixed()) }}
         </p>
@@ -32,7 +32,7 @@ defineProps<{
           Net APY
         </p>
       </div>
-      <div class="flex flex-col gap-1 px-5 py-4 dark:bg-gray-850 bg-slate-50 rounded-5">
+      <div class="flex flex-col gap-1 rounded-5 bg-slate-50 px-5 py-4 dark:bg-gray-850">
         <p class="text-[26px] leading-[30px]">
           {{ abbreviateNumber(position.healthFactor) }}
         </p>
@@ -46,11 +46,11 @@ defineProps<{
         <h2 class="text-lg">
           Supplied: {{ formatUsd(position.positions?.totalSupplyInUsd) }}
         </h2>
-        <ul class="flex flex-col dark:bg-gray-850 bg-slate-50 rounded-5 sm:max-h-[500px] max-h-[180px] sm:oveflow-[initial] overflow-auto scroll-style">
+        <ul class="sm:oveflow-[initial] scroll-style flex max-h-[180px] flex-col overflow-auto rounded-5 bg-slate-50 dark:bg-gray-850 sm:max-h-[500px]">
           <template v-if="toBN(position.positions?.totalSupplyInUsd).gt('0')">
             <DefiPositionRow v-for="item in position.suppliedTokens" :key="item.key" :chain-id="position.chainId" :item="item" />
           </template>
-          <p v-else class="py-4.5 px-5 text-center">
+          <p v-else class="px-5 py-4.5 text-center">
             No Supplied tokens
           </p>
         </ul>
@@ -59,11 +59,11 @@ defineProps<{
         <h2 class="text-lg">
           Borrowed: {{ formatUsd(position.positions?.totalBorrowInUsd) }}
         </h2>
-        <ul class="flex flex-col dark:bg-gray-850 bg-slate-50 rounded-5 sm:max-h-[500px] max-h-[180px] overflow-auto scroll-style">
+        <ul class="scroll-style flex max-h-[180px] flex-col overflow-auto rounded-5 bg-slate-50 dark:bg-gray-850 sm:max-h-[500px]">
           <template v-if="toBN(position.positions?.totalBorrowInUsd).gt('0')">
             <DefiPositionRow v-for="item in position.borrowedTokens" :key="item.key" :chain-id="position.chainId" :item="item" :borrow="true" />
           </template>
-          <p v-else class="py-4.5 px-5 text-center">
+          <p v-else class="px-5 py-4.5 text-center">
             No borrowed tokens
           </p>
         </ul>

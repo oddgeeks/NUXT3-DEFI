@@ -9,11 +9,11 @@ defineEmits(['update:modelValue'])
 </script>
 
 <template>
-  <div v-bind="rootAttrs" class="w-full flex flex-col">
-    <textarea :value="modelValue" v-bind="$attrs" class="dark:bg-slate-800 border-0 rounded-[15px] w-full bg-slate-100 focus-within:ring-1 dark:focus-within:bg-gray-850 focus-within:bg-slate-50 dark:focus-within:ring-slate-750 focus-within:ring-slate-100" @input="(e: any) => $emit('update:modelValue', e.target.value)" />
+  <div v-bind="rootAttrs" class="flex w-full flex-col">
+    <textarea :value="modelValue" v-bind="$attrs" class="w-full rounded-[15px] border-0 bg-slate-100 focus-within:bg-slate-50 focus-within:ring-1 focus-within:ring-slate-100 dark:bg-slate-800 dark:focus-within:bg-gray-850 dark:focus-within:ring-slate-750" @input="(e: any) => $emit('update:modelValue', e.target.value)" />
     <span
       v-if="!!errorMessage"
-      class="text-xs flex gap-2 items-center text-left mt-2 text-red-alert"
+      class="mt-2 flex items-center gap-2 text-left text-xs text-red-alert"
     >
       <SvgoInfo2 class="shrink-0" />
       {{ errorMessage }}

@@ -45,7 +45,7 @@ function selectType(type: string) {
 </script>
 
 <template>
-  <div class="flex flex-col gap-7.5 flex-1">
+  <div class="flex flex-1 flex-col gap-7.5">
     <TotalBalance />
     <div class="flex flex-col gap-3.5">
       <Tabs />
@@ -54,26 +54,26 @@ function selectType(type: string) {
     <DApps v-if="$route.query.tab === undefined" />
     <Bookmarks v-if="$route.query.tab === 'bookmarks'" />
 
-    <div class="flex gap-5 lg:flex-row flex-col flex-1">
-      <div class="flex relative flex-col w-full gap-5">
+    <div class="flex flex-1 flex-col gap-5 lg:flex-row">
+      <div class="relative flex w-full flex-col gap-5">
         <div class="flex flex-col gap-5">
           <WarningsUnstableDappVersion v-if="unstableDappNetworks?.length" />
           <div class="flex justify-between sm:pr-7.5">
             <div class="flex gap-7.5">
-              <h2 class="font-semibold inline-flex gap-2 items-center">
-                Balances <span class="sm:block hidden">
+              <h2 class="inline-flex items-center gap-2 font-semibold">
+                Balances <span class="hidden sm:block">
                   ({{ balancesTokenCount }})
                 </span>
                 <button v-if="account" @click="handleOpenDialog">
-                  <SvgoQuestionCircle class="w-5 h-5 text-primary" />
+                  <SvgoQuestionCircle class="h-5 w-5 text-primary" />
                 </button>
               </h2>
               <ClientOnly v-if="account">
                 <button
                   :class="{
-                    'dark:text-white text-slate-900': isHideZeroBalances,
+                    'text-slate-900 dark:text-white': isHideZeroBalances,
                   }"
-                  class="text-sm text-slate-400 hidden sm:inline-flex gap-2.5 items-center"
+                  class="hidden items-center gap-2.5 text-sm text-slate-400 sm:inline-flex"
                   @click="isHideZeroBalances = !isHideZeroBalances"
                 >
                   Hide 0 Balances
@@ -83,14 +83,14 @@ function selectType(type: string) {
                       { 'success-circle text-white': isHideZeroBalances },
                       { 'svg-circle darker': !isHideZeroBalances },
                     ]"
-                    class="w-4 h-4"
+                    class="h-4 w-4"
                   />
                 </button>
               </ClientOnly>
             </div>
             <div v-if="account" class="flex gap-[10px]">
               <ClientOnly v-if="account">
-                <div class="hidden md:flex gap-[16px] items-center">
+                <div class="hidden items-center gap-[16px] md:flex">
                   <button v-tippy="'Individual View'" @click="() => selectType('individual')">
                     <IndividualIconSVG :class="`${listType === 'individual' ? 'type-icon-selected' : 'type-icon-unselected'} cursor-pointer w-[20px] h-[20px]`" />
                   </button>
@@ -109,11 +109,11 @@ function selectType(type: string) {
         </div>
         <div
           v-if="!account"
-          class="absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-1/2 sm:-translate-y-1/2 flex items-center justify-center w-full"
+          class="absolute left-1/2 top-1/2 flex w-full -translate-x-1/2 translate-y-1/2 items-center justify-center sm:-translate-y-1/2"
         >
           <div class="flex flex-col items-center justify-center gap-6">
             <p
-              class="font-semibold leading-[30px] text-slate-400 sm:text-white sm:text-lg sm:whitespace-nowrap text-center"
+              class="text-center font-semibold leading-[30px] text-slate-400 sm:whitespace-nowrap sm:text-lg sm:text-white"
             >
               Connect your wallet to see the balances
             </p>

@@ -34,7 +34,7 @@ const visibleNetworks = computed(() => {
       >
         <ChainLogo
           :stroke="false"
-          class="w-6.5 sm:w-6 h-6.5 sm:h-6"
+          class="h-6.5 w-6.5 sm:h-6 sm:w-6"
           :chain="network.chainId"
         />
       </a>
@@ -42,11 +42,11 @@ const visibleNetworks = computed(() => {
       <ChainLogo
         v-else
         :stroke="false"
-        class="w-6.5 sm:w-6 h-6.5 sm:h-6"
+        class="h-6.5 w-6.5 sm:h-6 sm:w-6"
         :chain="network.chainId"
       />
     </li>
-    <button v-if="props.maxCount && availableNetworks.length > props.maxCount" class="w-6 h-6 text-xs bg-primary text-white rounded-full flex items-center justify-center" @click="openSupportedNetworks">
+    <button v-if="props.maxCount && availableNetworks.length > props.maxCount" class="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs text-white" @click="openSupportedNetworks">
       +{{ availableNetworks.length - props.maxCount }}
     </button>
   </ul>

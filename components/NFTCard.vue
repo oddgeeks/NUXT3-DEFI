@@ -18,20 +18,20 @@ const isHidden = computed(() => {
 </script>
 
 <template>
-  <li class="dark:bg-slate-800 bg-slate-150 rounded-5 relative">
+  <li class="relative rounded-5 bg-slate-150 dark:bg-slate-800">
     <button
-      class="w-full p-2.5 h-full text-left focus:outline-none rounded-[inherit] focus-within:ring-1 dark:ring-slate-150 ring-slate-800 dark:ring-opacity-10 ring-opacity-10"
+      class="h-full w-full rounded-[inherit] p-2.5 text-left ring-slate-800 ring-opacity-10 focus-within:ring-1 focus:outline-none dark:ring-slate-150 dark:ring-opacity-10"
       @click="openNFTDetailsModal(asset)"
     >
-      <figure class="h-full w-full flex flex-col gap-2.5">
+      <figure class="flex h-full w-full flex-col gap-2.5">
         <NFTImage :asset="asset" />
-        <figcaption class="flex-1 flex flex-col px-2">
+        <figcaption class="flex flex-1 flex-col px-2">
           <span v-if="asset.name" class="text-xs font-bold leading-5">
             {{ asset.name }}
           </span>
           <span
             v-if="asset.collectionName"
-            class="text-xs text-slate-400 font-medium leading-5"
+            class="text-xs font-medium leading-5 text-slate-400"
           >
             {{ asset.collectionName }}
           </span>
@@ -39,11 +39,11 @@ const isHidden = computed(() => {
       </figure>
     </button>
     <button
-      class="absolute right-5 top-5 w-7.5 h-7.5 flex justify-center items-center bg-[#0000004D] hover:bg-[#8888884D] rounded-full"
+      class="absolute right-5 top-5 flex h-7.5 w-7.5 items-center justify-center rounded-full bg-[#0000004D] hover:bg-[#8888884D]"
       @click="toggleNFT()"
     >
-      <SvgoEyeOff v-if="isHidden" class="w-5 h-5 text-white" />
-      <SvgoEye v-if="!isHidden" class="w-5 h-5 stroke-white-icon" />
+      <SvgoEyeOff v-if="isHidden" class="h-5 w-5 text-white" />
+      <SvgoEye v-if="!isHidden" class="stroke-white-icon h-5 w-5" />
     </button>
   </li>
 </template>

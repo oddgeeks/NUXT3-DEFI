@@ -75,19 +75,19 @@ const out = computed(() => {
 <template>
   <li
     :class="{ hidden: !token && payload.type !== 'NFT' }"
-    class="dark:bg-gray-850 rounded-2xl flex flex-col justify-between items-start gap-2 py-2.5 px-3 bg-slate-50"
+    class="flex flex-col items-start justify-between gap-2 rounded-2xl bg-slate-50 px-3 py-2.5 dark:bg-gray-850"
   >
-    <div class="flex gap-2 justify-between w-full">
+    <div class="flex w-full justify-between gap-2">
       <div
         v-if="payload.type === 'NFT'"
-        class="flex gap-1.5 items-center flex-1"
+        class="flex flex-1 items-center gap-1.5"
       >
         <img width="26" height="26" :src="payload.nftMetadata?.imageUrl">
-        <p class="inline leading-4 text-xs uppercase">
+        <p class="inline text-xs uppercase leading-4">
           {{ payload.nftMetadata?.name }}
         </p>
       </div>
-      <div v-else class="flex gap-1.5 items-center">
+      <div v-else class="flex items-center gap-1.5">
         <img
           v-if="token?.logo_url"
           width="26"
@@ -101,7 +101,7 @@ const out = computed(() => {
           </span>
           <span
             v-if="priceInUSD"
-            class="text-[10px] text-slate-400 leading-4 font-medium"
+            class="text-[10px] font-medium leading-4 text-slate-400"
           >
             {{ formatUsd(priceInUSD) }}
           </span>
@@ -109,17 +109,17 @@ const out = computed(() => {
       </div>
       <div
         v-if="actualType === TypeTitles.RevokedAllowance"
-        class="rounded-[14px] flex items-center gap-1 w-fit text-primary h-4"
+        class="flex h-4 w-fit items-center gap-1 rounded-[14px] text-primary"
       >
         <div class="h-1 w-1 rounded-full bg-primary" />
-        <span class="text-[10px] leading-4 whitespace-nowrap">
+        <span class="whitespace-nowrap text-[10px] leading-4">
           {{ actualType }}
         </span>
       </div>
       <div
         v-else
         :class="out ? 'text-red-alert' : 'text-green-400'"
-        class="rounded-[14px] flex items-center gap-1 w-fit h-4"
+        class="flex h-4 w-fit items-center gap-1 rounded-[14px]"
       >
         <ArrowRight
           :class="out ? '-rotate-90' : 'rotate-90'"
@@ -130,17 +130,17 @@ const out = computed(() => {
         </span>
       </div>
     </div>
-    <div class="flex justify-between w-full">
+    <div class="flex w-full justify-between">
       <div
-        class="text-[10px] font-medium w-fit text-slate-400 dark:bg-slate-800 py-1 px-2.5 bg-slate-150 rounded-10"
+        class="w-fit rounded-10 bg-slate-150 px-2.5 py-1 text-[10px] font-medium text-slate-400 dark:bg-slate-800"
       >
-        <span v-if="actualType === TypeTitles.In" class="leading-4 inline-flex items-center">
-          From:&nbsp;{{ shortenHash(payload.from) }}&nbsp;<Copy class="w-3 h-3" :text="payload.from" :icon-only="true" /></span>
-        <span v-else class="leading-4  inline-flex items-center"> To:&nbsp;{{ shortenHash(payload.to) }}&nbsp;<Copy class="w-3 h-3" :text="payload.to" :icon-only="true" /></span>
+        <span v-if="actualType === TypeTitles.In" class="inline-flex items-center leading-4">
+          From:&nbsp;{{ shortenHash(payload.from) }}&nbsp;<Copy class="h-3 w-3" :text="payload.from" :icon-only="true" /></span>
+        <span v-else class="inline-flex  items-center leading-4"> To:&nbsp;{{ shortenHash(payload.to) }}&nbsp;<Copy class="h-3 w-3" :text="payload.to" :icon-only="true" /></span>
       </div>
       <div
         v-if="payload.type"
-        class="text-[10px] flex items-center gap-[7px] font-medium w-fit text-slate-400 dark:bg-slate-800 py-1 px-2.5 bg-slate-150 rounded-10"
+        class="flex w-fit items-center gap-[7px] rounded-10 bg-slate-150 px-2.5 py-1 text-[10px] font-medium text-slate-400 dark:bg-slate-800"
       >
         {{ payload.type }}
         <SVGInfoCircle
@@ -148,7 +148,7 @@ const out = computed(() => {
           v-tippy="
             'This transfer involves taking a flashloan using the Instadapp Flashloan Aggregator'
           "
-          class="text-primary w-3"
+          class="w-3 text-primary"
         />
       </div>
     </div>

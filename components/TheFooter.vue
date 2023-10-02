@@ -14,8 +14,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <footer class="py-8 mt-24 px-10 hidden sm:flex items-center justify-between">
-    <figure class="flex gap-3 items-center">
+  <footer class="mt-24 hidden items-center justify-between px-10 py-8 sm:flex">
+    <figure class="flex items-center gap-3">
       <figcaption class="text-xs text-slate-400">
         Built by
       </figcaption>

@@ -5,8 +5,8 @@ const parsedError = parseRequestError(error)
 </script>
 
 <template>
-  <div class="flex flex-col h-full">
-    <header class="flex justify-between items-center py-8 px-10">
+  <div class="flex h-full flex-col">
+    <header class="flex items-center justify-between px-10 py-8">
       <NuxtLink to="/">
         <SvgoAvocadoLogo />
       </NuxtLink>
@@ -16,21 +16,21 @@ const parsedError = parseRequestError(error)
       </nav>
     </header>
 
-    <main class="h-full flex flex-col">
-      <div class="container relative flex-1 flex justify-center">
-        <div class="flex flex-col justify-center items-center text-center max-w-3xl mx-auto">
-          <h1 class="mb-7.5 sm:mb-10 text-[120px] sm:text-[260px] leading-[100px] sm:leading-[250px]">
+    <main class="flex h-full flex-col">
+      <div class="container relative flex flex-1 justify-center">
+        <div class="mx-auto flex max-w-3xl flex-col items-center justify-center text-center">
+          <h1 class="mb-7.5 text-[120px] leading-[100px] sm:mb-10 sm:text-[260px] sm:leading-[250px]">
             {{ parsedError.statusCode }}
           </h1>
-          <div class="flex flex-col gap-2.5 sm:gap-[26px] mb-[50px] sm:mb-10">
-            <h1 class="text-[18px] sm:text-[40px] leading-7.5">
+          <div class="mb-[50px] flex flex-col gap-2.5 sm:mb-10 sm:gap-[26px]">
+            <h1 class="leading-7.5 text-[18px] sm:text-[40px]">
               {{ parsedError.statusMessage }}
             </h1>
-            <h2 class="text-slate-400 leading-6 sm:leading-7.5 text-xs sm:text-base font-medium sm:font-semibold">
+            <h2 class="sm:leading-7.5 text-xs font-medium leading-6 text-slate-400 sm:text-base sm:font-semibold">
               {{ parsedError.message }}
             </h2>
           </div>
-          <CommonButton class="!px-7.5 w-full justify-center sm:w-fit" as="NuxtLink" to="/" size="lg">
+          <CommonButton class="w-full justify-center !px-7.5 sm:w-fit" as="NuxtLink" to="/" size="lg">
             Back to Home
           </CommonButton>
         </div>

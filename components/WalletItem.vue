@@ -61,17 +61,17 @@ function handleClick() {
 <template>
   <button
     :class="{
-      'dark:bg-slate-800 dark:border-slate-800 bg-slate-50 border-slate-50': active,
-      'dark:bg-gray-850 bg-slate-150': !active,
+      'border-slate-50 bg-slate-50 dark:border-slate-800 dark:bg-slate-800': active,
+      'bg-slate-150 dark:bg-gray-850': !active,
     }"
-    class="px-4 w-full text-left items-stretch flex justify-between py-3.5 border rounded-2xl border-slate-150 dark:border-slate-750" @click="handleClick"
+    class="flex w-full items-stretch justify-between rounded-2xl border border-slate-150 px-4 py-3.5 text-left dark:border-slate-750" @click="handleClick"
   >
     <div>
-      <div class="flex items-center gap-[8px] mb-2.5">
-        <p v-if="isMultisig" class="leading-[10px] text-purple text-sm font-medium">
+      <div class="mb-2.5 flex items-center gap-[8px]">
+        <p v-if="isMultisig" class="text-sm font-medium leading-[10px] text-purple">
           {{ walletName }}
         </p>
-        <p v-else class="leading-[10px] text-primary text-sm font-medium">
+        <p v-else class="text-sm font-medium leading-[10px] text-primary">
           {{ walletName }}
         </p>
 
@@ -80,27 +80,27 @@ function handleClick() {
         </button>
       </div>
 
-      <Copy class="text-sm leading-[18px] mb-[6px] dark:text-white text-slate-900" :text="safe?.safe_address">
+      <Copy class="mb-[6px] text-sm leading-[18px] text-slate-900 dark:text-white" :text="safe?.safe_address">
         <template #content>
           {{ shortenHash(safe?.safe_address) }}
         </template>
       </Copy>
 
-      <p class="text-slate-400 leading-[18px] text-sm font-medium">
+      <p class="text-sm font-medium leading-[18px] text-slate-400">
         {{ balance ? formatUsd(balance) : '' }}
       </p>
     </div>
-    <div class="flex flex-col justify-between items-end">
+    <div class="flex flex-col items-end justify-between">
       <div class="flex items-center gap-2">
         <SvgoInfo2 v-if="tooltip && isLegacySafeExist" v-tippy="tooltip" class="text-slate-500" />
         <p
           :class="isMultisig ? 'bg-purple text-purple' : !v2 ? 'bg-slate-400 text-slate-400' : 'bg-primary text-primary'"
-          class="rounded-lg bg-opacity-[14%] text-xs py-0.5 px-2 font-medium"
+          class="rounded-lg bg-opacity-[14%] px-2 py-0.5 text-xs font-medium"
         >
           {{ isMultisig ? 'TEAM' : v2 ? 'PERSONAL' : "LEGACY" }}
         </p>
       </div>
-      <p class="text-orange text-xs font-medium">
+      <p class="text-xs font-medium text-orange">
         {{ isMultisig && pendingTxnsCount ? `${pendingTxnsCount} Pending txns` : '' }}
       </p>
     </div>

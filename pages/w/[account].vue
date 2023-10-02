@@ -16,29 +16,29 @@ if (!(await isSafeAddress(account)))
 
 <template>
   <div class="container flex-1">
-    <div class="flex justify-center items-center md:py-32">
+    <div class="flex items-center justify-center md:py-32">
       <div
-        class="flex flex-col md:flex-row p-5 md:p-10 bg-slate-50 dark:bg-gray-850 rounded-5.5 justify-start md:space-x-6 space-y-6 md:space-y-0"
+        class="flex flex-col justify-start space-y-6 rounded-5.5 bg-slate-50 p-5 dark:bg-gray-850 md:flex-row md:space-x-6 md:space-y-0 md:p-10"
       >
         <div class="flex items-start">
           <StyledQrCode
             :key="account"
-            class="rounded-5 mx-auto bg-white overflow-hidden"
+            class="mx-auto overflow-hidden rounded-5 bg-white"
             :size="160"
             :margin="7"
             :data="account"
           />
         </div>
         <div class="flex flex-col space-y-5">
-          <div class="font-semibold inline-flex gap-2.5 sm:items-center">
-            <ExclamationCircleSVG class="w-4 h-4 text-primary mt-1 sm:mt-0" />
-            <span class="flex-1 text-xs leading-5 font-medium">
+          <div class="inline-flex gap-2.5 font-semibold sm:items-center">
+            <ExclamationCircleSVG class="mt-1 h-4 w-4 text-primary sm:mt-0" />
+            <span class="flex-1 text-xs font-medium leading-5">
               Please use the following details to send me funds!
             </span>
           </div>
 
           <Copy
-            class="px-4 py-3 flex items-center text-xs text-wrap justify-between rounded-5 dark:bg-slate-800 bg-slate-100 gap-2 text-left"
+            class="text-wrap flex items-center justify-between gap-2 rounded-5 bg-slate-100 px-4 py-3 text-left text-xs dark:bg-slate-800"
             :text="account"
           >
             <template #content>
@@ -46,7 +46,7 @@ if (!(await isSafeAddress(account)))
             </template>
           </Copy>
 
-          <span class="font-semibold inline-flex gap-2.5 text-xs">
+          <span class="inline-flex gap-2.5 text-xs font-semibold">
             Supported Chains
           </span>
           <SupportedChains class="!flex justify-between" />

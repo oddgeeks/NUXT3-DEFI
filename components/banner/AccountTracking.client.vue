@@ -46,12 +46,12 @@ async function disconnect() {
 
 <template>
   <div
-    class="w-full h-9 bg-primary bg-opacity-10 shrink-0 fixed sm:relative z-50 top-0 flex justify-center items-center gap-[15px]"
+    class="fixed top-0 z-50 flex h-9 w-full shrink-0 items-center justify-center gap-[15px] bg-primary bg-opacity-10 sm:relative"
   >
     <p class="text-xs text-primary">
       Tracking account: {{ shortenHash(trackingAccount!) }}
     </p>
-    <button class="text-red-alert text-xs" @click="disconnect">
+    <button class="text-xs text-red-alert" @click="disconnect">
       (Disconnect)
     </button>
   </div>

@@ -654,11 +654,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <form novalidate class="flex gap-7.5 flex-col" @submit="onSubmit">
+  <form novalidate class="flex flex-col gap-7.5" @submit="onSubmit">
     <div class="flex flex-col items-center justify-center">
-      <div class="flex flex-col gap-[15px] w-full">
+      <div class="flex w-full flex-col gap-[15px]">
         <div class="flex gap-[14px]">
-          <CommonTxTypeIcon class="w-10 h-10">
+          <CommonTxTypeIcon class="h-10 w-10">
             <template #icon>
               <SvgoRefresh class="-rotate-45" />
             </template>
@@ -667,16 +667,16 @@ onUnmounted(() => {
             <h1 class="text-lg leading-[20px]">
               Swap
             </h1>
-            <h2 class="font-medium text-xs text-slate-400 leading-5">
+            <h2 class="text-xs font-medium leading-5 text-slate-400">
               Trade tokens on multiple networks at best price.
             </h2>
           </div>
         </div>
         <div
-          class="flex gap-2 justify-between items-center mt-5 w-full mx-auto rounded-full"
+          class="mx-auto mt-5 flex w-full items-center justify-between gap-2 rounded-full"
         >
-          <p class="text-xs py-1 px-5 rounded-full border border-[#1e293b]">
-            <span class="sm:inline hidden"> Processing on the</span> <ChainLogo class="w-6 h-6 inline" :chain="toChainId" /> {{ networks.find(network => network.chainId === parseInt(toChainId))?.name }} Network
+          <p class="rounded-full border border-[#1e293b] px-5 py-1 text-xs">
+            <span class="hidden sm:inline"> Processing on the</span> <ChainLogo class="inline h-6 w-6" :chain="toChainId" /> {{ networks.find(network => network.chainId === parseInt(toChainId))?.name }} Network
           </p>
           <CommonToggle v-model="inputUSDToggle" text="Input USD" />
         </div>
@@ -685,16 +685,16 @@ onUnmounted(() => {
 
     <div class="flex flex-col gap-4">
       <div
-        class="relative flex flex-col gap-4 px-5 py-4 border-2 border-transparent dark:bg-slate-800 bg-slate-100 focus-within:bg-slate-50 focus-within:dark:border-slate-800 focus-within:border-slate-150 focus-within:dark:bg-gray-850 rounded-5"
+        class="relative flex flex-col gap-4 rounded-5 border-2 border-transparent bg-slate-100 px-5 py-4 focus-within:border-slate-150 focus-within:bg-slate-50 dark:bg-slate-800 focus-within:dark:border-slate-800 focus-within:dark:bg-gray-850"
       >
         <div class="flex">
           <div
             v-if="isLoading && !isSellAmountFocused"
-            class="flex-1 flex items-center"
+            class="flex flex-1 items-center"
           >
             <div
               style="width: 100px; height: 28px"
-              class="rounded-lg loading-box"
+              class="loading-box rounded-lg"
             />
           </div>
           <div v-else ref="sellInputWrapperRef" class="flex-1">
@@ -714,7 +714,7 @@ onUnmounted(() => {
             />
             <CommonCurrencyInput
               v-else
-              class="flex-1 text-[26px] w-full placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
+              class="w-full flex-1 rounded-none !p-0 text-[26px] leading-[48px] placeholder:!text-[26px]"
               :model-value="toBN(sellAmountInUsd).toNumber()"
               @focus="isSellAmountFocused = true"
               @blur="isSellAmountFocused = false"
@@ -724,14 +724,14 @@ onUnmounted(() => {
           <TokenSelection
             v-model="swap.sellToken"
             :tokens="availableTokens"
-            class="dark:bg-gray-900 bg-white"
+            class="bg-white dark:bg-gray-900"
           />
         </div>
         <div class="flex items-center justify-between text-sm text-slate-400">
           <div
             v-if="isLoading"
             style="width: 60px; height: 24px"
-            class="rounded-lg loading-box"
+            class="loading-box rounded-lg"
           />
           <p
             v-else
@@ -739,7 +739,7 @@ onUnmounted(() => {
           >
             {{ !inputUSDToggle ? `${formatUsd(toBN(sellAmountInUsd).toNumber())}` : `${sellAmount ? sellAmount : 0}` }}
           </p>
-          <div class="flex items-center ml-auto gap-2.5 uppercase">
+          <div class="ml-auto flex items-center gap-2.5 uppercase">
             <span class="font-medium">{{ formatDecimal(sellTokenBalance) }}
               {{ swap.sellToken?.symbol }}</span>
             <button type="button" class="text-primary" @click="setMax">
@@ -749,30 +749,30 @@ onUnmounted(() => {
         </div>
         <span
           v-if="sellAmountMeta.dirty && errors['sell-amount']"
-          class="flex items-center gap-2 mt-2 text-xs text-left text-red-alert"
+          class="mt-2 flex items-center gap-2 text-left text-xs text-red-alert"
         >
           <SVGInfo /> {{ errors["sell-amount"] }}
         </span>
         <button
           type="button"
-          class="flex justify-center items-center absolute bg-slate-150 dark:bg-slate-600 ring-[6px] ring-white dark:ring-gray-950 rounded-full h-10 w-10 -bottom-[26px] left-1/2 -translate-x-1/2"
+          class="absolute -bottom-[26px] left-1/2 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full bg-slate-150 ring-[6px] ring-white dark:bg-slate-600 dark:ring-gray-950"
           @click="swapTokens"
         >
-          <ArrowLeft class="w-5 h-5 -rotate-90 text-slate-400" />
+          <ArrowLeft class="h-5 w-5 -rotate-90 text-slate-400" />
         </button>
       </div>
 
       <div
-        class="flex flex-col gap-4 px-5 py-4 border-2 border-transparent dark:bg-slate-800 bg-slate-100 focus-within:bg-slate-50 focus-within:dark:border-slate-800 focus-within:border-slate-150 focus-within:dark:bg-gray-850 rounded-5"
+        class="flex flex-col gap-4 rounded-5 border-2 border-transparent bg-slate-100 px-5 py-4 focus-within:border-slate-150 focus-within:bg-slate-50 dark:bg-slate-800 focus-within:dark:border-slate-800 focus-within:dark:bg-gray-850"
       >
         <div class="flex">
           <div
             v-if="isLoading && !isUsdBuyAmountFocused"
-            class="flex-1 flex items-center"
+            class="flex flex-1 items-center"
           >
             <div
               style="width: 100px; height: 28px"
-              class="rounded-lg loading-box"
+              class="loading-box rounded-lg"
             />
           </div>
           <div v-else class="flex-1">
@@ -792,7 +792,7 @@ onUnmounted(() => {
             />
             <CommonCurrencyInput
               v-else
-              class="flex-1 text-[26px] w-full placeholder:!text-[26px] !p-0 leading-[48px] rounded-none"
+              class="w-full flex-1 rounded-none !p-0 text-[26px] leading-[48px] placeholder:!text-[26px]"
               :model-value="toBN(buyAmountInUsd).toNumber()"
               @focus="isUsdBuyAmountFocused = true"
               @blur="isUsdBuyAmountFocused = false"
@@ -802,14 +802,14 @@ onUnmounted(() => {
           <TokenSelection
             v-model="swap.buyToken"
             :tokens="availableBuyTokens"
-            class="dark:bg-gray-900 bg-white"
+            class="bg-white dark:bg-gray-900"
           />
         </div>
         <div class="flex items-center justify-between text-sm text-slate-400">
           <div
             v-if="isLoading"
             style="width: 60px; height: 24px"
-            class="rounded-lg loading-box"
+            class="loading-box rounded-lg"
           />
           <p
             v-else
@@ -818,7 +818,7 @@ onUnmounted(() => {
             {{ !inputUSDToggle ? `${formatUsd(toBN(buyAmountInUsd).toNumber())}` : `${buyAmount ? buyAmount : 0}` }}
           </p>
 
-          <div class="flex items-center ml-auto gap-2.5 uppercase">
+          <div class="ml-auto flex items-center gap-2.5 uppercase">
             <span class="font-medium">{{ formatDecimal(buyTokenBalance) }}
               {{ swap.buyToken?.symbol }}</span>
           </div>
@@ -828,11 +828,11 @@ onUnmounted(() => {
 
     <div class="flex flex-col gap-5">
       <div class="space-y-2.5">
-        <div class="px-5 pt-[14px] pb-5 dark:bg-gray-850 bg-slate-50 rounded-5">
+        <div class="rounded-5 bg-slate-50 px-5 pb-5 pt-[14px] dark:bg-gray-850">
           <div class="flex flex-col gap-5">
-            <details open class="flex flex-col group">
+            <details open class="group flex flex-col">
               <summary
-                class="flex justify-between text-sm font-semibold cursor-pointer"
+                class="flex cursor-pointer justify-between text-sm font-semibold"
               >
                 <span class="inline-flex gap-2.5">
                   Slippage
@@ -843,15 +843,15 @@ onUnmounted(() => {
                     "
                     type="button"
                   >
-                    <QuestionCircleSVG class="w-5 h-5 text-primary" />
+                    <QuestionCircleSVG class="h-5 w-5 text-primary" />
                   </button>
                 </span>
                 <ChevronDownSVG
                   class="w-5 text-slate-400 group-open:rotate-180"
                 />
               </summary>
-              <div class="flex items-end flex-1 gap-4 mt-4">
-                <div class="flex flex-col gap-2.5 flex-1">
+              <div class="mt-4 flex flex-1 items-end gap-4">
+                <div class="flex flex-1 flex-col gap-2.5">
                   <CommonSelect
                     v-model="slippage"
                     value-key="value"
@@ -888,7 +888,7 @@ onUnmounted(() => {
               </div>
               <span
                 v-if="!!slippageError"
-                class="flex items-center gap-2 mt-4 text-xs text-left text-red-alert"
+                class="mt-4 flex items-center gap-2 text-left text-xs text-red-alert"
               >
                 <SVGInfo />
                 {{ slippageError }}
@@ -899,16 +899,16 @@ onUnmounted(() => {
 
             <div class="flex flex-col gap-4">
               <div
-                class="flex flex-col items-center justify-between text-sm font-medium uppercase sm:flex-row text-slate-400"
+                class="flex flex-col items-center justify-between text-sm font-medium uppercase text-slate-400 sm:flex-row"
               >
                 <div
                   v-if="isLoading"
                   style="width: 140px; height: 20px"
-                  class="rounded-lg loading-box"
+                  class="loading-box rounded-lg"
                 />
                 <div
                   v-else
-                  class="flex items-center justify-between w-full sm:justify-start sm:gap-2"
+                  class="flex w-full items-center justify-between sm:justify-start sm:gap-2"
                 >
                   <span>1 {{ swap.sellToken?.symbol }}</span>
                   <span class="hidden sm:block"> = </span>
@@ -918,11 +918,11 @@ onUnmounted(() => {
                 <div
                   v-if="isLoading"
                   style="width: 140px; height: 20px"
-                  class="rounded-lg loading-box"
+                  class="loading-box rounded-lg"
                 />
                 <div
                   v-else
-                  class="flex items-center justify-between w-full sm:justify-end sm:gap-2"
+                  class="flex w-full items-center justify-between sm:justify-end sm:gap-2"
                 >
                   <span>1 {{ swap.buyToken?.symbol }}</span>
                   <span class="hidden sm:block"> = </span>
@@ -931,7 +931,7 @@ onUnmounted(() => {
                 </div>
               </div>
               <div
-                class="items-center justify-between hidden text-sm font-medium sm:flex text-slate-400"
+                class="hidden items-center justify-between text-sm font-medium text-slate-400 sm:flex"
               >
                 <span>
                   Route Through
@@ -939,15 +939,15 @@ onUnmounted(() => {
                 <div
                   v-if="isLoading"
                   style="width: 140px; height: 20px"
-                  class="rounded-lg loading-box"
+                  class="loading-box rounded-lg"
                 />
                 <span
                   v-else-if="!!selectedRoute && swapDetails.data?.aggregators?.length"
-                  class="capitalize hidden sm:flex items-center gap-2.5"
+                  class="hidden items-center gap-2.5 capitalize sm:flex"
                 >
                   <Menu v-slot="{ open }" as="div" class="relative">
-                    <MenuButton class="flex items-center gap-2.5 rounded-xl px-3 py-2 border border-slate-150 dark:border-slate-750">
-                      <ProtocolLogo class="w-5 h-5" :name="selectedRoute.name" />
+                    <MenuButton class="flex items-center gap-2.5 rounded-xl border border-slate-150 px-3 py-2 dark:border-slate-750">
+                      <ProtocolLogo class="h-5 w-5" :name="selectedRoute.name" />
                       {{ formatProtocol(selectedRoute.name) }}
                       <SvgoChevronDown class="w-4" :class="open ? 'rotate-180' : ''" />
                     </MenuButton>
@@ -960,21 +960,21 @@ onUnmounted(() => {
                       leave-to-class="transform scale-95 opacity-0"
                     >
                       <MenuItems
-                        class="absolute rounded-5 z-20 py-4 top-12 left-1/2 -translate-x-1/2 w-[300px] origin-center dark:bg-gray-850 border-slate-150 border bg-slate-50 dark:border-slate-700"
+                        class="absolute left-1/2 top-12 z-20 w-[300px] origin-center -translate-x-1/2 rounded-5 border border-slate-150 bg-slate-50 py-4 dark:border-slate-700 dark:bg-gray-850"
                       >
                         <template v-for="aggr, i in swapDetails.data?.aggregators" :key="aggr.name">
-                          <MenuItem as="button" type="button" class="font-medium w-full text-left px-4 py-[14px] first:pt-0 last-of-type:pb-0" @click="userChangeRoute(aggr)">
+                          <MenuItem as="button" type="button" class="w-full px-4 py-[14px] text-left font-medium first:pt-0 last-of-type:pb-0" @click="userChangeRoute(aggr)">
                             <div class="flex gap-2">
-                              <ProtocolLogo class="w-5 h-5" :name="aggr.name" />
-                              <div class="flex flex-col gap-1 w-full">
-                                <div class="flex justify-between w-full">
+                              <ProtocolLogo class="h-5 w-5" :name="aggr.name" />
+                              <div class="flex w-full flex-col gap-1">
+                                <div class="flex w-full justify-between">
                                   <span class="text-white">
                                     {{ formatProtocol(aggr.name) }}
                                   </span>
-                                  <span v-if="i === 0" class="rounded-lg px-2 leading-5 text-[10px] uppercase bg-primary bg-opacity-10 text-primary">
+                                  <span v-if="i === 0" class="rounded-lg bg-primary bg-opacity-10 px-2 text-[10px] uppercase leading-5 text-primary">
                                     Best Rate
                                   </span>
-                                  <SvgoCheckCircle v-else-if="aggr.name === selectedRoute.name" class="w-4 success-circle" />
+                                  <SvgoCheckCircle v-else-if="aggr.name === selectedRoute.name" class="success-circle w-4" />
                                 </div>
                                 <span class="text-xs text-slate-400">
                                   {{ formatDecimal(fromWei(aggr.data.buyTokenAmount, aggr.data.buyToken.decimals).toFixed()) }}
@@ -983,7 +983,7 @@ onUnmounted(() => {
                               </div>
                             </div>
                           </MenuItem>
-                          <hr class="last:hidden dark:border-slate-800 border-slate-100">
+                          <hr class="border-slate-100 last:hidden dark:border-slate-800">
                         </template>
                       </MenuItems>
                     </transition>
@@ -995,7 +995,7 @@ onUnmounted(() => {
                 </span>
               </div>
               <div
-                class="items-center justify-between hidden text-sm font-medium sm:flex text-slate-400"
+                class="hidden items-center justify-between text-sm font-medium text-slate-400 sm:flex"
               >
                 <span>
                   Min. Received after slippage ({{ actualSlippage }}%)
@@ -1003,7 +1003,7 @@ onUnmounted(() => {
                 <div
                   v-if="isLoading"
                   style="width: 140px; height: 20px"
-                  class="rounded-lg loading-box"
+                  class="loading-box rounded-lg"
                 />
                 <span v-else class="uppercase">
                   {{ minRecievedAfterSlippage }}
@@ -1017,7 +1017,7 @@ onUnmounted(() => {
                 <div
                   v-if="isLoading"
                   style="width: 100px; height: 20px"
-                  class="rounded-lg loading-box"
+                  class="loading-box rounded-lg"
                 />
                 <span
                   v-else
@@ -1047,7 +1047,7 @@ onUnmounted(() => {
         type="submit"
         :disabled="sendingDisabled"
         :loading="isSubmitting || swapDetails.pending || feePending"
-        class="justify-center w-full"
+        class="w-full justify-center"
         size="lg"
       >
         Swap

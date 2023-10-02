@@ -34,11 +34,11 @@ async function disconnectAllConnections() {
 
 <template>
   <div>
-    <div :class="isAnySessionAvailable ? 'mb-7.5' : ''" class="flex gap-3 items-center sm:flex-nowrap sm:justify-normal justify-center flex-wrap">
+    <div :class="isAnySessionAvailable ? 'mb-7.5' : ''" class="flex flex-wrap items-center justify-center gap-3 sm:flex-nowrap sm:justify-normal">
       <CommonButton
         :disabled="!safeAddress"
         size="lg"
-        class="flex items-center justify-center gap-2 px-5 w-full sm:w-fit"
+        class="flex w-full items-center justify-center gap-2 px-5 sm:w-fit"
         @click="openWalletConnectModal()"
       >
         <PlusSVG />

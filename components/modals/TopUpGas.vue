@@ -222,15 +222,15 @@ watch(usdcTokens, () => {
 <template>
   <div class="space-y-7.5 text-center">
     <div
-      class="flex items-center mx-auto justify-center h-10 w-10 rounded-full dark:bg-slate-800 bg-slate-100"
+      class="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
     >
       <GasSVG class="text-slate-900 dark:text-white" />
     </div>
-    <div class="flex gap-4 flex-col">
+    <div class="flex flex-col gap-4">
       <h1 class="text-lg leading-5">
         Gas Reserve
       </h1>
-      <h2 class="text-xs text-slate-400 leading-5 font-medium">
+      <h2 class="text-xs font-medium leading-5 text-slate-400">
         You will be able to use this as gas on any supported chain. Note that
         you need to have USDC in your Avocado wallet to add gas.
       </h2>
@@ -238,20 +238,20 @@ watch(usdcTokens, () => {
         href="https://help.avocado.instadapp.io/en/articles/7038872-topping-up-gas-on-avocado"
         target="blank"
         rel="noopener noreferrer"
-        class="text-sm text-center justify-center font-medium inline-flex gap-2.5 text-primary"
+        class="inline-flex justify-center gap-2.5 text-center text-sm font-medium text-primary"
       >
         What’s happening here?
         <LinkSVG />
       </a>
     </div>
     <span
-      class="whitespace-nowrap block px-5 py-3 ring-2 dark:ring-slate-700 ring-slate-200 rounded-[30px] w-fit leading-5 mx-auto"
+      class="mx-auto block w-fit whitespace-nowrap rounded-[30px] px-5 py-3 leading-5 ring-2 ring-slate-200 dark:ring-slate-700"
     >
       {{ formatDecimal(gasBalance, 2) }} USDC
     </span>
     <div
       v-if="toBN(pendingGasAmount.data.value).gt('0')"
-      class="flex-col leading-5 text-xs gap-0.5 text-orange-400 items-center justify-center flex"
+      class="flex flex-col items-center justify-center gap-0.5 text-xs leading-5 text-orange-400"
     >
       <div class="flex items-center gap-2">
         <SvgSpinner />
@@ -270,7 +270,7 @@ watch(usdcTokens, () => {
     </div>
     <form v-if="!isGiftActive" class="space-y-5" @submit="onSubmit">
       <div class="flex flex-col gap-2.5">
-        <span class="text-left leading-5 text-sm sm:text-base">Network</span>
+        <span class="text-left text-sm leading-5 sm:text-base">Network</span>
         <CommonSelect
           v-model="id"
           label-key="name"
@@ -279,15 +279,15 @@ watch(usdcTokens, () => {
           :options="usdcTokens"
         >
           <template #button-prefix>
-            <ChainLogo v-if="token" class="w-6 h-6" :chain="token.chainId" />
+            <ChainLogo v-if="token" class="h-6 w-6" :chain="token.chainId" />
           </template>
           <template #item-prefix="{ value }">
-            <ChainLogo v-if="getToken(value)" class="w-6 h-6 flex-shrink-0" :chain="getToken(value).chainId" />
+            <ChainLogo v-if="getToken(value)" class="h-6 w-6 shrink-0" :chain="getToken(value).chainId" />
           </template>
           <template #item="{ label, item }">
-            <div class="flex flex-col gap-1 mb-auto text-sm sm:text-base">
+            <div class="mb-auto flex flex-col gap-1 text-sm sm:text-base">
               <span class="text-sm">{{ label }}</span>
-              <span class="text-sm text-gray-400 font-medium">
+              <span class="text-sm font-medium text-gray-400">
                 {{ formatDecimal(item.balance) }} {{ item.symbol.toUpperCase() }}
               </span>
             </div>
@@ -297,7 +297,7 @@ watch(usdcTokens, () => {
 
       <div class="space-y-2.5">
         <div
-          class="flex justify-between items-center leading-5 text-sm sm:text-base"
+          class="flex items-center justify-between text-sm leading-5 sm:text-base"
         >
           <span>Amount</span>
           <SvgSpinner v-if="!usdcTokens?.length" class="text-primary" />
@@ -314,7 +314,7 @@ watch(usdcTokens, () => {
           <template #suffix>
             <button
               type="button"
-              class="absolute top-0 bottom-0 right-0 mr-5 text-sm text-primary hover:text-primary"
+              class="absolute inset-y-0 right-0 mr-5 text-sm text-primary hover:text-primary"
               @click="setMax"
             >
               MAX
@@ -326,7 +326,7 @@ watch(usdcTokens, () => {
         type="submit"
         :disabled="sendingDisabled"
         :loading="loading"
-        class="justify-center w-full"
+        class="w-full justify-center"
         size="lg"
       >
         Add Gas
@@ -338,12 +338,12 @@ watch(usdcTokens, () => {
     <button
       v-if="!isGiftActive"
       type="button"
-      class="text-xs text-primary !mt-3"
+      class="!mt-3 text-xs text-primary"
       @click="toggleGift()"
     >
       Redeem Code
     </button>
-    <p class="w-full text-xs text-orange-400 leading-5">
+    <p class="w-full text-xs leading-5 text-orange-400">
       Deposited gas cannot be withdrawn at this time. Please only top up what you plan to use.
     </p>
   </div>

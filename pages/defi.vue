@@ -43,23 +43,23 @@ watch(safeAddress, () => {
 </script>
 
 <template>
-  <div class="flex-1 flex gap-7.5 flex-col">
-    <div class="w-full flex items-center justify-between flex-wrap">
-      <h1 class="sm:text-base text-sm">
+  <div class="flex flex-1 flex-col gap-7.5">
+    <div class="flex w-full flex-wrap items-center justify-between">
+      <h1 class="text-sm sm:text-base">
         Your DeFi Positions
       </h1>
       <MultipleNetworkFilter v-if="account" v-model:networks="networkPreferences" :show-supported-networks="false" :filters="false" />
     </div>
     <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
-      <div v-for="item in summarize" :key="item.name" class="flex items-center gap-4 sm:p-5 px-4 py-3 dark:bg-gray-850 bg-slate-50 rounded-3xl">
-        <div :class="item.color" class="sm:w-[50px] sm:h-[50px] w-11 h-11 bg-opacity-10 rounded-2xl flex items-center justify-center">
+      <div v-for="item in summarize" :key="item.name" class="flex items-center gap-4 rounded-3xl bg-slate-50 px-4 py-3 dark:bg-gray-850 sm:p-5">
+        <div :class="item.color" class="flex h-11 w-11 items-center justify-center rounded-2xl bg-opacity-10 sm:h-[50px] sm:w-[50px]">
           <component :is="item.icon" />
         </div>
         <div class="flex flex-col gap-0.5">
-          <h1 class="sm:text-sm text-xs text-slate-500">
+          <h1 class="text-xs text-slate-500 sm:text-sm">
             {{ item.name }}
           </h1>
-          <h2 class="sm:text-3xl leading-[30px] text-2xl sm:leading-10">
+          <h2 class="text-2xl leading-[30px] sm:text-3xl sm:leading-10">
             {{ item.value }}
           </h2>
         </div>
@@ -80,16 +80,16 @@ watch(safeAddress, () => {
       <div
         :class="!account ? 'blur h-96' : ''"
         style="scrollbar-gutter: stable; overflow-y: overlay"
-        class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] hidden sm:flex scroll-style"
+        class="scroll-style hidden max-h-[530px] overflow-auto rounded-[25px] bg-slate-50 dark:bg-gray-850 sm:flex md:overflow-x-hidden"
       >
         <table
           class="table w-full"
         >
           <thead>
             <tr
-              class="text-sm font-medium text-left text-gray-400 border-b border-slate-150 dark:border-slate-800"
+              class="border-b border-slate-150 text-left text-sm font-medium text-gray-400 dark:border-slate-800"
             >
-              <th class="text-left py-6 pl-7.5">
+              <th class="py-6 pl-7.5 text-left">
                 Protocol
               </th>
               <th class="py-5">
@@ -101,23 +101,23 @@ watch(safeAddress, () => {
               <th class="py-5 pl-10">
                 APY
               </th>
-              <th class="py-5 pl-10 whitespace-nowrap">
+              <th class="whitespace-nowrap py-5 pl-10">
                 Health Factor
               </th>
               <th class="py-5" />
               <th class="py-5" />
             </tr>
           </thead>
-          <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
+          <tbody class="divide-y divide-slate-150 dark:divide-slate-800">
             <tr
               v-for="position in filteredPositions"
               :key="position.label + position.chainId"
               class="cursor-pointer" @click="openDefiPositionDetailsModal(position)"
             >
               <td class="py-[26px] pl-7.5">
-                <div class="flex items-center gap-3 w-fit">
+                <div class="flex w-fit items-center gap-3">
                   <div
-                    class="relative inline-block h-7.5 w-7.5 rounded-full flex-shrink-0"
+                    class="relative inline-block h-7.5 w-7.5 shrink-0 rounded-full"
                   >
                     <img
                       class="h-7.5 w-7.5 rounded-full"
@@ -127,11 +127,11 @@ watch(safeAddress, () => {
 
                     <ChainLogo
                       :stroke="true"
-                      class="absolute w-4 h-4 -right-1 -bottom-1"
+                      class="absolute -bottom-1 -right-1 h-4 w-4"
                       :chain="position.chainId"
                     />
                   </div>
-                  <span class="sm:whitespace-normal whitespace-nowrap">
+                  <span class="whitespace-nowrap sm:whitespace-normal">
                     {{ position.label }}
                   </span>
                 </div>
@@ -165,16 +165,16 @@ watch(safeAddress, () => {
         </table>
       </div>
 
-      <ul class="sm:hidden flex-col flex gap-5">
+      <ul class="flex flex-col gap-5 sm:hidden">
         <li
           v-for="position in filteredPositions"
           :key="position.label + position.chainId"
-          class="dark:bg-gray-850 flex-col bg-slate-50 rounded-5 flex gap-3"
+          class="flex flex-col gap-3 rounded-5 bg-slate-50 dark:bg-gray-850"
         >
-          <button class="flex justify-between w-full py-4 px-5 border-b dark:border-slate-800 border-slate-150" @click="openDefiPositionDetailsModal(position)">
+          <button class="flex w-full justify-between border-b border-slate-150 px-5 py-4 dark:border-slate-800" @click="openDefiPositionDetailsModal(position)">
             <div class="flex items-center gap-3">
               <div
-                class="relative inline-block h-7.5 w-7.5 rounded-full flex-shrink-0"
+                class="relative inline-block h-7.5 w-7.5 shrink-0 rounded-full"
               >
                 <img
                   class="h-7.5 w-7.5 rounded-full"
@@ -184,38 +184,38 @@ watch(safeAddress, () => {
 
                 <ChainLogo
                   :stroke="true"
-                  class="absolute w-4 h-4 -right-1 -bottom-1"
+                  class="absolute -bottom-1 -right-1 h-4 w-4"
                   :chain="position.chainId"
                 />
               </div>
-              <span class="w-[160px] text-sm text-left">
+              <span class="w-[160px] text-left text-sm">
                 {{ position.label }}
               </span>
             </div>
-            <CommonButton class="whitespace-nowrap text-xs h-fit !px-4" color="white" :href="position.defiURL" target="_blank" as="a" @click.stop>
+            <CommonButton class="h-fit whitespace-nowrap !px-4 text-xs" color="white" :href="position.defiURL" target="_blank" as="a" @click.stop>
               {{ getDefiProtocolName(position.protocol) || position.label }}
             </CommonButton>
           </button>
           <div class="">
             <dl class="grid grid-cols-2 gap-y-4">
-              <div class="border-b dark:border-slate-800 border-slate-150 pb-4 px-5">
-                <dt class="text-slate-500 text-xs leading-5">
+              <div class="border-b border-slate-150 px-5 pb-4 dark:border-slate-800">
+                <dt class="text-xs leading-5 text-slate-500">
                   Supplied
                 </dt>
                 <dd class="text-sm">
                   {{ `$${abbreviateNumber(position.positions?.totalSupplyInUsd)}` }}
                 </dd>
               </div>
-              <div class="border-b dark:border-slate-800 border-slate-150">
-                <dt class="text-slate-500 text-xs leading-5">
+              <div class="border-b border-slate-150 dark:border-slate-800">
+                <dt class="text-xs leading-5 text-slate-500">
                   Borrowed
                 </dt>
                 <dd class="text-sm">
                   {{ `$${abbreviateNumber(position.positions?.totalBorrowInUsd)}` }}
                 </dd>
               </div>
-              <div class="pb-4 px-5">
-                <dt class="text-slate-500 text-xs leading-5">
+              <div class="px-5 pb-4">
+                <dt class="text-xs leading-5 text-slate-500">
                   APY
                 </dt>
                 <dd class="text-sm">
@@ -223,7 +223,7 @@ watch(safeAddress, () => {
                 </dd>
               </div>
               <div>
-                <dt class="text-slate-500 text-xs leading-5">
+                <dt class="text-xs leading-5 text-slate-500">
                   Health Factor
                 </dt>
                 <dd class="text-sm">
@@ -240,11 +240,11 @@ watch(safeAddress, () => {
 
       <div
         v-if="!account"
-        class="flex items-center justify-center w-full absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-1/2 sm:-translate-y-1/2"
+        class="absolute left-1/2 top-1/2 flex w-full -translate-x-1/2 translate-y-1/2 items-center justify-center sm:-translate-y-1/2"
       >
         <div class="flex flex-col items-center justify-center gap-6">
           <p
-            class="font-semibold leading-[30px] text-slate-400 sm:text-white sm:text-lg sm:whitespace-nowrap text-center"
+            class="text-center font-semibold leading-[30px] text-slate-400 sm:whitespace-nowrap sm:text-lg sm:text-white"
           >
             Connect your wallet to see your DeFi positions
           </p>

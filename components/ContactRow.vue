@@ -27,19 +27,19 @@ async function handleDeletingContact(contact: IContact) {
 
 <template>
   <tr
-    class="contact-row text-sm font-semibold cursor-pointer"
+    class="contact-row cursor-pointer text-sm font-semibold"
   >
     <td class="pl-7.5 text-sm">
       <span class="relative">{{ contact.name }}</span>
     </td>
-    <td class="pr-10 py-6">
+    <td class="py-6 pr-10">
       <div
         class="relative flex items-center justify-between gap-10"
       >
         <div class="flex items-center gap-2.5">
           <ChainLogo
             :stroke="false"
-            class="w-[22px] h-[22px]"
+            class="h-[22px] w-[22px]"
             :chain="contact.chainId"
           />
           <span>{{ shortenHash(contact.address) }}</span>
@@ -50,7 +50,7 @@ async function handleDeletingContact(contact: IContact) {
           <div class="flex gap-4">
             <CommonButton
               color="white"
-              class="items-center h-10 !px-4"
+              class="h-10 items-center !px-4"
               :disabled="contact.owner"
               @click="
                 openAddContactModal(
@@ -65,7 +65,7 @@ async function handleDeletingContact(contact: IContact) {
             </CommonButton>
             <CommonButton
               color="white"
-              class="items-center gap-2.5 h-10 !px-4"
+              class="h-10 items-center gap-2.5 !px-4"
               :disabled="!!contact.chainId && !hasAvailableTokens(contact.chainId)"
               @click="
                 openSendModal(contact.chainId || 1, undefined, contact)
@@ -74,13 +74,13 @@ async function handleDeletingContact(contact: IContact) {
               Send
               <CommonTxTypeIcon class="p-1.5" :disabled="!!contact.chainId && !hasAvailableTokens(contact.chainId)" color="light">
                 <template #icon>
-                  <SvgoArrowRight class="-rotate-45 w-3.5 h-3.5" />
+                  <SvgoArrowRight class="h-3.5 w-3.5 -rotate-45" />
                 </template>
               </CommonTxTypeIcon>
             </CommonButton>
           </div>
-          <button class="disabled:text-slate-400 disabled:opacity-40 text-red-alert" :disabled="contact.owner" @click="handleDeletingContact(contact)">
-            <DeleteSVG class="w-4 h-4" />
+          <button class="text-red-alert disabled:text-slate-400 disabled:opacity-40" :disabled="contact.owner" @click="handleDeletingContact(contact)">
+            <DeleteSVG class="h-4 w-4" />
           </button>
         </div>
       </div>

@@ -50,12 +50,12 @@ const decodedParams = computedAsync<IDecodedParams | undefined>(async () => {
 
 <template>
   <details class="group px-5 sm:px-7.5">
-    <summary class="text-xs flex items-center justify-between cursor-pointer">
-      <dl class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center w-full">
+    <summary class="flex cursor-pointer items-center justify-between text-xs">
+      <dl class="flex w-full flex-col justify-between gap-2.5 text-sm sm:flex-row sm:items-center sm:gap-0">
         <dt class="text-slate-400">
           Target
         </dt>
-        <dd class="flex justify-between items-center gap-2 break-all sm:w-[420px]">
+        <dd class="flex items-center justify-between gap-2 break-all sm:w-[420px]">
           {{ action.target }}
           <SvgoChevronDown
             class="w-5 text-slate-400 group-open:rotate-180"
@@ -63,13 +63,13 @@ const decodedParams = computedAsync<IDecodedParams | undefined>(async () => {
         </dd>
       </dl>
     </summary>
-    <div class="flex flex-col gap-2.5 mt-5">
-      <div v-if="String(action.operation) === '1'" class="flex px-4 items-center py-2 mb-2.5 gap-2.5 justify-between text-sm border w-fit dark:border-slate-700 rounded-[14px]">
+    <div class="mt-5 flex flex-col gap-2.5">
+      <div v-if="String(action.operation) === '1'" class="mb-2.5 flex w-fit items-center justify-between gap-2.5 rounded-[14px] border px-4 py-2 text-sm dark:border-slate-700">
         <SvgoInfo2 class="text-slate-500" />
         This is a delegate call transaction
       </div>
-      <dl v-if="decodedParams" class="flex sm:flex-row flex-col items-start justify-between text-sm sm:gap-0 gap-2.5">
-        <dt style="word-break: break-all;" class="text-slate-400 max-w-[220px]">
+      <dl v-if="decodedParams" class="flex flex-col items-start justify-between gap-2.5 text-sm sm:flex-row sm:gap-0">
+        <dt style="word-break: break-all;" class="max-w-[220px] text-slate-400">
           {{ decodedParams.method }}
         </dt>
         <dd class="flex items-center gap-2 break-all sm:w-[420px]">
@@ -78,7 +78,7 @@ const decodedParams = computedAsync<IDecodedParams | undefined>(async () => {
           </button>
         </dd>
       </dl>
-      <dl class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5">
+      <dl class="flex flex-col justify-between gap-2.5 text-sm sm:flex-row sm:gap-0">
         <dt class="text-slate-400">
           Data
         </dt>
@@ -86,7 +86,7 @@ const decodedParams = computedAsync<IDecodedParams | undefined>(async () => {
           {{ action.data }}
         </dd>
       </dl>
-      <dl class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
+      <dl class="flex flex-col justify-between gap-2.5 text-sm sm:flex-row sm:items-center sm:gap-0">
         <dt class="text-slate-400">
           Operation
         </dt>
@@ -94,7 +94,7 @@ const decodedParams = computedAsync<IDecodedParams | undefined>(async () => {
           {{ action.operation }}
         </dd>
       </dl>
-      <dl class="flex sm:flex-row flex-col justify-between text-sm sm:gap-0 gap-2.5 sm:items-center">
+      <dl class="flex flex-col justify-between gap-2.5 text-sm sm:flex-row sm:items-center sm:gap-0">
         <dt class="text-slate-400">
           Value
         </dt>

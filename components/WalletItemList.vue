@@ -34,13 +34,13 @@ const displayLegacySafe = computed(() => {
 
 <template>
   <div class="flex flex-col">
-    <div class="flex mb-3 justify-between items-center">
-      <h2 class="text-xs font-medium items-center flex gap-3">
+    <div class="mb-3 flex items-center justify-between">
+      <h2 class="flex items-center gap-3 text-xs font-medium">
         Your wallets
 
         <SvgSpinner v-if="safesLoading" class="text-primary" />
       </h2>
-      <button v-if="legacySafeAddress && legacySafe" class="text-primary text-xs" type="button" @click="handleToggle">
+      <button v-if="legacySafeAddress && legacySafe" class="text-xs text-primary" type="button" @click="handleToggle">
         {{ !displayLegacySafe ? 'Show' : 'Hide' }} legacy safe
       </button>
     </div>
@@ -52,7 +52,7 @@ const displayLegacySafe = computed(() => {
       </div>
 
       <div v-if="!!filteredSafes?.length" class="mt-5">
-        <h2 class="text-xs mb-3 font-medium">
+        <h2 class="mb-3 text-xs font-medium">
           Other wallets
         </h2>
         <ul class="flex flex-col gap-2.5">

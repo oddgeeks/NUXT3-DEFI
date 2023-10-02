@@ -15,11 +15,11 @@ defineProps({
       :key="address"
       :size="220"
       :margin="16"
-      class="rounded-5 mx-auto bg-white overflow-hidden"
+      class="mx-auto overflow-hidden rounded-5 bg-white"
       :data="address"
     />
 
-    <div class="flex flex-col gap-2 items-center">
+    <div class="flex flex-col items-center gap-2">
       <Copy v-if="address" class="text-xl" :text="address">
         <template #content>
           {{ shortenHash(address) }}
@@ -30,19 +30,19 @@ defineProps({
         :href="`/w/${address}`"
         external
         target="_blank"
-        class="absolute top-0 left-0 m-6 inline-flex text-primary items-center space-x-2"
+        class="absolute left-0 top-0 m-6 inline-flex items-center space-x-2 text-primary"
       >
-        <ExternalLinkSVG class="w-6.5 h-6.5 text-slate-400" />
+        <ExternalLinkSVG class="h-6.5 w-6.5 text-slate-400" />
       </NuxtLink>
     </div>
 
     <div class="flex flex-col items-center gap-4">
       <span>Supported Chains</span>
-      <div class="flex gap-2 justify-center flex-wrap">
+      <div class="flex flex-wrap justify-center gap-2">
         <div
           v-for="network in availableNetworks"
           :key="network.chainId"
-          class="flex items-center gap-2 text-[10px] p-1.5 bg-slate-50 dark:bg-gray-850 rounded-full"
+          class="flex items-center gap-2 rounded-full bg-slate-50 p-1.5 text-[10px] dark:bg-gray-850"
         >
           <ChainLogo
             style="width: 14px; height: 14px"
@@ -53,8 +53,8 @@ defineProps({
       </div>
     </div>
 
-    <div class="flex flex-col gap-2.5 items-center">
-      <div class="font-semibold text-xs leading-6 text-center">
+    <div class="flex flex-col items-center gap-2.5">
+      <div class="text-center text-xs font-semibold leading-6">
         Send funds to your Avocado wallet using the details above on any
         supported chain
       </div>
@@ -63,10 +63,10 @@ defineProps({
         href="https://help.avocado.instadapp.io/en/articles/7038878-depositing-funds-to-your-avocado-account"
         target="blank"
         rel="noopener noreferrer"
-        class="text-xs font-medium inline-flex items-center gap-2.5 text-primary"
+        class="inline-flex items-center gap-2.5 text-xs font-medium text-primary"
       >
         <span class="underline underline-offset-4">Learn more about how to deposit</span>
-        <LinkSVG class="w-4 h-4" />
+        <LinkSVG class="h-4 w-4" />
       </a>
     </div>
   </div>

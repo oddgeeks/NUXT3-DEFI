@@ -5,22 +5,22 @@ const account = computed(() => safeAddress.value || '0x000000000000000')
 
 <template>
   <div
-    class="relative flex flex-col items-center gap-4 w-[420px]"
-    :class="{ 'blur pointer-events-none': !safeAddress }"
+    class="relative flex w-[420px] flex-col items-center gap-4"
+    :class="{ 'pointer-events-none blur': !safeAddress }"
   >
     <StyledQrCode
       :key="account"
-      class="rounded-10 mt-5 bg-white overflow-hidden"
+      class="mt-5 overflow-hidden rounded-10 bg-white"
       :size="420"
       :margin="20"
       :data="account"
     />
 
-    <div class="relative bg-slate-50 dark:bg-gray-850 rounded-7.5 flex flex-col justify-center items-center gap-2.5 px-4 py-4 overflow-hidden w-full">
-      <span class="text-sm dark:text-slate-500 text-slate-400">Your Avocado Address</span>
+    <div class="relative flex w-full flex-col items-center justify-center gap-2.5 overflow-hidden rounded-7.5 bg-slate-50 p-4 dark:bg-gray-850">
+      <span class="text-sm text-slate-400 dark:text-slate-500">Your Avocado Address</span>
       <Copy :text="account" class="w-full justify-center">
         <template #content>
-          <span class="dark:text-white text-slate-900 text-[14px]">{{ account }}</span>
+          <span class="text-[14px] text-slate-900 dark:text-white">{{ account }}</span>
         </template>
       </Copy>
     </div>

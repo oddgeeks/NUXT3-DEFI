@@ -50,18 +50,18 @@ async function handleDisconnectWallet(session: any) {
 
 <template>
   <div
-    class="flex items-center sm:justify-normal justify-between gap-3 p-5 dark:bg-gray-850 bg-slate-50 rounded-5 py-2.5 pr-[14px] pl-4"
+    class="flex items-center justify-between gap-3 rounded-5 bg-slate-50 p-5 py-2.5 pl-4 pr-[14px] dark:bg-gray-850 sm:justify-normal"
   >
     <button
-      class="flex text-left gap-3 items-center"
+      class="flex items-center gap-3 text-left"
       @click="openWalletDetailsModalV2(session)"
     >
       <div
         v-if="iconURL"
-        class="relative inline-block h-7.5 w-7.5 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
+        class="relative inline-block h-7.5 w-7.5 shrink-0 rounded-full bg-gray-300 shadow-sm"
       >
         <img
-          class="w-full h-full object-fit rounded-[inherit]"
+          class="object-fit h-full w-full rounded-[inherit]"
           referrerpolicy="no-referrer"
           :src="iconURL"
         >
@@ -69,11 +69,11 @@ async function handleDisconnectWallet(session: any) {
 
       <div>
         <h1
-          class="text-sm overflow-hidden whitespace-nowrap text-shadow sm:w-[148px] w-[200px]"
+          class="text-shadow w-[200px] overflow-hidden whitespace-nowrap text-sm sm:w-[148px]"
         >
           {{ session?.peer.metadata.name }}
         </h1>
-        <h2 class="text-xs text-primary leading-5">
+        <h2 class="text-xs leading-5 text-primary">
           Connected v2
         </h2>
       </div>
@@ -82,7 +82,7 @@ async function handleDisconnectWallet(session: any) {
       v-if="isConnectionWarned" v-tippy="{
         content: 'This DApp is known to have some compatability issues with Avocado.',
         maxWidth: 'none',
-      }" class="text-orange-400 cursor-pointer"
+      }" class="cursor-pointer text-orange-400"
     />
     <a
       v-if="session?.peer.metadata.url"
@@ -96,7 +96,7 @@ async function handleDisconnectWallet(session: any) {
       v-tippy="'Disconnect'"
       @click="handleDisconnectWallet(session)"
     >
-      <SVGX class="text-slate-400 h-[18px] w-[18px]" />
+      <SVGX class="h-[18px] w-[18px] text-slate-400" />
     </button>
   </div>
 </template>

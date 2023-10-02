@@ -36,13 +36,13 @@ const amount = computed(() => {
 </script>
 
 <template>
-  <li class="flex justify-between items-center py-4.5 px-5 border-b dark:border-b-slate-800 last:border-b-0">
-    <span class="uppercase flex items-center gap-3 text-sm">
-      <SafeTokenLogo class="w-6 h-6" :url="token?.logoURI || token?.logo_url" />
+  <li class="flex items-center justify-between border-b px-5 py-4.5 last:border-b-0 dark:border-b-slate-800">
+    <span class="flex items-center gap-3 text-sm uppercase">
+      <SafeTokenLogo class="h-6 w-6" :url="token?.logoURI || token?.logo_url" />
       {{ formatDecimal(amount) }}
       {{ item.key }}
     </span>
-    <span class="text-slate-400 text-sm">
+    <span class="text-sm text-slate-400">
       ({{ formatUsd(toBN(amount).times(item?.price || token?.price || 0)) }})
     </span>
   </li>

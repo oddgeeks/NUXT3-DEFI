@@ -130,8 +130,8 @@ async function onSubmit() {
 </script>
 
 <template>
-  <form class="flex flex-col gap-7.5 sm:w-[520px] w-full" @submit.prevent="onSubmit">
-    <div class="bg-slate-50 dark:bg-gray-850 rounded-5 py-[14px] sm:px-5 px-3 text-sm sm:mx-0 mx-[-0.75rem]">
+  <form class="flex w-full flex-col gap-7.5 sm:w-[520px]" @submit.prevent="onSubmit">
+    <div class="mx-[-0.75rem] rounded-5 bg-slate-50 px-3 py-[14px] text-sm dark:bg-gray-850 sm:mx-0 sm:px-5">
       <div class="flex flex-col gap-2.5 font-medium">
         <dl class="flex items-center justify-between">
           <dt class="text-slate-400">
@@ -146,30 +146,30 @@ async function onSubmit() {
           <dt class="text-slate-400">
             Token
           </dt>
-          <dd class=" items-center flex gap-2">
-            <SafeTokenLogo class="w-[18px] h-[18px]" :url="token?.logoURI" />
+          <dd class=" flex items-center gap-2">
+            <SafeTokenLogo class="h-[18px] w-[18px]" :url="token?.logoURI" />
             <span class="uppercase">
               {{ token?.symbol }}
             </span>
-            <span v-tippy="token?.name" class="text-slate-400 max-w-[200px] truncate">
+            <span v-tippy="token?.name" class="max-w-[200px] truncate text-slate-400">
               ({{ token?.name }})
             </span>
           </dd>
         </dl>
-        <dl class="flex items-center justify-between flex-wrap">
-          <dt class="text-slate-400 whitespace-nowrap">
+        <dl class="flex flex-wrap items-center justify-between">
+          <dt class="whitespace-nowrap text-slate-400">
             To address
           </dt>
           <dd>
-            <NuxtLink target="_blank" class="text-primary font-medium sm:text-sm text-xs" :to="getExplorerUrl(data.toChainId, `/address/${actualAddress}`)" external>
+            <NuxtLink target="_blank" class="text-xs font-medium text-primary sm:text-sm" :to="getExplorerUrl(data.toChainId, `/address/${actualAddress}`)" external>
               {{ actualAddress }}
             </NuxtLink>
           </dd>
         </dl>
       </div>
-      <div class="ticket-divider w-full my-4" />
+      <div class="ticket-divider my-4 w-full" />
 
-      <div class="flex justify-between items-center font-semibold sm:text-2xl text-md">
+      <div class="text-md flex items-center justify-between font-semibold sm:text-2xl">
         <span>
           Amount
         </span>
