@@ -8,6 +8,7 @@ defineProps<{
   imgClass?: string
   details?: boolean
   hideChainLogo?: boolean
+  compact?: boolean
 }>()
 
 const error = ref(false)
@@ -41,7 +42,8 @@ async function handleToggle() {
   >
     <div
       v-if="error || !asset.imageUrl"
-      class="dark:bg-gray-850 bg-slate-50 rounded-[14px] w-[168] h-[240px] flex justify-center items-center"
+      :class="compact ? 'w-8 h-8' : 'w-[168] h-[240px]'"
+      class="dark:bg-gray-850 bg-slate-50 rounded-[14px] flex justify-center items-center"
     >
       <BrokenSVG />
     </div>
