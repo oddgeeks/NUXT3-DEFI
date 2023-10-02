@@ -47,8 +47,8 @@ watchThrottled(
 
     // @ts-expect-error
     window.$chatwoot.setUser(identifier, {
-      name: identifier,
-      email: identifier,
+      name: account.value,
+      email: safeAddress.value,
     })
   }, { immediate: true, throttle: 500 })
 
