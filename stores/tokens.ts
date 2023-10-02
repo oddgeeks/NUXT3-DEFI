@@ -17,6 +17,8 @@ export interface IToken {
 
 export const useTokens = defineStore('tokens', () => {
   const tokens = ref<IToken[]>([])
+  const selectedTokensForMigration = ref<IToken[]>([])
+  const selectedNFTsForMigration = ref<NFTData[]>([])
   const customTokens = useStorageAsync<IToken[]>('custom-tokens', [])
 
   const fetchTokens = async () => {
@@ -132,6 +134,36 @@ export const useTokens = defineStore('tokens', () => {
     }
   }
 
+  const toggleSelectedTokenForMigration = (tokenForMigration: IToken) => {
+    const index = selectedTokensForMigration.value?.findIndex((selectedToken) => {
+      return `${selectedToken.address}-${selectedToken.chainId}` === `${tokenForMigration.address}-${tokenForMigration.chainId}`
+    })
+    if (index === -1) {
+      selectedTokensForMigration.value.push(tokenForMigration)
+    } else {
+      selectedTokensForMigration.value.splice(index, 1)
+    }
+  }
+
+  const toggleSelectedNFTsForMigration = (NFTForMigration: NFTData) => {
+    const index = selectedNFTsForMigration.value?.findIndex((selectedNFT) => {
+      return `${selectedNFT.tokenId}-${selectedNFT.chainId}` === `${NFTForMigration.tokenId}-${NFTForMigration.chainId}`
+    })
+    if (index === -1) {
+      selectedNFTsForMigration.value.push(NFTForMigration)
+    } else {
+      selectedNFTsForMigration.value.splice(index, 1)
+    }
+  }
+
+  const setTokensForMigration = (tokensForMigration: IToken[]) => {
+    selectedTokensForMigration.value = [...tokensForMigration];
+  }
+
+  const setNFTsForMigration = (NFTsForMigration: NFTData[]) => {
+    selectedNFTsForMigration.value = [...NFTsForMigration];
+  }
+
   useIntervalFn(handleTokenPrices, 10000)
 
   return {
@@ -142,6 +174,12 @@ export const useTokens = defineStore('tokens', () => {
     handleAddToken,
     handleDeleteToken,
     fetchTokenByAddress,
+    selectedTokensForMigration,
+    toggleSelectedTokenForMigration,
+    setTokensForMigration,
+    selectedNFTsForMigration,
+    toggleSelectedNFTsForMigration,
+    setNFTsForMigration,
   }
 })
 

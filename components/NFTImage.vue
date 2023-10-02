@@ -7,6 +7,7 @@ defineProps<{
   asset: NFTData
   imgClass?: string
   details?: boolean
+  hideChainLogo?: boolean
 }>()
 
 const error = ref(false)
@@ -58,6 +59,7 @@ async function handleToggle() {
       @error="handleError"
     >
     <div
+      v-if="!hideChainLogo"
       :class="{
         'text-xs p-1.5': !details,
         'p-2 font-bold': details,
