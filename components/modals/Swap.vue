@@ -305,13 +305,12 @@ const aggregators = ref<IAggregator[]>([])
 const selectedRoute = ref<IAggregator>()
 const fallbackRoutes = ref<IAggregator[]>([])
 
-const userChangeRoute = (route: IAggregator) => {
+function userChangeRoute(route: IAggregator) {
   selectedRoute.value = route
   fallbackRoutes.value = aggregators.value.filter(i => i.name !== route.name)
 }
 
-
-const resetRetryCounts = () => {
+function resetRetryCounts() {
   txRetryCount.value = 0
   esimatedFeeRetryCount.value = 0
 }
@@ -421,7 +420,7 @@ const { data: txActions } = useAsyncData(
  * Creates a set of txActions based on the selected route
  * @param route
  */
-const createRouteBasedTxActions = async (route?: IAggregator): Promise<TransactionsAction[]> => {
+async function createRouteBasedTxActions(route?: IAggregator): Promise<TransactionsAction[]> {
   const { valid } = await validate()
 
   if (!valid)
@@ -457,50 +456,9 @@ const createRouteBasedTxActions = async (route?: IAggregator): Promise<Transacti
   })
 
   return txActions
-
 }
 
 const txRetryCount = ref(0)
-
-/**
- * This functions retrys the swap tx if it fails for any reason.
- * The retry triggers a change in the selectedRoutes and creates a set of new txActions
- * @param metadata
- * @returns txHash as a string
- */
-const sendTransactionsWithRetry = async (metadata: string): Promise<any> => {
-  try {
-    const actionsToSend = txActions.value || await createRouteBasedTxActions(selectedRoute.value)
-    if (!actionsToSend)
-      throw new Error('Could not create tx actions')
-
-    const txHash = await sendTransactions(
-      actionsToSend,
-      toChainId.value,
-      {
-        metadata
-      },
-      'swap',
-    )
-    return txHash
-  }
-  catch (e: any) {
-    const err = parseTransactionError(e)
-    if (err.formatted?.includes('Signing rejected'))
-      throw e
-
-
-    const nextRoute = changeRouteForRetry(txRetryCount, 1)
-    if (nextRoute) {
-      txRetryCount.value++
-      await createRouteBasedTxActions(nextRoute)
-      return await sendTransactionsWithRetry(metadata)
-    }
-
-    throw e
-  }
-}
-
 
 const totalRetries = computed(() => {
   return txRetryCount.value + esimatedFeeRetryCount.value
@@ -511,7 +469,7 @@ const totalRetries = computed(() => {
  * The current implementation supports cycling through all the fallback routes
  * Retry policy is set to 1
  */
-const changeRouteForRetry = (retryCount: Ref<number>, maxRetry = 1) => {
+function changeRouteForRetry(retryCount: Ref<number>, maxRetry = 1) {
   if (fallbackRoutes.value.length > totalRetries.value && retryCount.value < maxRetry) {
     const nextRoute = fallbackRoutes.value[totalRetries.value]
     selectedRoute.value = nextRoute
@@ -528,17 +486,17 @@ const {
   pending: feePending,
   error,
 } = useEstimatedFee(txActions, toChainId, {
-    cb: () => {
-      resume()
-      refreshing.value = false
-    },
+  cb: () => {
+    resume()
+    refreshing.value = false
   },
-  {
-    active: true,
-    count: esimatedFeeRetryCount,
-    max: 1,
-    cb: changeRouteForRetry
-  }
+},
+{
+  active: true,
+  count: esimatedFeeRetryCount,
+  max: 1,
+  cb: changeRouteForRetry,
+},
 )
 
 const onSubmit = handleSubmit(async () => {
@@ -553,27 +511,23 @@ const onSubmit = handleSubmit(async () => {
       protocol: utils.formatBytes32String(selectedRoute?.value?.name || ''),
     })
 
-    const transactionHash = await sendTransactionsWithRetry(metadata)
+    if (!txActions.value?.length)
+      throw new Error('No transaction actions found')
+
+    const transactionHash = await sendTransactions(
+      txActions.value,
+      toChainId.value,
+      {
+        metadata,
+      },
+      'swap',
+    )
 
     if (!transactionHash)
       return
 
-    const buyAmt = fromWei(
-      swapDetails.value?.data?.data.buyTokenAmount || 0,
-      swapDetails.value?.data?.data.buyToken.decimals,
-    ).toFixed()
-
-    const sellAmt = fromWei(
-      swapDetails.value?.data?.data.sellTokenAmount || 0,
-      swapDetails.value?.data?.data.sellToken.decimals,
-    ).toFixed()
-
     logActionToSlack({
-      message: `${formatDecimal(sellAmt)} ${formatSymbol(
-        swap.value.sellToken.symbol,
-      )} to ${formatDecimal(buyAmt)} ${formatSymbol(
-        swap.value.buyToken.symbol,
-      )}`,
+      message: generateSlackMessage(metadata, toChainId.value),
       action: 'swap',
       account: account.value,
       chainId: toChainId.value,

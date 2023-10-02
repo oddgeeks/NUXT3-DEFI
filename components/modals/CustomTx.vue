@@ -45,7 +45,7 @@ async function onSubmit() {
 
     emit('destroy')
 
-    showPendingTransactionModal(transactionHash, chainId.value, 'send')
+    showPendingTransactionModal(transactionHash, chainId.value, 'transfer')
   }
   catch (e: any) {
     const err = parseTransactionError(e)
@@ -57,7 +57,7 @@ async function onSubmit() {
 
     logActionToSlack({
       message: err.formatted,
-      action: 'send',
+      action: 'transfer',
       type: 'error',
       account: account.value,
       errorDetails: err.parsed,

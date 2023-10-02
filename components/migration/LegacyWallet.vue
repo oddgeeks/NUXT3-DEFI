@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { legacySafe } = storeToRefs(useSafe());
+const { legacySafe } = storeToRefs(useSafe())
 </script>
 
 <template>

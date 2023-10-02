@@ -115,7 +115,7 @@ const groupedBalances = computed(() => {
 const search = useDebounceFn((event: Event) => {
   searchQuery.value = (<HTMLInputElement>event.target).value
 }, 200)
-const { safeAddress, isSafeAddress } = useAvocadoSafe()
+const { safeAddress } = useAvocadoSafe()
 </script>
 
 <template>

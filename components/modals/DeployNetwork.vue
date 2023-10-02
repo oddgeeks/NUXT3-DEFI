@@ -41,14 +41,14 @@ async function handleDeploy() {
       return
 
     logActionToSlack({
-      message: ` ${chainIdToName(props.option.chainId)}`,
+      message: generateSlackMessage(metadata, props.option.chainId),
       action: 'deploy',
       txHash: transactionHash,
       chainId: String(props.option.chainId),
       account: account.value,
     })
 
-    await showPendingTransactionModal(transactionHash, props.option.chainId, 'send')
+    await showPendingTransactionModal(transactionHash, props.option.chainId, 'deploy')
 
     emit('destroy')
   }

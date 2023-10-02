@@ -77,7 +77,7 @@ interface IWcTransactionModal {
 
 export function showPendingTransactionModal(hash: string,
   chainId: number | string,
-  type?: ITxType,
+  type?: IWeb3Action,
   async = false) {
   return openModal({
     component: PendingTransaction,

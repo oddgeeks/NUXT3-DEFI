@@ -25,7 +25,7 @@ const loading = ref({
   target: false,
 })
 
-const { safe, signMultisigData } = useAvocadoSafe()
+const { signLegacyData, signMultisigData } = useAvocadoSafe()
 const { switchToAvocadoNetwork } = useNetworks()
 
 async function handleSign(source: boolean) {
@@ -37,7 +37,15 @@ async function handleSign(source: boolean) {
   try {
     loading.value[source ? 'source' : 'target'] = true
 
-    const signature = isSelectedSafeLegacy.value ? await safe.value?.buildSignature(message, chainId) : await signMultisigData({ chainId, data: message })
+    let signature
+
+    if (isSelectedSafeLegacy.value) {
+      const { signature: legacySignature } = await signLegacyData({ chainId, message })
+      signature = legacySignature
+    }
+    else {
+      signature = await signMultisigData({ chainId, data: message })
+    }
 
     if (!signature)
       return

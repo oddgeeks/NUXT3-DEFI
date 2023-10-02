@@ -11,7 +11,7 @@ const { token, stepBack, data, actualAddress, targetToken } = useSend()
 const { gasBalance, safeOptions, isSelectedSafeLegacy, selectedSafe } = storeToRefs(useSafe())
 const { account } = useWeb3()
 const { toWei, fromWei } = useBignumber()
-const { safeAddress, safe, tokenBalances, generateMultisigSignatureMessage } = useAvocadoSafe()
+const { safeAddress, tokenBalances, generateMultisigSignatureMessage, generateSignatureMessage } = useAvocadoSafe()
 const { avoProvider } = useSafe()
 const { parseTransactionError } = useErrorHandler()
 
@@ -198,6 +198,16 @@ async function fetchQuoteWithGasFee() {
   throw new Error('Unable to fetch quote with acceptable gas fees after max retries')
 }
 
+function getMetadata() {
+  return encodeCrossTransferMetadata({
+    fromToken: token.value?.address!,
+    toToken: targetToken.value?.address,
+    toChainId: String(data.value.toChainId),
+    amount: bestRoute.value?.toAmount,
+    receiver: actualAddress.value,
+  })
+}
+
 async function fetchBestRoute() {
   error.value = ''
   buildTransaction.value = undefined
@@ -269,33 +279,27 @@ async function fetchBestRoute() {
       })
     }
 
-    const metadata = encodeCrossTransferMetadata({
-      fromToken: token.value?.address!,
-      toToken: targetToken.value?.address,
-      toChainId: String(data.value.toChainId),
-      amount: bestRoute.value.toAmount,
-      receiver: actualAddress.value,
-    })
+    const metadata = getMetadata()
 
     let tMessage
     let sMessage
 
     if (isSelectedSafeLegacy.value) {
-      tMessage = await safe.value?.generateSignatureMessage(
-        targetActions,
-        data.value.toChainId,
-        {
+      tMessage = await generateSignatureMessage({
+        actions: targetActions,
+        chainId: data.value.toChainId,
+        options: {
           metadata,
         },
-      )
+      })
 
-      sMessage = await safe.value?.generateSignatureMessage(
-        sourceActions,
-        data.value.fromChainId,
-        {
+      sMessage = await generateSignatureMessage({
+        actions: sourceActions,
+        chainId: data.value.fromChainId,
+        options: {
           metadata,
         },
-      )
+      })
     }
     else {
       tMessage = await generateMultisigSignatureMessage({
@@ -476,7 +480,9 @@ async function fetchCrossFee() {
     crossFee.value.data = mergedFees
   }
   catch (e: any) {
-    crossFee.value.error = e.data?.data?.message || e?.message || 'Something went wrong'
+    const err = serialize(e)
+
+    crossFee.value.error = e?.response?._data?.message || err?.message || 'Failed to fetching estimated fee'
   }
   finally {
     crossFee.value.pending = false
@@ -531,13 +537,13 @@ async function onSubmit() {
       throw new Error('Something went wrong')
     }
 
+    const metadata = getMetadata()
+
     logActionToSlack({
-      message: `${formatDecimal(data.value.amount)} ${formatSymbol(
-        token.value.symbol,
-      )} to ${actualAddress.value}`,
-      action: 'send',
+      message: generateSlackMessage(metadata, data.value.fromChainId),
+      action: 'cross-transfer',
       txHash: avocadoHash,
-      chainId: String(data.value.toChainId),
+      chainId: String(data.value.fromChainId),
       amountInUsd: times(data.value.amount, token.value.price || '0').toFixed(),
       account: account.value,
       network: formattedNetwork,
@@ -557,7 +563,7 @@ async function onSubmit() {
 
     logActionToSlack({
       message: err.formatted,
-      action: 'send',
+      action: 'cross-transfer',
       type: 'error',
       account: account.value,
       errorDetails: err.parsed,

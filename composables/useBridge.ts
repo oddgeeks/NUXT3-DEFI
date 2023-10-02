@@ -21,6 +21,7 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
 
   const { isInputUsd } = useInputUsd()
   const [max, toggleMax] = useToggle(false)
+  const [dirty, toggleDirty] = useToggle(false)
 
   const { account } = useWeb3()
   const { fromWei, toWei } = useBignumber()
@@ -31,6 +32,8 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
 
   const toChainId = ref(fromChainId.value == '137' ? '10' : '137')
   const bridgeToToken = ref<IBridgeTokensResult>()
+
+  const txRoute = ref<IRoute>()
 
   const form = useForm({
     validationSchema: yup.object({
@@ -60,6 +63,9 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
         .decimalPlaces(4, 6).toNumber()
     },
     set(newValue) {
+      if (max.value)
+        return
+
       const value = toBN(newValue || 0).div(fromToken.value?.price || 0)
 
       setValue(toBN(value)
@@ -218,7 +224,7 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
 
         routesController = null
 
-        if (!data.result.routes.length) {
+        if (!data.result?.routes?.length) {
           const minAmountError: any = Object.entries(data.result.bridgeRouteErrors).find(([_, error]: any) => {
             return error?.status === 'MIN_AMOUNT_NOT_MET'
           })
@@ -241,6 +247,12 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
           }
         }
 
+        data?.result?.routes.sort((a, b) => toBN(b?.toAmount || '0').minus(toBN(a?.toAmount || '0')).toNumber())
+
+        const [route] = data?.result?.routes || []
+
+        txRoute.value = route
+
         return data
       }
       catch (error: any) {
@@ -258,12 +270,6 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
       watch: [amount, fromToken, bridgeToToken],
     },
   )
-
-  const txRoute = computed(() => {
-    const [route] = routes.data.value?.result.routes || []
-
-    return route ?? null
-  })
 
   const transactions = useAsyncData(
     'bridge-transactions',
@@ -580,5 +586,7 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
     isInputUsd,
     max,
     toggleMax,
+    dirty,
+    toggleDirty,
   }
 }

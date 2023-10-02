@@ -15,7 +15,7 @@ const { lastModal } = useModal()
 
 const { account } = useWeb3()
 const { isAccountCanSign } = useMultisig()
-const { selectedSafe, safeOptions } = storeToRefs(useSafe())
+const { selectedSafe } = storeToRefs(useSafe())
 const { checkTransactionExecuted } = useAvocadoSafe()
 
 const isCollapseAll = inject<Ref<boolean>>('isCollapseAll', ref(false))
