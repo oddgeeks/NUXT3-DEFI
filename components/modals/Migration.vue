@@ -15,7 +15,12 @@ interface MigrateToModalProps {
 
 const { sendTransactions } = useAvocadoSafe()
 const { legacySafeAddress } = storeToRefs(useSafe())
-const { toggleSelectedTokenForMigration, toggleSelectedNFTsForMigration } = useMigration()
+const {
+  toggleSelectedTokenForMigration,
+  toggleSelectedNFTsForMigration,
+  setTokensForMigration,
+  setNFTsForMigration
+} = useMigration()
 const { selectedTokensForMigration, selectedNFTsForMigration, selectedGasBalanceForMigration } = storeToRefs(useMigration())
 const { account, library } = useWeb3()
 
@@ -140,6 +145,8 @@ async function migrate() {
 
     const nftHashes = await migrateNfts()
 
+    setTokensForMigration([])
+    setNFTsForMigration([])
     emit('destroy')
     openPendingMigrationModal([...hashes, ...nftHashes || []], [...chainIds, ...nftChainIds.value])
   }
