@@ -44,13 +44,6 @@ const filteredAssets = computed(() => {
     networkPreferences.value.some(i => i == item.chainId),
   )
 })
-
-function isChecked(asset: NFTData) {
-  const index = selectedNFTsForMigration.value?.findIndex((selectedNFT) => {
-    return `${selectedNFT.tokenId}-${selectedNFT.chainId}` === `${asset.tokenId}-${asset.chainId}`
-  })
-  return index > -1
-}
 </script>
 
 <template>
@@ -76,7 +69,6 @@ function isChecked(asset: NFTData) {
       v-else
       :key="asset.name + asset.contractAddress + asset.tokenId"
       :asset="asset"
-      :is-checked="isChecked(asset)"
       @toggleCheck="() => toggleSelectedNFTsForMigration(asset)"
     />
   </div>
