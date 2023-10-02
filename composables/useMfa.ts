@@ -1,4 +1,5 @@
 const mfaTermsAccepted = useLocalStorage('mfa-terms-accepted', false)
+const preferredMfaType = useLocalStorage('mfa-preferred-type', '')
 
 export function useMfa() {
   const { mfaEmailVerifed, mfaPhoneVerifed, mfaTotpVerifed } = storeToRefs(useSafe())
@@ -88,5 +89,6 @@ export function useMfa() {
     mfaModes,
     mfaMode,
     actualMfaMode,
+    preferredMfaType,
   }
 }

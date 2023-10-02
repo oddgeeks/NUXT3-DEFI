@@ -8,7 +8,7 @@ useAccountTrack(undefined, () => {
 })
 
 const { isSelectedSafeLegacy } = storeToRefs(useSafe())
-const { mfaTypes, mfaTermsAccepted, mfaModes, mfaMode, actualMfaMode } = useMfa()
+const { mfaTypes, mfaTermsAccepted, preferredMfaType } = useMfa()
 
 function defaultSteps() {
   return {
@@ -19,6 +19,11 @@ function defaultSteps() {
 
 useState('signer-steps', defaultSteps)
 
+async function handleDeactivate(mfa: IMfa, close: () => void) {
+  console.log(mfa)
+  close()
+}
+
 async function handleActivate(mfa: IMfa) {
   if (!mfaTermsAccepted.value) {
     const { success } = await openMfaTermsModal()
@@ -28,6 +33,15 @@ async function handleActivate(mfa: IMfa) {
   }
 
   openMfaActivateModal({ mfaType: mfa })
+}
+
+function handleSetDefault(mfa: IMfa, close: () => void) {
+  preferredMfaType.value = mfa.value
+  close()
+  notify({
+    type: 'success',
+    message: `Default 2FA method set to ${mfa.label}`,
+  })
 }
 </script>
 
@@ -49,95 +63,67 @@ async function handleActivate(mfa: IMfa) {
           Learn more about how it works
         </NuxtLink>
       </div>
-      <div class="grid grid-cols-2 gap-5">
-        <div class="rounded-5 flex flex-col gap-7.5 dark:bg-gray-850 bg-slate-50 p-7.5">
-          <div>
-            <h2 class="mb-2.5">
-              Set up 2FA methods
-            </h2>
-            <h3 class="font-medium text-xs text-slate-400">
-              You can set up multiple modes of verification and later use any method to confirm your identity.
-            </h3>
-          </div>
-          <div>
-            <ul class="flex flex-col gap-4">
-              <li v-for="mfa in mfaTypes" :key="mfa.value">
-                <div class="dark:bg-slate-850 text-left flex items-center justify-between h-[66px] bg-slate-150 ring-1 rounded-2xl dark:ring-slate-750 ring-slate-150 w-full p-5">
-                  <div class="flex items-center justify-between w-full">
-                    <span class="leading-5 font-medium text-xs">
-                      {{ mfa.label }}
-                    </span>
-                    <span v-if="mfa.activated" class="flex items-center text-xs uppercase gap-2.5 text-primary">
-                      <SvgoCheckCircle class="success-circle w-5" />
-                      Active
-
-                      <Popover class="relative inline-flex items-center">
-                        <PopoverButton class="group">
-                          <SvgoDots />
-                        </PopoverButton>
-
-                        <transition
-                          enter-active-class="transition duration-200 ease-out"
-                          enter-from-class="translate-y-1 opacity-0"
-                          enter-to-class="translate-y-0 opacity-100"
-                          leave-active-class="transition duration-150 ease-in"
-                          leave-from-class="translate-y-0 opacity-100"
-                          leave-to-class="translate-y-1 opacity-0"
-                        >
-                          <PopoverPanel
-                            class="absolute left-1/2 z-10 -top-14 -translate-x-1/2 transform px-4 sm:px-0 lg:max-w-3xl"
-                          >
-                            <div class="dark:bg-slate-750 flex items-center gap-2.5 text-red-alert px-5 rounded-2xl py-4 bg-slate-150">
-                              <SvgoTrash2 /> Deactivate
-                            </div>
-                          </PopoverPanel>
-                        </transition>
-                      </Popover>
-                    </span>
-                    <CommonButton v-else @click="handleActivate(mfa)">
-                      Activate Now
-                    </CommonButton>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
+      <div class="rounded-5 flex flex-col gap-7.5 dark:bg-gray-850 bg-slate-50 p-7.5">
+        <div>
+          <h2 class="mb-2.5">
+            Set up 2FA methods
+          </h2>
+          <h3 class="font-medium text-xs text-slate-400">
+            You can set up multiple modes of verification and later use any method to confirm your identity.
+          </h3>
         </div>
-        <div class="rounded-5 flex flex-col gap-7.5 dark:bg-gray-850 bg-slate-50 p-7.5">
-          <div>
-            <h2 class="mb-2.5">
-              Your preferred 2FA Mode
-            </h2>
-            <h3 class="font-medium text-xs text-slate-400">
-              You can change this anytime later in 2FA settings.
-            </h3>
-          </div>
-
-          <ul class="flex flex-col gap-4">
-            <li v-for="mode in mfaModes" :key="mode.value">
-              <button :class="mfaMode === mode.value ? 'ring-primary' : 'dark:ring-slate-750 ring-slate-150'" class="dark:bg-slate-850 text-left flex items-center justify-between bg-slate-150 ring-1 rounded-2xl  w-full p-5" @click="mfaMode = mode.value">
-                <div class="flex flex-col justify-between w-full gap-4">
-                  <div class="leading-5 flex gap-2.5 font-medium text-xs">
-                    {{ mode.title }}
-                    <span v-if="mode.recommended" class="bg-primary font-medium text-xs bg-opacity-10 text-primary px-2 h-5 inline-flex items-center justify-center rounded-md">
-                      Recommended
+        <div>
+          <ul class="grid grid-cols-2 gap-4">
+            <li v-for="mfa in mfaTypes" :key="mfa.value">
+              <div class="dark:bg-slate-850 text-left flex items-center justify-between h-[66px] bg-slate-150 ring-1 rounded-2xl dark:ring-slate-750 ring-slate-150 w-full p-5">
+                <div class="flex items-center justify-between w-full">
+                  <span class="leading-5 font-medium text-xs">
+                    {{ mfa.label }}
+                  </span>
+                  <span v-if="mfa.activated" class="flex items-center text-xs uppercase gap-2.5 ">
+                    <SvgoCheckCircle class="success-circle w-5" />
+                    <span class="text-primary">
+                      Active
                     </span>
-                  </div>
-                  <p class="font-medium text-slate-400 text-sm !leading-5">
-                    {{ mode.description }}
-                  </p>
+
+                    <Popover class="relative inline-flex items-center">
+                      <PopoverButton class="group">
+                        <SvgoDots />
+                      </PopoverButton>
+
+                      <transition
+                        enter-active-class="transition duration-200 ease-out"
+                        enter-from-class="translate-y-1 opacity-0"
+                        enter-to-class="translate-y-0 opacity-100"
+                        leave-active-class="transition duration-150 ease-in"
+                        leave-from-class="translate-y-0 opacity-100"
+                        leave-to-class="translate-y-1 opacity-0"
+                      >
+                        <PopoverPanel
+                          v-slot="{ close }"
+                          class="absolute left-1/2 z-10 flex-col dark:bg-gray-900 border dark:border-slate-800 flex gap-2.5 rounded-2xl py-4 bg-slate-150 -top-24 -translate-x-1/2 transform sm:px-0 lg:max-w-3xl text-sm"
+                        >
+                          <button class="text-left px-5 whitespace-nowrap" @click="handleSetDefault(mfa, close)">
+                            Set as default
+                          </button>
+                          <button class="text-red-alert px-5 flex items-center gap-2" @click="handleDeactivate(mfa, close)">
+                            <SvgoTrash2 /> Deactivate
+                          </button>
+                        </PopoverPanel>
+                      </transition>
+                    </Popover>
+                  </span>
+                  <CommonButton v-else @click="handleActivate(mfa)">
+                    Activate Now
+                  </CommonButton>
                 </div>
-              </button>
+              </div>
             </li>
           </ul>
-          <p class="flex h-8 text-orange-400 font-medium text-xs gap-2">
-            <SvgoInfo2 class="mt-0.5" />
-            Mode will be changed to '{{ actualMfaMode?.title }}' once changes
-            are confirmed
-          </p>
         </div>
       </div>
-      <div class="flex justify-center items-center flex-col gap-[14px] mt-7.5">
+
+      <div class="flex justify-center items-center flex-col gap-[14px]">
         <span class="text-xs font-medium text-slate-400">
           One or more changes yet to be confirmed
         </span>
