@@ -167,7 +167,8 @@ async function handleMigrateGasBalance() {
   const actions = []
 
   for (const gasBalance of selectedGasBalanceForMigration.value) {
-    const data = (await gasBalanceManagerInstance.populateTransaction['transfer(address,uint256,uint256)'](account.value, gasBalance.safe.multisig_index, gasBalance.amount)).data
+    console.log(toBN(gasBalance.amount).toString())
+    const data = (await gasBalanceManagerInstance.populateTransaction['transfer(address,uint256,uint256)'](props.selectedSafe?.owner_address, props.selectedSafe?.multisig_index, toBN(gasBalance.amount).toString())).data
 
     const tx = {
       to: gasBalanceManagerAddress,
