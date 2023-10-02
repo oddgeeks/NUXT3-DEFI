@@ -72,15 +72,21 @@ const onSubmit = handleSubmit(async () => {
       index: selectedSafe.value?.multisig_index,
       countryCode: countryCode.value,
       phone: phone.value,
+      existingMfaType: 'phone',
+      existingMfaCode: '',
     },
     email: {
       owner: selectedSafe.value?.owner_address,
       index: selectedSafe.value?.multisig_index,
       email: email.value,
+      mfaType: 'email',
+      mfaCode: '',
     },
     totp: {
       owner: selectedSafe.value?.owner_address,
       index: selectedSafe.value?.multisig_index,
+      mfaType: 'totp',
+      mfaCode: '',
     },
   } as any
 
@@ -105,6 +111,14 @@ const onSubmit = handleSubmit(async () => {
     data,
     signature,
   }])
+
+  if (!resp) {
+    openSnackbar({
+      message: 'MFA request failed',
+      type: 'error',
+    })
+    return
+  }
 
   mfaRequestResponse.value = resp
 })

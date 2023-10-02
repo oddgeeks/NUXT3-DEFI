@@ -11,7 +11,7 @@ const meta = {
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   extends: ['@instadapp/avocado-base'],
-
+  devtools: false,
   runtimeConfig: {
     socketApiKey: process.env.SOCKET_API_KEY,
     debankAccessKey: process.env.DEBANK_ACCESS_KEY,
