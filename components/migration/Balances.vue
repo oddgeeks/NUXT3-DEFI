@@ -16,7 +16,6 @@
       v-for="token in tokensWithBalances"
       :key="token.address + '-' + token.chainId"
       :token-balance="token"
-      :is-checked="isChecked(token)"
       @toggleCheck="() => toggleSelectedTokenForMigration(token)"
     />
   </div>
@@ -26,8 +25,7 @@
 import { storeToRefs } from 'pinia'
 
 const { setGasBalance } = useSafe()
-const { toggleSelectedTokenForMigration, setTokensForMigration } = useTokens()
-const { selectedTokensForMigration } = storeToRefs(useTokens())
+const { toggleSelectedTokenForMigration, setTokensForMigration } = useMigration()
 const { legacySafe, balances, selectedSafe } = storeToRefs(useSafe())
 const { account } = useWeb3()
 const { safeAddress, tokenBalances } = useAvocadoSafe()
@@ -35,13 +33,6 @@ const { safeAddress, tokenBalances } = useAvocadoSafe()
 const tokensWithBalances = computed(() =>
   tokenBalances.value.filter((tb) => toBN(tb.balance).gt(0))
 )
- 
-const isChecked = (token: IToken) => {
-  const index = selectedTokensForMigration?.value?.findIndex((selectedToken) => {
-    return `${selectedToken.address}-${selectedToken.chainId}` === `${token.address}-${token.chainId}`
-  })
-  return index > -1
-}
 
 watch([selectedSafe, legacySafe], () => {
   // Set legacy safe as the selected one to show correct balances

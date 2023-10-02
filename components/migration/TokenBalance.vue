@@ -20,7 +20,7 @@
     <input
       v-if="!props.showSelectedUi"
       type="checkbox"
-      :checked="props.isChecked"
+      :checked="isChecked"
       class="ml-5 w-5 h-5 rounded-[6px] !bg-slate-700 border-0 outline-0 cursor-pointer"
       @click="emits('toggleCheck')"
     />
@@ -33,16 +33,23 @@
 <script setup lang="ts">
 import SVGX from '~/assets/images/icons/x.svg?component'
 
+const { selectedTokensForMigration } = storeToRefs(useMigration())
+
 const props = withDefaults(defineProps<{
   tokenBalance: IBalance
-  isChecked?: boolean
   showSelectedUi?: boolean
 }>(),
   {
-    isChecked: false,
     showSelectedUi: false,
   },
 )
 
-const emits = defineEmits(['toggleCheck']);
+const isChecked = computed(() => {
+  const index = selectedTokensForMigration?.value?.findIndex((selectedToken) => {
+    return `${selectedToken.address}-${selectedToken.chainId}` === `${props.tokenBalance.address}-${props.tokenBalance.chainId}`
+  })
+  return index > -1
+})
+
+const emits = defineEmits(['toggleCheck'])
 </script>

@@ -19,7 +19,6 @@
           v-for="token in selectedTokensForMigration"
           :key="token.address + '-' + token.chainId"
           :token-balance="(token as IBalance)"
-          is-checked
           show-selected-ui
           @toggleCheck="() => toggleSelectedTokenForMigration(token)"
         />
@@ -78,8 +77,8 @@ interface MigrateToModalProps {
 
 const { sendTransactions } = useAvocadoSafe()
 const { legacySafeAddress } = storeToRefs(useSafe())
-const { toggleSelectedTokenForMigration, toggleSelectedNFTsForMigration } = useTokens()
-const { selectedTokensForMigration, selectedNFTsForMigration } = storeToRefs(useTokens())
+const { toggleSelectedTokenForMigration, toggleSelectedNFTsForMigration } = useMigration()
+const { selectedTokensForMigration, selectedNFTsForMigration } = storeToRefs(useMigration())
 const { account, library } = useWeb3()
 
 const props = defineProps<MigrateToModalProps>()

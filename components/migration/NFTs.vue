@@ -26,8 +26,8 @@ import { storeToRefs } from 'pinia'
 
 const { NFT } = useNft()
 const { legacySafeAddress } = storeToRefs(useSafe())
-const { toggleSelectedNFTsForMigration, setNFTsForMigration } = useTokens()
-const { selectedNFTsForMigration } = storeToRefs(useTokens())
+const { toggleSelectedNFTsForMigration, setNFTsForMigration } = useMigration()
+const { selectedNFTsForMigration } = storeToRefs(useMigration())
 
 const networkPreferences = ref(
   [137, 42161, 1, 10, 56, 43114, 250],
