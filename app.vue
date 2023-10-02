@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import crypto from 'node:crypto'
+
 useTokens()
 useSafe()
-const { library } = useWeb3()
+const { library, account } = useWeb3()
+const { public: { chatwootUserIdentificationKey } } = useRuntimeConfig()
 
 onMounted(() => {
   (window as any).library = library
@@ -16,14 +19,16 @@ onMounted(() => {
 
   return () => document.removeEventListener('scroll', hideAllTooltipsOnScroll)
 })
-const { account } = useWeb3()
+
 watch(
   account,
-  () => {
+  async () => {
     if (account.value) {
+      await until(() => (window as any).$chatwoot as any).changed();
+
       (window as any).$chatwoot.setUser(account.value.toLowerCase(), {
         name: account.value.toLowerCase(),
-        email: account.value.toLowerCase(),
+        identifier_hash: crypto.createHmac('sha256', chatwootUserIdentificationKey as any).update(account.value.toLowerCase()).digest('hex'),
       })
     }
   }, { immediate: true })
