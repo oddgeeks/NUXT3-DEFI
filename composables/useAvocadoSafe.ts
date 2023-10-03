@@ -177,7 +177,7 @@ export function useAvocadoSafe() {
 
     const domain = {
       name: safeOptions.domainName,
-      version: safeOptions.currentVersion,
+      version: safeOptions.notdeployed ? safeOptions?.latestVersion : safeOptions.currentVersion,
       chainId: String(avoChainId),
       salt: ethers.utils.solidityKeccak256(['uint256'], [chainId]),
       verifyingContract: selectedSafe.value?.safe_address,
