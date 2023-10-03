@@ -10,6 +10,7 @@ interface ISlackMessage {
   errorDetails?: string
   amountInUsd?: string
   network?: string
+  isBridgeError?: boolean
 }
 
 const prefixes: Record<ISlackMessage['action'], string> = {
@@ -25,6 +26,7 @@ const prefixes: Record<ISlackMessage['action'], string> = {
   'deploy': 'Deployed:',
   'network': 'Network',
   'nft': 'NFT Transfer',
+  'auth': 'Auth',
   'multisig': 'Executed Multisig Transaction',
   'proposal': 'MS Proposal Created',
   'fetch-nonce': 'Fetched Nonce',
@@ -63,6 +65,7 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
     errorDetails,
     amountInUsd = '0',
     network,
+    isBridgeError,
   } = slackMessage
 
   if (ignoredMessages.some(i => message && new RegExp(i).test(message)))
@@ -103,7 +106,7 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
   if (errorDetails)
     logMessage += `\n${'`Error details`'} ${errorDetails}`
 
-  slack(logMessage, type)
+  slack(logMessage, type, isBridgeError)
 }
 
 export function generateSlackMessage(_metadata: string, chainId: string | number, additionalMessage?: string) {
