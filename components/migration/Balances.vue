@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 
-const { toggleSelectedTokenForMigration, setTokensForMigration } = useTokens()
-const { selectedTokensForMigration } = storeToRefs(useTokens())
-const { balances } = storeToRefs(useSafe())
+const { setGasBalance } = useSafe()
+const { toggleSelectedTokenForMigration, setTokensForMigration } = useMigration()
+const { legacySafe, balances, selectedSafe } = storeToRefs(useSafe())
 const { account } = useWeb3()
 const { tokenBalances } = useAvocadoSafe()
 
@@ -43,7 +43,6 @@ function isChecked(token: IToken) {
       v-else
       :key="`${token.address}-${token.chainId}`"
       :token-balance="token"
-      :is-checked="isChecked(token)"
       @toggle-check="() => toggleSelectedTokenForMigration(token)"
     />
   </div>

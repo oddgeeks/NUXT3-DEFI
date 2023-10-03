@@ -1,11 +1,19 @@
 <script setup lang="ts">
 import SVGX from '~/assets/images/icons/x.svg?component'
 
-defineProps<{
+const { selectedNFTsForMigration } = storeToRefs(useMigration())
+
+const props = defineProps<{
   asset: NFTData
   showSelectedUi?: boolean
-  isChecked?: boolean
 }>()
+
+const isChecked = computed(() => {
+  const index = selectedNFTsForMigration.value?.findIndex((selectedNFT) => {
+    return `${selectedNFT.tokenId}-${selectedNFT.chainId}` === `${props.asset.tokenId}-${props.asset.chainId}`
+  })
+  return index > -1
+})
 
 const emits = defineEmits(['toggleCheck'])
 </script>

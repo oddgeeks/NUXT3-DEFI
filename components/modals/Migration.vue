@@ -15,11 +15,18 @@ interface MigrateToModalProps {
 
 const { sendTransactions } = useAvocadoSafe()
 const { legacySafeAddress } = storeToRefs(useSafe())
-const { toggleSelectedTokenForMigration, toggleSelectedNFTsForMigration } = useTokens()
-const { selectedTokensForMigration, selectedNFTsForMigration, selectedSafeForMigration } = storeToRefs(useTokens())
+const {
+  toggleSelectedTokenForMigration,
+  toggleSelectedNFTsForMigration,
+  setTokensForMigration,
+  setNFTsForMigration,
+} = useMigration()
+const { selectedTokensForMigration, selectedNFTsForMigration, selectedDefiForMigration, selectedSafeForMigration } = storeToRefs(useMigration())
 const { account, library } = useWeb3()
 
 const loading = ref(false)
+
+const { toggleSelectedDefiForMigration } = useMigration()
 
 const nftChainIds = computed(() => selectedNFTsForMigration.value?.map(nft => nft.chainId))
 
@@ -140,6 +147,8 @@ async function migrate() {
 
     const nftHashes = await migrateNfts()
 
+    setTokensForMigration([])
+    setNFTsForMigration([])
     emit('destroy')
     openPendingMigrationModal([...hashes, ...nftHashes || []], [...chainIds, ...nftChainIds.value])
   }
@@ -219,7 +228,6 @@ async function handleMigrateGasBalance() {
           v-for="token in selectedTokensForMigration"
           :key="`${token.address}-${token.chainId}`"
           :token-balance="token as IBalance"
-          is-checked
           show-selected-ui
           @toggle-check="() => toggleSelectedTokenForMigration(token)"
         />
@@ -236,12 +244,27 @@ async function handleMigrateGasBalance() {
           v-for="asset in selectedNFTsForMigration"
           :key="`${asset.tokenId}-${asset.chainId}`"
           :asset="asset"
-          is-checked
           show-selected-ui
           @toggleCheck="() => toggleSelectedNFTsForMigration(asset)"
         />
         <div v-if="!selectedNFTsForMigration?.length" class="text-xs text-slate-400 font-medium">
           No NFTs selected.
+        </div>
+      </div>
+
+      <h4 class="text-xs dark:text-white text-slate-900 font-medium mb-[10px] mt-5">
+        DeFi Positions
+      </h4>
+      <div class="w-[460px] max-w-full dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5" :class="selectedDefiForMigration?.length ? 'border-[1px]' : ''">
+        <MigrationDefiPosition
+          v-for="position in selectedDefiForMigration"
+          :key="position.id"
+          :position="position"
+          show-selected-ui
+          @toggle-check="() => toggleSelectedDefiForMigration(position)"
+        />
+        <div v-if="!selectedDefiForMigration?.length" class="text-xs text-slate-400 font-medium">
+          No DeFi positions selected.
         </div>
       </div>
 
