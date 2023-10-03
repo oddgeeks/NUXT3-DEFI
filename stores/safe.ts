@@ -46,7 +46,7 @@ export const useSafe = defineStore('safe', () => {
   const optionsLoading = ref(false)
 
   const allSafes = computed<ISafe[]>(() => {
-    const primary = [selectedSafe.value, multiSigSafe.value].filter(Boolean)
+    const primary = [mainSafe.value, multiSigSafe.value].filter(Boolean)
     const secondary = safes.value.filter(s => !primary.some(p => isAddressEqual(p?.safe_address, s?.safe_address)))
 
     return [...primary, ...secondary] as ISafe[]

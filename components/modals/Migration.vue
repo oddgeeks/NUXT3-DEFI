@@ -16,7 +16,7 @@ interface MigrateToModalProps {
 const { sendTransactions } = useAvocadoSafe()
 const { legacySafeAddress } = storeToRefs(useSafe())
 const { toggleSelectedTokenForMigration, toggleSelectedNFTsForMigration } = useTokens()
-const { selectedTokensForMigration, selectedNFTsForMigration, selectedGasBalanceForMigration } = storeToRefs(useTokens())
+const { selectedTokensForMigration, selectedNFTsForMigration, selectedSafeForMigration } = storeToRefs(useTokens())
 const { account, library } = useWeb3()
 
 const loading = ref(false)
@@ -157,6 +157,9 @@ async function migrate() {
 }
 
 async function handleMigrateGasBalance() {
+  if (!selectedSafeForMigration.value)
+    return
+
   const gasBalanceManagerAddress = '0x847b123EB1Ed2f51bC8A5ed7D5C9091595793ae7'
   const gasBalanceManagerAbi = [{ inputs: [{ internalType: 'address', name: 'avoFactory_', type: 'address' }, { internalType: 'address', name: 'avoMultisigFactory_', type: 'address' }, { internalType: 'address', name: 'owner_', type: 'address' }], stateMutability: 'nonpayable', type: 'constructor' }, { inputs: [], name: 'AvoGasBalanceManager__InvalidParams', type: 'error' }, { inputs: [], name: 'AvoGasBalanceManager__Unauthorized', type: 'error' }, { anonymous: false, inputs: [{ indexed: true, internalType: 'address', name: 'fromAvo', type: 'address' }, { indexed: true, internalType: 'address', name: 'toAvo', type: 'address' }, { indexed: false, internalType: 'address', name: 'toAvoOwner', type: 'address' }, { indexed: false, internalType: 'uint256', name: 'toAvoIndex', type: 'uint256' }, { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' }], name: 'AvoTransfer', type: 'event' }, { anonymous: false, inputs: [{ indexed: true, internalType: 'address', name: 'previousOwner', type: 'address' }, { indexed: true, internalType: 'address', name: 'newOwner', type: 'address' }], name: 'OwnershipTransferred', type: 'event' }, { anonymous: false, inputs: [{ indexed: false, internalType: 'address', name: 'account', type: 'address' }], name: 'Paused', type: 'event' }, { anonymous: false, inputs: [{ indexed: false, internalType: 'address', name: 'account', type: 'address' }], name: 'Unpaused', type: 'event' }, { inputs: [], name: 'avoFactory', outputs: [{ internalType: 'contract IAvoFactory', name: '', type: 'address' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'avoMultisigFactory', outputs: [{ internalType: 'contract IAvoMultisigFactory', name: '', type: 'address' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'owner', outputs: [{ internalType: 'address', name: '', type: 'address' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'pause', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [], name: 'paused', outputs: [{ internalType: 'bool', name: '', type: 'bool' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'renounceOwnership', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [{ internalType: 'address', name: 'toAvoOwner_', type: 'address' }, { internalType: 'uint256', name: 'toAvoIndex_', type: 'uint256' }, { internalType: 'uint256', name: 'amount_', type: 'uint256' }], name: 'transfer', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [{ internalType: 'address', name: 'toAvo_', type: 'address' }, { internalType: 'uint256', name: 'amount_', type: 'uint256' }], name: 'transfer', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [{ internalType: 'address', name: 'newOwner', type: 'address' }], name: 'transferOwnership', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [], name: 'unpause', outputs: [], stateMutability: 'nonpayable', type: 'function' }]
 
@@ -166,19 +169,16 @@ async function handleMigrateGasBalance() {
 
   const actions = []
 
-  for (const gasBalance of selectedGasBalanceForMigration.value) {
-    console.log(toBN(gasBalance.amount).toString())
-    const data = (await gasBalanceManagerInstance.populateTransaction['transfer(address,uint256,uint256)'](props.selectedSafe?.owner_address, props.selectedSafe?.multisig_index, toBN(gasBalance.amount).toString())).data
+  const data = (await gasBalanceManagerInstance.populateTransaction['transfer(address,uint256,uint256)'](props.selectedSafe?.owner_address, props.selectedSafe?.multisig_index, toBN(selectedSafeForMigration.value.amount).toString())).data
 
-    const tx = {
-      to: gasBalanceManagerAddress,
-      data,
-      value: '0',
-      operation: '0',
-    }
-
-    actions.push(tx)
+  const tx = {
+    to: gasBalanceManagerAddress,
+    data,
+    value: '0',
+    operation: '0',
   }
+
+  actions.push(tx)
 
   const hash = await sendTransactions(
     actions,
@@ -247,11 +247,11 @@ async function handleMigrateGasBalance() {
       <h4 class="text-xs dark:text-white text-slate-900 font-medium mb-[10px] mt-5">
         Gas balances
       </h4>
-      <div class="w-[460px] max-w-full dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5" :class="selectedGasBalanceForMigration?.length ? 'border-[1px]' : ''">
-        <MigrationGasCard v-for="asset in selectedGasBalanceForMigration" :key="asset.safe.safe_address" :safe="asset.safe" :balance="asset.amount" />
-        <div v-if="!selectedGasBalanceForMigration?.length" class="text-xs text-slate-400 font-medium">
-          No Gas selected.
-        </div>
+      <div v-if="selectedSafeForMigration" class="w-[460px] max-w-full dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5 border-1">
+        <MigrationGasCard :safe="selectedSafeForMigration.safe" :balance="selectedSafeForMigration.amount" />
+      </div>
+      <div v-else class="text-xs text-slate-400 font-medium">
+        No Gas selected.
       </div>
     </div>
 
@@ -269,7 +269,7 @@ async function handleMigrateGasBalance() {
       </div>
     </CommonButton>
 
-    <CommonButton :disabled="!selectedGasBalanceForMigration.length" size="lg" class="w-full mt-4 justify-center" @click="handleMigrateGasBalance">
+    <CommonButton :disabled="!selectedSafeForMigration?.safe" size="lg" class="w-full mt-4 justify-center" @click="handleMigrateGasBalance">
       Migrate Gas balance
     </CommonButton>
 

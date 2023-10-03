@@ -19,7 +19,7 @@ export const useTokens = defineStore('tokens', () => {
   const tokens = ref<IToken[]>([])
   const selectedTokensForMigration = ref<IToken[]>([])
   const selectedNFTsForMigration = ref<NFTData[]>([])
-  const selectedGasBalanceForMigration = ref<IGasBalanceMigration[]>([])
+  const selectedSafeForMigration = ref<IGasBalanceMigration>()
 
   const customTokens = useStorageAsync<IToken[]>('custom-tokens', [])
 
@@ -158,27 +158,6 @@ export const useTokens = defineStore('tokens', () => {
       selectedNFTsForMigration.value.splice(index, 1)
   }
 
-  function isGasBalanceSelected(gasBalanceForMigration: IGasBalanceMigration) {
-    const index = selectedGasBalanceForMigration.value.findIndex((selectedGasBalance) => {
-      return gasBalanceForMigration.safe.safe_address === selectedGasBalance.safe.safe_address
-    })
-
-    return {
-      index,
-      isSelected: index !== -1,
-    }
-  }
-
-  function toggleSelectedGasBalanceForMigration(gasBalanceForMigration: IGasBalanceMigration) {
-    const index = isGasBalanceSelected(gasBalanceForMigration).index
-
-    if (index === -1)
-      selectedGasBalanceForMigration.value.push(gasBalanceForMigration)
-
-    else
-      selectedGasBalanceForMigration.value.splice(index, 1)
-  }
-
   const setTokensForMigration = (tokensForMigration: IToken[]) => {
     selectedTokensForMigration.value = [...tokensForMigration]
   }
@@ -203,9 +182,8 @@ export const useTokens = defineStore('tokens', () => {
     selectedNFTsForMigration,
     toggleSelectedNFTsForMigration,
     setNFTsForMigration,
-    selectedGasBalanceForMigration,
-    toggleSelectedGasBalanceForMigration,
-    isGasBalanceSelected,
+    selectedSafeForMigration,
+
   }
 })
 

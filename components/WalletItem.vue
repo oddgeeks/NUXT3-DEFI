@@ -38,7 +38,8 @@ async function onEdit() {
 }
 
 function handleClick() {
-  if (props.hideActiveState) return;
+  if (props.hideActiveState)
+    return
 
   const safe = route.params?.safe as string
 

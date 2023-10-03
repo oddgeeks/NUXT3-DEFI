@@ -5,7 +5,21 @@ defineProps<{
   balance: string
 }>()
 
-const { toggleSelectedGasBalanceForMigration, isGasBalanceSelected } = useTokens()
+const { selectedSafeForMigration } = storeToRefs(useTokens())
+
+function handleSelect(safe: ISafe, balance: string, e: Event) {
+  const checked = (e.target as HTMLInputElement).checked
+
+  if (checked) {
+    selectedSafeForMigration.value = {
+      amount: balance,
+      safe,
+    }
+  }
+  else {
+    selectedSafeForMigration.value = undefined
+  }
+}
 </script>
 
 <template>
@@ -28,12 +42,9 @@ const { toggleSelectedGasBalanceForMigration, isGasBalanceSelected } = useTokens
         <input
           type="checkbox"
           :disabled="balance === '0x0'"
-          :checked="isGasBalanceSelected({ amount: balance, safe }).isSelected"
+          :checked="selectedSafeForMigration?.safe.safe_address === safe.safe_address"
           class="ml-5 w-5 h-5 rounded-[6px] !bg-slate-700 border-0 outline-0 cursor-pointer"
-          @change="toggleSelectedGasBalanceForMigration({
-            amount: balance,
-            safe,
-          })"
+          @change="(e) => handleSelect(safe, balance, e)"
         >
       </div>
     </div>
