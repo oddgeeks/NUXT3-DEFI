@@ -20,12 +20,13 @@ export const injectFavicon = function (src: string) {
 }
 
 export async function slack(message: string,
-  type: ISlackMessageType = 'success') {
+  type: ISlackMessageType = 'success', isBridgeError = false) {
   await http('/api/slack', {
     method: 'POST',
     body: {
       message,
       type,
+      isBridgeError,
     },
   })
 }

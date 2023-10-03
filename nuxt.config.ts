@@ -18,6 +18,7 @@ export default defineNuxtConfig({
     ankrApiKey: process.env.ANKR_API_KEY,
     slackKey: process.env.SLACK_KEY,
     slackErrorKey: process.env.SLACK_ERROR_KEY,
+    slackBridgeErrorKey: process.env.SLACK_BRIDGE_ERROR_KEY,
     slackStagingKey: process.env.SLACK_STAGING_KEY,
     public: {
       domainURL: process.env.VERCEL_BRANCH_URL ? `https://${process.env.VERCEL_BRANCH_URL}` : 'https://avocado.instadapp.io',
