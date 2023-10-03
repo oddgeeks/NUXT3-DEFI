@@ -39,8 +39,6 @@ export function useMfa() {
             { name: 'mfaCode', type: 'string' },
           ],
         },
-        requestMethod: 'mfa_requestTotpUpdate',
-        verifyMethod: 'mfa_verifyTotpUpdate',
         activated: mfaTotpVerifed.value,
       },
       {
@@ -54,12 +52,10 @@ export function useMfa() {
             { name: 'index', type: 'uint32' },
             { name: 'countryCode', type: 'uint256' },
             { name: 'phone', type: 'uint256' },
-            { name: 'existingMfaType', type: 'string' },
-            { name: 'existingMfaCode', type: 'string' },
+            { name: 'mfaType', type: 'string' },
+            { name: 'mfaCode', type: 'string' },
           ],
         },
-        requestMethod: 'mfa_requestPhoneUpdate',
-        verifyMethod: 'mfa_verifyPhoneUpdate',
         activated: mfaPhoneVerifed.value,
 
       }, {
@@ -76,8 +72,6 @@ export function useMfa() {
             { name: 'mfaCode', type: 'string' },
           ],
         },
-        requestMethod: 'mfa_requestEmailUpdate',
-        verifyMethod: 'mfa_verifyEmailUpdate',
         activated: mfaEmailVerifed.value,
       },
     ] as IMfa[],

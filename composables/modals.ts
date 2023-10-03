@@ -47,7 +47,8 @@ import ViewDecodedModal from '~/components/modals/Multisig/ViewDecodedModal.vue'
 import WelcomeModal from '~/components/modals/Welcome.vue'
 import CreateBookmark from '~/components/modals/CreateBookmark.vue'
 import ExecutionError from '~/components/modals/Multisig/ExecutionError.vue'
-import ActivateMFA from '~/components/modals/ActivateMFA.vue'
+import ActivateMFA from '~/components/modals//Mfa/ActivateMFA.vue'
+import AuthenticateMFA from '~/components/modals//Mfa/Authenticate.vue'
 import MFATerms from '~/components/modals/Mfa/Terms.vue'
 
 const { openModal } = useModal()
@@ -730,6 +731,18 @@ export async function openMfaActivateModal(params: IMfaActivateModalParams) {
     componentProps: {
       mfaType,
     },
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[560px]',
+    },
+  })
+}
+
+export async function openMfaAuthenticateModal(params: IMfaAuthenticateParams) {
+  return openModal({
+    component: AuthenticateMFA,
+    async: true,
+    componentProps: params,
     options: {
       contentClass: '!p-0',
       wrapperClass: '!max-w-[560px]',

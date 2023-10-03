@@ -862,6 +862,7 @@ export const useSafe = defineStore('safe', () => {
     mfaTotpVerifed,
     mfaPhoneVerifed,
     atLeastOneMfaVerifed,
+    fetchSafeInstanceses,
   }
 })
 

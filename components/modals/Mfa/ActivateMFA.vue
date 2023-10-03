@@ -14,9 +14,9 @@ const actualMfa = computed(() => props.mfaType)
 
 const phoneRegexp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
-const { selectedSafe } = storeToRefs(useSafe())
+const { selectedSafe, atLeastOneMfaVerifed } = storeToRefs(useSafe())
 const { provider, account } = useWeb3()
-const { avoProvider } = useSafe()
+const { avoProvider, fetchSafeInstanceses } = useSafe()
 
 const otpValue = ref<string>()
 const mfaRequestResponse = ref<IMfaResponse>()
@@ -59,6 +59,10 @@ const onSubmit = handleSubmit(async () => {
   if (!actualMfa.value)
     return
 
+  if (atLeastOneMfaVerifed.value) {
+    const { payload: laleli } = await openMfaAuthenticateModal({})
+  }
+
   const domain = {
     name: 'Avocado MFA Update',
     version: '1.0.0',
@@ -72,20 +76,20 @@ const onSubmit = handleSubmit(async () => {
       index: selectedSafe.value?.multisig_index,
       countryCode: countryCode.value,
       phone: phone.value,
-      existingMfaType: 'phone',
-      existingMfaCode: '',
+      mfaType: '',
+      mfaCode: '',
     },
     email: {
       owner: selectedSafe.value?.owner_address,
       index: selectedSafe.value?.multisig_index,
       email: email.value,
-      mfaType: 'email',
+      mfaType: '',
       mfaCode: '',
     },
     totp: {
       owner: selectedSafe.value?.owner_address,
       index: selectedSafe.value?.multisig_index,
-      mfaType: 'totp',
+      mfaType: '',
       mfaCode: '',
     },
   } as any
@@ -107,12 +111,13 @@ const onSubmit = handleSubmit(async () => {
   if (cancelled || !signature)
     return
 
-  const resp: IMfaResponse = await avoProvider.send(actualMfa.value.requestMethod, [{
+  const resp: IMfaResponse = await avoProvider.send('mfa_requestUpdate', [{
+    type: actualMfa.value.value,
     data,
     signature,
   }])
 
-  if (!resp) {
+  if (!resp.status) {
     openSnackbar({
       message: 'MFA request failed',
       type: 'error',
@@ -127,13 +132,15 @@ async function verify() {
   if (!actualMfa.value || !otpValue.value)
     return
 
-  const verifed = await avoProvider.send(actualMfa.value?.verifyMethod, [{
+  const verifed = await avoProvider.send('mfa_verifyUpdate', [{
+    type: actualMfa.value.value,
     owner: selectedSafe.value?.owner_address,
     index: String(selectedSafe.value?.multisig_index),
     code: otpValue.value,
   }])
 
   if (verifed) {
+    await fetchSafeInstanceses()
     openSnackbar({
       message: 'MFA enabled',
       type: 'success',
@@ -196,13 +203,13 @@ async function verify() {
         </div>
       </template>
     </form>
-    <div v-if="mfaRequestResponse?.uri" class="flex flex-col gap-5">
-      <Copy :text="mfaRequestResponse.secret">
+    <div v-if="mfaRequestResponse?.data?.uri" class="flex flex-col gap-5">
+      <Copy :text="mfaRequestResponse?.data?.secret">
         <template #content>
           Copy Secret
         </template>
       </Copy>
-      <CommonQrImage :url="mfaRequestResponse.uri" />
+      <CommonQrImage :url="mfaRequestResponse?.data?.uri" />
     </div>
 
     <form v-if="mfaRequestResponse" class="flex flex-col gap-5" @submit.prevent="verify">

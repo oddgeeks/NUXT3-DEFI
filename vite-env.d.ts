@@ -697,6 +697,11 @@ interface IComputeAddresses {
 
 type TxBuilderModes = 'expand' | 'collapse' | 'super-collapse' | 'raw'
 
+
+interface IMfaAuthenticateParams {
+  
+}
+
 interface IMfaActivateModalParams {
   mfaType: IMfa
 }
