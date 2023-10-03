@@ -14,7 +14,7 @@ interface EstimatedFeeRetry {
   active: boolean
   count: Ref<number>
   max: number
-  cb: (count: EstimatedFeeRetry['count'], max?: number) => void
+  cb: (count: EstimatedFeeRetry['count'], max?: number, err?: any) => void
   onError?: (err: any) => void
 }
 
@@ -148,7 +148,7 @@ export function useEstimatedFee(
     }
     catch (err: any) {
       if (retry?.active === true && retry?.count?.value < retry?.max)
-        return retry.cb(retry.count, retry.max)
+        return retry.cb(retry.count, retry.max, err)
 
       error.value = err?.error || err
 

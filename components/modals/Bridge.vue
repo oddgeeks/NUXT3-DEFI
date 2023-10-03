@@ -75,31 +75,49 @@ const { pending, error, data } = useEstimatedFee(
     count: esimatedFeeRetryCount,
     max: 1,
     cb: changeRouteForRetry,
-    onError: handleEstimatedError,
+    onError: e => handleEstimatedError(e, true),
   },
 )
 
 const availableRoutes = computed(() => routes.data.value?.result?.routes || [])
 const fallbackRoutes = computed(() => availableRoutes.value.filter(i => getRouteProvider(i)?.displayName !== bridgeProtocol.value?.displayName))
 
-function handleEstimatedError(e: any) {
+function formatRouteAmount(route: IRoute) {
+  const amount = fromWei(route?.toAmount || 0, bridgeToToken.value?.decimals).toFixed()
+  const symbol = bridgeToToken.value?.symbol || ''
+  const formattedSymbol = formatSymbol(symbol)
+
+  return `${formatDecimal(amount)} ${formattedSymbol} ${symbol}`
+}
+
+function handleEstimatedError(e: Error, error = false) {
   const err = serialize(e)
 
-  const message = `Estimated fee failed: ${err.message}
-<@UK9L88BS7>, <@U02NZML3JJ0>
-${'`Route`'} ${JSON.stringify(txRoute.value)}
-`
+  if (!txRoute.value)
+    return
+
+  const title = error ? 'Bridge Fee Estimation failling' : 'Shifting to fallback provider'
+
+  const formattedRoutes = availableRoutes.value.map(i => `${getRouteProvider(i)?.displayName} ${formatRouteAmount(i)}${txRoute.value?.routeId === i.routeId ? ':x:' : ''}`).join(',\r\n')
+
+  const message = `${title}: ${err.message}
+${'`Amount`'} ${formatRouteAmount(txRoute.value)}
+${'`Providers`'} [
+${formattedRoutes}
+]
+${'`RouteId`'} ${txRoute.value.routeId}`
 
   logActionToSlack({
     account: account.value,
     action: 'bridge',
-    type: 'error',
+    type: error ? 'error' : 'banner',
+    isBridgeError: true,
     message,
     chainId: fromChainId.value,
   })
 }
 
-function changeRouteForRetry() {
+function changeRouteForRetry(_: any, __: any, err: any) {
   if (esimatedFeeRetryCount.value > 1)
     return
 
@@ -115,6 +133,8 @@ function changeRouteForRetry() {
 
   txRoute.value = route
   esimatedFeeRetryCount.value += 1
+
+  handleEstimatedError(err)
 }
 
 const availableTokens = computed(() => {
