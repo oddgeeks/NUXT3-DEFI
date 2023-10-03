@@ -187,7 +187,8 @@ async function handleMigrateGasBalance() {
     'transfer',
   )
 
-  showPendingTransactionModal(hash, 137)
+  if (hash)
+    showPendingTransactionModal(hash, 137)
 }
 </script>
 
