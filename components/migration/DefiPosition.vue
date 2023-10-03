@@ -4,7 +4,7 @@ import SVGX from '~/assets/images/icons/x.svg?component'
 const { selectedDefiForMigration } = storeToRefs(useMigration())
 
 const props = withDefaults(defineProps<{
-  position: Positions
+  position: MigrationPositions
   showSelectedUi?: boolean
 }>(),
   {

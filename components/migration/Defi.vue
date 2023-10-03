@@ -1,22 +1,23 @@
 <script setup lang="ts">
-const { safeAddress } = useAvocadoSafe()
+const { account } = useWeb3()
 const { toggleSelectedDefiForMigration, setDefiForMigration } = useMigration()
-const { availablePositions, defaultDefiApis, fetchPositions } = useDefi()
+const { defaultDefiApis } = useDefi()
+const { fetchPositions, positions } = useMigrationDefi()
 
 const networkPreferences = ref(
   [...new Set(defaultDefiApis.map(i => i.chainId))],
 )
 
 const filteredPositions = computed(() => {
-  const items = availablePositions.value?.filter(item =>
+  const items = positions.value?.filter(item =>
     networkPreferences.value.some(i => i == item.chainId),
   )
 
   return items || []
 })
 
-watch(safeAddress, () => {
-  if (!safeAddress.value)
+watch(account, () => {
+  if (!account.value)
     return
 
   fetchPositions()

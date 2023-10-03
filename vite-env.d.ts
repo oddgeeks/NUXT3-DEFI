@@ -631,6 +631,23 @@ interface Positions extends DefiApis {
   borrowedTokens: any[];
 }
 
+interface MigrationPositions extends DefiApis {
+  positions: any;
+  dsaId?: string;
+  dsaAddress?: string;
+  vaultId?: string;
+  proceedOnNativeNetwork?: boolean;
+  id: string;
+  // permitData?: PermitSignature[];
+}
+
+interface IDsaAccount {
+  id: string;
+  address: string;
+  version: string;
+  chainId: number;
+}
+
 interface IDefiActions {
   getApy: (positions: any) => any
   getSuppliedTokens: (positions: any) => any[]

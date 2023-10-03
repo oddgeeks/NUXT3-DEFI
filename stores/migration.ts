@@ -4,7 +4,7 @@ export const useMigration = defineStore('migration', () => {
   const selectedTokensForMigration = ref<IToken[]>([])
   const selectedNFTsForMigration = ref<NFTData[]>([])
   const selectedSafeForMigration = ref<IGasBalanceMigration>()
-  const selectedDefiForMigration = ref<Positions[]>([])
+  const selectedDefiForMigration = ref<MigrationPositions[]>([])
 
   const toggleSelectedTokenForMigration = (tokenForMigration: IToken) => {
     const index = selectedTokensForMigration.value?.findIndex((selectedToken) => {
@@ -28,7 +28,7 @@ export const useMigration = defineStore('migration', () => {
       selectedNFTsForMigration.value.splice(index, 1)
   }
 
-  const toggleSelectedDefiForMigration = (defiForMigration: Positions) => {
+  const toggleSelectedDefiForMigration = (defiForMigration: MigrationPositions) => {
     const index = selectedDefiForMigration.value?.findIndex((selectedDefi) => {
       return selectedDefi.id === defiForMigration.id
     })
@@ -47,7 +47,7 @@ export const useMigration = defineStore('migration', () => {
     selectedNFTsForMigration.value = [...NFTsForMigration]
   }
 
-  const setDefiForMigration = (defiForMigration: Positions[]) => {
+  const setDefiForMigration = (defiForMigration: MigrationPositions[]) => {
     selectedDefiForMigration.value = [...defiForMigration]
   }
 
