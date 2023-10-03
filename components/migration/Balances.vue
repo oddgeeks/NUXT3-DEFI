@@ -1,22 +1,14 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 
-const { setGasBalance } = useSafe()
 const { toggleSelectedTokenForMigration, setTokensForMigration } = useMigration()
-const { legacySafe, balances, selectedSafe } = storeToRefs(useSafe())
+const { balances } = storeToRefs(useSafe())
 const { account } = useWeb3()
 const { tokenBalances } = useAvocadoSafe()
 
 const tokensWithBalances = computed(() =>
   tokenBalances.value.filter(tb => toBN(tb.balance).gt(0)),
 )
-
-function isChecked(token: IToken) {
-  const index = selectedTokensForMigration?.value?.findIndex((selectedToken) => {
-    return `${selectedToken.address}-${selectedToken.chainId}` === `${token.address}-${token.chainId}`
-  })
-  return index > -1
-}
 </script>
 
 <template>
@@ -30,7 +22,7 @@ function isChecked(token: IToken) {
       </button>
     </div>
 
-    <template v-if="!account || !tokensWithBalances.length || !balances.data">
+    <template v-if="!account || balances.loading">
       <MigrationLoadingBalance
         v-for="i in 4"
 

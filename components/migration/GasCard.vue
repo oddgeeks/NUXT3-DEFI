@@ -5,7 +5,7 @@ defineProps<{
   balance: string
 }>()
 
-const { selectedSafeForMigration } = storeToRefs(useTokens())
+const { selectedSafeForMigration } = storeToRefs(useMigration())
 
 function handleSelect(safe: ISafe, balance: string, e: Event) {
   const checked = (e.target as HTMLInputElement).checked

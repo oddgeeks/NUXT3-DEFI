@@ -1,11 +1,13 @@
 <script setup lang="ts">
 const { selectedSafe } = storeToRefs(useSafe())
 const { avoProvider } = useSafe()
+const { selectedSafeForMigration } = storeToRefs(useMigration())
 const gasBalance = ref<string>()
 
 const pending = ref(false)
 
 async function fetchGasBalances() {
+  selectedSafeForMigration.value = undefined
   try {
     pending.value = true
     const balance = await avoProvider.send('api_getWithdrawableBalance', [
@@ -23,6 +25,7 @@ async function fetchGasBalances() {
 watchThrottled(selectedSafe, fetchGasBalances, {
   throttle: 1000,
   immediate: true,
+  deep: true,
 })
 </script>
 
