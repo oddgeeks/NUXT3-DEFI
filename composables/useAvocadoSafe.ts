@@ -24,6 +24,10 @@ export function useAvocadoSafe() {
   const { isSafeMultisig, hasInstadappSigner } = storeToRefs(useMultisig())
   const { getRequiredSigner } = useMultisig()
 
+  const transactionToken = useCookie<string | undefined>('transaction-token', {
+    watch: true,
+  })
+
   const { safeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks, networkOrderedBySumTokens } = storeToRefs(useSafe())
 
   const sendTransaction = async (
@@ -406,21 +410,45 @@ export function useAvocadoSafe() {
 
     if (isSafeEligableToSingleExecution(requiredSigner, selectedSafe.value)) {
       if (hasInstadappSigner.value && atLeastOneMfaVerifed.value) {
-        const { success, payload } = await openMfaAuthenticateModal({})
-
-        if (!success)
-          throw new Error('Authenticate canceled')
-
-        const mfa: IMfa = payload?.mfa
-
-        if (mfa) {
-          const { success, payload } = await openVerifyMFAModal(mfa, true)
+        if (transactionToken.value) { mfaProperties.mfa_token = transactionToken.value }
+        else {
+          const { success, payload } = await openMfaAuthenticateModal({})
 
           if (!success)
-            throw new Error('MFA verification failed')
+            throw new Error('Authenticate canceled')
 
-          mfaProperties.mfa_code = payload.code
-          mfaProperties.mfa_type = mfa.value
+          const mfa: IMfa = payload?.mfa
+
+          if (mfa) {
+            const { success, payload: verifyPayload } = await openVerifyMFAModal(mfa, true)
+
+            if (!success)
+              throw new Error('MFA verification failed')
+
+            mfaProperties.mfa_code = verifyPayload.code
+            mfaProperties.mfa_type = mfa.value
+
+            if (payload.sessionAvailable) {
+              const resp = await avoProvider.send('mfa_generateSessionToken', [
+                {
+                  owner: selectedSafe.value?.owner_address,
+                  index: selectedSafe.value?.multisig_index,
+                  ttl: '30min',
+                  code: verifyPayload.code,
+                  type: mfa.value,
+                },
+              ])
+
+              const transactionToken = useCookie<string | undefined>('transaction-token', {
+                expires: new Date(resp.expiresAt),
+              })
+
+              transactionToken.value = resp.token
+
+              if (!resp)
+                throw new Error('Failed to generate session token')
+            }
+          }
         }
       }
 
