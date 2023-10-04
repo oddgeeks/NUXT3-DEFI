@@ -131,6 +131,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
 
         <CommonButton
           size="lg" class="w-fit" @click="openAddSignerModal({
+            threshold: 2,
             addresses: [
               {
                 address: instadappSigner,

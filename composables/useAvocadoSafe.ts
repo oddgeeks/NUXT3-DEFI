@@ -16,11 +16,12 @@ export function useAvocadoSafe() {
   const { isTrackingMode } = useAccountTrack()
   const { getRpcProviderByChainId } = useShared()
   const { avoProvider, getSafeOptions, refreshSelectedSafe, getFallbackSafeOptionsByChainId } = useSafe()
-  const { selectedSafe, isSelectedSafeLegacy, safeOptions } = storeToRefs(useSafe())
+  const { selectedSafe, isSelectedSafeLegacy, safeOptions, atLeastOneMfaVerifed } = storeToRefs(useSafe())
   const { clearAllModals } = useModal()
+  const { mfaSessionTypes } = useMfa()
   const dryRun = useCookie<boolean | undefined>('dry-run')
 
-  const { isSafeMultisig } = storeToRefs(useMultisig())
+  const { isSafeMultisig, hasInstadappSigner } = storeToRefs(useMultisig())
   const { getRequiredSigner } = useMultisig()
 
   const { safeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks, networkOrderedBySumTokens } = storeToRefs(useSafe())
@@ -228,6 +229,9 @@ export function useAvocadoSafe() {
       safe: params.safe,
       targetChainId: String(params.targetChainId),
       index: String(selectedSafe.value?.multisig_index || 0),
+      mfa_type: params.mfa_type,
+      mfa_code: params.mfa_code,
+      mfa_token: params.mfa_token,
     }
 
     if (selectedSafe.value.multisig_index > 0 || params.signers.length > 1) {
@@ -251,6 +255,8 @@ export function useAvocadoSafe() {
         dryRun: true,
       })
     }
+
+    console.log({ signatureObject })
 
     const transactionHash = await avoProvider.send('txn_broadcast', [signatureObject])
 
@@ -392,7 +398,32 @@ export function useAvocadoSafe() {
 
     const requiredSigner = await getRequiredSigner(selectedSafe.value?.safe_address!, chainId)
 
+    const mfaProperties = {
+      mfa_code: '',
+      mfa_type: '',
+      mfa_token: '',
+    } as any
+
     if (isSafeEligableToSingleExecution(requiredSigner, selectedSafe.value)) {
+      if (hasInstadappSigner.value && atLeastOneMfaVerifed.value) {
+        const { success, payload } = await openMfaAuthenticateModal({})
+
+        if (!success)
+          throw new Error('Authenticate canceled')
+
+        const mfa: IMfa = payload?.mfa
+
+        if (mfa) {
+          const { success, payload } = await openVerifyMFAModal(mfa, true)
+
+          if (!success)
+            throw new Error('MFA verification failed')
+
+          mfaProperties.mfa_code = payload.code
+          mfaProperties.mfa_type = mfa.value
+        }
+      }
+
       const params = await generateMultisigSignatureAndSign({ chainId, actions, metadata, options })
 
       const txHash = await multisigBroadcast({
@@ -408,6 +439,9 @@ export function useAvocadoSafe() {
         owner: selectedSafe.value?.owner_address!,
         safe: selectedSafe.value?.safe_address!,
         targetChainId: chainId,
+        mfa_code: mfaProperties.mfa_code,
+        mfa_token: mfaProperties.mfa_token,
+        mfa_type: mfaProperties.mfa_type,
       })
 
       return txHash
@@ -754,7 +788,45 @@ ${parsed.message}`,
   }
 
   function isSafeEligableToSingleExecution(requiredSigner: number, safe?: ISafe) {
+    if (atLeastOneMfaVerifed.value)
+      return true
     return safe && safe.multisig_index === 0 && requiredSigner === 1
+  }
+
+  async function signAndRequestMfaCode(mfa: IMfa, requestForTransaction = false) {
+    const name = requestForTransaction ? 'Avocado MFA Transaction' : 'Avocado MFA Code'
+    const method = requestForTransaction ? 'mfa_requestTransactionCode' : 'mfa_requestCode'
+
+    const domain = {
+      name,
+      version: '1.0.0',
+      chainId: String(avoChainId),
+      verifyingContract: selectedSafe.value?.safe_address,
+    }
+
+    const value = {
+      owner: selectedSafe.value?.owner_address,
+      index: selectedSafe.value?.multisig_index,
+      type: mfa.value,
+    }
+
+    const payload = {
+      domain,
+      types: mfaSessionTypes,
+      value,
+    }
+
+    const { signature, cancelled } = await signTypedData(library.value, account.value, payload)
+
+    if (cancelled || !signature)
+      return
+
+    return avoProvider.send(method, [
+      {
+        signature,
+        data: value,
+      },
+    ])
   }
 
   return {
@@ -784,5 +856,6 @@ ${parsed.message}`,
     checkTransactionExecuted,
     networkOrderedBySumTokens,
     generateSignatureMessage,
+    signAndRequestMfaCode,
   }
 }

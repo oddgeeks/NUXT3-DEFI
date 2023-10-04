@@ -73,6 +73,9 @@ interface IMultisigBroadcastParams {
   signers: string[]
   targetChainId: string | number
   ignoreSlack?: boolean
+  mfa_code?: string,
+  mfa_type?: Mfa,
+  mfa_token?: string,
 }
 
 interface IChangeThresholdParams {

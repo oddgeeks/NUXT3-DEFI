@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ethers } from 'ethers'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import VOtpInput from 'vue3-otp-input'
@@ -15,7 +14,7 @@ const actualMfa = computed(() => props.mfaType)
 const phoneRegexp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
 const { selectedSafe, atLeastOneMfaVerifed } = storeToRefs(useSafe())
-const { provider, account } = useWeb3()
+const { account, library } = useWeb3()
 const { avoProvider, fetchSafeInstanceses } = useSafe()
 
 const otpValue = ref<string>()
@@ -59,10 +58,6 @@ const onSubmit = handleSubmit(async () => {
   if (!actualMfa.value)
     return
 
-  if (atLeastOneMfaVerifed.value) {
-    const { payload: laleli } = await openMfaAuthenticateModal({})
-  }
-
   const domain = {
     name: 'Avocado MFA Update',
     version: '1.0.0',
@@ -96,17 +91,29 @@ const onSubmit = handleSubmit(async () => {
 
   const data = value[actualMfa.value.value]
 
-  const browserProvider = new ethers.providers.Web3Provider(provider.value)
-
   const payload = {
     domain,
     types: actualMfa.value.types,
     value: data,
   }
 
-  console.log({ payload })
+  if (atLeastOneMfaVerifed.value) {
+    const { success, payload } = await openMfaAuthenticateModal({})
+    if (!success && !payload?.mfa)
+      return
 
-  const { signature, cancelled } = await signTypedData(browserProvider, account.value, payload)
+    const mfa: IMfa = payload?.mfa
+
+    const { success: verifySuccess, payload: verifyPayload } = await openVerifyMFAModal(mfa)
+
+    if (!verifySuccess || !verifyPayload?.code)
+      return
+
+    data.mfaType = mfa.value
+    data.mfaCode = verifyPayload.code
+  }
+
+  const { signature, cancelled } = await signTypedData(library.value, account.value, payload)
 
   if (cancelled || !signature)
     return

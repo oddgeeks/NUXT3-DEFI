@@ -24,6 +24,14 @@ export function useMfa() {
     },
   ])
 
+  const mfaSessionTypes = {
+    RequestCode: [
+      { name: 'owner', type: 'address' },
+      { name: 'index', type: 'uint32' },
+      { name: 'type', type: 'string' },
+    ],
+  }
+
   const mfaTypes = computed(() =>
     [
       {
@@ -79,6 +87,7 @@ export function useMfa() {
 
   return {
     mfaTermsAccepted,
+    mfaSessionTypes,
     mfaTypes,
     mfaModes,
     mfaMode,
