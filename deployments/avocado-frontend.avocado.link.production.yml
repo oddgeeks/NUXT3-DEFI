@@ -23,9 +23,9 @@ spec:
         app: avocado-frontend
       annotations:
         vault.security.banzaicloud.io/vault-addr: 'https://instadapp.vault.1592b418-2038-43e8-bf5a-0b50c0ea68e5.aws.hashicorp.cloud:8200'
-        vault.security.banzaicloud.io/vault-namespace: admin
-        vault.security.banzaicloud.io/vault-serviceaccount: default
-        vault.security.banzaicloud.io/vault-role: avocado-frontend
+        vault.security.banzaicloud.io/vault-namespace: 'admin'
+        vault.security.banzaicloud.io/vault-serviceaccount: 'default'
+        vault.security.banzaicloud.io/vault-role: 'avocado-frontend'
     spec:
       topologySpreadConstraints:
         - maxSkew: 2
@@ -41,15 +41,15 @@ spec:
           resources:
             requests:
               cpu: '1'
-              memory: 2G
+              memory: '2G'
             limits:
               cpu: '2'
-              memory: 4G
+              memory: '4G'
           ports:
             - containerPort: 5000
           env:
             - name: PORT
-              value: '5000'
+              value: "5000"
             - name: HOST
               value: 0.0.0.0
             - name: ANKR_API_KEY
