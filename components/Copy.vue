@@ -14,7 +14,7 @@ const slots = useSlots()
 <template>
   <button
     type="button"
-    class="text-slate-400 font-semibold inline-flex items-center gap-2.5"
+    class="inline-flex items-center gap-2.5 font-semibold text-slate-400"
     @click.stop="copy(text)"
   >
     <Transition mode="out-in" name="slide-left">
@@ -27,7 +27,7 @@ const slots = useSlots()
     <Transition mode="out-in" name="slide">
       <CheckCircle
         v-if="copied"
-        class="w-4 h-4 shrink-0 dark:text-slate-900 text-white svg-circle"
+        class="svg-circle h-4 w-4 shrink-0 text-white dark:text-slate-900"
       />
       <slot v-else-if="slots.copy" name="copy" />
       <slot v-else name="copy-icon">

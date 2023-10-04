@@ -21,28 +21,28 @@ watch(reactiveAddresses, () => {
 
 <template>
   <div class="flex flex-col">
-    <div class="p-6 sm:p-7.5 flex flex-col gap-7.5">
+    <div class="flex flex-col gap-7.5 p-6 sm:p-7.5">
       <Steps class="mr-10" :current-step="1" :total-steps="3" />
 
-      <div class="text-lg flex gap-[14px]">
-        <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
+      <div class="flex gap-[14px] text-lg">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-lg text-white">
           1
         </div>
         <div class="flex flex-col gap-4">
           <h1 class="leading-[26px]">
             Are you sure you want <br> to delete the following signers?
           </h1>
-          <span class="block sm:text-sm text-xs text-slate-400 font-medium">
-            On <ChainLogo class="w-5 h-5 shrink-0 inline-block" :chain="chainId" />  {{ chainIdToName(chainId) }}</span>
+          <span class="block text-xs font-medium text-slate-400 sm:text-sm">
+            On <ChainLogo class="inline-block h-5 w-5 shrink-0" :chain="chainId" />  {{ chainIdToName(chainId) }}</span>
         </div>
       </div>
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
-    <ul class="text-sm flex gap-[26px] p-6 sm:p-7.5 flex-col">
-      <li v-for="address in reactiveAddresses" :key="address" class="flex gap-3 items-center justify-between">
-        <div class="flex gap-3 items-center">
+    <ul class="flex flex-col gap-[26px] p-6 text-sm sm:p-7.5">
+      <li v-for="address in reactiveAddresses" :key="address" class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
           <AuthorityAvatar :address="address" />
-          <span style="overflow-wrap: anywhere" class="text-slate-400 font-medium">
+          <span style="overflow-wrap: anywhere" class="font-medium text-slate-400">
             <span v-if="getContactNameByAddress(address)" class="text-white">
               ({{ getContactNameByAddress(address) }})
               <span class="text-slate-400">

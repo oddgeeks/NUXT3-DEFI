@@ -25,27 +25,27 @@ async function handleDeletingContact(contact: IContact) {
 
 <template>
   <div
-    class="flex flex-col sm:hidden dark:bg-gray-850 bg-slate-50 px-5 pt-4 pb-4.5 rounded-[20px] gap-5"
+    class="flex flex-col gap-5 rounded-[20px] bg-slate-50 px-5 pb-4.5 pt-4 dark:bg-gray-850 sm:hidden"
   >
     <div class="flex justify-between">
       <span class="text-sm font-semibold text-slate-400">{{
         contact.name
       }}</span>
-      <button class="disabled:text-slate-400 disabled:opacity-40 text-red-alert" :disabled="contact.owner" @click="handleDeletingContact(contact)">
-        <DeleteSVG class="w-4 h-4" />
+      <button class="text-red-alert disabled:text-slate-400 disabled:opacity-40" :disabled="contact.owner" @click="handleDeletingContact(contact)">
+        <DeleteSVG class="h-4 w-4" />
       </button>
     </div>
     <div
-      class="flex items-center gap-3 rounded-7.5 px-4.5 py-3 border-2 dark:border-slate-700"
+      class="flex items-center gap-3 rounded-7.5 border-2 px-4.5 py-3 dark:border-slate-700"
     >
       <ChainLogo
         :stroke="false"
-        class="w-6.5 h-6.5"
+        class="h-6.5 w-6.5"
         :chain="contact.chainId"
       />
       <Copy :text="contact.address" class="flex-1 justify-between">
         <template #content>
-          <span class="dark:text-white text-slate-900">{{
+          <span class="text-slate-900 dark:text-white">{{
             shortenHash(contact.address)
           }}</span>
         </template>
@@ -53,14 +53,14 @@ async function handleDeletingContact(contact: IContact) {
     </div>
     <span
       v-if="getSentTimes(contact) !== ''"
-      class="text-slate-400 text-xs"
+      class="text-xs text-slate-400"
     >
       {{ getSentTimes(contact) }}
     </span>
     <div class="flex gap-2.5">
       <CommonButton
         color="white"
-        class="flex-1 justify-center items-center"
+        class="flex-1 items-center justify-center"
         :disabled="contact.owner"
         @click="
           openAddContactModal(
@@ -75,14 +75,14 @@ async function handleDeletingContact(contact: IContact) {
       </CommonButton>
       <CommonButton
         color="white"
-        class="flex-1 justify-center items-center gap-2.5"
+        class="flex-1 items-center justify-center gap-2.5"
         :disabled="!!contact.chainId && !hasAvailableTokens(contact.chainId)"
         @click="openSendModal(contact.chainId || 1, undefined, contact)"
       >
         Send
         <CommonTxTypeIcon class="p-1" :disabled="!!contact.chainId && !hasAvailableTokens(contact.chainId)" color="light">
           <template #icon>
-            <SvgoArrowRight class="-rotate-45 w-3 h-3" />
+            <SvgoArrowRight class="h-3 w-3 -rotate-45" />
           </template>
         </CommonTxTypeIcon>
       </CommonButton>

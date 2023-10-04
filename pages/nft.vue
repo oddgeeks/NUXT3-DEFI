@@ -71,16 +71,16 @@ const filteredAssets = computed(() => {
 </script>
 
 <template>
-  <div class="flex-1 relative">
-    <div class="w-full flex items-center justify-fit mb-5 gap-5">
+  <div class="relative flex-1">
+    <div class="justify-fit mb-5 flex w-full items-center gap-5">
       <h1 class="flex-1">
         Your NFTs <span v-if="data">({{ data?.length }})</span>
       </h1>
       <ClientOnly>
-        <button class="flex gap-2.5 items-center" @click="hideNFT = !hideNFT">
+        <button class="flex items-center gap-2.5" @click="hideNFT = !hideNFT">
           <span>{{ hideNFT ? 'Unhide All' : 'Hide' }}</span>
-          <SvgoEyeOff v-if="hideNFT" class="stroke-slate-icon w-5 h-5" />
-          <SvgoEye v-if="!hideNFT" class="text-slate-400 w-5 h-5" />
+          <SvgoEyeOff v-if="hideNFT" class="stroke-slate-icon h-5 w-5" />
+          <SvgoEye v-if="!hideNFT" class="h-5 w-5 text-slate-400" />
         </button>
       </ClientOnly>
       <MultipleNetworkFilter v-if="account" v-model:networks="networkPreferences" container-class="!left-[10px]" :show-supported-networks="false" :filters="false" />
@@ -93,25 +93,25 @@ const filteredAssets = computed(() => {
       class="mb-5"
     >
       <template #prefix>
-        <SearchSVG class="shrink-0 mr-2" />
+        <SearchSVG class="mr-2 shrink-0" />
       </template>
     </CommonInput>
     <div
       :class="{
-        'blur dark:bg-gray-850 rounded-[25px] bg-slate-50': !data,
+        'rounded-[25px] bg-slate-50 blur dark:bg-gray-850': !data,
       }"
-      class="w-[101%] h-full max-h-[750px] sm:overflow-auto sm:-mr-2 scroll-style"
+      class="scroll-style h-full max-h-[750px] w-[101%] sm:-mr-2 sm:overflow-auto"
     >
       <div
         v-if="!pending && data && !data.length"
-        class="dark:bg-gray-850 bg-slate-50 rounded-[25px] w-full p-5"
+        class="w-full rounded-[25px] bg-slate-50 p-5 dark:bg-gray-850"
       >
         No NFTs found
       </div>
 
       <ul
         v-else
-        class="grid p-5 grid-cols-1 sm:grid-cols-3 dark:bg-gray-850 bg-slate-50 rounded-[25px] w-full md:grid-cols-4 gap-5 content-baseline"
+        class="grid w-full grid-cols-1 content-baseline gap-5 rounded-[25px] bg-slate-50 p-5 dark:bg-gray-850 sm:grid-cols-3 md:grid-cols-4"
       >
         <NFTCard
           v-for="asset in filteredAssets"

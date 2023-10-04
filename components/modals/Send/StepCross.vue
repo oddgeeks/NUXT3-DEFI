@@ -617,8 +617,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <form class="flex flex-col gap-7.5 sm:w-[600px] w-full" @submit.prevent="onSubmit">
-    <div class="bg-slate-50 dark:bg-gray-850 rounded-5 py-[14px] sm:px-5 px-3 text-sm sm:mx-0 mx-[-0.75rem]">
+  <form class="flex w-full flex-col gap-7.5 sm:w-[600px]" @submit.prevent="onSubmit">
+    <div class="mx-[-0.75rem] rounded-5 bg-slate-50 px-3 py-[14px] text-sm dark:bg-gray-850 sm:mx-0 sm:px-5">
       <div class="flex flex-col gap-2.5 font-medium">
         <dl class="flex items-center justify-between">
           <dt class="text-slate-400">
@@ -627,7 +627,7 @@ onMounted(() => {
           <dd class="flex items-center gap-2">
             <ChainLogo class="w-5" :chain="data.fromChainId" />
             <span>{{ chainIdToName(data.fromChainId) }}</span>
-            <ArrowRight class="text-slate-400 w-4" />
+            <ArrowRight class="w-4 text-slate-400" />
             <ChainLogo class="w-5" :chain="data.toChainId" />
             <span>{{ chainIdToName(data.toChainId) }}</span>
           </dd>
@@ -637,44 +637,44 @@ onMounted(() => {
             Token
           </dt>
           <div class="flex items-center gap-2">
-            <dd class=" items-center flex gap-2">
-              <SafeTokenLogo class="w-[18px] h-[18px]" :url="token?.logoURI" />
+            <dd class=" flex items-center gap-2">
+              <SafeTokenLogo class="h-[18px] w-[18px]" :url="token?.logoURI" />
               <span class="uppercase">
                 {{ token?.symbol }}
               </span>
-              <span v-tippy="token?.name" class="text-slate-400 max-w-[200px] truncate">
+              <span v-tippy="token?.name" class="max-w-[200px] truncate text-slate-400">
                 ({{ token?.name }})
               </span>
             </dd>
             <template v-if="targetToken && token?.symbol !== targetToken?.symbol">
-              <ArrowRight class="text-slate-400 w-4" />
-              <dd class=" items-center flex gap-2">
-                <SafeTokenLogo class="w-[18px] h-[18px]" :url="displayTargetToken?.logoURI" />
+              <ArrowRight class="w-4 text-slate-400" />
+              <dd class=" flex items-center gap-2">
+                <SafeTokenLogo class="h-[18px] w-[18px]" :url="displayTargetToken?.logoURI" />
                 <span class="uppercase">
                   {{ displayTargetToken?.symbol }}
                 </span>
-                <span v-tippy="displayTargetToken?.name" class="text-slate-400 max-w-[200px] truncate">
+                <span v-tippy="displayTargetToken?.name" class="max-w-[200px] truncate text-slate-400">
                   ({{ displayTargetToken?.name }})
                 </span>
               </dd>
             </template>
           </div>
         </dl>
-        <dl class="flex items-center justify-between flex-wrap">
-          <dt class="text-slate-400 whitespace-nowrap">
+        <dl class="flex flex-wrap items-center justify-between">
+          <dt class="whitespace-nowrap text-slate-400">
             To address
           </dt>
           <dd>
-            <NuxtLink target="_blank" class="text-primary font-medium sm:text-sm text-xs" :to="getExplorerUrl(data.toChainId, `/address/${actualAddress}`)" external>
+            <NuxtLink target="_blank" class="text-xs font-medium text-primary sm:text-sm" :to="getExplorerUrl(data.toChainId, `/address/${actualAddress}`)" external>
               {{ actualAddress }}
             </NuxtLink>
           </dd>
         </dl>
       </div>
-      <div class="ticket-divider w-full my-4" />
+      <div class="ticket-divider my-4 w-full" />
       <div class="flex flex-col gap-4">
-        <div class="flex justify-between leading-5 items-center">
-          <span v-tippy="'This recepient will receive this exact amount'" class="font-medium text-2xl inline-flex gap-3">
+        <div class="flex items-center justify-between leading-5">
+          <span v-tippy="'This recepient will receive this exact amount'" class="inline-flex gap-3 text-2xl font-medium">
             Amount on <ChainLogo class="w-8" :chain="data.toChainId" />
           </span>
           <p class="flex items-center gap-2.5">
@@ -690,7 +690,7 @@ onMounted(() => {
     </div>
 
     <Transition name="fade">
-      <p v-if="feeInfoMessage" class="text-slate-400 -mt-2 font-medium leading-6 flex items-start text-xs">
+      <p v-if="feeInfoMessage" class="-mt-2 flex items-start text-xs font-medium leading-6 text-slate-400">
         <SvgoExclamationCircle class="mr-2.5 mt-1 h-4.5 w-4.5 shrink-0 text-slate-500" />
         <span class="block">
           {{ feeInfoMessage }}
@@ -730,10 +730,10 @@ onMounted(() => {
       <template #action>
         <CommonButton
           size="sm"
-          class="flex gap-[6px] items-center justify-center"
+          class="flex items-center justify-center gap-[6px]"
           @click="handleSwapToken"
         >
-          <RefreshSVG class="w-[14px] h-[14px]" />
+          <RefreshSVG class="h-[14px] w-[14px]" />
           Swap Token
         </CommonButton>
       </template>

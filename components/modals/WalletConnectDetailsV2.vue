@@ -31,22 +31,22 @@ async function disconnectWallet() {
     <div class="inline-flex flex-col items-center">
       <div
         v-if="iconURL"
-        class="relative inline-block h-10 w-10 rounded-full bg-gray-300 shadow-sm flex-shrink-0"
+        class="relative inline-block h-10 w-10 shrink-0 rounded-full bg-gray-300 shadow-sm"
       >
         <img
           referrerpolicy="no-referrer"
           height="40"
           width="40"
-          class="w-full h-full object-fit rounded-[inherit]"
+          class="object-fit h-full w-full rounded-[inherit]"
           :src="iconURL"
         >
       </div>
 
-      <div class="text-lg text-center my-4">
+      <div class="my-4 text-center text-lg">
         {{ props.session.peer.metadata.name }}
       </div>
-      <div class="flex flex-col gap-5 justify-center items-center">
-        <p class="text-slate-400 text-xs text-center leading-5 font-medium">
+      <div class="flex flex-col items-center justify-center gap-5">
+        <p class="text-center text-xs font-medium leading-5 text-slate-400">
           You need the Avocado web app to be open to initiate transactions.
           Please don't close the tab.
         </p>
@@ -55,7 +55,7 @@ async function disconnectWallet() {
           rel="noopener noreferrer"
           target="_blank"
           :href="props.session.peer.metadata.url"
-          class="text-primary text-sm truncate max-w-sm"
+          class="max-w-sm truncate text-sm text-primary"
         >
           {{ props.session.peer.metadata.url }}
         </a>

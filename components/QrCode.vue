@@ -13,13 +13,13 @@ const isSafeDeployed = computed(() => {
 <template>
   <div
     style="will-change: transform;"
-    class="relative bg-slate-50 dark:bg-gray-850 rounded-5.5 flex justify-center items-center gap-4"
-    :class="{ 'blur pointer-events-none': !safeAddress }"
+    class="relative flex items-center justify-center gap-4 rounded-5.5 bg-slate-50 dark:bg-gray-850"
+    :class="{ 'pointer-events-none blur': !safeAddress }"
   >
     <button @click="openQrCode">
       <StyledQrCode
         :key="account"
-        class="rounded-5 bg-white overflow-hidden"
+        class="overflow-hidden rounded-5 bg-white"
         :size="80"
         :margin="3"
         :data="account"
@@ -42,10 +42,10 @@ const isSafeDeployed = computed(() => {
         :href="`/w/${account}`"
         external
         target="_blank"
-        class="inline-flex text-primary text-sm items-center gap-2"
+        class="inline-flex items-center gap-2 text-sm text-primary"
       >
         Share
-        <ExternalLinkSVG class="w-3 h-3" />
+        <ExternalLinkSVG class="h-3 w-3" />
       </NuxtLink>
     </div>
   </div>

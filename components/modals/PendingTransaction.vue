@@ -38,11 +38,11 @@ const isSuccess = computed(() => {
 </script>
 
 <template>
-  <div class="text-center flex flex-col gap-7.5">
+  <div class="flex flex-col gap-7.5 text-center">
     <div v-if="transaction" class="flex justify-center">
       <SVGCheckCircle
         v-if="isSuccess"
-        class="text-white w-10 h-10 success-circle"
+        class="success-circle h-10 w-10 text-white"
       />
 
       <svg
@@ -73,7 +73,7 @@ const isSuccess = computed(() => {
 
     <div v-if="!transaction" class="flex justify-center">
       <svg
-        class="animate-spin h-10 w-10 text-green-500"
+        class="h-10 w-10 animate-spin text-green-500"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -106,29 +106,29 @@ const isSuccess = computed(() => {
         }}
       </h2>
 
-      <p v-if="!transaction" class="text-slate-400 text-xs leading-5 mt-2">
+      <p v-if="!transaction" class="mt-2 text-xs leading-5 text-slate-400">
         The transaction has been sent to be processed.
       </p>
 
       <p
         v-if="transaction && !isSuccess"
-        class="text-slate-400 text-xs mt-2"
+        class="mt-2 text-xs text-slate-400"
       >
         Try again or return to the home page.
       </p>
     </div>
 
     <div
-      class="dark:bg-slate-800 bg-slate-100 bg px-[18px] py-[14px] rounded-5 flex items-center justify-between"
+      class="bg flex items-center justify-between rounded-5 bg-slate-100 px-[18px] py-[14px] dark:bg-slate-800"
     >
-      <div v-if="type === 'bridge'" class="flex gap-3 items-center">
-        <div class="bg-primary items-center justify-center flex rounded-full w-[26px] h-[26px]">
+      <div v-if="type === 'bridge'" class="flex items-center gap-3">
+        <div class="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-primary">
           <SVGBridge class="w-4" />
         </div>
-        <span class="text-sm text-slate-400 font-medium">Bridge</span>
+        <span class="text-sm font-medium text-slate-400">Bridge</span>
       </div>
-      <p v-else class="flex gap-3 items-center">
-        <ChainLogo class="w-[26px] h-[26px]" :chain="chainId" />
+      <p v-else class="flex items-center gap-3">
+        <ChainLogo class="h-[26px] w-[26px]" :chain="chainId" />
         <span class="text-sm text-slate-400">{{ chainIdToName(chainId) }}</span>
       </p>
       <CommonButton as="a" target="_blank" :href="`${avoExplorerURL}/tx/${hash}`" size="sm">

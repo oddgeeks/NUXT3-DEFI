@@ -260,38 +260,38 @@ function getNonceTooltip(value: number | undefined) {
 
 <template>
   <form class="flex flex-col" @submit.prevent="onSubmit">
-    <div class="px-7.5 pt-7.5 pb-5 flex flex-col gap-2.5">
+    <div class="flex flex-col gap-2.5 px-7.5 pb-5 pt-7.5">
       <h1 v-if="rejection" class="text-lg">
         Submit Reject Transaction
       </h1>
       <h1 v-else class="text-lg">
         Submit Transaction
       </h1>
-      <div class="text-slate-500 flex items-center gap-2 text-xs font-medium">
-        <ChainLogo class="w-5 h-5" :chain="chainId" />
+      <div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+        <ChainLogo class="h-5 w-5" :chain="chainId" />
         {{ chainIdToName(chainId) }}
       </div>
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
-    <div class="sm:px-7.5 px-5 py-5 flex flex-col gap-5">
+    <div class="flex flex-col gap-5 p-5 sm:px-7.5">
       <div v-if="!rejection" class="flex flex-col gap-2">
-        <span class="text-xs text-slate-400 font-medium">
+        <span class="text-xs font-medium text-slate-400">
           Transaction type
         </span>
-        <div class="flex row gap-4">
+        <div class="row flex gap-4">
           <CommonRadioSelect
             v-for="(nonceType, index) in transactionTypes" :key="index"
             v-model="nonce"
             :value="nonceType.value"
           >
             <template #content>
-              <div class="flex row items-center gap-2">
+              <div class="row flex items-center gap-2">
                 <span class="text-xs font-medium">{{ nonceType.name }}</span>
-                <SvgoInfo2 v-tippy="getNonceTooltip(nonceType.value)" class="dark:text-slate-500 text-slate-300" />
+                <SvgoInfo2 v-tippy="getNonceTooltip(nonceType.value)" class="text-slate-300 dark:text-slate-500" />
               </div>
               <span
                 v-if="nonceType.value === recommendedNonce"
-                class="ml-auto bg-primary bg-opacity-10 text-primary text-[0.625rem] font-medium px-1.5 py-1 uppercase rounded-10"
+                class="ml-auto rounded-10 bg-primary bg-opacity-10 px-1.5 py-1 text-[0.625rem] font-medium uppercase text-primary"
               >
                 Recommended
               </span>
@@ -301,7 +301,7 @@ function getNonceTooltip(value: number | undefined) {
       </div>
 
       <div class="flex flex-col gap-2">
-        <dl v-if="rejectionId" class="flex mb-2 justify-between">
+        <dl v-if="rejectionId" class="mb-2 flex justify-between">
           <dt class="text-xs text-slate-400">
             Proposal Hash
           </dt>
@@ -315,17 +315,17 @@ function getNonceTooltip(value: number | undefined) {
             {{ shortenHash(rejectionId) }}
           </dd>
         </dl>
-        <span class="text-xs font-medium flex items-center gap-2 text-slate-400">
+        <span class="flex items-center gap-2 text-xs font-medium text-slate-400">
           Note (optional)
-          <SvgoInfo2 v-tippy="'Specify any details/instructions you want other signers to read before signing this transaction.'" class="w-4 h-4 dark:text-slate-500 text-slate-300" />
+          <SvgoInfo2 v-tippy="'Specify any details/instructions you want other signers to read before signing this transaction.'" class="h-4 w-4 text-slate-300 dark:text-slate-500" />
         </span>
-        <textarea v-model="note" v-focus placeholder="Visible to all signers" class="dark:bg-slate-800 placeholder:text-sm placeholder:text-slate-400 text-sm font-medium rounded-[14px] bg-slate-100 py-[15px] px-4 border-0 outline-none focus:border-0 focus:outline-none focus:ring-0" />
+        <textarea v-model="note" v-focus placeholder="Visible to all signers" class="rounded-[14px] border-0 bg-slate-100 px-4 py-[15px] text-sm font-medium outline-none placeholder:text-sm placeholder:text-slate-400 focus:border-0 focus:outline-none focus:ring-0 dark:bg-slate-800" />
       </div>
     </div>
     <template v-if="!isSimulationDisabled">
       <template v-if="!estimatedFee">
         <hr class="border-slate-150 dark:border-slate-800">
-        <div v-if="!simulationStatus" class="sm:px-7.5 px-5 py-5 text-sm flex justify-between items-center">
+        <div v-if="!simulationStatus" class="flex items-center justify-between p-5 text-sm sm:px-7.5">
           Simulate Transaction
           <div class="flex items-center gap-2.5">
             <SvgSpinner v-if="pending" class="text-primary" />
@@ -334,20 +334,20 @@ function getNonceTooltip(value: number | undefined) {
             </button>
           </div>
         </div>
-        <div v-else :class="simulationDetails?.transaction?.status ? 'bg-primary' : 'bg-red-alert'" class="bg-opacity-10 items-baseline justify-between rounded-[14px] text-sm p-4 sm:mx-7.5 mx-5 my-5 font-medium flex gap-3">
-          <div class="flex gap-3 flex-col flex-1">
+        <div v-else :class="simulationDetails?.transaction?.status ? 'bg-primary' : 'bg-red-alert'" class="m-5 flex items-baseline justify-between gap-3 rounded-[14px] bg-opacity-10 p-4 text-sm font-medium sm:mx-7.5">
+          <div class="flex flex-1 flex-col gap-3">
             <div class="flex gap-3">
               <template v-if="isTransactionFailed">
-                <SvgoErrorCircle class="w-4.5 h-4.5" />
+                <SvgoErrorCircle class="h-4.5 w-4.5" />
                 This transaction will most likely fail
               </template>
               <template v-else>
-                <SvgoCheckCircle class="success-circle w-4.5 h-4.5" />
+                <SvgoCheckCircle class="success-circle h-4.5 w-4.5" />
                 This transaction will most likely succeed
               </template>
             </div>
 
-            <p v-if="simulationDetails?.transaction.simulationId" class="text-xs text-slate-400 font-medium">
+            <p v-if="simulationDetails?.transaction.simulationId" class="text-xs font-medium text-slate-400">
               View complete simulation report
               <NuxtLink target="_blank" class="inline-flex items-center gap-2 text-primary" external :to="`https://dashboard.tenderly.co/public/InstaDApp/avocado/simulator/${simulationDetails?.transaction.simulationId}?hideSidebar=true`">
                 on Tenderly
@@ -361,10 +361,10 @@ function getNonceTooltip(value: number | undefined) {
           </button>
         </div>
         <hr class="border-slate-150 dark:border-slate-800">
-        <details ref="detailsRef" class="group sm:px-7.5 px-5 py-5">
-          <summary class="text-orange-400 flex justify-between text-sm leading-5 cursor-pointer">
-            <span class="group-open:hidden block font-medium">View transaction breakdown</span>
-            <span class="group-open:block hidden font-medium">Hide transaction breakdown</span>
+        <details ref="detailsRef" class="group p-5 sm:px-7.5">
+          <summary class="flex cursor-pointer justify-between text-sm leading-5 text-orange-400">
+            <span class="block font-medium group-open:hidden">View transaction breakdown</span>
+            <span class="hidden font-medium group-open:block">Hide transaction breakdown</span>
 
             <SvgoChevronDown class="group-open:rotate-180" />
           </summary>
@@ -383,7 +383,7 @@ function getNonceTooltip(value: number | undefined) {
       <hr class="border-slate-150 dark:border-slate-800">
     </template>
 
-    <div v-if="estimatedFee" class="sm:px-7.5 px-5 py-5">
+    <div v-if="estimatedFee" class="p-5 sm:px-7.5">
       <EstimatedFee :data="data" :loading="feePending" :error="error" />
     </div>
 
@@ -391,9 +391,9 @@ function getNonceTooltip(value: number | undefined) {
       v-if="isExecuteReady"
       type="button"
       :class="{
-        'dark:text-white text-slate-900': signAndExecute,
+        'text-slate-900 dark:text-white': signAndExecute,
       }"
-      class="text-xs text-left font-medium items-base text-slate-400 flex gap-2.5 group sm:px-7.5 px-5 py-5"
+      class="items-base group flex gap-2.5 p-5 text-left text-xs font-medium text-slate-400 sm:px-7.5"
       @click="signAndExecuteToggle()"
     >
       <SvgoCheckCircle
@@ -401,11 +401,11 @@ function getNonceTooltip(value: number | undefined) {
           { 'success-circle text-white': signAndExecute },
           { 'svg-circle darker': !signAndExecute },
         ]"
-        class="w-4 h-4 shrink-0"
+        class="h-4 w-4 shrink-0"
       />
       I want to sign & execute in the same txn
     </button>
-    <CommonButton :disabled="feePending || isSubmitting" :loading="feePending || isSubmitting" class="justify-center mx-7.5 my-5" size="lg" type="submit">
+    <CommonButton :disabled="feePending || isSubmitting" :loading="feePending || isSubmitting" class="mx-7.5 my-5 justify-center" size="lg" type="submit">
       {{ signAndExecute && isExecuteReady ? 'Sign and Execute Transaction' : 'Sign and Send for Approval' }}
     </CommonButton>
   </form>

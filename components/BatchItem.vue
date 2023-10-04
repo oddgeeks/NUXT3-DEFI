@@ -22,51 +22,51 @@ function formatValue(i: string) {
 </script>
 
 <template>
-  <SlickItem :index="index" class="flex gap-4 w-full" tag="li">
-    <div class="flex gap-4 w-full">
-      <span class="w-2 font-medium text-xs text-slate-400 mt-5">
+  <SlickItem :index="index" class="flex w-full gap-4" tag="li">
+    <div class="flex w-full gap-4">
+      <span class="mt-5 w-2 text-xs font-medium text-slate-400">
         {{ index + 1 }}
       </span>
-      <details :class="!expandable ? 'pointer-events-none select-none' : 'cursor-pointer'" class="group dark:bg-slate-850 dark:border-slate-750 border flex items-center w-full gap-2.5 font-medium bg-slate-150 rounded-xl py-2.5 dark:ring-slate-750">
-        <summary class="w-full flex items-center gap-2.5 px-3">
-          <DragHandle class="cursor-grab pointer-events-auto">
+      <details :class="!expandable ? 'pointer-events-none select-none' : 'cursor-pointer'" class="group flex w-full items-center gap-2.5 rounded-xl border bg-slate-150 py-2.5 font-medium dark:border-slate-750 dark:bg-slate-850 dark:ring-slate-750">
+        <summary class="flex w-full items-center gap-2.5 px-3">
+          <DragHandle class="pointer-events-auto cursor-grab">
             <SvgoHandler class="shrink-0" />
           </DragHandle>
           <div class="flex flex-col">
             <span v-tippy="item.formValues.toAddress" class="text-xs text-slate-400">
               {{ shortenHash(item.formValues.toAddress) }}
             </span>
-            <span v-tippy="item.formValues.method" class="text-xs leading-5 truncate max-w-full w-[150px]">
+            <span v-tippy="item.formValues.method" class="w-[150px] max-w-full truncate text-xs leading-5">
               {{ item.formValues.method }}
             </span>
           </div>
           <div class="ml-auto flex items-center gap-2">
             <button class="pointer-events-auto" type="button" @click="$emit('editBatch', index)">
-              <SvgoPencil class="text-slate-400 w-3 h-3" />
+              <SvgoPencil class="h-3 w-3 text-slate-400" />
             </button>
             <button class="pointer-events-auto" type="button" @click="$emit('deleteBatch', index)">
-              <SvgoDelete class="text-slate-400 w-3 h-3" />
+              <SvgoDelete class="h-3 w-3 text-slate-400" />
             </button>
-            <SvgoChevronDown v-if="expandable" class="group-open:rotate-180 text-slate-400 w-4 h-4" />
+            <SvgoChevronDown v-if="expandable" class="h-4 w-4 text-slate-400 group-open:rotate-180" />
           </div>
         </summary>
-        <hr class="border-slate-150 dark:border-slate-800 my-3">
+        <hr class="my-3 border-slate-150 dark:border-slate-800">
         <div>
-          <div class="text-xs font-medium px-3 gap-2 flex flex-col">
+          <div class="flex flex-col gap-2 px-3 text-xs font-medium">
             <p>
               Interact with
             </p>
-            <div class="flex gap-3 items-center">
+            <div class="flex items-center gap-3">
               <AuthorityAvatar :address="item.formValues.toAddress" />
               {{ item.formValues.toAddress }}
             </div>
           </div>
-          <hr class="border-slate-150 dark:border-slate-800 my-3">
+          <hr class="my-3 border-slate-150 dark:border-slate-800">
           <ul class="flex flex-col gap-3 px-3 font-medium">
             <template v-for="i, k in item.formValues" :key="i">
               <li v-if="i !== undefined && !excludedKeys.includes(k as string)">
                 <dl class="flex">
-                  <dt class="text-xs text-slate-400 w-[140px]">
+                  <dt class="w-[140px] text-xs text-slate-400">
                     {{ k }}
                   </dt>
                   <dd class="text-xs">
@@ -77,7 +77,7 @@ function formatValue(i: string) {
             </template>
             <li v-if="data">
               <dl class="flex">
-                <dt class="text-xs text-slate-400 w-[140px] shrink-0">
+                <dt class="w-[140px] shrink-0 text-xs text-slate-400">
                   data
                 </dt>
                 <dd style="word-break: break-word;" class="text-xs">

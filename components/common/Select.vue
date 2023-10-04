@@ -101,16 +101,16 @@ whenever(open, () => {
     <button
       type="button"
       :class="[
-        { 'border-b-transparent rounded-b-none adjuster': open },
+        { 'adjuster rounded-b-none border-b-transparent': open },
         containerClasses,
       ]"
-      class="relative w-full flex items-center gap-2.5 max-h-12 rounded-[14px] border-1 dark:border-slate-700 border-slate-150 bg-slate-50 dark:bg-gray-850 px-[14px] py-3 text-left"
+      class="relative flex max-h-12 w-full items-center gap-2.5 rounded-[14px] border-1 border-slate-150 bg-slate-50 px-[14px] py-3 text-left dark:border-slate-700 dark:bg-gray-850"
       @click="toggle()"
     >
       <slot name="button-prefix">
         <img
           v-if="iconKey && selectedIcon"
-          class="w-6 h-6"
+          class="h-6 w-6"
           :src="selectedIcon"
         >
       </slot>
@@ -122,7 +122,7 @@ whenever(open, () => {
       </slot>
 
       <slot name="button-suffix" />
-      <span v-if="!disabled" class="pointer-events-none flex items-center ml-auto">
+      <span v-if="!disabled" class="pointer-events-none ml-auto flex items-center">
         <ChevronDownSVG class="h-5 w-5 text-gray-400" aria-hidden="true" />
       </span>
     </button>
@@ -136,23 +136,23 @@ whenever(open, () => {
           :class="listClasses"
           class="absolute w-full flex flex-col gap-1.5 px-1 py-[15px] max-h-60 border-1 dark:border-slate-700 border-slate-150 border-t-0 rounded-b-[14px] overflow-auto bg-slate-50 dark:bg-gray-850"
         >
-          <CommonInput v-if="searchable" v-model="search" autofocus placeholder="Search" name="search-input" class="!p-2 -mt-3" input-classes="!py-2" type="search" />
+          <CommonInput v-if="searchable" v-model="search" autofocus placeholder="Search" name="search-input" class="-mt-3 !p-2" input-classes="!py-2" type="search" />
           <li
             v-for="(option, i) in actualOptions"
             :key="i"
-            class="text-left text-sm hover:dark:bg-slate-800 hover:bg-slate-100 rounded-[14px]"
-            :class="{ 'dark:bg-slate-800 bg-slate-100': isSelected(option, i) }"
+            class="rounded-[14px] text-left text-sm hover:bg-slate-100 hover:dark:bg-slate-800"
+            :class="{ 'bg-slate-100 dark:bg-slate-800': isSelected(option, i) }"
           >
             <button
               type="button"
               :class="itemWrapperClasses"
-              class="w-full flex gap-2.5 items-center text-left py-3 px-3"
+              class="flex w-full items-center gap-2.5 p-3 text-left"
               @click="setSelected(option, i)"
             >
               <slot :value="getValue(option, i)" name="item-prefix">
                 <img
                   v-if="iconKey && getIcon(option)"
-                  class="w-6 h-6"
+                  class="h-6 w-6"
                   :src="getIcon(option)"
                 >
               </slot>
@@ -166,7 +166,7 @@ whenever(open, () => {
               </slot>
               <SVGSuccess
                 v-if="isSelected(option, i)"
-                class="selected w-5 h-5 shrink-0 ml-auto text-white"
+                class="selected ml-auto h-5 w-5 shrink-0 text-white"
               />
             </button>
           </li>

@@ -6,7 +6,7 @@ const { toggleWelcomeBanner } = useBanner()
 
 <template>
   <div
-    class="w-full h-9 text-xs relative bg-green-400 bg-opacity-10 shrink-0 flex justify-center items-center gap-[15px]"
+    class="relative flex h-9 w-full shrink-0 items-center justify-center gap-[15px] bg-green-400 bg-opacity-10 text-xs"
   >
     <p class="text-green-400">
       Welcome to Avocado! 🥑 Get started by following this simple guide

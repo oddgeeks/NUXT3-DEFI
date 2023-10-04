@@ -86,8 +86,9 @@ function getToken(address: string, chainId: string) {
   return token
 }
 
-function search(event: Event) {
-  searchQuery.value = (<HTMLInputElement>event.target).value
+function search(e: Event) {
+  const el = e.target as HTMLInputElement
+  searchQuery.value = el.value
   scrollTo(0)
 }
 
@@ -102,7 +103,7 @@ function handleCustomToken() {
 
 <template>
   <div>
-    <h1 class="text-lg text-center leading-5 mb-5">
+    <h1 class="mb-5 text-center text-lg leading-5">
       Add Token
     </h1>
     <CommonInput
@@ -115,18 +116,18 @@ function handleCustomToken() {
       @input="search"
     >
       <template #prefix>
-        <SearchSVG class="text-slate-400 mr-2" />
+        <SearchSVG class="mr-2 text-slate-400" />
       </template>
     </CommonInput>
     <div
       v-bind="containerProps"
-      class="max-h-[550px] h-[550px] scroll-style overflow-auto relative overflow-y-auto flex flex-col"
+      class="scroll-style relative flex h-[550px] max-h-[550px] flex-col overflow-auto"
     >
       <div>
-        <ul v-if="pending" class="flex gap-2 flex-col">
-          <li v-for="i in 10" :key="i" class="py-[14px] px-3">
-            <div class="flex gap-3 items-center">
-              <ChainLogo class="w-10 h-10" />
+        <ul v-if="pending" class="flex flex-col gap-2">
+          <li v-for="i in 10" :key="i" class="px-3 py-[14px]">
+            <div class="flex items-center gap-3">
+              <ChainLogo class="h-10 w-10" />
               <div class="flex flex-col gap-1">
                 <span
                   style="width: 80px; height: 20px"
@@ -140,23 +141,23 @@ function handleCustomToken() {
             </div>
           </li>
         </ul>
-        <ul v-else v-bind="wrapperProps" class="flex gap-2 flex-col pl-3">
+        <ul v-else v-bind="wrapperProps" class="flex flex-col gap-2 pl-3">
           <li
             v-for="token in list"
             :key="`${token.data.chainId}-${token.data.address}`"
-            class="py-[14px] px-3 flex justify-between items-center hover:dark:bg-slate-800 rounded-[24px] w-full"
+            class="flex w-full items-center justify-between rounded-[24px] px-3 py-[14px] hover:dark:bg-slate-800"
           >
-            <div class="flex gap-3 items-center">
+            <div class="flex items-center gap-3">
               <SafeTokenLogo :chain-id="token.data.chainId" :url="token.data.logoURI" />
 
               <div class="flex flex-col gap-1">
                 <span
-                  class="leading-5 w-[160px] sm:w-[231px] whitespace-nowrap overflow-hidden text-shadow text-sm sm:text-base"
+                  class="text-shadow w-[160px] overflow-hidden whitespace-nowrap text-sm leading-5 sm:w-[231px] sm:text-base"
                 >
                   {{ token.data.name }}
                 </span>
                 <span
-                  class="text-slate-400 font-medium leading-5 text-xs sm:text-base"
+                  class="text-xs font-medium leading-5 text-slate-400 sm:text-base"
                 >
                   {{ shortenHash(token.data.address) }}</span>
               </div>
@@ -172,7 +173,7 @@ function handleCustomToken() {
             <CommonButton
               v-else
               type="button"
-              class="h-fit px-[18px] flex gap-2 items-center !text-primary bg-opacity-10 hover:bg-opacity-100 hover:!text-white"
+              class="flex h-fit items-center gap-2 bg-opacity-10 px-[18px] !text-primary hover:bg-opacity-100 hover:!text-white"
               @click="handleAddToken(token.data)"
             >
               <PlusSVG class="w-2.5" />
@@ -186,13 +187,13 @@ function handleCustomToken() {
       </div>
       <div
         v-if="!pending"
-        class="text-slate-400 flex items-center justify-center flex-col gap-[26px] whitespace-nowrap my-auto"
+        class="my-auto flex flex-col items-center justify-center gap-[26px] whitespace-nowrap text-slate-400"
       >
         <p v-if="!filteredTokens.length">
           Nothing could be found
         </p>
         <CommonButton
-          class="items-center gap-2 mb-4"
+          class="mb-4 items-center gap-2"
           :loading="loading"
           size="lg"
           @click="handleCustomToken"

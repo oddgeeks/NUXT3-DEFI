@@ -24,32 +24,32 @@ const discountAvailable = computed(() => {
   <div class="flex flex-col gap-2.5">
     <div
       :class="wrapperClass"
-      class="flex flex-col gap-3 items-center min-h-12 justify-between bg-slate-50 dark:bg-gray-850 px-5 py-[15px] rounded-5"
+      class="min-h-12 flex flex-col items-center justify-between gap-3 rounded-5 bg-slate-50 px-5 py-[15px] dark:bg-gray-850"
     >
-      <div class="flex justify-between w-full">
-        <span v-if="showNetworkInfo" class="text-xs flex items-center gap-3">
-          <ChainLogo class="w-6 h-6" :chain="data.chainId" />
+      <div class="flex w-full justify-between">
+        <span v-if="showNetworkInfo" class="flex items-center gap-3 text-xs">
+          <ChainLogo class="h-6 w-6" :chain="data.chainId" />
           {{ chainIdToName(data.chainId) }}
         </span>
         <span
           v-else
-          class="text-xs text-slate-400 font-medium gap-2 inline-flex items-center"
+          class="inline-flex items-center gap-2 text-xs font-medium text-slate-400"
         >
           <GasSVG class="w-4" />
           Gas fees
         </span>
-        <span v-if="loading" class="loading-box rounded-5 w-24 h-5" />
+        <span v-if="loading" class="loading-box h-5 w-24 rounded-5" />
         <template v-else-if="data">
           <span
             :class="[
               discountAvailable ? 'text-slate-400' : '',
               { 'text-red-alert': error },
             ]"
-            class="text-xs inline-flex items-center gap-2.5"
+            class="inline-flex items-center gap-2.5 text-xs"
           >
             <img
               v-if="!discountAvailable"
-              class="w-[18px] h-[18px]"
+              class="h-[18px] w-[18px]"
               width="18"
               height="18"
               src="https://cdn.instadapp.io/icons/tokens/usdc.svg"
@@ -63,7 +63,7 @@ const discountAvailable = computed(() => {
         <div
           v-for="detail in data.discountDetails"
           :key="detail.name"
-          class="text-xs font-medium text-slate-400 leading-5 flex justify-between items-center w-full"
+          class="flex w-full items-center justify-between text-xs font-medium leading-5 text-slate-400"
         >
           <div class="flex items-center gap-1.5">
             <span class="text-base"> 🎁 </span>
@@ -79,7 +79,7 @@ const discountAvailable = computed(() => {
                   allowHTML: true,
                   content: detail?.description,
                 }"
-                class="w-4 h-4 text-primary"
+                class="h-4 w-4 text-primary"
               />
             </p>
           </div>
@@ -89,11 +89,11 @@ const discountAvailable = computed(() => {
           </p>
         </div>
         <div class="ticket-divider w-full" />
-        <div class="flex justify-between w-full text-sm">
+        <div class="flex w-full justify-between text-sm">
           <p>Total gas fees</p>
           <p class="inline-flex items-center gap-2">
             <img
-              class="w-[18px] h-[18px]"
+              class="h-[18px] w-[18px]"
               width="18"
               height="18"
               src="https://cdn.instadapp.io/icons/tokens/usdc.svg"

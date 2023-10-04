@@ -34,23 +34,23 @@ function onSelect() {
     <div class="flex items-center space-x-2.5">
       <SafeTokenLogo v-if="individual" :chain-id="tokenBalance.chainId" :url="tokenBalance.logoURI" />
       <SafeTokenLogo v-else-if="summary" :url="tokenBalance.logoURI" :count="count" />
-      <div v-else class="w-10 h-10 relative">
+      <div v-else class="relative h-10 w-10">
         <ChainLogo
           v-tippy="chainIdToName(tokenBalance.chainId)"
           :stroke="true"
-          class="w-5.5 h-5.5 absolute right-0 top-0"
+          class="absolute right-0 top-0 h-5.5 w-5.5"
           :chain="tokenBalance.chainId"
         />
       </div>
 
-      <div class="flex flex-col items-left">
-        <div class="font-semibold w-44 text-shadow max-w-[256px] overflow-hidden uppercase">
+      <div class="items-left flex flex-col">
+        <div class="text-shadow w-44 max-w-[256px] overflow-hidden font-semibold uppercase">
           {{
             formatDecimal(!summary ? tokenBalance.balance : sum)
           }}
           {{ tokenBalance.symbol }}
         </div>
-        <div class="text-sm font-medium text-slate-400 max-w-[256px] uppercase">
+        <div class="max-w-[256px] text-sm font-medium uppercase text-slate-400">
           {{ formatUsd(!summary ? tokenBalance.balanceInUSD : sumInUsd) }}
         </div>
       </div>
@@ -62,8 +62,8 @@ function onSelect() {
       <Options />
     </div>
     <div v-else>
-      <ChevronDownSVG v-if="!collapse" class="text-slate-400 w-[14px] h-[14px]" />
-      <ChevronDownSVG v-else class="text-slate-400 w-[14px] h-[14px] rotate-180" />
+      <ChevronDownSVG v-if="!collapse" class="h-[14px] w-[14px] text-slate-400" />
+      <ChevronDownSVG v-else class="h-[14px] w-[14px] rotate-180 text-slate-400" />
     </div>
   </div>
 </template>

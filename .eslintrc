@@ -1,24 +1,35 @@
 {
-    "extends": "@antfu",
+    "extends": [
+        "@antfu",
+        "plugin:tailwindcss/recommended"
+    ],
     "ignorePatterns": [
         "!pages/public"
     ],
-    "parserOptions" :{
-        "ecmaFeatures" : {
-            "jsx": false
+    "overrides": [
+        {
+            "files": [
+                "locales/**.json"
+            ],
+            "rules": {
+                "jsonc/sort-keys": "error"
+            }
         }
-    },
-    "plugins": ["simple-import-sort"],
+    ],
     "rules": {
+        "n/prefer-global/process": "off",
         "eqeqeq": "off",
         "no-console": "off",
         "max-statements-per-line": "off",
         "no-mixed-operators": "off",
-        //ban-ts-comment off
         "@typescript-eslint/ban-ts-comment": "off",
         "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
         "@typescript-eslint/no-use-before-define": "off",
         "array-callback-return": "off",
-       
-    }
+        "eslint-comments/no-unlimited-disable": "off",
+        "tailwindcss/no-custom-classname": "off"
+    },
+    "plugins": [
+        "simple-import-sort"
+    ]
 }

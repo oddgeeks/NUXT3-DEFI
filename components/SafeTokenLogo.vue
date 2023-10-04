@@ -18,13 +18,13 @@ function onError() {
 </script>
 
 <template>
-  <div class="relative inline-flex h-10 w-10 rounded-full flex-shrink-0">
+  <div class="relative inline-flex h-10 w-10 shrink-0 rounded-full">
     <SvgFallbackLogo v-if="error || !url" />
 
     <template v-else>
       <img
         :src="url"
-        class="w-full h-full rounded-full"
+        class="h-full w-full rounded-full"
         :onerror="onError"
         loading="lazy"
       >
@@ -34,11 +34,11 @@ function onError() {
       v-if="chainId"
       v-tippy="chainIdToName(chainId)"
       :stroke="true"
-      class="w-5.5 h-5.5 absolute -left-1 -bottom-1"
+      class="absolute -bottom-1 -left-1 h-5.5 w-5.5"
       :class="[networkLogoClass]"
       :chain="chainId"
     />
-    <div v-if="count" class="w-5 h-5 absolute -left-1 -bottom-1 border border-white dark:border-black bg-primary text-white text-center rounded-full text-[10px] md:text-xs flex items-center justify-center">
+    <div v-if="count" class="absolute -bottom-1 -left-1 flex h-5 w-5 items-center justify-center rounded-full border border-white bg-primary text-center text-[10px] text-white dark:border-black md:text-xs">
       {{ count }}
     </div>
   </div>

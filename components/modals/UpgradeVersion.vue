@@ -151,20 +151,20 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="text-center flex gap-7.5 flex-col">
-    <div class="flex flex-col justify-center gap-7.5 items-center">
-      <ChainLogo class="w-10 h-10" :chain="options.chainId" />
+  <div class="flex flex-col gap-7.5 text-center">
+    <div class="flex flex-col items-center justify-center gap-7.5">
+      <ChainLogo class="h-10 w-10" :chain="options.chainId" />
       <span class="text-lg leading-5">{{ chainIdToName(options.chainId) }} Upgrade</span>
     </div>
     <div class="flex items-center justify-center gap-3">
       <span
-        class="bg-slate-800 py-2 px-4 rounded-5 items-center justify-center flex text-sm"
+        class="flex items-center justify-center rounded-5 bg-slate-800 px-4 py-2 text-sm"
       >
         v{{ options.currentVersion }}
       </span>
-      <ArrowRight class="w-[18px] h-[18px] text-slate-400" />
+      <ArrowRight class="h-[18px] w-[18px] text-slate-400" />
       <span
-        class="bg-slate-800 py-2 px-4 rounded-5 items-center justify-center flex text-sm"
+        class="flex items-center justify-center rounded-5 bg-slate-800 px-4 py-2 text-sm"
       >
         v{{ options.latestVersion }}
       </span>
@@ -178,7 +178,7 @@ onUnmounted(() => {
     <CommonButton
       :loading="pending || submitting"
       :disabled="pending || submitting || error || !txData"
-      class="justify-center w-full"
+      class="w-full justify-center"
       size="lg"
       @click="handleSubmit"
     >

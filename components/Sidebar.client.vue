@@ -24,20 +24,20 @@ const tippyOptions = {
   <div class="relative">
     <button
       :style="{ left: `${actualWidth - 14}px` }"
-      class="w-7 h-7 fixed top-7.5  z-10 rounded-full items-center transition-[width] justify-center flex dark:bg-slate-800 bg-slate-100"
+      class="fixed top-7.5 z-10 flex  h-7 w-7 items-center justify-center rounded-full bg-slate-100 transition-[width] dark:bg-slate-800"
       @click="toggleSidebar"
     >
       <ArrowRight
-        class="w-3.5 h-3.5 text-slate-400"
+        class="h-3.5 w-3.5 text-slate-400"
         :class="{ 'rotate-180': opened }"
       />
     </button>
-    <aside :style="{ width: `${actualWidth}px` }" style="scrollbar-gutter:stable;overflow-y:overlay;" class="hidden shrink-0 sticky top-0 h-screen sm:flex overflow-y-auto scroll-style dark:bg-gray-850 bg-slate-50 transition-[width]">
-      <div v-if="opened" class="flex flex-col w-full">
-        <div class="flex flex-col gap-6 pt-7.5 pb-6 px-7.5">
+    <aside :style="{ width: `${actualWidth}px` }" style="scrollbar-gutter:stable;overflow-y:overlay;" class="scroll-style sticky top-0 hidden h-screen shrink-0 overflow-y-auto bg-slate-50 transition-[width] dark:bg-gray-850 sm:flex">
+      <div v-if="opened" class="flex w-full flex-col">
+        <div class="flex flex-col gap-6 px-7.5 pb-6 pt-7.5">
           <div class="flex items-center justify-between gap-2.5">
             <NuxtLink class="flex items-center gap-2.5" to="/">
-              <SvgoAvocadoLogo class="w-full h-full" />
+              <SvgoAvocadoLogo class="h-full w-full" />
               <MultisigBadge v-if="isSafeMultisig" />
             </NuxtLink>
           </div>
@@ -50,27 +50,27 @@ const tippyOptions = {
         </div>
         <Navigation />
       </div>
-      <div v-else class="flex flex-col items-center w-full p-7.5 gap-6">
+      <div v-else class="flex w-full flex-col items-center gap-6 p-7.5">
         <div class="flex flex-col items-center gap-5">
           <NuxtLink class="flex flex-col items-center gap-2.5" to="/">
             <SvgoAvocadoLogoMini />
             <MultisigBadge v-if="isSafeMultisig" />
           </NuxtLink>
         </div>
-        <div class="flex flex-col w-full gap-4" :class="{ 'blur pointer-events-none': !safeAddress }">
+        <div class="flex w-full flex-col gap-4" :class="{ 'pointer-events-none blur': !safeAddress }">
           <button
             v-tippy="{
               ...tippyOptions,
               content: 'Show Avocado QR Code',
             }"
-            class="flex justify-center items-center dark:bg-slate-800 bg-slate-100 w-full rounded-5 py-4"
+            class="flex w-full items-center justify-center rounded-5 bg-slate-100 py-4 dark:bg-slate-800"
             @click="openQrCode"
           >
-            <QrSVG class="w-4.5 h-4.5" />
+            <QrSVG class="h-4.5 w-4.5" />
           </button>
 
           <div
-            class="flex justify-center items-center dark:bg-slate-800 bg-slate-100 w-full rounded-5"
+            class="flex w-full items-center justify-center rounded-5 bg-slate-100 dark:bg-slate-800"
           >
             <Copy
               v-tippy="{
@@ -79,12 +79,12 @@ const tippyOptions = {
 
               }"
               :icon-only="true"
-              class="text-xs p-4"
+              class="p-4 text-xs"
               :text="safeAddress"
             />
           </div>
         </div>
-        <div :class="{ 'blur pointer-events-none': !safeAddress }" class="flex gap-2.5 py-2.5 flex-col items-center dark:bg-slate-800 bg-slate-100 text-slate-400 w-full rounded-5">
+        <div :class="{ 'pointer-events-none blur': !safeAddress }" class="flex w-full flex-col items-center gap-2.5 rounded-5 bg-slate-100 py-2.5 text-slate-400 dark:bg-slate-800">
           <template
             v-for="nav in navigations"
             :key="nav.to"
@@ -103,7 +103,7 @@ const tippyOptions = {
               active-class="text-primary"
               :to="nav.to"
             >
-              <component :is="nav.icon" class="w-4 h-4" />
+              <component :is="nav.icon" class="h-4 w-4" />
             </NuxtLink>
           </template>
         </div>

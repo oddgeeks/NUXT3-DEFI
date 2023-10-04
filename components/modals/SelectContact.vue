@@ -16,8 +16,9 @@ const { safeContacts, getSentTimes } = useContacts()
 
 const searchQuery = ref('')
 
-const search = useDebounceFn((event: Event) => {
-  searchQuery.value = (<HTMLInputElement>event.target).value
+const search = useDebounceFn((e: Event) => {
+  const el = e.target as HTMLInputElement
+  searchQuery.value = el.value
 }, 200)
 
 const filteredContacts = computed(() => {
@@ -41,12 +42,12 @@ const filteredContacts = computed(() => {
 
 <template>
   <form>
-    <h1 class="text-lg text-center leading-5 mb-7.5">
+    <h1 class="mb-7.5 text-center text-lg leading-5">
       Contacts
     </h1>
     <div class="flex flex-col gap-4 sm:gap-3.5">
       <CommonInput
-        class="flex-1 w-full"
+        class="w-full flex-1"
         :class="{
           'hidden sm:block':
             !safeContacts || safeContacts.length === 0,
@@ -58,31 +59,31 @@ const filteredContacts = computed(() => {
         @input="search"
       >
         <template #prefix>
-          <SearchSVG class="shrink-0 mr-2 w-5 h-5" />
+          <SearchSVG class="mr-2 h-5 w-5 shrink-0" />
         </template>
       </CommonInput>
       <ul
         v-if="filteredContacts.length"
-        class="overflow-auto scroll-style h-64 flex flex-col gap-4 sm:gap-3.5"
+        class="scroll-style flex h-64 flex-col gap-4 overflow-auto sm:gap-3.5"
       >
         <li v-for="contact in filteredContacts" :key="contact.address + contact.chainId">
           <button
-            class="w-full flex flex-col dark:bg-gray-850 bg-slate-50 px-4 py-3 rounded-[20px] gap-2.5"
+            class="flex w-full flex-col gap-2.5 rounded-[20px] bg-slate-50 px-4 py-3 dark:bg-gray-850"
             type="button"
             @click="emit('resolve', true, contact)"
           >
-            <div class="flex justify-between w-full">
+            <div class="flex w-full justify-between">
               <span class="text-sm font-semibold">{{ contact.name }}</span>
-              <ArrowRight class="text-slate-400 w-4 h-4" />
+              <ArrowRight class="h-4 w-4 text-slate-400" />
             </div>
-            <div class="text-xs flex items-center justify-between w-full">
+            <div class="flex w-full items-center justify-between text-xs">
               <div class="flex items-center gap-2">
                 <ChainLogo
                   :stroke="false"
-                  class="w-4.5 h-4.5"
+                  class="h-4.5 w-4.5"
                   :chain="contact.chainId"
                 />
-                <span class="dark:text-white text-slate-900">{{
+                <span class="text-slate-900 dark:text-white">{{
                   shortenHash(contact.address)
                 }}</span>
               </div>
@@ -91,7 +92,7 @@ const filteredContacts = computed(() => {
           </button>
         </li>
       </ul>
-      <div v-else class="flex flex-col items-center justify-center h-64">
+      <div v-else class="flex h-64 flex-col items-center justify-center">
         <p class="text-slate-400">
           Nothing could be found
         </p>

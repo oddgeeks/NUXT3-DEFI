@@ -24,28 +24,28 @@ const mostRecentVersion = computed(() => {
 </script>
 
 <template>
-  <div class="px-5 sm:mx-auto max-w-[880px] w-full flex-1 mt-3">
-    <div class="mb-5 sm:mb-7.5 max-w-[796px] w-full">
-      <h1 class="text-xl flex items-center gap-2 sm:text-3xl font-bold leading-7.5 mb-2.5">
+  <div class="mt-3 w-full max-w-[880px] flex-1 px-5 sm:mx-auto">
+    <div class="mb-5 w-full max-w-[796px] sm:mb-7.5">
+      <h1 class="leading-7.5 mb-2.5 flex items-center gap-2 text-xl font-bold sm:text-3xl">
         Upgrade your Avocado Wallet
         <SvgSpinner v-if="optionsLoading" class="text-primary" />
       </h1>
-      <h2 class="text-slate-400 leading-6 font-medium text-xs sm:text-sm">
+      <h2 class="text-xs font-medium leading-6 text-slate-400 sm:text-sm">
         Avocado wallet is a Smart Contract wallet, it is recommended that you
         keep your Smart Contract upgraded to make the most of Avocado.
       </h2>
     </div>
-    <div class="h-full relative mb-7.5 sm:mb-0">
+    <div class="relative mb-7.5 h-full sm:mb-0">
       <div
-        :class="{ 'blur h-full': !account || !safeOptions }"
-        class="dark:bg-gray-850 bg-slate-50 rounded-5 sm:rounded-[25px] flex-1 relative"
+        :class="{ 'h-full blur': !account || !safeOptions }"
+        class="relative flex-1 rounded-5 bg-slate-50 dark:bg-gray-850 sm:rounded-[25px]"
       >
         <table class="table w-full">
           <thead>
             <tr
-              class="hidden sm:table-row text-left text-sm text-gray-400 font-medium border-b border-slate-150 dark:border-slate-800"
+              class="hidden border-b border-slate-150 text-left text-sm font-medium text-gray-400 dark:border-slate-800 sm:table-row"
             >
-              <th class="text-left py-6 pl-7.5">
+              <th class="py-6 pl-7.5 text-left">
                 Network
               </th>
               <th class="py-5">
@@ -56,7 +56,7 @@ const mostRecentVersion = computed(() => {
               </th>
             </tr>
           </thead>
-          <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
+          <tbody class="divide-y divide-slate-150 dark:divide-slate-800">
             <NetworkUpgradeRow
               v-for="options in sortByVersion"
               :key="options.chainId"
@@ -68,10 +68,10 @@ const mostRecentVersion = computed(() => {
       </div>
       <div
         v-if="!account"
-        class="absolute top-1/2 left-1/2 -translate-x-1/2 sm:-translate-y-1/2 flex items-center justify-center"
+        class="absolute left-1/2 top-1/2 flex -translate-x-1/2 items-center justify-center sm:-translate-y-1/2"
       >
         <div class="flex flex-col items-center justify-center gap-6">
-          <p class="font-semibold text-lg whitespace-nowrap">
+          <p class="whitespace-nowrap text-lg font-semibold">
             Connect your wallet to upgrade
           </p>
 

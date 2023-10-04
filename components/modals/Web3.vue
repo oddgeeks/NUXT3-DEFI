@@ -37,7 +37,7 @@ function isProviderVisible(provider: Provider) {
 <template>
   <div class="relative">
     <slot name="title">
-      <div class="flex flex-col items-center justify-center mb-7 gap-4">
+      <div class="mb-7 flex flex-col items-center justify-center gap-4">
         <span class="text-lg">Connect wallet</span>
       </div>
     </slot>
@@ -46,18 +46,18 @@ function isProviderVisible(provider: Provider) {
       <li v-for="provider in providers" :key="provider.name">
         <button
           v-if="isProviderVisible(provider)"
-          class="px-5 py-[15px] w-full dark:bg-gray-850 bg-slate-100 rounded-[40px] group transition-colors flex items-center gap-4"
+          class="group flex w-full items-center gap-4 rounded-[40px] bg-slate-100 px-5 py-[15px] transition-colors dark:bg-gray-850"
           :class="
             [
               provider.name === 'Metamask'
-                ? 'dark:hover:bg-[#282125] hover:bg-[#FEF1E8]'
-                : 'dark:hover:bg-[#15233C] hover:bg-[#EBF2FE]',
+                ? 'hover:bg-[#FEF1E8] dark:hover:bg-[#282125]'
+                : 'hover:bg-[#EBF2FE] dark:hover:bg-[#15233C]',
               buttonClass,
             ]
           "
           @click="connect(provider)"
         >
-          <div class="flex items-center flex-1 gap-[15px]">
+          <div class="flex flex-1 items-center gap-[15px]">
             <component :is="provider.logo" class="h-7.5 w-7.5" />
 
             <span class="text-[16px]">{{ provider.name }}</span>
@@ -68,7 +68,7 @@ function isProviderVisible(provider: Provider) {
               provider.name === 'Metamask'
                 ? 'text-orange-500'
                 : 'text-primary'
-            " class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+            " class="-ml-1 mr-3 h-5 w-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
             viewBox="0 0 24 24"
           >
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
@@ -79,7 +79,7 @@ function isProviderVisible(provider: Provider) {
           </svg>
 
           <svg
-            v-else class="transition-all text-slate-500" :class="
+            v-else class="text-slate-500 transition-all" :class="
               provider.name === 'Metamask'
                 ? 'group-hover:text-orange-500'
                 : 'group-hover:text-primary'

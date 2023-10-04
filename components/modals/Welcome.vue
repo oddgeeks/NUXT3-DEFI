@@ -31,42 +31,42 @@ function onContinue() {
 <template>
   <div class="flex flex-col gap-7.5 pb-7.5">
     <div class="flex flex-col gap-2.5 px-7.5 pt-7.5">
-      <p class="font-semibold text-[26px] leading-[30px]">
+      <p class="text-[26px] font-semibold leading-[30px]">
         Welcome to Avocado
       </p>
-      <p class="text-slate-400 font-medium leading-5 text-sm">
+      <p class="text-sm font-medium leading-5 text-slate-400">
         The web3 superwallet
       </p>
     </div>
     <hr class="border-slate-800">
-    <div v-for="item of data" :key="item.title" class="flex flex-row gap-5 justify-center items-center px-7.5">
-      <div class="bg-[#4CA0541a] rounded-full w-[46px] h-[46px] flex justify-center items-center">
+    <div v-for="item of data" :key="item.title" class="flex flex-row items-center justify-center gap-5 px-7.5">
+      <div class="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-[#4CA0541a]">
         <SvgoWNetwork v-if="item.icon === 'network'" />
         <SvgoWGasTank v-if="item.icon === 'gastank'" />
         <SvgoWRefresh v-if="item.icon === 'refresh'" />
         <SvgoWCross v-if="item.icon === 'cross'" />
       </div>
-      <div class="flex flex-col flex-1 gap-3">
+      <div class="flex flex-1 flex-col gap-3">
         <p class="text-lg font-semibold leading-5">
           {{ item.title }}
         </p>
-        <p class="text-slate-400 font-medium text-xs leading-5">
+        <p class="text-xs font-medium leading-5 text-slate-400">
           {{ item.content }}
         </p>
       </div>
     </div>
     <hr class="border-slate-800">
-    <div class="w-full px-7.5 flex flex-col gap-5 justify-center items-center">
-      <button class="bg-[#4CA054] rounded-full px-7.5 py-3 text-sm leading-5 font-semibold w-full" @click="onContinue()">
+    <div class="flex w-full flex-col items-center justify-center gap-5 px-7.5">
+      <button class="w-full rounded-full bg-[#4CA054] px-7.5 py-3 text-sm font-semibold leading-5" @click="onContinue()">
         Continue
       </button>
       <NuxtLink
         href="https://help.avocado.instadapp.io/en/articles/7038838-a-checklist-to-get-started-with-avocado"
         target="_blank"
-        class="inline-flex text-primary text-xs items-center gap-2"
+        class="inline-flex items-center gap-2 text-xs text-primary"
       >
         Learn more about Avocado
-        <ExternalLinkSVG class="w-3 h-3" />
+        <ExternalLinkSVG class="h-3 w-3" />
       </NuxtLink>
     </div>
   </div>
