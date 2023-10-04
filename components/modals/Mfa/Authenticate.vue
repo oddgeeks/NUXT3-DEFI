@@ -34,7 +34,7 @@ async function handleTypeSelection() {
         </h2>
       </div>
     </div>
-    <ul>
+    <ul class="flex flex-col gap-5">
       <li v-for="mfa in enabledMfas" :key="mfa.value">
         <button
           :class="[
