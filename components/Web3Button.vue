@@ -66,7 +66,7 @@ function userSignOut() {
   <div v-show="isActualActive" class="flex items-center gap-[14px]">
     <button
       v-if="!hideGas"
-      class="px-4 py-[9px] flex items-center justify-between rounded-5 dark:bg-slate-800 bg-slate-100 gap-2"
+      class="flex items-center justify-between gap-2 rounded-5 bg-slate-100 px-4 py-[9px] dark:bg-slate-800"
       @click="openTopUpGasModal()"
     >
       <GasSVG
@@ -83,26 +83,26 @@ function userSignOut() {
         :class="{
           'text-orange-400': toBN(pendingGasAmount.data.value).gt('0'),
         }"
-        class="whitespace-nowrap transition-colors leading-5"
+        class="whitespace-nowrap leading-5 transition-colors"
       >
         {{ formatDecimal(gasBalance, 2) }} USDC</span>
 
-      <div v-else class="loading-box rounded-5 w-20 h-5" />
+      <div v-else class="loading-box h-5 w-20 rounded-5" />
 
       <span
-        class="h-[26px] w-[26px] flex items-center justify-center bg-primary rounded-full text-white"
+        class="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-primary text-white"
       ><PlusSVG />
       </span>
     </button>
     <template v-if="!hideEOA">
       <Popover
-        as="div" class="relative z-30 gap-4 items-center flex"
+        as="div" class="relative z-30 flex items-center gap-4"
       >
-        <PopoverButton class="bg-slate-100 relative rounded-7.5 dark:bg-slate-800 py-2.5 sm:py-3 px-4.5 sm:px-4 leading-5 justify-between flex items-center gap-x-2.5">
+        <PopoverButton class="relative flex items-center justify-between gap-x-2.5 rounded-7.5 bg-slate-100 px-4.5 py-2.5 leading-5 dark:bg-slate-800 sm:px-4 sm:py-3">
           <div class="flex gap-[14px]">
             <div class="flex items-center gap-2.5">
               <div v-if="connectedProvider">
-                <component :is="connectedProvider.logo" class="h-7.5 sm:h-6 w-7.5 sm:w-6" />
+                <component :is="connectedProvider.logo" class="h-7.5 w-7.5 sm:h-6 sm:w-6" />
               </div>
               <div class="flex flex-col items-start gap-[6px]">
                 <span>{{ addressLabel }}</span>
@@ -123,49 +123,49 @@ function userSignOut() {
           <PopoverPanel
             v-slot="{ close }"
             as="div"
-            class="bg-slate-100 sm:w-[440px] top-0 flex-col leading-5 justify-between flex gap-x-2.5 dark:bg-gray-850 absolute right-0 ring-1 dark:ring-slate-750 ring-slate-150 rounded-[25px]"
+            class="absolute right-0 top-0 flex flex-col justify-between gap-x-2.5 rounded-[25px] bg-slate-100 leading-5 ring-1 ring-slate-150 dark:bg-gray-850 dark:ring-slate-750 sm:w-[440px]"
           >
-            <div class="w-full flex justify-between p-5">
+            <div class="flex w-full justify-between p-5">
               <div class="flex gap-[14px]">
                 <div class="flex items-center gap-2.5">
                   <div v-if="connectedProvider">
-                    <component :is="connectedProvider.logo" class="h-7.5 sm:h-9 w-7.5 sm:w-9" />
+                    <component :is="connectedProvider.logo" class="h-7.5 w-7.5 sm:h-9 sm:w-9" />
                   </div>
                   <div class="flex flex-col items-start gap-[6px]">
-                    <span class="text-xs text-slate-500 leading-[10px] font-medium">Owner's Address</span>
-                    <span class="text-lg leading-5 font-semibold">{{ addressLabel }}</span>
+                    <span class="text-xs font-medium leading-[10px] text-slate-500">Owner's Address</span>
+                    <span class="text-lg font-semibold leading-5">{{ addressLabel }}</span>
                   </div>
                 </div>
 
                 <button
-                  class="w-7.5 h-7.5 rounded-full flex items-center justify-center overflow-hidden dark:bg-slate-800 bg-slate-150"
+                  class="flex h-7.5 w-7.5 items-center justify-center overflow-hidden rounded-full bg-slate-150 dark:bg-slate-800"
                   aria-label="Copy EOA"
                 >
                   <Copy :text="trackingAccount || account" :icon-only="true" />
                 </button>
 
                 <button
-                  class="w-7.5 h-7.5 rounded-full flex items-center justify-center overflow-hidden dark:bg-slate-800 bg-slate-150"
+                  class="flex h-7.5 w-7.5 items-center justify-center overflow-hidden rounded-full bg-slate-150 dark:bg-slate-800"
                   aria-label="Close Connection"
                   @click="closeConnection"
                   @mouseenter="hovered = true"
                   @mouseleave="hovered = false"
                 >
-                  <div class="overflow-hidden absolute">
-                    <PowerOffSVG v-if="hovered" class="pointer-events-none w-12 h-12" />
-                    <PowerOnSVG v-else class="pointer-events-none w-12 h-12" />
+                  <div class="absolute overflow-hidden">
+                    <PowerOffSVG v-if="hovered" class="pointer-events-none h-12 w-12" />
+                    <PowerOnSVG v-else class="pointer-events-none h-12 w-12" />
                   </div>
                 </button>
               </div>
               <button
-                class="h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-150"
+                class="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-150 dark:bg-slate-800"
                 aria-label="Close EOA"
                 @click.stop="close"
               >
                 <SvgoX />
               </button>
             </div>
-            <div class="border-t dark:border-slate-750 px-5 pb-5 border-slate-150 pt-4">
+            <div class="border-t border-slate-150 px-5 pb-5 pt-4 dark:border-slate-750">
               <WalletItemList />
             </div>
           </PopoverPanel>

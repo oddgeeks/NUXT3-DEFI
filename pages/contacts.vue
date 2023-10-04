@@ -17,8 +17,9 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const search = useDebounceFn((event: Event) => {
-  searchQuery.value = (<HTMLInputElement>event.target).value
+const search = useDebounceFn((e: Event) => {
+  const el = e.target as HTMLInputElement
+  searchQuery.value = el.value
 }, 200)
 
 const filteredContacts = computed(() => {
@@ -47,17 +48,17 @@ watch(safeAddress, () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-7.5 flex-1">
-    <div class="flex gap-5 flex-col flex-1">
-      <h2 class="sm:text-base text-sm font-semibold inline-flex items-center">
+  <div class="flex flex-1 flex-col gap-7.5">
+    <div class="flex flex-1 flex-col gap-5">
+      <h2 class="inline-flex items-center text-sm font-semibold sm:text-base">
         Contacts
       </h2>
       <div
-        class="flex sm:flex-row flex-col-reverse items-center gap-x-5 gap-y-7.5"
-        :class="{ 'blur pointer-events-none': !account }"
+        class="flex flex-col-reverse items-center gap-x-5 gap-y-7.5 sm:flex-row"
+        :class="{ 'pointer-events-none blur': !account }"
       >
         <CommonInput
-          class="flex-1 w-full"
+          class="w-full flex-1"
           :class="{
             'hidden sm:block':
               !safeContacts || safeContacts.length === 0,
@@ -68,14 +69,14 @@ watch(safeAddress, () => {
           @input="search"
         >
           <template #prefix>
-            <SearchSVG class="shrink-0 mr-2" />
+            <SearchSVG class="mr-2 shrink-0" />
           </template>
         </CommonInput>
 
         <CommonButton
           :disabled="!safeAddress"
           size="lg"
-          class="flex items-center justify-center gap-2 px-5 w-full sm:w-fit"
+          class="flex w-full items-center justify-center gap-2 px-5 sm:w-fit"
           @click="openAddContactModal()"
         >
           <PlusSVG />
@@ -84,31 +85,31 @@ watch(safeAddress, () => {
       </div>
       <div
         style="scrollbar-gutter: stable; overflow-y: overlay"
-        class="overflow-y-auto overflow-x-auto dark:sm:bg-gray-850 sm:bg-slate-50 sm:rounded-[25px] md:overflow-x-hidden h-[530px] max-h-[530px] scroll-style flex flex-col gap-4"
-        :class="{ '!overflow-hidden blur pointer-events-none': !account }"
+        class="scroll-style flex h-[530px] max-h-[530px] flex-col gap-4 overflow-auto sm:rounded-[25px] sm:bg-slate-50 dark:sm:bg-gray-850 md:overflow-x-hidden"
+        :class="{ 'pointer-events-none !overflow-hidden blur': !account }"
       >
         <div
           v-if="account && filteredContacts.length === 0"
-          class="w-full h-full flex items-center justify-center"
+          class="flex h-full w-full items-center justify-center"
         >
           No contacts
         </div>
         <template v-else>
-          <table class="hidden sm:table w-full">
+          <table class="hidden w-full sm:table">
             <thead>
               <tr
-                class="text-left text-sm text-gray-400 font-medium border-b border-slate-150 dark:border-slate-800"
+                class="border-b border-slate-150 text-left text-sm font-medium text-gray-400 dark:border-slate-800"
               >
-                <th class="text-left py-6 pl-7.5">
+                <th class="py-6 pl-7.5 text-left">
                   Name
                 </th>
-                <th class="pr-10 w-[70%]">
+                <th class="w-[70%] pr-10">
                   Address
                 </th>
               </tr>
             </thead>
             <ClientOnly>
-              <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
+              <tbody class="divide-y divide-slate-150 dark:divide-slate-800">
                 <ContactRow v-for="contact in filteredContacts" :key="contact.address + contact.chainId + contact.name" :contact="contact" />
               </tbody>
             </ClientOnly>

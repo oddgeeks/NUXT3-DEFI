@@ -138,31 +138,31 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col sm:gap-10 gap-5 flex-1">
+  <div class="flex flex-1 flex-col gap-5 sm:gap-10">
     <div class="flex flex-col gap-2.5">
       <h2 class="text-base">
         Manage Multisig Signers
       </h2>
-      <div class="flex justify-between flex-wrap gap-5">
-        <span class="text-xs text-slate-400 leading-5">
+      <div class="flex flex-wrap justify-between gap-5">
+        <span class="text-xs leading-5 text-slate-400">
           Signers are addresses that are required to sign transactions before they can be executed on<br> the blockchain.
         </span>
-        <fieldset :disabled="isSafeDoesNotMatch" class="flex items-center gap-7.5 sm:w-auto w-full justify-between self-start">
-          <button class="flex items-center text-xs disabled:text-slate-400 text-primary gap-2.5 whitespace-nowrap" @click="handleAddSignerModal()">
-            <div class="bg-current w-4.5 h-4.5 rounded-full flex">
-              <SvgoPlus class="text-white m-auto w-2 h-2" />
+        <fieldset :disabled="isSafeDoesNotMatch" class="flex w-full items-center justify-between gap-7.5 self-start sm:w-auto">
+          <button class="flex items-center gap-2.5 whitespace-nowrap text-xs text-primary disabled:text-slate-400" @click="handleAddSignerModal()">
+            <div class="flex h-4.5 w-4.5 rounded-full bg-current">
+              <SvgoPlus class="m-auto h-2 w-2 text-white" />
             </div>
             Add New Signer(s)
           </button>
-          <button :disabled="!selectedAddresses.length" class="flex whitespace-nowrap disabled:text-slate-400 items-center text-xs text-red-alert gap-2.5" @click="handleDeleteSigner">
+          <button :disabled="!selectedAddresses.length" class="flex items-center gap-2.5 whitespace-nowrap text-xs text-red-alert disabled:text-slate-400" @click="handleDeleteSigner">
             Delete Selected
-            <SvgoTrash2 class="w-3.5 h-3.5" />
+            <SvgoTrash2 class="h-3.5 w-3.5" />
           </button>
         </fieldset>
       </div>
-      <div v-if="!isSafeDoesNotMatch" class="dark:bg-gray-850 mb-2.5 justify-between font-medium flex bg-slate-50 p-[18px] rounded-[25px] sm:py-6.5 sm:px-7.5 items-center">
-        <div class="flex gap-3 items-center">
-          <SvgoSafe class="w-7.5 h-7.5" />
+      <div v-if="!isSafeDoesNotMatch" class="mb-2.5 flex items-center justify-between rounded-[25px] bg-slate-50 p-[18px] font-medium dark:bg-gray-850 sm:px-7.5 sm:py-6.5">
+        <div class="flex items-center gap-3">
+          <SvgoSafe class="h-7.5 w-7.5" />
           <div class="flex flex-col gap-1.5">
             Clone your existing Safe on Avocado in just 1 click!
           </div>

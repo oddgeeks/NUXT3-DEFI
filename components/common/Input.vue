@@ -87,14 +87,14 @@ function handleBeforeInput(e: any) {
       :class="[
         containerClasses,
         {
-          '!ring-red-alert !ring-2': !!errorMessage && errorType === 'error',
-          '!ring-orange-500 !ring-2': !!errorMessage && errorType === 'warning',
+          '!ring-2 !ring-red-alert': !!errorMessage && errorType === 'error',
+          '!ring-2 !ring-orange-500': !!errorMessage && errorType === 'warning',
         },
         transparent
           ? 'bg-transparent'
-          : 'dark:bg-slate-800  bg-slate-100 focus-within:ring-1 dark:focus-within:bg-gray-850 focus-within:bg-slate-50 dark:focus-within:ring-slate-750 focus-within:ring-slate-100',
+          : 'bg-slate-100  focus-within:bg-slate-50 focus-within:ring-1 focus-within:ring-slate-100 dark:bg-slate-800 dark:focus-within:bg-gray-850 dark:focus-within:ring-slate-750',
       ]"
-      class="relative flex items-center focus-within:outline-none px-5 rounded-[15px]"
+      class="relative flex items-center rounded-[15px] px-5 focus-within:outline-none"
     >
       <slot name="prefix" />
       <slot name="input">
@@ -123,7 +123,7 @@ function handleBeforeInput(e: any) {
     </div>
     <span
       v-if="!!errorMessage"
-      class="text-xs flex gap-2 items-center text-left mt-2"
+      class="mt-2 flex items-center gap-2 text-left text-xs"
       :class="[
         {
           'text-red-alert': errorType === 'error',

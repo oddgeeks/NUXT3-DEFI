@@ -69,10 +69,10 @@ async function onSubmit() {
 </script>
 
 <template>
-  <form class="text-center flex gap-7.5 flex-col" @submit.prevent="onSubmit">
-    <div class="flex justify-center flex-col items-center">
+  <form class="flex flex-col gap-7.5 text-center" @submit.prevent="onSubmit">
+    <div class="flex flex-col items-center justify-center">
       <div class="flex flex-col gap-[14px]">
-        <h2 class="text-lg leading-5 text-center">
+        <h2 class="text-center text-lg leading-5">
           Custom Transaction
         </h2>
       </div>
@@ -80,7 +80,7 @@ async function onSubmit() {
 
     <div class="space-y-5">
       <div class="space-y-2.5">
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <span class="text-sm">Network</span>
         </div>
 
@@ -91,16 +91,16 @@ async function onSubmit() {
           :options="availableNetworks"
         >
           <template #button-prefix>
-            <ChainLogo class="w-6 h-6" :chain="chainId" />
+            <ChainLogo class="h-6 w-6" :chain="chainId" />
           </template>
           <template #item-prefix="{ value }">
-            <ChainLogo class="w-6 h-6" :chain="value" />
+            <ChainLogo class="h-6 w-6" :chain="value" />
           </template>
         </CommonSelect>
       </div>
 
       <div class="space-y-2.5">
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <span class="text-sm">To</span>
         </div>
 
@@ -108,7 +108,7 @@ async function onSubmit() {
       </div>
 
       <div class="space-y-2.5">
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <span class="text-sm">Value</span>
         </div>
         <CommonInput
@@ -120,7 +120,7 @@ async function onSubmit() {
       </div>
 
       <div class="space-y-2.5">
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <span class="text-sm">Operation</span>
         </div>
         <CommonInput
@@ -132,7 +132,7 @@ async function onSubmit() {
       </div>
 
       <div class="space-y-2.5">
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <span class="text-sm">ID</span>
         </div>
         <CommonInput
@@ -144,7 +144,7 @@ async function onSubmit() {
       </div>
 
       <div class="space-y-2.5">
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <span class="text-sm">Data</span>
         </div>
 
@@ -156,7 +156,7 @@ async function onSubmit() {
       type="submit"
       :disabled="sendingDisabled"
       :loading="loading"
-      class="justify-center w-full"
+      class="w-full justify-center"
       size="lg"
     >
       Submit

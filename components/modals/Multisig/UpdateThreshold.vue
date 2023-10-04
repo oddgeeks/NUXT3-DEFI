@@ -42,7 +42,7 @@ onMounted(() => {
 
 <template>
   <div>
-    <div class="sm:p-7.5 p-5 flex flex-col gap-7.5">
+    <div class="flex flex-col gap-7.5 p-5 sm:p-7.5">
       <Steps v-if="activeStep && totalSteps" class="mr-10" :current-step="activeStep" :total-steps="totalSteps" />
       <div>
         <h2 class="text-lg">
@@ -59,12 +59,12 @@ onMounted(() => {
     </div>
 
     <hr class="border-slate-150 dark:border-slate-800">
-    <div class="flex text-sm items-center gap-5 sm:p-7.5 p-6">
+    <div class="flex items-center gap-5 p-6 text-sm sm:p-7.5">
       <CommonSelect v-model="threshold" class="w-[80px]" :options="generateNumber(minCount, maxCount)" />
       Out of {{ maxCount }} signer(s)
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
-    <div class="sm:p-7.5 p-6">
+    <div class="p-6 sm:p-7.5">
       <CommonButton class="w-full justify-center" size="lg" @click="$emit('resolve', true, threshold)">
         Continue
       </CommonButton>

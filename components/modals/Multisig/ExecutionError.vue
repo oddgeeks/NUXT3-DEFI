@@ -11,20 +11,20 @@ defineEmits(['resolve', 'destroy'])
 
 <template>
   <div
-    class="inline-flex gap-7.5 flex-col items-center justify-center text-center w-full"
+    class="inline-flex w-full flex-col items-center justify-center gap-7.5 text-center"
   >
-    <SVGErrorCircle class="text-white w-10 h-10 fill-primary" />
+    <SVGErrorCircle class="h-10 w-10 fill-primary text-white" />
 
     <div class="flex flex-col gap-[15px]">
       <h1 class="text-lg font-semibold">
         Unable to execute transaction
       </h1>
       <div
-        class="text-slate-400 text-xs text-center leading-5 font-medium"
+        class="text-center text-xs font-medium leading-5 text-slate-400"
       >
         Your transaction has been proposed but couldn't be executed. You can retry executing from <NuxtLink
           :to="`/multisig/${safeAddress}/pending-transactions/${proposalId}`"
-          class="text-primary text-xs text-center leading-5 font-medium"
+          class="text-center text-xs font-medium leading-5 text-primary"
           @click="$emit('destroy')"
         >
           Pending Transactions
@@ -33,7 +33,7 @@ defineEmits(['resolve', 'destroy'])
     </div>
     <div
 
-      class="flex w-full gap-4 items-center"
+      class="flex w-full items-center gap-4"
     >
       <CommonButton
 

@@ -29,14 +29,14 @@ async function handleUpgrade() {
 
 <template>
   <tr class="flex flex-col sm:table-row">
-    <td class="pt-5 sm:py-[26px] pb-4 sm:pl-7.5 pl-4.5">
-      <div class="flex gap-3 items-center">
-        <ChainLogo class="w-11 h-11" :chain="options.chainId" />
+    <td class="pb-4 pl-4.5 pt-5 sm:py-[26px] sm:pl-7.5">
+      <div class="flex items-center gap-3">
+        <ChainLogo class="h-11 w-11" :chain="options.chainId" />
         <div class="flex flex-col gap-1">
           <span>
             {{ chainIdToName(options.chainId) }}
           </span>
-          <span class="text-slate-400 font-medium text-sm">
+          <span class="text-sm font-medium text-slate-400">
             {{ options.currentVersion }}
           </span>
         </div>
@@ -50,12 +50,12 @@ async function handleUpgrade() {
         {{ options.latestVersion }}
       </span>
     </td>
-    <td class="px-4.5 pb-6.5 sm:pr-7.5 sm:pb-0 sm:pl-0 sm:w-[221px]">
+    <td class="px-4.5 pb-6.5 sm:w-[221px] sm:pb-0 sm:pl-0 sm:pr-7.5">
       <Tippy :content="isNetworkNotAuthorised ? `You are not authorized to interact on ${chainIdToName(options.chainId)}` : undefined">
         <fieldset :disabled="isNetworkNotAuthorised">
           <CommonButton
             v-if="options.notdeployed"
-            class="!px-[19px] w-full items-center justify-center"
+            class="w-full items-center justify-center !px-[19px]"
             @click="openDeployNetworkModal(options)"
           >
             Deploy
@@ -63,7 +63,7 @@ async function handleUpgrade() {
 
           <CommonButton
             v-else-if="isUpgradeAvailable"
-            class="w-full text-center justify-center"
+            class="w-full justify-center text-center"
             @click="handleUpgrade()"
           >
             Upgrade Now
@@ -72,7 +72,7 @@ async function handleUpgrade() {
           <CommonButton
             v-else
             disabled
-            class="!px-[19px] w-full items-center justify-center"
+            class="w-full items-center justify-center !px-[19px]"
           >
             Already up to date
           </CommonButton>

@@ -26,7 +26,7 @@ const newInputShape = {
       />
     </div>
 
-    <hr class="border-slate-150 dark:border-slate-800 my-5">
+    <hr class="my-5 border-slate-150 dark:border-slate-800">
 
     <div>
       <TransactionBuilderInput
@@ -35,7 +35,7 @@ const newInputShape = {
       />
     </div>
 
-    <hr class="border-slate-150 dark:border-slate-800 my-5">
+    <hr class="my-5 border-slate-150 dark:border-slate-800">
 
     <div>
       <TransactionBuilderInput

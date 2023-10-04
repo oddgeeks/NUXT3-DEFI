@@ -10,7 +10,26 @@
     "generate:contracts": "rimraf contracts && typechain --target=ethers-v5 'abi/*.json' --out-dir 'contracts'",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "simple-git-hooks && nuxt prepare"
+  },
+  "dependencies": {
+    "@instadapp/avocado-base": "0.0.75",
+    "@instadapp/transaction-builder": "^0.0.12",
+    "@splidejs/vue-splide": "^0.6.12",
+    "@walletconnect/core": "^2.10.1",
+    "@walletconnect/ethereum-provider": "^2.10.1",
+    "@walletconnect/modal": "^2.6.2",
+    "@walletconnect/types": "^2.10.1",
+    "@walletconnect/utils": "^2.10.1",
+    "@walletconnect/web3wallet": "^1.9.1",
+    "alchemy-sdk": "^2.7.4",
+    "canvas-confetti": "^1.6.0",
+    "d3": "^7.8.4",
+    "error-serializer": "^5.1.0",
+    "fuse.js": "^6.6.2",
+    "semver": "^7.3.8",
+    "vue-slicksort": "^2.0.5",
+    "xxhashjs": "^0.2.2"
   },
   "devDependencies": {
     "@ankr.com/ankr.js": "^0.3.1",
@@ -41,17 +60,21 @@
     "axios-retry": "^3.3.1",
     "bignumber.js": "^9.1.1",
     "collect.js": "^4.34.3",
-    "eslint": "^8.38.0",
+    "eslint": "^8.47.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-tailwindcss": "^3.13.0",
     "ethers": "^5.7.2",
+    "lint-staged": "^14.0.0",
     "nuxt": "^3.7.3",
     "nuxt-security": "^0.14.2",
     "nuxt-svgo": "^3.1.0",
     "ohmyfetch": "^0.4.21",
     "pinia": "^2.1.6",
+    "prettier": "^3.0.2",
     "qrcode.vue": "^3.3.3",
     "rimraf": "^3.0.2",
-    "simple-git": "^3.16.0",
+    "simple-git": "^3.17.0",
+    "simple-git-hooks": "^2.9.0",
     "styled-qr-code": "^1.0.0",
     "tsx": "^3.12.2",
     "typechain": "^8.1.1",
@@ -67,23 +90,11 @@
     "ws": "^8.12.0",
     "yup": "^0.32.11"
   },
-  "dependencies": {
-    "@instadapp/avocado-base": "0.0.75",
-    "@instadapp/transaction-builder": "^0.0.12",
-    "@splidejs/vue-splide": "^0.6.12",
-    "@walletconnect/core": "^2.10.1",
-    "@walletconnect/ethereum-provider": "^2.10.1",
-    "@walletconnect/modal": "^2.6.1",
-    "@walletconnect/types": "^2.10.1",
-    "@walletconnect/utils": "^2.10.1",
-    "@walletconnect/web3wallet": "^1.9.1",
-    "alchemy-sdk": "^2.7.4",
-    "canvas-confetti": "^1.6.0",
-    "d3": "^7.8.4",
-    "error-serializer": "^5.1.0",
-    "fuse.js": "^6.6.2",
-    "semver": "^7.3.8",
-    "vue-slicksort": "^2.0.5",
-    "xxhashjs": "^0.2.2"
+  "simple-git-hooks": {
+    "pre-commit": "yarn lint-staged",
+    "post-merge": "yarn install"
+  },
+  "lint-staged": {
+    "*": "eslint --fix"
   }
 }

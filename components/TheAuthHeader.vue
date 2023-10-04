@@ -1,9 +1,9 @@
 <template>
-  <div class="items-center justify-end py-8 flex">
+  <div class="flex items-center justify-end py-8">
     <NuxtLink class="mr-auto" to="/">
       <SvgoAvocadoLogo />
     </NuxtLink>
-    <nav class="flex items-center gap-7.5 relative">
+    <nav class="relative flex items-center gap-7.5">
       <div class="flex items-center gap-5">
         <ColorModeSwitcher />
       </div>

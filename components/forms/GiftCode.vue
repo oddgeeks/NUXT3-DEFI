@@ -118,15 +118,15 @@ Issued At: ${new Date().toISOString()}`
 <template>
   <form class="flex flex-col gap-7.5" @submit="onSubmit">
     <label for="input-gift-code">
-      <div class="flex justify-between mb-2.5">
+      <div class="mb-2.5 flex justify-between">
         <span class="text-sm">Reedem code</span>
         <button
           type="button"
-          class="h-5 w-5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100"
+          class="flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
           aria-label="Gift Code"
           @click="$emit('close')"
         >
-          <SVGX class="w-2.5 h-2.5" />
+          <SVGX class="h-2.5 w-2.5" />
         </button>
       </div>
       <CommonInput
@@ -141,7 +141,7 @@ Issued At: ${new Date().toISOString()}`
       :disabled="sendingDisabled"
       :loading="isSubmitting"
       type="submit"
-      class="justify-center w-full"
+      class="w-full justify-center"
       size="lg"
     >
       Redeem Gas

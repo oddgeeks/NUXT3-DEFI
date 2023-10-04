@@ -24,20 +24,20 @@ const colors = {
     <div
       v-if="open"
       :class="colors[type]"
-      class="absolute bottom-0 px-5 font-medium rounded-b-7.5 min-h-[48px] flex-col w-full items-center justify-center flex gap-2 py-2"
+      class="absolute bottom-0 flex min-h-[48px] w-full flex-col items-center justify-center gap-2 rounded-b-7.5 px-5 py-2 font-medium"
     >
       <p
         style="word-break: break-word"
-        class="text-xs flex gap-2 max-h-20 overflow-auto"
+        class="flex max-h-20 gap-2 overflow-auto text-xs"
       >
         <SvgoInfo2 v-if="type === 'info'" class="h-4 w-4 shrink-0 text-slate-400" />
         <SVGErrorCircle
           v-else-if="type === 'error'"
-          class="h-4 w-4 shrink-0 [&>rect]:fill-white [&>path]:stroke-red-alert"
+          class="h-4 w-4 shrink-0 [&>path]:stroke-red-alert [&>rect]:fill-white"
         />
         <SVGCheckCircle
           v-else
-          class="h-4 w-4 shrink-0 [&>rect]:fill-white [&>path]:stroke-green-400"
+          class="h-4 w-4 shrink-0 [&>path]:stroke-green-400 [&>rect]:fill-white"
         />
 
         {{ message }}

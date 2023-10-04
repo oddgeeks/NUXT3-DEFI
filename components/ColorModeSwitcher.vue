@@ -11,15 +11,15 @@ function switchColorMode(colorMode: ColorModeInstance) {
 <template>
   <ColorScheme>
     <button
-      class="inline-flex items-center justify-center w-9 h-9 relative"
+      class="relative inline-flex h-9 w-9 items-center justify-center"
       @click="switchColorMode($colorMode)"
     >
       <Transition name="slide-up">
         <span v-if="$colorMode.value === 'dark'" class="absolute">
-          <Sun class="w-4.5 h-4.5 sm:w-5.5 sm:h-5.5" />
+          <Sun class="h-4.5 w-4.5 sm:h-5.5 sm:w-5.5" />
         </span>
         <span v-else class="absolute">
-          <Moon class="w-4.5 h-4.5 sm:w-5.5 sm:h-5.5" />
+          <Moon class="h-4.5 w-4.5 sm:h-5.5 sm:w-5.5" />
         </span>
       </Transition>
     </button>

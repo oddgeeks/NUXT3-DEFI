@@ -58,10 +58,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="text-center flex flex-col gap-7.5 items-center">
+  <div class="flex flex-col items-center gap-7.5 text-center">
     <div v-if="isSuccess" class="flex justify-center">
       <SVGCheckCircle
-        class="text-white w-10 h-10 success-circle"
+        class="success-circle h-10 w-10 text-white"
       />
     </div>
 
@@ -92,7 +92,7 @@ onUnmounted(() => {
 
     <div v-else class="flex justify-center">
       <svg
-        class="animate-spin h-10 w-10 text-green-500"
+        class="h-10 w-10 animate-spin text-green-500"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -118,23 +118,23 @@ onUnmounted(() => {
         Transaction {{ statusLabel }}
       </h2>
 
-      <p v-if="isPending" class="text-slate-400 text-xs leading-5 mt-3 font-medium">
+      <p v-if="isPending" class="mt-3 text-xs font-medium leading-5 text-slate-400">
         The transaction has been sent to be processed.
       </p>
 
-      <p v-if="isFailed" class="text-slate-400 text-xs leading-5 mt-3 font-medium">
+      <p v-if="isFailed" class="mt-3 text-xs font-medium leading-5 text-slate-400">
         Try again or return to the home page.
       </p>
 
-      <div class="flex gap-2.5 items-center mt-7.5">
-        <div class="dark:bg-slate-800 flex-1 bg-slate-100 py-[14px] px-4.5 flex gap-3 rounded-5 items-center">
+      <div class="mt-7.5 flex items-center gap-2.5">
+        <div class="flex flex-1 items-center gap-3 rounded-5 bg-slate-100 px-4.5 py-[14px] dark:bg-slate-800">
           <ChainLogo class="w-[26px]" :chain="fromChainId" />
-          <span class="text-slate-400 text-sm"> {{ chainIdToName(fromChainId) }}</span>
+          <span class="text-sm text-slate-400"> {{ chainIdToName(fromChainId) }}</span>
         </div>
         <ArrowRight class="text-slate-500" />
-        <div class="dark:bg-slate-800 flex-1 bg-slate-100 py-[14px] px-4.5 flex gap-3 rounded-5 items-center">
+        <div class="flex flex-1 items-center gap-3 rounded-5 bg-slate-100 px-4.5 py-[14px] dark:bg-slate-800">
           <ChainLogo class="w-[26px]" :chain="toChainId" />
-          <span class="text-slate-400 text-sm"> {{ chainIdToName(toChainId) }}</span>
+          <span class="text-sm text-slate-400"> {{ chainIdToName(toChainId) }}</span>
         </div>
       </div>
 

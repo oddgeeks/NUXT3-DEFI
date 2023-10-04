@@ -1,6 +1,8 @@
 import { ofetch } from 'ofetch'
 import { serialize } from 'error-serializer'
 
+import type { AxiosError } from 'axios'
+
 interface ILogError {
   error: any
   notifyUser?: boolean
@@ -35,10 +37,7 @@ export default ofetch.create({
   retry: 3,
   onResponseError: error => logError({ error, notifyUser: false }),
 })
-
-
-import type { AxiosError } from 'axios'
-export const handleAxiosError = (error: AxiosError, showUserError: boolean) => {
+export function handleAxiosError(error: AxiosError, showUserError: boolean) {
   const data = error?.response?.data as any
   const message = data?.message || data?.error
   const statusCode = error.response?.status
@@ -52,7 +51,6 @@ export const handleAxiosError = (error: AxiosError, showUserError: boolean) => {
     })
   }
 
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development')
     console.error(error)
-  }
 }

@@ -29,9 +29,9 @@ function handleResolve() {
 
 <template>
   <div
-    class="inline-flex gap-7.5 flex-col items-center justify-center text-center w-full"
+    class="inline-flex w-full flex-col items-center justify-center gap-7.5 text-center"
   >
-    <SVGQuestionCircle class="w-10 h-10 text-primary" />
+    <SVGQuestionCircle class="h-10 w-10 text-primary" />
 
     <div class="flex flex-col gap-[15px]">
       <h1 class="text-lg font-semibold">
@@ -39,7 +39,7 @@ function handleResolve() {
       </h1>
       <p
 
-        class="text-slate-400 text-xs text-center leading-5 font-medium"
+        class="text-center text-xs font-medium leading-5 text-slate-400"
       >
         Are you sure you want to execute this transaction?
       </p>
@@ -51,7 +51,7 @@ function handleResolve() {
       :error="error"
     />
     <div v-if="!!error" class="flex w-full flex-col gap-7.5">
-      <p class="text-xs w-full font-medium -my-2.5 text-left">
+      <p class="-my-2.5 w-full text-left text-xs font-medium">
         This transaction will most likely fail on-chain.<br>
         Please cancel this by creating a rejection transaction.
       </p>
@@ -65,7 +65,7 @@ function handleResolve() {
     </div>
     <div
       v-else
-      class="flex w-full gap-4 items-center"
+      class="flex w-full items-center gap-4"
     >
       <CommonButton
         class="flex-1 justify-center"

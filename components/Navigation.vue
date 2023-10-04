@@ -55,8 +55,8 @@ function openBridge() {
 </script>
 
 <template>
-  <div :class="{ 'blur pointer-events-none': !safeAddress }">
-    <div class="flex flex-col w-full gap-2 border-y-1 dark:border-slate-750 border-slate-150 px-7.5 py-4 text-slate-400 font-base">
+  <div :class="{ 'pointer-events-none blur': !safeAddress }">
+    <div class="font-base flex w-full flex-col gap-2 border-y-1 border-slate-150 px-7.5 py-4 text-slate-400 dark:border-slate-750">
       <template
         v-for="nav in navigations"
         :key="nav.to"
@@ -70,28 +70,28 @@ function openBridge() {
           :target="nav.target"
           @click="emit('navigate')"
         >
-          <component :is="nav.icon" class="w-4 h-4" />
+          <component :is="nav.icon" class="h-4 w-4" />
           {{ nav.label }}
-          <span v-if="nav?.count" class="flex items-center justify-center min-w-[20px] h-5 px-[5px] bg-slate-500 text-xs rounded-full text-white">
+          <span v-if="nav?.count" class="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-slate-500 px-[5px] text-xs text-white">
             {{ nav?.count }}
           </span>
         </NuxtLink>
       </template>
     </div>
-    <div class="flex flex-col w-full gap-2 border-b-1 dark:border-slate-750 border-slate-150 px-7.5 py-4 text-slate-400">
+    <div class="flex w-full flex-col gap-2 border-b-1 border-slate-150 px-7.5 py-4 text-slate-400 dark:border-slate-750">
       <button
         class="flex h-11 items-center justify-between"
         :class="{
-          'dark:text-white text-slate-900': moreOptions,
+          'text-slate-900 dark:text-white': moreOptions,
         }"
         @click="toggleOptions(!moreOptions)"
       >
         <div class="flex items-center gap-2.5">
-          <MoreOptionsSVG class="w-4 h-4" />
+          <MoreOptionsSVG class="h-4 w-4" />
           More options
         </div>
         <ChevronDownSVG
-          class="w-4 h-4"
+          class="h-4 w-4"
           :class="{
             'rotate-180': moreOptions,
           }"
@@ -103,7 +103,7 @@ function openBridge() {
           :disabled="!tokenBalances || tokenBalances.length === 0"
           @click="openSwap"
         >
-          <SwapSVG class="w-4 h-4" />
+          <SwapSVG class="h-4 w-4" />
           Swap
         </button>
         <button
@@ -111,14 +111,14 @@ function openBridge() {
           :disabled="!tokenBalances || tokenBalances.length === 0"
           @click="openBridge"
         >
-          <BridgeSVG class="w-4 h-4" />
+          <BridgeSVG class="h-4 w-4" />
           Bridge
         </button>
         <button
           class="flex h-11 items-center gap-2.5"
           @click="openImportTokenModal"
         >
-          <PlusCircleSVG class="w-4 h-4" />
+          <PlusCircleSVG class="h-4 w-4" />
           Add custom Tokens
         </button>
         <NuxtLink
@@ -126,7 +126,7 @@ function openBridge() {
           class="flex h-11 items-center gap-2.5"
           to="/upgrade"
         >
-          <RefreshSVG class="w-4 h-4" />
+          <RefreshSVG class="h-4 w-4" />
           Deploy/Upgrade
         </NuxtLink>
         <NuxtLink
@@ -135,20 +135,20 @@ function openBridge() {
           target="_blank"
           to="https://help.avocado.instadapp.io"
         >
-          <QuestionSVG class="w-4 h-4" />
+          <QuestionSVG class="h-4 w-4" />
           Help
         </NuxtLink>
       </div>
     </div>
-    <div v-if="eoaBalances && eoaBalances?.length && isOnboardBannerVisible" class="flex flex-col py-6 px-7.5 text-xs gap-[14px]">
-      <span class="text-slate-400 text-center sm:text-left">You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet (EOA)</span>
+    <div v-if="eoaBalances && eoaBalances?.length && isOnboardBannerVisible" class="flex flex-col gap-[14px] px-7.5 py-6 text-xs">
+      <span class="text-center text-slate-400 sm:text-left">You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet (EOA)</span>
       <div class="flex justify-center sm:justify-start">
         <CommonButton
           size="sm"
           as="NuxtLink"
           external
           target="_blank"
-          class="bg-opacity-[14%] !text-primary hover:bg-opacity-20 py-2"
+          class="bg-opacity-[14%] py-2 !text-primary hover:bg-opacity-20"
           :to="avoOnboardURL"
         >
           Transfer funds into your Avocado Wallet

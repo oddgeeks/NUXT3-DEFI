@@ -36,7 +36,7 @@ function onInput(value: any) {
 </script>
 
 <template>
-  <div class="border px-4 py-3 rounded-lg border-gray-800">
+  <div class="rounded-lg border border-gray-800 px-4 py-3">
     <div v-if="input.type === 'tuple'" class="space-y-3">
       <label>{{ input.name }}</label>
 
@@ -50,7 +50,7 @@ function onInput(value: any) {
 
       <TransactionBuilderInputArray :key="input.type" :index="index" :input="input" :tx-builder="txBuilder" />
     </div>
-    <div v-else-if="input.type === 'bool'" class="flex my-3">
+    <div v-else-if="input.type === 'bool'" class="my-3 flex">
       <label>{{ input.name }}</label>
       <CommonToggle text="" @update="onInput($event.target.value)" />
     </div>
@@ -59,7 +59,7 @@ function onInput(value: any) {
 
       <CommonInput :placeholder="input.type" @input="onInput($event.target.value)" />
 
-      <span v-if="error" :class="errorClasses" class="text-xs flex gap-2 items-center text-left mt-2 text-red-alert">
+      <span v-if="error" :class="errorClasses" class="mt-2 flex items-center gap-2 text-left text-xs text-red-alert">
         <SVGInfo class="shrink-0" />
         {{ error }}
       </span>

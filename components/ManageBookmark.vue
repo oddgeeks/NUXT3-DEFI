@@ -7,7 +7,7 @@ defineEmits(['createBookmark', 'updateBookmark'])
 </script>
 
 <template>
-  <div class="flex justify-center items-center gap-2 text-xs font-medium text-primary">
+  <div class="flex items-center justify-center gap-2 text-xs font-medium text-primary">
     <SvgoBookmark />
     <button
       v-if="!bookmark"
@@ -31,7 +31,7 @@ defineEmits(['createBookmark', 'updateBookmark'])
       type="button"
       @click="$emit('updateBookmark')"
     >
-      <SvgoPencil class="text-slate-400 shrink-0" />
+      <SvgoPencil class="shrink-0 text-slate-400" />
     </button>
   </div>
 </template>

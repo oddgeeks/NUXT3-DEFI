@@ -513,22 +513,22 @@ watch(mode, async (newMode, oldMode) => {
 </script>
 
 <template>
-  <div class="flex-1 relative flex flex-col gap-5">
-    <div class="sm:hidden text-sm text-orange gap-2 flex">
-      <SvgoInfo2 class="shrink-0 mt-1.5" />
+  <div class="relative flex flex-1 flex-col gap-5">
+    <div class="flex gap-2 text-sm text-orange sm:hidden">
+      <SvgoInfo2 class="mt-1.5 shrink-0" />
       Transaction builder is not supported on mobile devices
     </div>
-    <ul class="dark:bg-gray-850 bg-slate-50 flex w-fit sm:justify-normal justify-center font-medium text-sm p-1.5 rounded-5 sm:rounded-10">
+    <ul class="flex w-fit justify-center rounded-5 bg-slate-50 p-1.5 text-sm font-medium dark:bg-gray-850 sm:justify-normal sm:rounded-10">
       <li v-for="item in modes" :key="item.value">
-        <button :class="mode === item.value ? 'dark:bg-slate-800 bg-slate-150' : 'text-slate-400'" class="whitespace-nowrap flex items-center gap-2.5 px-6 py-2.5 rounded-2xl sm:rounded-7.5" @click="mode = item.value">
+        <button :class="mode === item.value ? 'dark:bg-slate-800 bg-slate-150' : 'text-slate-400'" class="flex items-center gap-2.5 whitespace-nowrap rounded-2xl px-6 py-2.5 sm:rounded-7.5" @click="mode = item.value">
           {{ item.label }}
         </button>
       </li>
     </ul>
     <form @submit="onSubmit">
-      <div class="dark:bg-gray-850 bg-slate-50 rounded-[25px] py-7.5 flex flex-col">
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-10 w-full max-w-full px-7.5">
-          <div class="flex flex-col sm:col-span-2 w-full gap-7.5">
+      <div class="flex flex-col rounded-[25px] bg-slate-50 py-7.5 dark:bg-gray-850">
+        <div class="grid w-full max-w-full grid-cols-1 gap-10 px-7.5 sm:grid-cols-3">
+          <div class="flex w-full flex-col gap-7.5 sm:col-span-2">
             <div class="input-wrapper">
               <label class="input-label" for="input-contractAddress">Contract Address</label>
               <CommonInput v-model="contractAddress" class="flex-1" :error-message="contractAddressError" name="contractAddress" placeholder="Enter Address">
@@ -539,7 +539,7 @@ watch(mode, async (newMode, oldMode) => {
             </div>
 
             <div class="input-wrapper">
-              <label class="text-sm font-medium text-slate-400 shrink-0 w-[180px]" for="input-contractAddress">Network</label>
+              <label class="w-[180px] shrink-0 text-sm font-medium text-slate-400" for="input-contractAddress">Network</label>
               <CommonSelect
                 v-model="chainId"
                 class="w-full"
@@ -549,10 +549,10 @@ watch(mode, async (newMode, oldMode) => {
                 :options="deployedNetworks"
               >
                 <template #button-prefix>
-                  <ChainLogo class="w-6 h-6" :chain="chainId" />
+                  <ChainLogo class="h-6 w-6" :chain="chainId" />
                 </template>
                 <template #item-prefix="{ value }">
-                  <ChainLogo class="w-6 h-6" :chain="value" />
+                  <ChainLogo class="h-6 w-6" :chain="value" />
                 </template>
               </CommonSelect>
             </div>
@@ -584,49 +584,49 @@ watch(mode, async (newMode, oldMode) => {
           </div>
           <div
             v-if="!batch?.length"
-            class="bg-primary font-medium border gap-2.5 flex-col border-primary border-dashed flex items-center justify-center bg-opacity-10 rounded-[14px] p-10 h-[360px]"
+            class="flex h-[360px] flex-col items-center justify-center gap-2.5 rounded-[14px] border border-dashed border-primary bg-primary bg-opacity-10 p-10 font-medium"
             @dragenter="dragender"
             @dragleave="dragleave"
             @dragover="dragover"
             @drop="drop"
           >
-            <SvgoFilePlus class="text-primary pointer-events-none" />
+            <SvgoFilePlus class="pointer-events-none text-primary" />
             <span v-if="isDragging" class="pointer-events-none">
               Drop a JSON file here
             </span>
             <template v-else>
-              <h2 class="text-sm pointer-events-none">
+              <h2 class="pointer-events-none text-sm">
                 Batching
               </h2>
-              <p class="text-xs text-center leading-5">
+              <p class="text-center text-xs leading-5">
                 <span class="pointer-events-none"> Drag and drop a JSON file or</span>
                 <br>
                 <input
                   id="json-file"
                   ref="file"
                   type="file"
-                  class="w-px h-px opacity-0 overflow-hidden absolute"
+                  class="absolute h-px w-px overflow-hidden opacity-0"
                   accept="application/JSON"
                   @change="handleFileUpload"
                 >
-                <label for="json-file" class="text-primary cursor-pointer">
+                <label for="json-file" class="cursor-pointer text-primary">
                   Choose a file
                 </label>
               </p>
             </template>
           </div>
 
-          <div v-else class="flex flex-col shrink-0 h-fit min-w-[300px] dark:bg-gray-950 bg-white rounded-[14px] p-5">
-            <div class="flex items-center mb-5 justify-between">
+          <div v-else class="flex h-fit min-w-[300px] shrink-0 flex-col rounded-[14px] bg-white p-5 dark:bg-gray-950">
+            <div class="mb-5 flex items-center justify-between">
               <h2 class="text-sm">
                 Transactions Batch
               </h2>
-              <button v-tippy="'Download'" class="flex items-center flex-col" type="button" @click="downloadJson">
-                <SvgoDownload class="w-5 h-5" />
+              <button v-tippy="'Download'" class="flex flex-col items-center" type="button" @click="downloadJson">
+                <SvgoDownload class="h-5 w-5" />
               </button>
             </div>
 
-            <SlickList v-model:list="batch" use-drag-handle class="flex flex-col gap-5 max-h-[450px] overflow-auto scroll-style" tag="ul" axis="y">
+            <SlickList v-model:list="batch" use-drag-handle class="scroll-style flex max-h-[450px] flex-col gap-5 overflow-auto" tag="ul" axis="y">
               <BatchItem v-for="(item, i) in batch" :key="item.formValues.method + i" :item="item" :index="i" @edit-batch="handleEditBatchItem" @delete-batch="handleDeleteBatchItem" />
             </SlickList>
 
@@ -638,11 +638,11 @@ watch(mode, async (newMode, oldMode) => {
           </div>
         </div>
 
-        <hr class="border-slate-150 dark:border-slate-800 my-7.5">
+        <hr class="my-7.5 border-slate-150 dark:border-slate-800">
 
-        <div class="gap-5 flex flex-col">
-          <div v-if="mode === 'raw'" class="px-7.5 max-w-[820px] flex gap-7.5 w-full">
-            <label class="text-sm font-medium text-slate-400 w-[180px] shrink-0">Data</label>
+        <div class="flex flex-col gap-5">
+          <div v-if="mode === 'raw'" class="flex w-full max-w-[820px] gap-7.5 px-7.5">
+            <label class="w-[180px] shrink-0 text-sm font-medium text-slate-400">Data</label>
             <CommonTextarea v-model="rawDataValue" :error-message="rawDataErrorMessage" name="raw" rows="5" placeholder="Enter raw data" />
           </div>
 
@@ -661,7 +661,7 @@ watch(mode, async (newMode, oldMode) => {
           </template>
         </div>
       </div>
-      <CommonButton :disabled="!meta.valid" type="submit" class="mt-8 w-fit mx-7.5">
+      <CommonButton :disabled="!meta.valid" type="submit" class="mx-7.5 mt-8 w-fit">
         {{ editMode ? "Edit" : 'Add' }} Transaction
       </CommonButton>
     </form>
