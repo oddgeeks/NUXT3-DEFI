@@ -8,6 +8,7 @@ useAccountTrack(undefined, () => {
 })
 
 const { isSelectedSafeLegacy } = storeToRefs(useSafe())
+const { hasInstadappSigner } = storeToRefs(useMultisig())
 const { mfaTypes, mfaTermsAccepted, preferredMfaType } = useMfa()
 
 function defaultSteps() {
@@ -123,7 +124,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
         </div>
       </div>
 
-      <div class="flex justify-center items-center flex-col gap-[14px]">
+      <div v-if="!hasInstadappSigner" class="flex justify-center items-center flex-col gap-[14px]">
         <span class="text-xs font-medium text-slate-400">
           One or more changes yet to be confirmed
         </span>
@@ -132,7 +133,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
           size="lg" class="w-fit" @click="openAddSignerModal({
             addresses: [
               {
-                address: '0x2D8EE1C03b88b4b72B1c05Dab218EE1982147602',
+                address: instadappSigner,
                 name: 'Instadapp Signer',
               },
             ],

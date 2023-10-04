@@ -7,7 +7,7 @@ import { AvoMultisigImplementation__factory } from '@/contracts'
 export const useMultisig = defineStore('multisig', () => {
   const requiredSigners = ref<IRequiredSigners[]>([])
 
-  const { selectedSafe } = storeToRefs(useSafe())
+  const { selectedSafe, atLeastOneMfaVerifed } = storeToRefs(useSafe())
   const { getRpcProviderByChainId } = useShared()
 
   const signers = computed(() => {
@@ -62,12 +62,17 @@ export const useMultisig = defineStore('multisig', () => {
     return requiredSigner
   }
 
+  const hasInstadappSigner = computed(() => signers.value.some(i => getAddress(i.address) === getAddress(instadappSigner)))
+
   function checkSafeIsActualMultisig(safe: ISafe) {
     if (!safe)
       return false
 
     if (safe?.multisig_index > 0)
       return true
+
+    if (atLeastOneMfaVerifed.value || hasInstadappSigner.value)
+      return false
 
     const signers = safe?.signers || {}
 
@@ -87,6 +92,7 @@ export const useMultisig = defineStore('multisig', () => {
     getRequiredSigner,
     isAccountCanSign,
     checkSafeIsActualMultisig,
+    hasInstadappSigner,
   }
 })
 

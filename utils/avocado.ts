@@ -32,6 +32,8 @@ export const avoOnboardURL = isProd
 
 export const zerionApiURL = 'https://api.zerion.io/v1'
 
+export const instadappSigner = '0x2D8EE1C03b88b4b72B1c05Dab218EE1982147602'
+
 export const incorrectAddress = '0x0000000000000000000000000000000000000000'
 export const ethAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 
