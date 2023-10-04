@@ -41,16 +41,18 @@ async function handleRequest() {
 </script>
 
 <template>
-  <form class="flex flex-col gap-5" @submit.prevent="onSubmit">
+  <form class="flex flex-col gap-5 p-7.5" @submit.prevent="onSubmit">
     <div>
       <label for="otp">OTP</label>
       <VOtpInput v-model:value="otpValue" class="gap-2.5" input-classes="dark:bg-slate-800 rounded-lg bg-slate-100 focus-within:ring-1 dark:focus-within:bg-gray-850 focus-within:bg-slate-50 dark:focus-within:ring-slate-750 w-10 h-10 focus-within:ring-slate-100" separator="" should-auto-focus :num-inputs="6" />
     </div>
-    <CommonButton class="w-24 justify-center" type="submit" :disabled="String(otpValue).length !== 6">
-      Submit
-    </CommonButton>
-    <CommonButton v-if="mfa.value !== 'totp'" class="w-24 justify-center" @click="handleRequest">
-      Request OTP
-    </CommonButton>
+    <div class="flex gap-5">
+      <CommonButton class="w-24 justify-center" type="submit" :disabled="String(otpValue).length !== 6">
+        Submit
+      </CommonButton>
+      <CommonButton v-if="mfa.value !== 'totp'" class="justify-center" @click="handleRequest">
+        Request OTP
+      </CommonButton>
+    </div>
   </form>
 </template>
