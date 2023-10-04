@@ -19,8 +19,8 @@ async function handleTypeSelection() {
 
 <template>
   <div class="p-7.5">
-    <div class="flex gap-[14px] mb-7.5">
-      <CommonTxTypeIcon class="w-10 h-10">
+    <div class="mb-7.5 flex gap-[14px]">
+      <CommonTxTypeIcon class="h-10 w-10">
         <template #icon>
           <SvgoSecurity />
         </template>
@@ -29,7 +29,7 @@ async function handleTypeSelection() {
         <h1 class="text-lg leading-[20px]">
           How do you want to Authenticate?
         </h1>
-        <h2 class="font-medium text-xs text-slate-400 leading-5">
+        <h2 class="text-xs font-medium leading-5 text-slate-400">
           You can set up multiple modes of verification and later use any method to confirm your identity.
         </h2>
       </div>
@@ -40,18 +40,18 @@ async function handleTypeSelection() {
           :class="[
             mfa.value === mfaType ? 'dark:bg-slate-800' : 'bg-slate-50 dark:bg-gray-850',
           ]"
-          class=" flex items-center justify-between text-sm p-5 w-full text-left dark:border-slate-700 text-slate-400 font-medium border  rounded-2xl"
+          class=" flex w-full items-center justify-between rounded-2xl border p-5 text-left text-sm font-medium text-slate-400  dark:border-slate-700"
           @click="mfaType = mfa.value"
         >
           {{ mfa.label }}
-          <div :class="mfa.value === mfaType ? 'bg-primary' : 'dark:bg-slate-600'" class="w-5 h-5 rounded-full flex items-center  justify-center">
-            <div :class="mfa.value === mfaType ? 'bg-white' : 'dark:bg-slate-500'" class="w-1.5 h-1.5 rounded-full" />
+          <div :class="mfa.value === mfaType ? 'bg-primary' : 'dark:bg-slate-600'" class="flex h-5 w-5 items-center justify-center  rounded-full">
+            <div :class="mfa.value === mfaType ? 'bg-white' : 'dark:bg-slate-500'" class="h-1.5 w-1.5 rounded-full" />
           </div>
         </button>
       </li>
     </ul>
     <CommonButton
-      :disabled="!mfaType" size="lg" class="w-full justify-center mt-5" @click="handleTypeSelection"
+      :disabled="!mfaType" size="lg" class="mt-5 w-full justify-center" @click="handleTypeSelection"
     >
       Confirm Changes
     </CommonButton>

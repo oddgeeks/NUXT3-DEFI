@@ -134,7 +134,7 @@ whenever(open, () => {
       <div v-if="open">
         <ul
           :class="listClasses"
-          class="absolute w-full flex flex-col gap-1.5 px-1 py-[15px] max-h-60 border-1 dark:border-slate-700 border-slate-150 border-t-0 rounded-b-[14px] overflow-auto bg-slate-50 dark:bg-gray-850"
+          class="absolute flex max-h-60 w-full flex-col gap-1.5 overflow-auto rounded-b-[14px] border-1 border-t-0 border-slate-150 bg-slate-50 px-1 py-[15px] dark:border-slate-700 dark:bg-gray-850"
         >
           <CommonInput v-if="searchable" v-model="search" autofocus placeholder="Search" name="search-input" class="-mt-3 !p-2" input-classes="!py-2" type="search" />
           <li

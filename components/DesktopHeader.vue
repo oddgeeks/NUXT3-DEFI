@@ -37,15 +37,15 @@ useIntervalFn(refresh, 15000)
 </script>
 
 <template>
-  <div class="items-center justify-end py-8 hidden sm:flex">
+  <div class="hidden items-center justify-end py-8 sm:flex">
     <SvgoAvocadoProtect v-if="$route.name === 'protect'" class="mr-auto" />
-    <button v-if="dryRun" class="text-sm text-orange mr-4" @click="dryRun = undefined">
+    <button v-if="dryRun" class="mr-4 text-sm text-orange" @click="dryRun = undefined">
       Disable Dry Run
     </button>
     <NuxtLink v-if="!isSelectedSafeLegacy" to="/protect">
       Enable MFA
     </NuxtLink>
-    <nav class="flex items-center gap-7.5 relative">
+    <nav class="relative flex items-center gap-7.5">
       <div class="flex items-center gap-5">
         <ColorModeSwitcher />
         <Web3Button />

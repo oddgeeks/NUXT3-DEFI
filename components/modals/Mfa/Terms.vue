@@ -19,21 +19,21 @@ function handleProceed() {
 <template>
   <div class="flex flex-col gap-7.5">
     <div class="flex items-center gap-[14px]">
-      <SvgoExclamationCircle class="text-orange-400 w-10 h-10" />
+      <SvgoExclamationCircle class="h-10 w-10 text-orange-400" />
       <h1 class="text-lg">
         Important information
       </h1>
     </div>
-    <ul class="flex gap-5 flex-col">
+    <ul class="flex flex-col gap-5">
       <li v-for="term, i in terms" :key="term" class="text-xs font-medium leading-5 text-slate-400">
-        <label class="flex gap-2.5 cursor-pointer" :for="`input-${i}`">
+        <label class="flex cursor-pointer gap-2.5" :for="`input-${i}`">
           <input :id="`input-${i}`" v-model="checked" :value="i" class="peer sr-only" type="checkbox">
-          <SvgoCheckCircle class="shrink-0 mt-1 w-5 h-5 svg-circle cursor-pointer darker text-slate-500 peer-checked:success-circle" />
+          <SvgoCheckCircle class="svg-circle darker peer-checked:success-circle mt-1 h-5 w-5 shrink-0 cursor-pointer text-slate-500" />
           {{ term }}
         </label>
       </li>
     </ul>
-    <CommonButton class="text-center justify-center" :disabled="checked.length !== terms.length" size="lg" @click="handleProceed">
+    <CommonButton class="justify-center text-center" :disabled="checked.length !== terms.length" size="lg" @click="handleProceed">
       Proceed
     </CommonButton>
   </div>

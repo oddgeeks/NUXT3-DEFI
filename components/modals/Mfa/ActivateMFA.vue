@@ -164,13 +164,13 @@ async function verify() {
 </script>
 
 <template>
-  <div class="p-7.5 flex flex-col gap-5">
+  <div class="flex flex-col gap-5 p-7.5">
     <form class="flex flex-col gap-7.5" @submit="onSubmit">
-      <div class="flex gap-1 flex-col">
+      <div class="flex flex-col gap-1">
         <h1 class="text-lg">
           {{ actualMfa.title }}
         </h1>
-        <h2 class="text-xs text-slate-400 font-medium">
+        <h2 class="text-xs font-medium text-slate-400">
           {{ actualMfa.description }}
         </h2>
       </div>
@@ -183,15 +183,15 @@ async function verify() {
         <div v-else-if="actualMfa.value === 'phone'" class="flex flex-col gap-5">
           <div class="flex flex-col gap-2.5">
             <label class="text-sm leading-5" for="input-phone">Phone</label>
-            <div class="w-full flex items-baseline">
+            <div class="flex w-full items-baseline">
               <CommonInput id="phone" v-model="phone" name="phone" autofocus placeholder="0000 0000" :error-message="phoneErrorMessage" container-classes="!px-0" class="w-full">
                 <template #prefix>
                   <CommonSelect v-model="countryCode" container-classes="!py-0 !bg-transparent !border-0" list-classes="!w-[400%]" searchable label-key="name" value-key="dialCode" :options="countries">
                     <template #button-label>
-                      <Flag v-if="country" class="w-5 h-5" :flag="country?.iso2.toUpperCase()" />
+                      <Flag v-if="country" class="h-5 w-5" :flag="country?.iso2.toUpperCase()" />
                     </template>
                     <template #item="{ item }">
-                      <Flag v-if="item" class="w-5 h-5" :flag="item?.iso2.toUpperCase()" />
+                      <Flag v-if="item" class="h-5 w-5" :flag="item?.iso2.toUpperCase()" />
                       {{ item.name }}
                     </template>
                   </CommonSelect>

@@ -56,32 +56,32 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
         <h1 class="text-[30px] leading-10">
           Configure Avocado Protect ⚔️
         </h1>
-        <h2 class="font-medium text-sm text-slate-400 leading-6">
+        <h2 class="text-sm font-medium leading-6 text-slate-400">
           Avocado Protect is a non-custodial 2FA service which allows you to add an additional layer
           of verification using OT (or a backup address) before a transaction goes through.
         </h2>
-        <NuxtLink class="text-primary text-sm font-medium" external to="/">
+        <NuxtLink class="text-sm font-medium text-primary" external to="/">
           Learn more about how it works
         </NuxtLink>
       </div>
-      <div class="rounded-5 flex flex-col gap-7.5 dark:bg-gray-850 bg-slate-50 p-7.5">
+      <div class="flex flex-col gap-7.5 rounded-5 bg-slate-50 p-7.5 dark:bg-gray-850">
         <div>
           <h2 class="mb-2.5">
             Set up 2FA methods
           </h2>
-          <h3 class="font-medium text-xs text-slate-400">
+          <h3 class="text-xs font-medium text-slate-400">
             You can set up multiple modes of verification and later use any method to confirm your identity.
           </h3>
         </div>
         <div>
           <ul class="grid grid-cols-2 gap-4">
             <li v-for="mfa in mfaTypes" :key="mfa.value">
-              <div class="dark:bg-slate-850 text-left flex items-center justify-between h-[66px] bg-slate-150 ring-1 rounded-2xl dark:ring-slate-750 ring-slate-150 w-full p-5">
-                <div class="flex items-center justify-between w-full">
-                  <span class="leading-5 font-medium text-xs">
+              <div class="flex h-[66px] w-full items-center justify-between rounded-2xl bg-slate-150 p-5 text-left ring-1 ring-slate-150 dark:bg-slate-850 dark:ring-slate-750">
+                <div class="flex w-full items-center justify-between">
+                  <span class="text-xs font-medium leading-5">
                     {{ mfa.label }}
                   </span>
-                  <span v-if="mfa.activated" class="flex items-center text-xs uppercase gap-2.5 ">
+                  <span v-if="mfa.activated" class="flex items-center gap-2.5 text-xs uppercase ">
                     <SvgoCheckCircle class="success-circle w-5" />
                     <span class="text-primary">
                       Active
@@ -102,12 +102,12 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                       >
                         <PopoverPanel
                           v-slot="{ close }"
-                          class="absolute left-1/2 z-10 flex-col dark:bg-gray-900 border dark:border-slate-800 flex gap-2.5 rounded-2xl py-4 bg-slate-150 -top-24 -translate-x-1/2 transform sm:px-0 lg:max-w-3xl text-sm"
+                          class="absolute -top-24 left-1/2 z-10 flex -translate-x-1/2 flex-col gap-2.5 rounded-2xl border bg-slate-150 py-4 text-sm dark:border-slate-800 dark:bg-gray-900 sm:px-0 lg:max-w-3xl"
                         >
-                          <button class="text-left px-5 whitespace-nowrap" @click="handleSetDefault(mfa, close)">
+                          <button class="whitespace-nowrap px-5 text-left" @click="handleSetDefault(mfa, close)">
                             Set as default
                           </button>
-                          <button class="text-red-alert px-5 flex items-center gap-2" @click="handleDeactivate(mfa, close)">
+                          <button class="flex items-center gap-2 px-5 text-red-alert" @click="handleDeactivate(mfa, close)">
                             <SvgoTrash2 /> Deactivate
                           </button>
                         </PopoverPanel>
@@ -124,7 +124,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
         </div>
       </div>
 
-      <div v-if="!hasInstadappSigner" class="flex justify-center items-center flex-col gap-[14px]">
+      <div v-if="!hasInstadappSigner" class="flex flex-col items-center justify-center gap-[14px]">
         <span class="text-xs font-medium text-slate-400">
           One or more changes yet to be confirmed
         </span>
