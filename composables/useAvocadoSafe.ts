@@ -794,6 +794,8 @@ ${parsed.message}`,
   }
 
   async function signAndRequestMfaCode(mfa: IMfa, requestForTransaction = false) {
+    await switchToAvocadoNetwork()
+
     const name = requestForTransaction ? 'Avocado MFA Transaction' : 'Avocado MFA Code'
     const method = requestForTransaction ? 'mfa_requestTransactionCode' : 'mfa_requestCode'
 
