@@ -118,3 +118,4 @@ jobs:
           # Erase CA from disk
           #!/bin/sh
           rm ca.crt
+          
