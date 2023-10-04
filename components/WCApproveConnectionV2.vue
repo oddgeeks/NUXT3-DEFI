@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 defineEmits(['connect', 'destroy'])
-const { checkDappIsBanned, checkDappIsWarned, isProUrl } = useWalletConnectV2()
+const { checkDappIsBanned, checkDappIsWarned } = useWalletConnectV2()
 
 const proposer = computed(() => props.proposal.params?.proposer)
 
@@ -22,10 +22,6 @@ const isConnectionWarned = computed(() => {
     return true
 
   return checkDappIsWarned(proposer.value?.metadata?.url)
-})
-
-const isInstadappConnection = computed(() => {
-  return isProUrl(proposer.value?.metadata?.url)
 })
 
 const iconURL = computed(() => {
@@ -78,11 +74,6 @@ const iconURL = computed(() => {
     <div v-else-if="isConnectionWarned" class="text-orange bg-orange-400 bg-opacity-10  font-medium gap-2.5 flex text-xs rounded-2xl py-2.5 px-4">
       <SvgoInfo2 class="shrink-0 mt-0.5" />
       This DApp is known to have some compatability issues with Avocado. Please use at your own risk!
-    </div>
-
-    <div v-if="isInstadappConnection" class="text-primary bg-primary bg-opacity-10  font-medium gap-2.5 flex text-xs rounded-2xl py-2.5 px-4">
-      <SvgoInfo2 class="shrink-0 mt-0.5" />
-      To use your Avocado wallet with Instadapp Pro connect your wallet normally, once connected select Avocado in the Account panel.
     </div>
 
     <div class="flex flex-col gap-4">
