@@ -526,5 +526,8 @@ export function useDefi() {
     getDefiProtocolName,
     calculateHealthFactor,
     defaultDefiApis,
+    calculateCommonAPY,
+    getCommonBorrowedTokens,
+    getCommonSuppliedTokens,
   }
 }

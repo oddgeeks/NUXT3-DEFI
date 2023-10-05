@@ -2,14 +2,14 @@
 const { account } = useWeb3()
 const { toggleSelectedDefiForMigration, setDefiForMigration } = useMigration()
 const { defaultDefiApis } = useDefi()
-const { fetchPositions, positions } = useMigrationDefi()
+const { fetchPositions, availablePositions } = useMigrationDefi()
 
 const networkPreferences = ref(
   [...new Set(defaultDefiApis.map(i => i.chainId))],
 )
 
 const filteredPositions = computed(() => {
-  const items = positions.value?.filter(item =>
+  const items = availablePositions.value?.filter(item =>
     networkPreferences.value.some(i => i == item.chainId),
   )
 
