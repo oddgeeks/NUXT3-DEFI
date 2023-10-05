@@ -14,10 +14,10 @@ const tabs = [
     name: 'Gas',
     value: 'gas',
   },
-  {
-    name: 'DeFi',
-    value: 'defi',
-  },
+  // {
+  //   name: 'DeFi',
+  //   value: 'defi',
+  // },
 ]
 </script>
 
@@ -32,7 +32,7 @@ const tabs = [
 
     <MigrationBalances v-if="activeTab === 'balances'" class="h-[calc(100%-39px)] overflow-y-auto scroll-style" />
     <MigrationNFTs v-else-if="activeTab === 'nfts'" class="h-[calc(100%-39px)] overflow-y-auto scroll-style" />
-    <MigrationDefi v-else-if="activeTab === 'defi'" class="h-[calc(100%-39px)] overflow-y-auto scroll-style" />
     <MigrationGas v-else-if="activeTab === 'gas'" />
+    <!-- <MigrationDefi v-else-if="activeTab === 'defi'" class="h-[calc(100%-39px)] overflow-y-auto scroll-style" /> -->
   </div>
 </template>

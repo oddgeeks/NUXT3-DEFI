@@ -21,7 +21,7 @@ const {
   setTokensForMigration,
   setNFTsForMigration,
 } = useMigration()
-const { selectedTokensForMigration, selectedNFTsForMigration, selectedDefiForMigration, selectedSafeForMigration } = storeToRefs(useMigration())
+const { selectedTokensForMigration, selectedNFTsForMigration, selectedSafeForMigration } = storeToRefs(useMigration())
 const { account, library } = useWeb3()
 
 const loading = ref(false)
@@ -252,7 +252,7 @@ async function handleMigrateGasBalance() {
         </div>
       </div>
 
-      <h4 class="text-xs dark:text-white text-slate-900 font-medium mb-[10px] mt-5">
+      <!-- <h4 class="text-xs dark:text-white text-slate-900 font-medium mb-[10px] mt-5">
         DeFi Positions
       </h4>
       <div class="w-[460px] max-w-full dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5" :class="selectedDefiForMigration?.length ? 'border-[1px]' : ''">
@@ -266,7 +266,7 @@ async function handleMigrateGasBalance() {
         <div v-if="!selectedDefiForMigration?.length" class="text-xs text-slate-400 font-medium">
           No DeFi positions selected.
         </div>
-      </div>
+      </div> -->
 
       <h4 class="text-xs dark:text-white text-slate-900 font-medium mb-[10px] mt-5">
         Gas balances
