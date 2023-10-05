@@ -24,9 +24,7 @@ export function useAvocadoSafe() {
   const { isSafeMultisig, hasInstadappSigner } = storeToRefs(useMultisig())
   const { getRequiredSigner } = useMultisig()
 
-  const transactionToken = useCookie<string | undefined>('transaction-token', {
-    watch: true,
-  })
+  const transactionToken = useCookie<string | undefined>('transaction-token')
 
   const { safeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks, networkOrderedBySumTokens } = storeToRefs(useSafe())
 
@@ -443,7 +441,13 @@ export function useAvocadoSafe() {
                 expires: new Date(resp.expiresAt),
               })
 
+              const transactionTokenExpiry = useCookie<string | undefined>('transaction-token-expiry', {
+                watch: true,
+                expires: new Date(resp.expiresAt),
+              })
+
               transactionToken.value = resp.token
+              transactionTokenExpiry.value = resp.expiresAt
 
               if (!resp)
                 throw new Error('Failed to generate session token')

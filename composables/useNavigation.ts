@@ -79,6 +79,12 @@ export function useNavigation() {
         to: '/transaction-builder',
         tooltip: 'Transaction Builder',
       },
+      {
+        label: 'Enable MFA',
+        icon: 'SvgoShield',
+        to: '/protect',
+        tooltip: 'Multi-Factor Authentication',
+      },
     ]
   })
 
