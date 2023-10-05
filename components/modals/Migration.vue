@@ -26,12 +26,9 @@ const { account, library } = useWeb3()
 
 const loading = ref(false)
 
-const { toggleSelectedDefiForMigration } = useMigration()
-
 const nftChainIds = computed(() => selectedNFTsForMigration.value?.map(nft => nft.chainId))
 
 const nftTxs = computed(() => {
-  const chainIds = []
   const txs = []
 
   const erc712ABI = [
@@ -44,14 +41,26 @@ const nftTxs = computed(() => {
     const nft = selectedNFTsForMigration.value[i]
     const calldata = contractInterface.encodeFunctionData('transferFrom', [legacySafeAddress.value, props.selectedSafe?.safe_address, nft.tokenId])
 
-    chainIds.push(nft.chainId)
+    const index = txs.findIndex((tx) => tx.chainId === nft.chainId)
 
-    txs.push([{
-      to: nft.contractAddress,
-      data: calldata,
-      operation: '0',
-      value: '0',
-    }])
+    if (index === -1) {
+      txs.push({
+        chainId: nft.chainId,
+        txns: [{
+          to: nft.contractAddress,
+          data: calldata,
+          operation: '0',
+          value: '0',
+        }]
+      })
+    } else {
+      txs[index].txns = [...txs[index].txns, {
+        to: nft.contractAddress,
+        data: calldata,
+        operation: '0',
+        value: '0',
+      }]
+    }
   }
 
   return txs
@@ -60,10 +69,10 @@ const nftTxs = computed(() => {
 async function migrateNfts() {
   const hashes: string[] = []
 
-  for (let i = 0; i < selectedNFTsForMigration.value?.length; i++) {
+  for (let i = 0; i < nftTxs.value?.length; i++) {
     hashes.push(await sendTransactions(
-      nftTxs.value[i],
-      nftChainIds.value[i],
+      nftTxs.value[i].txns,
+      nftTxs.value[i].chainId,
       undefined,
       'nft',
     ))
