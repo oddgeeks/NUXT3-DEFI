@@ -155,11 +155,12 @@ async function migrate() {
     }
 
     const nftHashes = await migrateNfts()
+    const gasHash = await handleMigrateGasBalance()
 
     setTokensForMigration([])
     setNFTsForMigration([])
     emit('destroy')
-    openPendingMigrationModal([...hashes, ...nftHashes || []], [...chainIds, ...nftChainIds.value])
+    openPendingMigrationModal([...hashes, ...nftHashes || [], gasHash], [...chainIds, ...nftChainIds.value, 137])
   }
   catch (e: any) {
     const err = parseTransactionError(e)
@@ -198,15 +199,12 @@ async function handleMigrateGasBalance() {
 
   actions.push(tx)
 
-  const hash = await sendTransactions(
+  return await sendTransactions(
     actions,
     137,
     undefined,
     'transfer',
   )
-
-  if (hash)
-    showPendingTransactionModal(hash, 137)
 }
 </script>
 
@@ -291,7 +289,7 @@ async function handleMigrateGasBalance() {
     <CommonButton
       class="mt-5 w-full"
       size="lg"
-      :disabled="!selectedTokensForMigration?.length && !selectedNFTsForMigration?.length"
+      :disabled="!selectedTokensForMigration?.length && !selectedNFTsForMigration?.length && !selectedSafeForMigration?.safe"
       :loading="loading"
       @click="migrate"
     >
@@ -300,10 +298,6 @@ async function handleMigrateGasBalance() {
         <span class="mx-[10px] text-sm text-white font-medium">Migrate</span>
         <SvgoArrowRight class="rotate-90" />
       </div>
-    </CommonButton>
-
-    <CommonButton :disabled="!selectedSafeForMigration?.safe" size="lg" class="w-full mt-4 justify-center" @click="handleMigrateGasBalance">
-      Migrate Gas balance
     </CommonButton>
 
     <WalletItem v-if="selectedSafe" class="mt-4" v2 primary hide-active-state :safe="selectedSafe" />
