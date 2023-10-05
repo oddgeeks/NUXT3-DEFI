@@ -189,10 +189,10 @@ Issued At: ${new Date().toISOString()}`
 </script>
 
 <template>
-  <div class="container flex flex-col items-center justify-center gap-20 flex-1">
-    <div class="flex items-center gap-24 relative">
+  <div class="container flex flex-1 flex-col items-center justify-center gap-20">
+    <div class="relative flex items-center gap-24">
       <div class="flex flex-col items-center gap-4">
-        <div class="w-[46px] h-[46px] rounded-full bg-green-500 text-white flex items-center justify-center">
+        <div class="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-green-500 text-white">
           1
         </div>
         <span>Connect Wallet</span>
@@ -200,48 +200,48 @@ Issued At: ${new Date().toISOString()}`
 
       <div class="flex flex-col items-center gap-4">
         <div
-          class="w-[46px] h-[46px] rounded-full bg-green-500 text-white flex items-center justify-center font-medium"
-          :class="{ '!bg-opacity-20 !bg-[#EB5757] !text-[#EB5757]': !eligible || claimed, '!bg-green-500 !text-green-400': !account || account && !promo?.code }"
+          class="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-green-500 font-medium text-white"
+          :class="{ '!bg-[#EB5757] !bg-opacity-20 !text-[#EB5757]': !eligible || claimed, '!bg-green-500 !text-green-400': !account || account && !promo?.code }"
         >
           2
         </div>
         <span :class="{ 'text-slate-300 dark:text-slate-600': !eligible || claimed }">Claim Gas</span>
       </div>
 
-      <div class="absolute top-5 left-[102px] flex items-center gap-1 font-medium">
+      <div class="absolute left-[102px] top-5 flex items-center gap-1 font-medium">
         <div
           v-for="i in 9"
           :key="i"
-          class="w-3 rounded-full bg-green-500 h-1"
+          class="h-1 w-3 rounded-full bg-green-500"
           :class="{ 'bg-opacity-20': !account, '!bg-[#EB5757] !bg-opacity-20': (account && !eligible) || claimed, '!bg-green-500': account && !promo?.code }"
         />
       </div>
 
       <div
-        class="absolute top-2.5 left-[160px] bg-[#EB5757] flex items-center justify-center w-6 h-6 rounded-full"
+        class="absolute left-[160px] top-2.5 flex h-6 w-6 items-center justify-center rounded-full bg-[#EB5757]"
         :class="{ '!hidden': !account || eligible && !claimed || account && !promo?.code }"
       >
         <SVGX />
       </div>
     </div>
-    <div v-if="!account" class="flex flex-col items-center rounded-7.5 bg-slate-50 dark:bg-gray-850 max-w-lg w-full text-center">
-      <div class="flex flex-col py-10 gap-10 px-[50px] w-full">
+    <div v-if="!account" class="flex w-full max-w-lg flex-col items-center rounded-7.5 bg-slate-50 text-center dark:bg-gray-850">
+      <div class="flex w-full flex-col gap-10 px-[50px] py-10">
         <div class="flex flex-col gap-5">
-          <p class="leading-8 text-xl">
+          <p class="text-xl leading-8">
             Check Eligibility
           </p>
           <p class="text-sm font-medium text-slate-400">
             Connect your wallet to check your eligibility
           </p>
         </div>
-        <CommonButton size="lg" class="w-full flex justify-center" @click="openWeb3Modal">
+        <CommonButton size="lg" class="flex w-full justify-center" @click="openWeb3Modal">
           Connect Wallet
         </CommonButton>
       </div>
     </div>
-    <div v-else-if="!promo" class="flex justify-center items-center py-32">
+    <div v-else-if="!promo" class="flex items-center justify-center py-32">
       <svg
-        class="animate-spin h-10 w-10 text-green-500"
+        class="h-10 w-10 animate-spin text-green-500"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -267,11 +267,11 @@ Issued At: ${new Date().toISOString()}`
     >
       <span class="text-[46px]">✨ Congratulations! ✨</span>
       <div class="flex flex-col items-center">
-        <span class="max-w-2xl text-center text-slate-400 leading-7">You are eligible for free gas to make transactions on all supported networks all using only USDC. You have received:</span>
+        <span class="max-w-2xl text-center leading-7 text-slate-400">You are eligible for free gas to make transactions on all supported networks all using only USDC. You have received:</span>
         <div class="flex items-center gap-6.5">
           <div class="relative">
             <GasEmoji />
-            <img src="https://cdn.instadapp.io/avocado/tokens/usd-coin.svg" class="absolute -left-2 -bottom-2 border-4 border-white dark:border-[#111827] rounded-full" width="30" height="30">
+            <img src="https://cdn.instadapp.io/avocado/tokens/usd-coin.svg" class="absolute -bottom-2 -left-2 rounded-full border-4 border-white dark:border-[#111827]" width="30" height="30">
           </div>
           <span class="text-[80px] font-bold">{{ promo && toBN(promo.amount).decimalPlaces(2) }} USDC</span>
         </div>
@@ -279,27 +279,27 @@ Issued At: ${new Date().toISOString()}`
       <CommonButton
         :loading="claiming"
         size="lg"
-        class="flex items-center gap-2 sm:!px-14 sm:!text-xl sm:!py-3 justify-center"
+        class="flex items-center justify-center gap-2 sm:!px-14 sm:!py-3 sm:!text-xl"
         @click="claimAirdrop"
       >
         Claim
         <GiftSVG />
       </CommonButton>
     </div>
-    <div v-else-if="claimed" class="flex flex-col items-center gap-10 bg-slate-50 dark:bg-gray-850 py-10 px-[50px] rounded-5">
-      <div class="flex flex-col gap-5 items-center">
+    <div v-else-if="claimed" class="flex flex-col items-center gap-10 rounded-5 bg-slate-50 px-[50px] py-10 dark:bg-gray-850">
+      <div class="flex flex-col items-center gap-5">
         <span class="text-xl">You've already claimed this promo</span>
-        <span class="text-slate-400 text-sm w-[269px] text-center">Connect to a different wallet</span>
+        <span class="w-[269px] text-center text-sm text-slate-400">Connect to a different wallet</span>
       </div>
     </div>
-    <div v-else-if="!claimSuccess" class="flex flex-col items-center gap-10 bg-slate-50 dark:bg-gray-850 py-10 px-[50px] rounded-5">
-      <div class="flex flex-col gap-5 items-center">
+    <div v-else-if="!claimSuccess" class="flex flex-col items-center gap-10 rounded-5 bg-slate-50 px-[50px] py-10 dark:bg-gray-850">
+      <div class="flex flex-col items-center gap-5">
         <span class="text-xl">This address is not eligible</span>
-        <span class="text-slate-400 text-sm w-[269px] text-center">Connect to a different wallet</span>
+        <span class="w-[269px] text-center text-sm text-slate-400">Connect to a different wallet</span>
       </div>
     </div>
     <div v-else class="flex flex-col items-center space-y-5">
-      <div class="flex flex-col gap-7.5 bg-slate-50 dark:bg-gray-850 p-12 rounded-5">
+      <div class="flex flex-col gap-7.5 rounded-5 bg-slate-50 p-12 dark:bg-gray-850">
         <span class="text-left text-lg">What you can do on Avocado with your claimed gas</span>
         <div class="flex flex-col gap-5">
           <div
@@ -307,12 +307,12 @@ Issued At: ${new Date().toISOString()}`
             :key="ability"
             class="flex items-center gap-2"
           >
-            <CheckCircle class="text-white w-4 h-4 success-circle" />
+            <CheckCircle class="success-circle h-4 w-4 text-white" />
             <span>{{ ability }}</span>
           </div>
         </div>
       </div>
-      <CommonButton as="NuxtLink" href="/" size="lg" class="max-w-[196px] flex justify-center">
+      <CommonButton as="NuxtLink" href="/" size="lg" class="flex max-w-[196px] justify-center">
         Get started
       </CommonButton>
     </div>

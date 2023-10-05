@@ -112,16 +112,18 @@ const groupedBalances = computed(() => {
   return result
 })
 
-const search = useDebounceFn((event: Event) => {
-  searchQuery.value = (<HTMLInputElement>event.target).value
+const search = useDebounceFn((e: Event) => {
+  const el = e.target as HTMLInputElement
+  searchQuery.value = el.value
 }, 200)
+
 const { safeAddress } = useAvocadoSafe()
 </script>
 
 <template>
   <div class="relative flex-1">
-    <div class="h-full w-full flex flex-col gap-5">
-      <div v-if="!account || !tokenBalances.length || !isZero(totalBalance) || !balances.data" class="h-full w-full flex flex-col gap-5">
+    <div class="flex h-full w-full flex-col gap-5">
+      <div v-if="!account || !tokenBalances.length || !isZero(totalBalance) || !balances.data" class="flex h-full w-full flex-col gap-5">
         <CommonInput
           v-if="account"
           name="Token Search"
@@ -130,20 +132,20 @@ const { safeAddress } = useAvocadoSafe()
           @input="search"
         >
           <template #prefix>
-            <SearchSVG class="shrink-0 mr-2" />
+            <SearchSVG class="mr-2 shrink-0" />
           </template>
         </CommonInput>
         <div
           v-if="
             !!account && tokenBalances.length && filteredBalances.length === 0
           "
-          class="dark:bg-gray-850 bg-slate-50 rounded-[25px] flex flex-col space-y-4 items-center py-32"
+          class="flex flex-col items-center space-y-4 rounded-[25px] bg-slate-50 py-32 dark:bg-gray-850"
         >
           <p class="text-slate-400">
             Nothing could be found
           </p>
           <div
-            class="flex items-center flex-col space-y-4 sm:space-y-0 sm:flex-row sm:space-x-4"
+            class="flex flex-col items-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0"
           >
             <CommonButton
               color="white"
@@ -166,18 +168,18 @@ const { safeAddress } = useAvocadoSafe()
         <div
           v-else
           style="scrollbar-gutter: stable; overflow-y: overlay"
-          class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] hidden sm:flex scroll-style"
+          class="scroll-style hidden max-h-[530px] overflow-auto rounded-[25px] bg-slate-50 dark:bg-gray-850 sm:flex md:overflow-x-hidden"
           :class="{ '!overflow-hidden': !account }"
         >
           <table
             class="table w-full"
-            :class="{ 'blur pointer-events-none': !account }"
+            :class="{ 'pointer-events-none blur': !account }"
           >
             <thead>
               <tr
-                class="text-left text-sm text-gray-400 font-medium border-b border-slate-150 dark:border-slate-800"
+                class="border-b border-slate-150 text-left text-sm font-medium text-gray-400 dark:border-slate-800"
               >
-                <th class="text-left py-6 pl-7.5">
+                <th class="py-6 pl-7.5 text-left">
                   Token
                 </th>
                 <th class="py-5">
@@ -191,7 +193,7 @@ const { safeAddress } = useAvocadoSafe()
                 </th>
               </tr>
             </thead>
-            <tbody class="divide-y dark:divide-slate-800 divide-slate-150">
+            <tbody class="divide-y divide-slate-150 dark:divide-slate-800">
               <template v-if="!account || !tokenBalances.length || !balances.data">
                 <LoadingBalanceRow
                   v-for="i in 8"
@@ -240,36 +242,36 @@ const { safeAddress } = useAvocadoSafe()
         </div>
       </div>
       <div v-else class="w-full">
-        <div class="overflow-y-auto overflow-x-auto dark:bg-gray-850 bg-slate-50 rounded-[25px] md:overflow-x-hidden max-h-[530px] hidden sm:flex scroll-style flex-col items-center py-8 lg:py-[100px] gap-[30px]">
-          <div class="flex lg:flex-row flex-col w-2/3 lg:w-4/5 xl:w-2/3 gap-[30px]">
+        <div class="scroll-style hidden max-h-[530px] flex-col items-center gap-[30px] overflow-auto rounded-[25px] bg-slate-50 py-8 dark:bg-gray-850 sm:flex md:overflow-x-hidden lg:py-[100px]">
+          <div class="flex w-2/3 flex-col gap-[30px] lg:w-4/5 lg:flex-row xl:w-2/3">
             <StyledQrCode
               :key="safeAddress"
-              class="rounded-5 bg-white self-center flex items-center justify-center overflow-hidden"
+              class="flex items-center justify-center self-center overflow-hidden rounded-5 bg-white"
               :size="160"
               :margin="3"
               :data="safeAddress"
             />
-            <div class="flex-1 flex flex-col gap-[20px]">
+            <div class="flex flex-1 flex-col gap-[20px]">
               <p class="text-[20px] font-semibold">
                 Add tokens to your Avocado wallet
               </p>
               <Copy
-                class="px-4 py-3 flex items-center text-xs text-wrap justify-between rounded-5 dark:bg-slate-800 bg-slate-100 gap-2 text-left"
+                class="text-wrap flex items-center justify-between gap-2 rounded-5 bg-slate-100 px-4 py-3 text-left text-xs dark:bg-slate-800"
                 :text="safeAddress"
               >
                 <template #content>
                   {{ safeAddress }}
                 </template>
               </Copy>
-              <span class="font-semibold inline-flex gap-2.5 text-xs">
+              <span class="inline-flex gap-2.5 text-xs font-semibold">
                 Send tokens on any supported chain to your Avocado Wallet
               </span>
               <SupportedChains class="!flex" />
             </div>
           </div>
-          <div v-if="gt(totalEoaBalance || '0', 1) && isOnboardBannerVisible" class="bg-[#4CA0541A] w-2/3 rounded-[30px] px-[16px] py-[10px] flex flex-rows gap-[10px] items-center justify-center">
+          <div v-if="gt(totalEoaBalance || '0', 1) && isOnboardBannerVisible" class="flex-rows flex w-2/3 items-center justify-center gap-[10px] rounded-[30px] bg-[#4CA0541A] px-[16px] py-[10px]">
             <InfoSVG />
-            <p class="text-[12px] text-[#4CA054] flex-1">
+            <p class="flex-1 text-[12px] text-[#4CA054]">
               You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet (EOA)
             </p>
             <CommonButton
@@ -284,25 +286,25 @@ const { safeAddress } = useAvocadoSafe()
           </div>
         </div>
         <div class="flex flex-col space-y-4 sm:hidden">
-          <div class="flex-1 flex flex-col gap-[16px] px-[20px] items-center justify-center">
-            <p class="text-[16px] font-semibold text-center">
+          <div class="flex flex-1 flex-col items-center justify-center gap-[16px] px-[20px]">
+            <p class="text-center text-[16px] font-semibold">
               Add tokens to your Avocado wallet
             </p>
             <Copy
-              class="px-4 py-3 flex items-center text-[14px] text-wrap justify-between rounded-5 dark:bg-slate-800 bg-slate-100 gap-2 text-left"
+              class="text-wrap flex items-center justify-between gap-2 rounded-5 bg-slate-100 px-4 py-3 text-left text-[14px] dark:bg-slate-800"
               :text="safeAddress"
             >
               <template #content>
                 {{ shortenHash(safeAddress) }}
               </template>
             </Copy>
-            <span class="font-normal text-center inline-flex text-[12px] text-xs">
+            <span class="inline-flex text-center text-xs font-normal">
               Send tokens on any supported chain to your Avocado Wallet
             </span>
             <SupportedChains class="!flex justify-between" :max-count="5" />
           </div>
-          <div v-if="gt(totalEoaBalance || '0', 1) && isOnboardBannerVisible" class="bg-[#4CA0541A] rounded-[20px] p-[16px] flex flex-col gap-[12px]">
-            <p class="text-[12px] text-[#4CA054] flex-1">
+          <div v-if="gt(totalEoaBalance || '0', 1) && isOnboardBannerVisible" class="flex flex-col gap-[12px] rounded-[20px] bg-[#4CA0541A] p-[16px]">
+            <p class="flex-1 text-xs text-[#4CA054]">
               You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet (EOA)
             </p>
             <CommonButton
@@ -320,7 +322,7 @@ const { safeAddress } = useAvocadoSafe()
       </div>
       <p
         v-if="account"
-        class="text-xs leading-5 text-center mb-5 sm:mb-0 sm:text-right dark:text-slate-500 text-slate-400"
+        class="mb-5 text-center text-xs leading-5 text-slate-400 dark:text-slate-500 sm:mb-0 sm:text-right"
       >
         Don’t see your tokens?
         <button class="text-primary" @click="openImportTokenModal()">

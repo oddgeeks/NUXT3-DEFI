@@ -31,9 +31,9 @@ function selectType(type: string) {
     <ClientOnly>
       <button
         :class="{
-          'dark:text-white text-slate-900': isHideZeroBalances,
+          'text-slate-900 dark:text-white': isHideZeroBalances,
         }"
-        class="text-sm text-slate-400 inline-flex gap-2.5 items-center justify-center w-full"
+        class="inline-flex w-full items-center justify-center gap-2.5 text-sm text-slate-400"
         @click="isHideZeroBalances = !isHideZeroBalances"
       >
         Hide 0 Balances
@@ -43,21 +43,21 @@ function selectType(type: string) {
             { 'success-circle text-white': isHideZeroBalances },
             { 'svg-circle darker': !isHideZeroBalances },
           ]"
-          class="w-4 h-4"
+          class="h-4 w-4"
         />
       </button>
     </ClientOnly>
-    <ul class="rounded-5 p-[6px] bg-slate-50 dark:bg-gray-850 w-full">
+    <ul class="w-full rounded-5 bg-slate-50 p-[6px] dark:bg-gray-850">
       <li
-        class="flex items-center justify-between gap-2.5 pt-1 pb-3.5 px-3 rounded-[14px]"
+        class="flex items-center justify-between gap-2.5 rounded-[14px] px-3 pb-3.5 pt-1"
       >
         <span class="text-slate-400">Views</span>
       </li>
 
       <li
-        class="flex items-center gap-3.5 hover:bg-slate-150 hover:dark:bg-slate-800 cursor-pointer py-2.5 px-3 rounded-[14px]"
+        class="flex cursor-pointer items-center gap-3.5 rounded-[14px] px-3 py-2.5 hover:bg-slate-150 hover:dark:bg-slate-800"
         :class="{
-          'dark:text-slate-500 text-slate-400': listType !== 'group',
+          'text-slate-400 dark:text-slate-500': listType !== 'group',
         }"
         @click="() => selectType('group')"
       >
@@ -65,17 +65,17 @@ function selectType(type: string) {
         Group view
         <CheckCircle
           v-if="listType === 'group'"
-          class="success-circle cursor-pointer w-7 ml-auto"
+          class="success-circle ml-auto w-7 cursor-pointer"
         />
         <CheckCircle
           v-else
-          class="svg-circle darker cursor-pointer w-7 ml-auto"
+          class="svg-circle darker ml-auto w-7 cursor-pointer"
         />
       </li>
       <li
-        class="flex items-center gap-3.5 hover:bg-slate-150 hover:dark:bg-slate-800 cursor-pointer py-2.5 px-3 rounded-[14px]"
+        class="flex cursor-pointer items-center gap-3.5 rounded-[14px] px-3 py-2.5 hover:bg-slate-150 hover:dark:bg-slate-800"
         :class="{
-          'dark:text-slate-500 text-slate-400': listType !== 'individual',
+          'text-slate-400 dark:text-slate-500': listType !== 'individual',
         }"
         @click="() => selectType('individual')"
       >
@@ -83,21 +83,21 @@ function selectType(type: string) {
         Individual view
         <CheckCircle
           v-if="listType === 'individual'"
-          class="success-circle cursor-pointer w-7 ml-auto"
+          class="success-circle ml-auto w-7 cursor-pointer"
         />
         <CheckCircle
           v-else
-          class="svg-circle darker cursor-pointer w-7 ml-auto"
+          class="svg-circle darker ml-auto w-7 cursor-pointer"
         />
       </li>
     </ul>
-    <ul class="rounded-5 p-[6px] bg-slate-50 dark:bg-gray-850 w-full">
+    <ul class="w-full rounded-5 bg-slate-50 p-[6px] dark:bg-gray-850">
       <li
-        class="flex items-center justify-between gap-2.5 pt-1 pb-3.5 px-3 rounded-[14px]"
+        class="flex items-center justify-between gap-2.5 rounded-[14px] px-3 pb-3.5 pt-1"
       >
         <span class="text-slate-400">Networks</span>
         <div
-          class="text-green-600 cursor-pointer"
+          class="cursor-pointer text-green-600"
           @click="toggleAllNetworks"
         >
           {{
@@ -109,9 +109,9 @@ function selectType(type: string) {
       <li
         v-for="network in availableNetworks"
         :key="network.chainId"
-        class="flex items-center gap-3.5 hover:bg-slate-150 hover:dark:bg-slate-800 cursor-pointer py-2.5 px-3 rounded-[14px]"
+        class="flex cursor-pointer items-center gap-3.5 rounded-[14px] px-3 py-2.5 hover:bg-slate-150 hover:dark:bg-slate-800"
         :class="{
-          'dark:text-slate-500 text-slate-400': !networkPreference.includes(network.chainId),
+          'text-slate-400 dark:text-slate-500': !networkPreference.includes(network.chainId),
         }"
         @click="toggleNetwork(network.chainId)"
       >
@@ -119,11 +119,11 @@ function selectType(type: string) {
         {{ network.name }}
         <CheckCircle
           v-if="networkPreference.includes(network.chainId)"
-          class="success-circle cursor-pointer w-7 ml-auto"
+          class="success-circle ml-auto w-7 cursor-pointer"
         />
         <CheckCircle
           v-else
-          class="svg-circle darker cursor-pointer w-7 ml-auto"
+          class="svg-circle darker ml-auto w-7 cursor-pointer"
         />
       </li>
     </ul>

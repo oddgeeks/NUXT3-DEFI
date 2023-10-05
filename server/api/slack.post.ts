@@ -10,10 +10,10 @@ const colors: Record<'danger' | 'error' | 'success' | 'banner', string> = {
 const IGNORED_MESSAGES = ['/api/balances']
 
 export default defineEventHandler(async (event) => {
-  const { slackKey, slackErrorKey, slackStagingKey } = useRuntimeConfig()
+  const { slackKey, slackErrorKey, slackStagingKey, slackBridgeErrorKey } = useRuntimeConfig()
   const { isProd } = useAppConfig()
 
-  let { type = 'success', message } = await readBody(event)
+  let { type = 'success', message, isBridgeError = false } = await readBody(event)
 
   if (message && IGNORED_MESSAGES.some(i => message.includes(i)))
     return {}
@@ -30,6 +30,9 @@ export default defineEventHandler(async (event) => {
 
   if (!isProd)
     channelId = slackStagingKey
+  else if (isBridgeError)
+    channelId = slackBridgeErrorKey
+
   else if (type === 'error' || type === 'banner')
     channelId = slackErrorKey
 

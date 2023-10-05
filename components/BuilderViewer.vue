@@ -32,13 +32,13 @@ const hasActualComponents = computed(() => actualComponents.value && actualCompo
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 w-full">
+  <div class="flex w-full flex-col gap-2">
     <ul v-if="hasActualComponents" class="tree flex flex-col gap-3">
       <fieldset v-if="input.type === 'tuple'" :class="index === undefined ? 'pl-9' : 'gap-9'" class="flex w-full">
-        <div class="text-sm font-medium text-slate-400 h-[30px] items-center flex shrink-0">
+        <div class="flex h-[30px] shrink-0 items-center text-sm font-medium text-slate-400">
           {{ input.name }} ({{ input.type }})
         </div>
-        <div class="space-y-4 flex-1">
+        <div class="flex-1 space-y-4">
           <BuilderViewer
             v-for="i in actualComponents"
             :key="i.name"
@@ -51,7 +51,7 @@ const hasActualComponents = computed(() => actualComponents.value && actualCompo
         </div>
       </fieldset>
       <template v-else-if="Array.isArray(value)">
-        <li v-for="_, t in value" :key="t" class="relative flex flex-col gap-5 w-full">
+        <li v-for="_, t in value" :key="t" class="relative flex w-full flex-col gap-5">
           <template
             v-for="i in actualComponents"
             :key="i.name + t"
@@ -69,7 +69,7 @@ const hasActualComponents = computed(() => actualComponents.value && actualCompo
     </ul>
 
     <div v-else :class="index === undefined ? 'pl-9 max-w-[580px]' : ''" class="flex gap-7.5">
-      <label class="text-sm font-medium text-slate-400 h-[30px] items-center flex w-[180px] shrink-0">
+      <label class="flex h-[30px] w-[180px] shrink-0 items-center text-sm font-medium text-slate-400">
         {{ input.name }} ({{ input.type }})
       </label>
       <div style="word-break: break-all;" class="flex items-center text-sm">

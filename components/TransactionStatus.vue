@@ -28,23 +28,23 @@ const statusColor = computed(() => {
 <template>
   <span
     :class="statusColor"
-    class="inline-flex sm:px-2.5 sm:py-3 sm:p-0 rounded-[14px] dark:bg-gray-850 bg-slate-50 sm:!bg-transparent gap-2.5 items-center capitalize"
+    class="inline-flex items-center gap-2.5 rounded-[14px] bg-slate-50 capitalize dark:bg-gray-850 sm:!bg-transparent sm:p-0 sm:px-2.5 sm:py-3"
   >
     <SVGCheckCircle
       v-if="
         status === 'success' || status === 'completed' || status === 'ready'
       "
-      class="text-white w-5 h-5 sm:w-4 sm:h-4 success-circle"
+      class="success-circle h-5 w-5 text-white sm:h-4 sm:w-4"
     />
     <SVGInfoCircle
       v-else-if="status === 'dropped'"
-      class="text-slate-600 w-5 h-5 sm:w-4 sm:h-4"
+      class="h-5 w-5 text-slate-600 sm:h-4 sm:w-4"
     />
     <SVGErrorCircle
       v-else-if="status === 'failed'"
-      class="text-white w-5 h-5 sm:w-4 sm:h-4"
+      class="h-5 w-5 text-white sm:h-4 sm:w-4"
     />
-    <SVGClockCircle v-else class="w-5 h-5 sm:w-4 sm:h-4" />
+    <SVGClockCircle v-else class="h-5 w-5 sm:h-4 sm:w-4" />
     <span v-if="!hideText">{{ status }}</span>
     <slot />
   </span>

@@ -11,13 +11,13 @@ const suffix = computed<any>(() => {
 
 <template>
   <form>
-    <div class="flex flex-col items-center gap-7.5 mb-7.5">
+    <div class="mb-7.5 flex flex-col items-center gap-7.5">
       <WorldSVG />
-      <h1 class="text-lg text-center leading-5">
+      <h1 class="text-center text-lg leading-5">
         Supported EVM Networks
       </h1>
     </div>
-    <ul class="flex flex-col gap-5 bg-slate-50 dark:bg-gray-850 px-5 py-4 rounded-5">
+    <ul class="flex flex-col gap-5 rounded-5 bg-slate-50 px-5 py-4 dark:bg-gray-850">
       <li
         v-for="network in networkOrderedBySumTokens"
         :key="network.chainId"
@@ -29,7 +29,7 @@ const suffix = computed<any>(() => {
         >
           <ChainLogo
             :stroke="false"
-            class="w-[26px] h-[26px]"
+            class="h-[26px] w-[26px]"
             :chain="network.chainId"
           />
           <span>{{ network.name }}</span>

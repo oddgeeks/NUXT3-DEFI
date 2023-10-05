@@ -50,7 +50,7 @@ const { value: chainId } = useField<string>('chainId', undefined, {
   initialValue: '1',
 })
 const {
-  value: address,
+  value: reactiveAddress,
   meta: addressMeta,
   setValue,
 } = useField<string>('address')
@@ -66,7 +66,7 @@ const {
 
     if (valid) {
       const contract = Erc20__factory.connect(
-        address.value,
+        reactiveAddress.value,
         getRpcProviderByChainId(chainId.value),
       )
 
@@ -74,7 +74,7 @@ const {
       const name = await contract.name()
       const decimals = await contract.decimals()
 
-      const tokens = await fetchTokenByAddress([address.value], chainId.value)
+      const tokens = await fetchTokenByAddress([reactiveAddress.value], chainId.value)
 
       const token = tokens?.[0]
 
@@ -82,7 +82,7 @@ const {
 
       const tokenBalance = data?.find(
         (i: IToken) =>
-          i.address.toLowerCase() === address.value.toLowerCase()
+          i.address.toLowerCase() === reactiveAddress.value.toLowerCase()
           && i.chainId == chainId.value,
       )
 
@@ -90,7 +90,7 @@ const {
         balance.value = tokenBalance.balance
 
       return {
-        address: address.value,
+        address: reactiveAddress.value,
         chainId: chainId.value,
         symbol,
         name,
@@ -103,7 +103,7 @@ const {
     }
   },
   {
-    watch: [address, chainId],
+    watch: [reactiveAddress, chainId],
   },
 )
 
@@ -138,7 +138,7 @@ const onSubmit = handleSubmit(async () => {
 
 async function pasteAddress() {
   try {
-    address.value = await navigator.clipboard.readText()
+    reactiveAddress.value = await navigator.clipboard.readText()
   }
   catch (e) {
     console.log(e)
@@ -161,10 +161,10 @@ onUnmounted(() => {
 
 <template>
   <form @submit="onSubmit">
-    <h1 class="text-lg text-center leading-5 mb-7.5">
+    <h1 class="mb-7.5 text-center text-lg leading-5">
       Custom Token
     </h1>
-    <div class="flex flex-col gap-5 mb-7.5">
+    <div class="mb-7.5 flex flex-col gap-5">
       <div>
         <p class="mb-2.5 text-sm">
           Network
@@ -177,10 +177,10 @@ onUnmounted(() => {
           :options="availableNetworks"
         >
           <template #button-prefix>
-            <ChainLogo class="w-6 h-6 shrink-0" :chain="chainId" />
+            <ChainLogo class="h-6 w-6 shrink-0" :chain="chainId" />
           </template>
           <template #item-prefix="{ value }">
-            <ChainLogo class="w-6 h-6 shrink-0" :chain="value" />
+            <ChainLogo class="h-6 w-6 shrink-0" :chain="value" />
           </template>
         </CommonSelect>
       </div>
@@ -189,7 +189,7 @@ onUnmounted(() => {
           Token Address
         </p>
         <CommonInput
-          v-model.trim="address"
+          v-model.trim="reactiveAddress"
           autofocus
           :error-message="addressMeta.dirty ? errors.address : ''"
           name="address"
@@ -208,7 +208,7 @@ onUnmounted(() => {
         text="Token not found, try changing the network."
       />
     </div>
-    <div v-if="token" class="flex justify-between items-center mb-7.5">
+    <div v-if="token" class="mb-7.5 flex items-center justify-between">
       <div class="text-slate-400">
         <p>{{ token.name }}</p>
         <p class="text-sm font-medium">
@@ -216,7 +216,7 @@ onUnmounted(() => {
         </p>
       </div>
       <div
-        class="dark:bg-gray-850 text-sm bg-slate-50 px-4 py-2.5 rounded-2xl items-center justify-center text-slate-400"
+        class="items-center justify-center rounded-2xl bg-slate-50 px-4 py-2.5 text-sm text-slate-400 dark:bg-gray-850"
       >
         Decimals {{ token.decimals }}
       </div>

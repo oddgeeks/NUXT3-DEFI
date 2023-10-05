@@ -78,54 +78,54 @@ onMounted(() => {
 
 <template>
   <div>
-    <h1 class="text-lg text-center mb-7.5">
+    <h1 class="mb-7.5 text-center text-lg">
       Select a Token
     </h1>
     <CommonInput
       v-model="search"
       autofocus
       name="token-search"
-      class="px-7.5 mb-5"
+      class="mb-5 px-7.5"
       placeholder="Search name"
       type="search"
     >
       <template #prefix>
-        <SearchSVG class="text-slate-400 mr-2" />
+        <SearchSVG class="mr-2 text-slate-400" />
       </template>
     </CommonInput>
     <ul
       v-if="tokensWithBalance.length && tokensWithBalance.length > 0"
-      class="overflow-auto scroll-style h-96"
+      class="scroll-style h-96 overflow-auto"
     >
       <li v-for="token in tokensWithBalance" :id="computeId(token)" :key="computeId(token)">
         <button
-          class="px-5 w-full text-left py-[14px] rounded-3xl flex items-center gap-3 hover:bg-slate-100 hover:dark:bg-slate-800"
+          class="flex w-full items-center gap-3 rounded-3xl px-5 py-[14px] text-left hover:bg-slate-100 hover:dark:bg-slate-800"
           @click="$emit('resolve', true, token)"
         >
           <SafeTokenLogo :chain-id="token.chainId" :url="token.logoURI" />
 
           <div class="flex flex-col">
             <span> {{ token.name }} </span>
-            <span class="text-slate-400 font-medium text-sm">
+            <span class="text-sm font-medium text-slate-400">
               {{ formatDecimal(token.balance) }}
               <span class="uppercase"> {{ token.symbol }}</span>
             </span>
           </div>
           <SVGSuccess
             v-if="token.address === selectedToken?.address && String(token?.chainId) === String(selectedToken?.chainId)"
-            class="selected shrink-0 ml-auto text-white"
+            class="selected ml-auto shrink-0 text-white"
           />
         </button>
       </li>
     </ul>
     <div
       v-else
-      class="flex flex-col space-y-8 items-center justify-center h-96"
+      class="flex h-96 flex-col items-center justify-center space-y-8"
     >
       <p class="text-slate-400">
         Nothing could be found
       </p>
-      <div class="flex items-center flex-col space-y-4">
+      <div class="flex flex-col items-center space-y-4">
         <CommonButton
           color="white"
           size="lg"

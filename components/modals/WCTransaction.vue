@@ -291,45 +291,45 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <form class="flex flex-col gap-7.5 sm:pt-[34px] sm:pb-10 pb-6 pt-6" @submit.prevent="handleSubmit">
-    <div class="flex flex-col gap-7.5 sm:px-10 px-6">
+  <form class="flex flex-col gap-7.5 py-6 sm:pb-10 sm:pt-[34px]" @submit.prevent="handleSubmit">
+    <div class="flex flex-col gap-7.5 px-6 sm:px-10">
       <audio v-if="!bookmark" src="/audio/alert.mp3" autoplay />
-      <div class="font-semibold leading-[30px] text-center sm:text-left">
+      <div class="text-center font-semibold leading-[30px] sm:text-left">
         <span v-if="isSign">Send Transaction: Permit2 Approval</span>
         <span v-else>Send Transaction</span>
       </div>
       <div class="flex flex-col gap-2.5">
         <div
-          class="dark:bg-gray-850 bg-slate-50 flex flex-col gap-4 rounded-5 py-[14px] px-5"
+          class="flex flex-col gap-4 rounded-5 bg-slate-50 px-5 py-[14px] dark:bg-gray-850"
         >
-          <div class="flex justify-between items-center">
-            <div class="text-slate-400 flex items-center gap-2.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5 text-slate-400">
               <FlowersSVG />
-              <span class="text-xs leading-5 font-medium">App Name</span>
+              <span class="text-xs font-medium leading-5">App Name</span>
             </div>
 
             <div class="flex items-center gap-2.5">
               <a
                 rel="noopener noreferrer"
                 target="_blank"
-                class="text-primary text-sm"
+                class="text-sm text-primary"
                 :href="peerURL"
               >
                 {{ formatURL(peerURL!) || sessionV2?.peer.metadata.name }}
               </a>
             </div>
           </div>
-          <div class="flex justify-between items-center">
-            <div class="text-slate-400 flex items-center gap-2.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5 text-slate-400">
               <NetworkSVG />
-              <span class="text-xs leading-5 font-medium">Network</span>
+              <span class="text-xs font-medium leading-5">Network</span>
             </div>
 
             <div class="flex items-center gap-2.5">
               <span class="text-xs font-medium">
                 {{ chainIdToName(chainId) }}
               </span>
-              <ChainLogo class="w-[18px] h-[18px]" :chain="chainId" />
+              <ChainLogo class="h-[18px] w-[18px]" :chain="chainId" />
             </div>
           </div>
           <EstimatedFee
@@ -340,10 +340,10 @@ onUnmounted(() => {
           />
 
           <template v-if="isSign && signMessageDetails">
-            <div class="flex justify-between items-center">
-              <div class="text-slate-400 flex items-center gap-2.5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5 text-slate-400">
                 <SVGClockCircle class="w-4" />
-                <span class="text-xs leading-5 font-medium">Exprires at</span>
+                <span class="text-xs font-medium leading-5">Exprires at</span>
               </div>
 
               <div class="flex items-center gap-2.5 text-sm">
@@ -354,10 +354,10 @@ onUnmounted(() => {
         </div>
       </div>
     </div>
-    <div v-if="revokeTokens?.length" class="flex flex-col sm:px-10 px-6 border-y border-slate-150 dark:border-slate-800">
-      <details class="text-xs group">
-        <summary class="text-primary cursor-pointer flex items-center justify-between py-5">
-          <span class="flex gap-2 items-center">
+    <div v-if="revokeTokens?.length" class="flex flex-col border-y border-slate-150 px-6 dark:border-slate-800 sm:px-10">
+      <details class="group text-xs">
+        <summary class="flex cursor-pointer items-center justify-between py-5 text-primary">
+          <span class="flex items-center gap-2">
             Revoke Tokens
             <SvgoInfo2 v-tippy="'Revoke tokens approvals of this transaction'" />
           </span>
@@ -369,14 +369,14 @@ onUnmounted(() => {
 
         <div class="group-open:pb-5">
           <ul class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-            <li v-for="i in revokeTokens" :key="i.from" class="text-[10px] flex justify-between border rounded-2xl dark:border-slate-800 py-2 px-2.5">
+            <li v-for="i in revokeTokens" :key="i.from" class="flex justify-between rounded-2xl border px-2.5 py-2 text-[10px] dark:border-slate-800">
               <div class="flex items-center gap-2 font-medium">
-                <SafeTokenLogo class="w-4 h-4" :url="i.tokenObj?.logoURI" />
+                <SafeTokenLogo class="h-4 w-4" :url="i.tokenObj?.logoURI" />
                 {{ shortenHash(i.to) }}
               </div>
-              <div class="flex gap-2.5 items-center">
-                <button :disabled="pending" type="button" class="text-primary disabled:text-slate-500 flex items-center gap-1.5" @click="addRevokeTransaction(i.token, i.to)">
-                  <SvgoPlus class="w-2.5 h-2.5" />
+              <div class="flex items-center gap-2.5">
+                <button :disabled="pending" type="button" class="flex items-center gap-1.5 text-primary disabled:text-slate-500" @click="addRevokeTransaction(i.token, i.to)">
+                  <SvgoPlus class="h-2.5 w-2.5" />
                   Revoke tx
                 </button>
               </div>
@@ -386,27 +386,27 @@ onUnmounted(() => {
       </details>
     </div>
 
-    <div class="flex flex-col gap-7.5 sm:px-10 px-6">
+    <div class="flex flex-col gap-7.5 px-6 sm:px-10">
       <SimulationDetails
         v-if="simulationDetails && hasSimulationDetails"
         :chain-id="chainId"
         :details="simulationDetails"
         :has-error="!!error"
       />
-      <p v-if="simulationError" class="text-xs leading-5 text-orange-400 flex items-center gap-2">
+      <p v-if="simulationError" class="flex items-center gap-2 text-xs leading-5 text-orange-400">
         <SVGInfoCircle class="w-3" />
 
         {{ simulationError.message }}
       </p>
-      <p v-if="nonAuthorised" class="text-xs leading-5 text-orange-400 flex gap-2">
-        <SvgoExclamationCircle class="w-3 shrink-0 mt-1" />
+      <p v-if="nonAuthorised" class="flex gap-2 text-xs leading-5 text-orange-400">
+        <SvgoExclamationCircle class="mt-1 w-3 shrink-0" />
         You are not authorised to sign transactions on {{ chainIdToName(chainId) }} network.
       </p>
-      <div class="flex justify-between items-center gap-4">
+      <div class="flex items-center justify-between gap-4">
         <CommonButton
           color="white"
           size="lg"
-          class="flex-1 justify-center items-center hover:!bg-red-alert hover:!bg-opacity-10 hover:text-red-alert"
+          class="flex-1 items-center justify-center hover:!bg-red-alert hover:!bg-opacity-10 hover:text-red-alert"
           @click="handleReject"
         >
           Reject
@@ -416,7 +416,7 @@ onUnmounted(() => {
           :loading="submitting"
           :disabled="submitDisabled"
           type="submit"
-          class="flex-1 justify-center items-center"
+          class="flex-1 items-center justify-center"
           size="lg"
         >
           Submit

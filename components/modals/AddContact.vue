@@ -140,10 +140,10 @@ onMounted(() => {
 
 <template>
   <form @submit="onSubmit">
-    <h1 class="text-lg text-center leading-5 mb-7.5">
+    <h1 class="mb-7.5 text-center text-lg leading-5">
       {{ props.isEdit ? "Edit" : "Create" }} Contact
     </h1>
-    <div class="flex flex-col gap-5 mb-7.5">
+    <div class="mb-7.5 flex flex-col gap-5">
       <div>
         <p class="mb-2.5 text-sm">
           Name
@@ -184,10 +184,10 @@ onMounted(() => {
           :options="networks"
         >
           <template #button-prefix>
-            <ChainLogo class="w-6 h-6 shrink-0" :chain="chainId" />
+            <ChainLogo class="h-6 w-6 shrink-0" :chain="chainId" />
           </template>
           <template #item-prefix="{ value }">
-            <ChainLogo class="w-6 h-6 shrink-0" :chain="value" />
+            <ChainLogo class="h-6 w-6 shrink-0" :chain="value" />
           </template>
         </CommonSelect>
       </div>

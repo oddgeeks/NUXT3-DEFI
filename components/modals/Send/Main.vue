@@ -75,8 +75,8 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <div class="flex gap-[14px] mb-7.5">
-      <CommonTxTypeIcon class="w-10 h-10">
+    <div class="mb-7.5 flex gap-[14px]">
+      <CommonTxTypeIcon class="h-10 w-10">
         <template #icon>
           <SvgoArrowRight class="-rotate-45" />
         </template>
@@ -86,20 +86,20 @@ onUnmounted(() => {
           {{ isCrossChain ? 'Cross-chain Send' : 'Send' }}
           <span v-if="contact"> to {{ contact.name }}  </span>
         </h1>
-        <h2 class="font-medium text-xs text-slate-400 leading-5">
+        <h2 class="text-xs font-medium leading-5 text-slate-400">
           Transfer tokens to any address on selected chain.
         </h2>
       </div>
     </div>
     <div
       v-if="contact"
-      class="flex items-center rounded-5 mb-5 -mt-3 pl-5 pr-4 py-5 dark:bg-gray-850 bg-slate-50 justify-between w-full"
+      class="-mt-3 mb-5 flex w-full items-center justify-between rounded-5 bg-slate-50 py-5 pl-5 pr-4 dark:bg-gray-850"
     >
       <div class="flex items-center gap-3">
-        <ChainLogo :stroke="false" class="w-7 h-7" :chain="contact.chainId" />
+        <ChainLogo :stroke="false" class="h-7 w-7" :chain="contact.chainId" />
         <Copy :text="contact.address">
           <template #content>
-            <span class="dark:text-white text-slate-900">{{
+            <span class="text-slate-900 dark:text-white">{{
               shortenHash(contact.address)
             }}</span>
           </template>
@@ -108,7 +108,7 @@ onUnmounted(() => {
       <CommonButton
         :disabled="contact.owner"
         color="white"
-        class="justify-center dark:bg-slate-800 bg-slate-150 !px-4"
+        class="justify-center bg-slate-150 !px-4 dark:bg-slate-800"
         @click="handleEdit()"
       >
         Edit

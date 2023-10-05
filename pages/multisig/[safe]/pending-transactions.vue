@@ -120,7 +120,6 @@ function toggleLoading(status: boolean, chainId?: number) {
       acc[network.chainId] = status
       return acc
     }, {} as Record<number, boolean>)
-    return
   }
 }
 
@@ -131,13 +130,12 @@ const loadingPendingTxns = ref(availableNetworks.reduce((acc, network) => {
 }, {} as Record<number, boolean>))
 
 const isLoadingPendingTxns = computed(() => {
-  return  activeTab.value !== 'completed' && Object.values(loadingPendingTxns.value).some(i => i);
+  return activeTab.value !== 'completed' && Object.values(loadingPendingTxns.value).some(i => i)
 })
 
 const isLoadingCompletedTxns = computed(() => {
   return activeTab.value === 'completed' && loadingCompletedTxns.value
 })
-
 
 useIntervalFn(() => {
   refreshNonSeq()
@@ -159,45 +157,45 @@ onMounted(() => {
 
 <template>
   <div class="flex-1">
-    <div class="flex flex-col gap-5 sm:mb-0 mb-5">
+    <div class="mb-5 flex flex-col gap-5 sm:mb-0">
       <h1 class="text-center sm:text-left">
         Transactions
       </h1>
 
       <div class="flex justify-between">
-        <div class="bg-slate-50 dark:bg-gray-850 rounded-10 p-1.5 flex w-fit sm:self-baseline self-center font-medium">
+        <div class="flex w-fit self-center rounded-10 bg-slate-50 p-1.5 font-medium dark:bg-gray-850 sm:self-baseline">
           <button
             v-for="tab in tabs"
             :key="tab.label"
             :class="
               tab.query === activeTab ? 'dark:bg-slate-800 bg-slate-150' : 'text-slate-400'
             "
-            class="px-4 justify-center flex-1 text-xs rounded-7.5 gap-2.5 whitespace-nowrap py-2 laeding-5 flex items-center"
+            class="laeding-5 flex flex-1 items-center justify-center gap-2.5 whitespace-nowrap rounded-7.5 px-4 py-2 text-xs"
             @click="$router.replace({ query: { tab: tab.query } })"
           >
-            <span class="sm:block hidden"> {{ tab.label }}</span>
-            <span class="sm:hidden block"> {{ tab.mobileLabel || tab.label }}</span>
-            <span v-if="tab?.count" class="flex items-center justify-center min-w-[20px] h-5 px-[5px] bg-slate-500 text-xs rounded-full text-white">
+            <span class="hidden sm:block"> {{ tab.label }}</span>
+            <span class="block sm:hidden"> {{ tab.mobileLabel || tab.label }}</span>
+            <span v-if="tab?.count" class="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-slate-500 px-[5px] text-xs text-white">
               {{ tab?.count }}
             </span>
           </button>
         </div>
-        <button v-if="activeTab !== 'completed'" :disabled="isCollapseAllDisabled" class="text-primary text-xs disabled:text-slate-400" type="button" @click="toggle(true)">
+        <button v-if="activeTab !== 'completed'" :disabled="isCollapseAllDisabled" class="text-xs text-primary disabled:text-slate-400" type="button" @click="toggle(true)">
           Collapse All
         </button>
       </div>
 
-      <h2 v-if="title" class="text-xs leading-5 sm:text-left text-center font-medium">
+      <h2 v-if="title" class="text-center text-xs font-medium leading-5 sm:text-left">
         {{ title }}
       </h2>
-      <div ref="itemsRef" class="gap-5 flex flex-col">
+      <div ref="itemsRef" class="flex flex-col gap-5">
         <template v-if="activeTab === 'completed'">
           <MultisigLoadingTransactionItems v-if="isLoadingCompletedTxns" />
-          <MultisigPendingTransactionItems :class="{'hidden': isLoadingCompletedTxns}" network-cell-visible :active-tab="activeTab" @on-toggle="syncToggles" @loading="toggleLoading" />
+          <MultisigPendingTransactionItems :class="{ hidden: isLoadingCompletedTxns }" network-cell-visible :active-tab="activeTab" @on-toggle="syncToggles" @loading="toggleLoading" />
         </template>
         <template v-else>
           <MultisigLoadingTransactionItems v-if="isLoadingPendingTxns" />
-          <MultisigPendingTransactionItems :class="{'hidden': isLoadingPendingTxns}" v-for="network in availableNetworks" :key="network.chainId" :active-tab="activeTab" :chain-id="network.chainId" @on-toggle="syncToggles" @loading="(status) => toggleLoading(status, network.chainId)" />
+          <MultisigPendingTransactionItems v-for="network in availableNetworks" :key="network.chainId" :class="{ hidden: isLoadingPendingTxns }" :active-tab="activeTab" :chain-id="network.chainId" @on-toggle="syncToggles" @loading="(status) => toggleLoading(status, network.chainId)" />
         </template>
       </div>
     </div>

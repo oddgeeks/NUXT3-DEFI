@@ -19,10 +19,10 @@ const noBreakdownAvailable = computed(() => {
 </script>
 
 <template>
-  <div class="flex gap-5 flex-col">
+  <div class="flex flex-col gap-5">
     <h1
       v-if="!titleHidden"
-      class="text-xs text-center sm:text-left"
+      class="text-center text-xs sm:text-left"
       :class="[
         {
           'text-orange-400': hasError,
@@ -32,14 +32,14 @@ const noBreakdownAvailable = computed(() => {
       Transaction Breakdown
     </h1>
 
-    <p v-if="noBreakdownAvailable" class="text-slate-400 font-medium text-xs">
+    <p v-if="noBreakdownAvailable" class="text-xs font-medium text-slate-400">
       No breakdown available
     </p>
 
     <ul
       v-else
       :class="wrapperClass"
-      class="grid grid-cols-1 sm:grid-cols-2 -mr-3 gap-x-[10px] gap-y-5 scroll-style max-h-[239px] overflow-y-auto"
+      class="scroll-style -mr-3 grid max-h-[239px] grid-cols-1 gap-x-[10px] gap-y-5 overflow-y-auto sm:grid-cols-2"
     >
       <template
         v-for="(item, k) in details.simulation.approveTokens"

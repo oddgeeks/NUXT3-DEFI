@@ -166,9 +166,9 @@ const onSubmit = handleSubmit(() => {
 
 <template>
   <form @submit="onSubmit">
-    <div class="flex flex-col gap-7.5 sm:p-7.5 p-5">
+    <div class="flex flex-col gap-7.5 p-5 sm:p-7.5">
       <div class="flex items-center gap-[14px]">
-        <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-lg text-white">
           1
         </div>
         <h1 class="text-lg">
@@ -177,7 +177,7 @@ const onSubmit = handleSubmit(() => {
       </div>
       <Steps :current-step="steps?.currentStep || 1" :total-steps="steps?.totalSteps || 5" />
     </div>
-    <div class="px-7.5 flex gap-5">
+    <div class="flex gap-5 px-7.5">
       <CommonInput v-model="gnosisAddress" autofocus :error-message="errorMessage" name="gnosisAddress" placeholder="Gnosis safe address" />
       <CommonSelect
         v-model="chainId"
@@ -188,10 +188,10 @@ const onSubmit = handleSubmit(() => {
         :options="availableNetworks"
       >
         <template #button-prefix>
-          <ChainLogo class="w-6 h-6" :chain="chainId" />
+          <ChainLogo class="h-6 w-6" :chain="chainId" />
         </template>
         <template #item-prefix="{ value }">
-          <ChainLogo class="w-6 h-6" :chain="value" />
+          <ChainLogo class="h-6 w-6" :chain="value" />
         </template>
       </CommonSelect>
     </div>

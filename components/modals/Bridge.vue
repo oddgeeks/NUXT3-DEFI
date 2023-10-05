@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { serialize } from 'error-serializer'
 import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 
 const props = defineProps({
@@ -74,13 +75,49 @@ const { pending, error, data } = useEstimatedFee(
     count: esimatedFeeRetryCount,
     max: 1,
     cb: changeRouteForRetry,
+    onError: e => handleEstimatedError(e, true),
   },
 )
 
 const availableRoutes = computed(() => routes.data.value?.result?.routes || [])
 const fallbackRoutes = computed(() => availableRoutes.value.filter(i => getRouteProvider(i)?.displayName !== bridgeProtocol.value?.displayName))
 
-function changeRouteForRetry() {
+function formatRouteAmount(route: IRoute) {
+  const amount = fromWei(route?.toAmount || 0, bridgeToToken.value?.decimals).toFixed()
+  const symbol = bridgeToToken.value?.symbol || ''
+  const formattedSymbol = formatSymbol(symbol)
+
+  return `${formatDecimal(amount)} ${formattedSymbol} ${symbol}`
+}
+
+function handleEstimatedError(e: Error, error = false) {
+  const err = serialize(e)
+
+  if (!txRoute.value)
+    return
+
+  const title = error ? 'Bridge Fee Estimation failling' : 'Shifting to fallback provider'
+
+  const formattedRoutes = availableRoutes.value.map(i => `${getRouteProvider(i)?.displayName} ${formatRouteAmount(i)}${txRoute.value?.routeId === i.routeId ? ':x:' : ''}`).join(',\r\n')
+
+  const message = `${title}: ${err.message}
+${'`Amount`'} ${formatRouteAmount(txRoute.value)}
+${'`Providers`'} [
+${formattedRoutes}
+]
+${'`RouteId`'} ${txRoute.value.routeId}`
+
+  logActionToSlack({
+    account: account.value,
+    action: 'bridge',
+    type: error ? 'error' : 'banner',
+    isBridgeError: true,
+    message,
+    chainId: fromChainId.value,
+  })
+}
+
+function changeRouteForRetry(_: any, __: any, err: any) {
   if (esimatedFeeRetryCount.value > 1)
     return
 
@@ -96,6 +133,8 @@ function changeRouteForRetry() {
 
   txRoute.value = route
   esimatedFeeRetryCount.value += 1
+
+  handleEstimatedError(err)
 }
 
 const availableTokens = computed(() => {
@@ -235,9 +274,9 @@ const onSubmit = form.handleSubmit(async () => {
 </script>
 
 <template>
-  <form class="flex gap-7.5 flex-col" @submit="onSubmit">
+  <form class="flex flex-col gap-7.5" @submit="onSubmit">
     <div class="flex gap-[14px]">
-      <CommonTxTypeIcon class="w-10 h-10">
+      <CommonTxTypeIcon class="h-10 w-10">
         <template #icon>
           <SvgoBridge />
         </template>
@@ -246,7 +285,7 @@ const onSubmit = form.handleSubmit(async () => {
         <h1 class="text-lg leading-[20px]">
           Bridge
         </h1>
-        <h2 class="font-medium text-xs text-slate-400 leading-5">
+        <h2 class="text-xs font-medium leading-5 text-slate-400">
           Migrate tokens across multiple networks with lowest slippage.
         </h2>
       </div>
@@ -254,25 +293,25 @@ const onSubmit = form.handleSubmit(async () => {
 
     <div class="flex flex-col gap-5">
       <div class="space-y-2.5">
-        <h1 class="text-sm flex items-center justify-between">
+        <h1 class="flex items-center justify-between text-sm">
           Transfer from
 
           <CommonToggle v-model="isInputUsd" text="Input USD" />
         </h1>
 
         <div
-          class="flex flex-col dark:bg-gray-850 bg-slate-50 rounded-5 pt-3.5 px-5 pb-5 gap-3 sm:gap-5"
+          class="flex flex-col gap-3 rounded-5 bg-slate-50 px-5 pb-5 pt-3.5 dark:bg-gray-850 sm:gap-5"
         >
-          <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
-            <div class="flex flex-col flex-1 gap-2.5">
+          <div class="flex flex-col gap-3 sm:flex-row sm:gap-4">
+            <div class="flex flex-1 flex-col gap-2.5">
               <span class="text-sm">Coin</span>
               <TokenSelection
                 v-model="fromToken"
-                class="relative w-full flex items-center gap-2.5 max-h-12 rounded-2xl border dark:border-slate-700 border-slate-150 !bg-slate-50 dark:!bg-gray-850 px-4 py-3 text-left"
+                class="relative flex max-h-12 w-full items-center gap-2.5 rounded-2xl border border-slate-150 !bg-slate-50 px-4 py-3 text-left dark:border-slate-700 dark:!bg-gray-850"
                 :tokens="availableTokens"
               />
             </div>
-            <div class="flex flex-col flex-1 gap-2.5">
+            <div class="flex flex-1 flex-col gap-2.5">
               <span class="text-sm">Network</span>
               <CommonSelect
                 v-model="fromChainId"
@@ -282,10 +321,10 @@ const onSubmit = form.handleSubmit(async () => {
                 :options="authorisedNetworks"
               >
                 <template #button-prefix>
-                  <ChainLogo class="w-6 h-6" :chain="fromChainId" />
+                  <ChainLogo class="h-6 w-6" :chain="fromChainId" />
                 </template>
                 <template #item-prefix="{ value }">
-                  <ChainLogo class="w-6 h-6" :chain="value" />
+                  <ChainLogo class="h-6 w-6" :chain="value" />
                 </template>
               </CommonSelect>
             </div>
@@ -294,7 +333,7 @@ const onSubmit = form.handleSubmit(async () => {
             <div class="flex justify-between">
               <span class="text-sm">Amount</span>
               <div class="flex items-center gap-2.5">
-                <span class="uppercase text-sm">
+                <span class="text-sm uppercase">
                   {{ formatDecimal(fromToken.balance) }} {{ fromToken.symbol }}
                 </span>
                 <button
@@ -320,7 +359,7 @@ const onSubmit = form.handleSubmit(async () => {
               @beforeinput="toggleMax(false)"
             >
               <template #suffix>
-                <span class="text-sm text-left text-slate-400 absolute right-5">
+                <span class="absolute right-5 text-left text-sm text-slate-400">
                   {{ formatDecimal(amount) }}
                 </span>
               </template>
@@ -346,17 +385,17 @@ const onSubmit = form.handleSubmit(async () => {
         </div>
       </div>
       <div class="space-y-2.5">
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <h1 class="text-sm">
             Transfer to
           </h1>
         </div>
         <div
-          class="px-5 pt-4 sm:pt-[14px] pb-5 dark:bg-gray-850 bg-slate-50 rounded-5"
+          class="rounded-5 bg-slate-50 px-5 pb-5 pt-4 dark:bg-gray-850 sm:pt-[14px]"
         >
           <div class="flex flex-col gap-4 sm:gap-5">
             <div
-              class="grid items-center gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2 md:gap-x-4 md:gap-y-5"
+              class="grid grid-cols-1 items-center gap-3 sm:gap-4 md:grid-cols-2 md:gap-x-4 md:gap-y-5"
             >
               <div class="flex flex-col gap-2.5">
                 <span class="text-sm">Coin</span>
@@ -365,7 +404,7 @@ const onSubmit = form.handleSubmit(async () => {
                   v-model="bridgeToToken"
                   :sort="false"
                   :pending="bridgeTokens.pending.value"
-                  class="relative flex items-center gap-2.5 max-h-12 rounded-2xl border dark:border-slate-700 border-slate-150 !bg-slate-50 dark:!bg-gray-850 px-4 py-3 text-left"
+                  class="relative flex max-h-12 items-center gap-2.5 rounded-2xl border border-slate-150 !bg-slate-50 px-4 py-3 text-left dark:border-slate-700 dark:!bg-gray-850"
                   :tokens="bridgeTokens.data"
                 />
               </div>
@@ -378,20 +417,20 @@ const onSubmit = form.handleSubmit(async () => {
                   :options="selectableToChains"
                 >
                   <template #button-prefix>
-                    <ChainLogo class="w-6 h-6" :chain="toChainId" />
+                    <ChainLogo class="h-6 w-6" :chain="toChainId" />
                   </template>
                   <template #item-prefix="{ value }">
-                    <ChainLogo class="w-6 h-6" :chain="value" />
+                    <ChainLogo class="h-6 w-6" :chain="value" />
                   </template>
                 </CommonSelect>
               </div>
             </div>
             <div class="flex flex-col gap-2 sm:gap-2.5">
-              <div class="flex justify-between items-center">
-                <span class="text-sm text-slate-400 font-medium">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-slate-400">
                   Estimated processing time
                 </span>
-                <span class="text-slate-400 font-medium">
+                <span class="font-medium text-slate-400">
                   {{
                     txRoute
                       ? `~${Math.round(txRoute.serviceTime / 60)}m`
@@ -400,7 +439,7 @@ const onSubmit = form.handleSubmit(async () => {
                 </span>
               </div>
               <div
-                class="items-center justify-between hidden text-sm font-medium sm:flex text-slate-400"
+                class="hidden items-center justify-between text-sm font-medium text-slate-400 sm:flex"
               >
                 <span>
                   Route Through
@@ -408,15 +447,15 @@ const onSubmit = form.handleSubmit(async () => {
                 <div
                   v-if="routes.pending.value"
                   style="width: 140px; height: 20px"
-                  class="rounded-lg loading-box"
+                  class="loading-box rounded-lg"
                 />
                 <span
                   v-else-if="!!txRoute && !!availableRoutes?.length"
-                  class="capitalize hidden sm:flex items-center gap-2.5"
+                  class="hidden items-center gap-2.5 capitalize sm:flex"
                 >
                   <Menu v-slot="{ open }" as="div" class="relative">
-                    <MenuButton class="flex items-center gap-2.5 rounded-xl px-3 py-2 border border-slate-150 dark:border-slate-750">
-                      <img :src="bridgeProtocol?.icon" class="w-5 h-5">
+                    <MenuButton class="flex items-center gap-2.5 rounded-xl border border-slate-150 px-3 py-2 dark:border-slate-750">
+                      <img :src="bridgeProtocol?.icon" class="h-5 w-5">
                       {{ bridgeProtocol?.displayName }}
                       <SvgoChevronDown class="w-4" :class="open ? 'rotate-180' : ''" />
                     </MenuButton>
@@ -429,21 +468,21 @@ const onSubmit = form.handleSubmit(async () => {
                       leave-to-class="transform scale-95 opacity-0"
                     >
                       <MenuItems
-                        class="absolute rounded-5 z-20 py-4 top-12 left-1/2 -translate-x-1/2 w-[300px] origin-center dark:bg-gray-850 border-slate-150 border bg-slate-50 dark:border-slate-700"
+                        class="absolute left-1/2 top-12 z-20 w-[300px] origin-center -translate-x-1/2 rounded-5 border border-slate-150 bg-slate-50 py-4 dark:border-slate-700 dark:bg-gray-850"
                       >
                         <template v-for="route, i in availableRoutes" :key="route.routeId">
-                          <MenuItem as="button" type="button" class="font-medium w-full text-left px-4 py-[14px] first:pt-0 last-of-type:pb-0" @click="txRoute = route">
+                          <MenuItem as="button" type="button" class="w-full px-4 py-[14px] text-left font-medium first:pt-0 last-of-type:pb-0" @click="txRoute = route">
                             <div class="flex gap-2">
-                              <img width="20" height="20" :src="getRouteProvider(route)?.icon" class="w-5 h-5">
-                              <div class="flex flex-col gap-1 w-full">
-                                <div class="flex justify-between w-full">
+                              <img width="20" height="20" :src="getRouteProvider(route)?.icon" class="h-5 w-5">
+                              <div class="flex w-full flex-col gap-1">
+                                <div class="flex w-full justify-between">
                                   <span class="text-white">
                                     {{ getRouteProvider(route)?.displayName }}
                                   </span>
-                                  <span v-if="i === 0" class="rounded-lg px-2 leading-5 text-[10px] uppercase bg-primary bg-opacity-10 text-primary">
+                                  <span v-if="i === 0" class="rounded-lg bg-primary bg-opacity-10 px-2 text-[10px] uppercase leading-5 text-primary">
                                     Best Rate
                                   </span>
-                                  <SvgoCheckCircle v-else-if="txRoute.routeId === route.routeId" class="w-4 success-circle" />
+                                  <SvgoCheckCircle v-else-if="txRoute.routeId === route.routeId" class="success-circle w-4" />
                                 </div>
                                 <span class="text-xs text-slate-400">
                                   {{ formatDecimal(fromWei(route?.toAmount || '0', bridgeToToken?.decimals).toFixed()) }}
@@ -452,7 +491,7 @@ const onSubmit = form.handleSubmit(async () => {
                               </div>
                             </div>
                           </MenuItem>
-                          <hr class="last:hidden dark:border-slate-800 border-slate-100">
+                          <hr class="border-slate-100 last:hidden dark:border-slate-800">
                         </template>
                       </MenuItems>
                     </transition>
@@ -468,22 +507,22 @@ const onSubmit = form.handleSubmit(async () => {
             <div class="divider" />
 
             <div
-              class="flex justify-between items-start sm:items-center whitespace-nowrap"
+              class="flex items-start justify-between whitespace-nowrap sm:items-center"
             >
-              <span class="md:text-lg font-semibold !leading-5">You receive</span>
+              <span class="font-semibold !leading-5 md:text-lg">You receive</span>
               <div
                 v-if="routes.pending.value"
                 style="width: 140px; height: 20px"
-                class="rounded-lg loading-box"
+                class="loading-box rounded-lg"
               />
               <span
                 v-else
-                class="sm:text-2xl text-sm font-semibold text-right !leading-5 uppercase inline-flex flex-wrap gap-2 sm:gap-2.5 justify-end"
+                class="inline-flex flex-wrap justify-end gap-2 text-right text-sm font-semibold uppercase !leading-5 sm:gap-2.5 sm:text-2xl"
               >
                 <span>{{ formatDecimal(recievedAmount) }}
                   {{ bridgeToToken?.symbol || fromToken.symbol }}</span>
 
-                <span class="text-slate-400 text-sm">({{ formatUsd(recivedValueInUsd) }})</span>
+                <span class="text-sm text-slate-400">({{ formatUsd(recivedValueInUsd) }})</span>
               </span>
             </div>
           </div>
@@ -492,7 +531,7 @@ const onSubmit = form.handleSubmit(async () => {
         <EstimatedFee :loading="pending" :data="data" :error="error" />
 
         <Transition name="fade">
-          <p v-if="feeInfoMessage" class="text-slate-400 mt-1 font-medium leading-6 flex items-start text-xs">
+          <p v-if="feeInfoMessage" class="mt-1 flex items-start text-xs font-medium leading-6 text-slate-400">
             <SvgoExclamationCircle class="mr-2.5 mt-1 h-4.5 w-4.5 shrink-0 text-slate-500" />
             <span class="block">
               {{ feeInfoMessage }}
@@ -513,10 +552,10 @@ const onSubmit = form.handleSubmit(async () => {
           <template #action>
             <CommonButton
               size="sm"
-              class="flex gap-[6px] items-center justify-center"
+              class="flex items-center justify-center gap-[6px]"
               @click="handleSwapToken"
             >
-              <RefreshSVG class="w-[14px] h-[14px]" />
+              <RefreshSVG class="h-[14px] w-[14px]" />
               Swap Token
             </CommonButton>
           </template>
@@ -528,12 +567,12 @@ const onSubmit = form.handleSubmit(async () => {
         />
       </div>
 
-      <div class="flex gap-4 flex-col">
+      <div class="flex flex-col gap-4">
         <CommonButton
           type="submit"
           :disabled="disabled || pending || !!error"
           :loading="loading || pending"
-          class="justify-center w-full"
+          class="w-full justify-center"
           size="lg"
         >
           Bridge

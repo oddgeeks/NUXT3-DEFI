@@ -37,37 +37,37 @@ async function handleToggle() {
 
 <template>
   <div
-    :class="[expanded ? 'sm:scale-[1.35] scale-110 origin-center z-10 visible' : '']"
-    class="w-full relative animate-scale"
+    :class="[expanded ? 'visible z-10 origin-center scale-110 sm:scale-[1.35]' : '']"
+    class="animate-scale relative w-full"
   >
     <div
       v-if="error || !asset.imageUrl"
       :class="compact ? 'w-8 h-8' : 'w-[168] h-[240px]'"
-      class="dark:bg-gray-850 bg-slate-50 rounded-[14px] flex justify-center items-center"
+      class="flex h-[240px] w-[168] items-center justify-center rounded-[14px] bg-slate-50 dark:bg-gray-850"
     >
       <BrokenSVG />
     </div>
 
-    <video v-else-if="asset.animationUrl && details" :poster="asset?.thumbnailUrl" class="rounded-[14px] object-contain max-h-full w-full" playsinline autoplay loop :src="formatIPFSUri(asset.animationUrl)" />
+    <video v-else-if="asset.animationUrl && details" :poster="asset?.thumbnailUrl" class="max-h-full w-full rounded-[14px] object-contain" playsinline autoplay loop :src="formatIPFSUri(asset.animationUrl)" />
 
     <img
       v-else
-      class="rounded-[14px] w-full sm:w-full h-[240px]"
+      class="h-[240px] w-full rounded-[14px] sm:w-full"
       width="168"
       height="160"
       :src="details ? asset.imageUrl : asset?.thumbnailUrl ?? asset.imageUrl"
       :alt="asset.collectionName"
-      :class="[imgClass, expanded ? 'sm:!h-auto sm:w-auto h-full sm:max-h-[70vh] object-contain max-h-full' : 'object-cover']"
+      :class="[imgClass, expanded ? 'h-full max-h-full object-contain sm:!h-auto sm:max-h-[70vh] sm:w-auto' : 'object-cover']"
       @error="handleError"
     >
     <div
       v-if="!hideChainLogo"
       :class="{
-        'text-xs p-1.5': !details,
+        'p-1.5 text-xs': !details,
         'p-2 font-bold': details,
         'scale-75': expanded,
       }"
-      class="backdrop-blur-[20px] absolute left-2.5 bottom-2.5 w-fit leading-[18px]  items-center flex gap-1.5 rounded-10 bg-black bg-opacity-30"
+      class="absolute bottom-2.5 left-2.5 flex w-fit items-center  gap-1.5 rounded-10 bg-black bg-opacity-30 leading-[18px] backdrop-blur-[20px]"
     >
       <ChainLogo
         :class="{
@@ -75,11 +75,11 @@ async function handleToggle() {
           'w-6': details,
         }" class="shrink-0" :chain="asset.chainId"
       />
-      <span class="shrink-0 mr-1 text-white">
+      <span class="mr-1 shrink-0 text-white">
         {{ chainIdToName(asset.chainId) }}
       </span>
     </div>
-    <button v-if="details && asset.imageUrl" :class="{ 'scale-75': expanded }" class="absolute w-10 h-10 right-2.5 bottom-2.5 bg-black bg-opacity-30 backdrop-blur-[20px] rounded-full flex items-center justify-center" @click="handleToggle">
+    <button v-if="details && asset.imageUrl" :class="{ 'scale-75': expanded }" class="absolute bottom-2.5 right-2.5 flex h-10 w-10 items-center justify-center rounded-full bg-black bg-opacity-30 backdrop-blur-[20px]" @click="handleToggle">
       <ExpandSVG v-if="!expanded" />
       <ShrinkSVG v-else />
     </button>

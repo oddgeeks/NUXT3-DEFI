@@ -75,13 +75,13 @@ async function handleDeploy() {
 </script>
 
 <template>
-  <div class="flex gap-7.5 flex-col">
-    <ChainLogo class="w-10 h-10 mx-auto" :chain="option.chainId" />
+  <div class="flex flex-col gap-7.5">
+    <ChainLogo class="mx-auto h-10 w-10" :chain="option.chainId" />
     <div>
-      <h1 class="font-lg text-center leading-5 mb-3">
+      <h1 class="font-lg mb-3 text-center leading-5">
         {{ chainIdToName(option.chainId) }}
       </h1>
-      <h2 class="font-medium text-xs text-slate-400 leading-5 text-center">
+      <h2 class="text-center text-xs font-medium leading-5 text-slate-400">
         In order to interact with dapps on your requested network, please deploy
         (activate) your wallet.
       </h2>

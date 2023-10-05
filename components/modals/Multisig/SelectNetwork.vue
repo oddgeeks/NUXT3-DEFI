@@ -58,10 +58,10 @@ function handleBack() {
 
 <template>
   <form @submit.prevent="handleSubmit">
-    <div class="flex flex-col gap-7.5 sm:p-7.5 p-5">
+    <div class="flex flex-col gap-7.5 p-5 sm:p-7.5">
       <Steps class="mr-10" :total-steps="steps?.totalSteps" :current-step=" steps?.currentStep" />
       <div class="flex gap-[14px]">
-        <div class="w-10 h-10 shrink-0 rounded-full text-lg bg-primary items-center justify-center flex text-white">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-lg text-white">
           {{ steps.currentStep }}
         </div>
         <div class="flex gap-1">
@@ -72,16 +72,16 @@ function handleBack() {
       </div>
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
-    <div class="sm:p-7.5 py-5 px-6">
-      <button v-if="selectedNetworks.length === availableNetworks.length" class="text-xs absolute right-7.5 text-primary" type="button" @click="handleDeselectAll">
+    <div class="px-6 py-5 sm:p-7.5">
+      <button v-if="selectedNetworks.length === availableNetworks.length" class="absolute right-7.5 text-xs text-primary" type="button" @click="handleDeselectAll">
         Deselect all
       </button>
 
-      <button v-else class="text-xs absolute right-7.5 text-primary" type="button" @click="handleSelectAll">
+      <button v-else class="absolute right-7.5 text-xs text-primary" type="button" @click="handleSelectAll">
         Select all
       </button>
       <template v-if="deployedNetworks?.length">
-        <h2 class="text-sm mb-4">
+        <h2 class="mb-4 text-sm">
           Deployed
         </h2>
         <ul class="mb-4 flex flex-col gap-4">
@@ -89,7 +89,7 @@ function handleBack() {
         </ul>
       </template>
       <template v-if="nonDeployedNetworks?.length">
-        <h2 class="text-sm mb-4 flex items-center gap-2.5">
+        <h2 class="mb-4 flex items-center gap-2.5 text-sm">
           Not deployed <SvgoInfo2 v-tippy="'You can also deploy anytime in future on any chain at the same address'" class="text-slate-500" />
         </h2>
         <ul class="flex flex-col gap-4">
@@ -98,7 +98,7 @@ function handleBack() {
       </template>
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
-    <div class="p-7.5 grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-2 gap-4 p-7.5">
       <CommonButton class="justify-center" size="lg" color="white" @click="handleBack">
         Back
       </CommonButton>

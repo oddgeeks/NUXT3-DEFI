@@ -35,28 +35,28 @@ const componentToShow = computed(() => {
           color === 'orange',
       },
       {
-        'bg-blue-500 text-white hover:bg-blue-600 dark:disabled:bg-slate-800 dark:disabled:text-slate-500 disabled:text-slate-400 disabled:bg-slate-200':
+        'bg-blue-500 text-white hover:bg-blue-600 disabled:bg-slate-200 disabled:text-slate-400 dark:disabled:bg-slate-800 dark:disabled:text-slate-500':
           color === 'blue',
       },
       {
-        'bg-primary text-white hover:bg-primary-hover dark:disabled:bg-slate-800 dark:disabled:text-slate-500 disabled:text-slate-400 disabled:bg-slate-200':
+        'bg-primary text-white hover:bg-primary-hover disabled:bg-slate-200 disabled:text-slate-400 dark:disabled:bg-slate-800 dark:disabled:text-slate-500':
           color === 'primary',
       },
       {
-        'dark:bg-slate-800 bg-slate-100 dark:disabled:text-slate-500 disabled:text-slate-400':
+        'bg-slate-100 disabled:text-slate-400 dark:bg-slate-800 dark:disabled:text-slate-500':
           color === 'white',
       },
       {
-        'text-xs py-1 px-[15px] rounded-5 leading-5': size === 'sm',
+        'rounded-5 px-[15px] py-1 text-xs leading-5': size === 'sm',
       },
       {
-        'text-sm py-2 px-5.5 rounded-5': size === 'md',
+        'rounded-5 px-5.5 py-2 text-sm': size === 'md',
       },
       {
-        'text-sm py-3 px-5.5 rounded-10': size === 'lg',
+        'rounded-10 px-5.5 py-3 text-sm': size === 'lg',
       },
     ]"
-    class="font-semibold inline-flex disabled:pointer-events-none disabled:select-none"
+    class="inline-flex font-semibold disabled:pointer-events-none disabled:select-none"
     :disabled="disabled || loading"
   >
     <slot name="prefix" />

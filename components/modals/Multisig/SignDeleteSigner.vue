@@ -7,7 +7,7 @@ defineProps<{
 
 <template>
   <div>
-    <div class="flex gap-[14px] sm:p-7.5 p-5">
+    <div class="flex gap-[14px] p-5 sm:p-7.5">
       <div class="flex flex-col gap-1">
         <h1 class="text-lg leading-10">
           Sign Transaction

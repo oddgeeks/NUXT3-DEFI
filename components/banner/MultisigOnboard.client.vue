@@ -5,19 +5,19 @@ const { isMultisigOnboardBannerVisible, hideMultisigOnboardBanner } = useBanner(
 
 <template>
   <Transition name="slide-fade">
-    <div v-if="isMultisigOnboardBannerVisible" class="flex z-10 items-center gap-[15px] sm:max-w-[500px] w-full bg-[#4CA054] dark:bg-[#4CA054] dark:bg-opacity-70 bg-opacity-30 backdrop-blur px-5 rounded-5 pr-7.5 py-4 fixed left-1/2 transform -translate-x-1/2 bottom-[50px]">
+    <div v-if="isMultisigOnboardBannerVisible" class="fixed bottom-[50px] left-1/2 z-10 flex w-full -translate-x-1/2 items-center gap-[15px] rounded-5 bg-[#4CA054] bg-opacity-30 px-5 py-4 pr-7.5 backdrop-blur dark:bg-[#4CA054] dark:bg-opacity-70 sm:max-w-[500px]">
       <SvgoGear />
-      <p class="text-xs leading-5 flex-1 dark:text-white text-slate-900">
+      <p class="flex-1 text-xs leading-5 text-slate-900 dark:text-white">
         Configure your multisig wallet to get access to all the features
       </p>
       <CommonButton as="NuxtLink" :to="`/multisig/${selectedSafe?.safe_address}/signers`">
         Setup
       </CommonButton>
       <button
-        class="w-5 h-5 rounded-full flex items-center justify-center bg-white bg-opacity-20"
+        class="flex h-5 w-5 items-center justify-center rounded-full bg-white bg-opacity-20"
         @click="hideMultisigOnboardBanner"
       >
-        <SvgoX class="dark:text-white text-slate-500" />
+        <SvgoX class="text-slate-500 dark:text-white" />
       </button>
     </div>
   </Transition>
