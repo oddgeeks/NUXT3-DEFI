@@ -24,8 +24,6 @@ export function useAvocadoSafe() {
   const { isSafeMultisig, hasInstadappSigner } = storeToRefs(useMultisig())
   const { getRequiredSigner } = useMultisig()
 
-  const transactionToken = useCookie<string | undefined>('transaction-token')
-
   const { safeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks, networkOrderedBySumTokens } = storeToRefs(useSafe())
 
   const sendTransaction = async (
@@ -408,6 +406,8 @@ export function useAvocadoSafe() {
 
     if (isSafeEligableToSingleExecution(requiredSigner, selectedSafe.value)) {
       if (hasInstadappSigner.value && atLeastOneMfaVerifed.value) {
+        const transactionToken = useCookie<string | undefined>(`transaction-token-${selectedSafe.value?.safe_address}`)
+
         if (transactionToken.value) { mfaProperties.mfa_token = transactionToken.value }
         else {
           const { success, payload } = await openMfaAuthenticateModal({})
@@ -437,12 +437,11 @@ export function useAvocadoSafe() {
                 },
               ])
 
-              const transactionToken = useCookie<string | undefined>('transaction-token', {
+              const transactionToken = useCookie<string | undefined>(`transaction-token-${selectedSafe.value?.safe_address}`, {
                 expires: new Date(resp.expiresAt),
               })
 
-              const transactionTokenExpiry = useCookie<string | undefined>('transaction-token-expiry', {
-                watch: true,
+              const transactionTokenExpiry = useCookie<string | undefined>(`transaction-token-expiry-${selectedSafe.value?.safe_address}`, {
                 expires: new Date(resp.expiresAt),
               })
 

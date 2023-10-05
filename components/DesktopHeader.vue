@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 
-const { safeAddress, isSelectedSafeLegacy } = storeToRefs(useSafe())
+const { safeAddress, selectedSafe } = storeToRefs(useSafe())
 const { fromWei } = useBignumber()
 const { avoProvider } = useSafe()
 const route = useRoute()
@@ -15,11 +15,9 @@ const dryRun = useCookie<boolean | undefined>('dry-run', {
 
 const formattedTime = ref()
 
-const transactionTokenExpiry = useCookie<string | undefined>('transaction-token-expiry', {
-  watch: true,
-})
-
 function formatCountDown() {
+  const transactionTokenExpiry = useCookie<string | undefined>(`transaction-token-expiry-${selectedSafe.value?.safe_address}`)
+
   if (!transactionTokenExpiry.value) {
     formattedTime.value = undefined
     return
