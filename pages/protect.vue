@@ -9,7 +9,8 @@ useAccountTrack(undefined, () => {
 
 const { isSelectedSafeLegacy } = storeToRefs(useSafe())
 const { hasInstadappSigner } = storeToRefs(useMultisig())
-const { mfaTypes, mfaTermsAccepted, preferredMfaType } = useMfa()
+const { fetchSafeInstanceses } = useSafe()
+const { mfaTypes, mfaTermsAccepted, preferredMfaType, verifyDeleteRequest } = useMfa()
 
 function defaultSteps() {
   return {
@@ -20,8 +21,46 @@ function defaultSteps() {
 
 useState('signer-steps', defaultSteps)
 
+async function handleDeactivateWithRecoveryCode(close: () => void) {
+  const { success } = await openDeactivateTotpByRecoveryCodes()
+
+  if (success) {
+    notify({
+      type: 'success',
+      message: 'Successfully deactivated OTPT',
+    })
+    fetchSafeInstanceses()
+  }
+
+  close()
+}
+
 async function handleDeactivate(mfa: IMfa, close: () => void) {
-  console.log(mfa)
+  const { success, payload } = await openVerifyMFAModal(mfa, 'delete')
+
+  if (!success || !payload.code)
+    return
+
+  const verified = await verifyDeleteRequest(mfa, payload.code)
+
+  if (verified) {
+    notify({
+      type: 'success',
+      message: `Successfully deactivated ${mfa.label}`,
+    })
+
+    if (preferredMfaType.value === mfa.value)
+      preferredMfaType.value = undefined
+
+    fetchSafeInstanceses()
+  }
+  else {
+    notify({
+      type: 'error',
+      message: `Failed to deactivate ${mfa.label}`,
+    })
+  }
+
   close()
 }
 
@@ -109,6 +148,9 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                           </button>
                           <button class="flex items-center gap-2 px-5 text-red-alert" @click="handleDeactivate(mfa, close)">
                             <SvgoTrash2 /> Deactivate
+                          </button>
+                          <button v-if="mfa.value === 'totp'" class="flex items-center gap-2 whitespace-nowrap px-5 text-red-alert" @click="handleDeactivateWithRecoveryCode(close)">
+                            <SvgoTrash2 /> Deactivate <span class="text-[10px]">(Recovery Code)</span>
                           </button>
                         </PopoverPanel>
                       </transition>

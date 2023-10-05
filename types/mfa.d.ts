@@ -10,6 +10,7 @@ interface IMfaResponse {
     issuer: string
     label: string
     uri: string
+    recovery_codes: string[]
   }
 }
 
@@ -19,6 +20,12 @@ interface IMfa {
   activated: boolean
   title: string
   description: string
+  removeTypes?: {
+    [key: string]: {
+      name: string
+      type: string
+    }[]
+  },
   types: {
     [key: string]: {
       name: string

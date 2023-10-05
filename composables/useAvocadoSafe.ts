@@ -418,7 +418,7 @@ export function useAvocadoSafe() {
           const mfa: IMfa = payload?.mfa
 
           if (mfa) {
-            const { success, payload: verifyPayload } = await openVerifyMFAModal(mfa, true)
+            const { success, payload: verifyPayload } = await openVerifyMFAModal(mfa, 'transaction')
 
             if (!success)
               throw new Error('MFA verification failed')
@@ -824,44 +824,6 @@ ${parsed.message}`,
     return safe && safe.multisig_index === 0 && requiredSigner === 1
   }
 
-  async function signAndRequestMfaCode(mfa: IMfa, requestForTransaction = false) {
-    await switchToAvocadoNetwork()
-
-    const name = requestForTransaction ? 'Avocado MFA Transaction' : 'Avocado MFA Code'
-    const method = requestForTransaction ? 'mfa_requestTransactionCode' : 'mfa_requestCode'
-
-    const domain = {
-      name,
-      version: '1.0.0',
-      chainId: String(avoChainId),
-      verifyingContract: selectedSafe.value?.safe_address,
-    }
-
-    const value = {
-      owner: selectedSafe.value?.owner_address,
-      index: selectedSafe.value?.multisig_index,
-      type: mfa.value,
-    }
-
-    const payload = {
-      domain,
-      types: mfaSessionTypes,
-      value,
-    }
-
-    const { signature, cancelled } = await signTypedData(library.value, account.value, payload)
-
-    if (cancelled || !signature)
-      return
-
-    return avoProvider.send(method, [
-      {
-        signature,
-        data: value,
-      },
-    ])
-  }
-
   return {
     tokenBalances,
     totalEoaBalance,
@@ -889,6 +851,5 @@ ${parsed.message}`,
     checkTransactionExecuted,
     networkOrderedBySumTokens,
     generateSignatureMessage,
-    signAndRequestMfaCode,
   }
 }

@@ -50,6 +50,8 @@ import ExecutionError from '~/components/modals/Multisig/ExecutionError.vue'
 import ActivateMFA from '~/components/modals//Mfa/ActivateMFA.vue'
 import AuthenticateMFA from '~/components/modals//Mfa/Authenticate.vue'
 import VerifyMFA from '~/components/modals//Mfa/VerifyMFA.vue'
+import TotpRecoveryCode from '~/components/modals/Mfa/TotpRecoveryCode.vue'
+import TotpDeactivateByRecoveryCode from '~/components/modals/Mfa/TotpDeactivateByRecoveryCode.vue'
 import MFATerms from '~/components/modals/Mfa/Terms.vue'
 
 const { openModal } = useModal()
@@ -751,13 +753,13 @@ export async function openMfaAuthenticateModal(params: IMfaAuthenticateParams) {
   })
 }
 
-export async function openVerifyMFAModal(mfa: IMfa, requestForTransaction = false) {
+export async function openVerifyMFAModal(mfa: IMfa, requestType: MfaRequestType) {
   return openModal({
     component: VerifyMFA,
     async: true,
     componentProps: {
       mfa,
-      requestForTransaction,
+      requestType,
     },
     options: {
       contentClass: '!p-0',
@@ -765,5 +767,33 @@ export async function openVerifyMFAModal(mfa: IMfa, requestForTransaction = fals
     },
   })
 }
+
+export async function openRegenerateTotpRecoveryCodeModal(recoverycodes?: string[]) {
+  return openModal({
+    component: TotpRecoveryCode,
+    async: true,
+    componentProps: {
+      recoverycodes,
+    },
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[560px]',
+    },
+  })
+}
+
+export async function openDeactivateTotpByRecoveryCodes() {
+  return openModal({
+    component: TotpDeactivateByRecoveryCode,
+    async: true,
+    componentProps: {
+    },
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[560px]',
+    },
+  })
+}
+
 // @ts-expect-error
 globalThis.openCustomTxModal = openCustomTxModal

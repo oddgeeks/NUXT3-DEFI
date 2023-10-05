@@ -702,6 +702,8 @@ interface IMfaAuthenticateParams {
   
 }
 
+type MfaRequestType = 'transaction' | 'delete' | 'update'
+
 interface IMfaActivateModalParams {
   mfaType: IMfa
 }

@@ -3,11 +3,11 @@ import VOtpInput from 'vue3-otp-input'
 
 const props = defineProps<{
   mfa: IMfa
-  requestForTransaction: boolean
+  requestType: MfaRequestType
 }>()
 
 const emit = defineEmits(['resolve'])
-const { signAndRequestMfaCode } = useAvocadoSafe()
+const { signAndRequestTransactionMfaCode, signAndRequestDeleteMfaCode, signAndRequestUpdateMfaCode } = useMfa()
 
 const actualMfa = computed(() => props.mfa)
 
@@ -23,7 +23,18 @@ async function onSubmit() {
 }
 
 async function handleRequest() {
-  const success = await signAndRequestMfaCode(actualMfa.value, props.requestForTransaction)
+  let success = false
+
+  console.log(props.requestType)
+
+  if (props.requestType === 'update')
+    success = await signAndRequestUpdateMfaCode(props.mfa)
+
+  if (props.requestType === 'delete')
+    success = await signAndRequestDeleteMfaCode(props.mfa)
+
+  else if (props.requestType === 'transaction')
+    success = await signAndRequestTransactionMfaCode(props.mfa)
 
   if (success) {
     notify({

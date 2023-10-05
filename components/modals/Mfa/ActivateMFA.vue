@@ -7,7 +7,9 @@ const props = defineProps<{
   mfaType: IMfa
 }>()
 
-defineEmits(['destroy'])
+const emit = defineEmits(['destroy'])
+
+const { switchToAvocadoNetwork } = useNetworks()
 
 const actualMfa = computed(() => props.mfaType)
 
@@ -58,6 +60,8 @@ const onSubmit = handleSubmit(async () => {
   if (!actualMfa.value)
     return
 
+  await switchToAvocadoNetwork()
+
   const domain = {
     name: 'Avocado MFA Update',
     version: '1.0.0',
@@ -104,7 +108,7 @@ const onSubmit = handleSubmit(async () => {
 
     const mfa: IMfa = payload?.mfa
 
-    const { success: verifySuccess, payload: verifyPayload } = await openVerifyMFAModal(mfa)
+    const { success: verifySuccess, payload: verifyPayload } = await openVerifyMFAModal(mfa, 'update')
 
     if (!verifySuccess || !verifyPayload?.code)
       return
@@ -152,6 +156,14 @@ async function verify() {
       message: 'MFA enabled',
       type: 'success',
     })
+
+    setTimeout(() => {
+      if (props.mfaType.value === 'totp') {
+        emit('destroy')
+        openRegenerateTotpRecoveryCodeModal(mfaRequestResponse.value?.data.recovery_codes)
+      }
+      else { emit('destroy') }
+    }, 1000)
   }
 
   else {
