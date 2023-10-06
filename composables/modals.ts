@@ -52,6 +52,7 @@ import AuthenticateMFA from '~/components/modals//Mfa/Authenticate.vue'
 import VerifyMFA from '~/components/modals//Mfa/VerifyMFA.vue'
 import TotpRecoveryCode from '~/components/modals/Mfa/TotpRecoveryCode.vue'
 import TotpDeactivateByRecoveryCode from '~/components/modals/Mfa/TotpDeactivateByRecoveryCode.vue'
+import TotpActivate from '~/components/modals/Mfa/TotpActivate.vue'
 import MFATerms from '~/components/modals/Mfa/Terms.vue'
 
 const { openModal } = useModal()
@@ -736,16 +737,30 @@ export async function openMfaActivateModal(params: IMfaActivateModalParams) {
     },
     options: {
       contentClass: '!p-0',
-      wrapperClass: '!max-w-[560px]',
     },
   })
 }
 
-export async function openMfaAuthenticateModal(params: IMfaAuthenticateParams) {
+export async function openTotptActivateModal(totp: ITotpData) {
+  return openModal({
+    component: TotpActivate,
+    async: true,
+    componentProps: {
+      totp,
+    },
+    options: {
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export async function openMfaAuthenticateModal(mfaRequestType: MfaRequestType) {
   return openModal({
     component: AuthenticateMFA,
     async: true,
-    componentProps: params,
+    componentProps: {
+      mfaRequestType,
+    },
     options: {
       contentClass: '!p-0',
       wrapperClass: '!max-w-[560px]',
@@ -753,17 +768,16 @@ export async function openMfaAuthenticateModal(params: IMfaAuthenticateParams) {
   })
 }
 
-export async function openVerifyMFAModal(mfa: IMfa, requestType: MfaRequestType) {
+export async function openVerifyMFAModal(mfa: IMfa, request?: Function) {
   return openModal({
     component: VerifyMFA,
     async: true,
     componentProps: {
       mfa,
-      requestType,
+      request,
     },
     options: {
       contentClass: '!p-0',
-      wrapperClass: '!max-w-[560px]',
     },
   })
 }

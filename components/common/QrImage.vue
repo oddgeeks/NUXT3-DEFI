@@ -18,5 +18,5 @@ const dataURL = computedAsync(async () => {
 </script>
 
 <template>
-  <img v-if="dataURL" class="rounded-lg" style="width: 200px; height: 200px;" :src="dataURL" alt="Qr Image">
+  <img v-if="dataURL" class="rounded-lg" :src="dataURL" alt="Qr Image">
 </template>

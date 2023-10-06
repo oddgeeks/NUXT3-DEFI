@@ -1,8 +1,6 @@
 type Mfa = 'totp' | 'phone' | 'email'
 
-interface IMfaResponse {
-  status: boolean;
-  data: {
+interface ITotpData {
     algorithm: string
     digits: number
     period: number
@@ -12,6 +10,10 @@ interface IMfaResponse {
     uri: string
     recovery_codes: string[]
   }
+
+interface IMfaResponse {
+  status: boolean;
+  data: ITotpData
 }
 
 interface IMfa {

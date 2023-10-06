@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { serialize } from 'error-serializer'
+
 definePageMeta({
   middleware: 'auth',
 })
@@ -10,7 +12,7 @@ useAccountTrack(undefined, () => {
 const { isSelectedSafeLegacy } = storeToRefs(useSafe())
 const { hasInstadappSigner } = storeToRefs(useMultisig())
 const { fetchSafeInstanceses } = useSafe()
-const { mfaTypes, mfaTermsAccepted, preferredMfaType, verifyDeleteRequest } = useMfa()
+const { mfaTypes, mfaTermsAccepted, preferredMfaType, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa } = useMfa()
 
 function defaultSteps() {
   return {
@@ -36,7 +38,14 @@ async function handleDeactivateWithRecoveryCode(close: () => void) {
 }
 
 async function handleDeactivate(mfa: IMfa, close: () => void) {
-  const { success, payload } = await openVerifyMFAModal(mfa, 'delete')
+  if (mfa.value !== 'totp') {
+    const success = await signAndRequestDeleteMfaCode(mfa)
+
+    if (!success)
+      return
+  }
+
+  const { success, payload } = await openVerifyMFAModal(mfa, signAndRequestDeleteMfaCode)
 
   if (!success || !payload.code)
     return
@@ -65,14 +74,37 @@ async function handleDeactivate(mfa: IMfa, close: () => void) {
 }
 
 async function handleActivate(mfa: IMfa) {
-  if (!mfaTermsAccepted.value) {
-    const { success } = await openMfaTermsModal()
+  try {
+    if (!mfaTermsAccepted.value) {
+      const { success } = await openMfaTermsModal()
 
-    if (!success)
-      return
+      if (!success)
+        return
+    }
+
+    if (mfa.value === 'totp') { await activateToptMfa(mfa) }
+
+    else {
+      const { success } = await openMfaActivateModal({ mfaType: mfa })
+
+      if (success) {
+        notify({
+          type: 'success',
+          message: `Successfully activated ${mfa.label}`,
+        })
+      }
+    }
+
+    fetchSafeInstanceses()
   }
+  catch (e) {
+    const parsed = serialize(e)
 
-  openMfaActivateModal({ mfaType: mfa })
+    notify({
+      type: 'error',
+      message: parsed.message,
+    })
+  }
 }
 
 function handleSetDefault(mfa: IMfa, close: () => void) {

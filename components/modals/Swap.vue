@@ -1053,6 +1053,7 @@ onUnmounted(() => {
         Swap
       </CommonButton>
     </div>
+    <SessionLocked class="mx-auto" />
   </form>
 </template>
 

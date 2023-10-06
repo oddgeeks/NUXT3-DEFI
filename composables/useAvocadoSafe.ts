@@ -18,7 +18,7 @@ export function useAvocadoSafe() {
   const { avoProvider, getSafeOptions, refreshSelectedSafe, getFallbackSafeOptionsByChainId } = useSafe()
   const { selectedSafe, isSelectedSafeLegacy, safeOptions, atLeastOneMfaVerifed } = storeToRefs(useSafe())
   const { clearAllModals } = useModal()
-  const { mfaSessionTypes } = useMfa()
+  const { signAndRequestTransactionMfaCode } = useMfa()
   const dryRun = useCookie<boolean | undefined>('dry-run')
 
   const { isSafeMultisig, hasInstadappSigner } = storeToRefs(useMultisig())
@@ -410,7 +410,7 @@ export function useAvocadoSafe() {
 
         if (transactionToken.value) { mfaProperties.mfa_token = transactionToken.value }
         else {
-          const { success, payload } = await openMfaAuthenticateModal({})
+          const { success, payload } = await openMfaAuthenticateModal('transaction')
 
           if (!success)
             throw new Error('Authenticate canceled')
@@ -418,7 +418,14 @@ export function useAvocadoSafe() {
           const mfa: IMfa = payload?.mfa
 
           if (mfa) {
-            const { success, payload: verifyPayload } = await openVerifyMFAModal(mfa, 'transaction')
+            if (mfa.value !== 'totp') {
+              const success = await signAndRequestTransactionMfaCode(mfa)
+
+              if (!success)
+                throw new Error('Failed to request MFA code')
+            }
+
+            const { success, payload: verifyPayload } = await openVerifyMFAModal(mfa, signAndRequestTransactionMfaCode)
 
             if (!success)
               throw new Error('MFA verification failed')
