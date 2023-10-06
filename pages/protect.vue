@@ -9,7 +9,7 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const { isSelectedSafeLegacy } = storeToRefs(useSafe())
+const { isSelectedSafeLegacy, atLeastOneMfaVerifed } = storeToRefs(useSafe())
 const { hasInstadappSigner } = storeToRefs(useMultisig())
 const { fetchSafeInstanceses } = useSafe()
 const { mfaTypes, mfaTermsAccepted, preferredMfaType, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa } = useMfa()
@@ -152,11 +152,18 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                   <span class="text-xs font-medium leading-5">
                     {{ mfa.label }}
                   </span>
-                  <span v-if="mfa.activated" class="flex items-center gap-2.5 text-xs uppercase ">
-                    <SvgoCheckCircle class="success-circle w-5" />
-                    <span class="text-primary">
-                      Active
-                    </span>
+                  <span v-if="mfa.activated" class="flex items-center gap-2.5 text-xs font-medium">
+                    <template v-if="hasInstadappSigner">
+                      <SvgoCheckCircle class="success-circle w-5" />
+                      <span class="uppercase text-primary">
+                        Active
+                      </span>
+                    </template>
+                    <template v-else>
+                      <span class="text-orange">
+                        Confirm changes to activate
+                      </span>
+                    </template>
 
                     <Popover class="relative inline-flex items-center">
                       <PopoverButton class="group">
@@ -198,7 +205,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
         </div>
       </div>
 
-      <div v-if="!hasInstadappSigner" class="flex flex-col items-center justify-center gap-[14px]">
+      <div v-if="atLeastOneMfaVerifed && !hasInstadappSigner" class="flex flex-col items-center justify-center gap-[14px]">
         <span class="text-xs font-medium text-slate-400">
           One or more changes yet to be confirmed
         </span>

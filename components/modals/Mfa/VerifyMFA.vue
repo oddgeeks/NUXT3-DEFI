@@ -57,7 +57,7 @@ async function handleRequest() {
         Submit
       </CommonButton>
       <CommonButton v-if="mfa.value !== 'totp'" :disabled="!!count" class="flex-1 justify-center" @click="handleRequest">
-        Re send OTP
+        Resend OTP
         <span v-if="count" class="ml-1">
           ({{ count }})
         </span>
