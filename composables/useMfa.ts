@@ -118,7 +118,7 @@ export function useMfa() {
     if (atLeastOneMfaVerifed.value) {
       const { success, payload: authPayload } = await openMfaAuthenticateModal('update')
       if (!success && !authPayload?.mfa)
-        throw new Error('Failed to authenticate MFA')
+        return
 
       const authMfa: IMfa = authPayload?.mfa
 
@@ -166,7 +166,7 @@ export function useMfa() {
     if (atLeastOneMfaVerifed.value) {
       const { success, payload: authPayload } = await openMfaAuthenticateModal('delete')
       if (!success && !authPayload?.mfa)
-        throw new Error('Failed to authenticate MFA')
+        return
 
       const mfa: IMfa = authPayload?.mfa
 

@@ -21,8 +21,8 @@ export function useAvocadoSafe() {
   const { signAndRequestTransactionMfaCode } = useMfa()
   const dryRun = useCookie<boolean | undefined>('dry-run')
 
-  const { isSafeMultisig, hasInstadappSigner } = storeToRefs(useMultisig())
-  const { getRequiredSigner } = useMultisig()
+  const { isSafeMultisig } = storeToRefs(useMultisig())
+  const { getRequiredSigner, isInstadappSignerAdded } = useMultisig()
 
   const { safeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks, networkOrderedBySumTokens } = storeToRefs(useSafe())
 
@@ -405,7 +405,7 @@ export function useAvocadoSafe() {
     } as any
 
     if (isSafeEligableToSingleExecution(requiredSigner, selectedSafe.value)) {
-      if (hasInstadappSigner.value && atLeastOneMfaVerifed.value) {
+      if (isInstadappSignerAdded(chainId) && atLeastOneMfaVerifed.value) {
         const transactionToken = useCookie<string | undefined>(`transaction-token-${selectedSafe.value?.safe_address}`)
 
         if (transactionToken.value) { mfaProperties.mfa_token = transactionToken.value }

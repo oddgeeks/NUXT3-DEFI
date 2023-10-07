@@ -54,6 +54,7 @@ import TotpRecoveryCode from '~/components/modals/Mfa/TotpRecoveryCode.vue'
 import TotpDeactivateByRecoveryCode from '~/components/modals/Mfa/TotpDeactivateByRecoveryCode.vue'
 import TotpActivate from '~/components/modals/Mfa/TotpActivate.vue'
 import MFATerms from '~/components/modals/Mfa/Terms.vue'
+import MFASignInstadappSigner from '~/components/modals/Mfa/SignInstadappSigner.vue'
 
 const { openModal } = useModal()
 
@@ -799,6 +800,18 @@ export async function openRegenerateTotpRecoveryCodeModal(recoverycodes?: string
 export async function openDeactivateTotpByRecoveryCodes() {
   return openModal({
     component: TotpDeactivateByRecoveryCode,
+    async: true,
+    componentProps: {
+    },
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[560px]',
+    },
+  })
+}
+export function openMfaSignInstadappSignerModal() {
+  return openModal({
+    component: MFASignInstadappSigner,
     async: true,
     componentProps: {
     },
