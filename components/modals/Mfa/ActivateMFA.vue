@@ -11,6 +11,8 @@ const emit = defineEmits(['resolve'])
 
 const phoneRegexp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
+const countriesWithKey = computed(() => countries.map(c => ({ ...c, key: c.iso2 + c.dialCode })))
+
 const { selectedSafe } = storeToRefs(useSafe())
 const { activateMfa } = useMfa()
 
@@ -41,19 +43,21 @@ useField<Mfa>('mfa', undefined, {
 const { value: email, errorMessage: emailErrorMessage } = useField('email')
 const { value: phone, errorMessage: phoneErrorMessage } = useField('phone')
 const { value: countryCode } = useField('countryCode', undefined, {
-  initialValue: '1',
+  initialValue: 'us1',
 })
 
 const country = computed(() => {
-  return countries.find(c => c.dialCode === countryCode.value)
+  return countriesWithKey.value.find(c => c.key === countryCode.value)
 })
 
 const onSubmit = handleSubmit(async () => {
+  const country = countriesWithKey.value.find(c => c.key === countryCode.value)
+
   const value = {
     phone: {
       owner: selectedSafe.value?.owner_address,
       index: selectedSafe.value?.multisig_index,
-      countryCode: countryCode.value,
+      countryCode: country?.dialCode,
       phone: phone.value,
       mfaType: '',
       mfaCode: '',
@@ -107,7 +111,7 @@ const onSubmit = handleSubmit(async () => {
           <div class="flex w-full items-baseline">
             <CommonInput id="phone" v-model="phone" name="phone" autofocus placeholder="0000 0000" :error-message="phoneErrorMessage" container-classes="!px-0" class="w-full">
               <template #prefix>
-                <CommonSelect v-model="countryCode" container-classes="!py-0 !bg-transparent !border-0" list-classes="!w-[400%]" searchable label-key="name" value-key="dialCode" :options="countries">
+                <CommonSelect v-model="countryCode" container-classes="!py-0 !bg-transparent !border-0" list-classes="!w-[400%]" searchable label-key="name" value-key="key" :options="countriesWithKey">
                   <template #button-label>
                     <Flag v-if="country" class="h-5 w-5" :flag="country?.iso2.toUpperCase()" />
                   </template>
