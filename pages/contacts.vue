@@ -37,6 +37,23 @@ const filteredContacts = computed(() => {
   return fuse.search(searchQuery.value).map(result => result.item)
 })
 
+const downloadContactsAsCSV = () => {
+  let csvContent = 'Address,Name,ChainId\n'
+
+  filteredContacts.value.forEach(row => {
+    csvContent += row.address + "," + row.name + "," + row.chainId + "\n"
+  })
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8,' })
+  const url = URL.createObjectURL(blob)
+
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'Contacts.csv'
+  a.click()
+  a.remove()
+}
+
 watch(safeAddress, () => {
   if (!safeAddress.value)
     return
@@ -72,7 +89,10 @@ watch(safeAddress, () => {
             <SearchSVG class="mr-2 shrink-0" />
           </template>
         </CommonInput>
-
+        <button class="flex items-center justify-center gap-2 px-5 hover:text-slate-400" @click="downloadContactsAsCSV()">
+          <SvgoDownload class="w-5 h-5" />
+          Export
+        </button>
         <CommonButton
           :disabled="!safeAddress"
           size="lg"
