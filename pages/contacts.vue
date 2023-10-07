@@ -2,6 +2,8 @@
 import Fuse from 'fuse.js'
 import SearchSVG from '~/assets/images/icons/search.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
+import ImportSVG from '~/assets/images/icons/import.svg?component'
+import ExportSVG from '~/assets/images/icons/export.svg?component'
 
 definePageMeta({
   middleware: 'auth',
@@ -9,7 +11,8 @@ definePageMeta({
 
 const { account } = useWeb3()
 const { safeAddress } = useAvocadoSafe()
-const { safeContacts, fetchTransferCounts } = useContacts()
+const { ownerContact, safeContacts, fetchTransferCounts } = useContacts()
+const { contacts } = useContacts()
 
 const searchQuery = ref('')
 
@@ -36,6 +39,45 @@ const filteredContacts = computed(() => {
 
   return fuse.search(searchQuery.value).map(result => result.item)
 })
+
+const importCSVFile = () => {
+  const file_input = document.createElement('input');
+  file_input.type = 'file';
+  file_input.onchange = (ev) => {
+    if (!file_input.files)
+      return
+    const file = file_input.files[0] 
+    const reader = new FileReader()
+
+    reader.onload = (e) => {
+      const csvContent = e.target?.result;
+      const lines = csvContent?.toString().split("\n")
+      contacts.value = lines?.filter((line, i) => {
+        if (i === 0)
+          return false;
+        const columns = line.split(",")
+        if (columns[0].length === 0 || columns[0] === ownerContact.value?.address)
+          return false;
+        return true;
+      }).map(line => {
+        const columns = line.split(",")
+        return {
+          address: columns[0],
+          name: columns[1],
+          chainId: parseInt(columns[2]),
+        }
+      })
+      file_input.remove()
+    }
+
+    reader.onerror = (e) => {
+      file_input.remove()
+    }
+
+    reader.readAsText(file)
+  }
+  file_input.click()
+}
 
 const downloadContactsAsCSV = () => {
   let csvContent = 'Address,Name,ChainId\n'
@@ -89,8 +131,12 @@ watch(safeAddress, () => {
             <SearchSVG class="mr-2 shrink-0" />
           </template>
         </CommonInput>
-        <button class="flex items-center justify-center gap-2 px-5 hover:text-slate-400" @click="downloadContactsAsCSV()">
-          <SvgoDownload class="w-5 h-5" />
+        <button class="flex items-center justify-center gap-2 px-5 hover:bg-primary-hover py-2 rounded-full" @click="importCSVFile()">
+          <ImportSVG class="w-5 h-5 dark:fill-white fill-black" />
+          Import
+        </button>
+        <button class="flex items-center justify-center gap-2 px-5 hover:bg-primary-hover py-2 rounded-full" @click="downloadContactsAsCSV()">
+          <ExportSVG class="w-5 h-5 dark:fill-white fill-black" />
           Export
         </button>
         <CommonButton
