@@ -14,7 +14,10 @@ async function handleContinue() {
   if (!mfa.value)
     return
 
-  const { success, payload } = await openVerifyMFAModal(mfa.value)
+  const { success, payload } = await openVerifyMFAModal({
+    mfa: mfa.value,
+    mfaRequestType: 'update',
+  })
 
   if (success && payload.code) {
     const verifed = await verifyUpdateRequest(mfa.value, payload.code)

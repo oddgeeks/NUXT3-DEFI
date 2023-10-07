@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   mfaRequestType: MfaRequestType
 }>()
 
@@ -9,8 +9,6 @@ const enabledMfas = computed(() => mfaTypes.value.filter(i => i.activated))
 
 const mfaType = ref(preferredMfaType.value)
 
-const sessionAvailable = ref(false)
-
 async function handleTypeSelection() {
   const mfaObj = mfaTypes.value.find(i => i.value === mfaType.value)
 
@@ -19,7 +17,6 @@ async function handleTypeSelection() {
 
   emit('resolve', true, {
     mfa: mfaObj,
-    sessionAvailable: sessionAvailable.value,
   })
 }
 </script>
@@ -58,11 +55,6 @@ async function handleTypeSelection() {
       </li>
     </ul>
 
-    <label v-if="props.mfaRequestType === 'transaction'" class="mt-7.5 flex cursor-pointer items-center gap-2.5 text-xs text-slate-400" for="input-session">
-      <input id="input-session" v-model="sessionAvailable" class="peer sr-only" type="checkbox">
-      <SvgoCheckCircle class="svg-circle darker peer-checked:success-circle mt-1 h-5 w-5 shrink-0 cursor-pointer text-slate-500" />
-      Don’t ask for OTP verification for the next 30 min.
-    </label>
     <CommonButton
       :disabled="!mfaType" size="lg" class="mt-5 w-full justify-center" @click="handleTypeSelection"
     >

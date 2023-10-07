@@ -18,7 +18,7 @@ export function useAvocadoSafe() {
   const { avoProvider, getSafeOptions, refreshSelectedSafe, getFallbackSafeOptionsByChainId } = useSafe()
   const { selectedSafe, isSelectedSafeLegacy, safeOptions, atLeastOneMfaVerifed } = storeToRefs(useSafe())
   const { clearAllModals } = useModal()
-  const { signAndRequestTransactionMfaCode } = useMfa()
+  const { authVerify, preferredMfa } = useMfa()
   const dryRun = useCookie<boolean | undefined>('dry-run')
 
   const { isSafeMultisig } = storeToRefs(useMultisig())
@@ -393,6 +393,48 @@ export function useAvocadoSafe() {
     } as any
   }
 
+  async function authenticateMfa(_authMfa?: IMfa) {
+    const mfa = _authMfa || preferredMfa.value
+    const { success, payload: verifyPayload } = await authVerify(mfa, 'transaction')
+
+    if (verifyPayload?.fallbackMfa)
+      return authenticateMfa(verifyPayload.fallbackMfa)
+
+    if (!success || !verifyPayload?.code)
+      throw new Error('MFA verification failed')
+
+    if (verifyPayload.sessionAvailable) {
+      const resp = await avoProvider.send('mfa_generateSessionToken', [
+        {
+          owner: selectedSafe.value?.owner_address,
+          index: selectedSafe.value?.multisig_index,
+          ttl: '30min',
+          code: verifyPayload.code,
+          type: mfa.value,
+        },
+      ])
+
+      const transactionToken = useCookie<string | undefined>(`transaction-token-${selectedSafe.value?.safe_address}`, {
+        expires: new Date(resp.expiresAt),
+      })
+
+      const transactionTokenExpiry = useCookie<string | undefined>(`transaction-token-expiry-${selectedSafe.value?.safe_address}`, {
+        expires: new Date(resp.expiresAt),
+      })
+
+      transactionToken.value = resp.token
+      transactionTokenExpiry.value = resp.expiresAt
+
+      if (!resp)
+        throw new Error('Failed to generate session token')
+    }
+
+    return {
+      mfaCode: verifyPayload.code,
+      mfaType: mfa.value,
+    }
+  }
+
   async function createProposalOrSignDirecty(args: IGenerateMultisigSignatureParams) {
     const { chainId, actions, nonce, metadata, estimatedFee = false, rejection, rejectionId, options, transactionType = 'others', clearModals = true } = args
 
@@ -410,55 +452,10 @@ export function useAvocadoSafe() {
 
         if (transactionToken.value) { mfaProperties.mfa_token = transactionToken.value }
         else {
-          const { success, payload } = await openMfaAuthenticateModal('transaction')
+          const { mfaCode, mfaType } = await authenticateMfa()
 
-          if (!success)
-            throw new Error('Authenticate canceled')
-
-          const mfa: IMfa = payload?.mfa
-
-          if (mfa) {
-            if (mfa.value !== 'totp') {
-              const success = await signAndRequestTransactionMfaCode(mfa)
-
-              if (!success)
-                throw new Error('Failed to request MFA code')
-            }
-
-            const { success, payload: verifyPayload } = await openVerifyMFAModal(mfa, signAndRequestTransactionMfaCode)
-
-            if (!success)
-              throw new Error('MFA verification failed')
-
-            mfaProperties.mfa_code = verifyPayload.code
-            mfaProperties.mfa_type = mfa.value
-
-            if (payload.sessionAvailable) {
-              const resp = await avoProvider.send('mfa_generateSessionToken', [
-                {
-                  owner: selectedSafe.value?.owner_address,
-                  index: selectedSafe.value?.multisig_index,
-                  ttl: '30min',
-                  code: verifyPayload.code,
-                  type: mfa.value,
-                },
-              ])
-
-              const transactionToken = useCookie<string | undefined>(`transaction-token-${selectedSafe.value?.safe_address}`, {
-                expires: new Date(resp.expiresAt),
-              })
-
-              const transactionTokenExpiry = useCookie<string | undefined>(`transaction-token-expiry-${selectedSafe.value?.safe_address}`, {
-                expires: new Date(resp.expiresAt),
-              })
-
-              transactionToken.value = resp.token
-              transactionTokenExpiry.value = resp.expiresAt
-
-              if (!resp)
-                throw new Error('Failed to generate session token')
-            }
-          }
+          mfaProperties.mfa_code = mfaCode
+          mfaProperties.mfa_type = mfaType
         }
       }
 

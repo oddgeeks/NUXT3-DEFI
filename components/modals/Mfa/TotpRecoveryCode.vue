@@ -20,7 +20,10 @@ async function regenerateRecoveryCodes() {
     if (!mfa)
       return
 
-    const { success, payload } = await openVerifyMFAModal(mfa, 'delete')
+    const { success, payload } = await openVerifyMFAModal({
+      mfa,
+      mfaRequestType: 'delete',
+    })
 
     if (!success)
       return

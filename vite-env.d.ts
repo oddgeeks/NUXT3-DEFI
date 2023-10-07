@@ -707,3 +707,10 @@ type MfaRequestType = 'transaction' | 'delete' | 'update'
 interface IMfaActivateModalParams {
   mfaType: IMfa
 }
+
+interface IMfaVerifyModalParams {
+  mfa: IMfa,
+  mfaRequestType: MfaRequestType,
+  authenticate?: boolean,
+  request?: Function
+}

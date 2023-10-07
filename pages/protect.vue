@@ -23,7 +23,7 @@ function defaultSteps() {
 
 useState('signer-steps', defaultSteps)
 
-async function handleDeactivateWithRecoveryCode(close: () => void) {
+async function handleDeactivateWithRecoveryCode(mfa: IMfa, close: () => void) {
   const { success } = await openDeactivateTotpByRecoveryCodes()
 
   if (success) {
@@ -31,6 +31,8 @@ async function handleDeactivateWithRecoveryCode(close: () => void) {
       type: 'success',
       message: 'Successfully deactivated OTPT',
     })
+
+    setFallbackDefaultMfaType(mfa)
     fetchSafeInstanceses()
   }
 
@@ -45,7 +47,11 @@ async function handleDeactivate(mfa: IMfa, close: () => void) {
       return
   }
 
-  const { success, payload } = await openVerifyMFAModal(mfa, signAndRequestDeleteMfaCode)
+  const { success, payload } = await openVerifyMFAModal({
+    mfa,
+    mfaRequestType: 'delete',
+    request: signAndRequestDeleteMfaCode,
+  })
 
   if (!success || !payload.code)
     return
@@ -58,8 +64,7 @@ async function handleDeactivate(mfa: IMfa, close: () => void) {
       message: `Successfully deactivated ${mfa.label}`,
     })
 
-    if (preferredMfaType.value === mfa.value)
-      preferredMfaType.value = undefined
+    setFallbackDefaultMfaType(mfa)
 
     fetchSafeInstanceses()
   }
@@ -71,6 +76,19 @@ async function handleDeactivate(mfa: IMfa, close: () => void) {
   }
 
   close()
+}
+
+function setFallbackDefaultMfaType(mfa: IMfa) {
+  if (preferredMfaType.value === mfa.value) {
+    const activatedMfa = mfaTypes.value.find(i => i.activated && i.value !== mfa.value)
+    if (activatedMfa) {
+      preferredMfaType.value = activatedMfa.value
+    }
+    else {
+      // if no mfa is activated, set default to undefined
+      preferredMfaType.value = undefined
+    }
+  }
 }
 
 async function handleActivate(mfa: IMfa) {
@@ -88,6 +106,9 @@ async function handleActivate(mfa: IMfa) {
       const { success } = await openMfaActivateModal({ mfaType: mfa })
 
       if (success) {
+        if (!preferredMfaType.value)
+          preferredMfaType.value = mfa.value
+
         notify({
           type: 'success',
           message: `Successfully activated ${mfa.label}`,
@@ -150,9 +171,14 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
               <li v-for="mfa in mfaTypes" :key="mfa.value">
                 <div class="flex h-[66px] w-full items-center justify-between rounded-2xl bg-slate-150 p-5 text-left ring-1 ring-slate-150 dark:bg-slate-850 dark:ring-slate-750">
                   <div class="flex w-full items-center justify-between">
-                    <span class="text-xs font-medium leading-5">
-                      {{ mfa.label }}
-                    </span>
+                    <div class="flex flex-col gap-1">
+                      <span class="text-xs font-medium leading-5">
+                        {{ mfa.label }}
+                      </span>
+                      <span v-if="mfa.value === preferredMfaType" class="text-xs font-medium text-slate-400">
+                        Default
+                      </span>
+                    </div>
                     <span v-if="mfa.activated" class="flex items-center gap-2.5 text-xs font-medium">
                       <template v-if="hasInstadappSigner">
                         <SvgoCheckCircle class="success-circle w-5" />
@@ -189,7 +215,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                             <button class="flex items-center gap-2 px-5 text-red-alert" @click="handleDeactivate(mfa, close)">
                               <SvgoTrash2 /> Deactivate
                             </button>
-                            <button v-if="mfa.value === 'totp'" class="flex items-center gap-2 whitespace-nowrap px-5 text-red-alert" @click="handleDeactivateWithRecoveryCode(close)">
+                            <button v-if="mfa.value === 'totp'" class="flex items-center gap-2 whitespace-nowrap px-5 text-red-alert" @click="handleDeactivateWithRecoveryCode(mfa, close)">
                               <SvgoTrash2 /> Deactivate <span class="text-[10px]">(Recovery Code)</span>
                             </button>
                           </PopoverPanel>

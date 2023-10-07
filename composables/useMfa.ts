@@ -80,6 +80,14 @@ export function useMfa() {
     ] as IMfa[],
   )
 
+  const preferredMfa = computed(() => {
+    const mfas = mfaTypes.value.filter(mfa => mfa.activated)
+
+    const mfa = mfas.find(mfa => mfa.value === preferredMfaType.value)
+
+    return mfa || mfas[0]
+  })
+
   async function handleRequestActivateMfa(mfa: IMfa, payload: any) {
     const { signature, cancelled } = await signTypedData(library.value, account.value, payload)
 
@@ -95,7 +103,7 @@ export function useMfa() {
     return resp
   }
 
-  async function activateToptMfa(mfa: IMfa) {
+  async function activateToptMfa(mfa: IMfa, _authMfa?: IMfa) {
     await switchToAvocadoNetwork()
     const domain = {
       name: 'Avocado MFA Update',
@@ -116,23 +124,17 @@ export function useMfa() {
     }
 
     if (atLeastOneMfaVerifed.value) {
-      const { success, payload: authPayload } = await openMfaAuthenticateModal('update')
-      if (!success && !authPayload?.mfa)
-        return
+      const authMfa: IMfa = _authMfa || preferredMfa.value
 
-      const authMfa: IMfa = authPayload?.mfa
+      const { success: verifySuccess, payload: verifyPayload } = await authVerify(authMfa, 'update')
 
-      const requestSuccess = await signAndRequestUpdateMfaCode(authMfa)
-
-      if (!requestSuccess)
-        throw new Error('Failed to request MFA code')
-
-      const { success: verifySuccess, payload: verifyPayload } = await openVerifyMFAModal(authMfa, signAndRequestUpdateMfaCode)
+      if (verifyPayload?.fallbackMfa)
+        return activateToptMfa(mfa, verifyPayload.fallbackMfa)
 
       if (!verifySuccess || !verifyPayload?.code)
         return
 
-      signPayload.value.mfaType = authMfa.value
+      signPayload.value.mfaType = preferredMfa.value.value
       signPayload.value.mfaCode = verifyPayload.code
     }
 
@@ -147,7 +149,23 @@ export function useMfa() {
       throw new Error('Failed to activate TOTP MFA')
   }
 
-  async function activateMfa(mfa: IMfa, value: any) {
+  async function authVerify(mfa: IMfa, mfaRequestType: MfaRequestType) {
+    if (mfa.value !== 'totp') {
+      const success = mfaRequestType === 'transaction' ? await signAndRequestTransactionMfaCode(mfa) : await signAndRequestUpdateMfaCode(mfa)
+
+      if (!success)
+        throw new Error('Failed to request MFA code')
+    }
+
+    return openVerifyMFAModal({
+      mfa,
+      mfaRequestType,
+      authenticate: true,
+      request: signAndRequestUpdateMfaCode,
+    })
+  }
+
+  async function activateMfa(mfa: IMfa, value: any, _authMfa?: IMfa) {
     await switchToAvocadoNetwork()
 
     const domain = {
@@ -164,25 +182,17 @@ export function useMfa() {
     } as any
 
     if (atLeastOneMfaVerifed.value) {
-      const { success, payload: authPayload } = await openMfaAuthenticateModal('delete')
-      if (!success && !authPayload?.mfa)
-        return
+      const authMfa: IMfa = _authMfa || preferredMfa.value
 
-      const mfa: IMfa = authPayload?.mfa
+      const { success: verifySuccess, payload: verifyPayload } = await authVerify(authMfa, 'update')
 
-      if (mfa.value !== 'totp') {
-        const requestSuccess = await signAndRequestUpdateMfaCode(mfa)
-
-        if (!requestSuccess)
-          throw new Error('Failed to request MFA code')
-      }
-
-      const { success: verifySuccess, payload: verifyPayload } = await openVerifyMFAModal(mfa, signAndRequestUpdateMfaCode)
+      if (verifyPayload?.fallbackMfa)
+        return activateMfa(mfa, value, verifyPayload.fallbackMfa)
 
       if (!verifySuccess || !verifyPayload?.code)
         return
 
-      value.mfaType = mfa.value
+      value.mfaType = authMfa.value
       value.mfaCode = verifyPayload.code
     }
 
@@ -191,7 +201,11 @@ export function useMfa() {
     if (!resp?.status)
       throw new Error('Failed to activate MFA')
 
-    const { success, payload: verifyPayload } = await openVerifyMFAModal(mfa, handleRequestActivateMfa.bind(null, signPayload))
+    const { success, payload: verifyPayload } = await openVerifyMFAModal({
+      mfa,
+      mfaRequestType: 'update',
+      request: handleRequestActivateMfa.bind(null, signPayload),
+    })
 
     if (success && verifyPayload?.code) {
       const verifed = await verifyUpdateRequest(mfa, verifyPayload.code)
@@ -348,6 +362,7 @@ export function useMfa() {
     mfaSessionTypes,
     mfaTypes,
     preferredMfaType,
+    preferredMfa,
     signAndRequestTransactionMfaCode,
     signAndRequestDeleteMfaCode,
     verifyDeleteRequest,
@@ -357,5 +372,6 @@ export function useMfa() {
     verifyUpdateRequest,
     activateMfa,
     activateToptMfa,
+    authVerify,
   }
 }
