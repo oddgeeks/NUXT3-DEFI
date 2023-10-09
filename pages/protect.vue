@@ -145,8 +145,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
           Configure Avocado Protect ⚔️
         </h1>
         <h2 class="text-sm font-medium leading-6 text-slate-400">
-          Avocado Protect is a non-custodial 2FA service which allows you to add an additional layer
-          of verification using OT (or a backup address) before a transaction goes through.
+          Avocado Protect is a non-custodial 2FA service which allows you to add an additional layer of verification before a transaction goes through. You can activate multiple methods at once. Note only one method will be required to validate transactions.
         </h2>
         <NuxtLink class="text-sm font-medium text-primary" external to="/">
           Learn more about how it works
