@@ -80,7 +80,7 @@ export function useNavigation() {
         tooltip: 'Transaction Builder',
       },
       {
-        label: 'Enable MFA',
+        label: 'Avocado Protect',
         icon: 'SvgoShield',
         to: '/protect',
         tooltip: 'Multi-Factor Authentication',
