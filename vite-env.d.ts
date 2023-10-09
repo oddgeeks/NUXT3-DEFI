@@ -708,9 +708,12 @@ interface IMfaActivateModalParams {
   mfaType: IMfa
 }
 
+type MfaVerify = (mfa: IMfa, code: string) => Promise<boolean>
+
 interface IMfaVerifyModalParams {
   mfa: IMfa,
   mfaRequestType: MfaRequestType,
+  verify?: MfaVerify
   authenticate?: boolean,
   request?: Function
 }

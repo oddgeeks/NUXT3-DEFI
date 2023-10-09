@@ -23,17 +23,13 @@ async function regenerateRecoveryCodes() {
     const { success, payload } = await openVerifyMFAModal({
       mfa,
       mfaRequestType: 'delete',
+      verify: regenerateTotpRecoveryCode,
     })
 
     if (!success)
       return
 
-    const resp = await regenerateTotpRecoveryCode(payload.code)
-
-    if (!resp)
-      throw new Error('Failed to regenerate recovery codes')
-
-    recoveryCodes.value = resp.recovery_codes
+    recoveryCodes.value = payload?.resp?.recovery_codes
   }
   catch (e: any) {
     openSnackbar({

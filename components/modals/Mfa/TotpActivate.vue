@@ -14,24 +14,22 @@ async function handleContinue() {
   if (!mfa.value)
     return
 
-  const { success, payload } = await openVerifyMFAModal({
+  const { success } = await openVerifyMFAModal({
     mfa: mfa.value,
     mfaRequestType: 'update',
+    verify: verifyUpdateRequest,
   })
 
-  if (success && payload.code) {
-    const verifed = await verifyUpdateRequest(mfa.value, payload.code)
+  if (success) {
+    openRegenerateTotpRecoveryCodeModal(props.totp.recovery_codes)
+    emit('resolve', true)
+  }
 
-    if (verifed) {
-      openRegenerateTotpRecoveryCodeModal(props.totp.recovery_codes)
-      emit('resolve', true)
-    }
-    else {
-      notify({
-        type: 'error',
-        message: 'Invalid code',
-      })
-    }
+  else {
+    notify({
+      type: 'error',
+      message: 'Failed to verify OTP',
+    })
   }
 }
 </script>

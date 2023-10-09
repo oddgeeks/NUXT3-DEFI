@@ -4,6 +4,7 @@ import VOtpInput from 'vue3-otp-input'
 const props = defineProps<{
   mfa: IMfa
   mfaRequestType: MfaRequestType
+  verify?: (mfa: IMfa, code: string) => Promise<boolean>
   request?: (mfa: IMfa) => Promise<IMfaResponse>
   authenticate?: boolean
 }>()
@@ -22,8 +23,22 @@ async function onSubmit() {
   if (!actualMfa.value || !otpValue.value)
     return
 
+  let resp
+
+  if (typeof props.verify === 'function') {
+    resp = await props.verify(actualMfa.value, otpValue.value)
+
+    if (!resp) {
+      return openSnackbar({
+        message: 'Invalid OTP',
+        type: 'error',
+      })
+    }
+  }
+
   emit('resolve', true, {
     code: otpValue.value,
+    resp,
     sessionAvailable: sessionAvailable.value,
   })
 }

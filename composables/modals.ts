@@ -770,7 +770,7 @@ export async function openMfaAuthenticateModal(mfaRequestType: MfaRequestType) {
 }
 
 export async function openVerifyMFAModal(params: IMfaVerifyModalParams) {
-  const { mfa, request, authenticate, mfaRequestType } = params || {}
+  const { mfa, request, authenticate, mfaRequestType, verify } = params || {}
 
   return openModal({
     component: VerifyMFA,
@@ -778,6 +778,7 @@ export async function openVerifyMFAModal(params: IMfaVerifyModalParams) {
     componentProps: {
       mfa,
       request,
+      verify,
       mfaRequestType,
       authenticate,
     },

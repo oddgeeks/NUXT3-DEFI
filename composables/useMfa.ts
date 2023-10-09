@@ -190,7 +190,7 @@ export function useMfa() {
         return activateMfa(mfa, value, verifyPayload.fallbackMfa)
 
       if (!verifySuccess || !verifyPayload?.code)
-        return
+        throw new Error('MFA verification failed')
 
       value.mfaType = authMfa.value
       value.mfaCode = verifyPayload.code
@@ -201,21 +201,18 @@ export function useMfa() {
     if (!resp?.status)
       throw new Error('Failed to activate MFA')
 
-    const { success, payload: verifyPayload } = await openVerifyMFAModal({
+    const { success } = await openVerifyMFAModal({
       mfa,
       mfaRequestType: 'update',
       request: handleRequestActivateMfa.bind(null, signPayload),
+      verify: verifyUpdateRequest,
     })
 
-    if (success && verifyPayload?.code) {
-      const verifed = await verifyUpdateRequest(mfa, verifyPayload.code)
+    if (success)
+      await fetchSafeInstanceses()
 
-      if (verifed)
-        await fetchSafeInstanceses()
-
-      else
-        throw new Error('MFA verification failed')
-    }
+    else
+      throw new Error('MFA verification failed')
   }
 
   async function signAndRequestUpdateMfaCode(mfa: IMfa) {
@@ -341,7 +338,7 @@ export function useMfa() {
     }])
   }
 
-  function regenerateTotpRecoveryCode(code: string) {
+  function regenerateTotpRecoveryCode(mfa: IMfa, code: string) {
     return avoProvider.send('mfa_regenerateTotpRecoveryCodes', [{
       owner: selectedSafe.value?.owner_address,
       index: String(selectedSafe.value?.multisig_index),

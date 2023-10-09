@@ -47,18 +47,14 @@ async function handleDeactivate(mfa: IMfa, close: () => void) {
       return
   }
 
-  const { success, payload } = await openVerifyMFAModal({
+  const { success } = await openVerifyMFAModal({
     mfa,
     mfaRequestType: 'delete',
     request: signAndRequestDeleteMfaCode,
+    verify: verifyDeleteRequest,
   })
 
-  if (!success || !payload.code)
-    return
-
-  const verified = await verifyDeleteRequest(mfa, payload.code)
-
-  if (verified) {
+  if (success) {
     notify({
       type: 'success',
       message: `Successfully deactivated ${mfa.label}`,
