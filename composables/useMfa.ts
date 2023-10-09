@@ -108,6 +108,8 @@ export function useMfa() {
 
   async function activateToptMfa(mfa: IMfa, _authMfa?: IMfa) {
     await switchToAvocadoNetwork()
+
+    let resp: IMfaResponse | undefined
     const domain = {
       name: 'Avocado MFA Update',
       version: '1.0.0',
@@ -132,6 +134,17 @@ export function useMfa() {
       const { success: verifySuccess, payload: verifyPayload } = await authVerify({
         mfa: authMfa,
         mfaRequestType: 'update',
+        submitFn: async (_mfa, code) => {
+          signPayload.value.mfaType = _mfa.value
+          signPayload.value.mfaCode = code
+
+          resp = await handleRequestActivateMfa(mfa, signPayload)
+
+          if (resp?.status)
+            return true
+
+          return false
+        },
       })
 
       if (verifyPayload?.fallbackMfa)
@@ -139,12 +152,7 @@ export function useMfa() {
 
       if (!verifySuccess || !verifyPayload?.code)
         return
-
-      signPayload.value.mfaType = preferredMfa.value.value
-      signPayload.value.mfaCode = verifyPayload.code
     }
-
-    const resp = await handleRequestActivateMfa(mfa, signPayload)
 
     if (!resp?.status)
       throw new Error('Failed to activate TOTP MFA')
@@ -388,15 +396,15 @@ export function useMfa() {
     mfaTypes,
     preferredMfaType,
     preferredMfa,
+    verifyUpdateRequest,
+    activateMfa,
+    activateToptMfa,
+    authVerify,
     signAndRequestTransactionMfaCode,
     signAndRequestDeleteMfaCode,
     verifyDeleteRequest,
     regenerateTotpRecoveryCode,
     removeTotpUsingRecoveryCode,
     signAndRequestUpdateMfaCode,
-    verifyUpdateRequest,
-    activateMfa,
-    activateToptMfa,
-    authVerify,
   }
 }
