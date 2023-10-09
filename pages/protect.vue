@@ -9,7 +9,7 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const { isSelectedSafeLegacy } = storeToRefs(useSafe())
+const { isSelectedSafeLegacy, atLeastOneMfaVerifed } = storeToRefs(useSafe())
 const { hasInstadappSigner, instadappSignerNetworks } = storeToRefs(useMultisig())
 const { fetchSafeInstanceses } = useSafe()
 const { mfaTypes, mfaTermsAccepted, preferredMfaType, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa } = useMfa()
@@ -185,7 +185,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                         </template>
                         <template v-else>
                           <span class="text-orange">
-                            Confirm changes to activate
+                            Manage networks to activate
                           </span>
                         </template>
 
@@ -228,7 +228,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
               </ul>
             </div>
           </div>
-          <div class="flex items-baseline justify-between border-t border-slate-150 p-7.5 pt-5 dark:border-slate-800">
+          <div v-if="atLeastOneMfaVerifed" class="flex items-baseline justify-between border-t border-slate-150 p-7.5 pt-5 dark:border-slate-800">
             <div class="flex flex-col gap-2.5">
               <span class="text-sm font-medium">
                 Active on {{ instadappSignerNetworks.length }} networks

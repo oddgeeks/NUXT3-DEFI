@@ -1,15 +1,13 @@
 <script lang="ts" setup>
 const props = defineProps<{
   chainId: string | number
-  modelValue: boolean[]
-
 }>()
 
-const emit = defineEmits(['destroy', 'update:modelValue'])
+defineEmits(['destroy'])
 
 const pending = ref(false)
-const signed = useState(`signed-${props.chainId}`, () => false)
-const executed = useState(`executed-${props.chainId}`, () => false)
+const signed = useState(`mfa-signed-${props.chainId}`, () => false)
+const executed = useState(`mfa-executed-${props.chainId}`, () => false)
 
 const { isInstadappSignerAdded } = useMultisig()
 
@@ -57,10 +55,6 @@ async function handleSign() {
     }
 
     signed.value = true
-
-    const modelValue = props.modelValue
-    modelValue.push(true)
-    emit('update:modelValue', modelValue)
   }
   catch (e: any) {
     const parsed = parseTransactionError(e)

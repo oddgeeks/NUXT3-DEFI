@@ -1,13 +1,5 @@
 <script lang="ts" setup>
-const emit = defineEmits(['destroy'])
-const signs = ref<boolean[]>([])
 
-const steps = useState<SignerSteps>('signer-steps')
-
-async function handleBack() {
-  steps.value.currentStep -= 1
-  emit('destroy')
-}
 </script>
 
 <template>
@@ -23,7 +15,7 @@ async function handleBack() {
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <ul class="flex flex-col gap-7 p-7.5">
-      <MfaSignAddSignerItem v-for="network in availableNetworks" :key="network.chainId" v-model="signs" :chain-id="network.chainId" />
+      <MfaSignAddSignerItem v-for="network in availableNetworks" :key="network.chainId" :chain-id="network.chainId" />
     </ul>
   </div>
 </template>
