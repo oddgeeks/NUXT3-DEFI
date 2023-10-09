@@ -1,6 +1,21 @@
 <script setup lang="ts">
 const activeTab = ref('balances')
 
+const { selectedSafe } = storeToRefs(useSafe())
+const { selectedSafeForMigration } = storeToRefs(useMigration())
+const { setTokensForMigration, setNFTsForMigration, setDefiForMigration } = useMigration()
+
+// When a new safe is selected clean up selected assets for migration
+watch(selectedSafe, () => {
+  setTokensForMigration([])
+  setNFTsForMigration([])
+  setDefiForMigration([])
+  selectedSafeForMigration.value = undefined
+}, {
+  immediate: true,
+  deep: true,
+})
+
 const tabs = [
   {
     name: 'Balances',

@@ -1,12 +1,11 @@
 <script setup lang="ts">
-const { allSafes } = storeToRefs(useSafe())
-const { selectedSafeForMigration } = storeToRefs(useMigration())
+const { allSafes, selectedSafe } = storeToRefs(useSafe())
 
 const filteredSafes = computed(() => {
   const safes = allSafes.value.filter(safe => safe.multisig === 1)
-  if (!selectedSafeForMigration.value)
+  if (!selectedSafe.value)
     return safes
-  return safes.filter(safe => safe.safe_address !== selectedSafeForMigration.value?.safe.safe_address)
+  return safes.filter(safe => safe.safe_address !== selectedSafe.value?.safe_address)
 })
 
 function handleSelect(safe: ISafe) {
