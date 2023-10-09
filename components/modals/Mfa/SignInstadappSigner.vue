@@ -25,10 +25,5 @@ async function handleBack() {
     <ul class="flex flex-col gap-7 p-7.5">
       <MfaSignAddSignerItem v-for="network in availableNetworks" :key="network.chainId" v-model="signs" :chain-id="network.chainId" />
     </ul>
-    <div class="grid grid-cols-2 gap-4 p-7.5">
-      <CommonButton class="justify-center" size="lg" color="white" @click="handleBack">
-        Back
-      </CommonButton>
-    </div>
   </div>
 </template>
