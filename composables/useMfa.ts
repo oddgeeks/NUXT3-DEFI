@@ -19,9 +19,9 @@ export function useMfa() {
     [
       {
         value: 'totp',
-        title: 'Set up TOTP Authenticator app',
+        title: 'Set up Authenticator app',
         description: 'Please enter the provided code or scan QR in your Auth Provider.',
-        label: 'Authenticator app (TOTP) login',
+        label: 'Authenticator app login',
         enterOtpLabel: 'Enter TOTP provided by Auth Provider',
         types: {
           Totp: [

@@ -12,7 +12,10 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['resolve'])
+const { fetchSafeInstanceses } = useSafe()
+
 const actualMfa = computed(() => props.mfa)
+
 const otpValue = ref<string>()
 const pending = ref(false)
 
@@ -103,6 +106,16 @@ async function handleTryAnotherMethod() {
     })
   }
 }
+
+async function handleDeactivateWithRecoveryCode() {
+  try {
+    const { success } = await openDeactivateTotpByRecoveryCodes()
+    emit('resolve', success)
+  }
+  catch (e) {
+    emit('resolve', false)
+  }
+}
 </script>
 
 <template>
@@ -143,6 +156,9 @@ async function handleTryAnotherMethod() {
       </button>
       <button v-if="authenticate" class="text-left text-xs font-medium leading-5 text-primary" type="button" @click="handleTryAnotherMethod">
         Try another verification method
+      </button>
+      <button class="text-xs font-medium leading-5 text-primary" @click="handleDeactivateWithRecoveryCode">
+        Use Recovery codes
       </button>
     </div>
   </form>

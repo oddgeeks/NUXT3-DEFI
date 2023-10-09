@@ -23,22 +23,6 @@ function defaultSteps() {
 
 useState('signer-steps', defaultSteps)
 
-async function handleDeactivateWithRecoveryCode(mfa: IMfa, close: () => void) {
-  const { success } = await openDeactivateTotpByRecoveryCodes()
-
-  if (success) {
-    notify({
-      type: 'success',
-      message: 'Successfully deactivated TOTP',
-    })
-
-    setFallbackDefaultMfaType(mfa)
-    fetchSafeInstanceses()
-  }
-
-  close()
-}
-
 async function handleDeactivate(mfa: IMfa, close: () => void) {
   if (mfa.value !== 'totp') {
     const success = await signAndRequestDeleteMfaCode(mfa)
@@ -210,9 +194,6 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                               </button>
                               <button class="flex items-center gap-2 px-5 text-red-alert" @click="handleDeactivate(mfa, close)">
                                 <SvgoTrash2 /> Deactivate
-                              </button>
-                              <button v-if="mfa.value === 'totp'" class="flex items-center gap-2 whitespace-nowrap px-5 text-red-alert" @click="handleDeactivateWithRecoveryCode(mfa, close)">
-                                <SvgoTrash2 /> Deactivate <span class="text-[10px]">(Recovery Code)</span>
                               </button>
                             </PopoverPanel>
                           </transition>
