@@ -13,6 +13,11 @@ interface MigrateToModalProps {
   selectedSafe: ISafe | undefined
 }
 
+interface MigrationTransaction {
+  chainId: string | number,
+  txs: TransactionsAction[] 
+}
+
 const { sendTransactions } = useAvocadoSafe()
 const { legacySafeAddress } = storeToRefs(useSafe())
 const {
@@ -26,10 +31,8 @@ const { account, library } = useWeb3()
 
 const loading = ref(false)
 
-const nftChainIds = computed(() => selectedNFTsForMigration.value?.map(nft => nft.chainId))
-
-const nftTxs = computed(() => {
-  const txs = []
+function addNftTxs(currentTransactions: MigrationTransaction[]) {
+  const transactions = [...currentTransactions]
 
   const erc712ABI = [
     'function transferFrom(address from, address to, uint256 tokenId)',
@@ -41,12 +44,12 @@ const nftTxs = computed(() => {
     const nft = selectedNFTsForMigration.value[i]
     const calldata = contractInterface.encodeFunctionData('transferFrom', [legacySafeAddress.value, props.selectedSafe?.safe_address, nft.tokenId])
 
-    const index = txs.findIndex((tx) => tx.chainId === nft.chainId)
+    const index = transactions.findIndex((tx) => tx.chainId === nft.chainId)
 
     if (index === -1) {
-      txs.push({
+      transactions.push({
         chainId: nft.chainId,
-        txns: [{
+        txs: [{
           to: nft.contractAddress,
           data: calldata,
           operation: '0',
@@ -54,7 +57,7 @@ const nftTxs = computed(() => {
         }]
       })
     } else {
-      txs[index].txns = [...txs[index].txns, {
+      transactions[index].txs = [...transactions[index].txs, {
         to: nft.contractAddress,
         data: calldata,
         operation: '0',
@@ -63,30 +66,48 @@ const nftTxs = computed(() => {
     }
   }
 
-  return txs
-})
-
-async function migrateNfts() {
-  const hashes: string[] = []
-
-  for (let i = 0; i < nftTxs.value?.length; i++) {
-    hashes.push(await sendTransactions(
-      nftTxs.value[i].txns,
-      nftTxs.value[i].chainId,
-      undefined,
-      'nft',
-    ))
-  }
-
-  if (!hashes?.length)
-    return
-
-  return hashes
+  return transactions
 }
 
-async function migrate() {
-  loading.value = true
-  const transactions: any = []
+async function addGasBalanceTx(currentTransactions: MigrationTransaction[]) {
+  if (!selectedSafeForMigration.value)
+    return currentTransactions
+
+  const transactions = [...currentTransactions]
+
+  const gasBalanceManagerAddress = '0x847b123EB1Ed2f51bC8A5ed7D5C9091595793ae7'
+  const gasBalanceManagerAbi = [{ inputs: [{ internalType: 'address', name: 'avoFactory_', type: 'address' }, { internalType: 'address', name: 'avoMultisigFactory_', type: 'address' }, { internalType: 'address', name: 'owner_', type: 'address' }], stateMutability: 'nonpayable', type: 'constructor' }, { inputs: [], name: 'AvoGasBalanceManager__InvalidParams', type: 'error' }, { inputs: [], name: 'AvoGasBalanceManager__Unauthorized', type: 'error' }, { anonymous: false, inputs: [{ indexed: true, internalType: 'address', name: 'fromAvo', type: 'address' }, { indexed: true, internalType: 'address', name: 'toAvo', type: 'address' }, { indexed: false, internalType: 'address', name: 'toAvoOwner', type: 'address' }, { indexed: false, internalType: 'uint256', name: 'toAvoIndex', type: 'uint256' }, { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' }], name: 'AvoTransfer', type: 'event' }, { anonymous: false, inputs: [{ indexed: true, internalType: 'address', name: 'previousOwner', type: 'address' }, { indexed: true, internalType: 'address', name: 'newOwner', type: 'address' }], name: 'OwnershipTransferred', type: 'event' }, { anonymous: false, inputs: [{ indexed: false, internalType: 'address', name: 'account', type: 'address' }], name: 'Paused', type: 'event' }, { anonymous: false, inputs: [{ indexed: false, internalType: 'address', name: 'account', type: 'address' }], name: 'Unpaused', type: 'event' }, { inputs: [], name: 'avoFactory', outputs: [{ internalType: 'contract IAvoFactory', name: '', type: 'address' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'avoMultisigFactory', outputs: [{ internalType: 'contract IAvoMultisigFactory', name: '', type: 'address' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'owner', outputs: [{ internalType: 'address', name: '', type: 'address' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'pause', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [], name: 'paused', outputs: [{ internalType: 'bool', name: '', type: 'bool' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'renounceOwnership', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [{ internalType: 'address', name: 'toAvoOwner_', type: 'address' }, { internalType: 'uint256', name: 'toAvoIndex_', type: 'uint256' }, { internalType: 'uint256', name: 'amount_', type: 'uint256' }], name: 'transfer', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [{ internalType: 'address', name: 'toAvo_', type: 'address' }, { internalType: 'uint256', name: 'amount_', type: 'uint256' }], name: 'transfer', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [{ internalType: 'address', name: 'newOwner', type: 'address' }], name: 'transferOwnership', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [], name: 'unpause', outputs: [], stateMutability: 'nonpayable', type: 'function' }]
+
+  const signer = library.value.getSigner()
+
+  const gasBalanceManagerInstance = new ethers.Contract(gasBalanceManagerAddress, gasBalanceManagerAbi, signer)
+
+  const data = (await gasBalanceManagerInstance.populateTransaction['transfer(address,uint256,uint256)'](props.selectedSafe?.owner_address, props.selectedSafe?.multisig_index, toBN(selectedSafeForMigration.value.amount).toString())).data
+
+  const tx = {
+    to: gasBalanceManagerAddress,
+    data,
+    value: '0',
+    operation: '0',
+  }
+
+  const index = transactions.findIndex((transaction) => transaction.chainId === 137)
+  if (index === -1) {
+    return [...transactions, {
+      chainId: 137,
+      txs: [tx]
+    }]
+  }
+
+  transactions[index].txs = [...transactions[index].txs, tx]
+
+  return transactions
+}
+
+async function addBalancesTxs(currentTransactions: MigrationTransaction[]) {
+  if (!props.selectedSafe?.safe_address) return currentTransactions
+
+  const transactions = [...currentTransactions]
 
   for (let i = 0; i < selectedTokensForMigration.value.length; i++) {
     const selectedToken = selectedTokensForMigration.value[i]
@@ -104,12 +125,11 @@ async function migrate() {
         value: transferAmount,
         data: '0x',
       }
-    }
-    else {
+    } else {
       const contract = Erc20__factory.connect(selectedToken.address, library.value)
 
       const { data: transferData } = await contract.populateTransaction.transfer(
-        props.selectedSafe?.safe_address || '',
+        props.selectedSafe?.safe_address,
         transferAmount,
       )
 
@@ -117,7 +137,7 @@ async function migrate() {
         from: account.value,
         to: selectedToken.address,
         value: '0',
-        data: transferData,
+        data: transferData || '',
       }
     }
 
@@ -129,14 +149,24 @@ async function migrate() {
           txs: [tx],
         },
       )
-    }
-    else {
+    } else {
       transactions[index] = {
         chainId: transactions[index].chainId,
         txs: [...transactions[index].txs, tx],
       }
     }
   }
+
+  return transactions
+}
+
+async function migrate() {
+  loading.value = true
+  let transactions: MigrationTransaction[] = []
+
+  transactions = await addBalancesTxs(transactions)
+  transactions = addNftTxs(transactions)
+  transactions = await addGasBalanceTx(transactions)
 
   try {
     const hashes = []
@@ -154,23 +184,10 @@ async function migrate() {
       chainIds.push(transactions[i].chainId)
     }
 
-    const nftHashes = await migrateNfts()
-    const gasHash = await handleMigrateGasBalance()
-
-    let modalHashes: string[] = []
-    if (hashes?.length) modalHashes = modalHashes.concat(hashes)
-    if (nftHashes?.length) modalHashes = modalHashes.concat(nftHashes)
-    if (gasHash) modalHashes = modalHashes.concat([gasHash])
-
-    let modalChainIds: (string | number)[] = []
-    if (chainIds?.length) modalChainIds = modalChainIds.concat(chainIds)
-    if (nftChainIds.value?.length) modalChainIds = modalChainIds.concat(nftChainIds.value)
-    if (gasHash) modalChainIds = modalChainIds.concat([137])
-
     setTokensForMigration([])
     setNFTsForMigration([])
     emit('destroy')
-    openPendingMigrationModal(modalHashes, modalChainIds)
+    openPendingMigrationModal(hashes, chainIds)
   }
   catch (e: any) {
     const err = parseTransactionError(e)
@@ -183,38 +200,6 @@ async function migrate() {
   finally {
     loading.value = false
   }
-}
-
-async function handleMigrateGasBalance() {
-  if (!selectedSafeForMigration.value)
-    return
-
-  const gasBalanceManagerAddress = '0x847b123EB1Ed2f51bC8A5ed7D5C9091595793ae7'
-  const gasBalanceManagerAbi = [{ inputs: [{ internalType: 'address', name: 'avoFactory_', type: 'address' }, { internalType: 'address', name: 'avoMultisigFactory_', type: 'address' }, { internalType: 'address', name: 'owner_', type: 'address' }], stateMutability: 'nonpayable', type: 'constructor' }, { inputs: [], name: 'AvoGasBalanceManager__InvalidParams', type: 'error' }, { inputs: [], name: 'AvoGasBalanceManager__Unauthorized', type: 'error' }, { anonymous: false, inputs: [{ indexed: true, internalType: 'address', name: 'fromAvo', type: 'address' }, { indexed: true, internalType: 'address', name: 'toAvo', type: 'address' }, { indexed: false, internalType: 'address', name: 'toAvoOwner', type: 'address' }, { indexed: false, internalType: 'uint256', name: 'toAvoIndex', type: 'uint256' }, { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' }], name: 'AvoTransfer', type: 'event' }, { anonymous: false, inputs: [{ indexed: true, internalType: 'address', name: 'previousOwner', type: 'address' }, { indexed: true, internalType: 'address', name: 'newOwner', type: 'address' }], name: 'OwnershipTransferred', type: 'event' }, { anonymous: false, inputs: [{ indexed: false, internalType: 'address', name: 'account', type: 'address' }], name: 'Paused', type: 'event' }, { anonymous: false, inputs: [{ indexed: false, internalType: 'address', name: 'account', type: 'address' }], name: 'Unpaused', type: 'event' }, { inputs: [], name: 'avoFactory', outputs: [{ internalType: 'contract IAvoFactory', name: '', type: 'address' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'avoMultisigFactory', outputs: [{ internalType: 'contract IAvoMultisigFactory', name: '', type: 'address' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'owner', outputs: [{ internalType: 'address', name: '', type: 'address' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'pause', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [], name: 'paused', outputs: [{ internalType: 'bool', name: '', type: 'bool' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'renounceOwnership', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [{ internalType: 'address', name: 'toAvoOwner_', type: 'address' }, { internalType: 'uint256', name: 'toAvoIndex_', type: 'uint256' }, { internalType: 'uint256', name: 'amount_', type: 'uint256' }], name: 'transfer', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [{ internalType: 'address', name: 'toAvo_', type: 'address' }, { internalType: 'uint256', name: 'amount_', type: 'uint256' }], name: 'transfer', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [{ internalType: 'address', name: 'newOwner', type: 'address' }], name: 'transferOwnership', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [], name: 'unpause', outputs: [], stateMutability: 'nonpayable', type: 'function' }]
-
-  const signer = library.value.getSigner()
-
-  const gasBalanceManagerInstance = new ethers.Contract(gasBalanceManagerAddress, gasBalanceManagerAbi, signer)
-
-  const actions = []
-
-  const data = (await gasBalanceManagerInstance.populateTransaction['transfer(address,uint256,uint256)'](props.selectedSafe?.owner_address, props.selectedSafe?.multisig_index, toBN(selectedSafeForMigration.value.amount).toString())).data
-
-  const tx = {
-    to: gasBalanceManagerAddress,
-    data,
-    value: '0',
-    operation: '0',
-  }
-
-  actions.push(tx)
-
-  return await sendTransactions(
-    actions,
-    137,
-    undefined,
-    'transfer',
-  )
 }
 </script>
 
