@@ -7,7 +7,7 @@ const props = defineProps<{
   mfaType: IMfa
 }>()
 
-const emit = defineEmits(['resolve'])
+const emit = defineEmits(['resolve', 'destroy'])
 
 const phoneRegexp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
@@ -110,7 +110,7 @@ const onSubmit = handleSubmit(async () => {
           <div class="flex w-full items-baseline">
             <CommonInput id="phone" v-model="phone" name="phone" autofocus placeholder="0000 0000" :error-message="phoneErrorMessage" container-classes="!px-0" class="w-full">
               <template #prefix>
-                <CommonSelect v-model="countryCode" container-classes="!py-0 !bg-transparent !border-0" list-classes="!w-[400%]" searchable label-key="name" value-key="key" :options="countriesWithKey">
+                <CommonSelect v-model="countryCode" container-classes="!py-0 !bg-transparent !border-0 pr-1" list-classes="!w-[400%]" searchable label-key="name" value-key="key" :options="countriesWithKey">
                   <template #button-label>
                     <Flag v-if="country" class="h-5 w-5" :flag="country?.iso2.toUpperCase()" />
                   </template>
@@ -119,6 +119,9 @@ const onSubmit = handleSubmit(async () => {
                     {{ item.name }}
                   </template>
                 </CommonSelect>
+                <span class="mr-1.5">
+                  +{{ country?.dialCode }}
+                </span>
               </template>
             </CommonInput>
           </div>
