@@ -129,7 +129,10 @@ export function useMfa() {
     if (atLeastOneMfaVerifed.value) {
       const authMfa: IMfa = _authMfa || preferredMfa.value
 
-      const { success: verifySuccess, payload: verifyPayload } = await authVerify(authMfa, 'update')
+      const { success: verifySuccess, payload: verifyPayload } = await authVerify({
+        mfa: authMfa,
+        mfaRequestType: 'update',
+      })
 
       if (verifyPayload?.fallbackMfa)
         return activateToptMfa(mfa, verifyPayload.fallbackMfa)
@@ -152,7 +155,9 @@ export function useMfa() {
       throw new Error('Failed to activate TOTP MFA')
   }
 
-  async function authVerify(mfa: IMfa, mfaRequestType: MfaRequestType) {
+  async function authVerify(params: IAuthVerifyParams) {
+    const { mfa, mfaRequestType, submitFn } = params || {}
+
     if (mfa.value !== 'totp') {
       const success = mfaRequestType === 'transaction' ? await signAndRequestTransactionMfaCode(mfa) : await signAndRequestUpdateMfaCode(mfa)
 
@@ -165,12 +170,11 @@ export function useMfa() {
       mfaRequestType,
       authenticate: true,
       request: signAndRequestUpdateMfaCode,
+      verify: submitFn,
     })
   }
 
-  async function activateMfa(mfa: IMfa, value: any, _authMfa?: IMfa) {
-    await switchToAvocadoNetwork()
-
+  async function requestActivateMfa(mfa: IMfa, value: any) {
     const domain = {
       name: 'Avocado MFA Update',
       version: '1.0.0',
@@ -184,33 +188,53 @@ export function useMfa() {
       value,
     } as any
 
-    if (atLeastOneMfaVerifed.value) {
-      const authMfa: IMfa = _authMfa || preferredMfa.value
-
-      const { success: verifySuccess, payload: verifyPayload } = await authVerify(authMfa, 'update')
-
-      if (verifyPayload?.fallbackMfa)
-        return activateMfa(mfa, value, verifyPayload.fallbackMfa)
-
-      if (!verifySuccess || !verifyPayload?.code)
-        throw new Error('MFA verification failed')
-
-      value.mfaType = authMfa.value
-      value.mfaCode = verifyPayload.code
-    }
-
     const resp = await handleRequestActivateMfa(mfa, signPayload)
 
-    if (!resp?.status)
-      throw new Error(`Failed to activate ${mfa.value}`)
+    if (!resp?.status) {
+      return {
+        success: false,
+      }
+    }
 
-    const { success } = await openVerifyMFAModal({
+    return openVerifyMFAModal({
       mfa,
       mfaRequestType: 'update',
       request: handleRequestActivateMfa.bind(null, signPayload),
       verify: verifyUpdateRequest,
       inputValue: value,
     })
+  }
+
+  async function activateMfa(mfa: IMfa, value: any, _authMfa?: IMfa) {
+    await switchToAvocadoNetwork()
+
+    if (atLeastOneMfaVerifed.value) {
+      const authMfa: IMfa = _authMfa || preferredMfa.value
+
+      const { success: verifySuccess, payload: verifyPayload } = await authVerify(
+        {
+          mfa: authMfa,
+          mfaRequestType: 'update',
+          submitFn: async (_mfa, code) => {
+            value.mfaType = _mfa.value
+            value.mfaCode = code
+
+            const { success } = await requestActivateMfa(mfa, value)
+
+            return success
+          },
+        })
+
+      if (verifyPayload?.fallbackMfa)
+        return activateMfa(mfa, value, verifyPayload.fallbackMfa)
+
+      if (verifySuccess) {
+        await fetchSafeInstanceses()
+        return
+      }
+    }
+
+    const { success } = await requestActivateMfa(mfa, value)
 
     if (success)
       await fetchSafeInstanceses()

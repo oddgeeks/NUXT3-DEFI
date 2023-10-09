@@ -718,3 +718,14 @@ interface IMfaVerifyModalParams {
   inputValue?: string
   authenticate?: boolean,
 }
+
+interface IAuthVerifyParams {
+  mfa: IMfa
+  mfaRequestType: MfaRequestType
+  submitFn?: MfaVerify
+}
+
+interface IAuthTransactionMfa {
+  _authMfa?: IMfa
+  submitFn?: MfaVerify
+}

@@ -393,12 +393,23 @@ export function useAvocadoSafe() {
     } as any
   }
 
-  async function authenticateMfa(_authMfa?: IMfa) {
-    const mfa = _authMfa || preferredMfa.value
-    const { success, payload: verifyPayload } = await authVerify(mfa, 'transaction')
+  async function authenticateTransactionMfa(params?: IAuthTransactionMfa) {
+    const { _authMfa, submitFn } = params || {}
 
-    if (verifyPayload?.fallbackMfa)
-      return authenticateMfa(verifyPayload.fallbackMfa)
+    const mfa = _authMfa || preferredMfa.value
+
+    const { success, payload: verifyPayload } = await authVerify({
+      mfa,
+      mfaRequestType: 'transaction',
+      submitFn,
+    })
+
+    if (verifyPayload?.fallbackMfa) {
+      return authenticateTransactionMfa({
+        _authMfa: verifyPayload.fallbackMfa,
+        submitFn,
+      })
+    }
 
     if (!success || !verifyPayload?.code)
       throw new Error('MFA verification failed')
@@ -440,28 +451,12 @@ export function useAvocadoSafe() {
 
     const requiredSigner = await getRequiredSigner(selectedSafe.value?.safe_address!, chainId)
 
-    const mfaProperties = {
-      mfa_code: '',
-      mfa_type: '',
-      mfa_token: '',
-    } as any
+    const transactionToken = useCookie<string | undefined>(`transaction-token-${selectedSafe.value?.safe_address}`)
 
-    if (isSafeEligableToSingleExecution(requiredSigner, selectedSafe.value)) {
-      if (isInstadappSignerAdded(chainId) && atLeastOneMfaVerifed.value) {
-        const transactionToken = useCookie<string | undefined>(`transaction-token-${selectedSafe.value?.safe_address}`)
-
-        if (transactionToken.value) { mfaProperties.mfa_token = transactionToken.value }
-        else {
-          const { mfaCode, mfaType } = await authenticateMfa()
-
-          mfaProperties.mfa_code = mfaCode
-          mfaProperties.mfa_type = mfaType
-        }
-      }
-
+    async function getSignatureObject() {
       const params = await generateMultisigSignatureAndSign({ chainId, actions, metadata, options })
 
-      const txHash = await multisigBroadcast({
+      const signatureObject: IMultisigBroadcastParams = {
         proposalId: '',
         ignoreSlack: true,
         confirmations: [{
@@ -474,10 +469,55 @@ export function useAvocadoSafe() {
         owner: selectedSafe.value?.owner_address!,
         safe: selectedSafe.value?.safe_address!,
         targetChainId: chainId,
-        mfa_code: mfaProperties.mfa_code,
-        mfa_token: mfaProperties.mfa_token,
-        mfa_type: mfaProperties.mfa_type,
-      })
+        mfa_code: '',
+        mfa_token: '',
+        mfa_type: undefined,
+      }
+
+      return signatureObject
+    }
+
+    if (isSafeEligableToSingleExecution(requiredSigner, selectedSafe.value)) {
+      if (isInstadappSignerAdded(chainId) && atLeastOneMfaVerifed.value && !transactionToken.value) {
+        let txHash
+        let err
+
+        await authenticateTransactionMfa({
+          submitFn: async (_mfa, code) => {
+            const signatureObject = await getSignatureObject()
+
+            signatureObject.mfa_code = code
+            signatureObject.mfa_type = _mfa.value
+
+            try {
+              txHash = await multisigBroadcast(signatureObject)
+              return true
+            }
+            catch (e) {
+              const parsed = serialize(e)
+
+              if (parsed.message.includes('INVALID_MFA_CODE')) { return false }
+
+              else {
+                err = e
+                return true
+              }
+            }
+          },
+        })
+
+        if (err)
+          throw err
+
+        return txHash
+      }
+
+      const signatureObject = await getSignatureObject()
+
+      if (isInstadappSignerAdded(chainId) && atLeastOneMfaVerifed.value && transactionToken.value)
+        signatureObject.mfa_token = transactionToken.value
+
+      const txHash = await multisigBroadcast(signatureObject)
 
       return txHash
     }
