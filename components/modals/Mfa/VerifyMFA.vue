@@ -47,7 +47,7 @@ async function onSubmit() {
 
       if (!resp) {
         return openSnackbar({
-          message: 'Invalid OTP',
+          message: 'Incorrect OTP, please retry',
           type: 'error',
         })
       }
