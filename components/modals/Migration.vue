@@ -157,10 +157,20 @@ async function migrate() {
     const nftHashes = await migrateNfts()
     const gasHash = await handleMigrateGasBalance()
 
+    let modalHashes: string[] = []
+    if (hashes?.length) modalHashes = modalHashes.concat(hashes)
+    if (nftHashes?.length) modalHashes = modalHashes.concat(nftHashes)
+    if (gasHash) modalHashes = modalHashes.concat([gasHash])
+
+    let modalChainIds: (string | number)[] = []
+    if (chainIds?.length) modalChainIds = modalChainIds.concat(chainIds)
+    if (nftChainIds.value?.length) modalChainIds = modalChainIds.concat(nftChainIds.value)
+    if (gasHash) modalChainIds = modalChainIds.concat([137])
+
     setTokensForMigration([])
     setNFTsForMigration([])
     emit('destroy')
-    openPendingMigrationModal([...hashes, ...nftHashes || [], gasHash], [...chainIds, ...nftChainIds.value, 137])
+    openPendingMigrationModal(modalHashes, modalChainIds)
   }
   catch (e: any) {
     const err = parseTransactionError(e)
