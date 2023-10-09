@@ -19,7 +19,7 @@ async function handleDeactivate() {
     else {
       notify({
         type: 'error',
-        message: 'Failed to deactivate OTPT',
+        message: 'Failed to deactivate TOTP',
       })
     }
   }
@@ -31,10 +31,22 @@ async function handleDeactivate() {
 
 <template>
   <div class="flex flex-col gap-5 p-7.5">
-    <h1 class="">
-      Recovery code
-    </h1>
-    <CommonInput v-model="recoveryCode" label="Recovery code" name="recovery-code" />
+    <div class="flex gap-[14px]">
+      <CommonTxTypeIcon class="h-10 w-10">
+        <template #icon>
+          <SvgoLock />
+        </template>
+      </CommonTxTypeIcon>
+      <div class="flex flex-col gap-1">
+        <h1 class="text-lg leading-[20px]">
+          Deactivate TOTP
+        </h1>
+        <h2 class="text-xs font-medium leading-5 text-slate-400">
+          Enter your recovery code to deactivate TOTP
+        </h2>
+      </div>
+    </div>
+    <CommonInput v-model="recoveryCode" placeholder="Recovery code" label="Recovery code" name="recovery-code" />
 
     <CommonButton :loading="pending" :disabled="!recoveryCode" size="lg" class="items-center justify-center" color="red" @click="handleDeactivate">
       Deactivate

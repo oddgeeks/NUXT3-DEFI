@@ -29,7 +29,7 @@ async function handleDeactivateWithRecoveryCode(mfa: IMfa, close: () => void) {
   if (success) {
     notify({
       type: 'success',
-      message: 'Successfully deactivated OTPT',
+      message: 'Successfully deactivated TOTP',
     })
 
     setFallbackDefaultMfaType(mfa)

@@ -714,6 +714,7 @@ interface IMfaVerifyModalParams {
   mfa: IMfa,
   mfaRequestType: MfaRequestType,
   verify?: MfaVerify
-  authenticate?: boolean,
   request?: Function
+  inputValue?: string
+  authenticate?: boolean,
 }

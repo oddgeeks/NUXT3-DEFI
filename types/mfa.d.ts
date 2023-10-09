@@ -22,6 +22,7 @@ interface IMfa {
   activated: boolean
   title: string
   description: string
+  enterOtpLabel: string
   removeTypes?: {
     [key: string]: {
       name: string

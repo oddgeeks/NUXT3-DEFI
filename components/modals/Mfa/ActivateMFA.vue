@@ -100,14 +100,13 @@ const onSubmit = handleSubmit(async () => {
           {{ mfaType.description }}
         </h2>
       </div>
-
       <div v-if="mfaType.value === 'email'" class="flex flex-col gap-2.5">
-        <label class="text-sm leading-5" for="input-email">Email</label>
+        <label class="text-sm font-medium leading-5" for="input-email">Email</label>
         <CommonInput id="email" v-model="email" autofocus name="email" :error-message="emailErrorMessage" type="email" class="w-full" />
       </div>
       <div v-else-if="mfaType.value === 'phone'" class="flex flex-col gap-5">
         <div class="flex flex-col gap-2.5">
-          <label class="text-sm leading-5" for="input-phone">Phone</label>
+          <label class="text-sm font-medium leading-5" for="input-phone">Phone</label>
           <div class="flex w-full items-baseline">
             <CommonInput id="phone" v-model="phone" name="phone" autofocus placeholder="0000 0000" :error-message="phoneErrorMessage" container-classes="!px-0" class="w-full">
               <template #prefix>

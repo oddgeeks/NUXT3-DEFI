@@ -19,9 +19,10 @@ export function useMfa() {
     [
       {
         value: 'totp',
-        title: 'Set up Google Auth/Authy',
+        title: 'Set up TOTP Authenticator app',
         description: 'Please enter the provided code or scan QR in your Auth Provider.',
         label: 'Authenticator app (TOTP) login',
+        enterOtpLabel: 'Enter TOTP provided by Auth Provider',
         types: {
           Totp: [
             { name: 'owner', type: 'address' },
@@ -35,6 +36,7 @@ export function useMfa() {
       {
         value: 'phone',
         label: 'SMS OTP based login',
+        enterOtpLabel: 'Enter Phone OTP',
         title: 'Enter your phone number',
         description: 'We will send an OTP to your phone.',
         removeTypes: {
@@ -58,6 +60,7 @@ export function useMfa() {
       }, {
         value: 'email',
         title: 'Enter your Email',
+        enterOtpLabel: 'Enter email OTP',
         description: 'We will send an OTP to your email.',
         label: 'Email OTP login',
         removeTypes: {
@@ -199,13 +202,14 @@ export function useMfa() {
     const resp = await handleRequestActivateMfa(mfa, signPayload)
 
     if (!resp?.status)
-      throw new Error('Failed to activate MFA')
+      throw new Error(`Failed to activate ${mfa.value}`)
 
     const { success } = await openVerifyMFAModal({
       mfa,
       mfaRequestType: 'update',
       request: handleRequestActivateMfa.bind(null, signPayload),
       verify: verifyUpdateRequest,
+      inputValue: value,
     })
 
     if (success)

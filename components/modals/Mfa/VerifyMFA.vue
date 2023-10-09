@@ -7,11 +7,13 @@ const props = defineProps<{
   verify?: (mfa: IMfa, code: string) => Promise<boolean>
   request?: (mfa: IMfa) => Promise<IMfaResponse>
   authenticate?: boolean
+  inputValue?: any
 }>()
 
 const emit = defineEmits(['resolve'])
 const actualMfa = computed(() => props.mfa)
 const otpValue = ref<string>()
+const pending = ref(false)
 
 const { dec, count } = useCounter(60, { min: 0, max: 60 })
 
@@ -19,28 +21,46 @@ const sessionAvailable = ref(false)
 
 useIntervalFn(() => dec(), 1000)
 
+const value = computed(() => {
+  if (!props.inputValue)
+    return
+
+  const email = props.inputValue?.email
+  const phone = props.inputValue?.phone
+  const countryCode = props.inputValue?.countryCode
+
+  return email || (phone ? `+${countryCode} ${phone}` : '')
+})
+
 async function onSubmit() {
   if (!actualMfa.value || !otpValue.value)
     return
 
-  let resp
+  try {
+    pending.value = true
 
-  if (typeof props.verify === 'function') {
-    resp = await props.verify(actualMfa.value, otpValue.value)
+    let resp
 
-    if (!resp) {
-      return openSnackbar({
-        message: 'Invalid OTP',
-        type: 'error',
-      })
+    if (typeof props.verify === 'function') {
+      resp = await props.verify(actualMfa.value, otpValue.value)
+
+      if (!resp) {
+        return openSnackbar({
+          message: 'Invalid OTP',
+          type: 'error',
+        })
+      }
     }
-  }
 
-  emit('resolve', true, {
-    code: otpValue.value,
-    resp,
-    sessionAvailable: sessionAvailable.value,
-  })
+    emit('resolve', true, {
+      code: otpValue.value,
+      resp,
+      sessionAvailable: sessionAvailable.value,
+    })
+  }
+  finally {
+    pending.value = false
+  }
 }
 
 async function handleRequest() {
@@ -79,27 +99,42 @@ async function handleTryAnotherMethod() {
 <template>
   <form class="flex flex-col gap-5 p-7.5" @submit.prevent="onSubmit">
     <div>
-      <label class="mb-7.5 block text-lg" for="otp">Enter TOTP provided by {{ mfa.label }}</label>
-      <VOtpInput v-model:value="otpValue" class="otp-wrapper gap-2.5" input-classes="dark:bg-slate-800 rounded-lg bg-slate-100 border-0 focus-within:ring-1 dark:focus-within:bg-gray-850 focus-within:bg-slate-50 dark:focus-within:ring-slate-750 w-10 h-10 focus-within:ring-slate-100" separator="" should-auto-focus :num-inputs="6" />
+      <div class="mb-7.5 flex flex-col gap-2.5">
+        <h1 class="block text-lg leading-[30px] sm:max-w-sm">
+          {{ mfa.enterOtpLabel }}
+          <span v-if="mfaRequestType === 'transaction'">
+            to confirm the transaction
+          </span>
+        </h1>
+        <h2 v-if="mfa.value !== 'totp'" class="text-xs font-medium leading-5 text-slate-400">
+          A 6 digit code has been sent to <span v-if="value"> {{ value }}</span> <span v-else class="lowercase">your {{ mfa.value }}.</span>
+        </h2>
+      </div>
+      <VOtpInput v-model:value="otpValue" should-auto-focus class="otp-wrapper gap-2.5" input-classes="dark:bg-slate-800 rounded-[14px] bg-slate-100 border-0 focus-within:ring-1 dark:focus-within:bg-gray-850 focus-within:bg-slate-50 dark:focus-within:ring-slate-750 px-4 py-[15px] text-center w-[58px] h-[50px] focus-within:ring-slate-100" separator="" :num-inputs="6" />
     </div>
-    <label v-if="props.mfaRequestType === 'transaction'" class="flex cursor-pointer items-center gap-2.5 text-xs text-slate-400" for="input-session">
+    <label v-if="props.mfaRequestType === 'transaction'" class="mt-2.5 flex cursor-pointer items-center gap-2.5 text-xs" for="input-session">
       <input id="input-session" v-model="sessionAvailable" class="peer sr-only" type="checkbox">
-      <SvgoCheckCircle class="svg-circle darker peer-checked:success-circle h-5 w-5 shrink-0 cursor-pointer text-slate-500" />
-      Don’t ask for OTP verification for the next 30 min.
+      <SvgoCheckCircle class="svg-circle darker peer-checked:success-circle h-5 w-5 shrink-0 cursor-pointer text-slate-400" />
+      <span :class="!sessionAvailable ? 'text-slate-500' : ''">
+        Don’t ask for OTP verification for the next 30 min.
+      </span>
     </label>
+
     <div class="flex w-full gap-5">
-      <CommonButton class="flex-1 justify-center" type="submit" :disabled="String(otpValue).length !== 6">
-        Submit
-      </CommonButton>
-      <CommonButton v-if="mfa.value !== 'totp'" :disabled="!!count" class="flex-1 justify-center" @click="handleRequest">
-        Resend OTP
-        <span v-if="count" class="ml-1">
-          ({{ count }})
-        </span>
+      <CommonButton :loading="pending" size="lg" class="flex-1 justify-center" type="submit" :disabled="String(otpValue).length !== 6">
+        {{ mfaRequestType === 'transaction' ? 'Confirm transaction' : 'Verify' }}
       </CommonButton>
     </div>
-    <button v-if="authenticate" class="text-left text-sm font-medium text-slate-400" type="button" @click="handleTryAnotherMethod">
-      Try another method
-    </button>
+    <div class="flex justify-between">
+      <button v-if="mfa.value !== 'totp'" type="button" :disabled="!!count" class="text-left text-xs font-medium leading-5 text-primary disabled:text-slate-400" @click="handleRequest">
+        Resend OTP
+        <span v-if="count">
+          in {{ count }} secs
+        </span>
+      </button>
+      <button v-if="authenticate" class="text-left text-xs font-medium leading-5 text-primary" type="button" @click="handleTryAnotherMethod">
+        Try another verification method
+      </button>
+    </div>
   </form>
 </template>
