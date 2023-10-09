@@ -480,34 +480,30 @@ export function useAvocadoSafe() {
     if (isSafeEligableToSingleExecution(requiredSigner, selectedSafe.value)) {
       if (isInstadappSignerAdded(chainId) && atLeastOneMfaVerifed.value && !transactionToken.value) {
         let txHash
-        let err
 
         await authenticateTransactionMfa({
           submitFn: async (_mfa, code) => {
-            const signatureObject = await getSignatureObject()
-
-            signatureObject.mfa_code = code
-            signatureObject.mfa_type = _mfa.value
-
             try {
+              const signatureObject = await getSignatureObject()
+
+              signatureObject.mfa_code = code
+              signatureObject.mfa_type = _mfa.value
+
               txHash = await multisigBroadcast(signatureObject)
+
               return true
             }
             catch (e) {
               const parsed = serialize(e)
 
-              if (parsed.message.includes('INVALID_MFA_CODE')) { return false }
+              if (parsed.message.includes('INVALID_MFA_CODE'))
+                return false
 
-              else {
-                err = e
-                return true
-              }
+              else
+                throw e
             }
           },
         })
-
-        if (err)
-          throw err
 
         return txHash
       }

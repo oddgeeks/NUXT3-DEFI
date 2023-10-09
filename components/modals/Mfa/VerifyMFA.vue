@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { serialize } from 'error-serializer'
 import VOtpInput from 'vue3-otp-input'
 
 const props = defineProps<{
@@ -56,6 +57,14 @@ async function onSubmit() {
       code: otpValue.value,
       resp,
       sessionAvailable: sessionAvailable.value,
+    })
+  }
+  catch (e) {
+    const parsed = serialize(e)
+
+    openSnackbar({
+      message: parsed.message,
+      type: 'error',
     })
   }
   finally {
