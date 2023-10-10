@@ -43,7 +43,7 @@ useField<Mfa>('mfa', undefined, {
 const { value: email, errorMessage: emailErrorMessage } = useField('email')
 const { value: phone, errorMessage: phoneErrorMessage } = useField('phone')
 const { value: countryCode } = useField('countryCode', undefined, {
-  initialValue: 'us1',
+  initialValue: '',
 })
 
 const country = computed(() => {
@@ -86,6 +86,15 @@ const onSubmit = handleSubmit(async () => {
       message: parsed.message,
     })
   }
+})
+
+onMounted(async () => {
+  const lookup: any = await $fetch('https://ipapi.co/json')
+
+  const existingCode = countriesWithKey.value.find(c => c.key === `${lookup.country_code.toLowerCase()}${parseInt(lookup.country_calling_code)}`)?.key
+
+  if (existingCode)
+    countryCode.value = existingCode
 })
 </script>
 
