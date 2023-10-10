@@ -8,6 +8,8 @@ export function useMfa() {
   const { switchToAvocadoNetwork } = useNetworks()
   const { account, library } = useWeb3()
 
+  const isAvocadoProtectActive = computed(() => selectedSafe.value?.multisig_index === 0)
+
   const mfaSessionTypes = {
     RequestCode: [
       { name: 'owner', type: 'address' },
@@ -98,7 +100,9 @@ export function useMfa() {
 
     const mfa = mfas.find(mfa => mfa.value === preferredMfaType.value)
 
-    return mfa || mfas[0]
+    const fallbackMfas = mfas.filter(mfa => mfa.value !== 'backup')
+
+    return mfa || fallbackMfas[0]
   })
 
   async function handleRequestActivateMfa(mfa: IMfa, payload: any) {
@@ -413,6 +417,7 @@ export function useMfa() {
     activateToptMfa,
     authVerify,
     backupMfa,
+    isAvocadoProtectActive,
     signAndRequestTransactionMfaCode,
     signAndRequestDeleteMfaCode,
     verifyDeleteRequest,

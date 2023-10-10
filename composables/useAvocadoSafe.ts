@@ -18,7 +18,7 @@ export function useAvocadoSafe() {
   const { avoProvider, getSafeOptions, refreshSelectedSafe, getFallbackSafeOptionsByChainId } = useSafe()
   const { selectedSafe, isSelectedSafeLegacy, safeOptions, atLeastOneMfaVerifed } = storeToRefs(useSafe())
   const { clearAllModals } = useModal()
-  const { authVerify, preferredMfa } = useMfa()
+  const { authVerify, preferredMfa, isAvocadoProtectActive } = useMfa()
   const dryRun = useCookie<boolean | undefined>('dry-run')
 
   const { isSafeMultisig } = storeToRefs(useMultisig())
@@ -133,7 +133,7 @@ export function useAvocadoSafe() {
 
   async function generateMultisigSignatureAndSign({ chainId, actions, nonce, metadata, options }: IGenerateMultisigSignatureParams) {
     const data = await generateMultisigSignatureMessage({ chainId, actions, nonce, metadata, options })
-    const signature = await signMultisigData({ chainId, data })
+    const { signature, domain, value } = await signMultisigData({ chainId, data })
 
     return {
       signatureParams: {
@@ -141,6 +141,8 @@ export function useAvocadoSafe() {
         address: account.value,
       },
       castParams: data,
+      domain,
+      value,
     }
   }
 
@@ -232,6 +234,7 @@ export function useAvocadoSafe() {
       mfa_type: params.mfa_type,
       mfa_code: params.mfa_code,
       mfa_token: params.mfa_token,
+      debug: params.debug,
     }
 
     if (selectedSafe.value.multisig_index > 0 || params.signers.length > 1) {
@@ -475,12 +478,15 @@ export function useAvocadoSafe() {
         mfa_code: '',
         mfa_token: '',
         mfa_type: undefined,
+        debug: {
+          domain: params.domain,
+        },
       }
 
       return signatureObject
     }
 
-    if (isSafeEligableToSingleExecution(requiredSigner, selectedSafe.value)) {
+    if (isSafeEligableToSingleExecution(requiredSigner)) {
       if (isInstadappSignerAdded(chainId) && atLeastOneMfaVerifed.value && !transactionToken.value) {
         let txHash
 
@@ -618,7 +624,7 @@ export function useAvocadoSafe() {
     return signature
   }
 
-  async function signMultisigData({ chainId, data }: any): Promise<string> {
+  async function signMultisigData({ chainId, data }: any) {
     await switchToAvocadoNetwork()
 
     const config = await getFallbackSafeOptionsByChainId(selectedSafe.value!, chainId)
@@ -681,7 +687,11 @@ export function useAvocadoSafe() {
 
     console.log({ domain, types, value: data, account: account.value, signature })
 
-    return signature
+    return {
+      signature,
+      domain,
+      value: data,
+    }
   }
 
   async function rejectMultisigTransaction(tx: IMultisigTransaction) {
@@ -870,10 +880,10 @@ ${parsed.message}`,
     return tx.executed_at !== null
   }
 
-  function isSafeEligableToSingleExecution(requiredSigner: number, safe?: ISafe) {
-    if (atLeastOneMfaVerifed.value)
+  function isSafeEligableToSingleExecution(requiredSigner: number) {
+    if (atLeastOneMfaVerifed.value && isAvocadoProtectActive.value)
       return true
-    return safe && safe.multisig_index === 0 && requiredSigner === 1
+    return selectedSafe.value && selectedSafe.value.multisig_index === 0 && requiredSigner === 1
   }
 
   return {

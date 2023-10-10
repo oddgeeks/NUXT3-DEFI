@@ -195,7 +195,7 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
 async function handleSign(item: IMultisigTransaction) {
   try {
     pending.value.sign = true
-    const signature = await signMultisigData({ chainId: item.chain_id, data: item.data })
+    const { signature } = await signMultisigData({ chainId: item.chain_id, data: item.data })
 
     const { data } = await axios.post<IMultisigTransaction>(`/safes/${selectedSafe.value?.safe_address}/transactions/${item.id}/confirmations`, {
       address: account.value,

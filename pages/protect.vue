@@ -9,10 +9,10 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const { isSelectedSafeLegacy, atLeastOneMfaVerifed } = storeToRefs(useSafe())
+const { atLeastOneMfaVerifed } = storeToRefs(useSafe())
 const { hasInstadappSigner, instadappSignerNetworks, backupSigners } = storeToRefs(useMultisig())
 const { fetchSafeInstanceses } = useSafe()
-const { mfaTypes, mfaTermsAccepted, preferredMfaType, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa, backupMfa } = useMfa()
+const { mfaTypes, mfaTermsAccepted, preferredMfaType, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa, backupMfa, isAvocadoProtectActive } = useMfa()
 
 async function handleDeactivate(mfa: IMfa, close: () => void) {
   if (mfa.value !== 'totp') {
@@ -51,7 +51,7 @@ async function handleDeactivate(mfa: IMfa, close: () => void) {
 
 function setFallbackDefaultMfaType(mfa: IMfa) {
   if (preferredMfaType.value === mfa.value) {
-    const activatedMfa = mfaTypes.value.find(i => i.activated && i.value !== mfa.value)
+    const activatedMfa = mfaTypes.value.find(i => i.activated && i.value !== mfa.value && i.value !== 'backup')
     if (activatedMfa) {
       preferredMfaType.value = activatedMfa.value
     }
@@ -111,8 +111,8 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
 
 <template>
   <div class="flex flex-col gap-7.5">
-    <div v-if="isSelectedSafeLegacy">
-      Legacy Safe is not supported
+    <div v-if="!isAvocadoProtectActive">
+      Safe is not supported
     </div>
     <div v-else class="flex flex-col gap-7.5">
       <div class="flex flex-col gap-2.5">
@@ -243,7 +243,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
               </div>
             </div>
           </div>
-          <div v-if="atLeastOneMfaVerifed" class="mt-auto flex items-baseline justify-between border-t border-slate-150 p-7.5 pt-5 dark:border-slate-800">
+          <div v-if="atLeastOneMfaVerifed" class="scroll-style mt-auto flex max-h-[250px] flex-col items-baseline justify-between gap-5 overflow-auto border-t border-slate-150 p-7.5 pt-5 dark:border-slate-800">
             <div v-for="signer in backupSigners" :key="signer.address" class="flex w-full items-baseline justify-between">
               <div class="flex flex-col gap-2.5">
                 <span class="text-sm font-medium">

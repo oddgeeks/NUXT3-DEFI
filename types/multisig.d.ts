@@ -76,6 +76,7 @@ interface IMultisigBroadcastParams {
   mfa_code?: string,
   mfa_type?: Mfa,
   mfa_token?: string,
+  debug?: any
 }
 
 interface IChangeThresholdParams {
