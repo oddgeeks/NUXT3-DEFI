@@ -11,8 +11,7 @@ const props = defineProps<{
   inputValue?: any
 }>()
 
-const emit = defineEmits(['resolve'])
-const { fetchSafeInstanceses } = useSafe()
+const emit = defineEmits(['resolve', 'destroy'])
 
 const actualMfa = computed(() => props.mfa)
 
@@ -110,10 +109,14 @@ async function handleTryAnotherMethod() {
 async function handleDeactivateWithRecoveryCode() {
   try {
     const { success } = await openDeactivateTotpByRecoveryCodes()
+
+    if (!success)
+      return
+
     emit('resolve', success)
   }
   catch (e) {
-    emit('resolve', false)
+    emit('destroy')
   }
 }
 </script>

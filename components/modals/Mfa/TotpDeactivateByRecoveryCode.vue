@@ -46,7 +46,7 @@ async function handleDeactivate() {
         </h2>
       </div>
     </div>
-    <CommonInput v-model="recoveryCode" placeholder="Recovery code" label="Recovery code" name="recovery-code" />
+    <CommonInput v-model="recoveryCode" autofocus placeholder="Recovery code" label="Recovery code" name="recovery-code" />
 
     <CommonButton :loading="pending" :disabled="!recoveryCode" size="lg" class="items-center justify-center" color="red" @click="handleDeactivate">
       Deactivate

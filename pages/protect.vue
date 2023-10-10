@@ -140,16 +140,16 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
           <div class="flex flex-col gap-7.5 p-7.5">
             <div>
               <h2 class="mb-2.5">
-                Otp Login
+                OTP Login
               </h2>
-              <h3 class="text-xs font-medium text-slate-400">
+              <h3 class="text-xs font-medium leading-5 text-slate-400">
                 Set up one or more OTP methods & use any one to verify identity at the time of transaction.
               </h3>
             </div>
             <div>
               <ul class="flex flex-col gap-4">
                 <li v-for="mfa in mfaTypes" :key="mfa.value">
-                  <div class="flex h-[66px] w-full items-center justify-between rounded-2xl bg-slate-150 p-5 text-left ring-1 ring-slate-150 dark:bg-slate-850 dark:ring-slate-750">
+                  <div class="flex h-[66px] w-full items-center  justify-between rounded-2xl bg-slate-100 p-5 text-left ring-1 ring-slate-200 dark:bg-slate-850 dark:ring-slate-750">
                     <div class="flex w-full items-center justify-between">
                       <div class="flex flex-col gap-1">
                         <span class="text-xs font-medium leading-5">
@@ -172,7 +172,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                           </span>
                         </template>
 
-                        <Popover class="relative inline-flex items-center">
+                        <Popover class="relative ml-2.5 inline-flex items-center">
                           <PopoverButton class="group">
                             <SvgoDots />
                           </PopoverButton>
@@ -187,12 +187,12 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                           >
                             <PopoverPanel
                               v-slot="{ close }"
-                              class="absolute -top-24 left-1/2 z-10 flex -translate-x-1/2 flex-col gap-2.5 rounded-2xl border bg-slate-150 py-4 text-sm dark:border-slate-800 dark:bg-gray-900 sm:px-0 lg:max-w-3xl"
+                              class="absolute -top-24 left-1/2 z-10 flex -translate-x-1/2 flex-col rounded-2xl border border-slate-150 bg-slate-100 p-2 text-sm font-medium dark:border-[#1E293B] dark:bg-gray-950"
                             >
-                              <button class="whitespace-nowrap px-5 text-left" @click="handleSetDefault(mfa, close)">
-                                Set as default
+                              <button class="flex items-center gap-2.5 whitespace-nowrap rounded-xl px-4 py-2.5 hover:bg-slate-150 hover:dark:bg-slate-800" @click="handleSetDefault(mfa, close)">
+                                <SvgoAsDefault /> Set as default
                               </button>
-                              <button class="flex items-center gap-2 px-5 text-red-alert" @click="handleDeactivate(mfa, close)">
+                              <button class="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-red-alert hover:bg-red-alert/10" @click="handleDeactivate(mfa, close)">
                                 <SvgoTrash2 /> Deactivate
                               </button>
                             </PopoverPanel>
@@ -223,16 +223,16 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
             </button>
           </div>
         </div>
-        <div class="flex flex-col gap-7.5 rounded-5 bg-slate-50 dark:bg-gray-850">
-          <div>
+        <div class="flex flex-col gap-7.5 rounded-5 bg-slate-50 p-7.5 dark:bg-gray-850">
+          <div class="">
             <h2 class="mb-2.5">
               Backup outh (optional)
             </h2>
-            <h3 class="text-xs font-medium text-slate-400">
+            <h3 class="mb-2.5 text-xs font-medium leading-5 text-slate-400">
               In case you don't have access to OTP's, you can use a secondary address to confirm your identity. This ensures you are never locked out of your Avocado Wallet
             </h3>
 
-            <div class="mt-4 flex h-[66px] w-full items-center justify-between rounded-2xl bg-slate-150 p-5 text-left ring-1 ring-slate-150 dark:bg-slate-850 dark:ring-slate-750">
+            <div class="flex h-[66px] w-full items-center justify-between rounded-2xl bg-slate-100 p-5 text-left ring-1 ring-slate-200 dark:bg-slate-850 dark:ring-slate-750">
               <div class="flex w-full items-center justify-between">
                 <span class="text-xs font-medium leading-5">
                   Secondary Address
