@@ -1,5 +1,7 @@
-<script lang="ts" setup>
-
+<script setup lang="ts">
+defineProps<{
+  address: string
+}>()
 </script>
 
 <template>
@@ -15,7 +17,7 @@
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
     <ul class="flex flex-col gap-7 p-7.5">
-      <MfaSignAddSignerItem v-for="network in availableNetworks" :key="network.chainId" :chain-id="network.chainId" />
+      <MfaSignAddSignerItem v-for="network in availableNetworks" :key="network.chainId" :address="address" :chain-id="network.chainId" />
     </ul>
   </div>
 </template>

@@ -160,7 +160,7 @@ async function handleDeactivateWithRecoveryCode() {
       <button v-if="authenticate" class="text-left text-xs font-medium leading-5 text-primary" type="button" @click="handleTryAnotherMethod">
         Try another verification method
       </button>
-      <button class="text-xs font-medium leading-5 text-primary" @click="handleDeactivateWithRecoveryCode">
+      <button v-if="mfa.value === 'totp' && mfaRequestType === 'delete'" class="text-xs font-medium leading-5 text-primary" @click="handleDeactivateWithRecoveryCode">
         Use Recovery codes
       </button>
     </div>

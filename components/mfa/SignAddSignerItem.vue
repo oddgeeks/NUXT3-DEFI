@@ -1,27 +1,28 @@
 <script lang="ts" setup>
 const props = defineProps<{
   chainId: string | number
+  address: string
 }>()
 
 defineEmits(['destroy'])
 
 const pending = ref(false)
-const signed = useState(`mfa-signed-${props.chainId}`, () => false)
-const executed = useState(`mfa-executed-${props.chainId}`, () => false)
+const signed = useState(`mfa-signed-${props.chainId}-${props.address}`, () => false)
+const executed = useState(`mfa-executed-${props.chainId}-${props.address}`, () => false)
 
-const { isInstadappSignerAdded } = useMultisig()
+const { isSignerAdded } = useMultisig()
 
 const { addSignersWithThreshold } = useAvocadoSafe()
 const { parseTransactionError } = useErrorHandler()
 const { account } = useWeb3()
 
-const instadappSignerAdded = computed(() => isInstadappSignerAdded(props.chainId))
+const instadappSignerAdded = computed(() => isSignerAdded(props.address, props.chainId))
 
 async function handleSign() {
   try {
     pending.value = true
     const threshold = '2'
-    const actualSigners = [{ address: instadappSigner, name: '' }]
+    const actualSigners = [{ address: props.address, name: '' }]
 
     const signers = actualSigners.map(signer => signer.address)
 

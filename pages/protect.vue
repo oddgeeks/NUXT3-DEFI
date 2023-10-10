@@ -217,7 +217,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                 <ChainLogo v-for="i in instadappSignerNetworks" :key="i.chainId" class="-ml-2 h-6 w-6 first:ml-0" :chain="i.chainId" />
               </div>
             </div>
-            <button class="flex items-center gap-2 text-sm font-medium text-primary" @click="openMfaSignInstadappSignerModal">
+            <button class="flex items-center gap-2 text-sm font-medium text-primary" @click="openMfaSignInstadappSignerModal(instadappSigner)">
               Manage Networks
               <SvgoCog />
             </button>

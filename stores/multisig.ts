@@ -73,9 +73,13 @@ export const useMultisig = defineStore('multisig', () => {
 
   const hasInstadappSigner = computed(() => instadappSignerNetworks.value.length > 0)
 
-  function isInstadappSignerAdded(chainId: number | string) {
+  function isSignerAdded(address: string, chainId: number | string) {
     const signers = selectedSafe.value?.signers?.[chainId] || []
-    return signers.some(i => getAddress(i) === getAddress(instadappSigner))
+    return signers.some(i => getAddress(i) === getAddress(address))
+  }
+
+  function isInstadappSignerAdded(chainId: number | string) {
+    return isSignerAdded(instadappSigner, chainId)
   }
 
   function checkSafeIsActualMultisig(safe: ISafe) {
@@ -107,8 +111,9 @@ export const useMultisig = defineStore('multisig', () => {
     isAccountCanSign,
     checkSafeIsActualMultisig,
     hasInstadappSigner,
-    isInstadappSignerAdded,
+    isSignerAdded,
     instadappSignerNetworks,
+    isInstadappSignerAdded,
   }
 })
 
