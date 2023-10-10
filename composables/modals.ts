@@ -816,12 +816,13 @@ export async function openDeactivateTotpByRecoveryCodes() {
     },
   })
 }
-export function openMfaSignInstadappSignerModal(address: string) {
+export function openMfaSignInstadappSignerModal(address: string, removeSigner?: boolean) {
   return openModal({
     component: MFASignInstadappSigner,
     async: true,
     componentProps: {
       address,
+      removeSigner,
     },
     options: {
       contentClass: '!p-0',

@@ -10,18 +10,9 @@ useAccountTrack(undefined, () => {
 })
 
 const { isSelectedSafeLegacy, atLeastOneMfaVerifed } = storeToRefs(useSafe())
-const { hasInstadappSigner, instadappSignerNetworks } = storeToRefs(useMultisig())
+const { hasInstadappSigner, instadappSignerNetworks, backupSigners } = storeToRefs(useMultisig())
 const { fetchSafeInstanceses } = useSafe()
 const { mfaTypes, mfaTermsAccepted, preferredMfaType, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa } = useMfa()
-
-function defaultSteps() {
-  return {
-    currentStep: 1,
-    totalSteps: 4,
-  }
-}
-
-useState('signer-steps', defaultSteps)
 
 async function handleDeactivate(mfa: IMfa, close: () => void) {
   if (mfa.value !== 'totp') {
@@ -116,6 +107,10 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
     message: `Default 2FA method set to ${mfa.label}`,
   })
 }
+
+function handleDeactivateBackupSigner(close: () => void) {
+  close()
+}
 </script>
 
 <template>
@@ -173,7 +168,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                         </template>
 
                         <Popover class="relative ml-2.5 inline-flex items-center">
-                          <PopoverButton class="group">
+                          <PopoverButton class="group focus:outline-none">
                             <SvgoDots />
                           </PopoverButton>
 
@@ -223,8 +218,8 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
             </button>
           </div>
         </div>
-        <div class="flex flex-col gap-7.5 rounded-5 bg-slate-50 p-7.5 dark:bg-gray-850">
-          <div class="">
+        <div class="flex flex-col rounded-5 bg-slate-50 dark:bg-gray-850">
+          <div class="p-7.5">
             <h2 class="mb-2.5">
               Backup outh (optional)
             </h2>
@@ -238,10 +233,66 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                   Secondary Address
                 </span>
 
-                <CommonButton @click="openAddBackupSignerModal">
+                <CommonButton v-if="!backupSigners.length" @click="openAddBackupSignerModal">
                   Activate Now
                 </CommonButton>
+                <span v-else class="flex items-center gap-2.5 text-xs font-medium">
+                  <template v-if="hasInstadappSigner">
+                    <SvgoCheckCircle class="success-circle w-5" />
+                    <span class="uppercase text-primary">
+                      Active
+                    </span>
+                  </template>
+                  <template v-else>
+                    <span class="text-orange">
+                      Manage networks to activate
+                    </span>
+                  </template>
+
+                  <Popover class="relative ml-2.5 inline-flex items-center">
+                    <PopoverButton class="group focus:outline-none">
+                      <SvgoDots />
+                    </PopoverButton>
+
+                    <transition
+                      enter-active-class="transition duration-200 ease-out"
+                      enter-from-class="translate-y-1 opacity-0"
+                      enter-to-class="translate-y-0 opacity-100"
+                      leave-active-class="transition duration-150 ease-in"
+                      leave-from-class="translate-y-0 opacity-100"
+                      leave-to-class="translate-y-1 opacity-0"
+                    >
+                      <PopoverPanel
+                        v-slot="{ close }"
+                        class="absolute -top-16 left-1/2 z-10 flex -translate-x-1/2 flex-col rounded-2xl border border-slate-150 bg-slate-100 p-2 text-sm font-medium dark:border-[#1E293B] dark:bg-gray-950"
+                      >
+                        <button class="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-red-alert hover:bg-red-alert/10" @click="handleDeactivateBackupSigner(close)">
+                          <SvgoTrash2 /> Deactivate
+                        </button>
+                      </PopoverPanel>
+                    </transition>
+                  </Popover>
+                </span>
               </div>
+            </div>
+          </div>
+          <div v-if="atLeastOneMfaVerifed" class="mt-auto flex items-baseline justify-between border-t border-slate-150 p-7.5 pt-5 dark:border-slate-800">
+            <div v-for="signer in backupSigners" :key="signer.address" class="flex w-full items-baseline justify-between">
+              <div class="flex flex-col gap-2.5">
+                <span class="text-sm font-medium">
+                  Active on {{ signer.chainIds.length }} networks
+                </span>
+                <span class="text-xs text-slate-400">
+                  {{ signer.address }}
+                </span>
+                <div class="flex">
+                  <ChainLogo v-for="i in signer.chainIds" :key="i" class="-ml-2 h-6 w-6 first:ml-0" :chain="i" />
+                </div>
+              </div>
+              <button class="flex items-center gap-2 text-sm font-medium text-primary" @click="openMfaSignInstadappSignerModal(signer.address, true)">
+                Manage Networks
+                <SvgoCog />
+              </button>
             </div>
           </div>
         </div>
