@@ -398,6 +398,9 @@ export function useAvocadoSafe() {
 
     const mfa = _authMfa || preferredMfa.value
 
+    if (mfa.value === 'backup')
+      return { mfaCode: '', mfaType: 'backup' }
+
     const { success, payload: verifyPayload } = await authVerify({
       mfa,
       mfaRequestType: 'transaction',
@@ -447,7 +450,7 @@ export function useAvocadoSafe() {
   }
 
   async function createProposalOrSignDirecty(args: IGenerateMultisigSignatureParams) {
-    const { chainId, actions, nonce, metadata, estimatedFee = false, rejection, rejectionId, options, transactionType = 'others', clearModals = true } = args
+    const { chainId, actions, metadata, options } = args
 
     const requiredSigner = await getRequiredSigner(selectedSafe.value?.safe_address!, chainId)
 
@@ -481,7 +484,7 @@ export function useAvocadoSafe() {
       if (isInstadappSignerAdded(chainId) && atLeastOneMfaVerifed.value && !transactionToken.value) {
         let txHash
 
-        await authenticateTransactionMfa({
+        const { mfaType } = await authenticateTransactionMfa({
           submitFn: async (_mfa, code) => {
             try {
               const signatureObject = await getSignatureObject()
@@ -505,6 +508,9 @@ export function useAvocadoSafe() {
           },
         })
 
+        if (mfaType === 'backup')
+          return createProposal(args)
+
         return txHash
       }
 
@@ -517,6 +523,12 @@ export function useAvocadoSafe() {
 
       return txHash
     }
+
+    await createProposal(args)
+  }
+
+  async function createProposal(args: IGenerateMultisigSignatureParams) {
+    const { chainId, actions, nonce, metadata, estimatedFee = false, rejection, rejectionId, options, transactionType = 'others', clearModals = true } = args
 
     const { success, payload } = await openEditNonceModal({ chainId, actions, defaultNonce: nonce, estimatedFee, rejection, rejectionId, transactionType, metadata, options })
 

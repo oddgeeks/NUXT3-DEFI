@@ -3,6 +3,7 @@ const preferredMfaType = useLocalStorage('mfa-preferred-type', '')
 
 export function useMfa() {
   const { mfaEmailVerifed, mfaPhoneVerifed, mfaTotpVerifed, selectedSafe, atLeastOneMfaVerifed } = storeToRefs(useSafe())
+  const { backupSigners } = storeToRefs(useMultisig())
   const { avoProvider, fetchSafeInstanceses } = useSafe()
   const { switchToAvocadoNetwork } = useNetworks()
   const { account, library } = useWeb3()
@@ -17,6 +18,13 @@ export function useMfa() {
 
   const mfaTypes = computed(() =>
     [
+      {
+        value: 'backup',
+        title: 'Backup address',
+        label: 'Backup address',
+        description: '',
+        activated: !!backupSigners.value.length,
+      },
       {
         value: 'totp',
         title: 'Set up Authenticator app',
@@ -82,6 +90,8 @@ export function useMfa() {
       },
     ] as IMfa[],
   )
+
+  const backupMfa = computed(() => mfaTypes.value.find(mfa => mfa.value === 'backup'))
 
   const preferredMfa = computed(() => {
     const mfas = mfaTypes.value.filter(mfa => mfa.activated)
@@ -402,6 +412,7 @@ export function useMfa() {
     activateMfa,
     activateToptMfa,
     authVerify,
+    backupMfa,
     signAndRequestTransactionMfaCode,
     signAndRequestDeleteMfaCode,
     verifyDeleteRequest,

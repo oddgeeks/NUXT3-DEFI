@@ -12,7 +12,7 @@ useAccountTrack(undefined, () => {
 const { isSelectedSafeLegacy, atLeastOneMfaVerifed } = storeToRefs(useSafe())
 const { hasInstadappSigner, instadappSignerNetworks, backupSigners } = storeToRefs(useMultisig())
 const { fetchSafeInstanceses } = useSafe()
-const { mfaTypes, mfaTermsAccepted, preferredMfaType, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa } = useMfa()
+const { mfaTypes, mfaTermsAccepted, preferredMfaType, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa, backupMfa } = useMfa()
 
 async function handleDeactivate(mfa: IMfa, close: () => void) {
   if (mfa.value !== 'totp') {
@@ -107,10 +107,6 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
     message: `Default 2FA method set to ${mfa.label}`,
   })
 }
-
-function handleDeactivateBackupSigner(close: () => void) {
-  close()
-}
 </script>
 
 <template>
@@ -143,63 +139,65 @@ function handleDeactivateBackupSigner(close: () => void) {
             </div>
             <div>
               <ul class="flex flex-col gap-4">
-                <li v-for="mfa in mfaTypes" :key="mfa.value">
-                  <div class="flex h-[66px] w-full items-center  justify-between rounded-2xl bg-slate-100 p-5 text-left ring-1 ring-slate-200 dark:bg-slate-850 dark:ring-slate-750">
-                    <div class="flex w-full items-center justify-between">
-                      <div class="flex flex-col gap-1">
-                        <span class="text-xs font-medium leading-5">
-                          {{ mfa.label }}
-                        </span>
-                        <span v-if="mfa.value === preferredMfaType" class="text-xs font-medium text-slate-400">
-                          Default
-                        </span>
-                      </div>
-                      <span v-if="mfa.activated" class="flex items-center gap-2.5 text-xs font-medium">
-                        <template v-if="hasInstadappSigner">
-                          <SvgoCheckCircle class="success-circle w-5" />
-                          <span class="uppercase text-primary">
-                            Active
+                <template v-for="mfa in mfaTypes" :key="mfa.value">
+                  <li v-if="mfa.value !== 'backup'">
+                    <div class="flex h-[66px] w-full items-center  justify-between rounded-2xl bg-slate-100 p-5 text-left ring-1 ring-slate-200 dark:bg-slate-850 dark:ring-slate-750">
+                      <div class="flex w-full items-center justify-between">
+                        <div class="flex flex-col gap-1">
+                          <span class="text-xs font-medium leading-5">
+                            {{ mfa.label }}
                           </span>
-                        </template>
-                        <template v-else>
-                          <span class="text-orange">
-                            Manage networks to activate
+                          <span v-if="mfa.value === preferredMfaType" class="text-xs font-medium text-slate-400">
+                            Default
                           </span>
-                        </template>
+                        </div>
+                        <span v-if="mfa.activated" class="flex items-center gap-2.5 text-xs font-medium">
+                          <template v-if="hasInstadappSigner">
+                            <SvgoCheckCircle class="success-circle w-5" />
+                            <span class="uppercase text-primary">
+                              Active
+                            </span>
+                          </template>
+                          <template v-else>
+                            <span class="text-orange">
+                              Manage networks to activate
+                            </span>
+                          </template>
 
-                        <Popover class="relative ml-2.5 inline-flex items-center">
-                          <PopoverButton class="group focus:outline-none">
-                            <SvgoDots />
-                          </PopoverButton>
+                          <Popover class="relative ml-2.5 inline-flex items-center">
+                            <PopoverButton class="group focus:outline-none">
+                              <SvgoDots />
+                            </PopoverButton>
 
-                          <transition
-                            enter-active-class="transition duration-200 ease-out"
-                            enter-from-class="translate-y-1 opacity-0"
-                            enter-to-class="translate-y-0 opacity-100"
-                            leave-active-class="transition duration-150 ease-in"
-                            leave-from-class="translate-y-0 opacity-100"
-                            leave-to-class="translate-y-1 opacity-0"
-                          >
-                            <PopoverPanel
-                              v-slot="{ close }"
-                              class="absolute -top-24 left-1/2 z-10 flex -translate-x-1/2 flex-col rounded-2xl border border-slate-150 bg-slate-100 p-2 text-sm font-medium dark:border-[#1E293B] dark:bg-gray-950"
+                            <transition
+                              enter-active-class="transition duration-200 ease-out"
+                              enter-from-class="translate-y-1 opacity-0"
+                              enter-to-class="translate-y-0 opacity-100"
+                              leave-active-class="transition duration-150 ease-in"
+                              leave-from-class="translate-y-0 opacity-100"
+                              leave-to-class="translate-y-1 opacity-0"
                             >
-                              <button class="flex items-center gap-2.5 whitespace-nowrap rounded-xl px-4 py-2.5 hover:bg-slate-150 hover:dark:bg-slate-800" @click="handleSetDefault(mfa, close)">
-                                <SvgoAsDefault /> Set as default
-                              </button>
-                              <button class="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-red-alert hover:bg-red-alert/10" @click="handleDeactivate(mfa, close)">
-                                <SvgoTrash2 /> Deactivate
-                              </button>
-                            </PopoverPanel>
-                          </transition>
-                        </Popover>
-                      </span>
-                      <CommonButton v-else @click="handleActivate(mfa)">
-                        Activate Now
-                      </CommonButton>
+                              <PopoverPanel
+                                v-slot="{ close }"
+                                class="absolute -top-24 left-1/2 z-10 flex -translate-x-1/2 flex-col rounded-2xl border border-slate-150 bg-slate-100 p-2 text-sm font-medium dark:border-[#1E293B] dark:bg-gray-950"
+                              >
+                                <button class="flex items-center gap-2.5 whitespace-nowrap rounded-xl px-4 py-2.5 hover:bg-slate-150 hover:dark:bg-slate-800" @click="handleSetDefault(mfa, close)">
+                                  <SvgoAsDefault /> Set as default
+                                </button>
+                                <button class="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-red-alert hover:bg-red-alert/10" @click="handleDeactivate(mfa, close)">
+                                  <SvgoTrash2 /> Deactivate
+                                </button>
+                              </PopoverPanel>
+                            </transition>
+                          </Popover>
+                        </span>
+                        <CommonButton v-else @click="handleActivate(mfa)">
+                          Activate Now
+                        </CommonButton>
+                      </div>
                     </div>
-                  </div>
-                </li>
+                  </li>
+                </template>
               </ul>
             </div>
           </div>
@@ -230,48 +228,17 @@ function handleDeactivateBackupSigner(close: () => void) {
             <div class="flex h-[66px] w-full items-center justify-between rounded-2xl bg-slate-100 p-5 text-left ring-1 ring-slate-200 dark:bg-slate-850 dark:ring-slate-750">
               <div class="flex w-full items-center justify-between">
                 <span class="text-xs font-medium leading-5">
-                  Secondary Address
+                  {{ backupMfa?.title }}
                 </span>
 
-                <CommonButton v-if="!backupSigners.length" @click="openAddBackupSignerModal">
+                <CommonButton v-if="!backupMfa?.activated" @click="openAddBackupSignerModal">
                   Activate Now
                 </CommonButton>
                 <span v-else class="flex items-center gap-2.5 text-xs font-medium">
-                  <template v-if="hasInstadappSigner">
-                    <SvgoCheckCircle class="success-circle w-5" />
-                    <span class="uppercase text-primary">
-                      Active
-                    </span>
-                  </template>
-                  <template v-else>
-                    <span class="text-orange">
-                      Manage networks to activate
-                    </span>
-                  </template>
-
-                  <Popover class="relative ml-2.5 inline-flex items-center">
-                    <PopoverButton class="group focus:outline-none">
-                      <SvgoDots />
-                    </PopoverButton>
-
-                    <transition
-                      enter-active-class="transition duration-200 ease-out"
-                      enter-from-class="translate-y-1 opacity-0"
-                      enter-to-class="translate-y-0 opacity-100"
-                      leave-active-class="transition duration-150 ease-in"
-                      leave-from-class="translate-y-0 opacity-100"
-                      leave-to-class="translate-y-1 opacity-0"
-                    >
-                      <PopoverPanel
-                        v-slot="{ close }"
-                        class="absolute -top-16 left-1/2 z-10 flex -translate-x-1/2 flex-col rounded-2xl border border-slate-150 bg-slate-100 p-2 text-sm font-medium dark:border-[#1E293B] dark:bg-gray-950"
-                      >
-                        <button class="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-red-alert hover:bg-red-alert/10" @click="handleDeactivateBackupSigner(close)">
-                          <SvgoTrash2 /> Deactivate
-                        </button>
-                      </PopoverPanel>
-                    </transition>
-                  </Popover>
+                  <SvgoCheckCircle class="success-circle w-5" />
+                  <span class="uppercase text-primary">
+                    Active
+                  </span>
                 </span>
               </div>
             </div>

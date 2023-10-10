@@ -1,4 +1,4 @@
-type Mfa = 'totp' | 'phone' | 'email'
+type Mfa = 'totp' | 'phone' | 'email' | 'backup'
 
 interface ITotpData {
     algorithm: string
