@@ -6,7 +6,7 @@ const props = defineProps<{
   mfa: IMfa
   mfaRequestType: MfaRequestType
   verify?: (mfa: IMfa, code: string) => Promise<boolean>
-  request?: (mfa: IMfa) => Promise<IMfaResponse>
+  request?: () => Promise<IMfaResponse>
   authenticate?: boolean
   inputValue?: any
 }>()
@@ -18,7 +18,7 @@ const actualMfa = computed(() => props.mfa)
 const otpValue = ref<string>()
 const pending = ref(false)
 
-const { dec, count } = useCounter(60, { min: 0, max: 60 })
+const { dec, count, reset } = useCounter(60, { min: 0, max: 60 })
 
 const sessionAvailable = ref(false)
 
@@ -78,7 +78,7 @@ async function handleRequest() {
   if (!props.request)
     return
 
-  const result = await props.request(actualMfa.value)
+  const result = await props.request()
 
   const isSuccess = typeof result === 'object' ? result?.status : result
 
@@ -94,6 +94,8 @@ async function handleRequest() {
       message: `Failed to send OTP to your ${actualMfa.value.label}`,
     })
   }
+
+  reset()
 }
 
 async function handleTryAnotherMethod() {

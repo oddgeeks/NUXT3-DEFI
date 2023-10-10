@@ -34,7 +34,7 @@ async function handleDeactivate(mfa: IMfa, close: () => void) {
   const { success } = await openVerifyMFAModal({
     mfa,
     mfaRequestType: 'delete',
-    request: signAndRequestDeleteMfaCode,
+    request: signAndRequestDeleteMfaCode.bind(null, mfa),
     verify: verifyDeleteRequest,
   })
 

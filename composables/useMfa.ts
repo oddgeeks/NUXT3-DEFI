@@ -166,8 +166,10 @@ export function useMfa() {
   async function authVerify(params: IAuthVerifyParams) {
     const { mfa, mfaRequestType, submitFn } = params || {}
 
+    const requestFunction = mfaRequestType === 'transaction' ? signAndRequestTransactionMfaCode : signAndRequestUpdateMfaCode
+
     if (mfa.value !== 'totp') {
-      const success = mfaRequestType === 'transaction' ? await signAndRequestTransactionMfaCode(mfa) : await signAndRequestUpdateMfaCode(mfa)
+      const success = await requestFunction(mfa)
 
       if (!success)
         throw new Error('Failed to request MFA code')
@@ -177,7 +179,7 @@ export function useMfa() {
       mfa,
       mfaRequestType,
       authenticate: true,
-      request: signAndRequestUpdateMfaCode,
+      request: requestFunction.bind(null, mfa),
       verify: submitFn,
     })
   }
@@ -207,7 +209,7 @@ export function useMfa() {
     return openVerifyMFAModal({
       mfa,
       mfaRequestType: 'update',
-      request: handleRequestActivateMfa.bind(null, signPayload),
+      request: handleRequestActivateMfa.bind(null, mfa, signPayload),
       verify: verifyUpdateRequest,
       inputValue: value,
     })
