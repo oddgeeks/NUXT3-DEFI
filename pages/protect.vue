@@ -238,7 +238,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                   Secondary Address
                 </span>
 
-                <CommonButton>
+                <CommonButton @click="openAddBackupSignerModal">
                   Activate Now
                 </CommonButton>
               </div>
