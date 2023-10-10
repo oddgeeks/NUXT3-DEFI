@@ -16,7 +16,10 @@ const { safeTotalBalanceMapping, legacySafeAddress, selectedSafe } = storeToRefs
 const { checkSafeIsActualMultisig } = useMultisig()
 
 const isMultisig = computed(() => checkSafeIsActualMultisig(props.safe))
-const walletName = useLocalStorage(`safe-label-${props.safe?.safe_address}`, isMultisig.value ? 'MultiSig' : 'Personal')
+const walletName = computed(() => {
+  const name = localStorage.getItem(`safe-label-${props.safe?.safe_address}`)
+  return name?.length ? name : (isMultisig.value ? 'MultiSig' : 'Personal')
+})
 
 const isLegacySafeExist = computed(() => !!legacySafeAddress.value)
 
