@@ -89,12 +89,17 @@ const onSubmit = handleSubmit(async () => {
 })
 
 onMounted(async () => {
-  const lookup: any = await $fetch('https://ipapi.co/json')
+  try {
+    const lookup: any = await $fetch('https://ipapi.co/json')
 
-  const existingCode = countriesWithKey.value.find(c => c.key === `${lookup.country_code.toLowerCase()}${parseInt(lookup.country_calling_code)}`)?.key
+    const existingCode = countriesWithKey.value.find(c => c.key === `${lookup.country_code.toLowerCase()}${parseInt(lookup.country_calling_code)}`)?.key
 
-  if (existingCode)
-    countryCode.value = existingCode
+    if (existingCode)
+      countryCode.value = existingCode
+  }
+  catch (e) {
+    countryCode.value = 'us1'
+  }
 })
 </script>
 
