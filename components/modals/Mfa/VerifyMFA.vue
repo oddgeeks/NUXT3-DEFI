@@ -10,6 +10,7 @@ const props = defineProps<{
   defaultSessionAvailable?: boolean
   authenticate?: boolean
   inputValue?: any
+  expire?: MfaExpire
 }>()
 
 const emit = defineEmits(['resolve', 'destroy'])
@@ -24,6 +25,16 @@ const { dec, count, reset } = useCounter(60, { min: 0, max: 60 })
 const sessionAvailable = ref(props.defaultSessionAvailable || false)
 
 useIntervalFn(() => dec(), 1000)
+
+const buttonLabel = computed(() => {
+  const obj: Record<MfaRequestType, string> = {
+    delete: `Remove ${props.mfa.label}`,
+    transaction: 'Confirm transaction',
+    update: 'Verify',
+  }
+
+  return obj[props.mfaRequestType]
+})
 
 const value = computed(() => {
   if (!props.inputValue)
@@ -151,13 +162,13 @@ async function handleDeactivateWithRecoveryCode() {
       <input id="input-session" v-model="sessionAvailable" class="peer sr-only" type="checkbox">
       <SvgoCheckCircle class="svg-circle darker peer-checked:success-circle h-5 w-5 shrink-0 cursor-pointer text-slate-400" />
       <span :class="!sessionAvailable ? 'text-slate-500' : ''">
-        Don’t ask for OTP verification for the next 30 min. <span v-if="defaultSessionAvailable"> (Recommended) </span>
+        Don’t ask for OTP verification for the next {{ expire ? parseInt(expire) : '30' }} min. <span v-if="defaultSessionAvailable"> (Recommended) </span>
       </span>
     </label>
 
     <div class="flex w-full gap-5">
-      <CommonButton :loading="pending" size="lg" class="flex-1 justify-center" type="submit" :disabled="String(otpValue).length !== 6">
-        {{ mfaRequestType === 'transaction' ? 'Confirm transaction' : 'Verify' }}
+      <CommonButton :loading="pending" size="lg" :color="mfaRequestType === 'delete' ? 'red' : 'primary'" class="flex-1 justify-center" type="submit" :disabled="String(otpValue).length !== 6">
+        {{ buttonLabel }}
       </CommonButton>
     </div>
     <div class="flex justify-between">

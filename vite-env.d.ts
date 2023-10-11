@@ -711,6 +711,8 @@ interface IMfaActivateModalParams {
 
 type MfaVerify = (mfa: IMfa, code: string) => Promise<boolean>
 
+type MfaExpire = '30min' | '60min'
+
 interface IMfaVerifyModalParams {
   mfa: IMfa,
   mfaRequestType: MfaRequestType,
@@ -719,6 +721,7 @@ interface IMfaVerifyModalParams {
   inputValue?: string
   authenticate?: boolean,
   defaultSessionAvailable?: boolean
+  expire?: MfaExpire
 }
 
 interface IAuthVerifyParams {
@@ -726,10 +729,13 @@ interface IAuthVerifyParams {
   mfaRequestType: MfaRequestType
   submitFn?: MfaVerify
   defaultSessionAvailable?: boolean
+  expire?: MfaExpire
 }
 
 interface IAuthTransactionMfa {
   _authMfa?: IMfa
   submitFn?: MfaVerify
   defaultSessionAvailable?: boolean
+  forceGrabSession?: boolean
+  expire?: MfaExpire
 }

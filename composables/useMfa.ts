@@ -46,7 +46,7 @@ export function useMfa() {
       },
       {
         value: 'phone',
-        label: 'SMS OTP based login',
+        label: 'SMS OTP login',
         enterOtpLabel: 'Enter Phone OTP',
         title: 'Enter your phone number',
         description: 'We will send an OTP to your phone.',
@@ -181,7 +181,7 @@ export function useMfa() {
   }
 
   async function authVerify(params: IAuthVerifyParams) {
-    const { mfa, mfaRequestType, submitFn, defaultSessionAvailable = false } = params || {}
+    const { mfa, mfaRequestType, submitFn, defaultSessionAvailable = false, expire } = params || {}
 
     const requestFunction = mfaRequestType === 'transaction' ? signAndRequestTransactionMfaCode : signAndRequestUpdateMfaCode
 
@@ -199,6 +199,7 @@ export function useMfa() {
       request: requestFunction.bind(null, mfa),
       verify: submitFn,
       defaultSessionAvailable,
+      expire,
     })
   }
 

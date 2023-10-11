@@ -397,9 +397,10 @@ export function useAvocadoSafe() {
   }
 
   async function authenticateTransactionMfa(params?: IAuthTransactionMfa) {
-    const { _authMfa, submitFn, defaultSessionAvailable = false } = params || {}
+    const { _authMfa, submitFn, defaultSessionAvailable = false, expire, forceGrabSession = false } = params || {}
 
     const mfa = _authMfa || preferredMfa.value
+    let mfaToken
 
     if (mfa.value === 'backup')
       return { mfaCode: '', mfaType: 'backup' }
@@ -409,48 +410,55 @@ export function useAvocadoSafe() {
       mfaRequestType: 'transaction',
       submitFn,
       defaultSessionAvailable,
-
     })
 
     if (verifyPayload?.fallbackMfa) {
       return authenticateTransactionMfa({
         _authMfa: verifyPayload.fallbackMfa,
         submitFn,
+        defaultSessionAvailable,
+        expire,
+        forceGrabSession,
       })
     }
 
     if (!success || !verifyPayload?.code)
       throw new Error('MFA verification failed')
 
-    if (verifyPayload.sessionAvailable) {
+    if (verifyPayload.sessionAvailable || forceGrabSession) {
       const resp = await avoProvider.send('mfa_generateSessionToken', [
         {
           owner: selectedSafe.value?.owner_address,
           index: selectedSafe.value?.multisig_index,
-          ttl: '30min',
+          ttl: expire || '30min',
           code: verifyPayload.code,
           type: mfa.value,
         },
       ])
 
-      const transactionToken = useCookie<string | undefined>(`transaction-token-${selectedSafe.value?.safe_address}`, {
-        expires: new Date(resp.expiresAt),
-      })
-
-      const transactionTokenExpiry = useCookie<string | undefined>(`transaction-token-expiry-${selectedSafe.value?.safe_address}`, {
-        expires: new Date(resp.expiresAt),
-      })
-
-      transactionToken.value = resp.token
-      transactionTokenExpiry.value = resp.expiresAt
-
       if (!resp)
         throw new Error('Failed to generate session token')
+
+      if (verifyPayload.sessionAvailable) {
+        const transactionToken = useCookie<string | undefined>(`transaction-token-${selectedSafe.value?.safe_address}`, {
+          expires: new Date(resp.expiresAt),
+        })
+
+        const transactionTokenExpiry = useCookie<string | undefined>(`transaction-token-expiry-${selectedSafe.value?.safe_address}`, {
+          expires: new Date(resp.expiresAt),
+        })
+
+        transactionToken.value = resp.token
+        transactionTokenExpiry.value = resp.expiresAt
+      }
+
+      mfaToken = resp.token
     }
 
     return {
       mfaCode: verifyPayload.code,
       mfaType: mfa.value,
+      mfaToken,
     }
   }
 
@@ -923,5 +931,7 @@ ${parsed.message}`,
     checkTransactionExecuted,
     networkOrderedBySumTokens,
     generateSignatureMessage,
+    authenticateTransactionMfa,
+    isEligableToProceed2FA,
   }
 }
