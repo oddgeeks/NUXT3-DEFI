@@ -48,6 +48,10 @@ export const useSafe = defineStore('safe', () => {
 
   const atLeastOneMfaVerifed = computed(() => mfaEmailVerifed.value || mfaTotpVerifed.value || mfaPhoneVerifed.value)
 
+  const isSafeBackupSigner = computed(() => {
+    return atLeastOneMfaVerifed.value && !isAddressEqual(selectedSafe.value?.owner_address, account.value)
+  })
+
   const safesLoading = ref(false)
   const optionsLoading = ref(false)
 
@@ -863,6 +867,7 @@ export const useSafe = defineStore('safe', () => {
     mfaPhoneVerifed,
     atLeastOneMfaVerifed,
     fetchSafeInstanceses,
+    isSafeBackupSigner,
   }
 })
 

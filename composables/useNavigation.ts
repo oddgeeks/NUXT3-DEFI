@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 export function useNavigation() {
+  const { isSafeBackupSigner } = storeToRefs(useSafe())
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { safeAddress, account } = useAvocadoSafe()
   const { isAvocadoProtectActive } = useMfa()
@@ -44,7 +45,7 @@ export function useNavigation() {
         icon: 'SvgoStopwatch',
         to: `/multisig/${safeAddress.value}/pending-transactions`,
         tooltip: 'Pending Transactions',
-        hidden: !isSafeMultisig.value,
+        hidden: !isSafeMultisig.value && !isSafeBackupSigner.value,
         count: totalPendingTransactions,
       },
       {
