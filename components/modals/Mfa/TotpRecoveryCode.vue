@@ -69,7 +69,7 @@ async function regenerateRecoveryCodes() {
       </ul>
     </div>
     <div class="flex flex-col gap-4">
-      <CommonButton :loading="loading.regenerate" class="items-center justify-center" size="lg" @click="regenerateRecoveryCodes">
+      <CommonButton color="white" :loading="loading.regenerate" class="items-center justify-center" size="lg" @click="regenerateRecoveryCodes">
         Regenerate recovery codes
       </CommonButton>
     </div>
