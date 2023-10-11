@@ -8,7 +8,7 @@ export function useMfa() {
   const { switchToAvocadoNetwork } = useNetworks()
   const { account, library } = useWeb3()
 
-  const isAvocadoProtectActive = computed(() => selectedSafe.value?.multisig_index === 0)
+  const isAvocadoProtectActive = computed(() => selectedSafe.value?.multisig === 1 && selectedSafe.value?.multisig_index === 0)
 
   const mfaSessionTypes = {
     RequestCode: [

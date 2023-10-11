@@ -62,6 +62,17 @@ export const useMultisig = defineStore('multisig', () => {
     return requiredSigner
   }
 
+  function checkHasInstadappSigner(safe: ISafe) {
+    const signers = formatSigners(safe.signers)
+
+    const instadappSigners = signers.find(i => getAddress(i.address) === getAddress(instadappSigner))
+
+    if (!instadappSigners)
+      return false
+
+    return instadappSigners.chainIds.length > 0
+  }
+
   const instadappSignerNetworks = computed(() => {
     const instadappSigners = signers.value.find(i => getAddress(i.address) === getAddress(instadappSigner))
 
@@ -75,7 +86,7 @@ export const useMultisig = defineStore('multisig', () => {
     return signers.value.filter(i => !isAddressEqual(i.address, instadappSigner) && !isAddressEqual(i.address, selectedSafe.value?.owner_address))
   })
 
-  const hasInstadappSigner = computed(() => instadappSignerNetworks.value.length > 0)
+  const hasInstadappSigner = computed(() => checkHasInstadappSigner(selectedSafe.value!))
 
   function isSignerAdded(address: string, chainId: number | string) {
     const signers = selectedSafe.value?.signers?.[chainId] || []
@@ -86,6 +97,10 @@ export const useMultisig = defineStore('multisig', () => {
     return isSignerAdded(instadappSigner, chainId)
   }
 
+  function checkAtleastOneMfaVerified(safe: ISafe) {
+    return safe.mfa_phone_verified === 1 || safe.mfa_email_verified === 1 || safe.mfa_totp_verified === 1
+  }
+
   function checkSafeIsActualMultisig(safe: ISafe) {
     if (!safe)
       return false
@@ -93,7 +108,7 @@ export const useMultisig = defineStore('multisig', () => {
     if (safe?.multisig_index > 0)
       return true
 
-    if (atLeastOneMfaVerifed.value || hasInstadappSigner.value)
+    if (checkAtleastOneMfaVerified(safe) || hasInstadappSigner.value)
       return false
 
     const signers = safe?.signers || {}

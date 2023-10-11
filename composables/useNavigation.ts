@@ -3,7 +3,7 @@ import axios from 'axios'
 export function useNavigation() {
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { safeAddress, account } = useAvocadoSafe()
-  const { selectedSafe } = storeToRefs(useSafe())
+  const { isAvocadoProtectActive } = useMfa()
 
   const { data, refresh } = useAsyncData<IMultisigTransactionResponse>(async () => {
     if (!safeAddress.value || !account.value)
@@ -85,7 +85,7 @@ export function useNavigation() {
         icon: 'SvgoShield',
         to: '/protect',
         tooltip: 'Multi-Factor Authentication',
-        hidden: selectedSafe.value?.multisig_index !== 0,
+        hidden: !isAvocadoProtectActive.value,
       },
     ]
   })

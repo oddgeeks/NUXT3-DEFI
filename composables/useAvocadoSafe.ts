@@ -452,48 +452,53 @@ export function useAvocadoSafe() {
     }
   }
 
-  async function createProposalOrSignDirecty(args: IGenerateMultisigSignatureParams) {
+  function isEligableToProceed2FA(requiredSigner: number, chainId: string | number) {
+    return isInstadappSignerAdded(chainId) && atLeastOneMfaVerifed.value && requiredSigner === 2
+  }
+
+  async function getSingleSignatureObject(args: IGenerateMultisigSignatureParams) {
     const { chainId, actions, metadata, options } = args
+    const params = await generateMultisigSignatureAndSign({ chainId, actions, metadata, options })
+
+    const signatureObject: IMultisigBroadcastParams = {
+      proposalId: '',
+      ignoreSlack: true,
+      confirmations: [{
+        address: params.signatureParams.address,
+        signature: params.signatureParams.signature,
+        created_at: new Date().getTime(),
+      }],
+      signers: [params.signatureParams.address],
+      message: params.castParams,
+      owner: selectedSafe.value?.owner_address!,
+      safe: selectedSafe.value?.safe_address!,
+      targetChainId: chainId,
+      mfa_code: '',
+      mfa_token: '',
+      mfa_type: undefined,
+      debug: {
+        domain: params.domain,
+      },
+    }
+
+    return signatureObject
+  }
+
+  async function createProposalOrSignDirecty(params: IGenerateMultisigSignatureParams) {
+    const { chainId } = params
 
     const requiredSigner = await getRequiredSigner(selectedSafe.value?.safe_address!, chainId)
 
     const transactionToken = useCookie<string | undefined>(`transaction-token-${selectedSafe.value?.safe_address}`)
 
-    async function getSignatureObject() {
-      const params = await generateMultisigSignatureAndSign({ chainId, actions, metadata, options })
-
-      const signatureObject: IMultisigBroadcastParams = {
-        proposalId: '',
-        ignoreSlack: true,
-        confirmations: [{
-          address: params.signatureParams.address,
-          signature: params.signatureParams.signature,
-          created_at: new Date().getTime(),
-        }],
-        signers: [params.signatureParams.address],
-        message: params.castParams,
-        owner: selectedSafe.value?.owner_address!,
-        safe: selectedSafe.value?.safe_address!,
-        targetChainId: chainId,
-        mfa_code: '',
-        mfa_token: '',
-        mfa_type: undefined,
-        debug: {
-          domain: params.domain,
-        },
-      }
-
-      return signatureObject
-    }
-
     if (isSafeEligableToSingleExecution(requiredSigner)) {
-      if (isInstadappSignerAdded(chainId) && atLeastOneMfaVerifed.value && !transactionToken.value) {
+      if (isEligableToProceed2FA(requiredSigner, chainId) && !transactionToken.value) {
         let txHash
 
         const { mfaType } = await authenticateTransactionMfa({
           submitFn: async (_mfa, code) => {
             try {
-              const signatureObject = await getSignatureObject()
+              const signatureObject = await getSingleSignatureObject(params)
 
               signatureObject.mfa_code = code
               signatureObject.mfa_type = _mfa.value
@@ -515,14 +520,14 @@ export function useAvocadoSafe() {
         })
 
         if (mfaType === 'backup')
-          return createProposal(args)
+          return createProposal(params)
 
         return txHash
       }
 
-      const signatureObject = await getSignatureObject()
+      const signatureObject = await getSingleSignatureObject(params)
 
-      if (isInstadappSignerAdded(chainId) && atLeastOneMfaVerifed.value && transactionToken.value)
+      if (isEligableToProceed2FA(requiredSigner, chainId) && transactionToken.value)
         signatureObject.mfa_token = transactionToken.value
 
       const txHash = await multisigBroadcast(signatureObject)
@@ -530,7 +535,7 @@ export function useAvocadoSafe() {
       return txHash
     }
 
-    await createProposal(args)
+    await createProposal(params)
   }
 
   async function createProposal(args: IGenerateMultisigSignatureParams) {

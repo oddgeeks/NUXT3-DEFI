@@ -3,7 +3,6 @@ const props = defineProps<{
   safe: ISafe
   primary?: boolean
   tooltip?: string
-  v2?: boolean
 }>()
 
 const route = useRoute()
@@ -13,6 +12,8 @@ const { safeAddress } = useAvocadoSafe()
 const { fetchPendingMultisigTxnsCount, setGasBalance } = useSafe()
 const { safeTotalBalanceMapping, legacySafeAddress, selectedSafe } = storeToRefs(useSafe())
 const { checkSafeIsActualMultisig } = useMultisig()
+
+const v2 = computed(() => props.safe.multisig === 1)
 
 const isMultisig = computed(() => checkSafeIsActualMultisig(props.safe))
 const walletName = useLocalStorage(`safe-label-${props.safe?.safe_address}`, isMultisig.value ? 'MultiSig' : 'Personal')
