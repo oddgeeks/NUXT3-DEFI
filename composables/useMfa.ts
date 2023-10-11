@@ -42,6 +42,7 @@ export function useMfa() {
           ],
         },
         activated: mfaTotpVerifed.value,
+        icon: 'SvgoTotp',
       },
       {
         value: 'phone',
@@ -66,6 +67,7 @@ export function useMfa() {
           ],
         },
         activated: mfaPhoneVerifed.value,
+        icon: 'SvgoPhone',
 
       }, {
         value: 'email',
@@ -89,6 +91,7 @@ export function useMfa() {
           ],
         },
         activated: mfaEmailVerifed.value,
+        icon: 'SvgoEmail',
       },
     ] as IMfa[],
   )

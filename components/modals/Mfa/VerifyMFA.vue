@@ -126,16 +126,23 @@ async function handleDeactivateWithRecoveryCode() {
 <template>
   <form class="flex flex-col gap-5 p-7.5" @submit.prevent="onSubmit">
     <div>
-      <div class="mb-7.5 flex flex-col gap-2.5">
-        <h1 class="block text-lg leading-[30px] sm:max-w-sm">
-          {{ mfa.enterOtpLabel }}
-          <span v-if="mfaRequestType === 'transaction'">
-            to confirm the transaction
-          </span>
-        </h1>
-        <h2 v-if="mfa.value !== 'totp'" class="text-xs font-medium leading-5 text-slate-400">
-          A 6 digit code has been sent to <span v-if="value"> {{ value }}</span> <span v-else class="lowercase">your {{ mfa.value }}.</span>
-        </h2>
+      <div class="flex gap-[14px]">
+        <CommonTxTypeIcon class="h-10 w-10">
+          <template #icon>
+            <Component :is="mfa.icon" />
+          </template>
+        </CommonTxTypeIcon>
+        <div class="mb-7.5 flex flex-col gap-2.5">
+          <h1 class="block text-lg leading-[30px] sm:max-w-xs">
+            {{ mfa.enterOtpLabel }}
+            <span v-if="mfaRequestType === 'transaction'">
+              to confirm the transaction
+            </span>
+          </h1>
+          <h2 v-if="mfa.value !== 'totp'" class="text-xs font-medium leading-5 text-slate-400">
+            A 6 digit code has been sent to <span v-if="value"> {{ value }}</span> <span v-else class="lowercase">your {{ mfa.value }}.</span>
+          </h2>
+        </div>
       </div>
       <VOtpInput v-model:value="otpValue" should-auto-focus class="otp-wrapper gap-2.5" input-classes="dark:bg-slate-800 rounded-[14px] bg-slate-100 border-0 focus-within:ring-1 dark:focus-within:bg-gray-850 focus-within:bg-slate-50 dark:focus-within:ring-slate-750 px-4 py-[15px] text-center w-[58px] h-[50px] focus-within:ring-slate-100" separator="" :num-inputs="6" />
     </div>

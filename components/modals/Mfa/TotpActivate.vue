@@ -36,13 +36,20 @@ async function handleContinue() {
 
 <template>
   <div v-if="mfa" class="p-7.5">
-    <div class="flex flex-col gap-1">
-      <h1 class="text-lg">
-        {{ mfa.title }}
-      </h1>
-      <h2 class="text-xs font-medium text-slate-400">
-        {{ mfa.description }}
-      </h2>
+    <div class="flex gap-[14px]">
+      <CommonTxTypeIcon class="h-10 w-10">
+        <template #icon>
+          <Component :is="mfa.icon" />
+        </template>
+      </CommonTxTypeIcon>
+      <div class="flex flex-col gap-1">
+        <h1 class="text-lg">
+          {{ mfa.title }}
+        </h1>
+        <h2 class="text-xs font-medium text-slate-400">
+          {{ mfa.description }}
+        </h2>
+      </div>
     </div>
     <div class="flex flex-col gap-5">
       <CommonQrImage class="mt-7.5" :url="totp.uri" />

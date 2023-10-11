@@ -23,6 +23,7 @@ interface IMfa {
   title: string
   description: string
   enterOtpLabel: string
+  icon: string
   removeTypes?: {
     [key: string]: {
       name: string
