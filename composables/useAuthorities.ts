@@ -1,7 +1,7 @@
 export function useAuthorities() {
-  const { selectedSafe, mainSafe, safeAddress, atLeastOneMfaVerifed } = storeToRefs(useSafe())
+  const { selectedSafe, mainSafe, safeAddress } = storeToRefs(useSafe())
   const { isSafeMultisig } = storeToRefs(useMultisig())
-  const { isAccountCanSign, isInstadappSignerAdded } = useMultisig()
+  const { isAccountCanSign } = useMultisig()
 
   const isWalletSecondary = computed(() => selectedSafe.value?.multisig !== 1 && (mainSafe.value?.safe_address !== selectedSafe.value?.safe_address))
 
@@ -10,9 +10,6 @@ export function useAuthorities() {
   const authorisedNetworks = computed(() => {
     if (!account.value || !safeAddress?.value || !selectedSafe.value)
       return availableNetworks
-
-    if (atLeastOneMfaVerifed.value)
-      return availableNetworks.filter(i => isInstadappSignerAdded(i.chainId))
 
     if (isSafeMultisig.value)
 

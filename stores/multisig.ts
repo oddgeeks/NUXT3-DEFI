@@ -7,7 +7,7 @@ import { AvoMultisigImplementation__factory } from '@/contracts'
 export const useMultisig = defineStore('multisig', () => {
   const requiredSigners = ref<IRequiredSigners[]>([])
 
-  const { selectedSafe, atLeastOneMfaVerifed } = storeToRefs(useSafe())
+  const { selectedSafe } = storeToRefs(useSafe())
   const { getRpcProviderByChainId } = useShared()
 
   const signers = computed(() => {
