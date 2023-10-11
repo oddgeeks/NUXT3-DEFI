@@ -483,8 +483,6 @@ export const useSafe = defineStore('safe', () => {
     pause()
 
     try {
-      await until(optionsLoading).toMatch(s => !s)
-
       balances.value.loading = true
 
       const data = await getBalances(
