@@ -718,15 +718,18 @@ interface IMfaVerifyModalParams {
   request?: Function
   inputValue?: string
   authenticate?: boolean,
+  defaultSessionAvailable?: boolean
 }
 
 interface IAuthVerifyParams {
   mfa: IMfa
   mfaRequestType: MfaRequestType
   submitFn?: MfaVerify
+  defaultSessionAvailable?: boolean
 }
 
 interface IAuthTransactionMfa {
   _authMfa?: IMfa
   submitFn?: MfaVerify
+  defaultSessionAvailable?: boolean
 }

@@ -181,7 +181,7 @@ export function useMfa() {
   }
 
   async function authVerify(params: IAuthVerifyParams) {
-    const { mfa, mfaRequestType, submitFn } = params || {}
+    const { mfa, mfaRequestType, submitFn, defaultSessionAvailable = false } = params || {}
 
     const requestFunction = mfaRequestType === 'transaction' ? signAndRequestTransactionMfaCode : signAndRequestUpdateMfaCode
 
@@ -198,6 +198,7 @@ export function useMfa() {
       authenticate: true,
       request: requestFunction.bind(null, mfa),
       verify: submitFn,
+      defaultSessionAvailable,
     })
   }
 

@@ -397,7 +397,7 @@ export function useAvocadoSafe() {
   }
 
   async function authenticateTransactionMfa(params?: IAuthTransactionMfa) {
-    const { _authMfa, submitFn } = params || {}
+    const { _authMfa, submitFn, defaultSessionAvailable = false } = params || {}
 
     const mfa = _authMfa || preferredMfa.value
 
@@ -408,6 +408,8 @@ export function useAvocadoSafe() {
       mfa,
       mfaRequestType: 'transaction',
       submitFn,
+      defaultSessionAvailable,
+
     })
 
     if (verifyPayload?.fallbackMfa) {
@@ -485,7 +487,7 @@ export function useAvocadoSafe() {
   }
 
   async function createProposalOrSignDirecty(params: IGenerateMultisigSignatureParams) {
-    const { chainId } = params
+    const { chainId, transactionType } = params
 
     const requiredSigner = await getRequiredSigner(selectedSafe.value?.safe_address!, chainId)
 
@@ -495,7 +497,10 @@ export function useAvocadoSafe() {
       if (isEligableToProceed2FA(requiredSigner, chainId) && !transactionToken.value) {
         let txHash
 
+        const defaultSessionAvailable = transactionType === 'add-signers' || transactionType === 'remove-signers'
+
         const { mfaType } = await authenticateTransactionMfa({
+          defaultSessionAvailable,
           submitFn: async (_mfa, code) => {
             try {
               const signatureObject = await getSingleSignatureObject(params)

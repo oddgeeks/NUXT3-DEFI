@@ -7,6 +7,7 @@ const props = defineProps<{
   mfaRequestType: MfaRequestType
   verify?: (mfa: IMfa, code: string) => Promise<boolean>
   request?: () => Promise<IMfaResponse>
+  defaultSessionAvailable?: boolean
   authenticate?: boolean
   inputValue?: any
 }>()
@@ -20,7 +21,7 @@ const pending = ref(false)
 
 const { dec, count, reset } = useCounter(60, { min: 0, max: 60 })
 
-const sessionAvailable = ref(false)
+const sessionAvailable = ref(props.defaultSessionAvailable || false)
 
 useIntervalFn(() => dec(), 1000)
 
@@ -150,7 +151,7 @@ async function handleDeactivateWithRecoveryCode() {
       <input id="input-session" v-model="sessionAvailable" class="peer sr-only" type="checkbox">
       <SvgoCheckCircle class="svg-circle darker peer-checked:success-circle h-5 w-5 shrink-0 cursor-pointer text-slate-400" />
       <span :class="!sessionAvailable ? 'text-slate-500' : ''">
-        Don’t ask for OTP verification for the next 30 min.
+        Don’t ask for OTP verification for the next 30 min. <span v-if="defaultSessionAvailable"> (Recommended) </span>
       </span>
     </label>
 
