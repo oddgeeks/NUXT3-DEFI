@@ -365,6 +365,7 @@ type ISnackOptions = {
 
 type IOptions = {
   raw?: boolean;
+  closeButton?: boolean;
   clickToClose?: boolean;
   wrapperClass?: string;
   contentClass?: string;

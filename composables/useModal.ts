@@ -7,6 +7,7 @@ function defaultOptions() {
   return {
     raw: false,
     clickToClose: true,
+    closeButton: true,
     wrapperClass: '',
     contentClass: '',
     sheetPosition: 'bottom',

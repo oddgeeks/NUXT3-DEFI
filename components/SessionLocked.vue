@@ -34,7 +34,7 @@ useIntervalFn(() => formatCountDown(), 1000)
 
 <template>
   <span v-if="formattedTime" class="flex w-fit items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-1.5 text-sm font-medium">
-    <SvgoInfo2 v-tippy="'You will not be asked to verify using OTP before doing a transaction for the specified time'" class="w-4" />
+    <SvgoInfo2 v-tippy="'You will not be asked to verify using OTP before doing a transaction for the specified time'" class="w-4 text-primary" />
 
     <span class="text-primary">
       Session unlocked for

@@ -752,6 +752,8 @@ export async function openTotptActivateModal(totp: ITotpData) {
     },
     options: {
       contentClass: '!p-0',
+      clickToClose: false,
+      closeButton: false,
     },
   })
 }
@@ -800,6 +802,8 @@ export async function openRegenerateTotpRecoveryCodeModal(recoverycodes?: string
     options: {
       contentClass: '!p-0',
       wrapperClass: '!max-w-[560px]',
+      clickToClose: false,
+      closeButton: false,
     },
   })
 }
