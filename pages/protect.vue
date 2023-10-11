@@ -147,7 +147,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                           <span class="text-xs font-medium leading-5">
                             {{ mfa.label }}
                           </span>
-                          <span v-if="mfa.value === preferredMfaType" class="text-xs font-medium text-slate-400">
+                          <span v-if="mfa.value === preferredMfaType && mfa.activated" class="text-xs font-medium text-slate-400">
                             Default
                           </span>
                         </div>
