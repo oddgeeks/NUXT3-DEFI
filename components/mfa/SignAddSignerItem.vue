@@ -134,7 +134,7 @@ async function handleRemoveSigner() {
     </span>
 
     <CommonButton v-if="signerAdded" class="h-7.5 w-20 items-center justify-center text-xs" :color="hovered ? 'red' : 'white'" :disabled="pending || signed || executed" :loading="pending" @mouseenter="toggle(true)" @mouseleave="toggle(false)" @click="handleRemoveSigner">
-      {{ executed ? 'Executed' : signed ? 'Signed' : hovered ? 'Remove' : 'Enabled' }}
+      {{ executed ? 'Executed' : signed ? 'Signed' : hovered ? 'Disable' : 'Enabled' }}
     </CommonButton>
 
     <CommonButton v-else class="h-7.5 w-20 items-center justify-center text-xs" :disabled="pending || signed || executed || signerAdded" :loading="pending" @click="handleAddSigner">
