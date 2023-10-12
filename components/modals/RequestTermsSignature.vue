@@ -4,7 +4,7 @@ const { avoProvider } = useSafe()
 
 const { parseTransactionError } = useErrorHandler()
 
-const referral = useCookie<string | undefined>('ref-code')
+const referral = useCookie<string | null>('ref-code')
 
 const { account, library } = useWeb3()
 const pending = ref(false)
@@ -59,9 +59,11 @@ nonce: {{NONCE}}
       console.log({ linkStatus })
     }
 
-    referral.value = undefined
+    setTimeout(() => {
+      emit('resolve', true)
+    }, 0)
 
-    emit('resolve', true)
+    referral.value = null
   }
   catch (e: any) {
     const parsed = parseTransactionError(e)
@@ -83,7 +85,11 @@ nonce: {{NONCE}}
       Welcome to Avocado
     </h1>
     <h2 class="text-center font-medium">
-      By connecting your wallet and using Avocado, you agree to our Terms of Service and Privacy Policy.
+      By connecting your wallet and using Avocado, you agree to our <NuxtLink class="text-primary" to="/">
+        Terms of Service
+      </NuxtLink> and <NuxtLink class="text-primary" to="/">
+        Privacy Policy
+      </NuxtLink>
     </h2>
 
     <div class="flex w-full items-center justify-between gap-5 self-start">
