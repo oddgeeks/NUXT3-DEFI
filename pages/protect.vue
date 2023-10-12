@@ -192,7 +192,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                           </Popover>
                         </span>
                         <CommonButton v-else @click="handleActivate(mfa)">
-                          Activate Now
+                          Enable Now
                         </CommonButton>
                       </div>
                     </div>
@@ -241,7 +241,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
 
                 <Tippy v-if="!backupMfa?.activated" :content="!(hasInstadappSigner && atLeastOneMfaVerifed) ? 'Activate 2FA to enable backup signer' : undefined">
                   <CommonButton :disabled="!(hasInstadappSigner && atLeastOneMfaVerifed)" @click="openAddBackupSignerModal">
-                    Activate Now
+                    Enable Now
                   </CommonButton>
                 </Tippy>
                 <span v-else class="flex items-center gap-2.5 text-xs font-medium">
