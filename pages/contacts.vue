@@ -64,7 +64,7 @@ const importCSVFile = () => {
         return {
           address: columns[0],
           name: columns[1],
-          chainId: parseInt(columns[2]),
+          chainId: columns[2] === 'All Network' ? '' : parseInt(columns[2]),
         }
       })
       file_input.remove()
@@ -82,8 +82,13 @@ const importCSVFile = () => {
 const downloadContactsAsCSV = () => {
   let csvContent = 'Address,Name,ChainId\n'
 
+  console.log(filteredContacts);
+
   filteredContacts.value.forEach(row => {
-    csvContent += row.address + "," + row.name + "," + row.chainId + "\n"
+    if (row.address === ownerContact.value?.address) {
+      return;
+    }
+    csvContent += row.address + "," + row.name + "," + (row.chainId === '' ? 'All Network' : row.chainId) + "\n"
   })
 
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8,' })
