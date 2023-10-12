@@ -8,14 +8,24 @@ const { activate } = useWeb3()
 const { providers } = useNetworks()
 const { setConnectorName } = useConnectors()
 
+const termsSigned = useCookie<boolean>('terms-signed', {
+  expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+})
+
 const loading = ref<Record<string, boolean>>({})
 
 async function connect(provider: any) {
   try {
     loading.value[provider.name] = true
     await activate(await provider.connect(), undefined, true)
-    setConnectorName(provider.id)
-    emit('destroy')
+
+    const { success } = await openRequestTermsSignature()
+
+    if (success) {
+      setConnectorName(provider.id)
+      termsSigned.value = true
+      emit('destroy')
+    }
   }
   catch (e) {
     console.log(e)

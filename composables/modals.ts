@@ -47,6 +47,7 @@ import ViewDecodedModal from '~/components/modals/Multisig/ViewDecodedModal.vue'
 import WelcomeModal from '~/components/modals/Welcome.vue'
 import CreateBookmark from '~/components/modals/CreateBookmark.vue'
 import ExecutionError from '~/components/modals/Multisig/ExecutionError.vue'
+import RequestTermsSignature from '~/components/modals/RequestTermsSignature.vue'
 
 const { openModal } = useModal()
 interface DialogModalProps {
@@ -708,5 +709,18 @@ export async function openDecodedParamsModal(params: IDecodedParams) {
     },
   })
 }
+
+export async function openRequestTermsSignature() {
+  return openModal({
+    component: RequestTermsSignature,
+    async: true,
+    options: {
+      clickToClose: false,
+      closeButton: false,
+      wrapperClass: '!max-w-[560px]',
+    },
+  })
+}
+
 // @ts-expect-error
 globalThis.openCustomTxModal = openCustomTxModal

@@ -11,10 +11,27 @@ const providers = {
 
 export function useConnectors() {
   const { rpcs } = storeToRefs(useShared())
+  const { deactivate, connector } = useWeb3()
+  const { resetAccounts } = useSafe()
+
+  const router = useRouter()
 
   const cachedProviderName = useCookie('cachedProviderName', {
     expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
   })
+
+  const termsSigned = useCookie<boolean>('terms-signed', {
+    expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
+  })
+
+  function onDisconnect() {
+    termsSigned.value = false
+    resetAccounts()
+    setConnectorName(null)
+    router.push('/login')
+    if (connector.value)
+      deactivate()
+  }
 
   function setConnectorName(name: string | null) {
     cachedProviderName.value = name
@@ -32,5 +49,6 @@ export function useConnectors() {
     setConnectorName,
     getConnector,
     cachedProviderName,
+    onDisconnect,
   }
 }

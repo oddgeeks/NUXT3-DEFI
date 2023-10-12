@@ -12,13 +12,11 @@ defineProps({
   buttonClass: String,
 })
 
-const { active, deactivate, account, connector } = useWeb3()
+const { active, account } = useWeb3()
 const { trackingAccount } = useAccountTrack()
 const { gasBalance, ensName } = storeToRefs(useSafe())
-const { resetAccounts } = useSafe()
-const { setConnectorName, cachedProviderName } = useConnectors()
+const { cachedProviderName, onDisconnect } = useConnectors()
 const { providers } = useNetworks()
-const router = useRouter()
 
 const open = ref(false)
 const hovered = ref(false)
@@ -33,12 +31,8 @@ async function closeConnection() {
   const { success } = await openDisconnectWalletModal()
 
   if (success) {
-    resetAccounts()
     open.value = false
-    setConnectorName(null)
-    userSignOut()
-    if (connector.value)
-      deactivate()
+    onDisconnect()
   }
 }
 
@@ -53,10 +47,6 @@ const addressLabel = computed(() =>
 const connectedProvider = computed(() => {
   return providers.find(item => item.id === cachedProviderName.value)
 })
-
-function userSignOut() {
-  router.push('/login')
-}
 </script>
 
 <template>
