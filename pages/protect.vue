@@ -12,7 +12,7 @@ useAccountTrack(undefined, () => {
 
 const { hasInstadappSigner, instadappSignerNetworks, backupSigners } = storeToRefs(useMultisig())
 const { fetchSafeInstanceses } = useSafe()
-const { mfaTypes, mfaTermsAccepted, preferredMfaType, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa, backupMfa, isAvocadoProtectActive, atLeastOneMfaVerifed } = useMfa()
+const { mfaTypes, mfaTermsAccepted, preferredMfaType, preferredMfa, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa, backupMfa, isAvocadoProtectActive, atLeastOneMfaVerifed } = useMfa()
 
 async function handleDeactivate(mfa: IMfa, close: () => void) {
   if (mfa.value !== 'totp') {
@@ -147,7 +147,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                           <span class="text-xs font-medium leading-5">
                             {{ mfa.label }}
                           </span>
-                          <span v-if="mfa.value === preferredMfaType && mfa.activated" class="text-xs font-medium text-slate-400">
+                          <span v-if="mfa.value === preferredMfa.value && mfa.activated" class="text-xs font-medium text-slate-400">
                             Default
                           </span>
                         </div>
