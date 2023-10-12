@@ -154,8 +154,8 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                         <span v-if="mfa.activated" class="flex items-center gap-2.5 text-xs font-medium">
                           <template v-if="hasInstadappSigner">
                             <SvgoCheckCircle class="success-circle w-5" />
-                            <span class="uppercase text-primary">
-                              Active
+                            <span class="text-primary">
+                              Enabled
                             </span>
                           </template>
                           <template v-else>
@@ -227,17 +227,25 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
 
             <div class="flex h-[66px] w-full items-center justify-between rounded-2xl bg-slate-100 p-5 text-left ring-1 ring-slate-200 dark:bg-slate-850 dark:ring-slate-750">
               <div class="flex w-full items-center justify-between">
-                <span class="text-xs font-medium leading-5">
-                  {{ backupMfa?.title }}
-                </span>
+                <div class="flex flex-col gap-0.5">
+                  <p class="text-xs font-medium leading-5">
+                    {{ backupMfa?.title }}
+                  </p>
+                  <ul>
+                    <li v-for="signer in backupSigners" :key="signer.address" class="flex items-center gap-1.5 text-xs font-medium leading-5 text-slate-400">
+                      {{ shortenHash(signer.address, 10) }}
+                      <Copy icon-only :text="signer.address" />
+                    </li>
+                  </ul>
+                </div>
 
                 <CommonButton v-if="!backupMfa?.activated" @click="openAddBackupSignerModal">
                   Activate Now
                 </CommonButton>
                 <span v-else class="flex items-center gap-2.5 text-xs font-medium">
                   <SvgoCheckCircle class="success-circle w-5" />
-                  <span class="uppercase text-primary">
-                    Active
+                  <span class="text-primary">
+                    Enabled
                   </span>
                 </span>
               </div>
@@ -249,7 +257,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                 <span class="text-sm font-medium">
                   Active on {{ signer.chainIds.length }} networks
                 </span>
-                <span class="text-xs text-slate-400">
+                <span v-if="backupSigners.length > 1" class="text-xs text-slate-400">
                   {{ signer.address }}
                 </span>
                 <div class="flex">
