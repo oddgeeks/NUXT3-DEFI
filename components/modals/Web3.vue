@@ -8,10 +8,6 @@ const { activate } = useWeb3()
 const { providers } = useNetworks()
 const { setConnectorName } = useConnectors()
 
-const termsSigned = useCookie<boolean>('terms-signed', {
-  expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-})
-
 const loading = ref<Record<string, boolean>>({})
 
 async function connect(provider: any) {
@@ -23,7 +19,6 @@ async function connect(provider: any) {
 
     if (success) {
       setConnectorName(provider.id)
-      termsSigned.value = true
       emit('destroy')
     }
   }
