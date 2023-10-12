@@ -2,14 +2,14 @@
 const props = defineProps<{
   chainId: string | number
   address: string
-  removeSigner?: boolean
 }>()
 
 defineEmits(['destroy'])
 
 const pending = ref(false)
-const signed = useState(`mfa-signed-${props.chainId}-${props.address}-${props.removeSigner}`, () => false)
-const executed = useState(`mfa-executed-${props.chainId}-${props.address}-${props.removeSigner}`, () => false)
+const signed = ref(false)
+const executed = ref(false)
+const [hovered, toggle] = useToggle(false)
 
 const { isSignerAdded } = useMultisig()
 
@@ -18,6 +18,8 @@ const { parseTransactionError } = useErrorHandler()
 const { account } = useWeb3()
 
 const signerAdded = computed(() => isSignerAdded(props.address, props.chainId))
+
+const isInstadappSigner = computed(() => isAddressEqual(props.address, instadappSigner))
 
 async function handleAddSigner() {
   try {
@@ -74,7 +76,8 @@ async function handleAddSigner() {
 async function handleRemoveSigner() {
   try {
     pending.value = true
-    const threshold = 2
+
+    const threshold = isInstadappSigner ? 1 : 2
 
     const addresses = [props.address]
 
@@ -128,12 +131,12 @@ async function handleRemoveSigner() {
       {{ chainIdToName(chainId) }}
     </span>
 
-    <CommonButton v-if="removeSigner && signerAdded" color="red" :disabled="pending || signed || executed" :loading="pending" @click="handleRemoveSigner">
-      {{ executed ? 'Executed' : signed ? 'Signed' : 'Remove' }}
+    <CommonButton v-if="signerAdded" class="h-7.5 w-20 items-center justify-center text-xs" :color="hovered ? 'red' : 'white'" :disabled="pending || signed || executed" :loading="pending" @mouseenter="toggle(true)" @mouseleave="toggle(false)" @click="handleRemoveSigner">
+      {{ executed ? 'Executed' : signed ? 'Signed' : hovered ? 'Remove' : 'Enabled' }}
     </CommonButton>
 
-    <CommonButton v-else :disabled="pending || signed || executed || signerAdded" :loading="pending" @click="handleAddSigner">
-      {{ signerAdded ? 'Added' : executed ? 'Executed' : signed ? 'Signed' : 'Sign' }}
+    <CommonButton v-else class="h-7.5 w-20 items-center justify-center text-xs" :disabled="pending || signed || executed || signerAdded" :loading="pending" @click="handleAddSigner">
+      {{ executed ? 'Executed' : signed ? 'Signed' : 'Enable' }}
     </CommonButton>
   </li>
 </template>
