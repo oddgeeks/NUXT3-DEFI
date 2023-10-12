@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { serialize } from 'error-serializer'
+import { Tippy } from 'vue-tippy'
 
 definePageMeta({
   middleware: 'auth',
@@ -9,10 +10,9 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const { atLeastOneMfaVerifed } = storeToRefs(useSafe())
 const { hasInstadappSigner, instadappSignerNetworks, backupSigners } = storeToRefs(useMultisig())
 const { fetchSafeInstanceses } = useSafe()
-const { mfaTypes, mfaTermsAccepted, preferredMfaType, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa, backupMfa, isAvocadoProtectActive } = useMfa()
+const { mfaTypes, mfaTermsAccepted, preferredMfaType, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa, backupMfa, isAvocadoProtectActive, atLeastOneMfaVerifed } = useMfa()
 
 async function handleDeactivate(mfa: IMfa, close: () => void) {
   if (mfa.value !== 'totp') {
@@ -239,9 +239,11 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                   </ul>
                 </div>
 
-                <CommonButton v-if="!backupMfa?.activated" @click="openAddBackupSignerModal">
-                  Activate Now
-                </CommonButton>
+                <Tippy v-if="!backupMfa?.activated" :content="!(hasInstadappSigner && atLeastOneMfaVerifed) ? 'Activate 2FA to enable backup signer' : undefined">
+                  <CommonButton :disabled="!(hasInstadappSigner && atLeastOneMfaVerifed)" @click="openAddBackupSignerModal">
+                    Activate Now
+                  </CommonButton>
+                </Tippy>
                 <span v-else class="flex items-center gap-2.5 text-xs font-medium">
                   <SvgoCheckCircle class="success-circle w-5" />
                   <span class="text-primary">

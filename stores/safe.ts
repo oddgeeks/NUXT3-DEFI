@@ -44,16 +44,6 @@ export const useSafe = defineStore('safe', () => {
   const legacySafe = ref<ISafe>()
   const multiSigSafe = ref<ISafe>()
 
-  const mfaEmailVerifed = computed(() => selectedSafe.value?.mfa_email_verified === 1)
-  const mfaTotpVerifed = computed(() => selectedSafe.value?.mfa_totp_verified === 1)
-  const mfaPhoneVerifed = computed(() => selectedSafe.value?.mfa_phone_verified === 1)
-
-  const atLeastOneMfaVerifed = computed(() => mfaEmailVerifed.value || mfaTotpVerifed.value || mfaPhoneVerifed.value)
-
-  const isSafeBackupSigner = computed(() => {
-    return atLeastOneMfaVerifed.value && !isAddressEqual(selectedSafe.value?.owner_address, account.value)
-  })
-
   const safesLoading = ref(false)
   const optionsLoading = ref(false)
 
@@ -862,12 +852,7 @@ export const useSafe = defineStore('safe', () => {
     networkOrderedBySumTokens,
     getFallbackSafeOptionsByChainId,
     allSafes,
-    mfaEmailVerifed,
-    mfaTotpVerifed,
-    mfaPhoneVerifed,
-    atLeastOneMfaVerifed,
     fetchSafeInstanceses,
-    isSafeBackupSigner,
   }
 })
 

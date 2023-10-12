@@ -1,10 +1,9 @@
 import axios from 'axios'
 
 export function useNavigation() {
-  const { isSafeBackupSigner } = storeToRefs(useSafe())
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { safeAddress, account } = useAvocadoSafe()
-  const { isAvocadoProtectActive } = useMfa()
+  const { isAvocadoProtectActive, isSafeBackupSigner } = useMfa()
 
   const { data, refresh } = useAsyncData<IMultisigTransactionResponse>(async () => {
     if (!safeAddress.value || !account.value)

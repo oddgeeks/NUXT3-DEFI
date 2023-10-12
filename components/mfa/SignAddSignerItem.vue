@@ -11,15 +11,17 @@ const signed = ref(false)
 const executed = ref(false)
 const [hovered, toggle] = useToggle(false)
 
-const { isSignerAdded } = useMultisig()
-
 const { addSignersWithThreshold, removeSignerWithThreshold } = useAvocadoSafe()
 const { parseTransactionError } = useErrorHandler()
+const { selectedSafe } = storeToRefs(useSafe())
 const { account } = useWeb3()
 
-const signerAdded = computed(() => isSignerAdded(props.address, props.chainId))
+const signerAdded = computed(() => isSignerAdded(selectedSafe.value!, props.address, props.chainId))
 
 const isInstadappSigner = computed(() => isAddressEqual(props.address, instadappSigner))
+const isInstadappSignerAdded = computed(() => isSignerAdded(selectedSafe.value!, instadappSigner, props.chainId))
+
+const instadappSignerNotYetAdded = computed(() => !isInstadappSigner.value && !isInstadappSignerAdded.value)
 
 async function handleAddSigner() {
   try {
@@ -125,7 +127,7 @@ async function handleRemoveSigner() {
 </script>
 
 <template>
-  <li class="flex w-full items-center justify-between">
+  <li v-if="!instadappSignerNotYetAdded" class="flex w-full items-center justify-between">
     <span class="flex items-center gap-3 text-sm leading-5">
       <ChainLogo class="h-[26px] w-[26px]" :chain="chainId" />
       {{ chainIdToName(chainId) }}

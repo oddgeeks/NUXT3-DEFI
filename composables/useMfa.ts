@@ -2,13 +2,21 @@ const mfaTermsAccepted = useLocalStorage('mfa-terms-accepted', false)
 const preferredMfaType = useLocalStorage('mfa-preferred-type', '')
 
 export function useMfa() {
-  const { mfaEmailVerifed, mfaPhoneVerifed, mfaTotpVerifed, selectedSafe, atLeastOneMfaVerifed } = storeToRefs(useSafe())
+  const { selectedSafe } = storeToRefs(useSafe())
   const { backupSigners } = storeToRefs(useMultisig())
   const { avoProvider, fetchSafeInstanceses } = useSafe()
   const { switchToAvocadoNetwork } = useNetworks()
   const { account, library } = useWeb3()
 
   const isAvocadoProtectActive = computed(() => selectedSafe.value?.multisig === 1 && selectedSafe.value?.multisig_index === 0)
+
+  const mfaEmailVerifed = computed(() => selectedSafe.value?.mfa_email_verified === 1)
+  const mfaTotpVerifed = computed(() => selectedSafe.value?.mfa_totp_verified === 1)
+  const mfaPhoneVerifed = computed(() => selectedSafe.value?.mfa_phone_verified === 1)
+
+  const atLeastOneMfaVerifed = computed(() => checkAtleastOneMfaVerified(selectedSafe.value!))
+
+  const isSafeBackupSigner = computed(() => atLeastOneMfaVerifed.value && !isAddressEqual(selectedSafe.value?.owner_address, account.value))
 
   const mfaSessionTypes = {
     RequestCode: [
@@ -431,5 +439,10 @@ export function useMfa() {
     regenerateTotpRecoveryCode,
     removeTotpUsingRecoveryCode,
     signAndRequestUpdateMfaCode,
+    mfaEmailVerifed,
+    mfaTotpVerifed,
+    mfaPhoneVerifed,
+    isSafeBackupSigner,
+    atLeastOneMfaVerifed,
   }
 }

@@ -16,13 +16,13 @@ export function useAvocadoSafe() {
   const { isTrackingMode } = useAccountTrack()
   const { getRpcProviderByChainId } = useShared()
   const { avoProvider, getSafeOptions, refreshSelectedSafe, getFallbackSafeOptionsByChainId } = useSafe()
-  const { selectedSafe, isSelectedSafeLegacy, safeOptions, atLeastOneMfaVerifed } = storeToRefs(useSafe())
+  const { selectedSafe, isSelectedSafeLegacy, safeOptions } = storeToRefs(useSafe())
   const { clearAllModals } = useModal()
-  const { authVerify, preferredMfa, isAvocadoProtectActive } = useMfa()
+  const { authVerify, preferredMfa, isAvocadoProtectActive, atLeastOneMfaVerifed } = useMfa()
   const dryRun = useCookie<boolean | undefined>('dry-run')
 
   const { isSafeMultisig } = storeToRefs(useMultisig())
-  const { getRequiredSigner, isInstadappSignerAdded } = useMultisig()
+  const { getRequiredSigner } = useMultisig()
 
   const { safeAddress, tokenBalances, totalBalance, totalEoaBalance, eoaBalances, fundedEoaNetworks, networkOrderedBySumTokens } = storeToRefs(useSafe())
 
@@ -463,7 +463,7 @@ export function useAvocadoSafe() {
   }
 
   function isEligableToProceed2FA(requiredSigner: number, chainId: string | number) {
-    return isInstadappSignerAdded(chainId) && atLeastOneMfaVerifed.value && requiredSigner === 2
+    return isInstadappSignerAdded(selectedSafe.value!, chainId) && atLeastOneMfaVerifed.value && requiredSigner === 2
   }
 
   async function getSingleSignatureObject(args: IGenerateMultisigSignatureParams) {
