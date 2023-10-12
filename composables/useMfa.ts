@@ -29,13 +29,6 @@ export function useMfa() {
   const mfaTypes = computed(() =>
     [
       {
-        value: 'backup',
-        title: 'Backup address',
-        label: 'Backup address',
-        description: '',
-        activated: !!backupSigners.value.length,
-      },
-      {
         value: 'totp',
         title: 'Set up Authenticator app',
         description: 'Please enter the provided code or scan QR in your Auth Provider.',
@@ -100,6 +93,14 @@ export function useMfa() {
         },
         activated: mfaEmailVerifed.value,
         icon: 'SvgoEmail',
+      },
+      {
+        value: 'backup',
+        title: 'Backup address',
+        label: 'Backup address',
+        description: '',
+        activated: !!backupSigners.value.length,
+        icon: 'SvgoBackup',
       },
     ] as IMfa[],
   )

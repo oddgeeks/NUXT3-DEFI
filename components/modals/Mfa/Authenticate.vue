@@ -3,22 +3,11 @@ defineProps<{
   mfaRequestType: MfaRequestType
 }>()
 
-const emit = defineEmits(['resolve'])
+defineEmits(['resolve'])
 const { mfaTypes, preferredMfaType } = useMfa()
 const enabledMfas = computed(() => mfaTypes.value.filter(i => i.activated))
 
 const mfaType = ref(preferredMfaType.value)
-
-async function handleTypeSelection() {
-  const mfaObj = mfaTypes.value.find(i => i.value === mfaType.value)
-
-  if (!mfaObj)
-    return
-
-  emit('resolve', true, {
-    mfa: mfaObj,
-  })
-}
 </script>
 
 <template>
@@ -41,24 +30,18 @@ async function handleTypeSelection() {
     <ul class="flex flex-col gap-5">
       <li v-for="mfa in enabledMfas" :key="mfa.value">
         <button
-          :class="[
-            mfa.value === mfaType ? 'dark:bg-slate-800' : 'bg-slate-50 dark:bg-gray-850',
-          ]"
-          class=" flex w-full items-center justify-between rounded-2xl border p-5 text-left text-sm font-medium text-slate-400  dark:border-slate-700"
-          @click="mfaType = mfa.value"
+          class="flex w-full items-center justify-between rounded-2xl border bg-slate-50 p-5 text-left text-sm font-medium text-slate-400 hover:bg-slate-100 dark:border-slate-700 dark:bg-gray-850  hover:dark:bg-gray-800"
+          @click="$emit('resolve', true, {
+            mfa,
+          })"
         >
-          {{ mfa.label }}
-          <div :class="mfa.value === mfaType ? 'bg-primary' : 'dark:bg-slate-600'" class="flex h-5 w-5 items-center justify-center  rounded-full">
-            <div :class="mfa.value === mfaType ? 'bg-white' : 'dark:bg-slate-500'" class="h-1.5 w-1.5 rounded-full" />
-          </div>
+          <span class="flex items-center gap-[14px]">
+            <Component :is="mfa.icon" class="text-slate-400" />
+            {{ mfa.label }}
+          </span>
+          <SvgoChevronDown class="-rotate-90" />
         </button>
       </li>
     </ul>
-
-    <CommonButton
-      :disabled="!mfaType" size="lg" class="mt-5 w-full justify-center" @click="handleTypeSelection"
-    >
-      Confirm Changes
-    </CommonButton>
   </div>
 </template>

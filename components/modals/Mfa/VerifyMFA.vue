@@ -141,7 +141,7 @@ async function handleDeactivateWithRecoveryCode() {
       <div class="flex gap-[14px]">
         <CommonTxTypeIcon class="h-10 w-10">
           <template #icon>
-            <Component :is="mfa.icon" />
+            <Component :is="mfa.icon" class="text-white" />
           </template>
         </CommonTxTypeIcon>
         <div class="mb-7.5 flex flex-col gap-2.5">
