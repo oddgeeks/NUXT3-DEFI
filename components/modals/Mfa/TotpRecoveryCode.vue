@@ -61,7 +61,7 @@ async function regenerateRecoveryCodes() {
             <SvgoKey />
           </template>
         </CommonTxTypeIcon>
-        <div class="flex flex-col gap-1">
+        <div class="flex flex-col gap-2.5">
           <h1 class="text-lg leading-[20px]">
             Fallback recovery codes
           </h1>

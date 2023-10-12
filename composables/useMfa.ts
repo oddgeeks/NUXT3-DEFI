@@ -171,6 +171,8 @@ export function useMfa() {
         return
     }
 
+    resp = resp || await handleRequestActivateMfa(mfa, signPayload)
+
     if (!resp?.status)
       throw new Error('Failed to activate TOTP MFA')
 
