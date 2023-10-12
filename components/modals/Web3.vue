@@ -3,10 +3,12 @@ defineProps<{
   buttonClass?: string
 }>()
 const emit = defineEmits(['destroy'])
-const { activate } = useWeb3()
+const { activate, account } = useWeb3()
+const { avoProvider } = useSafe()
 
 const { providers } = useNetworks()
 const { setConnectorName } = useConnectors()
+const referral = useCookie<string | null>('ref-code')
 
 const loading = ref<Record<string, boolean>>({})
 
@@ -15,12 +17,17 @@ async function connect(provider: any) {
     loading.value[provider.name] = true
     await activate(await provider.connect(), undefined, true)
 
-    const { success } = await openRequestTermsSignature()
+    const isReferrer = await avoProvider.send('api_hasReferralForUser', [account.value])
 
-    if (success) {
-      setConnectorName(provider.id)
-      emit('destroy')
+    if (!isReferrer && referral.value) {
+      const { success } = await openRequestTermsSignature()
+
+      if (!success)
+        throw new Error('Failed to sign terms')
     }
+
+    setConnectorName(provider.id)
+    emit('destroy')
   }
   catch (e) {
     console.log(e)

@@ -363,6 +363,11 @@ type ISnackOptions = {
   timeout?: number;
 };
 
+interface IConnectionMeta {
+  provider: string | null;
+  address: string;
+}
+
 type IOptions = {
   raw?: boolean;
   closeButton?: boolean;
