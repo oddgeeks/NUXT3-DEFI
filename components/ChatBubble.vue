@@ -1,16 +1,20 @@
 <script setup lang="ts">
 const { selectedSafe, safeAddress } = storeToRefs(useSafe())
-const { library, account } = useWeb3()
+const { library, account, provider } = useWeb3()
 
 const [open, toggle] = useToggle(false)
 const isChatwoodReady = ref(false)
+
+function getIdentifier(account: string, safe: string) {
+  return `${account}:${safe}`.toLowerCase()
+}
 
 async function openMessagePopup() {
   const message = chatwootMessage
     .replace('{ACCOUNT}', account.value)
     .replace('{SAFE_ADDRESS}', selectedSafe.value?.safe_address!)
 
-  const identifier = `${account.value}:${selectedSafe.value?.safe_address}`.toLowerCase()
+  const identifier = getIdentifier(account.value, selectedSafe.value?.safe_address!)
 
   const identifierHash = useCookie(`chatwoot-identifier-hash-${identifier}`)
 
@@ -35,14 +39,23 @@ async function openMessagePopup() {
   }
 
   // @ts-expect-error
-  window.$chatwoot.setUser(identifier, {
-    identifier_hash: identifierHash.value,
-    name: account.value,
-    email: selectedSafe.value?.safe_address,
-  })
+  const userExist = !!window.$chatwoot.user
 
-  // @ts-expect-error
-  window.$chatwoot.toggle()
+  if (!userExist) {
+    // @ts-expect-error
+    window.$chatwoot.setUser(identifier, {
+      identifier_hash: identifierHash.value,
+      name: account.value,
+      email: selectedSafe.value?.safe_address,
+    })
+  }
+
+  const timeout = userExist ? 0 : 500
+
+  setTimeout(() => {
+    // @ts-expect-error
+    window.$chatwoot.toggle()
+  }, timeout)
 }
 
 onMounted(() => {
@@ -68,6 +81,15 @@ onMounted(() => {
     })
     console.log(element)
   })
+})
+
+watchThrottled(provider, () => {
+  provider.value.on('accountsChanged', () => {
+    // @ts-expect-error
+    window.$chatwoot.reset()
+  })
+}, {
+  throttle: 1000,
 })
 </script>
 
