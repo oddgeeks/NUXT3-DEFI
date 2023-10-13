@@ -140,7 +140,7 @@
 }
 
 .tippy-content {
-  @apply p-0 font-medium leading-5 !important;
+  @apply p-0 font-medium leading-5 text-left !important;
   font-family: "Source Code Pro" !important;
   font-style: normal !important;
 }
