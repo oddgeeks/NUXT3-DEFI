@@ -77,9 +77,6 @@ async function handleActivate(mfa: IMfa) {
       const { success } = await openMfaActivateModal({ mfaType: mfa })
 
       if (success) {
-        if (!preferredMfaType.value)
-          preferredMfaType.value = mfa.value
-
         notify({
           type: 'success',
           message: `Successfully activated ${mfa.label}`,
