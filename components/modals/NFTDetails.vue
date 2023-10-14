@@ -33,7 +33,7 @@ const isNotAuthorised = computed(() => {
     />
     <template v-if="!expanded">
       <div class="flex flex-col gap-3">
-        <h1 v-if="asset.name" class="flex justify-center gap-2 text-lg leading-5 text-center">
+        <h1 v-if="asset.name" class="flex justify-center gap-2 text-center text-lg leading-5">
           {{ asset.name }}
 
           <NuxtLink external target="_blank" class="shrink-0 text-slate-750 dark:text-slate-150" :to="getExplorerUrl(asset.chainId, `/address/${asset.contractAddress}`)">
@@ -42,14 +42,14 @@ const isNotAuthorised = computed(() => {
         </h1>
         <h2
           v-if="asset.collectionName"
-          class="text-sm font-medium text-center text-slate-400"
+          class="text-center text-sm font-medium text-slate-400"
         >
           {{ asset.collectionName }}
         </h2>
       </div>
-      <details v-if="asset.attributes?.length" class="dark:ring-slate-800 ring-slate-150 bg-slate-50 dark:bg-gray-850 ring-2 rounded-2xl group">
+      <details v-if="asset.attributes?.length" class="group rounded-2xl bg-slate-50 ring-2 ring-slate-150 dark:bg-gray-850 dark:ring-slate-800">
         <summary
-          class="text-sm font-semibold cursor-pointer py-[14px] px-4 flex items-center justify-between"
+          class="flex cursor-pointer items-center justify-between px-4 py-[14px] text-sm font-semibold"
         >
           Traits
           <ChevronDownSVG
@@ -57,9 +57,9 @@ const isNotAuthorised = computed(() => {
           />
         </summary>
 
-        <div class="border-t dark:border-slate-800 px-4 py-[14px] max-h-[300px] overflow-y-auto scroll-style">
-          <ul class="grid items-baseline grid-cols-2 gap-2">
-            <li v-for="attr in asset.attributes" :key="attr.value" class="dark:bg-slate-800 bg-white flex flex-col rounded-[14px] px-[14px] py-2">
+        <div class="scroll-style max-h-[300px] overflow-y-auto border-t px-4 py-[14px] dark:border-slate-800">
+          <ul class="grid grid-cols-2 items-baseline gap-2">
+            <li v-for="attr in asset.attributes" :key="attr.value" class="flex flex-col rounded-[14px] bg-white px-[14px] py-2 dark:bg-slate-800">
               <span class="text-[10px] leading-4 text-slate-400"> {{ attr.type }}</span>
               <span class="text-xs leading-5">{{ attr.value }}</span>
             </li>
@@ -71,7 +71,7 @@ const isNotAuthorised = computed(() => {
           content: isNotAuthorised ? `You are not authorized to interact with tokens on ${chainIdToName(asset.chainId)}` : undefined,
         }"
       >
-        <CommonButton :disabled="isNotAuthorised" class="justify-center w-full" size="lg" @click="$emit('destroy'), openSendNFTModal(asset)">
+        <CommonButton :disabled="isNotAuthorised" class="w-full justify-center" size="lg" @click="$emit('destroy'), openSendNFTModal(asset)">
           Send NFT
         </CommonButton>
       </div>

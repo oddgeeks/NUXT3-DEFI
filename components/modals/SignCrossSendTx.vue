@@ -89,35 +89,35 @@ watch(signatures, () => {
 
 <template>
   <div>
-    <h1 class="text-center mb-3">
+    <h1 class="mb-3 text-center">
       Sign Transaction
     </h1>
-    <h2 class="text-xs leading-5 text-slate-400 text-center mb-7.5">
+    <h2 class="mb-7.5 text-center text-xs leading-5 text-slate-400">
       Cross chain send transactions require <br>
       2 signatures
     </h2>
     <div class="grid grid-cols-2 gap-5">
-      <div class="dark:bg-gray-850 rounded-5 p-4 flex flex-col items-center gap-5">
+      <div class="flex flex-col items-center gap-5 rounded-5 p-4 dark:bg-gray-850">
         <h1 class="text-xs text-slate-400">
           Source Approval
         </h1>
-        <div class="flex flex-col gap-2.5 items-center">
-          <ChainLogo class="w-[60px] h-[60px]" :chain="sourceChainId" />
+        <div class="flex flex-col items-center gap-2.5">
+          <ChainLogo class="h-[60px] w-[60px]" :chain="sourceChainId" />
           <span class="text-sm"> {{ chainIdToName(sourceChainId) }}</span>
         </div>
-        <CommonButton :disabled="!!signatures.source || loading.source" :loading="loading.source" class="py-2 w-full justify-center" size="sm" @click="handleSign(true)">
+        <CommonButton :disabled="!!signatures.source || loading.source" :loading="loading.source" class="w-full justify-center py-2" size="sm" @click="handleSign(true)">
           {{ !!signatures.source ? 'Confirmed' : 'Confirm Now' }}
         </CommonButton>
       </div>
-      <div class="dark:bg-gray-850 rounded-5 p-4 flex flex-col items-center gap-5">
+      <div class="flex flex-col items-center gap-5 rounded-5 p-4 dark:bg-gray-850">
         <h1 class="text-xs text-slate-400">
           Dest. Approval
         </h1>
-        <div class="flex flex-col gap-2.5 items-center">
-          <ChainLogo class="w-[60px] h-[60px]" :chain="targetChainId" />
+        <div class="flex flex-col items-center gap-2.5">
+          <ChainLogo class="h-[60px] w-[60px]" :chain="targetChainId" />
           <span class="text-sm"> {{ chainIdToName(targetChainId) }}</span>
         </div>
-        <CommonButton :disabled="!!signatures.target || loading.target" :loading="loading.target" class="py-2 w-full justify-center" size="sm" @click="handleSign(false)">
+        <CommonButton :disabled="!!signatures.target || loading.target" :loading="loading.target" class="w-full justify-center py-2" size="sm" @click="handleSign(false)">
           {{ !!signatures.target ? 'Confirmed' : 'Confirm Now' }}
         </CommonButton>
       </div>

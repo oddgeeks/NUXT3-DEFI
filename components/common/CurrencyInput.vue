@@ -50,7 +50,7 @@ watch(() => props.dirty, () => {
     v-else
     ref="inputRef"
     v-bind="$attrs"
-    class="bg-transparent p-0 outline-none border-0 font-medium focus:border-0 focus:ring-0"
+    class="border-0 bg-transparent p-0 font-medium outline-none focus:border-0 focus:ring-0"
     type="text"
   >
 </template>

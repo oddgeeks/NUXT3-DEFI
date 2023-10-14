@@ -59,11 +59,11 @@ whenever(escape, () => {
 <template>
   <div
     :data-modal-id="modalId"
-    class="fixed modal inset-0 z-50 overflow-y-auto bg-slate-200/20 backdrop-filter backdrop-blur-[4px]"
+    class="modal fixed inset-0 z-50 overflow-y-auto bg-slate-200/20 backdrop-blur-[4px]"
   >
     <div
       :data-modal-id="modalId"
-      class="flex sm:items-center justify-center sm:h-auto h-full sm:min-h-screen text-center sm:p-0 modal-height-wrapper"
+      class="modal-height-wrapper flex h-full justify-center text-center sm:h-auto sm:min-h-screen sm:items-center sm:p-0"
     >
       <div
         :class="[
@@ -74,7 +74,7 @@ whenever(escape, () => {
           options.wrapperClass,
         ]"
         :data-sheet-position="options.sheetPosition"
-        class="inline-block relative modal-inner w-full sm:my-6 dark:bg-gray-950 bg-white sm:rounded-7.5 text-left align-middle max-w-[460px]"
+        class="modal-inner relative inline-block w-full max-w-[460px] bg-white text-left align-middle dark:bg-gray-950 sm:my-6 sm:rounded-7.5"
         role="dialog"
         aria-modal="true"
       >
@@ -87,10 +87,10 @@ whenever(escape, () => {
             },
             options.contentClass,
           ]"
-          class="modal-content-wrapper rounded-[inherit] relative sm:px-[50px] px-6 py-10 w-full"
+          class="modal-content-wrapper relative w-full rounded-[inherit] px-6 py-10 sm:px-[50px]"
         >
           <button
-            class="absolute h-7.5 w-7.5 rounded-full items-center justify-center flex dark:bg-slate-800 bg-slate-100 top-0 right-0 m-6"
+            class="absolute right-0 top-0 m-6 flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
             aria-label="Close modal"
             @click="handleDestory"
           >

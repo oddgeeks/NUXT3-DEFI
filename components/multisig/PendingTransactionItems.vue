@@ -184,9 +184,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <component :is="chainId ? 'details' : 'div'" v-if="data?.data?.length" ref="containerRef" :open="isDetailsOpen" class="dark:bg-gray-850 rounded-2xl bg-slate-50 sm:open:pb-0 group" @toggle="handleToggle">
-    <summary v-if="chainId" class="py-4 flex cursor-pointer items-center gap-2.5 px-5 text-xs font-medium leading-5 text-slate-400">
-      <ChainLogo class="w-5 h-5" :chain="chainId" />
+  <component :is="chainId ? 'details' : 'div'" v-if="data?.data?.length" ref="containerRef" :open="isDetailsOpen" class="group rounded-2xl bg-slate-50 dark:bg-gray-850 sm:open:pb-0" @toggle="handleToggle">
+    <summary v-if="chainId" class="flex cursor-pointer items-center gap-2.5 px-5 py-4 text-xs font-medium leading-5 text-slate-400">
+      <ChainLogo class="h-5 w-5" :chain="chainId" />
       <span v-if="chainId" class="text-white">
         {{ chainIdToName(chainId) }}
       </span>
@@ -195,25 +195,25 @@ onUnmounted(() => {
       </div>
       <SvgSpinner v-if="pending" class="text-primary" />
       <div class="ml-auto flex items-center">
-        <div v-if="!canSign" class="text-red-alert bg-red-alert bg-opacity-10 text-xs px-3 py-1 rounded-full">
+        <div v-if="!canSign && !isDetailsOpen" class="rounded-full bg-red-alert bg-opacity-10 px-3 py-1 text-xs text-red-alert">
           Unauthorized network
         </div>
-        <div v-if="isYourSignNeeded" class="text-orange-400 text-xs">
+        <div v-if="isYourSignNeeded && !isDetailsOpen" class="text-xs text-orange-400">
           Your signatures needed
         </div>
         <SvgoChevronDown
-          class="w-5 text-slate-400 ml-5 group-open:rotate-180"
+          class="ml-5 w-5 text-slate-400 group-open:rotate-180"
         />
       </div>
     </summary>
-    <div class="flex flex-col sm:gap-0 gap-4 sm:p-0 p-5">
-      <ul v-if="activeTab === 'completed'" class="sm:block flex flex-col gap-4">
+    <div class="flex flex-col gap-4 p-5 sm:gap-0 sm:p-0">
+      <ul v-if="activeTab === 'completed'" class="flex flex-col gap-4 sm:block">
         <MultisigPendingTransactionItem v-for="item in data.data" :key="item.id" network-cell-visible :inside-group="false" :active-tab="activeTab" :item="item" />
       </ul>
       <ul v-for="items, key in groupedData" v-else :key="key">
         <li>
           <ul :class="checkIsGroup(key, items) ? 'p-4 my-4 sm:p-0 border sm:block flex gap-5 flex-col border-slate-300 dark:border-slate-750 rounded-5 dark:bg-slate-850 bg-slate-150' : ''" class="flex flex-col">
-            <p v-if="checkIsGroup(key, items)" class="text-xs border-b border-slate-150 dark:border-slate-800 sm:p-4 flex items-center gap-2.5 sm:pb-4 font-medium  text-slate-500 dark:text-slate-400">
+            <p v-if="checkIsGroup(key, items)" class="flex items-center gap-2.5 border-b border-slate-150 text-xs font-medium text-slate-500 dark:border-slate-800 dark:text-slate-400  sm:p-4">
               <SvgoInfo2 class="text-slate-500" />
               You can complete one of the transactions below. The other will be cancelled automatically.
             </p>
@@ -222,6 +222,6 @@ onUnmounted(() => {
         </li>
       </ul>
     </div>
-    <Pagination class="sm:px-0 px-4 pb-4" :auto-navigate="false" :current="data.meta.current_page" :limit="data.meta.per_page" :total="data.meta.total" @update:current="handleCurrentUpdate" />
+    <Pagination class="px-4 pb-4 sm:px-0" :auto-navigate="false" :current="data.meta.current_page" :limit="data.meta.per_page" :total="data.meta.total" @update:current="handleCurrentUpdate" />
   </component>
 </template>

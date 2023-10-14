@@ -84,11 +84,12 @@ const prepareAndConnect = handleSubmit(async () => {
     if (err?.cause?.message == 'version-error') {
       openDialogModal({
         title: err.message,
-        content: `WalletConnect V1 is deprecated and not supported anymore`,
+        content: 'WalletConnect V1 is deprecated and not supported anymore',
         type: 'error',
         buttonText: 'I Understand',
       })
-    } else {
+    }
+    else {
       openDialogModal({
         title: 'Connected Failed',
         content: `Try again or return to the home page.<br />
@@ -200,11 +201,11 @@ onMounted(async () => {
           </defs>
         </svg>
 
-        <div class="text-lg mt-5 sm:mt-7.5 mb-4">
+        <div class="mb-4 mt-5 text-lg sm:mt-7.5">
           Connect with WalletConnect
         </div>
 
-        <p class="text-slate-400 text-xs text-center leading-5 font-medium">
+        <p class="text-center text-xs font-medium leading-5 text-slate-400">
           Do not close this window while connecting.<br>
           Have a question? Follow this
           <a
@@ -241,7 +242,7 @@ onMounted(async () => {
     </form>
 
     <div v-if="isIframeVisible" class="mt-6" @click="isTutorialWatched = true">
-      <h1 class="text-xs leading-5 mb-3 text-slate-400 text-center font-medium">
+      <h1 class="mb-3 text-center text-xs font-medium leading-5 text-slate-400">
         Looking for step-by-step instructions? <br>Watch this video.
       </h1>
       <LiteYouTubeEmbed

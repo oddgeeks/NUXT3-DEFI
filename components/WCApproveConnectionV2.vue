@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 defineEmits(['connect', 'destroy'])
-const { checkDappIsBanned, checkDappIsWarned, isProUrl } = useWalletConnectV2()
+const { checkDappIsBanned, checkDappIsWarned } = useWalletConnectV2()
 
 const proposer = computed(() => props.proposal.params?.proposer)
 
@@ -22,10 +22,6 @@ const isConnectionWarned = computed(() => {
     return true
 
   return checkDappIsWarned(proposer.value?.metadata?.url)
-})
-
-const isInstadappConnection = computed(() => {
-  return isProUrl(proposer.value?.metadata?.url)
 })
 
 const iconURL = computed(() => {
@@ -48,9 +44,9 @@ const iconURL = computed(() => {
     @submit.prevent="$emit('connect')"
   >
     <div class="flex flex-col items-center space-y-8">
-      <div v-if="iconURL" class="w-10 h-10">
+      <div v-if="iconURL" class="h-10 w-10">
         <img
-          class="w-full h-full object-fit"
+          class="object-fit h-full w-full"
           referrerpolicy="no-referrer"
           :src="iconURL"
         >
@@ -60,29 +56,24 @@ const iconURL = computed(() => {
     </div>
 
     <div class="flex flex-col gap-7.5">
-      <p class="text-slate-400 text-xs text-center font-medium">
+      <p class="text-center text-xs font-medium text-slate-400">
         You need the Avocado web app to be open to initiate transactions. You
         will not receive transaction requests when it is not open.
       </p>
 
-      <div v-if="proposer.metadata.url" class="text-primary text-sm text-center truncate max-w-sm">
+      <div v-if="proposer.metadata.url" class="max-w-sm truncate text-center text-sm text-primary">
         {{ proposer.metadata.url }}
       </div>
     </div>
 
-    <div v-if="isConnectionBanned" class="bg-red-alert font-medium gap-2.5 flex bg-opacity-10 text-xs rounded-2xl text-red-alert py-2.5 px-4">
-      <SvgoInfo2 class="shrink-0 mt-0.5" />
+    <div v-if="isConnectionBanned" class="flex gap-2.5 rounded-2xl bg-red-alert bg-opacity-10 px-4 py-2.5 text-xs font-medium text-red-alert">
+      <SvgoInfo2 class="mt-0.5 shrink-0" />
       This DApp does not work with Avocado. Please use an EOA account to interact with this DApp.
     </div>
 
-    <div v-else-if="isConnectionWarned" class="text-orange bg-orange-400 bg-opacity-10  font-medium gap-2.5 flex text-xs rounded-2xl py-2.5 px-4">
-      <SvgoInfo2 class="shrink-0 mt-0.5" />
+    <div v-else-if="isConnectionWarned" class="flex gap-2.5 rounded-2xl  bg-orange-400 bg-opacity-10 px-4 py-2.5 text-xs font-medium text-orange">
+      <SvgoInfo2 class="mt-0.5 shrink-0" />
       This DApp is known to have some compatability issues with Avocado. Please use at your own risk!
-    </div>
-
-    <div v-if="isInstadappConnection" class="text-primary bg-primary bg-opacity-10  font-medium gap-2.5 flex text-xs rounded-2xl py-2.5 px-4">
-      <SvgoInfo2 class="shrink-0 mt-0.5" />
-      To use your Avocado wallet with Instadapp Pro connect your wallet normally, once connected select Avocado in the Account panel.
     </div>
 
     <div class="flex flex-col gap-4">

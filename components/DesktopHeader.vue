@@ -37,11 +37,11 @@ useIntervalFn(refresh, 15000)
 </script>
 
 <template>
-  <div class="items-center justify-end py-8 hidden sm:flex">
-    <button v-if="dryRun" class="text-sm text-orange mr-4" @click="dryRun = undefined">
+  <div class="hidden items-center justify-end py-8 sm:flex">
+    <button v-if="dryRun" class="mr-4 text-sm text-orange" @click="dryRun = undefined">
       Disable Dry Run
     </button>
-    <nav class="flex items-center gap-7.5 relative">
+    <nav class="relative flex items-center gap-7.5">
       <div class="flex items-center gap-5">
         <ColorModeSwitcher />
         <Web3Button />

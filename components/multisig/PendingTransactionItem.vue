@@ -109,12 +109,12 @@ async function handleClick(item: IMultisigTransaction) {
 </script>
 
 <template>
-  <li :class="insideGroup ? 'last:!border-b-0' : ''" class="w-full sm:border-b border-slate-150 dark:border-slate-800">
+  <li :class="insideGroup ? 'last:!border-b-0' : ''" class="w-full border-slate-150 dark:border-slate-800 sm:border-b">
     <button class="w-full" @click.stop="handleClick(item)">
-      <div :class="networkCellVisible ? 'grid-network-item' : 'grid-item'" class="hidden grid-row sm:grid focus:outline-none items-center w-full text-xs font-medium py-4 px-5">
+      <div :class="networkCellVisible ? 'grid-network-item' : 'grid-item'" class="grid-row hidden w-full items-center px-5 py-4 text-xs font-medium focus:outline-none sm:grid">
         <div v-if="networkCellVisible" class="flex items-center gap-3">
           <Tippy :content="chainIdToName(item.chain_id)">
-            <ChainLogo class="w-5 h-5" :chain="item.chain_id" />
+            <ChainLogo class="h-5 w-5" :chain="item.chain_id" />
           </Tippy>
           <span class="sm:hidden 2xl:inline-block">
             {{ chainIdToName(item.chain_id) }}
@@ -132,12 +132,12 @@ async function handleClick(item: IMultisigTransaction) {
             v-if="actionType === 'rejection'" v-tippy="{
               content: 'Executing this will cancel the transaction(s) below',
               maxWidth: 'none',
-            }" class="text-slate-500 shrink-0"
+            }" class="shrink-0 text-slate-500"
           />
         </span>
-        <ul :class="(decodedMetadata || [])?.length > 1 ? 'list-decimal pl-5 text-xs' : ''" class="flex-1 flex-col flex gap-2 svg-shrink-none max-w-sm truncate">
+        <ul :class="(decodedMetadata || [])?.length > 1 ? 'list-decimal pl-5 text-xs' : ''" class="svg-shrink-none flex max-w-sm flex-1 flex-col gap-2 truncate">
           <li v-for="(metadata, index) in decodeMetadata(item.data.params.metadata)" :key="index" v-memo="[tokens]">
-            <ActionMetadata :key="metadata" :tokens="transformedTokens as any" class="text-left whitespace-nowrap" compact :chain_id="item.chain_id" :metadata="metadata" />
+            <ActionMetadata :key="metadata" :tokens="transformedTokens as any" class="whitespace-nowrap text-left" compact :chain_id="item.chain_id" :metadata="metadata" />
           </li>
         </ul>
         <span class="whitespace-nowrap text-left">
@@ -152,48 +152,48 @@ async function handleClick(item: IMultisigTransaction) {
 
         <div>
           <div :class="isConfirmationsMatch ? 'text-primary' : 'text-orange-400'">
-            <span v-if="executing && !isTransactionExecuted" class="items-center flex gap-2 justify-between">
+            <span v-if="executing && !isTransactionExecuted" class="flex items-center justify-between gap-2">
               Executing
-              <SvgSpinner class="w-5 h-5" />
+              <SvgSpinner class="h-5 w-5" />
             </span>
-            <span v-else-if="isTransactionFailed" class="flex items-center text-red-alert gap-2 justify-end">
+            <span v-else-if="isTransactionFailed" class="flex items-center justify-end gap-2 text-red-alert">
               Failed
-              <SvgoErrorCircle class="text-white w-4.5 h-4.5" />
+              <SvgoErrorCircle class="h-4.5 w-4.5 text-white" />
             </span>
-            <span v-else-if="isTransactionExecuted" class="flex items-center gap-2 justify-end">
+            <span v-else-if="isTransactionExecuted" class="flex items-center justify-end gap-2">
               Executed
-              <SvgoCheckCircle class="success-circle w-5 h-5" />
+              <SvgoCheckCircle class="success-circle h-5 w-5" />
             </span>
-            <span v-else-if="isConfirmationsMatch" class="items-center flex gap-5 justify-between">
+            <span v-else-if="isConfirmationsMatch" class="flex items-center justify-between gap-5">
               <span v-if="isNonceNotMatch" class="text-slate-400">
                 Threshold reached
               </span>
               <span v-else>
                 Ready to execute
               </span>
-              <SvgoCheckCircle :class="isNonceNotMatch ? 'svg-circle text-[initial]' : 'success-circle'" class="w-5 h-5" />
+              <SvgoCheckCircle :class="isNonceNotMatch ? 'svg-circle text-[initial]' : 'success-circle'" class="h-5 w-5" />
             </span>
-            <span v-else class="items-center flex gap-5 justify-between whitespace-nowrap">
+            <span v-else class="flex items-center justify-between gap-5 whitespace-nowrap">
               <span v-if="isYourSignNeeded">
                 Your sign needed
               </span>
               <span v-else>
                 Awaiting signatures
               </span>
-              <span class="w-5 h-5 flex items-center justify-center">
-                <SvgoHourGlass class="w-4 h-4" />
+              <span class="flex h-5 w-5 items-center justify-center">
+                <SvgoHourGlass class="h-4 w-4" />
               </span>
             </span>
           </div>
         </div>
       </div>
-      <div class="sm:hidden flex flex-col items-baseline dark:bg-gray-850 bg-slate-50 ring-slate-150 dark:ring-slate-800 ring-1 rounded-5">
-        <div v-if="networkCellVisible" class="flex px-4 py-4 text-xs items-center gap-3">
-          <ChainLogo class="w-4 h-4" :chain="item.chain_id" />
+      <div class="flex flex-col items-baseline rounded-5 bg-slate-50 ring-1 ring-slate-150 dark:bg-gray-850 dark:ring-slate-800 sm:hidden">
+        <div v-if="networkCellVisible" class="flex items-center gap-3 p-4 text-xs">
+          <ChainLogo class="h-4 w-4" :chain="item.chain_id" />
           {{ chainIdToName(item.chain_id) }}
         </div>
-        <hr v-if="networkCellVisible" class="border-slate-150 w-full dark:border-slate-800">
-        <div class="px-4 pt-4 pb-3 flex items-center gap-5">
+        <hr v-if="networkCellVisible" class="w-full border-slate-150 dark:border-slate-800">
+        <div class="flex items-center gap-5 px-4 pb-3 pt-4">
           <span v-if="activeTab !== 'nonseq'" :class="item.nonce === '-1' ? 'hidden' : ''">
             {{ item.nonce }}
           </span>
@@ -205,53 +205,53 @@ async function handleClick(item: IMultisigTransaction) {
                 {
                   content: 'Executing this will cancel the transaction(s) below',
                   maxWidth: 'none',
-                }" class="text-slate-500 shrink-0"
+                }" class="shrink-0 text-slate-500"
             />
           </span>
         </div>
-        <hr class="border-slate-150 w-full dark:border-slate-800">
-        <div class="py-3 px-4">
-          <ul :class="`${(decodedMetadata || [])?.length > 1 ? 'list-decimal pl-5 text-xs' : ''}`" class="flex-1 text-xs flex-col flex gap-2 svg-shrink-none max-w-sm truncate">
+        <hr class="w-full border-slate-150 dark:border-slate-800">
+        <div class="px-4 py-3">
+          <ul :class="`${(decodedMetadata || [])?.length > 1 ? 'list-decimal pl-5 text-xs' : ''}`" class="svg-shrink-none flex max-w-sm flex-1 flex-col gap-2 truncate text-xs">
             <li v-for="(metadata, index) in decodeMetadata(item.data.params.metadata)" :key="index" v-memo="[tokens]">
-              <ActionMetadata :key="metadata" :tokens="transformedTokens as any" class="text-left whitespace-nowrap" compact :chain_id="item.chain_id" :metadata="metadata" />
+              <ActionMetadata :key="metadata" :tokens="transformedTokens as any" class="whitespace-nowrap text-left" compact :chain_id="item.chain_id" :metadata="metadata" />
             </li>
           </ul>
         </div>
-        <hr class="border-slate-150 w-full dark:border-slate-800">
-        <div class="flex items-center py-3 px-4 gap-2.5 whitespace-nowrap text-xs">
+        <hr class="w-full border-slate-150 dark:border-slate-800">
+        <div class="flex items-center gap-2.5 whitespace-nowrap px-4 py-3 text-xs">
           <SvgoUserCircle :class="isConfirmationsMatch ? 'text-primary' : 'text-slate-400'" />
           <span :class="isConfirmationsMatch ? 'text-primary' : ''">
             {{ item.confirmations.length }} out of {{ item.confirmations_required }}
           </span>
         </div>
-        <hr class="border-slate-150 w-full dark:border-slate-800">
-        <div class="text-xs px-4 pt-4 pb-3 flex justify-between items-center w-full">
+        <hr class="w-full border-slate-150 dark:border-slate-800">
+        <div class="flex w-full items-center justify-between px-4 pb-3 pt-4 text-xs">
           <div class="font-medium" :class="isConfirmationsMatch ? 'text-primary' : 'text-orange-400'">
             <span v-if="executing && !isTransactionExecuted" class="flex items-center gap-2">
               Executing
-              <SvgSpinner class="w-5 h-5" />
+              <SvgSpinner class="h-5 w-5" />
             </span>
-            <span v-else-if="isTransactionFailed" class="flex items-center text-red-alert gap-2 justify-end">
+            <span v-else-if="isTransactionFailed" class="flex items-center justify-end gap-2 text-red-alert">
               Failed
-              <SvgoErrorCircle class="text-white w-4.5 h-4.5" />
+              <SvgoErrorCircle class="h-4.5 w-4.5 text-white" />
             </span>
             <span v-else-if="isTransactionExecuted" class="flex items-center gap-2">
               Executed
-              <SvgoCheckCircle class="success-circle w-5 h-5" />
+              <SvgoCheckCircle class="success-circle h-5 w-5" />
             </span>
-            <span v-else-if="isConfirmationsMatch" class="items-center flex gap-5 justify-between">
+            <span v-else-if="isConfirmationsMatch" class="flex items-center justify-between gap-5">
               Ready to execute
-              <SvgoCheckCircle class="success-circle w-5 h-5" />
+              <SvgoCheckCircle class="success-circle h-5 w-5" />
             </span>
-            <span v-else class="items-center flex gap-3 justify-between whitespace-nowrap">
+            <span v-else class="flex items-center justify-between gap-3 whitespace-nowrap">
               <span v-if="isYourSignNeeded">
                 Your sign needed
               </span>
               <span v-else>
                 Awaiting signatures
               </span>
-              <span class="w-5 h-5 flex items-center justify-center">
-                <SvgoHourGlass class="w-4 h-4" />
+              <span class="flex h-5 w-5 items-center justify-center">
+                <SvgoHourGlass class="h-4 w-4" />
               </span>
             </span>
           </div>

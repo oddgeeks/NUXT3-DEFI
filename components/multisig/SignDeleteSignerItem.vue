@@ -37,9 +37,9 @@ async function handleSign() {
 </script>
 
 <template>
-  <div class="flex items-center justify-between w-full">
+  <div class="flex w-full items-center justify-between">
     <span class="flex items-center gap-3 text-sm leading-5">
-      <ChainLogo class="w-[26px] h-[26px]" :chain="chainId" />
+      <ChainLogo class="h-[26px] w-[26px]" :chain="chainId" />
       {{ chainIdToName(chainId) }}
     </span>
     <CommonButton :disabled="pending || signed" :loading="pending" @click="handleSign">

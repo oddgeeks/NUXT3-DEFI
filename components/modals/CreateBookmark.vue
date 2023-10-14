@@ -99,8 +99,8 @@ async function handleDeleteBookmark() {
 
 <template>
   <form @submit="onSubmit">
-    <div class="p-7.5 flex items-center gap-[14px]">
-      <div class="bg-primary w-10 h-10 flex items-center justify-center rounded-full">
+    <div class="flex items-center gap-[14px] p-7.5">
+      <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
         <SvgoBookmark />
       </div>
       <h1>
@@ -113,22 +113,22 @@ async function handleDeleteBookmark() {
         <tbody>
           <template v-if="type === 'wc' && session">
             <tr>
-              <td class="text-slate-400 pb-7.5">
+              <td class="pb-7.5 text-slate-400">
                 App URL
               </td>
-              <td class="pl-[60px] pb-7.5">
+              <td class="pb-7.5 pl-[60px]">
                 <NuxtLink target="_blank" external class="text-primary" :to="session.peer.metadata.url">
                   {{ session.peer.metadata.url }}
                 </NuxtLink>
               </td>
             </tr>
             <tr>
-              <td class="text-slate-400 pb-7.5">
+              <td class="pb-7.5 text-slate-400">
                 Network
               </td>
-              <td class="pl-[60px] pb-7.5">
-                <div class="flex gap-2.5 items-center">
-                  <ChainLogo class="w-5.5 h-5.5" :chain="chainId" />
+              <td class="pb-7.5 pl-[60px]">
+                <div class="flex items-center gap-2.5">
+                  <ChainLogo class="h-5.5 w-5.5" :chain="chainId" />
                   {{ chainIdToName(chainId) }}
                 </div>
               </td>
@@ -144,28 +144,28 @@ async function handleDeleteBookmark() {
           </template>
           <template v-if="type === 'transfer' && sendData">
             <tr>
-              <td class="text-slate-400 pb-7.5">
+              <td class="pb-7.5 text-slate-400">
                 Network
               </td>
-              <td class="pl-[60px] pb-7.5">
-                <div class="flex gap-2.5 items-center">
-                  <ChainLogo class="w-5.5 h-5.5" :chain="sendData.fromChainId" />
+              <td class="pb-7.5 pl-[60px]">
+                <div class="flex items-center gap-2.5">
+                  <ChainLogo class="h-5.5 w-5.5" :chain="sendData.fromChainId" />
                   <span>{{ chainIdToName(sendData.fromChainId) }}</span>
                   <template v-if="sendData.toChainId && sendData.toChainId !== sendData.fromChainId">
-                    <SvgoArrowRight class="text-slate-400 w-5" />
-                    <ChainLogo class="w-5.5 h-5.5" :chain="sendData.toChainId" />
+                    <SvgoArrowRight class="w-5 text-slate-400" />
+                    <ChainLogo class="h-5.5 w-5.5" :chain="sendData.toChainId" />
                     <span>{{ chainIdToName(sendData.toChainId) }}</span>
                   </template>
                 </div>
               </td>
             </tr>
             <tr>
-              <td class="text-slate-400 pb-7.5">
+              <td class="pb-7.5 text-slate-400">
                 Amount
               </td>
-              <td class="pl-[60px] pb-7.5">
+              <td class="pb-7.5 pl-[60px]">
                 <div class="flex items-center gap-2.5 uppercase">
-                  <SafeTokenLogo class="w-5.5 h-5.5" :url="token?.logoURI" />
+                  <SafeTokenLogo class="h-5.5 w-5.5" :url="token?.logoURI" />
                   {{ formatDecimal(sendData.amount) }}
                   {{ token?.symbol }}
                 </div>
@@ -176,7 +176,7 @@ async function handleDeleteBookmark() {
                 Dest. Address
               </td>
               <td class="pl-[60px]">
-                <NuxtLink v-tippy="sendData.address" target="_blank" class="text-primary font-medium" :to="getExplorerUrl(sendData.toChainId, `/address/${sendData.address}`)" external>
+                <NuxtLink v-tippy="sendData.address" target="_blank" class="font-medium text-primary" :to="getExplorerUrl(sendData.toChainId, `/address/${sendData.address}`)" external>
                   {{ shortenHash(sendData.address) }}
                 </NuxtLink>
               </td>
@@ -191,9 +191,9 @@ async function handleDeleteBookmark() {
       <CommonInput v-model="value" name="shortcut-name" autofocus placeholder="Enter the name" />
     </div>
     <hr class="border-slate-150 dark:border-slate-800">
-    <div class="p-7.5 flex flex-col gap-7.5">
-      <div class="text-xs text-slate-400 font-medium flex gap-2.5">
-        <SvgoInfo2 class="text-slate-500 shrink-0 mt-0.5" />
+    <div class="flex flex-col gap-7.5 p-7.5">
+      <div class="flex gap-2.5 text-xs font-medium text-slate-400">
+        <SvgoInfo2 class="mt-0.5 shrink-0 text-slate-500" />
         Transaction Shortcuts are best suited for non-time-sensitive transactions like sends, repayments, claiming and minting. Some transactions may not work with Tx Shortcut.
       </div>
       <div class="grid grid-cols-2 gap-4">
@@ -204,8 +204,8 @@ async function handleDeleteBookmark() {
           Save Tx Shortcut
         </CommonButton>
       </div>
-      <button v-if="edit" type="button" class="flex justify-center items-center gap-2.5 text-xs text-red-alert" @click="handleDeleteBookmark">
-        Delete Shortcut <SvgoDelete class="w-3 h-3" />
+      <button v-if="edit" type="button" class="flex items-center justify-center gap-2.5 text-xs text-red-alert" @click="handleDeleteBookmark">
+        Delete Shortcut <SvgoDelete class="h-3 w-3" />
       </button>
     </div>
   </form>

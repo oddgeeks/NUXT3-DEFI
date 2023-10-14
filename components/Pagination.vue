@@ -97,19 +97,19 @@ function navigate(type: INavigationType) {
 </script>
 
 <template>
-  <nav class="sm:py-6 sm:px-7.5 flex justify-between w-full">
+  <nav class="flex w-full justify-between sm:px-7.5 sm:py-6">
     <div
-      class="px-5 py-2 dark:bg-slate-800 bg-slate-150 text-sm rounded-7.5 w-fit hidden sm:inline"
+      class="hidden w-fit rounded-7.5 bg-slate-150 px-5 py-2 text-sm dark:bg-slate-800 sm:inline"
     >
       <span v-if="!compact"> Showing </span>
       {{ start }} to {{ end }} of {{ total }}
       <span v-if="!compact"> results </span>
     </div>
-    <div class="flex gap-4 items-center w-full sm:w-fit">
+    <div class="flex w-full items-center gap-4 sm:w-fit">
       <CommonButton
         :disabled="disabled.prev"
         size="md"
-        class="!px-4 hidden sm:inline"
+        class="hidden !px-4 sm:inline"
         @click="navigate('first')"
       >
         First
@@ -117,28 +117,28 @@ function navigate(type: INavigationType) {
       <CommonButton
         :disabled="disabled.prev"
         size="md"
-        class="!px-2 !py-2"
+        class="!p-2"
         @click="navigate('prev')"
       >
-        <ArrowLeft class="w-5 h-5" />
+        <ArrowLeft class="h-5 w-5" />
       </CommonButton>
       <div
-        class="px-5 py-3 text-slate-400 dark:bg-slate-800 text-center bg-slate-150 text-xs rounded-7.5 w-full sm:hidden"
+        class="w-full rounded-7.5 bg-slate-150 px-5 py-3 text-center text-xs text-slate-400 dark:bg-slate-800 sm:hidden"
       >
         {{ start }} - {{ end }} of {{ total }} results
       </div>
       <CommonButton
         :disabled="disabled.next"
         size="md"
-        class="!px-2 !py-2"
+        class="!p-2"
         @click="navigate('next')"
       >
-        <ArrowRight class="w-5 h-5" />
+        <ArrowRight class="h-5 w-5" />
       </CommonButton>
       <CommonButton
         :disabled="disabled.next"
         size="md"
-        class="!px-4 hidden sm:inline"
+        class="hidden !px-4 sm:inline"
         @click="navigate('last')"
       >
         Last

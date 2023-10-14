@@ -140,12 +140,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-[26px] w-full md:w-[450px]">
+  <div class="flex w-full flex-col gap-[26px] md:w-[450px]">
     <div
-      class="flex gap-2 justify-between items-center w-full mx-auto rounded-full"
+      class="mx-auto flex w-full items-center justify-between gap-2 rounded-full"
     >
-      <p class="text-xs py-1 px-5 rounded-full border border-[#1e293b]">
-        <span class="sm:inline hidden"> Processing on the</span> <ChainLogo class="w-6 h-6 inline" :chain="data.fromChainId" />
+      <p class="rounded-full border border-[#1e293b] px-5 py-1 text-xs">
+        <span class="hidden sm:inline"> Processing on the</span> <ChainLogo class="inline h-6 w-6" :chain="data.fromChainId" />
         {{ chainIdToName(data.fromChainId) }}
       </p>
       <CommonToggle v-model="isInputUsd" text="Input USD" />
@@ -158,16 +158,16 @@ onMounted(() => {
             :model-value="token"
             :chain-id="data.fromChainId"
             network-logo-class="w-[15px] h-[15px]"
-            class="relative w-[160px] flex items-center gap-2.5 max-h-12 rounded-[14px] border-1 dark:border-slate-700 border-slate-150 !bg-slate-50 dark:!bg-gray-850 text-left"
+            class="relative flex max-h-12 w-[160px] items-center gap-2.5 rounded-[14px] border-1 border-slate-150 !bg-slate-50 text-left dark:border-slate-700 dark:!bg-gray-850"
             :tokens="availableTokens"
             @update:model-value="handleTokenChange"
           />
         </div>
 
-        <div class="flex flex-col gap-2.5 flex-1">
+        <div class="flex flex-1 flex-col gap-2.5">
           <div class="flex items-center justify-between">
             <span class="text-sm">Amount</span>
-            <div class="flex text-sm uppercase gap-x-3">
+            <div class="flex gap-x-3 text-sm uppercase">
               <span>
                 {{ formatDecimal(token?.balance || '0') }}
                 {{ token?.symbol }}
@@ -195,7 +195,7 @@ onMounted(() => {
             @beforeinput="toggleMax(false)"
           >
             <template #suffix>
-              <span class="text-sm text-left text-slate-400 absolute right-5">
+              <span class="absolute right-5 text-left text-sm text-slate-400">
                 {{ formatDecimal(amount) }}
               </span>
             </template>
@@ -208,13 +208,13 @@ onMounted(() => {
             :error-message="errorMessage"
             name="amount"
             autofocus
-            class="!rounded-2xl w-full"
+            class="w-full !rounded-2xl"
             input-classes="!py-3"
             :placeholder="amountPlaceholder"
             @beforeinput="toggleMax(false)"
           >
             <template #suffix>
-              <span class="text-sm text-left text-slate-400 absolute right-5">
+              <span class="absolute right-5 text-left text-sm text-slate-400">
                 {{ formatUsd(amountInUsd) }}
               </span>
             </template>
@@ -239,15 +239,15 @@ onMounted(() => {
             :options="toCrossChainNetworks"
           >
             <template #button-prefix>
-              <ChainLogo class="w-6 h-6 shrink-0" :chain="data.toChainId" />
+              <ChainLogo class="h-6 w-6 shrink-0" :chain="data.toChainId" />
             </template>
             <template #item-prefix="{ value }">
-              <ChainLogo class="w-6 h-6 shrink-0" :chain="value" />
+              <ChainLogo class="h-6 w-6 shrink-0" :chain="value" />
             </template>
           </CommonSelect>
         </div>
 
-        <div class="flex gap-2.5 flex-col w-full">
+        <div class="flex w-full flex-col gap-2.5">
           <div class="flex items-center justify-between">
             <span class="text-sm">Address</span>
             <span v-if="totalTransfers" class="text-sm text-slate-400">
@@ -256,7 +256,7 @@ onMounted(() => {
             </span>
             <span
               v-else-if="totalTransfers === 0"
-              class="text-sm text-orange-400 flex items-center gap-2"
+              class="flex items-center gap-2 text-sm text-orange-400"
             >
               <SvgoExclamationCircle
                 v-tippy="
@@ -269,7 +269,7 @@ onMounted(() => {
             v-model="fieldAddress"
             :error-message="addressMeta.dirty ? addressErrorMessage : ''"
             name="address"
-            class="!rounded-2xl w-full"
+            class="w-full !rounded-2xl"
             input-classes="!py-3"
             placeholder="Enter Address"
           >
@@ -291,24 +291,24 @@ onMounted(() => {
     </div>
 
     <Transition name="fade">
-      <div class="text-slate-400 font-medium leading-6 flex items-center text-xs">
+      <div class="flex items-center text-xs font-medium leading-6 text-slate-400">
         <SvgoInfo2
-          class="mr-2.5 h-4 w-4 svg-gray-info rounded-full"
+          class="svg-gray-info mr-2.5 h-4 w-4 rounded-full"
         />
         <div v-if="isCrossChain" class="flex items-center">
-          Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;from&nbsp;<ChainLogo class="w-4 h-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}&nbsp;to Receiver on&nbsp;<ChainLogo class="w-4 h-4 shrink-0" :chain="data.toChainId" />&nbsp;{{ targetNetwork }}
+          Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;from&nbsp;<ChainLogo class="h-4 w-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}&nbsp;to Receiver on&nbsp;<ChainLogo class="h-4 w-4 shrink-0" :chain="data.toChainId" />&nbsp;{{ targetNetwork }}
         </div>
         <div v-else class="flex items-center">
-          Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;on&nbsp;<ChainLogo class="w-4 h-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}
+          Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;on&nbsp;<ChainLogo class="h-4 w-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}
         </div>
       </div>
     </Transition>
-    <div v-if="isCrossChainEnable" class="flex gap-2.5 items-center">
+    <div v-if="isCrossChainEnable" class="flex items-center gap-2.5">
       <button
         :class="{
-          'dark:text-white text-slate-900': isCrossChain,
+          'text-slate-900 dark:text-white': isCrossChain,
         }"
-        class="text-sm text-slate-400 flex gap-2.5 items-center"
+        class="flex items-center gap-2.5 text-sm text-slate-400"
         @click="onToggleCrossChain"
       >
         <CheckCircle
@@ -316,18 +316,18 @@ onMounted(() => {
             { 'success-circle text-white': isCrossChain },
             { 'svg-circle darker': !isCrossChain },
           ]"
-          class="w-4 h-4"
+          class="h-4 w-4"
         />
         I want to send cross-chain
       </button>
       <SvgoQuestionCircle
         v-tippy="'Cross-chain send allows you to directly send tokens from chain A to the receiver on chain B'"
-        class="text-slate-400 w-4 h-4"
+        class="h-4 w-4 text-slate-400"
       />
     </div>
   </div>
 
-  <CommonButton :loading="tokenlistPending" :disabled="disabled" class="justify-center mt-7.5 w-full" size="lg" @click="handleContinue">
+  <CommonButton :loading="tokenlistPending" :disabled="disabled" class="mt-7.5 w-full justify-center" size="lg" @click="handleContinue">
     Continue
   </CommonButton>
 </template>

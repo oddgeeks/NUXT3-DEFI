@@ -179,28 +179,28 @@ ${'`Transfer To`'} ${actualAddress.value}`
 </script>
 
 <template>
-  <form class="flex gap-7.5 flex-col" @submit.prevent="onSubmit">
-    <h1 class="text-lg leading-5 text-center">
+  <form class="flex flex-col gap-7.5" @submit.prevent="onSubmit">
+    <h1 class="text-center text-lg leading-5">
       Send
     </h1>
-    <div class="flex items-center justify-between gap-3 px-5 py-4 dark:bg-gray-850 bg-slate-50 rounded-5 max-w-full">
-      <img v-if="asset.imageUrl" :alt="asset.collectionName" width="40" height="40" class="w-10 h-10 rounded-full shrink-0" :src="asset.imageUrl">
-      <BrokenSVG v-else class="w-8 h-8" />
-      <div class="flex flex-col gap-[2px] flex-1 max-w-[60%]">
+    <div class="flex max-w-full items-center justify-between gap-3 rounded-5 bg-slate-50 px-5 py-4 dark:bg-gray-850">
+      <img v-if="asset.imageUrl" :alt="asset.collectionName" width="40" height="40" class="h-10 w-10 shrink-0 rounded-full" :src="asset.imageUrl">
+      <BrokenSVG v-else class="h-8 w-8" />
+      <div class="flex max-w-[60%] flex-1 flex-col gap-[2px]">
         <div class="flex items-center">
-          <h1 v-tippy="asset.collectionName" class="inline-flex text-lg leading-6 overflow-hidden pr-4  whitespace-nowrap text-shadow">
+          <h1 v-tippy="asset.collectionName" class="text-shadow inline-flex overflow-hidden whitespace-nowrap pr-4  text-lg leading-6">
             {{ asset.collectionName }}
           </h1>
           <NuxtLink external target="_blank" class="shrink-0" :to="getExplorerUrl(asset.chainId, `/address/${asset.contractAddress}`)">
-            <ExternalLinkSVG class="shrink-0 w-4" />
+            <ExternalLinkSVG class="w-4 shrink-0" />
           </NuxtLink>
         </div>
         <h2 class="text-xs font-medium text-slate-400">
           {{ asset.name }}
         </h2>
       </div>
-      <div class="flex items-center justify-center h-10 gap-2 px-3 text-xs dark:bg-slate-800 bg-slate-150 rounded-5">
-        <ChainLogo :chain="asset.chainId" class="w-5.5 h-5.5" />
+      <div class="flex h-10 items-center justify-center gap-2 rounded-5 bg-slate-150 px-3 text-xs dark:bg-slate-800">
+        <ChainLogo :chain="asset.chainId" class="h-5.5 w-5.5" />
         {{ chainIdToName(asset.chainId) }}
       </div>
     </div>
@@ -243,7 +243,7 @@ ${'`Transfer To`'} ${actualAddress.value}`
       :data="data"
       :error="error"
     />
-    <CommonButton :loading="isSubmitting || pending" :disabled="sendingDisabled" type="submit" class="justify-center w-full" size="lg">
+    <CommonButton :loading="isSubmitting || pending" :disabled="sendingDisabled" type="submit" class="w-full justify-center" size="lg">
       Send NFT
     </CommonButton>
   </form>

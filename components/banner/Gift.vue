@@ -1,12 +1,12 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="bg-green-400 bg-opacity-10 rounded-5 py-[15px] items-center justify-center flex gap-[15px]">
+  <div class="flex items-center justify-center gap-[15px] rounded-5 bg-green-400 bg-opacity-10 py-[15px]">
     <span>🎁</span>
-    <p class="text-green-400 text-xs">
+    <p class="text-xs text-green-400">
       Claim your gas gift to start trying out Avocado
     </p>
-    <CommonButton class="h-7.5 !px-4 flex items-center text-xs" @click="openTopUpGasModal()">
+    <CommonButton class="flex h-7.5 items-center !px-4 text-xs" @click="openTopUpGasModal()">
       Claim Gas
     </CommonButton>
   </div>

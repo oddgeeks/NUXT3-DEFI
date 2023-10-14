@@ -31,22 +31,22 @@ function handleReject() {
 
 <template>
   <div
-    class="inline-flex gap-7.5 flex-col items-center justify-center text-center w-full"
+    class="inline-flex w-full flex-col items-center justify-center gap-7.5 text-center"
   >
     <component :is="headerIconComponent" v-if="headerIconComponent" />
     <img
       v-else-if="headerIconUrl"
-      class="w-10 h-10"
+      class="h-10 w-10"
       width="40"
       height="40"
       :src="headerIconUrl"
     >
     <SVGCheckCircle
       v-else-if="type === 'success'"
-      class="text-white success-circle"
+      class="success-circle text-white"
     />
-    <SVGErrorCircle v-else-if="type === 'error'" class="text-white w-10 h-10 fill-primary" />
-    <SVGQuestionCircle v-else-if="type === 'question'" class="w-10 h-10 text-primary" />
+    <SVGErrorCircle v-else-if="type === 'error'" class="h-10 w-10 fill-primary text-white" />
+    <SVGQuestionCircle v-else-if="type === 'question'" class="h-10 w-10 text-primary" />
 
     <div class="flex flex-col gap-[15px]">
       <h1 v-if="title" class="text-lg font-semibold">
@@ -54,13 +54,13 @@ function handleReject() {
       </h1>
       <p
         v-if="content"
-        class="text-slate-400 text-xs text-center leading-5 font-medium"
+        class="text-center text-xs font-medium leading-5 text-slate-400"
         v-html="content"
       />
     </div>
     <div
       v-if="isCancelButtonVisible || isButtonVisible"
-      class="flex w-full gap-4 items-center"
+      class="flex w-full items-center gap-4"
     >
       <CommonButton
         v-if="isCancelButtonVisible"

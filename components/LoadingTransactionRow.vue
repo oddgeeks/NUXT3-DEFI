@@ -1,32 +1,32 @@
 <template>
   <tr class="transaction-row">
     <td>
-      <div class="dark:bg-slate-800 bg-slate-150 rounded-5 w-[120px] h-5" />
+      <div class="h-5 w-[120px] rounded-5 bg-slate-150 dark:bg-slate-800" />
     </td>
     <td class="flex gap-2">
-      <div class="dark:bg-slate-800 bg-slate-150 rounded-full w-5 h-5" />
-      <div class="dark:bg-slate-800 bg-slate-150 rounded-5 w-20 h-5" />
+      <div class="h-5 w-5 rounded-full bg-slate-150 dark:bg-slate-800" />
+      <div class="h-5 w-20 rounded-5 bg-slate-150 dark:bg-slate-800" />
     </td>
     <td>
       <div
-        class="dark:bg-slate-800 bg-slate-150 rounded-full w-[110px] h-5"
+        class="h-5 w-[110px] rounded-full bg-slate-150 dark:bg-slate-800"
       />
     </td>
     <td>
       <div
-        class="dark:bg-slate-800 bg-slate-150 rounded-full w-[110px] h-5"
+        class="h-5 w-[110px] rounded-full bg-slate-150 dark:bg-slate-800"
       />
     </td>
     <td class="flex gap-2">
-      <div class="dark:bg-slate-800 bg-slate-150 rounded-full w-5 h-5" />
-      <div class="dark:bg-slate-800 bg-slate-150 rounded-5 w-20 h-5" />
+      <div class="h-5 w-5 rounded-full bg-slate-150 dark:bg-slate-800" />
+      <div class="h-5 w-20 rounded-5 bg-slate-150 dark:bg-slate-800" />
     </td>
     <td>
-      <div class="dark:bg-slate-800 bg-slate-150 rounded-full w-14 h-5" />
+      <div class="h-5 w-14 rounded-full bg-slate-150 dark:bg-slate-800" />
     </td>
     <td>
       <div
-        class="dark:bg-slate-800 bg-slate-150 rounded-full w-[60px] h-5"
+        class="h-5 w-[60px] rounded-full bg-slate-150 dark:bg-slate-800"
       />
     </td>
   </tr>
