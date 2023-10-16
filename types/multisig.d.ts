@@ -88,12 +88,14 @@ interface IRemoveSignerParams {
   addresses: string[]
   chainId: number | string
   threshold: number
+  actionsOnly?: boolean
 }
 
 interface IAddSignerParams {
   addresses: ISignerAddress[]
   threshold: string
   chainId: number | string
+  actionsOnly?: boolean
 }
 
 type TransactionsAction = {

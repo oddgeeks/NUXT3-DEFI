@@ -56,6 +56,7 @@ import TotpActivate from '~/components/modals/Mfa/TotpActivate.vue'
 import MFATerms from '~/components/modals/Mfa/Terms.vue'
 import MFASignInstadappSigner from '~/components/modals/Mfa/SignInstadappSigner.vue'
 import MFAActivateBackupSigner from '~/components/modals/Mfa/ActivateBackupSigner.vue'
+import ReviewSignerProcess from '~/components/modals/Multisig/ReviewSignerProcess.vue'
 
 const { openModal } = useModal()
 
@@ -846,6 +847,21 @@ export function openAddBackupSignerModal() {
       contentClass: '!p-0',
       wrapperClass: '!max-w-[560px]',
     },
+  })
+}
+
+export function openReviewSignerProcessModal(params: IOpenReviewSignerProcessModalParams) {
+  const { chainId, actions, deleteSigner, isInstadappSigner } = params || {}
+
+  return openModal({
+    component: ReviewSignerProcess,
+    componentProps: {
+      chainId,
+      actions,
+      deleteSigner,
+      isInstadappSigner,
+    },
+    async: true,
   })
 }
 

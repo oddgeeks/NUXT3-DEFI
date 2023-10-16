@@ -14,53 +14,53 @@ const [hovered, toggle] = useToggle(false)
 const { addSignersWithThreshold, removeSignerWithThreshold } = useAvocadoSafe()
 const { parseTransactionError } = useErrorHandler()
 const { selectedSafe } = storeToRefs(useSafe())
-const { account } = useWeb3()
+const { fetchSafeInstanceses } = useSafe()
 
 const signerAdded = computed(() => isSignerAdded(selectedSafe.value!, props.address, props.chainId))
 
 const isInstadappSigner = computed(() => isAddressEqual(props.address, instadappSigner))
 const isInstadappSignerAdded = computed(() => isSignerAdded(selectedSafe.value!, instadappSigner, props.chainId))
 
+const addSignerActions = asyncComputed(async () => {
+  return addSignersWithThreshold({
+    addresses: [{ address: props.address, name: '' }],
+    threshold: '2',
+    chainId: props.chainId,
+    actionsOnly: true,
+  })
+})
+
+const removeSignerActions = asyncComputed(async () => {
+  const threshold = isInstadappSigner.value ? 1 : 2
+
+  return removeSignerWithThreshold({
+    addresses: [props.address],
+    threshold,
+    chainId: props.chainId,
+    actionsOnly: true,
+  })
+})
+
 const instadappSignerNotYetAdded = computed(() => !isInstadappSigner.value && !isInstadappSignerAdded.value)
 
 async function handleAddSigner() {
   try {
     pending.value = true
-    const threshold = '2'
-    const actualSigners = [{ address: props.address, name: '' }]
 
-    const signers = actualSigners.map(signer => signer.address)
-
-    const metadata = threshold
-      ? encodeMultipleActions(
-        encodeAddSignersMetadata(signers, false),
-        encodeChangeThresholdMetadata(threshold, false),
-      )
-      : encodeAddSignersMetadata(signers)
-
-    const txHash = await addSignersWithThreshold({
-      addresses: actualSigners,
-      threshold,
+    const { success } = await openReviewSignerProcessModal({
       chainId: props.chainId,
+      actions: addSignerActions.value,
+      deleteSigner: false,
+      isInstadappSigner: isInstadappSigner.value,
     })
 
-    if (txHash) {
-      const provider = getRpcProvider(props.chainId)
+    if (!success)
+      return
 
-      await provider.waitForTransaction(txHash)
-
-      executed.value = true
-
-      logActionToSlack({
-        account: account.value,
-        action: 'add-signers',
-        txHash,
-        message: generateSlackMessage(metadata, props.chainId),
-        chainId: String(props.chainId),
-      })
-    }
-
-    signed.value = true
+    setTimeout(async () => {
+      await fetchSafeInstanceses()
+      pending.value = false
+    }, 1000)
   }
   catch (e: any) {
     const parsed = parseTransactionError(e)
@@ -69,8 +69,6 @@ async function handleAddSigner() {
       message: parsed.formatted,
       type: 'error',
     })
-  }
-  finally {
     pending.value = false
   }
 }
@@ -79,38 +77,20 @@ async function handleRemoveSigner() {
   try {
     pending.value = true
 
-    const threshold = isInstadappSigner ? 1 : 2
-
-    const addresses = [props.address]
-
-    const metadata = encodeMultipleActions(
-      encodeRemoveSignersMetadata(addresses, false),
-      encodeChangeThresholdMetadata(threshold, false),
-    )
-
-    const txHash = await removeSignerWithThreshold({
-      addresses,
-      threshold,
+    const { success } = await openReviewSignerProcessModal({
       chainId: props.chainId,
+      actions: removeSignerActions.value,
+      deleteSigner: true,
+      isInstadappSigner: isInstadappSigner.value,
     })
 
-    if (txHash) {
-      const provider = getRpcProvider(props.chainId)
+    if (!success)
+      return
 
-      await provider.waitForTransaction(txHash)
-
-      executed.value = true
-
-      logActionToSlack({
-        account: account.value,
-        action: 'remove-signers',
-        txHash,
-        message: generateSlackMessage(metadata, props.chainId),
-        chainId: String(props.chainId),
-      })
-    }
-
-    signed.value = true
+    setTimeout(async () => {
+      await fetchSafeInstanceses()
+      pending.value = false
+    }, 1000)
   }
   catch (e: any) {
     const parsed = parseTransactionError(e)
@@ -119,8 +99,7 @@ async function handleRemoveSigner() {
       message: parsed.formatted,
       type: 'error',
     })
-  }
-  finally {
+
     pending.value = false
   }
 }

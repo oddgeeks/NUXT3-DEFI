@@ -739,3 +739,13 @@ interface IAuthTransactionMfa {
   forceGrabSession?: boolean
   expire?: MfaExpire
 }
+
+interface IOpenReviewSignerProcessModalParams{
+  chainId: number | string
+  deleteSigner?: boolean
+  isInstadappSigner?: boolean
+  actions: {
+    actions: TransactionsAction[]
+    metadata: string
+  }
+}
