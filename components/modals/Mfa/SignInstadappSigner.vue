@@ -20,10 +20,10 @@ const isInstadappSigner = computed(() => isAddressEqual(props.address, instadapp
         </h1>
         <h2 class="text-xs font-medium leading-5 text-slate-400">
           <template v-if="isInstadappSigner">
-            Enable/Disable OTP functionality on each chain separately. If you want to opt out of OTP based 2FA, please disable all chains.
+            Enable/Disable OTP functionality on each chain. If you want to opt out of OTP based 2FA, please disable all chains.
           </template>
           <template v-else>
-            Enable/Disable backup signer on each chain separately. If you want to remove backup signer, please disable all chains.
+            Enable/Disable backup signer on each chain. If you want to remove backup signer, please disable all chains.
           </template>
         </h2>
       </div>
