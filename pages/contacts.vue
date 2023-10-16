@@ -54,7 +54,7 @@ const importCSVFile = () => {
     reader.onload = (e) => {
       const csvContent = e.target?.result;
       const lines = csvContent?.toString().split("\n")
-      contacts.value = lines?.filter((line, i) => {
+      const importedContacts: IContact[] = lines?.filter((line, i) => {
         if (i === 0)
           return false
         const columns = line.split(",")
@@ -62,7 +62,7 @@ const importCSVFile = () => {
           return false
         if (columns[2] !== 'All Network' && isNaN(parseInt(columns[2])))
           return false
-        if (columns[0].length === 0 || columns[0] === ownerContact.value?.address)
+        if (columns[0].length === 0 || columns[0] === ownerContact.value?.address || contacts.value.find(c => c.address === columns[0]))
           return false
         return true
       }).map(line => {
@@ -71,8 +71,10 @@ const importCSVFile = () => {
           address: columns[0],
           name: columns[1],
           chainId: columns[2] === 'All Network' ? '' : parseInt(columns[2]),
+          owner: false
         }
-      })
+      });
+      contacts.value = [ ...contacts.value, ...importedContacts ]
       file_input.remove()
     }
 
