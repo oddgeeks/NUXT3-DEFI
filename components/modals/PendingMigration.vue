@@ -21,12 +21,12 @@ onMounted(async () => {
   await wait(5000)
 
   props.hashes.forEach(async (hash, index) => {
-    const provider = getRpcProviderByChainId(props.chainIds[index]);
-    transactions.value?.push(await provider.waitForTransaction(hash));
+    const provider = getRpcProviderByChainId(props.chainIds[index])
+    transactions.value?.push(await provider.waitForTransaction(hash))
   })
 })
 
-const getIsSuccess = (transaction: TransactionReceipt) => {
+function getIsSuccess(transaction: TransactionReceipt) {
   if (!transaction.status)
     return false
 
@@ -38,12 +38,12 @@ const getIsSuccess = (transaction: TransactionReceipt) => {
 </script>
 
 <template>
-  <div class="text-center flex flex-col gap-7.5">
-    <div v-for="(hash, index) in hashes" class="mt-4 first:mt-0">
+  <div class="flex flex-col gap-7.5 text-center">
+    <div v-for="(hash, index) in hashes" :key="hash" class="mt-4 first:mt-0">
       <div v-if="transactions?.length && transactions[index]" class="flex justify-center">
         <SVGCheckCircle
           v-if="getIsSuccess(transactions[index])"
-          class="text-white w-10 h-10 success-circle"
+          class="success-circle h-10 w-10 text-white"
         />
 
         <svg
@@ -73,7 +73,7 @@ const getIsSuccess = (transaction: TransactionReceipt) => {
       </div>
       <div v-else class="flex justify-center">
         <svg
-          class="animate-spin h-10 w-10 text-green-500"
+          class="h-10 w-10 animate-spin text-green-500"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -95,7 +95,7 @@ const getIsSuccess = (transaction: TransactionReceipt) => {
       </div>
 
       <div>
-        <h2 class="text-lg leading-5 my-4">
+        <h2 class="my-4 text-lg leading-5">
           Transaction
           {{
             transactions?.length && transactions[index]
@@ -108,15 +108,15 @@ const getIsSuccess = (transaction: TransactionReceipt) => {
 
         <p
           v-if="transactions?.length && transactions[index] && !getIsSuccess(transactions[index])"
-          class="text-slate-400 text-xs mb-2"
+          class="mb-2 text-xs text-slate-400"
         >
           Try again or return to the home page.
         </p>
       </div>
 
-      <div class="dark:bg-slate-800 bg-slate-100 bg px-[18px] py-[14px] rounded-5 flex items-center justify-between">
-        <p class="flex gap-3 items-center">
-          <ChainLogo class="w-[26px] h-[26px]" :chain="chainIds[index]" />
+      <div class="bg flex items-center justify-between rounded-5 bg-slate-100 px-[18px] py-[14px] dark:bg-slate-800">
+        <p class="flex items-center gap-3">
+          <ChainLogo class="h-[26px] w-[26px]" :chain="chainIds[index]" />
           <span class="text-sm text-slate-400">{{ chainIdToName(chainIds[index]) }}</span>
         </p>
         <CommonButton as="a" target="_blank" :href="`${avoExplorerURL}/tx/${hash}`" size="sm">

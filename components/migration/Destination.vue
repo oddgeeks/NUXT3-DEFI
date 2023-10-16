@@ -15,7 +15,7 @@ function handleSelect(safe: ISafe) {
 
 <template>
   <div>
-    <h2 class="text-white text-base font-semibold mb-5">
+    <h2 class="mb-5 text-base font-semibold text-white">
       Migrate to
     </h2>
 

@@ -61,7 +61,7 @@ const componentToShow = computed(() => {
   >
     <slot name="prefix" />
     <slot v-if="!loading" />
-    <div v-else class="dot-flashing my-1.5 mx-auto" />
+    <div v-else class="dot-flashing mx-auto my-1.5" />
     <slot name="suffix" />
   </component>
 </template>

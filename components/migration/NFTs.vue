@@ -48,8 +48,8 @@ const filteredAssets = computed(() => {
 
 <template>
   <div>
-    <div class="p-5 flex items-center justify-between text-xs font-medium border-b-[1px] dark:border-slate-750 border-white">
-      <p class="dark:text-white text-slate-900">
+    <div class="flex items-center justify-between border-b-[1px] border-white p-5 text-xs font-medium dark:border-slate-750">
+      <p class="text-slate-900 dark:text-white">
         Select NFTs for migration
       </p>
       <button class="text-green-500" @click="() => setNFTsForMigration(filteredAssets || [])">

@@ -1,12 +1,12 @@
 <template>
-  <div class="w-full h-[77px] p-5 flex items-center justify-between border-b-[1px] last:border-b-[0px] dark:border-slate-750 border-white">
+  <div class="flex h-[77px] w-full items-center justify-between border-b-[1px] border-white p-5 last:border-b-[0px] dark:border-slate-750">
     <div class="flex items-center">
-      <div class="w-[30px] h-[30px] rounded-full loading-box" />
+      <div class="loading-box h-[30px] w-[30px] rounded-full" />
       <div class="ml-[10px]">
-        <div class="w-[50px] h-[18px] mb-0.5 rounded-full loading-box" />
-        <div class="w-[100px] h-[16px] rounded-full loading-box" />
+        <div class="loading-box mb-0.5 h-[18px] w-[50px] rounded-full" />
+        <div class="loading-box h-[16px] w-[100px] rounded-full" />
       </div>
     </div>
-    <div class="w-[20px] h-[20px] rounded-full loading-box" />
+    <div class="loading-box h-[20px] w-[20px] rounded-full" />
   </div>
 </template>

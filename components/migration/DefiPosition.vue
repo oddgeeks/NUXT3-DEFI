@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import SVGX from '~/assets/images/icons/x.svg?component'
 
-const { selectedDefiForMigration } = storeToRefs(useMigration())
-
 const props = withDefaults(defineProps<{
   position: MigrationPositions
   showSelectedUi?: boolean
 }>(),
-  {
-    showSelectedUi: false,
-  },
+{
+  showSelectedUi: false,
+},
 )
+
+const emits = defineEmits(['toggleCheck'])
+
+const { selectedDefiForMigration } = storeToRefs(useMigration())
 
 const isChecked = computed(() => {
   const index = selectedDefiForMigration?.value?.findIndex((defi) => {
@@ -18,43 +20,51 @@ const isChecked = computed(() => {
   })
   return index > -1
 })
-
-const emits = defineEmits(['toggleCheck']);
 </script>
 
 <template>
-  <div class="p-5 flex items-center border-b-[1px] last:border-b-[0px] dark:border-slate-750 border-white">
-    <div class="relative basis-[30px] h-[30px] grow-0 shrink-0">
-      <SafeTokenLogo class="w-full h-full" :url="position.logoURI" />
+  <div class="flex items-center border-b-[1px] border-white p-5 last:border-b-[0px] dark:border-slate-750">
+    <div class="relative h-[30px] shrink-0 grow-0 basis-[30px]">
+      <SafeTokenLogo class="h-full w-full" :url="position.logoURI" />
       <ChainLogo
         v-tippy="chainIdToName(position.chainId)"
         :stroke="true"
-        class="w-[18px] h-[18px] absolute -left-1 -bottom-1"
+        class="absolute -bottom-1 -left-1 h-[18px] w-[18px]"
         :chain="position.chainId"
       />
     </div>
 
     <div class="ml-[10px] grow">
-      <div class="text-sm dark:text-white text-slate-900 font-medium overflow-hidden w-[90px] whitespace-nowrap text-ellipsis">{{ position.label }}</div>
+      <div class="w-[90px] truncate text-sm font-medium text-slate-900 dark:text-white">
+        {{ position.label }}
+      </div>
     </div>
 
     <div class="ml-[10px] grow">
-      <div class="text-sm dark:text-white text-slate-900 font-medium">{{ formatUsd(position.positions.totalSupplyInUsd) }}</div>
-      <div class="text-xs text-slate-400 font-medium">Supplied</div>
+      <div class="text-sm font-medium text-slate-900 dark:text-white">
+        {{ formatUsd(position.positions.totalSupplyInUsd) }}
+      </div>
+      <div class="text-xs font-medium text-slate-400">
+        Supplied
+      </div>
     </div>
 
     <div class="ml-[10px] grow">
-      <div class="text-sm dark:text-white text-slate-900 font-medium">{{ formatUsd(position.positions.totalBorrowInUsd) }}</div>
-      <div class="text-xs text-slate-400 font-medium">Borrowed</div>
+      <div class="text-sm font-medium text-slate-900 dark:text-white">
+        {{ formatUsd(position.positions.totalBorrowInUsd) }}
+      </div>
+      <div class="text-xs font-medium text-slate-400">
+        Borrowed
+      </div>
     </div>
 
     <input
       v-if="!props.showSelectedUi"
       type="checkbox"
       :checked="isChecked"
-      class="ml-5 w-5 h-5 rounded-[6px] !bg-slate-700 border-0 outline-0 cursor-pointer"
+      class="ml-5 h-5 w-5 cursor-pointer rounded-[6px] border-0 !bg-slate-700 outline-0"
       @click="emits('toggleCheck')"
-    />
+    >
     <button v-else class="ml-5" @click="emits('toggleCheck')">
       <SVGX />
     </button>

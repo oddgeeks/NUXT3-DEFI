@@ -8,8 +8,8 @@ useEagerConnect()
 </script>
 
 <template>
-  <div class="flex flex-1 h-full max-h-[calc(100vh-222px)]">
-    <MigrationLegacyWallet class="grow-0 shrink-0 basis-[420px] mr-0 md:mr-[60px]" />
-    <MigrationDestination class="grow mt-[30px] md:mt-0" />
+  <div class="flex h-full max-h-[calc(100vh-222px)] flex-1">
+    <MigrationLegacyWallet class="mr-0 shrink-0 grow-0 basis-[420px] md:mr-[60px]" />
+    <MigrationDestination class="mt-[30px] grow md:mt-0" />
   </div>
 </template>

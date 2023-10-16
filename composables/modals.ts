@@ -727,7 +727,7 @@ export async function openMigrationModal(selectedSafe: ISafe) {
 export function openPendingMigrationModal(
   hashes: string[],
   chainIds: (number | string)[],
-  async = false
+  async = false,
 ) {
   return openModal({
     component: PendingMigration,

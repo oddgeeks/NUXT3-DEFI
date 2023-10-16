@@ -14,8 +14,8 @@ interface MigrateToModalProps {
 }
 
 interface MigrationTransaction {
-  chainId: string | number,
-  txs: TransactionsAction[] 
+  chainId: string | number
+  txs: TransactionsAction[]
 }
 
 const { sendTransactions } = useAvocadoSafe()
@@ -44,7 +44,7 @@ function addNftTxs(currentTransactions: MigrationTransaction[]) {
     const nft = selectedNFTsForMigration.value[i]
     const calldata = contractInterface.encodeFunctionData('transferFrom', [legacySafeAddress.value, props.selectedSafe?.safe_address, nft.tokenId])
 
-    const index = transactions.findIndex((tx) => tx.chainId === nft.chainId)
+    const index = transactions.findIndex(tx => tx.chainId === nft.chainId)
 
     if (index === -1) {
       transactions.push({
@@ -54,9 +54,10 @@ function addNftTxs(currentTransactions: MigrationTransaction[]) {
           data: calldata,
           operation: '0',
           value: '0',
-        }]
+        }],
       })
-    } else {
+    }
+    else {
       transactions[index].txs = [...transactions[index].txs, {
         to: nft.contractAddress,
         data: calldata,
@@ -91,11 +92,11 @@ async function addGasBalanceTx(currentTransactions: MigrationTransaction[]) {
     operation: '0',
   }
 
-  const index = transactions.findIndex((transaction) => transaction.chainId === 137)
+  const index = transactions.findIndex(transaction => transaction.chainId === 137)
   if (index === -1) {
     return [...transactions, {
       chainId: 137,
-      txs: [tx]
+      txs: [tx],
     }]
   }
 
@@ -105,7 +106,8 @@ async function addGasBalanceTx(currentTransactions: MigrationTransaction[]) {
 }
 
 async function addBalancesTxs(currentTransactions: MigrationTransaction[]) {
-  if (!props.selectedSafe?.safe_address) return currentTransactions
+  if (!props.selectedSafe?.safe_address)
+    return currentTransactions
 
   const transactions = [...currentTransactions]
 
@@ -125,7 +127,8 @@ async function addBalancesTxs(currentTransactions: MigrationTransaction[]) {
         value: transferAmount,
         data: '0x',
       }
-    } else {
+    }
+    else {
       const contract = Erc20__factory.connect(selectedToken.address, library.value)
 
       const { data: transferData } = await contract.populateTransaction.transfer(
@@ -149,7 +152,8 @@ async function addBalancesTxs(currentTransactions: MigrationTransaction[]) {
           txs: [tx],
         },
       )
-    } else {
+    }
+    else {
       transactions[index] = {
         chainId: transactions[index].chainId,
         txs: [...transactions[index].txs, tx],
@@ -207,25 +211,25 @@ async function migrate() {
   <div>
     <div class="flex items-start justify-between">
       <div class="flex items-center">
-        <button class="bg-green-500 p-[10px] rounded-full relative flex items-center justify-center mr-[14px]">
+        <button class="relative mr-[14px] flex items-center justify-center rounded-full bg-green-500 p-[10px]">
           <SvgoArrowRight />
         </button>
         <div>
-          <h2 class="dark:text-white text-slate-900 text-lg font-semibold mb-1">
+          <h2 class="mb-1 text-lg font-semibold text-slate-900 dark:text-white">
             Migrate
           </h2>
-          <h3 class="text-slate-400 text-xs font-medium">
+          <h3 class="text-xs font-medium text-slate-400">
             Migrate to...
           </h3>
         </div>
       </div>
     </div>
 
-    <div class="p-5 mt-[30px] border-[1px] dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5">
-      <h4 class="text-xs dark:text-white text-slate-900 font-medium mb-[10px]">
+    <div class="mt-[30px] rounded-5 border-[1px] border-white bg-slate-150 p-5 dark:border-slate-750 dark:bg-gray-850">
+      <h4 class="mb-[10px] text-xs font-medium text-slate-900 dark:text-white">
         Balances
       </h4>
-      <div class="w-[460px] max-w-full dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5" :class="selectedTokensForMigration?.length ? 'border-[1px]' : ''">
+      <div class="w-[460px] max-w-full rounded-5 border-white bg-slate-150 dark:border-slate-750 dark:bg-gray-850" :class="selectedTokensForMigration?.length ? 'border-[1px]' : ''">
         <MigrationTokenBalance
           v-for="token in selectedTokensForMigration"
           :key="`${token.address}-${token.chainId}`"
@@ -233,15 +237,15 @@ async function migrate() {
           show-selected-ui
           @toggle-check="() => toggleSelectedTokenForMigration(token)"
         />
-        <div v-if="!selectedTokensForMigration?.length" class="text-xs text-slate-400 font-medium">
+        <div v-if="!selectedTokensForMigration?.length" class="text-xs font-medium text-slate-400">
           No balances selected.
         </div>
       </div>
 
-      <h4 class="text-xs dark:text-white text-slate-900 font-medium mb-[10px] mt-5">
+      <h4 class="mb-[10px] mt-5 text-xs font-medium text-slate-900 dark:text-white">
         NFTs
       </h4>
-      <div class="w-[460px] max-w-full dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5" :class="selectedNFTsForMigration?.length ? 'border-[1px]' : ''">
+      <div class="w-[460px] max-w-full rounded-5 border-white bg-slate-150 dark:border-slate-750 dark:bg-gray-850" :class="selectedNFTsForMigration?.length ? 'border-[1px]' : ''">
         <MigrationNFTCard
           v-for="asset in selectedNFTsForMigration"
           :key="`${asset.tokenId}-${asset.chainId}`"
@@ -249,7 +253,7 @@ async function migrate() {
           show-selected-ui
           @toggleCheck="() => toggleSelectedNFTsForMigration(asset)"
         />
-        <div v-if="!selectedNFTsForMigration?.length" class="text-xs text-slate-400 font-medium">
+        <div v-if="!selectedNFTsForMigration?.length" class="text-xs font-medium text-slate-400">
           No NFTs selected.
         </div>
       </div>
@@ -270,13 +274,13 @@ async function migrate() {
         </div>
       </div> -->
 
-      <h4 class="text-xs dark:text-white text-slate-900 font-medium mb-[10px] mt-5">
+      <h4 class="mb-[10px] mt-5 text-xs font-medium text-slate-900 dark:text-white">
         Gas balances
       </h4>
-      <div v-if="selectedSafeForMigration" class="w-[460px] max-w-full dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5 border-1">
+      <div v-if="selectedSafeForMigration" class="w-[460px] max-w-full rounded-5 border-1 border-white bg-slate-150 dark:border-slate-750 dark:bg-gray-850">
         <MigrationGasCard :safe="selectedSafeForMigration.safe" :balance="selectedSafeForMigration.amount" />
       </div>
-      <div v-else class="text-xs text-slate-400 font-medium">
+      <div v-else class="text-xs font-medium text-slate-400">
         No Gas selected.
       </div>
     </div>
@@ -288,9 +292,9 @@ async function migrate() {
       :loading="loading"
       @click="migrate"
     >
-      <div class="flex items-center justify-center w-full">
+      <div class="flex w-full items-center justify-center">
         <SvgoArrowRight class="rotate-90" />
-        <span class="mx-[10px] text-sm text-white font-medium">Migrate</span>
+        <span class="mx-[10px] text-sm font-medium text-white">Migrate</span>
         <SvgoArrowRight class="rotate-90" />
       </div>
     </CommonButton>
