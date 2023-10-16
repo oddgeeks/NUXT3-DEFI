@@ -12,6 +12,7 @@ useAccountTrack(undefined, () => {
 
 const { hasInstadappSigner, instadappSignerNetworks, backupSigners } = storeToRefs(useMultisig())
 const { fetchSafeInstanceses } = useSafe()
+const { account } = useWeb3()
 const { mfaTypes, mfaTermsAccepted, preferredMfaType, preferredMfa, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa, backupMfa, isAvocadoProtectActive, atLeastOneMfaVerifed } = useMfa()
 
 async function handleDeactivate(mfa: IMfa, close: () => void) {
@@ -107,10 +108,26 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
 </script>
 
 <template>
-  <div class="flex flex-col gap-7.5">
-    <div v-if="!isAvocadoProtectActive">
-      Safe is not supported
+  <div class="flex flex-1 flex-col gap-7.5">
+    <div
+      v-if="!account"
+      class="m-auto flex w-full items-center justify-center self-center"
+    >
+      <div class="flex flex-col items-center justify-center gap-6">
+        <p
+          class="text-center font-semibold leading-[30px] text-slate-400 sm:whitespace-nowrap sm:text-lg sm:text-white"
+        >
+          Connect your wallet to see your Avocado Protect settings
+        </p>
+
+        <div class="w-28">
+          <Web3Button />
+        </div>
+      </div>
     </div>
+    <p v-else-if="!isAvocadoProtectActive" class="font-medium">
+      Avocado Protect does not support Multisig or Legacy safes, please select personal safe instead.
+    </p>
     <div v-else class="flex flex-col gap-7.5">
       <div class="flex flex-col gap-2.5">
         <h1 class="text-[30px] leading-10">
