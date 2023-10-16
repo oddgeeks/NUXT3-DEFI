@@ -11,6 +11,7 @@ export function useContacts() {
   const { parseTransactionError } = useErrorHandler()
   const { mainSafe, multiSigSafe, safes, legacySafe, legacySafeAddress, safesLoading, selectedSafe } = storeToRefs(useSafe())
   const { checkSafeIsActualMultisig } = useMultisig()
+  const { allSafes } = storeToRefs(useSafe())
 
   const ownerContact = computed(() => {
     if (!account.value)
@@ -27,44 +28,46 @@ export function useContacts() {
   const safeContacts = computed(() => {
     if (!ownerContact.value)
       return contacts.value
-    const result = [ownerContact.value];
-    result.push({
-      name: "Personal",
-      address: mainSafe.value?.safe_address!,
-      chainId: ''
-    })
-    result.push({
-      name: "MultiSig",
-      address: multiSigSafe.value?.safe_address!,
-      chainId: ''
-    })
-    result.push({
-      name: "Legacy",
-      address: legacySafe.value?.safe_address!,
-      chainId: ''
-    })
+    var types = {
+      "Personal": 1,
+      "MultiSig": 1,
+      "Legacy": 1
+    };
 
-    const excludedAddresses = [
-      mainSafe.value?.safe_address,
-      multiSigSafe.value?.safe_address,
-      legacySafe.value?.safe_address,
-    ].filter(address => !!address)
-    const filteredSafes = safes.value.filter(safe => !excludedAddresses.includes(getAddress(safe.safe_address)))
+    var result = [ownerContact.value]
 
-    var num = 2;
-
-    for (var contact of filteredSafes) {
+    for (const safe of allSafes.value) {
+      var name: "Personal" | "MultiSig" | "Legacy" = "Personal";
+      var contact_name;
+      if (checkSafeIsActualMultisig(safe)) {
+        name = "MultiSig"
+      }
+      else if (safe.multisig === 0) {
+        name = "Legacy"
+      }
+      let bFound = false
+      for (const contact of result) {
+        if (safe.safe_address === contact.address) {
+          bFound = true
+          break
+        }
+      }
+      if (bFound)
+        continue
+      if (types[name] !== 1) {
+        contact_name = name + types[name];
+      }
+      else {
+        contact_name = name;
+      }
+      types[name] ++;
       result.push({
-        name: checkSafeIsActualMultisig(contact) ? "MultiSig-" + num : "Personal" + num,
-        address: contact.safe_address,
+        name: contact_name,
+        address: safe.safe_address,
         chainId: ''
-      });
-      num = num + 1
+      })
     }
 
-    for (const contact1 of contacts.value) {
-      result.push(contact1)
-    }
     return result
   })
 
