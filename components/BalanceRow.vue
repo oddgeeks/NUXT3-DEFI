@@ -1,8 +1,5 @@
 <script lang="ts" setup>
-import { Tippy } from 'vue-tippy'
 import type { IBalance } from '~/stores/safe'
-import BridgeSVG from '~/assets/images/icons/bridge.svg?component'
-import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
 
 const props = defineProps<{
@@ -21,23 +18,10 @@ const liteAPY = ref('')
 
 const {
   priceDiffColor,
-  interactable,
-  isBridgeDisabled,
-  isSwapDisabled,
   priceDiffClass,
   priceDiffInPercent,
   fetchLiteAPY,
-  nonAuthorised,
-  fuseDisabled,
 } = useGraph(balance)
-
-const errorMessage = computed(() => {
-  if (nonAuthorised.value)
-    return `You are not authorized to interact with tokens on ${chainIdToName(balance.value.chainId)}`
-
-  if (fuseDisabled.value)
-    return 'Fuse network is not supported legacy safes'
-})
 
 onMounted(async () => {
   const apy = await fetchLiteAPY(props.tokenBalance)
@@ -80,7 +64,7 @@ function onClick() {
             <span v-else>
               {{ tokenBalance.name }}
             </span>
-            <NuxtLink v-if="liteAPY" external target="_blank" to="https://lite.instadapp.io" class="inline-flex items-center justify-center  rounded-5 bg-lite bg-opacity-10 px-2 py-1 text-[10px] font-medium leading-[10px] text-lite">
+            <NuxtLink v-if="liteAPY" external target="_blank" to="https://lite.instadapp.io" class="inline-flex items-center justify-center  rounded-5 bg-lite/10 px-2 py-1 text-[10px] font-medium leading-[10px] text-lite">
               Earn  {{ formatPercent(liteAPY) }} APY
             </NuxtLink>
           </div>
@@ -140,58 +124,9 @@ function onClick() {
       </div>
     </td>
     <td class="min-w-[138px] py-6 text-right">
-      <Tippy
-        v-if="!summary"
-        :content="errorMessage"
-        tag="div" class="flex items-center justify-center gap-[15px]"
-      >
-        <CommonButton
-          v-tippy="{
-            arrow: true,
-            arrowType: 'round',
-            animation: 'fade',
-            content: 'Send',
-          }"
-          :disabled="!interactable"
-          class="!h-9 !w-9 items-center justify-center !p-0"
-          @click="openSendModal(tokenBalance.chainId, tokenBalance.address)"
-        >
-          <CommonTxTypeIcon :disabled="!interactable" :hoverable="true">
-            <template #icon>
-              <SvgoArrowRight class="-rotate-45" />
-            </template>
-          </CommonTxTypeIcon>
-        </CommonButton>
+      <ActionsButtonGroup v-if="!summary" :token-balance="balance" />
 
-        <CommonButton
-          v-tippy="{
-            arrow: true,
-            arrowType: 'round',
-            animation: 'fade',
-            content: 'Swap',
-          }"
-          :disabled="!interactable || isSwapDisabled"
-          class="!h-9 !w-9 items-center justify-center !p-0"
-          @click="openSwapModal(tokenBalance.address, tokenBalance.chainId)"
-        >
-          <RefreshSVG />
-        </CommonButton>
-
-        <CommonButton
-          v-tippy="{
-            arrow: true,
-            arrowType: 'round',
-            animation: 'fade',
-            content: 'Bridge',
-          }"
-          :disabled="!interactable || isBridgeDisabled"
-          class="!h-9 !w-9 items-center justify-center !p-0"
-          @click="openBridgeModal(tokenBalance.address, tokenBalance.chainId)"
-        >
-          <BridgeSVG />
-        </CommonButton>
-      </Tippy>
-      <div v-else class="flex justify-end pr-[30px]">
+      <div v-else class="flex justify-end pr-7.5">
         <ChevronDownSVG v-if="!collapse" class="h-[14px] w-[14px] text-slate-400" />
         <ChevronDownSVG v-else class="h-[14px] w-[14px] rotate-180 text-slate-400" />
       </div>

@@ -26,9 +26,11 @@ export const useSafe = defineStore('safe', () => {
   const multiSigSafeAddress = ref()
   const accountSafeMapping = useCookie<Record<string, string>>('account-safe-mapping', {
     maxAge: 60 * 60 * 24 * 365 * 10,
+    default: () => ref({}),
   })
   const safeTotalBalanceMapping = useCookie<Record<string, string>>('safe-balance-mapping', {
     maxAge: 60 * 60 * 24 * 365 * 10,
+    default: () => ref({}),
   })
 
   const route = useRoute()
@@ -483,8 +485,6 @@ export const useSafe = defineStore('safe', () => {
     pause()
 
     try {
-      await until(optionsLoading).toMatch(s => !s)
-
       balances.value.loading = true
 
       const data = await getBalances(
