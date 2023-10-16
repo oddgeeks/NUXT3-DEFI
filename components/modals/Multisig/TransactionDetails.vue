@@ -304,9 +304,13 @@ async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
 
 onUnmounted(() => {
   const currentRoute = router.currentRoute.value
+
   router.push({
-    path: `/multisig/${currentRoute.params.safe}/pending-transactions`,
+    name: 'multisig-safe-pending-transactions',
     query: currentRoute.query,
+    params: {
+      safe: currentRoute.params.safe,
+    },
   })
 })
 </script>

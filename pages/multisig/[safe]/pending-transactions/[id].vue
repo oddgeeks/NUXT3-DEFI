@@ -6,6 +6,10 @@ const route = useRoute()
 
 const safe = route.params.safe as string
 
+definePageMeta({
+  alias: '/2fa/:safe/pending-transactions/:id',
+})
+
 if (!safe || !isAddress(safe)) {
   throw createError({
     message: 'Invalid safe address',

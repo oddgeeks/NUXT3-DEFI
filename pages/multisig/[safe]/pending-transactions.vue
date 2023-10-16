@@ -7,6 +7,10 @@ const itemsRef = ref<HTMLElement | null>(null)
 const [isCollapseAll, toggle] = useToggle(false)
 const isCollapseAllDisabled = ref(false)
 
+definePageMeta({
+  alias: '/2fa/:safe/pending-transactions',
+})
+
 const { getSafeOptions } = useSafe()
 const { selectedSafe, safeOptions } = storeToRefs(useSafe())
 
@@ -75,6 +79,31 @@ const { data: seqResponse, refresh: refreshSeq } = useAsyncData<IMultisigTransac
 })
 
 const tabs = computed(() => {
+  const is2FA = route.path.includes('2fa')
+
+  const completeTab = {
+    value: undefined,
+    label: 'Completed',
+    query: 'completed',
+    title: null,
+    mobileLabel: null,
+    count: null,
+  }
+
+  if (is2FA) {
+    return [
+      {
+        value: 'pending',
+        title: 'Pending transactions need to be executed in the order they were proposed in.',
+        query: 'pending',
+        mobileLabel: 'Pending',
+        label: 'Pending',
+        count: toBN(seqResponse.value?.meta?.total || 0).plus(toBN(nonSeqResponse.value?.meta?.total || 0)).toString(),
+      },
+      completeTab,
+    ]
+  }
+
   return [
     {
       value: 'seq',
@@ -92,11 +121,7 @@ const tabs = computed(() => {
       title: 'Non-Sequential transactions can be executed in any order.',
       count: nonSeqResponse.value?.meta?.total || 0,
     },
-    {
-      value: undefined,
-      label: 'Completed',
-      query: 'completed',
-    },
+    completeTab,
   ]
 })
 
@@ -171,7 +196,7 @@ onMounted(() => {
               tab.query === activeTab ? 'dark:bg-slate-800 bg-slate-150' : 'text-slate-400'
             "
             class="laeding-5 flex flex-1 items-center justify-center gap-2.5 whitespace-nowrap rounded-7.5 px-4 py-2 text-xs"
-            @click="$router.replace({ query: { tab: tab.query } })"
+            @click="$router.replace({ query: { tab: tab.query }, path: $router.currentRoute.value.path })"
           >
             <span class="hidden sm:block"> {{ tab.label }}</span>
             <span class="block sm:hidden"> {{ tab.mobileLabel || tab.label }}</span>

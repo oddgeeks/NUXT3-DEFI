@@ -40,9 +40,11 @@ export function useNavigation() {
         tooltip: 'View your DeFi Positions',
       },
       {
+        id: 'pending-transactions',
         label: 'Pending Transactions',
         icon: 'SvgoStopwatch',
         to: `/multisig/${safeAddress.value}/pending-transactions`,
+        mfaSlug: `/2fa/${safeAddress.value}/pending-transactions`,
         tooltip: 'Pending Transactions',
         hidden: !isSafeMultisig.value && !isSafeBackupSigner.value,
         count: totalPendingTransactions,

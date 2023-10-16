@@ -10,10 +10,13 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
+const { navigations } = useNavigation()
 const { hasInstadappSigner, instadappSignerNetworks, backupSigners } = storeToRefs(useMultisig())
 const { fetchSafeInstanceses } = useSafe()
 const { account } = useWeb3()
 const { mfaTypes, mfaTermsAccepted, preferredMfaType, preferredMfa, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa, backupMfa, isAvocadoProtectActive, atLeastOneMfaVerifed } = useMfa()
+
+const pendingTransactionsLink = computed(() => navigations.value.find(i => i.id === 'pending-transactions'))
 
 async function handleDeactivate(mfa: IMfa, close: () => void) {
   if (mfa.value !== 'totp') {
@@ -239,8 +242,8 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
               In case you don't have access to OTP's, you can use a secondary address to confirm your identity. This ensures you are never locked out of your Avocado Wallet
             </h3>
 
-            <div class="flex h-[66px] w-full items-center justify-between rounded-2xl bg-slate-100 p-5 text-left ring-1 ring-slate-200 dark:bg-slate-850 dark:ring-slate-750">
-              <div class="flex w-full items-center justify-between">
+            <div class="flex w-full flex-col justify-between rounded-2xl bg-slate-100 text-left font-medium ring-1 ring-slate-200 dark:bg-slate-850 dark:ring-slate-750">
+              <div class="flex w-full items-center justify-between px-5 py-3">
                 <div class="flex flex-col gap-0.5">
                   <p class="text-xs font-medium leading-5">
                     {{ backupMfa?.title }}
@@ -265,6 +268,12 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                   </span>
                 </span>
               </div>
+              <NuxtLink v-if="pendingTransactionsLink?.mfaSlug && pendingTransactionsLink.count" :to="{ path: pendingTransactionsLink.mfaSlug, query: { tab: 'pending' } }" class="flex items-center justify-between rounded-b-[inherit] bg-slate-150 px-5 py-1.5 text-xs font-medium leading-5 dark:bg-slate-750">
+                <span>
+                  View Queued transactions ({{ pendingTransactionsLink.count }})
+                </span>
+                <SvgoChevronDown class="h-3 w-3 -rotate-90 text-slate-400" />
+              </NuxtLink>
             </div>
           </div>
           <div v-if="atLeastOneMfaVerifed" class="scroll-style mt-auto flex max-h-[250px] flex-col items-baseline justify-between gap-5 overflow-auto border-t border-slate-150 p-7.5 pt-5 dark:border-slate-800">
