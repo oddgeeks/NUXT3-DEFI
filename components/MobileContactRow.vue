@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import DeleteSVG from '~/assets/images/icons/delete.svg?component'
 
-defineProps({
+const props = defineProps({
   contact: {
     type: Object as PropType<IContact>,
     required: true,
@@ -10,6 +10,7 @@ defineProps({
 
 const { deleteContact, getSentTimes } = useContacts()
 const { tokenBalances } = useAvocadoSafe()
+const name = useLocalStorage(`safe-label-${props.contact.address}`, props.contact.name)
 
 function hasAvailableTokens(chainId: number | string) {
   return tokenBalances.value.filter(t => t.chainId == chainId).length > 0
@@ -29,7 +30,7 @@ async function handleDeletingContact(contact: IContact) {
   >
     <div class="flex justify-between">
       <span class="text-sm font-semibold text-slate-400">{{
-        contact.name
+        name
       }}</span>
       <button class="text-red-alert disabled:text-slate-400 disabled:opacity-40" :disabled="contact.owner" @click="handleDeletingContact(contact)">
         <DeleteSVG class="h-4 w-4" />

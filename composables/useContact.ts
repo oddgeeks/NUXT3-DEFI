@@ -28,23 +28,23 @@ export function useContacts() {
   const safeContacts = computed(() => {
     if (!ownerContact.value)
       return contacts.value
-    var types = {
-      "Personal": 1,
-      "MultiSig": 1,
-      "Legacy": 1
-    };
+    const types = {
+      Personal: 1,
+      MultiSig: 1,
+      Legacy: 1,
+    }
 
-    var result = [ownerContact.value]
+    const result = [ownerContact.value]
 
     for (const safe of allSafes.value) {
-      var name: "Personal" | "MultiSig" | "Legacy" = "Personal";
-      var contact_name;
-      if (checkSafeIsActualMultisig(safe)) {
-        name = "MultiSig"
-      }
-      else if (safe.multisig === 0) {
-        name = "Legacy"
-      }
+      let name: 'Personal' | 'MultiSig' | 'Legacy' = 'Personal'
+      let contact_name
+      if (checkSafeIsActualMultisig(safe))
+        name = 'MultiSig'
+
+      else if (safe.multisig === 0)
+        name = 'Legacy'
+
       let bFound = false
       for (const contact of result) {
         if (safe.safe_address === contact.address) {
@@ -54,18 +54,18 @@ export function useContacts() {
       }
       if (bFound)
         continue
-      if (types[name] !== 1) {
-        contact_name = name + types[name];
-      }
-      else {
-        contact_name = name;
-      }
-      types[name] ++;
+      if (types[name] !== 1)
+        contact_name = name + types[name]
+
+      else
+        contact_name = name
+
+      types[name]++
       result.push({
         name: contact_name,
         address: safe.safe_address,
         chainId: '',
-        owner: true
+        owner: true,
       })
     }
 

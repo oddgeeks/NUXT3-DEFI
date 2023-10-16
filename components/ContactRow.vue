@@ -10,6 +10,7 @@ const props = defineProps({
 
 const { deleteContact, getSentTimes } = useContacts()
 const { tokenBalances } = useAvocadoSafe()
+const name = useLocalStorage(`safe-label-${props.contact.address}`, props.contact.name)
 
 const sentTimes = computed(() => getSentTimes(props.contact))
 
@@ -30,7 +31,7 @@ async function handleDeletingContact(contact: IContact) {
     class="contact-row cursor-pointer text-sm font-semibold"
   >
     <td class="pl-7.5 text-sm">
-      <span class="relative">{{ contact.name }}</span>
+      <span class="relative">{{ name }}</span>
     </td>
     <td class="py-6 pr-10">
       <div
