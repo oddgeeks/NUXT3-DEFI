@@ -4,6 +4,7 @@ import SearchSVG from '~/assets/images/icons/search.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
 import ImportSVG from '~/assets/images/icons/import.svg?component'
 import ExportSVG from '~/assets/images/icons/export.svg?component'
+import { isAddress } from 'ethers/lib/utils'
 
 definePageMeta({
   middleware: 'auth',
@@ -43,6 +44,7 @@ const filteredContacts = computed(() => {
 const importCSVFile = () => {
   const file_input = document.createElement('input');
   file_input.type = 'file';
+  file_input.accept = '.csv';
   file_input.onchange = (ev) => {
     if (!file_input.files)
       return
@@ -54,11 +56,15 @@ const importCSVFile = () => {
       const lines = csvContent?.toString().split("\n")
       contacts.value = lines?.filter((line, i) => {
         if (i === 0)
-          return false;
+          return false
         const columns = line.split(",")
+        if (!isAddress(columns[0]))
+          return false
+        if (columns[2] !== 'All Network' && isNaN(parseInt(columns[2])))
+          return false
         if (columns[0].length === 0 || columns[0] === ownerContact.value?.address)
-          return false;
-        return true;
+          return false
+        return true
       }).map(line => {
         const columns = line.split(",")
         return {
@@ -136,14 +142,16 @@ watch(safeAddress, () => {
             <SearchSVG class="mr-2 shrink-0" />
           </template>
         </CommonInput>
-        <button class="flex items-center justify-center gap-2 px-5 hover:bg-primary-hover py-2 rounded-full" @click="importCSVFile()">
-          <ImportSVG class="w-5 h-5 dark:fill-white fill-black" />
-          Import
-        </button>
-        <button class="flex items-center justify-center gap-2 px-5 hover:bg-primary-hover py-2 rounded-full" @click="downloadContactsAsCSV()">
-          <ExportSVG class="w-5 h-5 dark:fill-white fill-black" />
-          Export
-        </button>
+        <div class="flex gap-2.5 w-full md:w-auto">
+          <button class="flex flex-1 md:flex-auto items-center justify-center gap-2 px-5 hover:text-slate-400 py-2 rounded-full group" @click="importCSVFile()">
+            <ImportSVG class="w-5 h-5 dark:fill-white fill-black group-hover:fill-slate-400" />
+            Import
+          </button>
+          <button class="flex flex-1 md:flex-auto items-center justify-center gap-2 px-5 hover:text-slate-400 py-2 rounded-full group" @click="downloadContactsAsCSV()">
+            <ExportSVG class="w-5 h-5 dark:fill-white fill-black group-hover:fill-slate-400" />
+            Export
+          </button>
+        </div>
         <CommonButton
           :disabled="!safeAddress"
           size="lg"
