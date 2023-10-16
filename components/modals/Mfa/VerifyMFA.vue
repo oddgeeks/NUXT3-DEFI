@@ -16,6 +16,7 @@ const props = defineProps<{
 const emit = defineEmits(['resolve', 'destroy'])
 
 const actualMfa = computed(() => props.mfa)
+const { $t } = useNuxtApp()
 
 const otpValue = ref<string>()
 const pending = ref(false)
@@ -61,7 +62,7 @@ async function onSubmit() {
 
       if (!resp) {
         return openSnackbar({
-          message: 'Incorrect OTP, please retry',
+          message: $t('mfa.notifications.incorrectOTP'),
           type: 'error',
         })
       }
@@ -97,13 +98,13 @@ async function handleRequest() {
   if (isSuccess) {
     notify({
       type: 'success',
-      message: `OTP sent to your ${actualMfa.value.label}`,
+      message: $t('mfa.notifications.OTPSent', { method: actualMfa.value.label }),
     })
   }
   else {
     notify({
       type: 'error',
-      message: `Failed to send OTP to your ${actualMfa.value.label}`,
+      message: $t('mfa.notifications.OTPSentFailed', { method: actualMfa.value.label }),
     })
   }
 

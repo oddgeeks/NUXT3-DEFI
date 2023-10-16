@@ -14,6 +14,7 @@ const { navigations } = useNavigation()
 const { hasInstadappSigner, instadappSignerNetworks, backupSigners } = storeToRefs(useMultisig())
 const { fetchSafeInstanceses } = useSafe()
 const { account } = useWeb3()
+const { $t } = useNuxtApp()
 const { mfaTypes, mfaTermsAccepted, preferredMfaType, preferredMfa, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa, backupMfa, isAvocadoProtectActive, atLeastOneMfaVerifed } = useMfa()
 
 const pendingTransactionsLink = computed(() => navigations.value.find(i => i.id === 'pending-transactions'))
@@ -36,7 +37,7 @@ async function handleDeactivate(mfa: IMfa, close: () => void) {
   if (success) {
     notify({
       type: 'success',
-      message: `Successfully deactivated ${mfa.label}`,
+      message: $t('mfa.notifications.deactivated', { method: mfa.label }),
     })
 
     setFallbackDefaultMfaType(mfa)
@@ -46,7 +47,7 @@ async function handleDeactivate(mfa: IMfa, close: () => void) {
   else {
     notify({
       type: 'error',
-      message: `Failed to deactivate ${mfa.label}`,
+      message: $t('mfa.notifications.failedToDeactivate', { method: mfa.label }),
     })
   }
 
@@ -83,7 +84,7 @@ async function handleActivate(mfa: IMfa) {
       if (success) {
         notify({
           type: 'success',
-          message: `Successfully activated ${mfa.label}`,
+          message: $t('mfa.notifications.activated', { method: mfa.label }),
         })
       }
     }
@@ -105,7 +106,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
   close()
   notify({
     type: 'success',
-    message: `Default 2FA method set to ${mfa.label}`,
+    message: $t('mfa.notifications.setDefault', { method: mfa.label }),
   })
 }
 </script>
@@ -134,10 +135,10 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
     <div v-else class="flex flex-col gap-7.5">
       <div class="flex flex-col gap-2.5">
         <h1 class="text-[30px] leading-10">
-          Configure Avocado Protect ⚔️
+          {{ $t('mfa.page.title') }}
         </h1>
         <h2 class="text-sm font-medium leading-6 text-slate-400">
-          Avocado Protect is a non-custodial 2FA service which allows you to add an additional layer of verification before a transaction goes through. You can activate multiple methods at once. Note only one method will be required to validate transactions.
+          {{ $t('mfa.page.subtitle') }}
         </h2>
         <NuxtLink class="text-sm font-medium text-primary" external to="/">
           Learn more about how it works

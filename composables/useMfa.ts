@@ -7,6 +7,7 @@ export function useMfa() {
   const { avoProvider, fetchSafeInstanceses } = useSafe()
   const { switchToAvocadoNetwork } = useNetworks()
   const { account, library } = useWeb3()
+  const { $t } = useNuxtApp()
 
   const isAvocadoProtectActive = computed(() => selectedSafe.value?.multisig === 1 && selectedSafe.value?.multisig_index === 0)
 
@@ -183,12 +184,12 @@ export function useMfa() {
     resp = resp || await handleRequestActivateMfa(mfa, signPayload)
 
     if (!resp?.status)
-      throw new Error('Failed to activate TOTP MFA')
+      throw new Error($t('mfa.notifications.failedToActivate', { method: mfa.label }))
 
     const { success: activateSuccess } = await openTotptActivateModal(resp.data)
 
     if (!activateSuccess)
-      throw new Error('Failed to activate TOTP MFA')
+      throw new Error($t('mfa.notifications.failedToActivate', { method: mfa.label }))
   }
 
   async function authVerify(params: IAuthVerifyParams) {
@@ -200,7 +201,7 @@ export function useMfa() {
       const success = await requestFunction(mfa)
 
       if (!success)
-        throw new Error('Failed to request MFA code')
+        throw new Error($t('mfa.notifications.failedToRequest', { method: mfa.label }))
     }
 
     return openVerifyMFAModal({
@@ -280,7 +281,7 @@ export function useMfa() {
       await fetchSafeInstanceses()
 
     else
-      throw new Error('MFA verification failed')
+      throw new Error($t('mfa.notifications.verificationFailed'))
   }
 
   async function signAndRequestUpdateMfaCode(mfa: IMfa) {

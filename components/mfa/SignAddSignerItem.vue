@@ -15,6 +15,7 @@ const { addSignersWithThreshold, removeSignerWithThreshold } = useAvocadoSafe()
 const { parseTransactionError } = useErrorHandler()
 const { selectedSafe } = storeToRefs(useSafe())
 const { fetchSafeInstanceses } = useSafe()
+const { $t } = useNuxtApp()
 
 const signerAdded = computed(() => isSignerAdded(selectedSafe.value!, props.address, props.chainId))
 
@@ -60,6 +61,15 @@ async function handleAddSigner() {
     setTimeout(async () => {
       await fetchSafeInstanceses()
       pending.value = false
+
+      const chainName = chainIdToName(props.chainId)
+
+      const messageKey = isInstadappSigner.value ? 'mfa.notifications.instadappSignerEnabled' : 'mfa.notifications.signerEnabled'
+
+      openSnackbar({
+        message: $t(messageKey, { chainName }),
+        type: 'success',
+      })
     }, 1000)
   }
   catch (e: any) {
@@ -90,6 +100,14 @@ async function handleRemoveSigner() {
     setTimeout(async () => {
       await fetchSafeInstanceses()
       pending.value = false
+      const chainName = chainIdToName(props.chainId)
+
+      const messageKey = isInstadappSigner.value ? 'mfa.notifications.instadappSignerDisabled' : 'mfa.notifications.signerDisabled'
+
+      openSnackbar({
+        message: $t(messageKey, { chainName }),
+        type: 'success',
+      })
     }, 1000)
   }
   catch (e: any) {
