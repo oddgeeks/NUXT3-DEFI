@@ -10,7 +10,7 @@ const emit = defineEmits(['destroy'])
 const { parseTransactionError } = useErrorHandler()
 
 interface MigrateToModalProps {
-  selectedSafe: ISafe | undefined
+  selectedMigrationSafe: ISafe | undefined
 }
 
 interface MigrationTransaction {
@@ -19,7 +19,7 @@ interface MigrationTransaction {
 }
 
 const { sendTransactions } = useAvocadoSafe()
-const { legacySafeAddress } = storeToRefs(useSafe())
+const { selectedSafe } = storeToRefs(useSafe())
 const {
   toggleSelectedTokenForMigration,
   toggleSelectedNFTsForMigration,
@@ -42,7 +42,7 @@ function addNftTxs(currentTransactions: MigrationTransaction[]) {
 
   for (let i = 0; i < selectedNFTsForMigration.value?.length; i++) {
     const nft = selectedNFTsForMigration.value[i]
-    const calldata = contractInterface.encodeFunctionData('transferFrom', [legacySafeAddress.value, props.selectedSafe?.safe_address, nft.tokenId])
+    const calldata = contractInterface.encodeFunctionData('transferFrom', [selectedSafe.value?.safe_address, props.selectedMigrationSafe?.safe_address, nft.tokenId])
 
     const index = transactions.findIndex(tx => tx.chainId === nft.chainId)
 
@@ -83,7 +83,7 @@ async function addGasBalanceTx(currentTransactions: MigrationTransaction[]) {
 
   const gasBalanceManagerInstance = new ethers.Contract(gasBalanceManagerAddress, gasBalanceManagerAbi, signer)
 
-  const data = (await gasBalanceManagerInstance.populateTransaction['transfer(address,uint256,uint256)'](props.selectedSafe?.owner_address, props.selectedSafe?.multisig_index, toBN(selectedSafeForMigration.value.amount).toString())).data
+  const data = (await gasBalanceManagerInstance.populateTransaction['transfer(address,uint256,uint256)'](props.selectedMigrationSafe?.owner_address, props.selectedMigrationSafe?.multisig_index, toBN(selectedSafeForMigration.value.amount).toString())).data
 
   const tx = {
     to: gasBalanceManagerAddress,
@@ -106,7 +106,7 @@ async function addGasBalanceTx(currentTransactions: MigrationTransaction[]) {
 }
 
 async function addBalancesTxs(currentTransactions: MigrationTransaction[]) {
-  if (!props.selectedSafe?.safe_address)
+  if (!props.selectedMigrationSafe?.safe_address)
     return currentTransactions
 
   const transactions = [...currentTransactions]
@@ -123,7 +123,7 @@ async function addBalancesTxs(currentTransactions: MigrationTransaction[]) {
     if (selectedToken.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
       tx = {
         from: account.value,
-        to: props.selectedSafe?.safe_address,
+        to: props.selectedMigrationSafe?.safe_address,
         value: transferAmount,
         data: '0x',
       }
@@ -132,7 +132,7 @@ async function addBalancesTxs(currentTransactions: MigrationTransaction[]) {
       const contract = Erc20__factory.connect(selectedToken.address, library.value)
 
       const { data: transferData } = await contract.populateTransaction.transfer(
-        props.selectedSafe?.safe_address,
+        props.selectedMigrationSafe?.safe_address,
         transferAmount,
       )
 
@@ -216,10 +216,10 @@ async function migrate() {
         </button>
         <div>
           <h2 class="mb-1 text-lg font-semibold text-slate-900 dark:text-white">
-            Migrate
+            Avocado Account Migration
           </h2>
           <h3 class="text-xs font-medium text-slate-400">
-            Migrate to...
+            Transferring Assets between Accounts
           </h3>
         </div>
       </div>
@@ -227,6 +227,11 @@ async function migrate() {
 
     <div class="mt-[30px] rounded-5 border-[1px] border-white bg-slate-150 p-5 dark:border-slate-750 dark:bg-gray-850">
       <h4 class="mb-[10px] text-xs font-medium text-slate-900 dark:text-white">
+        From
+      </h4>
+      <WalletItem v-if="selectedSafe" class="mt-4" v2 primary hide-active-state :safe="selectedSafe" />
+
+      <h4 class="mb-[10px] mt-5 text-xs font-medium text-slate-900 dark:text-white">
         Balances
       </h4>
       <div class="w-[460px] max-w-full rounded-5 border-white bg-slate-150 dark:border-slate-750 dark:bg-gray-850" :class="selectedTokensForMigration?.length ? 'border-[1px]' : ''">
@@ -299,6 +304,6 @@ async function migrate() {
       </div>
     </CommonButton>
 
-    <WalletItem v-if="selectedSafe" class="mt-4" v2 primary hide-active-state :safe="selectedSafe" />
+    <WalletItem v-if="selectedMigrationSafe" class="mt-4" v2 primary hide-active-state :safe="selectedMigrationSafe" />
   </div>
 </template>

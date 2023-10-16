@@ -711,12 +711,12 @@ export async function openDecodedParamsModal(params: IDecodedParams) {
   })
 }
 
-export async function openMigrationModal(selectedSafe: ISafe) {
+export async function openMigrationModal(selectedMigrationSafe: ISafe) {
   return openModal({
     component: Migration,
     async: true,
     componentProps: {
-      selectedSafe,
+      selectedMigrationSafe,
     },
     options: {
       wrapperClass: '!max-w-[fit-content]',
