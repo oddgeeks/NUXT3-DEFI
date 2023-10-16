@@ -155,7 +155,7 @@
 }
 
 .tippy-content {
-  @apply p-0 font-medium leading-5 !important;
+  @apply p-0 font-medium leading-5 text-left !important;
   font-family: "Source Code Pro" !important;
   font-style: normal !important;
 }
@@ -274,4 +274,8 @@ input[type="search" i]::-webkit-search-cancel-button {
 
 .type-icon-selected path {
   @apply fill-black stroke-black dark:fill-white dark:stroke-white;
+}
+
+.woot--bubble-holder > .woot-widget-bubble {
+  z-index: 49 !important
 }

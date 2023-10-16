@@ -9,6 +9,7 @@ const props = defineProps<{
 
 const { switchToAvocadoNetwork } = useNetworks()
 const { authorisedNetworks } = useAuthorities()
+const { $t } = useNuxtApp()
 
 const isNetworkNotAuthorised = computed(() => {
   return !authorisedNetworks.value?.find(i => String(i.chainId) == String(props.options.chainId))
@@ -51,7 +52,12 @@ async function handleUpgrade() {
       </span>
     </td>
     <td class="px-4.5 pb-6.5 sm:w-[221px] sm:pb-0 sm:pl-0 sm:pr-7.5">
-      <Tippy :content="isNetworkNotAuthorised ? `You are not authorized to interact on ${chainIdToName(options.chainId)}` : undefined">
+      <Tippy
+        :content="isNetworkNotAuthorised
+          ? $t('nonAuthorized', {
+            network: chainIdToName(options.chainId),
+          }) : undefined"
+      >
         <fieldset :disabled="isNetworkNotAuthorised">
           <CommonButton
             v-if="options.notdeployed"
