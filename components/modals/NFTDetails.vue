@@ -8,6 +8,7 @@ const props = defineProps<{
 defineEmits(['destroy'])
 
 const { checkNetworkIsAuthorised } = useAuthorities()
+const { $t } = useNuxtApp()
 
 const [expanded, toggle] = useToggle(false)
 
@@ -17,10 +18,6 @@ provide('toggle', toggle)
 const isNotAuthorised = computed(() => {
   return !checkNetworkIsAuthorised(props.asset.chainId)
 })
-
-// const isContractERC1155 = computed(() => props.asset.contractType === 'ERC1155')
-
-// const disabled = computed(() => isContractERC1155.value)
 </script>
 
 <template>
@@ -68,7 +65,11 @@ const isNotAuthorised = computed(() => {
       </details>
       <div
         v-tippy="{
-          content: isNotAuthorised ? `You are not authorized to interact with tokens on ${chainIdToName(asset.chainId)}` : undefined,
+          content: isNotAuthorised
+            ? $t('nonAuthorized', {
+              network: chainIdToName(asset.chainId),
+            })
+            : undefined,
         }"
       >
         <CommonButton :disabled="isNotAuthorised" class="w-full justify-center" size="lg" @click="$emit('destroy'), openSendNFTModal(asset)">

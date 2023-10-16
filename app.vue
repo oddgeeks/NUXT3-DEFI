@@ -1,14 +1,17 @@
 <script setup lang="ts">
 useTokens()
 useSafe()
-const { library, account } = useWeb3()
-const isChatwoodReady = ref(false)
-const { safeAddress } = useAvocadoSafe()
+const { library } = useWeb3()
 
 useScriptTag('https://app.chatwoot.com/packs/js/sdk.js', () => {
   // @ts-expect-error
   if (!window.chatwootSDK)
     return
+
+  // @ts-expect-error
+  window.chatwootSettings = {
+    hideMessageBubble: true,
+  }
 
   // @ts-expect-error
   window.chatwootSDK.run({
@@ -34,32 +37,6 @@ onMounted(() => {
 
   return () => document.removeEventListener('scroll', hideAllTooltipsOnScroll)
 })
-
-watchThrottled(
-  [safeAddress, isChatwoodReady, account],
-  () => {
-    if (!safeAddress.value || !isChatwoodReady.value || !account.value)
-      return
-
-    const identifier = `${account.value}:${safeAddress.value}`.toLowerCase()
-
-    console.log(identifier)
-
-    // @ts-expect-error
-    window.$chatwoot.setUser(identifier, {
-      name: account.value,
-      email: safeAddress.value,
-    })
-  }, { immediate: true, throttle: 500 })
-
-onMounted(() => {
-  if (process.server)
-    return
-
-  window.addEventListener('chatwoot:ready', async () => {
-    isChatwoodReady.value = true
-  })
-})
 </script>
 
 <template>
@@ -72,6 +49,7 @@ onMounted(() => {
   <BannerMultisigOnboard />
   <Notifications />
   <Modals />
+  <ChatBubble />
 </template>
 
 <style>
