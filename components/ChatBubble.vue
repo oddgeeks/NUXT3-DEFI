@@ -92,9 +92,14 @@ watchThrottled([account, safeAddress], () => {
   const identifier = getIdentifier(account.value, safeAddress.value)
 
   // @ts-expect-error
-  if (window?.$chatwoot.identifier !== identifier)
-  // @ts-expect-error
+  if (window?.$chatwoot.identifier !== identifier) {
+    // @ts-expect-error
+    delete window.$chatwoot.identifier
+    // @ts-expect-error
+    delete window.$chatwoot.user
+    // @ts-expect-error
     window?.$chatwoot.reset()
+  }
 }, { immediate: true, throttle: 1000 })
 </script>
 
