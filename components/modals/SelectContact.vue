@@ -56,6 +56,7 @@ const filteredContacts = computed(() => {
         name="Contact Search"
         type="search"
         placeholder="Search"
+        autofocus
         @input="search"
       >
         <template #prefix>
