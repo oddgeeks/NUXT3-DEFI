@@ -64,7 +64,8 @@ export function useContacts() {
       result.push({
         name: contact_name,
         address: safe.safe_address,
-        chainId: ''
+        chainId: '',
+        owner: true
       })
     }
 
