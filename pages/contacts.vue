@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
+import { read, utils } from 'xlsx'
 import { isAddress } from 'ethers/lib/utils'
 import SearchSVG from '~/assets/images/icons/search.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
-import ImportSVG from '~/assets/images/icons/import.svg?component'
-import ExportSVG from '~/assets/images/icons/export.svg?component'
 
 definePageMeta({
   middleware: 'auth',
@@ -12,8 +11,7 @@ definePageMeta({
 
 const { account } = useWeb3()
 const { safeAddress } = useAvocadoSafe()
-const { ownerContact, safeContacts, fetchTransferCounts } = useContacts()
-const { contacts } = useContacts()
+const { safeContacts, fetchTransferCounts, contacts, addContact } = useContacts()
 
 const searchQuery = ref('')
 
@@ -44,59 +42,93 @@ const filteredContacts = computed(() => {
 function importCSVFile() {
   const file_input = document.createElement('input')
   file_input.type = 'file'
-  file_input.accept = '.csv'
-  file_input.onchange = (ev) => {
+  file_input.accept = 'text/plain, .numbers, .csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'
+  file_input.onchange = () => {
     if (!file_input.files)
       return
     const file = file_input.files[0]
     const reader = new FileReader()
 
     reader.onload = (e) => {
-      const csvContent = e.target?.result
-      const lines = csvContent?.toString().split('\n')
-      const importedContacts: IContact[] = lines?.filter((line, i) => {
-        if (i === 0)
-          return false
-        const columns = line.split(',')
-        if (!isAddress(columns[0]))
-          return false
-        if (columns[2] !== 'All Network' && isNaN(parseInt(columns[2])))
-          return false
-        if (columns[0].length === 0 || columns[0] === ownerContact.value?.address || contacts.value.find(c => c.address === columns[0]))
-          return false
-        return true
-      }).map((line) => {
-        const columns = line.split(',')
-        return {
-          address: columns[0],
-          name: columns[1],
-          chainId: columns[2] === 'All Network' ? '' : parseInt(columns[2]),
-          owner: false,
+      try {
+        const csvContent = e.target?.result
+
+        const res = read(csvContent, {
+          raw: true,
+        })
+
+        const importedContacts: IContact[] = utils.sheet_to_json(res.Sheets[res.SheetNames[0]])
+
+        const filteredContacts = importedContacts.filter((contact) => {
+          if (!contact.address || !contact.name)
+            return false
+
+          if (!isAddress(contact.address))
+            return false
+
+          const chainId = contact.chainId ? String(contact.chainId).trim() : ''
+
+          const existingContact = contacts.value.find(i => isAddressEqual(i.address, contact.address) && String(i.chainId) == chainId)
+
+          if (existingContact)
+            return false
+
+          const isNetworkAvailable = chainId ? availableNetworks.some(i => String(i.chainId) == String(chainId)) : true
+
+          return isNetworkAvailable
+        })
+
+        if (!filteredContacts.length) {
+          notify({
+            type: 'error',
+            message: 'No valid contacts found',
+          })
+          return
         }
+
+        for (const contact of filteredContacts) {
+          addContact({
+            address: contact.address,
+            chainId: String(contact.chainId).trim(),
+            name: contact.name,
+          }, false)
+        }
+
+        fetchTransferCounts()
+
+        notify({
+          type: 'success',
+          message: `${filteredContacts.length} contacts imported successfully`,
+        })
+
+        file_input.remove()
+      }
+      catch (e) {
+        notify({
+          type: 'error',
+          message: 'Invalid CSV file',
+        })
+      }
+    }
+
+    reader.onerror = () => {
+      file_input.remove()
+      notify({
+        type: 'error',
+        message: 'Invalid CSV file',
       })
-      contacts.value = [...contacts.value, ...importedContacts]
-      file_input.remove()
     }
 
-    reader.onerror = (e) => {
-      file_input.remove()
-    }
-
-    reader.readAsText(file)
+    reader.readAsArrayBuffer(file)
   }
   file_input.click()
 }
 
 function downloadContactsAsCSV() {
-  let csvContent = 'Address,Name,ChainId\n'
-
-  console.log(filteredContacts)
+  let csvContent = 'address,name,chainId\n'
 
   filteredContacts.value.forEach((row) => {
-    if (row.address === ownerContact.value?.address)
-      return
-
-    csvContent += `${row.address},${row.name},${row.chainId === '' ? 'All Network' : row.chainId}\n`
+    csvContent += `${row.address},${row.name},${row.chainId || ' '}\n`
   })
 
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8,' })
@@ -104,7 +136,9 @@ function downloadContactsAsCSV() {
 
   const a = document.createElement('a')
   a.href = url
-  a.download = 'Contacts.csv'
+
+  const dateLabel = new Date().toISOString().split('T')[0]
+  a.download = `Contacts-${dateLabel}.csv`
   a.click()
   a.remove()
 }
@@ -126,7 +160,7 @@ watch(safeAddress, () => {
         Contacts
       </h2>
       <div
-        class="flex flex-col-reverse items-center gap-x-5 gap-y-7.5 sm:flex-row"
+        class="flex flex-col-reverse items-center gap-5 sm:flex-row sm:gap-7.5"
         :class="{ 'pointer-events-none blur': !account }"
       >
         <CommonInput
@@ -144,13 +178,13 @@ watch(safeAddress, () => {
             <SearchSVG class="mr-2 shrink-0" />
           </template>
         </CommonInput>
-        <div class="flex w-full gap-2.5 md:w-auto">
-          <button class="group flex flex-1 items-center justify-center gap-2 rounded-full px-5 py-2 hover:text-slate-400 md:flex-auto" @click="importCSVFile()">
-            <ImportSVG class="h-5 w-5 fill-black group-hover:fill-slate-400 dark:fill-white" />
+        <div class="flex w-full gap-10 md:w-auto">
+          <button type="button" class="flex flex-1 items-center justify-center gap-2 rounded-full py-2 font-medium hover:text-primary md:flex-auto" @click="importCSVFile()">
+            <SvgoImport class="h-5 w-5" />
             Import
           </button>
-          <button class="group flex flex-1 items-center justify-center gap-2 rounded-full px-5 py-2 hover:text-slate-400 md:flex-auto" @click="downloadContactsAsCSV()">
-            <ExportSVG class="h-5 w-5 fill-black group-hover:fill-slate-400 dark:fill-white" />
+          <button type="button" class="flex flex-1 items-center justify-center gap-2 rounded-full py-2 font-medium hover:text-primary md:flex-auto" @click="downloadContactsAsCSV()">
+            <SvgoExport class="h-5 w-5" />
             Export
           </button>
         </div>
