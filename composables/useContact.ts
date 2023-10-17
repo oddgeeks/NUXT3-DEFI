@@ -48,7 +48,7 @@ export function useContacts() {
         address: safe.safe_address,
         chainId: '',
         name: walletName.value,
-        notEditable: true,
+        notDeletable: true,
       })
     }
 

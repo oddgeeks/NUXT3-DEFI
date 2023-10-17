@@ -70,7 +70,7 @@ async function handleDeletingContact(contact: IContact) {
             </CommonButton>
           </div>
           <button
-            class="text-red-alert disabled:text-slate-400 disabled:opacity-40" :disabled="contact.owner || contact.notEditable"
+            class="text-red-alert disabled:text-slate-400 disabled:opacity-40" :disabled="contact.owner || contact.notDeletable"
             @click="handleDeletingContact(contact)"
           >
             <DeleteSVG class="h-4 w-4" />
