@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
-import BridgeSVG from '~/assets/images/icons/bridge.svg?component'
-import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 import type { IBalance } from '~/stores/safe'
 
 const props = defineProps({
@@ -16,12 +13,9 @@ const liteAPY = ref('')
 
 const {
   priceDiffColor,
-  interactable,
   priceDiffClass,
   priceDiffInPercent,
-  isSwapDisabled,
   fetchLiteAPY,
-  isBridgeDisabled,
 } = useGraph(balance)
 
 onMounted(async () => {
@@ -53,58 +47,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div class="flex items-center justify-center gap-[55px]">
-      <div class="flex flex-col items-center gap-2">
-        <CommonButton
-          v-tippy="{
-            arrow: true,
-            arrowType: 'round',
-            animation: 'fade',
-            content: 'Send',
-          }"
-          :disabled="!interactable"
-          class="!h-[46px] !w-[45px] items-center justify-center rounded-full !p-0"
-          @click="openSendModal(balance.chainId, balance.address)"
-        >
-          <ArrowRight class="-rotate-45" />
-        </CommonButton>
-        <span class="text-sm text-slate-400">Send</span>
-      </div>
-
-      <div class="flex flex-col items-center gap-2">
-        <CommonButton
-          v-tippy="{
-            arrow: true,
-            arrowType: 'round',
-            animation: 'fade',
-            content: 'Swap',
-          }"
-          :disabled="!interactable || isSwapDisabled"
-          class="!h-[46px] !w-[45px] items-center justify-center rounded-full !p-0"
-          @click="openSwapModal(balance.address, balance.chainId)"
-        >
-          <RefreshSVG />
-        </CommonButton>
-        <span class="text-sm text-slate-400">Swap</span>
-      </div>
-
-      <div class="flex flex-col items-center gap-2">
-        <CommonButton
-          v-tippy="{
-            arrow: true,
-            arrowType: 'round',
-            animation: 'fade',
-            content: 'Bridge',
-          }"
-          :disabled="!interactable || isBridgeDisabled"
-          class="!h-[46px] !w-[45px] items-center justify-center rounded-full !p-0"
-          @click="openBridgeModal(balance.address, balance.chainId)"
-        >
-          <BridgeSVG />
-        </CommonButton>
-        <span class="text-sm text-slate-400">Bridge</span>
-      </div>
-    </div>
+    <ActionsButtonGroup show-label class="gap-[55px]" button-class="!h-12 !w-12 rounded-full" :token-balance="balance" />
 
     <div
       class="relative flex h-[232px] w-full justify-between rounded-[20px] bg-gray-850"

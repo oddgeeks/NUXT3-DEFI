@@ -332,6 +332,14 @@ export function openAddContactModal(name?: string,
   address?: string,
   chainId?: number | string,
   isEdit?: boolean) {
+  if (isEdit) {
+    const { allSafes } = storeToRefs(useSafe())
+    const safe = allSafes.value.find(i => isAddressEqual(i.safe_address, address))
+
+    if (safe)
+      return openWalletNameEditModal(safe)
+  }
+
   return openModal({
     component: AddContact,
     async: true,
