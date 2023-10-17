@@ -48,7 +48,7 @@ nonce: {{NONCE}}
     const signature = await signer.signMessage(template)
 
     if (!isReferrer) {
-      const linkStatus = await avoProvider.send('api_setUserReferrer', [
+      const linkStatus = await avoProvider.send('api_signUser', [
         signature,
         nonce,
       ])

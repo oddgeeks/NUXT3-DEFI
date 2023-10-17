@@ -8,7 +8,6 @@ const { avoProvider } = useSafe()
 
 const { providers } = useNetworks()
 const { setConnectorName } = useConnectors()
-const referral = useCookie<string | null>('ref-code')
 
 const loading = ref<Record<string, boolean>>({})
 
@@ -19,7 +18,7 @@ async function connect(provider: any) {
 
     const isReferrer = await avoProvider.send('api_hasReferralForUser', [account.value])
 
-    if (!isReferrer && referral.value) {
+    if (!isReferrer) {
       const { success } = await openRequestTermsSignature()
 
       if (!success)
