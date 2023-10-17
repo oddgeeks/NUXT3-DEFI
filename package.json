@@ -31,6 +31,7 @@
     "lodash": "^4.17.21",
     "semver": "^7.3.8",
     "vue-slicksort": "^2.0.5",
+    "xlsx": "^0.18.5",
     "xxhashjs": "^0.2.2"
   },
   "devDependencies": {

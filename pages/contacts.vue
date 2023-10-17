@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
+import { read, utils } from 'xlsx'
+import { isAddress } from 'ethers/lib/utils'
 import SearchSVG from '~/assets/images/icons/search.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
 
@@ -9,7 +11,7 @@ definePageMeta({
 
 const { account } = useWeb3()
 const { safeAddress } = useAvocadoSafe()
-const { safeContacts, fetchTransferCounts } = useContacts()
+const { safeContacts, fetchTransferCounts, contacts, addContact } = useContacts()
 
 const searchQuery = ref('')
 
@@ -37,6 +39,110 @@ const filteredContacts = computed(() => {
   return fuse.search(searchQuery.value).map(result => result.item)
 })
 
+function importCSVFile() {
+  const file_input = document.createElement('input')
+  file_input.type = 'file'
+  file_input.accept = 'text/plain, .numbers, .csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'
+  file_input.onchange = () => {
+    if (!file_input.files)
+      return
+    const file = file_input.files[0]
+    const reader = new FileReader()
+
+    reader.onload = (e) => {
+      try {
+        const csvContent = e.target?.result
+
+        const res = read(csvContent, {
+          raw: true,
+        })
+
+        const importedContacts: IContact[] = utils.sheet_to_json(res.Sheets[res.SheetNames[0]])
+
+        const filteredContacts = importedContacts.filter((contact) => {
+          if (!contact.address || !contact.name)
+            return false
+
+          if (!isAddress(contact.address))
+            return false
+
+          const chainId = contact.chainId ? String(contact.chainId).trim() : ''
+
+          const existingContact = contacts.value.find(i => isAddressEqual(i.address, contact.address) && String(i.chainId) == chainId)
+
+          if (existingContact)
+            return false
+
+          const isNetworkAvailable = chainId ? availableNetworks.some(i => String(i.chainId) == String(chainId)) : true
+
+          return isNetworkAvailable
+        })
+
+        if (!filteredContacts.length) {
+          notify({
+            type: 'error',
+            message: 'No valid contacts found',
+          })
+          return
+        }
+
+        for (const contact of filteredContacts) {
+          addContact({
+            address: contact.address,
+            chainId: String(contact.chainId).trim(),
+            name: contact.name,
+          }, false)
+        }
+
+        fetchTransferCounts()
+
+        notify({
+          type: 'success',
+          message: `${filteredContacts.length} contacts imported successfully`,
+        })
+
+        file_input.remove()
+      }
+      catch (e) {
+        notify({
+          type: 'error',
+          message: 'Invalid CSV file',
+        })
+      }
+    }
+
+    reader.onerror = () => {
+      file_input.remove()
+      notify({
+        type: 'error',
+        message: 'Invalid CSV file',
+      })
+    }
+
+    reader.readAsArrayBuffer(file)
+  }
+  file_input.click()
+}
+
+function downloadContactsAsCSV() {
+  let csvContent = 'address,name,chainId\n'
+
+  filteredContacts.value.forEach((row) => {
+    csvContent += `${row.address},${row.name},${row.chainId || ' '}\n`
+  })
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8,' })
+  const url = URL.createObjectURL(blob)
+
+  const a = document.createElement('a')
+  a.href = url
+
+  const dateLabel = new Date().toISOString().split('T')[0]
+  a.download = `Contacts-${dateLabel}.csv`
+  a.click()
+  a.remove()
+}
+
 watch(safeAddress, () => {
   if (!safeAddress.value)
     return
@@ -54,7 +160,7 @@ watch(safeAddress, () => {
         Contacts
       </h2>
       <div
-        class="flex flex-col-reverse items-center gap-x-5 gap-y-7.5 sm:flex-row"
+        class="flex flex-col-reverse items-center gap-5 sm:flex-row sm:gap-7.5"
         :class="{ 'pointer-events-none blur': !account }"
       >
         <CommonInput
@@ -72,7 +178,16 @@ watch(safeAddress, () => {
             <SearchSVG class="mr-2 shrink-0" />
           </template>
         </CommonInput>
-
+        <div class="flex w-full gap-10 md:w-auto">
+          <button type="button" class="flex flex-1 items-center justify-center gap-2 rounded-full py-2 font-medium hover:text-primary md:flex-auto" @click="importCSVFile()">
+            <SvgoImport class="h-5 w-5" />
+            Import
+          </button>
+          <button type="button" class="flex flex-1 items-center justify-center gap-2 rounded-full py-2 font-medium hover:text-primary md:flex-auto" @click="downloadContactsAsCSV()">
+            <SvgoExport class="h-5 w-5" />
+            Export
+          </button>
+        </div>
         <CommonButton
           :disabled="!safeAddress"
           size="lg"
