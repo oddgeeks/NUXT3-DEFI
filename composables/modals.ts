@@ -791,6 +791,7 @@ export async function openVerifyMFAModal(params: IMfaVerifyModalParams) {
     },
     options: {
       contentClass: '!p-0',
+      wrapperClass: '!max-w-[490px]',
     },
   })
 }

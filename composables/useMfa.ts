@@ -49,7 +49,7 @@ export function useMfa() {
       {
         value: 'phone',
         label: 'SMS OTP login',
-        enterOtpLabel: 'Enter Phone OTP',
+        enterOtpLabel: 'Enter SMS OTP',
         title: 'Enter your phone number',
         description: 'We will send an OTP to your phone.',
         removeTypes: {
