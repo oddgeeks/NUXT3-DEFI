@@ -14,6 +14,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['resolve', 'destroy'])
+const { mfaTypes } = useMfa()
 
 const actualMfa = computed(() => props.mfa)
 const { $t } = useNuxtApp()
@@ -24,8 +25,11 @@ const pending = ref(false)
 const { dec, count, reset } = useCounter(60, { min: 0, max: 60 })
 
 const sessionAvailable = ref(props.defaultSessionAvailable || false)
+const availableMfas = computed(() => mfaTypes.value.filter(i => i.activated && i.value !== props.mfa.value && i.value !== 'backup'))
 
-useIntervalFn(() => dec(), 1000)
+useIntervalFn(() => dec(), 1000, {
+  immediate: false,
+})
 
 const buttonLabel = computed(() => {
   const obj: Record<MfaRequestType, string> = {
@@ -112,7 +116,7 @@ async function handleRequest() {
 }
 
 async function handleTryAnotherMethod() {
-  const { success, payload } = await openMfaAuthenticateModal(props.mfaRequestType)
+  const { success, payload } = await openMfaAuthenticateModal(props.mfaRequestType, actualMfa.value)
 
   if (success && payload?.mfa) {
     emit('resolve', true, {
@@ -179,7 +183,7 @@ async function handleDeactivateWithRecoveryCode() {
           in {{ count }} secs
         </span>
       </button>
-      <button v-if="authenticate" class="text-left text-xs font-medium leading-5 text-primary" type="button" @click="handleTryAnotherMethod">
+      <button v-if="authenticate && !!availableMfas.length" class="text-left text-xs font-medium leading-5 text-primary" type="button" @click="handleTryAnotherMethod">
         Try another verification method
       </button>
       <button v-if="mfa.value === 'totp' && mfaRequestType === 'delete'" class="text-xs font-medium leading-5 text-primary" @click="handleDeactivateWithRecoveryCode">

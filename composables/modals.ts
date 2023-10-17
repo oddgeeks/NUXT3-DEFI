@@ -759,12 +759,13 @@ export async function openTotptActivateModal(totp: ITotpData) {
   })
 }
 
-export async function openMfaAuthenticateModal(mfaRequestType: MfaRequestType) {
+export async function openMfaAuthenticateModal(mfaRequestType: MfaRequestType, excludeMfa: IMfa) {
   return openModal({
     component: AuthenticateMFA,
     async: true,
     componentProps: {
       mfaRequestType,
+      excludeMfa,
     },
     options: {
       contentClass: '!p-0',

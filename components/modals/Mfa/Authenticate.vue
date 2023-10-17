@@ -1,11 +1,12 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   mfaRequestType: MfaRequestType
+  excludeMfa: IMfa
 }>()
 
 defineEmits(['resolve'])
-const { mfaTypes, preferredMfa } = useMfa()
-const enabledMfas = computed(() => mfaTypes.value.filter(i => i.activated))
+const { mfaTypes } = useMfa()
+const enabledMfas = computed(() => mfaTypes.value.filter(i => i.activated && i.value !== props.excludeMfa.value))
 </script>
 
 <template>
@@ -21,23 +22,20 @@ const enabledMfas = computed(() => mfaTypes.value.filter(i => i.activated))
       </h1>
     </div>
     <ul class="flex flex-col gap-5">
-      <template v-for="mfa in enabledMfas">
-        <li v-if="mfa.value !== preferredMfa.value" :key="mfa.value">
-          <button
-
-            class="flex w-full items-center justify-between rounded-2xl border bg-slate-50 p-5 text-left text-sm font-medium text-slate-400 hover:bg-slate-100 dark:border-slate-700 dark:bg-gray-850  hover:dark:bg-gray-800"
-            @click="$emit('resolve', true, {
-              mfa,
-            })"
-          >
-            <span class="flex items-center gap-[14px]">
-              <Component :is="mfa.icon" class="text-slate-400" />
-              {{ mfa.label }}
-            </span>
-            <SvgoChevronDown class="-rotate-90" />
-          </button>
-        </li>
-      </template>
+      <li v-for="mfa in enabledMfas" :key="mfa.value">
+        <button
+          class="flex w-full items-center justify-between rounded-2xl border bg-slate-50 p-5 text-left text-sm font-medium text-slate-400 hover:bg-slate-100 dark:border-slate-700 dark:bg-gray-850  hover:dark:bg-gray-800"
+          @click="$emit('resolve', true, {
+            mfa,
+          })"
+        >
+          <span class="flex items-center gap-[14px]">
+            <Component :is="mfa.icon" class="text-slate-400" />
+            {{ mfa.label }}
+          </span>
+          <SvgoChevronDown class="-rotate-90" />
+        </button>
+      </li>
     </ul>
   </div>
 </template>
