@@ -1,9 +1,11 @@
 <script setup lang="ts">
 useTokens()
 useSafe()
-const { library, account } = useWeb3()
+const { library, account, provider } = useWeb3()
+const { onDisconnect } = useConnectors()
 const isChatwoodReady = ref(false)
 const { safeAddress } = useAvocadoSafe()
+const { lastModal } = useModal()
 
 useScriptTag('https://app.chatwoot.com/packs/js/sdk.js', () => {
   // @ts-expect-error
@@ -59,6 +61,23 @@ onMounted(() => {
   window.addEventListener('chatwoot:ready', async () => {
     isChatwoodReady.value = true
   })
+})
+
+watchThrottled(provider, () => {
+  if (!provider.value)
+    return
+
+  provider.value.on('accountsChanged', async () => {
+    if (lastModal.value?.id !== 'request-terms-signature') {
+      const { success } = await openRequestTermsSignature()
+
+      if (!success)
+        onDisconnect()
+    }
+  })
+}, {
+  throttle: 1000,
+  immediate: true,
 })
 </script>
 

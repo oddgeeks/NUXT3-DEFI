@@ -713,6 +713,7 @@ export async function openDecodedParamsModal(params: IDecodedParams) {
 export async function openRequestTermsSignature() {
   return openModal({
     component: RequestTermsSignature,
+    id: 'request-terms-signature',
     async: true,
     options: {
       clickToClose: false,

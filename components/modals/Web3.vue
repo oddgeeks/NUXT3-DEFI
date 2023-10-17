@@ -3,8 +3,7 @@ defineProps<{
   buttonClass?: string
 }>()
 const emit = defineEmits(['destroy'])
-const { activate, account } = useWeb3()
-const { avoProvider } = useSafe()
+const { activate } = useWeb3()
 
 const { providers } = useNetworks()
 const { setConnectorName } = useConnectors()
