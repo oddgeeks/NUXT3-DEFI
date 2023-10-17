@@ -495,7 +495,7 @@ export function useAvocadoSafe() {
   }
 
   async function createProposalOrSignDirecty(params: IGenerateMultisigSignatureParams) {
-    const { chainId, transactionType } = params
+    const { chainId, transactionType, actions, metadata, options, clearModals } = params
 
     const requiredSigner = await getRequiredSigner(selectedSafe.value?.safe_address!, chainId)
 
@@ -532,8 +532,26 @@ export function useAvocadoSafe() {
           },
         })
 
-        if (mfaType === 'backup')
-          return createProposal(params)
+        if (mfaType === 'backup') {
+          const multisigParams = await generateMultisigSignatureAndSign({ chainId, actions, nonce: -1, metadata, options })
+
+          // generate proposal
+          const { data } = await axios.post<IMultisigTransaction>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {
+            chain_id: chainId,
+            status: 'pending',
+            signer: multisigParams?.signatureParams,
+            owner: selectedSafe.value?.owner_address,
+            index: String(selectedSafe.value?.multisig_index),
+            data: multisigParams?.castParams,
+            nonce: -1,
+          }, {
+            baseURL: multisigURL,
+          })
+
+          clearAllModals()
+          openReviewMultisigTransaction(data.id, chainId)
+          return
+        }
 
         return txHash
       }
