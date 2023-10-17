@@ -71,7 +71,7 @@ export function useContacts() {
       contacts.value.splice(index, 1)
   }
 
-  const addContact = (contact: IContact) => {
+  const addContact = (contact: IContact, shouldFetchTransferCounts = true) => {
     contact.address = getAddress(contact.address)
 
     const index = contacts.value.findIndex(
@@ -83,7 +83,8 @@ export function useContacts() {
     if (index === -1)
       contacts.value.push(contact)
 
-    fetchTransferCounts()
+    if (shouldFetchTransferCounts)
+      fetchTransferCounts()
   }
 
   const editContact = (oldContact: IContact, newContact: IContact) => {
