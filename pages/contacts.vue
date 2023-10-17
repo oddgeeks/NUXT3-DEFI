@@ -85,7 +85,7 @@ watch(safeAddress, () => {
       </div>
       <div
         style="scrollbar-gutter: stable; overflow-y: overlay"
-        class="scroll-style flex h-[530px] max-h-[530px] flex-col gap-4 overflow-auto sm:rounded-[25px] sm:bg-slate-50 dark:sm:bg-gray-850 md:overflow-x-hidden"
+        class="scroll-style flex flex-col gap-4 overflow-auto sm:h-[530px] sm:max-h-[530px] sm:rounded-[25px] sm:bg-slate-50 dark:sm:bg-gray-850 md:overflow-x-hidden"
         :class="{ 'pointer-events-none !overflow-hidden blur': !account }"
       >
         <div

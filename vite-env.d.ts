@@ -541,6 +541,7 @@ interface NFTParams {
   address: string
   chainId: number | string
   owner?: true
+  notEditable?: true
 }
 
  interface ITransferCount {

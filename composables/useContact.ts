@@ -9,7 +9,6 @@ export function useContacts() {
   const { account } = useWeb3()
   const abortController = ref<AbortController | null>(null)
   const { parseTransactionError } = useErrorHandler()
-  const { mainSafe, multiSigSafe, safes, legacySafe, legacySafeAddress, safesLoading, selectedSafe } = storeToRefs(useSafe())
   const { checkSafeIsActualMultisig } = useMultisig()
   const { allSafes } = storeToRefs(useSafe())
 
@@ -28,48 +27,32 @@ export function useContacts() {
   const safeContacts = computed(() => {
     if (!ownerContact.value)
       return contacts.value
-    const types = {
-      Personal: 1,
-      MultiSig: 1,
-      Legacy: 1,
-    }
 
     const result = [ownerContact.value]
 
     for (const safe of allSafes.value) {
-      let name: 'Personal' | 'MultiSig' | 'Legacy' = 'Personal'
-      let contact_name
-      if (checkSafeIsActualMultisig(safe))
-        name = 'MultiSig'
+      const multisig = checkSafeIsActualMultisig(safe)
 
-      else if (safe.multisig === 0)
-        name = 'Legacy'
+      const existingContact = contacts.value.find(
+        contact => isAddressEqual(contact.address, safe.safe_address),
+      )
 
-      let bFound = false
-      for (const contact of result) {
-        if (safe.safe_address === contact.address) {
-          bFound = true
-          break
-        }
-      }
-      if (bFound)
+      if (existingContact)
         continue
-      if (types[name] !== 1)
-        contact_name = name + types[name]
 
-      else
-        contact_name = name
+      const defaultLabel = multisig ? 'MultiSig' : 'Personal'
 
-      types[name]++
+      const walletName = useLocalStorage(`safe-label-${safe.safe_address}`, defaultLabel)
+
       result.push({
-        name: contact_name,
         address: safe.safe_address,
         chainId: '',
-        owner: true,
+        name: walletName.value,
+        notEditable: true,
       })
     }
 
-    return result
+    return [...result, ...contacts.value]
   })
 
   const deleteContact = (contact: IContact) => {
