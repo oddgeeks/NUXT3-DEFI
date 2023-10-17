@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
+import { isAddress } from 'ethers/lib/utils'
 import SearchSVG from '~/assets/images/icons/search.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
 import ImportSVG from '~/assets/images/icons/import.svg?component'
 import ExportSVG from '~/assets/images/icons/export.svg?component'
-import { isAddress } from 'ethers/lib/utils'
 
 definePageMeta({
   middleware: 'auth',
@@ -41,23 +41,23 @@ const filteredContacts = computed(() => {
   return fuse.search(searchQuery.value).map(result => result.item)
 })
 
-const importCSVFile = () => {
-  const file_input = document.createElement('input');
-  file_input.type = 'file';
-  file_input.accept = '.csv';
+function importCSVFile() {
+  const file_input = document.createElement('input')
+  file_input.type = 'file'
+  file_input.accept = '.csv'
   file_input.onchange = (ev) => {
     if (!file_input.files)
       return
-    const file = file_input.files[0] 
+    const file = file_input.files[0]
     const reader = new FileReader()
 
     reader.onload = (e) => {
-      const csvContent = e.target?.result;
-      const lines = csvContent?.toString().split("\n")
+      const csvContent = e.target?.result
+      const lines = csvContent?.toString().split('\n')
       const importedContacts: IContact[] = lines?.filter((line, i) => {
         if (i === 0)
           return false
-        const columns = line.split(",")
+        const columns = line.split(',')
         if (!isAddress(columns[0]))
           return false
         if (columns[2] !== 'All Network' && isNaN(parseInt(columns[2])))
@@ -65,16 +65,16 @@ const importCSVFile = () => {
         if (columns[0].length === 0 || columns[0] === ownerContact.value?.address || contacts.value.find(c => c.address === columns[0]))
           return false
         return true
-      }).map(line => {
-        const columns = line.split(",")
+      }).map((line) => {
+        const columns = line.split(',')
         return {
           address: columns[0],
           name: columns[1],
           chainId: columns[2] === 'All Network' ? '' : parseInt(columns[2]),
-          owner: false
+          owner: false,
         }
-      });
-      contacts.value = [ ...contacts.value, ...importedContacts ]
+      })
+      contacts.value = [...contacts.value, ...importedContacts]
       file_input.remove()
     }
 
@@ -87,16 +87,16 @@ const importCSVFile = () => {
   file_input.click()
 }
 
-const downloadContactsAsCSV = () => {
+function downloadContactsAsCSV() {
   let csvContent = 'Address,Name,ChainId\n'
 
-  console.log(filteredContacts);
+  console.log(filteredContacts)
 
-  filteredContacts.value.forEach(row => {
-    if (row.address === ownerContact.value?.address) {
-      return;
-    }
-    csvContent += row.address + "," + row.name + "," + (row.chainId === '' ? 'All Network' : row.chainId) + "\n"
+  filteredContacts.value.forEach((row) => {
+    if (row.address === ownerContact.value?.address)
+      return
+
+    csvContent += `${row.address},${row.name},${row.chainId === '' ? 'All Network' : row.chainId}\n`
   })
 
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8,' })
@@ -144,13 +144,13 @@ watch(safeAddress, () => {
             <SearchSVG class="mr-2 shrink-0" />
           </template>
         </CommonInput>
-        <div class="flex gap-2.5 w-full md:w-auto">
-          <button class="flex flex-1 md:flex-auto items-center justify-center gap-2 px-5 hover:text-slate-400 py-2 rounded-full group" @click="importCSVFile()">
-            <ImportSVG class="w-5 h-5 dark:fill-white fill-black group-hover:fill-slate-400" />
+        <div class="flex w-full gap-2.5 md:w-auto">
+          <button class="group flex flex-1 items-center justify-center gap-2 rounded-full px-5 py-2 hover:text-slate-400 md:flex-auto" @click="importCSVFile()">
+            <ImportSVG class="h-5 w-5 fill-black group-hover:fill-slate-400 dark:fill-white" />
             Import
           </button>
-          <button class="flex flex-1 md:flex-auto items-center justify-center gap-2 px-5 hover:text-slate-400 py-2 rounded-full group" @click="downloadContactsAsCSV()">
-            <ExportSVG class="w-5 h-5 dark:fill-white fill-black group-hover:fill-slate-400" />
+          <button class="group flex flex-1 items-center justify-center gap-2 rounded-full px-5 py-2 hover:text-slate-400 md:flex-auto" @click="downloadContactsAsCSV()">
+            <ExportSVG class="h-5 w-5 fill-black group-hover:fill-slate-400 dark:fill-white" />
             Export
           </button>
         </div>
@@ -166,7 +166,7 @@ watch(safeAddress, () => {
       </div>
       <div
         style="scrollbar-gutter: stable; overflow-y: overlay"
-        class="scroll-style flex h-[530px] max-h-[530px] flex-col gap-4 overflow-auto sm:rounded-[25px] sm:bg-slate-50 dark:sm:bg-gray-850 md:overflow-x-hidden"
+        class="scroll-style flex flex-col gap-4 overflow-auto sm:h-[530px] sm:max-h-[530px] sm:rounded-[25px] sm:bg-slate-50 dark:sm:bg-gray-850 md:overflow-x-hidden"
         :class="{ 'pointer-events-none !overflow-hidden blur': !account }"
       >
         <div

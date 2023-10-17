@@ -134,13 +134,28 @@
     @apply -right-10
   }
 
+.woot-widget--without-bubble {
+  @apply sm:translate-y-[-100px] !important;
+}
+
+.woot-widget-bubble {
+  @apply bg-primary !important;
+}
+
+/* .woot-widget-bubble {
+  visibility: visible !important;
+  bottom: 0 !important;
+} */
+
+
+
 .tippy-box {
   @apply dark:bg-slate-600 bg-slate-200 text-slate-900 dark:text-white border-none !important;
   @apply px-4 py-3 rounded-2xl text-xs !important;
 }
 
 .tippy-content {
-  @apply p-0 font-medium leading-5 !important;
+  @apply p-0 font-medium leading-5 text-left !important;
   font-family: "Source Code Pro" !important;
   font-style: normal !important;
 }
@@ -259,4 +274,8 @@ input[type="search" i]::-webkit-search-cancel-button {
 
 .type-icon-selected path {
   @apply fill-black stroke-black dark:fill-white dark:stroke-white;
+}
+
+.woot--bubble-holder > .woot-widget-bubble {
+  z-index: 49 !important
 }
