@@ -266,6 +266,9 @@ export function useMfa() {
           },
         })
 
+      if (!verifySuccess)
+        throw new Error($t('mfa.notifications.failedToActivate', { method: mfa.label }))
+
       if (verifyPayload?.fallbackMfa)
         return activateMfa(mfa, value, verifyPayload.fallbackMfa)
 
