@@ -27,9 +27,7 @@ const { dec, count, reset } = useCounter(60, { min: 0, max: 60 })
 const sessionAvailable = ref(props.defaultSessionAvailable || false)
 const availableMfas = computed(() => mfaTypes.value.filter(i => i.activated && i.value !== props.mfa.value && i.value !== 'backup'))
 
-useIntervalFn(() => dec(), 1000, {
-  immediate: false,
-})
+useIntervalFn(() => dec(), 1000)
 
 const buttonLabel = computed(() => {
   const obj: Record<MfaRequestType, string> = {
