@@ -18,7 +18,7 @@ const enabledMfas = computed(() => mfaTypes.value.filter(i => i.activated && i.v
         </template>
       </CommonTxTypeIcon>
       <h1 class="text-lg leading-[20px]">
-        How do you want to Authenticate?
+        How else do you want to authenticate?
       </h1>
     </div>
     <ul class="flex flex-col gap-5">
