@@ -16,14 +16,10 @@ async function connect(provider: any) {
     loading.value[provider.name] = true
     await activate(await provider.connect(), undefined, true)
 
-    const isReferrer = await avoProvider.send('api_hasReferralForUser', [account.value])
+    const { success } = await openRequestTermsSignature()
 
-    if (!isReferrer) {
-      const { success } = await openRequestTermsSignature()
-
-      if (!success)
-        throw new Error('Failed to sign terms')
-    }
+    if (!success)
+      throw new Error('Failed to sign terms')
 
     setConnectorName(provider.id)
     emit('destroy')
