@@ -514,6 +514,7 @@ export function useAvocadoSafe() {
           defaultSessionAvailable,
           submitFn: async (_mfa, code) => {
             try {
+              params.nonce = -1
               const signatureObject = await getSingleSignatureObject(params)
 
               signatureObject.mfa_code = code
