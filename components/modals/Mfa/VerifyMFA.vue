@@ -78,10 +78,10 @@ async function onSubmit() {
     })
   }
   catch (e) {
-    const parsed = serialize(e)
+    const parsed: any = serialize(e)
 
     openSnackbar({
-      message: parsed.message,
+      message: parsed?.error?.message || parsed.message,
       type: 'error',
     })
   }
