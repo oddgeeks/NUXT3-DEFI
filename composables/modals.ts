@@ -56,6 +56,7 @@ import TotpActivate from '~/components/modals/Mfa/TotpActivate.vue'
 import MFATerms from '~/components/modals/Mfa/Terms.vue'
 import MFASignInstadappSigner from '~/components/modals/Mfa/SignInstadappSigner.vue'
 import MFAActivateBackupSigner from '~/components/modals/Mfa/ActivateBackupSigner.vue'
+import MFAReviewBackupTransaction from '~/components/modals/Mfa/ReviewBackupTransaction.vue'
 import ReviewSignerProcess from '~/components/modals/Multisig/ReviewSignerProcess.vue'
 
 const { openModal } = useModal()
@@ -618,6 +619,21 @@ export function openReviewMultisigTransaction(transactionId: string, chainId: st
   })
 }
 
+export function openReview2faBackupTransaction(transactionId: string, chainId: string | number) {
+  return openModal({
+    component: MFAReviewBackupTransaction,
+    componentProps: {
+      transactionId,
+      chainId,
+    },
+    options: {
+      contentClass: '!p-7.5',
+      wrapperClass: '!max-w-[560px]',
+      closeButton: false,
+      clickToClose: false,
+    },
+  })
+}
 export async function openMultisigTransactionDetails(transaction: IMultisigTransaction) {
   return openModal({
     component: MultisigTransactionDetail,

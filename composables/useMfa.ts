@@ -19,6 +19,12 @@ export function useMfa() {
 
   const isSafeBackupSigner = computed(() => atLeastOneMfaVerifed.value && !isAddressEqual(selectedSafe.value?.owner_address, account.value))
 
+  const backupSigner = computed(() => {
+    const [firstBackupSigner] = backupSigners.value || []
+
+    return firstBackupSigner
+  })
+
   const mfaSessionTypes = {
     RequestCode: [
       { name: 'owner', type: 'address' },
@@ -449,5 +455,6 @@ export function useMfa() {
     mfaPhoneVerifed,
     isSafeBackupSigner,
     atLeastOneMfaVerifed,
+    backupSigner,
   }
 }
