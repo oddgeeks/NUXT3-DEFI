@@ -474,9 +474,11 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
 
   watchThrottled(safe.safeAddress, () => {
     for (const session of actualSessions.value) {
+      const [chainId] = session?.namespaces?.eip155?.chains ?? []
+
       web3WalletV2.value?.emitSessionEvent({
         topic: session.topic,
-        chainId: 'eip155:1',
+        chainId: chainId || 'eip155:1',
         event: {
           name: 'accountsChanged',
           data: [safe.safeAddress.value],
