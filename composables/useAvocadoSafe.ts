@@ -541,7 +541,7 @@ export function useAvocadoSafe() {
 
           // generate proposal
           const { data } = await axios.post<IMultisigTransaction>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {
-            chain_id: chainId,
+            chain_id: String(chainId),
             status: 'pending',
             signer: multisigParams?.signatureParams,
             owner: selectedSafe.value?.owner_address,
