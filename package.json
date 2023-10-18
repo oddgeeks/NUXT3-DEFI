@@ -34,6 +34,7 @@
     "semver": "^7.3.8",
     "vue-slicksort": "^2.0.5",
     "vue3-otp-input": "^0.4.1",
+    "xlsx": "^0.18.5",
     "xxhashjs": "^0.2.2"
   },
   "devDependencies": {
