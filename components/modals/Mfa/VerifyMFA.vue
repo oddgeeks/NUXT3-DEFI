@@ -11,6 +11,7 @@ const props = defineProps<{
   authenticate?: boolean
   inputValue?: any
   expire?: MfaExpire
+  chainId?: number | string
 }>()
 
 const emit = defineEmits(['resolve', 'destroy'])
@@ -114,7 +115,7 @@ async function handleRequest() {
 }
 
 async function handleTryAnotherMethod() {
-  const { success, payload } = await openMfaAuthenticateModal(props.mfaRequestType, actualMfa.value)
+  const { success, payload } = await openMfaAuthenticateModal(props.mfaRequestType, actualMfa.value, props.chainId)
 
   if (success && payload?.mfa) {
     emit('resolve', true, {

@@ -397,7 +397,7 @@ export function useAvocadoSafe() {
   }
 
   async function authenticateTransactionMfa(params?: IAuthTransactionMfa) {
-    const { _authMfa, submitFn, defaultSessionAvailable = false, expire, forceGrabSession = false } = params || {}
+    const { _authMfa, submitFn, defaultSessionAvailable = false, expire, forceGrabSession = false, chainId } = params || {}
 
     const mfa = _authMfa || preferredMfa.value
     let mfaToken
@@ -410,6 +410,7 @@ export function useAvocadoSafe() {
       mfaRequestType: 'transaction',
       submitFn,
       defaultSessionAvailable,
+      chainId,
     })
 
     if (verifyPayload?.fallbackMfa) {
@@ -419,6 +420,7 @@ export function useAvocadoSafe() {
         defaultSessionAvailable,
         expire,
         forceGrabSession,
+        chainId,
       })
     }
 
@@ -508,6 +510,7 @@ export function useAvocadoSafe() {
         const defaultSessionAvailable = transactionType === 'add-signers' || transactionType === 'remove-signers'
 
         const { mfaType } = await authenticateTransactionMfa({
+          chainId,
           defaultSessionAvailable,
           submitFn: async (_mfa, code) => {
             try {

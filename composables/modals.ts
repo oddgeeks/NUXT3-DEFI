@@ -783,13 +783,14 @@ export async function openTotptActivateModal(totp: ITotpData) {
   })
 }
 
-export async function openMfaAuthenticateModal(mfaRequestType: MfaRequestType, excludeMfa: IMfa) {
+export async function openMfaAuthenticateModal(mfaRequestType: MfaRequestType, excludeMfa: IMfa, chainId?: number | string) {
   return openModal({
     component: AuthenticateMFA,
     async: true,
     componentProps: {
       mfaRequestType,
       excludeMfa,
+      chainId,
     },
     options: {
       contentClass: '!p-0',
@@ -799,7 +800,7 @@ export async function openMfaAuthenticateModal(mfaRequestType: MfaRequestType, e
 }
 
 export async function openVerifyMFAModal(params: IMfaVerifyModalParams) {
-  const { mfa, request, authenticate, mfaRequestType, verify, inputValue, defaultSessionAvailable } = params || {}
+  const { mfa, request, authenticate, mfaRequestType, verify, inputValue, defaultSessionAvailable, chainId } = params || {}
 
   return openModal({
     component: VerifyMFA,
@@ -807,6 +808,7 @@ export async function openVerifyMFAModal(params: IMfaVerifyModalParams) {
     componentProps: {
       mfa,
       request,
+      chainId,
       verify,
       inputValue,
       authenticate,

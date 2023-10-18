@@ -199,7 +199,7 @@ export function useMfa() {
   }
 
   async function authVerify(params: IAuthVerifyParams) {
-    const { mfa, mfaRequestType, submitFn, defaultSessionAvailable = false, expire } = params || {}
+    const { mfa, mfaRequestType, submitFn, defaultSessionAvailable = false, expire, chainId } = params || {}
 
     const requestFunction = mfaRequestType === 'transaction' ? signAndRequestTransactionMfaCode : signAndRequestUpdateMfaCode
 
@@ -218,6 +218,7 @@ export function useMfa() {
       verify: submitFn,
       defaultSessionAvailable,
       expire,
+      chainId,
     })
   }
 

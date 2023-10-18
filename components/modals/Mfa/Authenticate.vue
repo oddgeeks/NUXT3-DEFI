@@ -2,11 +2,19 @@
 const props = defineProps<{
   mfaRequestType: MfaRequestType
   excludeMfa: IMfa
+  chainId?: number | string
 }>()
 
 defineEmits(['resolve'])
-const { mfaTypes } = useMfa()
+const { mfaTypes, backupSigner } = useMfa()
 const enabledMfas = computed(() => mfaTypes.value.filter(i => i.activated && i.value !== props.excludeMfa.value))
+
+const isBackupSignerAvailable = computed(() => {
+  if (!props.chainId)
+    return false
+
+  return backupSigner.value.chainIds.some(i => String(i) === String(props.chainId))
+})
 </script>
 
 <template>
@@ -22,20 +30,22 @@ const enabledMfas = computed(() => mfaTypes.value.filter(i => i.activated && i.v
       </h1>
     </div>
     <ul class="flex flex-col gap-5">
-      <li v-for="mfa in enabledMfas" :key="mfa.value">
-        <button
-          class="flex w-full items-center justify-between rounded-2xl border bg-slate-50 p-5 text-left text-sm font-medium text-slate-400 hover:bg-slate-100 dark:border-slate-700 dark:bg-gray-850  hover:dark:bg-gray-800"
-          @click="$emit('resolve', true, {
-            mfa,
-          })"
-        >
-          <span class="flex items-center gap-[14px]">
-            <Component :is="mfa.icon" class="text-slate-400" />
-            {{ mfa.label }}
-          </span>
-          <SvgoChevronDown class="-rotate-90" />
-        </button>
-      </li>
+      <template v-for="mfa in enabledMfas" :key="mfa.value">
+        <li v-if="mfa.value === 'backup' ? isBackupSignerAvailable : true">
+          <button
+            class="flex w-full items-center justify-between rounded-2xl border bg-slate-50 p-5 text-left text-sm font-medium text-slate-400 hover:bg-slate-100 dark:border-slate-700 dark:bg-gray-850  hover:dark:bg-gray-800"
+            @click="$emit('resolve', true, {
+              mfa,
+            })"
+          >
+            <span class="flex items-center gap-[14px]">
+              <Component :is="mfa.icon" class="text-slate-400" />
+              {{ mfa.label }}
+            </span>
+            <SvgoChevronDown class="-rotate-90" />
+          </button>
+        </li>
+      </template>
     </ul>
   </div>
 </template>

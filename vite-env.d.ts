@@ -724,6 +724,7 @@ interface IMfaVerifyModalParams {
   authenticate?: boolean,
   defaultSessionAvailable?: boolean
   expire?: MfaExpire
+  chainId?: number | string
 }
 
 interface IAuthVerifyParams {
@@ -732,6 +733,7 @@ interface IAuthVerifyParams {
   submitFn?: MfaVerify
   defaultSessionAvailable?: boolean
   expire?: MfaExpire
+  chainId?: number | string
 }
 
 interface IAuthTransactionMfa {
@@ -740,6 +742,7 @@ interface IAuthTransactionMfa {
   defaultSessionAvailable?: boolean
   forceGrabSession?: boolean
   expire?: MfaExpire
+  chainId?: number | string
 }
 
 interface IOpenReviewSignerProcessModalParams{
