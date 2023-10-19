@@ -800,7 +800,7 @@ export async function openMfaAuthenticateModal(mfaRequestType: MfaRequestType, e
 }
 
 export async function openVerifyMFAModal(params: IMfaVerifyModalParams) {
-  const { mfa, request, authenticate, mfaRequestType, verify, inputValue, defaultSessionAvailable, chainId } = params || {}
+  const { mfa, request, authenticate, mfaRequestType, verify, inputValue, defaultSessionAvailable, chainId, expire } = params || {}
 
   return openModal({
     component: VerifyMFA,
@@ -814,6 +814,7 @@ export async function openVerifyMFAModal(params: IMfaVerifyModalParams) {
       authenticate,
       mfaRequestType,
       defaultSessionAvailable,
+      expire,
     },
     options: {
       contentClass: '!p-0',
@@ -890,6 +891,23 @@ export function openReviewSignerProcessModal(params: IOpenReviewSignerProcessMod
       isInstadappSigner,
     },
     async: true,
+  })
+}
+
+export function open2faTerminateSessionModal() {
+  return openDialogModal({
+    title: 'Are you sure you want to terminate your verified session?',
+    content: 'OTP verification will be required for transacting if you terminate.',
+    type: 'question',
+    cancelButtonText: 'Keep session',
+    isCancelButtonVisible: true,
+    buttonText: 'Terminate',
+    buttonProps: {
+      color: 'red',
+    },
+    cancelButtonProps: {
+      color: 'white',
+    },
   })
 }
 

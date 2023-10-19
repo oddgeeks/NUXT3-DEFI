@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 const formattedTime = ref()
 
-const { selectedSafe } = storeToRefs(useSafe())
+const { getMFATokenExpiry, terminateMFAToken } = useMfa()
 
 function formatCountDown() {
-  const transactionTokenExpiry = useCookie<string | undefined>(`transaction-token-expiry-${selectedSafe.value?.safe_address}`)
+  const transactionTokenExpiry = getMFATokenExpiry()
 
   if (!transactionTokenExpiry.value) {
     formattedTime.value = undefined
@@ -30,6 +30,13 @@ function formatCountDown() {
 }
 
 useIntervalFn(() => formatCountDown(), 1000)
+
+async function handleTerminate2faSession() {
+  const { success } = await open2faTerminateSessionModal()
+
+  if (success)
+    terminateMFAToken()
+}
 </script>
 
 <template>
@@ -43,5 +50,8 @@ useIntervalFn(() => formatCountDown(), 1000)
     <span class="rounded-md bg-white px-1.5 text-xs leading-5 text-slate-900 dark:bg-slate-900 dark:text-white">
       {{ formattedTime }}
     </span>
+    <button v-tippy="'Terminate Session'" @click="handleTerminate2faSession">
+      <SvgoX />
+    </button>
   </span>
 </template>

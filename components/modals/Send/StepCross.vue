@@ -14,6 +14,7 @@ const { toWei, fromWei } = useBignumber()
 const { safeAddress, tokenBalances, generateMultisigSignatureMessage, generateSignatureMessage, authenticateTransactionMfa, isEligableToProceed2FA } = useAvocadoSafe()
 const { avoProvider } = useSafe()
 const { parseTransactionError } = useErrorHandler()
+const { getMFAToken } = useMfa()
 
 const fallbackFee: TotalFee = {
   amount: '0',
@@ -510,7 +511,7 @@ async function executeTransaction(srcMfaToken?: string) {
   })
 
   if (!isSelectedSafeLegacy.value) {
-    const transactionToken = useCookie<string | undefined>(`transaction-token-${selectedSafe.value?.safe_address}`)
+    const transactionToken = getMFAToken()
 
     const mfaToken = srcMfaToken || transactionToken.value
 
@@ -560,7 +561,7 @@ async function onSubmit() {
   try {
     isSubmitting.value = true
 
-    const transactionToken = useCookie<string | undefined>(`transaction-token-${selectedSafe.value?.safe_address}`)
+    const transactionToken = getMFAToken()
 
     const source = safeOptions.value.find(i => i.chainId == data.value.fromChainId)
 

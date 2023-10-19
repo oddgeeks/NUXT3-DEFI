@@ -18,7 +18,7 @@ export function useAvocadoSafe() {
   const { avoProvider, getSafeOptions, refreshSelectedSafe, getFallbackSafeOptionsByChainId } = useSafe()
   const { selectedSafe, isSelectedSafeLegacy, safeOptions } = storeToRefs(useSafe())
   const { clearAllModals } = useModal()
-  const { authVerify, preferredMfa, isAvocadoProtectActive, atLeastOneMfaVerifed } = useMfa()
+  const { authVerify, preferredMfa, isAvocadoProtectActive, atLeastOneMfaVerifed, getMFAToken, getMFATokenExpiry } = useMfa()
   const dryRun = useCookie<boolean | undefined>('dry-run')
 
   const { isSafeMultisig } = storeToRefs(useMultisig())
@@ -411,6 +411,7 @@ export function useAvocadoSafe() {
       submitFn,
       defaultSessionAvailable,
       chainId,
+      expire,
     })
 
     if (verifyPayload?.fallbackMfa) {
@@ -442,11 +443,11 @@ export function useAvocadoSafe() {
         throw new Error('Failed to generate session token')
 
       if (verifyPayload.sessionAvailable) {
-        const transactionToken = useCookie<string | undefined>(`transaction-token-${selectedSafe.value?.safe_address}`, {
+        const transactionToken = getMFAToken({
           expires: new Date(resp.expiresAt),
         })
 
-        const transactionTokenExpiry = useCookie<string | undefined>(`transaction-token-expiry-${selectedSafe.value?.safe_address}`, {
+        const transactionTokenExpiry = getMFATokenExpiry({
           expires: new Date(resp.expiresAt),
         })
 
@@ -501,7 +502,7 @@ export function useAvocadoSafe() {
 
     const requiredSigner = await getRequiredSigner(selectedSafe.value?.safe_address!, chainId)
 
-    const transactionToken = useCookie<string | undefined>(`transaction-token-${selectedSafe.value?.safe_address}`)
+    const transactionToken = getMFAToken()
 
     if (isSafeEligableToSingleExecution(requiredSigner)) {
       if (isEligableToProceed2FA(requiredSigner, chainId) && !transactionToken.value) {

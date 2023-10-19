@@ -1,3 +1,5 @@
+import type { CookieOptions } from 'nuxt/app'
+
 const mfaTermsAccepted = useLocalStorage('mfa-terms-accepted', false)
 const preferredMfaType = useLocalStorage('mfa-preferred-type', '')
 
@@ -19,11 +21,19 @@ export function useMfa() {
 
   const isSafeBackupSigner = computed(() => atLeastOneMfaVerifed.value && !isAddressEqual(selectedSafe.value?.owner_address, account.value))
 
+  const getMFATokenExpiry = (otps?: CookieOptions) => useCookie<string | undefined | null>(`transaction-token-expiry-${selectedSafe.value?.safe_address}`, otps)
+  const getMFAToken = (otps?: CookieOptions) => useCookie<string | undefined | null>(`transaction-token-${selectedSafe.value?.safe_address}`, otps)
+
   const backupSigner = computed(() => {
     const [firstBackupSigner] = backupSigners.value || []
 
     return firstBackupSigner
   })
+
+  function terminateMFAToken() {
+    getMFATokenExpiry().value = null
+    getMFAToken().value = null
+  }
 
   const mfaSessionTypes = {
     RequestCode: [
@@ -200,6 +210,8 @@ export function useMfa() {
 
   async function authVerify(params: IAuthVerifyParams) {
     const { mfa, mfaRequestType, submitFn, defaultSessionAvailable = false, expire, chainId } = params || {}
+
+    console.log({ expire })
 
     const requestFunction = mfaRequestType === 'transaction' ? signAndRequestTransactionMfaCode : signAndRequestUpdateMfaCode
 
@@ -457,5 +469,8 @@ export function useMfa() {
     isSafeBackupSigner,
     atLeastOneMfaVerifed,
     backupSigner,
+    getMFATokenExpiry,
+    getMFAToken,
+    terminateMFAToken,
   }
 }
