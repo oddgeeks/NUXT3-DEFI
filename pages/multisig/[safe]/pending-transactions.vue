@@ -99,7 +99,7 @@ const tabs = computed(() => {
     return [
       {
         value: 'pending',
-        title: 'Pending transactions need to be executed in the order they were proposed in.',
+        title: null,
         query: 'pending',
         mobileLabel: 'Pending',
         label: 'Pending',
