@@ -49,6 +49,7 @@ export function useMfa() {
         value: 'totp',
         title: 'Set up Authenticator app',
         description: 'Please enter the provided code or scan QR in your Auth Provider.',
+        type: '2',
         label: 'Authenticator app',
         enterOtpLabel: 'Enter TOTP provided by Auth Provider',
         types: {
@@ -67,6 +68,7 @@ export function useMfa() {
         label: 'SMS OTP',
         enterOtpLabel: 'Enter SMS OTP',
         title: 'Enter your phone number',
+        type: '1',
         description: 'We will send an OTP to your phone.',
         removeTypes: {
           Phone: [
@@ -93,6 +95,7 @@ export function useMfa() {
         enterOtpLabel: 'Enter email OTP',
         description: 'We will send an OTP to your email.',
         label: 'Email OTP',
+        type: '0',
         removeTypes: {
           Email: [
             { name: 'owner', type: 'address' },
@@ -118,6 +121,7 @@ export function useMfa() {
         description: '',
         activated: !!backupSigners.value.length,
         icon: 'SvgoBackup',
+        type: '',
       },
     ] as IMfa[],
   )
@@ -141,7 +145,7 @@ export function useMfa() {
       return
 
     const resp: IMfaResponse = await avoProvider.send('mfa_requestUpdate', [{
-      type: mfa.value,
+      type: mfa.type,
       data: payload.value,
       signature,
     }])
@@ -178,7 +182,7 @@ export function useMfa() {
         mfa: authMfa,
         mfaRequestType: 'update',
         submitFn: async (_mfa, code) => {
-          signPayload.value.mfaType = _mfa.value
+          signPayload.value.mfaType = _mfa.type
           signPayload.value.mfaCode = code
 
           resp = await handleRequestActivateMfa(mfa, signPayload)
@@ -276,7 +280,7 @@ export function useMfa() {
           mfa: authMfa,
           mfaRequestType: 'update',
           submitFn: async (_mfa, code) => {
-            value.mfaType = _mfa.value
+            value.mfaType = _mfa.type
             value.mfaCode = code
 
             const { success } = await requestActivateMfa(mfa, value)
@@ -319,7 +323,7 @@ export function useMfa() {
     const value = {
       owner: selectedSafe.value?.owner_address,
       index: selectedSafe.value?.multisig_index,
-      type: mfa.value,
+      type: mfa.type,
     }
 
     const payload = {
@@ -369,7 +373,7 @@ export function useMfa() {
 
     return avoProvider.send('mfa_requestRemove', [
       {
-        type: mfa.value,
+        type: mfa.type,
         signature,
         data: value,
       },
@@ -389,7 +393,7 @@ export function useMfa() {
     const value = {
       owner: selectedSafe.value?.owner_address,
       index: selectedSafe.value?.multisig_index,
-      type: mfa.value,
+      type: mfa.type,
     }
 
     const payload = {
@@ -413,7 +417,7 @@ export function useMfa() {
 
   function verifyDeleteRequest(mfa: IMfa, code: string) {
     return avoProvider.send('mfa_verifyRemove', [{
-      type: mfa.value,
+      type: mfa.type,
       owner: selectedSafe.value?.owner_address,
       index: String(selectedSafe.value?.multisig_index),
       code,
@@ -422,7 +426,7 @@ export function useMfa() {
 
   function verifyUpdateRequest(mfa: IMfa, code: string) {
     return avoProvider.send('mfa_verifyUpdate', [{
-      type: mfa.value,
+      type: mfa.type,
       owner: selectedSafe.value?.owner_address,
       index: String(selectedSafe.value?.multisig_index),
       code,
