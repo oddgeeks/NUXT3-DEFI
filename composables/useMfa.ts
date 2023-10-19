@@ -39,7 +39,7 @@ export function useMfa() {
         value: 'totp',
         title: 'Set up Authenticator app',
         description: 'Please enter the provided code or scan QR in your Auth Provider.',
-        label: 'Authenticator app login',
+        label: 'Authenticator app',
         enterOtpLabel: 'Enter TOTP provided by Auth Provider',
         types: {
           Totp: [
@@ -54,7 +54,7 @@ export function useMfa() {
       },
       {
         value: 'phone',
-        label: 'SMS OTP login',
+        label: 'SMS OTP',
         enterOtpLabel: 'Enter SMS OTP',
         title: 'Enter your phone number',
         description: 'We will send an OTP to your phone.',
@@ -82,7 +82,7 @@ export function useMfa() {
         title: 'Enter your Email',
         enterOtpLabel: 'Enter email OTP',
         description: 'We will send an OTP to your email.',
-        label: 'Email OTP login',
+        label: 'Email OTP',
         removeTypes: {
           Email: [
             { name: 'owner', type: 'address' },

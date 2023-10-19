@@ -9,7 +9,7 @@ export default defineNuxtPlugin(() => {
       mfa: {
         page: {
           title: 'Configure Avocado Protect ⚔️',
-          subtitle: 'Avocado Protect is a non-custodial 2FA service which allows you to add an additional layer of verification before a transaction goes through. You can activate multiple methods at once. Note only one method will be required to validate transactions.',
+          subtitle: 'A non-custodial 2FA service which allows you to add an additional layer of verification to your transactions.',
         },
         notifications: {
           failedToActivate: 'Failed to activate {method}',

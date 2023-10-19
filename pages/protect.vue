@@ -150,12 +150,9 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
             <div>
               <h2 class="mb-2.5 flex items-center justify-between">
                 OTP Login
-                <span class="text-xs text-primary">
-                  Method A
-                </span>
               </h2>
               <h3 class="text-xs font-medium leading-5 text-slate-400">
-                Set up a OTP. There are three different modes of verification you can activate multiple modes, but only one is required for verification.
+                Set up one or more modes of OTP verification, & verify identity using any one when required.
               </h3>
             </div>
             <div>
@@ -238,16 +235,15 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
           </div>
         </div>
         <div class="flex flex-col rounded-5 bg-slate-50 dark:bg-gray-850">
-          <div class="p-7.5">
-            <h2 class="mb-2.5 flex items-center justify-between">
-              Backup Address
-              <span class="text-xs text-primary">
-                Method B
-              </span>
-            </h2>
-            <h3 class="mb-2.5 text-xs font-medium leading-5 text-slate-400">
-              Establish a backup address. This acts as an alternative verification method and holds equal authority as Method A for account changes.
-            </h3>
+          <div class="flex flex-col gap-7.5 p-7.5">
+            <div>
+              <h2 class="mb-2.5 flex items-center justify-between">
+                Backup Address
+              </h2>
+              <h3 class="text-xs font-medium leading-5 text-slate-400">
+                A backup address lets you approve a transaction if OTP is not working, or you lose access to your email, SMS, etc.
+              </h3>
+            </div>
 
             <div class="flex w-full flex-col justify-between rounded-2xl bg-slate-100 text-left font-medium ring-1 ring-slate-200 dark:bg-slate-850 dark:ring-slate-750">
               <div class="flex w-full items-center justify-between px-5 py-3">
