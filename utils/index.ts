@@ -337,6 +337,11 @@ export function tryJsonParse(val: string) {
     if (typeof val === 'object')
       return val
 
+    const isNumber = !toBN(val).isNaN()
+
+    if (isNumber)
+      return val
+
     return JSON.parse(val)
   }
   catch (e) {
