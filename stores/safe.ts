@@ -51,7 +51,7 @@ export const useSafe = defineStore('safe', () => {
     const primary = [mainSafe.value, multiSigSafe.value, legacySafe.value].filter(Boolean)
     const secondary = safes.value.filter(s => !primary.some(p => isAddressEqual(p?.safe_address, s?.safe_address)))
 
-    return [...primary, ...secondary] as ISafe[]
+    return [...primary, ...secondary].sort(a => isAddressEqual(a?.safe_address, selectedSafe.value?.safe_address) ? -1 : 1) as ISafe[]
   })
 
   const { account } = useWeb3()
