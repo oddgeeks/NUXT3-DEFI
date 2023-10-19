@@ -81,11 +81,16 @@ const { data: seqResponse, refresh: refreshSeq } = useAsyncData<IMultisigTransac
 const tabs = computed(() => {
   const is2FA = route.path.includes('2fa')
 
+  const completedLabel2fa = `
+  <span class='text-slate-400'>
+  You might see some transactions here that you don't recognise (like adding signer, changing threshold). These happen automatically when you configure Avocado Protect and do not indicate that your account has been compromised.
+  </span>`
+
   const completeTab = {
     value: undefined,
     label: 'Completed',
     query: 'completed',
-    title: null,
+    title: is2FA ? completedLabel2fa : null,
     mobileLabel: null,
     count: null,
   }
@@ -126,7 +131,7 @@ const tabs = computed(() => {
 })
 
 const title = computed(() => {
-  const tab = tabs.value.find(tab => tab.value === activeTab.value)
+  const tab = tabs.value.find(tab => (tab.value || tab.query) === activeTab.value)
 
   return tab?.title
 })
@@ -198,7 +203,7 @@ onMounted(() => {
             class="laeding-5 flex flex-1 items-center justify-center gap-2.5 whitespace-nowrap rounded-7.5 px-4 py-2 text-xs"
             @click="$router.replace({ query: { tab: tab.query }, path: $router.currentRoute.value.path })"
           >
-            <span class="hidden sm:block"> {{ tab.label }}</span>
+            <span class="hidden sm:block">  {{ tab.label }}</span>
             <span class="block sm:hidden"> {{ tab.mobileLabel || tab.label }}</span>
             <span v-if="tab?.count" class="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-slate-500 px-[5px] text-xs text-white">
               {{ tab?.count }}
@@ -210,9 +215,7 @@ onMounted(() => {
         </button>
       </div>
 
-      <h2 v-if="title" class="text-center text-xs font-medium leading-5 sm:text-left">
-        {{ title }}
-      </h2>
+      <h2 v-if="title" class="text-center text-xs font-medium leading-5 sm:text-left" v-html="title" />
       <div ref="itemsRef" class="flex flex-col gap-5">
         <template v-if="activeTab === 'completed'">
           <MultisigLoadingTransactionItems v-if="isLoadingCompletedTxns" />
