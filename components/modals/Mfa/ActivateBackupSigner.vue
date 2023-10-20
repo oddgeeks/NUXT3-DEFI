@@ -6,6 +6,8 @@ import * as yup from 'yup'
 const emits = defineEmits(['destroy'])
 
 const { account } = useWeb3()
+const { getRpcProviderByChainId } = useShared()
+
 const { handleSubmit, meta } = useForm({
   validationSchema: yup.object({
     address: yup.string().required('')
@@ -20,10 +22,33 @@ const { handleSubmit, meta } = useForm({
         catch (error) {
           return false
         }
+      })
+      .test('is-eoa-address', 'Address must be an EOA address', async (value) => {
+        try {
+          if (!value)
+            return true
+
+          const isEOA = await checkIsEOAAddress(value)
+
+          return isEOA
+        }
+        catch (error) {
+          return false
+        }
       }),
     confirm: yup.boolean().required().equals([true]),
   }),
 })
+
+async function checkIsEOAAddress(address: string) {
+  const list = await Promise.allSettled(availableNetworks.map((i) => {
+    const provider = getRpcProviderByChainId(i.chainId)
+
+    return provider.getCode(address)
+  }))
+
+  return list.every(i => i.status === 'fulfilled' && i.value === '0x')
+}
 
 function validateAddress(value: any) {
   try {
@@ -73,7 +98,7 @@ const onSubmit = handleSubmit(async () => {
         </label>
       </div>
       <div class="flex gap-4">
-        <CommonButton class="flex-1 justify-center" color="white" size="lg">
+        <CommonButton class="flex-1 justify-center" color="white" size="lg" @click="$emit('destroy')">
           Close
         </CommonButton>
         <CommonButton type="submit" :disabled="!meta.valid" class="flex-1 justify-center" size="lg">
