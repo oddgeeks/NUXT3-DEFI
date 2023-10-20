@@ -157,7 +157,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
             </div>
             <div>
               <ul class="flex flex-col gap-4">
-                <template v-for="mfa in mfaTypes" :key="mfa.value">
+                <template v-for="mfa in mfaTypes" :key="mfa?.value || mfa.label">
                   <li v-if="mfa.value !== 'backup'">
                     <div class="flex h-[66px] w-full items-center  justify-between rounded-2xl bg-slate-100 p-5 text-left ring-1 ring-slate-200 dark:bg-slate-850 dark:ring-slate-750">
                       <div class="flex w-full items-center justify-between">
@@ -165,7 +165,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                           <span class="text-xs font-medium leading-5">
                             {{ mfa.label }}
                           </span>
-                          <span v-if="mfa.value === preferredMfa.value && mfa.activated" class="text-xs font-medium text-slate-400">
+                          <span v-if="mfa.value === preferredMfa?.value && mfa.activated" class="text-xs font-medium text-slate-400">
                             Default
                           </span>
                         </div>
