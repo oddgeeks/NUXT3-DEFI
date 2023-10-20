@@ -84,7 +84,7 @@ export function useNavigation() {
       },
       {
         label: 'Avocado Protect',
-        icon: 'SvgoShield',
+        icon: 'SvgoSecurity',
         to: '/protect',
         tooltip: 'Multi-Factor Authentication',
         hidden: !isAvocadoProtectActive.value,
