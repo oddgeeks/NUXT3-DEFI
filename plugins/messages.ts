@@ -6,6 +6,7 @@ export default defineNuxtPlugin(() => {
       nonAuthorized: `You are not a signer on {network} and cannot interact with assets on this network.
 <a class='text-primary block' target='_blank' href=https://guides.avocado.instadapp.io/avocado-multisig/your-avocado-multisig#why-cant-i-send-assets-in-a-particular-network>Learn More</a>`,
       fuseNotSupported: 'Fuse network is not supported legacy safes',
+      disabledBackupSigner: 'Backup address cannot initiate transactions',
       mfa: {
         page: {
           title: 'Configure Avocado Protect ⚔️',
