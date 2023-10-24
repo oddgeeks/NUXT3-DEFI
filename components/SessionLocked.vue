@@ -50,7 +50,7 @@ async function handleTerminate2faSession() {
     <span class="rounded-md bg-white px-1.5 text-xs leading-5 text-slate-900 dark:bg-slate-900 dark:text-white">
       {{ formattedTime }}
     </span>
-    <button v-tippy="'Terminate Session'" @click="handleTerminate2faSession">
+    <button v-tippy="'Terminate Session'" type="button" @click="handleTerminate2faSession">
       <SvgoX />
     </button>
   </span>
