@@ -70,7 +70,7 @@ export const useTokens = defineStore('tokens', () => {
 
             const price = toBN(tokenPrice?.price || '0').eq('0') && sparkline.length > 0
               ? sparkline[sparkline.length - 1]
-              : token?.price
+              : tokenPrice?.price
 
             token.price = toBN(price || '0').toNumber()
             token.sparklinePrice7d = sparkline
