@@ -13,7 +13,7 @@ export const AVO_PROD_MULTISIG_FORWARDER_ADDR = '0x46978CD477A496028A18c02F07ab7
 export const AVO_STAGING_MULTISIG_FORWARDER_ADDR = '0x6f444b80f944FA5Ce3f74cC0e4e1371844B5F91e'
 
 export const stagingInstadappSigner = '0x2D8EE1C03b88b4b72B1c05Dab218EE1982147602'
-export const prodInstadappSigner = '0x2D8EE1C03b88b4b72B1c05Dab218EE1982147602'
+export const prodInstadappSigner = '0x15873f5682d2089d81cDAA516783D24eE89E7349'
 
 export const multisigForwarderProxyAddress = isProd
   ? AVO_PROD_MULTISIG_FORWARDER_ADDR
