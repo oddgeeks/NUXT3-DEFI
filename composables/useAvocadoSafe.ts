@@ -389,7 +389,6 @@ export function useAvocadoSafe() {
 
   async function createProposalOrSignDirecty(args: IGenerateMultisigSignatureParams) {
     const { chainId, actions, nonce, metadata, estimatedFee = false, rejection, rejectionId, options, transactionType = 'others', clearModals = true } = args
-
     const requiredSigner = await getRequiredSigner(selectedSafe.value?.safe_address!, chainId)
 
     if (isSafeEligableToSingleExecution(requiredSigner, selectedSafe.value)) {
