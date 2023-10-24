@@ -421,6 +421,9 @@ export const useSafe = defineStore('safe', () => {
   async function getBalances(address: string, signal?: AbortSignal, updateState = false) {
     return Promise.all(
       availableNetworks.map(async (network) => {
+        if (String(network.chainId) == '122' && selectedSafe.value?.multisig === 0)
+          return []
+
         const customTokenAddress = customTokens.value
           .filter(t => String(t.chainId) == String(network.chainId))
           .map(t => t.address)
@@ -616,6 +619,9 @@ export const useSafe = defineStore('safe', () => {
         availableNetworks.map((network) => {
           const provider = getRpcBatchProviderByChainId(network.chainId)
 
+          if (String(network.chainId) == '122' && safe.multisig === 0)
+            return
+
           return getSafeOptionsByChain({
             safe,
             chainId: network.chainId,
@@ -652,7 +658,7 @@ export const useSafe = defineStore('safe', () => {
         }),
       )
 
-      return options as ISafeOptions[]
+      return options.filter(Boolean) as ISafeOptions[]
     }
     catch (e: any) {
       const msg = 'Failed to get safe options over public and private provider'

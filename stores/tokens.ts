@@ -66,8 +66,14 @@ export const useTokens = defineStore('tokens', () => {
           )
 
           if (token) {
-            token.price = toBN(tokenPrice.price).toNumber()
-            token.sparklinePrice7d = tokenPrice.sparkline_price_7d || []
+            const sparkline = tokenPrice?.sparkline_price_7d || []
+
+            const price = toBN(tokenPrice?.price || '0').eq('0') && sparkline.length > 0
+              ? sparkline[sparkline.length - 1]
+              : token?.price
+
+            token.price = toBN(price || '0').toNumber()
+            token.sparklinePrice7d = sparkline
           }
           else {
             console.log(
