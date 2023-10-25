@@ -25,6 +25,7 @@ interface IMfa {
   enterOtpLabel: string
   icon: string
   type: string
+  otpSentNotificationKey?: string
   removeTypes?: {
     [key: string]: {
       name: string

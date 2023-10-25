@@ -88,6 +88,7 @@ export function useMfa() {
         },
         activated: mfaPhoneVerifed.value,
         icon: 'SvgoPhone',
+        otpSentNotificationKey: 'mfa.notifications.SMSOtpSent',
 
       }, {
         value: 'email',

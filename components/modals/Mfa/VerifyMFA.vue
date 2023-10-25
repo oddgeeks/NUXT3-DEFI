@@ -98,10 +98,12 @@ async function handleRequest() {
 
   const isSuccess = typeof result === 'object' ? result?.status : result
 
+  const otpSentMessageKey = actualMfa.value?.otpSentNotificationKey || 'mfa.notifications.OTPSent'
+
   if (isSuccess) {
     notify({
       type: 'success',
-      message: $t('mfa.notifications.OTPSent', { method: actualMfa.value.label }),
+      message: $t(otpSentMessageKey, { method: actualMfa.value.label }),
     })
   }
   else {
