@@ -5,9 +5,11 @@ const { mfaTermsAccepted } = useMfa()
 
 const checked = ref<boolean[]>([])
 const terms = [
-  'The illumination of the sky, at first glance, is looking for materialistic autotraining.',
-  'The subconscious is a complex of the most unconscious, even if the tendency to conformism is characteristic',
-  'The archetype, as is commonly believed, is a complex of the most unconscious',
+  'Activating Avocado Protect allows the Avocado backend to oversee transaction approvals based on your 2FA settings. Once 2FA is activated, it cannot be deactivated by the Avocado or Instadapp teams.',
+  'We strongly advise setting up a Backup Address along with 2FA. This combination ensures you can access your account even if you lose your 2FA.',
+  'By enabling Avocado Protect, you confirm your commitment to safeguarding your keys, backup codes for the authenticator, and all other essential credentials for account access.',
+  'Should you lose access to your 2FA, Backup or both, you understand that Instadapp Labs LLC cannot assist in recovering your account and is absolved from any associated liability.',
+  'By activating this feature, you acknowledge and accept full responsibility for the security and access of your account.',
 ]
 
 function handleProceed() {
@@ -21,7 +23,7 @@ function handleProceed() {
     <div class="flex items-center gap-[14px]">
       <SvgoExclamationCircle class="h-10 w-10 text-orange-400" />
       <h1 class="text-lg">
-        Important information
+        Important Notice:  Please Read Carefully
       </h1>
     </div>
     <ul class="flex flex-col gap-5">

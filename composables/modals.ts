@@ -750,6 +750,7 @@ export async function openMfaTermsModal() {
     async: true,
     options: {
       contentClass: '!p-7.5',
+      wrapperClass: '!max-w-[575px]',
     },
   })
 }
