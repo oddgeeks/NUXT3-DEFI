@@ -1800,10 +1800,10 @@
   dependencies:
     "@ethersproject/abi" "^5.7.0"
 
-"@instadapp/utils@^0.5.2":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@instadapp/utils/-/utils-0.5.2.tgz#4b089f26017afb2c6a391dd4c9971079fa1dc361"
-  integrity sha512-fSkzteS1QNVTZacprKweJ/bV/AImaP//sDZ4PA+IJhdOkd7CqRPQZD93Pw7Zfu4I8tAr2OYPGZxXhqSG9E3SMA==
+"@instadapp/utils@^0.5.3":
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/@instadapp/utils/-/utils-0.5.3.tgz#76c022fd0d0b4a623777c93939ba252402d393ed"
+  integrity sha512-noL82sexzhc1FsN9kL3WiX2NE/EZlKtX9Emdb+aLXJ2JCcKLn3LODarFCL1+GiTrFk7ALZ472TdsF2pfuhUu/w==
   dependencies:
     async-retry "^1.3.3"
     axios "^0.27.2"
