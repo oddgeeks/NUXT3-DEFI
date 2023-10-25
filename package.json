@@ -41,7 +41,7 @@
     "@fontsource/source-code-pro": "^4.5.12",
     "@headlessui/vue": "^1.7.12",
     "@instadapp/transaction-builder": "^0.0.12",
-    "@instadapp/utils": "^0.5.1",
+    "@instadapp/utils": "^0.5.2",
     "@instadapp/vue-web3-nuxt": "^0.10.1",
     "@nuxtjs/color-mode": "^3.3.0",
     "@nuxtjs/tailwindcss": "^6.8.0",
