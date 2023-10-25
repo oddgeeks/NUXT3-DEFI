@@ -70,7 +70,7 @@ async function handleAddSigner() {
         message: $t(messageKey, { chainName }),
         type: 'success',
       })
-    }, 1000)
+    }, 3000)
   }
   catch (e: any) {
     const parsed = parseTransactionError(e)
