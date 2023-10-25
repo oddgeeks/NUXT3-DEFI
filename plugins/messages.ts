@@ -22,6 +22,7 @@ export default defineNuxtPlugin(() => {
           setDefault: 'Default 2FA method set to {method}',
           incorrectOTP: 'Incorrect OTP, please retry',
           OTPSent: 'OTP sent to your {method}',
+          SMSOtpSent: 'SMS OTP sent to your Mobile',
           OTPSentFailed: 'Failed to send OTP to your {method}',
           instadappSignerEnabled: 'OTP enabled for {chainName}',
           instadappSignerDisabled: 'OTP disabled for {chainName}',
