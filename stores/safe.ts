@@ -59,20 +59,20 @@ export const useSafe = defineStore('safe', () => {
   const { fetchTokenByAddress } = useTokens()
   const documentVisibility = useDocumentVisibility()
   const { parseTransactionError } = useErrorHandler()
-  const { getRpcProviderByChainId, getRpcBatchProviderByChainId, getRpcBatchRetryProviderByChainId } = useShared()
+  const { getRpcProviderByChainId } = useShared()
   const { trackingAccount } = useAccountTrack()
 
   const avoProvider = getRpcProviderByChainId(avoChainId)
-  const avoBatchProvider = getRpcBatchRetryProviderByChainId(avoChainId)
+  const avoBatchProvider = getRpcProviderByChainId(avoChainId)
 
   const forwarderProxyContract = Forwarder__factory.connect(
     forwarderProxyAddress,
-    getRpcBatchProviderByChainId(137),
+    getRpcProviderByChainId(137),
   )
 
   const multisigForwarderProxyContract = MultisigForwarder__factory.connect(
     multisigForwarderProxyAddress,
-    getRpcBatchProviderByChainId(137),
+    getRpcProviderByChainId(137),
   )
 
   const balanceResolverContracts = availableNetworks.reduce((acc, curr) => {
@@ -85,7 +85,7 @@ export const useSafe = defineStore('safe', () => {
 
   async function computeAddresses() {
     try {
-      const polygonProvider = getRpcBatchProviderByChainId(137)
+      const polygonProvider = getRpcProviderByChainId(137)
       const { address, multisigAddress, oldSafeAddress } = await getComputedAddresses({
         accountAddress: account.value,
         provider: polygonProvider,
@@ -590,7 +590,7 @@ export const useSafe = defineStore('safe', () => {
       const config = await getSafeOptionsByChain({
         safe,
         chainId,
-        provider: getRpcBatchProviderByChainId(chainId),
+        provider: getRpcProviderByChainId(chainId),
       })
 
       return config
@@ -614,7 +614,7 @@ export const useSafe = defineStore('safe', () => {
 
       const options = await Promise.all(
         availableNetworks.map((network) => {
-          const provider = getRpcBatchProviderByChainId(network.chainId)
+          const provider = getRpcProviderByChainId(network.chainId)
 
           return getSafeOptionsByChain({
             safe,

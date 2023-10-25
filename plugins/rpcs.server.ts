@@ -4,15 +4,20 @@ export default defineNuxtPlugin(async () => {
   const shared = useShared()
 
   try {
-    const data = await $fetch<Record<string, string>>('https://rpc.instadapp.io/rpc', {
-      retry: 3,
-    })
+    const [rpcs, rpcList] = await Promise.all([
+      $fetch<Record<string, string>>('https://rpc.instadapp.io/rpc', {
+        retry: 3,
+      }),
+      $fetch<Record<string, string[]>>('https://cdn.instadapp.io/avocado/rpcs.json', {
+        retry: 3,
+      })])
 
-    shared.rpcs = data as Record<string, string>
+    shared.rpcs = rpcs as Record<string, string>
+    shared.rpcList = rpcList as Record<string, string[]>
 
     return {
       provide: {
-        RPCMap: data,
+        RPCMap: rpcs,
       },
     }
   }
