@@ -749,7 +749,7 @@ export async function openMfaTermsModal() {
     component: MFATerms,
     async: true,
     options: {
-      contentClass: '!p-7.5',
+      contentClass: '!p-0',
       wrapperClass: '!max-w-[575px]',
     },
   })
