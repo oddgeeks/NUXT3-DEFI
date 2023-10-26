@@ -209,8 +209,8 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                                 <button class="flex items-center gap-2.5 whitespace-nowrap rounded-xl px-4 py-2.5 hover:bg-slate-150 hover:dark:bg-slate-800" @click="handleSetDefault(mfa, close)">
                                   <SvgoAsDefault /> Set as default
                                 </button>
-                                <Tippy :content="deactivateDisabled ? 'Disable OTP functionality on each chain.' : undefined">
-                                  <button class="flex w-full items-center gap-2.5 rounded-xl px-4 py-2.5 text-red-alert hover:bg-red-alert/10" @click="handleDeactivate(mfa, close)">
+                                <Tippy :content="deactivateDisabled ? 'Please disable all networks from Manage networks section first' : undefined">
+                                  <button :disabled="deactivateDisabled" :class="deactivateDisabled ? 'text-slate-400' : 'text-red-alert hover:bg-red-alert/10'" class="flex w-full items-center gap-2.5 rounded-xl px-4 py-2.5" @click="handleDeactivate(mfa, close)">
                                     <SvgoTrash2 /> Deactivate
                                   </button>
                                 </Tippy>
