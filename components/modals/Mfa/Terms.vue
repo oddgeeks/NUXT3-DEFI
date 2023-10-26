@@ -11,7 +11,7 @@ const terms = [
 ]
 
 function handleProceed() {
-  mfaTermsAccepted.value = true
+  mfaTermsAccepted().value = true
   emit('resolve', true)
 }
 </script>

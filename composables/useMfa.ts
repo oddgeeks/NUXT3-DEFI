@@ -1,6 +1,5 @@
 import type { CookieOptions } from 'nuxt/app'
 
-const mfaTermsAccepted = useLocalStorage('mfa-terms-accepted', false)
 const preferredMfaType = useLocalStorage('mfa-preferred-type', '')
 
 export function useMfa() {
@@ -10,6 +9,7 @@ export function useMfa() {
   const { switchToAvocadoNetwork } = useNetworks()
   const { account, library } = useWeb3()
   const { $t } = useNuxtApp()
+  const mfaTermsAccepted = () => useLocalStorage(`mfa-terms-accepted-${selectedSafe.value?.safe_address}`, false)
 
   const isAvocadoProtectActive = computed(() => selectedSafe.value?.multisig === 1 && selectedSafe.value?.multisig_index === 0)
 

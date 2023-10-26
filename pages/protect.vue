@@ -69,7 +69,7 @@ function setFallbackDefaultMfaType(mfa: IMfa) {
 
 async function handleActivate(mfa: IMfa) {
   try {
-    if (!mfaTermsAccepted.value) {
+    if (!mfaTermsAccepted().value) {
       const { success } = await openMfaTermsModal()
 
       if (!success)
