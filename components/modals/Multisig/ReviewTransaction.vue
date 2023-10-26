@@ -10,6 +10,8 @@ defineProps<{
 defineEmits(['destroy'])
 
 const { selectedSafe } = storeToRefs(useSafe())
+
+const { isAvocadoProtectActive } = useMfa()
 </script>
 
 <template>
@@ -38,7 +40,7 @@ const { selectedSafe } = storeToRefs(useSafe())
             <ChainLogo class="h-[26px] w-[26px]" :chain="chainId" />
             <span class="text-sm text-slate-400">{{ chainIdToName(chainId) }}</span>
           </p>
-          <CommonButton as="NuxtLink" :to="`/multisig/${selectedSafe?.safe_address}/pending-transactions/${transactionId}`" size="sm" @click="$emit('destroy')">
+          <CommonButton as="NuxtLink" :to="`/${isAvocadoProtectActive ? '2fa' : 'multisig'}/${selectedSafe?.safe_address}/pending-transactions/${transactionId}`" size="sm" @click="$emit('destroy')">
             View Queued Transaction
           </CommonButton>
         </div>

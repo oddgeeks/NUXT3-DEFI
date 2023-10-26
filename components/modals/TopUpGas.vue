@@ -346,5 +346,6 @@ watch(usdcTokens, () => {
     <p class="w-full text-xs leading-5 text-orange-400">
       Deposited gas cannot be withdrawn at this time. Please only top up what you plan to use.
     </p>
+    <SessionLocked class="mx-auto" />
   </div>
 </template>

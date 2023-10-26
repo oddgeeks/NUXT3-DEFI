@@ -195,7 +195,7 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
 async function handleSign(item: IMultisigTransaction) {
   try {
     pending.value.sign = true
-    const signature = await signMultisigData({ chainId: item.chain_id, data: item.data })
+    const { signature } = await signMultisigData({ chainId: item.chain_id, data: item.data })
 
     const { data } = await axios.post<IMultisigTransaction>(`/safes/${selectedSafe.value?.safe_address}/transactions/${item.id}/confirmations`, {
       address: account.value,
@@ -304,9 +304,13 @@ async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
 
 onUnmounted(() => {
   const currentRoute = router.currentRoute.value
+
   router.push({
-    path: `/multisig/${currentRoute.params.safe}/pending-transactions`,
+    name: 'multisig-safe-pending-transactions',
     query: currentRoute.query,
+    params: {
+      safe: currentRoute.params.safe,
+    },
   })
 })
 </script>
