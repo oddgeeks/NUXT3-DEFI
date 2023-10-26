@@ -140,7 +140,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
         <h2 class="text-sm font-medium leading-6 text-slate-400">
           {{ $t('mfa.page.subtitle') }}
         </h2>
-        <NuxtLink class="text-sm font-medium text-primary" external to="/">
+        <NuxtLink class="text-sm font-medium text-primary" external target="_blank" to="https://guides.avocado.instadapp.io/avocado-protect-2fa/how-does-avocado-protect-2fa-work">
           Learn more about how it works
         </NuxtLink>
       </div>
