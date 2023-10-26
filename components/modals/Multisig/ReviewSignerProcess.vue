@@ -5,6 +5,7 @@ const props = defineProps<{
   chainId: string | number
   isInstadappSigner?: boolean
   deleteSigner?: boolean
+  removeBackupSigner?: boolean
   actions: {
     actions: TransactionsAction[]
     metadata: string
@@ -76,7 +77,8 @@ async function handleSubmit() {
         {{ chainIdToName(chainId) }}
       </h1>
       <h2 class="text-center text-xs font-medium leading-5 text-slate-400">
-        Confirming this will {{ label }} {{ signerTypeLabel }} on {{ chainIdToName(chainId) }}
+        Confirming this will {{ label }} {{ signerTypeLabel }}
+        <span v-if="removeBackupSigner">and backup signer will be removed</span> on {{ chainIdToName(chainId) }}
       </h2>
     </div>
     <EstimatedFee :data="data" :loading="pending" :error="error" />

@@ -881,7 +881,7 @@ export function openAddBackupSignerModal() {
 }
 
 export function openReviewSignerProcessModal(params: IOpenReviewSignerProcessModalParams) {
-  const { chainId, actions, deleteSigner, isInstadappSigner } = params || {}
+  const { chainId, actions, deleteSigner, isInstadappSigner, removeBackupSigner } = params || {}
 
   return openModal({
     component: ReviewSignerProcess,
@@ -890,6 +890,7 @@ export function openReviewSignerProcessModal(params: IOpenReviewSignerProcessMod
       actions,
       deleteSigner,
       isInstadappSigner,
+      removeBackupSigner,
     },
     async: true,
   })

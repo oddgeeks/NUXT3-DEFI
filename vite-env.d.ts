@@ -749,6 +749,7 @@ interface IOpenReviewSignerProcessModalParams{
   chainId: number | string
   deleteSigner?: boolean
   isInstadappSigner?: boolean
+  removeBackupSigner?: boolean
   actions: {
     actions: TransactionsAction[]
     metadata: string

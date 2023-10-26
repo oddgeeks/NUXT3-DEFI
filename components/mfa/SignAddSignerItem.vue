@@ -15,12 +15,22 @@ const { addSignersWithThreshold, removeSignerWithThreshold } = useAvocadoSafe()
 const { parseTransactionError } = useErrorHandler()
 const { selectedSafe } = storeToRefs(useSafe())
 const { fetchSafeInstanceses } = useSafe()
+const { backupSigner } = useMfa()
 const { $t } = useNuxtApp()
 
 const signerAdded = computed(() => isSignerAdded(selectedSafe.value!, props.address, props.chainId))
 
 const isInstadappSigner = computed(() => isAddressEqual(props.address, instadappSigner))
 const isInstadappSignerAdded = computed(() => isSignerAdded(selectedSafe.value!, instadappSigner, props.chainId))
+
+const isBackupSignerAvailable = computed(() => {
+  if (!backupSigner.value)
+    return false
+
+  return backupSigner.value.chainIds.some(i => String(i) === String(props.chainId))
+})
+
+const isBackupSignerAvailableOnChain = computed(() => isInstadappSigner.value && isBackupSignerAvailable.value)
 
 const addSignerActions = asyncComputed(async () => {
   return addSignersWithThreshold({
@@ -34,8 +44,13 @@ const addSignerActions = asyncComputed(async () => {
 const removeSignerActions = asyncComputed(async () => {
   const threshold = isInstadappSigner.value ? 1 : 2
 
+  const addresses = [props.address]
+
+  if (isBackupSignerAvailableOnChain.value)
+    addresses.push(backupSigner.value.address)
+
   return removeSignerWithThreshold({
-    addresses: [props.address],
+    addresses,
     threshold,
     chainId: props.chainId,
     actionsOnly: true,
@@ -55,8 +70,10 @@ async function handleAddSigner() {
       isInstadappSigner: isInstadappSigner.value,
     })
 
-    if (!success)
+    if (!success) {
+      pending.value = false
       return
+    }
 
     setTimeout(async () => {
       await fetchSafeInstanceses()
@@ -92,10 +109,13 @@ async function handleRemoveSigner() {
       actions: removeSignerActions.value,
       deleteSigner: true,
       isInstadappSigner: isInstadappSigner.value,
+      removeBackupSigner: isBackupSignerAvailableOnChain.value,
     })
 
-    if (!success)
+    if (!success) {
+      pending.value = false
       return
+    }
 
     setTimeout(async () => {
       await fetchSafeInstanceses()

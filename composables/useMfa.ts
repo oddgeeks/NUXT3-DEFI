@@ -129,6 +129,8 @@ export function useMfa() {
 
   const backupMfa = computed(() => mfaTypes.value.find(mfa => mfa.value === 'backup'))
 
+  const activeMfaTypes = computed(() => mfaTypes.value.filter(mfa => mfa.activated && mfa.value !== 'backup'))
+
   const preferredMfa = computed(() => {
     const mfas = mfaTypes.value.filter(mfa => mfa.activated)
 
@@ -477,5 +479,6 @@ export function useMfa() {
     getMFATokenExpiry,
     getMFAToken,
     terminateMFAToken,
+    activeMfaTypes,
   }
 }

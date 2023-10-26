@@ -15,11 +15,18 @@ const { hasInstadappSigner, instadappSignerNetworks, backupSigners } = storeToRe
 const { fetchSafeInstanceses } = useSafe()
 const { account } = useWeb3()
 const { $t } = useNuxtApp()
-const { mfaTypes, mfaTermsAccepted, preferredMfaType, preferredMfa, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa, backupMfa, isAvocadoProtectActive, atLeastOneMfaVerifed } = useMfa()
+const { mfaTypes, activeMfaTypes, mfaTermsAccepted, preferredMfaType, preferredMfa, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa, backupMfa, isAvocadoProtectActive, atLeastOneMfaVerifed } = useMfa()
 
 const pendingTransactionsLink = computed(() => navigations.value.find(i => i.id === 'pending-transactions'))
 
+const deactivateDisabled = computed(() => {
+  return instadappSignerNetworks.value.length > 0 && activeMfaTypes.value.length === 1
+})
+
 async function handleDeactivate(mfa: IMfa, close: () => void) {
+  if (deactivateDisabled.value)
+    return
+
   if (mfa.value !== 'totp') {
     const success = await signAndRequestDeleteMfaCode(mfa)
 
@@ -202,9 +209,11 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                                 <button class="flex items-center gap-2.5 whitespace-nowrap rounded-xl px-4 py-2.5 hover:bg-slate-150 hover:dark:bg-slate-800" @click="handleSetDefault(mfa, close)">
                                   <SvgoAsDefault /> Set as default
                                 </button>
-                                <button class="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-red-alert hover:bg-red-alert/10" @click="handleDeactivate(mfa, close)">
-                                  <SvgoTrash2 /> Deactivate
-                                </button>
+                                <Tippy :content="deactivateDisabled ? 'Disable OTP functionality on each chain.' : undefined">
+                                  <button class="flex w-full items-center gap-2.5 rounded-xl px-4 py-2.5 text-red-alert hover:bg-red-alert/10" @click="handleDeactivate(mfa, close)">
+                                    <SvgoTrash2 /> Deactivate
+                                  </button>
+                                </Tippy>
                               </PopoverPanel>
                             </transition>
                           </Popover>
