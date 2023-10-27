@@ -291,24 +291,30 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
               </NuxtLink>
             </div>
           </div>
-          <div v-if="atLeastOneMfaVerifed" class="scroll-style mt-auto flex max-h-[250px] flex-col items-baseline justify-between gap-5 overflow-auto border-t border-slate-150 p-7.5 pt-5 dark:border-slate-800">
-            <div v-for="signer in backupSigners" :key="signer.address" class="flex w-full items-baseline justify-between">
-              <div class="flex flex-col gap-2.5">
-                <span class="text-sm font-medium">
-                  Active on {{ signer.chainIds.length }} networks
-                </span>
-                <span v-if="backupSigners.length > 1" class="text-xs text-slate-400">
-                  {{ signer.address }}
-                </span>
-                <div class="flex">
-                  <ChainLogo v-for="i in signer.chainIds" :key="i" class="-ml-2 h-6 w-6 first:ml-0" :chain="i" />
+          <div class="scroll-style mt-auto flex max-h-[250px] flex-col items-baseline justify-between gap-5 overflow-auto border-t border-slate-150 p-7.5 pt-5 dark:border-slate-800">
+            <template v-if="atLeastOneMfaVerifed">
+              <div v-for="signer in backupSigners" :key="signer.address" class="flex w-full items-baseline justify-between">
+                <div class="flex flex-col gap-2.5">
+                  <span class="text-sm font-medium">
+                    Active on {{ signer.chainIds.length }} networks
+                  </span>
+                  <span v-if="backupSigners.length > 1" class="text-xs text-slate-400">
+                    {{ signer.address }}
+                  </span>
+                  <div class="flex">
+                    <ChainLogo v-for="i in signer.chainIds" :key="i" class="-ml-2 h-6 w-6 first:ml-0" :chain="i" />
+                  </div>
                 </div>
+                <button class="flex items-center gap-2 text-sm font-medium text-primary" @click="openMfaSignInstadappSignerModal(signer.address, true)">
+                  Manage Networks
+                  <SvgoCog />
+                </button>
               </div>
-              <button class="flex items-center gap-2 text-sm font-medium text-primary" @click="openMfaSignInstadappSignerModal(signer.address, true)">
-                Manage Networks
-                <SvgoCog />
-              </button>
-            </div>
+            </template>
+            <p v-if="!atLeastOneMfaVerifed && !backupSigners.length" class="flex items-center gap-2.5 text-xs text-orange">
+              <SvgoInfo2 class="w-5" />
+              Backup address can only be set up after you enable OTP verification.
+            </p>
           </div>
         </div>
       </div>
