@@ -14,6 +14,7 @@ const { ensName } = storeToRefs(useSafe())
 const [opened, toggle] = useToggle(false)
 const [walletListOpened, toggleWalletList] = useToggle(false)
 const { setConnectorName, cachedProviderName } = useConnectors()
+const { terminateMFAToken } = useMfa()
 const { providers } = useNetworks()
 const {
   showTrackingBanner,
@@ -41,6 +42,7 @@ async function closeConnection() {
   const { success } = await openDisconnectWalletModal()
 
   if (success) {
+    terminateMFAToken()
     resetAccounts()
     setConnectorName(null)
     router.push('/login')

@@ -424,5 +424,6 @@ onUnmounted(() => {
       </div>
       <ManageBookmark :bookmark="reactiveBookmark" @update-bookmark="handleUpdateBookmark" @create-bookmark="handleCreateBookmark" />
     </div>
+    <SessionLocked class="mx-auto" />
   </form>
 </template>

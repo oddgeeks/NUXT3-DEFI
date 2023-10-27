@@ -195,7 +195,7 @@ onUnmounted(() => {
       </div>
       <SvgSpinner v-if="pending" class="text-primary" />
       <div class="ml-auto flex items-center">
-        <div v-if="!canSign && !isDetailsOpen" class="rounded-full bg-red-alert bg-opacity-10 px-3 py-1 text-xs text-red-alert">
+        <div v-if="!canSign && !isDetailsOpen" class="rounded-full bg-red-alert/10 px-3 py-1 text-xs text-red-alert">
           Unauthorized network
         </div>
         <div v-if="isYourSignNeeded && !isDetailsOpen" class="text-xs text-orange-400">
