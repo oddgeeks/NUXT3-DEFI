@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { serialize } from 'error-serializer'
-
 const props = defineProps<{
   chainId: string | number
   isInstadappSigner?: boolean
@@ -18,6 +16,7 @@ const { account } = useWeb3()
 
 const transaction = computed(() => props.actions.actions)
 const submitting = ref(false)
+const { parseTransactionError } = useErrorHandler()
 
 const { data, pending, error } = useEstimatedFee(
   transaction,
@@ -56,10 +55,11 @@ async function handleSubmit() {
       emit('resolve', true)
     }
   }
-  catch (e) {
-    const parsed = serialize(e)
+  catch (e: any) {
+    const parsed = parseTransactionError(e)
+
     openSnackbar({
-      message: parsed.message,
+      message: parsed.formatted,
       type: 'error',
     })
   }
