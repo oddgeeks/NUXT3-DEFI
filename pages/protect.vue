@@ -159,7 +159,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
           <div class="flex flex-col gap-7.5 p-7.5">
             <div>
               <h2 class="mb-2.5 flex items-center justify-between">
-                OTP Login
+                OTP Verification
               </h2>
               <h3 class="text-xs font-medium leading-5 text-slate-400">
                 Set up one or more modes of OTP verification, & verify identity using any one when required.
@@ -250,7 +250,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
           <div class="flex flex-col gap-7.5 p-7.5">
             <div>
               <h2 class="mb-2.5 flex items-center justify-between">
-                Backup Address
+                Backup Address (Optional)
               </h2>
               <h3 class="text-xs font-medium leading-5 text-slate-400">
                 A backup address lets you approve a transaction if OTP is not working, or you lose access to your email, SMS, etc.
