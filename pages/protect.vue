@@ -15,7 +15,7 @@ const { hasInstadappSigner, instadappSignerNetworks, backupSigners } = storeToRe
 const { fetchSafeInstanceses } = useSafe()
 const { account } = useWeb3()
 const { $t } = useNuxtApp()
-const { mfaTypes, activeMfaTypes, mfaTermsAccepted, preferredMfaType, preferredMfa, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa, backupMfa, isAvocadoProtectActive, atLeastOneMfaVerifed } = useMfa()
+const { mfaTypes, activeMfaTypes, mfaTermsAccepted, preferredMfaType, preferredMfa, terminateMFAToken, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa, backupMfa, isAvocadoProtectActive, atLeastOneMfaVerifed } = useMfa()
 
 const pendingTransactionsLink = computed(() => navigations.value.find(i => i.id === 'pending-transactions'))
 
@@ -49,7 +49,10 @@ async function handleDeactivate(mfa: IMfa, close: () => void) {
 
     setFallbackDefaultMfaType(mfa)
 
-    fetchSafeInstanceses()
+    await fetchSafeInstanceses()
+
+    if (!atLeastOneMfaVerifed.value)
+      terminateMFAToken()
   }
   else {
     notify({
