@@ -82,13 +82,13 @@ export function useNavigation() {
         to: '/transaction-builder',
         tooltip: 'Transaction Builder',
       },
-      // {
-      //   label: 'Avocado Protect',
-      //   icon: 'SvgoSecurity',
-      //   to: '/protect',
-      //   tooltip: 'Multi-Factor Authentication',
-      //   hidden: !isAvocadoProtectActive.value,
-      // },
+      {
+        label: 'Avocado Protect',
+        icon: 'SvgoSecurity',
+        to: '/protect',
+        tooltip: 'Multi-Factor Authentication',
+        hidden: !isAvocadoProtectActive.value,
+      },
     ]
   })
 

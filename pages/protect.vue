@@ -159,7 +159,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
           <div class="flex flex-col gap-7.5 p-7.5">
             <div>
               <h2 class="mb-2.5 flex items-center justify-between">
-                OTP Login
+                OTP Verification
               </h2>
               <h3 class="text-xs font-medium leading-5 text-slate-400">
                 Set up one or more modes of OTP verification, & verify identity using any one when required.
@@ -250,7 +250,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
           <div class="flex flex-col gap-7.5 p-7.5">
             <div>
               <h2 class="mb-2.5 flex items-center justify-between">
-                Backup Address
+                Backup Address (Optional)
               </h2>
               <h3 class="text-xs font-medium leading-5 text-slate-400">
                 A backup address lets you approve a transaction if OTP is not working, or you lose access to your email, SMS, etc.
@@ -291,24 +291,30 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
               </NuxtLink>
             </div>
           </div>
-          <div v-if="atLeastOneMfaVerifed" class="scroll-style mt-auto flex max-h-[250px] flex-col items-baseline justify-between gap-5 overflow-auto border-t border-slate-150 p-7.5 pt-5 dark:border-slate-800">
-            <div v-for="signer in backupSigners" :key="signer.address" class="flex w-full items-baseline justify-between">
-              <div class="flex flex-col gap-2.5">
-                <span class="text-sm font-medium">
-                  Active on {{ signer.chainIds.length }} networks
-                </span>
-                <span v-if="backupSigners.length > 1" class="text-xs text-slate-400">
-                  {{ signer.address }}
-                </span>
-                <div class="flex">
-                  <ChainLogo v-for="i in signer.chainIds" :key="i" class="-ml-2 h-6 w-6 first:ml-0" :chain="i" />
+          <div class="scroll-style mt-auto flex max-h-[250px] flex-col items-baseline justify-between gap-5 overflow-auto border-t border-slate-150 p-7.5 pt-5 dark:border-slate-800">
+            <template v-if="atLeastOneMfaVerifed">
+              <div v-for="signer in backupSigners" :key="signer.address" class="flex w-full items-baseline justify-between">
+                <div class="flex flex-col gap-2.5">
+                  <span class="text-sm font-medium">
+                    Active on {{ signer.chainIds.length }} networks
+                  </span>
+                  <span v-if="backupSigners.length > 1" class="text-xs text-slate-400">
+                    {{ signer.address }}
+                  </span>
+                  <div class="flex">
+                    <ChainLogo v-for="i in signer.chainIds" :key="i" class="-ml-2 h-6 w-6 first:ml-0" :chain="i" />
+                  </div>
                 </div>
+                <button class="flex items-center gap-2 text-sm font-medium text-primary" @click="openMfaSignInstadappSignerModal(signer.address, true)">
+                  Manage Networks
+                  <SvgoCog />
+                </button>
               </div>
-              <button class="flex items-center gap-2 text-sm font-medium text-primary" @click="openMfaSignInstadappSignerModal(signer.address, true)">
-                Manage Networks
-                <SvgoCog />
-              </button>
-            </div>
+            </template>
+            <p v-if="!atLeastOneMfaVerifed && !backupSigners.length" class="flex items-center gap-2.5 text-xs text-orange">
+              <SvgoInfo2 class="w-5" />
+              Backup address can only be set up after you enable OTP verification.
+            </p>
           </div>
         </div>
       </div>
