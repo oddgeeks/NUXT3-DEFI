@@ -53,9 +53,6 @@ nonce: {{NONCE}}
         nonce,
       ])
 
-      if (!linkStatus)
-        console.error('Failed to link user')
-
       console.log({ linkStatus })
     }
 
