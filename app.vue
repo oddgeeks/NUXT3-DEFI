@@ -1,10 +1,9 @@
 <script setup lang="ts">
 useTokens()
 useSafe()
-const { library, account, provider } = useWeb3()
+const { library, provider } = useWeb3()
 const { onDisconnect } = useConnectors()
 const isChatwoodReady = ref(false)
-const { safeAddress } = useAvocadoSafe()
 const { lastModal } = useModal()
 
 useScriptTag('https://app.chatwoot.com/packs/js/sdk.js', () => {
@@ -40,32 +39,6 @@ onMounted(() => {
   document.addEventListener('scroll', hideAllTooltipsOnScroll, true)
 
   return () => document.removeEventListener('scroll', hideAllTooltipsOnScroll)
-})
-
-watchThrottled(
-  [safeAddress, isChatwoodReady, account],
-  () => {
-    if (!safeAddress.value || !isChatwoodReady.value || !account.value)
-      return
-
-    const identifier = `${account.value}:${safeAddress.value}`.toLowerCase()
-
-    console.log(identifier)
-
-    // @ts-expect-error
-    window.$chatwoot.setUser(identifier, {
-      name: account.value,
-      email: safeAddress.value,
-    })
-  }, { immediate: true, throttle: 500 })
-
-onMounted(() => {
-  if (process.server)
-    return
-
-  window.addEventListener('chatwoot:ready', async () => {
-    isChatwoodReady.value = true
-  })
 })
 
 watchThrottled(provider, () => {
