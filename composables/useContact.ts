@@ -9,6 +9,8 @@ export function useContacts() {
   const { account } = useWeb3()
   const abortController = ref<AbortController | null>(null)
   const { parseTransactionError } = useErrorHandler()
+  const { checkSafeIsActualMultisig } = useMultisig()
+  const { allSafes } = storeToRefs(useSafe())
 
   const ownerContact = computed(() => {
     if (!account.value)
@@ -26,7 +28,31 @@ export function useContacts() {
     if (!ownerContact.value)
       return contacts.value
 
-    return [ownerContact.value, ...contacts.value || []] as IContact[]
+    const result = [ownerContact.value]
+
+    for (const safe of allSafes.value) {
+      const multisig = checkSafeIsActualMultisig(safe)
+
+      const existingContact = contacts.value.find(
+        contact => isAddressEqual(contact.address, safe.safe_address),
+      )
+
+      if (existingContact)
+        continue
+
+      const defaultLabel = multisig ? 'MultiSig' : 'Personal'
+
+      const walletName = useLocalStorage(`safe-label-${safe.safe_address}`, defaultLabel)
+
+      result.push({
+        address: safe.safe_address,
+        chainId: '',
+        name: walletName.value,
+        notDeletable: true,
+      })
+    }
+
+    return [...result, ...contacts.value]
   })
 
   const deleteContact = (contact: IContact) => {
@@ -45,7 +71,7 @@ export function useContacts() {
       contacts.value.splice(index, 1)
   }
 
-  const addContact = (contact: IContact) => {
+  const addContact = (contact: IContact, shouldFetchTransferCounts = true) => {
     contact.address = getAddress(contact.address)
 
     const index = contacts.value.findIndex(
@@ -57,7 +83,8 @@ export function useContacts() {
     if (index === -1)
       contacts.value.push(contact)
 
-    fetchTransferCounts()
+    if (shouldFetchTransferCounts)
+      fetchTransferCounts()
   }
 
   const editContact = (oldContact: IContact, newContact: IContact) => {

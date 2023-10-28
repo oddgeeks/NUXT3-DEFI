@@ -9,25 +9,11 @@ const positionClasses: any = {
   'top-center': 'left-1/2 -translate-x-1/2',
   'center': 'left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2',
 }
-
-//  | "center"
-//     | "top"
-//     | "top-start"
-//     | "top-end"
-//     | "bottom"
-//     | "bottom-start"
-//     | "bottom-end"
-//     | "left"
-//     | "left-start"
-//     | "left-end"
-//     | "right"
-//     | "right-start"
-//     | "right-end";
 </script>
 
 <template>
   <Teleport to="body">
-    <div class="relative z-[999999] flex flex-col gap-2.5">
+    <div class="relative z-[9999999999] flex flex-col gap-2.5">
       <TransitionGroup name="list">
         <div
           v-for="(notifications, position) in positionedNotifications"

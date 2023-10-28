@@ -579,6 +579,7 @@ const onSubmit = form.handleSubmit(async () => {
         </CommonButton>
       </div>
     </div>
+    <SessionLocked class="mx-auto" />
   </form>
 </template>
 

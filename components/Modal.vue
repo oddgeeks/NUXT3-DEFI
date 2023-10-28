@@ -6,6 +6,7 @@ const props = withDefaults(
     show?: boolean
     modalId?: string
     options: IOptions
+    options: IOptions
     inline?: boolean
     isAsync?: boolean
   }>(),

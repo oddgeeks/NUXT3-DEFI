@@ -50,10 +50,10 @@ export const useSafe = defineStore('safe', () => {
   const optionsLoading = ref(false)
 
   const allSafes = computed<ISafe[]>(() => {
-    const primary = [selectedSafe.value, multiSigSafe.value].filter(Boolean)
+    const primary = [mainSafe.value, multiSigSafe.value, legacySafe.value].filter(Boolean)
     const secondary = safes.value.filter(s => !primary.some(p => isAddressEqual(p?.safe_address, s?.safe_address)))
 
-    return [...primary, ...secondary] as ISafe[]
+    return [...primary, ...secondary].sort(a => isAddressEqual(a?.safe_address, selectedSafe.value?.safe_address) ? -1 : 1) as ISafe[]
   })
 
   const { account } = useWeb3()
@@ -212,6 +212,7 @@ export const useSafe = defineStore('safe', () => {
       getSafe(mainSafeAddress.value),
       getSafe(multiSigSafeAddress.value),
     ])
+    console.log(_selectedSafe)
 
     if (!_selectedSafe) {
       const isMultisig = isAddressEqual(safeAddress.value, multiSigSafeAddress.value)
@@ -689,6 +690,9 @@ export const useSafe = defineStore('safe', () => {
       id: 0,
       owner_address: account.value,
       updated_at: new Date().toString(),
+      mfa_email_verified: 0,
+      mfa_phone_verified: 0,
+      mfa_totp_verified: 0,
       version: {},
       multisig,
       signers: {},
@@ -852,6 +856,7 @@ export const useSafe = defineStore('safe', () => {
     networkOrderedBySumTokens,
     getFallbackSafeOptionsByChainId,
     allSafes,
+    fetchSafeInstanceses,
   }
 })
 

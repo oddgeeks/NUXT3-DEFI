@@ -13,6 +13,11 @@ useScriptTag('https://app.chatwoot.com/packs/js/sdk.js', () => {
     return
 
   // @ts-expect-error
+  window.chatwootSettings = {
+    hideMessageBubble: true,
+  }
+
+  // @ts-expect-error
   window.chatwootSDK.run({
     websiteToken: 'pmgPtAUDhoeVv7h9nS2xk7PF',
     baseUrl: 'https://app.chatwoot.com',
@@ -91,6 +96,7 @@ watchThrottled(provider, () => {
   <BannerMultisigOnboard />
   <Notifications />
   <Modals />
+  <ChatBubble />
 </template>
 
 <style>
