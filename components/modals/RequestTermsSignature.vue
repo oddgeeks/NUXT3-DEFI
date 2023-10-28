@@ -82,9 +82,9 @@ nonce: {{NONCE}}
       Welcome to Avocado
     </h1>
     <h2 class="text-center font-medium">
-      By connecting your wallet and using Avocado, you agree to our <NuxtLink class="text-primary" to="/">
+      By connecting your wallet and using Avocado, you agree to our <NuxtLink class="text-primary" external target="_blank" to="https://instadapp.io/terms">
         Terms of Service
-      </NuxtLink> and <NuxtLink class="text-primary" to="/">
+      </NuxtLink> and <NuxtLink class="text-primary" external target="_blank" to="https://instadapp.io/cookies">
         Privacy Policy
       </NuxtLink>
     </h2>
