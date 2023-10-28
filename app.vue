@@ -3,7 +3,6 @@ useTokens()
 useSafe()
 const { library, provider } = useWeb3()
 const { onDisconnect } = useConnectors()
-const isChatwoodReady = ref(false)
 const { lastModal } = useModal()
 
 useScriptTag('https://app.chatwoot.com/packs/js/sdk.js', () => {
