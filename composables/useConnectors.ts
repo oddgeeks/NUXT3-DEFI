@@ -29,6 +29,10 @@ export function useConnectors() {
   const cachedProviderName = computed(() => connectionMeta.value.provider)
 
   function onDisconnect() {
+    const { terminateMFAToken } = useMfa()
+
+    terminateMFAToken()
+
     resetAccounts()
     router.push('/login')
 
