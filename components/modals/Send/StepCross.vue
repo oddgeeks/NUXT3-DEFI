@@ -395,6 +395,8 @@ async function fetchcrossSignatures() {
       throw new Error('Rejected by user')
 
     crossSignatures.value = payload
+
+    await onSubmit()
   }
   catch (e: any) {
     const err = serialize(e)

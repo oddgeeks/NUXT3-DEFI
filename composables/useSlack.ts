@@ -52,6 +52,7 @@ const ignoredMessages = [
 
 export function logActionToSlack(slackMessage: ISlackMessage) {
   const { isSafeMultisig } = storeToRefs(useMultisig())
+  const { atLeastOneMfaVerifed } = useMfa()
 
   const build = useBuildInfo()
 
@@ -102,6 +103,9 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
 
   if (isSafeMultisig.value)
     logMessage += `\n${'`Multisig`'}`
+
+  if (atLeastOneMfaVerifed.value)
+    logMessage += `\n${'`2FA`'}`
 
   if (errorDetails)
     logMessage += `\n${'`Error details`'} ${errorDetails}`
