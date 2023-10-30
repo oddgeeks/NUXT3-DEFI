@@ -16,6 +16,7 @@ const { parseTransactionError } = useErrorHandler()
 const { selectedSafe } = storeToRefs(useSafe())
 const { fetchSafeInstanceses } = useSafe()
 const { backupSigner } = useMfa()
+const { account } = useWeb3()
 const { $t } = useNuxtApp()
 
 const signerAdded = computed(() => isSignerAdded(selectedSafe.value!, props.address, props.chainId))
@@ -72,6 +73,7 @@ async function handleAddSigner() {
 
     if (!success) {
       pending.value = false
+
       return
     }
 
@@ -80,6 +82,15 @@ async function handleAddSigner() {
       pending.value = false
 
       const chainName = chainIdToName(props.chainId)
+
+      if (isInstadappSigner.value) {
+        logActionToSlack({
+          account: account.value,
+          action: '2fa-activated',
+          chainId: String(props.chainId),
+          message: `Instadapp signer activated on ${chainName}`,
+        })
+      }
 
       const messageKey = isInstadappSigner.value ? 'mfa.notifications.instadappSignerEnabled' : 'mfa.notifications.signerEnabled'
 
@@ -121,6 +132,16 @@ async function handleRemoveSigner() {
       await fetchSafeInstanceses()
       pending.value = false
       const chainName = chainIdToName(props.chainId)
+
+      if (isInstadappSigner.value) {
+        logActionToSlack({
+          account: account.value,
+          action: '2fa-deactivated',
+          chainId: String(props.chainId),
+          type: 'banner',
+          message: `Instadapp signer deactivated on ${chainName}`,
+        })
+      }
 
       const messageKey = isInstadappSigner.value ? 'mfa.notifications.instadappSignerDisabled' : 'mfa.notifications.signerDisabled'
 
