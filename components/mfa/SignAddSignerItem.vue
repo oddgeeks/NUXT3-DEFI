@@ -14,8 +14,9 @@ const [hovered, toggle] = useToggle(false)
 const { addSignersWithThreshold, removeSignerWithThreshold } = useAvocadoSafe()
 const { parseTransactionError } = useErrorHandler()
 const { selectedSafe } = storeToRefs(useSafe())
+const { instadappSignerNetworks } = storeToRefs(useMultisig())
 const { fetchSafeInstanceses } = useSafe()
-const { backupSigner } = useMfa()
+const { backupSigner, terminateMFAToken } = useMfa()
 const { account } = useWeb3()
 const { $t } = useNuxtApp()
 
@@ -143,13 +144,16 @@ async function handleRemoveSigner() {
         })
       }
 
+      if (!instadappSignerNetworks.value?.length)
+        terminateMFAToken()
+
       const messageKey = isInstadappSigner.value ? 'mfa.notifications.instadappSignerDisabled' : 'mfa.notifications.signerDisabled'
 
       openSnackbar({
         message: $t(messageKey, { chainName }),
         type: 'success',
       })
-    }, 1000)
+    }, 5000)
   }
   catch (e: any) {
     const parsed = parseTransactionError(e)
