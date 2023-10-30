@@ -44,7 +44,9 @@ async function handleSign(source: boolean) {
       signature = legacySignature
     }
     else {
-      signature = await signMultisigData({ chainId, data: message })
+      const { signature: sig } = await signMultisigData({ chainId, data: message })
+
+      signature = sig
     }
 
     if (!signature)

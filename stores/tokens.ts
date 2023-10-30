@@ -25,8 +25,10 @@ export const useTokens = defineStore('tokens', () => {
         'https://cdn.instadapp.io/avocado/tokenlist.json',
       )
 
+      const supportedTokens = data.tokens.filter((i: any) => availableNetworks.some(n => String(n.chainId) === String(i.chainId)))
+
       tokens.value = await fetchTokenPrices([
-        ...data.tokens.map((t: any) => ({
+        ...supportedTokens.map((t: any) => ({
           name: t.name,
           address: t.address,
           decimals: t.decimals,

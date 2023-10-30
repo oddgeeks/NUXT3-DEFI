@@ -17,6 +17,7 @@ const { trackingAccount } = useAccountTrack()
 const { gasBalance, ensName } = storeToRefs(useSafe())
 const { resetAccounts } = useSafe()
 const { setConnectorName, cachedProviderName } = useConnectors()
+const { terminateMFAToken } = useMfa()
 const { providers } = useNetworks()
 const router = useRouter()
 
@@ -33,6 +34,7 @@ async function closeConnection() {
   const { success } = await openDisconnectWalletModal()
 
   if (success) {
+    terminateMFAToken()
     resetAccounts()
     open.value = false
     setConnectorName(null)
