@@ -365,6 +365,7 @@ type ISnackOptions = {
 
 type IOptions = {
   raw?: boolean;
+  closeButton?: boolean;
   clickToClose?: boolean;
   wrapperClass?: string;
   contentClass?: string;
@@ -545,7 +546,9 @@ interface NFTParams {
   name: string
   address: string
   chainId: number | string
-  owner?: true
+  owner?: boolean
+  notEditable?:  boolean
+  notDeletable?: boolean
 }
 
  interface ITransferCount {
@@ -674,6 +677,9 @@ interface ISafesResponse {
   created_at: string
   updated_at: string
   multisig: 0 | 1 | number
+  mfa_email_verified: 0 | 1
+  mfa_phone_verified : 0 | 1
+  mfa_totp_verified : 0 | 1
   deployed: Record<string, boolean>,
   version: Record<string, string>
   authorities: Record<string, string[]>
@@ -715,3 +721,59 @@ interface IComputeAddresses {
 }
 
 type TxBuilderModes = 'expand' | 'collapse' | 'super-collapse' | 'raw'
+
+
+interface IMfaAuthenticateParams {
+  
+}
+
+type MfaRequestType = 'transaction' | 'delete' | 'update'
+
+interface IMfaActivateModalParams {
+  mfaType: IMfa
+}
+
+type MfaVerify = (mfa: IMfa, code: string) => Promise<boolean>
+
+type MfaExpire = '30min' | '60min'
+
+interface IMfaVerifyModalParams {
+  mfa: IMfa,
+  mfaRequestType: MfaRequestType,
+  verify?: MfaVerify
+  request?: Function
+  inputValue?: string
+  authenticate?: boolean,
+  defaultSessionAvailable?: boolean
+  expire?: MfaExpire
+  chainId?: number | string
+}
+
+interface IAuthVerifyParams {
+  mfa: IMfa
+  mfaRequestType: MfaRequestType
+  submitFn?: MfaVerify
+  defaultSessionAvailable?: boolean
+  expire?: MfaExpire
+  chainId?: number | string
+}
+
+interface IAuthTransactionMfa {
+  _authMfa?: IMfa
+  submitFn?: MfaVerify
+  defaultSessionAvailable?: boolean
+  forceGrabSession?: boolean
+  expire?: MfaExpire
+  chainId?: number | string
+}
+
+interface IOpenReviewSignerProcessModalParams{
+  chainId: number | string
+  deleteSigner?: boolean
+  isInstadappSigner?: boolean
+  removeBackupSigner?: boolean
+  actions: {
+    actions: TransactionsAction[]
+    metadata: string
+  }
+}

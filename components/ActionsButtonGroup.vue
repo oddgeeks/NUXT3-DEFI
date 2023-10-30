@@ -17,6 +17,8 @@ const {
   fuseDisabled,
 } = useGraph(balance)
 
+const { isSafeBackupSigner } = useMfa()
+
 const errorMessage = computed(() => {
   if (nonAuthorised.value) {
     return $t('nonAuthorized', {
@@ -26,6 +28,9 @@ const errorMessage = computed(() => {
 
   if (fuseDisabled.value)
     return $t('fuseNotSupported')
+
+  if (isSafeBackupSigner.value)
+    return $t('disabledBackupSigner')
 })
 
 const buttonClasses = computed(() => {

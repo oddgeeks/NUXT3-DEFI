@@ -15,6 +15,8 @@ const { fetchPendingMultisigTxnsCount, setGasBalance } = useSafe()
 const { safeTotalBalanceMapping, legacySafeAddress, selectedSafe } = storeToRefs(useSafe())
 const { checkSafeIsActualMultisig } = useMultisig()
 
+const v2 = computed(() => props.safe.multisig === 1)
+
 const isMultisig = computed(() => checkSafeIsActualMultisig(props.safe))
 const walletName = computed(() => {
   const name = localStorage.getItem(`safe-label-${props.safe?.safe_address}`)

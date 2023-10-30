@@ -49,8 +49,20 @@ import CreateBookmark from '~/components/modals/CreateBookmark.vue'
 import ExecutionError from '~/components/modals/Multisig/ExecutionError.vue'
 import Migration from '~/components/modals/Migration.vue'
 import PendingMigration from '~/components/modals/PendingMigration.vue'
+import ActivateMFA from '~/components/modals//Mfa/ActivateMFA.vue'
+import AuthenticateMFA from '~/components/modals//Mfa/Authenticate.vue'
+import VerifyMFA from '~/components/modals//Mfa/VerifyMFA.vue'
+import TotpRecoveryCode from '~/components/modals/Mfa/TotpRecoveryCode.vue'
+import TotpDeactivateByRecoveryCode from '~/components/modals/Mfa/TotpDeactivateByRecoveryCode.vue'
+import TotpActivate from '~/components/modals/Mfa/TotpActivate.vue'
+import MFATerms from '~/components/modals/Mfa/Terms.vue'
+import MFASignInstadappSigner from '~/components/modals/Mfa/SignInstadappSigner.vue'
+import MFAActivateBackupSigner from '~/components/modals/Mfa/ActivateBackupSigner.vue'
+import MFAReviewBackupTransaction from '~/components/modals/Mfa/ReviewBackupTransaction.vue'
+import ReviewSignerProcess from '~/components/modals/Multisig/ReviewSignerProcess.vue'
 
 const { openModal } = useModal()
+
 interface DialogModalProps {
   title?: string
   content?: string
@@ -334,6 +346,14 @@ export function openAddContactModal(name?: string,
   address?: string,
   chainId?: number | string,
   isEdit?: boolean) {
+  if (isEdit) {
+    const { allSafes } = storeToRefs(useSafe())
+    const safe = allSafes.value.find(i => isAddressEqual(i.safe_address, address))
+
+    if (safe)
+      return openWalletNameEditModal(safe)
+  }
+
   return openModal({
     component: AddContact,
     async: true,
@@ -601,6 +621,21 @@ export function openReviewMultisigTransaction(transactionId: string, chainId: st
   })
 }
 
+export function openReview2faBackupTransaction(transactionId: string, chainId: string | number) {
+  return openModal({
+    component: MFAReviewBackupTransaction,
+    componentProps: {
+      transactionId,
+      chainId,
+    },
+    options: {
+      contentClass: '!p-7.5',
+      wrapperClass: '!max-w-[560px]',
+      closeButton: false,
+      clickToClose: false,
+    },
+  })
+}
 export async function openMultisigTransactionDetails(transaction: IMultisigTransaction) {
   return openModal({
     component: MultisigTransactionDetail,
@@ -735,6 +770,175 @@ export function openPendingMigrationModal(
     componentProps: {
       hashes,
       chainIds,
+    },
+  })
+}
+
+export async function openMfaTermsModal() {
+  return openModal({
+    component: MFATerms,
+    async: true,
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[575px]',
+    },
+  })
+}
+
+export async function openMfaActivateModal(params: IMfaActivateModalParams) {
+  const { mfaType } = params || {}
+  return openModal({
+    component: ActivateMFA,
+    async: true,
+    componentProps: {
+      mfaType,
+    },
+    options: {
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export async function openTotptActivateModal(totp: ITotpData) {
+  return openModal({
+    component: TotpActivate,
+    async: true,
+    componentProps: {
+      totp,
+    },
+    options: {
+      contentClass: '!p-0',
+      clickToClose: false,
+      closeButton: false,
+    },
+  })
+}
+
+export async function openMfaAuthenticateModal(mfaRequestType: MfaRequestType, excludeMfa: IMfa, chainId?: number | string) {
+  return openModal({
+    component: AuthenticateMFA,
+    async: true,
+    componentProps: {
+      mfaRequestType,
+      excludeMfa,
+      chainId,
+    },
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[560px]',
+    },
+  })
+}
+
+export async function openVerifyMFAModal(params: IMfaVerifyModalParams) {
+  const { mfa, request, authenticate, mfaRequestType, verify, inputValue, defaultSessionAvailable, chainId, expire } = params || {}
+
+  return openModal({
+    component: VerifyMFA,
+    async: true,
+    componentProps: {
+      mfa,
+      request,
+      chainId,
+      verify,
+      inputValue,
+      authenticate,
+      mfaRequestType,
+      defaultSessionAvailable,
+      expire,
+    },
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[490px]',
+    },
+  })
+}
+
+export async function openRegenerateTotpRecoveryCodeModal(recoverycodes?: string[]) {
+  return openModal({
+    component: TotpRecoveryCode,
+    async: true,
+    componentProps: {
+      recoverycodes,
+    },
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[560px]',
+      clickToClose: false,
+      closeButton: false,
+    },
+  })
+}
+
+export async function openDeactivateTotpByRecoveryCodes() {
+  return openModal({
+    component: TotpDeactivateByRecoveryCode,
+    async: true,
+    componentProps: {
+    },
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[560px]',
+    },
+  })
+}
+export function openMfaSignInstadappSignerModal(address: string, removeSigner?: boolean) {
+  return openModal({
+    component: MFASignInstadappSigner,
+    async: true,
+    componentProps: {
+      address,
+      removeSigner,
+    },
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[560px]',
+    },
+  })
+}
+
+export function openAddBackupSignerModal() {
+  return openModal({
+    component: MFAActivateBackupSigner,
+    async: true,
+    componentProps: {
+    },
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[560px]',
+    },
+  })
+}
+
+export function openReviewSignerProcessModal(params: IOpenReviewSignerProcessModalParams) {
+  const { chainId, actions, deleteSigner, isInstadappSigner, removeBackupSigner } = params || {}
+
+  return openModal({
+    component: ReviewSignerProcess,
+    componentProps: {
+      chainId,
+      actions,
+      deleteSigner,
+      isInstadappSigner,
+      removeBackupSigner,
+    },
+    async: true,
+  })
+}
+
+export function open2faTerminateSessionModal() {
+  return openDialogModal({
+    title: 'Are you sure you want to terminate your verified session?',
+    content: 'OTP verification will be required for transacting if you terminate.',
+    type: 'question',
+    cancelButtonText: 'Keep session',
+    isCancelButtonVisible: true,
+    buttonText: 'Terminate',
+    buttonProps: {
+      color: 'red',
+    },
+    cancelButtonProps: {
+      color: 'white',
     },
   })
 }
