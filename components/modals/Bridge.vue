@@ -29,6 +29,10 @@ const esimatedFeeRetryCount = ref(0)
 
 const fromChainId = ref<string>(props.chainId)
 
+const bridgeAvailableNetworks = computed(() => {
+  return authorisedNetworks.value.filter(i => !bridgeDisabledChains.includes(i.chainId))
+})
+
 const fromToken = ref(
   tokenBalances.value.find(
     t => t.chainId == fromChainId.value && t.address === props.address,
@@ -318,7 +322,7 @@ const onSubmit = form.handleSubmit(async () => {
                 value-key="chainId"
                 label-key="name"
                 icon-key="icon"
-                :options="authorisedNetworks"
+                :options="bridgeAvailableNetworks"
               >
                 <template #button-prefix>
                   <ChainLogo class="h-6 w-6" :chain="fromChainId" />
