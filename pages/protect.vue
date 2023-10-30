@@ -51,6 +51,13 @@ async function handleDeactivate(mfa: IMfa, close: () => void) {
 
     await fetchSafeInstanceses()
 
+    logActionToSlack({
+      account: account.value,
+      action: '2fa-method-deactivated',
+      type: 'banner',
+      message: mfa.label,
+    })
+
     if (!atLeastOneMfaVerifed.value)
       terminateMFAToken()
   }
@@ -100,6 +107,12 @@ async function handleActivate(mfa: IMfa) {
     }
 
     fetchSafeInstanceses()
+
+    logActionToSlack({
+      account: account.value,
+      action: '2fa-method-activated',
+      message: mfa.label,
+    })
   }
   catch (e) {
     const parsed = serialize(e)
