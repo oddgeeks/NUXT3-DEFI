@@ -7,7 +7,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const referalCode = useCookie<string>('ref-code')
 
   const trackingUser = to.query?.user || trackAccount.value
-  const refCode = to.query?.r as string
+  const refCode = to.query?.z as string
   const redirectPath = to.path
   const loginRedirectPath = `/login?redirectTo=${redirectPath}`
 
