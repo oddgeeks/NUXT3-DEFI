@@ -58,7 +58,7 @@ export default defineNuxtConfig({
   },
   pwa: {
     registerType: 'prompt',
-    manifestFilename: 'site.webmanifest',
+    manifestFilename: 'icons/site.webmanifest',
     workbox: {
       navigateFallback: null,
       globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
@@ -206,7 +206,7 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    '/site.webmanifest': {
+    '/icons/site.webmanifest': {
       headers: {
         'Content-Type': 'application/manifest+json',
       },

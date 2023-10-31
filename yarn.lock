@@ -1890,10 +1890,10 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@instadapp/avocado-base@0.0.79":
-  version "0.0.79"
-  resolved "https://registry.yarnpkg.com/@instadapp/avocado-base/-/avocado-base-0.0.79.tgz#6c06fcd7e1c5d91aee7eb24894a03a053c687466"
-  integrity sha512-uPCAFx3NVTd4cEbwp2BpgmHkvEgzbHp4vnrZN/ySd781frV61rxgOmwH3Whs4Qswwj3F+b4IpkHpCJ7Rk6DoFw==
+"@instadapp/avocado-base@0.0.80":
+  version "0.0.80"
+  resolved "https://registry.yarnpkg.com/@instadapp/avocado-base/-/avocado-base-0.0.80.tgz#9ba16164b655e82aa6f9d98aac104091fc9411b7"
+  integrity sha512-XIOovBr0wlJ0T+pbqN0JtNXsRgdU/FBDFNBfudU/RTW2W7vGwsgIb9zTg+3MP5HIlZ+Lb7XvDAyAWzyOF27CUQ==
   dependencies:
     "@vueuse/nuxt" "^10.2.0"
     bignumber.js "^9.1.1"

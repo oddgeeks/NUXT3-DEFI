@@ -89,6 +89,12 @@ const {
       if (tokenBalance)
         balance.value = tokenBalance.balance
 
+      const sparkline = token?.sparkline_price_7d || []
+
+      const price = toBN(token?.price || '0').eq('0') && sparkline.length > 0
+        ? sparkline[sparkline.length - 1]
+        : token?.price
+
       return {
         address: reactiveAddress.value,
         chainId: chainId.value,
@@ -97,8 +103,8 @@ const {
         decimals,
         coingeckoId: '',
         logoURI: token?.logo_url,
-        price: token?.price || 0,
-        sparklinePrice7d: token?.sparkline_price_7d || [],
+        price,
+        sparklinePrice7d: sparkline,
       } as IToken
     }
   },
