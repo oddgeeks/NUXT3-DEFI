@@ -13,9 +13,11 @@ async function handleSign() {
   try {
     pending.value = true
 
-    let template = `
-issueAt: {{ISSUE_AT}}
-nonce: {{NONCE}}
+    let template = `Welcome to Avocado!
+
+Address: {{OWNER}}
+Time: {{ISSUE_AT}}
+Nonce: {{NONCE}}
 `
 
     const dateNow = new Date().toUTCString()
@@ -42,6 +44,7 @@ nonce: {{NONCE}}
 
     template = template.replaceAll('{{NONCE}}', nonce)
     template = template.replaceAll('{{ISSUE_AT}}', dateNow)
+    template = template.replaceAll('{{OWNER}}', account.value)
 
     const signer = library.value.getSigner()
 
