@@ -16,7 +16,7 @@ async function handleSign() {
     let template = `Welcome to Avocado!
 
 Address: {{OWNER}}
-Time: {{ISSUE_AT}}
+Time: {{TIME}}
 Nonce: {{NONCE}}
 `
 
@@ -42,9 +42,9 @@ Nonce: {{NONCE}}
       generateNonceParams,
     ])
 
-    template = template.replaceAll('{{NONCE}}', nonce)
-    template = template.replaceAll('{{ISSUE_AT}}', dateNow)
     template = template.replaceAll('{{OWNER}}', account.value)
+    template = template.replaceAll('{{TIME}}', dateNow)
+    template = template.replaceAll('{{NONCE}}', nonce)
 
     const signer = library.value.getSigner()
 
