@@ -15,7 +15,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['resolve', 'destroy'])
-const { mfaTypes } = useMfa()
+const { mfaTypes, backupSigner, backupMfa } = useMfa()
 
 const actualMfa = computed(() => props.mfa)
 const { $t } = useNuxtApp()
@@ -27,6 +27,13 @@ const { dec, count, reset } = useCounter(60, { min: 0, max: 60 })
 
 const sessionAvailable = ref(props.defaultSessionAvailable || false)
 const availableMfas = computed(() => mfaTypes.value.filter(i => i.activated && i.value !== props.mfa.value && i.value !== 'backup'))
+
+const isBackupSignerAvailable = computed(() => {
+  if (!props.chainId)
+    return false
+
+  return backupSigner.value.chainIds.some(i => String(i) === String(props.chainId))
+})
 
 useIntervalFn(() => dec(), 1000)
 
@@ -186,6 +193,13 @@ async function handleDeactivateWithRecoveryCode() {
       </button>
       <button v-if="authenticate && !!availableMfas.length" class="text-left text-xs font-medium leading-5 text-primary" type="button" @click="handleTryAnotherMethod">
         Try another verification method
+      </button>
+      <button
+        v-if="authenticate && isBackupSignerAvailable && !availableMfas.length" class="text-left text-xs font-medium leading-5 text-primary" type="button" @click="$emit('resolve', true, {
+          fallbackMfa: backupMfa,
+        })"
+      >
+        Use Backup Signer
       </button>
       <button v-if="mfa.value === 'totp' && mfaRequestType === 'delete'" class="text-xs font-medium leading-5 text-primary" @click="handleDeactivateWithRecoveryCode">
         Use Recovery codes
