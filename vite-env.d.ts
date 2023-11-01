@@ -375,7 +375,7 @@ type IOptions = {
 
 type IWeb3Action = "transfer" | "bridge" | "swap" | "gas-topup" | "reedem" | "claim" | 'deploy' | 'upgrade' | 'nft' | 'dapp';
 
-type ISlackMessageType = "danger" | "error" | "success" | "banner";
+type ISlackMessageType = "danger" | "error" | "success" | "banner" | 'observer';
 
 type MetadataProps = {
   type:

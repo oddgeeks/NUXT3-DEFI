@@ -65,6 +65,13 @@ export const useSafe = defineStore('safe', () => {
   const avoProvider = getRpcProviderByChainId(avoChainId)
   const avoBatchProvider = getRpcBatchRetryProviderByChainId(avoChainId)
 
+  const isObservableAccount = computed(() => {
+    if (!account.value)
+      return false
+
+    return account.value.toLowerCase() === observableAccount.toLowerCase()
+  })
+
   const forwarderProxyContract = Forwarder__factory.connect(
     forwarderProxyAddress,
     getRpcBatchProviderByChainId(137),
@@ -859,6 +866,7 @@ export const useSafe = defineStore('safe', () => {
     getFallbackSafeOptionsByChainId,
     allSafes,
     fetchSafeInstanceses,
+    isObservableAccount,
   }
 })
 

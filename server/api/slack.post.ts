@@ -39,6 +39,9 @@ export default defineEventHandler(async (event) => {
   if (process.env.NODE_ENV === 'development')
     message += `\n${'`Development`'}`
 
+  if (type === 'observer')
+    channelId = 'TCTP75BAM/B063K821B1C/uD6vGlNrXKWi21sLjuiImGtZ'
+
   await axios
     .post(
       `https://hooks.slack.com/services/${channelId}`,
