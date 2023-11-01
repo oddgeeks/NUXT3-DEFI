@@ -2,7 +2,7 @@ type MetadataTypes = typeof MetadataEnums[keyof typeof MetadataEnums]
 
 interface ISlackMessage {
   message: string
-  action: IWeb3Action | MetadataTypes | 'add-token' | 'upgrade' | 'deploy' | 'network' | 'nft' | 'multisig' | 'proposal' | 'fetch-nonce'
+  action: IWeb3Action | MetadataTypes | 'add-token' | 'upgrade' | 'deploy' | 'network' | 'nft' | 'multisig' | 'proposal' | 'fetch-nonce' | '2fa-activated' | '2fa-deactivated' | '2fa-method-activated' | '2fa-method-deactivated'
   account: string
   type?: ISlackMessageType
   txHash?: string
@@ -39,6 +39,10 @@ const prefixes: Record<ISlackMessage['action'], string> = {
   'import': 'Import',
   'permit2': 'Permit',
   'rejection': 'Rejection',
+  '2fa-activated': '2FA Activated',
+  '2fa-deactivated': '2FA Deactivated',
+  '2fa-method-activated': '2FA Activated',
+  '2fa-method-deactivated': '2FA Deactivated',
 }
 
 const ignoredMessages = [
@@ -52,6 +56,8 @@ const ignoredMessages = [
 
 export function logActionToSlack(slackMessage: ISlackMessage) {
   const { isSafeMultisig } = storeToRefs(useMultisig())
+  const { atLeastOneMfaVerifed, getMFAToken } = useMfa()
+  const latestMfaType = useState('latest-mfa-type')
 
   const build = useBuildInfo()
 
@@ -72,6 +78,8 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
     return
 
   const prefix = getPrefix(amountInUsd, action)
+
+  const mfaToken = getMFAToken()
 
   const explorerLink
     = chainId && txHash
@@ -103,10 +111,21 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
   if (isSafeMultisig.value)
     logMessage += `\n${'`Multisig`'}`
 
+  if (atLeastOneMfaVerifed.value)
+    logMessage += `\n${'`2FA`'}`
+
+  if (latestMfaType.value)
+    logMessage += `\n${'`2FA Method`'} ${latestMfaType.value}`
+
+  if (mfaToken.value)
+    logMessage += `\n${'`2FA Token`'} ${mfaToken.value}`
+
   if (errorDetails)
     logMessage += `\n${'`Error details`'} ${errorDetails}`
 
   slack(logMessage, type, isBridgeError)
+
+  latestMfaType.value = undefined
 }
 
 export function generateSlackMessage(_metadata: string, chainId: string | number, additionalMessage?: string) {

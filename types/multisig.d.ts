@@ -73,6 +73,10 @@ interface IMultisigBroadcastParams {
   signers: string[]
   targetChainId: string | number
   ignoreSlack?: boolean
+  mfa_code?: string,
+  mfa_type?: Mfa,
+  mfa_token?: string,
+  debug?: any
 }
 
 interface IChangeThresholdParams {
@@ -84,12 +88,14 @@ interface IRemoveSignerParams {
   addresses: string[]
   chainId: number | string
   threshold: number
+  actionsOnly?: boolean
 }
 
 interface IAddSignerParams {
   addresses: ISignerAddress[]
   threshold: string
   chainId: number | string
+  actionsOnly?: boolean
 }
 
 type TransactionsAction = {

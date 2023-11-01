@@ -12,6 +12,9 @@ export const avoChainName = isProd
 export const AVO_PROD_MULTISIG_FORWARDER_ADDR = '0x46978CD477A496028A18c02F07ab7F35EDBa5A54'
 export const AVO_STAGING_MULTISIG_FORWARDER_ADDR = '0x6f444b80f944FA5Ce3f74cC0e4e1371844B5F91e'
 
+export const stagingInstadappSigner = '0x2D8EE1C03b88b4b72B1c05Dab218EE1982147602'
+export const prodInstadappSigner = '0x27A26e2f1CaD33cD0389A85Ab09a6b4f169Bc34f'
+
 export const multisigForwarderProxyAddress = isProd
   ? AVO_PROD_MULTISIG_FORWARDER_ADDR
   : AVO_STAGING_MULTISIG_FORWARDER_ADDR
@@ -68,3 +71,4 @@ export const bannedDapps = ['https://www.orbiter.finance', 'https://mirror.xyz',
 export const bridgeDisabledChains = [250, 122, 204, 534352]
 export const swapDisabledChains = [122, 204, 534352]
 export const multisigURL = isProd ? multisigURLProd : multisigURLStaging
+export const instadappSigner = isProd ? prodInstadappSigner : stagingInstadappSigner
