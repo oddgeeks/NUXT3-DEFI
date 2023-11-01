@@ -575,7 +575,7 @@ export function useAvocadoSafe() {
       return txHash
     }
 
-    await createProposal(params)
+    return createProposal(params)
   }
 
   async function createProposal(args: IGenerateMultisigSignatureParams) {
