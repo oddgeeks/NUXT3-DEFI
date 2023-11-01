@@ -189,7 +189,7 @@ async function handleSubmit() {
 const { data: simulationDetails, error: simulationError, refresh: refreshSimulation } = useAsyncData(
   'simulationDetails',
   () => {
-    if (networksSimulationNotSupported.includes(Number(props.chainId)))
+    if (simulationNotSupportedChains.includes(Number(props.chainId)))
       throw new Error('Simulation not supported on this network.')
 
     const id = getActualId(transactions.value, options.value?.id)
