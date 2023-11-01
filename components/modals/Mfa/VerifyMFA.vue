@@ -29,10 +29,10 @@ const sessionAvailable = ref(props.defaultSessionAvailable || false)
 const availableMfas = computed(() => mfaTypes.value.filter(i => i.activated && i.value !== props.mfa.value && i.value !== 'backup'))
 
 const isBackupSignerAvailable = computed(() => {
-  if (!props.chainId)
+  if (!props.chainId || !backupSigner.value?.chainIds)
     return false
 
-  return backupSigner.value.chainIds.some(i => String(i) === String(props.chainId))
+  return backupSigner.value?.chainIds?.some(i => String(i) === String(props.chainId))
 })
 
 useIntervalFn(() => dec(), 1000)
