@@ -71,5 +71,6 @@ export const bannedDapps = ['https://www.orbiter.finance', 'https://mirror.xyz',
 export const bridgeDisabledChains = [250, 122, 204, 534352]
 export const swapDisabledChains = [122, 204, 534352]
 export const legacyNotSupportedChains = [122, 204, 534352]
+export const networksSimulationNotSupported = [1313161554, 1101, 122, 204, 534352]
 export const multisigURL = isProd ? multisigURLProd : multisigURLStaging
 export const instadappSigner = isProd ? prodInstadappSigner : stagingInstadappSigner
