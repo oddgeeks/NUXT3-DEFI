@@ -134,9 +134,9 @@ async function handleSubmit() {
     )
 
     if (!transactionHash && web3WalletV2.value) {
-      const fakeHash = availableNetworks.find(i => String(i.chainId) == String(props.chainId))?.fakeTransactionHash
+      let fakeHash = availableNetworks.find(i => String(i.chainId) == String(props.chainId))?.fakeTransactionHash
 
-      console.log(fakeHash)
+      fakeHash = `${fakeHash?.slice(0, -1)}3`
 
       web3WalletV2.value.respondSessionRequest({
         topic: props.sessionV2.topic,
