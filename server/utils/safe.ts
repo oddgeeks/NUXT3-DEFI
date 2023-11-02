@@ -1,7 +1,6 @@
 import { serialize } from 'error-serializer'
 import { ethers } from 'ethers'
-import { storeToRefs } from 'pinia'
-import { useEnvironmentState } from '~~/stores/environment-state'
+import { getForwarderProxyAddress, getMultisigForwarderProxyAddress } from '~~/utils/avocado'
 import { AvoMultisigImplementation__factory, Forwarder__factory, GaslessWallet__factory, MultisigForwarder__factory } from '@/contracts'
 
 const serverRpcInstances = {} as Record<string, ethers.providers.StaticJsonRpcProvider>
@@ -18,22 +17,24 @@ export function getServerBatchedRpcProvider(chainId: number | string) {
 }
 
 export async function getSafeOptionsByChain(params: IOptionsParams): Promise<ISafeOptions> {
-  const { safe, provider, chainId, server = false } = params
-  const { multisigForwarderProxyAddress, forwarderProxyAddress, isProd } = storeToRefs(useEnvironmentState())
+  const { safe, provider, chainId, server = false, is_prod } = params
 
-  console.log({ isProd: isProd.value })
+  const multisigForwarderProxyAddress = getMultisigForwarderProxyAddress(is_prod)
+  const forwarderProxyAddress = getForwarderProxyAddress(is_prod)
+
+  console.log({ isProd: is_prod })
 
   const obj = {} as ISafeOptions
 
   const implInstance = AvoMultisigImplementation__factory.connect(safe.safe_address, provider)
 
   const multisigForwarderInstance = MultisigForwarder__factory.connect(
-    multisigForwarderProxyAddress.value,
+    multisigForwarderProxyAddress,
     provider,
   )
 
   const legacyForwarderInstance = Forwarder__factory.connect(
-    forwarderProxyAddress.value,
+    forwarderProxyAddress,
     provider,
   )
 
@@ -167,19 +168,18 @@ export async function getSafeOptionsByChain(params: IOptionsParams): Promise<ISa
 }
 
 export async function getComputedAddresses(params: IComputeSafeParams) {
-  const { accountAddress, provider } = params
+  const { accountAddress, provider, isProd = true } = params
 
-  const { multisigForwarderProxyAddress, forwarderProxyAddress, isProd } = storeToRefs(useEnvironmentState())
-
-  console.log({ isProd: isProd.value })
+  const multisigForwarderProxyAddress = getMultisigForwarderProxyAddress(isProd)
+  const forwarderProxyAddress = getForwarderProxyAddress(isProd)
 
   const legacyProvider = Forwarder__factory.connect(
-    forwarderProxyAddress.value,
+    forwarderProxyAddress,
     provider,
   )
 
   const multisigProvider = MultisigForwarder__factory.connect(
-    multisigForwarderProxyAddress.value,
+    multisigForwarderProxyAddress,
     provider,
   )
 

@@ -1,6 +1,4 @@
 import axios from 'axios'
-import { storeToRefs } from 'pinia'
-import { useEnvironmentState } from '~~/stores/environment-state'
 
 const colors: Record<'danger' | 'error' | 'success' | 'banner', string> = {
   danger: '#000000', // black
@@ -14,11 +12,9 @@ const IGNORED_MESSAGES = ['/api/balances']
 export default defineEventHandler(async (event) => {
   const { slackKey, slackErrorKey, slackStagingKey, slackBridgeErrorKey } = useRuntimeConfig()
 
-  const { isProd } = storeToRefs(useEnvironmentState())
+  let { type = 'success', message, isBridgeError = false, isProd = false } = await readBody(event)
 
-  console.log({ isProd: isProd.value })
-
-  let { type = 'success', message, isBridgeError = false } = await readBody(event)
+  console.log({ isProdSlack: isProd })
 
   if (message && IGNORED_MESSAGES.some(i => message.includes(i)))
     return {}
@@ -33,7 +29,7 @@ export default defineEventHandler(async (event) => {
 
   let channelId = slackKey
 
-  if (!isProd.value)
+  if (!isProd)
     channelId = slackStagingKey
   else if (isBridgeError)
     channelId = slackBridgeErrorKey

@@ -43,3 +43,11 @@ export const bridgeDisabledChains = [250, 122]
 export const swapDisabledChains = [122]
 
 export const observableAccount = '0xcf877a28c4f86b0d3fb7e5a52156f094140ba742'
+
+export function getMultisigForwarderProxyAddress(isProd: boolean) {
+  return isProd ? AVO_PROD_MULTISIG_FORWARDER_ADDR : AVO_STAGING_MULTISIG_FORWARDER_ADDR
+}
+
+export function getForwarderProxyAddress(isProd: boolean) {
+  return isProd ? AVO_PROD_FORWARDER_ADDR : AVO_STAGING_FORWARDER_ADDR
+}

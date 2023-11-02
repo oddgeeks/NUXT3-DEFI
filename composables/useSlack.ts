@@ -57,7 +57,7 @@ const ignoredMessages = [
 export function logActionToSlack(slackMessage: ISlackMessage) {
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { atLeastOneMfaVerifed, getMFAToken } = useMfa()
-  const { avoExplorerURL } = storeToRefs(useEnvironmentState())
+  const { avoExplorerURL, isProd } = storeToRefs(useEnvironmentState())
   const { isObservableAccount } = storeToRefs(useSafe())
   const latestMfaType = useState('latest-mfa-type')
 
@@ -130,7 +130,7 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
     logMessage = `<@UK9L88BS7>,<@U0146FL6CSZ> ${logMessage}`
   }
 
-  slack(logMessage, type, isBridgeError)
+  slack(logMessage, type, isBridgeError, isProd.value)
 
   latestMfaType.value = undefined
 }

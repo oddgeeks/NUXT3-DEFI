@@ -210,6 +210,7 @@ export default defineNuxtConfig({
   vite: {
     optimizeDeps: {
       include: [
+        'bech32',
         'scrypt-js',
         'aes-js',
         'bn.js',

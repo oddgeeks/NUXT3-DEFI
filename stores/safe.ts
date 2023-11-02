@@ -62,7 +62,7 @@ export const useSafe = defineStore('safe', () => {
   const { getRpcProviderByChainId } = useShared()
   const { trackingAccount } = useAccountTrack()
 
-  const { multisigForwarderProxyAddress, forwarderProxyAddress, multisigURL, avoChainId } = storeToRefs(useEnvironmentState())
+  const { multisigForwarderProxyAddress, forwarderProxyAddress, multisigURL, avoChainId, isProd } = storeToRefs(useEnvironmentState())
 
   const avoProvider = getRpcProviderByChainId(avoChainId.value)
 
@@ -97,6 +97,7 @@ export const useSafe = defineStore('safe', () => {
       const { address, multisigAddress, oldSafeAddress } = await getComputedAddresses({
         accountAddress: account.value,
         provider: polygonProvider,
+        isProd: isProd.value,
       })
 
       logBalance({
@@ -115,6 +116,7 @@ export const useSafe = defineStore('safe', () => {
       const { address, multisigAddress, oldSafeAddress } = await http<IComputeAddresses>('/api/rpc/compute', {
         params: {
           address: account.value,
+          is_prod: isProd.value,
         },
         retry: 3,
       })
@@ -584,6 +586,7 @@ export const useSafe = defineStore('safe', () => {
             multisig_index: safe.multisig_index,
             multisig: safe.multisig,
             owner_address: safe.owner_address,
+            is_prod: isProd.value,
           },
         }).then((e) => {
           logBalance({
@@ -603,6 +606,7 @@ export const useSafe = defineStore('safe', () => {
         safe,
         chainId,
         provider: getRpcProviderByChainId(chainId),
+        is_prod: isProd.value,
       })
 
       return config
@@ -613,6 +617,7 @@ export const useSafe = defineStore('safe', () => {
           multisig_index: safe.multisig_index,
           multisig: safe.multisig,
           owner_address: safe.owner_address,
+          is_prod: isProd.value,
         },
       })
 
@@ -635,6 +640,7 @@ export const useSafe = defineStore('safe', () => {
             safe,
             chainId: network.chainId,
             provider,
+            is_prod: isProd.value,
           })
             .catch((e) => {
               const msg = 'Failed to get safe options by public provider'
@@ -653,6 +659,7 @@ export const useSafe = defineStore('safe', () => {
                   multisig_index: safe.multisig_index,
                   multisig: safe.multisig,
                   owner_address: safe.owner_address,
+                  is_prod: isProd.value,
                 },
               })
             })

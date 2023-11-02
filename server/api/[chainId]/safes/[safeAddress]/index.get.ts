@@ -15,11 +15,12 @@ export default defineEventHandler(async (event) => {
     multisig: Yup.number().required(),
     owner_address: Yup.string().required(),
     deployed: Yup.object(),
+    is_prod: Yup.boolean(),
   })
 
   await schema.validate(query)
 
-  const { multisig = 0, multisig_index = 0, owner_address, deployed = {} } = schema.cast(query)
+  const { multisig = 0, multisig_index = 0, owner_address, is_prod = true } = schema.cast(query)
 
   if (!owner_address) {
     return createError({
@@ -61,5 +62,6 @@ export default defineEventHandler(async (event) => {
     chainId,
     provider,
     server: true,
+    is_prod,
   })
 })

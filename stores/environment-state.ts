@@ -1,12 +1,10 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 
 import {
-  AVO_PROD_FORWARDER_ADDR,
-  AVO_PROD_MULTISIG_FORWARDER_ADDR,
-  AVO_STAGING_FORWARDER_ADDR,
-  AVO_STAGING_MULTISIG_FORWARDER_ADDR,
   avoOnboardURLProd,
   avoOnboardURLStaging,
+  getForwarderProxyAddress,
+  getMultisigForwarderProxyAddress,
   multisigURLProd,
   multisigURLStaging,
   prodInstadappSigner,
@@ -25,13 +23,9 @@ export const useEnvironmentState = defineStore('environment-state', () => {
     ? AVO_PROD_CHAIN_NAME
     : AVO_STAGING_CHAIN_NAME)
 
-  const multisigForwarderProxyAddress = computed(() => isProd.value
-    ? AVO_PROD_MULTISIG_FORWARDER_ADDR
-    : AVO_STAGING_MULTISIG_FORWARDER_ADDR)
+  const multisigForwarderProxyAddress = computed(() => getMultisigForwarderProxyAddress(isProd.value))
 
-  const forwarderProxyAddress = computed(() => isProd.value
-    ? AVO_PROD_FORWARDER_ADDR
-    : AVO_STAGING_FORWARDER_ADDR)
+  const forwarderProxyAddress = computed(() => getForwarderProxyAddress(isProd.value))
 
   const avoDepositAddress = computed(() => isProd.value
     ? AVO_PROD_DEPOSIT_ADDRESS

@@ -281,11 +281,13 @@ interface IOptionsParams {
   chainId: string | number,
   provider: ethers.providers.StaticJsonRpcProvider
   server?: boolean
+  is_prod: boolean
 } 
 
 interface IComputeSafeParams {
   provider: ethers.providers.StaticJsonRpcProvider
   accountAddress: string
+  isProd: boolean
 }
 
 interface IToToken {
