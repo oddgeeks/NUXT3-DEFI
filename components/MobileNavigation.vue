@@ -2,6 +2,7 @@
 import SVGWalletConnect from '~/assets/images/wallet/wallet-connect-lite.svg?component'
 
 const { account } = useWeb3()
+const { avoExplorerURL } = storeToRefs(useEnvironmentState())
 </script>
 
 <template>

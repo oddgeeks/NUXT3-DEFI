@@ -13,6 +13,7 @@ import SVGWalletConnect from '~/assets/images/wallet/wallet-connect.svg?componen
 export function useNetworks() {
   const { chainId, provider, library } = useWeb3()
   const { rpcs } = storeToRefs(useShared())
+  const { avoChainId } = storeToRefs(useEnvironmentState())
 
   const providers: Provider[] = [
     {
@@ -34,7 +35,7 @@ export function useNetworks() {
         return await changeMetamaskNetwork(network)
       },
       connect: async () => {
-        return walletlink()
+        return walletlink(avoChainId.value)
       },
     },
     {
@@ -126,7 +127,7 @@ export function useNetworks() {
   }
 
   const switchToAvocadoNetwork = () => {
-    return switchNetworkByChainId(avoChainId)
+    return switchNetworkByChainId(avoChainId.value)
   }
 
   return {

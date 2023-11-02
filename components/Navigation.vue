@@ -11,6 +11,7 @@ import type { IBalance } from '~/stores/safe'
 const emit = defineEmits(['navigate'])
 
 const { tokenBalances, totalEoaBalance, eoaBalances, fundedEoaNetworks } = useAvocadoSafe()
+const { avoOnboardURL } = storeToRefs(useEnvironmentState())
 const { isOnboardBannerVisible } = useBanner()
 const { authorisedNetworks } = useAuthorities()
 const [moreOptions, toggleOptions] = useToggle(false)

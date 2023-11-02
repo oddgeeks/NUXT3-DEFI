@@ -4,9 +4,7 @@ export default defineEventHandler((event) => {
   const txPath = '/tx/'
   const addressPath = '/address/'
 
-  const config = useAppConfig()
-
-  const explorerURL = config.isProd
+  const explorerURL = true
     ? AVO_PROD_EXPLORER_URL
     : AVO_STAGING_EXPLORER_URL
 

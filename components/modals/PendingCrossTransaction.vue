@@ -10,6 +10,7 @@ const props = defineProps<{
 }>()
 
 const { avoProvider } = useSafe()
+const { avoExplorerURL } = storeToRefs(useEnvironmentState())
 
 const pending = ref(true)
 

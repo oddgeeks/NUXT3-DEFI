@@ -57,6 +57,7 @@ const ignoredMessages = [
 export function logActionToSlack(slackMessage: ISlackMessage) {
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { atLeastOneMfaVerifed, getMFAToken } = useMfa()
+  const { avoExplorerURL } = storeToRefs(useEnvironmentState())
   const { isObservableAccount } = storeToRefs(useSafe())
   const latestMfaType = useState('latest-mfa-type')
 
@@ -84,7 +85,7 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
 
   const explorerLink
     = chainId && txHash
-      ? `<${`${avoExplorerURL}/tx/${txHash}`}|${shortenHash(
+      ? `<${`${avoExplorerURL.value}/tx/${txHash}`}|${shortenHash(
           txHash,
           12,
         )}>`

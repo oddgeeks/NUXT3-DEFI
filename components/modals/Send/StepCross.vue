@@ -6,7 +6,7 @@ import { parse } from 'semver'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 
-const { isProd } = useAppConfig()
+const { isProd } = storeToRefs(useEnvironmentState())
 const { token, stepBack, data, actualAddress, targetToken } = useSend()
 const { gasBalance, safeOptions, isSelectedSafeLegacy, selectedSafe } = storeToRefs(useSafe())
 const { account } = useWeb3()
@@ -428,7 +428,7 @@ async function fetchCrossFee() {
     const targetVersion = target?.notdeployed ? target?.latestVersion : target?.currentVersion
 
     const body = {
-      staging: !isProd,
+      staging: !isProd.value,
       sourceChainId: String(data.value.fromChainId),
       targetChainId: String(data.value.toChainId),
       target: targetMessage.value,

@@ -15,6 +15,7 @@ const { hasInstadappSigner, instadappSignerNetworks, backupSigners } = storeToRe
 const { fetchSafeInstanceses } = useSafe()
 const { account } = useWeb3()
 const { $t } = useNuxtApp()
+const { instadappSigner } = storeToRefs(useEnvironmentState())
 const { mfaTypes, activeMfaTypes, mfaTermsAccepted, preferredMfaType, preferredMfa, terminateMFAToken, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa, backupMfa, isAvocadoProtectActive, atLeastOneMfaVerifed } = useMfa()
 
 const pendingTransactionsLink = computed(() => navigations.value.find(i => i.id === 'pending-transactions'))

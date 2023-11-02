@@ -59,11 +59,12 @@ export const useSafe = defineStore('safe', () => {
   const { fetchTokenByAddress } = useTokens()
   const documentVisibility = useDocumentVisibility()
   const { parseTransactionError } = useErrorHandler()
-  const { getRpcProviderByChainId, getRpcBatchProviderByChainId, getRpcBatchRetryProviderByChainId } = useShared()
+  const { getRpcProviderByChainId } = useShared()
   const { trackingAccount } = useAccountTrack()
 
-  const avoProvider = getRpcProviderByChainId(avoChainId)
-  const avoBatchProvider = getRpcBatchRetryProviderByChainId(avoChainId)
+  const { multisigForwarderProxyAddress, forwarderProxyAddress, multisigURL, avoChainId } = storeToRefs(useEnvironmentState())
+
+  const avoProvider = getRpcProviderByChainId(avoChainId.value)
 
   const isObservableAccount = computed(() => {
     if (!account.value)
@@ -73,13 +74,13 @@ export const useSafe = defineStore('safe', () => {
   })
 
   const forwarderProxyContract = Forwarder__factory.connect(
-    forwarderProxyAddress,
-    getRpcBatchProviderByChainId(137),
+    forwarderProxyAddress.value,
+    getRpcProviderByChainId(137),
   )
 
   const multisigForwarderProxyContract = MultisigForwarder__factory.connect(
-    multisigForwarderProxyAddress,
-    getRpcBatchProviderByChainId(137),
+    multisigForwarderProxyAddress.value,
+    getRpcProviderByChainId(137),
   )
 
   const balanceResolverContracts = availableNetworks.reduce((acc, curr) => {
@@ -92,7 +93,7 @@ export const useSafe = defineStore('safe', () => {
 
   async function computeAddresses() {
     try {
-      const polygonProvider = getRpcBatchProviderByChainId(137)
+      const polygonProvider = getRpcProviderByChainId(137)
       const { address, multisigAddress, oldSafeAddress } = await getComputedAddresses({
         accountAddress: account.value,
         provider: polygonProvider,
@@ -302,7 +303,7 @@ export const useSafe = defineStore('safe', () => {
   }
 
   const getSafe = async (address: string): Promise<ISafe> => {
-    return avoBatchProvider.send('api_getSafe', [address])
+    return avoProvider.send('api_getSafe', [address])
   }
 
   async function refreshSelectedSafe() {
@@ -570,7 +571,7 @@ export const useSafe = defineStore('safe', () => {
   }
 
   const getSafes = async (address: string): Promise<ISafesResponse> => {
-    return avoBatchProvider.send('api_getSafes', [{
+    return avoProvider.send('api_getSafes', [{
       address,
     }])
   }
@@ -601,7 +602,7 @@ export const useSafe = defineStore('safe', () => {
       const config = await getSafeOptionsByChain({
         safe,
         chainId,
-        provider: getRpcBatchProviderByChainId(chainId),
+        provider: getRpcProviderByChainId(chainId),
       })
 
       return config
@@ -625,7 +626,7 @@ export const useSafe = defineStore('safe', () => {
 
       const options = await Promise.all(
         availableNetworks.map((network) => {
-          const provider = getRpcBatchProviderByChainId(network.chainId)
+          const provider = getRpcProviderByChainId(network.chainId)
 
           if (String(network.chainId) == '122' && safe.multisig === 0)
             return
@@ -717,7 +718,7 @@ export const useSafe = defineStore('safe', () => {
         params: {
           status: 'pending',
         },
-        baseURL: multisigURL,
+        baseURL: multisigURL.value,
       })
       const txs: IMultisigTransactionResponse = resp.data
       return txs.meta.total
@@ -840,7 +841,6 @@ export const useSafe = defineStore('safe', () => {
     eoaBalances,
     totalEoaBalance,
     fetchBalances,
-    forwarderProxyAddress,
     networkPreference,
     avoProvider,
     getBalances,

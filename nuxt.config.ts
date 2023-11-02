@@ -11,7 +11,6 @@ const meta = {
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   extends: ['@instadapp/avocado-base'],
-  devtools: false,
   runtimeConfig: {
     socketApiKey: process.env.SOCKET_API_KEY,
     debankAccessKey: process.env.DEBANK_ACCESS_KEY,
@@ -21,6 +20,7 @@ export default defineNuxtConfig({
     slackBridgeErrorKey: process.env.SLACK_BRIDGE_ERROR_KEY,
     slackStagingKey: process.env.SLACK_STAGING_KEY,
     public: {
+      environment: process.env.ENVIRONMENT,
       domainURL: process.env.VERCEL_BRANCH_URL ? `https://${process.env.VERCEL_BRANCH_URL}` : 'https://avocado.instadapp.io',
       googleAnalyticsId: process.env.GA_ID,
     },
@@ -194,13 +194,7 @@ export default defineNuxtConfig({
     '@fontsource/source-code-pro/600.css',
     '~/assets/css/app.css',
   ],
-  pinia: {
-    autoImports: [
-      'storeToRefs',
-      'defineStore',
-      'acceptHMRUpdate',
-    ],
-  },
+
   imports: {
     dirs: ['./stores'],
   },
@@ -214,6 +208,14 @@ export default defineNuxtConfig({
   },
 
   vite: {
+    optimizeDeps: {
+      include: [
+        'scrypt-js',
+        'aes-js',
+        'bn.js',
+        'js-sha3',
+        'hash.js'],
+    },
     build: {
       commonjsOptions: {
         transformMixedEsModules: true,

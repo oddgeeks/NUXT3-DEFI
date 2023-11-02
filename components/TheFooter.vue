@@ -2,12 +2,12 @@
 import InstadappSVG from '~/assets/images/logo/instadapp.svg?component'
 
 const info = useBuildInfo()
-const { isProd } = useAppConfig()
+const { isProd } = storeToRefs(useEnvironmentState())
 
 onMounted(() => {
   // console.clear()
   console.log(
-    `%cAvocado v${info.version} (${info.commit.slice(0, 8)}.${isProd ? 'PROD' : 'STAGING'})`,
+    `%cAvocado v${info.version} (${info.commit.slice(0, 8)}.${isProd.value ? 'PROD' : 'STAGING'})`,
     'color: white; background: #07A65D; font-size: 32px;padding: 8px;text-shadow: 2px 2px black;',
   )
 })
