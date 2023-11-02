@@ -133,7 +133,19 @@ async function handleSubmit() {
       'wc',
     )
 
-    if (!transactionHash) {
+    if (!transactionHash && web3WalletV2.value) {
+      const fakeHash = availableNetworks.find(i => String(i.chainId) == String(props.chainId))?.fakeTransactionHash
+
+      console.log(fakeHash)
+
+      web3WalletV2.value.respondSessionRequest({
+        topic: props.sessionV2.topic,
+        response: {
+          id: props.payload.id,
+          result: fakeHash,
+          jsonrpc: '2.0',
+        },
+      })
       toggle(false)
       return
     }
