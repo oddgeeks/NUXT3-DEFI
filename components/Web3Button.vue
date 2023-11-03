@@ -68,7 +68,7 @@ function userSignOut() {
   <div v-show="isActualActive" class="flex items-center gap-[14px]">
     <button
       v-if="!hideGas"
-      class="flex items-center justify-between gap-2 rounded-5 bg-slate-100 px-4 py-[9px] dark:bg-slate-800"
+      class="flex items-center justify-between gap-2 rounded-5 bg-slate-100 px-4 py-[9px] dark:bg-gray-900"
       @click="openTopUpGasModal()"
     >
       <GasSVG
@@ -76,7 +76,7 @@ function userSignOut() {
         :class="
           toBN(pendingGasAmount.data.value).gt('0')
             ? 'text-orange-400'
-            : 'text-slate-400'
+            : 'text-gray-400'
         "
       />
 
@@ -100,7 +100,7 @@ function userSignOut() {
       <Popover
         as="div" class="relative z-30 flex items-center gap-4"
       >
-        <PopoverButton class="relative flex items-center justify-between gap-x-2.5 rounded-7.5 bg-slate-100 px-4.5 py-2.5 leading-5 dark:bg-slate-800 sm:px-4 sm:py-3">
+        <PopoverButton class="relative flex items-center justify-between gap-x-2.5 rounded-7.5 bg-slate-100 px-4.5 py-2.5 leading-5 dark:bg-gray-900 sm:px-4 sm:py-3">
           <div class="flex gap-[14px]">
             <div class="flex items-center gap-2.5">
               <div v-if="connectedProvider">
@@ -134,20 +134,20 @@ function userSignOut() {
                     <component :is="connectedProvider.logo" class="h-7.5 w-7.5 sm:h-9 sm:w-9" />
                   </div>
                   <div class="flex flex-col items-start gap-[6px]">
-                    <span class="text-xs font-medium leading-[10px] text-slate-500">Owner's Address</span>
+                    <span class="text-xs font-medium leading-[10px] text-gray-500">Owner's Address</span>
                     <span class="text-lg font-semibold leading-5">{{ addressLabel }}</span>
                   </div>
                 </div>
 
                 <button
-                  class="flex h-7.5 w-7.5 items-center justify-center overflow-hidden rounded-full bg-slate-150 dark:bg-slate-800"
+                  class="flex h-7.5 w-7.5 items-center justify-center overflow-hidden rounded-full bg-slate-150 dark:bg-gray-900"
                   aria-label="Copy EOA"
                 >
                   <Copy :text="trackingAccount || account" :icon-only="true" />
                 </button>
 
                 <button
-                  class="flex h-7.5 w-7.5 items-center justify-center overflow-hidden rounded-full bg-slate-150 dark:bg-slate-800"
+                  class="flex h-7.5 w-7.5 items-center justify-center overflow-hidden rounded-full bg-slate-150 dark:bg-gray-900"
                   aria-label="Close Connection"
                   @click="closeConnection"
                   @mouseenter="hovered = true"
@@ -160,7 +160,7 @@ function userSignOut() {
                 </button>
               </div>
               <button
-                class="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-150 dark:bg-slate-800"
+                class="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-150 dark:bg-gray-900"
                 aria-label="Close EOA"
                 @click.stop="close"
               >

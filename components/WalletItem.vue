@@ -60,7 +60,7 @@ function handleClick() {
 <template>
   <button
     :class="{
-      'border-slate-50 bg-slate-50 dark:border-slate-800 dark:bg-slate-800': active,
+      'border-slate-50 bg-slate-50 dark:border-gray-800 dark:bg-gray-900': active,
       'bg-slate-150 dark:bg-gray-850': !active,
     }"
     class="flex w-full items-stretch justify-between rounded-2xl border border-slate-150 px-4 py-3.5 text-left dark:border-slate-750" @click="handleClick"
@@ -85,13 +85,13 @@ function handleClick() {
         </template>
       </Copy>
 
-      <p class="text-sm font-medium leading-[18px] text-slate-400">
+      <p class="text-sm font-medium leading-[18px] text-gray-400">
         {{ balance ? formatUsd(balance) : '' }}
       </p>
     </div>
     <div class="flex flex-col items-end justify-between">
       <div class="flex items-center gap-2">
-        <SvgoInfo2 v-if="tooltip && isLegacySafeExist" v-tippy="tooltip" class="text-slate-500" />
+        <SvgoInfo2 v-if="tooltip && isLegacySafeExist" v-tippy="tooltip" class="text-gray-500" />
         <SafeBadge :safe="safe" />
       </div>
       <p class="text-xs font-medium text-orange">

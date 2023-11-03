@@ -79,7 +79,7 @@ function isProviderVisible(provider: Provider) {
           </svg>
 
           <svg
-            v-else class="text-slate-500 transition-all" :class="
+            v-else class="text-gray-500 transition-all" :class="
               provider.name === 'Metamask'
                 ? 'group-hover:text-orange-500'
                 : 'group-hover:text-primary'

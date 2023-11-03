@@ -26,11 +26,11 @@ async function handleDeletingContact(contact: IContact) {
 <template>
   <div class="flex flex-col gap-5 rounded-[20px] bg-slate-50 px-5 pb-4.5 pt-4 dark:bg-gray-850 sm:hidden">
     <div class="flex justify-between">
-      <span class="text-sm font-semibold text-slate-400">{{
+      <span class="text-sm font-semibold text-gray-400">{{
         contact.name
       }}</span>
       <button
-        class="text-red-alert disabled:text-slate-400 disabled:opacity-40" :disabled="contact.owner || contact.notDeletable"
+        class="text-red-alert disabled:text-gray-400 disabled:opacity-40" :disabled="contact.owner || contact.notDeletable"
         @click="handleDeletingContact(contact)"
       >
         <DeleteSVG class="h-4 w-4" />
@@ -46,7 +46,7 @@ async function handleDeletingContact(contact: IContact) {
         </template>
       </Copy>
     </div>
-    <span v-if="getSentTimes(contact) !== ''" class="text-xs text-slate-400">
+    <span v-if="getSentTimes(contact) !== ''" class="text-xs text-gray-400">
       {{ getSentTimes(contact) }}
     </span>
     <div class="flex gap-2.5">

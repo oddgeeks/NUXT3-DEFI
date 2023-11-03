@@ -195,7 +195,7 @@ onMounted(() => {
             @beforeinput="toggleMax(false)"
           >
             <template #suffix>
-              <span class="absolute right-5 text-left text-sm text-slate-400">
+              <span class="absolute right-5 text-left text-sm text-gray-400">
                 {{ formatDecimal(amount) }}
               </span>
             </template>
@@ -214,7 +214,7 @@ onMounted(() => {
             @beforeinput="toggleMax(false)"
           >
             <template #suffix>
-              <span class="absolute right-5 text-left text-sm text-slate-400">
+              <span class="absolute right-5 text-left text-sm text-gray-400">
                 {{ formatUsd(amountInUsd) }}
               </span>
             </template>
@@ -250,7 +250,7 @@ onMounted(() => {
         <div class="flex w-full flex-col gap-2.5">
           <div class="flex items-center justify-between">
             <span class="text-sm">Address</span>
-            <span v-if="totalTransfers" class="text-sm text-slate-400">
+            <span v-if="totalTransfers" class="text-sm text-gray-400">
               {{ totalTransfers }} previous
               {{ totalTransfers === 1 ? "send" : "sends" }}
             </span>
@@ -291,7 +291,7 @@ onMounted(() => {
     </div>
 
     <Transition name="fade">
-      <div class="flex items-center text-xs font-medium leading-6 text-slate-400">
+      <div class="flex items-center text-xs font-medium leading-6 text-gray-400">
         <SvgoInfo2
           class="svg-gray-info mr-2.5 h-4 w-4 rounded-full"
         />
@@ -308,7 +308,7 @@ onMounted(() => {
         :class="{
           'text-slate-900 dark:text-white': isCrossChain,
         }"
-        class="flex items-center gap-2.5 text-sm text-slate-400"
+        class="flex items-center gap-2.5 text-sm text-gray-400"
         @click="onToggleCrossChain"
       >
         <CheckCircle
@@ -322,7 +322,7 @@ onMounted(() => {
       </button>
       <SvgoQuestionCircle
         v-tippy="'Cross-chain send allows you to directly send tokens from chain A to the receiver on chain B'"
-        class="h-4 w-4 text-slate-400"
+        class="h-4 w-4 text-gray-400"
       />
     </div>
   </div>

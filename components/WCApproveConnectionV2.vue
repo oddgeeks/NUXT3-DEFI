@@ -56,7 +56,7 @@ const iconURL = computed(() => {
     </div>
 
     <div class="flex flex-col gap-7.5">
-      <p class="text-center text-xs font-medium text-slate-400">
+      <p class="text-center text-xs font-medium text-gray-400">
         You need the Avocado web app to be open to initiate transactions. You
         will not receive transaction requests when it is not open.
       </p>

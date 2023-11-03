@@ -48,7 +48,7 @@ function handleInput() {
 </script>
 
 <template>
-  <div class="flex w-full items-center justify-between border-b-1 border-slate-150 p-[18px] last:border-b-0 dark:border-slate-800 sm:px-7.5 sm:py-6.5">
+  <div class="flex w-full items-center justify-between border-b-1 border-slate-150 p-[18px] last:border-b-0 dark:border-gray-800 sm:px-7.5 sm:py-6.5">
     <div class="flex w-full items-center justify-between">
       <div class="flex flex-1 flex-wrap items-center gap-3 sm:gap-5">
         <AuthorityAvatar
@@ -64,18 +64,18 @@ function handleInput() {
               <button v-else class="text-sm font-medium text-primary" @click="openAddContactModal(undefined, address)">
                 Save as Contact
               </button>
-              <span v-if="owner" class="text-slate-400">
+              <span v-if="owner" class="text-gray-400">
                 (Owner)
               </span>
             </span>
-            <span class="text-slate-400">
+            <span class="text-gray-400">
               {{ address }}
             </span>
           </span>
         </span>
         <span class="ml-2.5 flex min-w-[135px] flex-col gap-1 text-xs text-slate-900 dark:text-white sm:ml-0 sm:hidden">
           <span>
-            <span v-if="contactName" class="text-slate-400">
+            <span v-if="contactName" class="text-gray-400">
               {{ contactName }}
             </span>
 
@@ -83,7 +83,7 @@ function handleInput() {
               Save as Contact
             </button>
 
-            <span v-if="owner" class="text-slate-400">
+            <span v-if="owner" class="text-gray-400">
               (Owner)
             </span>
           </span>
@@ -92,15 +92,15 @@ function handleInput() {
         <Copy icon-only :text="address">
           <template #copy>
             <div
-              class="flex h-7.5  w-7.5 rounded-full bg-slate-150 dark:bg-slate-800"
+              class="flex h-7.5  w-7.5 rounded-full bg-slate-150 dark:bg-gray-900"
             >
-              <SvgoCopy class="m-auto h-[14px] w-[14px] text-slate-400" />
+              <SvgoCopy class="m-auto h-[14px] w-[14px] text-gray-400" />
             </div>
           </template>
         </Copy>
 
-        <NuxtLink external target="_blank" :to="getExplorerUrl(chainId, `/address/${address}`)" class="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-150 dark:bg-slate-800">
-          <SvgoExternalLink class="w-4 text-slate-400" />
+        <NuxtLink external target="_blank" :to="getExplorerUrl(chainId, `/address/${address}`)" class="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-150 dark:bg-gray-900">
+          <SvgoExternalLink class="w-4 text-gray-400" />
         </NuxtLink>
       </div>
       <label
@@ -110,7 +110,7 @@ function handleInput() {
         }" :for="`input-${address}-${chainId}`"
       >
         <input :id="`input-${address}-${chainId}`" :disabled="isDisabled || !canSign" :value="address" class="peer sr-only" type="checkbox" @change="selectedChainId = chainId" @input="handleInput">
-        <SvgoCheckCircle class="svg-circle darker peer-checked:success-circle cursor-pointer text-slate-500" />
+        <SvgoCheckCircle class="svg-circle darker peer-checked:success-circle cursor-pointer text-gray-500" />
       </label>
     </div>
   </div>

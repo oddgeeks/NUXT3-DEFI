@@ -65,7 +65,7 @@ async function regenerateRecoveryCodes() {
           <h1 class="text-lg leading-[20px]">
             Fallback recovery codes
           </h1>
-          <h2 class="text-xs font-medium leading-5 text-slate-400">
+          <h2 class="text-xs font-medium leading-5 text-gray-400">
             We strongly recommend you to save these codes in a safe place. You can use these codes to recover your account if you lose access to your 2FA device.
           </h2>
         </div>
@@ -77,7 +77,7 @@ async function regenerateRecoveryCodes() {
             {{ code }}
           </li>
         </ul>
-        <button type="button" :loading="loading.regenerate" class="text-xs font-medium text-slate-400" @click="regenerateRecoveryCodes">
+        <button type="button" :loading="loading.regenerate" class="text-xs font-medium text-gray-400" @click="regenerateRecoveryCodes">
           Regenerate recovery codes
         </button>
       </div>
@@ -85,7 +85,7 @@ async function regenerateRecoveryCodes() {
     <div class="flex flex-col gap-5">
       <label class="mt-2.5 flex cursor-pointer gap-2.5 text-xs" for="input-session">
         <input id="input-session" v-model="understand" class="peer sr-only" type="checkbox">
-        <SvgoCheckCircle class="svg-circle darker peer-checked:success-circle mt-1 h-5 w-5 shrink-0 cursor-pointer text-slate-400" />
+        <SvgoCheckCircle class="svg-circle darker peer-checked:success-circle mt-1 h-5 w-5 shrink-0 cursor-pointer text-gray-400" />
         <span class="font-medium leading-5">
           I understand that I will not be able to recover my account if I lose access to my 2FA device and recovery codes.
         </span>

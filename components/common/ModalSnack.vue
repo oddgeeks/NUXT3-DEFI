@@ -30,7 +30,7 @@ const colors = {
         style="word-break: break-word"
         class="flex max-h-20 gap-2 overflow-auto text-xs"
       >
-        <SvgoInfo2 v-if="type === 'info'" class="h-4 w-4 shrink-0 text-slate-400" />
+        <SvgoInfo2 v-if="type === 'info'" class="h-4 w-4 shrink-0 text-gray-400" />
         <SVGErrorCircle
           v-else-if="type === 'error'"
           class="h-4 w-4 shrink-0 [&>path]:stroke-red-alert [&>rect]:fill-white"

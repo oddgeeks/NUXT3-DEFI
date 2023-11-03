@@ -28,7 +28,7 @@ const isSafeDeployed = computed(() => {
 
     <div class="flex flex-col gap-2">
       <div class="flex flex-col gap-1">
-        <span class="text-sm text-slate-500">Avo Address</span>
+        <span class="text-sm text-gray-500">Avo Address</span>
         <div class="flex items-center gap-2.5 text-lg">
           <Copy v-tippy="account" :text="account">
             <template #content>

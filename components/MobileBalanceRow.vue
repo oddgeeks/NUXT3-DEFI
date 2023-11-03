@@ -28,7 +28,7 @@ function onSelect() {
 
 <template>
   <div
-    :class="`flex py-3.5 px-4.5 justify-between items-center ${individual ? 'rounded-5 dark:bg-gray-850 bg-slate-50' : (!summary ? 'border-t border-slate-100 dark:border-slate-800' : '')}`"
+    :class="`flex py-3.5 px-4.5 justify-between items-center ${individual ? 'rounded-5 dark:bg-gray-850 bg-slate-50' : (!summary ? 'border-t border-slate-100 dark:border-gray-800' : '')}`"
     @click="onSelect"
   >
     <div class="flex items-center space-x-2.5">
@@ -50,20 +50,20 @@ function onSelect() {
           }}
           {{ tokenBalance.symbol }}
         </div>
-        <div class="max-w-[256px] text-sm font-medium uppercase text-slate-400">
+        <div class="max-w-[256px] text-sm font-medium uppercase text-gray-400">
           {{ formatUsd(!summary ? tokenBalance.balanceInUSD : sumInUsd) }}
         </div>
       </div>
     </div>
     <div
       v-if="!summary"
-      :class="`w-[34px] h-[34px] bg-slate-150 dark:bg-slate-800 rounded-[12px] flex items-center justify-center text-slate-300 dark:text-slate-600 ${interactable && '!bg-green-500 !text-white'}`"
+      :class="`w-[34px] h-[34px] bg-slate-150 dark:bg-gray-900 rounded-[12px] flex items-center justify-center text-slate-300 dark:text-slate-600 ${interactable && '!bg-green-500 !text-white'}`"
     >
       <Options />
     </div>
     <div v-else>
-      <ChevronDownSVG v-if="!collapse" class="h-[14px] w-[14px] text-slate-400" />
-      <ChevronDownSVG v-else class="h-[14px] w-[14px] rotate-180 text-slate-400" />
+      <ChevronDownSVG v-if="!collapse" class="h-[14px] w-[14px] text-gray-400" />
+      <ChevronDownSVG v-else class="h-[14px] w-[14px] rotate-180 text-gray-400" />
     </div>
   </div>
 </template>

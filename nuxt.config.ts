@@ -189,9 +189,10 @@ export default defineNuxtConfig({
     classSuffix: '',
   },
   css: [
-    '@fontsource/source-code-pro/400.css',
-    '@fontsource/source-code-pro/500.css',
-    '@fontsource/source-code-pro/600.css',
+    '@fontsource/space-grotesk/400.css',
+    '@fontsource/space-grotesk/500.css',
+    '@fontsource/space-grotesk/600.css',
+    '@fontsource/space-grotesk/700.css',
     '~/assets/css/app.css',
   ],
   pinia: {

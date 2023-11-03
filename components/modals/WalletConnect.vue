@@ -205,7 +205,7 @@ onMounted(async () => {
           Connect with WalletConnect
         </div>
 
-        <p class="text-center text-xs font-medium leading-5 text-slate-400">
+        <p class="text-center text-xs font-medium leading-5 text-gray-400">
           Do not close this window while connecting.<br>
           Have a question? Follow this
           <a
@@ -226,7 +226,7 @@ onMounted(async () => {
         placeholder="QR code or link"
       >
         <template v-if="!uri" #suffix>
-          <SVGQr class="text-slate-400" />
+          <SVGQr class="text-gray-400" />
         </template>
       </CommonInput>
 
@@ -242,7 +242,7 @@ onMounted(async () => {
     </form>
 
     <div v-if="isIframeVisible" class="mt-6" @click="isTutorialWatched = true">
-      <h1 class="mb-3 text-center text-xs font-medium leading-5 text-slate-400">
+      <h1 class="mb-3 text-center text-xs font-medium leading-5 text-gray-400">
         Looking for step-by-step instructions? <br>Watch this video.
       </h1>
       <LiteYouTubeEmbed

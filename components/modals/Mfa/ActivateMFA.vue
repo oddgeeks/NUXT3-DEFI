@@ -110,7 +110,7 @@ onMounted(async () => {
         <h1 class="text-lg">
           {{ mfaType.title }}
         </h1>
-        <h2 class="text-xs font-medium text-slate-400">
+        <h2 class="text-xs font-medium text-gray-400">
           {{ mfaType.description }}
         </h2>
       </div>

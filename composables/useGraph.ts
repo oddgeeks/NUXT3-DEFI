@@ -37,7 +37,7 @@ export function useGraph(balance: Ref<IBalance>) {
 
   const priceDiffClass = computed(() => {
     if (!priceDiffInPercent.value)
-      return 'text-slate-400'
+      return 'text-gray-400'
 
     if (priceDiffInPercent.value < 0)
       return 'text-red-alert'

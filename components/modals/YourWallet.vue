@@ -32,7 +32,7 @@ defineProps({
         target="_blank"
         class="absolute left-0 top-0 m-6 inline-flex items-center space-x-2 text-primary"
       >
-        <ExternalLinkSVG class="h-6.5 w-6.5 text-slate-400" />
+        <ExternalLinkSVG class="h-6.5 w-6.5 text-gray-400" />
       </NuxtLink>
     </div>
 

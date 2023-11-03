@@ -54,7 +54,7 @@ async function handleTokenSelection() {
       <SafeTokenLogo :network-logo-class="networkLogoClass" :chain-id="chainId" class="h-6 w-6" :url="selectedToken?.logoURI" />
       <span class="inline-flex w-full items-center justify-between gap-[6px]">
         {{ selectedToken?.symbol }}
-        <ChevronDownSVG class="w-5 -rotate-90 text-slate-400" />
+        <ChevronDownSVG class="w-5 -rotate-90 text-gray-400" />
       </span>
     </template>
   </button>

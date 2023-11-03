@@ -18,7 +18,7 @@ function handleOpenSendModal() {
 
 <template>
   <div>
-    <h2 class="mb-2.5 flex items-center gap-2 font-semibold text-slate-400">
+    <h2 class="mb-2.5 flex items-center gap-2 font-semibold text-gray-400">
       Total balance
 
       <SvgSpinner v-if="balances.loading" class="text-primary" />
@@ -38,7 +38,7 @@ function handleOpenSendModal() {
             <div
               class="rounded-full bg-primary p-1.5 text-white"
               :class="{
-                'bg-slate-300 !text-slate-400 dark:bg-slate-600 dark:!text-slate-500':
+                'bg-slate-300 !text-gray-400 dark:bg-slate-600 dark:!text-gray-500':
                   !hasAvailableTokens(),
               }"
             >

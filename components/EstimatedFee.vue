@@ -33,7 +33,7 @@ const discountAvailable = computed(() => {
         </span>
         <span
           v-else
-          class="inline-flex items-center gap-2 text-xs font-medium text-slate-400"
+          class="inline-flex items-center gap-2 text-xs font-medium text-gray-400"
         >
           <GasSVG class="w-4" />
           Gas fees
@@ -42,7 +42,7 @@ const discountAvailable = computed(() => {
         <template v-else-if="data">
           <span
             :class="[
-              discountAvailable ? 'text-slate-400' : '',
+              discountAvailable ? 'text-gray-400' : '',
               { 'text-red-alert': error },
             ]"
             class="inline-flex items-center gap-2.5 text-xs"
@@ -63,7 +63,7 @@ const discountAvailable = computed(() => {
         <div
           v-for="detail in data.discountDetails"
           :key="detail.name"
-          class="flex w-full items-center justify-between text-xs font-medium leading-5 text-slate-400"
+          class="flex w-full items-center justify-between text-xs font-medium leading-5 text-gray-400"
         >
           <div class="flex items-center gap-1.5">
             <span class="text-base"> 🎁 </span>

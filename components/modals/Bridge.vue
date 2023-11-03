@@ -289,7 +289,7 @@ const onSubmit = form.handleSubmit(async () => {
         <h1 class="text-lg leading-[20px]">
           Bridge
         </h1>
-        <h2 class="text-xs font-medium leading-5 text-slate-400">
+        <h2 class="text-xs font-medium leading-5 text-gray-400">
           Migrate tokens across multiple networks with lowest slippage.
         </h2>
       </div>
@@ -363,7 +363,7 @@ const onSubmit = form.handleSubmit(async () => {
               @beforeinput="toggleMax(false)"
             >
               <template #suffix>
-                <span class="absolute right-5 text-left text-sm text-slate-400">
+                <span class="absolute right-5 text-left text-sm text-gray-400">
                   {{ formatDecimal(amount) }}
                 </span>
               </template>
@@ -380,7 +380,7 @@ const onSubmit = form.handleSubmit(async () => {
               @beforeinput="toggleMax(false)"
             >
               <template #suffix>
-                <span class="flex text-sm text-slate-400">
+                <span class="flex text-sm text-gray-400">
                   {{ formatUsd(amountInUsd) }}
                 </span>
               </template>
@@ -431,10 +431,10 @@ const onSubmit = form.handleSubmit(async () => {
             </div>
             <div class="flex flex-col gap-2 sm:gap-2.5">
               <div class="flex items-center justify-between">
-                <span class="text-sm font-medium text-slate-400">
+                <span class="text-sm font-medium text-gray-400">
                   Estimated processing time
                 </span>
-                <span class="font-medium text-slate-400">
+                <span class="font-medium text-gray-400">
                   {{
                     txRoute
                       ? `~${Math.round(txRoute.serviceTime / 60)}m`
@@ -443,7 +443,7 @@ const onSubmit = form.handleSubmit(async () => {
                 </span>
               </div>
               <div
-                class="hidden items-center justify-between text-sm font-medium text-slate-400 sm:flex"
+                class="hidden items-center justify-between text-sm font-medium text-gray-400 sm:flex"
               >
                 <span>
                   Route Through
@@ -488,14 +488,14 @@ const onSubmit = form.handleSubmit(async () => {
                                   </span>
                                   <SvgoCheckCircle v-else-if="txRoute.routeId === route.routeId" class="success-circle w-4" />
                                 </div>
-                                <span class="text-xs text-slate-400">
+                                <span class="text-xs text-gray-400">
                                   {{ formatDecimal(fromWei(route?.toAmount || '0', bridgeToToken?.decimals).toFixed()) }}
                                   {{ bridgeToToken?.symbol }}
                                   ({{ formatUsd(times(fromWei(route?.toAmount || '0', bridgeToToken?.decimals), bridgeToToken?.price || '0')) }})</span>
                               </div>
                             </div>
                           </MenuItem>
-                          <hr class="border-slate-100 last:hidden dark:border-slate-800">
+                          <hr class="border-slate-100 last:hidden dark:border-gray-800">
                         </template>
                       </MenuItems>
                     </transition>
@@ -526,7 +526,7 @@ const onSubmit = form.handleSubmit(async () => {
                 <span>{{ formatDecimal(recievedAmount) }}
                   {{ bridgeToToken?.symbol || fromToken.symbol }}</span>
 
-                <span class="text-sm text-slate-400">({{ formatUsd(recivedValueInUsd) }})</span>
+                <span class="text-sm text-gray-400">({{ formatUsd(recivedValueInUsd) }})</span>
               </span>
             </div>
           </div>
@@ -535,8 +535,8 @@ const onSubmit = form.handleSubmit(async () => {
         <EstimatedFee :loading="pending" :data="data" :error="error" />
 
         <Transition name="fade">
-          <p v-if="feeInfoMessage" class="mt-1 flex items-start text-xs font-medium leading-6 text-slate-400">
-            <SvgoExclamationCircle class="mr-2.5 mt-1 h-4.5 w-4.5 shrink-0 text-slate-500" />
+          <p v-if="feeInfoMessage" class="mt-1 flex items-start text-xs font-medium leading-6 text-gray-400">
+            <SvgoExclamationCircle class="mr-2.5 mt-1 h-4.5 w-4.5 shrink-0 text-gray-500" />
             <span class="block">
               {{ feeInfoMessage }}
             </span>
@@ -599,13 +599,13 @@ const onSubmit = form.handleSubmit(async () => {
 }
 
 .divider:after {
-  @apply w-5 h-5 rounded-full absolute top-1/2 -right-10 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-950 bg-white;
+  @apply w-5 h-5 rounded-full absolute top-1/2 -right-10 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-975 bg-white;
   content: "";
   display: block;
 }
 
 .divider:before {
-  @apply w-5 h-5 rounded-full absolute top-1/2 -left-5 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-950 bg-white;
+  @apply w-5 h-5 rounded-full absolute top-1/2 -left-5 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-975 bg-white;
   content: "";
   display: block;
 }

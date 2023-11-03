@@ -141,7 +141,7 @@ const { safeAddress } = useAvocadoSafe()
           "
           class="flex flex-col items-center space-y-4 rounded-[25px] bg-slate-50 py-32 dark:bg-gray-850"
         >
-          <p class="text-slate-400">
+          <p class="text-gray-400">
             Nothing could be found
           </p>
           <div
@@ -177,7 +177,7 @@ const { safeAddress } = useAvocadoSafe()
           >
             <thead>
               <tr
-                class="border-b border-slate-150 text-left text-sm font-medium text-gray-400 dark:border-slate-800"
+                class="border-b border-slate-150 text-left text-sm font-medium text-gray-400 dark:border-gray-800"
               >
                 <th class="py-6 pl-7.5 text-left">
                   Token
@@ -193,7 +193,7 @@ const { safeAddress } = useAvocadoSafe()
                 </th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-150 dark:divide-slate-800">
+            <tbody class="divide-y divide-slate-150 dark:divide-gray-900">
               <template v-if="!account || !tokenBalances.length || !balances.data">
                 <LoadingBalanceRow
                   v-for="i in 8"
@@ -256,7 +256,7 @@ const { safeAddress } = useAvocadoSafe()
                 Add tokens to your Avocado wallet
               </p>
               <Copy
-                class="text-wrap flex items-center justify-between gap-2 rounded-5 bg-slate-100 px-4 py-3 text-left text-xs dark:bg-slate-800"
+                class="text-wrap flex items-center justify-between gap-2 rounded-5 bg-slate-100 px-4 py-3 text-left text-xs dark:bg-gray-900"
                 :text="safeAddress"
               >
                 <template #content>
@@ -291,7 +291,7 @@ const { safeAddress } = useAvocadoSafe()
               Add tokens to your Avocado wallet
             </p>
             <Copy
-              class="text-wrap flex items-center justify-between gap-2 rounded-5 bg-slate-100 px-4 py-3 text-left text-[14px] dark:bg-slate-800"
+              class="text-wrap flex items-center justify-between gap-2 rounded-5 bg-slate-100 px-4 py-3 text-left text-[14px] dark:bg-gray-900"
               :text="safeAddress"
             >
               <template #content>
@@ -322,7 +322,7 @@ const { safeAddress } = useAvocadoSafe()
       </div>
       <p
         v-if="account"
-        class="mb-5 text-center text-xs leading-5 text-slate-400 dark:text-slate-500 sm:mb-0 sm:text-right"
+        class="mb-5 text-center text-xs leading-5 text-gray-400 dark:text-gray-500 sm:mb-0 sm:text-right"
       >
         Don’t see your tokens?
         <button class="text-primary" @click="openImportTokenModal()">

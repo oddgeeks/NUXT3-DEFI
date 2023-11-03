@@ -25,11 +25,11 @@ const tippyOptions = {
   <div class="relative">
     <button
       :style="{ left: `${actualWidth - 14}px` }"
-      class="fixed top-7.5 z-10 flex  h-7 w-7 items-center justify-center rounded-full bg-slate-100 transition-[width] dark:bg-slate-800"
+      class="fixed top-7.5 z-10 flex  h-7 w-7 items-center justify-center rounded-full bg-slate-100 transition-[width] dark:bg-gray-900"
       @click="toggleSidebar"
     >
       <ArrowRight
-        class="h-3.5 w-3.5 text-slate-400"
+        class="h-3.5 w-3.5 text-gray-400"
         :class="{ 'rotate-180': opened }"
       />
     </button>
@@ -64,14 +64,14 @@ const tippyOptions = {
               ...tippyOptions,
               content: 'Show Avocado QR Code',
             }"
-            class="flex w-full items-center justify-center rounded-5 bg-slate-100 py-4 dark:bg-slate-800"
+            class="flex w-full items-center justify-center rounded-5 bg-slate-100 py-4 dark:bg-gray-900"
             @click="openQrCode"
           >
             <QrSVG class="h-4.5 w-4.5" />
           </button>
 
           <div
-            class="flex w-full items-center justify-center rounded-5 bg-slate-100 dark:bg-slate-800"
+            class="flex w-full items-center justify-center rounded-5 bg-slate-100 dark:bg-gray-900"
           >
             <Copy
               v-tippy="{
@@ -85,7 +85,7 @@ const tippyOptions = {
             />
           </div>
         </div>
-        <div :class="{ 'pointer-events-none blur': !safeAddress }" class="flex w-full flex-col items-center gap-2.5 rounded-5 bg-slate-100 py-2.5 text-slate-400 dark:bg-slate-800">
+        <div :class="{ 'pointer-events-none blur': !safeAddress }" class="flex w-full flex-col items-center gap-2.5 rounded-5 bg-slate-100 py-2.5 text-gray-400 dark:bg-gray-900">
           <template
             v-for="nav in navigations"
             :key="nav.to"

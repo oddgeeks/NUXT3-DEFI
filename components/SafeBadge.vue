@@ -11,7 +11,7 @@ const isLegacy = computed(() => props.safe.multisig === 0)
 
 <template>
   <p
-    :class="isMultisig ? 'bg-purple text-purple' : isLegacy ? 'bg-slate-400 text-slate-400' : 'bg-primary text-primary'"
+    :class="isMultisig ? 'bg-purple text-purple' : isLegacy ? 'bg-gray-400 text-gray-400' : 'bg-primary text-primary'"
     class="rounded-lg bg-opacity-[14%] px-2 py-0.5 text-xs font-medium"
   >
     {{ isMultisig ? 'MULTISIG' : isLegacy ? 'LEGACY' : 'PERSONAL' }}

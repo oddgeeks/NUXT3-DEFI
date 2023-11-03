@@ -56,7 +56,7 @@ function openBridge() {
 
 <template>
   <div :class="{ 'pointer-events-none blur': !safeAddress }">
-    <div class="font-base flex w-full flex-col gap-2 border-y-1 border-slate-150 px-7.5 py-4 text-slate-400 dark:border-slate-750">
+    <div class="font-base flex w-full flex-col gap-2 border-y-1 border-slate-150 px-7.5 py-4 text-gray-400 dark:border-slate-750">
       <template
         v-for="nav in navigations"
         :key="nav.to"
@@ -72,13 +72,13 @@ function openBridge() {
         >
           <component :is="nav.icon" class="h-4 w-4" />
           {{ nav.label }}
-          <span v-if="nav?.count" class="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-slate-500 px-[5px] text-xs text-white">
+          <span v-if="nav?.count" class="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gray-500 px-[5px] text-xs text-white">
             {{ nav?.count }}
           </span>
         </NuxtLink>
       </template>
     </div>
-    <div class="flex w-full flex-col gap-2 border-b-1 border-slate-150 px-7.5 py-4 text-slate-400 dark:border-slate-750">
+    <div class="flex w-full flex-col gap-2 border-b-1 border-slate-150 px-7.5 py-4 text-gray-400 dark:border-slate-750">
       <button
         class="flex h-11 items-center justify-between"
         :class="{
@@ -158,7 +158,7 @@ function openBridge() {
       </div>
     </div>
     <div v-if="eoaBalances && eoaBalances?.length && isOnboardBannerVisible" class="flex flex-col gap-[14px] px-7.5 py-6 text-xs">
-      <span class="text-center text-slate-400 sm:text-left">You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet (EOA)</span>
+      <span class="text-center text-gray-400 sm:text-left">You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet (EOA)</span>
       <div class="flex justify-center sm:justify-start">
         <CommonButton
           size="sm"

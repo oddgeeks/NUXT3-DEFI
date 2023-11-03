@@ -140,8 +140,8 @@ whenever(open, () => {
           <li
             v-for="(option, i) in actualOptions"
             :key="i"
-            class="rounded-[14px] text-left text-sm hover:bg-slate-100 hover:dark:bg-slate-800"
-            :class="{ 'bg-slate-100 dark:bg-slate-800': isSelected(option, i) }"
+            class="rounded-[14px] text-left text-sm hover:bg-slate-100 hover:dark:bg-gray-900"
+            :class="{ 'bg-slate-100 dark:bg-gray-900': isSelected(option, i) }"
           >
             <button
               type="button"

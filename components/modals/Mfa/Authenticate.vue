@@ -33,19 +33,19 @@ const isBackupSignerAvailable = computed(() => {
       <template v-for="mfa in enabledMfas" :key="mfa.value">
         <li v-if="mfa.value !== 'backup'">
           <button
-            class="flex w-full items-center justify-between rounded-2xl border bg-slate-50 p-5 text-left text-sm font-medium text-slate-400 hover:bg-slate-100 dark:border-slate-700 dark:bg-gray-850  hover:dark:bg-gray-800"
+            class="flex w-full items-center justify-between rounded-2xl border bg-slate-50 p-5 text-left text-sm font-medium text-gray-400 hover:bg-slate-100 dark:border-slate-700 dark:bg-gray-850  hover:dark:bg-gray-800"
             @click="$emit('resolve', true, {
               mfa,
             })"
           >
             <span class="flex items-center gap-[14px]">
-              <Component :is="mfa.icon" class="text-slate-400" />
+              <Component :is="mfa.icon" class="text-gray-400" />
               {{ mfa.label }}
             </span>
             <SvgoChevronDown class="-rotate-90" />
           </button>
         </li>
-        <li v-else-if="isBackupSignerAvailable" class="text-xs font-medium text-slate-400">
+        <li v-else-if="isBackupSignerAvailable" class="text-xs font-medium text-gray-400">
           OTP inaccessable? <button class="text-primary" @click="$emit('resolve', true, { mfa })">
             Use backup address to approve transaction
           </button>

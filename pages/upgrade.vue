@@ -30,7 +30,7 @@ const mostRecentVersion = computed(() => {
         Upgrade your Avocado Wallet
         <SvgSpinner v-if="optionsLoading" class="text-primary" />
       </h1>
-      <h2 class="text-xs font-medium leading-6 text-slate-400 sm:text-sm">
+      <h2 class="text-xs font-medium leading-6 text-gray-400 sm:text-sm">
         Avocado wallet is a Smart Contract wallet, it is recommended that you
         keep your Smart Contract upgraded to make the most of Avocado.
       </h2>
@@ -43,7 +43,7 @@ const mostRecentVersion = computed(() => {
         <table class="table w-full">
           <thead>
             <tr
-              class="hidden border-b border-slate-150 text-left text-sm font-medium text-gray-400 dark:border-slate-800 sm:table-row"
+              class="hidden border-b border-slate-150 text-left text-sm font-medium text-gray-400 dark:border-gray-800 sm:table-row"
             >
               <th class="py-6 pl-7.5 text-left">
                 Network
@@ -56,7 +56,7 @@ const mostRecentVersion = computed(() => {
               </th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-150 dark:divide-slate-800">
+          <tbody class="divide-y divide-slate-150 dark:divide-gray-900">
             <NetworkUpgradeRow
               v-for="options in sortByVersion"
               :key="options.chainId"

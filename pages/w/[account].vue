@@ -38,7 +38,7 @@ if (!(await isSafeAddress(account)))
           </div>
 
           <Copy
-            class="text-wrap flex items-center justify-between gap-2 rounded-5 bg-slate-100 px-4 py-3 text-left text-xs dark:bg-slate-800"
+            class="text-wrap flex items-center justify-between gap-2 rounded-5 bg-slate-100 px-4 py-3 text-left text-xs dark:bg-gray-900"
             :text="account"
           >
             <template #content>

@@ -73,7 +73,7 @@ function selectType(type: string) {
                   :class="{
                     'text-slate-900 dark:text-white': isHideZeroBalances,
                   }"
-                  class="hidden items-center gap-2.5 text-sm text-slate-400 sm:inline-flex"
+                  class="hidden items-center gap-2.5 text-sm text-gray-400 sm:inline-flex"
                   @click="isHideZeroBalances = !isHideZeroBalances"
                 >
                   Hide 0 Balances
@@ -113,7 +113,7 @@ function selectType(type: string) {
         >
           <div class="flex flex-col items-center justify-center gap-6">
             <p
-              class="text-center font-semibold leading-[30px] text-slate-400 sm:whitespace-nowrap sm:text-lg sm:text-white"
+              class="text-center font-semibold leading-[30px] text-gray-400 sm:whitespace-nowrap sm:text-lg sm:text-white"
             >
               Connect your wallet to see the balances
             </p>

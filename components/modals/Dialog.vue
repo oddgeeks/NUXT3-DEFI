@@ -54,7 +54,7 @@ function handleReject() {
       </h1>
       <p
         v-if="content"
-        class="text-center text-xs font-medium leading-5 text-slate-400"
+        class="text-center text-xs font-medium leading-5 text-gray-400"
         v-html="content"
       />
     </div>

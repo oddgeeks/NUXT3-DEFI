@@ -667,7 +667,7 @@ onUnmounted(() => {
             <h1 class="text-lg leading-[20px]">
               Swap
             </h1>
-            <h2 class="text-xs font-medium leading-5 text-slate-400">
+            <h2 class="text-xs font-medium leading-5 text-gray-400">
               Trade tokens on multiple networks at best price.
             </h2>
           </div>
@@ -685,7 +685,7 @@ onUnmounted(() => {
 
     <div class="flex flex-col gap-4">
       <div
-        class="relative flex flex-col gap-4 rounded-5 border-2 border-transparent bg-slate-100 px-5 py-4 focus-within:border-slate-150 focus-within:bg-slate-50 dark:bg-slate-800 focus-within:dark:border-slate-800 focus-within:dark:bg-gray-850"
+        class="relative flex flex-col gap-4 rounded-5 border-2 border-transparent bg-slate-100 px-5 py-4 focus-within:border-slate-150 focus-within:bg-slate-50 dark:bg-gray-900 focus-within:dark:border-gray-800 focus-within:dark:bg-gray-850"
       >
         <div class="flex">
           <div
@@ -727,7 +727,7 @@ onUnmounted(() => {
             class="bg-white dark:bg-gray-900"
           />
         </div>
-        <div class="flex items-center justify-between text-sm text-slate-400">
+        <div class="flex items-center justify-between text-sm text-gray-400">
           <div
             v-if="isLoading"
             style="width: 60px; height: 24px"
@@ -755,15 +755,15 @@ onUnmounted(() => {
         </span>
         <button
           type="button"
-          class="absolute -bottom-[26px] left-1/2 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full bg-slate-150 ring-[6px] ring-white dark:bg-slate-600 dark:ring-gray-950"
+          class="absolute -bottom-[26px] left-1/2 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full bg-slate-150 ring-[6px] ring-white dark:bg-slate-600 dark:ring-gray-975"
           @click="swapTokens"
         >
-          <ArrowLeft class="h-5 w-5 -rotate-90 text-slate-400" />
+          <ArrowLeft class="h-5 w-5 -rotate-90 text-gray-400" />
         </button>
       </div>
 
       <div
-        class="flex flex-col gap-4 rounded-5 border-2 border-transparent bg-slate-100 px-5 py-4 focus-within:border-slate-150 focus-within:bg-slate-50 dark:bg-slate-800 focus-within:dark:border-slate-800 focus-within:dark:bg-gray-850"
+        class="flex flex-col gap-4 rounded-5 border-2 border-transparent bg-slate-100 px-5 py-4 focus-within:border-slate-150 focus-within:bg-slate-50 dark:bg-gray-900 focus-within:dark:border-gray-800 focus-within:dark:bg-gray-850"
       >
         <div class="flex">
           <div
@@ -805,7 +805,7 @@ onUnmounted(() => {
             class="bg-white dark:bg-gray-900"
           />
         </div>
-        <div class="flex items-center justify-between text-sm text-slate-400">
+        <div class="flex items-center justify-between text-sm text-gray-400">
           <div
             v-if="isLoading"
             style="width: 60px; height: 24px"
@@ -847,7 +847,7 @@ onUnmounted(() => {
                   </button>
                 </span>
                 <ChevronDownSVG
-                  class="w-5 text-slate-400 group-open:rotate-180"
+                  class="w-5 text-gray-400 group-open:rotate-180"
                 />
               </summary>
               <div class="mt-4 flex flex-1 items-end gap-4">
@@ -899,7 +899,7 @@ onUnmounted(() => {
 
             <div class="flex flex-col gap-4">
               <div
-                class="flex flex-col items-center justify-between text-sm font-medium uppercase text-slate-400 sm:flex-row"
+                class="flex flex-col items-center justify-between text-sm font-medium uppercase text-gray-400 sm:flex-row"
               >
                 <div
                   v-if="isLoading"
@@ -931,7 +931,7 @@ onUnmounted(() => {
                 </div>
               </div>
               <div
-                class="hidden items-center justify-between text-sm font-medium text-slate-400 sm:flex"
+                class="hidden items-center justify-between text-sm font-medium text-gray-400 sm:flex"
               >
                 <span>
                   Route Through
@@ -976,14 +976,14 @@ onUnmounted(() => {
                                   </span>
                                   <SvgoCheckCircle v-else-if="aggr.name === selectedRoute.name" class="success-circle w-4" />
                                 </div>
-                                <span class="text-xs text-slate-400">
+                                <span class="text-xs text-gray-400">
                                   {{ formatDecimal(fromWei(aggr.data.buyTokenAmount, aggr.data.buyToken.decimals).toFixed()) }}
                                   {{ aggr.data.buyToken.symbol }}
                                   ({{ formatUsd(times(fromWei(aggr.data.buyTokenAmount, aggr.data.buyToken.decimals), aggr.data.buyToken.price)) }})</span>
                               </div>
                             </div>
                           </MenuItem>
-                          <hr class="border-slate-100 last:hidden dark:border-slate-800">
+                          <hr class="border-slate-100 last:hidden dark:border-gray-800">
                         </template>
                       </MenuItems>
                     </transition>
@@ -995,7 +995,7 @@ onUnmounted(() => {
                 </span>
               </div>
               <div
-                class="hidden items-center justify-between text-sm font-medium text-slate-400 sm:flex"
+                class="hidden items-center justify-between text-sm font-medium text-gray-400 sm:flex"
               >
                 <span>
                   Min. Received after slippage ({{ actualSlippage }}%)

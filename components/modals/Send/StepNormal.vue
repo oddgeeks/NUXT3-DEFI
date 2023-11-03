@@ -134,7 +134,7 @@ async function onSubmit() {
     <div class="mx-[-0.75rem] rounded-5 bg-slate-50 px-3 py-[14px] text-sm dark:bg-gray-850 sm:mx-0 sm:px-5">
       <div class="flex flex-col gap-2.5 font-medium">
         <dl class="flex items-center justify-between">
-          <dt class="text-slate-400">
+          <dt class="text-gray-400">
             Network
           </dt>
           <dd class="flex items-center gap-2">
@@ -143,7 +143,7 @@ async function onSubmit() {
           </dd>
         </dl>
         <dl class="flex items-center justify-between">
-          <dt class="text-slate-400">
+          <dt class="text-gray-400">
             Token
           </dt>
           <dd class=" flex items-center gap-2">
@@ -151,13 +151,13 @@ async function onSubmit() {
             <span class="uppercase">
               {{ token?.symbol }}
             </span>
-            <span v-tippy="token?.name" class="max-w-[200px] truncate text-slate-400">
+            <span v-tippy="token?.name" class="max-w-[200px] truncate text-gray-400">
               ({{ token?.name }})
             </span>
           </dd>
         </dl>
         <dl class="flex flex-wrap items-center justify-between">
-          <dt class="whitespace-nowrap text-slate-400">
+          <dt class="whitespace-nowrap text-gray-400">
             To address
           </dt>
           <dd>
@@ -177,7 +177,7 @@ async function onSubmit() {
           <span class="uppercase">
             {{ formatDecimal(data.amount) }} {{ token?.symbol }}
           </span>
-          <span class="text-slate-400">
+          <span class="text-gray-400">
             ({{ formatUsd(amountInUsd) }})
           </span>
         </p>

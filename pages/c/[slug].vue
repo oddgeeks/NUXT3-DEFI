@@ -230,7 +230,7 @@ Issued At: ${new Date().toISOString()}`
           <p class="text-xl leading-8">
             Check Eligibility
           </p>
-          <p class="text-sm font-medium text-slate-400">
+          <p class="text-sm font-medium text-gray-400">
             Connect your wallet to check your eligibility
           </p>
         </div>
@@ -267,7 +267,7 @@ Issued At: ${new Date().toISOString()}`
     >
       <span class="text-[46px]">✨ Congratulations! ✨</span>
       <div class="flex flex-col items-center">
-        <span class="max-w-2xl text-center leading-7 text-slate-400">You are eligible for free gas to make transactions on all supported networks all using only USDC. You have received:</span>
+        <span class="max-w-2xl text-center leading-7 text-gray-400">You are eligible for free gas to make transactions on all supported networks all using only USDC. You have received:</span>
         <div class="flex items-center gap-6.5">
           <div class="relative">
             <GasEmoji />
@@ -289,13 +289,13 @@ Issued At: ${new Date().toISOString()}`
     <div v-else-if="claimed" class="flex flex-col items-center gap-10 rounded-5 bg-slate-50 px-[50px] py-10 dark:bg-gray-850">
       <div class="flex flex-col items-center gap-5">
         <span class="text-xl">You've already claimed this promo</span>
-        <span class="w-[269px] text-center text-sm text-slate-400">Connect to a different wallet</span>
+        <span class="w-[269px] text-center text-sm text-gray-400">Connect to a different wallet</span>
       </div>
     </div>
     <div v-else-if="!claimSuccess" class="flex flex-col items-center gap-10 rounded-5 bg-slate-50 px-[50px] py-10 dark:bg-gray-850">
       <div class="flex flex-col items-center gap-5">
         <span class="text-xl">This address is not eligible</span>
-        <span class="w-[269px] text-center text-sm text-slate-400">Connect to a different wallet</span>
+        <span class="w-[269px] text-center text-sm text-gray-400">Connect to a different wallet</span>
       </div>
     </div>
     <div v-else class="flex flex-col items-center space-y-5">

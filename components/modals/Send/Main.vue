@@ -86,7 +86,7 @@ onUnmounted(() => {
           {{ isCrossChain ? 'Cross-chain Send' : 'Send' }}
           <span v-if="contact"> to {{ contact.name }}  </span>
         </h1>
-        <h2 class="text-xs font-medium leading-5 text-slate-400">
+        <h2 class="text-xs font-medium leading-5 text-gray-400">
           Transfer tokens to any address on selected chain.
         </h2>
       </div>
@@ -108,7 +108,7 @@ onUnmounted(() => {
       <CommonButton
         :disabled="contact.owner"
         color="white"
-        class="justify-center bg-slate-150 !px-4 dark:bg-slate-800"
+        class="justify-center bg-slate-150 !px-4 dark:bg-gray-900"
         @click="handleEdit()"
       >
         Edit

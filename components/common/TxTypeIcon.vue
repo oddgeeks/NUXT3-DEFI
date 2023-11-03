@@ -14,11 +14,11 @@ const props = withDefaults(defineProps<TxTypeProps>(), {
 const colorClasses = {
   default: {
     active: 'bg-primary text-white',
-    disabled: 'dark:bg-slate-800 bg-slate-100 dark:disabled:text-slate-500 disabled:text-slate-400',
+    disabled: 'dark:bg-gray-900 bg-slate-100 dark:disabled:text-gray-500 disabled:text-gray-400',
   },
   light: {
     active: 'bg-primary text-white ',
-    disabled: 'dark:bg-slate-600 bg-slate-300 dark:!text-slate-500 !text-slate-400',
+    disabled: 'dark:bg-slate-600 bg-slate-300 dark:!text-gray-500 !text-gray-400',
   },
 }
 

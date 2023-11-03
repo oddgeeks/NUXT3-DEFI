@@ -46,7 +46,7 @@ async function disconnectWallet() {
         {{ props.session.peer.metadata.name }}
       </div>
       <div class="flex flex-col items-center justify-center gap-5">
-        <p class="text-center text-xs font-medium leading-5 text-slate-400">
+        <p class="text-center text-xs font-medium leading-5 text-gray-400">
           You need the Avocado web app to be open to initiate transactions.
           Please don't close the tab.
         </p>

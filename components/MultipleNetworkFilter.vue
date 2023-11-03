@@ -79,14 +79,14 @@ function toggleAllNetworks() {
       @click="openNetworksModal"
     >
       Filters
-      <ChevronDownSVG class="h-[14px] w-[14px] -rotate-90 text-slate-400" />
+      <ChevronDownSVG class="h-[14px] w-[14px] -rotate-90 text-gray-400" />
     </button>
     <Popover
       as="div" :class="`relative z-20 gap-4 items-center ${!filters ? 'flex' : 'hidden sm:flex'}`"
     >
       <PopoverButton class="flex h-7.5 items-center gap-2 text-sm focus-visible:outline-none">
         Networks
-        <ChevronDownSVG class="h-[14px] w-[14px] text-slate-400" />
+        <ChevronDownSVG class="h-[14px] w-[14px] text-gray-400" />
       </PopoverButton>
       <transition
         enter-active-class="transition duration-100 ease-out"
@@ -104,7 +104,7 @@ function toggleAllNetworks() {
           <li
             class="flex items-center justify-between gap-2.5 rounded-[14px] px-3 py-1 text-sm"
           >
-            <span class="text-[11px] text-slate-400">Networks</span>
+            <span class="text-[11px] text-gray-400">Networks</span>
             <div
               class="cursor-pointer select-none text-[11px] text-green-600"
               @click="toggleAllNetworks"
@@ -120,7 +120,7 @@ function toggleAllNetworks() {
           <li
             v-for="network in allNetworks"
             :key="network.chainId"
-            class="flex cursor-pointer items-center gap-2.5 rounded-[14px] px-3 py-2.5 text-sm hover:bg-slate-150 hover:dark:bg-slate-800"
+            class="flex cursor-pointer items-center gap-2.5 rounded-[14px] px-3 py-2.5 text-sm hover:bg-slate-150 hover:dark:bg-gray-900"
             @click="toggleNetwork(network.chainId)"
           >
             <ChainLogo

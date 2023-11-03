@@ -55,12 +55,12 @@ function handleOpenBookmark(bookmark: IBookmark) {
                 edit: true,
               })"
             >
-              <SvgoPencil class="mr-[14px] shrink-0 text-slate-400" />
+              <SvgoPencil class="mr-[14px] shrink-0 text-gray-400" />
             </button>
           </li>
         </SplideSlide>
       </Splide>
-      <p v-else class="text-sm font-medium leading-[22px] text-slate-400">
+      <p v-else class="text-sm font-medium leading-[22px] text-gray-400">
         Bookmark your most used transactions with Transaction Shortcuts to quickly execute common actions. Find the bookmark on the transaction confirmation panel.
       </p>
     </div>

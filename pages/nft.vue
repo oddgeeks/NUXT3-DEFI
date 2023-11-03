@@ -80,7 +80,7 @@ const filteredAssets = computed(() => {
         <button class="flex items-center gap-2.5" @click="hideNFT = !hideNFT">
           <span>{{ hideNFT ? 'Unhide All' : 'Hide' }}</span>
           <SvgoEyeOff v-if="hideNFT" class="stroke-slate-icon h-5 w-5" />
-          <SvgoEye v-if="!hideNFT" class="h-5 w-5 text-slate-400" />
+          <SvgoEye v-if="!hideNFT" class="h-5 w-5 text-gray-400" />
         </button>
       </ClientOnly>
       <MultipleNetworkFilter v-if="account" v-model:networks="networkPreferences" container-class="!left-[10px]" :show-supported-networks="false" :filters="false" />

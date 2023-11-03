@@ -222,7 +222,7 @@ watch(usdcTokens, () => {
 <template>
   <div class="space-y-7.5 text-center">
     <div
-      class="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
+      class="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-900"
     >
       <GasSVG class="text-slate-900 dark:text-white" />
     </div>
@@ -230,7 +230,7 @@ watch(usdcTokens, () => {
       <h1 class="text-lg leading-5">
         Gas Reserve
       </h1>
-      <h2 class="text-xs font-medium leading-5 text-slate-400">
+      <h2 class="text-xs font-medium leading-5 text-gray-400">
         You will be able to use this as gas on any supported chain. Note that
         you need to have USDC in your Avocado wallet to add gas.
       </h2>

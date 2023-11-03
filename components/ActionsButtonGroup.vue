@@ -64,7 +64,7 @@ function getTippyProps(content: string) {
       >
         <SvgoArrowRight class="-rotate-45" />
       </CommonButton>
-      <span v-if="showLabel" class="text-sm font-medium text-slate-400">
+      <span v-if="showLabel" class="text-sm font-medium text-gray-400">
         Send
       </span>
     </div>
@@ -78,7 +78,7 @@ function getTippyProps(content: string) {
       >
         <SvgoRefresh />
       </CommonButton>
-      <span v-if="showLabel" class="text-sm font-medium text-slate-400">
+      <span v-if="showLabel" class="text-sm font-medium text-gray-400">
         Swap
       </span>
     </div>
@@ -92,7 +92,7 @@ function getTippyProps(content: string) {
       >
         <SvgoBridge />
       </CommonButton>
-      <span v-if="showLabel" class="text-sm font-medium text-slate-400">
+      <span v-if="showLabel" class="text-sm font-medium text-gray-400">
         Bridge
       </span>
     </div>

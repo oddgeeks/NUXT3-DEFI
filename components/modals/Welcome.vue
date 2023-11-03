@@ -34,11 +34,11 @@ function onContinue() {
       <p class="text-[26px] font-semibold leading-[30px]">
         Welcome to Avocado
       </p>
-      <p class="text-sm font-medium leading-5 text-slate-400">
+      <p class="text-sm font-medium leading-5 text-gray-400">
         The web3 superwallet
       </p>
     </div>
-    <hr class="border-slate-800">
+    <hr class="border-gray-900">
     <div v-for="item of data" :key="item.title" class="flex flex-row items-center justify-center gap-5 px-7.5">
       <div class="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-[#4CA0541a]">
         <SvgoWNetwork v-if="item.icon === 'network'" />
@@ -50,12 +50,12 @@ function onContinue() {
         <p class="text-lg font-semibold leading-5">
           {{ item.title }}
         </p>
-        <p class="text-xs font-medium leading-5 text-slate-400">
+        <p class="text-xs font-medium leading-5 text-gray-400">
           {{ item.content }}
         </p>
       </div>
     </div>
-    <hr class="border-slate-800">
+    <hr class="border-gray-900">
     <div class="flex w-full flex-col items-center justify-center gap-5 px-7.5">
       <button class="w-full rounded-full bg-[#4CA054] px-7.5 py-3 text-sm font-semibold leading-5" @click="onContinue()">
         Continue

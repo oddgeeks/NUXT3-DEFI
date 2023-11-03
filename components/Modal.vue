@@ -81,7 +81,7 @@ whenever(escape, () => {
           modalOptions.wrapperClass,
         ]"
         :data-sheet-position="modalOptions.sheetPosition"
-        class="modal-inner relative inline-block w-full max-w-[460px] bg-white text-left align-middle dark:bg-gray-950 sm:my-6 sm:rounded-7.5"
+        class="modal-inner relative inline-block w-full max-w-[460px] bg-white text-left align-middle dark:bg-gray-975 sm:my-6 sm:rounded-7.5"
         role="dialog"
         aria-modal="true"
       >
@@ -98,7 +98,7 @@ whenever(escape, () => {
         >
           <button
             v-if="modalOptions.closeButton"
-            class="absolute right-0 top-0 m-6 flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
+            class="absolute right-0 top-0 m-6 flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-900"
             aria-label="Close modal"
             @click="handleDestory"
           >

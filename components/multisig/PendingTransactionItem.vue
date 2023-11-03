@@ -109,7 +109,7 @@ async function handleClick(item: IMultisigTransaction) {
 </script>
 
 <template>
-  <li :class="insideGroup ? 'last:!border-b-0' : ''" class="w-full border-slate-150 dark:border-slate-800 sm:border-b">
+  <li :class="insideGroup ? 'last:!border-b-0' : ''" class="w-full border-slate-150 dark:border-gray-800 sm:border-b">
     <button class="w-full" @click.stop="handleClick(item)">
       <div :class="networkCellVisible ? 'grid-network-item' : 'grid-item'" class="grid-row hidden w-full items-center px-5 py-4 text-xs font-medium focus:outline-none sm:grid">
         <div v-if="networkCellVisible" class="flex items-center gap-3">
@@ -132,7 +132,7 @@ async function handleClick(item: IMultisigTransaction) {
             v-if="actionType === 'rejection'" v-tippy="{
               content: 'Executing this will cancel the transaction(s) below',
               maxWidth: 'none',
-            }" class="shrink-0 text-slate-500"
+            }" class="shrink-0 text-gray-500"
           />
         </span>
         <ul :class="(decodedMetadata || [])?.length > 1 ? 'list-decimal pl-5 text-xs' : ''" class="svg-shrink-none flex max-w-sm flex-1 flex-col gap-2 truncate">
@@ -144,7 +144,7 @@ async function handleClick(item: IMultisigTransaction) {
           {{ formatTimeAgo(new Date(activeTab === 'completed' ? item.executed_at : item.created_at)) }}
         </span>
         <span class="flex items-center gap-2.5  whitespace-nowrap">
-          <SvgoUserCircle :class="isConfirmationsMatch ? 'text-primary' : 'text-slate-400'" />
+          <SvgoUserCircle :class="isConfirmationsMatch ? 'text-primary' : 'text-gray-400'" />
           <span :class="isConfirmationsMatch ? 'text-primary' : ''">
             {{ item.confirmations.length }} out of {{ item.confirmations_required }}
           </span>
@@ -165,7 +165,7 @@ async function handleClick(item: IMultisigTransaction) {
               <SvgoCheckCircle class="success-circle h-5 w-5" />
             </span>
             <span v-else-if="isConfirmationsMatch" class="flex items-center justify-between gap-5">
-              <span v-if="isNonceNotMatch" class="text-slate-400">
+              <span v-if="isNonceNotMatch" class="text-gray-400">
                 Threshold reached
               </span>
               <span v-else>
@@ -187,12 +187,12 @@ async function handleClick(item: IMultisigTransaction) {
           </div>
         </div>
       </div>
-      <div class="flex flex-col items-baseline rounded-5 bg-slate-50 ring-1 ring-slate-150 dark:bg-gray-850 dark:ring-slate-800 sm:hidden">
+      <div class="flex flex-col items-baseline rounded-5 bg-slate-50 ring-1 ring-slate-150 dark:bg-gray-850 dark:ring-gray-800 sm:hidden">
         <div v-if="networkCellVisible" class="flex items-center gap-3 p-4 text-xs">
           <ChainLogo class="h-4 w-4" :chain="item.chain_id" />
           {{ chainIdToName(item.chain_id) }}
         </div>
-        <hr v-if="networkCellVisible" class="w-full border-slate-150 dark:border-slate-800">
+        <hr v-if="networkCellVisible" class="w-full border-slate-150 dark:border-gray-800">
         <div class="flex items-center gap-5 px-4 pb-3 pt-4">
           <span v-if="activeTab !== 'nonseq'" :class="item.nonce === '-1' ? 'hidden' : ''">
             {{ item.nonce }}
@@ -205,11 +205,11 @@ async function handleClick(item: IMultisigTransaction) {
                 {
                   content: 'Executing this will cancel the transaction(s) below',
                   maxWidth: 'none',
-                }" class="shrink-0 text-slate-500"
+                }" class="shrink-0 text-gray-500"
             />
           </span>
         </div>
-        <hr class="w-full border-slate-150 dark:border-slate-800">
+        <hr class="w-full border-slate-150 dark:border-gray-800">
         <div class="px-4 py-3">
           <ul :class="`${(decodedMetadata || [])?.length > 1 ? 'list-decimal pl-5 text-xs' : ''}`" class="svg-shrink-none flex max-w-sm flex-1 flex-col gap-2 truncate text-xs">
             <li v-for="(metadata, index) in decodeMetadata(item.data.params.metadata)" :key="index" v-memo="[tokens]">
@@ -217,14 +217,14 @@ async function handleClick(item: IMultisigTransaction) {
             </li>
           </ul>
         </div>
-        <hr class="w-full border-slate-150 dark:border-slate-800">
+        <hr class="w-full border-slate-150 dark:border-gray-800">
         <div class="flex items-center gap-2.5 whitespace-nowrap px-4 py-3 text-xs">
-          <SvgoUserCircle :class="isConfirmationsMatch ? 'text-primary' : 'text-slate-400'" />
+          <SvgoUserCircle :class="isConfirmationsMatch ? 'text-primary' : 'text-gray-400'" />
           <span :class="isConfirmationsMatch ? 'text-primary' : ''">
             {{ item.confirmations.length }} out of {{ item.confirmations_required }}
           </span>
         </div>
-        <hr class="w-full border-slate-150 dark:border-slate-800">
+        <hr class="w-full border-slate-150 dark:border-gray-800">
         <div class="flex w-full items-center justify-between px-4 pb-3 pt-4 text-xs">
           <div class="font-medium" :class="isConfirmationsMatch ? 'text-primary' : 'text-orange-400'">
             <span v-if="executing && !isTransactionExecuted" class="flex items-center gap-2">

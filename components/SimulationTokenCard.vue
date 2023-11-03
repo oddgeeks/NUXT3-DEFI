@@ -101,7 +101,7 @@ const out = computed(() => {
           </span>
           <span
             v-if="priceInUSD"
-            class="text-[10px] font-medium leading-4 text-slate-400"
+            class="text-[10px] font-medium leading-4 text-gray-400"
           >
             {{ formatUsd(priceInUSD) }}
           </span>
@@ -132,7 +132,7 @@ const out = computed(() => {
     </div>
     <div class="flex w-full justify-between">
       <div
-        class="w-fit rounded-10 bg-slate-150 px-2.5 py-1 text-[10px] font-medium text-slate-400 dark:bg-slate-800"
+        class="w-fit rounded-10 bg-slate-150 px-2.5 py-1 text-[10px] font-medium text-gray-400 dark:bg-gray-900"
       >
         <span v-if="actualType === TypeTitles.In" class="inline-flex items-center leading-4">
           From:&nbsp;{{ shortenHash(payload.from) }}&nbsp;<Copy class="h-3 w-3" :text="payload.from" :icon-only="true" /></span>
@@ -140,7 +140,7 @@ const out = computed(() => {
       </div>
       <div
         v-if="payload.type"
-        class="flex w-fit items-center gap-[7px] rounded-10 bg-slate-150 px-2.5 py-1 text-[10px] font-medium text-slate-400 dark:bg-slate-800"
+        class="flex w-fit items-center gap-[7px] rounded-10 bg-slate-150 px-2.5 py-1 text-[10px] font-medium text-gray-400 dark:bg-gray-900"
       >
         {{ payload.type }}
         <SVGInfoCircle

@@ -520,7 +520,7 @@ watch(mode, async (newMode, oldMode) => {
     </div>
     <ul class="flex w-fit justify-center rounded-5 bg-slate-50 p-1.5 text-sm font-medium dark:bg-gray-850 sm:justify-normal sm:rounded-10">
       <li v-for="item in modes" :key="item.value">
-        <button :class="mode === item.value ? 'dark:bg-slate-800 bg-slate-150' : 'text-slate-400'" class="flex items-center gap-2.5 whitespace-nowrap rounded-2xl px-6 py-2.5 sm:rounded-7.5" @click="mode = item.value">
+        <button :class="mode === item.value ? 'dark:bg-gray-900 bg-slate-150' : 'text-gray-400'" class="flex items-center gap-2.5 whitespace-nowrap rounded-2xl px-6 py-2.5 sm:rounded-7.5" @click="mode = item.value">
           {{ item.label }}
         </button>
       </li>
@@ -539,7 +539,7 @@ watch(mode, async (newMode, oldMode) => {
             </div>
 
             <div class="input-wrapper">
-              <label class="w-[180px] shrink-0 text-sm font-medium text-slate-400" for="input-contractAddress">Network</label>
+              <label class="w-[180px] shrink-0 text-sm font-medium text-gray-400" for="input-contractAddress">Network</label>
               <CommonSelect
                 v-model="chainId"
                 class="w-full"
@@ -616,7 +616,7 @@ watch(mode, async (newMode, oldMode) => {
             </template>
           </div>
 
-          <div v-else class="flex h-fit min-w-[300px] shrink-0 flex-col rounded-[14px] bg-white p-5 dark:bg-gray-950">
+          <div v-else class="flex h-fit min-w-[300px] shrink-0 flex-col rounded-[14px] bg-white p-5 dark:bg-gray-975">
             <div class="mb-5 flex items-center justify-between">
               <h2 class="text-sm">
                 Transactions Batch
@@ -638,11 +638,11 @@ watch(mode, async (newMode, oldMode) => {
           </div>
         </div>
 
-        <hr class="my-7.5 border-slate-150 dark:border-slate-800">
+        <hr class="my-7.5 border-slate-150 dark:border-gray-800">
 
         <div class="flex flex-col gap-5">
           <div v-if="mode === 'raw'" class="flex w-full max-w-[820px] gap-7.5 px-7.5">
-            <label class="w-[180px] shrink-0 text-sm font-medium text-slate-400">Data</label>
+            <label class="w-[180px] shrink-0 text-sm font-medium text-gray-400">Data</label>
             <CommonTextarea v-model="rawDataValue" :error-message="rawDataErrorMessage" name="raw" rows="5" placeholder="Enter raw data" />
           </div>
 
@@ -670,7 +670,7 @@ watch(mode, async (newMode, oldMode) => {
 
 <style scoped>
 .input-label {
-  @apply text-sm font-medium text-slate-400 sm:w-[180px]
+  @apply text-sm font-medium text-gray-400 sm:w-[180px]
 }
 
 .input-wrapper {

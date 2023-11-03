@@ -37,7 +37,7 @@ async function handleUpgrade() {
           <span>
             {{ chainIdToName(options.chainId) }}
           </span>
-          <span class="text-sm font-medium text-slate-400">
+          <span class="text-sm font-medium text-gray-400">
             {{ options.currentVersion }}
           </span>
         </div>

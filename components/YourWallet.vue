@@ -22,12 +22,12 @@ function openModal() {
       </div>
       <div class="flex flex-col space-y-1">
         <span>Your Avo Wallet</span>
-        <span v-if="account !== '0x000000000000000'" class="font-[14px] text-slate-400">{{ shortenHash(account) }}</span>
+        <span v-if="account !== '0x000000000000000'" class="font-[14px] text-gray-400">{{ shortenHash(account) }}</span>
         <svg v-else width="120" height="20" viewBox="0 0 120 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="120" height="20" rx="8" class="fill-slate-200 dark:fill-slate-800" />
+          <rect width="120" height="20" rx="8" class="fill-slate-200 dark:fill-gray-900" />
         </svg>
       </div>
     </div>
-    <EyeSVG v-if="account !== '0x000000000000000'" class="text-slate-400" />
+    <EyeSVG v-if="account !== '0x000000000000000'" class="text-gray-400" />
   </div>
 </template>

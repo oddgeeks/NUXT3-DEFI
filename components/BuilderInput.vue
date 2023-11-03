@@ -131,7 +131,7 @@ onMounted(() => {
   <div class="flex w-full max-w-[660px] flex-col gap-2">
     <ul v-if="hasActualComponents && mode === 'expand'" class="tree flex flex-col gap-4">
       <fieldset v-if="input.type === 'tuple'" :class="index === undefined ? 'pl-9' : 'gap-9'" class="flex w-full">
-        <div class="flex h-[50px] shrink-0 items-center text-sm font-medium text-slate-400">
+        <div class="flex h-[50px] shrink-0 items-center text-sm font-medium text-gray-400">
           {{ input.name }} ({{ input.type }})
         </div>
         <div class="flex-1 space-y-4">
@@ -148,7 +148,7 @@ onMounted(() => {
       </fieldset>
       <template v-else>
         <li v-for="_, t in fields" :key="t" class="relative flex w-full flex-col gap-5">
-          <button v-if="fields.length > 1" class="absolute -right-6 top-4 z-[2] text-slate-400" type="button" @click="remove(t)">
+          <button v-if="fields.length > 1" class="absolute -right-6 top-4 z-[2] text-gray-400" type="button" @click="remove(t)">
             <SvgoX />
           </button>
           <template
@@ -173,7 +173,7 @@ onMounted(() => {
     </ul>
 
     <div v-else :class="index === undefined ? 'pl-9 max-w-[580px]' : ''" class="flex w-full gap-7.5">
-      <label class="flex h-[50px] w-[180px] shrink-0 items-center text-sm font-medium text-slate-400" :for="`input-${name}`">
+      <label class="flex h-[50px] w-[180px] shrink-0 items-center text-sm font-medium text-gray-400" :for="`input-${name}`">
         {{ input.name }} ({{ input.type }})
       </label>
       <div class="flex w-full items-center">

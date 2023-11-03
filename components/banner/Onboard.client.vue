@@ -33,7 +33,7 @@ const { totalEoaBalance, eoaBalances, fundedEoaNetworks } = useAvocadoSafe()
         class="flex h-5 w-5 items-center justify-center rounded-full bg-white bg-opacity-20"
         @click="hideOnboardBanner()"
       >
-        <SVGX class="text-slate-500 dark:text-white" />
+        <SVGX class="text-gray-500 dark:text-white" />
       </button>
     </div>
   </div>

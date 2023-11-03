@@ -77,7 +77,7 @@ watch(() => active.value, () => {
 
       <button
         v-if="isActualActive"
-        class="flex h-10 w-10 items-center justify-center rounded-[14px] bg-slate-100 text-slate-500 dark:bg-slate-800"
+        class="flex h-10 w-10 items-center justify-center rounded-[14px] bg-slate-100 text-gray-500 dark:bg-gray-900"
         @click="toggle(!opened)"
       >
         <SVGX v-if="opened" class="h-5 w-5" />
@@ -95,12 +95,12 @@ watch(() => active.value, () => {
         <div
           role="button"
           tabindex="0"
-          class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
+          class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-900"
         >
           <ColorModeSwitcher />
         </div>
 
-        <button class="relative flex items-center justify-between gap-x-2.5 rounded-7.5 bg-slate-100 px-4.5 py-2.5 leading-5 dark:bg-slate-800 sm:px-4 sm:py-3" @click="toggleWalletList(!walletListOpened)">
+        <button class="relative flex items-center justify-between gap-x-2.5 rounded-7.5 bg-slate-100 px-4.5 py-2.5 leading-5 dark:bg-gray-900 sm:px-4 sm:py-3" @click="toggleWalletList(!walletListOpened)">
           <div class="flex gap-[14px]">
             <div class="flex items-center gap-2.5">
               <div v-if="connectedProvider">
@@ -116,10 +116,10 @@ watch(() => active.value, () => {
         </button>
 
         <button
-          class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
+          class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-900"
           @click="closeConnection"
         >
-          <PowerSVG class="text-slate-400" />
+          <PowerSVG class="text-gray-400" />
         </button>
       </div>
       <div v-if="walletListOpened" class="px-[20px] py-[24px]">
@@ -128,19 +128,19 @@ watch(() => active.value, () => {
       <div class="flex w-full flex-col items-center gap-6 px-5 py-6">
         <div class="flex w-full items-center justify-between">
           <button
-            class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
+            class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-900"
             @click="openYourWalletModal(safeAddress)"
           >
-            <QrSVG class="h-4.5 w-4.5 text-slate-400" />
+            <QrSVG class="h-4.5 w-4.5 text-gray-400" />
           </button>
 
-          <div class="flex h-[54px] items-center rounded-full bg-slate-150 px-4 dark:bg-slate-800">
+          <div class="flex h-[54px] items-center rounded-full bg-slate-150 px-4 dark:bg-gray-900">
             <Copy :text="safeAddress">
               <template #content>
                 <div class="flex items-center gap-3">
                   <SvgoAvocadoLogoMini class="text-primary" />
                   <div class="flex flex-col">
-                    <span class="text-left text-xs text-slate-500">Avo Address</span>
+                    <span class="text-left text-xs text-gray-500">Avo Address</span>
                     <span class="text-slate-900 dark:text-white">{{ shortenHash(safeAddress) }}</span>
                   </div>
                 </div>
@@ -152,9 +152,9 @@ watch(() => active.value, () => {
             :href="`/w/${safeAddress}`"
             external
             target="_blank"
-            class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
+            class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-900"
           >
-            <ExternalLinkSVG class="h-4.5 w-4.5 text-slate-400" />
+            <ExternalLinkSVG class="h-4.5 w-4.5 text-gray-400" />
           </NuxtLink>
         </div>
         <div class="flex flex-col items-center gap-3">
@@ -163,7 +163,7 @@ watch(() => active.value, () => {
       </div>
       <Navigation @navigate="toggle(false)" />
       <div class="flex flex-col gap-7.5 px-[44px]">
-        <nav class="mt-1.5 flex w-full flex-col gap-5 text-xs text-slate-400">
+        <nav class="mt-1.5 flex w-full flex-col gap-5 text-xs text-gray-400">
           <div class="flex w-full justify-around">
             <a target="_blank" href="https://guides.avocado.instadapp.io">Help</a>
             <a href="mailto:info@instadapp.io">Email</a>
@@ -185,9 +185,9 @@ watch(() => active.value, () => {
         </nav>
         <div class="flex justify-center">
           <figure
-            class="flex items-center gap-3 rounded-full border-2 border-slate-100 px-4 py-2 dark:border-slate-800"
+            class="flex items-center gap-3 rounded-full border-2 border-slate-100 px-4 py-2 dark:border-gray-800"
           >
-            <figcaption class="text-xs text-slate-400">
+            <figcaption class="text-xs text-gray-400">
               Built by
             </figcaption>
             <a target="_blank" href="https://instadapp.io/">

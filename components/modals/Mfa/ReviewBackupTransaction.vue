@@ -27,7 +27,7 @@ const path = computed(() => `${url.origin}/2fa/${selectedSafe.value?.safe_addres
           <h1 class="text-lg">
             Approve this transaction using Backup Address
           </h1>
-          <h2 class="text-xs font-medium leading-5 text-slate-400">
+          <h2 class="text-xs font-medium leading-5 text-gray-400">
             To complete this transaction, approve the transaction from <br> <span
               v-if="backupSigner" v-tippy="{
                 content: backupSigner.address,
@@ -42,7 +42,7 @@ const path = computed(() => `${url.origin}/2fa/${selectedSafe.value?.safe_addres
 
       <div class="flex w-full flex-col gap-5">
         <div
-          class="bg flex w-full items-center justify-between rounded-5 bg-slate-100 px-4 py-3 dark:bg-slate-800"
+          class="bg flex w-full items-center justify-between rounded-5 bg-slate-100 px-4 py-3 dark:bg-gray-900"
         >
           <span class="max-w-[95%] truncate text-sm font-medium">
             {{ path }}

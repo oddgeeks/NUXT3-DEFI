@@ -51,30 +51,30 @@ async function handleNext() {
           <h1 class="text-lg leading-10">
             Review Details
           </h1>
-          <h2 class="text-xs font-medium leading-5 text-slate-400">
+          <h2 class="text-xs font-medium leading-5 text-gray-400">
             It might take a few minutes for new signers to be synced
           </h2>
         </div>
       </div>
     </div>
-    <hr class="border-slate-150 dark:border-slate-800">
+    <hr class="border-slate-150 dark:border-gray-800">
 
     <table style="border-collapse: separate" class="w-full border-spacing-y-5 px-6 sm:border-spacing-y-7.5 sm:px-7.5">
       <tbody class="text-sm font-medium">
         <tr>
-          <td class="hidden leading-[30px] text-slate-400 sm:block">
+          <td class="hidden leading-[30px] text-gray-400 sm:block">
             Multisig Address
           </td>
           <td>
             <span class="mb-2 block text-xs font-medium sm:hidden">Address</span>
-            <span class="flex items-center gap-2.5 text-slate-400">
+            <span class="flex items-center gap-2.5 text-gray-400">
               {{ shortenHash(selectedSafe?.safe_address!) }}
               <Copy icon-only :text="selectedSafe?.safe_address!" />
             </span>
           </td>
         </tr>
         <tr>
-          <td class="hidden align-baseline leading-[30px] text-slate-400 sm:block sm:pr-[60px]">
+          <td class="hidden align-baseline leading-[30px] text-gray-400 sm:block sm:pr-[60px]">
             New signers
           </td>
           <td>
@@ -88,7 +88,7 @@ async function handleNext() {
                 <span v-if="address.name">
                   ({{ address.name }})
                 </span>
-                <span class="text-slate-400">
+                <span class="text-gray-400">
                   {{ shortenHash(address.address) }}
                 </span>
                 <Copy icon-only :text="address.address" />

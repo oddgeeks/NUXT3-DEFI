@@ -28,7 +28,7 @@ defineProps<{
         <p class="text-[26px] leading-[30px]">
           {{ formatPercent(toBN(position.apy).div(100).toFixed()) }}
         </p>
-        <p class="text-xs text-slate-500">
+        <p class="text-xs text-gray-500">
           Net APY
         </p>
       </div>
@@ -36,7 +36,7 @@ defineProps<{
         <p class="text-[26px] leading-[30px]">
           {{ abbreviateNumber(position.healthFactor) }}
         </p>
-        <p class="text-xs text-slate-500">
+        <p class="text-xs text-gray-500">
           Health Factor
         </p>
       </div>

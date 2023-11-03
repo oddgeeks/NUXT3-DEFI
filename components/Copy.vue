@@ -14,7 +14,7 @@ const slots = useSlots()
 <template>
   <button
     type="button"
-    class="inline-flex items-center gap-2.5 font-semibold text-slate-400"
+    class="inline-flex items-center gap-2.5 font-semibold text-gray-400"
     @click.stop="copy(text)"
   >
     <Transition mode="out-in" name="slide-left">
@@ -31,7 +31,7 @@ const slots = useSlots()
       />
       <slot v-else-if="slots.copy" name="copy" />
       <slot v-else name="copy-icon">
-        <CopySVG class="text-slate-400" />
+        <CopySVG class="text-gray-400" />
       </slot>
     </Transition>
   </button>

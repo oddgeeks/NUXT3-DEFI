@@ -39,25 +39,25 @@ const isNotAuthorised = computed(() => {
         </h1>
         <h2
           v-if="asset.collectionName"
-          class="text-center text-sm font-medium text-slate-400"
+          class="text-center text-sm font-medium text-gray-400"
         >
           {{ asset.collectionName }}
         </h2>
       </div>
-      <details v-if="asset.attributes?.length" class="group rounded-2xl bg-slate-50 ring-2 ring-slate-150 dark:bg-gray-850 dark:ring-slate-800">
+      <details v-if="asset.attributes?.length" class="group rounded-2xl bg-slate-50 ring-2 ring-slate-150 dark:bg-gray-850 dark:ring-gray-800">
         <summary
           class="flex cursor-pointer items-center justify-between px-4 py-[14px] text-sm font-semibold"
         >
           Traits
           <ChevronDownSVG
-            class="w-5 text-slate-400 group-open:rotate-180"
+            class="w-5 text-gray-400 group-open:rotate-180"
           />
         </summary>
 
-        <div class="scroll-style max-h-[300px] overflow-y-auto border-t px-4 py-[14px] dark:border-slate-800">
+        <div class="scroll-style max-h-[300px] overflow-y-auto border-t px-4 py-[14px] dark:border-gray-800">
           <ul class="grid grid-cols-2 items-baseline gap-2">
-            <li v-for="attr in asset.attributes" :key="attr.value" class="flex flex-col rounded-[14px] bg-white px-[14px] py-2 dark:bg-slate-800">
-              <span class="text-[10px] leading-4 text-slate-400"> {{ attr.type }}</span>
+            <li v-for="attr in asset.attributes" :key="attr.value" class="flex flex-col rounded-[14px] bg-white px-[14px] py-2 dark:bg-gray-900">
+              <span class="text-[10px] leading-4 text-gray-400"> {{ attr.type }}</span>
               <span class="text-xs leading-5">{{ attr.value }}</span>
             </li>
           </ul>

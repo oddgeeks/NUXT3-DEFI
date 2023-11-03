@@ -213,7 +213,7 @@ watch(safeAddress, () => {
           <table class="hidden w-full sm:table">
             <thead>
               <tr
-                class="border-b border-slate-150 text-left text-sm font-medium text-gray-400 dark:border-slate-800"
+                class="border-b border-slate-150 text-left text-sm font-medium text-gray-400 dark:border-gray-800"
               >
                 <th class="py-6 pl-7.5 text-left">
                   Name
@@ -224,7 +224,7 @@ watch(safeAddress, () => {
               </tr>
             </thead>
             <ClientOnly>
-              <tbody class="divide-y divide-slate-150 dark:divide-slate-800">
+              <tbody class="divide-y divide-slate-150 dark:divide-gray-900">
                 <ContactRow v-for="contact in filteredContacts" :key="contact.address + contact.chainId + contact.name" :contact="contact" />
               </tbody>
             </ClientOnly>

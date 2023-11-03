@@ -26,7 +26,7 @@ const parsedError = parseRequestError(error)
             <h1 class="leading-7.5 text-[18px] sm:text-[40px]">
               {{ parsedError.statusMessage }}
             </h1>
-            <h2 class="sm:leading-7.5 text-xs font-medium leading-6 text-slate-400 sm:text-base sm:font-semibold">
+            <h2 class="sm:leading-7.5 text-xs font-medium leading-6 text-gray-400 sm:text-base sm:font-semibold">
               {{ parsedError.message }}
             </h2>
           </div>

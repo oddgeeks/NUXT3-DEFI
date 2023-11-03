@@ -24,14 +24,14 @@ defineEmits(['createBookmark', 'updateBookmark'])
     </span>
     <SvgoInfo2
       v-if="!bookmark"
-      v-tippy="'Bookmark this transaction so you can execute it in one click from the Avocado UI.'" class="text-slate-500"
+      v-tippy="'Bookmark this transaction so you can execute it in one click from the Avocado UI.'" class="text-gray-500"
     />
     <button
       v-else
       type="button"
       @click="$emit('updateBookmark')"
     >
-      <SvgoPencil class="shrink-0 text-slate-400" />
+      <SvgoPencil class="shrink-0 text-gray-400" />
     </button>
   </div>
 </template>

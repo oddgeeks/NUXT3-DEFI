@@ -18,7 +18,7 @@ const isInstadappSigner = computed(() => isAddressEqual(props.address, instadapp
         <h1 class="text-lg leading-[20px]">
           Manage networks
         </h1>
-        <h2 class="text-xs font-medium leading-5 text-slate-400">
+        <h2 class="text-xs font-medium leading-5 text-gray-400">
           <template v-if="isInstadappSigner">
             Enable/Disable OTP functionality on each chain. If you want to opt out of OTP based 2FA, please disable all chains.
           </template>
@@ -28,7 +28,7 @@ const isInstadappSigner = computed(() => isAddressEqual(props.address, instadapp
         </h2>
       </div>
     </div>
-    <hr class="border-slate-150 dark:border-slate-800">
+    <hr class="border-slate-150 dark:border-gray-800">
     <ul class="flex flex-col gap-7 p-7.5">
       <MfaSignAddSignerItem v-for="network in availableNetworks" :key="network.chainId" :address="address" :chain-id="network.chainId" />
     </ul>

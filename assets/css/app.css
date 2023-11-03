@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply h-screen dark:bg-gray-950 bg-white dark:text-white text-slate-900 font-semibold overflow-y-overlay;
+    @apply h-screen dark:bg-gray-975 bg-white dark:text-white text-slate-900 font-medium overflow-y-overlay;
   }
 
   html.dark {
@@ -52,13 +52,13 @@
   }
 
   .ticket-divider:after {
-    @apply w-5 h-5 rounded-full absolute top-1/2 -right-10 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-950 bg-white;
+    @apply w-5 h-5 rounded-full absolute top-1/2 -right-10 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-975 bg-white;
     content: "";
     display: block;
   }
 
   .ticket-divider:before {
-    @apply w-5 h-5 rounded-full absolute top-1/2 -left-5 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-950 bg-white;
+    @apply w-5 h-5 rounded-full absolute top-1/2 -left-5 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-975 bg-white;
     content: "";
     display: block;
   }
@@ -71,7 +71,7 @@
   }
 
   .svg-circle > path:first-child {
-    @apply stroke-slate-400 fill-slate-400;
+    @apply stroke-gray-400 fill-gray-400;
   }
 
   .svg-circle.darker > path:first-child {
@@ -79,7 +79,7 @@
   }
 
   .svg-gray-info > g > path:first-child {
-    @apply stroke-slate-400 fill-slate-400;
+    @apply stroke-gray-400 fill-gray-400;
   }
 
   html.dark .loading-box {
@@ -99,7 +99,7 @@
   }
   
   .common-input {
-    @apply placeholder-slate-400 focus-visible:!outline-none placeholder:text-sm border-none shadow-none focus:ring-0 focus:border-none bg-inherit rounded-[inherit] px-0 py-[13px] w-full
+    @apply placeholder-gray-400 focus-visible:!outline-none placeholder:text-sm border-none shadow-none focus:ring-0 focus:border-none bg-inherit rounded-[inherit] px-0 py-[13px] w-full
   }
 
   @keyframes gradient {
@@ -156,7 +156,7 @@
 
 .tippy-content {
   @apply p-0 font-medium leading-5 text-left !important;
-  font-family: "Source Code Pro" !important;
+  font-family: "Space Grotesk" !important;
   font-style: normal !important;
 }
 
@@ -202,7 +202,7 @@ html.dark .scroll-style {
 }
 
 .clipboard_svg__paste-path {
-  @apply dark:fill-slate-800 fill-slate-100;
+  @apply dark:fill-gray-900 fill-slate-100;
 }
 
 .success-circle path:first-child {
@@ -261,11 +261,11 @@ input[type="search" i]::-webkit-search-cancel-button {
 }
 
 .type-icon-unselected path {
-  @apply fill-slate-400 stroke-slate-400;
+  @apply fill-gray-400 stroke-gray-400;
 }
 
 .stroke-slate-icon path {
-  @apply stroke-slate-400;
+  @apply stroke-gray-400;
 }
 
 .stroke-white-icon path {

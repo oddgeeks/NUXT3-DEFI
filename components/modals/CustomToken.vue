@@ -215,14 +215,14 @@ onUnmounted(() => {
       />
     </div>
     <div v-if="token" class="mb-7.5 flex items-center justify-between">
-      <div class="text-slate-400">
+      <div class="text-gray-400">
         <p>{{ token.name }}</p>
         <p class="text-sm font-medium">
           {{ balance }} {{ token.symbol }}
         </p>
       </div>
       <div
-        class="items-center justify-center rounded-2xl bg-slate-50 px-4 py-2.5 text-sm text-slate-400 dark:bg-gray-850"
+        class="items-center justify-center rounded-2xl bg-slate-50 px-4 py-2.5 text-sm text-gray-400 dark:bg-gray-850"
       >
         Decimals {{ token.decimals }}
       </div>

@@ -651,19 +651,19 @@ onMounted(() => {
     <div class="mx-[-0.75rem] rounded-5 bg-slate-50 px-3 py-[14px] text-sm dark:bg-gray-850 sm:mx-0 sm:px-5">
       <div class="flex flex-col gap-2.5 font-medium">
         <dl class="flex items-center justify-between">
-          <dt class="text-slate-400">
+          <dt class="text-gray-400">
             Network
           </dt>
           <dd class="flex items-center gap-2">
             <ChainLogo class="w-5" :chain="data.fromChainId" />
             <span>{{ chainIdToName(data.fromChainId) }}</span>
-            <ArrowRight class="w-4 text-slate-400" />
+            <ArrowRight class="w-4 text-gray-400" />
             <ChainLogo class="w-5" :chain="data.toChainId" />
             <span>{{ chainIdToName(data.toChainId) }}</span>
           </dd>
         </dl>
         <dl class="flex items-center justify-between">
-          <dt class="text-slate-400">
+          <dt class="text-gray-400">
             Token
           </dt>
           <div class="flex items-center gap-2">
@@ -672,18 +672,18 @@ onMounted(() => {
               <span class="uppercase">
                 {{ token?.symbol }}
               </span>
-              <span v-tippy="token?.name" class="max-w-[200px] truncate text-slate-400">
+              <span v-tippy="token?.name" class="max-w-[200px] truncate text-gray-400">
                 ({{ token?.name }})
               </span>
             </dd>
             <template v-if="targetToken && token?.symbol !== targetToken?.symbol">
-              <ArrowRight class="w-4 text-slate-400" />
+              <ArrowRight class="w-4 text-gray-400" />
               <dd class=" flex items-center gap-2">
                 <SafeTokenLogo class="h-[18px] w-[18px]" :url="displayTargetToken?.logoURI" />
                 <span class="uppercase">
                   {{ displayTargetToken?.symbol }}
                 </span>
-                <span v-tippy="displayTargetToken?.name" class="max-w-[200px] truncate text-slate-400">
+                <span v-tippy="displayTargetToken?.name" class="max-w-[200px] truncate text-gray-400">
                   ({{ displayTargetToken?.name }})
                 </span>
               </dd>
@@ -691,7 +691,7 @@ onMounted(() => {
           </div>
         </dl>
         <dl class="flex flex-wrap items-center justify-between">
-          <dt class="whitespace-nowrap text-slate-400">
+          <dt class="whitespace-nowrap text-gray-400">
             To address
           </dt>
           <dd>
@@ -711,7 +711,7 @@ onMounted(() => {
             <span class="uppercase">
               {{ formatDecimal(data.amount) }} {{ targetToken?.symbol || token?.symbol }}
             </span>
-            <span class="text-slate-400">
+            <span class="text-gray-400">
               ({{ formatUsd(toBN(data.amount).times(token?.price || '0').toString()) }})
             </span>
           </p>
@@ -720,8 +720,8 @@ onMounted(() => {
     </div>
 
     <Transition name="fade">
-      <p v-if="feeInfoMessage" class="-mt-2 flex items-start text-xs font-medium leading-6 text-slate-400">
-        <SvgoExclamationCircle class="mr-2.5 mt-1 h-4.5 w-4.5 shrink-0 text-slate-500" />
+      <p v-if="feeInfoMessage" class="-mt-2 flex items-start text-xs font-medium leading-6 text-gray-400">
+        <SvgoExclamationCircle class="mr-2.5 mt-1 h-4.5 w-4.5 shrink-0 text-gray-500" />
         <span class="block">
           {{ feeInfoMessage }}
         </span>

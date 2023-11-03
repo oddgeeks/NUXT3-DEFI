@@ -33,7 +33,7 @@ function selectType(type: string) {
         :class="{
           'text-slate-900 dark:text-white': isHideZeroBalances,
         }"
-        class="inline-flex w-full items-center justify-center gap-2.5 text-sm text-slate-400"
+        class="inline-flex w-full items-center justify-center gap-2.5 text-sm text-gray-400"
         @click="isHideZeroBalances = !isHideZeroBalances"
       >
         Hide 0 Balances
@@ -51,13 +51,13 @@ function selectType(type: string) {
       <li
         class="flex items-center justify-between gap-2.5 rounded-[14px] px-3 pb-3.5 pt-1"
       >
-        <span class="text-slate-400">Views</span>
+        <span class="text-gray-400">Views</span>
       </li>
 
       <li
-        class="flex cursor-pointer items-center gap-3.5 rounded-[14px] px-3 py-2.5 hover:bg-slate-150 hover:dark:bg-slate-800"
+        class="flex cursor-pointer items-center gap-3.5 rounded-[14px] px-3 py-2.5 hover:bg-slate-150 hover:dark:bg-gray-900"
         :class="{
-          'text-slate-400 dark:text-slate-500': listType !== 'group',
+          'text-gray-400 dark:text-gray-500': listType !== 'group',
         }"
         @click="() => selectType('group')"
       >
@@ -73,9 +73,9 @@ function selectType(type: string) {
         />
       </li>
       <li
-        class="flex cursor-pointer items-center gap-3.5 rounded-[14px] px-3 py-2.5 hover:bg-slate-150 hover:dark:bg-slate-800"
+        class="flex cursor-pointer items-center gap-3.5 rounded-[14px] px-3 py-2.5 hover:bg-slate-150 hover:dark:bg-gray-900"
         :class="{
-          'text-slate-400 dark:text-slate-500': listType !== 'individual',
+          'text-gray-400 dark:text-gray-500': listType !== 'individual',
         }"
         @click="() => selectType('individual')"
       >
@@ -95,7 +95,7 @@ function selectType(type: string) {
       <li
         class="flex items-center justify-between gap-2.5 rounded-[14px] px-3 pb-3.5 pt-1"
       >
-        <span class="text-slate-400">Networks</span>
+        <span class="text-gray-400">Networks</span>
         <div
           class="cursor-pointer text-green-600"
           @click="toggleAllNetworks"
@@ -109,9 +109,9 @@ function selectType(type: string) {
       <li
         v-for="network in availableNetworks"
         :key="network.chainId"
-        class="flex cursor-pointer items-center gap-3.5 rounded-[14px] px-3 py-2.5 hover:bg-slate-150 hover:dark:bg-slate-800"
+        class="flex cursor-pointer items-center gap-3.5 rounded-[14px] px-3 py-2.5 hover:bg-slate-150 hover:dark:bg-gray-900"
         :class="{
-          'text-slate-400 dark:text-slate-500': !networkPreference.includes(network.chainId),
+          'text-gray-400 dark:text-gray-500': !networkPreference.includes(network.chainId),
         }"
         @click="toggleNetwork(network.chainId)"
       >

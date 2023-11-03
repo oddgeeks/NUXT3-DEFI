@@ -195,11 +195,11 @@ ${'`Transfer To`'} ${actualAddress.value}`
             <ExternalLinkSVG class="w-4 shrink-0" />
           </NuxtLink>
         </div>
-        <h2 class="text-xs font-medium text-slate-400">
+        <h2 class="text-xs font-medium text-gray-400">
           {{ asset.name }}
         </h2>
       </div>
-      <div class="flex h-10 items-center justify-center gap-2 rounded-5 bg-slate-150 px-3 text-xs dark:bg-slate-800">
+      <div class="flex h-10 items-center justify-center gap-2 rounded-5 bg-slate-150 px-3 text-xs dark:bg-gray-900">
         <ChainLogo :chain="asset.chainId" class="h-5.5 w-5.5" />
         {{ chainIdToName(asset.chainId) }}
       </div>
@@ -232,7 +232,7 @@ ${'`Transfer To`'} ${actualAddress.value}`
             class="ml-3"
             @click="handleSelectContact()"
           >
-            <ContactSVG class="text-slate-400" />
+            <ContactSVG class="text-gray-400" />
           </button>
         </template>
       </CommonInput>

@@ -96,7 +96,7 @@ async function handleDisconnectWallet(session: any) {
       v-tippy="'Disconnect'"
       @click="handleDisconnectWallet(session)"
     >
-      <SVGX class="h-[18px] w-[18px] text-slate-400" />
+      <SVGX class="h-[18px] w-[18px] text-gray-400" />
     </button>
   </div>
 </template>
