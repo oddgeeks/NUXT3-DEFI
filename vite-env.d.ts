@@ -34,28 +34,31 @@ interface Provider {
   switchNetwork: (network: Network) => Promise<any>;
 }
 
-interface Network {
-  name: string;
-  debankName?: string;
-  ankrName?: string;
-  chainId: ChainId;
-  isAvocado?: boolean;
-  zerionName?: string;
-  serverRpcUrl: string | undefined;
-  balanceResolverAddress?: string;
-  usdcAddress: string;
-  explorerUrl: string;
-  params: {
-    chainName?: string;
-    iconUrls?: string[];
-    rpcUrls: string[];
-    nativeCurrency?: {
-      name: string;
-      symbol: string;
-      decimals: number;
+  interface Network {
+    name: string;
+    debankName?: string;
+    ankrName?: string;
+    zerionName?: string;
+    chainId: ChainId;
+    color: string;
+    isAvocado?: boolean;
+    serverRpcUrl: string | undefined;
+    balanceResolverAddress?: string;
+    usdcAddress?: string;
+    explorerUrl: string;
+    fakeTransactionHash: string;
+    apiURL?: string;
+    params: {
+      chainName?: string;
+      iconUrls?: string[];
+      rpcUrls: string[];
+      nativeCurrency?: {
+        name: string;
+        symbol: string;
+        decimals: number;
+      };
     };
-  };
-}
+  }
 
 interface NetworkVersion extends Network {
   latestVersion: string;
