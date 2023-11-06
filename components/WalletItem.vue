@@ -3,6 +3,7 @@ const props = defineProps<{
   safe: ISafe
   primary?: boolean
   tooltip?: string
+  hideActiveState?: boolean
 }>()
 
 const route = useRoute()
