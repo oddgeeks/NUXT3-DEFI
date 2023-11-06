@@ -122,6 +122,14 @@ function openBridge() {
           Add custom Tokens
         </button>
         <NuxtLink
+          class="flex h-11 items-center gap-2.5"
+          :class="$route.query.tab === 'bookmarks' ? 'text-primary' : ''"
+          :to="{ path: '/', query: { tab: 'bookmarks' } }"
+        >
+          <SvgoBookmark class="h-4 w-4" />
+          Transaction Shortcuts
+        </NuxtLink>
+        <NuxtLink
           active-class="text-primary"
           class="flex h-11 items-center gap-2.5"
           to="/upgrade"
@@ -133,7 +141,16 @@ function openBridge() {
           class="flex h-11 items-center gap-2.5"
           external
           target="_blank"
-          to="https://help.avocado.instadapp.io"
+          to="https://onboard.avocado.instadapp.io/"
+        >
+          <SvgoRocket class="h-4 w-4" />
+          Onboard
+        </NuxtLink>
+        <NuxtLink
+          class="flex h-11 items-center gap-2.5"
+          external
+          target="_blank"
+          to="https://guides.avocado.instadapp.io"
         >
           <QuestionSVG class="h-4 w-4" />
           Help

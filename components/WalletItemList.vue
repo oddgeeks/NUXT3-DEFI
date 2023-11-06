@@ -41,7 +41,7 @@ const displayLegacySafe = computed(() => {
         <SvgSpinner v-if="safesLoading" class="text-primary" />
       </h2>
       <button v-if="legacySafeAddress && legacySafe" class="text-xs text-primary" type="button" @click="handleToggle">
-        {{ !displayLegacySafe ? 'Show' : 'Hide' }} legacy safe
+        {{ !displayLegacySafe ? 'Show' : 'Hide' }} legacy wallet
       </button>
     </div>
     <template v-if="!safesLoading">

@@ -165,7 +165,7 @@ watch(() => active.value, () => {
       <div class="flex flex-col gap-7.5 px-[44px]">
         <nav class="mt-1.5 flex w-full flex-col gap-5 text-xs text-slate-400">
           <div class="flex w-full justify-around">
-            <a target="_blank" href="https://help.avocado.instadapp.io">Help</a>
+            <a target="_blank" href="https://guides.avocado.instadapp.io">Help</a>
             <a href="mailto:info@instadapp.io">Email</a>
             <a
               rel="noopener noreferrer"

@@ -211,7 +211,7 @@ onMounted(async () => {
           <a
             target="blank"
             rel="noopener noreferrer"
-            href="https://help.avocado.instadapp.io/en/articles/6848656-connect-dapps-on-avocado-using-walletconnect"
+            href="https://guides.avocado.instadapp.io/using-avocado/using-walletconnect"
             class="inline-flex gap-2.5 text-primary"
           >guide</a>.
         </p>
