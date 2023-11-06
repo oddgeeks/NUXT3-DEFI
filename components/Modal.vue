@@ -5,7 +5,7 @@ const props = withDefaults(
   defineProps<{
     show?: boolean
     modalId?: string
-    options?: any
+    options: IOptions
     inline?: boolean
     isAsync?: boolean
   }>(),
@@ -14,11 +14,12 @@ const props = withDefaults(
     show: false,
     isAsync: false,
     inline: false,
-    options: {},
   },
 )
 
 const emit = defineEmits(['destroy', 'reject'])
+
+const modalOptions = computed(() => props.options || {})
 
 const { lastModal } = useModal()
 
@@ -37,6 +38,9 @@ onClickOutside(
   wrapperRef,
   (event: any) => {
     if (event.currentTarget) {
+      if (!modalOptions.value.clickToClose)
+        return
+
       const targetModalId = event.target?.dataset?.modalId
 
       if (targetModalId === props.modalId)
@@ -49,6 +53,9 @@ onClickOutside(
 )
 
 whenever(escape, () => {
+  if (!modalOptions.value.clickToClose)
+    return
+
   if (props.inline && props.show)
     handleDestory()
   else if (props.show && lastModal.value.id === props.modalId)
@@ -68,12 +75,12 @@ whenever(escape, () => {
       <div
         :class="[
           {
-            'mt-auto rounded-t-7.5': options.sheetPosition === 'bottom',
-            'mb-auto rounded-b-7.5': options.sheetPosition === 'top',
+            'mt-auto rounded-t-7.5': modalOptions.sheetPosition === 'bottom',
+            'mb-auto rounded-b-7.5': modalOptions.sheetPosition === 'top',
           },
-          options.wrapperClass,
+          modalOptions.wrapperClass,
         ]"
-        :data-sheet-position="options.sheetPosition"
+        :data-sheet-position="modalOptions.sheetPosition"
         class="modal-inner relative inline-block w-full max-w-[460px] bg-white text-left align-middle dark:bg-gray-950 sm:my-6 sm:rounded-7.5"
         role="dialog"
         aria-modal="true"
@@ -82,14 +89,15 @@ whenever(escape, () => {
           ref="wrapperRef"
           :class="[
             {
-              'pb-8': options.sheetPosition === 'bottom',
-              'py-8': options.sheetPosition === 'top',
+              'pb-8': modalOptions.sheetPosition === 'bottom',
+              'py-8': modalOptions.sheetPosition === 'top',
             },
-            options.contentClass,
+            modalOptions.contentClass,
           ]"
           class="modal-content-wrapper relative w-full rounded-[inherit] px-6 py-10 sm:px-[50px]"
         >
           <button
+            v-if="modalOptions.closeButton"
             class="absolute right-0 top-0 m-6 flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
             aria-label="Close modal"
             @click="handleDestory"
@@ -98,7 +106,7 @@ whenever(escape, () => {
           </button>
           <slot />
         </div>
-        <CommonModalSnack v-bind="options.snackOptions" />
+        <CommonModalSnack v-bind="modalOptions.snackOptions" />
       </div>
     </div>
   </div>

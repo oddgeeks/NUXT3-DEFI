@@ -48,10 +48,10 @@ export const useSafe = defineStore('safe', () => {
   const optionsLoading = ref(false)
 
   const allSafes = computed<ISafe[]>(() => {
-    const primary = [mainSafe.value, multiSigSafe.value].filter(Boolean)
+    const primary = [mainSafe.value, multiSigSafe.value, legacySafe.value].filter(Boolean)
     const secondary = safes.value.filter(s => !primary.some(p => isAddressEqual(p?.safe_address, s?.safe_address)))
 
-    return [...primary, ...secondary] as ISafe[]
+    return [...primary, ...secondary].sort(a => isAddressEqual(a?.safe_address, selectedSafe.value?.safe_address) ? -1 : 1) as ISafe[]
   })
 
   const { account } = useWeb3()
@@ -64,6 +64,13 @@ export const useSafe = defineStore('safe', () => {
 
   const avoProvider = getRpcProviderByChainId(avoChainId)
   const avoBatchProvider = getRpcBatchRetryProviderByChainId(avoChainId)
+
+  const isObservableAccount = computed(() => {
+    if (!account.value)
+      return false
+
+    return account.value.toLowerCase() === observableAccount.toLowerCase()
+  })
 
   const forwarderProxyContract = Forwarder__factory.connect(
     forwarderProxyAddress,
@@ -210,6 +217,7 @@ export const useSafe = defineStore('safe', () => {
       getSafe(mainSafeAddress.value),
       getSafe(multiSigSafeAddress.value),
     ])
+    console.log(_selectedSafe)
 
     if (!_selectedSafe) {
       const isMultisig = isAddressEqual(safeAddress.value, multiSigSafeAddress.value)
@@ -421,6 +429,9 @@ export const useSafe = defineStore('safe', () => {
   async function getBalances(address: string, signal?: AbortSignal, updateState = false) {
     return Promise.all(
       availableNetworks.map(async (network) => {
+        if (String(network.chainId) == '122' && selectedSafe.value?.multisig === 0)
+          return []
+
         const customTokenAddress = customTokens.value
           .filter(t => String(t.chainId) == String(network.chainId))
           .map(t => t.address)
@@ -616,6 +627,9 @@ export const useSafe = defineStore('safe', () => {
         availableNetworks.map((network) => {
           const provider = getRpcBatchProviderByChainId(network.chainId)
 
+          if (String(network.chainId) == '122' && safe.multisig === 0)
+            return
+
           return getSafeOptionsByChain({
             safe,
             chainId: network.chainId,
@@ -652,7 +666,7 @@ export const useSafe = defineStore('safe', () => {
         }),
       )
 
-      return options as ISafeOptions[]
+      return options.filter(Boolean) as ISafeOptions[]
     }
     catch (e: any) {
       const msg = 'Failed to get safe options over public and private provider'
@@ -687,6 +701,9 @@ export const useSafe = defineStore('safe', () => {
       id: 0,
       owner_address: account.value,
       updated_at: new Date().toString(),
+      mfa_email_verified: 0,
+      mfa_phone_verified: 0,
+      mfa_totp_verified: 0,
       version: {},
       multisig,
       signers: {},
@@ -848,6 +865,8 @@ export const useSafe = defineStore('safe', () => {
     networkOrderedBySumTokens,
     getFallbackSafeOptionsByChainId,
     allSafes,
+    fetchSafeInstanceses,
+    isObservableAccount,
   }
 })
 

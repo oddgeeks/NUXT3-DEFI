@@ -133,7 +133,19 @@ async function handleSubmit() {
       'wc',
     )
 
-    if (!transactionHash) {
+    if (!transactionHash && web3WalletV2.value) {
+      let fakeHash = availableNetworks.find(i => String(i.chainId) == String(props.chainId))?.fakeTransactionHash
+
+      fakeHash = `${fakeHash?.slice(0, -1)}0`
+
+      web3WalletV2.value.respondSessionRequest({
+        topic: props.sessionV2.topic,
+        response: {
+          id: props.payload.id,
+          result: fakeHash,
+          jsonrpc: '2.0',
+        },
+      })
       toggle(false)
       return
     }
@@ -424,5 +436,6 @@ onUnmounted(() => {
       </div>
       <ManageBookmark :bookmark="reactiveBookmark" @update-bookmark="handleUpdateBookmark" @create-bookmark="handleCreateBookmark" />
     </div>
+    <SessionLocked class="mx-auto" />
   </form>
 </template>

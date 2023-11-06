@@ -24,25 +24,20 @@ async function handleDeletingContact(contact: IContact) {
 </script>
 
 <template>
-  <div
-    class="flex flex-col gap-5 rounded-[20px] bg-slate-50 px-5 pb-4.5 pt-4 dark:bg-gray-850 sm:hidden"
-  >
+  <div class="flex flex-col gap-5 rounded-[20px] bg-slate-50 px-5 pb-4.5 pt-4 dark:bg-gray-850 sm:hidden">
     <div class="flex justify-between">
       <span class="text-sm font-semibold text-slate-400">{{
         contact.name
       }}</span>
-      <button class="text-red-alert disabled:text-slate-400 disabled:opacity-40" :disabled="contact.owner" @click="handleDeletingContact(contact)">
+      <button
+        class="text-red-alert disabled:text-slate-400 disabled:opacity-40" :disabled="contact.owner || contact.notDeletable"
+        @click="handleDeletingContact(contact)"
+      >
         <DeleteSVG class="h-4 w-4" />
       </button>
     </div>
-    <div
-      class="flex items-center gap-3 rounded-7.5 border-2 px-4.5 py-3 dark:border-slate-700"
-    >
-      <ChainLogo
-        :stroke="false"
-        class="h-6.5 w-6.5"
-        :chain="contact.chainId"
-      />
+    <div class="flex items-center gap-3 rounded-7.5 border-2 px-4.5 py-3 dark:border-slate-700">
+      <ChainLogo :stroke="false" class="h-6.5 w-6.5" :chain="contact.chainId" />
       <Copy :text="contact.address" class="flex-1 justify-between">
         <template #content>
           <span class="text-slate-900 dark:text-white">{{
@@ -51,18 +46,12 @@ async function handleDeletingContact(contact: IContact) {
         </template>
       </Copy>
     </div>
-    <span
-      v-if="getSentTimes(contact) !== ''"
-      class="text-xs text-slate-400"
-    >
+    <span v-if="getSentTimes(contact) !== ''" class="text-xs text-slate-400">
       {{ getSentTimes(contact) }}
     </span>
     <div class="flex gap-2.5">
       <CommonButton
-        color="white"
-        class="flex-1 items-center justify-center"
-        :disabled="contact.owner"
-        @click="
+        color="white" class="flex-1 items-center justify-center" :disabled="contact.owner || contact.notEditable" @click="
           openAddContactModal(
             contact.name,
             contact.address,
@@ -74,8 +63,7 @@ async function handleDeletingContact(contact: IContact) {
         Edit
       </CommonButton>
       <CommonButton
-        color="white"
-        class="flex-1 items-center justify-center gap-2.5"
+        color="white" class="flex-1 items-center justify-center gap-2.5"
         :disabled="!!contact.chainId && !hasAvailableTokens(contact.chainId)"
         @click="openSendModal(contact.chainId || 1, undefined, contact)"
       >

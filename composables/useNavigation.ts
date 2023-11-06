@@ -3,6 +3,7 @@ import axios from 'axios'
 export function useNavigation() {
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { safeAddress, account } = useAvocadoSafe()
+  const { isAvocadoProtectActive, isSafeBackupSigner } = useMfa()
 
   const { data, refresh } = useAsyncData<IMultisigTransactionResponse>(async () => {
     if (!safeAddress.value || !account.value)
@@ -39,11 +40,13 @@ export function useNavigation() {
         tooltip: 'View your DeFi Positions',
       },
       {
+        id: 'pending-transactions',
         label: 'Pending Transactions',
         icon: 'SvgoStopwatch',
         to: `/multisig/${safeAddress.value}/pending-transactions`,
+        mfaSlug: `/2fa/${safeAddress.value}/pending-transactions`,
         tooltip: 'Pending Transactions',
-        hidden: !isSafeMultisig.value,
+        hidden: !isSafeMultisig.value && !isSafeBackupSigner.value,
         count: totalPendingTransactions,
       },
       {
@@ -78,6 +81,13 @@ export function useNavigation() {
         icon: 'SvgoHammer',
         to: '/transaction-builder',
         tooltip: 'Transaction Builder',
+      },
+      {
+        label: 'Avocado Protect',
+        icon: 'SvgoSecurity',
+        to: '/protect',
+        tooltip: 'Multi-Factor Authentication',
+        hidden: !isAvocadoProtectActive.value,
       },
     ]
   })

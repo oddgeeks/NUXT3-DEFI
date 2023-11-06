@@ -47,6 +47,10 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
     return warnedDapps.some(i => isSameOrigin(i, peerURL))
   }
 
+  const getChainAccounts = (chainIds: string[]) => {
+    return allSafes.value.flatMap(safe => chainIds.map(network => `${network}:${safe.safe_address}`))
+  }
+
   const prepareConnectV2 = async (
     uri: string,
   ) => {
@@ -68,13 +72,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
 
           const mergedChains = [...new Set([...chains, ...requiredChains])]
 
-          const accounts = allSafes.value.flatMap((safe) => {
-            return mergedChains.map((network) => {
-              return `${network}:${safe.safe_address}`
-            })
-          })
-
-          console.log(params, requiredMethods)
+          const accounts = getChainAccounts(mergedChains)
 
           const approvedNamespaces = buildApprovedNamespaces({
             proposal: params,
@@ -472,11 +470,30 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
     syncActiveSessions()
   })
 
-  watchThrottled(safe.safeAddress, () => {
+  watchThrottled(safe.safeAddress, async () => {
     for (const session of actualSessions.value) {
-      web3WalletV2.value?.emitSessionEvent({
+      const [chainId] = session?.requiredNamespaces?.eip155?.chains ?? []
+      const accounts = session?.namespaces?.eip155?.accounts ?? []
+
+      const chainAccounts = accounts.filter(i => i.includes(`${chainId}:`))
+
+      const sortedAccounts = chainAccounts.sort(a => a.includes(safe.safeAddress.value) ? -1 : 1)
+
+      await web3WalletV2.value?.updateSession({
+        namespaces: {
+          eip155: {
+            accounts: sortedAccounts,
+            chains: session.namespaces.eip155.chains,
+            events: session.namespaces.eip155.events,
+            methods: session.namespaces.eip155.methods,
+          },
+        },
         topic: session.topic,
-        chainId: 'eip155:1',
+      })
+
+      await web3WalletV2.value?.emitSessionEvent({
+        topic: session.topic,
+        chainId: chainId || 'eip155:1',
         event: {
           name: 'accountsChanged',
           data: [safe.safeAddress.value],

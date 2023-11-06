@@ -13,6 +13,7 @@ const props = defineProps<{
   itemTextClasses?: string
   itemWrapperClasses?: string
   selectedLabelClasses?: string
+  listClasses?: string
   disabled?: boolean
   searchable?: boolean
 }>()
@@ -113,9 +114,12 @@ whenever(open, () => {
           :src="selectedIcon"
         >
       </slot>
-      <span :class="selectedLabelClasses" class="block truncate text-sm">{{
-        selectedLabel
-      }}</span>
+      <slot name="button-label">
+        <span :class="selectedLabelClasses" class="block truncate text-sm">{{
+          selectedLabel
+        }}
+        </span>
+      </slot>
 
       <slot name="button-suffix" />
       <span v-if="!disabled" class="pointer-events-none ml-auto flex items-center">
@@ -129,6 +133,7 @@ whenever(open, () => {
     >
       <div v-if="open">
         <ul
+          :class="listClasses"
           class="absolute flex max-h-60 w-full flex-col gap-1.5 overflow-auto rounded-b-[14px] border-1 border-t-0 border-slate-150 bg-slate-50 px-1 py-[15px] dark:border-slate-700 dark:bg-gray-850"
         >
           <CommonInput v-if="searchable" v-model="search" autofocus placeholder="Search" name="search-input" class="-mt-3 !p-2" input-classes="!py-2" type="search" />

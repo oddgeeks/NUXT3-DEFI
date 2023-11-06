@@ -141,6 +141,9 @@ async function onSubmit() {
         owner: selectedSafe.value?.owner_address!,
         safe: selectedSafe.value?.safe_address!,
         targetChainId: props.chainId,
+        debug: {
+          domain: params.domain,
+        },
       })
 
       emit('resolve', true, {

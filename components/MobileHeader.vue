@@ -14,6 +14,7 @@ const { ensName } = storeToRefs(useSafe())
 const [opened, toggle] = useToggle(false)
 const [walletListOpened, toggleWalletList] = useToggle(false)
 const { setConnectorName, cachedProviderName } = useConnectors()
+const { terminateMFAToken } = useMfa()
 const { providers } = useNetworks()
 const {
   showTrackingBanner,
@@ -41,6 +42,7 @@ async function closeConnection() {
   const { success } = await openDisconnectWalletModal()
 
   if (success) {
+    terminateMFAToken()
     resetAccounts()
     setConnectorName(null)
     router.push('/login')
@@ -163,7 +165,7 @@ watch(() => active.value, () => {
       <div class="flex flex-col gap-7.5 px-[44px]">
         <nav class="mt-1.5 flex w-full flex-col gap-5 text-xs text-slate-400">
           <div class="flex w-full justify-around">
-            <a target="_blank" href="https://help.avocado.instadapp.io">Help</a>
+            <a target="_blank" href="https://guides.avocado.instadapp.io">Help</a>
             <a href="mailto:info@instadapp.io">Email</a>
             <a
               rel="noopener noreferrer"

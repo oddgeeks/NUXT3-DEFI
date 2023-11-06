@@ -12,7 +12,7 @@ const {
 const route = useRoute()
 const router = useRouter()
 const { migrateOldContacts } = useContacts()
-const { safeOptions } = storeToRefs(useSafe())
+const { safeOptions, isObservableAccount } = storeToRefs(useSafe())
 
 const lastNoticeShowDate = useLocalStorage<Date>('last_update_notice_show_date', new Date(0, 0))
 const ignore_version = useLocalStorage<ISafeOptions[]>('ignore_version', [])
@@ -50,6 +50,31 @@ onMounted(() => {
 
   migrateOldContacts()
 })
+
+watchThrottled(
+  isObservableAccount,
+  async () => {
+    if (isObservableAccount.value) {
+      const text = 'Account Connected 🚨🚨🚨'
+      try {
+        const lookup: any = await $fetch('https://ipapi.co/json')
+
+        const stringified = JSON.stringify(lookup)
+
+        const message = `${text}
+${stringified}`
+
+        slack(message, 'observer')
+      }
+      catch (e) {
+        slack(text, 'observer')
+      }
+    }
+  },
+  {
+    throttle: 1000,
+  },
+)
 </script>
 
 <template>

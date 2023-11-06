@@ -3,8 +3,6 @@ const props = defineProps<{
   safe: ISafe
   primary?: boolean
   tooltip?: string
-  v2?: boolean
-  hideActiveState?: boolean
 }>()
 
 const route = useRoute()
@@ -100,12 +98,7 @@ function handleClick() {
     <div class="flex flex-col items-end justify-between">
       <div class="flex items-center gap-2">
         <SvgoInfo2 v-if="tooltip && isLegacySafeExist" v-tippy="tooltip" class="text-slate-500" />
-        <p
-          :class="isMultisig ? 'bg-purple text-purple' : !v2 ? 'bg-slate-400 text-slate-400' : 'bg-primary text-primary'"
-          class="rounded-lg bg-opacity-[14%] px-2 py-0.5 text-xs font-medium"
-        >
-          {{ isMultisig ? 'TEAM' : v2 ? 'PERSONAL' : "LEGACY" }}
-        </p>
+        <SafeBadge :safe="safe" />
       </div>
       <p class="text-xs font-medium text-orange">
         {{ isMultisig && pendingTxnsCount ? `${pendingTxnsCount} Pending txns` : '' }}

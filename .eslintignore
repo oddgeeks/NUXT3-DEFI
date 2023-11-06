@@ -10,3 +10,5 @@ deployment/
 Dockerfile
 public/
 contracts/
+package.json
+yarn.lock
