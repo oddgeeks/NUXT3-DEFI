@@ -124,7 +124,7 @@ function openBridge() {
         <NuxtLink
           class="flex h-11 items-center gap-2.5"
           :class="$route.query.tab === 'bookmarks' ? 'text-primary' : ''"
-          :to="{ query: { tab: 'bookmarks' } }"
+          :to="{ path: '/', query: { tab: 'bookmarks' } }"
         >
           <SvgoBookmark class="h-4 w-4" />
           Transaction Shortcuts
