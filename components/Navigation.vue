@@ -143,7 +143,7 @@ function openBridge() {
           target="_blank"
           to="https://onboard.avocado.instadapp.io/"
         >
-          <SvgoBookmark class="h-4 w-4" />
+          <SvgoRocket class="h-4 w-4" />
           Onboard
         </NuxtLink>
         <NuxtLink
