@@ -60,7 +60,7 @@ defineProps({
       </div>
 
       <a
-        href="https://help.avocado.instadapp.io/en/articles/7038878-depositing-funds-to-your-avocado-account"
+        href=" https://guides.avocado.instadapp.io/getting-started/depositing-fundscount"
         target="blank"
         rel="noopener noreferrer"
         class="inline-flex items-center gap-2.5 text-xs font-medium text-primary"

@@ -44,6 +44,11 @@ export const promos: IPromo[] = [
     promo: 'AlphaInsiders-Campaign-v1',
   },
   {
+    title: 'Bankless Citizens Drop',
+    slug: 'bankless-citizens-drop',
+    promo: 'Bankless-Citizens-Drop-v1.0.0',
+  },
+  {
     title: 'Team Test',
     slug: 'team-test',
     promo: 'Team-Test-v1.0.0',

@@ -124,7 +124,7 @@ function openBridge() {
         <NuxtLink
           class="flex h-11 items-center gap-2.5"
           :class="$route.query.tab === 'bookmarks' ? 'text-primary' : ''"
-          :to="{ query: { tab: 'bookmarks' } }"
+          :to="{ path: '/', query: { tab: 'bookmarks' } }"
         >
           <SvgoBookmark class="h-4 w-4" />
           Transaction Shortcuts
@@ -143,7 +143,7 @@ function openBridge() {
           target="_blank"
           to="https://onboard.avocado.instadapp.io/"
         >
-          <SvgoBookmark class="h-4 w-4" />
+          <SvgoRocket class="h-4 w-4" />
           Onboard
         </NuxtLink>
         <NuxtLink
