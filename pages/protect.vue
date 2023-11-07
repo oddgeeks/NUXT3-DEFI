@@ -182,7 +182,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
               <ul class="flex flex-col gap-4">
                 <template v-for="mfa in mfaTypes" :key="mfa?.value || mfa.label">
                   <li v-if="mfa.value !== 'backup'">
-                    <div class="flex h-[66px] w-full items-center  justify-between rounded-2xl bg-slate-100 p-5 text-left ring-1 ring-slate-200 dark:bg-slate-850 dark:ring-slate-750">
+                    <div class="flex h-[66px] w-full items-center  justify-between rounded-2xl bg-slate-100 p-5 text-left ring-1 ring-slate-200 dark:bg-gray-900 dark:ring-gray-800">
                       <div class="flex w-full items-center justify-between">
                         <div class="flex flex-col gap-1">
                           <span class="text-xs font-medium leading-5">
@@ -270,7 +270,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
               </h3>
             </div>
 
-            <div class="flex w-full flex-col justify-between rounded-2xl bg-slate-100 text-left font-medium ring-1 ring-slate-200 dark:bg-slate-850 dark:ring-slate-750">
+            <div class="flex w-full flex-col justify-between rounded-2xl bg-slate-100 text-left font-medium ring-1 ring-slate-200 dark:bg-gray-900 dark:ring-gray-800">
               <div class="flex w-full items-center justify-between px-5 py-3">
                 <div class="flex flex-col gap-0.5">
                   <p class="text-xs font-medium leading-5">
@@ -296,7 +296,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                   </span>
                 </span>
               </div>
-              <NuxtLink v-if="pendingTransactionsLink?.mfaSlug && pendingTransactionsLink.count" :to="{ path: pendingTransactionsLink.mfaSlug, query: { tab: 'pending' } }" class="flex items-center justify-between rounded-b-[inherit] bg-slate-150 px-5 py-1.5 text-xs font-medium leading-5 dark:bg-slate-750">
+              <NuxtLink v-if="pendingTransactionsLink?.mfaSlug && pendingTransactionsLink.count" :to="{ path: pendingTransactionsLink.mfaSlug, query: { tab: 'pending' } }" class="flex items-center justify-between rounded-b-[inherit] border-t border-t-gray-800 bg-slate-150 px-5 py-1.5 text-xs font-medium leading-5 dark:bg-[#161E2D]">
                 <span>
                   View Queued transactions ({{ pendingTransactionsLink.count }})
                 </span>
