@@ -1,12 +1,11 @@
 <script setup lang="ts">
 const { allSafes, selectedSafe } = storeToRefs(useSafe())
-const { account } = useWeb3()
 
 const filteredSafes = computed(() => {
   const safes = allSafes.value.filter(safe => safe.multisig === 1)
   if (!selectedSafe.value)
     return safes
-  return safes.filter(safe => safe.safe_address !== selectedSafe.value?.safe_address && !checkSafeBackupSigner(safe, account.value))
+  return safes.filter(safe => safe.safe_address !== selectedSafe.value?.safe_address)
 })
 
 function handleSelect(safe: ISafe) {
