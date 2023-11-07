@@ -6,6 +6,7 @@ defineProps<{
   text: string
   iconOnly?: boolean
   successText?: string
+  iconClass?: string
 }>()
 const { copy, copied } = useClipboard()
 const slots = useSlots()
@@ -27,11 +28,12 @@ const slots = useSlots()
     <Transition mode="out-in" name="slide">
       <CheckCircle
         v-if="copied"
+        :class="iconClass"
         class="svg-circle h-4 w-4 shrink-0 text-white dark:text-slate-900"
       />
       <slot v-else-if="slots.copy" name="copy" />
       <slot v-else name="copy-icon">
-        <CopySVG class="text-gray-400" />
+        <CopySVG :class="iconClass" class="text-gray-400" />
       </slot>
     </Transition>
   </button>

@@ -3,8 +3,6 @@ import { storeToRefs } from 'pinia'
 import { Tippy } from 'vue-tippy'
 import GasSVG from '~/assets/images/icons/gas.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
-import PowerOnSVG from '~/assets/images/icons/power-on.svg?component'
-import PowerOffSVG from '~/assets/images/icons/power-off.svg?component'
 
 defineProps({
   hideGas: Boolean,
@@ -66,7 +64,7 @@ function userSignOut() {
 
 <template>
   <DefineTemplate>
-    <div
+    <button
       class="relative flex h-7.5 w-7.5 items-center justify-center overflow-hidden rounded-full bg-slate-150 dark:bg-gray-900"
       aria-label="Close Connection"
       role="button"
@@ -75,15 +73,15 @@ function userSignOut() {
       @mouseleave="hovered = false"
     >
       <div class="absolute overflow-hidden">
-        <PowerOffSVG v-if="hovered" class="pointer-events-none h-12 w-12" />
-        <PowerOnSVG v-else class="pointer-events-none h-12 w-12" />
+        <SvgoPowerOff v-if="hovered" class="pointer-events-none h-12 w-12" />
+        <SvgoPowerOn v-else class="pointer-events-none h-12 w-12" />
       </div>
-    </div>
+    </button>
   </DefineTemplate>
-  <CommonButton v-show="!isActualActive" :class="buttonClass" size="lg" @click="openWeb3Modal">
+  <CommonButton v-if="!isActualActive" :class="buttonClass" size="lg" @click="openWeb3Modal">
     Connect
   </CommonButton>
-  <div v-show="isActualActive" class="flex items-center gap-[14px]">
+  <div v-else class="flex items-center gap-[14px]">
     <button
       v-if="!hideGas"
       class="flex items-center justify-between gap-2 rounded-5 bg-slate-100 px-4 py-[9px] dark:bg-gray-900"

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 
-const { safeAddress } = storeToRefs(useSafe())
+const { safeAddress, allSafes } = storeToRefs(useSafe())
 const { fromWei } = useBignumber()
 const { avoProvider } = useSafe()
 const route = useRoute()
@@ -33,11 +33,24 @@ const { refresh } = useAsyncData(
   },
 )
 
+const firstThreeSafe = computed(() => {
+  return allSafes.value.slice(0, 3)
+})
+
 useIntervalFn(refresh, 15000)
 </script>
 
 <template>
   <div class="hidden items-center justify-end py-8 sm:flex">
+    <div class="flex items-center gap-4">
+      <TransitionGroup name="list">
+        <WalletItem v-for="safe in firstThreeSafe" :key="safe.id" :safe="safe" />
+      </TransitionGroup>
+      <button class="flex h-[44px] w-full items-center justify-center gap-2.5 rounded-7.5 border border-slate-150 bg-slate-150 px-[14px] py-1 text-left text-xs dark:border-slate-750 dark:bg-gray-850">
+        All
+        <SvgoChevronDown class="h-3.5 w-3.5 -rotate-90" />
+      </button>
+    </div>
     <div class="mr-auto flex items-center gap-2.5">
       <SvgoAvocadoProtect v-if="$route.name === 'protect'" />
       <SessionLocked />
@@ -67,5 +80,23 @@ useIntervalFn(refresh, 15000)
 .slide-fade-leave-to {
   transform: translateX(20px);
   opacity: 0;
+}
+
+.list-move, /* apply transition to moving elements */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+/* ensure leaving items are taken out of layout flow so that moving
+   animations can be calculated correctly. */
+.list-leave-active {
+  position: absolute;
 }
 </style>

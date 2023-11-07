@@ -63,33 +63,37 @@ function handleClick() {
       'border-slate-50 bg-slate-50 dark:border-gray-800 dark:bg-gray-900': active,
       'bg-slate-150 dark:bg-gray-850': !active,
     }"
-    class="flex w-full items-stretch justify-between rounded-2xl border border-slate-150 px-4 py-3.5 text-left dark:border-slate-750" @click="handleClick"
+    class="flex w-full items-center justify-center gap-2.5 rounded-7.5 border border-slate-150 px-[14px] py-1 text-left dark:border-slate-750" @click="handleClick"
   >
-    <div>
-      <div class="mb-2.5 flex items-center gap-[8px]">
-        <p v-if="isMultisig" class="text-sm font-medium leading-[10px] text-purple">
+    <SvgoCheckCircle
+      :class="active ? 'success-circle' : 'svg-circle darker'"
+      class="h-4.5 w-4.5 shrink-0 text-gray-500"
+    />
+    <div class="flex flex-col">
+      <div class="flex items-center gap-[8px] text-xs font-medium">
+        <p v-if="isMultisig" class="text-purple">
           {{ walletName }}
         </p>
-        <p v-else class="text-sm font-medium leading-[10px] text-primary">
+        <p v-else class="text-primary">
           {{ walletName }}
         </p>
-
+        <!--
         <button @click.stop="onEdit">
           <SvgoEdit />
-        </button>
+        </button> -->
       </div>
 
-      <Copy class="mb-[6px] text-sm leading-[18px] text-slate-900 dark:text-white" :text="safe?.safe_address">
+      <Copy icon-only icon-class="!w-3 !h-3" class="text-[10px] leading-[18px] text-gray-400" :text="safe?.safe_address">
         <template #content>
           {{ shortenHash(safe?.safe_address) }}
         </template>
       </Copy>
 
-      <p class="text-sm font-medium leading-[18px] text-gray-400">
+      <!-- <p class="text-sm font-medium leading-[18px] text-gray-400">
         {{ balance ? formatUsd(balance) : '' }}
-      </p>
+      </p> -->
     </div>
-    <div class="flex flex-col items-end justify-between">
+    <!-- <div class="flex flex-col items-end justify-between">
       <div class="flex items-center gap-2">
         <SvgoInfo2 v-if="tooltip && isLegacySafeExist" v-tippy="tooltip" class="text-gray-500" />
         <SafeBadge :safe="safe" />
@@ -97,6 +101,6 @@ function handleClick() {
       <p class="text-xs font-medium text-orange">
         {{ isMultisig && pendingTxnsCount ? `${pendingTxnsCount} Pending txns` : '' }}
       </p>
-    </div>
+    </div> -->
   </button>
 </template>
