@@ -20,6 +20,7 @@ export function useAvocadoSafe() {
   const { clearAllModals } = useModal()
   const { authVerify, preferredMfa, isAvocadoProtectActive, atLeastOneMfaVerifed, getMFAToken, getMFATokenExpiry } = useMfa()
   const dryRun = useCookie<boolean | undefined>('dry-run')
+  const latestMfaType = useState('latest-mfa-type')
 
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { getRequiredSigner } = useMultisig()
@@ -536,6 +537,9 @@ export function useAvocadoSafe() {
           },
         })
 
+        // global usage of recent mfa type
+        latestMfaType.value = mfaType
+
         if (mfaType === 'backup') {
           const nonce = -1
           const multisigParams = await generateMultisigSignatureAndSign({ chainId, actions, nonce, metadata, options })
@@ -571,7 +575,7 @@ export function useAvocadoSafe() {
       return txHash
     }
 
-    await createProposal(params)
+    return createProposal(params)
   }
 
   async function createProposal(args: IGenerateMultisigSignatureParams) {

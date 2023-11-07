@@ -25,7 +25,7 @@ onMounted(() => {
     </figure>
 
     <nav class="flex gap-10 text-xs text-slate-400">
-      <a target="_blank" href="https://help.avocado.instadapp.io">Help</a>
+      <a target="_blank" href="https://guides.avocado.instadapp.io">Help</a>
       <a href="mailto:info@instadapp.io">Email</a>
       <a
         rel="noopener noreferrer"
