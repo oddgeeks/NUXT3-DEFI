@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { ethers } from 'ethers'
+import groupBy from 'lodash/groupBy'
+import flatMap from 'lodash/flatMap'
 import { Erc20__factory } from '~/contracts'
 
 const props = defineProps<MigrateToModalProps>()
@@ -16,6 +18,7 @@ interface MigrateToModalProps {
 interface MigrationTransaction {
   chainId: string | number
   txs: TransactionsAction[]
+  metadata: string[]
 }
 
 const { sendTransactions } = useAvocadoSafe()
@@ -31,8 +34,8 @@ const { account, library } = useWeb3()
 
 const loading = ref(false)
 
-function addNftTxs(currentTransactions: MigrationTransaction[]) {
-  const transactions = [...currentTransactions]
+function getNftTransactions() {
+  const transactions: MigrationTransaction[] = []
 
   const erc712ABI = [
     'function transferFrom(address from, address to, uint256 tokenId)',
@@ -44,37 +47,26 @@ function addNftTxs(currentTransactions: MigrationTransaction[]) {
     const nft = selectedNFTsForMigration.value[i]
     const calldata = contractInterface.encodeFunctionData('transferFrom', [selectedSafe.value?.safe_address, props.selectedMigrationSafe?.safe_address, nft.tokenId])
 
-    const index = transactions.findIndex(tx => tx.chainId === nft.chainId)
-
-    if (index === -1) {
-      transactions.push({
-        chainId: nft.chainId,
-        txs: [{
-          to: nft.contractAddress,
-          data: calldata,
-          operation: '0',
-          value: '0',
-        }],
-      })
-    }
-    else {
-      transactions[index].txs = [...transactions[index].txs, {
+    transactions.push({
+      chainId: nft.chainId,
+      txs: [{
         to: nft.contractAddress,
         data: calldata,
         operation: '0',
         value: '0',
-      }]
-    }
+      }],
+      metadata: [],
+    })
   }
 
   return transactions
 }
 
-async function addGasBalanceTx(currentTransactions: MigrationTransaction[]) {
+async function getGasBalanceTransactions() {
   if (!selectedSafeForMigration.value)
-    return currentTransactions
+    return []
 
-  const transactions = [...currentTransactions]
+  const transactions: MigrationTransaction[] = []
 
   const gasBalanceManagerAddress = '0x847b123EB1Ed2f51bC8A5ed7D5C9091595793ae7'
   const gasBalanceManagerAbi = [{ inputs: [{ internalType: 'address', name: 'avoFactory_', type: 'address' }, { internalType: 'address', name: 'avoMultisigFactory_', type: 'address' }, { internalType: 'address', name: 'owner_', type: 'address' }], stateMutability: 'nonpayable', type: 'constructor' }, { inputs: [], name: 'AvoGasBalanceManager__InvalidParams', type: 'error' }, { inputs: [], name: 'AvoGasBalanceManager__Unauthorized', type: 'error' }, { anonymous: false, inputs: [{ indexed: true, internalType: 'address', name: 'fromAvo', type: 'address' }, { indexed: true, internalType: 'address', name: 'toAvo', type: 'address' }, { indexed: false, internalType: 'address', name: 'toAvoOwner', type: 'address' }, { indexed: false, internalType: 'uint256', name: 'toAvoIndex', type: 'uint256' }, { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' }], name: 'AvoTransfer', type: 'event' }, { anonymous: false, inputs: [{ indexed: true, internalType: 'address', name: 'previousOwner', type: 'address' }, { indexed: true, internalType: 'address', name: 'newOwner', type: 'address' }], name: 'OwnershipTransferred', type: 'event' }, { anonymous: false, inputs: [{ indexed: false, internalType: 'address', name: 'account', type: 'address' }], name: 'Paused', type: 'event' }, { anonymous: false, inputs: [{ indexed: false, internalType: 'address', name: 'account', type: 'address' }], name: 'Unpaused', type: 'event' }, { inputs: [], name: 'avoFactory', outputs: [{ internalType: 'contract IAvoFactory', name: '', type: 'address' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'avoMultisigFactory', outputs: [{ internalType: 'contract IAvoMultisigFactory', name: '', type: 'address' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'owner', outputs: [{ internalType: 'address', name: '', type: 'address' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'pause', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [], name: 'paused', outputs: [{ internalType: 'bool', name: '', type: 'bool' }], stateMutability: 'view', type: 'function' }, { inputs: [], name: 'renounceOwnership', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [{ internalType: 'address', name: 'toAvoOwner_', type: 'address' }, { internalType: 'uint256', name: 'toAvoIndex_', type: 'uint256' }, { internalType: 'uint256', name: 'amount_', type: 'uint256' }], name: 'transfer', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [{ internalType: 'address', name: 'toAvo_', type: 'address' }, { internalType: 'uint256', name: 'amount_', type: 'uint256' }], name: 'transfer', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [{ internalType: 'address', name: 'newOwner', type: 'address' }], name: 'transferOwnership', outputs: [], stateMutability: 'nonpayable', type: 'function' }, { inputs: [], name: 'unpause', outputs: [], stateMutability: 'nonpayable', type: 'function' }]
@@ -92,24 +84,20 @@ async function addGasBalanceTx(currentTransactions: MigrationTransaction[]) {
     operation: '0',
   }
 
-  const index = transactions.findIndex(transaction => transaction.chainId === 137)
-  if (index === -1) {
-    return [...transactions, {
-      chainId: 137,
-      txs: [tx],
-    }]
-  }
-
-  transactions[index].txs = [...transactions[index].txs, tx]
+  transactions.push({
+    chainId: 137,
+    metadata: [],
+    txs: [tx],
+  })
 
   return transactions
 }
 
-async function addBalancesTxs(currentTransactions: MigrationTransaction[]) {
-  if (!props.selectedMigrationSafe?.safe_address)
-    return currentTransactions
+async function getBalanceTransactions() {
+  if (!selectedTokensForMigration.value?.length)
+    return []
 
-  const transactions = [...currentTransactions]
+  const transactions: MigrationTransaction[] = []
 
   for (let i = 0; i < selectedTokensForMigration.value.length; i++) {
     const selectedToken = selectedTokensForMigration.value[i]
@@ -119,6 +107,15 @@ async function addBalancesTxs(currentTransactions: MigrationTransaction[]) {
     const transferAmount = toBN((selectedToken as IBalance).balance)
       .times(10 ** selectedToken.decimals)
       .toFixed()
+
+    const meta = encodeTransferMetadata(
+      {
+        token: selectedToken.address,
+        amount: transferAmount,
+        receiver: props.selectedMigrationSafe?.safe_address!,
+      },
+      false,
+    )
 
     if (selectedToken.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
       tx = {
@@ -132,7 +129,7 @@ async function addBalancesTxs(currentTransactions: MigrationTransaction[]) {
       const contract = Erc20__factory.connect(selectedToken.address, library.value)
 
       const { data: transferData } = await contract.populateTransaction.transfer(
-        props.selectedMigrationSafe?.safe_address,
+        props.selectedMigrationSafe?.safe_address!,
         transferAmount,
       )
 
@@ -144,21 +141,11 @@ async function addBalancesTxs(currentTransactions: MigrationTransaction[]) {
       }
     }
 
-    const index = transactions.findIndex((transaction: any) => transaction.chainId === selectedToken.chainId)
-    if (index === -1) {
-      transactions.push(
-        {
-          chainId: selectedToken.chainId,
-          txs: [tx],
-        },
-      )
-    }
-    else {
-      transactions[index] = {
-        chainId: transactions[index].chainId,
-        txs: [...transactions[index].txs, tx],
-      }
-    }
+    transactions.push({
+      chainId: selectedToken.chainId,
+      txs: [tx],
+      metadata: [meta],
+    })
   }
 
   return transactions
@@ -166,44 +153,53 @@ async function addBalancesTxs(currentTransactions: MigrationTransaction[]) {
 
 async function migrate() {
   loading.value = true
-  let transactions: MigrationTransaction[] = []
 
-  transactions = await addBalancesTxs(transactions)
-  transactions = addNftTxs(transactions)
-  transactions = await addGasBalanceTx(transactions)
+  const balanceTransactions = await getBalanceTransactions()
+  const nftTransactions = getNftTransactions()
+  const gasBalanceTransactions = await getGasBalanceTransactions()
 
-  try {
-    const hashes = []
-    const chainIds = []
+  const groupedTransactions = groupBy([...balanceTransactions, ...nftTransactions, ...gasBalanceTransactions], 'chainId')
+  const hashes: Record<string, string> = {}
 
-    for (let i = 0; i < transactions.length; i++) {
-      const hash = await sendTransactions(
-        transactions[i].txs!,
-        Number(transactions[i].chainId),
-        {},
-        'transfer',
-      )
+  console.log(groupedTransactions)
 
-      hashes.push(hash)
-      chainIds.push(transactions[i].chainId)
+  for (const chainId in groupedTransactions) {
+    const transactions = flatMap(groupedTransactions[chainId], 'txs')
+    const metadata = flatMap(groupedTransactions[chainId], 'metadata')
+
+    const encodedMetadata = encodeMultipleActions(...metadata)
+
+    try {
+      const txHash = await sendTransactions(transactions,
+        Number(chainId), { metadata: encodedMetadata }, 'transfer')
+
+      if (txHash)
+        hashes[chainId] = txHash
     }
+    catch (e: any) {
+      const err = parseTransactionError(e)
 
-    setTokensForMigration([])
-    setNFTsForMigration([])
-    emit('destroy')
-    openPendingMigrationModal(hashes, chainIds)
+      openSnackbar({
+        message: err.formatted,
+        type: 'error',
+      })
+    }
+    finally {
+      loading.value = false
+    }
   }
-  catch (e: any) {
-    const err = parseTransactionError(e)
 
-    openSnackbar({
-      message: err.formatted,
-      type: 'error',
-    })
-  }
-  finally {
-    loading.value = false
-  }
+  setTokensForMigration([])
+  setNFTsForMigration([])
+  selectedSafeForMigration.value = undefined
+
+  const succuessfulChainIds = Object.keys(hashes)
+  const hashesArray = Object.values(hashes)
+
+  if (!succuessfulChainIds.length || !hashesArray.length)
+    return
+
+  openPendingMigrationModal(hashesArray, succuessfulChainIds)
 }
 </script>
 
@@ -262,22 +258,6 @@ async function migrate() {
           No NFTs selected.
         </div>
       </div>
-
-      <!-- <h4 class="text-xs dark:text-white text-slate-900 font-medium mb-[10px] mt-5">
-        DeFi Positions
-      </h4>
-      <div class="w-[460px] max-w-full dark:bg-gray-850 bg-slate-150 dark:border-slate-750 border-white rounded-5" :class="selectedDefiForMigration?.length ? 'border-[1px]' : ''">
-        <MigrationDefiPosition
-          v-for="position in selectedDefiForMigration"
-          :key="position.id"
-          :position="position"
-          show-selected-ui
-          @toggle-check="() => toggleSelectedDefiForMigration(position)"
-        />
-        <div v-if="!selectedDefiForMigration?.length" class="text-xs text-slate-400 font-medium">
-          No DeFi positions selected.
-        </div>
-      </div> -->
 
       <h4 class="mb-[10px] mt-5 text-xs font-medium text-slate-900 dark:text-white">
         Gas balances

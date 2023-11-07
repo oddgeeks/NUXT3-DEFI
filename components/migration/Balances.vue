@@ -22,7 +22,7 @@ const tokensWithBalances = computed(() =>
       </button>
     </div>
 
-    <template v-if="!account || balances.loading">
+    <template v-if="!account || !balances">
       <MigrationLoadingBalance
         v-for="i in 4"
 
