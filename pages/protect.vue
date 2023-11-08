@@ -296,7 +296,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                   </span>
                 </span>
               </div>
-              <NuxtLink v-if="pendingTransactionsLink?.mfaSlug && pendingTransactionsLink.count" :to="{ path: pendingTransactionsLink.mfaSlug, query: { tab: 'pending' } }" class="flex items-center justify-between rounded-b-[inherit] border-t border-t-gray-800 bg-slate-150 px-5 py-1.5 text-xs font-medium leading-5 dark:bg-[#161E2D]">
+              <NuxtLink v-if="pendingTransactionsLink?.mfaSlug && pendingTransactionsLink.count" :to="{ path: pendingTransactionsLink.mfaSlug, query: { tab: 'pending' } }" class="flex items-center justify-between rounded-b-[inherit] border-t border-t-gray-800 bg-slate-150 px-5 py-1.5 text-xs font-medium leading-5 dark:bg-gray-875">
                 <span>
                   View Queued transactions ({{ pendingTransactionsLink.count }})
                 </span>

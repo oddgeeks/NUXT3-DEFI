@@ -94,11 +94,11 @@ whenever(escape, () => {
             },
             modalOptions.contentClass,
           ]"
-          class="modal-content-wrapper relative w-full rounded-[inherit] px-6 py-10 sm:px-[50px]"
+          class="modal-content-wrapper relative w-full rounded-[inherit] p-7.5"
         >
           <button
             v-if="modalOptions.closeButton"
-            class="absolute right-0 top-0 m-6 flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-900"
+            class="absolute right-0 top-0 m-6 flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-800"
             aria-label="Close modal"
             @click="handleDestory"
           >

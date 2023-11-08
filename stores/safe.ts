@@ -4,6 +4,7 @@ import collect from 'collect.js'
 import { deepCopy, isAddress } from 'ethers/lib/utils'
 import axios from 'axios'
 import { wait } from '@instadapp/utils'
+import { isUndefined } from 'lodash'
 import type { IToken } from './tokens'
 import { getComputedAddresses, getSafeOptionsByChain } from '~/server/utils/safe'
 import type { TokenBalanceResolver } from '~/contracts'
@@ -204,8 +205,11 @@ export const useSafe = defineStore('safe', () => {
     if (oldSafeAddress) {
       const legacySafeHasGas = await getGasBalance(oldSafeAddress).then(toBN).then(b => b.gt(0))
       const setLegacyAsDefault = legacySafeInstance && legacySafeHasGas
-      const hideLegacySafe = useLocalStorage('hide-legacy-safe', !legacySafeHasGas)
-      hideLegacySafe.value = !setLegacyAsDefault
+      const hideLegacySafe = useLocalStorage<boolean | undefined>('hide-legacy-safe', undefined)
+
+      if (isUndefined(hideLegacySafe.value))
+        hideLegacySafe.value = !setLegacyAsDefault
+
       return setLegacyAsDefault
     }
     return false

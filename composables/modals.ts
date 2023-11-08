@@ -58,6 +58,7 @@ import MFASignInstadappSigner from '~/components/modals/Mfa/SignInstadappSigner.
 import MFAActivateBackupSigner from '~/components/modals/Mfa/ActivateBackupSigner.vue'
 import MFAReviewBackupTransaction from '~/components/modals/Mfa/ReviewBackupTransaction.vue'
 import ReviewSignerProcess from '~/components/modals/Multisig/ReviewSignerProcess.vue'
+import AllWallets from '~/components/modals/AllWallets.vue'
 
 const { openModal } = useModal()
 
@@ -909,6 +910,16 @@ export function open2faTerminateSessionModal() {
     },
     cancelButtonProps: {
       color: 'white',
+    },
+  })
+}
+
+export function openAllWalletsModal() {
+  return openModal({
+    component: AllWallets,
+    options: {
+      wrapperClass: '!max-w-[800px]',
+      contentClass: '!p-0',
     },
   })
 }

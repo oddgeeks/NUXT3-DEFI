@@ -33,9 +33,7 @@ const { refresh } = useAsyncData(
   },
 )
 
-const firstThreeSafe = computed(() => {
-  return allSafes.value.slice(0, 3)
-})
+const firstThreeSafe = computed(() => allSafes.value?.slice(0, 3))
 
 useIntervalFn(refresh, 15000)
 </script>
@@ -46,7 +44,7 @@ useIntervalFn(refresh, 15000)
       <TransitionGroup name="list">
         <WalletItem v-for="safe in firstThreeSafe" :key="safe.id" :safe="safe" />
       </TransitionGroup>
-      <button class="flex h-[44px] w-full items-center justify-center gap-2.5 rounded-7.5 border border-slate-150 bg-slate-150 px-[14px] py-1 text-left text-xs dark:border-slate-750 dark:bg-gray-850">
+      <button v-if="allSafes?.length" class="flex h-[44px] w-full items-center justify-center gap-2.5 rounded-7.5 border border-slate-150 bg-slate-150 px-[14px] py-1 text-left text-xs dark:border-slate-750 dark:bg-gray-850" @click="openAllWalletsModal()">
         All
         <SvgoChevronDown class="h-3.5 w-3.5 -rotate-90" />
       </button>

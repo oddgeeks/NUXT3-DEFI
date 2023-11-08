@@ -75,7 +75,7 @@
   }
 
   .svg-circle.darker > path:first-child {
-    @apply dark:stroke-slate-750 dark:fill-gray-700 fill-slate-150 stroke-slate-150 dark:text-gray-500;
+    @apply dark:fill-gray-700 fill-slate-150 stroke-none dark:text-gray-500;
   }
 
   .svg-gray-info > g > path:first-child {
@@ -99,7 +99,7 @@
   }
   
   .common-input {
-    @apply placeholder-gray-400 focus-visible:!outline-none placeholder:text-sm border-none shadow-none focus:ring-0 focus:border-none bg-inherit rounded-[inherit] px-0 py-[13px] w-full
+    @apply placeholder-gray-400 focus-visible:!outline-none placeholder:text-sm border-none shadow-none focus:ring-0 focus:border-none bg-inherit px-0 py-[13px] w-full
   }
 
   @keyframes gradient {
