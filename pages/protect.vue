@@ -160,14 +160,22 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
         <h1 class="text-[30px] leading-10">
           {{ $t('mfa.page.title') }}
         </h1>
-        <h2 class="text-sm font-medium leading-6 text-slate-400">
-          {{ $t('mfa.page.subtitle') }}
-        </h2>
-        <NuxtLink class="text-sm font-medium text-primary" external target="_blank" to="https://guides.avocado.instadapp.io/avocado-protect-2fa/how-does-avocado-protect-2fa-work">
-          Learn more about how it works
-        </NuxtLink>
+        <div class="flex flex-col justify-between gap-2.5 sm:flex-row">
+          <div>
+            <h2 class="text-sm font-medium leading-6 text-slate-400">
+              {{ $t('mfa.page.subtitle') }}
+            </h2>
+            <NuxtLink class="text-sm font-medium text-primary" external target="_blank" to="https://guides.avocado.instadapp.io/avocado-protect-2fa/how-does-avocado-protect-2fa-work">
+              Learn more about how it works
+            </NuxtLink>
+          </div>
+          <NuxtLink target="_blank" external to="https://www.youtube.com/watch?v=XaGUVxmIv90" class="flex items-center gap-2 rounded-7.5 px-5 py-3 text-sm font-medium ring-1 ring-slate-150 dark:ring-slate-750">
+            <SvgoYoutube class="text-primary" />
+            Watch Tutorial Video
+          </NuxtLink>
+        </div>
       </div>
-      <div class="grid grid-cols-2 gap-5">
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div class="rounded-5 bg-slate-50 dark:bg-gray-850">
           <div class="flex flex-col gap-7.5 p-7.5">
             <div>
@@ -182,8 +190,8 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
               <ul class="flex flex-col gap-4">
                 <template v-for="mfa in mfaTypes" :key="mfa?.value || mfa.label">
                   <li v-if="mfa.value !== 'backup'">
-                    <div class="flex h-[66px] w-full items-center  justify-between rounded-2xl bg-slate-100 p-5 text-left ring-1 ring-slate-200 dark:bg-slate-850 dark:ring-slate-750">
-                      <div class="flex w-full items-center justify-between">
+                    <div class="flex w-full items-center justify-between  rounded-2xl bg-slate-100 p-5 text-left ring-1 ring-slate-200 dark:bg-slate-850 dark:ring-slate-750 sm:h-[66px]">
+                      <div class="flex w-full flex-col justify-between gap-2.5 sm:flex-row sm:items-center sm:gap-0">
                         <div class="flex flex-col gap-1">
                           <span class="text-xs font-medium leading-5">
                             {{ mfa.label }}
@@ -234,7 +242,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                             </transition>
                           </Popover>
                         </span>
-                        <CommonButton v-else @click="handleActivate(mfa)">
+                        <CommonButton v-else class="justify-center" @click="handleActivate(mfa)">
                           Enable Now
                         </CommonButton>
                       </div>
