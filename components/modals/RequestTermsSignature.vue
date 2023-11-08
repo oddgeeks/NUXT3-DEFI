@@ -23,7 +23,7 @@ Nonce: {{NONCE}}
     const dateNow = new Date().toUTCString()
 
     const generateNonceParams = {
-      ISSUE_AT: dateNow,
+      TIME: dateNow,
     }
 
     const isReferrer = await avoProvider.send('api_hasReferralForUser', [account.value,
