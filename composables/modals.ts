@@ -753,6 +753,7 @@ export async function openRequestTermsSignature() {
     options: {
       clickToClose: false,
       closeButton: false,
+      contentClass: '!p-7.5',
       wrapperClass: '!max-w-[560px]',
     },
   })
