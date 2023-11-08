@@ -41,7 +41,7 @@
 }
 
 @layer utilities {
-  .ticket-divider {
+   .ticket-divider {
     @apply bg-dashed-pattern dark:bg-dashed-pattern-dark;
     background-position: bottom;
     background-size: 21px 2px;
@@ -279,3 +279,19 @@ input[type="search" i]::-webkit-search-cancel-button {
 .woot--bubble-holder > .woot-widget-bubble {
   z-index: 49 !important
 }
+
+.wallet-list-move, 
+  .wallet-list-enter-active,
+  .wallet-list-leave-active {
+    transition: all 0.5s ease;
+  }
+
+  .wallet-list-enter-from,
+  .wallet-list-leave-to {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+
+  .wallet-list-leave-active {
+    position: absolute;
+  }

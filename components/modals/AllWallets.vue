@@ -79,9 +79,11 @@ const displayLegacySafe = computed(() => {
         </template>
       </CommonInput>
       <div class="grid min-h-[220px] grid-cols-2 items-baseline gap-4">
-        <template v-for="safe in filteredSafes" :key="safe.safe_address">
-          <WalletItem v-if="safe.multisig === 0 ? displayLegacySafe : true" detailed :safe="safe" />
-        </template>
+        <TransitionGroup name="wallet-list">
+          <template v-for="safe in filteredSafes" :key="safe.safe_address">
+            <WalletItem v-if="safe.multisig === 0 ? displayLegacySafe : true" detailed :safe="safe" />
+          </template>
+        </TransitionGroup>
       </div>
     </div>
   </div>

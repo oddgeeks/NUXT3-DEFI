@@ -41,7 +41,7 @@ useIntervalFn(refresh, 15000)
 <template>
   <div class="hidden items-center justify-end py-8 sm:flex">
     <div class="flex items-center gap-4">
-      <TransitionGroup name="list">
+      <TransitionGroup name="wallet-list">
         <WalletItem v-for="safe in firstThreeSafe" :key="safe.id" :safe="safe" />
       </TransitionGroup>
       <button v-if="allSafes?.length" class="flex h-[44px] w-full items-center justify-center gap-2.5 rounded-7.5 border border-slate-150 bg-slate-150 px-[14px] py-1 text-left text-xs dark:border-slate-750 dark:bg-gray-850" @click="openAllWalletsModal()">
@@ -78,23 +78,5 @@ useIntervalFn(refresh, 15000)
 .slide-fade-leave-to {
   transform: translateX(20px);
   opacity: 0;
-}
-
-.list-move, /* apply transition to moving elements */
-.list-enter-active,
-.list-leave-active {
-  transition: all 0.5s ease;
-}
-
-.list-enter-from,
-.list-leave-to {
-  opacity: 0;
-  transform: translateX(30px);
-}
-
-/* ensure leaving items are taken out of layout flow so that moving
-   animations can be calculated correctly. */
-.list-leave-active {
-  position: absolute;
 }
 </style>
