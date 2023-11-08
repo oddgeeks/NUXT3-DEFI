@@ -15,7 +15,7 @@ async function handleSign() {
 
     let template = `Welcome to Avocado!
 
-Address: {{OWNER}}
+Address: {{SIGNER}}
 Time: {{TIME}}
 Nonce: {{NONCE}}
 `
@@ -24,6 +24,7 @@ Nonce: {{NONCE}}
 
     const generateNonceParams = {
       TIME: dateNow,
+      SIGNER: account.value,
     }
 
     const isReferrer = await avoProvider.send('api_hasReferralForUser', [account.value,
@@ -42,7 +43,7 @@ Nonce: {{NONCE}}
       generateNonceParams,
     ])
 
-    template = template.replaceAll('{{OWNER}}', account.value)
+    template = template.replaceAll('{{SIGNER}}', account.value)
     template = template.replaceAll('{{TIME}}', dateNow)
     template = template.replaceAll('{{NONCE}}', nonce)
 
