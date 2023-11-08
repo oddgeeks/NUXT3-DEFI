@@ -10,7 +10,6 @@ definePageMeta({
 })
 
 const { account } = useWeb3()
-const { unstableDappNetworks } = useBanner()
 const { networkPreference, tokenBalances } = storeToRefs(useSafe())
 
 const listType = useLocalStorage('listType', 'individual')
@@ -47,17 +46,11 @@ function selectType(type: string) {
 <template>
   <div class="flex flex-1 flex-col gap-7.5">
     <TotalBalance />
-    <div class="flex flex-col gap-3.5">
-      <Tabs />
-      <YourWallet />
-    </div>
-    <DApps v-if="$route.query.tab === undefined" />
-    <Bookmarks v-if="$route.query.tab === 'bookmarks'" />
-
+    <YourWallet />
+    <DApps />
     <div class="flex flex-1 flex-col gap-5 lg:flex-row">
       <div class="relative flex w-full flex-col gap-5">
         <div class="flex flex-col gap-5">
-          <WarningsUnstableDappVersion v-if="unstableDappNetworks?.length" />
           <div class="flex justify-between sm:pr-7.5">
             <div class="flex gap-7.5">
               <h2 class="inline-flex items-center gap-2 font-semibold">

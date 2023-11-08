@@ -1,14 +1,11 @@
-<script setup>
+<script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
+import SVGWalletConnect from '~/assets/images/wallet/wallet-connect-lite.svg?component'
 
-const { balances } = storeToRefs(useSafe())
-const { totalBalance, tokenBalances } = useAvocadoSafe()
+const { balances, safeAddress } = storeToRefs(useSafe())
+const { totalBalance } = useAvocadoSafe()
 const { authorisedNetworks } = useAuthorities()
-
-function hasAvailableTokens() {
-  return tokenBalances.value.length > 0
-}
 
 function handleOpenSendModal() {
   const firstAvailableChain = authorisedNetworks.value[0]?.chainId || 1
@@ -17,74 +14,63 @@ function handleOpenSendModal() {
 </script>
 
 <template>
-  <div>
-    <h2 class="mb-2.5 flex items-center gap-2 font-semibold text-gray-400">
-      Total balance
+  <div class="flex rounded-5 p-5 dark:bg-gray-850">
+    <div class="flex flex-1 flex-col gap-2.5">
+      <h2 class="flex items-center gap-2 text-sm text-gray-400">
+        Total balance
 
-      <SvgSpinner v-if="balances.loading" class="text-primary" />
-    </h2>
-    <div class="font-semibold leading-10">
-      <div v-if="!balances.data" class="flex h-10 w-40 items-center">
-        <div class="loading-box h-[34px] w-full rounded-[12px]" />
-      </div>
-      <div v-else class="flex flex-row gap-4 sm:items-center sm:gap-7.5">
-        <span class="flex-1 text-[32px] sm:text-[40px] md:flex-none">{{ formatUsd(totalBalance.toNumber()) }}</span>
-        <div class="flex items-center gap-[15px] md:hidden">
-          <button
-            class="h-10"
-            :disabled="!hasAvailableTokens()"
-            @click="openSendModal(1)"
-          >
-            <div
-              class="rounded-full bg-primary p-1.5 text-white"
-              :class="{
-                'bg-slate-300 !text-gray-400 dark:bg-slate-600 dark:!text-gray-500':
-                  !hasAvailableTokens(),
-              }"
-            >
-              <ArrowRight class="h-3.5 w-3.5 -rotate-45" />
-            </div>
-          </button>
-          <button
-            class="h-10"
-            @click="openQrCode"
-          >
-            <div
-              class="rounded-full bg-primary p-1.5 text-white"
-            >
-              <ArrowRight class="h-3.5 w-3.5 rotate-[135deg]" />
-            </div>
-          </button>
+        <SvgSpinner v-if="balances.loading" class="text-primary" />
+      </h2>
+      <div class="font-semibold leading-10">
+        <div v-if="!balances.data" class="flex h-10 w-40 items-center">
+          <div class="loading-box h-[34px] w-full rounded-[12px]" />
         </div>
-        <div class="hidden items-center gap-[15px] md:flex">
-          <CommonButton
-            color="white"
-            class="h-10 flex-1 items-center justify-center gap-2.5 !px-4 sm:flex-none"
-            :disabled="!hasAvailableTokens()"
-            @click="handleOpenSendModal"
-          >
-            Send
-            <CommonTxTypeIcon class="p-1.5" :disabled="!hasAvailableTokens()" color="light">
-              <template #icon>
-                <SvgoArrowRight class="h-3.5 w-3.5 -rotate-45" />
-              </template>
-            </CommonTxTypeIcon>
-          </CommonButton>
-
-          <CommonButton
-            color="white"
-            class="h-10 flex-1 items-center justify-center gap-2.5 !px-4 sm:flex-none"
-            @click="openQrCode"
-          >
-            Receive
-            <div
-              class="rounded-full bg-primary p-1.5 text-white"
+        <div v-else class="flex flex-row gap-4 sm:items-center">
+          <span class="flex-1 text-[32px] sm:text-[40px] md:flex-none">{{ formatUsd(totalBalance.toNumber()) }}</span>
+          <div class="hidden items-center gap-[15px] md:flex">
+            <button
+              v-tippy="'Send'"
+              color="white"
+              @click="handleOpenSendModal()"
             >
-              <ArrowRight class="h-3.5 w-3.5 rotate-[135deg]" />
-            </div>
-          </CommonButton>
+              <div
+                class="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white"
+              >
+                <ArrowRight class="h-3.5 w-3.5 -rotate-45" />
+              </div>
+            </button>
+
+            <button
+              v-tippy="'Receive'"
+              color="white"
+              @click="openQrCode"
+            >
+              <div
+                class="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white"
+              >
+                <ArrowRight class="h-3.5 w-3.5 rotate-[135deg]" />
+              </div>
+            </button>
+          </div>
         </div>
       </div>
+      <button class="text-left text-sm text-primary">
+        DeFi Balance: $251,625
+      </button>
+    </div>
+    <div class="flex items-baseline gap-2.5">
+      <button class="flex items-center gap-2 px-4 py-2 text-sm text-gray-400" @click="openTransactionShortcutsModal">
+        <SvgoBookmark />
+        Tx Shortcuts
+      </button>
+      <CommonButton
+        :disabled="!safeAddress"
+        class="flex w-full items-center justify-center gap-2 !px-4 sm:w-fit"
+        @click="openWalletConnectModal()"
+      >
+        <SVGWalletConnect />
+        Connect
+      </CommonButton>
     </div>
   </div>
 </template>

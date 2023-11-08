@@ -5,6 +5,7 @@ const userToggleHideLegacy = useLocalStorage('hide-legacy-safe', false)
 const { allSafes, legacySafe, mainSafe, legacySafeAddress, selectedSafe, safeAddress } = storeToRefs(useSafe())
 
 const search = ref('')
+const searcInputFocused = ref(false)
 
 watch(userToggleHideLegacy, () => {
   if (selectedSafe.value?.multisig === 0) {
@@ -73,15 +74,22 @@ const displayLegacySafe = computed(() => {
           </button>
         </div>
       </div>
-      <CommonInput v-model="search" placeholder="Search name" container-classes="rounded-[40px] !px-4" input-classes="!py-2.5" type="search">
+      <CommonInput
+        v-model="search"
+        placeholder="Search name, address" container-classes="rounded-[40px] !px-4" input-classes="!py-2.5" type="search"
+        @input-blur="searcInputFocused = false"
+        @input-focus="searcInputFocused = true"
+      >
         <template #prefix>
           <SvgoSearch class="mr-2" />
         </template>
       </CommonInput>
       <div class="grid min-h-[220px] grid-cols-2 items-baseline gap-4">
-        <TransitionGroup name="wallet-list">
+        <TransitionGroup :appear="false" :name="!searcInputFocused ? 'wallet-list' : ''">
           <template v-for="safe in filteredSafes" :key="safe.safe_address">
-            <WalletItem v-if="safe.multisig === 0 ? displayLegacySafe : true" detailed :safe="safe" />
+            <div v-if="safe.multisig === 0 ? displayLegacySafe : true">
+              <WalletItem detailed :safe="safe" />
+            </div>
           </template>
         </TransitionGroup>
       </div>

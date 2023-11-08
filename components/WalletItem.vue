@@ -13,11 +13,14 @@ const { safeAddress } = useAvocadoSafe()
 const { fetchPendingMultisigTxnsCount, setGasBalance } = useSafe()
 const { safeTotalBalanceMapping, selectedSafe } = storeToRefs(useSafe())
 const { checkSafeIsActualMultisig } = useMultisig()
+const { togglePinSafe, isSafePinned, pinnedSafes } = useAccountState()
 
 const isMultisig = computed(() => checkSafeIsActualMultisig(props.safe))
 const walletName = useLocalStorage(`safe-label-${props.safe?.safe_address}`, isMultisig.value ? 'MultiSig' : 'Personal')
 
 const balance = computed(() => safeTotalBalanceMapping.value[props.safe?.safe_address])
+
+const safePinned = computed(() => isSafePinned(props.safe.safe_address))
 
 const active = computed(() => {
   return safeAddress.value === props.safe?.safe_address
@@ -98,7 +101,9 @@ function handleClick() {
             <SafeBadge show-tooltip class="!text-[10px]" :safe="safe" />
           </template>
         </div>
-        <SvgoPin class="text-gray-700" />
+        <button v-if="detailed" :disabled="pinnedSafes.length > 2 && !safePinned" @click.stop="togglePinSafe(safe.safe_address)">
+          <SvgoPin :class=" safePinned ? 'text-primary [&>path]:fill-primary' : 'text-gray-700'" />
+        </button>
       </div>
 
       <div class="flex flex-col gap-1.5">

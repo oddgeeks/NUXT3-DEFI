@@ -11,8 +11,6 @@ export function useBanner() {
   const { $pwa } = useNuxtApp()
   const route = useRoute()
 
-  const wcStoreV2 = useWalletConnectV2()
-
   const { trackingAccount } = useAccountTrack()
   const isHideWelcomeBanner = useLocalStorage('hide-welcome-banner', false)
   const isHideRabbyBanner = useLocalStorage('hide-rabby-banner', false)
@@ -90,15 +88,6 @@ export function useBanner() {
     return selectedSafe.value.multisig === 1 && selectedSafe.value.multisig_index === 0
   })
 
-  const unstableDappNetworks = computed(() => {
-    if (!wcStoreV2.sessions?.length)
-      return []
-    if (!safeOptions.value?.length)
-      return []
-
-    return false
-  })
-
   return {
     showWelcomeBanner,
     showInsufficientGasBanner,
@@ -106,7 +95,6 @@ export function useBanner() {
     showOnboardBanner,
     isVersionUpdateBannerHidden,
     showVersionUpdateBanner,
-    unstableDappNetworks,
     isHideRabbyBanner,
     isOnboardBannerVisible,
     isMultisigOnboardBannerVisible,

@@ -6,6 +6,8 @@ const { fromWei } = useBignumber()
 const { avoProvider } = useSafe()
 const route = useRoute()
 
+const { pinnedSafes, isSafePinned } = useAccountState()
+
 const dryRun = useCookie<boolean | undefined>('dry-run', {
   expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
   default: () => {
@@ -33,7 +35,14 @@ const { refresh } = useAsyncData(
   },
 )
 
-const firstThreeSafe = computed(() => allSafes.value?.slice(0, 3))
+const priorSafes = computed(() => {
+  if (!pinnedSafes.value.length)
+    return allSafes.value?.slice(0, 3)
+
+  return allSafes.value?.filter((safe) => {
+    return isSafePinned(safe.safe_address)
+  })
+})
 
 useIntervalFn(refresh, 15000)
 </script>
@@ -42,7 +51,7 @@ useIntervalFn(refresh, 15000)
   <div class="hidden items-center justify-end py-8 sm:flex">
     <div class="flex items-center gap-4">
       <TransitionGroup name="wallet-list">
-        <WalletItem v-for="safe in firstThreeSafe" :key="safe.id" :safe="safe" />
+        <WalletItem v-for="safe in priorSafes" :key="safe.id" :safe="safe" />
       </TransitionGroup>
       <button v-if="allSafes?.length" class="flex h-[44px] w-full items-center justify-center gap-2.5 rounded-7.5 border border-slate-150 bg-slate-150 px-[14px] py-1 text-left text-xs dark:border-slate-750 dark:bg-gray-850" @click="openAllWalletsModal()">
         All

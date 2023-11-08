@@ -59,6 +59,8 @@ import MFAActivateBackupSigner from '~/components/modals/Mfa/ActivateBackupSigne
 import MFAReviewBackupTransaction from '~/components/modals/Mfa/ReviewBackupTransaction.vue'
 import ReviewSignerProcess from '~/components/modals/Multisig/ReviewSignerProcess.vue'
 import AllWallets from '~/components/modals/AllWallets.vue'
+import TransactionShortcuts from '~/components/modals/TransactionShortcuts.vue'
+import AllDappConnections from '~/components/modals/AllDappConnections.vue'
 
 const { openModal } = useModal()
 
@@ -917,6 +919,26 @@ export function open2faTerminateSessionModal() {
 export function openAllWalletsModal() {
   return openModal({
     component: AllWallets,
+    options: {
+      wrapperClass: '!max-w-[800px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export function openTransactionShortcutsModal() {
+  return openModal({
+    component: TransactionShortcuts,
+    options: {
+      wrapperClass: '!max-w-[800px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export function openAllDappConnectionsModal() {
+  return openModal({
+    component: AllDappConnections,
     options: {
       wrapperClass: '!max-w-[800px]',
       contentClass: '!p-0',

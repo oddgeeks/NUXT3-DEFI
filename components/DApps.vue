@@ -1,11 +1,7 @@
 <script lang="ts" setup>
-import { Splide, SplideSlide } from '@splidejs/vue-splide'
 import '@splidejs/vue-splide/css'
-import PlusSVG from '~/assets/images/icons/plus.svg?component'
-import SVGWalletConnect from '~/assets/images/wallet/wallet-connect-lite.svg?component'
 import URLWalletConnect from '~/assets/images/wallet/wallet-connect.svg?url'
 
-const { safeAddress } = useAvocadoSafe()
 const wcStoreV2 = useWalletConnectV2()
 
 const isAnySessionAvailable = computed(() => wcStoreV2.sessions.length > 0)
@@ -30,41 +26,25 @@ async function disconnectAllConnections() {
   if (success)
     wcStoreV2.disconnectAll()
 }
+
+const reducedSessions = computed(() => {
+  if (!wcStoreV2.sessions?.length)
+    return []
+
+  return wcStoreV2.sessions.slice(0, 3)
+})
 </script>
 
 <template>
-  <div>
-    <div :class="isAnySessionAvailable ? 'mb-7.5' : ''" class="flex flex-wrap items-center justify-center gap-3 sm:flex-nowrap sm:justify-normal">
-      <CommonButton
-        :disabled="!safeAddress"
-        size="lg"
-        class="flex w-full items-center justify-center gap-2 px-5 sm:w-fit"
-        @click="openWalletConnectModal()"
-      >
-        <PlusSVG />
-        Connect Dapps
-        <SVGWalletConnect />
-      </CommonButton>
-      <CommonButton
-        v-if="isAnySessionAvailable"
-        color="white"
-        class="hover:!bg-red-alert hover:!bg-opacity-10 hover:text-red-alert"
-        size="sm"
-        @click="disconnectAllConnections"
-      >
-        Disconnect All
-      </CommonButton>
-    </div>
-    <div
-      v-if="isAnySessionAvailable"
-    >
-      <div :class="wcStoreV2.sessions?.length > 3 ? 'px-10' : ''">
-        <Splide :options="{ pagination: false, arrows: wcStoreV2.sessions?.length > 3, gap: '16px', autoWidth: true, arrowPath: 'M2 20.9997L40 20.9997M40 20.9997L21 2M40 20.9997L21 40' }">
-          <SplideSlide v-for="session in wcStoreV2.sessions" :key="session.peer.metadata.url">
-            <WCSessionCardV2 :session="session" />
-          </SplideSlide>
-        </Splide>
-      </div>
+  <div
+    v-if="isAnySessionAvailable"
+  >
+    <div class="flex gap-2.5">
+      <WCSessionCardV2 v-for="session in reducedSessions" :key="session.peer.metadata.url" :session="session" />
+      <button class="flex items-center gap-2.5 rounded-7.5 border px-4 py-2.5 text-xs dark:border-slate-800" @click="openAllDappConnectionsModal">
+        View All Connections
+        <SvgoChevronDown class="h-3.5 w-3.5 -rotate-90" />
+      </button>
     </div>
   </div>
 </template>

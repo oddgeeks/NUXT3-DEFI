@@ -20,9 +20,31 @@ const iconURL = computed(() => {
 
 async function disconnectWallet() {
   toggle(true)
-  await wcStoreV2.disconnect(props.session)
-  toggle(false)
-  emit('destroy')
+  try {
+    const { success } = await openDialogModal({
+      title: 'Are you sure you want to disconnect?',
+      type: 'question',
+      headerIconUrl: iconURL.value,
+      isButtonVisible: true,
+      isCancelButtonVisible: true,
+      buttonText: 'Disconnect',
+      cancelButtonText: 'Cancel',
+      cancelButtonProps: {
+        color: 'white',
+      },
+      buttonProps: {
+        color: 'red',
+      },
+    })
+
+    if (success) {
+      wcStoreV2.disconnect(props.session)
+      emit('destroy')
+    }
+  }
+  finally {
+    toggle(false)
+  }
 }
 </script>
 

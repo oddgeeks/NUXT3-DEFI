@@ -7,7 +7,10 @@ declare global {
     tokenAddress: string;
     address: string;
     amount: string;
-}
+ }
+  
+type IBookmarkType =  'wc' | 'transfer'
+  
 interface IBookmark {
   payload?: {
     method: string;
@@ -15,7 +18,7 @@ interface IBookmark {
   }
   metadata?: string;
   session?: SessionTypes.Struct
-  type: 'wc' | 'transfer'
+  type: IBookmarkType
   name: string
   chainId: number | string;
   sendData?: ISendData

@@ -1,10 +1,12 @@
 <template>
   <div class="flex gap-[14px]">
-    <CommonTxTypeIcon class="h-9 w-9">
-      <template #icon>
-        <slot name="icon" />
-      </template>
-    </CommonTxTypeIcon>
+    <slot name="icon-content">
+      <CommonTxTypeIcon class="h-9 w-9">
+        <template #icon>
+          <slot name="icon" />
+        </template>
+      </CommonTxTypeIcon>
+    </slot>
     <div class="flex flex-col gap-1">
       <h1 class="text-lg">
         <slot name="title" />

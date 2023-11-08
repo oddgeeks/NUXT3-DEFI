@@ -10,7 +10,6 @@ defineProps({
 <template>
   <div class="flex flex-col items-center gap-7.5">
     <span class="text-lg">Your Avocado Wallet</span>
-
     <StyledQrCode
       :key="address"
       :size="220"
