@@ -20,8 +20,6 @@ const { refresh } = useAsyncData(
       'pending-deposit',
     ])
 
-    console.log(amountInWei)
-
     return fromWei(amountInWei || '0', 18).toFixed()
   },
   {
