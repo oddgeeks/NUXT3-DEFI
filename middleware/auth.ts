@@ -1,11 +1,11 @@
 export default defineNuxtRouteMiddleware((to) => {
   const trackAccount = useCookie<boolean>('trackAccount')
-  const cachedProviderName = useCookie('cachedProviderName')
+  const connectionMeta = useCookie<IConnectionMeta>('connection-meta')
 
   const trackingUser = to.query?.user || trackAccount.value
 
   const redirectPath = to.path
 
-  if (!cachedProviderName.value && !trackingUser)
+  if (!connectionMeta.value?.provider && !trackingUser)
     return navigateTo(`/login?redirectTo=${redirectPath}`)
 })

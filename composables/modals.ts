@@ -58,6 +58,7 @@ import MFASignInstadappSigner from '~/components/modals/Mfa/SignInstadappSigner.
 import MFAActivateBackupSigner from '~/components/modals/Mfa/ActivateBackupSigner.vue'
 import MFAReviewBackupTransaction from '~/components/modals/Mfa/ReviewBackupTransaction.vue'
 import ReviewSignerProcess from '~/components/modals/Multisig/ReviewSignerProcess.vue'
+import RequestTermsSignature from '~/components/modals/RequestTermsSignature.vue'
 
 const { openModal } = useModal()
 
@@ -740,6 +741,20 @@ export async function openDecodedParamsModal(params: IDecodedParams) {
     options: {
       contentClass: '!p-0',
       wrapperClass: '!max-w-[fit-content]',
+    },
+  })
+}
+
+export async function openRequestTermsSignature() {
+  return openModal({
+    component: RequestTermsSignature,
+    id: 'request-terms-signature',
+    async: true,
+    options: {
+      clickToClose: false,
+      closeButton: false,
+      contentClass: '!p-7.5',
+      wrapperClass: '!max-w-[560px]',
     },
   })
 }

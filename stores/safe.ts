@@ -24,6 +24,8 @@ export const useSafe = defineStore('safe', () => {
   const safeAddress = ref()
   const mainSafeAddress = ref()
   const multiSigSafeAddress = ref()
+  const { connectionMeta } = useConnectors()
+
   const accountSafeMapping = useCookie<Record<string, string>>('account-safe-mapping', {
     maxAge: 60 * 60 * 24 * 365 * 10,
     default: () => ref({}),
@@ -759,6 +761,8 @@ export const useSafe = defineStore('safe', () => {
     async () => {
       if (!account.value)
         return
+
+      connectionMeta.value.address = account.value
 
       try {
         safesLoading.value = true
