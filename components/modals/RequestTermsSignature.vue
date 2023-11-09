@@ -11,6 +11,10 @@ const pending = ref(false)
 
 async function handleSign() {
   try {
+    const userNonce = useCookie<string | null>(`nonce-${account.value}`, {
+      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    })
+
     pending.value = true
 
     let template = `Welcome to Avocado!
@@ -41,6 +45,8 @@ Nonce: {{NONCE}}
       template,
       generateNonceParams,
     ])
+
+    userNonce.value = nonce
 
     template = template.replaceAll('{{SIGNER}}', account.value)
     template = template.replaceAll('{{TIME}}', dateNow)

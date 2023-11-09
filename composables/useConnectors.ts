@@ -11,7 +11,7 @@ const providers = {
 
 export function useConnectors() {
   const { rpcs } = storeToRefs(useShared())
-  const { deactivate, connector } = useWeb3()
+  const { deactivate, connector, account } = useWeb3()
   const { resetAccounts } = useSafe()
 
   const router = useRouter()
@@ -30,6 +30,10 @@ export function useConnectors() {
 
   function onDisconnect() {
     const { terminateMFAToken } = useMfa()
+
+    const userNonce = useCookie<string | null>(`nonce-${account.value}`)
+
+    userNonce.value = null
 
     terminateMFAToken()
 
