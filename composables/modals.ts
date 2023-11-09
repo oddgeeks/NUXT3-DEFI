@@ -60,6 +60,7 @@ import MFASignInstadappSigner from '~/components/modals/Mfa/SignInstadappSigner.
 import MFAActivateBackupSigner from '~/components/modals/Mfa/ActivateBackupSigner.vue'
 import MFAReviewBackupTransaction from '~/components/modals/Mfa/ReviewBackupTransaction.vue'
 import ReviewSignerProcess from '~/components/modals/Multisig/ReviewSignerProcess.vue'
+import RequestTermsSignature from '~/components/modals/RequestTermsSignature.vue'
 
 const { openModal } = useModal()
 
@@ -770,6 +771,20 @@ export function openPendingMigrationModal(
     componentProps: {
       hashes,
       chainIds,
+    },
+  })
+}
+
+export async function openRequestTermsSignature() {
+  return openModal({
+    component: RequestTermsSignature,
+    id: 'request-terms-signature',
+    async: true,
+    options: {
+      clickToClose: false,
+      closeButton: false,
+      contentClass: '!p-7.5',
+      wrapperClass: '!max-w-[560px]',
     },
   })
 }

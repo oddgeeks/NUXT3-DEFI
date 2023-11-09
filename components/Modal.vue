@@ -6,6 +6,7 @@ const props = withDefaults(
     show?: boolean
     modalId?: string
     options: IOptions
+    options: IOptions
     inline?: boolean
     isAsync?: boolean
   }>(),
@@ -64,10 +65,7 @@ whenever(escape, () => {
 </script>
 
 <template>
-  <div
-    :data-modal-id="modalId"
-    class="modal fixed inset-0 z-50 overflow-y-auto bg-slate-200/20 backdrop-blur-[4px]"
-  >
+  <div :data-modal-id="modalId" class="modal fixed inset-0 z-50 overflow-y-auto bg-slate-200/20 backdrop-blur-[4px]">
     <div
       :data-modal-id="modalId"
       class="modal-height-wrapper flex h-full justify-center text-center sm:h-auto sm:min-h-screen sm:items-center sm:p-0"
@@ -79,28 +77,23 @@ whenever(escape, () => {
             'mb-auto rounded-b-7.5': modalOptions.sheetPosition === 'top',
           },
           modalOptions.wrapperClass,
-        ]"
-        :data-sheet-position="modalOptions.sheetPosition"
+        ]" :data-sheet-position="modalOptions.sheetPosition"
         class="modal-inner relative inline-block w-full max-w-[460px] bg-white text-left align-middle dark:bg-gray-950 sm:my-6 sm:rounded-7.5"
-        role="dialog"
-        aria-modal="true"
+        role="dialog" aria-modal="true"
       >
         <div
-          ref="wrapperRef"
-          :class="[
+          ref="wrapperRef" :class="[
             {
               'pb-8': modalOptions.sheetPosition === 'bottom',
               'py-8': modalOptions.sheetPosition === 'top',
             },
             modalOptions.contentClass,
-          ]"
-          class="modal-content-wrapper relative w-full rounded-[inherit] px-6 py-10 sm:px-[50px]"
+          ]" class="modal-content-wrapper relative w-full rounded-[inherit] px-6 py-10 sm:px-[50px]"
         >
           <button
             v-if="modalOptions.closeButton"
             class="absolute right-0 top-0 m-6 flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
-            aria-label="Close modal"
-            @click="handleDestory"
+            aria-label="Close modal" @click="handleDestory"
           >
             <SVGX />
           </button>

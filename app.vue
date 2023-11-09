@@ -1,7 +1,9 @@
 <script setup lang="ts">
 useTokens()
 useSafe()
-const { library } = useWeb3()
+const { library, provider } = useWeb3()
+const { onDisconnect } = useConnectors()
+const { lastModal } = useModal()
 
 useScriptTag('https://app.chatwoot.com/packs/js/sdk.js', () => {
   // @ts-expect-error
@@ -36,6 +38,23 @@ onMounted(() => {
   document.addEventListener('scroll', hideAllTooltipsOnScroll, true)
 
   return () => document.removeEventListener('scroll', hideAllTooltipsOnScroll)
+})
+
+watchThrottled(provider, () => {
+  if (!provider.value)
+    return
+
+  provider.value.on('accountsChanged', async () => {
+    if (lastModal.value?.id !== 'request-terms-signature') {
+      const { success } = await openRequestTermsSignature()
+
+      if (!success)
+        onDisconnect()
+    }
+  })
+}, {
+  throttle: 1000,
+  immediate: true,
 })
 </script>
 
