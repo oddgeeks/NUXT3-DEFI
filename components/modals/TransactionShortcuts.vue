@@ -32,10 +32,6 @@ function getIcon(bookmark: IBookmark) {
     return token?.logoURI
   }
 }
-
-function handle() {
-  alert('selam')
-}
 </script>
 
 <template>
@@ -67,13 +63,10 @@ function handle() {
         </template>
       </CommonInput>
       <div class="grid min-h-[220px] grid-cols-2 items-baseline gap-4">
-        <div v-for="shortcut in filteredShortcuts" :key="shortcut.name" class="flex items-start rounded-2xl border border-gray-800 px-4 py-[14px] dark:bg-gray-850">
+        <div v-for="shortcut in filteredShortcuts" :key="shortcut.name" class="flex items-start rounded-2xl border border-gray-800 px-4 py-[14px] dark:bg-gray-850 hover:dark:bg-gray-900">
           <button class="flex flex-1 gap-3" @click="initializeBookmark(shortcut)">
             <SafeTokenLogo network-logo-class="!w-5 !h-5" class="h-7.5 w-7.5" :chain-id="shortcut.chainId" :url="getIcon(shortcut)" />
-            <!-- <div class="flex h-7.5 w-7.5 items-center justify-center rounded-full border border-gray-800 text-xs leading-5 dark:bg-gray-875">
-                {{ i + 1 }}
-              </div> -->
-            <div class="flex flex-col gap-1">
+            <div class="flex flex-col gap-1 text-left">
               <h2 class="text-sm font-bold leading-5">
                 {{ shortcut.name }}
               </h2>

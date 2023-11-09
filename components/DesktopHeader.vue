@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 
-const { safeAddress, allSafes } = storeToRefs(useSafe())
+const { safeAddress, allSafes, safesLoading } = storeToRefs(useSafe())
 const { fromWei } = useBignumber()
 const { avoProvider } = useSafe()
 const route = useRoute()
@@ -49,7 +49,7 @@ useIntervalFn(refresh, 15000)
 
 <template>
   <div class="hidden items-center justify-end py-8 sm:flex">
-    <div class="flex items-center gap-4">
+    <div v-if="!safesLoading" class="flex items-center gap-4">
       <TransitionGroup name="wallet-list">
         <WalletItem v-for="safe in priorSafes" :key="safe.id" :safe="safe" />
       </TransitionGroup>

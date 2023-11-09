@@ -1,9 +1,24 @@
 <script setup lang="ts">
+import Fuse from 'fuse.js'
 import SVGWalletConnect from '~/assets/images/wallet/wallet-connect.svg'
 
 const search = ref('')
 
 const { sessions } = storeToRefs(useWalletConnectV2())
+
+const filteredSessions = computed(() => {
+  if (!search.value)
+    return sessions.value
+
+  const fuse = new Fuse(sessions.value || [], {
+    keys: ['peer.metadata.name', 'peer.metadata.url'],
+    threshold: 0.5,
+  })
+
+  const result = fuse.search(search.value)
+
+  return result.map(i => i.item)
+})
 </script>
 
 <template>
@@ -26,7 +41,7 @@ const { sessions } = storeToRefs(useWalletConnectV2())
         </span>
       </div>
       <CommonInput
-        v-model="search" placeholder="Search name" container-classes="rounded-[40px] !px-4"
+        v-model="search" placeholder="Search name, URL" container-classes="rounded-[40px] !px-4"
         input-classes="!py-2.5" type="search"
       >
         <template #prefix>
@@ -34,7 +49,7 @@ const { sessions } = storeToRefs(useWalletConnectV2())
         </template>
       </CommonInput>
       <div class="grid min-h-[220px] grid-cols-2 items-baseline gap-4">
-        <WCSessionCardV2 v-for="session in sessions" :key="session.peer.metadata.url" detailed :session="session" />
+        <WCSessionCardV2 v-for="session in filteredSessions" :key="session.peer.metadata.url" detailed :session="session" />
       </div>
     </div>
   </div>

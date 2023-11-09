@@ -60,74 +60,80 @@ function handleClick() {
 </script>
 
 <template>
-  <button
-    :class="{
-      'border-slate-50 bg-slate-50 dark:bg-gray-900': active,
-      'bg-slate-150 dark:bg-gray-850': !active,
-      'gap-3 rounded-2xl px-4 py-[14px]': detailed,
-      'items-center justify-center gap-2.5 rounded-7.5 px-[14px] py-1': !detailed,
-    }"
-    class="flex w-full border border-slate-50 text-left dark:border-gray-800" @click="handleClick"
-  >
-    <SvgoCheckCircle
+  <div>
+    <button
       :class="{
-        'success-circle': active,
-        'svg-circle darker': !active,
-        'h-6 w-6': detailed,
-        'h-4.5 w-4.5': !detailed,
+        'border-slate-50 bg-slate-50 dark:bg-gray-900': active,
+        'bg-slate-150 dark:bg-gray-850': !active,
+        'gap-3 rounded-2xl px-4 py-[14px]': detailed,
+        'items-center justify-center gap-2.5 rounded-7.5 px-[14px] py-1': !detailed,
       }"
-      class="shrink-0 text-gray-500"
-    />
-    <div
-      :class="{
-        'gap-2': detailed,
-      }"
-      class="flex flex-1 flex-col"
+      class="flex h-full w-full border border-slate-50 text-left dark:border-gray-800 hover:dark:bg-gray-900" @click="handleClick"
     >
-      <div class="flex items-center justify-between">
-        <div
-          :class="{
-            'text-sm': detailed,
-            'text-xs': !detailed,
-          }" class="flex items-center gap-2 font-medium"
-        >
-          <p :class="isMultisig ? 'text-purple' : 'text-primary'">
-            {{ walletName }}
-          </p>
-          <template v-if="detailed">
-            <button @click.stop="onEdit">
-              <SvgoEdit />
-            </button>
-            <SafeBadge show-tooltip class="!text-[10px]" :safe="safe" />
-          </template>
+      <SvgoCheckCircle
+        :class="{
+          'success-circle': active,
+          'svg-circle darker': !active,
+          'h-6 w-6': detailed,
+          'h-4.5 w-4.5': !detailed,
+        }"
+        class="shrink-0 text-gray-500"
+      />
+      <div
+        :class="{
+          'gap-2': detailed,
+        }"
+        class="flex flex-1 flex-col"
+      >
+        <div class="flex items-center justify-between">
+          <div
+            :class="{
+              'text-sm': detailed,
+              'text-xs': !detailed,
+            }" class="flex items-center gap-2 font-medium"
+          >
+            <p :class="isMultisig ? 'text-purple' : 'text-primary'">
+              {{ walletName }}
+            </p>
+            <template v-if="detailed">
+              <button @click.stop="onEdit">
+                <SvgoEdit />
+              </button>
+              <SafeBadge show-tooltip class="!text-[10px]" :safe="safe" />
+            </template>
+          </div>
+          <button v-if="detailed" :disabled="pinnedSafes.length > 2 && !safePinned" @click.stop="togglePinSafe(safe.safe_address)">
+            <SvgoPin :class="safePinned ? 'text-primary [&>path]:fill-primary' : 'text-gray-700'" />
+          </button>
         </div>
-        <button v-if="detailed" :disabled="pinnedSafes.length > 2 && !safePinned" @click.stop="togglePinSafe(safe.safe_address)">
-          <SvgoPin :class=" safePinned ? 'text-primary [&>path]:fill-primary' : 'text-gray-700'" />
-        </button>
-      </div>
 
-      <div class="flex flex-col gap-1.5">
-        <Copy
-          class="w-fit"
-          :class="{
-            'text-sm leading-5 text-slate-900 dark:text-white': detailed,
-            'text-[10px] leading-[18px] text-gray-400': !detailed,
-          }" icon-only icon-class="!w-3 !h-3" :text="safe?.safe_address"
-        >
-          <template #content>
-            {{ shortenHash(safe?.safe_address) }}
-          </template>
-        </Copy>
+        <div class="flex flex-col gap-1.5">
+          <div class="flex items-center gap-1.5">
+            <span
+              :class="{
+                'text-sm leading-5 text-slate-900 dark:text-white': detailed,
+                'text-[10px] leading-[18px] text-gray-400': !detailed,
+              }"
+            >
+              {{ shortenHash(safe?.safe_address) }}
+            </span>
+            <Copy
+              class="w-fit"
+              icon-only
+              icon-class="!w-3 !h-3" :text="safe?.safe_address"
+            />
+          </div>
 
-        <div v-if="detailed" class="flex items-center justify-between">
-          <p class="text-sm font-medium leading-[18px] text-gray-400">
-            {{ balance ? formatUsd(balance) : '' }}
-          </p>
-          <p v-if="isMultisig && pendingTxnsCount" class="text-xs font-medium text-orange">
-            {{ `${pendingTxnsCount} Pending txns` }}
-          </p>
+          <div v-if="detailed" class="flex items-center justify-between">
+            <p class="text-sm font-medium leading-[18px] text-gray-400">
+              {{ balance ? formatUsd(balance) : '' }}
+            </p>
+            <p v-if="isMultisig && pendingTxnsCount" class="text-xs font-medium text-orange">
+              {{ `${pendingTxnsCount} Pending txns` }}
+            </p>
+          </div>
         </div>
       </div>
-    </div>
-  </button>
+    </button>
+  </div>
 </template>

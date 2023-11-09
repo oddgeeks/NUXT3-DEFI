@@ -4,6 +4,7 @@ import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 import SVGWalletConnect from '~/assets/images/wallet/wallet-connect-lite.svg?component'
 
 const { balances, safeAddress } = storeToRefs(useSafe())
+const { totalNetAssets } = storeToRefs(useDefi())
 const { totalBalance } = useAvocadoSafe()
 const { authorisedNetworks } = useAuthorities()
 
@@ -54,9 +55,9 @@ function handleOpenSendModal() {
           </div>
         </div>
       </div>
-      <button class="text-left text-sm text-primary">
-        DeFi Balance: $251,625
-      </button>
+      <NuxtLink v-if="gt(totalNetAssets, 3)" to="/defi" class="text-left text-sm text-primary">
+        DeFi Balance: {{ formatUsd(totalNetAssets) }}
+      </NuxtLink>
     </div>
     <div class="flex items-baseline gap-2.5">
       <button class="flex items-center gap-2 px-4 py-2 text-sm text-gray-400" @click="openTransactionShortcutsModal">

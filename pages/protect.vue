@@ -162,7 +162,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
         </h1>
         <div class="flex flex-col justify-between gap-2.5 sm:flex-row">
           <div>
-            <h2 class="text-sm font-medium leading-6 text-slate-400">
+            <h2 class="text-sm font-medium leading-6 text-gray-400">
               {{ $t('mfa.page.subtitle') }}
             </h2>
             <NuxtLink class="text-sm font-medium text-primary" external target="_blank" to="https://guides.avocado.instadapp.io/avocado-protect-2fa/how-does-avocado-protect-2fa-work">

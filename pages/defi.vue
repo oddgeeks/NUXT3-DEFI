@@ -5,12 +5,13 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const { safeAddress } = useAvocadoSafe()
 const { account } = useWeb3()
 
 const searchQuery = ref('')
 
-const { availablePositions, summarize, getDefiProtocolName, fetchPositions, defaultDefiApis } = useDefi()
+const { availablePositions, summarize } = storeToRefs(useDefi())
+
+const { getDefiProtocolName, defaultDefiApis } = useDefi()
 
 const networkPreferences = ref(
   [...new Set(defaultDefiApis.map(i => i.chainId))],
@@ -30,15 +31,6 @@ const filteredPositions = computed(() => {
   })
 
   return fuse.search(searchQuery.value).map(result => result.item)
-})
-
-watch(safeAddress, () => {
-  if (!safeAddress.value)
-    return
-
-  fetchPositions()
-}, {
-  immediate: true,
 })
 </script>
 

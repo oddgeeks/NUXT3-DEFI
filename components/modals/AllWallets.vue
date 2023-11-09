@@ -84,7 +84,7 @@ const displayLegacySafe = computed(() => {
           <SvgoSearch class="mr-2" />
         </template>
       </CommonInput>
-      <div class="grid min-h-[220px] grid-cols-2 items-baseline gap-4">
+      <div class="grid grid-cols-2 items-stretch gap-4">
         <TransitionGroup :appear="false" :name="!searcInputFocused ? 'wallet-list' : ''">
           <template v-for="safe in filteredSafes" :key="safe.safe_address">
             <div v-if="safe.multisig === 0 ? displayLegacySafe : true">
