@@ -6,7 +6,7 @@ const { fromWei } = useBignumber()
 const { avoProvider } = useSafe()
 const route = useRoute()
 
-const { pinnedSafes, isSafePinned } = useAccountState()
+const { pinnedSafes, isSafePinned, displayLegacySafe } = useAccountState()
 
 const dryRun = useCookie<boolean | undefined>('dry-run', {
   expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
@@ -36,10 +36,16 @@ const { refresh } = useAsyncData(
 )
 
 const priorSafes = computed(() => {
-  if (!pinnedSafes.value.length)
-    return allSafes.value?.slice(0, 3)
+  const safes = displayLegacySafe.value
+    ? allSafes.value
+    : allSafes.value?.filter((safe) => {
+      return safe.multisig === 1 ? true : displayLegacySafe.value
+    })
 
-  return allSafes.value?.filter((safe) => {
+  if (!pinnedSafes.value.length)
+    return safes.slice(0, 3)
+
+  return safes.filter((safe) => {
     return isSafePinned(safe.safe_address)
   })
 })
@@ -59,7 +65,7 @@ useIntervalFn(refresh, 15000)
       </button>
     </div>
     <div class="mr-auto flex items-center gap-2.5">
-      <SvgoAvocadoProtect v-if="$route.name === 'protect'" />
+      <!-- <SvgoAvocadoProtect v-if="$route.name === 'protect'" /> -->
       <SessionLocked />
     </div>
     <button v-if="dryRun" class="mr-4 text-sm text-orange" @click="dryRun = undefined">

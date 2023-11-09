@@ -1,5 +1,8 @@
 export function useAccountState() {
   const { account } = useWeb3()
+  const { legacySafe, legacySafeAddress } = storeToRefs(useSafe())
+
+  const userToggleHideLegacy = useLocalStorage('hide-legacy-safe', false)
 
   const accountSafeMapping = useCookie<Record<string, string[]>>('account-safe-pin-mapping', {
     maxAge: 60 * 60 * 24 * 365 * 10,
@@ -38,9 +41,15 @@ export function useAccountState() {
     return pinnedSafes.value.some(i => i.toLowerCase() === safeAddress.toLowerCase())
   }
 
+  const displayLegacySafe = computed(() => {
+    return legacySafeAddress.value && legacySafe.value && userToggleHideLegacy.value
+  })
+
   return {
     pinnedSafes,
     togglePinSafe,
     isSafePinned,
+    displayLegacySafe,
+    userToggleHideLegacy,
   }
 }

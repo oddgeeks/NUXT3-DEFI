@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
 
-const userToggleHideLegacy = useLocalStorage('hide-legacy-safe', false)
-const { allSafes, legacySafe, mainSafe, legacySafeAddress, selectedSafe, safeAddress } = storeToRefs(useSafe())
+const { allSafes, mainSafe, selectedSafe, safeAddress } = storeToRefs(useSafe())
+const { userToggleHideLegacy, displayLegacySafe } = useAccountState()
 
 const search = ref('')
 const searcInputFocused = ref(false)
@@ -33,10 +33,6 @@ const filteredSafes = computed(() => {
   const result = fuse.search(search.value)
 
   return result.map(i => i.item)
-})
-
-const displayLegacySafe = computed(() => {
-  return legacySafeAddress.value && legacySafe.value && userToggleHideLegacy.value
 })
 </script>
 
