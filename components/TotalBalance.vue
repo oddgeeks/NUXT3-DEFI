@@ -56,7 +56,7 @@ function handleOpenSendModal() {
           </div>
         </div>
       </div>
-      <NuxtLink v-if="gt(totalNetAssets, 3)" to="/defi" class="text-left text-sm text-primary">
+      <NuxtLink v-if="gt(totalNetAssets, 3)" to="/defi" class="w-fit text-left text-sm text-primary">
         DeFi Balance: {{ formatUsd(totalNetAssets) }}
       </NuxtLink>
     </div>

@@ -19,8 +19,9 @@ const transaction = ref<TransactionReceipt>()
 const crossTransaction = ref<ICrossChainTx>()
 
 const isCrossTransactionFetching = ref(true)
-
 const transactionPending = ref(true)
+
+const isSuccess = computed(() => status.value === TransactionStatus.Success)
 
 const events = [
   '0xacb5341cc21d71a005bd22634cec7391a7fd11ff2b563a7b301cac795f7a6a56',
@@ -81,13 +82,10 @@ const status = computed(() => {
   }
 })
 
-watch(status, () => {
-  if (status.value === TransactionStatus.Success) {
-    setTimeout(() => {
-      removeTransactionFromQueue(props.transactionParam.hash)
-    }, 5000)
-  }
-})
+function handleAnimationEnd() {
+  removeTransactionFromQueue(props.transactionParam.hash)
+}
+
 onMounted(() => {
   props.transactionParam.crossChain
     ? waitForCrossTransaction()
@@ -96,10 +94,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-3 rounded-5 border p-4 dark:border-gray-800 dark:bg-gray-850 sm:w-[400px]">
+  <div
+    class="wrapper relative flex flex-col gap-3 overflow-hidden rounded-5 border p-4 dark:border-gray-800 dark:bg-gray-850 sm:w-[400px]"
+  >
+    <div v-if="isSuccess" class="countdown-animation absolute bottom-0 left-0 h-1 w-full bg-primary" @animationend="handleAnimationEnd" />
     <div class="flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <div class="flex items-center gap-2.5">
+      <div class="flex items-center gap-2.5">
+        <div class="flex items-center gap-2">
           <ChainLogo class="h-5 w-5" :chain="transactionParam.chainId" />
           <span class="text-xs">
             {{ chainIdToName(transactionParam.chainId) }}
@@ -153,3 +154,23 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.wrapper:hover .countdown-animation {
+  animation-play-state: paused;
+}
+
+.countdown-animation {
+  animation: countdown 5200ms linear forwards;
+  transform-origin: left center;
+}
+
+@keyframes countdown {
+  0% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(0);
+  }
+}
+</style>
