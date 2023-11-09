@@ -44,7 +44,7 @@ const isConnectionWarned = computed(() => {
     >
       <div
         v-if="iconURL"
-        class="relative inline-block h-7.5 w-7.5 shrink-0 rounded-full bg-gray-300 shadow-sm"
+        class="relative mt-1 inline-block h-7.5 w-7.5 shrink-0 rounded-full bg-gray-300 shadow-sm"
       >
         <img
           class="object-fit h-full w-full rounded-[inherit]"
@@ -78,7 +78,7 @@ const isConnectionWarned = computed(() => {
           {{ props.session.peer.metadata.url }}
         </a>
         <h2 class="flex items-center gap-1.5 text-xs leading-5 text-primary">
-          <SvgoCheckCircle v-if="detailed" class="success-circle w-4" />
+          <SvgoCheckCircle v-if="detailed" class="success-circle h-4 w-4" />
           Connected
         </h2>
       </div>
