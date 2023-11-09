@@ -10,7 +10,7 @@ async function fetchGasBalances() {
   selectedSafeForMigration.value = undefined
   try {
     pending.value = true
-    const balance = await avoProvider.send('api_getWithdrawableBalance', [
+    const balance = await avoProvider.send('api_getTransferableBalance', [
       selectedSafe.value?.safe_address,
       'success',
     ])
