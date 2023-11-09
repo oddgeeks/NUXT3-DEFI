@@ -172,7 +172,11 @@ async function handleSubmit() {
 
     emit('resolve', true)
 
-    showPendingTransactionModal(transactionHash, props.chainId, 'wc')
+    showPendingTransactionModal({
+      hash: transactionHash,
+      chainId: props.chainId,
+      type: 'dapp',
+    })
   }
   catch (e: any) {
     const err = parseTransactionError(e)

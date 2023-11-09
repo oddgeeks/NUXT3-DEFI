@@ -180,7 +180,11 @@ const onSubmit = handleSubmit(async () => {
 
     emit('destroy')
 
-    showPendingTransactionModal(transactionHash, token.value.chainId, 'gas-topup')
+    showPendingTransactionModal({
+      hash: transactionHash,
+      chainId: token.value.chainId,
+      type: 'gas-topup',
+    })
 
     resetForm()
   }

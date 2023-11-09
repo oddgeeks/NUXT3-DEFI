@@ -2,7 +2,6 @@ import type { SessionTypes } from '@walletconnect/types'
 import ExecuteTransaction from '~~/components/modals/Multisig/ExecuteTransaction.vue'
 import Bridge from '~~/components/modals/Bridge.vue'
 import Swap from '~~/components/modals/Swap.vue'
-import PendingTransaction from '~~/components/modals/PendingTransaction.vue'
 import Send from '~~/components/modals/Send/Main.vue'
 import SignCrossSendTx from '~~/components/modals/SignCrossSendTx.vue'
 import TopUpGas from '~~/components/modals/TopUpGas.vue'
@@ -88,19 +87,10 @@ interface IWcTransactionModal {
   bookmark?: IBookmark
 }
 
-export function showPendingTransactionModal(hash: string,
-  chainId: number | string,
-  type?: IWeb3Action,
-  async = false) {
-  return openModal({
-    component: PendingTransaction,
-    async,
-    componentProps: {
-      hash,
-      chainId,
-      type,
-    },
-  })
+export function showPendingTransactionModal(params: IPendingTransactionModalParams) {
+  const { chainId, hash, async, type } = params || {}
+
+  addTransactionToQueue(params)
 }
 
 export function openBridgeModal(address: string, chainId: number | string) {

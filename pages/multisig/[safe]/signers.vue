@@ -97,7 +97,11 @@ async function handleDeleteSigner() {
         message: generateSlackMessage(metadata, selectedChainId.value),
         chainId: String(selectedChainId.value),
       })
-      showPendingTransactionModal(txHash, selectedChainId.value)
+
+      showPendingTransactionModal({
+        hash: txHash,
+        chainId: selectedChainId.value,
+      })
     }
 
     selectedAddresses.value = []

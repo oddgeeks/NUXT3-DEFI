@@ -117,12 +117,12 @@ async function handleSubmit() {
 
     emit('destroy')
 
-    showPendingTransactionModal(
-      transactionHash!,
-      props.options.chainId,
-      'upgrade',
-      true,
-    )
+    showPendingTransactionModal({
+      hash: transactionHash!,
+      chainId: props.options.chainId,
+      type: 'upgrade',
+      async: true,
+    })
   }
   catch (e: any) {
     const err = parseTransactionError(e)

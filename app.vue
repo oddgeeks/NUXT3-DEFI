@@ -48,6 +48,7 @@ onMounted(() => {
   <BannerNewVersion />
   <BannerMultisigOnboard />
   <Notifications />
+  <TransactionsQueue />
   <Modals />
   <ChatBubble />
 </template>

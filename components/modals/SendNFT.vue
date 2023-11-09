@@ -143,7 +143,11 @@ const onSubmit = handleSubmit(async () => {
 
     emit('destroy')
 
-    showPendingTransactionModal(transactionHash, props.asset.chainId, 'nft')
+    showPendingTransactionModal({
+      hash: transactionHash,
+      chainId: props.asset.chainId,
+      type: 'nft',
+    })
 
     const message = `
 ${'`Collection name`'} ${props.asset.collectionName}

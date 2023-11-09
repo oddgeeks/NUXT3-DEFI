@@ -257,7 +257,11 @@ const onSubmit = form.handleSubmit(async () => {
     form.resetForm()
     emit('destroy')
 
-    showPendingTransactionModal(transactionHash, fromChainId.value, 'bridge')
+    showPendingTransactionModal({
+      hash: transactionHash,
+      chainId: fromChainId.value,
+      type: 'bridge',
+    })
   }
   catch (e: any) {
     const err = parseTransactionError(e)

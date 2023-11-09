@@ -96,8 +96,12 @@ async function handleSubmit() {
       },
       'others')
 
-    if (tx)
-      showPendingTransactionModal(tx, props.chainId)
+    if (tx) {
+      showPendingTransactionModal({
+        chainId: props.chainId,
+        hash: tx,
+      })
+    }
 
     emit('destroy')
   }

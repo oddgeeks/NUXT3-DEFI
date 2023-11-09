@@ -556,7 +556,12 @@ async function executeTransaction(srcMfaToken?: string) {
 
   destroyModal()
 
-  showPendingCrossTransaction(avocadoHash, data.value.fromChainId, data.value.toChainId)
+  showPendingTransactionModal({
+    hash: avocadoHash,
+    chainId: data.value.fromChainId,
+    toChainId: data.value.toChainId,
+    crossChain: true,
+  })
 }
 
 async function onSubmit() {

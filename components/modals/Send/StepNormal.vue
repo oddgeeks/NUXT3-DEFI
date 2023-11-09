@@ -105,7 +105,11 @@ async function onSubmit() {
 
     destroyModal()
 
-    showPendingTransactionModal(transactionHash, data.value.toChainId, 'transfer')
+    showPendingTransactionModal({
+      hash: transactionHash,
+      chainId: data.value.toChainId,
+      type: 'transfer',
+    })
   }
   catch (e: any) {
     const err = parseTransactionError(e)

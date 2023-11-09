@@ -80,7 +80,11 @@ async function handleTresholdChange(chainId: string | number) {
         txHash,
         chainId: String(chainId),
       })
-      showPendingTransactionModal(txHash, chainId)
+
+      showPendingTransactionModal({
+        hash: txHash,
+        chainId,
+      })
     }
   }
 }

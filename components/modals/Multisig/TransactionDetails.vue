@@ -231,7 +231,11 @@ async function handleExecute(item: IMultisigTransaction) {
 
     if (hash) {
       emit('destroy')
-      showPendingTransactionModal(hash, item.chain_id, 'transfer')
+      showPendingTransactionModal({
+        hash,
+        chainId: item.chain_id,
+        type: 'transfer',
+      })
     }
   }
   catch (e: any) {
@@ -255,7 +259,11 @@ async function handleReject(transaction: IMultisigTransaction) {
 
     if (txHash) {
       emit('destroy')
-      showPendingTransactionModal(txHash, transaction.chain_id, 'transfer')
+      showPendingTransactionModal({
+        hash: txHash,
+        chainId: transaction.chain_id,
+        type: 'transfer',
+      })
     }
   }
   catch (e: any) {
