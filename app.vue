@@ -1,7 +1,7 @@
 <script setup lang="ts">
 useTokens()
 useSafe()
-const { library, provider } = useWeb3()
+const { library, provider, account } = useWeb3()
 const { onDisconnect } = useConnectors()
 const { lastModal } = useModal()
 
@@ -45,7 +45,9 @@ watchThrottled(provider, () => {
     return
 
   provider.value.on('accountsChanged', async () => {
-    if (lastModal.value?.id !== 'request-terms-signature') {
+    const userNonce = useCookie<string | null>(`nonce-${account.value}`)
+
+    if (lastModal.value?.id !== 'request-terms-signature' && !userNonce.value) {
       const { success } = await openRequestTermsSignature()
 
       if (!success)
