@@ -414,9 +414,12 @@ export function openSendNFTModal(NFTData: NFTData) {
   })
 }
 
-export function openSupportedNetworks() {
+export function openSupportedNetworks(networks?: Network[]) {
   openModal({
     component: SupportedNetworks,
+    componentProps: {
+      networks,
+    },
   })
 }
 

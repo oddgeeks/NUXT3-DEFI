@@ -121,14 +121,13 @@ function openBridge() {
           <PlusCircleSVG class="h-4 w-4" />
           Add custom Tokens
         </button>
-        <NuxtLink
+        <button
           class="flex h-11 items-center gap-2.5"
-          :class="$route.query.tab === 'bookmarks' ? 'text-primary' : ''"
-          :to="{ path: '/', query: { tab: 'bookmarks' } }"
+          @click="openTransactionShortcutsModal()"
         >
           <SvgoBookmark class="h-4 w-4" />
           Transaction Shortcuts
-        </NuxtLink>
+        </button>
         <NuxtLink
           active-class="text-primary"
           class="flex h-11 items-center gap-2.5"

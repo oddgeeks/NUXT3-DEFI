@@ -7,6 +7,7 @@ const { balances, safeAddress } = storeToRefs(useSafe())
 const { totalNetAssets } = storeToRefs(useDefi())
 const { totalBalance } = useAvocadoSafe()
 const { authorisedNetworks } = useAuthorities()
+const { sessions } = storeToRefs(useWalletConnectV2())
 
 function handleOpenSendModal() {
   const firstAvailableChain = authorisedNetworks.value[0]?.chainId || 1
@@ -65,6 +66,7 @@ function handleOpenSendModal() {
         Tx Shortcuts
       </button>
       <CommonButton
+        v-if="!sessions.length"
         :disabled="!safeAddress"
         class="flex w-full items-center justify-center gap-2 !px-4 sm:w-fit"
         @click="openWalletConnectModal()"

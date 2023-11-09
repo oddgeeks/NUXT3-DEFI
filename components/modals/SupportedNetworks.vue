@@ -1,11 +1,23 @@
 <script lang="ts" setup>
+import isArray from 'lodash/isArray'
 import WorldSVG from '~/assets/images/icons/world.svg?component'
+
+const props = defineProps<{
+  networks?: Network[]
+}>()
 
 const { safeAddress, networkOrderedBySumTokens } = useAvocadoSafe()
 
 const suffix = computed<any>(() => {
   if (safeAddress.value)
     return `/address/${safeAddress.value}`
+})
+
+const actualNetworks = computed(() => {
+  if (isArray(props.networks))
+    return props.networks
+
+  return networkOrderedBySumTokens.value
 })
 </script>
 
@@ -19,7 +31,7 @@ const suffix = computed<any>(() => {
     </div>
     <ul class="flex flex-col gap-5 rounded-5 bg-slate-50 px-5 py-4 dark:bg-gray-850">
       <li
-        v-for="network in networkOrderedBySumTokens"
+        v-for="network in actualNetworks"
         :key="network.chainId"
       >
         <a
