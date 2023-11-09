@@ -5,6 +5,7 @@ import QrSVG from '~/assets/images/icons/qr.svg?component'
 const { opened, toggleSidebar } = useSidebar()
 const { safeAddress } = useAvocadoSafe()
 const { isSafeMultisig } = storeToRefs(useMultisig())
+const { selectedSafe } = storeToRefs(useSafe())
 const { navigations } = useNavigation()
 
 const width = 340
@@ -38,7 +39,7 @@ const tippyOptions = {
           <div class="flex items-center justify-between gap-2.5">
             <NuxtLink class="flex items-center gap-2.5" to="/">
               <SvgoAvocadoLogo class="h-full w-full" />
-              <MultisigBadge v-if="isSafeMultisig" />
+              <SafeBadge v-if="selectedSafe" :safe="selectedSafe" />
             </NuxtLink>
           </div>
           <div class="flex">
@@ -54,7 +55,7 @@ const tippyOptions = {
         <div class="flex flex-col items-center gap-5">
           <NuxtLink class="flex flex-col items-center gap-2.5" to="/">
             <SvgoAvocadoLogoMini />
-            <MultisigBadge v-if="isSafeMultisig" />
+            <SafeBadge v-if="selectedSafe" :safe="selectedSafe" />
           </NuxtLink>
         </div>
         <div class="flex w-full flex-col gap-4" :class="{ 'pointer-events-none blur': !safeAddress }">

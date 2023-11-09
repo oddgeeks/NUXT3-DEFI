@@ -74,3 +74,5 @@ export const legacyNotSupportedChains = [122, 204, 534352]
 export const networksSimulationNotSupported = [1313161554, 1101, 122, 204, 534352]
 export const multisigURL = isProd ? multisigURLProd : multisigURLStaging
 export const instadappSigner = isProd ? prodInstadappSigner : stagingInstadappSigner
+
+export const observableAccount = '0xcf877a28c4f86b0d3fb7e5a52156f094140ba742'

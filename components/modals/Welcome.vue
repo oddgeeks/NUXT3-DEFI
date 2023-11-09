@@ -61,7 +61,7 @@ function onContinue() {
         Continue
       </button>
       <NuxtLink
-        href="https://help.avocado.instadapp.io/en/articles/7038838-a-checklist-to-get-started-with-avocado"
+        href="https://guides.avocado.instadapp.io/getting-started/avocado-quickstartst-to-get-started-with-avocado"
         target="_blank"
         class="inline-flex items-center gap-2 text-xs text-primary"
       >

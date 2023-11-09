@@ -29,10 +29,10 @@ const sessionAvailable = ref(props.defaultSessionAvailable || false)
 const availableMfas = computed(() => mfaTypes.value.filter(i => i.activated && i.value !== props.mfa.value && i.value !== 'backup'))
 
 const isBackupSignerAvailable = computed(() => {
-  if (!props.chainId)
+  if (!props.chainId || !backupSigner.value?.chainIds)
     return false
 
-  return backupSigner.value.chainIds.some(i => String(i) === String(props.chainId))
+  return backupSigner.value?.chainIds?.some(i => String(i) === String(props.chainId))
 })
 
 useIntervalFn(() => dec(), 1000)
@@ -169,7 +169,7 @@ async function handleDeactivateWithRecoveryCode() {
           </h2>
         </div>
       </div>
-      <VOtpInput v-model:value="otpValue" should-auto-focus class="otp-wrapper gap-2.5" input-classes="dark:bg-slate-800 rounded-[14px] bg-slate-100 border-0 focus-within:ring-1 dark:focus-within:bg-gray-850 focus-within:bg-slate-50 dark:focus-within:ring-slate-750 px-4 py-[15px] text-center w-[58px] h-[50px] focus-within:ring-slate-100" separator="" :num-inputs="6" />
+      <VOtpInput v-model:value="otpValue" should-auto-focus class="otp-wrapper justify-center gap-2.5" input-classes="dark:bg-slate-800 rounded-[14px] bg-slate-100 border-0 focus-within:ring-1 dark:focus-within:bg-gray-850 focus-within:bg-slate-50 dark:focus-within:ring-slate-750 px-4 py-[15px] text-center w-[58px] h-[50px] focus-within:ring-slate-100" separator="" :num-inputs="6" />
     </div>
     <label v-if="props.mfaRequestType === 'transaction'" class="mt-2.5 flex cursor-pointer items-center gap-2.5 text-xs" for="input-session">
       <input id="input-session" v-model="sessionAvailable" class="peer sr-only" type="checkbox">
@@ -185,7 +185,7 @@ async function handleDeactivateWithRecoveryCode() {
       </CommonButton>
     </div>
     <div class="flex justify-between">
-      <button v-if="mfa.value !== 'totp'" type="button" :disabled="!!count" class="text-left text-xs font-medium leading-5 text-primary disabled:text-slate-400" @click="handleRequest">
+      <button v-if="mfa.value !== 'totp'" type="button" :disabled="!!count" class="text-left text-xs font-medium leading-5 text-primary only:m-auto disabled:text-slate-400" @click="handleRequest">
         Resend OTP
         <span v-if="count">
           in {{ count }} secs

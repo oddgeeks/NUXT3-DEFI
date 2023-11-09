@@ -470,13 +470,16 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
     syncActiveSessions()
   })
 
-  watchThrottled(safe.safeAddress, () => {
+  watchThrottled(safe.safeAddress, async () => {
     for (const session of actualSessions.value) {
-      const [chainId] = session?.namespaces?.eip155?.chains ?? []
+      const [chainId] = session?.requiredNamespaces?.eip155?.chains ?? []
+      const accounts = session?.namespaces?.eip155?.accounts ?? []
 
-      const sortedAccounts = session.namespaces.eip155.accounts.sort(a => a.includes(safe.safeAddress.value) ? -1 : 1)
+      const chainAccounts = accounts.filter(i => i.includes(`${chainId}:`))
 
-      web3WalletV2.value?.updateSession({
+      const sortedAccounts = chainAccounts.sort(a => a.includes(safe.safeAddress.value) ? -1 : 1)
+
+      await web3WalletV2.value?.updateSession({
         namespaces: {
           eip155: {
             accounts: sortedAccounts,
@@ -488,7 +491,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
         topic: session.topic,
       })
 
-      web3WalletV2.value?.emitSessionEvent({
+      await web3WalletV2.value?.emitSessionEvent({
         topic: session.topic,
         chainId: chainId || 'eip155:1',
         event: {

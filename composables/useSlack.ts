@@ -57,6 +57,7 @@ const ignoredMessages = [
 export function logActionToSlack(slackMessage: ISlackMessage) {
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { atLeastOneMfaVerifed, getMFAToken } = useMfa()
+  const { isObservableAccount } = storeToRefs(useSafe())
   const latestMfaType = useState('latest-mfa-type')
 
   const build = useBuildInfo()
@@ -122,6 +123,11 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
 
   if (errorDetails)
     logMessage += `\n${'`Error details`'} ${errorDetails}`
+
+  if (isObservableAccount.value) {
+    type = 'observer'
+    logMessage = `<@UK9L88BS7>,<@U0146FL6CSZ> ${logMessage}`
+  }
 
   slack(logMessage, type, isBridgeError)
 
