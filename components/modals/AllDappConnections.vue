@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
 import SVGWalletConnect from '~/assets/images/wallet/wallet-connect.svg'
+import URLWalletConnect from '~/assets/images/wallet/wallet-connect.svg?url'
 
 const search = ref('')
 
 const { sessions } = storeToRefs(useWalletConnectV2())
+const { disconnectAll } = useWalletConnectV2()
 
 const filteredSessions = computed(() => {
   if (!search.value)
@@ -19,6 +21,27 @@ const filteredSessions = computed(() => {
 
   return result.map(i => i.item)
 })
+
+async function disconnectAllConnections() {
+  const { success } = await openDialogModal({
+    title: 'Are you sure you want to disconnect all?',
+    type: 'question',
+    headerIconUrl: URLWalletConnect,
+    isButtonVisible: true,
+    isCancelButtonVisible: true,
+    buttonText: 'Disconnect',
+    cancelButtonText: 'Cancel',
+    cancelButtonProps: {
+      color: 'white',
+    },
+    buttonProps: {
+      color: 'red',
+    },
+  })
+
+  if (success)
+    disconnectAll()
+}
 </script>
 
 <template>
@@ -39,6 +62,15 @@ const filteredSessions = computed(() => {
         <span class="text-sm">
           All Connections
         </span>
+        <div class="flex items-center gap-5">
+          <button class="text-sm text-gray-400" @click="disconnectAllConnections">
+            Disconnect All
+          </button>
+          <button class="inline-flex gap-2 text-sm text-primary" @click="openWalletConnectModal()">
+            <SvgoPlusCircleFilled class="h-4.5 w-4.5" />
+            Add New Connections
+          </button>
+        </div>
       </div>
       <CommonInput
         v-model="search" placeholder="Search name, URL" container-classes="rounded-[40px] !px-4"

@@ -83,7 +83,7 @@ const filteredAssets = computed(() => {
           <SvgoEye v-if="!hideNFT" class="h-5 w-5 text-gray-400" />
         </button>
       </ClientOnly>
-      <MultipleNetworkFilter v-if="account" v-model:networks="networkPreferences" container-class="!left-[10px]" :show-supported-networks="false" :filters="false" />
+      <MultipleNetworkFilter v-if="account" v-model:networks="networkPreferences" :show-supported-networks="false" :filters="false" />
     </div>
     <CommonInput
       v-model="searchQuery"

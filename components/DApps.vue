@@ -1,32 +1,10 @@
 <script lang="ts" setup>
 import '@splidejs/vue-splide/css'
 import SVGWalletConnect from '~/assets/images/wallet/wallet-connect-lite.svg?component'
-import URLWalletConnect from '~/assets/images/wallet/wallet-connect.svg?url'
 
 const wcStoreV2 = useWalletConnectV2()
 
 const isAnySessionAvailable = computed(() => wcStoreV2.sessions.length > 0)
-
-async function disconnectAllConnections() {
-  const { success } = await openDialogModal({
-    title: 'Are you sure you want to disconnect all?',
-    type: 'question',
-    headerIconUrl: URLWalletConnect,
-    isButtonVisible: true,
-    isCancelButtonVisible: true,
-    buttonText: 'Disconnect',
-    cancelButtonText: 'Cancel',
-    cancelButtonProps: {
-      color: 'white',
-    },
-    buttonProps: {
-      color: 'red',
-    },
-  })
-
-  if (success)
-    wcStoreV2.disconnectAll()
-}
 
 const reducedSessions = computed(() => {
   if (!wcStoreV2.sessions?.length)
