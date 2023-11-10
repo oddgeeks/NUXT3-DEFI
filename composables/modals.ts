@@ -755,7 +755,8 @@ export async function openMigrationModal(selectedMigrationSafe: ISafe) {
       selectedMigrationSafe,
     },
     options: {
-      wrapperClass: '!max-w-[fit-content]',
+      contentClass: '!p-7.5',
+      wrapperClass: '!max-w-[540px]',
     },
   })
 }

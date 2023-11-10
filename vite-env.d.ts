@@ -366,9 +366,25 @@ type ISnackOptions = {
   timeout?: number;
 };
 
+interface IMigrationTransaction {
+  chainId: string | number
+  txs: TransactionsAction[]
+  metadata: string[]
+}
+
 interface IConnectionMeta {
   provider: string | null;
   address: string;
+}
+
+interface IPendingTransactionModalParams {
+  hash: string
+  chainId: number | string
+  toChainId?: number | string
+  type?: IWeb3Action
+  async?: boolean
+  crossChain?: boolean
+  preventAutoClose?: boolean
 }
 
 type IOptions = {
@@ -591,6 +607,16 @@ interface IEstimatedFeeData {
   fee: string;
   multiplier: string;
   discount: IEstimatedDiscount;
+}
+
+interface IEstimatedFeeDataWithChainId extends IEstimatedFeeData { 
+  chainId: string
+}
+
+interface IEstimatedActions {
+  actions: TransactionsAction[]
+  chainId: number | string
+  options: any
 }
 
  interface IEstimatedDiscount {

@@ -93,6 +93,7 @@ useIntervalFn(refresh, 15000)
   <BannerNewVersion />
   <BannerMultisigOnboard />
   <Notifications />
+  <TransactionsQueue />
   <Modals />
   <ChatBubble />
 </template>
