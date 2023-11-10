@@ -4,7 +4,7 @@ import { isAddress } from '@ethersproject/address'
 import { useField, useForm } from 'vee-validate'
 import { storeToRefs } from 'pinia'
 import ClipboardSVG from '~/assets/images/icons/clipboard.svg?component'
-import type { IToken } from '~~/stores/tokens'
+import type { IBalance } from '~/stores/safe'
 import { Erc20__factory } from '~~/contracts'
 
 const props = defineProps<{
@@ -14,9 +14,8 @@ const props = defineProps<{
 const { handleAddToken, fetchTokenByAddress } = useTokens()
 const { tokens } = storeToRefs(useTokens())
 const { getRpcProviderByChainId } = useShared()
+const { safeAddress } = storeToRefs(useSafe())
 const { fetchBalances } = useSafe()
-
-const balance = ref('0')
 
 const { handleSubmit, isSubmitting, errors, meta, resetForm, validate }
   = useForm({
@@ -78,6 +77,10 @@ const {
 
       const token = tokens[0]
 
+      const balance = await contract.balanceOf(safeAddress.value)
+
+      const balanceFormatted = fromWei(toBN(balance), decimals).toFixed(2)
+
       const sparkline = token?.sparkline_price_7d || []
 
       const price = toBN(token?.price || '0').eq('0') && sparkline.length > 0
@@ -94,7 +97,8 @@ const {
         logoURI: token?.logo_url || '',
         price,
         sparklinePrice7d: sparkline,
-      } as IToken
+        balance: balanceFormatted,
+      } as IBalance
     }
   },
   {
@@ -208,6 +212,9 @@ onUnmounted(() => {
     <div v-if="token" class="mb-7.5 flex items-center justify-between">
       <div class="text-slate-400">
         <p>{{ token.name }}</p>
+        <p class="text-sm font-medium">
+          {{ token.balance }} {{ token.symbol }}
+        </p>
       </div>
       <div
         class="items-center justify-center rounded-2xl bg-slate-50 px-4 py-2.5 text-sm text-slate-400 dark:bg-gray-850"
