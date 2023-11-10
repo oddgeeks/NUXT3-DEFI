@@ -72,12 +72,10 @@ export function useMultipleEstimatedFee(
       if (!actions.value?.length)
         return
 
-      console.log('selam', actions.value)
-
       pending.value = true
       error.value = undefined
 
-      const resp = await Promise.all(actions.value.map(async (action) => {
+      const resp = await Promise.allSettled(actions.value.map(async (action) => {
         let message
 
         if (isSelectedSafeLegacy.value) {
@@ -120,9 +118,18 @@ export function useMultipleEstimatedFee(
         return data
       }))
 
-      console.log('selam', resp)
-
       rawData.value = resp
+        .filter(i => i.status === 'fulfilled')
+        .map(i => i.status === 'fulfilled' ? i.value : undefined)
+
+      const errors = resp.filter(i => i.status === 'rejected')
+        .map(i => i.status === 'rejected' && i.reason)
+
+      if (errors.length) {
+        error.value = errors.map((err: any) => {
+          return `${chainIdToName(err.chainId)} : ${parseTransactionError(err)?.formatted || err?.error || err}`
+        }).join('\n')
+      }
     }
     catch (err: any) {
       error.value = err?.error || err
