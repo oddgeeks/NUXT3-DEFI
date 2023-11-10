@@ -3,6 +3,7 @@ const props = defineProps<{
   safe: ISafe
   primary?: boolean
   tooltip?: string
+  hideActiveState?: boolean
 }>()
 
 const route = useRoute()
@@ -14,7 +15,10 @@ const { safeTotalBalanceMapping, legacySafeAddress, selectedSafe } = storeToRefs
 const { checkSafeIsActualMultisig } = useMultisig()
 
 const isMultisig = computed(() => checkSafeIsActualMultisig(props.safe))
-const walletName = useLocalStorage(`safe-label-${props.safe?.safe_address}`, isMultisig.value ? 'MultiSig' : 'Personal')
+const walletName = computed(() => {
+  const name = localStorage.getItem(`safe-label-${props.safe?.safe_address}`)
+  return name?.length ? name : (isMultisig.value ? 'MultiSig' : 'Personal')
+})
 
 const isLegacySafeExist = computed(() => !!legacySafeAddress.value)
 
@@ -36,6 +40,9 @@ async function onEdit() {
 }
 
 function handleClick() {
+  if (props.hideActiveState)
+    return
+
   const safe = route.params?.safe as string
 
   if (safe) {
@@ -60,8 +67,8 @@ function handleClick() {
 <template>
   <button
     :class="{
-      'border-slate-50 bg-slate-50 dark:border-slate-800 dark:bg-slate-800': active,
-      'bg-slate-150 dark:bg-gray-850': !active,
+      'border-slate-50 bg-slate-50 dark:border-slate-800 dark:bg-slate-800': active && !props.hideActiveState,
+      'bg-slate-150 dark:bg-gray-850': !active || props.hideActiveState,
     }"
     class="flex w-full items-stretch justify-between rounded-2xl border border-slate-150 px-4 py-3.5 text-left dark:border-slate-750" @click="handleClick"
   >

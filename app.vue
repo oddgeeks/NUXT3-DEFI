@@ -5,6 +5,30 @@ const { library, provider, account } = useWeb3()
 const { onDisconnect } = useConnectors()
 const { lastModal } = useModal()
 
+const { safeAddress } = storeToRefs(useSafe())
+const { fromWei } = useBignumber()
+const { avoProvider } = useSafe()
+
+const { refresh } = useAsyncData(
+  'pending-deposit',
+  async () => {
+    if (!safeAddress.value)
+      return '0'
+
+    const amountInWei = await avoProvider.send('eth_getBalance', [
+      safeAddress.value,
+      'pending-deposit',
+    ])
+
+    return fromWei(amountInWei || '0', 18).toFixed()
+  },
+  {
+    immediate: true,
+    server: false,
+    watch: [safeAddress],
+  },
+)
+
 useScriptTag('https://app.chatwoot.com/packs/js/sdk.js', () => {
   // @ts-expect-error
   if (!window.chatwootSDK)
@@ -58,6 +82,8 @@ watchThrottled(provider, () => {
   throttle: 1000,
   immediate: true,
 })
+
+useIntervalFn(refresh, 15000)
 </script>
 
 <template>
@@ -69,6 +95,7 @@ watchThrottled(provider, () => {
   <BannerNewVersion />
   <BannerMultisigOnboard />
   <Notifications />
+  <TransactionsQueue />
   <Modals />
   <ChatBubble />
 </template>

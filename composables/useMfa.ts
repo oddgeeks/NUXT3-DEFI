@@ -19,7 +19,7 @@ export function useMfa() {
 
   const atLeastOneMfaVerifed = computed(() => checkAtleastOneMfaVerified(selectedSafe.value!))
 
-  const isSafeBackupSigner = computed(() => atLeastOneMfaVerifed.value && !isAddressEqual(selectedSafe.value?.owner_address, account.value))
+  const isSafeBackupSigner = computed(() => checkSafeBackupSigner(selectedSafe.value!, account.value))
 
   const getMFATokenExpiry = (otps?: CookieOptions) => useCookie<string | undefined | null>(`transaction-token-expiry-${selectedSafe.value?.safe_address}`, otps)
   const getMFAToken = (otps?: CookieOptions) => useCookie<string | undefined | null>(`transaction-token-${selectedSafe.value?.safe_address}`, otps)
