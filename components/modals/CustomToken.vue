@@ -74,20 +74,9 @@ const {
       const name = await contract.name()
       const decimals = await contract.decimals()
 
-      const tokens = await fetchTokenByAddress([reactiveAddress.value], chainId.value)
+      const tokens = await fetchTokenByAddress([reactiveAddress.value], chainId.value) || []
 
-      const token = tokens?.[0]
-
-      const data = await fetchBalances()
-
-      const tokenBalance = data?.find(
-        (i: IToken) =>
-          i.address.toLowerCase() === reactiveAddress.value.toLowerCase()
-          && i.chainId == chainId.value,
-      )
-
-      if (tokenBalance)
-        balance.value = tokenBalance.balance
+      const token = tokens[0]
 
       const sparkline = token?.sparkline_price_7d || []
 
@@ -101,8 +90,8 @@ const {
         symbol,
         name,
         decimals,
-        coingeckoId: '',
-        logoURI: token?.logo_url,
+        coingeckoId: token.coingecko_id || '',
+        logoURI: token?.logo_url || '',
         price,
         sparklinePrice7d: sparkline,
       } as IToken
@@ -125,7 +114,9 @@ const onSubmit = handleSubmit(async () => {
   if (!token.value)
     return
 
-  handleAddToken(token.value)
+  await handleAddToken(token.value)
+
+  fetchBalances()
 
   openSnackbar({
     message: `${token.value?.name} added successfully.`,
@@ -161,7 +152,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  clearNuxtData('custom-token')
+  clearNuxtData(`custom-token-${props.address}`)
 })
 </script>
 
@@ -217,9 +208,6 @@ onUnmounted(() => {
     <div v-if="token" class="mb-7.5 flex items-center justify-between">
       <div class="text-slate-400">
         <p>{{ token.name }}</p>
-        <p class="text-sm font-medium">
-          {{ balance }} {{ token.symbol }}
-        </p>
       </div>
       <div
         class="items-center justify-center rounded-2xl bg-slate-50 px-4 py-2.5 text-sm text-slate-400 dark:bg-gray-850"
