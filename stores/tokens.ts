@@ -114,17 +114,17 @@ export const useTokens = defineStore('tokens', () => {
     await fetchTokens()
 
     // preload at custom tokens
-    await http('/api/tokens')
+    http('/api/tokens')
   })
 
   const handleTokenPrices = async () => {
     tokens.value = await fetchTokenPrices(tokens.value)
   }
 
-  const handleAddToken = (token: IToken) => {
+  const handleAddToken = async (token: IToken) => {
     token.isCustomToken = true
     customTokens.value.push(token)
-    fetchTokens()
+    await fetchTokens()
   }
 
   const handleDeleteToken = (token: IToken) => {

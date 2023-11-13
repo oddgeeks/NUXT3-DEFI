@@ -5,31 +5,23 @@ import { wait } from '@instadapp/utils'
 const props = defineProps<{
   transactionParam: IPendingTransactionModalParams
 }>()
-
 enum TransactionStatus {
   Pending = 'pending',
   Failed = 'failed',
   Success = 'success',
 }
-
 const { getRpcProviderByChainId } = useShared()
 const { avoProvider } = useSafe()
-
 const transaction = ref<TransactionReceipt>()
 const crossTransaction = ref<ICrossChainTx>()
-
 const isCrossTransactionFetching = ref(true)
 const transactionPending = ref(true)
-
 const isSuccess = computed(() => status.value === TransactionStatus.Success)
-
 const events = [
   '0xacb5341cc21d71a005bd22634cec7391a7fd11ff2b563a7b301cac795f7a6a56',
   '0xdaf1e6e151973de199f3ea25b9c6a7c3d94299dc85e269cfd20e48e517ecf704',
 ]
-
 const provider = getRpcProviderByChainId(props.transactionParam.chainId)
-
 async function waitForTransaction() {
   try {
     await wait(5000)
@@ -39,53 +31,41 @@ async function waitForTransaction() {
     transactionPending.value = false
   }
 }
-
 async function waitForCrossTransaction() {
   await wait(5000)
-
   while (isCrossTransactionFetching.value) {
     const tx = await avoProvider.send('api_getCrosschainTransaction', [
       props.transactionParam.hash,
     ]) as ICrossChainTx
-
     crossTransaction.value = tx
-
     await wait(3000)
   }
 }
-
 const status = computed(() => {
   if (props.transactionParam.crossChain) {
     if (crossTransaction.value?.status === TransactionStatus.Success) {
       isCrossTransactionFetching.value = false
       return TransactionStatus.Success
     }
-
     if (crossTransaction.value?.status === TransactionStatus.Failed) {
       isCrossTransactionFetching.value = false
       return TransactionStatus.Failed
     }
-
     return TransactionStatus.Pending
   }
   else {
     if (transactionPending.value)
       return TransactionStatus.Pending
-
     if ((!transactionPending.value && !transaction) || !transaction.value?.status)
       return TransactionStatus.Failed
-
     if (transaction.value.logs.some(i => i.topics.length && events.includes(i.topics[0])))
       return TransactionStatus.Success
-
     return TransactionStatus.Failed
   }
 })
-
 function handleAnimationEnd() {
   removeTransactionFromQueue(props.transactionParam.hash)
 }
-
 onMounted(() => {
   props.transactionParam.crossChain
     ? waitForCrossTransaction()
@@ -97,7 +77,10 @@ onMounted(() => {
   <div
     class="wrapper relative flex flex-col gap-3 overflow-hidden rounded-5 border p-4 dark:border-gray-800 dark:bg-gray-850 sm:w-[400px]"
   >
-    <div v-if="isSuccess" class="countdown-animation absolute bottom-0 left-0 h-1 w-full bg-primary" @animationend="handleAnimationEnd" />
+    <div
+      v-if="isSuccess && !transactionParam.preventAutoClose" class="countdown-animation absolute bottom-0 left-0 h-1 w-full bg-primary"
+      @animationend="handleAnimationEnd"
+    />
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2.5">
         <div class="flex items-center gap-2">
@@ -106,7 +89,10 @@ onMounted(() => {
             {{ chainIdToName(transactionParam.chainId) }}
           </span>
         </div>
-        <SvgoArrowRight v-if="transactionParam.crossChain && transactionParam.toChainId" class="h-3 w-3 text-gray-400" />
+        <SvgoArrowRight
+          v-if="transactionParam.crossChain && transactionParam.toChainId"
+          class="h-3 w-3 text-gray-400"
+        />
         <div v-if="transactionParam.toChainId" class="flex items-center gap-2.5">
           <ChainLogo class="h-5 w-5" :chain="transactionParam.toChainId" />
           <span class="text-xs">
@@ -120,8 +106,7 @@ onMounted(() => {
       </div>
       <button
         class="flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-800"
-        aria-label="Close modal"
-        @click="removeTransactionFromQueue(transactionParam.hash)"
+        aria-label="Close modal" @click="removeTransactionFromQueue(transactionParam.hash)"
       >
         <SvgoX class="h-2.5 w-2.5" />
       </button>
@@ -147,7 +132,10 @@ onMounted(() => {
           </span>
         </template>
       </div>
-      <NuxtLink target="_blank" external :to="`${avoExplorerURL}/tx/${transactionParam.hash}`" class="inline-flex items-center gap-0.5 text-xs text-primary">
+      <NuxtLink
+        target="_blank" external :to="`${avoExplorerURL}/tx/${transactionParam.hash}`"
+        class="inline-flex items-center gap-0.5 text-xs text-primary"
+      >
         View Explorer
         <SvgoChevronDown class="w-4 -rotate-90" />
       </NuxtLink>
@@ -157,20 +145,21 @@ onMounted(() => {
 
 <style scoped>
 .wrapper:hover .countdown-animation {
-  animation-play-state: paused;
+    animation-play-state: paused;
 }
 
 .countdown-animation {
-  animation: countdown 5200ms linear forwards;
-  transform-origin: left center;
+    animation: countdown 5200ms linear forwards;
+    transform-origin: left center;
 }
 
 @keyframes countdown {
-  0% {
-    transform: scaleX(1);
-  }
-  100% {
-    transform: scaleX(0);
-  }
+    0% {
+        transform: scaleX(1);
+    }
+
+    100% {
+        transform: scaleX(0);
+    }
 }
 </style>

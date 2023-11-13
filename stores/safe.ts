@@ -25,6 +25,8 @@ export const useSafe = defineStore('safe', () => {
   const safeAddress = ref()
   const mainSafeAddress = ref()
   const multiSigSafeAddress = ref()
+  const { connectionMeta } = useConnectors()
+
   const accountSafeMapping = useCookie<Record<string, string>>('account-safe-mapping', {
     maxAge: 60 * 60 * 24 * 365 * 10,
     default: () => ref({}),
@@ -516,19 +518,6 @@ export const useSafe = defineStore('safe', () => {
 
       balances.value.error = null
 
-      const total = !data
-        ? toBN('0')
-        : data.flat().reduce(
-          (acc, curr) => acc.plus(curr.balanceInUSD || '0'),
-          toBN(0) || toBN(0),
-        )
-
-      const clonedSafeTotalBalanceMapping = cloneDeep(safeTotalBalanceMapping.value || {})
-
-      clonedSafeTotalBalanceMapping[safeAddress.value] = total.toFixed()
-
-      safeTotalBalanceMapping.value = clonedSafeTotalBalanceMapping
-
       return balances.value.data
     }
     catch (e: any) {
@@ -764,6 +753,8 @@ export const useSafe = defineStore('safe', () => {
       if (!account.value)
         return
 
+      connectionMeta.value.address = account.value
+
       try {
         safesLoading.value = true
 
@@ -826,6 +817,17 @@ export const useSafe = defineStore('safe', () => {
     fetchDebouncedEOABalance()
   }, {
     throttle: 1000,
+  })
+
+  watchDebounced(totalBalance, () => {
+    const balance = toBN(totalBalance.value || 0).toFixed()
+
+    const clonedSafeTotalBalanceMapping = cloneDeep(safeTotalBalanceMapping.value || {})
+
+    clonedSafeTotalBalanceMapping[safeAddress.value] = balance
+    safeTotalBalanceMapping.value = clonedSafeTotalBalanceMapping
+  }, {
+    debounce: 1000,
   })
 
   return {

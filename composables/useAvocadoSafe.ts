@@ -192,7 +192,10 @@ export function useAvocadoSafe() {
     const types = {
       1: typesV1,
       2: typesV2,
-    }[versionMajor] || {}
+    }[versionMajor]
+
+    if (!types)
+      throw new Error('Invalid version')
 
     const { signature, cancelled } = await signTypedData(library.value, account.value, {
       domain,

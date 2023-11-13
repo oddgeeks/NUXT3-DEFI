@@ -4,6 +4,7 @@ const props = defineProps<{
   primary?: boolean
   tooltip?: string
   detailed?: boolean
+  hideActiveState?: boolean
 }>()
 
 const route = useRoute()
@@ -16,7 +17,10 @@ const { checkSafeIsActualMultisig } = useMultisig()
 const { togglePinSafe, isSafePinned, pinnedSafes } = useAccountState()
 
 const isMultisig = computed(() => checkSafeIsActualMultisig(props.safe))
-const walletName = useLocalStorage(`safe-label-${props.safe?.safe_address}`, isMultisig.value ? 'MultiSig' : 'Personal')
+const walletName = computed(() => {
+  const name = localStorage.getItem(`safe-label-${props.safe?.safe_address}`)
+  return name?.length ? name : (isMultisig.value ? 'MultiSig' : 'Personal')
+})
 
 const isLegacy = computed(() => props.safe?.multisig === 0)
 
@@ -40,6 +44,9 @@ async function onEdit() {
 }
 
 function handleClick() {
+  if (props.hideActiveState)
+    return
+
   const safe = route.params?.safe as string
 
   if (safe) {
