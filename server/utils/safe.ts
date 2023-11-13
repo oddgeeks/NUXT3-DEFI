@@ -22,8 +22,6 @@ export async function getSafeOptionsByChain(params: IOptionsParams): Promise<ISa
   const multisigForwarderProxyAddress = getMultisigForwarderProxyAddress(is_prod)
   const forwarderProxyAddress = getForwarderProxyAddress(is_prod)
 
-  console.log({ isProd: is_prod })
-
   const obj = {} as ISafeOptions
 
   const implInstance = AvoMultisigImplementation__factory.connect(safe.safe_address, provider)
