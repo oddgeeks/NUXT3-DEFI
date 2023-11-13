@@ -30,6 +30,7 @@ export const useShared = defineStore('shared', () => {
     if (!rpcInstances[chainId]) {
       rpcInstances[chainId] = new StaticJsonRpcRetryProvider(rpcURL, {
         delay: 50,
+        timeouts: [5000, 7000, 10000],
       })
     }
 
