@@ -56,7 +56,7 @@ function openBridge() {
 
 <template>
   <div :class="{ 'pointer-events-none blur': !safeAddress }">
-    <div class="font-base flex w-full flex-col gap-2 border-y-1 border-slate-150 px-7.5 py-4 text-gray-400 dark:border-slate-750">
+    <div class="font-base flex w-full flex-col gap-2 border-y-1 border-slate-750 px-7.5 py-4 text-gray-400">
       <template
         v-for="nav in navigations"
         :key="nav.to"
@@ -78,11 +78,11 @@ function openBridge() {
         </NuxtLink>
       </template>
     </div>
-    <div class="flex w-full flex-col gap-2 border-b-1 border-slate-150 px-7.5 py-4 text-gray-400 dark:border-slate-750">
+    <div class="flex w-full flex-col gap-2 border-b-1 border-slate-750 px-7.5 py-4 text-gray-400">
       <button
         class="flex h-11 items-center justify-between"
         :class="{
-          'text-slate-900 dark:text-white': moreOptions,
+          'text-white': moreOptions,
         }"
         @click="toggleOptions(!moreOptions)"
       >

@@ -139,7 +139,7 @@ function handleBackClick() {
       </div>
     </div>
 
-    <hr class="border-slate-150 dark:border-gray-800">
+    <hr class="border-gray-800">
     <div class="flex flex-col gap-7.5 p-5 sm:gap-5 sm:p-7.5">
       <fieldset
         v-for="field, key in fields"
@@ -169,7 +169,7 @@ function handleBackClick() {
               <SvgoInfo2 v-if="!isGnosisMigration" v-tippy="'Please make sure you enter the EOA address and not Avocado address.'" class="text-orange" />
             </span>
             <button
-              v-if="fields.length > 1" class="flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-900"
+              v-if="fields.length > 1" class="flex h-5 w-5 items-center justify-center rounded-full bg-gray-900"
               @click="remove(key as number)"
             >
               <SvgoX class="h-3 w-3" />
@@ -217,7 +217,7 @@ function handleBackClick() {
         </p>
       </div>
     </div>
-    <hr class="border-slate-150 dark:border-gray-800">
+    <hr class="border-gray-800">
     <div class="grid grid-cols-2 gap-4 p-7.5">
       <CommonButton class="justify-center" size="lg" color="white" @click="handleBackClick">
         Back

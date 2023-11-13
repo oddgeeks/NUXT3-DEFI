@@ -27,7 +27,7 @@ function formatValue(i: string) {
       <span class="mt-5 w-2 text-xs font-medium text-gray-400">
         {{ index + 1 }}
       </span>
-      <details :class="!expandable ? 'pointer-events-none select-none' : 'cursor-pointer'" class="group flex w-full items-center gap-2.5 rounded-xl border bg-slate-150 py-2.5 font-medium dark:border-slate-750 dark:bg-slate-850 dark:ring-slate-750">
+      <details :class="!expandable ? 'pointer-events-none select-none' : 'cursor-pointer'" class="group flex w-full items-center gap-2.5 rounded-xl bg-slate-850 py-2.5 font-medium ring-1 ring-slate-750">
         <summary class="flex w-full items-center gap-2.5 px-3">
           <DragHandle class="pointer-events-auto cursor-grab">
             <SvgoHandler class="shrink-0" />
@@ -50,7 +50,7 @@ function formatValue(i: string) {
             <SvgoChevronDown v-if="expandable" class="h-4 w-4 text-gray-400 group-open:rotate-180" />
           </div>
         </summary>
-        <hr class="my-3 border-slate-150 dark:border-gray-800">
+        <hr class="my-3 border-gray-800">
         <div>
           <div class="flex flex-col gap-2 px-3 text-xs font-medium">
             <p>
@@ -61,7 +61,7 @@ function formatValue(i: string) {
               {{ item.formValues.toAddress }}
             </div>
           </div>
-          <hr class="my-3 border-slate-150 dark:border-gray-800">
+          <hr class="my-3 border-gray-800">
           <ul class="flex flex-col gap-3 px-3 font-medium">
             <template v-for="i, k in item.formValues" :key="i">
               <li v-if="i !== undefined && !excludedKeys.includes(k as string)">

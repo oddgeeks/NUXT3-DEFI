@@ -122,7 +122,7 @@ Issued At: ${new Date().toISOString()}`
         <span class="text-sm">Reedem code</span>
         <button
           type="button"
-          class="flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-900"
+          class="flex h-5 w-5 items-center justify-center rounded-full bg-gray-900"
           aria-label="Gift Code"
           @click="$emit('close')"
         >

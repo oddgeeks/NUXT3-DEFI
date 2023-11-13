@@ -139,7 +139,7 @@ const { safeAddress } = useAvocadoSafe()
           v-if="
             !!account && tokenBalances.length && filteredBalances.length === 0
           "
-          class="flex flex-col items-center space-y-4 rounded-[25px] bg-slate-50 py-32 dark:bg-gray-850"
+          class="flex flex-col items-center space-y-4 rounded-[25px] bg-gray-850 py-32"
         >
           <p class="text-gray-400">
             Nothing could be found
@@ -168,7 +168,7 @@ const { safeAddress } = useAvocadoSafe()
         <div
           v-else
           style="scrollbar-gutter: stable; overflow-y: overlay"
-          class="scroll-style hidden max-h-[530px] overflow-auto rounded-[25px] bg-slate-50 dark:bg-gray-850 sm:flex md:overflow-x-hidden"
+          class="scroll-style hidden max-h-[530px] overflow-auto rounded-[25px] bg-gray-850 sm:flex md:overflow-x-hidden"
           :class="{ '!overflow-hidden': !account }"
         >
           <table
@@ -177,7 +177,7 @@ const { safeAddress } = useAvocadoSafe()
           >
             <thead>
               <tr
-                class="border-b border-slate-150 text-left text-sm font-medium text-gray-400 dark:border-gray-800"
+                class="border-b border-gray-800 text-left text-sm font-medium text-gray-400"
               >
                 <th class="py-6 pl-7.5 text-left">
                   Token
@@ -193,7 +193,7 @@ const { safeAddress } = useAvocadoSafe()
                 </th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-150 dark:divide-gray-900">
+            <tbody class="divide-ydivide-gray-900">
               <template v-if="!account || !tokenBalances.length || !balances.data">
                 <LoadingBalanceRow
                   v-for="i in 8"
@@ -242,7 +242,7 @@ const { safeAddress } = useAvocadoSafe()
         </div>
       </div>
       <div v-else class="w-full">
-        <div class="scroll-style hidden max-h-[530px] flex-col items-center gap-[30px] overflow-auto rounded-[25px] bg-slate-50 py-8 dark:bg-gray-850 sm:flex md:overflow-x-hidden lg:py-[100px]">
+        <div class="scroll-style hidden max-h-[530px] flex-col items-center gap-[30px] overflow-auto rounded-[25px]  bg-gray-850 py-8 sm:flex md:overflow-x-hidden lg:py-[100px]">
           <div class="flex w-2/3 flex-col gap-[30px] lg:w-4/5 lg:flex-row xl:w-2/3">
             <StyledQrCode
               :key="safeAddress"
@@ -256,7 +256,7 @@ const { safeAddress } = useAvocadoSafe()
                 Add tokens to your Avocado wallet
               </p>
               <Copy
-                class="text-wrap flex items-center justify-between gap-2 rounded-5 bg-slate-100 px-4 py-3 text-left text-xs dark:bg-gray-900"
+                class="text-wrap flex items-center justify-between gap-2 rounded-5  bg-gray-900 px-4 py-3 text-left text-xs"
                 :text="safeAddress"
               >
                 <template #content>
@@ -291,7 +291,7 @@ const { safeAddress } = useAvocadoSafe()
               Add tokens to your Avocado wallet
             </p>
             <Copy
-              class="text-wrap flex items-center justify-between gap-2 rounded-5 bg-slate-100 px-4 py-3 text-left text-[14px] dark:bg-gray-900"
+              class="text-wrap flex items-center justify-between gap-2 rounded-5  bg-gray-900 px-4 py-3 text-left text-[14px]"
               :text="safeAddress"
             >
               <template #content>
@@ -322,7 +322,7 @@ const { safeAddress } = useAvocadoSafe()
       </div>
       <p
         v-if="account"
-        class="mb-5 text-center text-xs leading-5 text-gray-400 dark:text-gray-500 sm:mb-0 sm:text-right"
+        class="mb-5 text-center text-xs leading-5 text-gray-500 sm:mb-0 sm:text-right"
       >
         Don’t see your tokens?
         <button class="text-primary" @click="openImportTokenModal()">

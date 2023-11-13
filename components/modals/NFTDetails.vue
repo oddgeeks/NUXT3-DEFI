@@ -33,7 +33,7 @@ const isNotAuthorised = computed(() => {
         <h1 v-if="asset.name" class="flex justify-center gap-2 text-center text-lg leading-5">
           {{ asset.name }}
 
-          <NuxtLink external target="_blank" class="shrink-0 text-slate-750 dark:text-slate-150" :to="getExplorerUrl(asset.chainId, `/address/${asset.contractAddress}`)">
+          <NuxtLink external target="_blank" class="shrink-0 text-slate-150" :to="getExplorerUrl(asset.chainId, `/address/${asset.contractAddress}`)">
             <ExternalLinkSVG class="w-4 shrink-0" />
           </NuxtLink>
         </h1>
@@ -44,7 +44,7 @@ const isNotAuthorised = computed(() => {
           {{ asset.collectionName }}
         </h2>
       </div>
-      <details v-if="asset.attributes?.length" class="group rounded-2xl bg-slate-50 ring-2 ring-slate-150 dark:bg-gray-850 dark:ring-gray-800">
+      <details v-if="asset.attributes?.length" class="r group rounded-2xl bg-gray-850 ring-2 ring-gray-800">
         <summary
           class="flex cursor-pointer items-center justify-between px-4 py-[14px] text-sm font-semibold"
         >
@@ -54,9 +54,9 @@ const isNotAuthorised = computed(() => {
           />
         </summary>
 
-        <div class="scroll-style max-h-[300px] overflow-y-auto border-t px-4 py-[14px] dark:border-gray-800">
+        <div class="scroll-style max-h-[300px] overflow-y-auto border-t border-gray-800 px-4 py-[14px]">
           <ul class="grid grid-cols-2 items-baseline gap-2">
-            <li v-for="attr in asset.attributes" :key="attr.value" class="flex flex-col rounded-[14px] bg-white px-[14px] py-2 dark:bg-gray-900">
+            <li v-for="attr in asset.attributes" :key="attr.value" class="flex flex-col rounded-[14px]  bg-gray-900 px-[14px] py-2">
               <span class="text-[10px] leading-4 text-gray-400"> {{ attr.type }}</span>
               <span class="text-xs leading-5">{{ attr.value }}</span>
             </li>

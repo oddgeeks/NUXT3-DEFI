@@ -13,7 +13,7 @@ const isSafeDeployed = computed(() => {
 <template>
   <div
     style="will-change: transform;"
-    class="relative flex items-center justify-center gap-4 rounded-5.5 bg-slate-50 dark:bg-gray-850"
+    class="relative flex items-center justify-center gap-4 rounded-5.5 bg-gray-850"
     :class="{ 'pointer-events-none blur': !safeAddress }"
   >
     <button @click="openQrCode">

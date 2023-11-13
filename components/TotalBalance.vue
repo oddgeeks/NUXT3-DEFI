@@ -16,7 +16,7 @@ function handleOpenSendModal() {
 </script>
 
 <template>
-  <div class="flex rounded-5 p-5 dark:bg-gray-850">
+  <div class="flex rounded-5 bg-gray-850 p-5">
     <div class="flex flex-1 flex-col gap-2.5">
       <h2 class="flex items-center gap-2 text-sm text-gray-400">
         Total balance

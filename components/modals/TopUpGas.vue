@@ -226,9 +226,9 @@ watch(usdcTokens, () => {
 <template>
   <div class="space-y-7.5 text-center">
     <div
-      class="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-900"
+      class="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-gray-900"
     >
-      <GasSVG class="text-slate-900 dark:text-white" />
+      <GasSVG class="text-white" />
     </div>
     <div class="flex flex-col gap-4">
       <h1 class="text-lg leading-5">
@@ -249,7 +249,7 @@ watch(usdcTokens, () => {
       </a>
     </div>
     <span
-      class="mx-auto block w-fit whitespace-nowrap rounded-[30px] px-5 py-3 leading-5 ring-2 ring-slate-200 dark:ring-slate-700"
+      class="mx-auto block w-fit whitespace-nowrap rounded-[30px] px-5 py-3 leading-5 ring-2 ring-slate-700"
     >
       {{ formatDecimal(gasBalance, 2) }} USDC
     </span>

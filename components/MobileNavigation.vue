@@ -31,7 +31,7 @@ const { account } = useWeb3()
         <SVGWalletConnect />
       </button>
     </div>
-    <hr class="mobile-navigation-bottom-line border-slate-150 dark:border-slate-700">
+    <hr class="mobile-navigation-bottom-line border-slate-700">
   </div>
 </template>
 

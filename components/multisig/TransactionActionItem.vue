@@ -64,7 +64,7 @@ const decodedParams = computedAsync<IDecodedParams | undefined>(async () => {
       </dl>
     </summary>
     <div class="mt-5 flex flex-col gap-2.5">
-      <div v-if="String(action.operation) === '1'" class="mb-2.5 flex w-fit items-center justify-between gap-2.5 rounded-[14px] border px-4 py-2 text-sm dark:border-slate-700">
+      <div v-if="String(action.operation) === '1'" class="mb-2.5 flex w-fit items-center justify-between gap-2.5 rounded-[14px] border border-slate-700 px-4 py-2 text-sm">
         <SvgoInfo2 class="text-gray-500" />
         This is a delegate call transaction
       </div>

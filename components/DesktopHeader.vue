@@ -59,7 +59,7 @@ useIntervalFn(refresh, 15000)
       <TransitionGroup name="wallet-list">
         <WalletItem v-for="safe in priorSafes" :key="safe.id" :safe="safe" />
       </TransitionGroup>
-      <button v-if="allSafes?.length" class="flex h-[44px] w-full items-center justify-center gap-2.5 rounded-7.5 border border-slate-150 bg-slate-150 py-1 pl-[14px] pr-2.5 text-left text-xs dark:border-slate-750 dark:bg-gray-850" @click="openAllWalletsModal()">
+      <button v-if="allSafes?.length" class="flex h-[44px] w-full items-center justify-center gap-2.5 rounded-7.5 border  border-slate-750 bg-gray-850 py-1 pl-[14px] pr-2.5 text-left text-xs" @click="openAllWalletsModal()">
         All
         <SvgoChevronDown class="h-3.5 w-3.5 -rotate-90" />
       </button>
@@ -73,7 +73,6 @@ useIntervalFn(refresh, 15000)
     </button>
     <nav class="relative flex items-center gap-7.5">
       <div class="flex items-center gap-5">
-        <ColorModeSwitcher />
         <Web3Button />
       </div>
     </nav>

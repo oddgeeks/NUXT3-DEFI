@@ -689,7 +689,7 @@ onUnmounted(() => {
 
     <div class="flex flex-col gap-4">
       <div
-        class="relative flex flex-col gap-4 rounded-5 border-2 border-transparent bg-slate-100 px-5 py-4 focus-within:border-slate-150 focus-within:bg-slate-50 dark:bg-gray-900 focus-within:dark:border-gray-800 focus-within:dark:bg-gray-850"
+        class="relative flex flex-col gap-4 rounded-5 border-2 border-transparent bg-gray-900 px-5 py-4  focus-within:border-gray-800 focus-within:bg-gray-850"
       >
         <div class="flex">
           <div
@@ -728,7 +728,7 @@ onUnmounted(() => {
           <TokenSelection
             v-model="swap.sellToken"
             :tokens="availableTokens"
-            class="bg-white dark:bg-gray-900"
+            class="bg-gray-900"
           />
         </div>
         <div class="flex items-center justify-between text-sm text-gray-400">
@@ -759,7 +759,7 @@ onUnmounted(() => {
         </span>
         <button
           type="button"
-          class="absolute -bottom-[26px] left-1/2 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full bg-slate-150 ring-[6px] ring-white dark:bg-slate-600 dark:ring-gray-975"
+          class="absolute bottom-[-26px] left-1/2 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full bg-slate-600  ring-[6px] ring-gray-975"
           @click="swapTokens"
         >
           <ArrowLeft class="h-5 w-5 -rotate-90 text-gray-400" />
@@ -767,7 +767,7 @@ onUnmounted(() => {
       </div>
 
       <div
-        class="flex flex-col gap-4 rounded-5 border-2 border-transparent bg-slate-100 px-5 py-4 focus-within:border-slate-150 focus-within:bg-slate-50 dark:bg-gray-900 focus-within:dark:border-gray-800 focus-within:dark:bg-gray-850"
+        class="flex flex-col gap-4 rounded-5 border-2  border-transparent bg-gray-900  px-5 py-4 focus-within:border-gray-800 focus-within:bg-gray-850"
       >
         <div class="flex">
           <div
@@ -806,7 +806,7 @@ onUnmounted(() => {
           <TokenSelection
             v-model="swap.buyToken"
             :tokens="availableBuyTokens"
-            class="bg-white dark:bg-gray-900"
+            class="bg-gray-900"
           />
         </div>
         <div class="flex items-center justify-between text-sm text-gray-400">
@@ -832,7 +832,7 @@ onUnmounted(() => {
 
     <div class="flex flex-col gap-5">
       <div class="space-y-2.5">
-        <div class="rounded-5 bg-slate-50 px-5 pb-5 pt-[14px] dark:bg-gray-850">
+        <div class="rounded-5 bg-gray-850 px-5 pb-5 pt-[14px]">
           <div class="flex flex-col gap-5">
             <details open class="group flex flex-col">
               <summary
@@ -950,7 +950,7 @@ onUnmounted(() => {
                   class="hidden items-center gap-2.5 capitalize sm:flex"
                 >
                   <Menu v-slot="{ open }" as="div" class="relative">
-                    <MenuButton class="flex items-center gap-2.5 rounded-xl border border-slate-150 px-3 py-2 dark:border-slate-750">
+                    <MenuButton class="flex items-center gap-2.5 rounded-xl border border-slate-750 px-3 py-2">
                       <ProtocolLogo class="h-5 w-5" :name="selectedRoute.name" />
                       {{ formatProtocol(selectedRoute.name) }}
                       <SvgoChevronDown class="w-4" :class="open ? 'rotate-180' : ''" />
@@ -964,7 +964,7 @@ onUnmounted(() => {
                       leave-to-class="transform scale-95 opacity-0"
                     >
                       <MenuItems
-                        class="absolute left-1/2 top-12 z-20 w-[300px] origin-center -translate-x-1/2 rounded-5 border border-slate-150 bg-slate-50 py-4 dark:border-slate-700 dark:bg-gray-850"
+                        class="absolute left-1/2 top-12 z-20 w-[300px] origin-center -translate-x-1/2 rounded-5 border border-slate-700 bg-gray-850 py-4"
                       >
                         <template v-for="aggr, i in swapDetails.data?.aggregators" :key="aggr.name">
                           <MenuItem as="button" type="button" class="w-full px-4 py-[14px] text-left font-medium first:pt-0 last-of-type:pb-0" @click="userChangeRoute(aggr)">
@@ -987,7 +987,7 @@ onUnmounted(() => {
                               </div>
                             </div>
                           </MenuItem>
-                          <hr class="border-slate-100 last:hidden dark:border-gray-800">
+                          <hr class="border-gray-800 last:hidden">
                         </template>
                       </MenuItems>
                     </transition>
@@ -1063,6 +1063,6 @@ onUnmounted(() => {
 
 <style scoped>
 .radio {
-  @apply w-5 h-5 rounded-full border-[6.5px] dark:border-slate-600 mr-3 border-slate-300 shrink-0;
+  @apply w-5 h-5 rounded-full border-[6.5px] border-slate-600 mr-3 shrink-0;
 }
 </style>

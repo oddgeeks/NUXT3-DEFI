@@ -103,7 +103,7 @@ async function handleDeletingContact(contact: IContact) {
 .contact-row:hover>td::before {
   content: "";
   transform: translateZ(-1px) translateX(-50%) translateY(-50%);
-  @apply absolute top-1/2 left-1/2 dark:bg-slate-850 bg-slate-150 pointer-events-none;
+  @apply absolute top-1/2 left-1/2 bg-slate-850  pointer-events-none;
   width: calc(100% + 1px);
   height: calc(100% - 16px);
 }

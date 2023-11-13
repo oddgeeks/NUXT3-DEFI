@@ -10,10 +10,6 @@ const parsedError = parseRequestError(error)
       <NuxtLink to="/">
         <SvgoAvocadoLogo />
       </NuxtLink>
-
-      <nav class="flex items-center">
-        <ColorModeSwitcher />
-      </nav>
     </header>
 
     <main class="flex h-full flex-col">

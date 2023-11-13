@@ -42,7 +42,7 @@ const path = computed(() => `${url.origin}/2fa/${selectedSafe.value?.safe_addres
 
       <div class="flex w-full flex-col gap-5">
         <div
-          class="bg flex w-full items-center justify-between rounded-5 bg-slate-100 px-4 py-3 dark:bg-gray-900"
+          class="bg flex w-full items-center justify-between rounded-5 bg-gray-900 px-4 py-3"
         >
           <span class="max-w-[95%] truncate text-sm font-medium">
             {{ path }}

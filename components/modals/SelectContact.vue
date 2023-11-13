@@ -69,7 +69,7 @@ const filteredContacts = computed(() => {
       >
         <li v-for="contact in filteredContacts" :key="contact.address + contact.chainId">
           <button
-            class="flex w-full flex-col gap-2.5 rounded-[20px] bg-slate-50 px-4 py-3 dark:bg-gray-850"
+            class="flex w-full flex-col gap-2.5 rounded-[20px] bg-gray-850 px-4 py-3"
             type="button"
             @click="emit('resolve', true, contact)"
           >
@@ -84,7 +84,7 @@ const filteredContacts = computed(() => {
                   class="h-4.5 w-4.5"
                   :chain="contact.chainId"
                 />
-                <span class="text-slate-900 dark:text-white">{{
+                <span>{{
                   shortenHash(contact.address)
                 }}</span>
               </div>

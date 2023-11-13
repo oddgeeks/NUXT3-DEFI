@@ -107,7 +107,7 @@ async function handleDeleteBookmark() {
         {{ edit ? "Edit" : "Create" }} Transaction Shortcut
       </h1>
     </div>
-    <hr class="border-slate-150 dark:border-gray-800">
+    <hr class="border-gray-800">
     <div class="p-7.5 font-medium">
       <table class="text-sm">
         <tbody>
@@ -185,12 +185,12 @@ async function handleDeleteBookmark() {
         </tbody>
       </table>
     </div>
-    <hr class="border-slate-150 dark:border-gray-800">
+    <hr class="border-gray-800">
     <div class="flex flex-col gap-2.5 p-7.5">
       <span class="text-sm font-medium">Name Shortcut</span>
       <CommonInput v-model="value" name="shortcut-name" autofocus placeholder="Enter the name" />
     </div>
-    <hr class="border-slate-150 dark:border-gray-800">
+    <hr class="border-gray-800">
     <div class="flex flex-col gap-7.5 p-7.5">
       <div class="flex gap-2.5 text-xs font-medium text-gray-400">
         <SvgoInfo2 class="mt-0.5 shrink-0 text-gray-500" />

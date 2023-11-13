@@ -13,6 +13,6 @@
 
 <style scoped>
 .loading {
-  @apply dark:bg-gray-900 bg-slate-150 rounded-5 h-5;
+  @apply bg-gray-900 rounded-5 h-5;
 }
 </style>

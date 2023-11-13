@@ -127,12 +127,12 @@ onUnmounted(() => {
       </p>
 
       <div class="mt-7.5 flex items-center gap-2.5">
-        <div class="flex flex-1 items-center gap-3 rounded-5 bg-slate-100 px-4.5 py-[14px] dark:bg-gray-900">
+        <div class="-gray-900 flex flex-1 items-center gap-3 rounded-5 px-4.5 py-[14px]">
           <ChainLogo class="w-[26px]" :chain="fromChainId" />
           <span class="text-sm text-gray-400"> {{ chainIdToName(fromChainId) }}</span>
         </div>
         <ArrowRight class="text-gray-500" />
-        <div class="flex flex-1 items-center gap-3 rounded-5 bg-slate-100 px-4.5 py-[14px] dark:bg-gray-900">
+        <div class="flex flex-1 items-center gap-3 rounded-5 bg-gray-900 px-4.5 py-[14px]">
           <ChainLogo class="w-[26px]" :chain="toChainId" />
           <span class="text-sm text-gray-400"> {{ chainIdToName(toChainId) }}</span>
         </div>

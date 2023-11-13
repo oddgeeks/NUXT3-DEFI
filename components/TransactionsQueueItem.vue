@@ -75,7 +75,7 @@ onMounted(() => {
 
 <template>
   <div
-    class="wrapper relative flex flex-col gap-3 overflow-hidden rounded-5 border p-4 dark:border-gray-800 dark:bg-gray-850 sm:w-[400px]"
+    class="wrapper relative flex flex-col gap-3 overflow-hidden rounded-5 border border-gray-800 bg-gray-850 p-4 sm:w-[400px]"
   >
     <div
       v-if="isSuccess && !transactionParam.preventAutoClose" class="countdown-animation absolute bottom-0 left-0 h-1 w-full bg-primary"
@@ -105,7 +105,7 @@ onMounted(() => {
         </span>
       </div>
       <button
-        class="flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-800"
+        class="flex h-5 w-5 items-center justify-center rounded-full bg-gray-800"
         aria-label="Close modal" @click="removeTransactionFromQueue(transactionParam.hash)"
       >
         <SvgoX class="h-2.5 w-2.5" />

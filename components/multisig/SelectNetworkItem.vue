@@ -50,7 +50,7 @@ const canSign = computed(() => {
 
 <template>
   <li
-    :key="option.chainId" class="rounded-5 border-slate-100 bg-slate-100 dark:border-gray-800 dark:bg-gray-850"
+    :key="option.chainId" class="rounded-5  border-gray-800 bg-gray-850"
   >
     <div class="p-4 text-sm">
       <div class="flex items-center justify-between">
@@ -74,7 +74,7 @@ const canSign = computed(() => {
       </div>
     </div>
     <template v-if="option">
-      <hr class="border-slate-150 dark:border-gray-800">
+      <hr class="border-gray-800">
       <div class="flex flex-col justify-between text-xs sm:flex-row sm:items-center">
         <div class="flex items-center gap-2.5 p-4 sm:p-3">
           <SvgoUserCircle class="h-4 w-4 text-gray-400" />
@@ -93,7 +93,7 @@ const canSign = computed(() => {
             </template>
           </Tippy>
         </div>
-        <hr class="block border-slate-150 dark:border-gray-800 sm:hidden">
+        <hr class="block border-gray-800 sm:hidden">
         <div class="p-4 text-gray-400 sm:p-3">
           Threshold:  {{ option?.threshold }}  out of  {{ signers.length }}
         </div>

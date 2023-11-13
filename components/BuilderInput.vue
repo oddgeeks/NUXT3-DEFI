@@ -183,7 +183,7 @@ onMounted(() => {
           <fieldset v-if="isTypeInteger" class="mt-4 flex items-center gap-4">
             <label v-for="i in ['6', '8', '18']" :key="i" class="block w-full" :for="`input-${name}-wei-${i}`">
               <input :id="`input-${name}-wei-${i}`" v-model="multipiler" class="peer sr-only" :value="i" :name="`${name}-wei`" type="radio">
-              <div class="flex items-center justify-center rounded-[14px] border border-slate-150 bg-slate-50 px-[14px] py-2.5 text-xs font-medium dark:border-slate-750 dark:bg-gray-850 peer-checked:dark:bg-gray-800">
+              <div class="flex items-center justify-center rounded-[14px] border border-slate-750 bg-gray-850 px-[14px] py-2.5 text-xs font-medium peer-checked:bg-gray-800">
                 10^{{ i }}
               </div>
             </label>

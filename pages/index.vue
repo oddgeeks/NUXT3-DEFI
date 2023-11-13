@@ -65,7 +65,7 @@ function selectType(type: string) {
               <ClientOnly v-if="account">
                 <button
                   :class="{
-                    'text-slate-900 dark:text-white': isHideZeroBalances,
+                    'text-white': isHideZeroBalances,
                   }"
                   class="hidden items-center gap-2.5 text-sm text-gray-400 sm:inline-flex"
                   @click="isHideZeroBalances = !isHideZeroBalances"

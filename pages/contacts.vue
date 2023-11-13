@@ -200,7 +200,7 @@ watch(safeAddress, () => {
       </div>
       <div
         style="scrollbar-gutter: stable; overflow-y: overlay"
-        class="scroll-style flex flex-col gap-4 overflow-auto sm:h-[530px] sm:max-h-[530px] sm:rounded-[25px] sm:bg-slate-50 dark:sm:bg-gray-850 md:overflow-x-hidden"
+        class="scroll-style flex flex-col gap-4 overflow-auto sm:h-[530px] sm:max-h-[530px] sm:rounded-[25px] sm:bg-gray-850 md:overflow-x-hidden"
         :class="{ 'pointer-events-none !overflow-hidden blur': !account }"
       >
         <div
@@ -213,7 +213,7 @@ watch(safeAddress, () => {
           <table class="hidden w-full sm:table">
             <thead>
               <tr
-                class="border-b border-slate-150 text-left text-sm font-medium text-gray-400 dark:border-gray-800"
+                class="border-b border-gray-800 text-left text-sm font-medium text-gray-400"
               >
                 <th class="py-6 pl-7.5 text-left">
                   Name
@@ -224,7 +224,7 @@ watch(safeAddress, () => {
               </tr>
             </thead>
             <ClientOnly>
-              <tbody class="divide-y divide-slate-150 dark:divide-gray-900">
+              <tbody class="divide-y divide-gray-900">
                 <ContactRow v-for="contact in filteredContacts" :key="contact.address + contact.chainId + contact.name" :contact="contact" />
               </tbody>
             </ClientOnly>

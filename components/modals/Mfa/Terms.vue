@@ -32,12 +32,12 @@ function handleProceed() {
         <li v-for="term in terms" :key="term" class="text-xs font-medium leading-5 text-gray-400" v-html="term" />
       </ul>
     </div>
-    <hr class="my-5 border-slate-150 dark:border-gray-800">
+    <hr class="my-5 border-gray-800">
     <div class="flex flex-col gap-5 p-7.5 pt-0">
       <label class="flex cursor-pointer items-center gap-2.5 font-medium text-gray-400" for="input-check">
         <input id="input-check" v-model="checked" class="peer sr-only" type="checkbox">
         <SvgoCheckCircle class="svg-circle darker peer-checked:success-circle mt-1 h-5 w-5 shrink-0 cursor-pointer text-gray-500" />
-        <span class="peer-checked:text-slate-900 peer-checked:dark:text-white"> I understand the above mentioned information</span>
+        <span class="peer-checked:text-white"> I understand the above mentioned information</span>
       </label>
       <CommonButton class="justify-center text-center" :disabled="!checked" size="lg" @click="handleProceed">
         Proceed

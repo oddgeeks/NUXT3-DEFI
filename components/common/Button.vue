@@ -35,15 +35,15 @@ const componentToShow = computed(() => {
           color === 'orange',
       },
       {
-        'bg-blue-500 text-white hover:bg-blue-600 disabled:bg-slate-200 disabled:text-gray-400 dark:disabled:bg-gray-900 dark:disabled:text-gray-500':
+        'bg-blue-500 text-white hover:bg-blue-600  disabled:bg-gray-900 disabled:text-gray-500':
           color === 'blue',
       },
       {
-        'bg-primary text-white hover:bg-primary-hover disabled:bg-slate-200 disabled:text-gray-400 dark:disabled:bg-gray-900 dark:disabled:text-gray-500':
+        'bg-primary text-white hover:bg-primary-hover  disabled:bg-gray-900 disabled:text-gray-500':
           color === 'primary',
       },
       {
-        'bg-slate-100 disabled:text-gray-400 dark:bg-gray-900 dark:disabled:text-gray-500':
+        'bg-gray-900 disabled:text-gray-500':
           color === 'white',
       },
       {

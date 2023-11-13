@@ -99,7 +99,7 @@ watch(signatures, () => {
       2 signatures
     </h2>
     <div class="grid grid-cols-2 gap-5">
-      <div class="flex flex-col items-center gap-5 rounded-5 p-4 dark:bg-gray-850">
+      <div class="flex flex-col items-center gap-5 rounded-5 bg-gray-850 p-4">
         <h1 class="text-xs text-gray-400">
           Source Approval
         </h1>
@@ -111,7 +111,7 @@ watch(signatures, () => {
           {{ !!signatures.source ? 'Confirmed' : 'Confirm Now' }}
         </CommonButton>
       </div>
-      <div class="flex flex-col items-center gap-5 rounded-5 p-4 dark:bg-gray-850">
+      <div class="flex flex-col items-center gap-5 rounded-5 bg-gray-850 p-4">
         <h1 class="text-xs text-gray-400">
           Dest. Approval
         </h1>

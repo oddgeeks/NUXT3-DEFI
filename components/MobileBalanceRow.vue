@@ -28,7 +28,7 @@ function onSelect() {
 
 <template>
   <div
-    :class="`flex py-3.5 px-4.5 justify-between items-center ${individual ? 'rounded-5 dark:bg-gray-850 bg-slate-50' : (!summary ? 'border-t border-slate-100 dark:border-gray-800' : '')}`"
+    :class="`flex py-3.5 px-4.5 justify-between items-center ${individual ? 'rounded-5 bg-gray-850 ' : (!summary ? 'border-t border-gray-800' : '')}`"
     @click="onSelect"
   >
     <div class="flex items-center space-x-2.5">
@@ -57,7 +57,7 @@ function onSelect() {
     </div>
     <div
       v-if="!summary"
-      :class="`w-[34px] h-[34px] bg-slate-150 dark:bg-gray-900 rounded-[12px] flex items-center justify-center text-slate-300 dark:text-slate-600 ${interactable && '!bg-green-500 !text-white'}`"
+      :class="`w-[34px] h-[34px] bg-gray-900 rounded-[12px] flex items-center justify-center  text-slate-600 ${interactable && '!bg-green-500 !text-white'}`"
     >
       <Options />
     </div>

@@ -164,7 +164,7 @@ onMounted(() => {
           </button>
         </fieldset>
       </div>
-      <div v-if="!isSafeDoesNotMatch" class="mb-2.5 flex items-center justify-between rounded-[25px] bg-slate-50 p-[18px] font-medium dark:bg-gray-850 sm:px-7.5 sm:py-6.5">
+      <div v-if="!isSafeDoesNotMatch" class="mb-2.5 flex items-center justify-between rounded-[25px] bg-gray-850 p-[18px] font-medium sm:px-7.5 sm:py-6.5">
         <div class="flex items-center gap-3">
           <SvgoSafe class="h-7.5 w-7.5" />
           <div class="flex flex-col gap-1.5">

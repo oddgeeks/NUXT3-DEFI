@@ -8,7 +8,7 @@ const props = defineProps({
 
 const loadingClass = computed(() => ({
   'loading-box': props.loading,
-  'dark:bg-gray-900 bg-slate-150': !props.loading,
+  'bg-gray-900': !props.loading,
 }))
 </script>
 

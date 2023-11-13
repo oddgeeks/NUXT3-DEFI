@@ -91,8 +91,8 @@ async function handleTresholdChange(chainId: string | number) {
 </script>
 
 <template>
-  <details class="group rounded-[25px] bg-slate-50 text-sm dark:bg-gray-850">
-    <summary class="flex cursor-pointer flex-wrap items-center justify-between gap-4.5 border-slate-150 p-[18px] last:border-b-0 group-open:border-b-1 dark:border-gray-800 sm:gap-0 sm:px-7.5 sm:py-6.5">
+  <details class="group rounded-[25px] bg-gray-850 text-sm">
+    <summary class="flex cursor-pointer flex-wrap items-center justify-between gap-4.5 border-gray-800 p-[18px] last:border-b-0 group-open:border-b-1 sm:gap-0 sm:px-7.5 sm:py-6.5">
       <h2 class="flex w-full items-center gap-3 sm:w-auto">
         <ChainLogo class="h-7.5 w-7.5" :chain="item.chainId" />
         {{ chainIdToName(item.chainId) }}

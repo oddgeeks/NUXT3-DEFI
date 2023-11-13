@@ -187,7 +187,7 @@ ${'`Transfer To`'} ${actualAddress.value}`
     <h1 class="text-center text-lg leading-5">
       Send
     </h1>
-    <div class="flex max-w-full items-center justify-between gap-3 rounded-5 bg-slate-50 px-5 py-4 dark:bg-gray-850">
+    <div class="flex max-w-full items-center justify-between gap-3 rounded-5 bg-gray-850 px-5 py-4">
       <img v-if="asset.imageUrl" :alt="asset.collectionName" width="40" height="40" class="h-10 w-10 shrink-0 rounded-full" :src="asset.imageUrl">
       <BrokenSVG v-else class="h-8 w-8" />
       <div class="flex max-w-[60%] flex-1 flex-col gap-[2px]">
@@ -203,7 +203,7 @@ ${'`Transfer To`'} ${actualAddress.value}`
           {{ asset.name }}
         </h2>
       </div>
-      <div class="flex h-10 items-center justify-center gap-2 rounded-5 bg-slate-150 px-3 text-xs dark:bg-gray-900">
+      <div class="flex h-10 items-center justify-center gap-2 rounded-5 bg-gray-900 px-3 text-xs">
         <ChainLogo :chain="asset.chainId" class="h-5.5 w-5.5" />
         {{ chainIdToName(asset.chainId) }}
       </div>

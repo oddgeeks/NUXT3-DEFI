@@ -39,7 +39,7 @@ function handleOpenBookmark(bookmark: IBookmark) {
     <div :class="safeBookmarks?.length > 3 ? 'px-10' : ''">
       <Splide v-if="safeBookmarks?.length" :options="{ pagination: false, gap: '16px', autoWidth: true, arrows: safeBookmarks?.length > 3, arrowPath: 'M2 20.9997L40 20.9997M40 20.9997L21 2M40 20.9997L21 40' }">
         <SplideSlide v-for="bookmark in safeBookmarks" :key="bookmark.name">
-          <li class="flex items-center gap-[14px] rounded-10 bg-slate-50 dark:bg-gray-850">
+          <li class="flex items-center gap-[14px] rounded-10 bg-gray-850">
             <button
               class="flex items-center gap-2.5 whitespace-nowrap py-2.5 pl-[14px] text-xs font-medium"
               @click="handleOpenBookmark(bookmark)"

@@ -84,7 +84,7 @@ function toggleAllNetworks() {
         <div
           v-if="networkPreference.length > 3"
           style="width: 22px; height: 22px"
-          class="-ml-2 flex items-center justify-center rounded-full border border-gray-50 bg-green-500 text-xs dark:border-slate-900"
+          class="-ml-2 flex items-center justify-center rounded-full border  border-slate-900 bg-green-500 text-xs"
         >
           {{ networkPreference.length - 3 }}
         </div>
@@ -116,7 +116,7 @@ function toggleAllNetworks() {
         <PopoverPanel
           as="div"
           :class="[containerClass]"
-          class="absolute -left-16 top-8 w-[340px] -translate-x-1/2 rounded-5 border-1 border-slate-150 bg-slate-50 p-2 pt-0 dark:border-gray-800 dark:bg-gray-850"
+          class="absolute -left-16 top-8 w-[340px] -translate-x-1/2 rounded-5 border-1  border-gray-800 bg-gray-850 p-2 pt-0"
         >
           <div
             class="flex items-center justify-between gap-2.5 rounded-[14px] px-3 pb-4 pt-5 text-sm"
@@ -144,7 +144,7 @@ function toggleAllNetworks() {
             <li
               v-for="network in filteredNetworks"
               :key="network.chainId"
-              class="flex cursor-pointer items-center gap-2.5 rounded-[14px] px-3 py-2.5 text-xs hover:bg-slate-150 hover:dark:bg-gray-900"
+              class="flex cursor-pointer items-center gap-2.5 rounded-[14px] px-3 py-2.5 text-xs  hover:bg-gray-900"
               @click="toggleNetwork(network.chainId)"
             >
               <ChainLogo

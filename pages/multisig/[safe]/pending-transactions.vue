@@ -193,12 +193,12 @@ onMounted(() => {
       </h1>
 
       <div class="flex justify-between">
-        <div class="flex w-fit self-center rounded-10 bg-slate-50 p-1.5 font-medium dark:bg-gray-850 sm:self-baseline">
+        <div class="flex w-fit self-center rounded-10 bg-gray-850 p-1.5 font-medium sm:self-baseline">
           <button
             v-for="tab in tabs"
             :key="tab.label"
             :class="
-              tab.query === activeTab ? 'dark:bg-gray-900 bg-slate-150' : 'text-gray-400'
+              tab.query === activeTab ? 'bg-gray-900 ' : 'text-gray-400'
             "
             class="laeding-5 flex flex-1 items-center justify-center gap-2.5 whitespace-nowrap rounded-7.5 px-4 py-2 text-xs"
             @click="$router.replace({ query: { tab: tab.query }, path: $router.currentRoute.value.path })"

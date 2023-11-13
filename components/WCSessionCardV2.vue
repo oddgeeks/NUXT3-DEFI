@@ -29,8 +29,8 @@ const isConnectionWarned = computed(() => {
 <template>
   <div
     :class="{
-      'bg-slate-50 dark:bg-gray-900': !detailed,
-      'border dark:border-gray-800 dark:bg-gray-850 hover:dark:bg-gray-900': detailed,
+      'bg-gray-900': !detailed,
+      'border border-gray-800 bg-gray-850 hover:bg-gray-900': detailed,
     }"
     class="flex items-center justify-between gap-3 rounded-2xl p-5 py-2.5 pl-[14px] pr-4 sm:justify-normal"
   >

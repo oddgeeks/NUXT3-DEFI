@@ -24,7 +24,7 @@ const discountAvailable = computed(() => {
   <div class="flex flex-col gap-2.5">
     <div
       :class="wrapperClass"
-      class="min-h-12 flex flex-col items-center justify-between gap-3 rounded-5 bg-slate-50 px-5 py-[15px] dark:bg-gray-850"
+      class="min-h-12 flex flex-col items-center justify-between gap-3 rounded-5  bg-gray-850 px-5 py-[15px]"
     >
       <div class="flex w-full justify-between">
         <span v-if="showNetworkInfo" class="flex items-center gap-3 text-xs">

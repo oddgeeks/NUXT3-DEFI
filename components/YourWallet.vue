@@ -13,7 +13,7 @@ function openModal() {
 
 <template>
   <div
-    class="flex items-center justify-between rounded-5 bg-slate-50 px-4.5 py-4 dark:bg-gray-850 sm:hidden"
+    class="flex items-center justify-between rounded-5 bg-gray-850 px-4.5 py-4 sm:hidden"
     @click="openModal"
   >
     <div class="flex items-center space-x-[17px]">
@@ -24,7 +24,7 @@ function openModal() {
         <span>Your Avo Wallet</span>
         <span v-if="account !== '0x000000000000000'" class="font-[14px] text-gray-400">{{ shortenHash(account) }}</span>
         <svg v-else width="120" height="20" viewBox="0 0 120 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="120" height="20" rx="8" class="fill-slate-200 dark:fill-gray-900" />
+          <rect width="120" height="20" rx="8" class="fill-gray-900" />
         </svg>
       </div>
     </div>

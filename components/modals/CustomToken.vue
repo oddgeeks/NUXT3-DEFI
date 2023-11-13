@@ -217,7 +217,7 @@ onUnmounted(() => {
         </p>
       </div>
       <div
-        class="items-center justify-center rounded-2xl bg-slate-50 px-4 py-2.5 text-sm text-gray-400 dark:bg-gray-850"
+        class="items-center justify-center rounded-2xl bg-gray-850 px-4 py-2.5 text-sm text-gray-400"
       >
         Decimals {{ token.decimals }}
       </div>

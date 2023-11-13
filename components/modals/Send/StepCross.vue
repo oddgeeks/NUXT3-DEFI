@@ -653,7 +653,7 @@ onMounted(() => {
 
 <template>
   <form class="flex w-full flex-col gap-7.5 sm:w-[600px]" @submit.prevent="onSubmit">
-    <div class="mx-[-0.75rem] rounded-5 bg-slate-50 px-3 py-[14px] text-sm dark:bg-gray-850 sm:mx-0 sm:px-5">
+    <div class="mx-[-0.75rem] rounded-5 bg-gray-850 px-3 py-[14px] text-sm sm:mx-0 sm:px-5">
       <div class="flex flex-col gap-2.5 font-medium">
         <dl class="flex items-center justify-between">
           <dt class="text-gray-400">

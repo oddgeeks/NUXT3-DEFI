@@ -47,7 +47,7 @@ async function handleTerminate2faSession() {
       Session unlocked for
 
     </span>
-    <span class="rounded-md bg-white px-1.5 text-xs leading-5 text-slate-900 dark:bg-slate-900 dark:text-white">
+    <span class="rounded-md bg-slate-900 px-1.5 text-xs leading-5 text-white">
       {{ formattedTime }}
     </span>
     <button v-tippy="'Terminate Session'" type="button" @click="handleTerminate2faSession">

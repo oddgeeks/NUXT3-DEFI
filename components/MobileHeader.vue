@@ -49,7 +49,7 @@ watch(() => active.value, () => {
 
 <template>
   <div
-    class="fixed left-0 z-40 flex w-full flex-col bg-gray-50 transition-transform dark:bg-gray-850 sm:hidden"
+    class="fixed left-0 z-40 flex w-full flex-col  bg-gray-850 transition-transform sm:hidden"
     :class="
       [{ 'rounded-b-5': !opened, '': opened },
        showTrackingBanner ? 'top-9' : 'top-0',
@@ -67,7 +67,7 @@ watch(() => active.value, () => {
 
       <button
         v-if="isActualActive"
-        class="flex h-10 w-10 items-center justify-center rounded-[14px] bg-slate-100 text-gray-500 dark:bg-gray-900"
+        class="flex h-10 w-10 items-center justify-center rounded-[14px]  bg-gray-900 text-gray-500"
         @click="toggle(!opened)"
       >
         <SVGX v-if="opened" class="h-5 w-5" />
@@ -81,16 +81,8 @@ watch(() => active.value, () => {
       </div>
     </div>
     <div v-if="opened" class="mt-2.5 flex h-screen w-full flex-col overflow-auto pb-[160px]">
-      <div class="flex w-full items-center justify-between border-y-1 border-slate-150 px-5 py-6 dark:border-slate-750">
-        <div
-          role="button"
-          tabindex="0"
-          class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-900"
-        >
-          <ColorModeSwitcher />
-        </div>
-
-        <button class="relative flex items-center justify-between gap-x-2.5 rounded-7.5 bg-slate-100 px-4.5 py-2.5 leading-5 dark:bg-gray-900 sm:px-4 sm:py-3" @click="toggleWalletList(!walletListOpened)">
+      <div class="flex w-full items-center justify-between border-y-1  border-slate-750 px-5 py-6">
+        <button class="relative flex items-center justify-between gap-x-2.5 rounded-7.5  bg-gray-900 px-4.5 py-2.5 leading-5 sm:px-4 sm:py-3" @click="toggleWalletList(!walletListOpened)">
           <div class="flex gap-[14px]">
             <div class="flex items-center gap-2.5">
               <div v-if="connectedProvider">
@@ -106,7 +98,7 @@ watch(() => active.value, () => {
         </button>
 
         <button
-          class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-900"
+          class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-900"
           @click="closeConnection"
         >
           <PowerSVG class="text-gray-400" />
@@ -118,20 +110,20 @@ watch(() => active.value, () => {
       <div class="flex w-full flex-col items-center gap-6 px-5 py-6">
         <div class="flex w-full items-center justify-between">
           <button
-            class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-900"
+            class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-900"
             @click="openYourWalletModal(safeAddress)"
           >
             <QrSVG class="h-4.5 w-4.5 text-gray-400" />
           </button>
 
-          <div class="flex h-[54px] items-center rounded-full bg-slate-150 px-4 dark:bg-gray-900">
+          <div class="flex h-[54px] items-center rounded-full  bg-gray-900 px-4">
             <Copy :text="safeAddress">
               <template #content>
                 <div class="flex items-center gap-3">
                   <SvgoAvocadoLogoMini class="text-primary" />
                   <div class="flex flex-col">
                     <span class="text-left text-xs text-gray-500">Avo Address</span>
-                    <span class="text-slate-900 dark:text-white">{{ shortenHash(safeAddress) }}</span>
+                    <span class="text-white">{{ shortenHash(safeAddress) }}</span>
                   </div>
                 </div>
               </template>
@@ -142,7 +134,7 @@ watch(() => active.value, () => {
             :href="`/w/${safeAddress}`"
             external
             target="_blank"
-            class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-900"
+            class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-900"
           >
             <ExternalLinkSVG class="h-4.5 w-4.5 text-gray-400" />
           </NuxtLink>
@@ -175,7 +167,7 @@ watch(() => active.value, () => {
         </nav>
         <div class="flex justify-center">
           <figure
-            class="flex items-center gap-3 rounded-full border-2 border-slate-100 px-4 py-2 dark:border-gray-800"
+            class="flex items-center gap-3 rounded-full border-2  border-gray-800 px-4 py-2"
           >
             <figcaption class="text-xs text-gray-400">
               Built by

@@ -24,7 +24,7 @@ async function handleDeletingContact(contact: IContact) {
 </script>
 
 <template>
-  <div class="flex flex-col gap-5 rounded-[20px] bg-slate-50 px-5 pb-4.5 pt-4 dark:bg-gray-850 sm:hidden">
+  <div class="flex flex-col gap-5 rounded-[20px]  bg-gray-850 px-5 pb-4.5 pt-4 sm:hidden">
     <div class="flex justify-between">
       <span class="text-sm font-semibold text-gray-400">{{
         contact.name
@@ -36,11 +36,11 @@ async function handleDeletingContact(contact: IContact) {
         <DeleteSVG class="h-4 w-4" />
       </button>
     </div>
-    <div class="flex items-center gap-3 rounded-7.5 border-2 px-4.5 py-3 dark:border-slate-700">
+    <div class="flex items-center gap-3 rounded-7.5 border-2 border-slate-700 px-4.5 py-3">
       <ChainLogo :stroke="false" class="h-6.5 w-6.5" :chain="contact.chainId" />
       <Copy :text="contact.address" class="flex-1 justify-between">
         <template #content>
-          <span class="text-slate-900 dark:text-white">{{
+          <span class="text-white">{{
             shortenHash(contact.address)
           }}</span>
         </template>

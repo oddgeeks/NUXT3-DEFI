@@ -326,9 +326,9 @@ onUnmounted(() => {
 <template>
   <div>
     <div class="flex flex-col font-medium sm:flex-row">
-      <div class="flex-1 border-r border-slate-150 dark:border-gray-800">
+      <div class="flex-1 border-r border-gray-800">
         <div class="scroll-style flex flex-col overflow-auto sm:max-h-[710px]">
-          <div class="border-b border-slate-150 p-5 dark:border-gray-800 sm:p-7.5">
+          <div class="border-b border-gray-800 p-5 sm:p-7.5">
             <div class="flex flex-col justify-between gap-5 sm:flex-row sm:gap-0">
               <div class="flex gap-4">
                 <div :class="isColorRed ? 'bg-red-alert' : 'bg-primary'" class="flex h-14 w-14 items-center justify-center rounded-full">
@@ -351,7 +351,7 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
-          <div v-if="decodedMetadata" class="flex gap-2.5 border-b border-slate-150 p-5 dark:border-gray-800 sm:p-7.5">
+          <div v-if="decodedMetadata" class="flex gap-2.5 border-b border-gray-800 p-5 sm:p-7.5">
             <div class="flex max-w-2xl gap-2.5">
               <span v-if="isRejection" class="inline-flex whitespace-nowrap text-xs">
                 Executing this transaction will reject transaction
@@ -365,7 +365,7 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
-          <div class="flex flex-col gap-5 border-b border-slate-150 p-5 dark:border-gray-800 sm:p-7.5">
+          <div class="flex flex-col gap-5 border-b border-gray-800 p-5 sm:p-7.5">
             <div v-if="proposalOwnerAddress" class="flex flex-col justify-between gap-2.5 text-sm sm:flex-row sm:items-center sm:gap-0">
               <span class="text-xs text-gray-400">Creator</span>
               <span>
@@ -448,7 +448,7 @@ onUnmounted(() => {
             </span>
           </div>
         </div>
-        <div class="border-b border-slate-150 px-5 pb-5 dark:border-gray-800 sm:px-7.5 sm:pb-7.5">
+        <div class="border-b border-gray-800 px-5 pb-5 sm:px-7.5 sm:pb-7.5">
           <ul class="scroll-style flex max-h-[300px] flex-col gap-5 overflow-auto">
             <li v-for="signer in transactionRef.confirmations" :key="signer.address">
               <div class="flex items-center gap-3">
@@ -465,10 +465,10 @@ onUnmounted(() => {
                   </span>
                 </p>
                 <div class="ml-auto flex items-center gap-2.5">
-                  <div class="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-900">
+                  <div class="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-gray-900">
                     <Copy class="h-3 w-3" icon-only :text="signer.address" />
                   </div>
-                  <NuxtLink external target="_blank" :to="getExplorerUrl(transactionRef.chain_id, `/address/${signer.address}`)" class="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-900">
+                  <NuxtLink external target="_blank" :to="getExplorerUrl(transactionRef.chain_id, `/address/${signer.address}`)" class="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-gray-900">
                     <SvgoExternalLink class="h-3 w-3 text-gray-400" />
                   </NuxtLink>
                 </div>
@@ -507,7 +507,7 @@ onUnmounted(() => {
           <button
             v-if="isSignAndExecuteToggleVisible"
             :class="{
-              'text-slate-900 dark:text-white': signAndExecute,
+              'text-white': signAndExecute,
             }"
             class="items-base flex gap-2.5 text-left text-xs font-medium text-gray-400"
             @click="toggle()"

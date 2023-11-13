@@ -38,7 +38,7 @@ const filteredSafes = computed(() => {
 
 <template>
   <div>
-    <ModalTitle class="border-b p-7.5 dark:border-gray-875">
+    <ModalTitle class="border-b border-gray-875 p-7.5">
       <template #icon>
         $
       </template>

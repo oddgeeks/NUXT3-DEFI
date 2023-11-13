@@ -72,12 +72,12 @@ function handleClick() {
   <div>
     <button
       :class="{
-        'border-slate-50 bg-slate-50 dark:bg-gray-900': active,
-        'bg-slate-150 dark:bg-gray-850': !active,
+        'bg-gray-900': active,
+        'bg-gray-850': !active,
         'gap-3 rounded-2xl px-4 py-[14px]': detailed,
         'items-center justify-center gap-2.5 rounded-7.5 px-[14px] py-1': !detailed,
       }"
-      class="flex h-full w-full border border-slate-50 text-left dark:border-gray-800 hover:dark:bg-gray-900" @click="handleClick"
+      class="flex h-full w-full border border-gray-800 text-left hover:bg-gray-900" @click="handleClick"
     >
       <SvgoCheckCircle
         :class="{
@@ -120,7 +120,7 @@ function handleClick() {
           <div class="flex items-center gap-1.5">
             <span
               :class="{
-                'text-sm leading-5 text-slate-900 dark:text-white': detailed,
+                'text-sm leading-5 text-white': detailed,
                 'text-[10px] leading-[18px] text-gray-400': !detailed,
               }"
             >

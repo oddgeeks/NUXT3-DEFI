@@ -18,9 +18,9 @@ const isHidden = computed(() => {
 </script>
 
 <template>
-  <li class="relative rounded-5 bg-slate-150 dark:bg-gray-900">
+  <li class="relative rounded-5 bg-gray-900">
     <button
-      class="h-full w-full rounded-[inherit] p-2.5 text-left ring-gray-900 ring-opacity-10 focus-within:ring-1 focus:outline-none dark:ring-slate-150 dark:ring-opacity-10"
+      class="h-full w-full rounded-[inherit] p-2.5 text-left ring-slate-150/10 focus-within:ring-1 focus:outline-none"
       @click="openNFTDetailsModal(asset)"
     >
       <figure class="flex h-full w-full flex-col gap-2.5">

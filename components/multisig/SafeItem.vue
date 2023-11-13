@@ -48,7 +48,7 @@ function handleInput() {
 </script>
 
 <template>
-  <div class="flex w-full items-center justify-between border-b-1 border-slate-150 p-[18px] last:border-b-0 dark:border-gray-800 sm:px-7.5 sm:py-6.5">
+  <div class="flex w-full items-center justify-between border-b-1 border-gray-800 p-[18px] last:border-b-0 sm:px-7.5 sm:py-6.5">
     <div class="flex w-full items-center justify-between">
       <div class="flex flex-1 flex-wrap items-center gap-3 sm:gap-5">
         <AuthorityAvatar
@@ -73,7 +73,7 @@ function handleInput() {
             </span>
           </span>
         </span>
-        <span class="ml-2.5 flex min-w-[135px] flex-col gap-1 text-xs text-slate-900 dark:text-white sm:ml-0 sm:hidden">
+        <span class="ml-2.5 flex min-w-[135px] flex-col gap-1 text-xs sm:ml-0 sm:hidden">
           <span>
             <span v-if="contactName" class="text-gray-400">
               {{ contactName }}
@@ -92,14 +92,14 @@ function handleInput() {
         <Copy icon-only :text="address">
           <template #copy>
             <div
-              class="flex h-7.5  w-7.5 rounded-full bg-slate-150 dark:bg-gray-900"
+              class="flex h-7.5  w-7.5 rounded-full bg-gray-900"
             >
               <SvgoCopy class="m-auto h-[14px] w-[14px] text-gray-400" />
             </div>
           </template>
         </Copy>
 
-        <NuxtLink external target="_blank" :to="getExplorerUrl(chainId, `/address/${address}`)" class="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-150 dark:bg-gray-900">
+        <NuxtLink external target="_blank" :to="getExplorerUrl(chainId, `/address/${address}`)" class="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-gray-900">
           <SvgoExternalLink class="w-4 text-gray-400" />
         </NuxtLink>
       </div>

@@ -53,7 +53,7 @@ const connectedProvider = computed(() => {
 <template>
   <DefineTemplate>
     <button
-      class="relative flex h-7.5 w-7.5 items-center justify-center overflow-hidden rounded-full bg-slate-150 dark:bg-gray-900"
+      class="relative flex h-7.5 w-7.5 items-center justify-center overflow-hidden rounded-full bg-gray-900"
       aria-label="Close Connection"
       role="button"
       @click="closeConnection"
@@ -72,7 +72,7 @@ const connectedProvider = computed(() => {
   <div v-else class="flex items-center gap-[14px]">
     <button
       v-if="!hideGas"
-      class="flex items-center justify-between gap-2 rounded-5 bg-slate-100 px-4 py-[9px] dark:bg-gray-900"
+      class="flex items-center justify-between gap-2 rounded-5 bg-gray-900 px-4 py-[9px]"
       @click="openTopUpGasModal()"
     >
       <GasSVG
@@ -100,7 +100,7 @@ const connectedProvider = computed(() => {
       </span>
     </button>
     <template v-if="!hideEOA">
-      <button class="relative flex items-center justify-between gap-x-2.5 rounded-7.5 bg-slate-100 px-4.5 py-2.5 leading-5 dark:bg-gray-900 sm:px-4 sm:py-3">
+      <button class="relative flex items-center justify-between gap-x-2.5 rounded-7.5 bg-gray-900 px-4.5 py-2.5 leading-5 sm:px-4 sm:py-3">
         <div class="flex items-center gap-[14px]">
           <Tippy
             arrow
@@ -109,7 +109,7 @@ const connectedProvider = computed(() => {
           >
             <component :is="connectedProvider.logo" v-if="connectedProvider" class="h-7.5 w-7.5 sm:h-6 sm:w-6" />
             <template #content>
-              <div class="flex w-full justify-between rounded-5 border p-5 dark:border-gray-800 dark:bg-gray-850">
+              <div class="flex w-full justify-between rounded-5 border border-gray-800 bg-gray-850 p-5">
                 <div class="flex gap-4">
                   <div class="flex items-center gap-4">
                     <div v-if="connectedProvider">

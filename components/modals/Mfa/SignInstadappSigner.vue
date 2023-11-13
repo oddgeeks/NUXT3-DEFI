@@ -28,7 +28,7 @@ const isInstadappSigner = computed(() => isAddressEqual(props.address, instadapp
         </h2>
       </div>
     </div>
-    <hr class="border-slate-150 dark:border-gray-800">
+    <hr class="border-gray-800">
     <ul class="flex flex-col gap-7 p-7.5">
       <MfaSignAddSignerItem v-for="network in availableNetworks" :key="network.chainId" :address="address" :chain-id="network.chainId" />
     </ul>

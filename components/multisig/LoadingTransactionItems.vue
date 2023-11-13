@@ -1,6 +1,6 @@
 <template>
-  <div class="pointer-events-none flex flex-col gap-5 rounded-2xl bg-slate-50 blur dark:bg-gray-850">
-    <div v-for="i in 3" :key="i" class="border-b border-slate-300 dark:border-slate-750">
+  <div class="pointer-events-none flex flex-col gap-5 rounded-2xl bg-gray-850 blur">
+    <div v-for="i in 3" :key="i" class="border-b border-slate-750">
       <MultisigLoadingTransactionItem />
     </div>
     <div class="flex cursor-pointer items-center gap-2.5 px-5 py-8 text-xs font-medium leading-5 text-gray-400">
@@ -15,6 +15,6 @@
 
 <style scoped>
 .loading-pagination {
-    @apply dark:bg-gray-900 bg-slate-150 rounded-5 h-8;
+    @apply bg-gray-900 rounded-5 h-8;
 }
 </style>

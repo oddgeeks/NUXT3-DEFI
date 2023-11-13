@@ -316,7 +316,7 @@ onUnmounted(() => {
       </div>
       <div class="flex flex-col gap-2.5">
         <div
-          class="flex flex-col gap-4 rounded-5 bg-slate-50 px-5 py-[14px] dark:bg-gray-850"
+          class="flex flex-col gap-4 rounded-5 bg-gray-850 px-5 py-[14px]"
         >
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2.5 text-gray-400">
@@ -370,7 +370,7 @@ onUnmounted(() => {
         </div>
       </div>
     </div>
-    <div v-if="revokeTokens?.length" class="flex flex-col border-y border-slate-150 px-6 dark:border-gray-800 sm:px-10">
+    <div v-if="revokeTokens?.length" class="flex flex-col border-y border-gray-800 px-6 sm:px-10">
       <details class="group text-xs">
         <summary class="flex cursor-pointer items-center justify-between py-5 text-primary">
           <span class="flex items-center gap-2">
@@ -385,7 +385,7 @@ onUnmounted(() => {
 
         <div class="group-open:pb-5">
           <ul class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-            <li v-for="i in revokeTokens" :key="i.from" class="flex justify-between rounded-2xl border px-2.5 py-2 text-[10px] dark:border-gray-800">
+            <li v-for="i in revokeTokens" :key="i.from" class="flex justify-between rounded-2xl border border-gray-800 px-2.5 py-2 text-[10px]">
               <div class="flex items-center gap-2 font-medium">
                 <SafeTokenLogo class="h-4 w-4" :url="i.tokenObj?.logoURI" />
                 {{ shortenHash(i.to) }}

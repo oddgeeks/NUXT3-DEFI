@@ -58,12 +58,12 @@ onMounted(() => {
       </div>
     </div>
 
-    <hr class="border-slate-150 dark:border-gray-800">
+    <hr class="border-gray-800">
     <div class="flex items-center gap-5 p-6 text-sm sm:p-7.5">
       <CommonSelect v-model="threshold" class="w-[80px]" :options="generateNumber(minCount, maxCount)" />
       Out of {{ maxCount }} signer(s)
     </div>
-    <hr class="border-slate-150 dark:border-gray-800">
+    <hr class="border-gray-800">
     <div class="p-6 sm:p-7.5">
       <CommonButton class="w-full justify-center" size="lg" @click="$emit('resolve', true, threshold)">
         Continue

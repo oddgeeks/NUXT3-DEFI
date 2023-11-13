@@ -99,7 +99,7 @@ onMounted(() => {
     >
       <li v-for="token in tokensWithBalance" :id="computeId(token)" :key="computeId(token)">
         <button
-          class="flex w-full items-center gap-3 rounded-3xl px-5 py-[14px] text-left hover:bg-slate-100 hover:dark:bg-gray-900"
+          class="flex w-full items-center gap-3 rounded-3xl px-5 py-[14px] text-left  hover:bg-gray-900"
           @click="$emit('resolve', true, token)"
         >
           <SafeTokenLogo :chain-id="token.chainId" :url="token.logoURI" />

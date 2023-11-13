@@ -43,7 +43,7 @@ const filteredPositions = computed(() => {
       <MultipleNetworkFilter v-if="account" v-model:networks="networkPreferences" :show-supported-networks="false" :filters="false" />
     </div>
     <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
-      <div v-for="item in summarize" :key="item.name" class="flex items-center gap-4 rounded-3xl bg-slate-50 px-4 py-3 dark:bg-gray-850 sm:p-5">
+      <div v-for="item in summarize" :key="item.name" class="flex items-center gap-4 rounded-3xl bg-gray-850 px-4 py-3 sm:p-5">
         <div :class="item.color" class="flex h-11 w-11 items-center justify-center rounded-2xl bg-opacity-10 sm:h-[50px] sm:w-[50px]">
           <component :is="item.icon" />
         </div>
@@ -72,14 +72,14 @@ const filteredPositions = computed(() => {
       <div
         :class="!account ? 'blur h-96' : ''"
         style="scrollbar-gutter: stable; overflow-y: overlay"
-        class="scroll-style hidden max-h-[530px] overflow-auto rounded-[25px] bg-slate-50 dark:bg-gray-850 sm:flex md:overflow-x-hidden"
+        class="scroll-style hidden max-h-[530px] overflow-auto rounded-[25px] bg-gray-850 sm:flex md:overflow-x-hidden"
       >
         <table
           class="table w-full"
         >
           <thead>
             <tr
-              class="border-b border-slate-150 text-left text-sm font-medium text-gray-400 dark:border-gray-800"
+              class="border-b border-gray-800 text-left text-sm font-medium text-gray-400"
             >
               <th class="py-6 pl-7.5 text-left">
                 Protocol
@@ -100,7 +100,7 @@ const filteredPositions = computed(() => {
               <th class="py-5" />
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-150 dark:divide-gray-900">
+          <tbody class="divide-y divide-gray-900">
             <tr
               v-for="position in filteredPositions"
               :key="position.label + position.chainId"
@@ -161,9 +161,9 @@ const filteredPositions = computed(() => {
         <li
           v-for="position in filteredPositions"
           :key="position.label + position.chainId"
-          class="flex flex-col gap-3 rounded-5 bg-slate-50 dark:bg-gray-850"
+          class="flex flex-col gap-3 rounded-5 "
         >
-          <button class="flex w-full justify-between border-b border-slate-150 px-5 py-4 dark:border-gray-800" @click="openDefiPositionDetailsModal(position)">
+          <button class="flex w-full justify-between border-b border-gray-800 px-5 py-4" @click="openDefiPositionDetailsModal(position)">
             <div class="flex items-center gap-3">
               <div
                 class="relative inline-block h-7.5 w-7.5 shrink-0 rounded-full"
@@ -190,7 +190,7 @@ const filteredPositions = computed(() => {
           </button>
           <div class="">
             <dl class="grid grid-cols-2 gap-y-4">
-              <div class="border-b border-slate-150 px-5 pb-4 dark:border-gray-800">
+              <div class="border-b border-gray-800 px-5 pb-4">
                 <dt class="text-xs leading-5 text-gray-500">
                   Supplied
                 </dt>
@@ -198,7 +198,7 @@ const filteredPositions = computed(() => {
                   {{ `$${abbreviateNumber(position.positions?.totalSupplyInUsd)}` }}
                 </dd>
               </div>
-              <div class="border-b border-slate-150 dark:border-gray-800">
+              <div class="border-b border-gray-800">
                 <dt class="text-xs leading-5 text-gray-500">
                   Borrowed
                 </dt>

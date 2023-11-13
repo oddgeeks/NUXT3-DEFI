@@ -36,7 +36,7 @@ function getIcon(bookmark: IBookmark) {
 
 <template>
   <div>
-    <ModalTitle class="border-b p-7.5 dark:border-gray-875">
+    <ModalTitle class="border-b border-gray-875 p-7.5">
       <template #icon>
         <SvgoBookmark class="text-white" />
       </template>
@@ -63,7 +63,7 @@ function getIcon(bookmark: IBookmark) {
         </template>
       </CommonInput>
       <div class="grid min-h-[220px] grid-cols-2 items-baseline gap-4">
-        <div v-for="shortcut in filteredShortcuts" :key="shortcut.name" class="flex items-start rounded-2xl border border-gray-800 px-4 py-[14px] dark:bg-gray-850 hover:dark:bg-gray-900">
+        <div v-for="shortcut in filteredShortcuts" :key="shortcut.name" class="flex items-start rounded-2xl border border-gray-800 bg-gray-850 px-4 py-[14px] hover:bg-gray-900">
           <button class="flex flex-1 gap-3" @click="initializeBookmark(shortcut)">
             <SafeTokenLogo network-logo-class="!w-5 !h-5" class="h-7.5 w-7.5" :chain-id="shortcut.chainId" :url="getIcon(shortcut)" />
             <div class="flex flex-col gap-1 text-left">

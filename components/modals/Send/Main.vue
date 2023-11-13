@@ -93,13 +93,13 @@ onUnmounted(() => {
     </div>
     <div
       v-if="contact"
-      class="-mt-3 mb-5 flex w-full items-center justify-between rounded-5 bg-slate-50 py-5 pl-5 pr-4 dark:bg-gray-850"
+      class="-mt-3 mb-5 flex w-full items-center justify-between rounded-5 bg-gray-850 py-5 pl-5 pr-4"
     >
       <div class="flex items-center gap-3">
         <ChainLogo :stroke="false" class="h-7 w-7" :chain="contact.chainId" />
         <Copy :text="contact.address">
           <template #content>
-            <span class="text-slate-900 dark:text-white">{{
+            <span>{{
               shortenHash(contact.address)
             }}</span>
           </template>
@@ -108,7 +108,7 @@ onUnmounted(() => {
       <CommonButton
         :disabled="contact.owner"
         color="white"
-        class="justify-center bg-slate-150 !px-4 dark:bg-gray-900"
+        class="justify-center bg-gray-900 !px-4"
         @click="handleEdit()"
       >
         Edit

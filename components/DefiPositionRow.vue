@@ -36,7 +36,7 @@ const amount = computed(() => {
 </script>
 
 <template>
-  <li class="flex items-center justify-between border-b px-5 py-4.5 last:border-b-0 dark:border-b-gray-900">
+  <li class="flex items-center justify-between border-b border-b-gray-900 px-5 py-4.5 last:border-b-0">
     <span class="flex items-center gap-3 text-sm uppercase">
       <SafeTokenLogo class="h-6 w-6" :url="token?.logoURI || token?.logo_url" />
       {{ formatDecimal(amount) }}

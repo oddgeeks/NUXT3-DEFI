@@ -72,7 +72,7 @@ async function regenerateRecoveryCodes() {
       </div>
       <div class="relative flex flex-col gap-5">
         <Copy icon-only class="absolute right-4 top-4" :text="recoveryCodes.join(',')" />
-        <ul v-if="recoveryCodes.length" class="grid grid-cols-2 gap-4 rounded-[14px] bg-slate-50 p-5 dark:bg-gray-850">
+        <ul v-if="recoveryCodes.length" class="grid grid-cols-2 gap-4 rounded-[14px] bg-gray-850 p-5">
           <li v-for="code in recoveryCodes" :key="code" class="text-center text-xs font-medium leading-5">
             {{ code }}
           </li>

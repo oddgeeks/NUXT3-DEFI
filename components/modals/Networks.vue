@@ -31,7 +31,7 @@ function selectType(type: string) {
     <ClientOnly>
       <button
         :class="{
-          'text-slate-900 dark:text-white': isHideZeroBalances,
+          'text-white': isHideZeroBalances,
         }"
         class="inline-flex w-full items-center justify-center gap-2.5 text-sm text-gray-400"
         @click="isHideZeroBalances = !isHideZeroBalances"
@@ -47,7 +47,7 @@ function selectType(type: string) {
         />
       </button>
     </ClientOnly>
-    <ul class="w-full rounded-5 bg-slate-50 p-[6px] dark:bg-gray-850">
+    <ul class="w-full rounded-5 bg-gray-850 p-[6px]">
       <li
         class="flex items-center justify-between gap-2.5 rounded-[14px] px-3 pb-3.5 pt-1"
       >
@@ -55,9 +55,9 @@ function selectType(type: string) {
       </li>
 
       <li
-        class="flex cursor-pointer items-center gap-3.5 rounded-[14px] px-3 py-2.5 hover:bg-slate-150 hover:dark:bg-gray-900"
+        class="flex cursor-pointer items-center gap-3.5 rounded-[14px] px-3 py-2.5  hover:bg-gray-900"
         :class="{
-          'text-gray-400 dark:text-gray-500': listType !== 'group',
+          'text-gray-500': listType !== 'group',
         }"
         @click="() => selectType('group')"
       >
@@ -73,9 +73,9 @@ function selectType(type: string) {
         />
       </li>
       <li
-        class="flex cursor-pointer items-center gap-3.5 rounded-[14px] px-3 py-2.5 hover:bg-slate-150 hover:dark:bg-gray-900"
+        class="flex cursor-pointer items-center gap-3.5 rounded-[14px] px-3 py-2.5 hover:bg-gray-900"
         :class="{
-          'text-gray-400 dark:text-gray-500': listType !== 'individual',
+          'text-gray-500': listType !== 'individual',
         }"
         @click="() => selectType('individual')"
       >
@@ -91,7 +91,7 @@ function selectType(type: string) {
         />
       </li>
     </ul>
-    <ul class="w-full rounded-5 bg-slate-50 p-[6px] dark:bg-gray-850">
+    <ul class="w-full rounded-5 bg-gray-850 p-[6px]">
       <li
         class="flex items-center justify-between gap-2.5 rounded-[14px] px-3 pb-3.5 pt-1"
       >
@@ -109,9 +109,9 @@ function selectType(type: string) {
       <li
         v-for="network in availableNetworks"
         :key="network.chainId"
-        class="flex cursor-pointer items-center gap-3.5 rounded-[14px] px-3 py-2.5 hover:bg-slate-150 hover:dark:bg-gray-900"
+        class="flex cursor-pointer items-center gap-3.5 rounded-[14px] px-3 py-2.5  hover:bg-gray-900"
         :class="{
-          'text-gray-400 dark:text-gray-500': !networkPreference.includes(network.chainId),
+          'text-gray-500': !networkPreference.includes(network.chainId),
         }"
         @click="toggleNetwork(network.chainId)"
       >

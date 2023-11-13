@@ -47,7 +47,6 @@
     "@instadapp/utils": "^0.4.7",
     "@instadapp/vue-web3-nuxt": "^0.10.1",
     "@nuxt/devtools": "^1.0.0-beta.0",
-    "@nuxtjs/color-mode": "^3.3.0",
     "@nuxtjs/tailwindcss": "^6.8.0",
     "@pinia/nuxt": "^0.4.11",
     "@tailwindcss/aspect-ratio": "^0.4.2",

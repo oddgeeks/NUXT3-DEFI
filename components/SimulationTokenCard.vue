@@ -75,7 +75,7 @@ const out = computed(() => {
 <template>
   <li
     :class="{ hidden: !token && payload.type !== 'NFT' }"
-    class="flex flex-col items-start justify-between gap-2 rounded-2xl bg-slate-50 px-3 py-2.5 dark:bg-gray-850"
+    class="flex flex-col items-start justify-between gap-2 rounded-2xl  bg-gray-850 px-3 py-2.5"
   >
     <div class="flex w-full justify-between gap-2">
       <div
@@ -132,7 +132,7 @@ const out = computed(() => {
     </div>
     <div class="flex w-full justify-between">
       <div
-        class="w-fit rounded-10 bg-slate-150 px-2.5 py-1 text-[10px] font-medium text-gray-400 dark:bg-gray-900"
+        class="w-fit rounded-10 bg-gray-900 px-2.5 py-1 text-[10px] font-medium text-gray-400"
       >
         <span v-if="actualType === TypeTitles.In" class="inline-flex items-center leading-4">
           From:&nbsp;{{ shortenHash(payload.from) }}&nbsp;<Copy class="h-3 w-3" :text="payload.from" :icon-only="true" /></span>
@@ -140,7 +140,7 @@ const out = computed(() => {
       </div>
       <div
         v-if="payload.type"
-        class="flex w-fit items-center gap-[7px] rounded-10 bg-slate-150 px-2.5 py-1 text-[10px] font-medium text-gray-400 dark:bg-gray-900"
+        class="flex w-fit items-center gap-[7px] rounded-10  bg-gray-900 px-2.5 py-1 text-[10px] font-medium text-gray-400"
       >
         {{ payload.type }}
         <SVGInfoCircle

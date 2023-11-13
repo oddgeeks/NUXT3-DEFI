@@ -5,11 +5,11 @@ const { authorisedNetworks, isWalletSecondary } = useAuthorities()
 </script>
 
 <template>
-  <div v-if="selectedSafe && isWalletSecondary" class="flex items-center justify-between rounded-5 px-5 py-[14px] dark:bg-gray-850">
+  <div v-if="selectedSafe && isWalletSecondary" class="flex items-center justify-between rounded-5 bg-gray-850 px-5 py-[14px]">
     <div class="flex flex-col gap-0.5">
       <div class="flex gap-2">
         <span class="text-sm">Multisig owned by</span>
-        <span class="inline-flex items-center gap-1.5 rounded-5 px-2 py-0.5  text-xs leading-5 text-gray-400 ring-1 dark:ring-gray-700">
+        <span class="inline-flex items-center gap-1.5 rounded-5 px-2 py-0.5  text-xs leading-5 text-gray-400 ring-1 ring-gray-700">
           {{ shortenHash(selectedSafe.owner_address) }}
           <Copy icon-class="w-3 h-3" icon-only :text="selectedSafe.owner_address" />
         </span>

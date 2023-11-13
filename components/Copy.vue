@@ -29,7 +29,7 @@ const slots = useSlots()
       <CheckCircle
         v-if="copied"
         :class="iconClass"
-        class="svg-circle h-4 w-4 shrink-0 text-white dark:text-slate-900"
+        class="svg-circle h-4 w-4 shrink-0 text-slate-900"
       />
       <slot v-else-if="slots.copy" name="copy" />
       <slot v-else name="copy-icon">

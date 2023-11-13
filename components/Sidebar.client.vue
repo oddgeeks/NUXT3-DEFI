@@ -25,7 +25,7 @@ const tippyOptions = {
   <div class="relative">
     <button
       :style="{ left: `${actualWidth - 14}px` }"
-      class="fixed top-7.5 z-10 flex  h-7 w-7 items-center justify-center rounded-full bg-slate-100 transition-[width] dark:bg-gray-900"
+      class="fixed top-7.5 z-10 flex  h-7 w-7 items-center justify-center rounded-full bg-gray-900 transition-[width]"
       @click="toggleSidebar"
     >
       <ArrowRight
@@ -33,7 +33,7 @@ const tippyOptions = {
         :class="{ 'rotate-180': opened }"
       />
     </button>
-    <aside :style="{ width: `${actualWidth}px` }" style="scrollbar-gutter:stable;overflow-y:overlay;" class="scroll-style sticky top-0 hidden h-screen shrink-0 overflow-y-auto bg-slate-50 transition-[width] dark:bg-gray-850 sm:flex">
+    <aside :style="{ width: `${actualWidth}px` }" style="scrollbar-gutter:stable;overflow-y:overlay;" class="scroll-style sticky top-0 hidden h-screen shrink-0 overflow-y-auto bg-gray-850 transition-[width] sm:flex">
       <div v-if="opened" class="flex w-full flex-col">
         <div class="flex flex-col gap-6 px-7.5 pb-6 pt-7.5">
           <div class="flex items-center justify-between gap-2.5">
@@ -64,14 +64,14 @@ const tippyOptions = {
               ...tippyOptions,
               content: 'Show Avocado QR Code',
             }"
-            class="flex w-full items-center justify-center rounded-5 bg-slate-100 py-4 dark:bg-gray-900"
+            class="flex w-full items-center justify-center rounded-5 bg-gray-900 py-4"
             @click="openQrCode"
           >
             <QrSVG class="h-4.5 w-4.5" />
           </button>
 
           <div
-            class="flex w-full items-center justify-center rounded-5 bg-slate-100 dark:bg-gray-900"
+            class="flex w-full items-center justify-center rounded-5 bg-gray-900"
           >
             <Copy
               v-tippy="{
@@ -85,7 +85,7 @@ const tippyOptions = {
             />
           </div>
         </div>
-        <div :class="{ 'pointer-events-none blur': !safeAddress }" class="flex w-full flex-col items-center gap-2.5 rounded-5 bg-slate-100 py-2.5 text-gray-400 dark:bg-gray-900">
+        <div :class="{ 'pointer-events-none blur': !safeAddress }" class="flex w-full flex-col items-center gap-2.5 rounded-5 bg-gray-900 py-2.5 text-gray-400">
           <template
             v-for="nav in navigations"
             :key="nav.to"

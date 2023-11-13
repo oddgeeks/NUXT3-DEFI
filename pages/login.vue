@@ -43,9 +43,9 @@ function handleDestroy() {
 
 <template>
   <div
-    class="mx-auto mt-10 h-full w-full rounded-[30px] bg-white px-5 py-10 dark:bg-gray-850 sm:mt-[92px] sm:w-[460px] sm:px-[50px]"
+    class="mx-auto mt-10 h-full w-full rounded-[30px] bg-gray-850 px-5 py-10 sm:mt-[92px] sm:w-[460px] sm:px-[50px]"
   >
-    <ModalsWeb3 button-class="dark:bg-gray-900 bg-slate-100" @destroy="handleDestroy">
+    <ModalsWeb3 button-class="bg-gray-900" @destroy="handleDestroy">
       <template #title>
         <div class="mb-7.5">
           <SvgoAvocadoLogoMini class="mx-auto h-12 w-12" />

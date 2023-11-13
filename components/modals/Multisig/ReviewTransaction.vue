@@ -34,7 +34,7 @@ const { isAvocadoProtectActive } = useMfa()
         </h1>
 
         <div
-          class="bg flex w-full items-center justify-between rounded-5 bg-slate-100 px-[18px] py-[14px] dark:bg-gray-900"
+          class="bg flex w-full items-center justify-between rounded-5 bg-gray-900 px-[18px] py-[14px]"
         >
           <p class="flex items-center gap-3">
             <ChainLogo class="h-[26px] w-[26px]" :chain="chainId" />

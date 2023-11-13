@@ -145,7 +145,7 @@ function handleCustomToken() {
           <li
             v-for="token in list"
             :key="`${token.data.chainId}-${token.data.address}`"
-            class="flex w-full items-center justify-between rounded-[24px] px-3 py-[14px] hover:dark:bg-gray-900"
+            class="flex w-full items-center justify-between rounded-[24px] px-3 py-[14px] hover:bg-gray-900"
           >
             <div class="flex items-center gap-3">
               <SafeTokenLogo :chain-id="token.data.chainId" :url="token.data.logoURI" />

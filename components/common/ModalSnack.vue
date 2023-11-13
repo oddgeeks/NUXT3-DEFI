@@ -15,7 +15,7 @@ withDefaults(defineProps<{
 const colors = {
   success: 'bg-green-400 text-white ',
   error: 'bg-red-alert text-white ',
-  info: 'dark:bg-slate-750 bg-slate-150 dark:text-white text-slate-900',
+  info: 'bg-slate-750 text-white',
 }
 </script>
 

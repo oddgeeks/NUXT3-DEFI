@@ -99,7 +99,7 @@ function navigate(type: INavigationType) {
 <template>
   <nav class="flex w-full justify-between sm:px-7.5 sm:py-6">
     <div
-      class="hidden w-fit rounded-7.5 bg-slate-150 px-5 py-2 text-sm dark:bg-gray-900 sm:inline"
+      class="hidden w-fit rounded-7.5  bg-gray-900 px-5 py-2 text-sm sm:inline"
     >
       <span v-if="!compact"> Showing </span>
       {{ start }} to {{ end }} of {{ total }}
@@ -123,7 +123,7 @@ function navigate(type: INavigationType) {
         <ArrowLeft class="h-5 w-5" />
       </CommonButton>
       <div
-        class="w-full rounded-7.5 bg-slate-150 px-5 py-3 text-center text-xs text-gray-400 dark:bg-gray-900 sm:hidden"
+        class="w-full rounded-7.5  bg-gray-900 px-5 py-3 text-center text-xs text-gray-400 sm:hidden"
       >
         {{ start }} - {{ end }} of {{ total }} results
       </div>

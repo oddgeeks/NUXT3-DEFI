@@ -172,18 +172,12 @@ export default defineNuxtConfig({
   modules: [
     '@vite-pwa/nuxt',
     'nuxt-svgo',
-    '@nuxtjs/color-mode',
     '@vueuse/nuxt',
     '@nuxtjs/tailwindcss',
     '@instadapp/vue-web3-nuxt',
     '@vueuse/nuxt',
     '@pinia/nuxt',
   ],
-
-  colorMode: {
-    preference: 'dark',
-    classSuffix: '',
-  },
   css: [
     '@fontsource/space-grotesk/400.css',
     '@fontsource/space-grotesk/500.css',
@@ -223,7 +217,5 @@ export default defineNuxtConfig({
       }),
     ],
   },
-  experimental: {
-    // emitRouteChunkError: "reload",
-  },
+
 })

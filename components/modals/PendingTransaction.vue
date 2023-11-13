@@ -119,7 +119,7 @@ const isSuccess = computed(() => {
     </div>
 
     <div
-      class="bg flex items-center justify-between rounded-5 bg-slate-100 px-[18px] py-[14px] dark:bg-gray-900"
+      class="bg flex items-center justify-between rounded-5 bg-gray-900 px-[18px] py-[14px]"
     >
       <div v-if="type === 'bridge'" class="flex items-center gap-3">
         <div class="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-primary">

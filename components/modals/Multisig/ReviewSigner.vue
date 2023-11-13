@@ -57,7 +57,7 @@ async function handleNext() {
         </div>
       </div>
     </div>
-    <hr class="border-slate-150 dark:border-gray-800">
+    <hr class="border-gray-800">
 
     <table style="border-collapse: separate" class="w-full border-spacing-y-5 px-6 sm:border-spacing-y-7.5 sm:px-7.5">
       <tbody class="text-sm font-medium">

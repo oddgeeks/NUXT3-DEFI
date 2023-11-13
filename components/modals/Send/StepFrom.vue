@@ -158,7 +158,7 @@ onMounted(() => {
             :model-value="token"
             :chain-id="data.fromChainId"
             network-logo-class="w-[15px] h-[15px]"
-            class="relative flex max-h-12 w-[160px] items-center gap-2.5 rounded-[14px] border-1 border-slate-150 !bg-slate-50 text-left dark:border-slate-700 dark:!bg-gray-850"
+            class="relative flex max-h-12 w-[160px] items-center gap-2.5 rounded-[14px] border-1 border-slate-700 !bg-gray-850 text-left"
             :tokens="availableTokens"
             @update:model-value="handleTokenChange"
           />
@@ -306,7 +306,7 @@ onMounted(() => {
     <div v-if="isCrossChainEnable" class="flex items-center gap-2.5">
       <button
         :class="{
-          'text-slate-900 dark:text-white': isCrossChain,
+          'text-white': isCrossChain,
         }"
         class="flex items-center gap-2.5 text-sm text-gray-400"
         @click="onToggleCrossChain"

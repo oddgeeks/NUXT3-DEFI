@@ -41,7 +41,7 @@ defineProps({
         <div
           v-for="network in availableNetworks"
           :key="network.chainId"
-          class="flex items-center gap-2 rounded-full bg-slate-50 p-1.5 text-[10px] dark:bg-gray-850"
+          class="flex items-center gap-2 rounded-full bg-gray-850 p-1.5 text-[10px]"
         >
           <ChainLogo
             style="width: 14px; height: 14px"

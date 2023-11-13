@@ -37,7 +37,7 @@ watch(reactiveAddresses, () => {
         </div>
       </div>
     </div>
-    <hr class="border-slate-150 dark:border-gray-800">
+    <hr class="border-gray-800">
     <ul class="flex flex-col gap-[26px] p-6 text-sm sm:p-7.5">
       <li v-for="address in reactiveAddresses" :key="address" class="flex items-center justify-between gap-3">
         <div class="flex items-center gap-3">
@@ -59,7 +59,7 @@ watch(reactiveAddresses, () => {
         </button>
       </li>
     </ul>
-    <hr class="border-slate-150 dark:border-gray-800">
+    <hr class="border-gray-800">
     <div class="flex gap-4 p-7.5">
       <CommonButton size="lg" class="flex-1 justify-center" color="white" @click="$emit('destroy')">
         Cancel

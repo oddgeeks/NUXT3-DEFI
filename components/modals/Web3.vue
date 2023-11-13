@@ -52,12 +52,12 @@ function isProviderVisible(provider: Provider) {
       <li v-for="provider in providers" :key="provider.name">
         <button
           v-if="isProviderVisible(provider)"
-          class="group flex w-full items-center gap-4 rounded-[40px] bg-slate-100 px-5 py-[15px] transition-colors dark:bg-gray-850"
+          class="group flex w-full items-center gap-4 rounded-[40px] bg-gray-850 px-5 py-[15px] transition-colors"
           :class="
             [
               provider.name === 'Metamask'
-                ? 'hover:bg-[#FEF1E8] dark:hover:bg-[#282125]'
-                : 'hover:bg-[#EBF2FE] dark:hover:bg-[#15233C]',
+                ? 'hover:bg-[#282125]'
+                : 'hover:bg-[#15233C]',
               buttonClass,
             ]
           "

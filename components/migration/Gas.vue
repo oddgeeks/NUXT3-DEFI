@@ -31,7 +31,7 @@ watchThrottled(selectedSafe, fetchGasBalances, {
 
 <template>
   <div>
-    <div class="flex flex-col items-center justify-between border-b-[1px] border-white text-xs font-medium dark:border-slate-750">
+    <div class="flex flex-col items-center justify-between border-b-[1px] border-slate-750 text-xs font-medium">
       <div class="w-full">
         <MigrationGasCard :pending="pending || !selectedSafe || !gasBalance" :safe="selectedSafe!" :balance="gasBalance!" />
       </div>

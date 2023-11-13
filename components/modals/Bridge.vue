@@ -308,14 +308,14 @@ const onSubmit = form.handleSubmit(async () => {
         </h1>
 
         <div
-          class="flex flex-col gap-3 rounded-5 bg-slate-50 px-5 pb-5 pt-3.5 dark:bg-gray-850 sm:gap-5"
+          class="flex flex-col gap-3 rounded-5 bg-gray-850 px-5 pb-5 pt-3.5 sm:gap-5"
         >
           <div class="flex flex-col gap-3 sm:flex-row sm:gap-4">
             <div class="flex flex-1 flex-col gap-2.5">
               <span class="text-sm">Coin</span>
               <TokenSelection
                 v-model="fromToken"
-                class="relative flex max-h-12 w-full items-center gap-2.5 rounded-2xl border border-slate-150 !bg-slate-50 px-4 py-3 text-left dark:border-slate-700 dark:!bg-gray-850"
+                class="relative flex max-h-12 w-full items-center gap-2.5 rounded-2xl border border-slate-700 !bg-gray-850 px-4 py-3 text-left"
                 :tokens="availableTokens"
               />
             </div>
@@ -399,7 +399,7 @@ const onSubmit = form.handleSubmit(async () => {
           </h1>
         </div>
         <div
-          class="rounded-5 bg-slate-50 px-5 pb-5 pt-4 dark:bg-gray-850 sm:pt-[14px]"
+          class="rounded-5 bg-gray-850 px-5 pb-5 pt-4 sm:pt-[14px]"
         >
           <div class="flex flex-col gap-4 sm:gap-5">
             <div
@@ -412,7 +412,7 @@ const onSubmit = form.handleSubmit(async () => {
                   v-model="bridgeToToken"
                   :sort="false"
                   :pending="bridgeTokens.pending.value"
-                  class="relative flex max-h-12 items-center gap-2.5 rounded-2xl border border-slate-150 !bg-slate-50 px-4 py-3 text-left dark:border-slate-700 dark:!bg-gray-850"
+                  class="relative flex max-h-12 items-center gap-2.5 rounded-2xl border border-slate-700 !bg-gray-850 px-4 py-3 text-left"
                   :tokens="bridgeTokens.data"
                 />
               </div>
@@ -462,7 +462,7 @@ const onSubmit = form.handleSubmit(async () => {
                   class="hidden items-center gap-2.5 capitalize sm:flex"
                 >
                   <Menu v-slot="{ open }" as="div" class="relative">
-                    <MenuButton class="flex items-center gap-2.5 rounded-xl border border-slate-150 px-3 py-2 dark:border-slate-750">
+                    <MenuButton class="flex items-center gap-2.5 rounded-xl border border-slate-750 px-3 py-2">
                       <img :src="bridgeProtocol?.icon" class="h-5 w-5">
                       {{ bridgeProtocol?.displayName }}
                       <SvgoChevronDown class="w-4" :class="open ? 'rotate-180' : ''" />
@@ -476,7 +476,7 @@ const onSubmit = form.handleSubmit(async () => {
                       leave-to-class="transform scale-95 opacity-0"
                     >
                       <MenuItems
-                        class="absolute left-1/2 top-12 z-20 w-[300px] origin-center -translate-x-1/2 rounded-5 border border-slate-150 bg-slate-50 py-4 dark:border-slate-700 dark:bg-gray-850"
+                        class="absolute left-1/2 top-12 z-20 w-[300px] origin-center -translate-x-1/2 rounded-5 border border-slate-700 bg-gray-850 py-4"
                       >
                         <template v-for="route, i in availableRoutes" :key="route.routeId">
                           <MenuItem as="button" type="button" class="w-full px-4 py-[14px] text-left font-medium first:pt-0 last-of-type:pb-0" @click="txRoute = route">
@@ -499,7 +499,7 @@ const onSubmit = form.handleSubmit(async () => {
                               </div>
                             </div>
                           </MenuItem>
-                          <hr class="border-slate-100 last:hidden dark:border-gray-800">
+                          <hr class="border-gray-800 last:hidden">
                         </template>
                       </MenuItems>
                     </transition>
@@ -593,7 +593,7 @@ const onSubmit = form.handleSubmit(async () => {
 
 <style scoped>
 .divider {
-  @apply bg-dashed-pattern dark:bg-dashed-pattern-dark;
+  @apply bg-dashed-pattern-dark;
   background-position: bottom;
   background-size: 21px 2px;
   background-repeat: repeat-x;
@@ -603,13 +603,13 @@ const onSubmit = form.handleSubmit(async () => {
 }
 
 .divider:after {
-  @apply w-5 h-5 rounded-full absolute top-1/2 -right-10 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-975 bg-white;
+  @apply w-5 h-5 rounded-full absolute top-1/2 -right-10 -translate-x-1/2 -translate-y-1/2 bg-gray-975 ;
   content: "";
   display: block;
 }
 
 .divider:before {
-  @apply w-5 h-5 rounded-full absolute top-1/2 -left-5 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-975 bg-white;
+  @apply w-5 h-5 rounded-full absolute top-1/2 -left-5 -translate-x-1/2 -translate-y-1/2 bg-gray-975 ;
   content: "";
   display: block;
 }
