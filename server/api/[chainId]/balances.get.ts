@@ -218,6 +218,9 @@ export default defineEventHandler<Promise<IBalance[]>>(async (event) => {
     )
   }
   catch (error) {
+    if (!network?.ankrName)
+      return []
+
     slackIt('banner', {
       title: '[server/api/[chainId]/balances.get.ts]',
       address: query.address as string,
