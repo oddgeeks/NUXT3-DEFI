@@ -12,7 +12,8 @@ const pending = ref(false)
 async function handleSign() {
   try {
     const userNonce = useCookie<string | null>(`nonce-${account.value}`, {
-      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      // expires in 1 month
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
     })
 
     pending.value = true
