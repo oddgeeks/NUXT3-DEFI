@@ -20,6 +20,9 @@ const dryRun = useCookie<boolean | undefined>('dry-run', {
     </button>
     <nav class="relative flex items-center gap-7.5">
       <div class="flex items-center gap-5">
+        <button @click="openTransactionBatchModal">
+          <SvgoLayer class="h-6 w-6" />
+        </button>
         <ColorModeSwitcher />
         <Web3Button />
       </div>

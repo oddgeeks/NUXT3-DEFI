@@ -2,6 +2,7 @@
 import { Erc20__factory } from '~~/contracts'
 
 const { token, stepBack, data, actualAddress, isCrossChain } = useSend()
+const { addToTransactionStack } = useShared()
 const { account, library } = useWeb3()
 const { toWei } = useBignumber()
 const { sendTransactions } = useAvocadoSafe()
@@ -66,27 +67,32 @@ const disabled = computed(() => {
   return !actualAddress.value || pending.value || error.value || isSubmitting.value
 })
 
+const metadata = computed(() => {
+  if (!token.value || !data.value)
+    return
+
+  return encodeTransferMetadata(
+    {
+      token: token.value?.address!,
+      amount: toWei(data.value.amount, token.value?.decimals),
+      receiver: actualAddress.value,
+    },
+    true,
+  )
+})
+
 async function onSubmit() {
   try {
-    if (!token.value || !data.value)
+    if (!token.value || !data.value || !metadata.value)
       return
 
     isSubmitting.value = true
-
-    const metadata = encodeTransferMetadata(
-      {
-        token: token.value?.address!,
-        amount: toWei(data.value.amount, token.value?.decimals),
-        receiver: actualAddress.value,
-      },
-      true,
-    )
 
     const transactionHash = await sendTransactions(
       txs.value!,
       Number(data.value.toChainId),
       {
-        metadata,
+        metadata: metadata.value,
       },
       'transfer',
     ) as string
@@ -95,7 +101,7 @@ async function onSubmit() {
       return
 
     logActionToSlack({
-      message: generateSlackMessage(metadata, data.value.toChainId),
+      message: generateSlackMessage(metadata.value, data.value.toChainId),
       action: 'transfer',
       txHash: transactionHash,
       amountInUsd: amountInUsd.value.toFixed(),
@@ -126,6 +132,30 @@ async function onSubmit() {
   finally {
     isSubmitting.value = false
   }
+}
+
+function handleAddBatch() {
+  if (!token.value || !data.value || !metadata.value)
+    return
+
+  addToTransactionStack({
+    actions: txs.value as any,
+    chainId: data.value.toChainId,
+    options: {
+      metadata: encodeTransferMetadata(
+        {
+          token: token.value?.address!,
+          amount: toWei(data.value.amount, token.value?.decimals),
+          receiver: actualAddress.value,
+        },
+        false,
+      ),
+    },
+  })
+
+  notify({
+    message: 'Transaction batch added!',
+  })
 }
 </script>
 
@@ -197,5 +227,8 @@ async function onSubmit() {
         Send
       </CommonButton>
     </div>
+    <button class="text-xs text-primary" type="button" @click="handleAddBatch">
+      Add Batch
+    </button>
   </form>
 </template>

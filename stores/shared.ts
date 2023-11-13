@@ -8,6 +8,7 @@ const rpcInstances: Record<string, ethers.providers.StaticJsonRpcProvider> = {}
 
 export const useShared = defineStore('shared', () => {
   const rpcs = ref<Record<string, string>>({})
+  const transactionStack = ref<IEstimatedActions[]>([])
 
   function getRpcFallbackUrl(chainId: string | number) {
     const rpcURL = rpcs.value[chainId]
@@ -72,12 +73,18 @@ export const useShared = defineStore('shared', () => {
     return rpcURL
   }
 
+  function addToTransactionStack(action: IEstimatedActions) {
+    transactionStack.value.push(action)
+  }
+
   return {
     rpcs,
     getRpcProviderByChainId,
     getRpcURLByChainId,
     getRpcBatchProviderByChainId,
     getRpcBatchRetryProviderByChainId,
+    transactionStack,
+    addToTransactionStack,
   }
 })
 

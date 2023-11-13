@@ -21,6 +21,7 @@ import DeployNetwork from '~/components/modals/DeployNetwork.vue'
 import YourWallet from '~/components/modals/YourWallet.vue'
 import Networks from '~/components/modals/Networks.vue'
 import Balance from '~/components/modals/Balance.vue'
+import TransactionBatch from '~/components/modals/TransactionBatch.vue'
 import AddContact from '~/components/modals/AddContact.vue'
 import SelectContact from '~/components/modals/SelectContact.vue'
 import NFTDetails from '~/components/modals/NFTDetails.vue'
@@ -956,6 +957,17 @@ export function open2faTerminateSessionModal() {
     cancelButtonProps: {
       color: 'white',
     },
+  })
+}
+
+export function openTransactionBatchModal() {
+  return openModal({
+    component: TransactionBatch,
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[560px]',
+    },
+    async: true,
   })
 }
 

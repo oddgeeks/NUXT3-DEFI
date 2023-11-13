@@ -25,6 +25,7 @@ const [submitting, toggle] = useToggle()
 const { parseTransactionError } = useErrorHandler()
 const { web3WalletV2 } = storeToRefs(useWalletConnectV2())
 const { tokens } = storeToRefs(useTokens())
+const { addToTransactionStack } = useShared()
 const { getRpcProviderByChainId } = useShared()
 
 const { authorisedNetworks } = useAuthorities()
@@ -297,6 +298,25 @@ async function addRevokeTransaction(tokenAddres: string, address: string) {
   refreshSimulation()
 }
 
+function handleAddBatch() {
+  const metadata = encodeDappMetadata({
+    name: props.sessionV2?.peer?.metadata?.name!,
+    url: props.sessionV2?.peer?.metadata?.url!,
+  }, false)
+
+  addToTransactionStack({
+    actions: transactions.value,
+    chainId: props.chainId,
+    options: {
+      metadata,
+    },
+  })
+
+  notify({
+    message: 'Transaction batch added!',
+  })
+}
+
 onUnmounted(() => {
   clearNuxtData('simulationDetails')
 })
@@ -434,6 +454,9 @@ onUnmounted(() => {
           Submit
         </CommonButton>
       </div>
+      <button class="text-xs text-primary" type="button" @click="handleAddBatch">
+        Add Batch
+      </button>
       <ManageBookmark :bookmark="reactiveBookmark" @update-bookmark="handleUpdateBookmark" @create-bookmark="handleCreateBookmark" />
     </div>
     <SessionLocked class="mx-auto" />
