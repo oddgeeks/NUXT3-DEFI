@@ -20,7 +20,6 @@ export function useConnectors() {
     default() {
       return {
         provider: null,
-        address: '',
       }
     },
   })
@@ -39,7 +38,6 @@ export function useConnectors() {
     resetAccounts()
     router.push('/login')
 
-    connectionMeta.value.address = ''
     connectionMeta.value.provider = null
 
     if (connector.value)
@@ -47,7 +45,11 @@ export function useConnectors() {
   }
 
   function setConnectorName(name: string | null) {
-    connectionMeta.value.provider = name
+    const obj = {
+      provider: name,
+    }
+
+    connectionMeta.value = obj
   }
 
   function getConnector(): any {

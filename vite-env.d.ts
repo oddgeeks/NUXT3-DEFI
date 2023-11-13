@@ -376,7 +376,6 @@ interface IMigrationTransaction {
 
 interface IConnectionMeta {
   provider: string | null;
-  address: string;
 }
 
 interface IPendingTransactionModalParams {

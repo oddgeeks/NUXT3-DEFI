@@ -14,8 +14,6 @@ export default defineEventHandler(async (event) => {
 
   let { type = 'success', message, isBridgeError = false, isProd = false } = await readBody(event)
 
-  console.log({ isProdSlack: isProd })
-
   if (message && IGNORED_MESSAGES.some(i => message.includes(i)))
     return {}
 
