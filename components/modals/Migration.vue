@@ -20,6 +20,7 @@ const { selectedSafe } = storeToRefs(useSafe())
 const { switchToAvocadoNetwork } = useNetworks()
 
 const { selectedTokensForMigration, selectedNFTsForMigration, selectedSafeForMigration } = storeToRefs(useMigration())
+const { gasBalanceManagerAddress } = storeToRefs(useEnvironmentState())
 const { account, library } = useWeb3()
 
 const {
@@ -100,12 +101,12 @@ async function getGasBalanceTransactions() {
 
   const signer = library.value.getSigner()
 
-  const gasBalanceManagerInstance = new ethers.Contract(gasBalanceManagerAddress, gasBalanceManagerAbi, signer)
+  const gasBalanceManagerInstance = new ethers.Contract(gasBalanceManagerAddress.value, gasBalanceManagerAbi, signer)
 
   const data = (await gasBalanceManagerInstance.populateTransaction['transfer(address,uint256,uint256)'](props.selectedMigrationSafe?.owner_address, props.selectedMigrationSafe?.multisig_index, toBN(selectedSafeForMigration.value.amount).toString())).data
 
   const tx = {
-    to: gasBalanceManagerAddress,
+    to: gasBalanceManagerAddress.value,
     data,
     value: '0',
     operation: '0',

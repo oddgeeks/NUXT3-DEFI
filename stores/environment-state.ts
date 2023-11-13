@@ -7,7 +7,9 @@ import {
   getMultisigForwarderProxyAddress,
   multisigURLProd,
   multisigURLStaging,
+  prodGasBalanceManagerAddress,
   prodInstadappSigner,
+  stagingGasBalanceManagerAddress,
   stagingInstadappSigner,
   swapAggregatorTokenProd,
   swapAggregatorTokenStaging,
@@ -24,6 +26,10 @@ export const useEnvironmentState = defineStore('environment-state', () => {
     : AVO_STAGING_CHAIN_NAME)
 
   const multisigForwarderProxyAddress = computed(() => getMultisigForwarderProxyAddress(isProd.value))
+
+  const gasBalanceManagerAddress = computed(() => isProd.value
+    ? prodGasBalanceManagerAddress
+    : stagingGasBalanceManagerAddress)
 
   const forwarderProxyAddress = computed(() => getForwarderProxyAddress(isProd.value))
 
@@ -62,6 +68,7 @@ export const useEnvironmentState = defineStore('environment-state', () => {
     multisigURL,
     swapAggregatorAccessToken,
     swapAggregatorURL,
+    gasBalanceManagerAddress,
   }
 })
 

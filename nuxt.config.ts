@@ -23,6 +23,7 @@ export default defineNuxtConfig({
       environment: process.env.ENVIRONMENT,
       domainURL: process.env.VERCEL_BRANCH_URL ? `https://${process.env.VERCEL_BRANCH_URL}` : 'https://avocado.instadapp.io',
       googleAnalyticsId: process.env.GA_ID,
+      isVercelProd: process.env.VERCEL_ENV === 'production',
     },
   },
   nitro: {

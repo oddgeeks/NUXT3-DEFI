@@ -7,6 +7,10 @@ export const useShared = defineStore('shared', () => {
   const rpcs = ref<Record<string, string>>({})
   const isProd = ref(false)
 
+  const isAppProduction = useCookie<boolean | undefined>('app-production', {
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
+  })
+
   function getRpcFallbackUrl(chainId: string | number) {
     const rpcURL = rpcs.value[chainId]
 
@@ -45,6 +49,7 @@ export const useShared = defineStore('shared', () => {
     rpcs,
     getRpcProviderByChainId,
     getRpcURLByChainId,
+    isAppProduction,
   }
 })
 
