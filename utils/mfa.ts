@@ -4,6 +4,10 @@ export function checkAtleastOneMfaVerified(safe?: ISafe) {
   return safe.mfa_phone_verified === 1 || safe.mfa_email_verified === 1 || safe.mfa_totp_verified === 1
 }
 
+export function checkSafeBackupSigner(safe: ISafe, account: string) {
+  return checkAtleastOneMfaVerified(safe) && !isAddressEqual(safe.owner_address, account)
+}
+
 export function checkHasInstadappSigner(safe: ISafe, instadappSigner: string) {
   const signers = formatSigners(safe.signers)
 

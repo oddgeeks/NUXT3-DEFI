@@ -27,14 +27,6 @@ export default defineNuxtConfig({
   },
   nitro: {
     routeRules: {
-      // '/api/cross-chain/estimate': {
-      //   proxy: {
-      //     to: 'https://microservices.instadapp.io/api/avocado/cross-chain/estimate',
-      //     onResponse: (response) => {
-      //       console.log(response)
-      //     },
-      //   },
-      // },
       '/**': {
         headers: {
           'Content-Security-Policy': 'frame-ancestors \'none\'',
@@ -45,15 +37,15 @@ export default defineNuxtConfig({
         headers: {
           'Content-Type': 'application/json',
         },
-        cache: { maxAge: 86400 },
+        cache: {
+          maxAge: 86400,
+        },
       },
-      // "/api/**": { cache: { maxAge: 5 } },
-      // "/api/transfers": { cache: { maxAge: 20 } },
-      // "/api/tokens": {
-      //   cache: {
-      //     maxAge: 3600, // 1 hour
-      //   },
-      // },
+      '/api/tokens': {
+        cache: {
+          maxAge: 86400,
+        },
+      },
     },
   },
   pwa: {

@@ -118,7 +118,7 @@ export function useNetworks() {
           type: 'error',
           title: 'Switch Network',
           message:
-            'Failed to Switch Network, please add Avocado Network manually (<a class=\'underline text-slate-300 font-medium\' target=\'_blank\' href=\'https://help.avocado.instadapp.io/en/articles/7037876-what-are-avocado-s-rpc-details\'>RPC details</a>).',
+            'Failed to Switch Network, please add Avocado Network manually (<a class=\'underline text-slate-300 font-medium\' target=\'_blank\' href=\'https://guides.avocado.instadapp.io/getting-started/avocado-rpc\'>RPC details</a>).',
         })
         return Promise.reject(err)
       }

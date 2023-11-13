@@ -6,21 +6,17 @@ import QrSVG from '~/assets/images/icons/qr.svg?component'
 import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
 import InstadappSVG from '@/assets/images/logo/instadapp.svg?component'
 
-const { active, deactivate, connector, account } = useWeb3()
+const { active, account } = useWeb3()
 const { trackingAccount } = useAccountTrack()
 const { safeAddress } = useAvocadoSafe()
-const { resetAccounts } = useSafe()
 const { ensName } = storeToRefs(useSafe())
 const [opened, toggle] = useToggle(false)
 const [walletListOpened, toggleWalletList] = useToggle(false)
-const { setConnectorName, cachedProviderName } = useConnectors()
-const { terminateMFAToken } = useMfa()
+const { cachedProviderName, onDisconnect } = useConnectors()
 const { providers } = useNetworks()
 const {
   showTrackingBanner,
 } = useBanner()
-
-const router = useRouter()
 
 const addressLabel = computed(() =>
   trackingAccount.value
@@ -41,14 +37,8 @@ const connectedProvider = computed(() => {
 async function closeConnection() {
   const { success } = await openDisconnectWalletModal()
 
-  if (success) {
-    terminateMFAToken()
-    resetAccounts()
-    setConnectorName(null)
-    router.push('/login')
-    if (connector.value)
-      deactivate()
-  }
+  if (success)
+    onDisconnect()
 }
 
 watch(() => active.value, () => {
@@ -165,7 +155,7 @@ watch(() => active.value, () => {
       <div class="flex flex-col gap-7.5 px-[44px]">
         <nav class="mt-1.5 flex w-full flex-col gap-5 text-xs text-slate-400">
           <div class="flex w-full justify-around">
-            <a target="_blank" href="https://help.avocado.instadapp.io">Help</a>
+            <a target="_blank" href="https://guides.avocado.instadapp.io">Help</a>
             <a href="mailto:info@instadapp.io">Email</a>
             <a
               rel="noopener noreferrer"

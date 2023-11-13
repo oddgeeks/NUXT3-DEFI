@@ -4,6 +4,8 @@ import { getAddress } from 'ethers/lib/utils'
 const { mainSafe, multiSigSafe, safes, legacySafe, legacySafeAddress, safesLoading, safeAddress, selectedSafe } = storeToRefs(useSafe())
 
 const userToggleHideLegacy = useLocalStorage('hide-legacy-safe', false)
+const route = useRoute()
+const { account } = useWeb3()
 
 const filteredSafes = computed(() => {
   if (!safes.value)
@@ -15,7 +17,14 @@ const filteredSafes = computed(() => {
     legacySafe.value?.safe_address,
   ].filter(address => !!address)
 
-  return safes.value.filter(safe => !excludedAddresses.includes(getAddress(safe.safe_address)))
+  const isMigrationPage = route.name === 'migration'
+
+  const safeItems = safes.value.filter(safe => !excludedAddresses.includes(getAddress(safe.safe_address)))
+
+  if (isMigrationPage)
+    return safeItems.filter(safe => !checkSafeBackupSigner(safe, account.value))
+
+  return safeItems
 })
 
 function handleToggle() {
@@ -41,7 +50,7 @@ const displayLegacySafe = computed(() => {
         <SvgSpinner v-if="safesLoading" class="text-primary" />
       </h2>
       <button v-if="legacySafeAddress && legacySafe" class="text-xs text-primary" type="button" @click="handleToggle">
-        {{ !displayLegacySafe ? 'Show' : 'Hide' }} legacy safe
+        {{ !displayLegacySafe ? 'Show' : 'Hide' }} legacy wallet
       </button>
     </div>
     <template v-if="!safesLoading">

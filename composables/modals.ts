@@ -47,6 +47,8 @@ import ViewDecodedModal from '~/components/modals/Multisig/ViewDecodedModal.vue'
 import WelcomeModal from '~/components/modals/Welcome.vue'
 import CreateBookmark from '~/components/modals/CreateBookmark.vue'
 import ExecutionError from '~/components/modals/Multisig/ExecutionError.vue'
+import Migration from '~/components/modals/Migration.vue'
+import PendingMigration from '~/components/modals/PendingMigration.vue'
 import ActivateMFA from '~/components/modals//Mfa/ActivateMFA.vue'
 import AuthenticateMFA from '~/components/modals//Mfa/Authenticate.vue'
 import VerifyMFA from '~/components/modals//Mfa/VerifyMFA.vue'
@@ -58,6 +60,7 @@ import MFASignInstadappSigner from '~/components/modals/Mfa/SignInstadappSigner.
 import MFAActivateBackupSigner from '~/components/modals/Mfa/ActivateBackupSigner.vue'
 import MFAReviewBackupTransaction from '~/components/modals/Mfa/ReviewBackupTransaction.vue'
 import ReviewSignerProcess from '~/components/modals/Multisig/ReviewSignerProcess.vue'
+import RequestTermsSignature from '~/components/modals/RequestTermsSignature.vue'
 
 const { openModal } = useModal()
 
@@ -740,6 +743,49 @@ export async function openDecodedParamsModal(params: IDecodedParams) {
     options: {
       contentClass: '!p-0',
       wrapperClass: '!max-w-[fit-content]',
+    },
+  })
+}
+
+export async function openMigrationModal(selectedMigrationSafe: ISafe) {
+  return openModal({
+    component: Migration,
+    async: true,
+    componentProps: {
+      selectedMigrationSafe,
+    },
+    options: {
+      contentClass: '!p-7.5',
+      wrapperClass: '!max-w-[540px]',
+    },
+  })
+}
+
+export function openPendingMigrationModal(
+  hashes: string[],
+  chainIds: (number | string)[],
+  async = false,
+) {
+  return openModal({
+    component: PendingMigration,
+    async,
+    componentProps: {
+      hashes,
+      chainIds,
+    },
+  })
+}
+
+export async function openRequestTermsSignature() {
+  return openModal({
+    component: RequestTermsSignature,
+    id: 'request-terms-signature',
+    async: true,
+    options: {
+      clickToClose: false,
+      closeButton: false,
+      contentClass: '!p-7.5',
+      wrapperClass: '!max-w-[560px]',
     },
   })
 }

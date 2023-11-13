@@ -1,6 +1,6 @@
 # Avocado App
 
-An interface for Avocado platform that makes web3 interaction easy by enabling network, gas and account abstraction allowing you to experience web3 more seamlessly.
+An interface for Avocado platform that makes web3 interaction easy by enabling network, gas and account abstraction allowing you to experience web3 more seamlessly..
 
 # Maintain dApps
 
@@ -44,3 +44,5 @@ npm run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information
+
+

@@ -7,6 +7,8 @@ defineProps<{
   asset: NFTData
   imgClass?: string
   details?: boolean
+  hideChainLogo?: boolean
+  compact?: boolean
 }>()
 
 const error = ref(false)
@@ -40,6 +42,7 @@ async function handleToggle() {
   >
     <div
       v-if="error || !asset.imageUrl"
+      :class="compact ? 'w-8 h-8' : 'w-[168] h-[240px]'"
       class="flex h-[240px] w-[168] items-center justify-center rounded-[14px] bg-slate-50 dark:bg-gray-850"
     >
       <BrokenSVG />
@@ -58,6 +61,7 @@ async function handleToggle() {
       @error="handleError"
     >
     <div
+      v-if="!hideChainLogo"
       :class="{
         'p-1.5 text-xs': !details,
         'p-2 font-bold': details,

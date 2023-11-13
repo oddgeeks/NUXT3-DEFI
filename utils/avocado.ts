@@ -6,6 +6,9 @@ export const AVO_PROD_FORWARDER_ADDR
 export const AVO_STAGING_FORWARDER_ADDR
   = '0x8CDaAC0371a443985c6Faf07938dDAa7A5818674'
 
+export const stagingGasBalanceManagerAddress = '0x847b123EB1Ed2f51bC8A5ed7D5C9091595793ae7'
+export const prodGasBalanceManagerAddress = '0x0bF8d2e143550874ADE7c2eb1e768aa494debB44'
+
 export const stagingInstadappSigner = '0x2D8EE1C03b88b4b72B1c05Dab218EE1982147602'
 export const prodInstadappSigner = '0x27A26e2f1CaD33cD0389A85Ab09a6b4f169Bc34f'
 
