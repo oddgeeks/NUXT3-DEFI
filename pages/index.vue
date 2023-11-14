@@ -44,10 +44,13 @@ function selectType(type: string) {
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col gap-7.5">
-    <SecondaryOwner />
-    <TotalBalance />
-    <DApps />
+  <div class="flex flex-1 flex-col gap-5 sm:gap-7.5">
+    <WalletItemList class="flex sm:hidden" compact />
+    <div class="flex flex-col gap-2.5 sm:hidden">
+      <SecondaryOwner />
+      <TotalBalance />
+      <DApps />
+    </div>
     <div class="flex flex-1 flex-col gap-5 lg:flex-row">
       <div class="relative flex w-full flex-col gap-5">
         <div class="flex flex-col gap-5">

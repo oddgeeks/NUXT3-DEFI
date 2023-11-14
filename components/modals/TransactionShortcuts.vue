@@ -36,7 +36,7 @@ function getIcon(bookmark: IBookmark) {
 
 <template>
   <div>
-    <ModalTitle class="border-b border-gray-875 p-7.5">
+    <ModalTitle class="border-b border-gray-875 p-5 sm:p-7.5">
       <template #icon>
         <SvgoBookmark class="text-white" />
       </template>

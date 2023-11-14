@@ -8,7 +8,9 @@ const { lastModal } = useModal()
 const { safeAddress } = storeToRefs(useSafe())
 const { fromWei } = useBignumber()
 const { avoProvider } = useSafe()
-const { layoutStyle, isMobile, actualWidth } = useSidebar()
+const { isMobile, actualWidth } = useSidebar()
+
+const actualWidthInPx = computed(() => `${actualWidth.value}px`)
 
 const { refresh } = useAsyncData(
   'pending-deposit',
@@ -89,7 +91,7 @@ useIntervalFn(refresh, 15000)
 
 <template>
   <Html :class="isMobile && actualWidth ? 'overflow-hidden' : ''">
-    <div class="transition-all" :style="layoutStyle">
+    <div class="layout-wrapper transition-all">
       <Sidebar />
 
       <NuxtLayout>
@@ -107,9 +109,20 @@ useIntervalFn(refresh, 15000)
   </Html>
 </template>
 
-<style>
+<style scoped>
 #__nuxt {
   width: 100%;
   height: 100%;
+}
+
+.layout-wrapper {
+   transform: translateX(v-bind(actualWidthInPx))
+}
+
+@screen sm {
+  .layout-wrapper {
+    margin-left: v-bind(actualWidthInPx);
+    transform: none;
+  }
 }
 </style>

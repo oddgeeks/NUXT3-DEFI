@@ -33,20 +33,6 @@ export function useSidebar() {
   const hideSidebar = () => hidden.value = true
   const toggleHideSidebar = () => hidden.value = !hidden.value
 
-  const layoutStyle = computed(() => {
-    if (process.server)
-      return
-
-    if (isMobile.value) {
-      return {
-        transform: `translateX(${actualWidth.value}px)`,
-      }
-    }
-    return {
-      marginLeft: `${actualWidth.value}px`,
-    }
-  })
-
   return {
     collapsed,
     collapse,
@@ -56,7 +42,6 @@ export function useSidebar() {
     toggleCollapse,
     actualWidth,
     collapsedWidth,
-    layoutStyle,
     hideSidebar,
     toggleHideSidebar,
     isMobile,

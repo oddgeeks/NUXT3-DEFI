@@ -1,12 +1,10 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 
-const { safeAddress, allSafes, safesLoading } = storeToRefs(useSafe())
+const { safeAddress } = storeToRefs(useSafe())
 const { fromWei } = useBignumber()
 const { avoProvider } = useSafe()
 const route = useRoute()
-
-const { pinnedSafes, isSafePinned, displayLegacySafe } = useAccountState()
 
 const dryRun = useCookie<boolean | undefined>('dry-run', {
   expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
@@ -35,35 +33,12 @@ const { refresh } = useAsyncData(
   },
 )
 
-const priorSafes = computed(() => {
-  const safes = displayLegacySafe.value
-    ? allSafes.value
-    : allSafes.value?.filter((safe) => {
-      return safe.multisig === 1
-    })
-
-  if (!pinnedSafes.value.length)
-    return safes.slice(0, 3)
-
-  return safes.filter((safe) => {
-    return isSafePinned(safe.safe_address)
-  })
-})
-
 useIntervalFn(refresh, 15000)
 </script>
 
 <template>
   <div class="hidden items-center justify-end py-8 sm:flex">
-    <div v-if="!safesLoading" class="flex items-center gap-4">
-      <TransitionGroup name="wallet-list">
-        <WalletItem v-for="safe in priorSafes" :key="safe.id" :safe="safe" />
-      </TransitionGroup>
-      <button v-if="allSafes?.length" class="flex h-[44px] w-full items-center justify-center gap-2.5 rounded-7.5 border  border-slate-750 bg-gray-850 py-1 pl-[14px] pr-2.5 text-left text-xs" @click="openAllWalletsModal()">
-        All
-        <SvgoChevronDown class="h-3.5 w-3.5 -rotate-90" />
-      </button>
-    </div>
+    <WalletItemList />
     <div class="mr-auto flex items-center gap-2.5">
       <SessionLocked />
     </div>

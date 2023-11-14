@@ -38,7 +38,7 @@ const filteredSafes = computed(() => {
 
 <template>
   <div>
-    <ModalTitle class="border-b border-gray-875 p-7.5">
+    <ModalTitle class="border-b border-gray-875 p-5 sm:p-7.5">
       <template #icon>
         $
       </template>
@@ -49,8 +49,8 @@ const filteredSafes = computed(() => {
         Manage your wallets and use all the features of Avocado!
       </template>
     </ModalTitle>
-    <div class="flex flex-col gap-2.5 px-7.5 pb-7.5 pt-4">
-      <div class="flex items-center justify-between">
+    <div class="flex flex-col gap-2.5 px-5 pb-7.5 pt-4 sm:px-7.5">
+      <div class="flex flex-col justify-between gap-2.5 sm:flex-row sm:items-center">
         <span class="text-sm">
           All Wallets
         </span>
@@ -80,7 +80,7 @@ const filteredSafes = computed(() => {
           <SvgoSearch class="mr-2" />
         </template>
       </CommonInput>
-      <div class="grid grid-cols-2 items-stretch gap-4">
+      <div class="grid grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2 sm:gap-4">
         <TransitionGroup :appear="false" :name="!searcInputFocused ? 'wallet-list' : ''">
           <template v-for="safe in filteredSafes" :key="safe.safe_address">
             <div v-if="safe.multisig === 0 ? displayLegacySafe : true">

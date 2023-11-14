@@ -5,7 +5,7 @@ const { authorisedNetworks, isWalletSecondary } = useAuthorities()
 </script>
 
 <template>
-  <div v-if="selectedSafe && isWalletSecondary" class="flex items-center justify-between rounded-5 bg-gray-850 px-5 py-[14px]">
+  <div v-if="selectedSafe && isWalletSecondary" class="flex flex-col items-baseline justify-between gap-2.5 rounded-5 bg-gray-850 px-4 py-[14px] sm:flex-row sm:items-center sm:px-5">
     <div class="flex flex-col gap-0.5">
       <div class="flex gap-2">
         <span class="text-sm">Multisig owned by</span>
@@ -18,7 +18,7 @@ const { authorisedNetworks, isWalletSecondary } = useAuthorities()
         You are not the primary owner
       </span>
     </div>
-    <div class="flex flex-1 items-center justify-center gap-4">
+    <div class="flex flex-1 flex-wrap items-center gap-1.5 sm:justify-center sm:gap-4">
       <span class="text-xs">
         Networks available to you
       </span>
