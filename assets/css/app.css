@@ -189,14 +189,6 @@
   background-color: transparent !important;
 }
 
-.text-shadow {
-  background: linear-gradient(90deg, #0f172a 85.41%, rgba(15, 23, 42, 0) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
-}
-
 .overflow-y-overlay {
   overflow-y: auto;
 }
@@ -207,7 +199,7 @@
   }
 }
 
-html.dark .text-shadow {
+.text-shadow {
   background: linear-gradient(
     90deg,
     #ffffff 85.41%,

@@ -47,7 +47,6 @@ function selectType(type: string) {
   <div class="flex flex-1 flex-col gap-7.5">
     <SecondaryOwner />
     <TotalBalance />
-    <YourWallet />
     <DApps />
     <div class="flex flex-1 flex-col gap-5 lg:flex-row">
       <div class="relative flex w-full flex-col gap-5">

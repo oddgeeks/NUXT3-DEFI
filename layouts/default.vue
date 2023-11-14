@@ -88,10 +88,9 @@ ${stringified}`
         class="mx-auto flex min-w-0 max-w-7xl flex-1 flex-col px-4 sm:px-10"
       >
         <TheHeader />
-        <div class="container mt-[104px] flex flex-col gap-4 sm:mt-0">
+        <div class="container mt-20 flex flex-col gap-4 sm:mt-0">
           <WarningsGasBalance v-if="showInsufficientGasBanner" />
         </div>
-        <MobileNavigation />
         <slot />
         <TheFooter />
       </div>

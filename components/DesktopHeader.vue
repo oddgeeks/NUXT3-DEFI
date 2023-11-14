@@ -39,7 +39,7 @@ const priorSafes = computed(() => {
   const safes = displayLegacySafe.value
     ? allSafes.value
     : allSafes.value?.filter((safe) => {
-      return safe.multisig === 1 ? true : displayLegacySafe.value
+      return safe.multisig === 1
     })
 
   if (!pinnedSafes.value.length)
@@ -65,7 +65,6 @@ useIntervalFn(refresh, 15000)
       </button>
     </div>
     <div class="mr-auto flex items-center gap-2.5">
-      <!-- <SvgoAvocadoProtect v-if="$route.name === 'protect'" /> -->
       <SessionLocked />
     </div>
     <button v-if="dryRun" class="mr-4 text-sm text-orange" @click="dryRun = undefined">

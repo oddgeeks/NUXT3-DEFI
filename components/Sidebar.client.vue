@@ -25,7 +25,7 @@ const tippyOptions = {
   <div class="relative">
     <button
       :style="{ left: `${actualWidth - 14}px` }"
-      class="fixed top-7.5 z-10 flex  h-7 w-7 items-center justify-center rounded-full bg-gray-900 transition-[width]"
+      class="fixed top-7.5 z-10 hidden h-7 w-7 items-center justify-center rounded-full bg-gray-900 transition-[width] sm:flex"
       @click="toggleSidebar"
     >
       <ArrowRight

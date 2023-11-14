@@ -53,7 +53,9 @@ export function useGraph(balance: Ref<IBalance>) {
       return
 
     try {
-      const vaults = await $fetch(`https://api.instadapp.io/v2/mainnet/lite/users/${incorrectAddress}/vaults`) as any[]
+      const vaults = await $fetch(`https://api.instadapp.io/v2/mainnet/lite/users/${incorrectAddress}/vaults`, {
+        retry: 3,
+      }) as any[]
       const v2EthVault = vaults.find(v => v.version === '2' && v.tokenAddress === ethAddress)
 
       if (!v2EthVault)
