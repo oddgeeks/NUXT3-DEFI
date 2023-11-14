@@ -81,6 +81,7 @@ Nonce: {{NONCE}}
 
     logActionToSlack({
       account: account.value,
+      type: 'error',
       action: 'sign-terms',
       message: `Failed to sign terms: ${parsed.formatted} 
 <@UK9L88BS7>, <@U02NZML3JJ0>`,
