@@ -91,21 +91,23 @@ useIntervalFn(refresh, 15000)
 
 <template>
   <Html :class="isMobile && actualWidth ? 'overflow-hidden' : ''">
-    <div class="layout-wrapper h-full transition-all">
-      <Sidebar />
+    <Body :class="isMobile && actualWidth ? 'overflow-hidden' : ''">
+      <div class="layout-wrapper h-full transition-all">
+        <Sidebar />
 
-      <NuxtLayout>
-        <NuxtLoadingIndicator color="#07A65D" :height="2" />
-        <NuxtPage />
-      </NuxtLayout>
-    </div>
+        <NuxtLayout>
+          <NuxtLoadingIndicator color="#07A65D" :height="2" />
+          <NuxtPage />
+        </NuxtLayout>
+      </div>
 
-    <BannerNewVersion />
-    <BannerMultisigOnboard />
-    <Notifications />
-    <TransactionsQueue />
-    <Modals />
-    <ChatBubble />
+      <BannerNewVersion />
+      <BannerMultisigOnboard />
+      <Notifications />
+      <TransactionsQueue />
+      <Modals />
+      <ChatBubble />
+    </Body>
   </Html>
 </template>
 
