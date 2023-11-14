@@ -72,7 +72,7 @@ whenever(escape, () => {
       <div
         :class="[
           {
-            'mt-auto rounded-t-7.5': modalOptions.sheetPosition === 'bottom',
+            'mt-auto rounded-t-7.5': modalOptions.sheetPosition === 'bottom' || !modalOptions.sheetPosition,
             'mb-auto rounded-b-7.5': modalOptions.sheetPosition === 'top',
           },
           modalOptions.wrapperClass,

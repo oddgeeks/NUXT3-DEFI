@@ -1,17 +1,10 @@
 <script setup lang="ts">
-import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 import QrSVG from '~/assets/images/icons/qr.svg?component'
 
-const { opened, toggleSidebar } = useSidebar()
+const { collapsed, toggleCollapse, hideSidebar, actualWidth, isMobile, hidden } = useSidebar()
 const { safeAddress } = useAvocadoSafe()
-const { isSafeMultisig } = storeToRefs(useMultisig())
 const { selectedSafe } = storeToRefs(useSafe())
 const { navigations } = useNavigation()
-
-const width = 340
-const collapsedWidth = 120
-
-const actualWidth = computed(() => opened.value ? width : collapsedWidth)
 
 const tippyOptions = {
   arrow: true,
@@ -19,39 +12,30 @@ const tippyOptions = {
   animation: 'fade',
   placement: 'right',
 }
+
+const target = ref<HTMLElement | null>(null)
+
+onClickOutside(target, () => {
+  hideSidebar()
+}, {
+  ignore: ['.modal', 'wcm-modal'],
+})
 </script>
 
 <template>
-  <div class="relative">
+  <Teleport to="body">
     <button
       :style="{ left: `${actualWidth - 14}px` }"
-      class="fixed top-7.5 z-10 hidden h-7 w-7 items-center justify-center rounded-full bg-gray-900 transition-[width] sm:flex"
-      @click="toggleSidebar"
+      class="fixed top-7.5 z-[40] hidden h-7 w-7 items-center justify-center rounded-full bg-gray-900 transition sm:flex"
+      @click="toggleCollapse"
     >
-      <ArrowRight
+      <SvgoArrowRight
         class="h-3.5 w-3.5 text-gray-400"
-        :class="{ 'rotate-180': opened }"
+        :class="{ 'rotate-180': !collapsed }"
       />
     </button>
-    <aside :style="{ width: `${actualWidth}px` }" style="scrollbar-gutter:stable;overflow-y:overlay;" class="scroll-style sticky top-0 hidden h-screen shrink-0 overflow-y-auto bg-gray-850 transition-[width] sm:flex">
-      <div v-if="opened" class="flex w-full flex-col">
-        <div class="flex flex-col gap-6 px-7.5 pb-6 pt-7.5">
-          <div class="flex items-center justify-between gap-2.5">
-            <NuxtLink class="flex items-center gap-2.5" to="/">
-              <SvgoAvocadoLogo class="h-full w-full" />
-              <SafeBadge v-if="selectedSafe" :safe="selectedSafe" />
-            </NuxtLink>
-          </div>
-          <div class="flex">
-            <QrCode />
-          </div>
-          <div class="flex flex-col items-start gap-3">
-            <SupportedChains :max-count="6" class="!flex justify-between !gap-3" />
-          </div>
-        </div>
-        <Navigation />
-      </div>
-      <div v-else class="flex w-full flex-col items-center gap-6 p-7.5">
+    <aside ref="target" :style="{ width: `${actualWidth}px` }" style="scrollbar-gutter:stable;overflow-y:overlay;" class="scroll-style fixed top-0 z-30 flex h-full shrink-0 overflow-y-auto bg-gray-850 transition-[width] sm:h-screen">
+      <div v-if="collapsed && !isMobile" class="flex w-full flex-col items-center gap-6 p-7.5">
         <div class="flex flex-col items-center gap-5">
           <NuxtLink class="flex flex-col items-center gap-2.5" to="/">
             <SvgoAvocadoLogoMini />
@@ -109,6 +93,25 @@ const tippyOptions = {
           </template>
         </div>
       </div>
+
+      <div v-else class="flex w-full flex-col">
+        <div class="flex flex-col gap-6 px-7.5 pb-6 pt-7.5">
+          <div class="flex items-center justify-between gap-2.5">
+            <NuxtLink class="flex items-center gap-2.5" to="/">
+              <SvgoAvocadoLogo class="h-full w-full" />
+              <SafeBadge v-if="selectedSafe" :safe="selectedSafe" />
+            </NuxtLink>
+          </div>
+          <div class="flex">
+            <QrCode />
+          </div>
+          <div class="flex flex-col items-start gap-3">
+            <SupportedChains :max-count="6" class="!flex justify-between !gap-3" />
+          </div>
+        </div>
+        <Navigation />
+      </div>
     </aside>
-  </div>
+    <div :class="hidden ? 'opacity-0 pointer-events-none select-none' : 'opacity-100'" :style="{ width: 'calc(100% - 324px)' }" class="fixed right-0 top-0 z-40 block h-full bg-[#E2E8F033] backdrop-blur-[4px] transition-opacity sm:hidden" />
+  </Teleport>
 </template>

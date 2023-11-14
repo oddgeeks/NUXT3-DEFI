@@ -8,6 +8,7 @@ const { lastModal } = useModal()
 const { safeAddress } = storeToRefs(useSafe())
 const { fromWei } = useBignumber()
 const { avoProvider } = useSafe()
+const { layoutStyle, isMobile, actualWidth } = useSidebar()
 
 const { refresh } = useAsyncData(
   'pending-deposit',
@@ -87,17 +88,23 @@ useIntervalFn(refresh, 15000)
 </script>
 
 <template>
-  <NuxtLayout>
-    <NuxtLoadingIndicator color="#07A65D" :height="2" />
-    <NuxtPage />
-  </NuxtLayout>
+  <Html :class="isMobile && actualWidth ? 'overflow-hidden' : ''">
+    <div class="transition-all" :style="layoutStyle">
+      <Sidebar />
 
-  <BannerNewVersion />
-  <BannerMultisigOnboard />
-  <Notifications />
-  <TransactionsQueue />
-  <Modals />
-  <ChatBubble />
+      <NuxtLayout>
+        <NuxtLoadingIndicator color="#07A65D" :height="2" />
+        <NuxtPage />
+      </NuxtLayout>
+    </div>
+
+    <BannerNewVersion />
+    <BannerMultisigOnboard />
+    <Notifications />
+    <TransactionsQueue />
+    <Modals />
+    <ChatBubble />
+  </Html>
 </template>
 
 <style>
