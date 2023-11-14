@@ -74,10 +74,12 @@ Nonce: {{NONCE}}
   }
   catch (e: any) {
     const parsed = parseTransactionError(e)
-    openSnackbar({
-      message: parsed.formatted,
-      type: 'error',
-    })
+
+    emit('resolve', true)
+    // openSnackbar({
+    //   message: parsed.formatted,
+    //   type: 'error',
+    // })
 
     logActionToSlack({
       account: account.value,
