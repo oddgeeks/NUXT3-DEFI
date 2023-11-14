@@ -16,9 +16,9 @@ const emit = defineEmits(['destroy'])
 
 const { safeAddress, sendTransaction } = useAvocadoSafe()
 const { isSafeMultisig } = storeToRefs(useMultisig())
-const { forwarderProxyAddress } = useSafe()
 const { parseTransactionError } = useErrorHandler()
 const { getRpcProviderByChainId } = useShared()
+const { multisigForwarderProxyAddress, forwarderProxyAddress } = storeToRefs(useEnvironmentState())
 
 const { account } = useWeb3()
 const submitting = ref(false)
@@ -27,12 +27,12 @@ const avoWalletImpAddress = ref('')
 
 async function fetchAvowalletImpl() {
   const forwarderProxyContract = Forwarder__factory.connect(
-    forwarderProxyAddress,
+    forwarderProxyAddress.value,
     getRpcProviderByChainId(props.options.chainId),
   )
 
   const multisigForarderContract = MultisigForwarder__factory.connect(
-    multisigForwarderProxyAddress,
+    multisigForwarderProxyAddress.value,
     getRpcProviderByChainId(props.options.chainId),
   )
 

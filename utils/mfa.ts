@@ -8,7 +8,7 @@ export function checkSafeBackupSigner(safe: ISafe, account: string) {
   return checkAtleastOneMfaVerified(safe) && !isAddressEqual(safe.owner_address, account)
 }
 
-export function checkHasInstadappSigner(safe: ISafe) {
+export function checkHasInstadappSigner(safe: ISafe, instadappSigner: string) {
   const signers = formatSigners(safe.signers)
 
   const instadappSigners = signers.find(i => isAddressEqual(i.address, instadappSigner))
@@ -19,15 +19,7 @@ export function checkHasInstadappSigner(safe: ISafe) {
   return instadappSigners.chainIds.length > 0
 }
 
-export function checkHasInstadappSignerWithMfa(safe: ISafe) {
-  return checkHasInstadappSigner(safe) && checkAtleastOneMfaVerified(safe)
-}
-
 export function isSignerAdded(safe: ISafe, address: string, chainId: number | string) {
   const signers = safe.signers?.[chainId] || []
   return signers.some(i => isAddressEqual(i, address))
-}
-
-export function isInstadappSignerAdded(safe: ISafe, chainId: number | string) {
-  return isSignerAdded(safe, instadappSigner, chainId)
 }

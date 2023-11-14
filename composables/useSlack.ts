@@ -58,6 +58,7 @@ const ignoredMessages = [
 export function logActionToSlack(slackMessage: ISlackMessage) {
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { atLeastOneMfaVerifed, getMFAToken } = useMfa()
+  const { avoExplorerURL, isProd } = storeToRefs(useEnvironmentState())
   const { isObservableAccount } = storeToRefs(useSafe())
   const latestMfaType = useState('latest-mfa-type')
   const { provider } = useWeb3()
@@ -86,7 +87,7 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
 
   const explorerLink
     = chainId && txHash
-      ? `<${`${avoExplorerURL}/tx/${txHash}`}|${shortenHash(
+      ? `<${`${avoExplorerURL.value}/tx/${txHash}`}|${shortenHash(
           txHash,
           12,
         )}>`
@@ -136,7 +137,7 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
   if (providerName)
     logMessage += `\n${'`Wallet Provider`'} ${providerName}`
 
-  slack(logMessage, type, isBridgeError)
+  slack(logMessage, type, isBridgeError, isProd.value)
 
   latestMfaType.value = undefined
 }

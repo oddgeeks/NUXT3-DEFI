@@ -17,6 +17,7 @@ export function useAvocadoSafe() {
   const { getRpcProviderByChainId } = useShared()
   const { avoProvider, getSafeOptions, refreshSelectedSafe, getFallbackSafeOptionsByChainId } = useSafe()
   const { selectedSafe, isSelectedSafeLegacy, safeOptions } = storeToRefs(useSafe())
+  const { multisigURL, instadappSigner, avoChainId } = storeToRefs(useEnvironmentState())
   const { clearAllModals } = useModal()
   const { authVerify, preferredMfa, isAvocadoProtectActive, atLeastOneMfaVerifed, getMFAToken, getMFATokenExpiry } = useMfa()
   const dryRun = useCookie<boolean | undefined>('dry-run')
@@ -182,7 +183,7 @@ export function useAvocadoSafe() {
     const domain = {
       name: safeOptions.domainName,
       version: safeOptions.notdeployed ? safeOptions?.latestVersion : safeOptions.currentVersion,
-      chainId: String(avoChainId),
+      chainId: String(avoChainId.value),
       salt: ethers.utils.solidityKeccak256(['uint256'], [chainId]),
       verifyingContract: selectedSafe.value?.safe_address,
     }
@@ -470,7 +471,7 @@ export function useAvocadoSafe() {
   }
 
   function isEligableToProceed2FA(requiredSigner: number, chainId: string | number) {
-    return isInstadappSignerAdded(selectedSafe.value!, chainId) && atLeastOneMfaVerifed.value && requiredSigner === 2
+    return isSignerAdded(selectedSafe.value!, instadappSigner.value, chainId) && atLeastOneMfaVerifed.value && requiredSigner === 2
   }
 
   async function getSingleSignatureObject(args: IGenerateMultisigSignatureParams) {
@@ -557,7 +558,7 @@ export function useAvocadoSafe() {
             data: multisigParams?.castParams,
             nonce,
           }, {
-            baseURL: multisigURL,
+            baseURL: multisigURL.value,
           })
 
           clearAllModals()
@@ -642,7 +643,7 @@ export function useAvocadoSafe() {
     const domain = {
       name: config.domainName,
       version: config.latestVersion,
-      chainId: String(avoChainId),
+      chainId: String(avoChainId.value),
       salt: ethers.utils.solidityKeccak256(['uint256'], [params.targetChainId]),
       verifyingContract: selectedSafe.value?.safe_address,
     }
@@ -685,7 +686,7 @@ export function useAvocadoSafe() {
     const domain = {
       name: config?.domainName,
       version: config?.latestVersion,
-      chainId: avoChainId,
+      chainId: avoChainId.value,
       verifyingContract,
       salt: ethers.utils.solidityKeccak256(['uint256'], [chainId]),
     }
@@ -762,7 +763,7 @@ export function useAvocadoSafe() {
 
     const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${tx.safe_address}/transactions`, {
       params,
-      baseURL: multisigURL,
+      baseURL: multisigURL.value,
     })
 
     const isRejectionAlreadyExist = isNonseq ? data.meta.total > 0 : data.meta.total > 1
@@ -912,7 +913,7 @@ export function useAvocadoSafe() {
           status: 'pending',
           chain_id: chainId,
         },
-        baseURL: multisigURL,
+        baseURL: multisigURL.value,
       })
 
       const maxNonce = Math.max(...data.data.map(i => Number(i.nonce)))
