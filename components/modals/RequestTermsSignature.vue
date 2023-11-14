@@ -1,4 +1,7 @@
 <script setup lang="ts">
+const props = defineProps<{
+  providerId?: string
+}>()
 const emit = defineEmits(['destroy', 'resolve'])
 const { avoProvider } = useSafe()
 
@@ -85,7 +88,8 @@ Nonce: {{NONCE}}
       account: account.value,
       type: 'error',
       action: 'sign-terms',
-      message: `Failed to sign terms: ${parsed.formatted} 
+      message: `Failed to sign terms: ${parsed.formatted}
+${'`Connector`'} ${props.providerId}
 <@UK9L88BS7>, <@U02NZML3JJ0>`,
     })
   }
