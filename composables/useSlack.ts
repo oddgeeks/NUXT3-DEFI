@@ -281,6 +281,7 @@ function getPrefix(amountInUsd: string, action: ISlackMessage['action']) {
 
 export function getWalletProviderName(provider: any) {
   const providerName = provider?.constructor?.name
+  const { connectionMeta } = useConnectors()
 
   if (provider.isTrust)
     return 'trust'
@@ -325,4 +326,6 @@ export function getWalletProviderName(provider: any) {
     return 'localhost'
   if (provider.isMetaMask)
     return 'metamask'
+
+  return connectionMeta?.value?.provider
 }
