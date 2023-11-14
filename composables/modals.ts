@@ -772,11 +772,14 @@ export function openPendingMigrationModal(
   })
 }
 
-export async function openRequestTermsSignature() {
+export async function openRequestTermsSignature(providerId?: string) {
   return openModal({
     component: RequestTermsSignature,
     id: 'request-terms-signature',
     async: true,
+    componentProps: {
+      providerId,
+    },
     options: {
       clickToClose: false,
       closeButton: false,

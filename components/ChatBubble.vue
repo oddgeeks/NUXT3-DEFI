@@ -46,7 +46,7 @@ async function openMessagePopup() {
     window.$chatwoot.setUser(identifier, {
       identifier_hash: identifierHash.value,
       name: account.value,
-      email: selectedSafe.value?.safe_address,
+      company_name: selectedSafe.value?.safe_address,
     })
   }
 
