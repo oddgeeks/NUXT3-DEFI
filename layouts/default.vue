@@ -81,7 +81,7 @@ ${stringified}`
   <section class="flex h-full flex-col">
     <BannerAccountTracking v-if="showTrackingBanner" />
 
-    <div class="flex">
+    <div class="flex h-full">
       <div class="flex w-full justify-center">
         <div
           class="flex min-w-0 max-w-7xl flex-1 flex-col px-4 transition-[margin-left] sm:px-10"

@@ -91,7 +91,7 @@ useIntervalFn(refresh, 15000)
 
 <template>
   <Html :class="isMobile && actualWidth ? 'overflow-hidden' : ''">
-    <div class="layout-wrapper transition-all">
+    <div class="layout-wrapper h-full transition-all">
       <Sidebar />
 
       <NuxtLayout>
@@ -109,7 +109,7 @@ useIntervalFn(refresh, 15000)
   </Html>
 </template>
 
-<style scoped>
+<style>
 #__nuxt {
   width: 100%;
   height: 100%;
