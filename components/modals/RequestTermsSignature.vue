@@ -12,7 +12,8 @@ const pending = ref(false)
 async function handleSign() {
   try {
     const userNonce = useCookie<string | null>(`nonce-${account.value}`, {
-      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      // expires in 3 months
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30 * 3),
     })
 
     pending.value = true
@@ -76,6 +77,13 @@ Nonce: {{NONCE}}
     openSnackbar({
       message: parsed.formatted,
       type: 'error',
+    })
+
+    logActionToSlack({
+      account: account.value,
+      action: 'sign-terms',
+      message: `Failed to sign terms: ${parsed.formatted} 
+<@UK9L88BS7>, <@U02NZML3JJ0>`,
     })
   }
   finally {
