@@ -31,33 +31,33 @@ function handleReject() {
 
 <template>
   <div
-    class="inline-flex w-full flex-col items-center justify-center gap-7.5 text-center"
+    class="inline-flex w-full flex-col gap-5"
   >
-    <component :is="headerIconComponent" v-if="headerIconComponent" />
-    <img
-      v-else-if="headerIconUrl"
-      class="h-10 w-10"
-      width="40"
-      height="40"
-      :src="headerIconUrl"
-    >
-    <SVGCheckCircle
-      v-else-if="type === 'success'"
-      class="success-circle text-white"
-    />
-    <SVGErrorCircle v-else-if="type === 'error'" class="h-10 w-10 fill-primary text-white" />
-    <SVGQuestionCircle v-else-if="type === 'question'" class="h-10 w-10 text-primary" />
-
-    <div class="flex flex-col gap-[15px]">
-      <h1 v-if="title" class="text-lg font-semibold">
+    <ModalTitle :class="!content ? 'items-center' : ''">
+      <template #icon-content>
+        <component :is="headerIconComponent" v-if="headerIconComponent" class="shrink-0" />
+        <img
+          v-else-if="headerIconUrl"
+          class="h-10 w-10 shrink-0"
+          width="40"
+          height="40"
+          :src="headerIconUrl"
+        >
+        <SVGCheckCircle
+          v-else-if="type === 'success'"
+          class="success-circle text-white"
+        />
+        <SVGErrorCircle v-else-if="type === 'error'" class="h-10 w-10 shrink-0 fill-primary text-white" />
+        <SVGQuestionCircle v-else-if="type === 'question'" class="h-10 w-10 shrink-0 text-primary" />
+      </template>
+      <template #title>
         {{ title }}
-      </h1>
-      <p
-        v-if="content"
-        class="text-center text-xs font-medium leading-5 text-gray-400"
-        v-html="content"
-      />
-    </div>
+      </template>
+      <template #subtitle>
+        <div v-if="content" v-html="content" />
+      </template>
+    </ModalTitle>
+
     <div
       v-if="isCancelButtonVisible || isButtonVisible"
       class="flex w-full items-center gap-4"

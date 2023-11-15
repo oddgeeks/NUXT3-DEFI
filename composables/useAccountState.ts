@@ -3,6 +3,8 @@ export function useAccountState() {
   const { legacySafe, legacySafeAddress } = storeToRefs(useSafe())
 
   const userToggleHideLegacy = useLocalStorage('hide-legacy-safe', false)
+  const isHideZeroBalances = useLocalStorage('hide-zero-balances', false)
+  const listType = useLocalStorage('listType', 'individual')
 
   const accountSafeMapping = useCookie<Record<string, string[]>>('account-safe-pin-mapping', {
     maxAge: 60 * 60 * 24 * 365 * 10,
@@ -51,5 +53,7 @@ export function useAccountState() {
     isSafePinned,
     displayLegacySafe,
     userToggleHideLegacy,
+    isHideZeroBalances,
+    listType,
   }
 }

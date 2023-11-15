@@ -324,6 +324,9 @@ export function openYourWalletModal(address: string) {
 export function openNetworksModal() {
   openModal({
     component: Networks,
+    options: {
+      contentClass: '!p-0',
+    },
   })
 }
 

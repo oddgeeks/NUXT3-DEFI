@@ -11,7 +11,7 @@
       <h1 class="text-lg">
         <slot name="title" />
       </h1>
-      <h2 class="text-xs font-medium leading-5 text-gray-400">
+      <h2 v-if="$slots?.subtitle" class="text-xs font-medium leading-5 text-gray-400">
         <slot name="subtitle" />
       </h2>
     </div>

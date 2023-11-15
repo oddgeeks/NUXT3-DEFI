@@ -11,14 +11,11 @@ definePageMeta({
 
 const { account } = useWeb3()
 const { networkPreference, tokenBalances } = storeToRefs(useSafe())
-
-const listType = useLocalStorage('listType', 'individual')
+const { isHideZeroBalances, listType } = useAccountState()
 
 useAccountTrack(undefined, () => {
   useEagerConnect()
 })
-
-const isHideZeroBalances = useLocalStorage('hide-zero-balances', false)
 
 const balancesTokenCount = computed(() => {
   if (!tokenBalances.value)
