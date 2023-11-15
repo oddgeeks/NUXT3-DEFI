@@ -6,10 +6,7 @@ export function useAccountState() {
   const isHideZeroBalances = useLocalStorage('hide-zero-balances', false)
   const listType = useLocalStorage('listType', 'individual')
 
-  const accountSafeMapping = useCookie<Record<string, string[]>>('account-safe-pin-mapping', {
-    maxAge: 60 * 60 * 24 * 365 * 10,
-    default: () => ref({}),
-  })
+  const accountSafeMapping = useLocalStorage<Record<string, string[]>>('account-safe-pin-mapping', {})
 
   const pinnedSafes = computed(() => {
     if (!account.value)
