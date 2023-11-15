@@ -7,7 +7,6 @@ const { balances, safeAddress } = storeToRefs(useSafe())
 const { totalNetAssets } = storeToRefs(useDefi())
 const { totalBalance } = useAvocadoSafe()
 const { authorisedNetworks } = useAuthorities()
-const { sessions } = storeToRefs(useWalletConnectV2())
 
 function handleOpenSendModal() {
   const firstAvailableChain = authorisedNetworks.value[0]?.chainId || 1
@@ -38,7 +37,7 @@ function handleOpenSendModal() {
               <div
                 class="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white"
               >
-                <ArrowRight class="h-3.5 w-3.5 -rotate-45" />
+                <ArrowRight class="h-4 w-4 -rotate-45" />
               </div>
             </button>
 
@@ -50,7 +49,7 @@ function handleOpenSendModal() {
               <div
                 class="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white"
               >
-                <ArrowRight class="h-3.5 w-3.5 rotate-[135deg]" />
+                <ArrowRight class="h-4 w-4 rotate-[135deg]" />
               </div>
             </button>
           </div>
@@ -60,13 +59,12 @@ function handleOpenSendModal() {
         DeFi Balance: {{ formatUsd(totalNetAssets) }}
       </NuxtLink>
     </div>
-    <div class="flex flex-col items-baseline gap-2.5 sm:flex-row">
-      <button class="flex items-center gap-2 px-4 py-2 text-sm text-gray-400" @click="openTransactionShortcutsModal">
+    <div class="flex flex-col-reverse items-baseline gap-2.5 sm:flex-row">
+      <button class="flex w-full items-center justify-center gap-2 rounded-5 border border-gray-800 px-4 py-2 text-xs text-gray-400 sm:w-fit sm:border-0 sm:text-sm" @click="openTransactionShortcutsModal">
         <SvgoBookmark />
         Tx Shortcuts
       </button>
       <CommonButton
-        v-if="!sessions.length"
         :disabled="!safeAddress"
         class="flex w-full items-center justify-center gap-2 !px-4 sm:w-fit"
         @click="openWalletConnectModal()"

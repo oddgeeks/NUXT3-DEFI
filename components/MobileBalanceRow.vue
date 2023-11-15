@@ -1,9 +1,7 @@
 <script lang="ts" setup>
 import type { IBalance } from '~/stores/safe'
-import Options from '@/assets/images/icons/options.svg?component'
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
 
-const props = defineProps<{
+defineProps<{
   tokenBalance: IBalance
   summary?: boolean
   sum?: number
@@ -13,28 +11,18 @@ const props = defineProps<{
   individual?: boolean
   count?: number
 }>()
-
-const interactable = computed(() =>
-  toBN(props.tokenBalance.balance).gt(0),
-)
-
-function onSelect() {
-  if (props.summary)
-    props.onToggle()
-  else if (toBN(props.tokenBalance.balance).gt(0))
-    openBalanceModal(props.tokenBalance)
-}
 </script>
 
 <template>
-  <div
-    :class="`flex py-3.5 px-4.5 justify-between items-center ${individual ? 'rounded-5 bg-gray-850 ' : (!summary ? 'border-t border-gray-800' : '')}`"
-    @click="onSelect"
+  <button
+    type="button"
+    :class="`flex text-left py-3.5 px-4.5 justify-between items-center ${individual ? 'rounded-5' : (!summary ? 'border-t border-gray-800' : '')}`"
+    @click="onToggle"
   >
-    <div class="flex items-center space-x-2.5">
-      <SafeTokenLogo v-if="individual" :chain-id="tokenBalance.chainId" :url="tokenBalance.logoURI" />
-      <SafeTokenLogo v-else-if="summary" :url="tokenBalance.logoURI" :count="count" />
-      <div v-else class="relative h-10 w-10">
+    <div class="flex max-w-[50%] flex-1 gap-2.5">
+      <SafeTokenLogo v-if="individual" network-logo-class="!w-4.5 !h-4.5" class="h-7.5 w-7.5" :chain-id="tokenBalance.chainId" :url="tokenBalance.logoURI" />
+      <SafeTokenLogo v-else-if="summary" network-logo-class="!w-4.5 !h-4.5" class="!h-7.5 !w-7.5" :url="tokenBalance.logoURI" :count="count" />
+      <div v-else class="relative pl-7.5">
         <ChainLogo
           v-tippy="chainIdToName(tokenBalance.chainId)"
           :stroke="true"
@@ -43,27 +31,20 @@ function onSelect() {
         />
       </div>
 
-      <div class="items-left flex flex-col">
-        <div class="text-shadow w-44 max-w-[256px] overflow-hidden font-semibold uppercase">
-          {{
-            formatDecimal(!summary ? tokenBalance.balance : sum)
-          }}
-          {{ tokenBalance.symbol }}
+      <div class="items-left flex flex-1 flex-col">
+        <div class="text-shadow min-w-0 max-w-[75%] flex-col overflow-hidden whitespace-nowrap text-xs font-bold uppercase leading-5">
+          {{ tokenBalance.name }}
         </div>
-        <div class="max-w-[256px] text-sm font-medium uppercase text-gray-400">
+        <p class="text-xs uppercase leading-5">
+          {{ formatDecimal(!summary ? tokenBalance.balance || 0 : sum || 0) }} {{ tokenBalance.symbol }}
+        </p>
+        <div class="text-xs uppercase leading-5 text-gray-400">
           {{ formatUsd(!summary ? tokenBalance.balanceInUSD : sumInUsd) }}
         </div>
       </div>
     </div>
-    <div
-      v-if="!summary"
-      :class="`w-[34px] h-[34px] bg-gray-900 rounded-[12px] flex items-center justify-center  text-slate-600 ${interactable && '!bg-green-500 !text-white'}`"
-    >
-      <Options />
-    </div>
-    <div v-else>
-      <ChevronDownSVG v-if="!collapse" class="h-[14px] w-[14px] text-gray-400" />
-      <ChevronDownSVG v-else class="h-[14px] w-[14px] rotate-180 text-gray-400" />
-    </div>
-  </div>
+    <ActionsButtonGroup v-if="!summary" :token-balance="tokenBalance" />
+
+    <SvgoChevronDown v-else :class="collapse ? 'rotate-180' : ''" class="h-4 w-4 text-gray-400" />
+  </button>
 </template>

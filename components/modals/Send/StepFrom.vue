@@ -158,7 +158,7 @@ onMounted(() => {
             :model-value="token"
             :chain-id="data.fromChainId"
             network-logo-class="w-[15px] h-[15px]"
-            class="relative flex max-h-12 w-[160px] items-center gap-2.5 rounded-[14px] border-1 border-slate-700 !bg-gray-850 text-left"
+            class="relative flex w-[160px] items-center gap-2.5 text-left"
             :tokens="availableTokens"
             @update:model-value="handleTokenChange"
           />
@@ -290,19 +290,17 @@ onMounted(() => {
       </div>
     </div>
 
-    <Transition name="fade">
-      <div class="flex items-center text-xs font-medium leading-6 text-gray-400">
-        <SvgoInfo2
-          class="svg-gray-info mr-2.5 h-4 w-4 rounded-full"
-        />
-        <div v-if="isCrossChain" class="flex items-center">
-          Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;from&nbsp;<ChainLogo class="h-4 w-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}&nbsp;to Receiver on&nbsp;<ChainLogo class="h-4 w-4 shrink-0" :chain="data.toChainId" />&nbsp;{{ targetNetwork }}
-        </div>
-        <div v-else class="flex items-center">
-          Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;on&nbsp;<ChainLogo class="h-4 w-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}
-        </div>
+    <div class="flex items-center text-xs font-medium leading-6 text-gray-400">
+      <SvgoInfo2
+        class="svg-gray-info mr-2.5 h-4 w-4 rounded-full"
+      />
+      <div v-if="isCrossChain" class="flex items-center">
+        Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;from&nbsp;<ChainLogo class="h-4 w-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}&nbsp;to Receiver on&nbsp;<ChainLogo class="h-4 w-4 shrink-0" :chain="data.toChainId" />&nbsp;{{ targetNetwork }}
       </div>
-    </Transition>
+      <div v-else class="flex items-center">
+        Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;on&nbsp;<ChainLogo class="h-4 w-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}
+      </div>
+    </div>
     <div v-if="isCrossChainEnable" class="flex items-center gap-2.5">
       <button
         :class="{

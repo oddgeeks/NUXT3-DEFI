@@ -10,7 +10,7 @@ const { fromWei } = useBignumber()
 const { avoProvider } = useSafe()
 const { isMobile, actualWidth } = useSidebar()
 
-const actualWidthInPx = computed(() => `${actualWidth.value}px`)
+const actualWidthInPx = computed(() => `${actualWidth.value ? actualWidth.value : undefined}px`)
 
 const { refresh } = useAsyncData(
   'pending-deposit',
@@ -92,7 +92,7 @@ useIntervalFn(refresh, 15000)
 <template>
   <Html :class="isMobile && actualWidth ? 'overflow-hidden' : ''">
     <Body :class="isMobile && actualWidth ? 'overflow-hidden' : ''">
-      <div class="layout-wrapper h-full transition-all">
+      <div class="layout-wrapper h-full">
         <Sidebar />
 
         <NuxtLayout>
@@ -118,13 +118,15 @@ useIntervalFn(refresh, 15000)
 }
 
 .layout-wrapper {
-   transform: translateX(v-bind(actualWidthInPx))
+   transform: translateX(v-bind(actualWidthInPx));
+   @apply transition-transform
 }
 
 @screen sm {
   .layout-wrapper {
     margin-left: v-bind(actualWidthInPx);
     transform: none;
+    @apply transition-[margin-left]
   }
 }
 </style>

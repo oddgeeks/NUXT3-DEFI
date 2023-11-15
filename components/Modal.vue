@@ -67,7 +67,7 @@ whenever(escape, () => {
   <div :data-modal-id="modalId" class="modal fixed inset-0 z-50 overflow-y-auto bg-slate-200/20 backdrop-blur-[4px]">
     <div
       :data-modal-id="modalId"
-      class="modal-height-wrapper flex h-full justify-center text-center sm:h-auto sm:min-h-screen sm:items-center sm:p-0"
+      class="modal-height-wrapper flex h-full justify-center pt-20 text-center sm:h-auto sm:min-h-screen sm:items-center sm:p-0"
     >
       <div
         :class="[
@@ -90,7 +90,7 @@ whenever(escape, () => {
             },
             modalOptions.contentClass,
           ]"
-          class="modal-content-wrapper relative w-full rounded-[inherit] p-7.5"
+          class="modal-content-wrapper relative w-full rounded-[inherit] p-5 sm:p-7.5"
         >
           <button
             v-if="modalOptions.closeButton"

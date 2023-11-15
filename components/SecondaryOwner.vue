@@ -23,8 +23,10 @@ const { authorisedNetworks, isWalletSecondary } = useAuthorities()
         Networks available to you
       </span>
       <SupportedChains stroke :networks="authorisedNetworks" class="!flex !gap-0 -space-x-2" :max-count="10" />
-      <NuxtLink to="/" class="inline-flex items-center gap-2 text-xs text-primary">
-        What does this mean?
+      <NuxtLink target="_blank" external to="https://guides.avocado.instadapp.io/avocado-multisig/owner-on-multisig" class="inline-flex items-center gap-2 text-xs text-primary">
+        <span class="hidden sm:block">
+          What does this mean?
+        </span>
         <SvgoQuestionCircle class="h-4.5 w-4.5" />
       </NuxtLink>
     </div>

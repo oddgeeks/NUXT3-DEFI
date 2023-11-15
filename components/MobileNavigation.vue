@@ -32,7 +32,7 @@ const { avoExplorerURL } = storeToRefs(useEnvironmentState())
         <SVGWalletConnect />
       </button>
     </div>
-    <hr class="mobile-navigation-bottom-line border-slate-700">
+    <hr class="mobile-navigation-bottom-line border-gray-800">
   </div>
 </template>
 

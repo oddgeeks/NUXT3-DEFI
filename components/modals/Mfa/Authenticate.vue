@@ -33,7 +33,7 @@ const isBackupSignerAvailable = computed(() => {
       <template v-for="mfa in enabledMfas" :key="mfa.value">
         <li v-if="mfa.value !== 'backup'">
           <button
-            class="flex w-full items-center justify-between rounded-2xl border border-slate-700 bg-gray-850 p-5 text-left text-sm  font-medium text-gray-400  hover:bg-gray-800"
+            class="flex w-full items-center justify-between rounded-2xl border border-gray-800 bg-gray-850 p-5 text-left text-sm  font-medium text-gray-400  hover:bg-gray-800"
             @click="$emit('resolve', true, {
               mfa,
             })"

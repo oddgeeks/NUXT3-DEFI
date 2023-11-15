@@ -47,7 +47,7 @@ function getIcon(bookmark: IBookmark) {
         Take your experience with Avocado to the next level using Txn shortcuts!
       </template>
     </ModalTitle>
-    <div class="flex flex-col gap-2.5 px-7.5 pb-7.5 pt-4">
+    <div class="flex flex-col gap-2.5 p-5 sm:px-7.5 sm:pb-7.5 sm:pt-4">
       <div class="flex items-center justify-between">
         <span class="text-sm">
           All Shortcuts

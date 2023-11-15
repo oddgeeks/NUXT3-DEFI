@@ -36,7 +36,7 @@ async function handleDeletingContact(contact: IContact) {
         <DeleteSVG class="h-4 w-4" />
       </button>
     </div>
-    <div class="flex items-center gap-3 rounded-7.5 border-2 border-slate-700 px-4.5 py-3">
+    <div class="flex items-center gap-3 rounded-7.5 border-2 border-gray-800 px-4.5 py-3">
       <ChainLogo :stroke="false" class="h-6.5 w-6.5" :chain="contact.chainId" />
       <Copy :text="contact.address" class="flex-1 justify-between">
         <template #content>

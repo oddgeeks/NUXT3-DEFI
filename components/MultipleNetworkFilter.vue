@@ -92,10 +92,10 @@ function toggleAllNetworks() {
     </ClientOnly>
     <button
       v-if="filters"
-      class="inline-flex items-center gap-2 text-sm sm:hidden"
+      class="inline-flex items-center gap-1.5 text-sm sm:hidden"
       @click="openNetworksModal"
     >
-      Filters
+      Filter
       <ChevronDownSVG class="h-[14px] w-[14px] -rotate-90 text-gray-400" />
     </button>
     <Popover

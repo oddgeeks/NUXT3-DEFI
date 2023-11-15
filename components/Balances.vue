@@ -179,18 +179,18 @@ const { safeAddress } = useAvocadoSafe()
           >
             <thead>
               <tr
-                class="border-b border-gray-800 text-left text-sm font-medium text-gray-400"
+                class="border-b border-gray-800 text-left text-sm text-gray-400"
               >
-                <th class="py-6 pl-7.5 text-left">
+                <th class="py-6 pl-7.5 text-left font-medium">
                   Token
                 </th>
-                <th class="py-5">
+                <th class="py-5 font-medium">
                   Balance
                 </th>
-                <th class="py-5 text-center">
+                <th class="py-5 text-center font-medium">
                   Last 7d
                 </th>
-                <th class="py-5 pl-10">
+                <th class="py-5 pl-10 font-medium">
                   Price
                 </th>
               </tr>
@@ -233,7 +233,7 @@ const { safeAddress } = useAvocadoSafe()
               :token-balance="tokenBalance"
             />
           </div>
-          <div v-else class="flex flex-col space-y-4">
+          <div v-else class="flex flex-col gap-4 rounded-5 bg-gray-850">
             <MobileBalanceRow
               v-for="(tokenBalance, i) in searchQuery.length > 0 ? filteredBalances : sortedBalances"
               :key="i"

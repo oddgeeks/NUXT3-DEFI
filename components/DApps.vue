@@ -18,19 +18,33 @@ const reducedSessions = computed(() => {
   <div
     v-if="isAnySessionAvailable"
   >
-    <div class="flex gap-2.5">
+    <div class="flex items-center gap-2.5">
       <CommonButton
-        class="flex w-full items-center justify-center gap-2 rounded-7.5 !px-4 sm:w-fit"
+        class="hidden h-fit w-full items-center justify-center gap-2 rounded-7.5 !p-4 sm:flex sm:w-fit"
         @click="openWalletConnectModal()"
       >
         <SVGWalletConnect />
         <SvgoPlus />
       </CommonButton>
-      <WCSessionCardV2 v-for="session in reducedSessions" :key="session.peer.metadata.url" :session="session" />
-      <button class="flex items-center gap-2.5 rounded-7.5 border border-slate-800 px-4 py-2.5 pr-3 text-xs" @click="openAllDappConnectionsModal">
+      <div class="dapp-wrapper flex items-center gap-2.5">
+        <WCSessionCardV2 v-for="session in reducedSessions" :key="session.peer.metadata.url" :session="session" />
+      </div>
+      <button class="ml-1.5 flex items-center gap-2.5 rounded-7.5 border border-slate-800 px-4 py-[13px] pr-3 text-xs" @click="openAllDappConnectionsModal">
         View All
         <SvgoChevronDown class="h-3.5 w-3.5 -rotate-90" />
       </button>
     </div>
   </div>
 </template>
+
+<style>
+.dapp-wrapper > div:nth-last-of-type(-n+2) {
+    @apply hidden;
+  }
+
+@screen sm {
+  .dapp-wrapper > div:nth-last-of-type(-n+2) {
+    @apply flex;
+  }
+}
+</style>

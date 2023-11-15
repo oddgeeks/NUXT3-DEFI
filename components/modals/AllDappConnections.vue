@@ -57,8 +57,8 @@ async function disconnectAllConnections() {
         Manage your wallets and use all the features of Avocado!
       </template>
     </ModalTitle>
-    <div class="flex flex-col gap-2.5 px-7.5 pb-7.5 pt-4">
-      <div class="flex items-center justify-between">
+    <div class="flex flex-col gap-2.5 p-5 sm:px-7.5 sm:pb-7.5 sm:pt-4">
+      <div class="flex flex-col justify-between gap-2.5 sm:flex-row sm:items-center">
         <span class="text-sm">
           All Connections
         </span>
@@ -80,7 +80,7 @@ async function disconnectAllConnections() {
           <SvgoSearch class="mr-2" />
         </template>
       </CommonInput>
-      <div class="grid min-h-[220px] grid-cols-2 items-baseline gap-4">
+      <div class="grid min-h-[220px] grid-cols-1 items-baseline gap-4 sm:grid-cols-2">
         <WCSessionCardV2 v-for="session in filteredSessions" :key="session.peer.metadata.url" detailed :session="session" />
       </div>
     </div>

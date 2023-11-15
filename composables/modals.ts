@@ -91,8 +91,6 @@ interface IWcTransactionModal {
 }
 
 export function showPendingTransactionModal(params: IPendingTransactionModalParams) {
-  const { chainId, hash, async, type } = params || {}
-
   addTransactionToQueue(params)
 }
 
@@ -105,6 +103,7 @@ export function openBridgeModal(address: string, chainId: number | string) {
     },
     options: {
       wrapperClass: 'max-w-[600px]',
+      contentClass: '!p-0',
     },
   })
 }
@@ -123,6 +122,7 @@ export function openSwapModal(address: string,
     },
     options: {
       wrapperClass: 'max-w-[600px]',
+      contentClass: '!p-0',
     },
   })
 }
@@ -142,7 +142,7 @@ export function openSendModal(chainId: number | string,
     },
     options: {
       wrapperClass: '!max-w-fit',
-      contentClass: '!px-7.5 !py-[32px]',
+      contentClass: '!p-0',
     },
   })
 }

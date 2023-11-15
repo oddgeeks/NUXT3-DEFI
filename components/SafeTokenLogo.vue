@@ -3,6 +3,7 @@ const props = defineProps<{
   url?: string
   chainId?: number | string
   networkLogoClass?: string
+  imgClasses?: string
   count?: number
 } > ()
 
@@ -25,6 +26,7 @@ function onError() {
       <img
         :src="url"
         class="h-full w-full rounded-full"
+        :class="[imgClasses]"
         :onerror="onError"
         loading="lazy"
       >

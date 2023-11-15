@@ -94,7 +94,7 @@ function handleBeforeInput(e: any) {
           ? 'bg-transparent'
           : 'bg-gray-900 focus-within:bg-gray-850 focus-within:ring-1 focus-within:ring-slate-750',
       ]"
-      class="relative flex items-center rounded-[15px] px-5 focus-within:outline-none"
+      class="relative flex items-center rounded-10 px-5 focus-within:outline-none"
     >
       <slot name="prefix" />
       <slot name="input">

@@ -4,7 +4,11 @@
 
 @layer base {
   body {
-    @apply h-screen bg-gray-975 text-white font-medium overflow-y-overlay;
+    @apply h-screen bg-gray-975 text-white font-medium;
+  }
+
+  html {
+     color-scheme: dark;
   }
 
   details > summary {

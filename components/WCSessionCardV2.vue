@@ -32,7 +32,7 @@ const isConnectionWarned = computed(() => {
       'bg-gray-900': !detailed,
       'border border-gray-800 bg-gray-850 hover:bg-gray-900': detailed,
     }"
-    class="flex items-center justify-between gap-3 rounded-2xl p-5 py-2.5 pl-[14px] pr-4 sm:justify-normal"
+    class="flex items-center justify-between gap-3 rounded-2xl p-5 px-[14px] py-2.5 sm:justify-normal"
   >
     <button
       :class="{
@@ -61,7 +61,7 @@ const isConnectionWarned = computed(() => {
       >
         <h1
           :class="{
-            'text-shadow w-[200px] overflow-hidden sm:w-[109px] ': !detailed,
+            'text-shadow w-[88px] overflow-hidden sm:w-[109px] ': !detailed,
           }"
           class="whitespace-nowrap text-sm"
         >

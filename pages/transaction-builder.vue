@@ -518,7 +518,7 @@ watch(mode, async (newMode, oldMode) => {
       <SvgoInfo2 class="mt-1.5 shrink-0" />
       Transaction builder is not supported on mobile devices
     </div>
-    <ul class="flex w-fit justify-center rounded-5 bg-gray-850 p-1.5 text-sm font-medium sm:justify-normal sm:rounded-10">
+    <ul class="flex w-fit flex-wrap justify-center rounded-5 bg-gray-850 p-1.5 text-sm font-medium sm:justify-normal sm:rounded-10">
       <li v-for="item in modes" :key="item.value">
         <button :class="mode === item.value ? 'bg-gray-900' : 'text-gray-400'" class="flex items-center gap-2.5 whitespace-nowrap rounded-2xl px-6 py-2.5 sm:rounded-7.5" @click="mode = item.value">
           {{ item.label }}

@@ -282,150 +282,51 @@ const onSubmit = form.handleSubmit(async () => {
 </script>
 
 <template>
-  <form class="flex flex-col gap-7.5" @submit="onSubmit">
-    <div class="flex gap-[14px]">
-      <CommonTxTypeIcon class="h-10 w-10">
-        <template #icon>
-          <SvgoBridge />
-        </template>
-      </CommonTxTypeIcon>
-      <div class="flex flex-col gap-1">
-        <h1 class="text-lg leading-[20px]">
-          Bridge
-        </h1>
-        <h2 class="text-xs font-medium leading-5 text-gray-400">
-          Migrate tokens across multiple networks with lowest slippage.
-        </h2>
-      </div>
-    </div>
+  <form class="flex flex-col" @submit="onSubmit">
+    <ModalTitle class="border-b border-gray-875 p-5 sm:px-7.5 sm:pt-7.5">
+      <template #icon>
+        <SvgoBridge />
+      </template>
+      <template #title>
+        Bridge
+      </template>
+      <template #subtitle>
+        Migrate tokens across multiple networks with lowest slippage.
+      </template>
+    </ModalTitle>
 
-    <div class="flex flex-col gap-5">
-      <div class="space-y-2.5">
-        <h1 class="flex items-center justify-between text-sm">
-          Transfer from
+    <div class="flex flex-col gap-7.5 p-5 sm:px-7.5 sm:pb-7.5 sm:pt-5">
+      <div class="flex flex-col gap-5">
+        <div class="space-y-2.5">
+          <h1 class="flex items-center justify-between text-sm">
+            Transfer from
 
-          <CommonToggle v-model="isInputUsd" text="Input USD" />
-        </h1>
-
-        <div
-          class="flex flex-col gap-3 rounded-5 bg-gray-850 px-5 pb-5 pt-3.5 sm:gap-5"
-        >
-          <div class="flex flex-col gap-3 sm:flex-row sm:gap-4">
-            <div class="flex flex-1 flex-col gap-2.5">
-              <span class="text-sm">Coin</span>
-              <TokenSelection
-                v-model="fromToken"
-                class="relative flex max-h-12 w-full items-center gap-2.5 rounded-2xl border border-slate-700 !bg-gray-850 px-4 py-3 text-left"
-                :tokens="availableTokens"
-              />
-            </div>
-            <div class="flex flex-1 flex-col gap-2.5">
-              <span class="text-sm">Network</span>
-              <CommonSelect
-                v-model="fromChainId"
-                value-key="chainId"
-                label-key="name"
-                icon-key="icon"
-                :options="bridgeAvailableNetworks"
-              >
-                <template #button-prefix>
-                  <ChainLogo class="h-6 w-6" :chain="fromChainId" />
-                </template>
-                <template #item-prefix="{ value }">
-                  <ChainLogo class="h-6 w-6" :chain="value" />
-                </template>
-              </CommonSelect>
-            </div>
-          </div>
-          <div class="flex flex-col gap-2.5">
-            <div class="flex justify-between">
-              <span class="text-sm">Amount</span>
-              <div class="flex items-center gap-2.5">
-                <span class="text-sm uppercase">
-                  {{ formatDecimal(fromToken.balance) }} {{ fromToken.symbol }}
-                </span>
-                <button
-                  type="button"
-                  class="text-sm text-primary"
-                  @click="setMax"
-                >
-                  MAX
-                </button>
-              </div>
-            </div>
-
-            <CommonCurrencyInput
-              v-if="isInputUsd"
-              v-model="amountInUsd"
-              :dirty="dirty"
-              styled
-              input-classes="!py-3"
-              autofocus
-              :error-message="form.errors.value.amount"
-              name="amount-usd"
-              placeholder="Enter amount"
-              @beforeinput="toggleMax(false)"
-            >
-              <template #suffix>
-                <span class="absolute right-5 text-left text-sm text-gray-400">
-                  {{ formatDecimal(amount) }}
-                </span>
-              </template>
-            </CommonCurrencyInput>
-
-            <CommonInput
-              v-else
-              v-model="amount"
-              type="numeric"
-              autofocus
-              :error-message="form.errors.value.amount"
-              name="amount"
-              placeholder="Enter amount"
-              @beforeinput="toggleMax(false)"
-            >
-              <template #suffix>
-                <span class="flex text-sm text-gray-400">
-                  {{ formatUsd(amountInUsd) }}
-                </span>
-              </template>
-            </CommonInput>
-          </div>
-        </div>
-      </div>
-      <div class="space-y-2.5">
-        <div class="flex items-center justify-between">
-          <h1 class="text-sm">
-            Transfer to
+            <CommonToggle v-model="isInputUsd" text="Input USD" />
           </h1>
-        </div>
-        <div
-          class="rounded-5 bg-gray-850 px-5 pb-5 pt-4 sm:pt-[14px]"
-        >
-          <div class="flex flex-col gap-4 sm:gap-5">
-            <div
-              class="grid grid-cols-1 items-center gap-3 sm:gap-4 md:grid-cols-2 md:gap-x-4 md:gap-y-5"
-            >
-              <div class="flex flex-col gap-2.5">
-                <span class="text-sm">Coin</span>
 
+          <div
+            class="flex flex-col gap-3 rounded-5 bg-gray-850 px-5 pb-5 pt-3.5 sm:gap-5"
+          >
+            <div class="flex flex-col gap-3 sm:flex-row sm:gap-4">
+              <div class="flex flex-1 flex-col gap-2.5">
+                <span class="text-sm">Coin</span>
                 <TokenSelection
-                  v-model="bridgeToToken"
-                  :sort="false"
-                  :pending="bridgeTokens.pending.value"
-                  class="relative flex max-h-12 items-center gap-2.5 rounded-2xl border border-slate-700 !bg-gray-850 px-4 py-3 text-left"
-                  :tokens="bridgeTokens.data"
+                  v-model="fromToken"
+                  class="relative flex max-h-12 w-full items-center gap-2.5 border border-gray-800 !bg-gray-850 px-4 py-3 text-left"
+                  :tokens="availableTokens"
                 />
               </div>
-              <div class="flex flex-col gap-2.5">
+              <div class="flex flex-1 flex-col gap-2.5">
                 <span class="text-sm">Network</span>
                 <CommonSelect
-                  v-model="toChainId"
+                  v-model="fromChainId"
                   value-key="chainId"
                   label-key="name"
-                  :options="selectableToChains"
+                  icon-key="icon"
+                  :options="bridgeAvailableNetworks"
                 >
                   <template #button-prefix>
-                    <ChainLogo class="h-6 w-6" :chain="toChainId" />
+                    <ChainLogo class="h-6 w-6" :chain="fromChainId" />
                   </template>
                   <template #item-prefix="{ value }">
                     <ChainLogo class="h-6 w-6" :chain="value" />
@@ -433,161 +334,258 @@ const onSubmit = form.handleSubmit(async () => {
                 </CommonSelect>
               </div>
             </div>
-            <div class="flex flex-col gap-2 sm:gap-2.5">
-              <div class="flex items-center justify-between">
-                <span class="text-sm font-medium text-gray-400">
-                  Estimated processing time
-                </span>
-                <span class="font-medium text-gray-400">
-                  {{
-                    txRoute
-                      ? `~${Math.round(txRoute.serviceTime / 60)}m`
-                      : "~10m"
-                  }}
-                </span>
+            <div class="flex flex-col gap-2.5">
+              <div class="flex justify-between">
+                <span class="text-sm">Amount</span>
+                <div class="flex items-center gap-2.5">
+                  <span class="text-sm uppercase">
+                    {{ formatDecimal(fromToken.balance) }} {{ fromToken.symbol }}
+                  </span>
+                  <button
+                    type="button"
+                    class="text-sm text-primary"
+                    @click="setMax"
+                  >
+                    MAX
+                  </button>
+                </div>
               </div>
-              <div
-                class="hidden items-center justify-between text-sm font-medium text-gray-400 sm:flex"
+
+              <CommonCurrencyInput
+                v-if="isInputUsd"
+                v-model="amountInUsd"
+                :dirty="dirty"
+                styled
+                input-classes="!py-3"
+                autofocus
+                :error-message="form.errors.value.amount"
+                name="amount-usd"
+                placeholder="Enter amount"
+                @beforeinput="toggleMax(false)"
               >
-                <span>
-                  Route Through
-                </span>
+                <template #suffix>
+                  <span class="absolute right-5 text-left text-sm text-gray-400">
+                    {{ formatDecimal(amount) }}
+                  </span>
+                </template>
+              </CommonCurrencyInput>
+
+              <CommonInput
+                v-else
+                v-model="amount"
+                type="numeric"
+                autofocus
+                :error-message="form.errors.value.amount"
+                name="amount"
+                placeholder="Enter amount"
+                @beforeinput="toggleMax(false)"
+              >
+                <template #suffix>
+                  <span class="flex text-sm text-gray-400">
+                    {{ formatUsd(amountInUsd) }}
+                  </span>
+                </template>
+              </CommonInput>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h1 class="text-sm">
+              Transfer to
+            </h1>
+          </div>
+          <div
+            class="rounded-5 bg-gray-850 px-5 pb-5 pt-4 sm:pt-[14px]"
+          >
+            <div class="flex flex-col gap-4 sm:gap-5">
+              <div
+                class="grid grid-cols-1 items-center gap-3 sm:gap-4 md:grid-cols-2 md:gap-x-4 md:gap-y-5"
+              >
+                <div class="flex flex-col gap-2.5">
+                  <span class="text-sm">Coin</span>
+
+                  <TokenSelection
+                    v-model="bridgeToToken"
+                    :sort="false"
+                    :pending="bridgeTokens.pending.value"
+                    class="relative flex max-h-12 items-center gap-2.5 border border-gray-800 !bg-gray-850 px-4 py-3 text-left"
+                    :tokens="bridgeTokens.data"
+                  />
+                </div>
+                <div class="flex flex-col gap-2.5">
+                  <span class="text-sm">Network</span>
+                  <CommonSelect
+                    v-model="toChainId"
+                    value-key="chainId"
+                    label-key="name"
+                    :options="selectableToChains"
+                  >
+                    <template #button-prefix>
+                      <ChainLogo class="h-6 w-6" :chain="toChainId" />
+                    </template>
+                    <template #item-prefix="{ value }">
+                      <ChainLogo class="h-6 w-6" :chain="value" />
+                    </template>
+                  </CommonSelect>
+                </div>
+              </div>
+              <div class="flex flex-col gap-2 sm:gap-2.5">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-medium text-gray-400">
+                    Estimated processing time
+                  </span>
+                  <span class="font-medium text-gray-400">
+                    {{
+                      txRoute
+                        ? `~${Math.round(txRoute.serviceTime / 60)}m`
+                        : "~10m"
+                    }}
+                  </span>
+                </div>
+                <div
+                  class="hidden items-center justify-between text-sm font-medium text-gray-400 sm:flex"
+                >
+                  <span>
+                    Route Through
+                  </span>
+                  <div
+                    v-if="routes.pending.value"
+                    style="width: 140px; height: 20px"
+                    class="loading-box rounded-lg"
+                  />
+                  <span
+                    v-else-if="!!txRoute && !!availableRoutes?.length"
+                    class="hidden items-center gap-2.5 capitalize sm:flex"
+                  >
+                    <Menu v-slot="{ open }" as="div" class="relative">
+                      <MenuButton class="flex items-center gap-2.5 rounded-xl border border-slate-750 px-3 py-2">
+                        <img :src="bridgeProtocol?.icon" class="h-5 w-5">
+                        {{ bridgeProtocol?.displayName }}
+                        <SvgoChevronDown class="w-4" :class="open ? 'rotate-180' : ''" />
+                      </MenuButton>
+                      <transition
+                        enter-active-class="transition duration-100 ease-out"
+                        enter-from-class="transform scale-95 opacity-0"
+                        enter-to-class="transform scale-100 opacity-100"
+                        leave-active-class="transition duration-75 ease-out"
+                        leave-from-class="transform scale-100 opacity-100"
+                        leave-to-class="transform scale-95 opacity-0"
+                      >
+                        <MenuItems
+                          class="absolute left-1/2 top-12 z-20 w-[300px] origin-center -translate-x-1/2 rounded-5 border border-gray-800 bg-gray-850 py-4"
+                        >
+                          <template v-for="route, i in availableRoutes" :key="route.routeId">
+                            <MenuItem as="button" type="button" class="w-full px-4 py-[14px] text-left font-medium first:pt-0 last-of-type:pb-0" @click="txRoute = route">
+                              <div class="flex gap-2">
+                                <img width="20" height="20" :src="getRouteProvider(route)?.icon" class="h-5 w-5">
+                                <div class="flex w-full flex-col gap-1">
+                                  <div class="flex w-full justify-between">
+                                    <span class="text-white">
+                                      {{ getRouteProvider(route)?.displayName }}
+                                    </span>
+                                    <span v-if="i === 0" class="rounded-lg bg-primary bg-opacity-10 px-2 text-[10px] uppercase leading-5 text-primary">
+                                      Best Rate
+                                    </span>
+                                    <SvgoCheckCircle v-else-if="txRoute.routeId === route.routeId" class="success-circle w-4" />
+                                  </div>
+                                  <span class="text-xs text-gray-400">
+                                    {{ formatDecimal(fromWei(route?.toAmount || '0', bridgeToToken?.decimals).toFixed()) }}
+                                    {{ bridgeToToken?.symbol }}
+                                    ({{ formatUsd(times(fromWei(route?.toAmount || '0', bridgeToToken?.decimals), bridgeToToken?.price || '0')) }})</span>
+                                </div>
+                              </div>
+                            </MenuItem>
+                            <hr class="border-gray-800 last:hidden">
+                          </template>
+                        </MenuItems>
+                      </transition>
+                    </Menu>
+
+                  </span>
+                  <span v-else>
+                    -
+                  </span>
+                </div>
+              </div>
+
+              <div class="divider" />
+
+              <div
+                class="flex items-start justify-between whitespace-nowrap sm:items-center"
+              >
+                <span class="font-semibold !leading-5 md:text-lg">You receive</span>
                 <div
                   v-if="routes.pending.value"
                   style="width: 140px; height: 20px"
                   class="loading-box rounded-lg"
                 />
                 <span
-                  v-else-if="!!txRoute && !!availableRoutes?.length"
-                  class="hidden items-center gap-2.5 capitalize sm:flex"
+                  v-else
+                  class="inline-flex flex-wrap justify-end gap-2 text-right text-sm font-semibold uppercase !leading-5 sm:gap-2.5 sm:text-2xl"
                 >
-                  <Menu v-slot="{ open }" as="div" class="relative">
-                    <MenuButton class="flex items-center gap-2.5 rounded-xl border border-slate-750 px-3 py-2">
-                      <img :src="bridgeProtocol?.icon" class="h-5 w-5">
-                      {{ bridgeProtocol?.displayName }}
-                      <SvgoChevronDown class="w-4" :class="open ? 'rotate-180' : ''" />
-                    </MenuButton>
-                    <transition
-                      enter-active-class="transition duration-100 ease-out"
-                      enter-from-class="transform scale-95 opacity-0"
-                      enter-to-class="transform scale-100 opacity-100"
-                      leave-active-class="transition duration-75 ease-out"
-                      leave-from-class="transform scale-100 opacity-100"
-                      leave-to-class="transform scale-95 opacity-0"
-                    >
-                      <MenuItems
-                        class="absolute left-1/2 top-12 z-20 w-[300px] origin-center -translate-x-1/2 rounded-5 border border-slate-700 bg-gray-850 py-4"
-                      >
-                        <template v-for="route, i in availableRoutes" :key="route.routeId">
-                          <MenuItem as="button" type="button" class="w-full px-4 py-[14px] text-left font-medium first:pt-0 last-of-type:pb-0" @click="txRoute = route">
-                            <div class="flex gap-2">
-                              <img width="20" height="20" :src="getRouteProvider(route)?.icon" class="h-5 w-5">
-                              <div class="flex w-full flex-col gap-1">
-                                <div class="flex w-full justify-between">
-                                  <span class="text-white">
-                                    {{ getRouteProvider(route)?.displayName }}
-                                  </span>
-                                  <span v-if="i === 0" class="rounded-lg bg-primary bg-opacity-10 px-2 text-[10px] uppercase leading-5 text-primary">
-                                    Best Rate
-                                  </span>
-                                  <SvgoCheckCircle v-else-if="txRoute.routeId === route.routeId" class="success-circle w-4" />
-                                </div>
-                                <span class="text-xs text-gray-400">
-                                  {{ formatDecimal(fromWei(route?.toAmount || '0', bridgeToToken?.decimals).toFixed()) }}
-                                  {{ bridgeToToken?.symbol }}
-                                  ({{ formatUsd(times(fromWei(route?.toAmount || '0', bridgeToToken?.decimals), bridgeToToken?.price || '0')) }})</span>
-                              </div>
-                            </div>
-                          </MenuItem>
-                          <hr class="border-gray-800 last:hidden">
-                        </template>
-                      </MenuItems>
-                    </transition>
-                  </Menu>
+                  <span>{{ formatDecimal(recievedAmount) }}
+                    {{ bridgeToToken?.symbol || fromToken.symbol }}</span>
 
-                </span>
-                <span v-else>
-                  -
+                  <span class="text-sm text-gray-400">({{ formatUsd(recivedValueInUsd) }})</span>
                 </span>
               </div>
             </div>
-
-            <div class="divider" />
-
-            <div
-              class="flex items-start justify-between whitespace-nowrap sm:items-center"
-            >
-              <span class="font-semibold !leading-5 md:text-lg">You receive</span>
-              <div
-                v-if="routes.pending.value"
-                style="width: 140px; height: 20px"
-                class="loading-box rounded-lg"
-              />
-              <span
-                v-else
-                class="inline-flex flex-wrap justify-end gap-2 text-right text-sm font-semibold uppercase !leading-5 sm:gap-2.5 sm:text-2xl"
-              >
-                <span>{{ formatDecimal(recievedAmount) }}
-                  {{ bridgeToToken?.symbol || fromToken.symbol }}</span>
-
-                <span class="text-sm text-gray-400">({{ formatUsd(recivedValueInUsd) }})</span>
-              </span>
-            </div>
           </div>
+
+          <EstimatedFee :loading="pending" :data="data" :error="error" />
+
+          <Transition name="fade">
+            <p v-if="feeInfoMessage" class="mt-1 flex items-start text-xs font-medium leading-6 text-gray-400">
+              <SvgoExclamationCircle class="mr-2.5 mt-1 h-4.5 w-4.5 shrink-0 text-gray-500" />
+              <span class="block">
+                {{ feeInfoMessage }}
+              </span>
+            </p>
+          </Transition>
+
+          <CommonNotification
+            v-if="transactions.error.value"
+            type="error"
+            :text="transactions.error.value?.message"
+          />
+          <CommonNotification
+            v-if="isInsufficientBalance"
+            type="error"
+            :text="`Not enough ${nativeCurrency?.symbol.toUpperCase()} balance`"
+          >
+            <template #action>
+              <CommonButton
+                size="sm"
+                class="flex items-center justify-center gap-[6px]"
+                @click="handleSwapToken"
+              >
+                <RefreshSVG class="h-[14px] w-[14px]" />
+                Swap Token
+              </CommonButton>
+            </template>
+          </CommonNotification>
+          <CommonNotification
+            v-if="routes.error.value"
+            type="warning"
+            :text="routes.error.value?.message"
+          />
         </div>
 
-        <EstimatedFee :loading="pending" :data="data" :error="error" />
-
-        <Transition name="fade">
-          <p v-if="feeInfoMessage" class="mt-1 flex items-start text-xs font-medium leading-6 text-gray-400">
-            <SvgoExclamationCircle class="mr-2.5 mt-1 h-4.5 w-4.5 shrink-0 text-gray-500" />
-            <span class="block">
-              {{ feeInfoMessage }}
-            </span>
-          </p>
-        </Transition>
-
-        <CommonNotification
-          v-if="transactions.error.value"
-          type="error"
-          :text="transactions.error.value?.message"
-        />
-        <CommonNotification
-          v-if="isInsufficientBalance"
-          type="error"
-          :text="`Not enough ${nativeCurrency?.symbol.toUpperCase()} balance`"
-        >
-          <template #action>
-            <CommonButton
-              size="sm"
-              class="flex items-center justify-center gap-[6px]"
-              @click="handleSwapToken"
-            >
-              <RefreshSVG class="h-[14px] w-[14px]" />
-              Swap Token
-            </CommonButton>
-          </template>
-        </CommonNotification>
-        <CommonNotification
-          v-if="routes.error.value"
-          type="warning"
-          :text="routes.error.value?.message"
-        />
+        <div class="flex flex-col gap-4">
+          <CommonButton
+            type="submit"
+            :disabled="disabled || pending || !!error"
+            :loading="loading || pending"
+            class="w-full justify-center"
+            size="lg"
+          >
+            Bridge
+          </CommonButton>
+        </div>
       </div>
-
-      <div class="flex flex-col gap-4">
-        <CommonButton
-          type="submit"
-          :disabled="disabled || pending || !!error"
-          :loading="loading || pending"
-          class="w-full justify-center"
-          size="lg"
-        >
-          Bridge
-        </CommonButton>
-      </div>
+      <SessionLocked class="mx-auto" />
     </div>
-    <SessionLocked class="mx-auto" />
   </form>
 </template>
 

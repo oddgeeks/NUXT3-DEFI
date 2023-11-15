@@ -46,7 +46,7 @@ async function handleTokenSelection() {
   <button
     type="button"
     :disabled="pending"
-    class="inline-flex h-fit items-center gap-2.5 rounded-2xl bg-gray-900 py-3 pl-[14px] pr-3 text-sm uppercase"
+    class="inline-flex h-fit items-center gap-2.5 rounded-10 bg-gray-900 py-3 pl-[14px] pr-3 text-sm uppercase"
     @click="handleTokenSelection"
   >
     <div v-if="pending" class="loading-box my-1 h-5 w-20 rounded-lg" />

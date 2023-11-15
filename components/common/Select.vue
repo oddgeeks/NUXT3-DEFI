@@ -104,7 +104,7 @@ whenever(open, () => {
         { 'adjuster rounded-b-none border-b-transparent': open },
         containerClasses,
       ]"
-      class="relative flex max-h-12 w-full items-center gap-2.5 rounded-[14px] border-1  border-slate-700 bg-gray-850 px-[14px] py-3 text-left"
+      class="relative flex max-h-12 w-full items-center gap-2.5 rounded-10 border-1  border-gray-800 bg-gray-850 px-[14px] py-3 text-left"
       @click="toggle()"
     >
       <slot name="button-prefix">
@@ -134,7 +134,7 @@ whenever(open, () => {
       <div v-if="open">
         <ul
           :class="listClasses"
-          class="absolute flex max-h-60 w-full flex-col gap-1.5 overflow-auto rounded-b-[14px] border-1 border-t-0 border-slate-700 bg-gray-850 px-1 py-[15px]"
+          class="absolute flex max-h-60 w-full flex-col gap-1.5 overflow-auto rounded-b-[14px] border-1 border-t-0 border-gray-800 bg-gray-850 px-1 py-[15px]"
         >
           <CommonInput v-if="searchable" v-model="search" autofocus placeholder="Search" name="search-input" class="-mt-3 !p-2" input-classes="!py-2" type="search" />
           <li

@@ -5,6 +5,7 @@ const { collapsed, toggleCollapse, hideSidebar, actualWidth, isMobile, hidden } 
 const { safeAddress } = useAvocadoSafe()
 const { selectedSafe } = storeToRefs(useSafe())
 const { navigations } = useNavigation()
+const route = useRoute()
 
 const tippyOptions = {
   arrow: true,
@@ -20,11 +21,16 @@ onClickOutside(target, () => {
 }, {
   ignore: ['.modal', 'wcm-modal'],
 })
+
+watch(() => route.fullPath, () => {
+  hideSidebar()
+})
 </script>
 
 <template>
   <Teleport to="body">
     <button
+      v-if="actualWidth"
       :style="{ left: `${actualWidth - 14}px` }"
       class="fixed top-7.5 z-[40] hidden h-7 w-7 items-center justify-center rounded-full bg-gray-900 transition sm:flex"
       @click="toggleCollapse"
@@ -34,7 +40,7 @@ onClickOutside(target, () => {
         :class="{ 'rotate-180': !collapsed }"
       />
     </button>
-    <aside ref="target" :style="{ width: `${actualWidth}px` }" style="scrollbar-gutter:stable;overflow-y:overlay;" class="scroll-style fixed top-0 z-30 flex h-full shrink-0 overflow-y-auto bg-gray-850 transition-[width] sm:h-screen">
+    <aside ref="target" :style="{ width: `${actualWidth}px` }" style="scrollbar-gutter:stable;overflow-y:overlay;" class="scroll-style fixed top-0 z-30 flex h-full shrink-0 overflow-y-auto bg-gray-850 transition-all sm:h-screen">
       <div v-if="collapsed && !isMobile" class="flex w-full flex-col items-center gap-6 p-7.5">
         <div class="flex flex-col items-center gap-5">
           <NuxtLink class="flex flex-col items-center gap-2.5" to="/">

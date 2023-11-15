@@ -46,7 +46,7 @@ function selectType(type: string) {
 <template>
   <div class="flex flex-1 flex-col gap-5 sm:gap-7.5">
     <WalletItemList class="flex sm:hidden" compact />
-    <div class="flex flex-col gap-2.5 sm:hidden">
+    <div class="flex flex-col gap-2.5 sm:gap-5">
       <SecondaryOwner />
       <TotalBalance />
       <DApps />
@@ -56,12 +56,12 @@ function selectType(type: string) {
         <div class="flex flex-col gap-5">
           <div class="flex justify-between sm:pr-7.5">
             <div class="flex gap-7.5">
-              <h2 class="inline-flex items-center gap-2 font-semibold">
+              <h2 class="inline-flex items-center gap-2 text-sm">
                 Balances <span class="hidden sm:block">
                   ({{ balancesTokenCount }})
                 </span>
                 <button v-if="account" @click="handleOpenDialog">
-                  <SvgoQuestionCircle class="h-5 w-5 text-primary" />
+                  <SvgoQuestionCircle class="h-4.5 w-4.5 text-primary" />
                 </button>
               </h2>
               <ClientOnly v-if="account">
