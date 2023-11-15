@@ -15,6 +15,7 @@ const { addSignersWithThreshold, removeSignerWithThreshold } = useAvocadoSafe()
 const { parseTransactionError } = useErrorHandler()
 const { selectedSafe } = storeToRefs(useSafe())
 const { instadappSignerNetworks } = storeToRefs(useMultisig())
+const { instadappSigner } = storeToRefs(useEnvironmentState())
 const { fetchSafeInstanceses } = useSafe()
 const { backupSigner, terminateMFAToken } = useMfa()
 const { account } = useWeb3()
@@ -22,8 +23,8 @@ const { $t } = useNuxtApp()
 
 const signerAdded = computed(() => isSignerAdded(selectedSafe.value!, props.address, props.chainId))
 
-const isInstadappSigner = computed(() => isAddressEqual(props.address, instadappSigner))
-const isInstadappSignerAdded = computed(() => isSignerAdded(selectedSafe.value!, instadappSigner, props.chainId))
+const isInstadappSigner = computed(() => isAddressEqual(props.address, instadappSigner.value))
+const isInstadappSignerAdded = computed(() => isSignerAdded(selectedSafe.value!, instadappSigner.value, props.chainId))
 
 const isBackupSignerAvailable = computed(() => {
   if (!backupSigner.value)

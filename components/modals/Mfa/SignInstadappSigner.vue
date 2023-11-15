@@ -3,7 +3,9 @@ const props = defineProps<{
   address: string
 }>()
 
-const isInstadappSigner = computed(() => isAddressEqual(props.address, instadappSigner))
+const { instadappSigner } = storeToRefs(useEnvironmentState())
+
+const isInstadappSigner = computed(() => isAddressEqual(props.address, instadappSigner.value))
 </script>
 
 <template>

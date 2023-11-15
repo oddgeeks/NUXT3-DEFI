@@ -5,6 +5,7 @@ const preferredMfaType = useLocalStorage('mfa-preferred-type', '')
 export function useMfa() {
   const { selectedSafe } = storeToRefs(useSafe())
   const { backupSigners } = storeToRefs(useMultisig())
+  const { avoChainId } = storeToRefs(useEnvironmentState())
   const { avoProvider, fetchSafeInstanceses } = useSafe()
   const { switchToAvocadoNetwork } = useNetworks()
   const { account, library } = useWeb3()
@@ -163,7 +164,7 @@ export function useMfa() {
     const domain = {
       name: 'Avocado MFA Update',
       version: '1.0.0',
-      chainId: String(avoChainId),
+      chainId: String(avoChainId.value),
       verifyingContract: selectedSafe.value?.safe_address,
     }
 
@@ -245,7 +246,7 @@ export function useMfa() {
     const domain = {
       name: 'Avocado MFA Update',
       version: '1.0.0',
-      chainId: String(avoChainId),
+      chainId: String(avoChainId.value),
       verifyingContract: selectedSafe.value?.safe_address,
     }
 
@@ -319,7 +320,7 @@ export function useMfa() {
     const domain = {
       name: 'Avocado MFA Code',
       version: '1.0.0',
-      chainId: String(avoChainId),
+      chainId: String(avoChainId.value),
       verifyingContract: selectedSafe.value?.safe_address,
     }
 
@@ -354,7 +355,7 @@ export function useMfa() {
     const domain = {
       name: 'Avocado MFA Update',
       version: '1.0.0',
-      chainId: String(avoChainId),
+      chainId: String(avoChainId.value),
       verifyingContract: selectedSafe.value?.safe_address,
     }
 
@@ -389,7 +390,7 @@ export function useMfa() {
     const domain = {
       name: 'Avocado MFA Transaction',
       version: '1.0.0',
-      chainId: String(avoChainId),
+      chainId: String(avoChainId.value),
       verifyingContract: selectedSafe.value?.safe_address,
     }
 

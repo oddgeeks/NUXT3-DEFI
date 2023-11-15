@@ -15,6 +15,7 @@ const { sendTransaction, tokenBalances, safeAddress }
   = useAvocadoSafe()
 const { authorisedNetworks } = useAuthorities()
 const { parseTransactionError } = useErrorHandler()
+const { avoDepositAddress } = storeToRefs(useEnvironmentState())
 const { tokens } = storeToRefs(useTokens())
 const [isGiftActive, toggleGift] = useToggle(false)
 const isDefaultTokenSet = ref(false)
@@ -122,7 +123,7 @@ const onSubmit = handleSubmit(async () => {
 
     const tx = {
       from: account.value,
-      to: avoDepositAddress,
+      to: avoDepositAddress.value,
       value: '0',
       data: '0x',
     }
@@ -137,7 +138,7 @@ const onSubmit = handleSubmit(async () => {
       )
 
       const { data } = await contract.populateTransaction.transfer(
-        avoDepositAddress,
+        avoDepositAddress.value,
         transferAmount,
       )
 

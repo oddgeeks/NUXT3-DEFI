@@ -11,9 +11,8 @@ const IGNORED_MESSAGES = ['/api/balances']
 
 export default defineEventHandler(async (event) => {
   const { slackKey, slackErrorKey, slackStagingKey, slackBridgeErrorKey } = useRuntimeConfig()
-  const { isProd } = useAppConfig()
 
-  let { type = 'success', message, isBridgeError = false } = await readBody(event)
+  let { type = 'success', message, isBridgeError = false, isProd = false } = await readBody(event)
 
   if (message && IGNORED_MESSAGES.some(i => message.includes(i)))
     return {}

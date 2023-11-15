@@ -12,6 +12,8 @@ const { account } = useWeb3()
 const { isAccountCanSign, getRequiredSigner } = useMultisig()
 const { changeThreshold } = useAvocadoSafe()
 
+const currentNetwork = computed(() => availableNetworks.find(i => i.chainId == props.chainId))
+
 const { selectedSafe, safeOptions, balances, optionsLoading } = storeToRefs(useSafe())
 
 const route = useRoute()
@@ -31,7 +33,7 @@ const currentThreshold = computed(() => {
 })
 
 async function getActualThreshold() {
-  if (!selectedSafe.value)
+  if (!selectedSafe.value || !currentNetwork)
     return
 
   const safe = route.params.safe as string
@@ -91,7 +93,7 @@ async function handleTresholdChange(chainId: string | number) {
 </script>
 
 <template>
-  <details class="group rounded-[25px] bg-gray-850 text-sm">
+  <details v-if="currentNetwork" class="group rounded-[25px] bg-gray-850 text-sm">
     <summary class="flex cursor-pointer flex-wrap items-center justify-between gap-4.5 border-gray-800 p-[18px] last:border-b-0 group-open:border-b-1 sm:gap-0 sm:px-7.5 sm:py-6.5">
       <h2 class="flex w-full items-center gap-3 sm:w-auto">
         <ChainLogo class="h-7.5 w-7.5" :chain="item.chainId" />

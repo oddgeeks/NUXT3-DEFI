@@ -17,6 +17,7 @@ const { account } = useWeb3()
 const { isAccountCanSign } = useMultisig()
 const { selectedSafe } = storeToRefs(useSafe())
 const { checkTransactionExecuted } = useAvocadoSafe()
+const { multisigURL } = storeToRefs(useEnvironmentState())
 
 const isCollapseAll = inject<Ref<boolean>>('isCollapseAll', ref(false))
 const route = useRoute()
@@ -59,7 +60,7 @@ async function fetchTransactions() {
         nonce_type: isCompleted ? undefined : props.activeTab,
         page: page.value,
       },
-      baseURL: multisigURL,
+      baseURL: multisigURL.value,
     })
 
     abortController.value = null

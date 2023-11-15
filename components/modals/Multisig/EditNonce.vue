@@ -21,6 +21,7 @@ const { public: config } = useRuntimeConfig()
 const { selectedSafe, safeOptions } = storeToRefs(useSafe())
 const { getActualId, safeAddress, generateMultisigSignatureAndSign, multisigBroadcast } = useAvocadoSafe()
 const { parseTransactionError } = useErrorHandler()
+const { multisigURL } = storeToRefs(useEnvironmentState())
 const { clearAllModals } = useModal()
 const { account } = useWeb3()
 
@@ -45,7 +46,7 @@ const { data: seqResponse } = useAsyncData<IMultisigTransactionResponse>(`${safe
       nonce_type: 'seq',
       chain_id: props.chainId,
     },
-    baseURL: multisigURL,
+    baseURL: multisigURL.value,
   })
 
   return data
@@ -118,7 +119,7 @@ async function onSubmit() {
       note: payload.note,
       nonce: params.castParams.params.avoSafeNonce,
     }, {
-      baseURL: multisigURL,
+      baseURL: multisigURL.value,
     })
 
     const message = `${'`Multisig Hash`'} <${config.domainURL}/multisig/${data.safe_address}/pending-transactions/${data.id}| ${shortenHash(data.id)}>`

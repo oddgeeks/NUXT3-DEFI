@@ -3,6 +3,7 @@ import { wait } from '@instadapp/utils'
 import axios from 'axios'
 
 const route = useRoute()
+const { multisigURL } = storeToRefs(useEnvironmentState())
 const itemsRef = ref<HTMLElement | null>(null)
 const [isCollapseAll, toggle] = useToggle(false)
 const isCollapseAllDisabled = ref(false)
@@ -54,7 +55,7 @@ const { data: nonSeqResponse, refresh: refreshNonSeq } = useAsyncData<IMultisigT
       status: 'pending',
       nonce_type: 'nonseq',
     },
-    baseURL: multisigURL,
+    baseURL: multisigURL.value,
   })
 
   return data
@@ -69,7 +70,7 @@ const { data: seqResponse, refresh: refreshSeq } = useAsyncData<IMultisigTransac
       status: 'pending',
       nonce_type: 'seq',
     },
-    baseURL: multisigURL,
+    baseURL: multisigURL.value,
   })
 
   return data

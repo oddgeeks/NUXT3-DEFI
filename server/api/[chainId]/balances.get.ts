@@ -29,57 +29,10 @@ interface IBalance extends Partial<IToken> {
   balanceInUSD: string
 }
 
-const { debankAccessKey, ankrApiKey } = useRuntimeConfig()
+const { ankrApiKey } = useRuntimeConfig()
 
 // Setup provider AnkrProvider
 const ankrProvider = new AnkrProvider(ankrApiKey)
-
-async function getFromDebank(address: string) {
-  let balances: any[] = await $fetch(
-    'https://pro-openapi.debank.com/v1/user/all_token_list',
-    {
-      retry: 3,
-      params: {
-        id: address,
-        is_all: true,
-      },
-      headers: {
-        AccessKey: debankAccessKey,
-      },
-    },
-  )
-
-  balances = balances.map((token: any) => {
-    const price = token.price || 0
-    const network = networks.find(n => n.debankName === token.chain)
-
-    return {
-      name: token.name,
-      address: token.id.startsWith('0x')
-        ? token.id
-        : '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-      decimals: token.decimals,
-      symbol: token.symbol,
-      chainId: network.chainId || null,
-      logoURI: token.logo_url,
-      price: new BigNumber(price).toFixed(),
-      balanceRaw: new BigNumber(token.raw_amount).toFixed(0),
-      balance: new BigNumber(token.raw_amount)
-        .div(10 ** token.decimals)
-        .toFixed(),
-      balanceInUSD: new BigNumber(token.raw_amount)
-        .div(10 ** token.decimals)
-        .times(price)
-        .toFixed(),
-    }
-  })
-
-  balances = balances.filter(b => b.chainId !== null)
-
-  return balances.sort((a, b) =>
-    new BigNumber(b.balanceInUSD).minus(a.balanceInUSD).toNumber(),
-  )
-}
 
 async function getFromAnkr(address: string,
   blockchain?: any): Promise<IBalance[]> {
@@ -90,6 +43,9 @@ async function getFromAnkr(address: string,
 
   let balances = ankrBalances.assets.map((asset) => {
     const network = networks.find(n => n.ankrName === asset.blockchain)!
+
+    if (!network)
+      return
 
     return {
       name: asset.tokenName,
@@ -108,7 +64,7 @@ async function getFromAnkr(address: string,
     }
   })
 
-  balances = balances.filter(b => b.chainId !== null)
+  balances = balances.filter(Boolean)
 
   balances = balances.sort((a, b) =>
     new BigNumber(b.balanceInUSD).minus(a.balanceInUSD).toNumber(),

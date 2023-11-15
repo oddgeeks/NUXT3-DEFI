@@ -11,6 +11,7 @@ const props = defineProps<{
 }>()
 
 const { getRpcProviderByChainId } = useShared()
+const { avoExplorerURL } = storeToRefs(useEnvironmentState())
 
 const events = [
   '0xacb5341cc21d71a005bd22634cec7391a7fd11ff2b563a7b301cac795f7a6a56',

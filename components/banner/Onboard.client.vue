@@ -4,6 +4,7 @@ import WaveSVG from '~/assets/images/icons/wave.svg?component'
 
 const { hideOnboardBanner, isOnboardBannerVisible } = useBanner()
 const { totalEoaBalance, eoaBalances, fundedEoaNetworks } = useAvocadoSafe()
+const { avoOnboardURL } = storeToRefs(useEnvironmentState())
 </script>
 
 <template>

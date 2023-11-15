@@ -4,6 +4,7 @@ import SearchSVG from '~/assets/images/icons/search.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
 import InfoSVG from '~/assets/images/icons/info.svg?component'
 import type { IBalance } from '~~/stores/safe'
+import { useEnvironmentState } from '~~/stores/environment-state'
 
 const props = defineProps<{
   hideZeroBalances: boolean
@@ -13,6 +14,7 @@ const props = defineProps<{
 const { balances } = storeToRefs(useSafe())
 const { isOnboardBannerVisible } = useBanner()
 const { totalBalance, tokenBalances, totalEoaBalance, fundedEoaNetworks } = useAvocadoSafe()
+const { avoOnboardURL } = storeToRefs(useEnvironmentState())
 const { account } = useWeb3()
 const { networkPreference } = storeToRefs(useSafe())
 
