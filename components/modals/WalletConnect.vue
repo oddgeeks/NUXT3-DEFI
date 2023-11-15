@@ -6,6 +6,7 @@ import * as yup from 'yup'
 import { useField, useForm } from 'vee-validate'
 
 import LiteYouTubeEmbed from 'vue-lite-youtube-embed'
+import SVGWalletConnect from '~/assets/images/wallet/wallet-connect.svg'
 import SVGQr from '~/assets/images/icons/qr.svg?component'
 
 import 'vue-lite-youtube-embed/style.css'
@@ -160,52 +161,21 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
-    <WCApproveConnectionV2 v-if="proposal" :proposal="proposal" :loading="loading" @connect="connect" @destroy="$emit('destroy')" />
+  <div class="flex flex-col gap-5">
+    <WCApproveConnectionV2 v-if="proposal" class="p-5 sm:p-7.5" :proposal="proposal" :loading="loading" @connect="connect" @destroy="$emit('destroy')" />
 
     <form
       v-else
-      class="space-y-8"
       @submit.prevent="prepareAndConnect"
     >
-      <div class="flex flex-col items-center">
-        <svg
-          width="40"
-          height="40"
-          viewBox="0 0 40 40"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-            d="M20 0C31.0469 0 40 8.95312 40 20C40 31.0469 31.0469 40 20 40C8.95312 40 0 31.0469 0 20C0 8.95312 8.95312 0 20 0Z"
-            fill="url(#paint0_radial_2802_2420)"
-          />
-          <path
-            d="M12.7109 15.4453C16.7344 11.5156 23.2656 11.5156 27.2891 15.4453L27.7734 15.9219C27.9766 16.1172 27.9766 16.4375 27.7734 16.6328L26.1172 18.25C26.0156 18.3516 25.8516 18.3516 25.75 18.25L25.0859 17.6016C22.2734 14.8594 17.7266 14.8594 14.9141 17.6016L14.2031 18.2969C14.1016 18.3984 13.9375 18.3984 13.8359 18.2969L12.1797 16.6797C11.9766 16.4844 11.9766 16.1641 12.1797 15.9687L12.7109 15.4453ZM30.7188 18.7891L32.1953 20.2266C32.3984 20.4219 32.3984 20.7422 32.1953 20.9375L25.5469 27.4297C25.3438 27.625 25.0156 27.625 24.8203 27.4297L20.1016 22.8203C20.0547 22.7734 19.9688 22.7734 19.9219 22.8203L15.2031 27.4297C15 27.625 14.6719 27.625 14.4766 27.4297L7.80469 20.9375C7.60156 20.7422 7.60156 20.4219 7.80469 20.2266L9.28125 18.7891C9.48437 18.5938 9.8125 18.5938 10.0078 18.7891L14.7266 23.3984C14.7734 23.4453 14.8594 23.4453 14.9062 23.3984L19.625 18.7891C19.8281 18.5938 20.1562 18.5938 20.3516 18.7891L25.0703 23.3984C25.1172 23.4453 25.2031 23.4453 25.25 23.3984L29.9688 18.7891C30.1875 18.5938 30.5156 18.5938 30.7188 18.7891Z"
-            fill="white"
-          />
-          <defs>
-            <radialGradient
-              id="paint0_radial_2802_2420"
-              cx="0"
-              cy="0"
-              r="1"
-              gradientUnits="userSpaceOnUse"
-              gradientTransform="translate(0.000123978 20.0006) scale(40)"
-            >
-              <stop stop-color="#5D9DF6" />
-              <stop offset="1" stop-color="#006FFF" />
-            </radialGradient>
-          </defs>
-        </svg>
-
-        <div class="mb-4 mt-5 text-lg sm:mt-7.5">
+      <ModalTitle class="border-b border-gray-875 p-5 sm:px-7.5 sm:pt-7.5">
+        <template #icon>
+          <SVGWalletConnect class="h-9 w-9 shrink-0" />
+        </template>
+        <template #title>
           Connect with WalletConnect
-        </div>
-
-        <p class="text-center text-xs font-medium leading-5 text-gray-400">
+        </template>
+        <template #subtitle>
           Do not close this window while connecting.<br>
           Have a question? Follow this
           <a
@@ -214,34 +184,36 @@ onMounted(async () => {
             href="https://guides.avocado.instadapp.io/using-avocado/using-walletconnect"
             class="inline-flex gap-2.5 text-primary"
           >guide</a>.
-        </p>
-      </div>
-
-      <CommonInput
-        v-model="uri"
-        name="uri"
-        type="search"
-        autofocus
-        :error-message="uriMeta.dirty ? errors.uri : ''"
-        placeholder="QR code or link"
-      >
-        <template v-if="!uri" #suffix>
-          <SVGQr class="text-gray-400" />
         </template>
-      </CommonInput>
+      </ModalTitle>
 
-      <CommonButton
-        type="submit"
-        :disabled="!meta.valid"
-        :loading="loading"
-        class="w-full justify-center"
-        size="lg"
-      >
-        Connect
-      </CommonButton>
+      <div class="flex flex-col gap-5 p-5 sm:px-7.5">
+        <CommonInput
+          v-model="uri"
+          name="uri"
+          type="search"
+          autofocus
+          :error-message="uriMeta.dirty ? errors.uri : ''"
+          placeholder="QR code or link"
+        >
+          <template v-if="!uri" #suffix>
+            <SVGQr class="text-gray-400" />
+          </template>
+        </CommonInput>
+
+        <CommonButton
+          type="submit"
+          :disabled="!meta.valid"
+          :loading="loading"
+          class="w-full justify-center"
+          size="lg"
+        >
+          Connect
+        </CommonButton>
+      </div>
     </form>
 
-    <div v-if="isIframeVisible" class="mt-6" @click="isTutorialWatched = true">
+    <div v-if="isIframeVisible" class="p-5 pt-0 sm:p-7.5 sm:pt-0" @click="isTutorialWatched = true">
       <h1 class="mb-3 text-center text-xs font-medium leading-5 text-gray-400">
         Looking for step-by-step instructions? <br>Watch this video.
       </h1>

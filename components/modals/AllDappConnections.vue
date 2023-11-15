@@ -46,7 +46,7 @@ async function disconnectAllConnections() {
 
 <template>
   <div>
-    <ModalTitle class="border-b border-gray-875 p-5 sm:p-7.5">
+    <ModalTitle class="border-b border-gray-875 p-5 sm:px-7.5 sm:pt-7.5">
       <template #icon-content>
         <SVGWalletConnect class="h-9 w-9" />
       </template>

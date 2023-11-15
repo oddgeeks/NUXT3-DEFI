@@ -150,6 +150,9 @@ export function openSendModal(chainId: number | string,
 export function openWalletConnectModal() {
   openModal({
     component: WalletConnect,
+    options: {
+      contentClass: '!p-0',
+    },
   })
 }
 

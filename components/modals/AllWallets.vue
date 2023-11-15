@@ -38,7 +38,7 @@ const filteredSafes = computed(() => {
 
 <template>
   <div>
-    <ModalTitle class="border-b border-gray-875 p-5 sm:p-7.5">
+    <ModalTitle class="border-b border-gray-875 p-5 sm:px-7.5 sm:pt-7.5">
       <template #icon>
         $
       </template>
@@ -80,7 +80,7 @@ const filteredSafes = computed(() => {
           <SvgoSearch class="mr-2" />
         </template>
       </CommonInput>
-      <div class="grid grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2 sm:gap-4">
+      <div class="grid min-h-[220px] grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2 sm:gap-4">
         <TransitionGroup :appear="false" :name="!searcInputFocused ? 'wallet-list' : ''">
           <template v-for="safe in filteredSafes" :key="safe.safe_address">
             <div v-if="safe.multisig === 0 ? displayLegacySafe : true">

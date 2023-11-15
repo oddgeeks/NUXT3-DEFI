@@ -62,7 +62,7 @@ function getIcon(bookmark: IBookmark) {
           <SvgoSearch class="mr-2" />
         </template>
       </CommonInput>
-      <div class="grid min-h-[220px] grid-cols-2 items-baseline gap-4">
+      <div class="grid min-h-[220px] grid-cols-1 items-baseline gap-4 sm:grid-cols-2">
         <div v-for="shortcut in filteredShortcuts" :key="shortcut.name" class="flex items-start rounded-2xl border border-gray-800 bg-gray-850 px-4 py-[14px] hover:bg-gray-900">
           <button class="flex flex-1 gap-3" @click="initializeBookmark(shortcut)">
             <SafeTokenLogo network-logo-class="!w-5 !h-5" class="h-7.5 w-7.5" :chain-id="shortcut.chainId" :url="getIcon(shortcut)" />
