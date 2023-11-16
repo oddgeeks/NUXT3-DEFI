@@ -15,6 +15,7 @@ const { sendTransaction, tokenBalances, safeAddress }
   = useAvocadoSafe()
 const { authorisedNetworks } = useAuthorities()
 const { parseTransactionError } = useErrorHandler()
+const { avoDepositAddress } = storeToRefs(useEnvironmentState())
 const { tokens } = storeToRefs(useTokens())
 const [isGiftActive, toggleGift] = useToggle(false)
 const isDefaultTokenSet = ref(false)
@@ -122,7 +123,7 @@ const onSubmit = handleSubmit(async () => {
 
     const tx = {
       from: account.value,
-      to: avoDepositAddress,
+      to: avoDepositAddress.value,
       value: '0',
       data: '0x',
     }
@@ -137,7 +138,7 @@ const onSubmit = handleSubmit(async () => {
       )
 
       const { data } = await contract.populateTransaction.transfer(
-        avoDepositAddress,
+        avoDepositAddress.value,
         transferAmount,
       )
 
@@ -235,7 +236,7 @@ watch(usdcTokens, () => {
         you need to have USDC in your Avocado wallet to add gas.
       </h2>
       <a
-        href="https://help.avocado.instadapp.io/en/articles/7038872-topping-up-gas-on-avocado"
+        href="https://guides.avocado.instadapp.io/getting-started/topping-up-the-gas-tank"
         target="blank"
         rel="noopener noreferrer"
         class="inline-flex justify-center gap-2.5 text-center text-sm font-medium text-primary"
@@ -259,7 +260,7 @@ watch(usdcTokens, () => {
         gas is pending block confirmation
       </div>
       <NuxtLink
-        href="https://help.avocado.instadapp.io/en/articles/7211493-why-haven-t-my-gas-credits-reflected-yet"
+        href="https://guides.avocado.instadapp.io/dapp-information/network-support#confirmation-times-for-tops-upsas-credits-reflected-yet"
         target="blank"
         external
         rel="noopener noreferrer"
@@ -346,5 +347,6 @@ watch(usdcTokens, () => {
     <p class="w-full text-xs leading-5 text-orange-400">
       Deposited gas cannot be withdrawn at this time. Please only top up what you plan to use.
     </p>
+    <SessionLocked class="mx-auto" />
   </div>
 </template>

@@ -17,6 +17,7 @@ const transactionRef = ref(props.transaction)
 const { signMultisigData, multisigBroadcast, rejectMultisigTransaction, checkTransactionExecuted } = useAvocadoSafe()
 const { getRequiredSigner, isAccountCanSign } = useMultisig()
 const { selectedSafe, safeOptions } = storeToRefs(useSafe())
+const { avoExplorerURL, multisigURL } = storeToRefs(useEnvironmentState())
 const { getContactNameByAddress } = useContacts()
 const { parseTransactionError } = useErrorHandler()
 const { account } = useWeb3()
@@ -112,7 +113,7 @@ const { data: isSameNonceExist } = useAsyncData(`${transactionRef.value.id}-same
 
   const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${transactionRef.value.safe_address}/transactions`, {
     params,
-    baseURL: multisigURL,
+    baseURL: multisigURL.value,
   })
 
   console.log(data)
@@ -195,13 +196,13 @@ const { data: simulationDetails, error: simulationError } = useAsyncData(
 async function handleSign(item: IMultisigTransaction) {
   try {
     pending.value.sign = true
-    const signature = await signMultisigData({ chainId: item.chain_id, data: item.data })
+    const { signature } = await signMultisigData({ chainId: item.chain_id, data: item.data })
 
     const { data } = await axios.post<IMultisigTransaction>(`/safes/${selectedSafe.value?.safe_address}/transactions/${item.id}/confirmations`, {
       address: account.value,
       signature,
     }, {
-      baseURL: multisigURL,
+      baseURL: multisigURL.value,
     })
 
     if (isConfirmationWillMatch.value && signAndExecute.value)
@@ -304,9 +305,13 @@ async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
 
 onUnmounted(() => {
   const currentRoute = router.currentRoute.value
+
   router.push({
-    path: `/multisig/${currentRoute.params.safe}/pending-transactions`,
+    name: 'multisig-safe-pending-transactions',
     query: currentRoute.query,
+    params: {
+      safe: currentRoute.params.safe,
+    },
   })
 })
 </script>

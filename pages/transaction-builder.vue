@@ -204,7 +204,7 @@ async function handleEditBatchItem(index: number) {
 
 async function handleDeleteBatchItem(index: number) {
   const { success } = await openDialogModal({
-    title: 'Are you sure you want to Delete Batch?',
+    title: 'Are you sure you want to delete this transaction?',
     type: 'question',
     cancelButtonText: 'Cancel',
     isCancelButtonVisible: true,

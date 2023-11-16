@@ -50,6 +50,7 @@ const { toWei, fromWei } = useBignumber()
 const { parseTransactionError } = useErrorHandler()
 const { account } = useWeb3()
 const { authorisedNetworks } = useAuthorities()
+const { swapAggregatorURL, swapAggregatorAccessToken } = storeToRefs(useEnvironmentState())
 
 const toChainId = ref<string>(props.chainId)
 const tokenAddress = ref<string>(props.address)
@@ -254,7 +255,7 @@ async function fetchSwapDetails() {
 
     const data: ISwapResponse = await http('/swap',
       {
-        baseURL: swapAggregatorURL,
+        baseURL: swapAggregatorURL.value,
         signal: abortController.value?.signal,
         params: {
           network: actualName,
@@ -264,7 +265,7 @@ async function fetchSwapDetails() {
           maxSlippage: actualSlippage.value,
           slippage: actualSlippage.value,
           user: safeAddress.value,
-          access_token: swapAggregatorAccessToken,
+          access_token: swapAggregatorAccessToken.value,
         },
       },
     )
@@ -1053,6 +1054,7 @@ onUnmounted(() => {
         Swap
       </CommonButton>
     </div>
+    <SessionLocked class="mx-auto" />
   </form>
 </template>
 

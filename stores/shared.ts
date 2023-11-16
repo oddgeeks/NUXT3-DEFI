@@ -7,6 +7,11 @@ const rpcInstances: Record<string, ethers.providers.StaticJsonRpcProvider> = {}
 export const useShared = defineStore('shared', () => {
   const rpcs = ref<Record<string, string>>({})
   const rpcList = ref<Record<string, string[]>>({})
+  const isProd = ref(false)
+
+  const isAppProduction = useCookie<boolean | undefined>('app-production', {
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
+  })
 
   function getRpcFallbackUrl(chainId: string | number) {
     const rpcURL = rpcs.value[chainId]
@@ -33,6 +38,7 @@ export const useShared = defineStore('shared', () => {
     if (!rpcInstances[chainId]) {
       rpcInstances[chainId] = new StaticJsonRpcRetryBatchProvider(list, {
         delay: 50,
+        timeouts: [5000, 7000, 10000],
       })
     }
 
@@ -49,10 +55,12 @@ export const useShared = defineStore('shared', () => {
   }
 
   return {
+    isProd,
     rpcs,
     rpcList,
     getRpcProviderByChainId,
     getRpcURLByChainId,
+    isAppProduction,
   }
 })
 

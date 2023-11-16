@@ -17,8 +17,11 @@ export function useAvocadoSafe() {
   const { getRpcProviderByChainId } = useShared()
   const { avoProvider, getSafeOptions, refreshSelectedSafe, getFallbackSafeOptionsByChainId } = useSafe()
   const { selectedSafe, isSelectedSafeLegacy, safeOptions } = storeToRefs(useSafe())
+  const { multisigURL, instadappSigner, avoChainId } = storeToRefs(useEnvironmentState())
   const { clearAllModals } = useModal()
+  const { authVerify, preferredMfa, isAvocadoProtectActive, atLeastOneMfaVerifed, getMFAToken, getMFATokenExpiry } = useMfa()
   const dryRun = useCookie<boolean | undefined>('dry-run')
+  const latestMfaType = useState('latest-mfa-type')
 
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { getRequiredSigner } = useMultisig()
@@ -132,7 +135,7 @@ export function useAvocadoSafe() {
 
   async function generateMultisigSignatureAndSign({ chainId, actions, nonce, metadata, options }: IGenerateMultisigSignatureParams) {
     const data = await generateMultisigSignatureMessage({ chainId, actions, nonce, metadata, options })
-    const signature = await signMultisigData({ chainId, data })
+    const { signature, domain, value } = await signMultisigData({ chainId, data })
 
     return {
       signatureParams: {
@@ -140,6 +143,8 @@ export function useAvocadoSafe() {
         address: account.value,
       },
       castParams: data,
+      domain,
+      value,
     }
   }
 
@@ -178,7 +183,7 @@ export function useAvocadoSafe() {
     const domain = {
       name: safeOptions.domainName,
       version: safeOptions.notdeployed ? safeOptions?.latestVersion : safeOptions.currentVersion,
-      chainId: String(avoChainId),
+      chainId: String(avoChainId.value),
       salt: ethers.utils.solidityKeccak256(['uint256'], [chainId]),
       verifyingContract: selectedSafe.value?.safe_address,
     }
@@ -188,7 +193,10 @@ export function useAvocadoSafe() {
     const types = {
       1: typesV1,
       2: typesV2,
-    }[versionMajor] || {}
+    }[versionMajor]
+
+    if (!types)
+      throw new Error('Invalid version')
 
     const { signature, cancelled } = await signTypedData(library.value, account.value, {
       domain,
@@ -228,6 +236,10 @@ export function useAvocadoSafe() {
       safe: params.safe,
       targetChainId: String(params.targetChainId),
       index: String(selectedSafe.value?.multisig_index || 0),
+      mfa_type: params.mfa_type,
+      mfa_code: params.mfa_code,
+      mfa_token: params.mfa_token,
+      debug: params.debug,
     }
 
     if (selectedSafe.value.multisig_index > 0 || params.signers.length > 1) {
@@ -251,6 +263,8 @@ export function useAvocadoSafe() {
         dryRun: true,
       })
     }
+
+    console.log({ signatureObject })
 
     const transactionHash = await avoProvider.send('txn_broadcast', [signatureObject])
 
@@ -387,31 +401,189 @@ export function useAvocadoSafe() {
     } as any
   }
 
-  async function createProposalOrSignDirecty(args: IGenerateMultisigSignatureParams) {
-    const { chainId, actions, nonce, metadata, estimatedFee = false, rejection, rejectionId, options, transactionType = 'others', clearModals = true } = args
+  async function authenticateTransactionMfa(params?: IAuthTransactionMfa) {
+    const { _authMfa, submitFn, defaultSessionAvailable = false, expire, forceGrabSession = false, chainId } = params || {}
+
+    const mfa = _authMfa || preferredMfa.value
+    let mfaToken
+
+    if (mfa.value === 'backup')
+      return { mfaCode: '', mfaType: 'backup' }
+
+    const { success, payload: verifyPayload } = await authVerify({
+      mfa,
+      mfaRequestType: 'transaction',
+      submitFn,
+      defaultSessionAvailable,
+      chainId,
+      expire,
+    })
+
+    if (verifyPayload?.fallbackMfa) {
+      return authenticateTransactionMfa({
+        _authMfa: verifyPayload.fallbackMfa,
+        submitFn,
+        defaultSessionAvailable,
+        expire,
+        forceGrabSession,
+        chainId,
+      })
+    }
+
+    if (!success || !verifyPayload?.code)
+      throw new Error('MFA verification failed')
+
+    if (verifyPayload.sessionAvailable || forceGrabSession) {
+      const resp = await avoProvider.send('mfa_generateSessionToken', [
+        {
+          owner: selectedSafe.value?.owner_address,
+          index: selectedSafe.value?.multisig_index,
+          ttl: expire || '30min',
+          code: verifyPayload.code,
+          type: mfa.value,
+        },
+      ])
+
+      if (!resp)
+        throw new Error('Failed to generate session token')
+
+      if (verifyPayload.sessionAvailable) {
+        const transactionToken = getMFAToken({
+          expires: new Date(resp.expiresAt),
+        })
+
+        const transactionTokenExpiry = getMFATokenExpiry({
+          expires: new Date(resp.expiresAt),
+        })
+
+        transactionToken.value = resp.token
+        transactionTokenExpiry.value = resp.expiresAt
+      }
+
+      mfaToken = resp.token
+    }
+
+    return {
+      mfaCode: verifyPayload.code,
+      mfaType: mfa.value,
+      mfaToken,
+    }
+  }
+
+  function isEligableToProceed2FA(requiredSigner: number, chainId: string | number) {
+    return isSignerAdded(selectedSafe.value!, instadappSigner.value, chainId) && atLeastOneMfaVerifed.value && requiredSigner === 2
+  }
+
+  async function getSingleSignatureObject(args: IGenerateMultisigSignatureParams) {
+    const { chainId, actions, metadata, options } = args
+    const params = await generateMultisigSignatureAndSign({ chainId, actions, metadata, options })
+
+    const signatureObject: IMultisigBroadcastParams = {
+      proposalId: '',
+      ignoreSlack: true,
+      confirmations: [{
+        address: params.signatureParams.address,
+        signature: params.signatureParams.signature,
+        created_at: new Date().getTime(),
+      }],
+      signers: [params.signatureParams.address],
+      message: params.castParams,
+      owner: selectedSafe.value?.owner_address!,
+      safe: selectedSafe.value?.safe_address!,
+      targetChainId: chainId,
+      mfa_code: '',
+      mfa_token: '',
+      mfa_type: undefined,
+      debug: {
+        domain: params.domain,
+      },
+    }
+
+    return signatureObject
+  }
+
+  async function createProposalOrSignDirecty(params: IGenerateMultisigSignatureParams) {
+    const { chainId, transactionType, actions, metadata, options } = params
 
     const requiredSigner = await getRequiredSigner(selectedSafe.value?.safe_address!, chainId)
 
-    if (isSafeEligableToSingleExecution(requiredSigner, selectedSafe.value)) {
-      const params = await generateMultisigSignatureAndSign({ chainId, actions, metadata, options })
+    const transactionToken = getMFAToken()
 
-      const txHash = await multisigBroadcast({
-        proposalId: '',
-        ignoreSlack: true,
-        confirmations: [{
-          address: params.signatureParams.address,
-          signature: params.signatureParams.signature,
-          created_at: new Date().getTime(),
-        }],
-        signers: [params.signatureParams.address],
-        message: params.castParams,
-        owner: selectedSafe.value?.owner_address!,
-        safe: selectedSafe.value?.safe_address!,
-        targetChainId: chainId,
-      })
+    if (isSafeEligableToSingleExecution(requiredSigner)) {
+      if (isEligableToProceed2FA(requiredSigner, chainId) && !transactionToken.value) {
+        let txHash
+
+        const defaultSessionAvailable = transactionType === 'add-signers' || transactionType === 'remove-signers'
+
+        const { mfaType } = await authenticateTransactionMfa({
+          chainId,
+          defaultSessionAvailable,
+          submitFn: async (_mfa, code) => {
+            try {
+              const signatureObject = await getSingleSignatureObject(params)
+
+              signatureObject.mfa_code = code
+              signatureObject.mfa_type = _mfa.value
+
+              txHash = await multisigBroadcast(signatureObject)
+
+              return true
+            }
+            catch (e) {
+              const parsed = serialize(e)
+
+              if (parsed.message.includes('INVALID_MFA_CODE'))
+                return false
+
+              else
+                throw e
+            }
+          },
+        })
+
+        // global usage of recent mfa type
+        latestMfaType.value = mfaType
+
+        if (mfaType === 'backup') {
+          const nonce = -1
+          const multisigParams = await generateMultisigSignatureAndSign({ chainId, actions, nonce, metadata, options })
+
+          // generate proposal
+          const { data } = await axios.post<IMultisigTransaction>(`/safes/${selectedSafe.value?.safe_address}/transactions`, {
+            chain_id: String(chainId),
+            status: 'pending',
+            signer: multisigParams?.signatureParams,
+            owner: selectedSafe.value?.owner_address,
+            index: String(selectedSafe.value?.multisig_index),
+            data: multisigParams?.castParams,
+            nonce,
+          }, {
+            baseURL: multisigURL.value,
+          })
+
+          clearAllModals()
+          openReview2faBackupTransaction(data.id, chainId)
+          return
+        }
+
+        return txHash
+      }
+
+      const signatureObject = await getSingleSignatureObject(params)
+
+      if (isEligableToProceed2FA(requiredSigner, chainId) && transactionToken.value)
+        signatureObject.mfa_token = transactionToken.value
+
+      const txHash = await multisigBroadcast(signatureObject)
 
       return txHash
     }
+
+    return createProposal(params)
+  }
+
+  async function createProposal(args: IGenerateMultisigSignatureParams) {
+    const { chainId, actions, nonce, metadata, estimatedFee = false, rejection, rejectionId, options, transactionType = 'others', clearModals = true } = args
 
     const { success, payload } = await openEditNonceModal({ chainId, actions, defaultNonce: nonce, estimatedFee, rejection, rejectionId, transactionType, metadata, options })
 
@@ -471,7 +643,7 @@ export function useAvocadoSafe() {
     const domain = {
       name: config.domainName,
       version: config.latestVersion,
-      chainId: String(avoChainId),
+      chainId: String(avoChainId.value),
       salt: ethers.utils.solidityKeccak256(['uint256'], [params.targetChainId]),
       verifyingContract: selectedSafe.value?.safe_address,
     }
@@ -501,7 +673,7 @@ export function useAvocadoSafe() {
     return signature
   }
 
-  async function signMultisigData({ chainId, data }: any): Promise<string> {
+  async function signMultisigData({ chainId, data }: any) {
     await switchToAvocadoNetwork()
 
     const config = await getFallbackSafeOptionsByChainId(selectedSafe.value!, chainId)
@@ -514,7 +686,7 @@ export function useAvocadoSafe() {
     const domain = {
       name: config?.domainName,
       version: config?.latestVersion,
-      chainId: avoChainId,
+      chainId: avoChainId.value,
       verifyingContract,
       salt: ethers.utils.solidityKeccak256(['uint256'], [chainId]),
     }
@@ -564,7 +736,11 @@ export function useAvocadoSafe() {
 
     console.log({ domain, types, value: data, account: account.value, signature })
 
-    return signature
+    return {
+      signature,
+      domain,
+      value: data,
+    }
   }
 
   async function rejectMultisigTransaction(tx: IMultisigTransaction) {
@@ -587,7 +763,7 @@ export function useAvocadoSafe() {
 
     const { data } = await axios.get<IMultisigTransactionResponse>(`/safes/${tx.safe_address}/transactions`, {
       params,
-      baseURL: multisigURL,
+      baseURL: multisigURL.value,
     })
 
     const isRejectionAlreadyExist = isNonseq ? data.meta.total > 0 : data.meta.total > 1
@@ -635,7 +811,7 @@ export function useAvocadoSafe() {
   }
 
   async function addSignersWithThreshold(params: IAddSignerParams) {
-    const { chainId, addresses, threshold } = params || {}
+    const { chainId, addresses, threshold, actionsOnly } = params || {}
 
     const avoMultisigInstance = AvoMultisigImplementation__factory.connect(selectedSafe.value?.safe_address!, getRpcProviderByChainId(chainId))
 
@@ -664,6 +840,13 @@ export function useAvocadoSafe() {
       },
     ] as any[]
 
+    if (actionsOnly) {
+      return {
+        actions,
+        metadata,
+      }
+    }
+
     return createProposalOrSignDirecty({ chainId, actions, estimatedFee: true, metadata, clearModals: false, transactionType: 'add-signers' })
   }
 
@@ -687,7 +870,7 @@ export function useAvocadoSafe() {
   }
 
   async function removeSignerWithThreshold(params: IRemoveSignerParams) {
-    const { addresses, chainId, threshold } = params || {}
+    const { addresses, chainId, threshold, actionsOnly } = params || {}
 
     const avoMultisigInstance = AvoMultisigImplementation__factory.connect(selectedSafe.value?.safe_address!, getRpcProviderByChainId(chainId))
 
@@ -709,6 +892,13 @@ export function useAvocadoSafe() {
       },
     ]
 
+    if (actionsOnly) {
+      return {
+        actions,
+        metadata,
+      }
+    }
+
     return createProposalOrSignDirecty({ chainId, actions, estimatedFee: true, metadata, clearModals: false, transactionType: 'remove-signers' })
   }
 
@@ -723,7 +913,7 @@ export function useAvocadoSafe() {
           status: 'pending',
           chain_id: chainId,
         },
-        baseURL: multisigURL,
+        baseURL: multisigURL.value,
       })
 
       const maxNonce = Math.max(...data.data.map(i => Number(i.nonce)))
@@ -753,8 +943,10 @@ ${parsed.message}`,
     return tx.executed_at !== null
   }
 
-  function isSafeEligableToSingleExecution(requiredSigner: number, safe?: ISafe) {
-    return safe && safe.multisig_index === 0 && requiredSigner === 1
+  function isSafeEligableToSingleExecution(requiredSigner: number) {
+    if (atLeastOneMfaVerifed.value && isAvocadoProtectActive.value)
+      return true
+    return selectedSafe.value && selectedSafe.value.multisig_index === 0 && requiredSigner === 1
   }
 
   return {
@@ -784,5 +976,7 @@ ${parsed.message}`,
     checkTransactionExecuted,
     networkOrderedBySumTokens,
     generateSignatureMessage,
+    authenticateTransactionMfa,
+    isEligableToProceed2FA,
   }
 }

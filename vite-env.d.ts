@@ -34,28 +34,31 @@ interface Provider {
   switchNetwork: (network: Network) => Promise<any>;
 }
 
-interface Network {
-  name: string;
-  debankName?: string;
-  ankrName?: string;
-  chainId: ChainId;
-  isAvocado?: boolean;
-  zerionName?: string;
-  serverRpcUrl: string | undefined;
-  balanceResolverAddress?: string;
-  usdcAddress: string;
-  explorerUrl: string;
-  params: {
-    chainName?: string;
-    iconUrls?: string[];
-    rpcUrls: string[];
-    nativeCurrency?: {
-      name: string;
-      symbol: string;
-      decimals: number;
+  interface Network {
+    name: string;
+    debankName?: string;
+    ankrName?: string;
+    zerionName?: string;
+    chainId: ChainId;
+    color: string;
+    isAvocado?: boolean;
+    serverRpcUrl: string | undefined;
+    balanceResolverAddress?: string;
+    usdcAddress?: string;
+    explorerUrl: string;
+    fakeTransactionHash: string;
+    apiURL?: string;
+    params: {
+      chainName?: string;
+      iconUrls?: string[];
+      rpcUrls: string[];
+      nativeCurrency?: {
+        name: string;
+        symbol: string;
+        decimals: number;
+      };
     };
-  };
-}
+  }
 
 interface NetworkVersion extends Network {
   latestVersion: string;
@@ -281,11 +284,13 @@ interface IOptionsParams {
   chainId: string | number,
   provider: ethers.providers.StaticJsonRpcProvider
   server?: boolean
+  is_prod: boolean
 } 
 
 interface IComputeSafeParams {
   provider: ethers.providers.StaticJsonRpcProvider
   accountAddress: string
+  isProd: boolean
 }
 
 interface IToToken {
@@ -363,8 +368,29 @@ type ISnackOptions = {
   timeout?: number;
 };
 
+interface IMigrationTransaction {
+  chainId: string | number
+  txs: TransactionsAction[]
+  metadata: string[]
+}
+
+interface IConnectionMeta {
+  provider: string | null;
+}
+
+interface IPendingTransactionModalParams {
+  hash: string
+  chainId: number | string
+  toChainId?: number | string
+  type?: IWeb3Action
+  async?: boolean
+  crossChain?: boolean
+  preventAutoClose?: boolean
+}
+
 type IOptions = {
   raw?: boolean;
+  closeButton?: boolean;
   clickToClose?: boolean;
   wrapperClass?: string;
   contentClass?: string;
@@ -374,7 +400,7 @@ type IOptions = {
 
 type IWeb3Action = "transfer" | "bridge" | "swap" | "gas-topup" | "reedem" | "claim" | 'deploy' | 'upgrade' | 'nft' | 'dapp';
 
-type ISlackMessageType = "danger" | "error" | "success" | "banner";
+type ISlackMessageType = "danger" | "error" | "success" | "banner" | 'observer';
 
 type MetadataProps = {
   type:
@@ -518,6 +544,11 @@ interface NFTAttributes {
   value: string;
 }
 
+interface IGasBalanceMigration {
+  safe: ISafe;
+  amount: string;
+}
+
 interface NFTData {
   imageUrl: string;
   thumbnailUrl: string;
@@ -579,6 +610,16 @@ interface IEstimatedFeeData {
   discount: IEstimatedDiscount;
 }
 
+interface IEstimatedFeeDataWithChainId extends IEstimatedFeeData { 
+  chainId: string
+}
+
+interface IEstimatedActions {
+  actions: TransactionsAction[]
+  chainId: number | string
+  options: any
+}
+
  interface IEstimatedDiscount {
   amount: number
   transactionCount: number
@@ -628,6 +669,23 @@ interface Positions extends DefiApis {
   borrowedTokens: any[];
 }
 
+interface MigrationPositions extends DefiApis {
+  positions: any;
+  dsaId?: string;
+  dsaAddress?: string;
+  vaultId?: string;
+  proceedOnNativeNetwork?: boolean;
+  id: string;
+  // permitData?: PermitSignature[];
+}
+
+interface IDsaAccount {
+  id: string;
+  address: string;
+  version: string;
+  chainId: number;
+}
+
 interface IDefiActions {
   getApy: (positions: any) => any
   getSuppliedTokens: (positions: any) => any[]
@@ -654,6 +712,9 @@ interface ISafesResponse {
   created_at: string
   updated_at: string
   multisig: 0 | 1 | number
+  mfa_email_verified: 0 | 1
+  mfa_phone_verified : 0 | 1
+  mfa_totp_verified : 0 | 1
   deployed: Record<string, boolean>,
   version: Record<string, string>
   authorities: Record<string, string[]>
@@ -695,3 +756,59 @@ interface IComputeAddresses {
 }
 
 type TxBuilderModes = 'expand' | 'collapse' | 'super-collapse' | 'raw'
+
+
+interface IMfaAuthenticateParams {
+  
+}
+
+type MfaRequestType = 'transaction' | 'delete' | 'update'
+
+interface IMfaActivateModalParams {
+  mfaType: IMfa
+}
+
+type MfaVerify = (mfa: IMfa, code: string) => Promise<boolean>
+
+type MfaExpire = '30min' | '60min'
+
+interface IMfaVerifyModalParams {
+  mfa: IMfa,
+  mfaRequestType: MfaRequestType,
+  verify?: MfaVerify
+  request?: Function
+  inputValue?: string
+  authenticate?: boolean,
+  defaultSessionAvailable?: boolean
+  expire?: MfaExpire
+  chainId?: number | string
+}
+
+interface IAuthVerifyParams {
+  mfa: IMfa
+  mfaRequestType: MfaRequestType
+  submitFn?: MfaVerify
+  defaultSessionAvailable?: boolean
+  expire?: MfaExpire
+  chainId?: number | string
+}
+
+interface IAuthTransactionMfa {
+  _authMfa?: IMfa
+  submitFn?: MfaVerify
+  defaultSessionAvailable?: boolean
+  forceGrabSession?: boolean
+  expire?: MfaExpire
+  chainId?: number | string
+}
+
+interface IOpenReviewSignerProcessModalParams{
+  chainId: number | string
+  deleteSigner?: boolean
+  isInstadappSigner?: boolean
+  removeBackupSigner?: boolean
+  actions: {
+    actions: TransactionsAction[]
+    metadata: string
+  }
+}

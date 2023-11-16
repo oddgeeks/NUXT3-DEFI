@@ -7,6 +7,7 @@ const isVersionUpdateBannerHidden = ref(false)
 export function useBanner() {
   const { gasBalance, safeOptions, selectedSafe } = storeToRefs(useSafe())
   const { isSafeMultisig, signers } = storeToRefs(useMultisig())
+  const { avoChainId } = storeToRefs(useEnvironmentState())
   const { account, chainId } = useWeb3()
   const { $pwa } = useNuxtApp()
   const route = useRoute()
@@ -32,14 +33,14 @@ export function useBanner() {
 
     return (
       account.value
-      && chainId.value === avoChainId
+      && chainId.value === avoChainId.value
       && lte(gasBalance.value, 0.1)
     )
   })
 
   const showIncorrectNetworkBanner = computed(
     () =>
-      !trackingAccount.value && account.value && chainId.value !== avoChainId,
+      !trackingAccount.value && account.value && chainId.value !== avoChainId.value,
   )
 
   const showOnboardBanner = computed(() => {

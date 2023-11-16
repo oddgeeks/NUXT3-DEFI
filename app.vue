@@ -1,7 +1,33 @@
 <script setup lang="ts">
 useTokens()
 useSafe()
-const { library } = useWeb3()
+const { library, provider, account } = useWeb3()
+const { onDisconnect } = useConnectors()
+const { lastModal } = useModal()
+
+const { safeAddress } = storeToRefs(useSafe())
+const { fromWei } = useBignumber()
+const { avoProvider } = useSafe()
+
+const { refresh } = useAsyncData(
+  'pending-deposit',
+  async () => {
+    if (!safeAddress.value)
+      return '0'
+
+    const amountInWei = await avoProvider.send('eth_getBalance', [
+      safeAddress.value,
+      'pending-deposit',
+    ])
+
+    return fromWei(amountInWei || '0', 18).toFixed()
+  },
+  {
+    immediate: true,
+    server: false,
+    watch: [safeAddress],
+  },
+)
 
 useScriptTag('https://app.chatwoot.com/packs/js/sdk.js', () => {
   // @ts-expect-error
@@ -37,6 +63,27 @@ onMounted(() => {
 
   return () => document.removeEventListener('scroll', hideAllTooltipsOnScroll)
 })
+
+watchThrottled(provider, () => {
+  if (!provider.value)
+    return
+
+  provider.value.on('accountsChanged', async () => {
+    const userNonce = useCookie<string | null>(`nonce-${account.value}`)
+
+    if (lastModal.value?.id !== 'request-terms-signature' && !userNonce.value) {
+      const { success } = await openRequestTermsSignature()
+
+      if (!success)
+        onDisconnect()
+    }
+  })
+}, {
+  throttle: 1000,
+  immediate: true,
+})
+
+useIntervalFn(refresh, 15000)
 </script>
 
 <template>
@@ -48,6 +95,7 @@ onMounted(() => {
   <BannerNewVersion />
   <BannerMultisigOnboard />
   <Notifications />
+  <TransactionsQueue />
   <Modals />
   <ChatBubble />
 </template>

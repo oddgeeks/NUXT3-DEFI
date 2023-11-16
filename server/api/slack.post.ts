@@ -11,9 +11,8 @@ const IGNORED_MESSAGES = ['/api/balances']
 
 export default defineEventHandler(async (event) => {
   const { slackKey, slackErrorKey, slackStagingKey, slackBridgeErrorKey } = useRuntimeConfig()
-  const { isProd } = useAppConfig()
 
-  let { type = 'success', message, isBridgeError = false } = await readBody(event)
+  let { type = 'success', message, isBridgeError = false, isProd = false } = await readBody(event)
 
   if (message && IGNORED_MESSAGES.some(i => message.includes(i)))
     return {}
@@ -38,6 +37,9 @@ export default defineEventHandler(async (event) => {
 
   if (process.env.NODE_ENV === 'development')
     message += `\n${'`Development`'}`
+
+  if (type === 'observer')
+    channelId = 'TCTP75BAM/B063K821B1C/uD6vGlNrXKWi21sLjuiImGtZ'
 
   await axios
     .post(

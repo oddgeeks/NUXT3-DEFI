@@ -4,7 +4,7 @@ import { isAddress } from '@ethersproject/address'
 import { useField, useForm } from 'vee-validate'
 import { storeToRefs } from 'pinia'
 import ClipboardSVG from '~/assets/images/icons/clipboard.svg?component'
-import type { IToken } from '~~/stores/tokens'
+import type { IBalance } from '~/stores/safe'
 import { Erc20__factory } from '~~/contracts'
 
 const props = defineProps<{
@@ -14,9 +14,8 @@ const props = defineProps<{
 const { handleAddToken, fetchTokenByAddress } = useTokens()
 const { tokens } = storeToRefs(useTokens())
 const { getRpcProviderByChainId } = useShared()
+const { safeAddress } = storeToRefs(useSafe())
 const { fetchBalances } = useSafe()
-
-const balance = ref('0')
 
 const { handleSubmit, isSubmitting, errors, meta, resetForm, validate }
   = useForm({
@@ -74,20 +73,19 @@ const {
       const name = await contract.name()
       const decimals = await contract.decimals()
 
-      const tokens = await fetchTokenByAddress([reactiveAddress.value], chainId.value)
+      const tokens = await fetchTokenByAddress([reactiveAddress.value], chainId.value) || []
 
-      const token = tokens?.[0]
+      const token = tokens[0]
 
-      const data = await fetchBalances()
+      const balance = await contract.balanceOf(safeAddress.value)
 
-      const tokenBalance = data?.find(
-        (i: IToken) =>
-          i.address.toLowerCase() === reactiveAddress.value.toLowerCase()
-          && i.chainId == chainId.value,
-      )
+      const balanceFormatted = fromWei(toBN(balance), decimals).toFixed(2)
 
-      if (tokenBalance)
-        balance.value = tokenBalance.balance
+      const sparkline = token?.sparkline_price_7d || []
+
+      const price = toBN(token?.price || '0').eq('0') && sparkline.length > 0
+        ? sparkline[sparkline.length - 1]
+        : token?.price
 
       return {
         address: reactiveAddress.value,
@@ -95,11 +93,12 @@ const {
         symbol,
         name,
         decimals,
-        coingeckoId: '',
-        logoURI: token?.logo_url,
-        price: token?.price || 0,
-        sparklinePrice7d: token?.sparkline_price_7d || [],
-      } as IToken
+        coingeckoId: token.coingecko_id || '',
+        logoURI: token?.logo_url || '',
+        price,
+        sparklinePrice7d: sparkline,
+        balance: balanceFormatted,
+      } as IBalance
     }
   },
   {
@@ -119,7 +118,9 @@ const onSubmit = handleSubmit(async () => {
   if (!token.value)
     return
 
-  handleAddToken(token.value)
+  await handleAddToken(token.value)
+
+  fetchBalances()
 
   openSnackbar({
     message: `${token.value?.name} added successfully.`,
@@ -155,7 +156,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  clearNuxtData('custom-token')
+  clearNuxtData(`custom-token-${props.address}`)
 })
 </script>
 
@@ -212,7 +213,7 @@ onUnmounted(() => {
       <div class="text-slate-400">
         <p>{{ token.name }}</p>
         <p class="text-sm font-medium">
-          {{ balance }} {{ token.symbol }}
+          {{ token.balance }} {{ token.symbol }}
         </p>
       </div>
       <div

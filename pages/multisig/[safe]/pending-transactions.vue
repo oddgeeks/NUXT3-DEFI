@@ -3,9 +3,14 @@ import { wait } from '@instadapp/utils'
 import axios from 'axios'
 
 const route = useRoute()
+const { multisigURL } = storeToRefs(useEnvironmentState())
 const itemsRef = ref<HTMLElement | null>(null)
 const [isCollapseAll, toggle] = useToggle(false)
 const isCollapseAllDisabled = ref(false)
+
+definePageMeta({
+  alias: '/2fa/:safe/pending-transactions',
+})
 
 const { getSafeOptions } = useSafe()
 const { selectedSafe, safeOptions } = storeToRefs(useSafe())
@@ -50,7 +55,7 @@ const { data: nonSeqResponse, refresh: refreshNonSeq } = useAsyncData<IMultisigT
       status: 'pending',
       nonce_type: 'nonseq',
     },
-    baseURL: multisigURL,
+    baseURL: multisigURL.value,
   })
 
   return data
@@ -65,7 +70,7 @@ const { data: seqResponse, refresh: refreshSeq } = useAsyncData<IMultisigTransac
       status: 'pending',
       nonce_type: 'seq',
     },
-    baseURL: multisigURL,
+    baseURL: multisigURL.value,
   })
 
   return data
@@ -75,6 +80,36 @@ const { data: seqResponse, refresh: refreshSeq } = useAsyncData<IMultisigTransac
 })
 
 const tabs = computed(() => {
+  const is2FA = route.path.includes('2fa')
+
+  const completedLabel2fa = `
+  <span class='text-slate-400'>
+  You might see some transactions here that you don't recognise (like adding signer, changing threshold). These happen automatically when you configure Avocado Protect and do not indicate that your account has been compromised.
+  </span>`
+
+  const completeTab = {
+    value: undefined,
+    label: 'Completed',
+    query: 'completed',
+    title: is2FA ? completedLabel2fa : null,
+    mobileLabel: null,
+    count: null,
+  }
+
+  if (is2FA) {
+    return [
+      {
+        value: 'pending',
+        title: null,
+        query: 'pending',
+        mobileLabel: 'Pending',
+        label: 'Pending',
+        count: toBN(seqResponse.value?.meta?.total || 0).plus(toBN(nonSeqResponse.value?.meta?.total || 0)).toString(),
+      },
+      completeTab,
+    ]
+  }
+
   return [
     {
       value: 'seq',
@@ -92,16 +127,12 @@ const tabs = computed(() => {
       title: 'Non-Sequential transactions can be executed in any order.',
       count: nonSeqResponse.value?.meta?.total || 0,
     },
-    {
-      value: undefined,
-      label: 'Completed',
-      query: 'completed',
-    },
+    completeTab,
   ]
 })
 
 const title = computed(() => {
-  const tab = tabs.value.find(tab => tab.value === activeTab.value)
+  const tab = tabs.value.find(tab => (tab.value || tab.query) === activeTab.value)
 
   return tab?.title
 })
@@ -171,9 +202,9 @@ onMounted(() => {
               tab.query === activeTab ? 'dark:bg-slate-800 bg-slate-150' : 'text-slate-400'
             "
             class="laeding-5 flex flex-1 items-center justify-center gap-2.5 whitespace-nowrap rounded-7.5 px-4 py-2 text-xs"
-            @click="$router.replace({ query: { tab: tab.query } })"
+            @click="$router.replace({ query: { tab: tab.query }, path: $router.currentRoute.value.path })"
           >
-            <span class="hidden sm:block"> {{ tab.label }}</span>
+            <span class="hidden sm:block">  {{ tab.label }}</span>
             <span class="block sm:hidden"> {{ tab.mobileLabel || tab.label }}</span>
             <span v-if="tab?.count" class="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-slate-500 px-[5px] text-xs text-white">
               {{ tab?.count }}
@@ -185,9 +216,7 @@ onMounted(() => {
         </button>
       </div>
 
-      <h2 v-if="title" class="text-center text-xs font-medium leading-5 sm:text-left">
-        {{ title }}
-      </h2>
+      <h2 v-if="title" class="text-center text-xs font-medium leading-5 sm:text-left" v-html="title" />
       <div ref="itemsRef" class="flex flex-col gap-5">
         <template v-if="activeTab === 'completed'">
           <MultisigLoadingTransactionItems v-if="isLoadingCompletedTxns" />

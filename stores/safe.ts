@@ -24,6 +24,8 @@ export const useSafe = defineStore('safe', () => {
   const safeAddress = ref()
   const mainSafeAddress = ref()
   const multiSigSafeAddress = ref()
+  const { connectionMeta } = useConnectors()
+
   const accountSafeMapping = useCookie<Record<string, string>>('account-safe-mapping', {
     maxAge: 60 * 60 * 24 * 365 * 10,
     default: () => ref({}),
@@ -62,16 +64,24 @@ export const useSafe = defineStore('safe', () => {
   const { getRpcProviderByChainId } = useShared()
   const { trackingAccount } = useAccountTrack()
 
-  const avoProvider = getRpcProviderByChainId(avoChainId)
-  const avoBatchProvider = getRpcProviderByChainId(avoChainId)
+  const { multisigForwarderProxyAddress, forwarderProxyAddress, multisigURL, avoChainId, isProd } = storeToRefs(useEnvironmentState())
+
+  const avoProvider = getRpcProviderByChainId(avoChainId.value)
+
+  const isObservableAccount = computed(() => {
+    if (!account.value)
+      return false
+
+    return account.value.toLowerCase() === observableAccount.toLowerCase()
+  })
 
   const forwarderProxyContract = Forwarder__factory.connect(
-    forwarderProxyAddress,
+    forwarderProxyAddress.value,
     getRpcProviderByChainId(137),
   )
 
   const multisigForwarderProxyContract = MultisigForwarder__factory.connect(
-    multisigForwarderProxyAddress,
+    multisigForwarderProxyAddress.value,
     getRpcProviderByChainId(137),
   )
 
@@ -89,6 +99,7 @@ export const useSafe = defineStore('safe', () => {
       const { address, multisigAddress, oldSafeAddress } = await getComputedAddresses({
         accountAddress: account.value,
         provider: polygonProvider,
+        isProd: isProd.value,
       })
 
       logBalance({
@@ -107,6 +118,7 @@ export const useSafe = defineStore('safe', () => {
       const { address, multisigAddress, oldSafeAddress } = await http<IComputeAddresses>('/api/rpc/compute', {
         params: {
           address: account.value,
+          is_prod: isProd.value,
         },
         retry: 3,
       })
@@ -210,6 +222,7 @@ export const useSafe = defineStore('safe', () => {
       getSafe(mainSafeAddress.value),
       getSafe(multiSigSafeAddress.value),
     ])
+    console.log(_selectedSafe)
 
     if (!_selectedSafe) {
       const isMultisig = isAddressEqual(safeAddress.value, multiSigSafeAddress.value)
@@ -294,7 +307,7 @@ export const useSafe = defineStore('safe', () => {
   }
 
   const getSafe = async (address: string): Promise<ISafe> => {
-    return avoBatchProvider.send('api_getSafe', [address])
+    return avoProvider.send('api_getSafe', [address])
   }
 
   async function refreshSelectedSafe() {
@@ -421,6 +434,9 @@ export const useSafe = defineStore('safe', () => {
   async function getBalances(address: string, signal?: AbortSignal, updateState = false) {
     return Promise.all(
       availableNetworks.map(async (network) => {
+        if (String(network.chainId) == '122' && selectedSafe.value?.multisig === 0)
+          return []
+
         const customTokenAddress = customTokens.value
           .filter(t => String(t.chainId) == String(network.chainId))
           .map(t => t.address)
@@ -501,19 +517,6 @@ export const useSafe = defineStore('safe', () => {
 
       balances.value.error = null
 
-      const total = !data
-        ? toBN('0')
-        : data.flat().reduce(
-          (acc, curr) => acc.plus(curr.balanceInUSD || '0'),
-          toBN(0) || toBN(0),
-        )
-
-      const clonedSafeTotalBalanceMapping = cloneDeep(safeTotalBalanceMapping.value || {})
-
-      clonedSafeTotalBalanceMapping[safeAddress.value] = total.toFixed()
-
-      safeTotalBalanceMapping.value = clonedSafeTotalBalanceMapping
-
       return balances.value.data
     }
     catch (e: any) {
@@ -559,7 +562,7 @@ export const useSafe = defineStore('safe', () => {
   }
 
   const getSafes = async (address: string): Promise<ISafesResponse> => {
-    return avoBatchProvider.send('api_getSafes', [{
+    return avoProvider.send('api_getSafes', [{
       address,
     }])
   }
@@ -572,6 +575,7 @@ export const useSafe = defineStore('safe', () => {
             multisig_index: safe.multisig_index,
             multisig: safe.multisig,
             owner_address: safe.owner_address,
+            is_prod: isProd.value,
           },
         }).then((e) => {
           logBalance({
@@ -591,6 +595,7 @@ export const useSafe = defineStore('safe', () => {
         safe,
         chainId,
         provider: getRpcProviderByChainId(chainId),
+        is_prod: isProd.value,
       })
 
       return config
@@ -601,6 +606,7 @@ export const useSafe = defineStore('safe', () => {
           multisig_index: safe.multisig_index,
           multisig: safe.multisig,
           owner_address: safe.owner_address,
+          is_prod: isProd.value,
         },
       })
 
@@ -616,10 +622,14 @@ export const useSafe = defineStore('safe', () => {
         availableNetworks.map((network) => {
           const provider = getRpcProviderByChainId(network.chainId)
 
+          if (String(network.chainId) == '122' && safe.multisig === 0)
+            return
+
           return getSafeOptionsByChain({
             safe,
             chainId: network.chainId,
             provider,
+            is_prod: isProd.value,
           })
             .catch((e) => {
               const msg = 'Failed to get safe options by public provider'
@@ -638,6 +648,7 @@ export const useSafe = defineStore('safe', () => {
                   multisig_index: safe.multisig_index,
                   multisig: safe.multisig,
                   owner_address: safe.owner_address,
+                  is_prod: isProd.value,
                 },
               })
             })
@@ -652,7 +663,7 @@ export const useSafe = defineStore('safe', () => {
         }),
       )
 
-      return options as ISafeOptions[]
+      return options.filter(Boolean) as ISafeOptions[]
     }
     catch (e: any) {
       const msg = 'Failed to get safe options over public and private provider'
@@ -687,6 +698,9 @@ export const useSafe = defineStore('safe', () => {
       id: 0,
       owner_address: account.value,
       updated_at: new Date().toString(),
+      mfa_email_verified: 0,
+      mfa_phone_verified: 0,
+      mfa_totp_verified: 0,
       version: {},
       multisig,
       signers: {},
@@ -700,7 +714,7 @@ export const useSafe = defineStore('safe', () => {
         params: {
           status: 'pending',
         },
-        baseURL: multisigURL,
+        baseURL: multisigURL.value,
       })
       const txs: IMultisigTransactionResponse = resp.data
       return txs.meta.total
@@ -742,6 +756,8 @@ export const useSafe = defineStore('safe', () => {
     async () => {
       if (!account.value)
         return
+
+      connectionMeta.value.address = account.value
 
       try {
         safesLoading.value = true
@@ -807,6 +823,17 @@ export const useSafe = defineStore('safe', () => {
     throttle: 1000,
   })
 
+  watchDebounced(totalBalance, () => {
+    const balance = toBN(totalBalance.value || 0).toFixed()
+
+    const clonedSafeTotalBalanceMapping = cloneDeep(safeTotalBalanceMapping.value || {})
+
+    clonedSafeTotalBalanceMapping[safeAddress.value] = balance
+    safeTotalBalanceMapping.value = clonedSafeTotalBalanceMapping
+  }, {
+    debounce: 1000,
+  })
+
   return {
     safeAddress,
     mainSafeAddress,
@@ -823,7 +850,6 @@ export const useSafe = defineStore('safe', () => {
     eoaBalances,
     totalEoaBalance,
     fetchBalances,
-    forwarderProxyAddress,
     networkPreference,
     avoProvider,
     getBalances,
@@ -848,6 +874,8 @@ export const useSafe = defineStore('safe', () => {
     networkOrderedBySumTokens,
     getFallbackSafeOptionsByChainId,
     allSafes,
+    fetchSafeInstanceses,
+    isObservableAccount,
   }
 })
 

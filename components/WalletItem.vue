@@ -3,7 +3,7 @@ const props = defineProps<{
   safe: ISafe
   primary?: boolean
   tooltip?: string
-  v2?: boolean
+  hideActiveState?: boolean
 }>()
 
 const route = useRoute()
@@ -15,7 +15,10 @@ const { safeTotalBalanceMapping, legacySafeAddress, selectedSafe } = storeToRefs
 const { checkSafeIsActualMultisig } = useMultisig()
 
 const isMultisig = computed(() => checkSafeIsActualMultisig(props.safe))
-const walletName = useLocalStorage(`safe-label-${props.safe?.safe_address}`, isMultisig.value ? 'MultiSig' : 'Personal')
+const walletName = computed(() => {
+  const name = localStorage.getItem(`safe-label-${props.safe?.safe_address}`)
+  return name?.length ? name : (isMultisig.value ? 'MultiSig' : 'Personal')
+})
 
 const isLegacySafeExist = computed(() => !!legacySafeAddress.value)
 
@@ -37,6 +40,9 @@ async function onEdit() {
 }
 
 function handleClick() {
+  if (props.hideActiveState)
+    return
+
   const safe = route.params?.safe as string
 
   if (safe) {
@@ -61,8 +67,8 @@ function handleClick() {
 <template>
   <button
     :class="{
-      'border-slate-50 bg-slate-50 dark:border-slate-800 dark:bg-slate-800': active,
-      'bg-slate-150 dark:bg-gray-850': !active,
+      'border-slate-50 bg-slate-50 dark:border-slate-800 dark:bg-slate-800': active && !props.hideActiveState,
+      'bg-slate-150 dark:bg-gray-850': !active || props.hideActiveState,
     }"
     class="flex w-full items-stretch justify-between rounded-2xl border border-slate-150 px-4 py-3.5 text-left dark:border-slate-750" @click="handleClick"
   >
@@ -93,12 +99,7 @@ function handleClick() {
     <div class="flex flex-col items-end justify-between">
       <div class="flex items-center gap-2">
         <SvgoInfo2 v-if="tooltip && isLegacySafeExist" v-tippy="tooltip" class="text-slate-500" />
-        <p
-          :class="isMultisig ? 'bg-purple text-purple' : !v2 ? 'bg-slate-400 text-slate-400' : 'bg-primary text-primary'"
-          class="rounded-lg bg-opacity-[14%] px-2 py-0.5 text-xs font-medium"
-        >
-          {{ isMultisig ? 'TEAM' : v2 ? 'PERSONAL' : "LEGACY" }}
-        </p>
+        <SafeBadge :safe="safe" />
       </div>
       <p class="text-xs font-medium text-orange">
         {{ isMultisig && pendingTxnsCount ? `${pendingTxnsCount} Pending txns` : '' }}

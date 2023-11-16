@@ -6,14 +6,15 @@ import { parse } from 'semver'
 import ArrowRight from '~/assets/images/icons/arrow-right.svg?component'
 import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 
-const { isProd } = useAppConfig()
+const { isProd } = storeToRefs(useEnvironmentState())
 const { token, stepBack, data, actualAddress, targetToken } = useSend()
 const { gasBalance, safeOptions, isSelectedSafeLegacy, selectedSafe } = storeToRefs(useSafe())
 const { account } = useWeb3()
 const { toWei, fromWei } = useBignumber()
-const { safeAddress, tokenBalances, generateMultisigSignatureMessage, generateSignatureMessage } = useAvocadoSafe()
+const { safeAddress, tokenBalances, generateMultisigSignatureMessage, generateSignatureMessage, authenticateTransactionMfa, isEligableToProceed2FA } = useAvocadoSafe()
 const { avoProvider } = useSafe()
 const { parseTransactionError } = useErrorHandler()
+const { getMFAToken } = useMfa()
 
 const fallbackFee: TotalFee = {
   amount: '0',
@@ -41,6 +42,8 @@ const crossFee = ref({
   pending: false,
   error: '',
 })
+
+const formattedNetwork = computed(() => `:${formatChainName(data.value.fromChainId)}: → :${formatChainName(data.value.toChainId)}: Cross-chain Send Transaction`)
 
 const nativeFee = computed(() => {
   if (!buildTransaction.value?.result || !nativeCurrency.value)
@@ -392,6 +395,8 @@ async function fetchcrossSignatures() {
       throw new Error('Rejected by user')
 
     crossSignatures.value = payload
+
+    await onSubmit()
   }
   catch (e: any) {
     const err = serialize(e)
@@ -423,7 +428,7 @@ async function fetchCrossFee() {
     const targetVersion = target?.notdeployed ? target?.latestVersion : target?.currentVersion
 
     const body = {
-      staging: !isProd,
+      staging: !isProd.value,
       sourceChainId: String(data.value.fromChainId),
       targetChainId: String(data.value.toChainId),
       target: targetMessage.value,
@@ -492,66 +497,91 @@ const disabled = computed(() => {
   return !actualAddress.value || crossFee.value.pending || !!crossFeeError.value || isSubmitting.value || !bestRoute.value || isInsufficientNativeBalance.value || isBalanceExceeded.value
 })
 
-async function onSubmit() {
-  const formattedNetwork = `:${formatChainName(data.value.fromChainId)}: → :${formatChainName(data.value.toChainId)}: Cross-chain Send Transaction`
+async function executeTransaction(srcMfaToken?: string) {
+  if (!token.value || !data.value)
+    return
 
-  try {
-    if (!token.value || !data.value)
-      return
+  if (!crossSignatures.value)
+    throw new Error('Signatures not found')
 
-    isSubmitting.value = true
+  Object.assign(crossSignatures.value.source, {
+    message: sourceMessage.value,
+  })
 
-    if (!crossSignatures.value)
-      throw new Error('Signatures not found')
+  Object.assign(crossSignatures.value.target, {
+    message: targetMessage.value,
+  })
+
+  if (!isSelectedSafeLegacy.value) {
+    const transactionToken = getMFAToken()
+
+    const mfaToken = srcMfaToken || transactionToken.value
 
     Object.assign(crossSignatures.value.source, {
-      message: sourceMessage.value,
+      index: String(selectedSafe.value?.multisig_index),
+      mfa_token: mfaToken,
+      signatures: [{
+        signature: crossSignatures.value.source.signature,
+        signer: account.value,
+      }],
     })
 
     Object.assign(crossSignatures.value.target, {
-      message: targetMessage.value,
+      index: String(selectedSafe.value?.multisig_index),
+      signatures: [{
+        signature: crossSignatures.value.target.signature,
+        signer: account.value,
+      }],
     })
+  }
 
-    if (!isSelectedSafeLegacy.value) {
-      Object.assign(crossSignatures.value.source, {
-        index: String(selectedSafe.value?.multisig_index),
-        signatures: [{
-          signature: crossSignatures.value.source.signature,
-          signer: account.value,
-        }],
+  const avocadoHash = await avoProvider.send('api_requestCrosschainTransaction', [crossSignatures.value.source, crossSignatures.value.target])
+
+  if (!avocadoHash) {
+    console.log(avocadoHash, 'Avocado hash not found', [crossSignatures.value.source, crossSignatures.value.target])
+    throw new Error('Something went wrong')
+  }
+
+  const metadata = getMetadata()
+
+  logActionToSlack({
+    message: generateSlackMessage(metadata, data.value.fromChainId),
+    action: 'cross-transfer',
+    txHash: avocadoHash,
+    chainId: String(data.value.fromChainId),
+    amountInUsd: times(data.value.amount, token.value.price || '0').toFixed(),
+    account: account.value,
+    network: formattedNetwork.value,
+  })
+
+  destroyModal()
+
+  showPendingCrossTransaction(avocadoHash, data.value.fromChainId, data.value.toChainId)
+}
+
+async function onSubmit() {
+  try {
+    isSubmitting.value = true
+
+    const transactionToken = getMFAToken()
+
+    const source = safeOptions.value.find(i => i.chainId == data.value.fromChainId)
+
+    if (!source)
+      throw new Error('Source config failed')
+
+    if (isEligableToProceed2FA(source.threshold, data.value.fromChainId) && !transactionToken.value) {
+      const { mfaToken } = await authenticateTransactionMfa({
+        expire: '60min',
+        defaultSessionAvailable: true,
+        forceGrabSession: true,
       })
 
-      Object.assign(crossSignatures.value.target, {
-        index: String(selectedSafe.value?.multisig_index),
-        signatures: [{
-          signature: crossSignatures.value.target.signature,
-          signer: account.value,
-        }],
-      })
+      await executeTransaction(mfaToken)
     }
-
-    const avocadoHash = await avoProvider.send('api_requestCrosschainTransaction', [crossSignatures.value.source, crossSignatures.value.target])
-
-    if (!avocadoHash) {
-      console.log(avocadoHash, 'Avocado hash not found', [crossSignatures.value.source, crossSignatures.value.target])
-      throw new Error('Something went wrong')
+    else {
+      await executeTransaction()
     }
-
-    const metadata = getMetadata()
-
-    logActionToSlack({
-      message: generateSlackMessage(metadata, data.value.fromChainId),
-      action: 'cross-transfer',
-      txHash: avocadoHash,
-      chainId: String(data.value.fromChainId),
-      amountInUsd: times(data.value.amount, token.value.price || '0').toFixed(),
-      account: account.value,
-      network: formattedNetwork,
-    })
-
-    destroyModal()
-
-    showPendingCrossTransaction(avocadoHash, data.value.fromChainId, data.value.toChainId)
   }
   catch (e: any) {
     const err = parseTransactionError(e)
@@ -567,7 +597,7 @@ async function onSubmit() {
       type: 'error',
       account: account.value,
       errorDetails: err.parsed,
-      network: formattedNetwork,
+      network: formattedNetwork.value,
     })
   }
   finally {

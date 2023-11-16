@@ -25,8 +25,10 @@ export const useTokens = defineStore('tokens', () => {
         'https://cdn.instadapp.io/avocado/tokenlist.json',
       )
 
+      const supportedTokens = data.tokens.filter((i: any) => availableNetworks.some(n => String(n.chainId) === String(i.chainId)))
+
       tokens.value = await fetchTokenPrices([
-        ...data.tokens.map((t: any) => ({
+        ...supportedTokens.map((t: any) => ({
           name: t.name,
           address: t.address,
           decimals: t.decimals,
@@ -66,8 +68,14 @@ export const useTokens = defineStore('tokens', () => {
           )
 
           if (token) {
-            token.price = toBN(tokenPrice.price).toNumber()
-            token.sparklinePrice7d = tokenPrice.sparkline_price_7d || []
+            const sparkline = tokenPrice?.sparkline_price_7d || []
+
+            const price = toBN(tokenPrice?.price || '0').eq('0') && sparkline.length > 0
+              ? sparkline[sparkline.length - 1]
+              : tokenPrice?.price
+
+            token.price = toBN(price || '0').toNumber()
+            token.sparklinePrice7d = sparkline
           }
           else {
             console.log(
@@ -106,17 +114,17 @@ export const useTokens = defineStore('tokens', () => {
     await fetchTokens()
 
     // preload at custom tokens
-    await http('/api/tokens')
+    http('/api/tokens')
   })
 
   const handleTokenPrices = async () => {
     tokens.value = await fetchTokenPrices(tokens.value)
   }
 
-  const handleAddToken = (token: IToken) => {
+  const handleAddToken = async (token: IToken) => {
     token.isCustomToken = true
     customTokens.value.push(token)
-    fetchTokens()
+    await fetchTokens()
   }
 
   const handleDeleteToken = (token: IToken) => {

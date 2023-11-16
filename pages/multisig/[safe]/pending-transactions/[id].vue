@@ -4,7 +4,13 @@ import { isAddress } from 'ethers/lib/utils'
 
 const route = useRoute()
 
+const { multisigURL } = storeToRefs(useEnvironmentState())
+
 const safe = route.params.safe as string
+
+definePageMeta({
+  alias: '/2fa/:safe/pending-transactions/:id',
+})
 
 if (!safe || !isAddress(safe)) {
   throw createError({
@@ -15,7 +21,7 @@ if (!safe || !isAddress(safe)) {
 
 const { data } = useAsyncData<IMultisigTransaction>(`${route.params.safe}+${route.params.id}`, async () => {
   const { data } = await axios.get(`/safes/${route.params.safe}/transactions/${route.params.id}`, {
-    baseURL: multisigURL,
+    baseURL: multisigURL.value,
   })
 
   return data
