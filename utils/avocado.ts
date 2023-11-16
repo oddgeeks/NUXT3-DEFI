@@ -38,7 +38,7 @@ export const walletConnectMetadata = {
   name: 'Instadapp Avocado',
 }
 
-export const ABIfetcherSupportedNetworks = ['polygon', 'mainnet', 'fantom', 'arbitrum', 'avalanche', 'optimism', 'bsc', 'gnosis']
+export const ABIfetcherSupportedNetworks = ['polygon', 'mainnet', 'fantom', 'arbitrum', 'avalanche', 'optimism', 'bsc', 'gnosis', 'fuse']
 export const warnedDapps = ['https://app.safe.global', 'https://mint.fun', 'https://app.velodrome.finance', 'https://app.frax.finance', 'https://docs.frax.finance']
 export const bannedDapps = ['https://www.orbiter.finance', 'https://mirror.xyz', 'https://blog.summer.fi', 'https://summer.fi', 'https://opensea.io']
 

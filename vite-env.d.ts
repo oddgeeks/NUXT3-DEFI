@@ -26,6 +26,17 @@ declare module '*.svg?skipsvgo' {
 
 type ChainId = 1 | 137 | 42161 | 10 | 56 | 43114 | 100 | 1101 | 634 | 63400;
 
+interface IBlockQueryChain {
+  id: string
+  name: string
+  created_at: string
+  updated_at: string
+  native_token_address: string
+  wrapped_token_address: string
+  free_rpc_urls: string[]
+}
+
+
 interface Provider {
   id: string;
   name: string;
