@@ -16,6 +16,11 @@ interface IMfaResponse {
   data: ITotpData
 }
 
+interface IKeyMfa {
+  mfaCode: string
+  mfaType: string
+}
+
 interface IMfa {
   value: Mfa
   label: string
