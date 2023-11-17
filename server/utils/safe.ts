@@ -1,6 +1,6 @@
 import { serialize } from 'error-serializer'
 import { ethers } from 'ethers'
-import { AVO_PROD_MULTISIG_FORWARDER_ADDR, AVO_STAGING_MULTISIG_FORWARDER_ADDR } from '../../utils/avocado'
+import { getForwarderProxyAddress, getMultisigForwarderProxyAddress } from '~~/utils/avocado'
 import { AvoMultisigImplementation__factory, Forwarder__factory, GaslessWallet__factory, MultisigForwarder__factory } from '@/contracts'
 
 const serverRpcInstances = {} as Record<string, ethers.providers.StaticJsonRpcProvider>
@@ -17,20 +17,22 @@ export function getServerBatchedRpcProvider(chainId: number | string) {
 }
 
 export async function getSafeOptionsByChain(params: IOptionsParams): Promise<ISafeOptions> {
-  const { safe, provider, chainId, server = false } = params
-  const { _forwarderProxyAddress, _multisigForwarderProxyAddress } = getContractAddresses()
+  const { safe, provider, chainId, server = false, is_prod } = params
+
+  const multisigForwarderProxyAddress = getMultisigForwarderProxyAddress(is_prod)
+  const forwarderProxyAddress = getForwarderProxyAddress(is_prod)
 
   const obj = {} as ISafeOptions
 
   const implInstance = AvoMultisigImplementation__factory.connect(safe.safe_address, provider)
 
   const multisigForwarderInstance = MultisigForwarder__factory.connect(
-    _multisigForwarderProxyAddress,
+    multisigForwarderProxyAddress,
     provider,
   )
 
   const legacyForwarderInstance = Forwarder__factory.connect(
-    _forwarderProxyAddress,
+    forwarderProxyAddress,
     provider,
   )
 
@@ -129,6 +131,9 @@ export async function getSafeOptionsByChain(params: IOptionsParams): Promise<ISa
   }
 
   function threshold(): Promise<number> {
+    if (safe.multisig == 0)
+      return Promise.resolve(0)
+
     return implInstance.requiredSigners().catch((e) => {
       const parsed = serialize(e)
 
@@ -160,35 +165,19 @@ export async function getSafeOptionsByChain(params: IOptionsParams): Promise<ISa
   return obj
 }
 
-function getContractAddresses() {
-  const config = useAppConfig()
-
-  const multisigForwarderProxyAddress = config.isProd
-    ? AVO_PROD_MULTISIG_FORWARDER_ADDR
-    : AVO_STAGING_MULTISIG_FORWARDER_ADDR
-
-  const forwarderProxyAddress = config.isProd
-    ? AVO_PROD_FORWARDER_ADDR
-    : AVO_STAGING_FORWARDER_ADDR
-
-  return {
-    _multisigForwarderProxyAddress: multisigForwarderProxyAddress,
-    _forwarderProxyAddress: forwarderProxyAddress,
-  }
-}
-
 export async function getComputedAddresses(params: IComputeSafeParams) {
-  const { accountAddress, provider } = params
+  const { accountAddress, provider, isProd = true } = params
 
-  const { _forwarderProxyAddress, _multisigForwarderProxyAddress } = getContractAddresses()
+  const multisigForwarderProxyAddress = getMultisigForwarderProxyAddress(isProd)
+  const forwarderProxyAddress = getForwarderProxyAddress(isProd)
 
   const legacyProvider = Forwarder__factory.connect(
-    _forwarderProxyAddress,
+    forwarderProxyAddress,
     provider,
   )
 
   const multisigProvider = MultisigForwarder__factory.connect(
-    _multisigForwarderProxyAddress,
+    multisigForwarderProxyAddress,
     provider,
   )
 

@@ -4,6 +4,7 @@ export function useNavigation() {
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { safeAddress, account } = useAvocadoSafe()
   const { isAvocadoProtectActive, isSafeBackupSigner } = useMfa()
+  const { avoExplorerURL, multisigURL } = storeToRefs(useEnvironmentState())
 
   const { data, refresh } = useAsyncData<IMultisigTransactionResponse>(async () => {
     if (!safeAddress.value || !account.value)
@@ -13,7 +14,7 @@ export function useNavigation() {
       params: {
         status: 'pending',
       },
-      baseURL: multisigURL,
+      baseURL: multisigURL.value,
     })
 
     return data
@@ -66,7 +67,7 @@ export function useNavigation() {
         icon: 'SvgoCalendar',
         external: true,
         target: '_blank',
-        to: `${avoExplorerURL}/address/${safeAddress.value}`,
+        to: `${avoExplorerURL.value}/address/${safeAddress.value}`,
         tooltip: 'History',
       },
       {

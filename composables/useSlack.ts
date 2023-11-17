@@ -2,7 +2,7 @@ type MetadataTypes = typeof MetadataEnums[keyof typeof MetadataEnums]
 
 interface ISlackMessage {
   message: string
-  action: IWeb3Action | MetadataTypes | 'add-token' | 'upgrade' | 'deploy' | 'network' | 'nft' | 'multisig' | 'proposal' | 'fetch-nonce' | '2fa-activated' | '2fa-deactivated' | '2fa-method-activated' | '2fa-method-deactivated'
+  action: IWeb3Action | MetadataTypes | 'add-token' | 'upgrade' | 'deploy' | 'network' | 'nft' | 'multisig' | 'proposal' | 'fetch-nonce' | '2fa-activated' | '2fa-deactivated' | '2fa-method-activated' | '2fa-method-deactivated' | 'sign-terms'
   account: string
   type?: ISlackMessageType
   txHash?: string
@@ -43,6 +43,7 @@ const prefixes: Record<ISlackMessage['action'], string> = {
   '2fa-deactivated': '2FA Deactivated',
   '2fa-method-activated': '2FA Activated',
   '2fa-method-deactivated': '2FA Deactivated',
+  'sign-terms': 'Sign Terms',
 }
 
 const ignoredMessages = [
@@ -57,8 +58,10 @@ const ignoredMessages = [
 export function logActionToSlack(slackMessage: ISlackMessage) {
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { atLeastOneMfaVerifed, getMFAToken } = useMfa()
+  const { avoExplorerURL, isProd } = storeToRefs(useEnvironmentState())
   const { isObservableAccount } = storeToRefs(useSafe())
   const latestMfaType = useState('latest-mfa-type')
+  const { provider } = useWeb3()
 
   const build = useBuildInfo()
 
@@ -84,7 +87,7 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
 
   const explorerLink
     = chainId && txHash
-      ? `<${`${avoExplorerURL}/tx/${txHash}`}|${shortenHash(
+      ? `<${`${avoExplorerURL.value}/tx/${txHash}`}|${shortenHash(
           txHash,
           12,
         )}>`
@@ -129,7 +132,12 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
     logMessage = `<@UK9L88BS7>,<@U0146FL6CSZ> ${logMessage}`
   }
 
-  slack(logMessage, type, isBridgeError)
+  const providerName = getWalletProviderName(provider.value)
+
+  if (providerName)
+    logMessage += `\n${'`Wallet Provider`'} ${providerName}`
+
+  slack(logMessage, type, isBridgeError, isProd.value)
 
   latestMfaType.value = undefined
 }
@@ -270,4 +278,55 @@ function getPrefix(amountInUsd: string, action: ISlackMessage['action']) {
     return `${emoji} (${formatUsd(amountInUsd)}) ${actionPrefix}`
 
   return actionPrefix
+}
+
+export function getWalletProviderName(provider: any) {
+  const providerName = provider?.constructor?.name
+  const { connectionMeta } = useConnectors()
+
+  if (provider.isTrust)
+    return 'trust'
+  if (provider.isGoWallet)
+    return 'goWallet'
+  if (provider.isAlphaWallet)
+    return 'alphaWallet'
+  if (provider.isEQLWallet)
+    return 'equal'
+  if (provider.isStatus)
+    return 'status'
+  if (provider.isDapper)
+    return 'dapper'
+  if (provider.isSafe)
+    return 'safe'
+  if (provider.isRabby)
+    return 'rabby'
+  if (provider.isCucumber)
+    return 'cucumber'
+  if (provider.isImToken)
+    return 'imtoken'
+  if (provider.isGSNProvider)
+    return 'GSN'
+  if (provider.isToshi)
+    return 'coinbase'
+  if (provider.isLedgerConnect)
+    return 'ledgerConnect'
+  if (provider.isLedger)
+    return 'ledger'
+  if (provider.isTorus)
+    return 'torus'
+  // @ts-expect-error
+  if (process.client && typeof window?.__CIPHER__ !== 'undefined')
+    return 'cipher'
+  if (providerName === 'EthereumProvider')
+    return 'mist'
+  if (providerName === 'Web3FrameProvider')
+    return 'parity'
+  if (provider.host && provider.host?.includes('infura') !== -1)
+    return 'infura'
+  if (provider.host && provider.host?.includes('localhost') !== -1)
+    return 'localhost'
+  if (provider.isMetaMask)
+    return 'metamask'
+
+  return connectionMeta?.value?.provider
 }

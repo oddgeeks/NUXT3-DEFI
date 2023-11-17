@@ -1,4 +1,4 @@
-import { object, string } from 'yup'
+import { boolean, object, string } from 'yup'
 import { getServerBatchedRpcProvider } from '@/server/utils/safe'
 
 export default defineEventHandler(async (event) => {
@@ -6,11 +6,14 @@ export default defineEventHandler(async (event) => {
 
   const schema = object().shape({
     address: string().required(),
+    is_prod: boolean().default(true),
   })
 
   await schema.validate(params)
 
-  const { address } = schema.cast(params)
+  const { address, is_prod } = schema.cast(params)
+
+  console.log({ isProdComputed: is_prod })
 
   if (!address) {
     return createError({
@@ -24,5 +27,6 @@ export default defineEventHandler(async (event) => {
   return getComputedAddresses({
     accountAddress: address,
     provider,
+    isProd: is_prod,
   })
 })

@@ -42,6 +42,7 @@ const buttonLabel = computed(() => {
     delete: `Remove ${props.mfa.label}`,
     transaction: 'Confirm transaction',
     update: 'Verify',
+    key: 'Confirm',
   }
 
   return obj[props.mfaRequestType]
@@ -184,7 +185,7 @@ async function handleDeactivateWithRecoveryCode() {
         {{ buttonLabel }}
       </CommonButton>
     </div>
-    <div class="flex justify-between">
+    <div class="flex justify-between empty:hidden">
       <button v-if="mfa.value !== 'totp'" type="button" :disabled="!!count" class="text-left text-xs font-medium leading-5 text-primary only:m-auto disabled:text-slate-400" @click="handleRequest">
         Resend OTP
         <span v-if="count">

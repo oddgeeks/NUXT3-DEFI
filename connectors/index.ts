@@ -3,7 +3,6 @@ import { NetworkConnector } from '@web3-react/network-connector'
 import { setWeb3LibraryCallback } from '@instadapp/vue-web3'
 import { Web3Provider } from '@ethersproject/providers'
 import { ethers } from 'ethers'
-import { TorusConnector } from '@web3-react/torus-connector'
 import { WalletLinkConnector } from './custom/walletlink'
 import { WalletConnectConnector } from './custom/walletconnect'
 
@@ -24,13 +23,14 @@ export function injected() {
   })
 }
 
-export function walletlink() {
+export function walletlink(chainId: number) {
   return new WalletLinkConnector({
     appName: 'Avocado',
     url: 'https://avocado.instadapp.io',
     appLogoUrl:
     'https://raw.githubusercontent.com/InstaDApp/brand/master/instadapp%20logo%20only%20filled.svg?component',
     darkMode: false,
+    avoChainId: chainId,
   })
 }
 
@@ -46,10 +46,6 @@ export function walletconnect(rpcMap: Record<string, string>) {
 export const network = new NetworkConnector({
   urls: RPCMap,
   defaultChainId: 56,
-})
-
-export const torus = new TorusConnector({
-  chainId: avoChainId,
 })
 
 export async function changeMetamaskNetwork(network: Network) {

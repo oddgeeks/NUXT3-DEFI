@@ -4,12 +4,13 @@ interface ISlackParams {
   address?: string
   chainId?: string | number | undefined
   userAddress?: string
+  isProd?: boolean
 }
 
 // Added slack logs to understand how is exactly balance fetching happening on production
 export async function slackIt(type: ISlackMessageType,
   params: ISlackParams) {
-  const { address, userAddress, message, chainId, title } = params
+  const { address, userAddress, message, chainId, title, isProd } = params
 
   const accountLink = userAddress
     ? `<https://avocado.instadapp.io/?user=${userAddress}|${shortenHash(
@@ -31,6 +32,7 @@ ${'`error`'}  ${message}`
     method: 'POST',
     body: {
       type,
+      isProd,
       message: msg,
     },
   })

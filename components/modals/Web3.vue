@@ -14,6 +14,12 @@ async function connect(provider: any) {
   try {
     loading.value[provider.name] = true
     await activate(await provider.connect(), undefined, true)
+
+    const { success } = await openRequestTermsSignature(provider.id)
+
+    if (!success)
+      throw new Error('Failed to sign terms')
+
     setConnectorName(provider.id)
     emit('destroy')
   }

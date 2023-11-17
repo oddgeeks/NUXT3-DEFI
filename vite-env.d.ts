@@ -284,11 +284,13 @@ interface IOptionsParams {
   chainId: string | number,
   provider: ethers.providers.StaticJsonRpcProvider
   server?: boolean
+  is_prod: boolean
 } 
 
 interface IComputeSafeParams {
   provider: ethers.providers.StaticJsonRpcProvider
   accountAddress: string
+  isProd: boolean
 }
 
 interface IToToken {
@@ -365,6 +367,26 @@ type ISnackOptions = {
   open?: boolean;
   timeout?: number;
 };
+
+interface IMigrationTransaction {
+  chainId: string | number
+  txs: TransactionsAction[]
+  metadata: string[]
+}
+
+interface IConnectionMeta {
+  provider: string | null;
+}
+
+interface IPendingTransactionModalParams {
+  hash: string
+  chainId: number | string
+  toChainId?: number | string
+  type?: IWeb3Action
+  async?: boolean
+  crossChain?: boolean
+  preventAutoClose?: boolean
+}
 
 type IOptions = {
   raw?: boolean;
@@ -522,6 +544,11 @@ interface NFTAttributes {
   value: string;
 }
 
+interface IGasBalanceMigration {
+  safe: ISafe;
+  amount: string;
+}
+
 interface NFTData {
   imageUrl: string;
   thumbnailUrl: string;
@@ -583,6 +610,16 @@ interface IEstimatedFeeData {
   discount: IEstimatedDiscount;
 }
 
+interface IEstimatedFeeDataWithChainId extends IEstimatedFeeData { 
+  chainId: string
+}
+
+interface IEstimatedActions {
+  actions: TransactionsAction[]
+  chainId: number | string
+  options: any
+}
+
  interface IEstimatedDiscount {
   amount: number
   transactionCount: number
@@ -630,6 +667,23 @@ interface Positions extends DefiApis {
   id: string;
   suppliedTokens: any[];
   borrowedTokens: any[];
+}
+
+interface MigrationPositions extends DefiApis {
+  positions: any;
+  dsaId?: string;
+  dsaAddress?: string;
+  vaultId?: string;
+  proceedOnNativeNetwork?: boolean;
+  id: string;
+  // permitData?: PermitSignature[];
+}
+
+interface IDsaAccount {
+  id: string;
+  address: string;
+  version: string;
+  chainId: number;
 }
 
 interface IDefiActions {
@@ -708,10 +762,11 @@ interface IMfaAuthenticateParams {
   
 }
 
-type MfaRequestType = 'transaction' | 'delete' | 'update'
+type MfaRequestType = 'transaction' | 'delete' | 'update' | 'key'
 
 interface IMfaActivateModalParams {
   mfaType: IMfa
+  keyMfa: IKeyMfa
 }
 
 type MfaVerify = (mfa: IMfa, code: string) => Promise<boolean>

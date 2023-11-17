@@ -5,6 +5,7 @@ const preferredMfaType = useLocalStorage('mfa-preferred-type', '')
 export function useMfa() {
   const { selectedSafe } = storeToRefs(useSafe())
   const { backupSigners } = storeToRefs(useMultisig())
+  const { avoChainId } = storeToRefs(useEnvironmentState())
   const { avoProvider, fetchSafeInstanceses } = useSafe()
   const { switchToAvocadoNetwork } = useNetworks()
   const { account, library } = useWeb3()
@@ -19,7 +20,7 @@ export function useMfa() {
 
   const atLeastOneMfaVerifed = computed(() => checkAtleastOneMfaVerified(selectedSafe.value!))
 
-  const isSafeBackupSigner = computed(() => atLeastOneMfaVerifed.value && !isAddressEqual(selectedSafe.value?.owner_address, account.value))
+  const isSafeBackupSigner = computed(() => checkSafeBackupSigner(selectedSafe.value!, account.value))
 
   const getMFATokenExpiry = (otps?: CookieOptions) => useCookie<string | undefined | null>(`transaction-token-expiry-${selectedSafe.value?.safe_address}`, otps)
   const getMFAToken = (otps?: CookieOptions) => useCookie<string | undefined | null>(`transaction-token-${selectedSafe.value?.safe_address}`, otps)
@@ -156,14 +157,13 @@ export function useMfa() {
     return resp
   }
 
-  async function activateToptMfa(mfa: IMfa, _authMfa?: IMfa) {
+  async function activateToptMfa(mfa: IMfa, keyMfa: IKeyMfa) {
     await switchToAvocadoNetwork()
 
-    let resp: IMfaResponse | undefined
     const domain = {
       name: 'Avocado MFA Update',
       version: '1.0.0',
-      chainId: String(avoChainId),
+      chainId: String(avoChainId.value),
       verifyingContract: selectedSafe.value?.safe_address,
     }
 
@@ -173,38 +173,12 @@ export function useMfa() {
       value: {
         owner: selectedSafe.value?.owner_address,
         index: selectedSafe.value?.multisig_index,
-        mfaType: '',
-        mfaCode: '',
+        mfaType: keyMfa.mfaType,
+        mfaCode: keyMfa.mfaCode,
       },
     }
 
-    if (atLeastOneMfaVerifed.value) {
-      const authMfa: IMfa = _authMfa || preferredMfa.value
-
-      const { success: verifySuccess, payload: verifyPayload } = await authVerify({
-        mfa: authMfa,
-        mfaRequestType: 'update',
-        submitFn: async (_mfa, code) => {
-          signPayload.value.mfaType = _mfa.type
-          signPayload.value.mfaCode = code
-
-          resp = await handleRequestActivateMfa(mfa, signPayload)
-
-          if (resp?.status)
-            return true
-
-          return false
-        },
-      })
-
-      if (verifyPayload?.fallbackMfa)
-        return activateToptMfa(mfa, verifyPayload.fallbackMfa)
-
-      if (!verifySuccess || !verifyPayload?.code)
-        return
-    }
-
-    resp = resp || await handleRequestActivateMfa(mfa, signPayload)
+    const resp = await handleRequestActivateMfa(mfa, signPayload)
 
     if (!resp?.status)
       throw new Error($t('mfa.notifications.failedToActivate', { method: mfa.label }))
@@ -217,8 +191,6 @@ export function useMfa() {
 
   async function authVerify(params: IAuthVerifyParams) {
     const { mfa, mfaRequestType, submitFn, defaultSessionAvailable = false, expire, chainId } = params || {}
-
-    console.log({ expire })
 
     const requestFunction = mfaRequestType === 'transaction' ? signAndRequestTransactionMfaCode : signAndRequestUpdateMfaCode
 
@@ -245,7 +217,7 @@ export function useMfa() {
     const domain = {
       name: 'Avocado MFA Update',
       version: '1.0.0',
-      chainId: String(avoChainId),
+      chainId: String(avoChainId.value),
       verifyingContract: selectedSafe.value?.safe_address,
     }
 
@@ -275,35 +247,6 @@ export function useMfa() {
   async function activateMfa(mfa: IMfa, value: any, _authMfa?: IMfa) {
     await switchToAvocadoNetwork()
 
-    if (atLeastOneMfaVerifed.value) {
-      const authMfa: IMfa = _authMfa || preferredMfa.value
-
-      const { success: verifySuccess, payload: verifyPayload } = await authVerify(
-        {
-          mfa: authMfa,
-          mfaRequestType: 'update',
-          submitFn: async (_mfa, code) => {
-            value.mfaType = _mfa.type
-            value.mfaCode = code
-
-            const { success } = await requestActivateMfa(mfa, value)
-
-            return success
-          },
-        })
-
-      if (!verifySuccess)
-        throw new Error($t('mfa.notifications.failedToActivate', { method: mfa.label }))
-
-      if (verifyPayload?.fallbackMfa)
-        return activateMfa(mfa, value, verifyPayload.fallbackMfa)
-
-      if (verifySuccess) {
-        await fetchSafeInstanceses()
-        return
-      }
-    }
-
     const { success } = await requestActivateMfa(mfa, value)
 
     if (success)
@@ -319,7 +262,7 @@ export function useMfa() {
     const domain = {
       name: 'Avocado MFA Code',
       version: '1.0.0',
-      chainId: String(avoChainId),
+      chainId: String(avoChainId.value),
       verifyingContract: selectedSafe.value?.safe_address,
     }
 
@@ -354,7 +297,7 @@ export function useMfa() {
     const domain = {
       name: 'Avocado MFA Update',
       version: '1.0.0',
-      chainId: String(avoChainId),
+      chainId: String(avoChainId.value),
       verifyingContract: selectedSafe.value?.safe_address,
     }
 
@@ -389,7 +332,7 @@ export function useMfa() {
     const domain = {
       name: 'Avocado MFA Transaction',
       version: '1.0.0',
-      chainId: String(avoChainId),
+      chainId: String(avoChainId.value),
       verifyingContract: selectedSafe.value?.safe_address,
     }
 
@@ -463,6 +406,7 @@ export function useMfa() {
     activateToptMfa,
     authVerify,
     backupMfa,
+    requestActivateMfa,
     isAvocadoProtectActive,
     signAndRequestTransactionMfaCode,
     signAndRequestDeleteMfaCode,

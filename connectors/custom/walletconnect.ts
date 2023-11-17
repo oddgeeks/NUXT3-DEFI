@@ -29,7 +29,7 @@ export class WalletConnectConnector extends AbstractConnector {
     this.config = {
       chains: [defaultChain],
       optionalChains,
-      optionalMethods: ['avocado_getOwner'],
+      optionalMethods: ['avocado_getOwner', 'personal_sign'],
       rpcMap,
       projectId,
       showQrModal: true,

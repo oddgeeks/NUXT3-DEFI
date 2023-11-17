@@ -37,7 +37,6 @@ export default defineNuxtModule({
     nuxt.options.appConfig = nuxt.options.appConfig || {}
     nuxt.options.appConfig.buildInfo = buildInfo
     nuxt.options.appConfig.node_env = node_env
-    nuxt.options.appConfig.isProd = node_env === 'production'
     nuxt.options.runtimeConfig.public.env = env
   },
 })

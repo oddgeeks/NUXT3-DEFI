@@ -1,13 +1,15 @@
-import { JsonRpcRetryBatchProvider, StaticJsonRpcRetryProvider } from '@instadapp/utils'
-import { acceptHMRUpdate, defineStore } from 'pinia'
-import { ethers } from 'ethers'
+import type { ethers } from 'ethers'
+import { StaticJsonRpcRetryProvider } from '@instadapp/utils'
 
-const rpcBatchInstances: Record<string, ethers.providers.StaticJsonRpcProvider> = {}
-const rpcBatchRetryInstances: Record<string, ethers.providers.StaticJsonRpcProvider> = {}
 const rpcInstances: Record<string, ethers.providers.StaticJsonRpcProvider> = {}
 
 export const useShared = defineStore('shared', () => {
   const rpcs = ref<Record<string, string>>({})
+  const isProd = ref(false)
+
+  const isAppProduction = useCookie<boolean | undefined>('app-production', {
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
+  })
 
   function getRpcFallbackUrl(chainId: string | number) {
     const rpcURL = rpcs.value[chainId]
@@ -30,37 +32,11 @@ export const useShared = defineStore('shared', () => {
     if (!rpcInstances[chainId]) {
       rpcInstances[chainId] = new StaticJsonRpcRetryProvider(rpcURL, {
         delay: 50,
+        timeouts: [5000, 7000, 10000],
       })
     }
 
     return rpcInstances[chainId]
-  }
-
-  function getRpcBatchProviderByChainId(chainId: number | string) {
-    const rpcURL = getRpcFallbackUrl(chainId)
-
-    if (!rpcURL)
-      throw new Error(`No RPC URL for chainId: ${chainId}`)
-
-    if (!rpcBatchInstances[chainId])
-      rpcBatchInstances[chainId] = new ethers.providers.JsonRpcBatchProvider(rpcURL)
-
-    return rpcBatchInstances[chainId]
-  }
-
-  function getRpcBatchRetryProviderByChainId(chainId: number | string) {
-    const rpcURL = getRpcFallbackUrl(chainId)
-
-    if (!rpcURL)
-      throw new Error(`No RPC URL for chainId: ${chainId}`)
-
-    if (!rpcBatchRetryInstances[chainId]) {
-      rpcBatchRetryInstances[chainId] = new JsonRpcRetryBatchProvider(rpcURL, {
-        delay: 50,
-      })
-    }
-
-    return rpcBatchRetryInstances[chainId]
   }
 
   function getRpcURLByChainId(chainId: number | string) {
@@ -73,11 +49,11 @@ export const useShared = defineStore('shared', () => {
   }
 
   return {
+    isProd,
     rpcs,
     getRpcProviderByChainId,
     getRpcURLByChainId,
-    getRpcBatchProviderByChainId,
-    getRpcBatchRetryProviderByChainId,
+    isAppProduction,
   }
 })
 
