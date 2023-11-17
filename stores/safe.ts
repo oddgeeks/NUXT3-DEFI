@@ -434,7 +434,7 @@ export const useSafe = defineStore('safe', () => {
   async function getBalances(address: string, signal?: AbortSignal, updateState = false) {
     return Promise.all(
       availableNetworks.map(async (network) => {
-        if (String(network.chainId) == '122' && selectedSafe.value?.multisig === 0)
+        if (legacyNotSupportedChains.some(i => network.chainId == i) && selectedSafe.value?.multisig === 0)
           return []
 
         const customTokenAddress = customTokens.value
@@ -624,7 +624,7 @@ export const useSafe = defineStore('safe', () => {
         availableNetworks.map((network) => {
           const provider = getRpcProviderByChainId(network.chainId)
 
-          if (String(network.chainId) == '122' && safe.multisig === 0)
+          if (legacyNotSupportedChains.some(i => network.chainId == i) && safe.multisig === 0)
             return
 
           return getSafeOptionsByChain({

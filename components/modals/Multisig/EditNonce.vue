@@ -25,7 +25,7 @@ const { multisigURL } = storeToRefs(useEnvironmentState())
 const { clearAllModals } = useModal()
 const { account } = useWeb3()
 
-const isSimulationDisabled = computed(() => networksSimulationNotSupported.includes(Number(props.chainId)))
+const isSimulationDisabled = computed(() => simulationNotSupportedChains.includes(Number(props.chainId)))
 
 const shouldNonSeqByDefault = props.transactionType === 'remove-signers' || props.transactionType === 'add-signers' || props.transactionType === 'gas-topup'
 const recommendedNonce = shouldNonSeqByDefault ? -1 : undefined
