@@ -15,7 +15,6 @@ export default defineNuxtConfig({
     defineModel: true,
     propsDestructure: true,
   },
-  devtools: false,
   runtimeConfig: {
     socketApiKey: process.env.SOCKET_API_KEY,
     debankAccessKey: process.env.DEBANK_ACCESS_KEY,

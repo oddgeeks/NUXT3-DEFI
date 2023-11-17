@@ -17,10 +17,8 @@ const { checkSafeIsActualMultisig } = useMultisig()
 const { togglePinSafe, isSafePinned, pinnedSafes } = useAccountState()
 
 const isMultisig = computed(() => checkSafeIsActualMultisig(props.safe))
-const walletName = computed(() => {
-  const name = localStorage.getItem(`safe-label-${props.safe?.safe_address}`)
-  return name?.length ? name : (isMultisig.value ? 'MultiSig' : 'Personal')
-})
+
+const walletName = useLocalStorage(`safe-label-${props.safe?.safe_address}`, isMultisig.value ? 'MultiSig' : 'Personal')
 
 const isLegacy = computed(() => props.safe?.multisig === 0)
 
@@ -134,8 +132,8 @@ function handleClick() {
           </div>
 
           <div v-if="detailed" class="flex items-center justify-between">
-            <p class="text-sm font-medium leading-[18px] text-gray-400">
-              {{ balance ? formatUsd(balance) : '' }}
+            <p v-if="balance" class="text-sm font-medium leading-[18px] text-gray-400">
+              {{ formatUsd(balance) }}
             </p>
             <p v-if="isMultisig && pendingTxnsCount" class="text-xs font-medium text-orange">
               {{ `${pendingTxnsCount} Pending txns` }}

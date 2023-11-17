@@ -6,13 +6,13 @@ export function useAccountState() {
   const isHideZeroBalances = useLocalStorage('hide-zero-balances', false)
   const listType = useLocalStorage('listType', 'individual')
 
-  const accountSafeMapping = useLocalStorage<Record<string, string[]>>('account-safe-pin-mapping', {})
+  const accountPinnedSafeMapping = useLocalStorage<Record<string, string[]>>('account-safe-pin-mapping', {})
 
   const pinnedSafes = computed(() => {
     if (!account.value)
       return []
 
-    const mapping = accountSafeMapping.value || {}
+    const mapping = accountPinnedSafeMapping.value || {}
 
     return mapping[account.value] || []
   })
@@ -21,7 +21,7 @@ export function useAccountState() {
     if (!account.value)
       return
 
-    const mapping = accountSafeMapping.value || {}
+    const mapping = accountPinnedSafeMapping.value || {}
 
     if (!mapping[account.value])
       mapping[account.value] = []
@@ -33,7 +33,7 @@ export function useAccountState() {
     else
       mapping[account.value].splice(index, 1)
 
-    accountSafeMapping.value = mapping
+    accountPinnedSafeMapping.value = mapping
   }
 
   function isSafePinned(safeAddress: string) {

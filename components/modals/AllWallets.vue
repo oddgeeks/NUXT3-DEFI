@@ -1,11 +1,68 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
+import { MultisigForwarder__factory } from '~/contracts'
 
-const { allSafes, mainSafe, selectedSafe, safeAddress } = storeToRefs(useSafe())
+const { allSafes, mainSafe, selectedSafe, safeAddress, accountCustomSafeMapping } = storeToRefs(useSafe())
+const { getDefaultSafe } = useSafe()
 const { userToggleHideLegacy, displayLegacySafe } = useAccountState()
+const { multisigForwarderProxyAddress } = storeToRefs(useEnvironmentState())
+const { getRpcProviderByChainId } = useShared()
+const { account } = useWeb3()
 
 const search = ref('')
 const searcInputFocused = ref(false)
+
+async function handleCreateMultisig() {
+  try {
+    const highestIndex = allSafes.value.reduce((acc, curr) => {
+      if (curr.multisig_index > acc)
+        return curr.multisig_index
+      return acc
+    }, 0)
+
+    const provider = getRpcProviderByChainId(137)
+
+    const multisigProvider = MultisigForwarder__factory.connect(
+      multisigForwarderProxyAddress.value,
+      provider,
+    )
+
+    const nextIndex = highestIndex + 1
+
+    if (nextIndex > 4) {
+      return notify({
+        type: 'error',
+        message: 'You can only create up to 5 wallets.',
+      })
+    }
+
+    const address = await multisigProvider.computeAvocado(
+      account.value,
+      nextIndex,
+    )
+
+    const safeInstance = getDefaultSafe(address, 1, nextIndex)
+
+    const mapping = accountCustomSafeMapping.value[account.value] || []
+
+    if (mapping) {
+      mapping.push(safeInstance)
+
+      accountCustomSafeMapping.value[account.value] = mapping
+    }
+
+    notify({
+      type: 'success',
+      message: 'Wallet created',
+    })
+  }
+  catch (e) {
+    notify({
+      type: 'error',
+      message: 'Error creating wallet',
+    })
+  }
+}
 
 watch(userToggleHideLegacy, () => {
   if (selectedSafe.value?.multisig === 0) {
@@ -62,9 +119,9 @@ const filteredSafes = computed(() => {
               </template>
             </CommonCheckbox>
           </span>
-          <button class="flex items-center gap-2 text-sm">
+          <button class="flex items-center gap-2 text-sm" @click="handleCreateMultisig">
             <div class="flex h-4.5 w-4.5 items-center justify-center rounded-full bg-purple">
-              <SvgoPlus class="h-1.5 w-1.5" />
+              <SvgoPlus />
             </div>
             Create new Multisig
           </button>
@@ -80,7 +137,7 @@ const filteredSafes = computed(() => {
           <SvgoSearch class="mr-2" />
         </template>
       </CommonInput>
-      <div class="grid min-h-[220px] grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2 sm:gap-4">
+      <div class="grid min-h-[84px] grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2 sm:gap-4">
         <TransitionGroup :appear="false" :name="!searcInputFocused ? 'wallet-list' : ''">
           <template v-for="safe in filteredSafes" :key="safe.safe_address">
             <div v-if="safe.multisig === 0 ? displayLegacySafe : true">
