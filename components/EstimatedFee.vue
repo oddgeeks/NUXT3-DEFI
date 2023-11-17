@@ -108,7 +108,7 @@ const showEthTooltip = computed(() => props.data.chainId == '1' && safeOption.va
               src="https://cdn.instadapp.io/icons/tokens/usdc.svg"
             >
 
-            {{ data?.formattedAmountAfterDiscount }}   USDC
+            {{ data?.formattedAmountAfterDiscount }} USDC
           </p>
         </div>
       </template>
