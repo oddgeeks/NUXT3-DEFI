@@ -123,7 +123,7 @@ onMounted(() => {
       class="flex h-96 flex-col items-center justify-center space-y-8"
     >
       <p class="text-slate-400">
-        Nothing could be found
+        We couldn't find your token. Please use the button below to input custom contract address
       </p>
       <div class="flex flex-col items-center space-y-4">
         <CommonButton

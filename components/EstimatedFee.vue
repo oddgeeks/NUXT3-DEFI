@@ -12,12 +12,18 @@ const props = defineProps<{
   hideDiscount?: boolean
 }>()
 
+const { safeOptions } = storeToRefs(useSafe())
+
 const discountAvailable = computed(() => {
   if (props.hideDiscount)
     return false
 
   return props.data?.discountAvailable
 })
+
+const safeOption = computed(() => safeOptions.value.find(option => option.chainId == props.data?.chainId))
+
+const showEthTooltip = computed(() => props.data.chainId == '1' && safeOption.value?.notdeployed)
 </script>
 
 <template>
@@ -47,6 +53,8 @@ const discountAvailable = computed(() => {
             ]"
             class="inline-flex items-center gap-2.5 text-xs"
           >
+            <SvgoInfo2 v-if="showEthTooltip" v-tippy="$t('ethHighFee')" class="shrink-0 text-orange-400" />
+
             <img
               v-if="!discountAvailable"
               class="h-[18px] w-[18px]"
@@ -54,7 +62,8 @@ const discountAvailable = computed(() => {
               height="18"
               src="https://cdn.instadapp.io/icons/tokens/usdc.svg"
             >
-            {{ data?.formatted }} USDC
+            {{ data?.formatted }}
+            USDC
           </span>
         </template>
       </div>
@@ -99,7 +108,7 @@ const discountAvailable = computed(() => {
               src="https://cdn.instadapp.io/icons/tokens/usdc.svg"
             >
 
-            {{ data?.formattedAmountAfterDiscount }} USDC
+            {{ data?.formattedAmountAfterDiscount }}   USDC
           </p>
         </div>
       </template>
