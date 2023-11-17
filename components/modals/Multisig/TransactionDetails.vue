@@ -167,7 +167,7 @@ const isRejection = computed(() => actionType.value === 'rejection')
 const { data: simulationDetails, error: simulationError } = useAsyncData(
   `${transactionRef.value.id}`,
   () => {
-    if (networksSimulationNotSupported.includes(Number(transactionRef.value.chain_id)))
+    if (simulationNotSupportedChains.includes(Number(transactionRef.value.chain_id)))
       throw new Error('Simulation not supported on this network.')
 
     return http('/api/simulate', {
