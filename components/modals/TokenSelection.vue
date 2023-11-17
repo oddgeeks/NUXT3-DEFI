@@ -122,18 +122,10 @@ onMounted(() => {
       v-else
       class="flex h-96 flex-col items-center justify-center space-y-8"
     >
-      <p class="text-slate-400">
-        We couldn't find your token. Please use the button below to input custom contract address
+      <p class="text-center text-sm font-medium text-slate-400">
+        We couldn't find your token. Please use the button below to add custom token.
       </p>
       <div class="flex flex-col items-center space-y-4">
-        <CommonButton
-          color="white"
-          size="lg"
-          as="NuxtLink"
-          href="mailto:info@instadapp.io?subject=Instadapp Avocado: New Token"
-        >
-          Reach out to us
-        </CommonButton>
         <CommonButton
           size="lg"
           class="flex items-center space-x-2"
@@ -141,6 +133,14 @@ onMounted(() => {
         >
           <PlusSVG />
           <span>Custom token</span>
+        </CommonButton>
+        <CommonButton
+          color="white"
+          size="lg"
+          as="NuxtLink"
+          href="mailto:info@instadapp.io?subject=Instadapp Avocado: New Token"
+        >
+          Reach out to us
         </CommonButton>
       </div>
     </div>
