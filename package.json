@@ -13,7 +13,7 @@
     "postinstall": "simple-git-hooks && nuxt prepare"
   },
   "dependencies": {
-    "@instadapp/avocado-base": "0.0.88",
+    "@instadapp/avocado-base": "0.0.86",
     "@instadapp/transaction-builder": "^0.0.12",
     "@splidejs/vue-splide": "^0.6.12",
     "@walletconnect/core": "^2.10.4",
@@ -73,7 +73,7 @@
     "eslint-plugin-tailwindcss": "^3.13.0",
     "ethers": "^5.7.2",
     "lint-staged": "^14.0.0",
-    "nuxt": "^3.8.1",
+    "nuxt": "3.7.4",
     "nuxt-security": "^0.14.2",
     "nuxt-svgo": "^3.5.6",
     "ohmyfetch": "^0.4.21",
