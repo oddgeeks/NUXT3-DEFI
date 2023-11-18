@@ -3,7 +3,7 @@ defineProps<{
   buttonClass?: string
 }>()
 const emit = defineEmits(['destroy'])
-const { activate } = useWeb3()
+const { activate, account } = useWeb3()
 
 const { providers } = useNetworks()
 const { setConnectorName } = useConnectors()
@@ -15,10 +15,14 @@ async function connect(provider: any) {
     loading.value[provider.name] = true
     await activate(await provider.connect(), undefined, true)
 
-    const { success } = await openRequestTermsSignature(provider.id)
+    const userNonce = useCookie<string | null>(`nonce-${account.value}`)
 
-    if (!success)
-      throw new Error('Failed to sign terms')
+    if (!userNonce.value) {
+      const { success } = await openRequestTermsSignature(provider.id)
+
+      if (!success)
+        throw new Error('Failed to sign terms')
+    }
 
     setConnectorName(provider.id)
     emit('destroy')
