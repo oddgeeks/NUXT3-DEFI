@@ -554,12 +554,14 @@ export const useSafe = defineStore('safe', () => {
     if (!safeAddress.value)
       return
 
-    gasBalance.value = undefined
-
     const b = await getGasBalance(safeAddress.value).then(toBN)
 
     gasBalance.value = b.div(10 ** 18).toFixed()
   }
+
+  useIntervalFn(setGasBalance, 15000, {
+    immediate: true,
+  })
 
   const getSafes = async (address: string): Promise<ISafesResponse> => {
     return avoProvider.send('api_getSafes', [{
@@ -723,10 +725,6 @@ export const useSafe = defineStore('safe', () => {
       handleAxiosError(e, false)
     }
   }
-
-  useIntervalFn(setGasBalance, 15000, {
-    immediate: false,
-  })
 
   const { pause, resume } = useIntervalFn(fetchBalances, 15000)
 
