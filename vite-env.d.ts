@@ -771,10 +771,11 @@ interface IMfaAuthenticateParams {
   
 }
 
-type MfaRequestType = 'transaction' | 'delete' | 'update'
+type MfaRequestType = 'transaction' | 'delete' | 'update' | 'key'
 
 interface IMfaActivateModalParams {
   mfaType: IMfa
+  keyMfa: IKeyMfa
 }
 
 type MfaVerify = (mfa: IMfa, code: string) => Promise<boolean>

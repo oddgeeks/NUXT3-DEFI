@@ -440,7 +440,7 @@ export const useSafe = defineStore('safe', () => {
   async function getBalances(address: string, signal?: AbortSignal, updateState = false) {
     return Promise.all(
       availableNetworks.map(async (network) => {
-        if (String(network.chainId) == '122' && selectedSafe.value?.multisig === 0)
+        if (legacyNotSupportedChains.some(i => network.chainId == i) && selectedSafe.value?.multisig === 0)
           return []
 
         const customTokenAddress = customTokens.value
@@ -560,12 +560,14 @@ export const useSafe = defineStore('safe', () => {
     if (!safeAddress.value)
       return
 
-    gasBalance.value = undefined
-
     const b = await getGasBalance(safeAddress.value).then(toBN)
 
     gasBalance.value = b.div(10 ** 18).toFixed()
   }
+
+  useIntervalFn(setGasBalance, 15000, {
+    immediate: true,
+  })
 
   const getSafes = async (address: string): Promise<ISafesResponse> => {
     return avoProvider.send('api_getSafes', [{
@@ -628,7 +630,7 @@ export const useSafe = defineStore('safe', () => {
         availableNetworks.map((network) => {
           const provider = getRpcProviderByChainId(network.chainId)
 
-          if (String(network.chainId) == '122' && safe.multisig === 0)
+          if (legacyNotSupportedChains.some(i => network.chainId == i) && safe.multisig === 0)
             return
 
           return getSafeOptionsByChain({
@@ -729,10 +731,6 @@ export const useSafe = defineStore('safe', () => {
       handleAxiosError(e, false)
     }
   }
-
-  useIntervalFn(setGasBalance, 15000, {
-    immediate: false,
-  })
 
   const { pause, resume } = useIntervalFn(fetchBalances, 15000)
 

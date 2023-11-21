@@ -16,7 +16,7 @@ const { fetchSafeInstanceses } = useSafe()
 const { account } = useWeb3()
 const { $t } = useNuxtApp()
 const { instadappSigner } = storeToRefs(useEnvironmentState())
-const { mfaTypes, activeMfaTypes, mfaTermsAccepted, preferredMfaType, preferredMfa, terminateMFAToken, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa, backupMfa, isAvocadoProtectActive, atLeastOneMfaVerifed } = useMfa()
+const { mfaTypes, activeMfaTypes, mfaTermsAccepted, preferredMfaType, authVerify, preferredMfa, terminateMFAToken, verifyDeleteRequest, signAndRequestDeleteMfaCode, activateToptMfa, backupMfa, isAvocadoProtectActive, atLeastOneMfaVerifed } = useMfa()
 
 const pendingTransactionsLink = computed(() => navigations.value.find(i => i.id === 'pending-transactions'))
 
@@ -85,7 +85,7 @@ function setFallbackDefaultMfaType(mfa: IMfa) {
   }
 }
 
-async function handleActivate(mfa: IMfa) {
+async function handleActivate(mfa: IMfa, _authMfa: IMfa) {
   try {
     if (!mfaTermsAccepted().value) {
       const { success } = await openMfaTermsModal()
@@ -94,10 +94,36 @@ async function handleActivate(mfa: IMfa) {
         return
     }
 
-    if (mfa.value === 'totp') { await activateToptMfa(mfa) }
+    const keyMfa: IKeyMfa = {
+      mfaType: '',
+      mfaCode: '',
+    }
+
+    if (atLeastOneMfaVerifed.value) {
+      const authMfa: IMfa = _authMfa || preferredMfa.value
+
+      const { success: verifySuccess, payload: verifyPayload } = await authVerify(
+        {
+          mfa: authMfa,
+          mfaRequestType: 'key',
+        })
+
+      if (!verifySuccess)
+        throw new Error($t('mfa.notifications.failedToActivate', { method: mfa.label }))
+
+      if (verifyPayload?.fallbackMfa)
+        return handleActivate(mfa, verifyPayload.fallbackMfa)
+
+      if (verifyPayload?.code) {
+        keyMfa.mfaCode = verifyPayload.code
+        keyMfa.mfaType = authMfa.value
+      }
+    }
+
+    if (mfa.value === 'totp') { await activateToptMfa(mfa, keyMfa) }
 
     else {
-      const { success } = await openMfaActivateModal({ mfaType: mfa })
+      const { success } = await openMfaActivateModal({ mfaType: mfa, keyMfa })
 
       if (success) {
         notify({
@@ -137,10 +163,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
 
 <template>
   <div class="flex flex-1 flex-col gap-7.5">
-    <div
-      v-if="!account"
-      class="m-auto flex w-full items-center justify-center self-center"
-    >
+    <div v-if="!account" class="m-auto flex w-full items-center justify-center self-center">
       <div class="flex flex-col items-center justify-center gap-6">
         <p
           class="text-center font-semibold leading-[30px] text-gray-400 sm:whitespace-nowrap sm:text-lg sm:text-white"
@@ -166,7 +189,10 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
             <h2 class="text-sm font-medium leading-6 text-gray-400">
               {{ $t('mfa.page.subtitle') }}
             </h2>
-            <NuxtLink class="text-sm font-medium text-primary" external target="_blank" to="https://guides.avocado.instadapp.io/avocado-protect-2fa/how-does-avocado-protect-2fa-work">
+            <NuxtLink
+              class="text-sm font-medium text-primary" external target="_blank"
+              to="https://guides.avocado.instadapp.io/avocado-protect-2fa/how-does-avocado-protect-2fa-work"
+            >
               Learn more about how it works
             </NuxtLink>
           </div>
@@ -221,11 +247,9 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
 
                             <transition
                               enter-active-class="transition duration-200 ease-out"
-                              enter-from-class="translate-y-1 opacity-0"
-                              enter-to-class="translate-y-0 opacity-100"
+                              enter-from-class="translate-y-1 opacity-0" enter-to-class="translate-y-0 opacity-100"
                               leave-active-class="transition duration-150 ease-in"
-                              leave-from-class="translate-y-0 opacity-100"
-                              leave-to-class="translate-y-1 opacity-0"
+                              leave-from-class="translate-y-0 opacity-100" leave-to-class="translate-y-1 opacity-0"
                             >
                               <PopoverPanel
                                 v-slot="{ close }"
@@ -259,10 +283,16 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                 Active on {{ instadappSignerNetworks.length }} networks
               </span>
               <div class="flex">
-                <ChainLogo v-for="i in instadappSignerNetworks" :key="i.chainId" class="-ml-2 h-6 w-6 first:ml-0" :chain="i.chainId" />
+                <ChainLogo
+                  v-for="i in instadappSignerNetworks" :key="i.chainId" class="-ml-2 h-6 w-6 first:ml-0"
+                  :chain="i.chainId"
+                />
               </div>
             </div>
-            <button class="flex items-center gap-2 text-sm font-medium text-primary" @click="openMfaSignInstadappSignerModal(instadappSigner)">
+            <button
+              class="flex items-center gap-2 text-sm font-medium text-primary"
+              @click="openMfaSignInstadappSignerModal(instadappSigner)"
+            >
               Manage Networks
               <SvgoCog />
             </button>
@@ -293,8 +323,14 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                   </ul>
                 </div>
 
-                <Tippy v-if="!backupMfa?.activated" :content="!(hasInstadappSigner && atLeastOneMfaVerifed) ? 'Activate 2FA to enable backup signer' : undefined">
-                  <CommonButton :disabled="!(hasInstadappSigner && atLeastOneMfaVerifed)" @click="openAddBackupSignerModal">
+                <Tippy
+                  v-if="!backupMfa?.activated"
+                  :content="!(hasInstadappSigner && atLeastOneMfaVerifed) ? 'Activate 2FA to enable backup signer' : undefined"
+                >
+                  <CommonButton
+                    :disabled="!(hasInstadappSigner && atLeastOneMfaVerifed)"
+                    @click="openAddBackupSignerModal"
+                  >
                     Enable Now
                   </CommonButton>
                 </Tippy>
@@ -315,7 +351,10 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
           </div>
           <div class="scroll-style mt-auto flex max-h-[250px] flex-col items-baseline justify-between gap-5 overflow-auto border-t border-gray-800 p-7.5 pt-5">
             <template v-if="atLeastOneMfaVerifed">
-              <div v-for="signer in backupSigners" :key="signer.address" class="flex w-full items-baseline justify-between">
+              <div
+                v-for="signer in backupSigners" :key="signer.address"
+                class="flex w-full items-baseline justify-between"
+              >
                 <div class="flex flex-col gap-2.5">
                   <span class="text-sm font-medium">
                     Active on {{ signer.chainIds.length }} networks
@@ -327,13 +366,19 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                     <ChainLogo v-for="i in signer.chainIds" :key="i" class="-ml-2 h-6 w-6 first:ml-0" :chain="i" />
                   </div>
                 </div>
-                <button class="flex items-center gap-2 text-sm font-medium text-primary" @click="openMfaSignInstadappSignerModal(signer.address, true)">
+                <button
+                  class="flex items-center gap-2 text-sm font-medium text-primary"
+                  @click="openMfaSignInstadappSignerModal(signer.address, true)"
+                >
                   Manage Networks
                   <SvgoCog />
                 </button>
               </div>
             </template>
-            <p v-if="!atLeastOneMfaVerifed && !backupSigners.length" class="flex items-center gap-2.5 text-xs text-orange">
+            <p
+              v-if="!atLeastOneMfaVerifed && !backupSigners.length"
+              class="flex items-center gap-2.5 text-xs text-orange"
+            >
               <SvgoInfo2 class="w-5" />
               Backup address can only be set up after you enable OTP verification.
             </p>

@@ -127,20 +127,20 @@ onMounted(() => {
       </p>
       <div class="flex flex-col items-center space-y-4">
         <CommonButton
-          color="white"
-          size="lg"
-          as="NuxtLink"
-          href="mailto:info@instadapp.io?subject=Instadapp Avocado: New Token"
-        >
-          Reach out to us
-        </CommonButton>
-        <CommonButton
           size="lg"
           class="flex items-center space-x-2"
           @click="openImportTokenModal()"
         >
           <PlusSVG />
           <span>Custom token</span>
+        </CommonButton>
+        <CommonButton
+          color="white"
+          size="lg"
+          as="NuxtLink"
+          href="mailto:info@instadapp.io?subject=Instadapp Avocado: New Token"
+        >
+          Reach out to us
         </CommonButton>
       </div>
     </div>

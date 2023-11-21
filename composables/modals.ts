@@ -807,12 +807,13 @@ export async function openMfaTermsModal() {
 }
 
 export async function openMfaActivateModal(params: IMfaActivateModalParams) {
-  const { mfaType } = params || {}
+  const { mfaType, keyMfa } = params || {}
   return openModal({
     component: ActivateMFA,
     async: true,
     componentProps: {
       mfaType,
+      keyMfa,
     },
     options: {
       contentClass: '!p-0',
