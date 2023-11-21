@@ -36,6 +36,21 @@ async function handleCreateMultisig() {
       })
     }
 
+    const { success } = await openDialogModal({
+      type: 'question',
+      title: 'Create new wallet',
+      content: 'This will generate a new Multisig account owned by you',
+      buttonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+      isCancelButtonVisible: true,
+      cancelButtonProps: {
+        color: 'white',
+      },
+    })
+
+    if (!success)
+      return
+
     const address = await multisigProvider.computeAvocado(
       account.value,
       nextIndex,
