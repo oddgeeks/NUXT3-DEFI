@@ -8,6 +8,7 @@ const props = defineProps<{
 
 defineEmits(['connect', 'destroy'])
 const { checkDappIsBanned, checkDappIsWarned } = useWalletConnectV2()
+const { walletConnectBannedDappList } = storeToRefs(useWalletConnectV2())
 
 const proposer = computed(() => props.proposal.params?.proposer)
 
@@ -68,12 +69,12 @@ const iconURL = computed(() => {
 
     <div v-if="isConnectionBanned" class="flex gap-2.5 rounded-2xl bg-red-alert bg-opacity-10 px-4 py-2.5 text-xs font-medium text-red-alert">
       <SvgoInfo2 class="mt-0.5 shrink-0" />
-      This DApp does not work with Avocado. Please use an EOA account to interact with this DApp.
+      {{ walletConnectBannedDappList?.bannedMessage }}
     </div>
 
     <div v-else-if="isConnectionWarned" class="flex gap-2.5 rounded-2xl  bg-orange-400 bg-opacity-10 px-4 py-2.5 text-xs font-medium text-orange">
       <SvgoInfo2 class="mt-0.5 shrink-0" />
-      This DApp is known to have some compatability issues with Avocado. Please use at your own risk!
+      {{ walletConnectBannedDappList?.warningMessage }}
     </div>
 
     <div class="flex flex-col gap-4">

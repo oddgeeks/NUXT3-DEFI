@@ -12,6 +12,8 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
   const safe = useAvocadoSafe()
   const web3WalletV2 = shallowRef<IWeb3Wallet>()
   const sessions = ref<SessionTypes.Struct[]>([])
+  const walletConnectBannedDappList = ref<IWalletConnectBannedDappList>()
+
   const { account } = useWeb3()
   const { parseTransactionError } = useErrorHandler()
   const { switchToAvocadoNetwork } = useNetworks()
@@ -40,11 +42,12 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
   }
 
   function checkDappIsBanned(peerURL: string) {
-    return bannedDapps.some(i => isSameOrigin(i, peerURL))
+    return walletConnectBannedDappList.value?.items.some(i => !!i?.ban && isSameOrigin(i.url, peerURL))
   }
 
   function checkDappIsWarned(peerURL: string) {
-    return warnedDapps.some(i => isSameOrigin(i, peerURL))
+    console.log(walletConnectBannedDappList.value, peerURL)
+    return walletConnectBannedDappList.value?.items.some(i => !!i?.warn && isSameOrigin(i.url, peerURL))
   }
 
   const getChainAccounts = (chainIds: string[]) => {
@@ -508,6 +511,15 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
     return eip155ChainId.replace('eip155:', '')
   }
 
+  async function getWalletConnectBannedDappList() {
+    walletConnectBannedDappList.value = await $fetch<IWalletConnectBannedDappList>('/walletConnectDapps.json', {
+      retry: 3,
+      baseURL: firebaseURL,
+    })
+
+    console.log(walletConnectBannedDappList.value)
+  }
+
   function getConnectionVersion(uri: string): 1 | 2 {
     const v1Pattern = /^wc:[a-zA-Z0-9-]+@1\?/
     const v2Pattern = /^wc:[a-zA-Z0-9]+@2\?/
@@ -522,6 +534,8 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
       throw new Error('Invalid connection URI')
   }
 
+  onMounted(() => getWalletConnectBannedDappList())
+
   return {
     prepareConnectV2,
     sessions: actualSessions,
@@ -533,6 +547,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
     getConnectionVersion,
     checkDappIsBanned,
     checkDappIsWarned,
+    walletConnectBannedDappList,
   }
 })
 

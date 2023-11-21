@@ -742,6 +742,16 @@ interface ISignerAddress {
   address: string
 }
 
+interface IWalletConnectBannedDappList {
+  bannedMessage: string;
+  warningMessage: string;
+  items: {
+    url: string;
+    warn?: boolean;
+    ban?: boolean;
+  }[]
+}
+
 interface INavigationTab {
   label: string;
   value: 'dapps' | 'balances' | 'bookmarks';
