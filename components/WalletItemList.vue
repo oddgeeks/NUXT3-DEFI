@@ -1,75 +1,38 @@
-<script lang="ts" setup>
-import { getAddress } from 'ethers/lib/utils'
+<script setup lang="ts">
+const props = defineProps<{
+  compact?: boolean
+}>()
+const { allSafes, safesLoading } = storeToRefs(useSafe())
+const { pinnedSafes, isSafePinned, displayLegacySafe } = useAccountState()
 
-const { mainSafe, multiSigSafe, safes, legacySafe, legacySafeAddress, safesLoading, safeAddress, selectedSafe } = storeToRefs(useSafe())
+const priorSafes = computed(() => {
+  const showCount = props.compact ? 2 : 3
 
-const userToggleHideLegacy = useLocalStorage('hide-legacy-safe', false)
-const route = useRoute()
-const { account } = useWeb3()
+  const safes = displayLegacySafe.value == 'true'
+    ? allSafes.value
+    : allSafes.value?.filter((safe) => {
+      return safe.multisig === 1
+    })
 
-const filteredSafes = computed(() => {
-  if (!safes.value)
-    return []
+  if (!pinnedSafes.value.length)
+    return safes.slice(0, showCount)
 
-  const excludedAddresses = [
-    mainSafe.value?.safe_address,
-    multiSigSafe.value?.safe_address,
-    legacySafe.value?.safe_address,
-  ].filter(address => !!address)
+  const filteredSafes = safes.filter((safe) => {
+    return isSafePinned(safe.safe_address)
+  })
 
-  const isMigrationPage = route.name === 'migration'
-
-  const safeItems = safes.value.filter(safe => !excludedAddresses.includes(getAddress(safe.safe_address)))
-
-  if (isMigrationPage)
-    return safeItems.filter(safe => !checkSafeBackupSigner(safe, account.value))
-
-  return safeItems
-})
-
-function handleToggle() {
-  userToggleHideLegacy.value = !userToggleHideLegacy.value
-
-  if (selectedSafe.value?.safe_address === legacySafe.value?.safe_address) {
-    safeAddress.value = mainSafe.value?.safe_address
-    selectedSafe.value = mainSafe.value
-  }
-}
-
-const displayLegacySafe = computed(() => {
-  return legacySafeAddress.value && legacySafe.value && !userToggleHideLegacy.value
+  return filteredSafes.slice(0, showCount)
 })
 </script>
 
 <template>
-  <div class="flex flex-col">
-    <div class="mb-3 flex items-center justify-between">
-      <h2 class="flex items-center gap-3 text-xs font-medium">
-        Your wallets
-
-        <SvgSpinner v-if="safesLoading" class="text-primary" />
-      </h2>
-      <button v-if="legacySafeAddress && legacySafe" class="text-xs text-primary" type="button" @click="handleToggle">
-        {{ !displayLegacySafe ? 'Show' : 'Hide' }} legacy wallet
-      </button>
-    </div>
-    <template v-if="!safesLoading">
-      <div class="flex flex-col gap-2.5">
-        <WalletItem v-if="mainSafe" v2 primary :safe="mainSafe" />
-        <WalletItem v-if="legacySafe && displayLegacySafe" tooltip="Please migrate your funds to new Avocado Personal to enjoy exciting updates in the future. Your legacy wallet will stay functional & secure forever." :safe="legacySafe" />
-        <WalletItem v-if="multiSigSafe" primary :safe="multiSigSafe" />
-      </div>
-
-      <div v-if="!!filteredSafes?.length" class="mt-5">
-        <h2 class="mb-3 text-xs font-medium">
-          Other wallets
-        </h2>
-        <ul class="flex flex-col gap-2.5">
-          <li v-for="safeItem in filteredSafes" :key="safeItem.safe_address">
-            <WalletItem :safe="safeItem" />
-          </li>
-        </ul>
-      </div>
-    </template>
+  <div v-if="!safesLoading" class="flex items-center gap-2 sm:gap-4">
+    <TransitionGroup name="wallet-list">
+      <WalletItem v-for="safe in priorSafes" :key="safe.id" :safe="safe" />
+    </TransitionGroup>
+    <button v-if="allSafes?.length" class="flex h-[44px] w-full items-center justify-center gap-2.5 rounded-7.5 border  border-slate-750 bg-gray-850 py-1 pl-[14px] pr-2.5 text-left text-xs" @click="openAllWalletsModal()">
+      All
+      <SvgoChevronDown class="h-3.5 w-3.5 -rotate-90" />
+    </button>
   </div>
 </template>

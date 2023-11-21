@@ -39,32 +39,36 @@ const iconURL = computed(() => {
   <form
     v-focus
     tabindex="0"
-    class="space-y-8 focus:outline-none"
+    class="flex flex-col gap-5 focus:outline-none"
     @keypress.enter="$emit('connect')"
     @submit.prevent="$emit('connect')"
   >
-    <div class="flex flex-col items-center space-y-8">
-      <div v-if="iconURL" class="h-10 w-10">
-        <img
-          class="object-fit h-full w-full"
-          referrerpolicy="no-referrer"
-          :src="iconURL"
-        >
-      </div>
+    <ModalTitle>
+      <template #icon-content>
+        <div v-if="iconURL" class="h-10 w-10 shrink-0">
+          <img
+            class="object-fit h-full w-full"
+            referrerpolicy="no-referrer"
+            :src="iconURL"
+          >
+        </div>
+      </template>
+      <template #title>
+        {{ proposer.metadata.name }} Wants to Connect
+      </template>
+      <template #subtitle>
+        <div class="flex flex-col gap-2.5">
+          <p class="text-xs font-medium text-gray-400">
+            You need the Avocado web app to be open to initiate transactions. You
+            will not receive transaction requests when it is not open.
+          </p>
 
-      <span> {{ proposer.metadata.name }} Wants to Connect </span>
-    </div>
-
-    <div class="flex flex-col gap-7.5">
-      <p class="text-center text-xs font-medium text-slate-400">
-        You need the Avocado web app to be open to initiate transactions. You
-        will not receive transaction requests when it is not open.
-      </p>
-
-      <div v-if="proposer.metadata.url" class="max-w-sm truncate text-center text-sm text-primary">
-        {{ proposer.metadata.url }}
-      </div>
-    </div>
+          <div v-if="proposer.metadata.url" class="max-w-sm truncate text-sm text-primary">
+            {{ proposer.metadata.url }}
+          </div>
+        </div>
+      </template>
+    </ModalTitle>
 
     <div v-if="isConnectionBanned" class="flex gap-2.5 rounded-2xl bg-red-alert bg-opacity-10 px-4 py-2.5 text-xs font-medium text-red-alert">
       <SvgoInfo2 class="mt-0.5 shrink-0" />

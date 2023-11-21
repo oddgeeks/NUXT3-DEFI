@@ -10,16 +10,12 @@ definePageMeta({
 })
 
 const { account } = useWeb3()
-const { unstableDappNetworks } = useBanner()
 const { networkPreference, tokenBalances } = storeToRefs(useSafe())
-
-const listType = useLocalStorage('listType', 'individual')
+const { isHideZeroBalances, listType } = useAccountState()
 
 useAccountTrack(undefined, () => {
   useEagerConnect()
 })
-
-const isHideZeroBalances = useLocalStorage('hide-zero-balances', false)
 
 const balancesTokenCount = computed(() => {
   if (!tokenBalances.value)
@@ -45,35 +41,32 @@ function selectType(type: string) {
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col gap-7.5">
-    <TotalBalance />
-    <div class="flex flex-col gap-3.5">
-      <Tabs />
-      <YourWallet />
+  <div class="flex flex-1 flex-col gap-5 sm:gap-7.5">
+    <WalletItemList class="flex sm:hidden" compact />
+    <div class="flex flex-col gap-2.5 sm:gap-5">
+      <SecondaryOwner />
+      <TotalBalance />
+      <DApps />
     </div>
-    <DApps v-if="$route.query.tab === undefined" />
-    <Bookmarks v-if="$route.query.tab === 'bookmarks'" />
-
     <div class="flex flex-1 flex-col gap-5 lg:flex-row">
       <div class="relative flex w-full flex-col gap-5">
         <div class="flex flex-col gap-5">
-          <WarningsUnstableDappVersion v-if="unstableDappNetworks?.length" />
           <div class="flex justify-between sm:pr-7.5">
             <div class="flex gap-7.5">
-              <h2 class="inline-flex items-center gap-2 font-semibold">
+              <h2 class="inline-flex items-center gap-2 text-sm">
                 Balances <span class="hidden sm:block">
                   ({{ balancesTokenCount }})
                 </span>
                 <button v-if="account" @click="handleOpenDialog">
-                  <SvgoQuestionCircle class="h-5 w-5 text-primary" />
+                  <SvgoQuestionCircle class="h-4.5 w-4.5 text-primary" />
                 </button>
               </h2>
               <ClientOnly v-if="account">
                 <button
                   :class="{
-                    'text-slate-900 dark:text-white': isHideZeroBalances,
+                    'text-white': isHideZeroBalances,
                   }"
-                  class="hidden items-center gap-2.5 text-sm text-slate-400 sm:inline-flex"
+                  class="hidden items-center gap-2.5 text-sm text-gray-400 sm:inline-flex"
                   @click="isHideZeroBalances = !isHideZeroBalances"
                 >
                   Hide 0 Balances
@@ -113,7 +106,7 @@ function selectType(type: string) {
         >
           <div class="flex flex-col items-center justify-center gap-6">
             <p
-              class="text-center font-semibold leading-[30px] text-slate-400 sm:whitespace-nowrap sm:text-lg sm:text-white"
+              class="text-center font-semibold leading-[30px] text-gray-400 sm:whitespace-nowrap sm:text-lg sm:text-white"
             >
               Connect your wallet to see the balances
             </p>

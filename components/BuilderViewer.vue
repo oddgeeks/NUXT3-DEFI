@@ -35,7 +35,7 @@ const hasActualComponents = computed(() => actualComponents.value && actualCompo
   <div class="flex w-full flex-col gap-2">
     <ul v-if="hasActualComponents" class="tree flex flex-col gap-3">
       <fieldset v-if="input.type === 'tuple'" :class="index === undefined ? 'pl-9' : 'gap-9'" class="flex w-full">
-        <div class="flex h-[30px] shrink-0 items-center text-sm font-medium text-slate-400">
+        <div class="flex h-[30px] shrink-0 items-center text-sm font-medium text-gray-400">
           {{ input.name }} ({{ input.type }})
         </div>
         <div class="flex-1 space-y-4">
@@ -69,7 +69,7 @@ const hasActualComponents = computed(() => actualComponents.value && actualCompo
     </ul>
 
     <div v-else :class="index === undefined ? 'pl-9 max-w-[580px]' : ''" class="flex gap-7.5">
-      <label class="flex h-[30px] w-[180px] shrink-0 items-center text-sm font-medium text-slate-400">
+      <label class="flex h-[30px] w-[180px] shrink-0 items-center text-sm font-medium text-gray-400">
         {{ input.name }} ({{ input.type }})
       </label>
       <div style="word-break: break-all;" class="flex items-center text-sm">

@@ -5,7 +5,7 @@ import CompoundUrl from '~/assets/images/protocols/compound.svg?url'
 import MakerUrl from '~/assets/images/protocols/makerdao.svg?url'
 import LiteUrl from '~/assets/images/protocols/instadapp-lite.svg?url'
 
-export function useDefi() {
+export const useDefi = defineStore('defi', () => {
   const { safeAddress } = useAvocadoSafe()
   const { tokens } = storeToRefs(useTokens())
 
@@ -354,36 +354,38 @@ export function useDefi() {
       )
   })
 
+  const total = computed(() => availablePositions.value.reduce((acc, curr) => {
+    const { totalSupplyInUsd, totalBorrowInUsd } = curr.positions
+
+    const interestFromProtocol = times(div(curr.apy, 100), minus(totalSupplyInUsd, totalBorrowInUsd))
+
+    acc.totalSupplyInUsd = plus(acc.totalSupplyInUsd, totalSupplyInUsd).toString()
+    acc.totalBorrowInUsd = plus(acc.totalBorrowInUsd, totalBorrowInUsd).toString()
+    acc.totalInterestFromProtocol = plus(acc.totalInterestFromProtocol, interestFromProtocol).toString()
+
+    return acc
+  }, {
+    totalSupplyInUsd: '0',
+    totalBorrowInUsd: '0',
+    totalInterestFromProtocol: '0',
+  }))
+
+  const totalNetAssets = computed(() => minus(total.value.totalSupplyInUsd, total.value.totalBorrowInUsd).toFixed())
+
   const summarize = computed(() => {
-    const total = availablePositions.value.reduce((acc, curr) => {
-      const { totalSupplyInUsd, totalBorrowInUsd } = curr.positions
-
-      const interestFromProtocol = times(div(curr.apy, 100), minus(totalSupplyInUsd, totalBorrowInUsd))
-
-      acc.totalSupplyInUsd = plus(acc.totalSupplyInUsd, totalSupplyInUsd).toString()
-      acc.totalBorrowInUsd = plus(acc.totalBorrowInUsd, totalBorrowInUsd).toString()
-      acc.totalInterestFromProtocol = plus(acc.totalInterestFromProtocol, interestFromProtocol).toString()
-
-      return acc
-    }, {
-      totalSupplyInUsd: '0',
-      totalBorrowInUsd: '0',
-      totalInterestFromProtocol: '0',
-    })
-
-    const totalNetAssets = minus(total.totalSupplyInUsd, total.totalBorrowInUsd)
-    const aggregatedAPY = div(total.totalInterestFromProtocol, totalNetAssets).toFixed(4)
+    const totalNetAssets = minus(total.value.totalSupplyInUsd, total.value.totalBorrowInUsd)
+    const aggregatedAPY = div(total.value.totalInterestFromProtocol, totalNetAssets).toFixed(4)
 
     return [
       {
         name: 'Supplied',
-        value: `$${abbreviateNumber(total.totalSupplyInUsd)}`,
+        value: `$${abbreviateNumber(total.value.totalSupplyInUsd)}`,
         color: 'bg-[#56CCF2]',
         icon: resolveComponent('SvgoMoneyLend'),
       },
       {
         name: 'Borrowed',
-        value: `$${abbreviateNumber(total.totalBorrowInUsd)}`,
+        value: `$${abbreviateNumber(total.value.totalBorrowInUsd)}`,
         color: 'bg-[#9B51E0]',
         icon: resolveComponent('SvgoMoneyBorrowed'),
       },
@@ -519,6 +521,16 @@ export function useDefi() {
     }
   }
 
+  watchThrottled(safeAddress, () => {
+    if (!safeAddress.value || process.server)
+      return
+
+    fetchPositions()
+  }, {
+    immediate: true,
+    throttle: 3000,
+  })
+
   return {
     availablePositions,
     summarize,
@@ -526,8 +538,10 @@ export function useDefi() {
     getDefiProtocolName,
     calculateHealthFactor,
     defaultDefiApis,
-    calculateCommonAPY,
-    getCommonBorrowedTokens,
-    getCommonSuppliedTokens,
+    total,
+    totalNetAssets,
   }
-}
+})
+
+if (import.meta.hot)
+  import.meta.hot.accept(acceptHMRUpdate(useDefi, import.meta.hot))

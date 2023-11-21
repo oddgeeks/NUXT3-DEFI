@@ -75,48 +75,46 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <div class="mb-7.5 flex gap-[14px]">
-      <CommonTxTypeIcon class="h-10 w-10">
-        <template #icon>
-          <SvgoArrowRight class="-rotate-45" />
-        </template>
-      </CommonTxTypeIcon>
-      <div class="flex flex-col gap-1">
-        <h1 class="text-lg leading-[20px]">
-          {{ isCrossChain ? 'Cross-chain Send' : 'Send' }}
-          <span v-if="contact"> to {{ contact.name }}  </span>
-        </h1>
-        <h2 class="text-xs font-medium leading-5 text-slate-400">
-          Transfer tokens to any address on selected chain.
-        </h2>
-      </div>
-    </div>
-    <div
-      v-if="contact"
-      class="-mt-3 mb-5 flex w-full items-center justify-between rounded-5 bg-slate-50 py-5 pl-5 pr-4 dark:bg-gray-850"
-    >
-      <div class="flex items-center gap-3">
-        <ChainLogo :stroke="false" class="h-7 w-7" :chain="contact.chainId" />
-        <Copy :text="contact.address">
-          <template #content>
-            <span class="text-slate-900 dark:text-white">{{
-              shortenHash(contact.address)
-            }}</span>
-          </template>
-        </Copy>
-      </div>
-      <CommonButton
-        :disabled="contact.owner"
-        color="white"
-        class="justify-center bg-slate-150 !px-4 dark:bg-slate-800"
-        @click="handleEdit()"
+    <ModalTitle class="border-b border-gray-875 p-5 sm:px-7.5 sm:pt-7.5">
+      <template #icon>
+        <SvgoArrowRight class="-rotate-45" />
+      </template>
+      <template #title>
+        {{ isCrossChain ? 'Cross-chain Send' : 'Send' }}
+        <span v-if="contact"> to {{ contact.name }}  </span>
+      </template>
+      <template #subtitle>
+        Transfer tokens to any address on selected chain.
+      </template>
+    </ModalTitle>
+    <div class="p-5 sm:p-7.5 sm:pt-5">
+      <div
+        v-if="contact"
+        class="-mt-3 mb-5 flex w-full items-center justify-between rounded-5 bg-gray-850 py-5 pl-5 pr-4"
       >
-        Edit
-      </CommonButton>
+        <div class="flex items-center gap-3">
+          <ChainLogo :stroke="false" class="h-7 w-7" :chain="contact.chainId" />
+          <Copy :text="contact.address">
+            <template #content>
+              <span>{{
+                shortenHash(contact.address)
+              }}</span>
+            </template>
+          </Copy>
+        </div>
+        <CommonButton
+          :disabled="contact.owner"
+          color="white"
+          class="justify-center bg-gray-900 !px-4"
+          @click="handleEdit()"
+        >
+          Edit
+        </CommonButton>
+      </div>
+
+      <component :is="steps[activeStep].component" />
+
+      <ManageBookmark v-if="activeStep === 1" class="mt-5" :bookmark="reactiveBookmark" @update-bookmark="handleUpdateBookmark" @create-bookmark="handleCreateBookmark" />
     </div>
-
-    <component :is="steps[activeStep].component" />
-
-    <ManageBookmark v-if="activeStep === 1" class="mt-5" :bookmark="reactiveBookmark" @update-bookmark="handleUpdateBookmark" @create-bookmark="handleCreateBookmark" />
   </div>
 </template>

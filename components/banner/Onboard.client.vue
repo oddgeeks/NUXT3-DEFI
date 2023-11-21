@@ -10,7 +10,7 @@ const { avoOnboardURL } = storeToRefs(useEnvironmentState())
 <template>
   <div
     v-if="eoaBalances && eoaBalances.length > 0 && isOnboardBannerVisible"
-    class="relative mx-auto flex w-full max-w-[832px] shrink-0 flex-col items-center justify-between gap-[15px] bg-[#4CA054] bg-opacity-60 px-5 py-[15px] text-xs backdrop-blur sm:flex-row sm:rounded-5"
+    class="relative mx-auto flex w-full max-w-[832px] shrink-0 flex-col items-center justify-between gap-[15px] bg-primary/60 px-5 py-[15px] text-xs backdrop-blur sm:flex-row sm:rounded-5"
   >
     <div class="flex items-start space-x-[25px] sm:items-center">
       <WaveSVG class="h-8 w-8" />
@@ -34,7 +34,7 @@ const { avoOnboardURL } = storeToRefs(useEnvironmentState())
         class="flex h-5 w-5 items-center justify-center rounded-full bg-white bg-opacity-20"
         @click="hideOnboardBanner()"
       >
-        <SVGX class="text-slate-500 dark:text-white" />
+        <SVGX />
       </button>
     </div>
   </div>

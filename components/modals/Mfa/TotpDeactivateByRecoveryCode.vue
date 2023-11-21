@@ -41,7 +41,7 @@ async function handleDeactivate() {
         <h1 class="text-lg leading-[20px]">
           Deactivate TOTP
         </h1>
-        <h2 class="text-xs font-medium leading-5 text-slate-400">
+        <h2 class="text-xs font-medium leading-5 text-gray-400">
           Enter your recovery code to deactivate TOTP
         </h2>
       </div>

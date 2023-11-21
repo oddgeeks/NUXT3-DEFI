@@ -30,7 +30,7 @@ const showEthTooltip = computed(() => props.data.chainId == '1' && safeOption.va
   <div class="flex flex-col gap-2.5">
     <div
       :class="wrapperClass"
-      class="min-h-12 flex flex-col items-center justify-between gap-3 rounded-5 bg-slate-50 px-5 py-[15px] dark:bg-gray-850"
+      class="min-h-12 flex flex-col items-center justify-between gap-3 rounded-5  bg-gray-850 px-5 py-[15px]"
     >
       <div class="flex w-full justify-between">
         <span v-if="showNetworkInfo" class="flex items-center gap-3 text-xs">
@@ -39,7 +39,7 @@ const showEthTooltip = computed(() => props.data.chainId == '1' && safeOption.va
         </span>
         <span
           v-else
-          class="inline-flex items-center gap-2 text-xs font-medium text-slate-400"
+          class="inline-flex items-center gap-2 text-xs font-medium text-gray-400"
         >
           <GasSVG class="w-4" />
           Gas fees
@@ -48,7 +48,7 @@ const showEthTooltip = computed(() => props.data.chainId == '1' && safeOption.va
         <template v-else-if="data">
           <span
             :class="[
-              discountAvailable ? 'text-slate-400' : '',
+              discountAvailable ? 'text-gray-400' : '',
               { 'text-red-alert': error },
             ]"
             class="inline-flex items-center gap-2.5 text-xs"
@@ -72,7 +72,7 @@ const showEthTooltip = computed(() => props.data.chainId == '1' && safeOption.va
         <div
           v-for="detail in data.discountDetails"
           :key="detail.name"
-          class="flex w-full items-center justify-between text-xs font-medium leading-5 text-slate-400"
+          class="flex w-full items-center justify-between text-xs font-medium leading-5 text-gray-400"
         >
           <div class="flex items-center gap-1.5">
             <span class="text-base"> 🎁 </span>

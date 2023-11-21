@@ -3,6 +3,7 @@ const props = defineProps<{
   safe: ISafe
   primary?: boolean
   tooltip?: string
+  detailed?: boolean
   hideActiveState?: boolean
 }>()
 
@@ -11,18 +12,19 @@ const router = useRouter()
 
 const { safeAddress } = useAvocadoSafe()
 const { fetchPendingMultisigTxnsCount, setGasBalance } = useSafe()
-const { safeTotalBalanceMapping, legacySafeAddress, selectedSafe } = storeToRefs(useSafe())
+const { safeTotalBalanceMapping, selectedSafe } = storeToRefs(useSafe())
 const { checkSafeIsActualMultisig } = useMultisig()
+const { togglePinSafe, isSafePinned, pinnedSafes } = useAccountState()
 
 const isMultisig = computed(() => checkSafeIsActualMultisig(props.safe))
-const walletName = computed(() => {
-  const name = localStorage.getItem(`safe-label-${props.safe?.safe_address}`)
-  return name?.length ? name : (isMultisig.value ? 'MultiSig' : 'Personal')
-})
 
-const isLegacySafeExist = computed(() => !!legacySafeAddress.value)
+const walletName = useLocalStorage(`safe-label-${props.safe?.safe_address}`, isMultisig.value ? 'MultiSig' : 'Personal')
+
+const isLegacy = computed(() => props.safe?.multisig === 0)
 
 const balance = computed(() => safeTotalBalanceMapping.value[props.safe?.safe_address])
+
+const safePinned = computed(() => isSafePinned(props.safe.safe_address))
 
 const active = computed(() => {
   return safeAddress.value === props.safe?.safe_address
@@ -65,45 +67,80 @@ function handleClick() {
 </script>
 
 <template>
-  <button
-    :class="{
-      'border-slate-50 bg-slate-50 dark:border-slate-800 dark:bg-slate-800': active && !props.hideActiveState,
-      'bg-slate-150 dark:bg-gray-850': !active || props.hideActiveState,
-    }"
-    class="flex w-full items-stretch justify-between rounded-2xl border border-slate-150 px-4 py-3.5 text-left dark:border-slate-750" @click="handleClick"
-  >
-    <div>
-      <div class="mb-2.5 flex items-center gap-[8px]">
-        <p v-if="isMultisig" class="text-sm font-medium leading-[10px] text-purple">
-          {{ walletName }}
-        </p>
-        <p v-else class="text-sm font-medium leading-[10px] text-primary">
-          {{ walletName }}
-        </p>
+  <div>
+    <button
+      :class="{
+        'bg-gray-900': active,
+        'bg-gray-850': !active,
+        'gap-3 rounded-2xl px-4 py-[14px]': detailed,
+        'items-center justify-center gap-1.5 rounded-7.5 px-2.5 py-1.5 sm:gap-2.5 sm:px-[14px] sm:py-1': !detailed,
+      }"
+      class="flex h-full w-full border border-gray-800 text-left hover:bg-gray-900" @click="handleClick"
+    >
+      <SvgoCheckCircle
+        :class="{
+          'success-circle': active,
+          'svg-circle darker': !active,
+          'h-6 w-6': detailed,
+          'h-4.5 w-4.5': !detailed,
+        }"
+        class="shrink-0 text-gray-500"
+      />
+      <div
+        :class="{
+          'gap-2': detailed,
+        }"
+        class="flex flex-1 flex-col"
+      >
+        <div class="flex items-center justify-between">
+          <div
+            :class="{
+              'text-sm': detailed,
+              'text-xs': !detailed,
+            }" class="flex items-center gap-2 font-medium"
+          >
+            <p :class="isMultisig ? 'text-purple' : isLegacy ? 'text-gray-400' : 'text-primary'">
+              {{ walletName }}
+            </p>
+            <template v-if="detailed">
+              <button @click.stop="onEdit">
+                <SvgoEdit />
+              </button>
+              <SafeBadge show-tooltip class="!text-[10px]" :safe="safe" />
+            </template>
+          </div>
+          <button v-if="detailed" :disabled="pinnedSafes.length > 2 && !safePinned" @click.stop="togglePinSafe(safe.safe_address)">
+            <SvgoPin :class="safePinned ? 'text-primary [&>path]:fill-primary' : 'text-gray-700'" />
+          </button>
+        </div>
 
-        <button @click.stop="onEdit">
-          <SvgoEdit />
-        </button>
+        <div class="flex flex-col gap-1.5">
+          <div class="flex items-center gap-1.5">
+            <span
+              :class="{
+                'text-sm leading-5 text-white': detailed,
+                'text-[10px] leading-[18px] text-gray-400': !detailed,
+              }"
+            >
+              {{ shortenHash(safe?.safe_address) }}
+            </span>
+            <Copy
+              class="w-fit"
+              icon-only
+              icon-class="!w-3 !h-3" :text="safe?.safe_address"
+            />
+          </div>
+
+          <div v-if="detailed" class="flex items-center justify-between">
+            <p v-if="balance" class="text-sm font-medium leading-[18px] text-gray-400">
+              {{ formatUsd(balance) }}
+            </p>
+            <p v-if="isMultisig && pendingTxnsCount" class="text-xs font-medium text-orange">
+              {{ `${pendingTxnsCount} Pending txns` }}
+            </p>
+          </div>
+        </div>
       </div>
-
-      <Copy class="mb-[6px] text-sm leading-[18px] text-slate-900 dark:text-white" :text="safe?.safe_address">
-        <template #content>
-          {{ shortenHash(safe?.safe_address) }}
-        </template>
-      </Copy>
-
-      <p class="text-sm font-medium leading-[18px] text-slate-400">
-        {{ balance ? formatUsd(balance) : '' }}
-      </p>
-    </div>
-    <div class="flex flex-col items-end justify-between">
-      <div class="flex items-center gap-2">
-        <SvgoInfo2 v-if="tooltip && isLegacySafeExist" v-tippy="tooltip" class="text-slate-500" />
-        <SafeBadge :safe="safe" />
-      </div>
-      <p class="text-xs font-medium text-orange">
-        {{ isMultisig && pendingTxnsCount ? `${pendingTxnsCount} Pending txns` : '' }}
-      </p>
-    </div>
-  </button>
+    </button>
+  </div>
 </template>

@@ -32,20 +32,20 @@ watch(reactiveAddresses, () => {
           <h1 class="leading-[26px]">
             Are you sure you want <br> to delete the following signers?
           </h1>
-          <span class="block text-xs font-medium text-slate-400 sm:text-sm">
+          <span class="block text-xs font-medium text-gray-400 sm:text-sm">
             On <ChainLogo class="inline-block h-5 w-5 shrink-0" :chain="chainId" />  {{ chainIdToName(chainId) }}</span>
         </div>
       </div>
     </div>
-    <hr class="border-slate-150 dark:border-slate-800">
+    <hr class="border-gray-800">
     <ul class="flex flex-col gap-[26px] p-6 text-sm sm:p-7.5">
       <li v-for="address in reactiveAddresses" :key="address" class="flex items-center justify-between gap-3">
         <div class="flex items-center gap-3">
           <AuthorityAvatar :address="address" />
-          <span style="overflow-wrap: anywhere" class="font-medium text-slate-400">
+          <span style="overflow-wrap: anywhere" class="font-medium text-gray-400">
             <span v-if="getContactNameByAddress(address)" class="text-white">
               ({{ getContactNameByAddress(address) }})
-              <span class="text-slate-400">
+              <span class="text-gray-400">
                 {{ address }}
               </span>
             </span>
@@ -54,12 +54,12 @@ watch(reactiveAddresses, () => {
             </span>
           </span>
         </div>
-        <button class="text-slate-400" @click="removeAddress(address)">
+        <button class="text-gray-400" @click="removeAddress(address)">
           <SvgoX />
         </button>
       </li>
     </ul>
-    <hr class="border-slate-150 dark:border-slate-800">
+    <hr class="border-gray-800">
     <div class="flex gap-4 p-7.5">
       <CommonButton size="lg" class="flex-1 justify-center" color="white" @click="$emit('destroy')">
         Cancel

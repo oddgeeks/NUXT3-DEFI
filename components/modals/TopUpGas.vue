@@ -181,7 +181,11 @@ const onSubmit = handleSubmit(async () => {
 
     emit('destroy')
 
-    showPendingTransactionModal(transactionHash, token.value.chainId, 'gas-topup')
+    showPendingTransactionModal({
+      hash: transactionHash,
+      chainId: token.value.chainId,
+      type: 'gas-topup',
+    })
 
     resetForm()
   }
@@ -223,15 +227,15 @@ watch(usdcTokens, () => {
 <template>
   <div class="space-y-7.5 text-center">
     <div
-      class="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
+      class="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-gray-900"
     >
-      <GasSVG class="text-slate-900 dark:text-white" />
+      <GasSVG class="text-white" />
     </div>
     <div class="flex flex-col gap-4">
       <h1 class="text-lg leading-5">
         Gas Reserve
       </h1>
-      <h2 class="text-xs font-medium leading-5 text-slate-400">
+      <h2 class="text-xs font-medium leading-5 text-gray-400">
         You will be able to use this as gas on any supported chain. Note that
         you need to have USDC in your Avocado wallet to add gas.
       </h2>
@@ -246,7 +250,7 @@ watch(usdcTokens, () => {
       </a>
     </div>
     <span
-      class="mx-auto block w-fit whitespace-nowrap rounded-[30px] px-5 py-3 leading-5 ring-2 ring-slate-200 dark:ring-slate-700"
+      class="mx-auto block w-fit whitespace-nowrap rounded-[30px] px-5 py-3 leading-5 ring-2 ring-slate-700"
     >
       {{ formatDecimal(gasBalance, 2) }} USDC
     </span>

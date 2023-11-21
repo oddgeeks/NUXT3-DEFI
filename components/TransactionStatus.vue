@@ -28,7 +28,7 @@ const statusColor = computed(() => {
 <template>
   <span
     :class="statusColor"
-    class="inline-flex items-center gap-2.5 rounded-[14px] bg-slate-50 capitalize dark:bg-gray-850 sm:!bg-transparent sm:p-0 sm:px-2.5 sm:py-3"
+    class="inline-flex items-center gap-2.5 rounded-[14px] bg-gray-850 capitalize sm:!bg-transparent sm:p-0 sm:px-2.5 sm:py-3"
   >
     <SVGCheckCircle
       v-if="

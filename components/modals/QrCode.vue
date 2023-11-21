@@ -16,11 +16,11 @@ const account = computed(() => safeAddress.value || '0x000000000000000')
       :data="account"
     />
 
-    <div class="relative flex w-full flex-col items-center justify-center gap-2.5 overflow-hidden rounded-7.5 bg-slate-50 p-4 dark:bg-gray-850">
-      <span class="text-sm text-slate-400 dark:text-slate-500">Your Avocado Address</span>
+    <div class="relative flex w-full flex-col items-center justify-center gap-2.5 overflow-hidden rounded-7.5 bg-gray-850 p-4">
+      <span class="text-sm text-gray-500">Your Avocado Address</span>
       <Copy :text="account" class="w-full justify-center">
         <template #content>
-          <span class="text-[14px] text-slate-900 dark:text-white">{{ account }}</span>
+          <span class="text-[14px] ">{{ account }}</span>
         </template>
       </Copy>
     </div>

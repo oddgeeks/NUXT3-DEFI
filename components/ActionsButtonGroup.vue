@@ -34,7 +34,7 @@ const errorMessage = computed(() => {
 })
 
 const buttonClasses = computed(() => {
-  return `h-9 w-9 items-center justify-center !p-0${props.buttonClass ? ` ${props.buttonClass}` : ''}`
+  return `sm:h-9 sm:w-9 h-7.5 w-7.5 items-center justify-center !p-0${props.buttonClass ? ` ${props.buttonClass}` : ''}`
 })
 
 function getTippyProps(content: string) {
@@ -62,9 +62,9 @@ function getTippyProps(content: string) {
         :class="buttonClasses"
         @click="openSendModal(tokenBalance.chainId, tokenBalance.address)"
       >
-        <SvgoArrowRight class="-rotate-45" />
+        <SvgoArrowRight class="h-4 w-4 -rotate-45" />
       </CommonButton>
-      <span v-if="showLabel" class="text-sm font-medium text-slate-400">
+      <span v-if="showLabel" class="text-sm font-medium text-gray-400">
         Send
       </span>
     </div>
@@ -76,9 +76,9 @@ function getTippyProps(content: string) {
         :class="buttonClasses"
         @click="openSwapModal(tokenBalance.address, tokenBalance.chainId)"
       >
-        <SvgoRefresh />
+        <SvgoRefresh class="h-3 w-3" />
       </CommonButton>
-      <span v-if="showLabel" class="text-sm font-medium text-slate-400">
+      <span v-if="showLabel" class="text-sm font-medium text-gray-400">
         Swap
       </span>
     </div>
@@ -90,9 +90,9 @@ function getTippyProps(content: string) {
         :class="buttonClasses"
         @click="openBridgeModal(tokenBalance.address, tokenBalance.chainId)"
       >
-        <SvgoBridge />
+        <SvgoBridge class="h-3 w-3" />
       </CommonButton>
-      <span v-if="showLabel" class="text-sm font-medium text-slate-400">
+      <span v-if="showLabel" class="text-sm font-medium text-gray-400">
         Bridge
       </span>
     </div>

@@ -41,7 +41,7 @@ async function handleBack() {
         </div>
       </div>
     </div>
-    <hr class="border-slate-150 dark:border-slate-800">
+    <hr class="border-gray-800">
     <ul class="flex flex-col gap-7 p-7.5">
       <MultisigSignAddSignerItem v-for="chainId in chainIds" :key="chainId" v-model="signs" :gnosis-address="gnosisAddress" :default-threshold="defaultThreshold" :chain-id="chainId" :addresses="addresses" />
     </ul>

@@ -4,15 +4,11 @@
 
 @layer base {
   body {
-    @apply h-screen dark:bg-gray-950 bg-white dark:text-white text-slate-900 font-semibold overflow-y-overlay;
+    @apply h-screen bg-gray-975 text-white font-medium;
   }
 
-  html.dark {
-    color-scheme: dark;
-  }
-
-  html.dark .scroll-style::-webkit-scrollbar-thumb {
-    box-shadow: inset 0 0 14px 14px #33415540;
+  html {
+     color-scheme: dark;
   }
 
   details > summary {
@@ -41,8 +37,8 @@
 }
 
 @layer utilities {
-  .ticket-divider {
-    @apply bg-dashed-pattern dark:bg-dashed-pattern-dark;
+   .ticket-divider {
+    @apply bg-dashed-pattern-dark;
     background-position: bottom;
     background-size: 21px 2px;
     background-repeat: repeat-x;
@@ -52,13 +48,13 @@
   }
 
   .ticket-divider:after {
-    @apply w-5 h-5 rounded-full absolute top-1/2 -right-10 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-950 bg-white;
+    @apply w-5 h-5 rounded-full absolute top-1/2 -right-10 -translate-x-1/2 -translate-y-1/2 bg-gray-975;
     content: "";
     display: block;
   }
 
   .ticket-divider:before {
-    @apply w-5 h-5 rounded-full absolute top-1/2 -left-5 -translate-x-1/2 -translate-y-1/2 dark:bg-gray-950 bg-white;
+    @apply w-5 h-5 rounded-full absolute top-1/2 -left-5 -translate-x-1/2 -translate-y-1/2 bg-gray-975;
     content: "";
     display: block;
   }
@@ -71,18 +67,18 @@
   }
 
   .svg-circle > path:first-child {
-    @apply stroke-slate-400 fill-slate-400;
+    @apply stroke-gray-400 fill-gray-400;
   }
 
   .svg-circle.darker > path:first-child {
-    @apply dark:stroke-slate-750 dark:fill-slate-750 fill-slate-150 stroke-slate-150;
+    @apply fill-gray-700 stroke-none text-gray-500;
   }
 
   .svg-gray-info > g > path:first-child {
-    @apply stroke-slate-400 fill-slate-400;
+    @apply stroke-gray-400 fill-gray-400;
   }
 
-  html.dark .loading-box {
+  .loading-box {
     background: linear-gradient(-45deg, #475569, #334155, #334155);
     background-size: 400% 400%;
     animation: gradient 1.6s linear infinite;
@@ -92,14 +88,8 @@
     overflow: hidden;
   }
 
-  .loading-box {
-    background: linear-gradient(-45deg, #e2e8f0, #cbd5e1, #cbd5e1);
-    background-size: 400% 400%;
-    animation: gradient 1.5s ease-in-out 0.1s infinite;
-  }
-  
   .common-input {
-    @apply placeholder-slate-400 focus-visible:!outline-none placeholder:text-sm border-none shadow-none focus:ring-0 focus:border-none bg-inherit rounded-[inherit] px-0 py-[13px] w-full
+    @apply placeholder-gray-400 focus-visible:!outline-none placeholder:text-sm border-none shadow-none focus:ring-0 focus:border-none bg-inherit px-0 py-[13px] w-full
   }
 
   @keyframes gradient {
@@ -123,7 +113,7 @@
 }
 
   .splide__arrows button {
-    @apply pointer-events-auto flex items-center justify-center h-7.5 w-7.5 bg-slate-150 dark:bg-slate-750 rounded-full
+    @apply pointer-events-auto flex items-center justify-center h-7.5 w-7.5 bg-slate-750 rounded-full
   }
 
   .splide__arrows svg {
@@ -140,28 +130,22 @@
 
 .woot-widget-bubble {
   @apply bg-primary !important;
+  z-index: 20 !important;
 }
 
-/* .woot-widget-bubble {
-  visibility: visible !important;
-  bottom: 0 !important;
-} */
-
-
-
 .tippy-box {
-  @apply dark:bg-slate-600 bg-slate-200 text-slate-900 dark:text-white border-none !important;
+  @apply bg-slate-600 text-white border-none !important;
   @apply px-4 py-3 rounded-2xl text-xs !important;
 }
 
 .tippy-content {
   @apply p-0 font-medium leading-5 text-left !important;
-  font-family: "Source Code Pro" !important;
+  font-family: "Space Grotesk" !important;
   font-style: normal !important;
 }
 
 .tippy-arrow {
-  @apply dark:text-slate-600 text-slate-200 !important;
+  @apply text-slate-600 !important;
 }
 
 .scroll-hide {
@@ -186,23 +170,21 @@
   border: solid 5px transparent;
 }
 
-html.dark .scroll-style::-webkit-scrollbar-thumb {
+.scroll-style::-webkit-scrollbar-thumb {
   box-shadow: inset 0 0 14px 14px #33415540;
 }
 
+
 .scroll-style {
-  scrollbar-color: #cbd5e1 transparent;
-}
-html.dark .scroll-style {
   scrollbar-color: #374151 transparent;
 }
 
 .copy_svg__copy-path {
-  @apply dark:fill-gray-850 fill-slate-50;
+  @apply fill-gray-850;
 }
 
 .clipboard_svg__paste-path {
-  @apply dark:fill-slate-800 fill-slate-100;
+  @apply fill-gray-900;
 }
 
 .success-circle path:first-child {
@@ -210,14 +192,6 @@ html.dark .scroll-style {
 }
 .-cbwsdk-css-reset body {
   background-color: transparent !important;
-}
-
-.text-shadow {
-  background: linear-gradient(90deg, #0f172a 85.41%, rgba(15, 23, 42, 0) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
 }
 
 .overflow-y-overlay {
@@ -230,7 +204,7 @@ html.dark .scroll-style {
   }
 }
 
-html.dark .text-shadow {
+.text-shadow {
   background: linear-gradient(
     90deg,
     #ffffff 85.41%,
@@ -261,11 +235,11 @@ input[type="search" i]::-webkit-search-cancel-button {
 }
 
 .type-icon-unselected path {
-  @apply fill-slate-400 stroke-slate-400;
+  @apply fill-gray-400 stroke-gray-400;
 }
 
 .stroke-slate-icon path {
-  @apply stroke-slate-400;
+  @apply stroke-gray-400;
 }
 
 .stroke-white-icon path {
@@ -273,9 +247,25 @@ input[type="search" i]::-webkit-search-cancel-button {
 }
 
 .type-icon-selected path {
-  @apply fill-black stroke-black dark:fill-white dark:stroke-white;
+  @apply  fill-white stroke-white;
 }
 
 .woot--bubble-holder > .woot-widget-bubble {
   z-index: 49 !important
 }
+
+.wallet-list-move, 
+  .wallet-list-enter-active,
+  .wallet-list-leave-active {
+    transition: all 0.5s ease;
+  }
+
+  .wallet-list-enter-from,
+  .wallet-list-leave-to {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+
+  .wallet-list-leave-active {
+    position: absolute;
+  }

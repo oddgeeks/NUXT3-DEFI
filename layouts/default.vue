@@ -81,22 +81,21 @@ ${stringified}`
   <section class="flex h-full flex-col">
     <BannerAccountTracking v-if="showTrackingBanner" />
 
-    <div class="flex">
-      <Sidebar />
-
-      <div
-        class="mx-auto flex min-w-0 max-w-7xl flex-1 flex-col px-4 sm:px-10"
-      >
-        <TheHeader />
-        <div class="container mt-[104px] flex flex-col gap-4 sm:mt-0">
-          <WarningsGasBalance v-if="showInsufficientGasBanner" />
+    <div class="flex h-full">
+      <div class="flex w-full justify-center">
+        <div
+          class="flex min-w-0 max-w-7xl flex-1 flex-col px-4 transition-[margin-left] sm:px-10"
+        >
+          <TheHeader />
+          <div class="container mt-20 flex flex-col gap-4 sm:mt-0">
+            <WarningsGasBalance v-if="showInsufficientGasBanner" />
+          </div>
+          <slot />
+          <TheFooter />
         </div>
-        <MobileNavigation />
-        <slot />
-        <TheFooter />
       </div>
     </div>
-    <div class="fixed bottom-0 left-1/2 z-40 w-full -translate-x-1/2 sm:bottom-12 sm:w-auto">
+    <div class="fixed bottom-0 left-1/2 z-[51] w-full -translate-x-1/2 sm:bottom-12 sm:w-auto">
       <BannerSwitchNetwork v-if="showIncorrectNetworkBanner" />
       <BannerOnboard
         v-else-if="showOnboardBanner && route.name !== 'claims-ens-drop'"

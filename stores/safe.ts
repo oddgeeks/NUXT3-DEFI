@@ -24,16 +24,6 @@ export const useSafe = defineStore('safe', () => {
   const safeAddress = ref()
   const mainSafeAddress = ref()
   const multiSigSafeAddress = ref()
-  const { connectionMeta } = useConnectors()
-
-  const accountSafeMapping = useCookie<Record<string, string>>('account-safe-mapping', {
-    maxAge: 60 * 60 * 24 * 365 * 10,
-    default: () => ref({}),
-  })
-  const safeTotalBalanceMapping = useCookie<Record<string, string>>('safe-balance-mapping', {
-    maxAge: 60 * 60 * 24 * 365 * 10,
-    default: () => ref({}),
-  })
 
   const route = useRoute()
   const ensName = ref()
@@ -49,11 +39,26 @@ export const useSafe = defineStore('safe', () => {
   const safesLoading = ref(false)
   const optionsLoading = ref(false)
 
+  const accountSafeMapping = useCookie<Record<string, string>>('account-safe-mapping', {
+    maxAge: 60 * 60 * 24 * 365 * 10,
+    default: () => ref({}),
+  })
+  const safeTotalBalanceMapping = useCookie<Record<string, string>>('safe-balance-mapping', {
+    maxAge: 60 * 60 * 24 * 365 * 10,
+    default: () => ref({}),
+  })
+
+  const accountCustomSafeMapping = useCookie<Record<string, ISafe[]>>('account-custom-safe-mapping', {
+    maxAge: 60 * 60 * 24 * 365 * 10,
+    default: () => ref({}),
+  })
+
   const allSafes = computed<ISafe[]>(() => {
     const primary = [mainSafe.value, multiSigSafe.value, legacySafe.value].filter(Boolean)
     const secondary = safes.value.filter(s => !primary.some(p => isAddressEqual(p?.safe_address, s?.safe_address)))
+    const customSafes = accountCustomSafeMapping.value[account.value] || []
 
-    return [...primary, ...secondary].sort(a => isAddressEqual(a?.safe_address, selectedSafe.value?.safe_address) ? -1 : 1) as ISafe[]
+    return [...primary, ...secondary, ...customSafes].sort(a => isAddressEqual(a?.safe_address, selectedSafe.value?.safe_address) ? -1 : 1) as ISafe[]
   })
 
   const { account } = useWeb3()
@@ -156,8 +161,6 @@ export const useSafe = defineStore('safe', () => {
 
     const cachedSafeAddress = getCachedSafeAddress(account.value)
 
-    console.log({ cachedSafeAddress })
-
     const [availableSafes, legacySafeInstance] = await Promise.all([
       getSafes(account.value),
       getSafe(oldSafeAddress),
@@ -165,7 +168,7 @@ export const useSafe = defineStore('safe', () => {
 
     safes.value = availableSafes.data
 
-    const isCachedSafeAvailable = availableSafes.data.some(i => isAddressEqual(cachedSafeAddress, i.safe_address))
+    const isCachedSafeAvailable = allSafes.value.some(i => isAddressEqual(cachedSafeAddress, i.safe_address))
       || isAddressEqual(cachedSafeAddress, multisigAddress)
       || isAddressEqual(cachedSafeAddress, address)
       || isAddressEqual(cachedSafeAddress, oldSafeAddress)
@@ -208,9 +211,9 @@ export const useSafe = defineStore('safe', () => {
   async function legacySafeAsDefault(oldSafeAddress?: string, legacySafeInstance?: ISafe) {
     if (oldSafeAddress) {
       const legacySafeHasGas = await getGasBalance(oldSafeAddress).then(toBN).then(b => b.gt(0))
-      const setLegacyAsDefault = legacySafeInstance && legacySafeHasGas
-      const hideLegacySafe = useLocalStorage('hide-legacy-safe', !legacySafeHasGas)
-      hideLegacySafe.value = !setLegacyAsDefault
+      const setLegacyAsDefault = !!(legacySafeInstance && legacySafeHasGas)
+      useLocalStorage<boolean>('show-legacy-safe', setLegacyAsDefault)
+
       return setLegacyAsDefault
     }
     return false
@@ -222,7 +225,6 @@ export const useSafe = defineStore('safe', () => {
       getSafe(mainSafeAddress.value),
       getSafe(multiSigSafeAddress.value),
     ])
-    console.log(_selectedSafe)
 
     if (!_selectedSafe) {
       const isMultisig = isAddressEqual(safeAddress.value, multiSigSafeAddress.value)
@@ -755,8 +757,6 @@ export const useSafe = defineStore('safe', () => {
       if (!account.value)
         return
 
-      connectionMeta.value.address = account.value
-
       try {
         safesLoading.value = true
 
@@ -874,6 +874,8 @@ export const useSafe = defineStore('safe', () => {
     allSafes,
     fetchSafeInstanceses,
     isObservableAccount,
+    accountCustomSafeMapping,
+    getDefaultSafe,
   }
 })
 

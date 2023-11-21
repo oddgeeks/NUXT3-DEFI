@@ -132,14 +132,14 @@ function handleBackClick() {
           <h1 class="text-lg leading-10">
             Add New Signer(s)
           </h1>
-          <h2 class="text-xs font-medium leading-5 text-slate-400">
+          <h2 class="text-xs font-medium leading-5 text-gray-400">
             Signers can approve/reject transaction. Signers are automatically saved as contacts.
           </h2>
         </div>
       </div>
     </div>
 
-    <hr class="border-slate-150 dark:border-slate-800">
+    <hr class="border-gray-800">
     <div class="flex flex-col gap-7.5 p-5 sm:gap-5 sm:p-7.5">
       <fieldset
         v-for="field, key in fields"
@@ -148,7 +148,7 @@ function handleBackClick() {
       >
         <div class="flex flex-1 flex-col gap-2">
           <div class="flex w-full items-center justify-between">
-            <span class="text-xs font-medium leading-5 text-slate-400">
+            <span class="text-xs font-medium leading-5 text-gray-400">
               <span class="inline sm:hidden">{{ key + 1 }}</span> Signer Name
             </span>
           </div>
@@ -164,12 +164,12 @@ function handleBackClick() {
         </div>
         <div class="flex flex-1 basis-12 flex-col gap-2">
           <div class="flex w-full items-center justify-between">
-            <span class="flex items-center gap-2.5 text-xs font-medium leading-5 text-slate-400">
+            <span class="flex items-center gap-2.5 text-xs font-medium leading-5 text-gray-400">
               <span class="inline sm:hidden">{{ key + 1 }}</span> Signer EOA Address
               <SvgoInfo2 v-if="!isGnosisMigration" v-tippy="'Please make sure you enter the EOA address and not Avocado address.'" class="text-orange" />
             </span>
             <button
-              v-if="fields.length > 1" class="flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
+              v-if="fields.length > 1" class="flex h-5 w-5 items-center justify-center rounded-full bg-gray-900"
               @click="remove(key as number)"
             >
               <SvgoX class="h-3 w-3" />
@@ -189,7 +189,7 @@ function handleBackClick() {
                 type="button"
                 class="ml-3" @click="handleUpdateField(key)"
               >
-                <SvgoBack class="text-slate-400" />
+                <SvgoBack class="text-gray-400" />
               </button>
               <button
                 v-else-if="!isGnosisMigration"
@@ -198,26 +198,26 @@ function handleBackClick() {
                 class="ml-3"
                 @click="handleSelectContact(key)"
               >
-                <SvgoContact class="text-slate-400" />
+                <SvgoContact class="text-gray-400" />
               </button>
             </template>
           </CommonInput>
         </div>
       </fieldset>
-      <button v-if="!isGnosisMigration" class="flex items-center gap-3 text-xs text-primary disabled:text-slate-500" :disabled="!meta.valid" @click="push({ address: '', name: '' })">
-        <div :class="!meta.valid ? 'bg-slate-500' : ''" class="flex h-4 w-4 rounded-full bg-primary">
+      <button v-if="!isGnosisMigration" class="flex items-center gap-3 text-xs text-primary disabled:text-gray-500" :disabled="!meta.valid" @click="push({ address: '', name: '' })">
+        <div :class="!meta.valid ? 'bg-gray-500' : ''" class="flex h-4 w-4 rounded-full bg-primary">
           <SvgoPlus class="m-auto h-2 w-2 text-white" />
         </div>
         Add more signer(s)
       </button>
       <div class="flex items-center gap-3">
-        <SvgoInfo2 class="h-5 w-5 rounded-full text-slate-500" />
+        <SvgoInfo2 class="h-5 w-5 rounded-full text-gray-500" />
         <p class="text-xs">
           Adding signers requires gas. Exact gas requirement will be visible in the next steps
         </p>
       </div>
     </div>
-    <hr class="border-slate-150 dark:border-slate-800">
+    <hr class="border-gray-800">
     <div class="grid grid-cols-2 gap-4 p-7.5">
       <CommonButton class="justify-center" size="lg" color="white" @click="handleBackClick">
         Back

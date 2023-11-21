@@ -107,13 +107,13 @@ async function handleDeleteBookmark() {
         {{ edit ? "Edit" : "Create" }} Transaction Shortcut
       </h1>
     </div>
-    <hr class="border-slate-150 dark:border-slate-800">
+    <hr class="border-gray-800">
     <div class="p-7.5 font-medium">
       <table class="text-sm">
         <tbody>
           <template v-if="type === 'wc' && session">
             <tr>
-              <td class="pb-7.5 text-slate-400">
+              <td class="pb-7.5 text-gray-400">
                 App URL
               </td>
               <td class="pb-7.5 pl-[60px]">
@@ -123,7 +123,7 @@ async function handleDeleteBookmark() {
               </td>
             </tr>
             <tr>
-              <td class="pb-7.5 text-slate-400">
+              <td class="pb-7.5 text-gray-400">
                 Network
               </td>
               <td class="pb-7.5 pl-[60px]">
@@ -134,7 +134,7 @@ async function handleDeleteBookmark() {
               </td>
             </tr>
             <tr>
-              <td class="text-slate-400">
+              <td class="text-gray-400">
                 App Name
               </td>
               <td class="pl-[60px] align-baseline">
@@ -144,7 +144,7 @@ async function handleDeleteBookmark() {
           </template>
           <template v-if="type === 'transfer' && sendData">
             <tr>
-              <td class="pb-7.5 text-slate-400">
+              <td class="pb-7.5 text-gray-400">
                 Network
               </td>
               <td class="pb-7.5 pl-[60px]">
@@ -152,7 +152,7 @@ async function handleDeleteBookmark() {
                   <ChainLogo class="h-5.5 w-5.5" :chain="sendData.fromChainId" />
                   <span>{{ chainIdToName(sendData.fromChainId) }}</span>
                   <template v-if="sendData.toChainId && sendData.toChainId !== sendData.fromChainId">
-                    <SvgoArrowRight class="w-5 text-slate-400" />
+                    <SvgoArrowRight class="w-5 text-gray-400" />
                     <ChainLogo class="h-5.5 w-5.5" :chain="sendData.toChainId" />
                     <span>{{ chainIdToName(sendData.toChainId) }}</span>
                   </template>
@@ -160,7 +160,7 @@ async function handleDeleteBookmark() {
               </td>
             </tr>
             <tr>
-              <td class="pb-7.5 text-slate-400">
+              <td class="pb-7.5 text-gray-400">
                 Amount
               </td>
               <td class="pb-7.5 pl-[60px]">
@@ -172,7 +172,7 @@ async function handleDeleteBookmark() {
               </td>
             </tr>
             <tr>
-              <td class="text-slate-400">
+              <td class="text-gray-400">
                 Dest. Address
               </td>
               <td class="pl-[60px]">
@@ -185,15 +185,15 @@ async function handleDeleteBookmark() {
         </tbody>
       </table>
     </div>
-    <hr class="border-slate-150 dark:border-slate-800">
+    <hr class="border-gray-800">
     <div class="flex flex-col gap-2.5 p-7.5">
       <span class="text-sm font-medium">Name Shortcut</span>
       <CommonInput v-model="value" name="shortcut-name" autofocus placeholder="Enter the name" />
     </div>
-    <hr class="border-slate-150 dark:border-slate-800">
+    <hr class="border-gray-800">
     <div class="flex flex-col gap-7.5 p-7.5">
-      <div class="flex gap-2.5 text-xs font-medium text-slate-400">
-        <SvgoInfo2 class="mt-0.5 shrink-0 text-slate-500" />
+      <div class="flex gap-2.5 text-xs font-medium text-gray-400">
+        <SvgoInfo2 class="mt-0.5 shrink-0 text-gray-500" />
         Transaction Shortcuts are best suited for non-time-sensitive transactions like sends, repayments, claiming and minting. Some transactions may not work with Tx Shortcut.
       </div>
       <div class="grid grid-cols-2 gap-4">

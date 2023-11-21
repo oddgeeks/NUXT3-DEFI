@@ -1730,10 +1730,10 @@
   resolved "https://registry.yarnpkg.com/@fastify/busboy/-/busboy-2.1.0.tgz#0709e9f4cb252351c609c6e6d8d6779a8d25edff"
   integrity sha512-+KpH+QxZU7O4675t3mnkQKcZZg56u+K/Ct2K+N2AZYNVK8kyeo/bI18tI8aPm3tvNNRyTWfj6s5tnGNlcbQRsA==
 
-"@fontsource/source-code-pro@^4.5.12":
-  version "4.5.14"
-  resolved "https://registry.yarnpkg.com/@fontsource/source-code-pro/-/source-code-pro-4.5.14.tgz#97e7b889f485c56132925e3b5bd1cc114b67e163"
-  integrity sha512-EWE0djE7wFCBmExWa9oT1vIp+qj5MUroVvXWb9G7Ig4t4aXDd9QDidYZzMzNemb8gQxTdOzGmhx6EZnDTFMh5Q==
+"@fontsource/space-grotesk@^5.0.15":
+  version "5.0.15"
+  resolved "https://registry.yarnpkg.com/@fontsource/space-grotesk/-/space-grotesk-5.0.15.tgz#703ea56e1a7616915ad786ffc09b13eb52c73342"
+  integrity sha512-9LaRK2f2B7X0Mx9F8UTuKuqW4w+Iv0RByoC5WyT7l3VSyepd2aJm+/s14tj8QJY+0gwfUG9P/6Gc8oDWy8+aeA==
 
 "@headlessui/vue@^1.7.12":
   version "1.7.16"

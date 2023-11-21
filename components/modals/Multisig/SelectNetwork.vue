@@ -71,7 +71,7 @@ function handleBack() {
         </div>
       </div>
     </div>
-    <hr class="border-slate-150 dark:border-slate-800">
+    <hr class="border-gray-800">
     <div class="px-6 py-5 sm:p-7.5">
       <button v-if="selectedNetworks.length === availableNetworks.length" class="absolute right-7.5 text-xs text-primary" type="button" @click="handleDeselectAll">
         Deselect all
@@ -90,14 +90,14 @@ function handleBack() {
       </template>
       <template v-if="nonDeployedNetworks?.length">
         <h2 class="mb-4 flex items-center gap-2.5 text-sm">
-          Not deployed <SvgoInfo2 v-tippy="'You can also deploy anytime in future on any chain at the same address'" class="text-slate-500" />
+          Not deployed <SvgoInfo2 v-tippy="'You can also deploy anytime in future on any chain at the same address'" class="text-gray-500" />
         </h2>
         <ul class="flex flex-col gap-4">
           <MultisigSelectNetworkItem v-for="option in nonDeployedNetworks" :key="option.chainId" :addresses="addresses" :selected="isSelected(option.chainId)" :option="option" @on-select="toggleNetworkChainId(option.chainId)" />
         </ul>
       </template>
     </div>
-    <hr class="border-slate-150 dark:border-slate-800">
+    <hr class="border-gray-800">
     <div class="grid grid-cols-2 gap-4 p-7.5">
       <CommonButton class="justify-center" size="lg" color="white" @click="handleBack">
         Back

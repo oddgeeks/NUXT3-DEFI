@@ -76,7 +76,7 @@ async function handleSubmit() {
       <h1 class="font-lg mb-3 text-center leading-5">
         {{ chainIdToName(chainId) }}
       </h1>
-      <h2 class="text-center text-xs font-medium leading-5 text-slate-400">
+      <h2 class="text-center text-xs font-medium leading-5 text-gray-400">
         Confirming this will {{ label }} {{ signerTypeLabel }}
         <span v-if="removeBackupSigner">and backup signer will be removed</span> on {{ chainIdToName(chainId) }}
       </h2>

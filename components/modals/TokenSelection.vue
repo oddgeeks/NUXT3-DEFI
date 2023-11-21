@@ -90,7 +90,7 @@ onMounted(() => {
       type="search"
     >
       <template #prefix>
-        <SearchSVG class="mr-2 text-slate-400" />
+        <SearchSVG class="mr-2 text-gray-400" />
       </template>
     </CommonInput>
     <ul
@@ -99,14 +99,14 @@ onMounted(() => {
     >
       <li v-for="token in tokensWithBalance" :id="computeId(token)" :key="computeId(token)">
         <button
-          class="flex w-full items-center gap-3 rounded-3xl px-5 py-[14px] text-left hover:bg-slate-100 hover:dark:bg-slate-800"
+          class="flex w-full items-center gap-3 rounded-3xl px-5 py-[14px] text-left  hover:bg-gray-900"
           @click="$emit('resolve', true, token)"
         >
           <SafeTokenLogo :chain-id="token.chainId" :url="token.logoURI" />
 
           <div class="flex flex-col">
             <span> {{ token.name }} </span>
-            <span class="text-sm font-medium text-slate-400">
+            <span class="text-sm font-medium text-gray-400">
               {{ formatDecimal(token.balance) }}
               <span class="uppercase"> {{ token.symbol }}</span>
             </span>
@@ -122,8 +122,8 @@ onMounted(() => {
       v-else
       class="flex h-96 flex-col items-center justify-center space-y-8"
     >
-      <p class="text-center text-sm font-medium text-slate-400">
-        We couldn't find your token. Please use the button below to add custom token.
+      <p class="text-gray-400">
+        Nothing could be found
       </p>
       <div class="flex flex-col items-center space-y-4">
         <CommonButton

@@ -5,12 +5,13 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
-const { safeAddress } = useAvocadoSafe()
 const { account } = useWeb3()
 
 const searchQuery = ref('')
 
-const { availablePositions, summarize, getDefiProtocolName, fetchPositions, defaultDefiApis } = useDefi()
+const { availablePositions, summarize } = storeToRefs(useDefi())
+
+const { getDefiProtocolName, defaultDefiApis } = useDefi()
 
 const networkPreferences = ref(
   [...new Set(defaultDefiApis.map(i => i.chainId))],
@@ -31,15 +32,6 @@ const filteredPositions = computed(() => {
 
   return fuse.search(searchQuery.value).map(result => result.item)
 })
-
-watch(safeAddress, () => {
-  if (!safeAddress.value)
-    return
-
-  fetchPositions()
-}, {
-  immediate: true,
-})
 </script>
 
 <template>
@@ -51,12 +43,12 @@ watch(safeAddress, () => {
       <MultipleNetworkFilter v-if="account" v-model:networks="networkPreferences" :show-supported-networks="false" :filters="false" />
     </div>
     <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
-      <div v-for="item in summarize" :key="item.name" class="flex items-center gap-4 rounded-3xl bg-slate-50 px-4 py-3 dark:bg-gray-850 sm:p-5">
+      <div v-for="item in summarize" :key="item.name" class="flex items-center gap-4 rounded-3xl bg-gray-850 px-4 py-3 sm:p-5">
         <div :class="item.color" class="flex h-11 w-11 items-center justify-center rounded-2xl bg-opacity-10 sm:h-[50px] sm:w-[50px]">
           <component :is="item.icon" />
         </div>
         <div class="flex flex-col gap-0.5">
-          <h1 class="text-xs text-slate-500 sm:text-sm">
+          <h1 class="text-xs text-gray-500 sm:text-sm">
             {{ item.name }}
           </h1>
           <h2 class="text-2xl leading-[30px] sm:text-3xl sm:leading-10">
@@ -80,14 +72,14 @@ watch(safeAddress, () => {
       <div
         :class="!account ? 'blur h-96' : ''"
         style="scrollbar-gutter: stable; overflow-y: overlay"
-        class="scroll-style hidden max-h-[530px] overflow-auto rounded-[25px] bg-slate-50 dark:bg-gray-850 sm:flex md:overflow-x-hidden"
+        class="scroll-style hidden max-h-[530px] overflow-auto rounded-[25px] bg-gray-850 sm:flex md:overflow-x-hidden"
       >
         <table
           class="table w-full"
         >
           <thead>
             <tr
-              class="border-b border-slate-150 text-left text-sm font-medium text-gray-400 dark:border-slate-800"
+              class="border-b border-gray-800 text-left text-sm font-medium text-gray-400"
             >
               <th class="py-6 pl-7.5 text-left">
                 Protocol
@@ -108,7 +100,7 @@ watch(safeAddress, () => {
               <th class="py-5" />
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-150 dark:divide-slate-800">
+          <tbody class="divide-y divide-gray-900">
             <tr
               v-for="position in filteredPositions"
               :key="position.label + position.chainId"
@@ -169,9 +161,9 @@ watch(safeAddress, () => {
         <li
           v-for="position in filteredPositions"
           :key="position.label + position.chainId"
-          class="flex flex-col gap-3 rounded-5 bg-slate-50 dark:bg-gray-850"
+          class="flex flex-col gap-3 rounded-5 "
         >
-          <button class="flex w-full justify-between border-b border-slate-150 px-5 py-4 dark:border-slate-800" @click="openDefiPositionDetailsModal(position)">
+          <button class="flex w-full justify-between border-b border-gray-800 px-5 py-4" @click="openDefiPositionDetailsModal(position)">
             <div class="flex items-center gap-3">
               <div
                 class="relative inline-block h-7.5 w-7.5 shrink-0 rounded-full"
@@ -198,16 +190,16 @@ watch(safeAddress, () => {
           </button>
           <div class="">
             <dl class="grid grid-cols-2 gap-y-4">
-              <div class="border-b border-slate-150 px-5 pb-4 dark:border-slate-800">
-                <dt class="text-xs leading-5 text-slate-500">
+              <div class="border-b border-gray-800 px-5 pb-4">
+                <dt class="text-xs leading-5 text-gray-500">
                   Supplied
                 </dt>
                 <dd class="text-sm">
                   {{ `$${abbreviateNumber(position.positions?.totalSupplyInUsd)}` }}
                 </dd>
               </div>
-              <div class="border-b border-slate-150 dark:border-slate-800">
-                <dt class="text-xs leading-5 text-slate-500">
+              <div class="border-b border-gray-800">
+                <dt class="text-xs leading-5 text-gray-500">
                   Borrowed
                 </dt>
                 <dd class="text-sm">
@@ -215,7 +207,7 @@ watch(safeAddress, () => {
                 </dd>
               </div>
               <div class="px-5 pb-4">
-                <dt class="text-xs leading-5 text-slate-500">
+                <dt class="text-xs leading-5 text-gray-500">
                   APY
                 </dt>
                 <dd class="text-sm">
@@ -223,7 +215,7 @@ watch(safeAddress, () => {
                 </dd>
               </div>
               <div>
-                <dt class="text-xs leading-5 text-slate-500">
+                <dt class="text-xs leading-5 text-gray-500">
                   Health Factor
                 </dt>
                 <dd class="text-sm">
@@ -244,7 +236,7 @@ watch(safeAddress, () => {
       >
         <div class="flex flex-col items-center justify-center gap-6">
           <p
-            class="text-center font-semibold leading-[30px] text-slate-400 sm:whitespace-nowrap sm:text-lg sm:text-white"
+            class="text-center font-semibold leading-[30px] text-gray-400 sm:whitespace-nowrap sm:text-lg sm:text-white"
           >
             Connect your wallet to see your DeFi positions
           </p>

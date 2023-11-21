@@ -39,7 +39,7 @@ const tabs = [
 <template>
   <div class="overflow-y-hidden">
     <MigrationTabs
-      class="border-b-[1px] border-white dark:border-slate-750"
+      class="border-b-[1px] border-slate-750"
       :tabs="tabs"
       :default-selected="activeTab"
       @updated="(newValue) => activeTab = newValue"

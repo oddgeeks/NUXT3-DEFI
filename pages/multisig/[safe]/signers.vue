@@ -97,7 +97,11 @@ async function handleDeleteSigner() {
         message: generateSlackMessage(metadata, selectedChainId.value),
         chainId: String(selectedChainId.value),
       })
-      showPendingTransactionModal(txHash, selectedChainId.value)
+
+      showPendingTransactionModal({
+        hash: txHash,
+        chainId: selectedChainId.value,
+      })
     }
 
     selectedAddresses.value = []
@@ -144,23 +148,23 @@ onMounted(() => {
         Manage Multisig Signers
       </h2>
       <div class="flex flex-wrap justify-between gap-5">
-        <span class="text-xs leading-5 text-slate-400">
+        <span class="text-xs leading-5 text-gray-400">
           Signers are addresses that are required to sign transactions before they can be executed on<br> the blockchain.
         </span>
         <fieldset :disabled="isSafeDoesNotMatch" class="flex w-full items-center justify-between gap-7.5 self-start sm:w-auto">
-          <button class="flex items-center gap-2.5 whitespace-nowrap text-xs text-primary disabled:text-slate-400" @click="handleAddSignerModal()">
+          <button class="flex items-center gap-2.5 whitespace-nowrap text-xs text-primary disabled:text-gray-400" @click="handleAddSignerModal()">
             <div class="flex h-4.5 w-4.5 rounded-full bg-current">
               <SvgoPlus class="m-auto h-2 w-2 text-white" />
             </div>
             Add New Signer(s)
           </button>
-          <button :disabled="!selectedAddresses.length" class="flex items-center gap-2.5 whitespace-nowrap text-xs text-red-alert disabled:text-slate-400" @click="handleDeleteSigner">
+          <button :disabled="!selectedAddresses.length" class="flex items-center gap-2.5 whitespace-nowrap text-xs text-red-alert disabled:text-gray-400" @click="handleDeleteSigner">
             Delete Selected
             <SvgoTrash2 class="h-3.5 w-3.5" />
           </button>
         </fieldset>
       </div>
-      <div v-if="!isSafeDoesNotMatch" class="mb-2.5 flex items-center justify-between rounded-[25px] bg-slate-50 p-[18px] font-medium dark:bg-gray-850 sm:px-7.5 sm:py-6.5">
+      <div v-if="!isSafeDoesNotMatch" class="mb-2.5 flex items-center justify-between rounded-[25px] bg-gray-850 p-[18px] font-medium sm:px-7.5 sm:py-6.5">
         <div class="flex items-center gap-3">
           <SvgoSafe class="h-7.5 w-7.5" />
           <div class="flex flex-col gap-1.5">

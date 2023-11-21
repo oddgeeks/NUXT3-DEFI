@@ -39,7 +39,7 @@ function handleResolve() {
       </h1>
       <p
 
-        class="text-center text-xs font-medium leading-5 text-slate-400"
+        class="text-center text-xs font-medium leading-5 text-gray-400"
       >
         Are you sure you want to execute this transaction?
       </p>

@@ -165,7 +165,9 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
   <div class="flex flex-1 flex-col gap-7.5">
     <div v-if="!account" class="m-auto flex w-full items-center justify-center self-center">
       <div class="flex flex-col items-center justify-center gap-6">
-        <p class="text-center font-semibold leading-[30px] text-slate-400 sm:whitespace-nowrap sm:text-lg sm:text-white">
+        <p
+          class="text-center font-semibold leading-[30px] text-gray-400 sm:whitespace-nowrap sm:text-lg sm:text-white"
+        >
           Connect your wallet to see your Avocado Protect settings
         </p>
 
@@ -184,7 +186,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
         </h1>
         <div class="flex flex-col justify-between gap-2.5 sm:flex-row">
           <div>
-            <h2 class="text-sm font-medium leading-6 text-slate-400">
+            <h2 class="text-sm font-medium leading-6 text-gray-400">
               {{ $t('mfa.page.subtitle') }}
             </h2>
             <NuxtLink
@@ -194,23 +196,20 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
               Learn more about how it works
             </NuxtLink>
           </div>
-          <NuxtLink
-            target="_blank" external to="https://www.youtube.com/watch?v=XaGUVxmIv90"
-            class="flex items-center gap-2 rounded-7.5 px-5 py-3 text-sm font-medium ring-1 ring-slate-150 dark:ring-slate-750"
-          >
+          <NuxtLink target="_blank" external to="https://www.youtube.com/watch?v=XaGUVxmIv90" class="flex items-center gap-2 rounded-7.5 px-5 py-3 text-sm font-medium ring-1 ring-slate-750">
             <SvgoYoutube class="text-primary" />
             Watch Tutorial Video
           </NuxtLink>
         </div>
       </div>
       <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        <div class="rounded-5 bg-slate-50 dark:bg-gray-850">
+        <div class="rounded-5 bg-gray-850">
           <div class="flex flex-col gap-7.5 p-7.5">
             <div>
               <h2 class="mb-2.5 flex items-center justify-between">
                 OTP Verification
               </h2>
-              <h3 class="text-xs font-medium leading-5 text-slate-400">
+              <h3 class="text-xs font-medium leading-5 text-gray-400">
                 Set up one or more modes of OTP verification, & verify identity using any one when required.
               </h3>
             </div>
@@ -218,18 +217,13 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
               <ul class="flex flex-col gap-4">
                 <template v-for="mfa in mfaTypes" :key="mfa?.value || mfa.label">
                   <li v-if="mfa.value !== 'backup'">
-                    <div
-                      class="flex w-full items-center justify-between  rounded-2xl bg-slate-100 p-5 text-left ring-1 ring-slate-200 dark:bg-slate-850 dark:ring-slate-750 sm:h-[66px]"
-                    >
+                    <div class="flex w-full items-center justify-between  rounded-2xl bg-slate-850 p-5 text-left ring-1 ring-slate-750 sm:h-[66px]">
                       <div class="flex w-full flex-col justify-between gap-2.5 sm:flex-row sm:items-center sm:gap-0">
                         <div class="flex flex-col gap-1">
                           <span class="text-xs font-medium leading-5">
                             {{ mfa.label }}
                           </span>
-                          <span
-                            v-if="mfa.value === preferredMfa?.value && mfa.activated"
-                            class="text-xs font-medium text-slate-400"
-                          >
+                          <span v-if="mfa.value === preferredMfa?.value && mfa.activated" class="text-xs font-medium text-gray-400">
                             Default
                           </span>
                         </div>
@@ -259,23 +253,13 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                             >
                               <PopoverPanel
                                 v-slot="{ close }"
-                                class="absolute -top-24 left-1/2 z-10 flex -translate-x-1/2 flex-col rounded-2xl border border-slate-150 bg-slate-100 p-2 text-sm font-medium dark:border-[#1E293B] dark:bg-gray-950"
+                                class="absolute -top-24 left-1/2 z-10 flex -translate-x-1/2 flex-col rounded-2xl border  border-[#1E293B] bg-gray-975 p-2 text-sm font-medium"
                               >
-                                <button
-                                  class="flex items-center gap-2.5 whitespace-nowrap rounded-xl px-4 py-2.5 hover:bg-slate-150 hover:dark:bg-slate-800"
-                                  @click="handleSetDefault(mfa, close)"
-                                >
+                                <button class="flex items-center gap-2.5 whitespace-nowrap rounded-xl px-4 py-2.5  hover:bg-gray-900" @click="handleSetDefault(mfa, close)">
                                   <SvgoAsDefault /> Set as default
                                 </button>
-                                <Tippy
-                                  :content="deactivateDisabled ? 'Please disable all networks from Manage networks section first' : undefined"
-                                >
-                                  <button
-                                    :disabled="deactivateDisabled"
-                                    :class="deactivateDisabled ? 'text-slate-400' : 'text-red-alert hover:bg-red-alert/10'"
-                                    class="flex w-full items-center gap-2.5 rounded-xl px-4 py-2.5"
-                                    @click="handleDeactivate(mfa, close)"
-                                  >
+                                <Tippy :content="deactivateDisabled ? 'Please disable all networks from Manage networks section first' : undefined">
+                                  <button :disabled="deactivateDisabled" :class="deactivateDisabled ? 'text-gray-400' : 'text-red-alert hover:bg-red-alert/10'" class="flex w-full items-center gap-2.5 rounded-xl px-4 py-2.5" @click="handleDeactivate(mfa, close)">
                                     <SvgoTrash2 /> Deactivate
                                   </button>
                                 </Tippy>
@@ -293,10 +277,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
               </ul>
             </div>
           </div>
-          <div
-            v-if="atLeastOneMfaVerifed"
-            class="flex items-baseline justify-between border-t border-slate-150 p-7.5 pt-5 dark:border-slate-800"
-          >
+          <div v-if="atLeastOneMfaVerifed" class="flex items-baseline justify-between border-t border-gray-800 p-7.5 pt-5">
             <div class="flex flex-col gap-2.5">
               <span class="text-sm font-medium">
                 Active on {{ instadappSignerNetworks.length }} networks
@@ -317,31 +298,25 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
             </button>
           </div>
         </div>
-        <div class="flex flex-col rounded-5 bg-slate-50 dark:bg-gray-850">
+        <div class="flex flex-col rounded-5 bg-gray-850">
           <div class="flex flex-col gap-7.5 p-7.5">
             <div>
               <h2 class="mb-2.5 flex items-center justify-between">
                 Backup Address (Optional)
               </h2>
-              <h3 class="text-xs font-medium leading-5 text-slate-400">
-                A backup address lets you approve a transaction if OTP is not working, or you lose access to your email,
-                SMS, etc.
+              <h3 class="text-xs font-medium leading-5 text-gray-400">
+                A backup address lets you approve a transaction if OTP is not working, or you lose access to your email, SMS, etc.
               </h3>
             </div>
 
-            <div
-              class="flex w-full flex-col justify-between rounded-2xl bg-slate-100 text-left font-medium ring-1 ring-slate-200 dark:bg-slate-850 dark:ring-slate-750"
-            >
+            <div class="flex w-full flex-col justify-between rounded-2xl bg-gray-900 text-left font-medium ring-1 ring-gray-800">
               <div class="flex w-full items-center justify-between px-5 py-3">
                 <div class="flex flex-col gap-0.5">
                   <p class="text-xs font-medium leading-5">
                     {{ backupMfa?.title }}
                   </p>
                   <ul>
-                    <li
-                      v-for="signer in backupSigners" :key="signer.address"
-                      class="flex items-center gap-1.5 text-xs font-medium leading-5 text-slate-400"
-                    >
+                    <li v-for="signer in backupSigners" :key="signer.address" class="flex items-center gap-1.5 text-xs font-medium leading-5 text-gray-400">
                       {{ shortenHash(signer.address, 10) }}
                       <Copy icon-only :text="signer.address" />
                     </li>
@@ -366,21 +341,15 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                   </span>
                 </span>
               </div>
-              <NuxtLink
-                v-if="pendingTransactionsLink?.mfaSlug && pendingTransactionsLink.count"
-                :to="{ path: pendingTransactionsLink.mfaSlug, query: { tab: 'pending' } }"
-                class="flex items-center justify-between rounded-b-[inherit] bg-slate-150 px-5 py-1.5 text-xs font-medium leading-5 dark:bg-slate-750"
-              >
+              <NuxtLink v-if="pendingTransactionsLink?.mfaSlug && pendingTransactionsLink.count" :to="{ path: pendingTransactionsLink.mfaSlug, query: { tab: 'pending' } }" class="flex items-center justify-between rounded-b-[inherit] border-t border-t-gray-800 bg-gray-875 px-5 py-1.5 text-xs font-medium leading-5">
                 <span>
                   View Queued transactions ({{ pendingTransactionsLink.count }})
                 </span>
-                <SvgoChevronDown class="h-3 w-3 -rotate-90 text-slate-400" />
+                <SvgoChevronDown class="h-3 w-3 -rotate-90 text-gray-400" />
               </NuxtLink>
             </div>
           </div>
-          <div
-            class="scroll-style mt-auto flex max-h-[250px] flex-col items-baseline justify-between gap-5 overflow-auto border-t border-slate-150 p-7.5 pt-5 dark:border-slate-800"
-          >
+          <div class="scroll-style mt-auto flex max-h-[250px] flex-col items-baseline justify-between gap-5 overflow-auto border-t border-gray-800 p-7.5 pt-5">
             <template v-if="atLeastOneMfaVerifed">
               <div
                 v-for="signer in backupSigners" :key="signer.address"
@@ -390,7 +359,7 @@ function handleSetDefault(mfa: IMfa, close: () => void) {
                   <span class="text-sm font-medium">
                     Active on {{ signer.chainIds.length }} networks
                   </span>
-                  <span v-if="backupSigners.length > 1" class="text-xs text-slate-400">
+                  <span v-if="backupSigners.length > 1" class="text-xs text-gray-400">
                     {{ signer.address }}
                   </span>
                   <div class="flex">
