@@ -140,7 +140,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-[26px] md:w-[450px]">
+  <div class="flex w-full flex-col gap-5 sm:gap-[26px] md:w-[450px]">
     <div
       class="mx-auto flex w-full items-center justify-between gap-2 rounded-full"
     >
@@ -151,7 +151,7 @@ onMounted(() => {
       <CommonToggle v-model="isInputUsd" text="Input USD" />
     </div>
     <div class="flex flex-col gap-2.5 font-medium">
-      <div class="flex justify-between gap-5">
+      <div class="flex justify-between gap-2.5 sm:gap-5">
         <div class="flex flex-col gap-2.5">
           <span class="text-sm font-medium">Token</span>
           <TokenSelection
@@ -165,7 +165,7 @@ onMounted(() => {
         </div>
 
         <div class="flex flex-1 flex-col gap-2.5">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between whitespace-nowrap">
             <span class="text-sm">Amount</span>
             <div class="flex gap-x-3 text-sm uppercase">
               <span>
@@ -224,7 +224,7 @@ onMounted(() => {
     </div>
 
     <div class="flex flex-col gap-2.5 font-medium">
-      <div class="flex justify-between gap-5">
+      <div class="flex justify-between gap-2.5 sm:gap-5">
         <div
           v-if="isCrossChain"
           class="flex flex-col gap-2.5"
@@ -248,7 +248,7 @@ onMounted(() => {
         </div>
 
         <div class="flex w-full flex-col gap-2.5">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between whitespace-nowrap">
             <span class="text-sm">Address</span>
             <span v-if="totalTransfers" class="text-sm text-gray-400">
               {{ totalTransfers }} previous
