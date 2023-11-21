@@ -8,7 +8,7 @@ const { pinnedSafes, isSafePinned, displayLegacySafe } = useAccountState()
 const priorSafes = computed(() => {
   const showCount = props.compact ? 2 : 3
 
-  const safes = displayLegacySafe.value == 'true'
+  const safes = String(displayLegacySafe.value).toLowerCase() == 'true'
     ? allSafes.value
     : allSafes.value?.filter((safe) => {
       return safe.multisig === 1

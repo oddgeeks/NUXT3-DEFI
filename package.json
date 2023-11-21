@@ -58,7 +58,7 @@
     "@types/qrcode": "^1.5.2",
     "@types/semver": "^7.3.13",
     "@vercel/analytics": "^0.1.11",
-    "@vite-pwa/nuxt": "^0.0.7",
+    "@vite-pwa/nuxt": "^0.2.3",
     "@vueuse/nuxt": "^10.5.0",
     "@web3-react/injected-connector": "^6.0.7",
     "@web3-react/network-connector": "^6.2.9",

@@ -40,7 +40,7 @@ function onContinue() {
     </div>
     <hr class="border-gray-900">
     <div v-for="item of data" :key="item.title" class="flex flex-row items-center justify-center gap-5 px-7.5">
-      <div class="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-[#4CA0541a]">
+      <div class="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-primary/10">
         <SvgoWNetwork v-if="item.icon === 'network'" />
         <SvgoWGasTank v-if="item.icon === 'gastank'" />
         <SvgoWRefresh v-if="item.icon === 'refresh'" />
@@ -57,9 +57,9 @@ function onContinue() {
     </div>
     <hr class="border-gray-900">
     <div class="flex w-full flex-col items-center justify-center gap-5 px-7.5">
-      <button class="w-full rounded-full bg-[#4CA054] px-7.5 py-3 text-sm font-semibold leading-5" @click="onContinue()">
+      <CommonButton size="lg" class="w-full justify-center" @click="onContinue()">
         Continue
-      </button>
+      </CommonButton>
       <NuxtLink
         href="https://guides.avocado.instadapp.io/getting-started/avocado-quickstartst-to-get-started-with-avocado"
         target="_blank"

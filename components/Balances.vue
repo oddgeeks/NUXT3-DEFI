@@ -271,9 +271,9 @@ const { safeAddress } = useAvocadoSafe()
               <SupportedChains class="!flex" />
             </div>
           </div>
-          <div v-if="gt(totalEoaBalance || '0', 1) && isOnboardBannerVisible" class="flex-rows flex w-2/3 items-center justify-center gap-[10px] rounded-[30px] bg-[#4CA0541A] px-[16px] py-[10px]">
+          <div v-if="gt(totalEoaBalance || '0', 1) && isOnboardBannerVisible" class="flex-rows flex w-2/3 items-center justify-center gap-[10px] rounded-[30px] bg-primary/10 px-[16px] py-[10px]">
             <InfoSVG />
-            <p class="flex-1 text-[12px] text-[#4CA054]">
+            <p class="flex-1 text-[12px] text-primary">
               You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet (EOA)
             </p>
             <CommonButton
@@ -305,8 +305,8 @@ const { safeAddress } = useAvocadoSafe()
             </span>
             <SupportedChains class="!flex justify-between" :max-count="5" />
           </div>
-          <div v-if="gt(totalEoaBalance || '0', 1) && isOnboardBannerVisible" class="flex flex-col gap-[12px] rounded-[20px] bg-[#4CA0541A] p-[16px]">
-            <p class="flex-1 text-xs text-[#4CA054]">
+          <div v-if="gt(totalEoaBalance || '0', 1) && isOnboardBannerVisible" class="flex flex-col gap-[12px] rounded-[20px] bg-primary/10 p-[16px]">
+            <p class="flex-1 text-xs text-primary">
               You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet (EOA)
             </p>
             <CommonButton

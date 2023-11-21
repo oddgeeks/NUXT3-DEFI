@@ -95,7 +95,7 @@ ${stringified}`
         </div>
       </div>
     </div>
-    <div class="fixed bottom-0 left-1/2 z-[51] w-full -translate-x-1/2 sm:bottom-12 sm:w-auto">
+    <div class="fixed bottom-0 left-1/2 z-[49] w-full -translate-x-1/2 sm:bottom-12 sm:w-auto">
       <BannerSwitchNetwork v-if="showIncorrectNetworkBanner" />
       <BannerOnboard
         v-else-if="showOnboardBanner && route.name !== 'claims-ens-drop'"

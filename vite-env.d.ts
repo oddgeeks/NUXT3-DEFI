@@ -1,3 +1,5 @@
+import type { UnwrapNestedRefs } from "nuxt/dist/app/compat/capi";
+
 interface Window {
   ethereum: any;
 }
@@ -24,7 +26,8 @@ declare module '*.svg?skipsvgo' {
   export default src
 }
 
-type ChainId = 1 | 137 | 42161 | 10 | 56 | 43114 | 100 | 1101 | 634 | 63400;
+declare global {
+  type ChainId = 1 | 137 | 42161 | 10 | 56 | 43114 | 100 | 1101 | 634 | 63400;
 
 interface Provider {
   id: string;
@@ -743,6 +746,26 @@ interface ISigner {
   chainIds: string[]
 }
 
+interface PwaInjection {
+  isInstalled: boolean
+  showInstallPrompt: Ref<boolean>
+  cancelInstall: () => void
+  install: () => Promise<void>
+  swActivated: Ref<boolean>
+  registrationError: Ref<boolean>
+  offlineReady: Ref<boolean>
+  needRefresh: Ref<boolean>
+  updateServiceWorker: (reloadPage?: boolean | undefined) => Promise<void>
+  cancelPrompt: () => Promise<void>
+  getSWRegistration: () => ServiceWorkerRegistration | undefined
+}
+
+declare module '#app' {
+  interface NuxtApp {
+    $pwa: UnwrapNestedRefs<PwaInjection>
+  }
+}
+
 type ChainFees = Record<string, ICalculatedFee>
 type ChainFeeErrors = Record<string, string>
 
@@ -832,3 +855,8 @@ interface IOpenReviewSignerProcessModalParams{
     metadata: string
   }
 }
+}
+
+
+
+export {}

@@ -88,7 +88,7 @@ watch(userToggleShowLegacy, () => {
 
 const filteredSafes = computed(() => {
   const safes = allSafes.value.filter((safe) => {
-    return safe.multisig === 0 ? !!displayLegacySafe.value : true
+    return safe.multisig === 0 ? String(displayLegacySafe.value).toLowerCase() == 'true' : true
   })
 
   if (!search.value)

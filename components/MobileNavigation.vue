@@ -8,15 +8,15 @@ const { avoExplorerURL } = storeToRefs(useEnvironmentState())
 <template>
   <div class="mb-5 flex flex-col gap-5 md:hidden">
     <div class="flex">
-      <NuxtLink class="flex h-10 flex-1 items-center justify-center rounded-xl text-gray-400" to="/" active-class="!text-primary bg-[#4CA0541A]">
+      <NuxtLink class="flex h-10 flex-1 items-center justify-center rounded-xl text-gray-400" to="/" active-class="!text-primary bg-[#07A65D1A]">
         <SvgoHome />
       </NuxtLink>
 
-      <NuxtLink class="flex h-10 flex-1 items-center justify-center rounded-xl text-gray-400" to="/contacts" active-class="!text-primary bg-[#4CA0541A]">
+      <NuxtLink class="flex h-10 flex-1 items-center justify-center rounded-xl text-gray-400" to="/contacts" active-class="!text-primary bg-[#07A65D1A]">
         <SvgoContact class="h-[15px]" />
       </NuxtLink>
 
-      <NuxtLink class="flex h-10 flex-1 items-center justify-center rounded-xl text-gray-400" to="/nft" active-class="!text-primary bg-[#4CA0541A]">
+      <NuxtLink class="flex h-10 flex-1 items-center justify-center rounded-xl text-gray-400" to="/nft" active-class="!text-primary bg-[#07A65D1A]">
         <SvgoFire />
       </NuxtLink>
 
@@ -24,7 +24,7 @@ const { avoExplorerURL } = storeToRefs(useEnvironmentState())
         <SvgoCalendar class="h-[18px]" />
       </NuxtLink>
 
-      <NuxtLink class="flex h-10 flex-1 items-center justify-center rounded-xl text-gray-400" to="/defi" active-class="!text-primary bg-[#4CA0541A]">
+      <NuxtLink class="flex h-10 flex-1 items-center justify-center rounded-xl text-gray-400" to="/defi" active-class="!text-primary bg-[#07A65D1A]">
         <SvgoDefi class="h-[18px]" />
       </NuxtLink>
 
