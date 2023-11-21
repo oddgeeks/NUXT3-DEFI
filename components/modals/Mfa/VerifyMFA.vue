@@ -170,7 +170,7 @@ async function handleDeactivateWithRecoveryCode() {
           </h2>
         </div>
       </div>
-      <VOtpInput v-model:value="otpValue" should-auto-focus class="otp-wrapper justify-center gap-2.5" input-classes="bg-gray-900 rounded-[14px] border-0 focus-within:ring-1 focus-within:bg-gray-850  focus-within:ring-slate-750 px-4 py-[15px] text-center w-[58px] h-[50px]" separator="" :num-inputs="6" />
+      <VOtpInput v-model:value="otpValue" should-auto-focus class="otp-wrapper justify-center gap-2.5" input-classes="bg-gray-900 rounded-[14px] border-0 focus-within:ring-1 focus-within:bg-gray-850  focus-within:ring-slate-750 px-0 py-0 w-12 h-12 sm:px-4 sm:py-[15px] text-center sm:w-[58px] sm:h-[50px]" separator="" :num-inputs="6" />
     </div>
     <label v-if="props.mfaRequestType === 'transaction'" class="mt-2.5 flex cursor-pointer items-center gap-2.5 text-xs" for="input-session">
       <input id="input-session" v-model="sessionAvailable" class="peer sr-only" type="checkbox">

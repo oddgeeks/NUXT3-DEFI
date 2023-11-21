@@ -4,7 +4,7 @@ import { MultisigForwarder__factory } from '~/contracts'
 
 const { allSafes, mainSafe, selectedSafe, safeAddress, accountCustomSafeMapping } = storeToRefs(useSafe())
 const { getDefaultSafe } = useSafe()
-const { userToggleHideLegacy, displayLegacySafe } = useAccountState()
+const { userToggleShowLegacy, displayLegacySafe } = useAccountState()
 const { multisigForwarderProxyAddress } = storeToRefs(useEnvironmentState())
 const { getRpcProviderByChainId } = useShared()
 const { account } = useWeb3()
@@ -64,7 +64,7 @@ async function handleCreateMultisig() {
   }
 }
 
-watch(userToggleHideLegacy, () => {
+watch(userToggleShowLegacy, () => {
   if (selectedSafe.value?.multisig === 0) {
     safeAddress.value = mainSafe.value?.safe_address
     selectedSafe.value = mainSafe.value
@@ -72,10 +72,14 @@ watch(userToggleHideLegacy, () => {
 })
 
 const filteredSafes = computed(() => {
-  if (!search.value)
-    return allSafes.value
+  const safes = allSafes.value.filter((safe) => {
+    return safe.multisig === 0 ? !!displayLegacySafe.value : true
+  })
 
-  const safesWithName = allSafes.value.map((i) => {
+  if (!search.value)
+    return safes
+
+  const safesWithName = safes.map((i) => {
     return {
       ...i,
       name: useLocalStorage(`safe-label-${i.safe_address}`, '').value,
@@ -113,7 +117,7 @@ const filteredSafes = computed(() => {
         </span>
         <div class="flex items-center gap-5">
           <span class="text-sm">
-            <CommonCheckbox v-model="userToggleHideLegacy">
+            <CommonCheckbox v-model="userToggleShowLegacy">
               <template #label>
                 Show legacy wallet
               </template>
@@ -137,15 +141,15 @@ const filteredSafes = computed(() => {
           <SvgoSearch class="mr-2" />
         </template>
       </CommonInput>
-      <div class="grid min-h-[84px] grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2 sm:gap-4">
-        <TransitionGroup :appear="false" :name="!searcInputFocused ? 'wallet-list' : ''">
-          <template v-for="safe in filteredSafes" :key="safe.safe_address">
-            <div v-if="safe.multisig === 0 ? displayLegacySafe : true">
+      <ClientOnly>
+        <div class="grid min-h-[84px] grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2 sm:gap-4">
+          <TransitionGroup :appear="false" :name="!searcInputFocused ? 'wallet-list' : ''">
+            <template v-for="safe in filteredSafes" :key="safe.safe_address">
               <WalletItem detailed :safe="safe" />
-            </div>
-          </template>
-        </TransitionGroup>
-      </div>
+            </template>
+          </TransitionGroup>
+        </div>
+      </ClientOnly>
     </div>
   </div>
 </template>

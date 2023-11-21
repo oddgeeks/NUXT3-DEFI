@@ -130,6 +130,7 @@
 
 .woot-widget-bubble {
   @apply bg-primary !important;
+  z-index: 20 !important;
 }
 
 .tippy-box {

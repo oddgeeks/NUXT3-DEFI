@@ -522,13 +522,13 @@ export const useDefi = defineStore('defi', () => {
   }
 
   watchThrottled(safeAddress, () => {
-    if (!safeAddress.value)
+    if (!safeAddress.value || process.server)
       return
 
     fetchPositions()
   }, {
     immediate: true,
-    throttle: 1000,
+    throttle: 3000,
   })
 
   return {

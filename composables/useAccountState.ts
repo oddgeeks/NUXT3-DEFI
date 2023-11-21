@@ -1,8 +1,10 @@
+import { useStorage } from '@vueuse/core'
+
 export function useAccountState() {
   const { account } = useWeb3()
   const { legacySafe, legacySafeAddress } = storeToRefs(useSafe())
 
-  const userToggleHideLegacy = useLocalStorage('hide-legacy-safe', false)
+  const userToggleShowLegacy = useStorage('show-legacy-safe', null)
   const isHideZeroBalances = useLocalStorage('hide-zero-balances', false)
   const listType = useLocalStorage('listType', 'individual')
 
@@ -41,7 +43,7 @@ export function useAccountState() {
   }
 
   const displayLegacySafe = computed(() => {
-    return legacySafeAddress.value && legacySafe.value && userToggleHideLegacy.value
+    return legacySafeAddress.value && legacySafe.value && userToggleShowLegacy.value
   })
 
   return {
@@ -49,7 +51,7 @@ export function useAccountState() {
     togglePinSafe,
     isSafePinned,
     displayLegacySafe,
-    userToggleHideLegacy,
+    userToggleShowLegacy,
     isHideZeroBalances,
     listType,
   }
