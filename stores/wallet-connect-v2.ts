@@ -516,8 +516,6 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
       retry: 3,
       baseURL: firebaseURL,
     })
-
-    console.log(walletConnectBannedDappList.value)
   }
 
   function getConnectionVersion(uri: string): 1 | 2 {
