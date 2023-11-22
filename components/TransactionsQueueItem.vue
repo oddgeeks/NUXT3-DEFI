@@ -17,6 +17,8 @@ const crossTransaction = ref<ICrossChainTx>()
 const isCrossTransactionFetching = ref(true)
 const transactionPending = ref(true)
 const isSuccess = computed(() => status.value === TransactionStatus.Success)
+const { avoExplorerURL } = storeToRefs(useEnvironmentState())
+
 const events = [
   '0xacb5341cc21d71a005bd22634cec7391a7fd11ff2b563a7b301cac795f7a6a56',
   '0xdaf1e6e151973de199f3ea25b9c6a7c3d94299dc85e269cfd20e48e517ecf704',
