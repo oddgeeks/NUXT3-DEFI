@@ -12,7 +12,7 @@ const tokensWithBalances = computed(() =>
 </script>
 
 <template>
-  <div>
+  <div class="scroll-style overflow-auto sm:max-h-[65vh]">
     <div class="flex items-center justify-between border-b-[1px] border-slate-750 p-5 text-xs font-medium">
       <p class="text-white">
         Select tokens for migration
