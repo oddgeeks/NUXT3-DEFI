@@ -158,7 +158,9 @@ export function useAvocadoSafe() {
       message,
     })
 
-    const transactionHash = await avoProvider.send('txn_broadcast', [
+    const avoStaticProvider = new ethers.providers.StaticJsonRpcProvider(getRpcURLByChainId(avoChainId.value))
+
+    const transactionHash = await avoStaticProvider.send('txn_broadcast', [
       {
         signature,
         message,
@@ -263,10 +265,11 @@ export function useAvocadoSafe() {
         dryRun: true,
       })
     }
-
     console.log({ signatureObject })
 
-    const transactionHash = await avoProvider.send('txn_broadcast', [signatureObject])
+    const avoStaticProvider = new ethers.providers.StaticJsonRpcProvider(getRpcURLByChainId(avoChainId.value))
+
+    const transactionHash = await avoStaticProvider.send('txn_broadcast', [signatureObject])
 
     if (dryRun.value) {
       alert(`Dry run value: ${transactionHash}`)
