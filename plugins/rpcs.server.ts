@@ -4,17 +4,22 @@ export default defineNuxtPlugin(async () => {
   const shared = useShared()
 
   try {
-    const data = await $fetch<Record<string, string>>('https://rpc.instadapp.io/rpc', {
+    const blockqueryNetworks = await $fetch<IBlockQueryChain[]>('https://blockquery.instadapp.io/chains', {
       retry: 3,
     })
 
-    shared.rpcs = data as Record<string, string>
+    shared.rpcList = networks.reduce((acc, network) => {
+      const blockqueryRpcList = blockqueryNetworks.find(i => String(i.id) == String(network.chainId))?.free_rpc_urls
+      const fallbackRpcList = network?.params?.rpcUrls
 
-    return {
-      provide: {
-        RPCMap: data,
-      },
-    }
+      const rpcList = blockqueryRpcList || fallbackRpcList
+
+      acc[network.chainId]
+        = rpcList
+      return acc
+    }, {} as Record<string, string[]>)
+
+    return { }
   }
   catch (e) {
     // fallback rpc
@@ -22,19 +27,12 @@ export default defineNuxtPlugin(async () => {
       message: 'RPCs CDN failed, fallback to default',
       title: 'CDN Failed',
     })
-    const rpcMap = networks.reduce((acc, network) => {
-      acc[network.chainId] = network.params.rpcUrls[0]
+
+    shared.rpcList = networks.reduce((acc, network) => {
+      acc[network.chainId] = network.params.rpcUrls
       return acc
-    }, {} as Record<string, string>)
+    }, {} as Record<string, string[]>)
 
-    shared.rpcs = rpcMap
-
-    return {
-      provide: {
-        RPCMap: rpcMap,
-      },
-    }
+    return { }
   }
-
-  return {}
 })

@@ -1,36 +1,30 @@
+import { StaticJsonRpcRetryBatchProvider } from '@instadapp/utils'
+import { acceptHMRUpdate, defineStore } from 'pinia'
 import type { ethers } from 'ethers'
-import { StaticJsonRpcRetryProvider } from '@instadapp/utils'
 
 const rpcInstances: Record<string, ethers.providers.StaticJsonRpcProvider> = {}
 
 export const useShared = defineStore('shared', () => {
-  const rpcs = ref<Record<string, string>>({})
+  const rpcList = ref<Record<string, string[]>>({})
   const isProd = ref(false)
+
+  const rpcs = computed(() => networks.reduce((acc, network) => {
+    acc[network.chainId] = network.params.rpcUrls[0]
+    return acc
+  }, {} as Record<string, string>))
 
   const isAppProduction = useCookie<boolean | undefined>('app-production', {
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
   })
 
-  function getRpcFallbackUrl(chainId: string | number) {
-    const rpcURL = rpcs.value[chainId]
-
-    if (rpcURL)
-      return rpcURL
-
-    const network = availableNetworks.find(i => i.chainId == chainId)
-
-    if (network)
-      return network.params.rpcUrls[0]
-  }
-
   function getRpcProviderByChainId(chainId: number | string) {
-    const rpcURL = getRpcFallbackUrl(chainId)
+    const list = rpcList.value[chainId]
 
-    if (!rpcURL)
+    if (!list)
       throw new Error(`No RPC URL for chainId: ${chainId}`)
 
     if (!rpcInstances[chainId]) {
-      rpcInstances[chainId] = new StaticJsonRpcRetryProvider(rpcURL, {
+      rpcInstances[chainId] = new StaticJsonRpcRetryBatchProvider(list, {
         delay: 50,
         timeouts: [5000, 7000, 10000],
       })
@@ -40,17 +34,18 @@ export const useShared = defineStore('shared', () => {
   }
 
   function getRpcURLByChainId(chainId: number | string) {
-    const rpcURL = getRpcFallbackUrl(chainId)
+    const list = rpcList.value[chainId]
 
-    if (!rpcURL)
+    if (!list?.length)
       throw new Error(`No RPC URL for chainId: ${chainId}`)
 
-    return rpcURL
+    return list[0]
   }
 
   return {
     isProd,
     rpcs,
+    rpcList,
     getRpcProviderByChainId,
     getRpcURLByChainId,
     isAppProduction,

@@ -40,7 +40,7 @@ export const walletConnectMetadata = {
   name: 'Instadapp Avocado',
 }
 
-export const ABIfetcherSupportedNetworks = ['polygon', 'mainnet', 'fantom', 'arbitrum', 'avalanche', 'optimism', 'bsc', 'gnosis']
+export const ABIfetcherSupportedNetworks = ['polygon', 'mainnet', 'fantom', 'arbitrum', 'avalanche', 'optimism', 'bsc', 'gnosis', 'fuse']
 
 export const bridgeDisabledChains = [250, 122, 204, 534352]
 export const swapDisabledChains = [122, 204, 534352]
