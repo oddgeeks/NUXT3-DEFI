@@ -6,7 +6,6 @@ const colors = {
 }
 
 module.exports = {
-  darkMode: 'class',
   theme: {
     container: {
       center: true,
@@ -50,7 +49,7 @@ module.exports = {
         1: '1px',
       },
       fontFamily: {
-        sans: ['Source Code Pro', ...defaultTheme.fontFamily.sans],
+        sans: ['Space Grotesk', ...defaultTheme.fontFamily.sans],
       },
       colors: {
         lite: {
@@ -60,8 +59,11 @@ module.exports = {
           alert: '#EB5757',
         },
         gray: {
-          850: '#161E2D',
+          900: '#131926',
+          850: '#0E121C',
+          875: '#161E2D',
           950: '#111827',
+          975: '#090D14',
         },
         slate: {
           150: '#E9EDF4',

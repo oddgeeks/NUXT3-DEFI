@@ -10,7 +10,6 @@ function defaultOptions() {
     closeButton: true,
     wrapperClass: '',
     contentClass: '',
-    sheetPosition: 'bottom',
     snackOptions: {
       open: false,
       type: 'success',

@@ -32,7 +32,7 @@ const noBreakdownAvailable = computed(() => {
       Transaction Breakdown
     </h1>
 
-    <p v-if="noBreakdownAvailable" class="text-xs font-medium text-slate-400">
+    <p v-if="noBreakdownAvailable" class="text-xs font-medium text-gray-400">
       No breakdown available
     </p>
 

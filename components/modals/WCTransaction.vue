@@ -172,7 +172,11 @@ async function handleSubmit() {
 
     emit('resolve', true)
 
-    showPendingTransactionModal(transactionHash, props.chainId, 'wc')
+    showPendingTransactionModal({
+      hash: transactionHash,
+      chainId: props.chainId,
+      type: 'dapp',
+    })
   }
   catch (e: any) {
     const err = parseTransactionError(e)
@@ -312,10 +316,10 @@ onUnmounted(() => {
       </div>
       <div class="flex flex-col gap-2.5">
         <div
-          class="flex flex-col gap-4 rounded-5 bg-slate-50 px-5 py-[14px] dark:bg-gray-850"
+          class="flex flex-col gap-4 rounded-5 bg-gray-850 px-5 py-[14px]"
         >
           <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2.5 text-slate-400">
+            <div class="flex items-center gap-2.5 text-gray-400">
               <FlowersSVG />
               <span class="text-xs font-medium leading-5">App Name</span>
             </div>
@@ -332,7 +336,7 @@ onUnmounted(() => {
             </div>
           </div>
           <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2.5 text-slate-400">
+            <div class="flex items-center gap-2.5 text-gray-400">
               <NetworkSVG />
               <span class="text-xs font-medium leading-5">Network</span>
             </div>
@@ -353,7 +357,7 @@ onUnmounted(() => {
 
           <template v-if="isSign && signMessageDetails">
             <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2.5 text-slate-400">
+              <div class="flex items-center gap-2.5 text-gray-400">
                 <SVGClockCircle class="w-4" />
                 <span class="text-xs font-medium leading-5">Exprires at</span>
               </div>
@@ -366,7 +370,7 @@ onUnmounted(() => {
         </div>
       </div>
     </div>
-    <div v-if="revokeTokens?.length" class="flex flex-col border-y border-slate-150 px-6 dark:border-slate-800 sm:px-10">
+    <div v-if="revokeTokens?.length" class="flex flex-col border-y border-gray-800 px-6 sm:px-10">
       <details class="group text-xs">
         <summary class="flex cursor-pointer items-center justify-between py-5 text-primary">
           <span class="flex items-center gap-2">
@@ -381,13 +385,13 @@ onUnmounted(() => {
 
         <div class="group-open:pb-5">
           <ul class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-            <li v-for="i in revokeTokens" :key="i.from" class="flex justify-between rounded-2xl border px-2.5 py-2 text-[10px] dark:border-slate-800">
+            <li v-for="i in revokeTokens" :key="i.from" class="flex justify-between rounded-2xl border border-gray-800 px-2.5 py-2 text-[10px]">
               <div class="flex items-center gap-2 font-medium">
                 <SafeTokenLogo class="h-4 w-4" :url="i.tokenObj?.logoURI" />
                 {{ shortenHash(i.to) }}
               </div>
               <div class="flex items-center gap-2.5">
-                <button :disabled="pending" type="button" class="flex items-center gap-1.5 text-primary disabled:text-slate-500" @click="addRevokeTransaction(i.token, i.to)">
+                <button :disabled="pending" type="button" class="flex items-center gap-1.5 text-primary disabled:text-gray-500" @click="addRevokeTransaction(i.token, i.to)">
                   <SvgoPlus class="h-2.5 w-2.5" />
                   Revoke tx
                 </button>

@@ -7,7 +7,7 @@ import { Erc20__factory } from '~/contracts'
 
 const props = defineProps<MigrateToModalProps>()
 
-const emit = defineEmits(['destroy'])
+defineEmits(['destroy'])
 
 const { parseTransactionError } = useErrorHandler()
 
@@ -31,6 +31,10 @@ const {
 } = useMigration()
 
 const loading = ref(false)
+
+const availableToMigrate = computed(() => !!selectedTokensForMigration.value?.length
+  || !!selectedNFTsForMigration.value.length
+  || toBN(selectedSafeForMigration.value?.amount || '0').gt(0))
 
 const multipleActions = asyncComputed<IEstimatedActions[]>(async () => {
   const arr: IEstimatedActions[] = []
@@ -103,7 +107,7 @@ async function getGasBalanceTransactions() {
 
   const gasBalanceManagerInstance = new ethers.Contract(gasBalanceManagerAddress.value, gasBalanceManagerAbi, signer)
 
-  const data = (await gasBalanceManagerInstance.populateTransaction['transfer(address,uint256,uint256)'](props.selectedMigrationSafe?.owner_address, props.selectedMigrationSafe?.multisig_index, toBN(selectedSafeForMigration.value.amount).toString())).data
+  const data = (await gasBalanceManagerInstance.populateTransaction['transfer(address,uint256,uint256)'](props.selectedMigrationSafe?.owner_address, props.selectedMigrationSafe?.multisig_index, selectedSafeForMigration.value.amount)).data
 
   const tx = {
     to: gasBalanceManagerAddress.value,
@@ -182,18 +186,40 @@ async function getBalanceTransactions() {
 async function migrate() {
   try {
     loading.value = true
+    const hashes = []
 
     await switchToAvocadoNetwork()
 
-    await Promise.all(multipleActions.value.map(action => sendTransactions(
-      action.actions,
-      action.chainId,
-      action.options,
-      'transfer').then(hash => addTransactionToQueue({
-      hash,
-      chainId: action.chainId,
-      preventAutoClose: true,
-    }))))
+    for await (const action of multipleActions.value) {
+      try {
+        const hash = await sendTransactions(
+          action.actions,
+          action.chainId,
+          action.options,
+          'transfer',
+        )
+
+        if (hash) {
+          addTransactionToQueue({
+            hash,
+            chainId: action.chainId,
+          })
+          hashes.push(hash)
+        }
+      }
+      catch (e: any) {
+        const err = parseTransactionError(e)
+
+        openSnackbar({
+          message: err.formatted,
+          type: 'error',
+        })
+        continue
+      }
+    }
+
+    if (hashes.length)
+      logActions()
 
     selectedSafeForMigration.value = undefined
 
@@ -212,6 +238,35 @@ async function migrate() {
     loading.value = false
   }
 }
+
+function logActions() {
+  const totalAmountInUsdToken = selectedTokensForMigration.value
+    .reduce<string>((acc, token) => toBN(acc).plus(token.balanceInUSD || 0).toFixed(), '0')
+
+  const totalNftMigrated = selectedNFTsForMigration.value.length
+
+  const totalGasBalanceMigrated = toBN(selectedSafeForMigration.value?.amount || 0)
+
+  const formattedTokenMessage = toBN(totalAmountInUsdToken).gt(0) ? `${formatUsd(totalAmountInUsdToken)} worth of tokens migrated` : null
+  const formattedNftMessage = totalNftMigrated ? `${totalNftMigrated} NFTs migrated` : null
+  const formattedGasBalanceMessage = totalGasBalanceMigrated.gt(0) ? `${formatUsd(totalGasBalanceMigrated.toFixed())} worth of gas balance migrated to ${selectedSafeForMigration.value?.safe?.safe_address}` : null
+
+  const chains = estimatedData.value?.map(({ chainId }) => formatChainName(chainId)).join(', ')
+
+  const formattedMessage = [
+    chains,
+    formattedTokenMessage,
+    formattedNftMessage,
+    formattedGasBalanceMessage,
+  ].filter(Boolean).join('\n')
+
+  logActionToSlack({
+    type: 'success',
+    account: account.value,
+    action: 'migration',
+    message: formattedMessage,
+  })
+}
 </script>
 
 <template>
@@ -222,7 +277,7 @@ async function migrate() {
           <SvgoArrowRight />
         </button>
         <div>
-          <h2 class="mb-1 text-lg font-semibold text-slate-900 dark:text-white">
+          <h2 class="mb-1 text-lg font-semibold ">
             Migrate
           </h2>
           <h3 class="text-xs font-medium text-slate-400">
@@ -234,17 +289,17 @@ async function migrate() {
 
     <div class="flex flex-col gap-5">
       <div class="flex flex-col gap-5">
-        <h4 class="text-sm font-medium leading-5 text-slate-900 dark:text-white">
+        <h4 class="text-sm font-medium leading-5 ">
           Migrate From
         </h4>
-        <WalletItem v-if="selectedSafe" hide-active-state :safe="selectedSafe" />
+        <WalletItem v-if="selectedSafe" detailed hide-active-state :safe="selectedSafe" />
       </div>
 
       <div class="flex flex-col gap-2">
         <h4 class="text-xs font-medium leading-5 text-slate-400">
           Balances
         </h4>
-        <div class="max-w-full rounded-5 border border-white bg-slate-150 dark:border-slate-750 dark:bg-gray-850">
+        <div class="max-w-full rounded-5 border  border-slate-750 bg-gray-850">
           <MigrationTokenBalance
             v-for="token in selectedTokensForMigration"
             :key="`${token.address}-${token.chainId}`"
@@ -262,7 +317,7 @@ async function migrate() {
         <h4 class="text-xs font-medium leading-5 text-slate-400">
           NFTs
         </h4>
-        <div class="max-w-full rounded-5 border border-white bg-slate-150 dark:border-slate-750 dark:bg-gray-850">
+        <div class="max-w-full rounded-5 border border-slate-750 bg-gray-850">
           <MigrationNFTCard
             v-for="asset in selectedNFTsForMigration"
             :key="`${asset.tokenId}-${asset.chainId}`"
@@ -280,7 +335,7 @@ async function migrate() {
         <h4 class="text-xs font-medium text-slate-400">
           Gas balances
         </h4>
-        <div class="max-w-full rounded-5 border-1 border-white bg-slate-150 px-4 py-[14px] text-sm text-slate-400 dark:border-slate-750 dark:bg-gray-850">
+        <div class="max-w-full rounded-5 border-1 border-slate-750 bg-gray-850 px-4 py-[14px] text-sm text-slate-400">
           <MigrationGasCard v-if="selectedSafeForMigration" class="!p-0" :safe="selectedSafeForMigration.safe" :balance="selectedSafeForMigration.amount" />
           <p v-else>
             No Gas selected
@@ -288,10 +343,10 @@ async function migrate() {
         </div>
       </div>
       <div class="flex flex-col gap-5">
-        <h4 class="text-sm font-medium leading-5 text-slate-900 dark:text-white">
+        <h4 class="text-sm font-medium leading-5 ">
           Migrate to
         </h4>
-        <WalletItem v-if="selectedMigrationSafe" hide-active-state :safe="selectedMigrationSafe" />
+        <WalletItem v-if="selectedMigrationSafe" detailed hide-active-state :safe="selectedMigrationSafe" />
       </div>
     </div>
 
@@ -302,7 +357,7 @@ async function migrate() {
     <CommonButton
       class="mt-5 w-full justify-center"
       size="lg"
-      :disabled="(!selectedTokensForMigration?.length && !selectedNFTsForMigration?.length && !selectedSafeForMigration?.safe) || !!estimateError"
+      :disabled="!availableToMigrate || !!estimateError"
       :loading="loading || estimatePending"
       @click="migrate"
     >

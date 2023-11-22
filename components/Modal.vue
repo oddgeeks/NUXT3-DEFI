@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import SVGX from '~/assets/images/icons/x.svg?component'
-
 const props = withDefaults(
   defineProps<{
     show?: boolean
     modalId?: string
-    options: IOptions
     options: IOptions
     inline?: boolean
     isAsync?: boolean
@@ -68,18 +65,20 @@ whenever(escape, () => {
   <div :data-modal-id="modalId" class="modal fixed inset-0 z-50 overflow-y-auto bg-slate-200/20 backdrop-blur-[4px]">
     <div
       :data-modal-id="modalId"
-      class="modal-height-wrapper flex h-full justify-center text-center sm:h-auto sm:min-h-screen sm:items-center sm:p-0"
+      class="modal-height-wrapper flex h-full justify-center pt-20 text-center sm:h-auto sm:min-h-screen sm:items-center sm:p-0"
     >
       <div
         :class="[
           {
-            'mt-auto rounded-t-7.5': modalOptions.sheetPosition === 'bottom',
+            'mt-auto rounded-t-7.5': modalOptions.sheetPosition === 'bottom' || !modalOptions.sheetPosition,
             'mb-auto rounded-b-7.5': modalOptions.sheetPosition === 'top',
           },
           modalOptions.wrapperClass,
-        ]" :data-sheet-position="modalOptions.sheetPosition"
-        class="modal-inner relative inline-block w-full max-w-[460px] bg-white text-left align-middle dark:bg-gray-950 sm:my-6 sm:rounded-7.5"
-        role="dialog" aria-modal="true"
+        ]"
+        :data-sheet-position="modalOptions.sheetPosition"
+        class="modal-inner relative inline-block w-full max-w-[460px]  bg-gray-975 text-left align-middle sm:my-6 sm:rounded-7.5"
+        role="dialog"
+        aria-modal="true"
       >
         <div
           ref="wrapperRef" :class="[
@@ -88,14 +87,15 @@ whenever(escape, () => {
               'py-8': modalOptions.sheetPosition === 'top',
             },
             modalOptions.contentClass,
-          ]" class="modal-content-wrapper relative w-full rounded-[inherit] px-6 py-10 sm:px-[50px]"
+          ]"
+          class="modal-content-wrapper relative w-full rounded-[inherit] p-5 sm:p-7.5"
         >
           <button
             v-if="modalOptions.closeButton"
-            class="absolute right-0 top-0 m-6 flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
+            class="absolute right-0 top-0 z-[1] m-5 flex h-7.5 w-7.5 items-center justify-center rounded-full bg-gray-800 sm:m-6"
             aria-label="Close modal" @click="handleDestory"
           >
-            <SVGX />
+            <SvgoX />
           </button>
           <slot />
         </div>

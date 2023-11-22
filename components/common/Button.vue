@@ -27,23 +27,23 @@ const componentToShow = computed(() => {
     :type="as === 'button' ? 'button' : undefined"
     :class="[
       {
-        'bg-red-alert text-white hover:bg-red-500 disabled:bg-slate-800 disabled:text-slate-500':
+        'bg-red-alert text-white hover:bg-red-500 disabled:bg-gray-900 disabled:text-gray-500':
           color === 'red',
       },
       {
-        'bg-orange text-white hover:bg-orange-400 disabled:bg-slate-800 disabled:text-slate-500':
+        'bg-orange text-white hover:bg-orange-400 disabled:bg-gray-900 disabled:text-gray-500':
           color === 'orange',
       },
       {
-        'bg-blue-500 text-white hover:bg-blue-600 disabled:bg-slate-200 disabled:text-slate-400 dark:disabled:bg-slate-800 dark:disabled:text-slate-500':
+        'bg-blue-500 text-white hover:bg-blue-600  disabled:bg-gray-900 disabled:text-gray-500':
           color === 'blue',
       },
       {
-        'bg-primary text-white hover:bg-primary-hover disabled:bg-slate-200 disabled:text-slate-400 dark:disabled:bg-slate-800 dark:disabled:text-slate-500':
+        'bg-primary text-white hover:bg-primary-hover  disabled:bg-gray-900 disabled:text-gray-500':
           color === 'primary',
       },
       {
-        'bg-slate-100 disabled:text-slate-400 dark:bg-slate-800 dark:disabled:text-slate-500':
+        'bg-gray-900 disabled:text-gray-500':
           color === 'white',
       },
       {

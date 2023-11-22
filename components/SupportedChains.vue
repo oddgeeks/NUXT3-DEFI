@@ -1,17 +1,23 @@
 <script setup lang="ts">
-const props = defineProps({
-  maxCount: {
-    type: Number,
-    required: false,
-  },
-})
+const props = defineProps<{
+  maxCount?: number
+  networks?: Network[]
+  stroke?: boolean
+}>()
 const { safeAddress, networkOrderedBySumTokens } = useAvocadoSafe()
+
+const actualNetworks = computed(() => {
+  if (props.networks)
+    return props.networks
+
+  return networkOrderedBySumTokens.value
+})
 
 const visibleNetworks = computed(() => {
   if (props.maxCount)
-    return networkOrderedBySumTokens.value.slice(0, props.maxCount)
+    return actualNetworks.value.slice(0, props.maxCount)
 
-  return networkOrderedBySumTokens.value
+  return actualNetworks.value
 })
 </script>
 
@@ -41,13 +47,16 @@ const visibleNetworks = computed(() => {
 
       <ChainLogo
         v-else
-        :stroke="false"
+        :stroke="stroke"
         class="h-6.5 w-6.5 sm:h-6 sm:w-6"
         :chain="network.chainId"
       />
     </li>
-    <button v-if="props.maxCount && availableNetworks.length > props.maxCount" class="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs text-white" @click="openSupportedNetworks">
-      +{{ availableNetworks.length - props.maxCount }}
+    <button
+      v-if="props.maxCount && actualNetworks.length > props.maxCount" class="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs text-white"
+      @click="openSupportedNetworks(actualNetworks)"
+    >
+      +{{ actualNetworks.length - props.maxCount }}
     </button>
   </ul>
 </template>

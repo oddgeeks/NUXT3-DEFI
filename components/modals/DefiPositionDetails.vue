@@ -24,19 +24,19 @@ defineProps<{
     <h1> {{ position.label }}</h1>
 
     <div class="grid w-full grid-cols-2 gap-5">
-      <div class="flex flex-col gap-1 rounded-5 bg-slate-50 px-5 py-4 dark:bg-gray-850">
+      <div class="flex flex-col gap-1 rounded-5 bg-gray-850 px-5 py-4">
         <p class="text-[26px] leading-[30px]">
           {{ formatPercent(toBN(position.apy).div(100).toFixed()) }}
         </p>
-        <p class="text-xs text-slate-500">
+        <p class="text-xs text-gray-500">
           Net APY
         </p>
       </div>
-      <div class="flex flex-col gap-1 rounded-5 bg-slate-50 px-5 py-4 dark:bg-gray-850">
+      <div class="flex flex-col gap-1 rounded-5 bg-gray-850 px-5 py-4">
         <p class="text-[26px] leading-[30px]">
           {{ abbreviateNumber(position.healthFactor) }}
         </p>
-        <p class="text-xs text-slate-500">
+        <p class="text-xs text-gray-500">
           Health Factor
         </p>
       </div>
@@ -46,7 +46,7 @@ defineProps<{
         <h2 class="text-lg">
           Supplied: {{ formatUsd(position.positions?.totalSupplyInUsd) }}
         </h2>
-        <ul class="sm:oveflow-[initial] scroll-style flex max-h-[180px] flex-col overflow-auto rounded-5 bg-slate-50 dark:bg-gray-850 sm:max-h-[500px]">
+        <ul class="sm:oveflow-[initial] scroll-style flex max-h-[180px] flex-col overflow-auto rounded-5 bg-gray-850 sm:max-h-[500px]">
           <template v-if="toBN(position.positions?.totalSupplyInUsd).gt('0')">
             <DefiPositionRow v-for="item in position.suppliedTokens" :key="item.key" :chain-id="position.chainId" :item="item" />
           </template>
@@ -59,7 +59,7 @@ defineProps<{
         <h2 class="text-lg">
           Borrowed: {{ formatUsd(position.positions?.totalBorrowInUsd) }}
         </h2>
-        <ul class="scroll-style flex max-h-[180px] flex-col overflow-auto rounded-5 bg-slate-50 dark:bg-gray-850 sm:max-h-[500px]">
+        <ul class="scroll-style flex max-h-[180px] flex-col overflow-auto rounded-5 bg-gray-850 sm:max-h-[500px]">
           <template v-if="toBN(position.positions?.totalBorrowInUsd).gt('0')">
             <DefiPositionRow v-for="item in position.borrowedTokens" :key="item.key" :chain-id="position.chainId" :item="item" :borrow="true" />
           </template>

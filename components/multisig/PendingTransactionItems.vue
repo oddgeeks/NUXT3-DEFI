@@ -185,8 +185,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <component :is="chainId ? 'details' : 'div'" v-if="data?.data?.length" ref="containerRef" :open="isDetailsOpen" class="group rounded-2xl bg-slate-50 dark:bg-gray-850 sm:open:pb-0" @toggle="handleToggle">
-    <summary v-if="chainId" class="flex cursor-pointer items-center gap-2.5 px-5 py-4 text-xs font-medium leading-5 text-slate-400">
+  <component :is="chainId ? 'details' : 'div'" v-if="data?.data?.length" ref="containerRef" :open="isDetailsOpen" class="group rounded-2xl bg-gray-850 sm:open:pb-0" @toggle="handleToggle">
+    <summary v-if="chainId" class="flex cursor-pointer items-center gap-2.5 px-5 py-4 text-xs font-medium leading-5 text-gray-400">
       <ChainLogo class="h-5 w-5" :chain="chainId" />
       <span v-if="chainId" class="text-white">
         {{ chainIdToName(chainId) }}
@@ -203,7 +203,7 @@ onUnmounted(() => {
           Your signatures needed
         </div>
         <SvgoChevronDown
-          class="ml-5 w-5 text-slate-400 group-open:rotate-180"
+          class="ml-5 w-5 text-gray-400 group-open:rotate-180"
         />
       </div>
     </summary>
@@ -213,9 +213,9 @@ onUnmounted(() => {
       </ul>
       <ul v-for="items, key in groupedData" v-else :key="key">
         <li>
-          <ul :class="checkIsGroup(key, items) ? 'p-4 my-4 sm:p-0 border sm:block flex gap-5 flex-col border-slate-300 dark:border-slate-750 rounded-5 dark:bg-slate-850 bg-slate-150' : ''" class="flex flex-col">
-            <p v-if="checkIsGroup(key, items)" class="flex items-center gap-2.5 border-b border-slate-150 text-xs font-medium text-slate-500 dark:border-slate-800 dark:text-slate-400  sm:p-4">
-              <SvgoInfo2 class="text-slate-500" />
+          <ul :class="checkIsGroup(key, items) ? 'p-4 my-4 sm:p-0 border sm:block flex gap-5 flex-col border-slate-750 rounded-5 bg-slate-850 ' : ''" class="flex flex-col">
+            <p v-if="checkIsGroup(key, items)" class="flex items-center gap-2.5 border-b  border-gray-800 text-xs  font-medium text-gray-400  sm:p-4">
+              <SvgoInfo2 class="text-gray-500" />
               You can complete one of the transactions below. The other will be cancelled automatically.
             </p>
             <MultisigPendingTransactionItem v-for="item in sortItems(items)" :key="item.id" :inside-group="checkIsGroup(key, items)" :active-tab="activeTab" :item="item" />

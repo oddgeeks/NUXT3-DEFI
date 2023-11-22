@@ -10,7 +10,6 @@ defineProps({
 <template>
   <div class="flex flex-col items-center gap-7.5">
     <span class="text-lg">Your Avocado Wallet</span>
-
     <StyledQrCode
       :key="address"
       :size="220"
@@ -32,7 +31,7 @@ defineProps({
         target="_blank"
         class="absolute left-0 top-0 m-6 inline-flex items-center space-x-2 text-primary"
       >
-        <ExternalLinkSVG class="h-6.5 w-6.5 text-slate-400" />
+        <ExternalLinkSVG class="h-6.5 w-6.5 text-gray-400" />
       </NuxtLink>
     </div>
 
@@ -42,7 +41,7 @@ defineProps({
         <div
           v-for="network in availableNetworks"
           :key="network.chainId"
-          class="flex items-center gap-2 rounded-full bg-slate-50 p-1.5 text-[10px] dark:bg-gray-850"
+          class="flex items-center gap-2 rounded-full bg-gray-850 p-1.5 text-[10px]"
         >
           <ChainLogo
             style="width: 14px; height: 14px"

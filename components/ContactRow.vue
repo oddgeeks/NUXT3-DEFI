@@ -37,7 +37,7 @@ async function handleDeletingContact(contact: IContact) {
           <span>{{ shortenHash(contact.address) }}</span>
           <Copy icon-only :text="contact.address" />
         </div>
-        <span class="text-slate-400">{{ sentTimes }}</span>
+        <span class="text-gray-400">{{ sentTimes }}</span>
         <div class="flex items-center gap-9">
           <div class="flex gap-4">
             <CommonButton
@@ -70,7 +70,7 @@ async function handleDeletingContact(contact: IContact) {
             </CommonButton>
           </div>
           <button
-            class="text-red-alert disabled:text-slate-400 disabled:opacity-40" :disabled="contact.owner || contact.notDeletable"
+            class="text-red-alert disabled:text-gray-400 disabled:opacity-40" :disabled="contact.owner || contact.notDeletable"
             @click="handleDeletingContact(contact)"
           >
             <DeleteSVG class="h-4 w-4" />
@@ -103,7 +103,7 @@ async function handleDeletingContact(contact: IContact) {
 .contact-row:hover>td::before {
   content: "";
   transform: translateZ(-1px) translateX(-50%) translateY(-50%);
-  @apply absolute top-1/2 left-1/2 dark:bg-slate-850 bg-slate-150 pointer-events-none;
+  @apply absolute top-1/2 left-1/2 bg-slate-850  pointer-events-none;
   width: calc(100% + 1px);
   height: calc(100% - 16px);
 }

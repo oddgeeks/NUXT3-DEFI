@@ -140,7 +140,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-[26px] md:w-[450px]">
+  <div class="flex w-full flex-col gap-5 sm:gap-[26px] md:w-[450px]">
     <div
       class="mx-auto flex w-full items-center justify-between gap-2 rounded-full"
     >
@@ -151,21 +151,21 @@ onMounted(() => {
       <CommonToggle v-model="isInputUsd" text="Input USD" />
     </div>
     <div class="flex flex-col gap-2.5 font-medium">
-      <div class="flex justify-between gap-5">
+      <div class="flex justify-between gap-2.5 sm:gap-5">
         <div class="flex flex-col gap-2.5">
           <span class="text-sm font-medium">Token</span>
           <TokenSelection
             :model-value="token"
             :chain-id="data.fromChainId"
             network-logo-class="w-[15px] h-[15px]"
-            class="relative flex max-h-12 w-[160px] items-center gap-2.5 rounded-[14px] border-1 border-slate-150 !bg-slate-50 text-left dark:border-slate-700 dark:!bg-gray-850"
+            class="relative flex w-[160px] items-center gap-2.5 text-left"
             :tokens="availableTokens"
             @update:model-value="handleTokenChange"
           />
         </div>
 
         <div class="flex flex-1 flex-col gap-2.5">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between whitespace-nowrap">
             <span class="text-sm">Amount</span>
             <div class="flex gap-x-3 text-sm uppercase">
               <span>
@@ -195,7 +195,7 @@ onMounted(() => {
             @beforeinput="toggleMax(false)"
           >
             <template #suffix>
-              <span class="absolute right-5 text-left text-sm text-slate-400">
+              <span class="absolute right-5 text-left text-sm text-gray-400">
                 {{ formatDecimal(amount) }}
               </span>
             </template>
@@ -214,7 +214,7 @@ onMounted(() => {
             @beforeinput="toggleMax(false)"
           >
             <template #suffix>
-              <span class="absolute right-5 text-left text-sm text-slate-400">
+              <span class="absolute right-5 text-left text-sm text-gray-400">
                 {{ formatUsd(amountInUsd) }}
               </span>
             </template>
@@ -224,7 +224,7 @@ onMounted(() => {
     </div>
 
     <div class="flex flex-col gap-2.5 font-medium">
-      <div class="flex justify-between gap-5">
+      <div class="flex justify-between gap-2.5 sm:gap-5">
         <div
           v-if="isCrossChain"
           class="flex flex-col gap-2.5"
@@ -248,9 +248,9 @@ onMounted(() => {
         </div>
 
         <div class="flex w-full flex-col gap-2.5">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between whitespace-nowrap">
             <span class="text-sm">Address</span>
-            <span v-if="totalTransfers" class="text-sm text-slate-400">
+            <span v-if="totalTransfers" class="text-sm text-gray-400">
               {{ totalTransfers }} previous
               {{ totalTransfers === 1 ? "send" : "sends" }}
             </span>
@@ -290,25 +290,23 @@ onMounted(() => {
       </div>
     </div>
 
-    <Transition name="fade">
-      <div class="flex items-center text-xs font-medium leading-6 text-slate-400">
-        <SvgoInfo2
-          class="svg-gray-info mr-2.5 h-4 w-4 rounded-full"
-        />
-        <div v-if="isCrossChain" class="flex items-center">
-          Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;from&nbsp;<ChainLogo class="h-4 w-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}&nbsp;to Receiver on&nbsp;<ChainLogo class="h-4 w-4 shrink-0" :chain="data.toChainId" />&nbsp;{{ targetNetwork }}
-        </div>
-        <div v-else class="flex items-center">
-          Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;on&nbsp;<ChainLogo class="h-4 w-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}
-        </div>
+    <div class="flex items-center text-xs font-medium leading-6 text-gray-400">
+      <SvgoInfo2
+        class="svg-gray-info mr-2.5 h-4 w-4 rounded-full"
+      />
+      <div v-if="isCrossChain" class="flex items-center">
+        Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;from&nbsp;<ChainLogo class="h-4 w-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}&nbsp;to Receiver on&nbsp;<ChainLogo class="h-4 w-4 shrink-0" :chain="data.toChainId" />&nbsp;{{ targetNetwork }}
       </div>
-    </Transition>
+      <div v-else class="flex items-center">
+        Sending&nbsp;{{ token?.symbol.toUpperCase() }}&nbsp;on&nbsp;<ChainLogo class="h-4 w-4 shrink-0" :chain="data.fromChainId" />&nbsp;{{ fromNetwork }}
+      </div>
+    </div>
     <div v-if="isCrossChainEnable" class="flex items-center gap-2.5">
       <button
         :class="{
-          'text-slate-900 dark:text-white': isCrossChain,
+          'text-white': isCrossChain,
         }"
-        class="flex items-center gap-2.5 text-sm text-slate-400"
+        class="flex items-center gap-2.5 text-sm text-gray-400"
         @click="onToggleCrossChain"
       >
         <CheckCircle
@@ -322,7 +320,7 @@ onMounted(() => {
       </button>
       <SvgoQuestionCircle
         v-tippy="'Cross-chain send allows you to directly send tokens from chain A to the receiver on chain B'"
-        class="h-4 w-4 text-slate-400"
+        class="h-4 w-4 text-gray-400"
       />
     </div>
   </div>

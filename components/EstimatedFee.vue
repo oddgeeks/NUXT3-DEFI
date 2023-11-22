@@ -12,19 +12,25 @@ const props = defineProps<{
   hideDiscount?: boolean
 }>()
 
+const { safeOptions } = storeToRefs(useSafe())
+
 const discountAvailable = computed(() => {
   if (props.hideDiscount)
     return false
 
   return props.data?.discountAvailable
 })
+
+const safeOption = computed(() => safeOptions.value.find(option => option.chainId == props.data?.chainId))
+
+const showEthTooltip = computed(() => props.data.chainId == '1' && safeOption.value?.notdeployed)
 </script>
 
 <template>
   <div class="flex flex-col gap-2.5">
     <div
       :class="wrapperClass"
-      class="min-h-12 flex flex-col items-center justify-between gap-3 rounded-5 bg-slate-50 px-5 py-[15px] dark:bg-gray-850"
+      class="min-h-12 flex flex-col items-center justify-between gap-3 rounded-5  bg-gray-850 px-5 py-[15px]"
     >
       <div class="flex w-full justify-between">
         <span v-if="showNetworkInfo" class="flex items-center gap-3 text-xs">
@@ -33,7 +39,7 @@ const discountAvailable = computed(() => {
         </span>
         <span
           v-else
-          class="inline-flex items-center gap-2 text-xs font-medium text-slate-400"
+          class="inline-flex items-center gap-2 text-xs font-medium text-gray-400"
         >
           <GasSVG class="w-4" />
           Gas fees
@@ -42,11 +48,13 @@ const discountAvailable = computed(() => {
         <template v-else-if="data">
           <span
             :class="[
-              discountAvailable ? 'text-slate-400' : '',
+              discountAvailable ? 'text-gray-400' : '',
               { 'text-red-alert': error },
             ]"
             class="inline-flex items-center gap-2.5 text-xs"
           >
+            <SvgoInfo2 v-if="showEthTooltip" v-tippy="$t('ethHighFee')" class="shrink-0 text-orange-400" />
+
             <img
               v-if="!discountAvailable"
               class="h-[18px] w-[18px]"
@@ -54,7 +62,8 @@ const discountAvailable = computed(() => {
               height="18"
               src="https://cdn.instadapp.io/icons/tokens/usdc.svg"
             >
-            {{ data?.formatted }} USDC
+            {{ data?.formatted }}
+            USDC
           </span>
         </template>
       </div>
@@ -63,7 +72,7 @@ const discountAvailable = computed(() => {
         <div
           v-for="detail in data.discountDetails"
           :key="detail.name"
-          class="flex w-full items-center justify-between text-xs font-medium leading-5 text-slate-400"
+          class="flex w-full items-center justify-between text-xs font-medium leading-5 text-gray-400"
         >
           <div class="flex items-center gap-1.5">
             <span class="text-base"> 🎁 </span>

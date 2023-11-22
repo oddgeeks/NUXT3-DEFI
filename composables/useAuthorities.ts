@@ -1,11 +1,14 @@
 export function useAuthorities() {
-  const { selectedSafe, mainSafe, safeAddress } = storeToRefs(useSafe())
+  const { selectedSafe, safeAddress, safesLoading } = storeToRefs(useSafe())
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { isAccountCanSign } = useMultisig()
-
-  const isWalletSecondary = computed(() => selectedSafe.value?.multisig !== 1 && (mainSafe.value?.safe_address !== selectedSafe.value?.safe_address))
-
   const { account } = useWeb3()
+
+  const isWalletSecondary = computed(() => {
+    if (safesLoading.value)
+      return false
+    return selectedSafe.value?.multisig === 1 && (!isAddressEqual(selectedSafe.value?.owner_address, account.value))
+  })
 
   const authorisedNetworks = computed(() => {
     if (!account.value || !safeAddress?.value || !selectedSafe.value)

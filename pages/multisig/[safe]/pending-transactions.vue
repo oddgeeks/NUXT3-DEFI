@@ -83,7 +83,7 @@ const tabs = computed(() => {
   const is2FA = route.path.includes('2fa')
 
   const completedLabel2fa = `
-  <span class='text-slate-400'>
+  <span class='text-gray-400'>
   You might see some transactions here that you don't recognise (like adding signer, changing threshold). These happen automatically when you configure Avocado Protect and do not indicate that your account has been compromised.
   </span>`
 
@@ -194,24 +194,24 @@ onMounted(() => {
       </h1>
 
       <div class="flex justify-between">
-        <div class="flex w-fit self-center rounded-10 bg-slate-50 p-1.5 font-medium dark:bg-gray-850 sm:self-baseline">
+        <div class="flex w-fit self-center rounded-10 bg-gray-850 p-1.5 font-medium sm:self-baseline">
           <button
             v-for="tab in tabs"
             :key="tab.label"
             :class="
-              tab.query === activeTab ? 'dark:bg-slate-800 bg-slate-150' : 'text-slate-400'
+              tab.query === activeTab ? 'bg-gray-900 ' : 'text-gray-400'
             "
             class="laeding-5 flex flex-1 items-center justify-center gap-2.5 whitespace-nowrap rounded-7.5 px-4 py-2 text-xs"
             @click="$router.replace({ query: { tab: tab.query }, path: $router.currentRoute.value.path })"
           >
             <span class="hidden sm:block">  {{ tab.label }}</span>
             <span class="block sm:hidden"> {{ tab.mobileLabel || tab.label }}</span>
-            <span v-if="tab?.count" class="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-slate-500 px-[5px] text-xs text-white">
+            <span v-if="tab?.count" class="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gray-500 px-[5px] text-xs text-white">
               {{ tab?.count }}
             </span>
           </button>
         </div>
-        <button v-if="activeTab !== 'completed'" :disabled="isCollapseAllDisabled" class="text-xs text-primary disabled:text-slate-400" type="button" @click="toggle(true)">
+        <button v-if="activeTab !== 'completed'" :disabled="isCollapseAllDisabled" class="text-xs text-primary disabled:text-gray-400" type="button" @click="toggle(true)">
           Collapse All
         </button>
       </div>

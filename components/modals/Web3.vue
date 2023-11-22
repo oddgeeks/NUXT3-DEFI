@@ -3,7 +3,7 @@ defineProps<{
   buttonClass?: string
 }>()
 const emit = defineEmits(['destroy'])
-const { activate } = useWeb3()
+const { activate, account } = useWeb3()
 
 const { providers } = useNetworks()
 const { setConnectorName } = useConnectors()
@@ -15,10 +15,14 @@ async function connect(provider: any) {
     loading.value[provider.name] = true
     await activate(await provider.connect(), undefined, true)
 
-    const { success } = await openRequestTermsSignature(provider.id)
+    const userNonce = useCookie<string | null>(`nonce-${account.value}`)
 
-    if (!success)
-      throw new Error('Failed to sign terms')
+    if (!userNonce.value) {
+      const { success } = await openRequestTermsSignature(provider.id)
+
+      if (!success)
+        throw new Error('Failed to sign terms')
+    }
 
     setConnectorName(provider.id)
     emit('destroy')
@@ -52,12 +56,12 @@ function isProviderVisible(provider: Provider) {
       <li v-for="provider in providers" :key="provider.name">
         <button
           v-if="isProviderVisible(provider)"
-          class="group flex w-full items-center gap-4 rounded-[40px] bg-slate-100 px-5 py-[15px] transition-colors dark:bg-gray-850"
+          class="group flex w-full items-center gap-4 rounded-[40px] bg-gray-850 px-5 py-[15px] transition-colors"
           :class="
             [
               provider.name === 'Metamask'
-                ? 'hover:bg-[#FEF1E8] dark:hover:bg-[#282125]'
-                : 'hover:bg-[#EBF2FE] dark:hover:bg-[#15233C]',
+                ? 'hover:bg-[#282125]'
+                : 'hover:bg-[#15233C]',
               buttonClass,
             ]
           "
@@ -85,7 +89,7 @@ function isProviderVisible(provider: Provider) {
           </svg>
 
           <svg
-            v-else class="text-slate-500 transition-all" :class="
+            v-else class="text-gray-500 transition-all" :class="
               provider.name === 'Metamask'
                 ? 'group-hover:text-orange-500'
                 : 'group-hover:text-primary'

@@ -25,6 +25,8 @@ export const blockQueryURL = 'https://blockquery.instadapp.io'
 export const swapAggregatorURLProd = 'https://swap-aggregator.instadapp.io'
 export const swapAggregatorURLStaging = 'https://swap-aggregator.instad.app'
 
+export const firebaseURL = 'https://avocado-a7489-default-rtdb.firebaseio.com'
+
 export const multisigURLStaging = 'https://multisig.api.avocado.instad.app'
 export const multisigURLProd = 'https://multisig-api.avocado.instadapp.io'
 
@@ -39,11 +41,11 @@ export const walletConnectMetadata = {
 }
 
 export const ABIfetcherSupportedNetworks = ['polygon', 'mainnet', 'fantom', 'arbitrum', 'avalanche', 'optimism', 'bsc', 'gnosis', 'fuse']
-export const warnedDapps = ['https://app.safe.global', 'https://mint.fun', 'https://app.velodrome.finance', 'https://app.frax.finance', 'https://docs.frax.finance']
-export const bannedDapps = ['https://www.orbiter.finance', 'https://mirror.xyz', 'https://blog.summer.fi', 'https://summer.fi', 'https://opensea.io']
 
-export const bridgeDisabledChains = [250, 122]
-export const swapDisabledChains = [122]
+export const bridgeDisabledChains = [250, 122, 204, 534352]
+export const swapDisabledChains = [122, 204, 534352]
+export const legacyNotSupportedChains = [122, 204, 534352]
+export const networksSimulationNotSupported = [1313161554, 1101, 122, 204, 534352]
 
 export const observableAccount = '0xcf877a28c4f86b0d3fb7e5a52156f094140ba742'
 

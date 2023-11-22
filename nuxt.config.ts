@@ -11,6 +11,10 @@ const meta = {
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   extends: ['@instadapp/avocado-base'],
+  vue: {
+    defineModel: true,
+    propsDestructure: true,
+  },
   runtimeConfig: {
     socketApiKey: process.env.SOCKET_API_KEY,
     debankAccessKey: process.env.DEBANK_ACCESS_KEY,
@@ -169,22 +173,17 @@ export default defineNuxtConfig({
   modules: [
     '@vite-pwa/nuxt',
     'nuxt-svgo',
-    '@nuxtjs/color-mode',
     '@vueuse/nuxt',
     '@nuxtjs/tailwindcss',
     '@instadapp/vue-web3-nuxt',
     '@vueuse/nuxt',
     '@pinia/nuxt',
   ],
-
-  colorMode: {
-    preference: 'dark',
-    classSuffix: '',
-  },
   css: [
-    '@fontsource/source-code-pro/400.css',
-    '@fontsource/source-code-pro/500.css',
-    '@fontsource/source-code-pro/600.css',
+    '@fontsource/space-grotesk/400.css',
+    '@fontsource/space-grotesk/500.css',
+    '@fontsource/space-grotesk/600.css',
+    '@fontsource/space-grotesk/700.css',
     '~/assets/css/app.css',
   ],
 
@@ -222,7 +221,5 @@ export default defineNuxtConfig({
       }),
     ],
   },
-  experimental: {
-    // emitRouteChunkError: "reload",
-  },
+
 })

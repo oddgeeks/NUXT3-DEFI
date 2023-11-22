@@ -23,7 +23,7 @@ function handleSelect(safe: ISafe, balance: string, e: Event) {
 </script>
 
 <template>
-  <li class="flex items-center border-b-[1px] border-white p-5 last:border-b-[0px] dark:border-slate-750">
+  <li class="flex items-center border-b-[1px] border-slate-750 p-5 last:border-b-[0px]">
     <div class="flex w-full items-center justify-between">
       <div class="flex flex-col">
         {{ shortenHash(safe.safe_address) }}

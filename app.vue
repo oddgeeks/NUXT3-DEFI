@@ -8,6 +8,9 @@ const { lastModal } = useModal()
 const { safeAddress } = storeToRefs(useSafe())
 const { fromWei } = useBignumber()
 const { avoProvider } = useSafe()
+const { isMobile, actualWidth } = useSidebar()
+
+const actualWidthInPx = computed(() => `${actualWidth.value ? actualWidth.value : undefined}px`)
 
 const { refresh } = useAsyncData(
   'pending-deposit',
@@ -87,22 +90,43 @@ useIntervalFn(refresh, 15000)
 </script>
 
 <template>
-  <NuxtLayout>
-    <NuxtLoadingIndicator color="#07A65D" :height="2" />
-    <NuxtPage />
-  </NuxtLayout>
+  <Html :class="isMobile && actualWidth ? 'overflow-hidden' : ''">
+    <Body :class="isMobile && actualWidth ? 'overflow-hidden' : ''">
+      <div class="layout-wrapper h-full">
+        <Sidebar />
 
-  <BannerNewVersion />
-  <BannerMultisigOnboard />
-  <Notifications />
-  <TransactionsQueue />
-  <Modals />
-  <ChatBubble />
+        <NuxtLayout>
+          <NuxtLoadingIndicator color="#07A65D" :height="2" />
+          <NuxtPage />
+        </NuxtLayout>
+      </div>
+
+      <BannerNewVersion />
+      <BannerMultisigOnboard />
+      <Notifications />
+      <TransactionsQueue />
+      <Modals />
+      <ChatBubble />
+    </Body>
+  </Html>
 </template>
 
 <style>
 #__nuxt {
   width: 100%;
   height: 100%;
+}
+
+.layout-wrapper {
+   transform: translateX(v-bind(actualWidthInPx));
+   @apply transition-transform
+}
+
+@screen sm {
+  .layout-wrapper {
+    margin-left: v-bind(actualWidthInPx);
+    transform: none;
+    @apply transition-[margin-left]
+  }
 }
 </style>

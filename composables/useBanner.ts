@@ -12,12 +12,11 @@ export function useBanner() {
   const { $pwa } = useNuxtApp()
   const route = useRoute()
 
-  const wcStoreV2 = useWalletConnectV2()
-
   const { trackingAccount } = useAccountTrack()
   const isHideWelcomeBanner = useLocalStorage('hide-welcome-banner', false)
   const isHideRabbyBanner = useLocalStorage('hide-rabby-banner', false)
   const isOnboardHidden = useLocalStorage('hide-onboard', false)
+  const [isMultisigOnboardHiddenToggle, toggle] = useToggle(false)
 
   const showWelcomeBanner = computed(() => {
     if (!account.value)
@@ -73,13 +72,15 @@ export function useBanner() {
   })
 
   const isMultisigOnboardBannerVisible = computed(() => {
-    if (!selectedSafe.value || $pwa.needRefresh || showIncorrectNetworkBanner.value)
+    if (!selectedSafe.value || $pwa?.needRefresh || showIncorrectNetworkBanner.value)
       return false
 
     if (signers.value?.length > 1)
       return false
 
     const isMultisigOnboardHidden = useLocalStorage(`multisig-hide-onboard-${selectedSafe.value.safe_address}`, false)
+
+    console.log(isMultisigOnboardHiddenToggle.value)
 
     return route.path === '/' && isSafeMultisig.value && !isMultisigOnboardHidden.value
   })
@@ -91,15 +92,6 @@ export function useBanner() {
     return selectedSafe.value.multisig === 1 && selectedSafe.value.multisig_index === 0
   })
 
-  const unstableDappNetworks = computed(() => {
-    if (!wcStoreV2.sessions?.length)
-      return []
-    if (!safeOptions.value?.length)
-      return []
-
-    return false
-  })
-
   return {
     showWelcomeBanner,
     showInsufficientGasBanner,
@@ -107,7 +99,6 @@ export function useBanner() {
     showOnboardBanner,
     isVersionUpdateBannerHidden,
     showVersionUpdateBanner,
-    unstableDappNetworks,
     isHideRabbyBanner,
     isOnboardBannerVisible,
     isMultisigOnboardBannerVisible,
@@ -119,6 +110,7 @@ export function useBanner() {
 
       const isMultisigOnboardHidden = useLocalStorage(`multisig-hide-onboard-${selectedSafe.value.safe_address}`, false)
       isMultisigOnboardHidden.value = true
+      toggle()
     },
     hideOnboardBanner: () => (isOnboardHidden.value = true),
     hideRabbyBanner: () => (isHideRabbyBanner.value = true),

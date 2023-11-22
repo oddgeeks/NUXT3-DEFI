@@ -5,6 +5,7 @@ import * as yup from 'yup'
 
 const props = defineProps<{
   mfaType: IMfa
+  keyMfa: IKeyMfa
 }>()
 
 const emit = defineEmits(['resolve', 'destroy'])
@@ -59,15 +60,15 @@ const onSubmit = handleSubmit(async () => {
       index: selectedSafe.value?.multisig_index,
       countryCode: country?.dialCode,
       phone: phone.value,
-      mfaType: '',
-      mfaCode: '',
+      mfaType: props.keyMfa.mfaType,
+      mfaCode: props.keyMfa.mfaCode,
     },
     email: {
       owner: selectedSafe.value?.owner_address,
       index: selectedSafe.value?.multisig_index,
       email: email.value,
-      mfaType: '',
-      mfaCode: '',
+      mfaType: props.keyMfa.mfaType,
+      mfaCode: props.keyMfa.mfaCode,
     },
   } as any
 
@@ -110,7 +111,7 @@ onMounted(async () => {
         <h1 class="text-lg">
           {{ mfaType.title }}
         </h1>
-        <h2 class="text-xs font-medium text-slate-400">
+        <h2 class="text-xs font-medium text-gray-400">
           {{ mfaType.description }}
         </h2>
       </div>

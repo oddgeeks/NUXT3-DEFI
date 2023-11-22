@@ -39,7 +39,7 @@ function handleOpenBookmark(bookmark: IBookmark) {
     <div :class="safeBookmarks?.length > 3 ? 'px-10' : ''">
       <Splide v-if="safeBookmarks?.length" :options="{ pagination: false, gap: '16px', autoWidth: true, arrows: safeBookmarks?.length > 3, arrowPath: 'M2 20.9997L40 20.9997M40 20.9997L21 2M40 20.9997L21 40' }">
         <SplideSlide v-for="bookmark in safeBookmarks" :key="bookmark.name">
-          <li class="flex items-center gap-[14px] rounded-10 bg-slate-50 dark:bg-gray-850">
+          <li class="flex items-center gap-[14px] rounded-10 bg-gray-850">
             <button
               class="flex items-center gap-2.5 whitespace-nowrap py-2.5 pl-[14px] text-xs font-medium"
               @click="handleOpenBookmark(bookmark)"
@@ -55,12 +55,12 @@ function handleOpenBookmark(bookmark: IBookmark) {
                 edit: true,
               })"
             >
-              <SvgoPencil class="mr-[14px] shrink-0 text-slate-400" />
+              <SvgoPencil class="mr-[14px] shrink-0 text-gray-400" />
             </button>
           </li>
         </SplideSlide>
       </Splide>
-      <p v-else class="text-sm font-medium leading-[22px] text-slate-400">
+      <p v-else class="text-sm font-medium leading-[22px] text-gray-400">
         Bookmark your most used transactions with Transaction Shortcuts to quickly execute common actions. Find the bookmark on the transaction confirmation panel.
       </p>
     </div>

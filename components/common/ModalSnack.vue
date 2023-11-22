@@ -15,7 +15,7 @@ withDefaults(defineProps<{
 const colors = {
   success: 'bg-green-400 text-white ',
   error: 'bg-red-alert text-white ',
-  info: 'dark:bg-slate-750 bg-slate-150 dark:text-white text-slate-900',
+  info: 'bg-slate-750 text-white',
 }
 </script>
 
@@ -30,7 +30,7 @@ const colors = {
         style="word-break: break-word"
         class="flex max-h-20 gap-2 overflow-auto text-xs"
       >
-        <SvgoInfo2 v-if="type === 'info'" class="h-4 w-4 shrink-0 text-slate-400" />
+        <SvgoInfo2 v-if="type === 'info'" class="h-4 w-4 shrink-0 text-gray-400" />
         <SVGErrorCircle
           v-else-if="type === 'error'"
           class="h-4 w-4 shrink-0 [&>path]:stroke-red-alert [&>rect]:fill-white"

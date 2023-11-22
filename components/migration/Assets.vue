@@ -39,14 +39,13 @@ const tabs = [
 <template>
   <div class="overflow-y-hidden">
     <MigrationTabs
-      class="border-b-[1px] border-white dark:border-slate-750"
       :tabs="tabs"
       :default-selected="activeTab"
       @updated="(newValue) => activeTab = newValue"
     />
 
-    <MigrationBalances v-if="activeTab === 'balances'" class="scroll-style h-[calc(100%-39px)] overflow-y-auto" />
-    <MigrationNFTs v-else-if="activeTab === 'nfts'" class="scroll-style h-[calc(100%-39px)] overflow-y-auto" />
+    <MigrationBalances v-if="activeTab === 'balances'" />
+    <MigrationNFTs v-else-if="activeTab === 'nfts'" />
     <MigrationGas v-else-if="activeTab === 'gas'" />
     <!-- <MigrationDefi v-else-if="activeTab === 'defi'" class="h-[calc(100%-39px)] overflow-y-auto scroll-style" /> -->
   </div>

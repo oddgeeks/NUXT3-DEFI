@@ -1,15 +1,14 @@
 <script setup lang="ts">
 definePageMeta({
   middleware: 'auth',
-  layout: 'migration',
 })
 
 useEagerConnect()
 </script>
 
 <template>
-  <div class="flex h-full flex-1">
-    <MigrationLegacyWallet class="mr-0 shrink-0 grow-0 basis-[420px] md:mr-[60px]" />
-    <MigrationDestination class="mt-[30px] grow md:mt-0" />
+  <div class="flex h-full flex-1 flex-col gap-7.5 sm:flex-row sm:gap-[60px]">
+    <MigrationLegacyWallet class="shrink-0 grow-0 sm:basis-[420px]" />
+    <MigrationDestination class="grow" />
   </div>
 </template>

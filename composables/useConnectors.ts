@@ -29,10 +29,6 @@ export function useConnectors() {
   function onDisconnect() {
     const { terminateMFAToken } = useMfa()
 
-    const userNonce = useCookie<string | null>(`nonce-${account.value}`)
-
-    userNonce.value = null
-
     terminateMFAToken()
 
     resetAccounts()
