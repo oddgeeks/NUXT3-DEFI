@@ -1,27 +1,15 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-
 const { NFT } = useNft()
-const { legacySafeAddress } = storeToRefs(useSafe())
+const { safeAddress } = useAvocadoSafe()
 const { toggleSelectedNFTsForMigration, setNFTsForMigration } = useMigration()
-const { selectedNFTsForMigration } = storeToRefs(useMigration())
 
-const networkPreferences = ref(
-  [137, 42161, 1, 10, 56, 43114, 250],
-)
-
-const { data, pending, refresh } = useAsyncData(
+const { data, pending } = useAsyncData(
   async () => {
-    if (!legacySafeAddress.value)
+    if (!safeAddress.value)
       return
 
-    if (legacySafeAddress.value === incorrectAddress) {
-      console.log('incorrect address')
-      return []
-    }
-
     try {
-      const nft = new NFT(legacySafeAddress.value)
+      const nft = new NFT(safeAddress.value)
 
       return nft.getNFTs()
     }
@@ -31,19 +19,10 @@ const { data, pending, refresh } = useAsyncData(
   },
   {
     server: false,
-    watch: [legacySafeAddress],
+    watch: [safeAddress],
+    immediate: true,
   },
 )
-
-useIntervalFn(() => {
-  refresh()
-}, 10000)
-
-const filteredAssets = computed(() => {
-  return data.value?.filter(item =>
-    networkPreferences.value.some(i => i == item.chainId),
-  )
-})
 </script>
 
 <template>
@@ -52,12 +31,12 @@ const filteredAssets = computed(() => {
       <p>
         Select NFTs for migration
       </p>
-      <button class="text-green-500" @click="() => setNFTsForMigration(filteredAssets || [])">
+      <button class="text-green-500" @click="() => setNFTsForMigration(data || [])">
         Select All
       </button>
     </div>
 
-    <template v-if="pending && !filteredAssets?.length">
+    <template v-if="pending">
       <MigrationLoadingNFT
         v-for="i in 4"
         :key="i"
@@ -65,7 +44,7 @@ const filteredAssets = computed(() => {
     </template>
 
     <MigrationNFTCard
-      v-for="asset in filteredAssets"
+      v-for="asset in data"
       v-else
       :key="asset.name + asset.contractAddress + asset.tokenId"
       :asset="asset"

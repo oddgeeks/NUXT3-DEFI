@@ -43,8 +43,8 @@ defineProps<{
         </p>
       </div>
     </li>
-    <li class="px-4">
-      <CommonNotification v-if="error" type="error" :text="error">
+    <li v-if="error" class="px-4">
+      <CommonNotification type="error" :text="error">
         <template v-if="error.includes('gas')" #action>
           <CommonButton class="whitespace-nowrap" size="sm" @click="openTopUpGasModal()">
             Top-up

@@ -43,7 +43,7 @@ async function handleToggle() {
     <div
       v-if="error || !asset.imageUrl"
       :class="compact ? 'w-8 h-8' : 'w-[168] h-[240px]'"
-      class="flex h-[240px] w-[168] items-center justify-center rounded-[14px] bg-gray-850"
+      class="flex w-[168] items-center justify-center rounded-[14px] bg-gray-850"
     >
       <BrokenSVG />
     </div>
