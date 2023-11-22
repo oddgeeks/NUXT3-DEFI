@@ -24,9 +24,8 @@ function handleSelect(safe: ISafe) {
         v-for="safe in filteredSafes"
         :key="safe.id"
         :safe="safe"
-        v2
-        primary
         hide-active-state
+        detailed
         @click="handleSelect(safe)"
       />
     </div>

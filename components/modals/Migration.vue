@@ -185,15 +185,34 @@ async function migrate() {
 
     await switchToAvocadoNetwork()
 
-    await Promise.all(multipleActions.value.map(action => sendTransactions(
-      action.actions,
-      action.chainId,
-      action.options,
-      'transfer').then(hash => addTransactionToQueue({
-      hash,
-      chainId: action.chainId,
-      preventAutoClose: true,
-    }))))
+    for await (const action of multipleActions.value) {
+      try {
+        const hash = await sendTransactions(
+          action.actions,
+          action.chainId,
+          action.options,
+          'transfer',
+        )
+
+        console.log(hash)
+
+        if (hash) {
+          addTransactionToQueue({
+            hash,
+            chainId: action.chainId,
+          })
+        }
+      }
+      catch (e) {
+        const err = parseTransactionError(e)
+
+        openSnackbar({
+          message: err.formatted,
+          type: 'error',
+        })
+        continue
+      }
+    }
 
     selectedSafeForMigration.value = undefined
 
@@ -237,7 +256,7 @@ async function migrate() {
         <h4 class="text-sm font-medium leading-5 ">
           Migrate From
         </h4>
-        <WalletItem v-if="selectedSafe" hide-active-state :safe="selectedSafe" />
+        <WalletItem v-if="selectedSafe" detailed hide-active-state :safe="selectedSafe" />
       </div>
 
       <div class="flex flex-col gap-2">
@@ -291,7 +310,7 @@ async function migrate() {
         <h4 class="text-sm font-medium leading-5 ">
           Migrate to
         </h4>
-        <WalletItem v-if="selectedMigrationSafe" hide-active-state :safe="selectedMigrationSafe" />
+        <WalletItem v-if="selectedMigrationSafe" detailed hide-active-state :safe="selectedMigrationSafe" />
       </div>
     </div>
 
