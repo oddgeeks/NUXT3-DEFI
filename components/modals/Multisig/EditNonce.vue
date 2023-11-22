@@ -271,15 +271,15 @@ function getNonceTooltip(value: number | undefined) {
       <h1 v-else class="text-lg">
         Submit Transaction
       </h1>
-      <div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+      <div class="flex items-center gap-2 text-xs font-medium text-gray-500">
         <ChainLogo class="h-5 w-5" :chain="chainId" />
         {{ chainIdToName(chainId) }}
       </div>
     </div>
-    <hr class="border-slate-150 dark:border-slate-800">
+    <hr class="border-gray-800">
     <div class="flex flex-col gap-5 p-5 sm:px-7.5">
       <div v-if="!rejection" class="flex flex-col gap-2">
-        <span class="text-xs font-medium text-slate-400">
+        <span class="text-xs font-medium text-gray-400">
           Transaction type
         </span>
         <div class="row flex gap-4">
@@ -291,7 +291,7 @@ function getNonceTooltip(value: number | undefined) {
             <template #content>
               <div class="row flex items-center gap-2">
                 <span class="text-xs font-medium">{{ nonceType.name }}</span>
-                <SvgoInfo2 v-tippy="getNonceTooltip(nonceType.value)" class="text-slate-300 dark:text-slate-500" />
+                <SvgoInfo2 v-tippy="getNonceTooltip(nonceType.value)" class="text-gray-500" />
               </div>
               <span
                 v-if="nonceType.value === recommendedNonce"
@@ -306,7 +306,7 @@ function getNonceTooltip(value: number | undefined) {
 
       <div class="flex flex-col gap-2">
         <dl v-if="rejectionId" class="mb-2 flex justify-between">
-          <dt class="text-xs text-slate-400">
+          <dt class="text-xs text-gray-400">
             Proposal Hash
           </dt>
           <dd
@@ -314,26 +314,26 @@ function getNonceTooltip(value: number | undefined) {
               content: rejectionId,
               interactive: true,
               maxWidth: 'none',
-            }" class="text-xs text-slate-400"
+            }" class="text-xs text-gray-400"
           >
             {{ shortenHash(rejectionId) }}
           </dd>
         </dl>
-        <span class="flex items-center gap-2 text-xs font-medium text-slate-400">
+        <span class="flex items-center gap-2 text-xs font-medium text-gray-400">
           Note (optional)
-          <SvgoInfo2 v-tippy="'Specify any details/instructions you want other signers to read before signing this transaction.'" class="h-4 w-4 text-slate-300 dark:text-slate-500" />
+          <SvgoInfo2 v-tippy="'Specify any details/instructions you want other signers to read before signing this transaction.'" class="h-4 w-4 text-gray-500" />
         </span>
-        <textarea v-model="note" v-focus placeholder="Visible to all signers" class="rounded-[14px] border-0 bg-slate-100 px-4 py-[15px] text-sm font-medium outline-none placeholder:text-sm placeholder:text-slate-400 focus:border-0 focus:outline-none focus:ring-0 dark:bg-slate-800" />
+        <textarea v-model="note" v-focus placeholder="Visible to all signers" class="rounded-[14px] border-0 bg-gray-900 px-4 py-[15px] text-sm font-medium outline-none placeholder:text-sm placeholder:text-gray-400 focus:border-0 focus:outline-none focus:ring-0" />
       </div>
     </div>
     <template v-if="!isSimulationDisabled">
       <template v-if="!estimatedFee">
-        <hr class="border-slate-150 dark:border-slate-800">
+        <hr class="border-gray-800">
         <div v-if="!simulationStatus" class="flex items-center justify-between p-5 text-sm sm:px-7.5">
           Simulate Transaction
           <div class="flex items-center gap-2.5">
             <SvgSpinner v-if="pending" class="text-primary" />
-            <button :disabled="pending" type="button" class="text-primary disabled:text-slate-400" @click="toggle()">
+            <button :disabled="pending" type="button" class="text-primary disabled:text-gray-400" @click="toggle()">
               Simulate
             </button>
           </div>
@@ -351,7 +351,7 @@ function getNonceTooltip(value: number | undefined) {
               </template>
             </div>
 
-            <p v-if="simulationDetails?.transaction.simulationId" class="text-xs font-medium text-slate-400">
+            <p v-if="simulationDetails?.transaction.simulationId" class="text-xs font-medium text-gray-400">
               View complete simulation report
               <NuxtLink target="_blank" class="inline-flex items-center gap-2 text-primary" external :to="`https://dashboard.tenderly.co/public/InstaDApp/avocado/simulator/${simulationDetails?.transaction.simulationId}?hideSidebar=true`">
                 on Tenderly
@@ -364,7 +364,7 @@ function getNonceTooltip(value: number | undefined) {
             <SvgoX />
           </button>
         </div>
-        <hr class="border-slate-150 dark:border-slate-800">
+        <hr class="border-gray-800">
         <details ref="detailsRef" class="group p-5 sm:px-7.5">
           <summary class="flex cursor-pointer justify-between text-sm leading-5 text-orange-400">
             <span class="block font-medium group-open:hidden">View transaction breakdown</span>
@@ -384,7 +384,7 @@ function getNonceTooltip(value: number | undefined) {
           </div>
         </details>
       </template>
-      <hr class="border-slate-150 dark:border-slate-800">
+      <hr class="border-gray-800">
     </template>
 
     <div v-if="estimatedFee" class="p-5 sm:px-7.5">
@@ -395,9 +395,9 @@ function getNonceTooltip(value: number | undefined) {
       v-if="isExecuteReady"
       type="button"
       :class="{
-        'text-slate-900 dark:text-white': signAndExecute,
+        'text-white': signAndExecute,
       }"
-      class="items-base group flex gap-2.5 p-5 text-left text-xs font-medium text-slate-400 sm:px-7.5"
+      class="items-base group flex gap-2.5 p-5 text-left text-xs font-medium text-gray-400 sm:px-7.5"
       @click="signAndExecuteToggle()"
     >
       <SvgoCheckCircle

@@ -116,7 +116,7 @@ function handleCustomToken() {
       @input="search"
     >
       <template #prefix>
-        <SearchSVG class="mr-2 text-slate-400" />
+        <SearchSVG class="mr-2 text-gray-400" />
       </template>
     </CommonInput>
     <div
@@ -145,7 +145,7 @@ function handleCustomToken() {
           <li
             v-for="token in list"
             :key="`${token.data.chainId}-${token.data.address}`"
-            class="flex w-full items-center justify-between rounded-[24px] px-3 py-[14px] hover:dark:bg-slate-800"
+            class="flex w-full items-center justify-between rounded-[24px] px-3 py-[14px] hover:bg-gray-900"
           >
             <div class="flex items-center gap-3">
               <SafeTokenLogo :chain-id="token.data.chainId" :url="token.data.logoURI" />
@@ -157,7 +157,7 @@ function handleCustomToken() {
                   {{ token.data.name }}
                 </span>
                 <span
-                  class="text-xs font-medium leading-5 text-slate-400 sm:text-base"
+                  class="text-xs font-medium leading-5 text-gray-400 sm:text-base"
                 >
                   {{ shortenHash(token.data.address) }}</span>
               </div>
@@ -187,10 +187,10 @@ function handleCustomToken() {
       </div>
       <div
         v-if="!pending"
-        class="my-auto flex flex-col items-center justify-center gap-[26px] whitespace-nowrap text-slate-400"
+        class="my-auto flex flex-col items-center justify-center gap-[26px] whitespace-nowrap text-gray-400"
       >
-        <p v-if="!filteredTokens.length">
-          Nothing could be found
+        <p v-if="!filteredTokens.length" class="text-center text-sm font-medium">
+          We couldn't find your token. Please use the button below to input custom contract address
         </p>
         <CommonButton
           class="mb-4 items-center gap-2"

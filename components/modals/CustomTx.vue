@@ -45,7 +45,11 @@ async function onSubmit() {
 
     emit('destroy')
 
-    showPendingTransactionModal(transactionHash, chainId.value, 'transfer')
+    showPendingTransactionModal({
+      hash: transactionHash,
+      chainId: chainId.value,
+      type: 'transfer',
+    })
   }
   catch (e: any) {
     const err = parseTransactionError(e)

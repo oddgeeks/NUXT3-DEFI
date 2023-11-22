@@ -3,7 +3,7 @@ defineProps<BadgeProps>()
 
 enum ColorClass {
   blue = 'bg-blue-400 text-blue-400 bg-opacity-10',
-  green = 'bg-green-500 bg-opacity-[15%] text-green-500',
+  green = 'bg-primary/10 text-primary',
   red = 'bg-red-alert bg-opacity-[15%] text-red-alert',
   yellow = 'bg-orange-500 bg-opacity-[15%] text-orange-500',
 }

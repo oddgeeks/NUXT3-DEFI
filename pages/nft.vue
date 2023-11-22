@@ -80,10 +80,10 @@ const filteredAssets = computed(() => {
         <button class="flex items-center gap-2.5" @click="hideNFT = !hideNFT">
           <span>{{ hideNFT ? 'Unhide All' : 'Hide' }}</span>
           <SvgoEyeOff v-if="hideNFT" class="stroke-slate-icon h-5 w-5" />
-          <SvgoEye v-if="!hideNFT" class="h-5 w-5 text-slate-400" />
+          <SvgoEye v-if="!hideNFT" class="h-5 w-5 text-gray-400" />
         </button>
       </ClientOnly>
-      <MultipleNetworkFilter v-if="account" v-model:networks="networkPreferences" container-class="!left-[10px]" :show-supported-networks="false" :filters="false" />
+      <MultipleNetworkFilter v-if="account" v-model:networks="networkPreferences" :show-supported-networks="false" :filters="false" />
     </div>
     <CommonInput
       v-model="searchQuery"
@@ -98,20 +98,20 @@ const filteredAssets = computed(() => {
     </CommonInput>
     <div
       :class="{
-        'rounded-[25px] bg-slate-50 blur dark:bg-gray-850': !data,
+        'rounded-[25px] bg-gray-850 blur': !data,
       }"
       class="scroll-style h-full max-h-[750px] w-[101%] sm:-mr-2 sm:overflow-auto"
     >
       <div
         v-if="!pending && data && !data.length"
-        class="w-full rounded-[25px] bg-slate-50 p-5 dark:bg-gray-850"
+        class="w-full rounded-[25px] bg-gray-850 p-5"
       >
         No NFTs found
       </div>
 
       <ul
         v-else
-        class="grid w-full grid-cols-1 content-baseline gap-5 rounded-[25px] bg-slate-50 p-5 dark:bg-gray-850 sm:grid-cols-3 md:grid-cols-4"
+        class="grid w-full grid-cols-1 content-baseline gap-5 rounded-[25px] bg-gray-850 p-5 sm:grid-cols-3 md:grid-cols-4"
       >
         <NFTCard
           v-for="asset in filteredAssets"

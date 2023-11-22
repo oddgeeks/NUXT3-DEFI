@@ -23,7 +23,7 @@ function onToggle() {
 </script>
 
 <template>
-  <div class="flex flex-col rounded-5 bg-slate-50 dark:bg-gray-850">
+  <div class="flex flex-col rounded-5 bg-gray-850">
     <MobileBalanceRow
       v-for="(token, i) of balances"
       :key="`${token.chainId} - ${token.symbol}`"

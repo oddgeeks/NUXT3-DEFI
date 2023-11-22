@@ -232,7 +232,11 @@ async function handleExecute(item: IMultisigTransaction) {
 
     if (hash) {
       emit('destroy')
-      showPendingTransactionModal(hash, item.chain_id, 'transfer')
+      showPendingTransactionModal({
+        hash,
+        chainId: item.chain_id,
+        type: 'transfer',
+      })
     }
   }
   catch (e: any) {
@@ -256,7 +260,11 @@ async function handleReject(transaction: IMultisigTransaction) {
 
     if (txHash) {
       emit('destroy')
-      showPendingTransactionModal(txHash, transaction.chain_id, 'transfer')
+      showPendingTransactionModal({
+        hash: txHash,
+        chainId: transaction.chain_id,
+        type: 'transfer',
+      })
     }
   }
   catch (e: any) {
@@ -319,9 +327,9 @@ onUnmounted(() => {
 <template>
   <div>
     <div class="flex flex-col font-medium sm:flex-row">
-      <div class="flex-1 border-r border-slate-150 dark:border-slate-800">
+      <div class="flex-1 border-r border-gray-800">
         <div class="scroll-style flex flex-col overflow-auto sm:max-h-[710px]">
-          <div class="border-b border-slate-150 p-5 dark:border-slate-800 sm:p-7.5">
+          <div class="border-b border-gray-800 p-5 sm:p-7.5">
             <div class="flex flex-col justify-between gap-5 sm:flex-row sm:gap-0">
               <div class="flex gap-4">
                 <div :class="isColorRed ? 'bg-red-alert' : 'bg-primary'" class="flex h-14 w-14 items-center justify-center rounded-full">
@@ -331,20 +339,20 @@ onUnmounted(() => {
                   <h1 class="text-[22px] leading-[30px]">
                     {{ formattedActionType }}
                   </h1>
-                  <span class="inline-flex items-center gap-2 text-sm font-medium text-slate-400">On <ChainLogo class="h-4 w-4" :chain="transactionRef.chain_id" /> {{ chainIdToName(transactionRef.chain_id) }}</span>
+                  <span class="inline-flex items-center gap-2 text-sm font-medium text-gray-400">On <ChainLogo class="h-4 w-4" :chain="transactionRef.chain_id" /> {{ chainIdToName(transactionRef.chain_id) }}</span>
                 </div>
               </div>
               <div class="flex items-center justify-between gap-2.5 sm:flex-col sm:justify-normal sm:gap-1.5">
                 <p class="whitespace-nowrap font-medium leading-[30px]">
                   Created {{ formatTimeAgo(new Date(transactionRef.created_at)) }}
                 </p>
-                <time class="whitespace-nowrap text-xs leading-5 text-slate-400 sm:text-right" :datetime="transactionRef.created_at">
+                <time class="whitespace-nowrap text-xs leading-5 text-gray-400 sm:text-right" :datetime="transactionRef.created_at">
                   {{ formatted }}
                 </time>
               </div>
             </div>
           </div>
-          <div v-if="decodedMetadata" class="flex gap-2.5 border-b border-slate-150 p-5 dark:border-slate-800 sm:p-7.5">
+          <div v-if="decodedMetadata" class="flex gap-2.5 border-b border-gray-800 p-5 sm:p-7.5">
             <div class="flex max-w-2xl gap-2.5">
               <span v-if="isRejection" class="inline-flex whitespace-nowrap text-xs">
                 Executing this transaction will reject transaction
@@ -358,9 +366,9 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
-          <div class="flex flex-col gap-5 border-b border-slate-150 p-5 dark:border-slate-800 sm:p-7.5">
+          <div class="flex flex-col gap-5 border-b border-gray-800 p-5 sm:p-7.5">
             <div v-if="proposalOwnerAddress" class="flex flex-col justify-between gap-2.5 text-sm sm:flex-row sm:items-center sm:gap-0">
-              <span class="text-xs text-slate-400">Creator</span>
+              <span class="text-xs text-gray-400">Creator</span>
               <span>
                 <NuxtLink target="_blank" :to="getExplorerUrl(transactionRef.chain_id, `/address/${proposalOwnerAddress}`)" class="text-sm text-primary">
                   {{ shortenHash(proposalOwnerAddress) }}
@@ -371,13 +379,13 @@ onUnmounted(() => {
               </span>
             </div>
             <div v-if="transactionRef.transaction_hash" class="flex flex-col justify-between gap-2.5 text-sm sm:flex-row sm:items-center sm:gap-0">
-              <span class="text-xs text-slate-400">Transaction Hash</span>
+              <span class="text-xs text-gray-400">Transaction Hash</span>
               <NuxtLink target="_blank" :to="`${avoExplorerURL}/tx/${transactionRef.transaction_hash}`" class="text-sm text-primary">
                 {{ shortenHash(transactionRef.transaction_hash) }}
               </NuxtLink>
             </div>
             <div v-if="!isNonseq" class="flex flex-col justify-between gap-2.5 text-sm sm:flex-row sm:items-center sm:gap-0">
-              <span class="text-xs text-slate-400">Nonce</span>
+              <span class="text-xs text-gray-400">Nonce</span>
               <div class="flex items-center gap-2">
                 #{{ transactionRef.nonce }}
                 <template v-if="!isTransactionExecuted">
@@ -386,19 +394,19 @@ onUnmounted(() => {
                     style="width: 80px; height: 16px"
                     class="loading-box rounded-lg"
                   />
-                  <span v-else-if="!isNonceNotMatch" class="text-xs text-slate-400">(next to be executed)</span>
-                  <span v-else class="text-xs text-slate-400">(execution unavailable, execute previous txns first)</span>
+                  <span v-else-if="!isNonceNotMatch" class="text-xs text-gray-400">(next to be executed)</span>
+                  <span v-else class="text-xs text-gray-400">(execution unavailable, execute previous txns first)</span>
                 </template>
               </div>
             </div>
             <div v-if="transactionRef.note" class="flex flex-col justify-between gap-2.5 text-sm">
-              <span class="text-xs text-slate-400">Note</span>
+              <span class="text-xs text-gray-400">Note</span>
               <span class="scroll-style max-h-[250px] overflow-auto whitespace-break-spaces text-xs">
                 {{ transactionRef.note }}
               </span>
             </div>
             <div class="flex flex-col justify-between gap-2.5 text-sm sm:flex-row sm:items-center sm:gap-0">
-              <span class="text-xs text-slate-400">Avocado Multisig Hash</span>
+              <span class="text-xs text-gray-400">Avocado Multisig Hash</span>
               <span class="flex items-center gap-2 text-sm font-medium">
                 {{ isNonseq ? 'Non-Sequential' : 'Sequential' }} /
                 {{ shortenHash(transactionRef.id) }}
@@ -433,7 +441,7 @@ onUnmounted(() => {
             <span class="leading-[30px]">
               Signers
             </span>
-            <span :class="isConfirmationsMatch ? 'text-primary' : 'text-slate-400'" class="flex items-center gap-2.5 text-xs">
+            <span :class="isConfirmationsMatch ? 'text-primary' : 'text-gray-400'" class="flex items-center gap-2.5 text-xs">
               <SvgoUserCircle />
               <span class="font-medium leading-5">
                 {{ transactionRef.confirmations.length }} signed out of {{ actualRequiredSigner }} required
@@ -441,7 +449,7 @@ onUnmounted(() => {
             </span>
           </div>
         </div>
-        <div class="border-b border-slate-150 px-5 pb-5 dark:border-slate-800 sm:px-7.5 sm:pb-7.5">
+        <div class="border-b border-gray-800 px-5 pb-5 sm:px-7.5 sm:pb-7.5">
           <ul class="scroll-style flex max-h-[300px] flex-col gap-5 overflow-auto">
             <li v-for="signer in transactionRef.confirmations" :key="signer.address">
               <div class="flex items-center gap-3">
@@ -453,16 +461,16 @@ onUnmounted(() => {
                   <button v-else class="text-xs font-medium text-primary" @click="openAddContactModal(undefined, signer.address)">
                     Save as Contact
                   </button>
-                  <span :class="getContactNameByAddress(signer.address) ? 'text-slate-400' : ''" class="text-xs font-medium leading-5">
+                  <span :class="getContactNameByAddress(signer.address) ? 'text-gray-400' : ''" class="text-xs font-medium leading-5">
                     {{ shortenHash(signer.address) }}
                   </span>
                 </p>
                 <div class="ml-auto flex items-center gap-2.5">
-                  <div class="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+                  <div class="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-gray-900">
                     <Copy class="h-3 w-3" icon-only :text="signer.address" />
                   </div>
-                  <NuxtLink external target="_blank" :to="getExplorerUrl(transactionRef.chain_id, `/address/${signer.address}`)" class="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
-                    <SvgoExternalLink class="h-3 w-3 text-slate-400" />
+                  <NuxtLink external target="_blank" :to="getExplorerUrl(transactionRef.chain_id, `/address/${signer.address}`)" class="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-gray-900">
+                    <SvgoExternalLink class="h-3 w-3 text-gray-400" />
                   </NuxtLink>
                 </div>
               </div>
@@ -500,9 +508,9 @@ onUnmounted(() => {
           <button
             v-if="isSignAndExecuteToggleVisible"
             :class="{
-              'text-slate-900 dark:text-white': signAndExecute,
+              'text-white': signAndExecute,
             }"
-            class="items-base flex gap-2.5 text-left text-xs font-medium text-slate-400"
+            class="items-base flex gap-2.5 text-left text-xs font-medium text-gray-400"
             @click="toggle()"
           >
             <SvgoCheckCircle
@@ -554,7 +562,7 @@ onUnmounted(() => {
           </p>
         </div>
         <div v-else class="flex flex-col gap-5 p-5 sm:p-7.5">
-          <span class="text-xs leading-5 text-slate-400">Connect your wallet to sign and execute this transaction.</span>
+          <span class="text-xs leading-5 text-gray-400">Connect your wallet to sign and execute this transaction.</span>
           <Web3Button button-class="!justify-center items-center text-center" />
         </div>
       </div>

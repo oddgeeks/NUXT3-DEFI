@@ -3,6 +3,7 @@ const props = defineProps<{
   url?: string
   chainId?: number | string
   networkLogoClass?: string
+  imgClasses?: string
   count?: number
 } > ()
 
@@ -25,6 +26,7 @@ function onError() {
       <img
         :src="url"
         class="h-full w-full rounded-full"
+        :class="[imgClasses]"
         :onerror="onError"
         loading="lazy"
       >
@@ -38,7 +40,7 @@ function onError() {
       :class="[networkLogoClass]"
       :chain="chainId"
     />
-    <div v-if="count" class="absolute -bottom-1 -left-1 flex h-5 w-5 items-center justify-center rounded-full border border-white bg-primary text-center text-[10px] text-white dark:border-black md:text-xs">
+    <div v-if="count" class="absolute -bottom-1 -left-1 flex h-5 w-5 items-center justify-center rounded-full border  border-black bg-primary text-center text-[10px] text-white md:text-xs">
       {{ count }}
     </div>
   </div>

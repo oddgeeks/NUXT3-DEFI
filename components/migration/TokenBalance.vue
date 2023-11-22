@@ -23,7 +23,7 @@ const isChecked = computed(() => {
 </script>
 
 <template>
-  <div class="flex items-center border-b-[1px] border-white p-5 last:border-b-[0px] dark:border-slate-750">
+  <div class="flex items-center border-b-[1px] border-slate-750 p-5 last:border-b-[0px]">
     <div class="relative h-[30px] shrink-0 grow-0 basis-[30px]">
       <SafeTokenLogo class="h-full w-full" :url="tokenBalance.logoURI" />
       <ChainLogo
@@ -35,7 +35,7 @@ const isChecked = computed(() => {
     </div>
 
     <div class="ml-[10px] grow">
-      <div class="text-sm font-medium text-slate-900 dark:text-white">
+      <div class="text-sm font-medium ">
         {{ tokenBalance.name }}
       </div>
       <div class="text-xs font-medium text-slate-400">
@@ -43,7 +43,7 @@ const isChecked = computed(() => {
       </div>
     </div>
 
-    <div class="ml-[10px] text-xs font-medium text-slate-900 dark:text-white">
+    <div class="ml-[10px] text-xs font-medium ">
       {{ formatUsd(tokenBalance.balanceInUSD) }}
     </div>
 

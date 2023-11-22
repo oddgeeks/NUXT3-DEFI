@@ -7,6 +7,7 @@ export default defineNuxtPlugin(() => {
 <a class='text-primary block' target='_blank' href=https://guides.avocado.instadapp.io/avocado-multisig/your-avocado-multisig#why-cant-i-send-assets-in-a-particular-network>Learn More</a>`,
       fuseNotSupported: 'Fuse network is not supported legacy safes',
       disabledBackupSigner: 'Backup address cannot initiate transactions',
+      ethHighFee: 'This is the first transaction on Ethereum from your wallet and will include wallet deployment costs as well. You may experience a one-time higher gas fees charged by the blockchain.',
       mfa: {
         page: {
           title: 'Configure Avocado Protect ⚔️',

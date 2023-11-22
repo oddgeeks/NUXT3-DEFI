@@ -41,7 +41,7 @@ onMounted(async () => {
           {{ balance.symbol.toUpperCase() }}
         </span>
 
-        <span class="text-sm leading-5 text-slate-400">
+        <span class="text-sm leading-5 text-gray-400">
           {{ formatUsd(balance.balanceInUSD).replace("$", "$ ") }}
         </span>
       </div>
@@ -58,7 +58,7 @@ onMounted(async () => {
           {{ signedNumber(toBN(priceDiffInPercent).toFixed(2)) }}%
         </span>
       </div>
-      <span class="pr-5 pt-5 text-slate-400">Last 7d</span>
+      <span class="pr-5 pt-5 text-gray-400">Last 7d</span>
       <div class="absolute bottom-5 h-[122px] w-full">
         <SparklineChart v-if="balance.sparklinePrice7d.length" v-once :line-color="priceDiffColor" :sparkline-data="balance.sparklinePrice7d" />
         <span v-else> - </span>

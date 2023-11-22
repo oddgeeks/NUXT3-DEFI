@@ -18,7 +18,7 @@ const { toggleWelcomeBanner } = useBanner()
       href="https://guides.avocado.instadapp.io/getting-started/topping-up-the-gas-tank"
     >(<u>Take me in!</u>)</a>
     <button class="absolute right-10" @click="toggleWelcomeBanner(false)">
-      <SVGX class="text-slate-500" />
+      <SVGX class="text-gray-500" />
     </button>
   </div>
 </template>

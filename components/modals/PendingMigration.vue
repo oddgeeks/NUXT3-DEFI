@@ -114,7 +114,7 @@ function getIsSuccess(transaction: TransactionReceipt) {
         </p>
       </div>
 
-      <div class="bg flex items-center justify-between rounded-5 bg-slate-100 px-[18px] py-[14px] dark:bg-slate-800">
+      <div class="bg flex items-center justify-between rounded-5 bg-slate-800 px-[18px] py-[14px]">
         <p class="flex items-center gap-3">
           <ChainLogo class="h-[26px] w-[26px]" :chain="chainIds[index]" />
           <span class="text-sm text-slate-400">{{ chainIdToName(chainIds[index]) }}</span>

@@ -14,7 +14,7 @@ defineProps<{
         </h1>
       </div>
     </div>
-    <hr class="border-slate-150 dark:border-slate-800">
+    <hr class="border-gray-800">
 
     <div class="p-7.5">
       <MultisigSignDeleteSignerItem :address="address" :chain-id="chainId" />

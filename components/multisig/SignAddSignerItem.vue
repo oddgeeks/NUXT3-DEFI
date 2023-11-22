@@ -86,7 +86,10 @@ async function handleSign() {
         chainId: String(props.chainId),
       })
 
-      showPendingTransactionModal(txHash, props.chainId)
+      showPendingTransactionModal({
+        hash: txHash,
+        chainId: props.chainId,
+      })
     }
 
     signed.value = true

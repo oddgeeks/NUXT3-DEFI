@@ -48,7 +48,11 @@ async function handleDeploy() {
       account: account.value,
     })
 
-    await showPendingTransactionModal(transactionHash, props.option.chainId, 'deploy')
+    await showPendingTransactionModal({
+      hash: transactionHash,
+      chainId: props.option.chainId,
+      type: 'deploy',
+    })
 
     emit('destroy')
   }
@@ -81,7 +85,7 @@ async function handleDeploy() {
       <h1 class="font-lg mb-3 text-center leading-5">
         {{ chainIdToName(option.chainId) }}
       </h1>
-      <h2 class="text-center text-xs font-medium leading-5 text-slate-400">
+      <h2 class="text-center text-xs font-medium leading-5 text-gray-400">
         In order to interact with dapps on your requested network, please deploy
         (activate) your wallet.
       </h2>

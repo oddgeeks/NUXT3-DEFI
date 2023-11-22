@@ -20,9 +20,31 @@ const iconURL = computed(() => {
 
 async function disconnectWallet() {
   toggle(true)
-  await wcStoreV2.disconnect(props.session)
-  toggle(false)
-  emit('destroy')
+  try {
+    const { success } = await openDialogModal({
+      title: 'Are you sure you want to disconnect?',
+      type: 'question',
+      headerIconUrl: iconURL.value,
+      isButtonVisible: true,
+      isCancelButtonVisible: true,
+      buttonText: 'Disconnect',
+      cancelButtonText: 'Cancel',
+      cancelButtonProps: {
+        color: 'white',
+      },
+      buttonProps: {
+        color: 'red',
+      },
+    })
+
+    if (success) {
+      wcStoreV2.disconnect(props.session)
+      emit('destroy')
+    }
+  }
+  finally {
+    toggle(false)
+  }
 }
 </script>
 
@@ -46,7 +68,7 @@ async function disconnectWallet() {
         {{ props.session.peer.metadata.name }}
       </div>
       <div class="flex flex-col items-center justify-center gap-5">
-        <p class="text-center text-xs font-medium leading-5 text-slate-400">
+        <p class="text-center text-xs font-medium leading-5 text-gray-400">
           You need the Avocado web app to be open to initiate transactions.
           Please don't close the tab.
         </p>

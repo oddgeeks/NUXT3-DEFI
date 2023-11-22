@@ -117,12 +117,12 @@ async function handleSubmit() {
 
     emit('destroy')
 
-    showPendingTransactionModal(
-      transactionHash!,
-      props.options.chainId,
-      'upgrade',
-      true,
-    )
+    showPendingTransactionModal({
+      hash: transactionHash!,
+      chainId: props.options.chainId,
+      type: 'upgrade',
+      async: true,
+    })
   }
   catch (e: any) {
     const err = parseTransactionError(e)
@@ -158,13 +158,13 @@ onUnmounted(() => {
     </div>
     <div class="flex items-center justify-center gap-3">
       <span
-        class="flex items-center justify-center rounded-5 bg-slate-800 px-4 py-2 text-sm"
+        class="flex items-center justify-center rounded-5 bg-gray-900 px-4 py-2 text-sm"
       >
         v{{ options.currentVersion }}
       </span>
-      <ArrowRight class="h-[18px] w-[18px] text-slate-400" />
+      <ArrowRight class="h-[18px] w-[18px] text-gray-400" />
       <span
-        class="flex items-center justify-center rounded-5 bg-slate-800 px-4 py-2 text-sm"
+        class="flex items-center justify-center rounded-5 bg-gray-900 px-4 py-2 text-sm"
       >
         v{{ options.latestVersion }}
       </span>
