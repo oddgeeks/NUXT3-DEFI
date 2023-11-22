@@ -265,6 +265,7 @@ export function useAvocadoSafe() {
         dryRun: true,
       })
     }
+    console.log({ signatureObject })
 
     const avoStaticProvider = new ethers.providers.StaticJsonRpcProvider(getRpcURLByChainId(avoChainId.value))
 
