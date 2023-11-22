@@ -31,7 +31,7 @@ const currentIndicatorPosition = computed(() => {
     <span
       v-for="tab in props.tabs"
       :key="tab.value"
-      :class="`inline-block text-xs font-medium text-center text-slate-400 cursor-pointer ${activeTab === tab.value ? '!text-green-500' : ''}`"
+      :class="`inline-flex items-center justify-center h-8 text-xs font-medium text-center text-slate-400 cursor-pointer ${activeTab === tab.value ? '!text-green-500' : ''}`"
       :style="{ width: `${100 / tabs.length}%` }"
       @click="() => onTabUpdated(tab.value)"
     >
@@ -39,7 +39,7 @@ const currentIndicatorPosition = computed(() => {
     </span>
 
     <span
-      class="mt-2 block h-1 rounded-t-[10px] bg-green-500 transition-all"
+      class="block h-1 rounded-t-[10px] bg-green-500 transition-all"
       :style="{
         width: `${100 / tabs.length}%`,
         marginLeft: `${currentIndicatorPosition}%`,

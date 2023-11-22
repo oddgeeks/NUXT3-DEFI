@@ -44,8 +44,8 @@ const tabs = [
       @updated="(newValue) => activeTab = newValue"
     />
 
-    <MigrationBalances v-if="activeTab === 'balances'" class="scroll-style h-[calc(100%-39px)] overflow-y-auto" />
-    <MigrationNFTs v-else-if="activeTab === 'nfts'" class="scroll-style h-[calc(100%-39px)] overflow-y-auto" />
+    <MigrationBalances v-if="activeTab === 'balances'" />
+    <MigrationNFTs v-else-if="activeTab === 'nfts'" />
     <MigrationGas v-else-if="activeTab === 'gas'" />
     <!-- <MigrationDefi v-else-if="activeTab === 'defi'" class="h-[calc(100%-39px)] overflow-y-auto scroll-style" /> -->
   </div>
