@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia'
 
 export const useMigration = defineStore('migration', () => {
-  const selectedTokensForMigration = ref<IToken[]>([])
+  const selectedTokensForMigration = ref<IBalance[]>([])
   const selectedNFTsForMigration = ref<NFTData[]>([])
   const selectedSafeForMigration = ref<IGasBalanceMigration>()
   const selectedDefiForMigration = ref<MigrationPositions[]>([])
 
-  const toggleSelectedTokenForMigration = (tokenForMigration: IToken) => {
+  const toggleSelectedTokenForMigration = (tokenForMigration: IBalance) => {
     const index = selectedTokensForMigration.value?.findIndex((selectedToken) => {
       return `${selectedToken.address}-${selectedToken.chainId}` === `${tokenForMigration.address}-${tokenForMigration.chainId}`
     })
@@ -39,7 +39,7 @@ export const useMigration = defineStore('migration', () => {
       selectedDefiForMigration.value.splice(index, 1)
   }
 
-  const setTokensForMigration = (tokensForMigration: IToken[]) => {
+  const setTokensForMigration = (tokensForMigration: IBalance[]) => {
     selectedTokensForMigration.value = [...tokensForMigration]
   }
 

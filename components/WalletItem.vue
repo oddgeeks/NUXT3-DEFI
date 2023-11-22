@@ -67,12 +67,15 @@ function handleClick() {
 <template>
   <div>
     <button
-      :class="{
-        'bg-gray-900': active,
-        'bg-gray-850': !active,
-        'gap-3 rounded-2xl px-4 py-[14px]': detailed,
-        'items-center justify-center gap-1.5 rounded-7.5 px-2.5 py-1.5 sm:gap-2.5 sm:px-[14px] sm:py-1': !detailed,
-      }"
+      :class="[
+        {
+          'bg-gray-900': active,
+          'bg-gray-850': !active,
+          'gap-3 rounded-2xl px-4 py-[14px]': detailed,
+          'items-center justify-center gap-1.5 rounded-7.5 px-2.5 py-1.5 sm:gap-2.5 sm:px-[14px] sm:py-1': !detailed,
+        },
+        $attrs?.class,
+      ]"
       class="flex h-full w-full border border-gray-800 text-left hover:bg-gray-900" @click="handleClick"
     >
       <SvgoCheckCircle

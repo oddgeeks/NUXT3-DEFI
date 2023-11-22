@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import SVGX from '~/assets/images/icons/x.svg?component'
-
 const props = withDefaults(
   defineProps<{
     show?: boolean
@@ -94,10 +92,10 @@ whenever(escape, () => {
         >
           <button
             v-if="modalOptions.closeButton"
-            class="absolute right-0 top-0 m-5 flex h-7.5 w-7.5 items-center justify-center rounded-full bg-gray-800 sm:m-6"
+            class="absolute right-0 top-0 z-[1] m-5 flex h-7.5 w-7.5 items-center justify-center rounded-full bg-gray-800 sm:m-6"
             aria-label="Close modal" @click="handleDestory"
           >
-            <SVGX />
+            <SvgoX />
           </button>
           <slot />
         </div>
