@@ -7,10 +7,10 @@ const { selectedSafe } = storeToRefs(useSafe())
     <MigrationLoadingLegacyWallet v-if="!selectedSafe" />
     <WalletItem
       v-else
-      :v2="selectedSafe.multisig === 1"
       class="border-0"
       :safe="selectedSafe"
       hide-active-state
+      detailed
     />
 
     <MigrationAssets />

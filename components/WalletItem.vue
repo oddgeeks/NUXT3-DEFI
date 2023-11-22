@@ -1,8 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
   safe: ISafe
-  primary?: boolean
-  tooltip?: string
   detailed?: boolean
   hideActiveState?: boolean
 }>()
