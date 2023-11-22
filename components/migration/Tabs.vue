@@ -39,7 +39,7 @@ const currentIndicatorPosition = computed(() => {
     </span>
 
     <span
-      class="mt-[10px] block h-1 rounded-t-[10px] bg-green-500 transition-all"
+      class="mt-2 block h-1 rounded-t-[10px] bg-green-500 transition-all"
       :style="{
         width: `${100 / tabs.length}%`,
         marginLeft: `${currentIndicatorPosition}%`,

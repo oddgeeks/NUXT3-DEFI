@@ -103,7 +103,7 @@ async function getGasBalanceTransactions() {
 
   const gasBalanceManagerInstance = new ethers.Contract(gasBalanceManagerAddress.value, gasBalanceManagerAbi, signer)
 
-  const data = (await gasBalanceManagerInstance.populateTransaction['transfer(address,uint256,uint256)'](props.selectedMigrationSafe?.owner_address, props.selectedMigrationSafe?.multisig_index, toBN(selectedSafeForMigration.value.amount).toString())).data
+  const data = (await gasBalanceManagerInstance.populateTransaction['transfer(address,uint256,uint256)'](props.selectedMigrationSafe?.owner_address, props.selectedMigrationSafe?.multisig_index, selectedSafeForMigration.value.amount)).data
 
   const tx = {
     to: gasBalanceManagerAddress.value,
