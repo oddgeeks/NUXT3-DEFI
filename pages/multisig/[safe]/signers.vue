@@ -11,6 +11,10 @@ useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
+const addedSigners = ref<ChainSigners>({})
+
+const hasUnsavedChanges = computed(() => Object.values(addedSigners.value || {}).some(i => !!i.length))
+
 const navigation = [
   {
     label: 'Add New Signer',
@@ -43,6 +47,10 @@ const { data } = useAsyncData(
     return safe
   },
 )
+
+async function handleProceed() {
+  const { success } = await openMapContactWithSignerModal(addedSigners.value)
+}
 </script>
 
 <template>
@@ -69,8 +77,17 @@ const { data } = useAsyncData(
     </div>
     <div v-if="data" class="grid grid-cols-3 gap-4.5">
       <template v-for="signers, chainId of data.signers" :key="chainId">
-        <MultisigSignerCard v-if="!!signers.length" :safe="data" :chain-id="chainId" />
+        <MultisigSignerCard v-if="!!signers.length" v-model="addedSigners" :safe="data" :chain-id="chainId" />
       </template>
     </div>
+    <CommonNotification v-if="hasUnsavedChanges" type="warning" class="flex w-fit gap-5 !rounded-2xl">
+      <div class="flex gap-2.5 text-xs/5">
+        <SvgoInfo2 class="mt-1" />
+        You have unsaved changes to your Multisig <br>Signers. Click Proceed to finalized changeds.
+      </div>
+      <CommonButton class="py-[5px]" size="sm" @click="handleProceed">
+        Proceed
+      </CommonButton>
+    </CommonNotification>
   </div>
 </template>

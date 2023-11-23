@@ -11,7 +11,7 @@ import TokenSelection from '~~/components/modals/TokenSelection.vue'
 import ImportToken from '~~/components/modals/ImportToken.vue'
 import CustomToken from '~~/components/modals/CustomToken.vue'
 import WCTransaction from '~~/components/modals/WCTransaction.vue'
-import PowerOffSVG from '~/assets/images/icons/power-off-bg.svg?component'
+import PowerOffSVG from '~/assets/images/icons/power-off-bg.svg'
 import Dialog from '~~/components/modals/Dialog.vue'
 import CustomTx from '~~/components/modals/CustomTx.vue'
 import UpgradeVersion from '~~/components/modals/UpgradeVersion.vue'
@@ -40,6 +40,9 @@ import SignDeleteSigner from '~/components/modals/Multisig/SignDeleteSigner.vue'
 import UpdateThreshold from '~/components/modals/Multisig/UpdateThreshold.vue'
 import FetchGnosisSafe from '~/components/modals/Multisig/FetchGnosisSafe.vue'
 import MultisigSelectNetwork from '~/components/modals/Multisig/SelectNetwork.vue'
+
+import MapContactWithSigner from '~/components/modals/Multisig/MapContactWithSigner.vue'
+
 import UpdateNoticeModal from '~/components/modals/UpdateNotice.vue'
 import CreateBatchModal from '~/components/modals/CreateBatchModal.vue'
 import ViewDecodedModal from '~/components/modals/Multisig/ViewDecodedModal.vue'
@@ -991,6 +994,20 @@ export function openAllDappConnectionsModal() {
     options: {
       wrapperClass: '!max-w-[800px]',
       contentClass: '!p-0',
+    },
+  })
+}
+
+export function openMapContactWithSignerModal(chainSigners: ChainSigners) {
+  return openModal({
+    component: MapContactWithSigner,
+    async: true,
+    options: {
+      wrapperClass: '!max-w-[480px]',
+      contentClass: '!p-0',
+    },
+    componentProps: {
+      chainSigners,
     },
   })
 }
