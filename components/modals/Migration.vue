@@ -7,7 +7,7 @@ import { Erc20__factory } from '~/contracts'
 
 const props = defineProps<MigrateToModalProps>()
 
-const emit = defineEmits(['destroy'])
+defineEmits(['destroy'])
 
 const { parseTransactionError } = useErrorHandler()
 
@@ -31,6 +31,10 @@ const {
 } = useMigration()
 
 const loading = ref(false)
+
+const availableToMigrate = computed(() => !!selectedTokensForMigration.value?.length
+  || !!selectedNFTsForMigration.value.length
+  || toBN(selectedSafeForMigration.value?.amount || '0').gt(0))
 
 const multipleActions = asyncComputed<IEstimatedActions[]>(async () => {
   const arr: IEstimatedActions[] = []
@@ -103,7 +107,7 @@ async function getGasBalanceTransactions() {
 
   const gasBalanceManagerInstance = new ethers.Contract(gasBalanceManagerAddress.value, gasBalanceManagerAbi, signer)
 
-  const data = (await gasBalanceManagerInstance.populateTransaction['transfer(address,uint256,uint256)'](props.selectedMigrationSafe?.owner_address, props.selectedMigrationSafe?.multisig_index, toBN(selectedSafeForMigration.value.amount).toString())).data
+  const data = (await gasBalanceManagerInstance.populateTransaction['transfer(address,uint256,uint256)'](props.selectedMigrationSafe?.owner_address, props.selectedMigrationSafe?.multisig_index, selectedSafeForMigration.value.amount)).data
 
   const tx = {
     to: gasBalanceManagerAddress.value,
@@ -182,6 +186,7 @@ async function getBalanceTransactions() {
 async function migrate() {
   try {
     loading.value = true
+    const hashes = []
 
     await switchToAvocadoNetwork()
 
@@ -194,16 +199,15 @@ async function migrate() {
           'transfer',
         )
 
-        console.log(hash)
-
         if (hash) {
           addTransactionToQueue({
             hash,
             chainId: action.chainId,
           })
+          hashes.push(hash)
         }
       }
-      catch (e) {
+      catch (e: any) {
         const err = parseTransactionError(e)
 
         openSnackbar({
@@ -213,6 +217,9 @@ async function migrate() {
         continue
       }
     }
+
+    if (hashes.length)
+      logActions()
 
     selectedSafeForMigration.value = undefined
 
@@ -230,6 +237,35 @@ async function migrate() {
   finally {
     loading.value = false
   }
+}
+
+function logActions() {
+  const totalAmountInUsdToken = selectedTokensForMigration.value
+    .reduce<string>((acc, token) => toBN(acc).plus(token.balanceInUSD || 0).toFixed(), '0')
+
+  const totalNftMigrated = selectedNFTsForMigration.value.length
+
+  const totalGasBalanceMigrated = toBN(selectedSafeForMigration.value?.amount || 0)
+
+  const formattedTokenMessage = toBN(totalAmountInUsdToken).gt(0) ? `${formatUsd(totalAmountInUsdToken)} worth of tokens migrated` : null
+  const formattedNftMessage = totalNftMigrated ? `${totalNftMigrated} NFTs migrated` : null
+  const formattedGasBalanceMessage = totalGasBalanceMigrated.gt(0) ? `${formatUsd(totalGasBalanceMigrated.toFixed())} worth of gas balance migrated to ${selectedSafeForMigration.value?.safe?.safe_address}` : null
+
+  const chains = estimatedData.value?.map(({ chainId }) => formatChainName(chainId)).join(', ')
+
+  const formattedMessage = [
+    chains,
+    formattedTokenMessage,
+    formattedNftMessage,
+    formattedGasBalanceMessage,
+  ].filter(Boolean).join('\n')
+
+  logActionToSlack({
+    type: 'success',
+    account: account.value,
+    action: 'migration',
+    message: formattedMessage,
+  })
 }
 </script>
 
@@ -321,7 +357,7 @@ async function migrate() {
     <CommonButton
       class="mt-5 w-full justify-center"
       size="lg"
-      :disabled="(!selectedTokensForMigration?.length && !selectedNFTsForMigration?.length && !selectedSafeForMigration?.safe) || !!estimateError"
+      :disabled="!availableToMigrate || !!estimateError"
       :loading="loading || estimatePending"
       @click="migrate"
     >

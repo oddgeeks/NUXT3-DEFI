@@ -2,7 +2,7 @@ type MetadataTypes = typeof MetadataEnums[keyof typeof MetadataEnums]
 
 interface ISlackMessage {
   message: string
-  action: IWeb3Action | MetadataTypes | 'add-token' | 'upgrade' | 'deploy' | 'network' | 'nft' | 'multisig' | 'proposal' | 'fetch-nonce' | '2fa-activated' | '2fa-deactivated' | '2fa-method-activated' | '2fa-method-deactivated' | 'sign-terms'
+  action: IWeb3Action | MetadataTypes | 'add-token' | 'upgrade' | 'deploy' | 'network' | 'nft' | 'multisig' | 'proposal' | 'fetch-nonce' | '2fa-activated' | '2fa-deactivated' | '2fa-method-activated' | '2fa-method-deactivated' | 'sign-terms' | 'migration'
   account: string
   type?: ISlackMessageType
   txHash?: string
@@ -43,7 +43,9 @@ const prefixes: Record<ISlackMessage['action'], string> = {
   '2fa-deactivated': '2FA Deactivated',
   '2fa-method-activated': '2FA Activated',
   '2fa-method-deactivated': '2FA Deactivated',
+  'migration': 'Migration',
   'sign-terms': 'Sign Terms',
+  'avocado-bridge': 'Avocado Bridge',
 }
 
 const ignoredMessages = [
