@@ -109,7 +109,7 @@ function handleClick() {
               {{ walletName }}
             </p>
             <span
-              v-if="isMultisig" :class="{
+              v-if="props.safe.multisig" :class="{
                 'px-[5px] py-0.5 text-[10px]/[16px]': detailed,
                 'px-1 text-[8px]/[14px]': !detailed,
               }" class="inline-flex items-center justify-center rounded-lg bg-gray-700"
