@@ -110,6 +110,9 @@ const filteredSafes = computed(() => {
 
   return result.map(i => i.item)
 })
+
+const primarySafes = computed(() => filteredSafes.value.filter(safe => isAddressEqual(safe.owner_address, account.value)))
+const secondarySafes = computed(() => filteredSafes.value.filter(safe => !isAddressEqual(safe.owner_address, account.value)))
 </script>
 
 <template>
@@ -157,13 +160,27 @@ const filteredSafes = computed(() => {
         </template>
       </CommonInput>
       <ClientOnly>
-        <div class="grid min-h-[84px] grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2 sm:gap-4">
-          <TransitionGroup :appear="false" :name="!searcInputFocused ? 'wallet-list' : ''">
-            <template v-for="safe in filteredSafes" :key="safe.safe_address">
-              <WalletItem detailed :safe="safe" />
-            </template>
-          </TransitionGroup>
-        </div>
+        <template v-if="primarySafes.length">
+          <h2 class="text-sm">
+            Primary Wallets
+          </h2>
+          <div class="grid min-h-[84px] grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2 sm:gap-4">
+            <TransitionGroup :appear="false" :name="!searcInputFocused ? 'wallet-list' : ''">
+              <WalletItem v-for="safe in primarySafes" :key="safe.safe_address" detailed :safe="safe" />
+            </TransitionGroup>
+          </div>
+        </template>
+
+        <template v-if="secondarySafes.length">
+          <h2 class="text-sm">
+            Secondary Wallets
+          </h2>
+          <div class="grid min-h-[84px] grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2 sm:gap-4">
+            <TransitionGroup :appear="false" :name="!searcInputFocused ? 'wallet-list' : ''">
+              <WalletItem v-for="safe in secondarySafes" :key="safe.safe_address" detailed :safe="safe" />
+            </TransitionGroup>
+          </div>
+        </template>
       </ClientOnly>
     </div>
   </div>
