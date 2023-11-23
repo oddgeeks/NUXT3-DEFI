@@ -23,6 +23,8 @@ const safePinned = computed(() => isSafePinned(props.safe.safe_address))
 
 const walletName = useLocalStorage(`safe-label-${props.safe?.safe_address}`, isMultisig.value ? 'MultiSig' : 'Personal')
 
+const baseColorClass = computed(() => isMultisig.value ? 'text-purple' : isLegacy.value ? 'text-gray-400' : 'text-primary')
+
 const active = computed(() => {
   return safeAddress.value === props.safe?.safe_address
 })
@@ -99,19 +101,28 @@ function handleClick() {
               'text-xs': !detailed,
             }" class="flex items-center gap-2 font-medium"
           >
-            <p :class="isMultisig ? 'text-purple' : isLegacy ? 'text-gray-400' : 'text-primary'">
+            <p class="inline-flex items-center gap-1" :class="baseColorClass">
+              <template v-if="!detailed">
+                <SvgoDoubleUser v-if="isMultisig" />
+                <SvgoSingleUser v-else />
+              </template>
               {{ walletName }}
             </p>
+            <span
+              v-if="isMultisig" :class="{
+                'px-[5px] py-0.5 text-[10px]/[16px]': detailed,
+                'px-1 text-[8px]/[14px]': !detailed,
+              }" class="inline-flex items-center justify-center rounded-lg bg-gray-700"
+            >
+              #{{ props.safe.multisig_index }}
+            </span>
             <template v-if="detailed">
               <button @click.stop="onEdit">
                 <SvgoEdit />
               </button>
-              <span v-if="isMultisig" class="inline-flex items-center justify-center rounded-lg bg-gray-700 px-[5px] py-0.5 text-[10px]/[16px]">
-                #{{ props.safe.multisig_index }}
-              </span>
               <SafeBadge show-tooltip class="!text-[10px]" :safe="safe" />
-              <SvgoShieldChecked v-if="isProtected" v-tippy="'This account has Avocado Protect activated on 1 or more networks.'" class="text-primary" />
             </template>
+            <SvgoShieldChecked v-if="isProtected" v-tippy="'This account has Avocado Protect activated on 1 or more networks.'" class="text-primary" />
           </div>
           <button v-if="detailed" :disabled="pinnedSafes.length > 2 && !safePinned" @click.stop="togglePinSafe(safe.safe_address)">
             <SvgoPin :class="safePinned ? 'text-primary [&>path]:fill-primary' : 'text-gray-700'" />
