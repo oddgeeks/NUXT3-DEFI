@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import '@splidejs/vue-splide/css'
-import SVGWalletConnect from '~/assets/images/wallet/wallet-connect-lite.svg?component'
+import SVGWalletConnect from '~/assets/images/wallet/wallet-connect-lite.svg'
 
 const wcStoreV2 = useWalletConnectV2()
 
