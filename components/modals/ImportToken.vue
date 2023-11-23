@@ -187,7 +187,7 @@ function handleCustomToken() {
       </div>
       <div
         v-if="!pending"
-        class="my-auto flex flex-col items-center justify-center gap-[26px] whitespace-nowrap text-gray-400"
+        class="my-auto flex flex-col items-center justify-center gap-[26px] text-gray-400"
       >
         <p v-if="!filteredTokens.length" class="text-center text-sm font-medium">
           We couldn't find your token. Please use the button below to input custom contract address
