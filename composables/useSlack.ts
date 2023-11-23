@@ -134,7 +134,7 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
     logMessage = `<@UK9L88BS7>,<@U0146FL6CSZ> ${logMessage}`
   }
 
-  const providerName = getWalletProviderName(provider.value)
+  const providerName = getInjectedName(provider.value)
 
   if (providerName)
     logMessage += `\n${'`Wallet Provider`'} ${providerName}`
@@ -280,55 +280,4 @@ function getPrefix(amountInUsd: string, action: ISlackMessage['action']) {
     return `${emoji} (${formatUsd(amountInUsd)}) ${actionPrefix}`
 
   return actionPrefix
-}
-
-export function getWalletProviderName(provider: any) {
-  const providerName = provider?.constructor?.name
-  const { connectionMeta } = useConnectors()
-
-  if (provider.isTrust)
-    return 'trust'
-  if (provider.isGoWallet)
-    return 'goWallet'
-  if (provider.isAlphaWallet)
-    return 'alphaWallet'
-  if (provider.isEQLWallet)
-    return 'equal'
-  if (provider.isStatus)
-    return 'status'
-  if (provider.isDapper)
-    return 'dapper'
-  if (provider.isSafe)
-    return 'safe'
-  if (provider.isRabby)
-    return 'rabby'
-  if (provider.isCucumber)
-    return 'cucumber'
-  if (provider.isImToken)
-    return 'imtoken'
-  if (provider.isGSNProvider)
-    return 'GSN'
-  if (provider.isToshi)
-    return 'coinbase'
-  if (provider.isLedgerConnect)
-    return 'ledgerConnect'
-  if (provider.isLedger)
-    return 'ledger'
-  if (provider.isTorus)
-    return 'torus'
-  // @ts-expect-error
-  if (process.client && typeof window?.__CIPHER__ !== 'undefined')
-    return 'cipher'
-  if (providerName === 'EthereumProvider')
-    return 'mist'
-  if (providerName === 'Web3FrameProvider')
-    return 'parity'
-  if (provider.host && provider.host?.includes('infura') !== -1)
-    return 'infura'
-  if (provider.host && provider.host?.includes('localhost') !== -1)
-    return 'localhost'
-  if (provider.isMetaMask)
-    return 'metamask'
-
-  return connectionMeta?.value?.provider
 }

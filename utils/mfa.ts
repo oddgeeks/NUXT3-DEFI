@@ -19,6 +19,10 @@ export function checkHasInstadappSigner(safe: ISafe, instadappSigner: string) {
   return instadappSigners.chainIds.length > 0
 }
 
+export function checkSafeProtected(safe: ISafe, instadappSigner: string) {
+  return checkAtleastOneMfaVerified(safe) && checkHasInstadappSigner(safe, instadappSigner)
+}
+
 export function isSignerAdded(safe: ISafe, address: string, chainId: number | string) {
   const signers = safe.signers?.[chainId] || []
   return signers.some(i => isAddressEqual(i, address))
