@@ -12,8 +12,8 @@ export const prodGasBalanceManagerAddress = '0x0bF8d2e143550874ADE7c2eb1e768aa49
 export const stagingInstadappSigner = '0x2D8EE1C03b88b4b72B1c05Dab218EE1982147602'
 export const prodInstadappSigner = '0x27A26e2f1CaD33cD0389A85Ab09a6b4f169Bc34f'
 
-export const avoOnboardURLStaging = 'https://onboard.avocado.instadapp.io'
-export const avoOnboardURLProd = 'https://onboard.avocado.instad.app'
+export const avoOnboardURLProd = 'https://onboard.avocado.instadapp.io'
+export const avoOnboardURLStaging = 'https://onboard.avocado.instad.app'
 
 export const zerionApiURL = 'https://api.zerion.io/v1'
 
