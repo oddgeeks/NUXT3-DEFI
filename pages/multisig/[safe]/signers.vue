@@ -36,7 +36,7 @@ const navigation = [
   },
 ]
 
-const { data } = useAsyncData(
+const { data, execute } = useAsyncData(
   `${route.params.safe}-signers`,
   async () => {
     const safe = await getSafe(route.params.safe as string)
@@ -48,8 +48,17 @@ const { data } = useAsyncData(
   },
 )
 
+useIntervalFn(() => {
+  execute()
+}, 10000)
+
 async function handleProceed() {
-  const { success } = await openMapContactWithSignerModal(addedSigners.value)
+  for (const network of availableNetworks) {
+    clearNuxtState(`signed-${network.chainId}`)
+    clearNuxtState(`executed-${network.chainId}`)
+  }
+
+  const { success } = await openReviewSignersModal(addedSigners.value)
 }
 </script>
 

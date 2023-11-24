@@ -41,7 +41,8 @@ import UpdateThreshold from '~/components/modals/Multisig/UpdateThreshold.vue'
 import FetchGnosisSafe from '~/components/modals/Multisig/FetchGnosisSafe.vue'
 import MultisigSelectNetwork from '~/components/modals/Multisig/SelectNetwork.vue'
 
-import MapContactWithSigner from '~/components/modals/Multisig/MapContactWithSigner.vue'
+import ReviewSigners from '~/components/modals/Multisig/ReviewSigners.vue'
+import SignSigners from '~/components/modals/Multisig/SignSigners.vue'
 
 import UpdateNoticeModal from '~/components/modals/UpdateNotice.vue'
 import CreateBatchModal from '~/components/modals/CreateBatchModal.vue'
@@ -998,12 +999,26 @@ export function openAllDappConnectionsModal() {
   })
 }
 
-export function openMapContactWithSignerModal(chainSigners: ChainSigners) {
+export function openReviewSignersModal(chainSigners: ChainSigners) {
   return openModal({
-    component: MapContactWithSigner,
+    component: ReviewSigners,
     async: true,
     options: {
-      wrapperClass: '!max-w-[480px]',
+      wrapperClass: '!max-w-[600px]',
+      contentClass: '!p-0',
+    },
+    componentProps: {
+      chainSigners,
+    },
+  })
+}
+
+export function openSignSignersModal(chainSigners: ChainSigners) {
+  return openModal({
+    component: SignSigners,
+    async: true,
+    options: {
+      wrapperClass: '!max-w-[600px]',
       contentClass: '!p-0',
     },
     componentProps: {

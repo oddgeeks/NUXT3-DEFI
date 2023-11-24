@@ -83,6 +83,15 @@ async function handleSelectContact() {
   }
 }
 
+function syncNewSigners() {
+  chainAddresses.value = {
+    ...chainAddresses.value,
+    [props.chainId]: newSigners.value.filter((address) => {
+      return !chainSigners.value.some(signer => isAddressEqual(signer, address))
+    }),
+  }
+}
+
 function handleRemoveSigner(address: string) {
   const index = newSigners.value.findIndex(_address => _address.toLowerCase() === address.toLowerCase())
 
@@ -103,8 +112,17 @@ const onSubmit = handleSubmit(() => {
   setValue(undefined, true)
 })
 
-onMounted(async () => {
+async function setThreshold() {
   threshold.value = await getRequiredSigner(props.safe.safe_address, props.chainId)
+}
+
+watchThrottled(() => props.safe, async () => {
+  await setThreshold()
+  syncNewSigners()
+}, {
+  throttle: 1000,
+  deep: true,
+  immediate: true,
 })
 </script>
 
@@ -118,7 +136,7 @@ onMounted(async () => {
           <span v-if="getContactNameByAddress(address)">
             {{ getContactNameByAddress(address) }}
           </span>
-          <button v-else type="button" class="text-sm font-medium text-primary" @click="openAddContactModal(undefined, address)">
+          <button v-else type="button" :class="removable ? 'text-primary' : 'text-gray-400'" class="text-xs" @click="openAddContactModal(undefined, address)">
             Save as Contact
           </button>
 
@@ -141,9 +159,9 @@ onMounted(async () => {
 
         <SvgoInfo2 v-if="newSigners.length" v-tippy="'You have unsaved changes. Click Proceed to finalize changes.'" class="h-5 w-5 text-orange-400" />
       </div>
-      <TransitionGroup tag="ul" class="flex flex-col gap-2.5" name="signer-list">
-        <AddressItem v-for="address in chainSigners" :key="address" :address="address" />
+      <TransitionGroup tag="ul" class="scroll-style flex flex-col gap-2.5 overflow-auto sm:max-h-[200px] sm:min-h-[100px]" name="signer-list">
         <AddressItem v-for="address in newSigners" :key="address" :removable="true" :address="address" />
+        <AddressItem v-for="address in chainSigners" :key="address" :address="address" />
       </TransitionGroup>
       <div>
         <CommonInput v-model="value" :error-message="errorMessage" placeholder="Signer EOA Address" container-classes="!bg-gray-800">
@@ -167,7 +185,7 @@ onMounted(async () => {
         </div>
         <div class="flex items-center gap-2">
           <SvgoUsers />
-          {{ threshold }}
+          {{ safe.signers[chainId].length }}
           total signer(s)
         </div>
       </div>
