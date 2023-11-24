@@ -159,7 +159,7 @@ watchThrottled(() => props.safe, async () => {
 
         <SvgoInfo2 v-if="newSigners.length" v-tippy="'You have unsaved changes. Click Proceed to finalize changes.'" class="h-5 w-5 text-orange-400" />
       </div>
-      <TransitionGroup tag="ul" class="scroll-style flex flex-col gap-2.5 overflow-auto sm:max-h-[200px] sm:min-h-[100px]" name="signer-list">
+      <TransitionGroup tag="ul" class="scroll-style flex flex-col gap-2.5 overflow-auto sm:max-h-[200px]" name="signer-list">
         <AddressItem v-for="address in newSigners" :key="address" :removable="true" :address="address" />
         <AddressItem v-for="address in chainSigners" :key="address" :address="address" />
       </TransitionGroup>

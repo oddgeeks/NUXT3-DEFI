@@ -44,6 +44,8 @@ const { data, execute } = useAsyncData(
     if (!safe)
       return
 
+    // sort object based on signer length
+
     return safe
   },
 )
@@ -86,7 +88,7 @@ async function handleProceed() {
     </div>
     <div v-if="data" class="grid grid-cols-3 gap-4.5">
       <template v-for="signers, chainId of data.signers" :key="chainId">
-        <MultisigSignerCard v-if="!!signers.length" v-model="addedSigners" :safe="data" :chain-id="chainId" />
+        <MultisigSignerCard v-if="signers.length" v-model="addedSigners" :safe="data" :chain-id="chainId" />
       </template>
     </div>
     <CommonNotification v-if="hasUnsavedChanges" type="warning" class="flex w-fit gap-5 !rounded-2xl">
