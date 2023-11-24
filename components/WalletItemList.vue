@@ -28,7 +28,7 @@ const priorSafes = computed(() => {
 <template>
   <div v-if="!safesLoading" class="flex items-center gap-2 sm:gap-4">
     <TransitionGroup name="wallet-list">
-      <WalletItem v-for="safe in priorSafes" :key="safe.id" :safe="safe" />
+      <WalletItem v-for="safe in priorSafes" :key="safe.safe_address" :safe="safe" />
     </TransitionGroup>
     <button v-if="allSafes?.length" class="flex h-[44px] w-full items-center justify-center gap-2.5 rounded-7.5 border  border-slate-750 bg-gray-850 py-1 pl-[14px] pr-2.5 text-left text-xs" @click="openAllWalletsModal()">
       All

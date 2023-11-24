@@ -52,7 +52,7 @@ async function handleSubmit() {
         txHash,
       })
 
-      emit('resolve', true)
+      emit('resolve', true, { txHash })
     }
   }
   catch (e: any) {
