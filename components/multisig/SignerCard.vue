@@ -110,11 +110,19 @@ onMounted(async () => {
 
 <template>
   <form class="h-fit rounded-5 border border-gray-800 bg-gray-850 p-5" @submit="onSubmit">
-    <DefineTemplate v-slot="{ address, removable }">
+    <DefineTemplate v-slot="{ address, removable } = {} as any">
       <li class="flex items-center justify-between gap-3">
         <div class="flex items-center gap-3 text-xs">
           <AuthorityAvatar class="h-5 w-5" :address="address" />
-          {{ getContactNameByAddress(address) || 'Name' }} <span v-if="checkAddressIsOwner(address)">(Owner)</span>
+
+          <span v-if="getContactNameByAddress(address)">
+            {{ getContactNameByAddress(address) }}
+          </span>
+          <button v-else type="button" class="text-sm font-medium text-primary" @click="openAddContactModal(undefined, address)">
+            Save as Contact
+          </button>
+
+          <span v-if="checkAddressIsOwner(address)">(Owner)</span>
           <button v-if="removable" v-tippy="'Remove Signer'" type="button" @click="handleRemoveSigner(address)">
             <SvgoX class="h-3 w-3" />
           </button>
