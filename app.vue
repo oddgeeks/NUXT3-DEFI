@@ -32,7 +32,7 @@ const { refresh } = useAsyncData(
   },
 )
 
-useScriptTag('https://app.chatwoot.com/packs/js/sdk.js', () => {
+useScriptTag('https://app.chatwoot.com/packs/js/sdk.js', async () => {
   // @ts-expect-error
   if (!window.chatwootSDK)
     return
@@ -47,6 +47,18 @@ useScriptTag('https://app.chatwoot.com/packs/js/sdk.js', () => {
     websiteToken: 'pmgPtAUDhoeVv7h9nS2xk7PF',
     baseUrl: 'https://app.chatwoot.com',
   })
+
+  const originalOnMessage: ((event: MessageEvent) => void) | null = window.onmessage
+
+  window.onmessage = function (e) {
+    const trustedOrigins = [window.origin, 'https://app.chatwoot.com']
+
+    if (!trustedOrigins.includes(e.origin))
+      return
+
+    if (originalOnMessage)
+      originalOnMessage(e)
+  }
 }, {
   async: true,
   defer: true,
