@@ -32,7 +32,7 @@ const { refresh } = useAsyncData(
   },
 )
 
-useScriptTag('https://app.chatwoot.com/packs/js/sdk.js', async () => {
+useScriptTag('https://app.chatwoot.com/packs/js/sdk.js', () => {
   // @ts-expect-error
   if (!window.chatwootSDK)
     return
