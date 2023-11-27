@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { selectedSafe } = storeToRefs(useSafe())
+const { getContactNameByAddress } = useContacts()
 
 function getSortedChain(reverse = false) {
   return Object.entries(selectedSafe.value?.signers || {}).map(([chainId, addresses]) => ({
@@ -12,6 +13,11 @@ const sourceChainId = ref(getSortedChain(true)?.chainId)
 const targetChainId = ref(getSortedChain(false)?.chainId)
 
 const sourceSigners = computed(() => selectedSafe.value?.signers[sourceChainId.value] || [])
+
+const targetSigners = computed(() => {
+  const signers = selectedSafe.value?.signers[targetChainId.value] || []
+  return [...new Set(signers.concat(sourceSigners.value))]
+})
 
 function handleSelectNetwork() {
   console.log('selam')
@@ -31,7 +37,7 @@ function handleSelectNetwork() {
       </ModalTitle>
     </div>
 
-    <div class="px-7.5 py-5 sm:px-7.5">
+    <div class="flex flex-col gap-5 px-7.5 py-5 sm:px-7.5">
       <div class="flex flex-col gap-2.5">
         <h2 class="flex items-center gap-2 text-xs">
           <SvgoUpload />
@@ -48,6 +54,34 @@ function handleSelectNetwork() {
           <ul>
             <li v-for="signer in sourceSigners" :key="signer" class="border-b border-gray-875 px-4 py-[14px] last:border-b-0">
               {{ signer }}
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="flex flex-col gap-2.5">
+        <h2 class="flex items-center gap-2 text-xs">
+          <SvgoUpload />
+          Copy Settings from
+        </h2>
+        <div class="rounded-2xl bg-gray-850 text-sm">
+          <button class="flex w-full items-center border-b border-gray-875 px-4 py-[14px]">
+            <div class="flex items-center gap-3">
+              <ChainLogo class="h-7.5 w-7.5" :chain="targetChainId" />
+              {{ chainIdToName(targetChainId) }}
+            </div>
+            <SvgoChevronDown class="ml-2 h-4 w-4 -rotate-90" />
+          </button>
+          <ul>
+            <li v-for="signer in targetSigners" :key="signer" class="border-b border-gray-875 px-4 py-[14px] last:border-b-0">
+              <AuthorityAvatar class="h-7.5 w-7.5" :address="signer" />
+              <div>
+                <span>
+                  {{ getContactNameByAddress(signer) }}
+                </span>
+                <span class="text-xs text-gray-400">
+                  {{ signer }}
+                </span>
+              </div>
             </li>
           </ul>
         </div>
