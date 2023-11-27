@@ -66,7 +66,7 @@ async function handleAddSigner() {
   try {
     pending.value = true
 
-    const { success } = await openReviewSignerProcessModal({
+    const { success, payload } = await openReviewSignerProcessModal({
       chainId: props.chainId,
       actions: addSignerActions.value,
       deleteSigner: false,
@@ -91,6 +91,7 @@ async function handleAddSigner() {
           action: '2fa-activated',
           chainId: String(props.chainId),
           message: `Instadapp signer activated on ${chainName}`,
+          txHash: payload.txHash,
         })
       }
 
