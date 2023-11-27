@@ -46,6 +46,7 @@ import SignSigners from '~/components/modals/Multisig/SignSigners.vue'
 import DeleteSigners from '~/components/modals/Multisig/DeleteSigners.vue'
 import DeleteSignersByNetwork from '~/components/modals/Multisig/DeleteSignersByNetwork.vue'
 import CopyMultisigSettings from '~/components/modals/Multisig/CopyMultisigSettings.vue'
+import MultisigSelectNetworkCopy from '~/components/modals/Multisig/MultisigSelectNetwork.vue'
 
 import UpdateNoticeModal from '~/components/modals/UpdateNotice.vue'
 import CreateBatchModal from '~/components/modals/CreateBatchModal.vue'
@@ -1060,6 +1061,20 @@ export function openCopyMultisigSettingsModal() {
     options: {
       wrapperClass: '!max-w-[600px]',
       contentClass: '!p-0',
+    },
+  })
+}
+
+export function openSelectMultisigNetworkModal(selectedChainId: number | string) {
+  return openModal({
+    component: MultisigSelectNetworkCopy,
+    async: true,
+    options: {
+      wrapperClass: '!max-w-[500px]',
+      contentClass: '!p-0',
+    },
+    componentProps: {
+      selectedChainId,
     },
   })
 }

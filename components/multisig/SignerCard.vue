@@ -86,12 +86,17 @@ async function handleSelectContact() {
 }
 
 function syncNewSigners() {
+  const signers = newSigners.value.filter((address) => {
+    return !chainSigners.value.some(signer => isAddressEqual(signer, address))
+  })
+
   chainAddresses.value = {
     ...chainAddresses.value,
-    [props.chainId]: newSigners.value.filter((address) => {
-      return !chainSigners.value.some(signer => isAddressEqual(signer, address))
-    }),
+    [props.chainId]: signers,
   }
+
+  if (chainSigners.value.length > 1)
+    blurry.value = false
 }
 
 function handleRemoveSigner(address: string) {
