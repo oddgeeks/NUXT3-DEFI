@@ -106,7 +106,7 @@ function handleClick() {
                 <SvgoDoubleUser v-if="isMultisig" />
                 <SvgoSingleUser v-else />
               </template>
-              <span class="truncate" :class="!detailed ? 'w-[75px]' : 'max-w-[140px]'">
+              <span class="truncate" :class="!detailed ? 'sm:w-[65px]' : 'max-w-[140px]'">
                 {{ walletName }}
               </span>
             </p>
