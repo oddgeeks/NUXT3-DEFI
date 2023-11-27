@@ -11,6 +11,8 @@ function getSortedChain(reverse = false) {
 const sourceChainId = ref(getSortedChain(true)?.chainId)
 const targetChainId = ref(getSortedChain(false)?.chainId)
 
+const sourceSigners = computed(() => selectedSafe.value?.signers[sourceChainId.value] || [])
+
 function handleSelectNetwork() {
   console.log('selam')
 }
@@ -35,14 +37,19 @@ function handleSelectNetwork() {
           <SvgoUpload />
           Copy Settings from
         </h2>
-        <div class="rounded-2xl bg-gray-850 px-4 py-[14px] text-sm">
-          <button class="flex items-center">
+        <div class="rounded-2xl bg-gray-850 text-sm">
+          <button class="flex w-full items-center border-b border-gray-875 px-4 py-[14px]">
             <div class="flex items-center gap-3">
               <ChainLogo class="h-7.5 w-7.5" :chain="sourceChainId" />
               {{ chainIdToName(sourceChainId) }}
             </div>
             <SvgoChevronDown class="ml-2 h-4 w-4 -rotate-90" />
           </button>
+          <ul>
+            <li v-for="signer in sourceSigners" :key="signer" class="border-b border-gray-875 px-4 py-[14px] last:border-b-0">
+              {{ signer }}
+            </li>
+          </ul>
         </div>
       </div>
     </div>
