@@ -43,6 +43,8 @@ import MultisigSelectNetwork from '~/components/modals/Multisig/SelectNetwork.vu
 
 import ReviewSigners from '~/components/modals/Multisig/ReviewSigners.vue'
 import SignSigners from '~/components/modals/Multisig/SignSigners.vue'
+import DeleteSigners from '~/components/modals/Multisig/DeleteSigners.vue'
+import DeleteSignersByNetwork from '~/components/modals/Multisig/DeleteSignersByNetwork.vue'
 
 import UpdateNoticeModal from '~/components/modals/UpdateNotice.vue'
 import CreateBatchModal from '~/components/modals/CreateBatchModal.vue'
@@ -529,6 +531,29 @@ export function openSignSignerModal(addresses: ISignerAddress[], chainIds: numbe
     },
     options: {
       wrapperClass: 'max-w-[560px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export function openDeleteSignersModal() {
+  return openModal({
+    component: DeleteSigners,
+    options: {
+      wrapperClass: 'max-w-[600px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export function openDeleteSignersByNetwork(addresses: string[]) {
+  return openModal({
+    component: DeleteSignersByNetwork,
+    componentProps: {
+      addresses,
+    },
+    options: {
+      wrapperClass: 'max-w-[600px]',
       contentClass: '!p-0',
     },
   })

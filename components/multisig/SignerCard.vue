@@ -29,6 +29,8 @@ const chainSigners = computed(() => [...props.safe.signers[props.chainId]].sort(
 
 const newSigners = computed(() => chainAddresses.value[props.chainId] || [])
 
+const blurry = ref(chainSigners.value.length === 0)
+
 const {
   handleSubmit,
   meta,
@@ -127,73 +129,84 @@ watchThrottled(() => props.safe, async () => {
 </script>
 
 <template>
-  <form class="h-fit rounded-5 border border-gray-800 bg-gray-850 p-5" @submit="onSubmit">
-    <DefineTemplate v-slot="{ address, removable } = {} as any">
-      <li class="flex items-center justify-between gap-3">
-        <div class="flex items-center gap-3 text-xs">
-          <AuthorityAvatar class="h-5 w-5" :address="address" />
+  <div class="relative">
+    <form :class="blurry ? 'blur pointer-events-none select-none' : ''" class="h-fit rounded-5 border border-gray-800 bg-gray-850 p-5 transition-all" @submit="onSubmit">
+      <DefineTemplate v-slot="{ address, removable } = {} as any">
+        <li class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3 text-xs">
+            <AuthorityAvatar class="h-5 w-5" :address="address" />
 
-          <span v-if="getContactNameByAddress(address)">
-            {{ getContactNameByAddress(address) }}
-          </span>
-          <button v-else type="button" :class="removable ? 'text-primary' : 'text-gray-400'" class="text-xs" @click="openAddContactModal(undefined, address)">
-            Save as Contact
-          </button>
-
-          <span v-if="checkAddressIsOwner(address)">(Owner)</span>
-          <button v-if="removable" v-tippy="'Remove Signer'" type="button" @click="handleRemoveSigner(address)">
-            <SvgoX class="h-3 w-3" />
-          </button>
-        </div>
-        <span v-tippy="address" class="text-xs text-gray-400">
-          {{ shortenHash(address) }}
-        </span>
-      </li>
-    </DefineTemplate>
-    <div class="flex flex-col gap-5">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
-          <ChainLogo class="h-10 w-10" :chain="chainId" />
-          {{ chainIdToName(chainId) }}
-        </div>
-
-        <SvgoInfo2 v-if="newSigners.length" v-tippy="'You have unsaved changes. Click Proceed to finalize changes.'" class="h-5 w-5 text-orange-400" />
-      </div>
-      <TransitionGroup tag="ul" class="scroll-style flex flex-col gap-2.5 overflow-auto sm:max-h-[200px]" name="signer-list">
-        <AddressItem v-for="address in newSigners" :key="address" :removable="true" :address="address" />
-        <AddressItem v-for="address in chainSigners" :key="address" :address="address" />
-      </TransitionGroup>
-      <div>
-        <CommonInput v-model="value" :error-message="errorMessage" placeholder="Signer EOA Address" container-classes="!bg-gray-800">
-          <template #suffix>
-            <button
-              v-tippy="'Select contact'"
-              type="button"
-              class="ml-3"
-              @click="handleSelectContact"
-            >
-              <SvgoContact class="text-gray-400" />
+            <span v-if="getContactNameByAddress(address)">
+              {{ getContactNameByAddress(address) }}
+            </span>
+            <button v-else type="button" :class="removable ? 'text-primary' : 'text-gray-400'" class="text-xs" @click="openAddContactModal(undefined, address)">
+              Save as Contact
             </button>
-          </template>
-        </CommonInput>
-      </div>
-      <div v-if="threshold !== undefined" class="flex items-center justify-between text-xs text-gray-400">
-        <div class="flex items-center gap-2">
-          <SvgoStamp />
-          {{ threshold }}
-          confirm. req.
+
+            <span v-if="checkAddressIsOwner(address)">(Owner)</span>
+            <button v-if="removable" v-tippy="'Remove Signer'" type="button" @click="handleRemoveSigner(address)">
+              <SvgoX class="h-3 w-3" />
+            </button>
+          </div>
+          <span v-tippy="address" class="text-xs text-gray-400">
+            {{ shortenHash(address) }}
+          </span>
+        </li>
+      </DefineTemplate>
+      <div class="flex flex-col gap-5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <ChainLogo class="h-10 w-10" :chain="chainId" />
+            {{ chainIdToName(chainId) }}
+          </div>
+
+          <SvgoInfo2 v-if="newSigners.length" v-tippy="'You have unsaved changes. Click Proceed to finalize changes.'" class="h-5 w-5 text-orange-400" />
         </div>
-        <div class="flex items-center gap-2">
-          <SvgoUsers />
-          {{ safe.signers[chainId].length }}
-          total signer(s)
+        <TransitionGroup tag="ul" class="scroll-style flex min-h-[20px] flex-col gap-2.5 overflow-auto sm:max-h-[200px]" name="signer-list">
+          <AddressItem v-for="address in newSigners" :key="address" :removable="true" :address="address" />
+          <AddressItem v-for="address in chainSigners" :key="address" :address="address" />
+        </TransitionGroup>
+        <div>
+          <CommonInput v-model="value" :error-message="errorMessage" placeholder="Signer EOA Address" container-classes="!bg-gray-800">
+            <template #suffix>
+              <button
+                v-tippy="'Select contact'"
+                type="button"
+                class="ml-3"
+                @click="handleSelectContact"
+              >
+                <SvgoContact class="text-gray-400" />
+              </button>
+            </template>
+          </CommonInput>
         </div>
+        <div v-if="threshold !== undefined" class="flex items-center justify-between text-xs text-gray-400">
+          <div class="flex items-center gap-2">
+            <SvgoStamp />
+            {{ threshold }}
+            confirm. req.
+          </div>
+          <div class="flex items-center gap-2">
+            <SvgoUsers />
+            {{ safe.signers[chainId].length }}
+            total signer(s)
+          </div>
+        </div>
+        <CommonButton type="submit" :disabled="!meta.valid" class="justify-center" size="lg">
+          Add Signer
+        </CommonButton>
       </div>
-      <CommonButton type="submit" :disabled="!meta.valid" class="justify-center" size="lg">
-        Add Signer
-      </CommonButton>
-    </div>
-  </form>
+    </form>
+    <Transition name="fade">
+      <button v-if="blurry" type="button" class="absolute left-1/2 top-1/2 flex w-max -translate-x-1/2 -translate-y-1/2 items-center gap-3 rounded-10 border border-gray-800 bg-gray-850 px-[14px] py-2 text-sm" @click="blurry = false">
+        <ChainLogo class="h-[26px] w-[26px]" :chain="chainId" />
+        <span class="whitespace-nowrap">
+          Deploy {{ chainIdToName(chainId) }}
+        </span>
+        <SvgoChevronDown class="h-4 w-4 shrink-0 -rotate-90 text-gray-400" />
+      </button>
+    </Transition>
+  </div>
 </template>
 
 <style scoped>
@@ -212,4 +225,15 @@ watchThrottled(() => props.safe, async () => {
   .signer-list-leave-active {
     position: absolute;
   }
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease-out;
+  transform-origin: left top;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>

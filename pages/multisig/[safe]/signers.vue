@@ -7,11 +7,20 @@ const { getSafe } = useSafe()
 if (!route.params.safe || !isAddress(route.params.safe as string))
   throw new Error('Safe address is required')
 
+function defaultSteps() {
+  return {
+    currentStep: 1,
+    totalSteps: 4,
+  }
+}
+
 useAccountTrack(undefined, () => {
   useEagerConnect()
 })
 
 const addedSigners = ref<ChainSigners>({})
+
+const signerSteps = useState('signer-steps', defaultSteps)
 
 const hasUnsavedChanges = computed(() => Object.values(addedSigners.value || {}).some(i => !!i.length))
 
@@ -20,11 +29,13 @@ const navigation = [
     label: 'Add New Signer',
     icon: 'SvgoPlusCircle',
     class: 'text-primary',
+    click: handleAddSigner,
   },
   {
     label: 'Delete Signers',
     icon: 'SvgoTrash2',
     class: 'text-red-alert',
+    click: handleDeleteSigner,
   },
   {
     label: 'Copy Multisig setup between Networks',
@@ -44,9 +55,15 @@ const { data, execute } = useAsyncData(
     if (!safe)
       return
 
-    // sort object based on signer length
+    const arr = Object.keys(safe.signers).map(key => ({ chainId: key, addresses: safe.signers[key] }))
 
-    return safe
+    // Sort the array based on the length of the value arrays
+    arr.sort((a, b) => b.addresses.length - a.addresses.length)
+
+    return {
+      safe,
+      formattedSigners: arr,
+    }
   },
 )
 
@@ -54,11 +71,27 @@ useIntervalFn(() => {
   execute()
 }, 10000)
 
-async function handleProceed() {
+function clearState() {
   for (const network of availableNetworks) {
     clearNuxtState(`signed-${network.chainId}`)
     clearNuxtState(`executed-${network.chainId}`)
   }
+}
+
+function handleAddSigner() {
+  clearState()
+  signerSteps.value.currentStep = 1
+  signerSteps.value.totalSteps = 4
+
+  openAddSignerModal()
+}
+
+function handleDeleteSigner() {
+  openDeleteSignersModal()
+}
+
+async function handleProceed() {
+  clearState()
 
   const { success } = await openReviewSignersModal(addedSigners.value)
 }
@@ -75,20 +108,23 @@ async function handleProceed() {
           Signers are addresses that are required to sign transactions before they can be executed on the blockchain.
         </h2>
       </div>
-      <div>
+      <div class="flex items-center justify-between">
         <ul class="flex items-center gap-2.5">
           <li v-for="item in navigation" :key="item.label">
-            <button :class="item.class" type="button" class="flex items-center gap-3 rounded-2xl bg-gray-900 px-4 py-3 text-xs">
+            <button :class="item.class" type="button" class="flex items-center gap-3 rounded-2xl bg-gray-900 px-4 py-3 text-xs" @click="item.click">
               <Component :is="item.icon" class="h-4.5 w-4.5" />
               {{ item.label }}
             </button>
           </li>
         </ul>
+        <CommonButton :disabled="!hasUnsavedChanges" @click="handleProceed">
+          Submit Changes
+        </CommonButton>
       </div>
     </div>
     <div v-if="data" class="grid grid-cols-3 gap-4.5">
-      <template v-for="signers, chainId of data.signers" :key="chainId">
-        <MultisigSignerCard v-if="signers.length" v-model="addedSigners" :safe="data" :chain-id="chainId" />
+      <template v-for="item of data.formattedSigners" :key="item.chainId">
+        <MultisigSignerCard v-model="addedSigners" :safe="data.safe" :chain-id="item.chainId" />
       </template>
     </div>
     <CommonNotification v-if="hasUnsavedChanges" type="warning" class="flex w-fit gap-5 !rounded-2xl">
