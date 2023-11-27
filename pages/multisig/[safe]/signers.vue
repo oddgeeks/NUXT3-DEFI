@@ -44,6 +44,7 @@ const navigation = [
   {
     label: 'Clone Gnosis Settings',
     icon: 'SvgoSafe',
+    click: handleGnosisSetup,
   },
 ]
 
@@ -78,6 +79,13 @@ function clearState() {
   }
 }
 
+function handleGnosisSetup() {
+  signerSteps.value.currentStep = 1
+  signerSteps.value.totalSteps = 5
+
+  openFetchGnosisSafeModal()
+}
+
 function handleAddSigner() {
   clearState()
   signerSteps.value.currentStep = 1
@@ -90,10 +98,10 @@ function handleDeleteSigner() {
   openDeleteSignersModal()
 }
 
-async function handleProceed() {
+function handleProceed() {
   clearState()
 
-  const { success } = await openReviewSignersModal(addedSigners.value)
+  openReviewSignersModal(addedSigners.value)
 }
 </script>
 
