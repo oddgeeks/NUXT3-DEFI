@@ -40,6 +40,7 @@ const navigation = [
   {
     label: 'Copy Multisig setup between Networks',
     icon: 'SvgoCopy',
+    click: openCopyMultisigSettingsModal,
   },
   {
     label: 'Clone Gnosis Settings',

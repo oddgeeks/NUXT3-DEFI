@@ -45,6 +45,7 @@ import ReviewSigners from '~/components/modals/Multisig/ReviewSigners.vue'
 import SignSigners from '~/components/modals/Multisig/SignSigners.vue'
 import DeleteSigners from '~/components/modals/Multisig/DeleteSigners.vue'
 import DeleteSignersByNetwork from '~/components/modals/Multisig/DeleteSignersByNetwork.vue'
+import CopyMultisigSettings from '~/components/modals/Multisig/CopyMultisigSettings.vue'
 
 import UpdateNoticeModal from '~/components/modals/UpdateNotice.vue'
 import CreateBatchModal from '~/components/modals/CreateBatchModal.vue'
@@ -1048,6 +1049,17 @@ export function openSignSignersModal(chainSigners: ChainSigners) {
     },
     componentProps: {
       chainSigners,
+    },
+  })
+}
+
+export function openCopyMultisigSettingsModal() {
+  return openModal({
+    component: CopyMultisigSettings,
+    async: true,
+    options: {
+      wrapperClass: '!max-w-[600px]',
+      contentClass: '!p-0',
     },
   })
 }

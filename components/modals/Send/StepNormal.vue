@@ -37,6 +37,7 @@ const { data: txs } = useAsyncData(
     }
     else {
       const contract = Erc20__factory.connect(token.value.address, library.value)
+      console.log(library.value)
 
       const { data: transferData } = await contract.populateTransaction.transfer(
         actualAddress.value,
