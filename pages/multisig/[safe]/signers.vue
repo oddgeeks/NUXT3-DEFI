@@ -117,21 +117,23 @@ function handleProceed() {
           Signers are addresses that are required to sign transactions before they can be executed on the blockchain.
         </h2>
       </div>
-      <div class="flex items-center justify-between">
-        <ul class="flex items-center gap-2.5">
+      <div class="flex flex-wrap items-center justify-between gap-5 sm:flex-nowrap">
+        <ul class="grid w-full grid-cols-2 gap-2.5 sm:flex sm:items-center">
           <li v-for="item in navigation" :key="item.label">
-            <button :class="item.class" type="button" class="flex items-center gap-3 rounded-2xl bg-gray-900 px-4 py-3 text-xs" @click="item.click">
-              <Component :is="item.icon" class="h-4.5 w-4.5" />
-              {{ item.label }}
+            <button :class="item.class" type="button" class="flex w-full items-center gap-1.5 rounded-2xl bg-gray-900 p-2.5 text-[10px] sm:gap-3 sm:px-4 sm:py-3 sm:text-xs" @click="item.click">
+              <Component :is="item.icon" class="h-3 w-3 shrink-0 sm:h-4.5 sm:w-4.5" />
+              <span class="max-w-[150px] truncate sm:max-w-none">
+                {{ item.label }}
+              </span>
             </button>
           </li>
         </ul>
-        <CommonButton :disabled="!hasUnsavedChanges" @click="handleProceed">
+        <CommonButton class="whitespace-nowrap" :disabled="!hasUnsavedChanges" @click="handleProceed">
           Submit Changes
         </CommonButton>
       </div>
     </div>
-    <div v-if="data" class="grid grid-cols-3 gap-4.5">
+    <div v-if="data" class="grid grid-cols-1 gap-4.5 sm:grid-cols-3">
       <template v-for="item of data.formattedSigners" :key="item.chainId">
         <MultisigSignerCard v-model="addedSigners" :safe="data.safe" :chain-id="item.chainId" />
       </template>

@@ -98,7 +98,7 @@ async function handleChangeNetwork(source = false) {
             <SvgoChevronDown class="ml-2 h-4 w-4 -rotate-90" />
           </button>
           <ul>
-            <li v-for="signer in sourceSigners" :key="signer" class="flex gap-3 border-b border-gray-875 px-4 py-[14px] last:border-b-0">
+            <li v-for="signer in sourceSigners" :key="signer" class="flex gap-3 border-b border-gray-875 p-2.5 last:border-b-0 sm:px-4 sm:py-[14px]">
               <AuthorityAvatar class="h-7.5 w-7.5" :address="signer" />
               <div class="flex flex-col gap-1">
                 <span v-if="getContactNameByAddress(signer)" class="max-w-[150px] truncate whitespace-nowrap text-xs">
@@ -108,7 +108,7 @@ async function handleChangeNetwork(source = false) {
                   Save as Contact
                 </button>
                 <span class="text-xs text-gray-400">
-                  {{ signer }}
+                  {{ shortenHash(signer, 9) }}
                 </span>
               </div>
             </li>
@@ -141,7 +141,7 @@ async function handleChangeNetwork(source = false) {
             <li class="flex gap-3 border-b border-gray-875 px-4 py-[14px] text-xs text-gray-400 last:border-b-0">
               Adding Signers
             </li>
-            <li v-for="signer in targetSigners" :key="signer" class="flex gap-3 border-b border-gray-875 px-4 py-[14px] last:border-b-0">
+            <li v-for="signer in targetSigners" :key="signer" class="flex gap-3 border-b border-gray-875 p-2.5 last:border-b-0 sm:px-4 sm:py-[14px]">
               <AuthorityAvatar class="h-7.5 w-7.5" :address="signer" />
               <div class="flex flex-col gap-1">
                 <span v-if="getContactNameByAddress(signer)" class="max-w-[150px] truncate whitespace-nowrap text-xs">
@@ -151,7 +151,7 @@ async function handleChangeNetwork(source = false) {
                   Save as Contact
                 </button>
                 <span class="text-xs text-gray-400">
-                  {{ signer }}
+                  {{ shortenHash(signer, 9) }}
                 </span>
               </div>
             </li>
@@ -165,7 +165,7 @@ async function handleChangeNetwork(source = false) {
       </div>
     </div>
 
-    <div class="grid grid-cols-2 gap-4 border-t border-gray-875 py-5 sm:px-7.5 sm:pb-7.5">
+    <div class="grid grid-cols-1 gap-4 border-t border-gray-875 p-5 sm:grid-cols-2 sm:px-7.5 sm:pb-7.5">
       <CommonButton class="justify-center" size="lg" color="white">
         Cancel
       </CommonButton>

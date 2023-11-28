@@ -42,7 +42,7 @@ function formatAddress(addresses: string[]): ISignerAddress[] {
       </ul>
     </div>
 
-    <div class="grid grid-cols-2 gap-4 border-t border-gray-875 py-5 sm:px-7.5 sm:pb-7.5">
+    <div class="grid grid-cols-1 gap-4 border-t border-gray-875 p-5 sm:grid-cols-2 sm:px-7.5 sm:pb-7.5">
       <CommonButton class="justify-center" size="lg" color="white" @click="handleBack">
         Cancel
       </CommonButton>

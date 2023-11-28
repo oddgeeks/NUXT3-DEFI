@@ -11,6 +11,7 @@ const props = defineProps<{
 const { getContactNameByAddress } = useContacts()
 const { getRequiredSigner } = useMultisig()
 const { account } = useWeb3()
+const { changeThreshold } = useAvocadoSafe()
 
 const [DefineTemplate, AddressItem] = createReusableTemplate()
 
@@ -123,6 +124,34 @@ async function setThreshold() {
   threshold.value = await getRequiredSigner(props.safe.safe_address, props.chainId)
 }
 
+async function handleTresholdChange(chainId: string | number) {
+  const { success, payload } = await openUpdateThresholdModal(chainId, 0)
+
+  if (success && payload) {
+    const metadata = encodeChangeThresholdMetadata(payload)
+
+    const txHash = await changeThreshold({
+      threshold: payload,
+      chainId,
+    })
+
+    if (txHash) {
+      logActionToSlack({
+        account: account.value,
+        message: generateSlackMessage(metadata, chainId),
+        action: 'change-threshold',
+        txHash,
+        chainId: String(chainId),
+      })
+
+      showPendingTransactionModal({
+        hash: txHash,
+        chainId,
+      })
+    }
+  }
+}
+
 watchThrottled(() => props.safe, async () => {
   await setThreshold()
   syncNewSigners()
@@ -188,8 +217,15 @@ watchThrottled(() => props.safe, async () => {
         <div v-if="threshold !== undefined" class="flex items-center justify-between text-xs text-gray-400">
           <div class="flex items-center gap-2">
             <SvgoStamp />
-            {{ threshold }}
-            confirm. req.
+            <div class="group">
+              <p class="h-fit translate-y-0 opacity-100 transition-all group-hover:h-0 group-hover:translate-y-5 group-hover:opacity-0">
+                {{ threshold }}
+                confirm. req.
+              </p>
+              <button class="invisible flex h-0 translate-y-5 text-primary opacity-0 transition-all group-hover:visible group-hover:h-fit group-hover:translate-y-0 group-hover:opacity-100" @click="handleTresholdChange(chainId)">
+                Modify threshold
+              </button>
+            </div>
           </div>
           <div class="flex items-center gap-2">
             <SvgoUsers />
