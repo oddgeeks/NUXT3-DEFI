@@ -43,7 +43,7 @@ useIntervalFn(refresh, 15000)
     <button v-if="dryRun" class="mr-4 text-sm text-orange" @click="dryRun = undefined">
       Disable Dry Run
     </button>
-    <nav class="relative flex items-center gap-4">
+    <nav class="relative ml-auto flex items-center gap-4">
       <SessionLocked />
       <Web3Button />
     </nav>

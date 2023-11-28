@@ -16,8 +16,8 @@ function handleOpenSendModal() {
 
 <template>
   <div class="flex flex-col gap-2.5 rounded-5 bg-gray-850 px-4 py-[14px] sm:flex-row sm:p-5">
-    <div class="flex">
-      <div class="flex flex-1 flex-col gap-1 sm:gap-2.5">
+    <div class="flex flex-1">
+      <div class="flex flex-col gap-1 sm:gap-2.5">
         <h2 class="flex items-center gap-2 text-xs text-gray-400 sm:text-sm">
           Total balance
 
