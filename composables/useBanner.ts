@@ -5,7 +5,7 @@ import { gt } from 'semver'
 const isVersionUpdateBannerHidden = ref(false)
 
 export function useBanner() {
-  const { gasBalance, safeOptions, selectedSafe } = storeToRefs(useSafe())
+  const { gasBalance, safeOptions, selectedSafe, isSelectedSafeLegacy } = storeToRefs(useSafe())
   const { isSafeMultisig, signers } = storeToRefs(useMultisig())
   const { avoChainId } = storeToRefs(useEnvironmentState())
   const { account, chainId } = useWeb3()
@@ -15,6 +15,7 @@ export function useBanner() {
   const { trackingAccount } = useAccountTrack()
   const isHideWelcomeBanner = useLocalStorage('hide-welcome-banner', false)
   const isHideRabbyBanner = useLocalStorage('hide-rabby-banner', false)
+  const isHideMigrationBanner = useLocalStorage('hide-migration-banner', false)
   const isOnboardHidden = useLocalStorage('hide-onboard', false)
   const [isMultisigOnboardHiddenToggle, toggle] = useToggle(false)
 
@@ -92,6 +93,13 @@ export function useBanner() {
     return selectedSafe.value.multisig === 1 && selectedSafe.value.multisig_index === 0
   })
 
+  const isMigrationBannerVisible = computed(() => {
+    if (!selectedSafe.value || $pwa?.needRefresh || showIncorrectNetworkBanner.value || route?.path === '/migration')
+      return false
+
+    return !isHideMigrationBanner.value && isSelectedSafeLegacy.value
+  })
+
   return {
     showWelcomeBanner,
     showInsufficientGasBanner,
@@ -102,6 +110,7 @@ export function useBanner() {
     isHideRabbyBanner,
     isOnboardBannerVisible,
     isMultisigOnboardBannerVisible,
+    isMigrationBannerVisible,
     showTrackingBanner: computed(() => !!trackingAccount.value),
     toggleWelcomeBanner: (val: boolean) => (isHideWelcomeBanner.value = !val),
     hideMultisigOnboardBanner: () => {
@@ -115,5 +124,6 @@ export function useBanner() {
     hideOnboardBanner: () => (isOnboardHidden.value = true),
     hideRabbyBanner: () => (isHideRabbyBanner.value = true),
     hideVersionUpdateBanner: () => (isVersionUpdateBannerHidden.value = true),
+    hideMigrationBanner: () => (isHideMigrationBanner.value = true),
   }
 }

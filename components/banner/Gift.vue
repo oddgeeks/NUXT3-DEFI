@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="flex items-center justify-center gap-[15px] rounded-5 bg-green-400 bg-opacity-10 py-[15px]">
+  <div class="flex items-center justify-center gap-[15px] rounded-5 bg-green-400/10 py-[15px]">
     <span>🎁</span>
     <p class="text-xs text-green-400">
       Claim your gas gift to start trying out Avocado

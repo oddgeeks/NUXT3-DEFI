@@ -7,7 +7,7 @@ import { Erc20__factory } from '~/contracts'
 
 const props = defineProps<MigrateToModalProps>()
 
-defineEmits(['destroy'])
+const emit = defineEmits(['destroy'])
 
 const { parseTransactionError } = useErrorHandler()
 
@@ -225,6 +225,8 @@ async function migrate() {
 
     setTokensForMigration([])
     setNFTsForMigration([])
+
+    emit('destroy')
   }
   catch (e: any) {
     const err = parseTransactionError(e)
