@@ -5,6 +5,15 @@ export function useAccountTrack(onSuccess?: () => void, onFailure?: () => void) 
     expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
   })
 
+  const actualTrackingAccount = computed({
+    get: () => {
+      return process.server ? null : trackingAccount.value
+    },
+    set: (value: string | null) => {
+      trackingAccount.value = value
+    },
+  })
+
   const route = useRoute()
 
   const init = async () => {
@@ -34,7 +43,7 @@ export function useAccountTrack(onSuccess?: () => void, onFailure?: () => void) 
   })
 
   return {
-    trackingAccount,
+    trackingAccount: actualTrackingAccount,
     isTrackingMode,
   }
 }
