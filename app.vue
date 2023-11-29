@@ -115,7 +115,6 @@ useIntervalFn(refresh, 15000)
 
       <BannerNewVersion />
       <BannerMultisigOnboard />
-      <BannerMigration />
       <Notifications />
       <TransactionsQueue />
       <Modals />

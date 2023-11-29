@@ -94,7 +94,7 @@ export function useBanner() {
   })
 
   const isMigrationBannerVisible = computed(() => {
-    if (!selectedSafe.value || $pwa?.needRefresh || showIncorrectNetworkBanner.value || route?.path === '/migration')
+    if (!selectedSafe.value || showInsufficientGasBanner.value || route?.path === '/migration')
       return false
 
     return !isHideMigrationBanner.value && isSelectedSafeLegacy.value

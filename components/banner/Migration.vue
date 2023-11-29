@@ -1,44 +1,25 @@
 <script setup lang="ts">
-const { isMigrationBannerVisible, hideMigrationBanner } = useBanner()
+const { hideMigrationBanner } = useBanner()
 </script>
 
 <template>
-  <ClientOnly>
-    <Transition name="slide-fade">
-      <div
-        v-if="isMigrationBannerVisible"
-        class="fixed bottom-[50px] left-1/2 z-10 flex w-full -translate-x-1/2 items-center gap-[15px] rounded-5 bg-primary/10 px-5 py-4 pr-7.5 backdrop-blur sm:max-w-[500px]"
-      >
-        <SvgoArrowRight />
-        <p class="flex-1 text-xs leading-5 text-primary">
-          Migrate your balances to Avocado Personal to get the latest updates
-        </p>
-        <CommonButton as="NuxtLink" to="/migration">
-          Migrate
-        </CommonButton>
-        <button
-          class="flex h-5 w-5 items-center justify-center rounded-full bg-white/20"
-          @click="hideMigrationBanner"
-        >
-          <SvgoX class="text-white" />
-        </button>
-      </div>
-    </Transition>
-  </ClientOnly>
+  <div
+    class="mb-4 flex w-full flex-col items-center justify-center gap-[15px] rounded-5 bg-primary/10 p-4 text-center text-sm text-primary sm:flex-row"
+  >
+    <div class="inline-flex items-center gap-2">
+      <SvgoEyes />
+      <span class="self-center text-xs">
+        Migrate your balances to Avocado Personal to get the latest updates
+      </span>
+    </div>
+    <CommonButton as="NuxtLink" to="/migration" class="flex h-7.5 justify-center !px-4 text-xs">
+      Migrate
+    </CommonButton>
+    <button
+      class="flex h-5 w-5 items-center justify-center rounded-full bg-white/20"
+      @click="hideMigrationBanner"
+    >
+      <SvgoX class="text-white" />
+    </button>
+  </div>
 </template>
-
-<style scoped>
-.slide-fade-enter-active {
-    transition: all 0.3s ease-out;
-}
-
-.slide-fade-leave-active {
-    transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
-}
-
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-    bottom: -20px;
-    opacity: 0;
-}
-</style>
