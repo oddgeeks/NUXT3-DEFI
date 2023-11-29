@@ -50,8 +50,6 @@ Nonce: {{NONCE}}
       generateNonceParams,
     ])
 
-    userNonce.value = nonce
-
     template = template.replaceAll('{{SIGNER}}', account.value)
     template = template.replaceAll('{{TIME}}', dateNow)
     template = template.replaceAll('{{NONCE}}', nonce)
@@ -59,6 +57,8 @@ Nonce: {{NONCE}}
     const signer = library.value.getSigner()
 
     const signature = await signer.signMessage(template)
+
+    userNonce.value = nonce
 
     if (!isReferrer) {
       await avoProvider.send('api_signUser', [
@@ -76,11 +76,15 @@ Nonce: {{NONCE}}
   catch (e: any) {
     const parsed = parseTransactionError(e)
 
-    emit('resolve', true)
-    // openSnackbar({
-    //   message: parsed.formatted,
-    //   type: 'error',
-    // })
+    if (!parsed.userRejected) {
+      emit('resolve', true)
+    }
+    else {
+      openSnackbar({
+        message: parsed.formatted,
+        type: 'error',
+      })
+    }
 
     logActionToSlack({
       account: account.value,

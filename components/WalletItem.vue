@@ -124,7 +124,11 @@ function handleClick() {
               </button>
               <SafeBadge show-tooltip class="!text-[10px]" :safe="safe" />
             </template>
-            <SvgoShieldChecked v-if="isProtected" v-tippy="'This account has Avocado Protect activated on 1 or more networks.'" class="text-primary" />
+            <SvgoShieldChecked
+              v-if="isProtected" v-tippy="'This account has Avocado Protect activated on 1 or more networks.'"
+              :class="!detailed ? 'h-4 w-4' : ''"
+              class="text-primary"
+            />
           </div>
           <button v-if="detailed" :disabled="pinnedSafes.length > 2 && !safePinned" @click.stop="togglePinSafe(safe.safe_address)">
             <SvgoPin :class="safePinned ? 'text-primary [&>path]:fill-primary' : 'text-gray-700'" />

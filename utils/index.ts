@@ -509,3 +509,12 @@ export function getInjectedName(ethereum?: any) {
 
   return getName(ethereum) ?? 'Injected'
 }
+
+export function isRequestUserRejected(err: any) {
+  try {
+    return typeof err === 'object' && 'code' in err && (err?.code === 4001 || err?.code === 'ACTION_REJECTED' || err?.message?.includes(errorMessages.metamaskUserDeniedSignature))
+  }
+  catch {
+    return false
+  }
+}

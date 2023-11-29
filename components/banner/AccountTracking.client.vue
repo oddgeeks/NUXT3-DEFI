@@ -46,7 +46,7 @@ async function disconnect() {
 
 <template>
   <div
-    class="fixed top-0 z-50 flex h-9 w-full shrink-0 items-center justify-center gap-[15px] bg-primary bg-opacity-10 sm:relative"
+    class="sticky top-0 z-50 flex h-9 w-full shrink-0 items-center justify-center gap-[15px] bg-primary/10 sm:relative"
   >
     <p class="text-xs text-primary">
       Tracking account: {{ shortenHash(trackingAccount!) }}
