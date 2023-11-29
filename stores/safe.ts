@@ -58,7 +58,17 @@ export const useSafe = defineStore('safe', () => {
     const secondary = safes.value.filter(s => !primary.some(p => isAddressEqual(p?.safe_address, s?.safe_address)))
     const customSafes = accountCustomSafeMapping.value[account.value] || []
 
-    return [...primary, ...secondary, ...customSafes].sort(a => isAddressEqual(a?.safe_address, selectedSafe.value?.safe_address) ? -1 : 1) as ISafe[]
+    const uniqueSafes = [...primary, ...secondary, ...customSafes].reduce((acc, curr) => {
+      if (!curr)
+        return acc
+
+      if (!acc.some(i => isAddressEqual(i?.safe_address, curr?.safe_address)))
+        acc.push(curr)
+      return acc
+    }
+    , [] as ISafe[])
+
+    return uniqueSafes.sort(a => isAddressEqual(a?.safe_address, selectedSafe.value?.safe_address) ? -1 : 1)
   })
 
   const { account } = useWeb3()

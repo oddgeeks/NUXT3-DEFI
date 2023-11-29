@@ -2,10 +2,12 @@
 const { allSafes, selectedSafe } = storeToRefs(useSafe())
 
 const filteredSafes = computed(() => {
-  const safes = allSafes.value.filter(safe => safe.multisig === 1)
   if (!selectedSafe.value)
-    return safes
-  return safes.filter(safe => safe.safe_address !== selectedSafe.value?.safe_address)
+    return []
+
+  return allSafes.value.filter(safe =>
+    safe.multisig === 1
+    && !isAddressEqual(safe.safe_address, selectedSafe.value?.safe_address))
 })
 
 function handleSelect(safe: ISafe) {
