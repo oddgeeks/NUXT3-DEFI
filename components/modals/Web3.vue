@@ -16,8 +16,9 @@ async function connect(provider: any) {
     await activate(await provider.connect(), undefined, true)
 
     const userNonce = useCookie<string | null>(`nonce-${account.value}`)
+    const referral = useCookie<string | null>('ref-code')
 
-    if (!userNonce.value) {
+    if (!userNonce.value || referral.value) {
       const { success } = await openRequestTermsSignature(provider.id)
 
       if (!success)

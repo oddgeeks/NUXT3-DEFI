@@ -25,6 +25,8 @@ const walletName = useLocalStorage(`safe-label-${props.safe?.safe_address}`, isM
 
 const baseColorClass = computed(() => isMultisig.value ? 'text-purple' : isLegacy.value ? 'text-gray-400' : 'text-primary')
 
+const isSafeSecondary = computed(() => !isAddressEqual(props.safe.owner_address, selectedSafe.value?.owner_address))
+
 const active = computed(() => {
   return safeAddress.value === props.safe?.safe_address
 })
@@ -111,7 +113,7 @@ function handleClick() {
               </span>
             </p>
             <span
-              v-if="props.safe.multisig" :class="{
+              v-if="props.safe.multisig && !isSafeSecondary" :class="{
                 'px-[5px] py-0.5 text-[10px]/[16px]': detailed,
                 'px-1 text-[8px]/[14px]': !detailed,
               }" class="inline-flex items-center justify-center rounded-lg bg-gray-700"
