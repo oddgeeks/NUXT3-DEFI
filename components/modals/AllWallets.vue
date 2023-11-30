@@ -12,9 +12,12 @@ const { account } = useWeb3()
 const search = ref('')
 const searcInputFocused = ref(false)
 
+const primarySafes = computed(() => filteredSafes.value.filter(safe => isAddressEqual(safe.owner_address, account.value)))
+const secondarySafes = computed(() => filteredSafes.value.filter(safe => !isAddressEqual(safe.owner_address, account.value)))
+
 async function handleCreateMultisig() {
   try {
-    const highestIndex = allSafes.value.reduce((acc, curr) => {
+    const highestIndex = primarySafes.value.reduce((acc, curr) => {
       if (curr.multisig_index > acc)
         return curr.multisig_index
       return acc
@@ -110,9 +113,6 @@ const filteredSafes = computed(() => {
 
   return result.map(i => i.item)
 })
-
-const primarySafes = computed(() => filteredSafes.value.filter(safe => isAddressEqual(safe.owner_address, account.value)))
-const secondarySafes = computed(() => filteredSafes.value.filter(safe => !isAddressEqual(safe.owner_address, account.value)))
 </script>
 
 <template>
