@@ -1,5 +1,6 @@
 import { ethers } from 'ethers'
 import { getAddress } from 'ethers/lib/utils'
+import { serialize } from 'error-serializer'
 
 // @ts-expect-error
 import * as XXH from 'xxhashjs'
@@ -512,7 +513,14 @@ export function getInjectedName(ethereum?: any) {
 
 export function isRequestUserRejected(err: any) {
   try {
-    return typeof err === 'object' && 'code' in err && (err?.code === 4001 || err?.code === 'ACTION_REJECTED' || err?.message?.includes(errorMessages.metamaskUserDeniedSignature))
+    const parsedError = serialize(err)
+
+    const message = (parsedError.message || err?.message || '').toLowerCase()
+
+    return typeof err === 'object'
+      && 'code' in err
+      && (err?.code === 4001
+      || err?.code === 'ACTION_REJECTED' || userRejectedMessages.some(msg => message.includes(msg)))
   }
   catch {
     return false
