@@ -249,7 +249,7 @@ function logActions() {
 
   const formattedTokenMessage = toBN(totalAmountInUsdToken).gt(0) ? `${formatUsd(totalAmountInUsdToken)} worth of tokens migrated` : null
   const formattedNftMessage = totalNftMigrated ? `${totalNftMigrated} NFTs migrated` : null
-  const formattedGasBalanceMessage = totalGasBalanceMigrated.gt(0) ? `${formatUsd(fromWei(totalGasBalanceMigrated, 6))} worth of gas balance migrated to ${selectedSafeForMigration.value?.safe?.safe_address}` : null
+  const formattedGasBalanceMessage = totalGasBalanceMigrated.gt(0) ? `${formatUsd(fromWei(totalGasBalanceMigrated))} worth of gas balance migrated to ${selectedSafeForMigration.value?.safe?.safe_address}` : null
 
   const chains = estimatedData.value?.map(({ chainId }) => formatChainName(chainId)).join(', ')
 
