@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const { selectedSafe, safeAddress } = storeToRefs(useSafe())
-const { library, account, provider } = useWeb3()
+const { library, account } = useWeb3()
+const { parseTransactionError } = useErrorHandler()
 
 const [open, toggle] = useToggle(false)
 const isChatwoodReady = ref(false)
@@ -10,52 +11,63 @@ function getIdentifier(account: string, safe: string) {
 }
 
 async function openMessagePopup() {
-  const message = chatwootMessage
-    .replace('{ACCOUNT}', account.value)
-    .replace('{SAFE_ADDRESS}', selectedSafe.value?.safe_address!)
+  try {
+    const message = chatwootMessage
+      .replace('{ACCOUNT}', account.value)
+      .replace('{SAFE_ADDRESS}', selectedSafe.value?.safe_address!)
 
-  const identifier = getIdentifier(account.value, selectedSafe.value?.safe_address!)
+    const identifier = getIdentifier(account.value, selectedSafe.value?.safe_address!)
 
-  const identifierHash = useCookie(`chatwoot-identifier-hash-${identifier}`)
+    const identifierHash = useCookie(`chatwoot-identifier-hash-${identifier}`)
 
-  if (!identifierHash.value) {
-    const signer = library.value.getSigner()
-
-    const signature = await signer.signMessage(message)
-
-    const hash = await $fetch('/api/chatwoot', {
-      method: 'post',
-      body: {
-        owner: account.value,
-        safeAddress: selectedSafe.value?.safe_address!,
-        signature,
-      },
-    })
-
-    if (!hash)
-      throw new Error('Failed to get hash')
-
-    identifierHash.value = hash
-  }
-
-  // @ts-expect-error
-  const userExist = !!window.$chatwoot.user
-
-  if (!userExist) {
     // @ts-expect-error
-    window.$chatwoot.setUser(identifier, {
+    if (!identifierHash.value || window?.$chatwoot?.resetTriggered) {
+      const signer = library.value.getSigner()
+
+      const signature = await signer.signMessage(message)
+
+      const hash = await $fetch('/api/chatwoot', {
+        method: 'post',
+        body: {
+          owner: account.value,
+          safeAddress: selectedSafe.value?.safe_address!,
+          signature,
+        },
+      })
+
+      if (!hash)
+        throw new Error('Failed to get hash')
+
+      identifierHash.value = hash
+
+      // @ts-expect-error
+      Object.assign(window.$chatwoot, {
+        resetTriggered: false,
+      })
+    }
+
+    // @ts-expect-error
+    // const userExist = !!window?.$chatwoot?.user
+
+    window.$chatwoot?.setUser(identifier, {
       identifier_hash: identifierHash.value,
       name: account.value,
       company_name: selectedSafe.value?.safe_address,
     })
+
+    setTimeout(() => {
+      // @ts-expect-error
+      window?.$chatwoot?.toggle()
+    }, 0)
   }
+  catch (e: any) {
+    const parsed = parseTransactionError(e)
 
-  const timeout = userExist ? 0 : 500
-
-  setTimeout(() => {
-    // @ts-expect-error
-    window.$chatwoot.toggle()
-  }, timeout)
+    notify({
+      message: parsed.formatted,
+      type: 'error',
+    })
+  }
 }
 
 onMounted(() => {
