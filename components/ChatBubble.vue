@@ -47,23 +47,18 @@ async function openMessagePopup() {
     }
 
     // @ts-expect-error
-    const userExist = !!window?.$chatwoot?.user
+    // const userExist = !!window?.$chatwoot?.user
 
-    if (!userExist) {
-      // @ts-expect-error
-      window.$chatwoot?.setUser(identifier, {
-        identifier_hash: identifierHash.value,
-        name: account.value,
-        company_name: selectedSafe.value?.safe_address,
-      })
-    }
-
-    const timeout = userExist ? 0 : 500
+    window.$chatwoot?.setUser(identifier, {
+      identifier_hash: identifierHash.value,
+      name: account.value,
+      company_name: selectedSafe.value?.safe_address,
+    })
 
     setTimeout(() => {
       // @ts-expect-error
       window?.$chatwoot?.toggle()
-    }, timeout)
+    }, 0)
   }
   catch (e: any) {
     const parsed = parseTransactionError(e)
