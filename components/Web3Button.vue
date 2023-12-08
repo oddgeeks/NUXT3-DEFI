@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { Tippy } from 'vue-tippy'
-import GasSVG from '~/assets/images/icons/gas.svg?component'
-import PlusSVG from '~/assets/images/icons/plus.svg?component'
 
 defineProps({
   hideGas: Boolean,
@@ -74,7 +72,7 @@ const connectedProvider = computed(() => {
       class="flex items-center justify-between gap-2 rounded-5 bg-gray-900 px-4 py-2 text-sm sm:py-3"
       @click="openTopUpGasModal()"
     >
-      <GasSVG
+      <SvgoGas
         class="transition-colors"
         :class="
           toBN(pendingGasAmount.data.value).gt('0')
@@ -95,7 +93,7 @@ const connectedProvider = computed(() => {
       <div v-else class="loading-box h-5 w-20 rounded-5" />
 
       <span class="ml-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-primary text-white">
-        <PlusSVG />
+        <SvgoPlus />
       </span>
     </button>
     <template v-if="!hideEOA">
@@ -105,12 +103,12 @@ const connectedProvider = computed(() => {
           interactive
           class="wallet-provider"
         >
-          <component :is="connectedProvider.logo" v-if="connectedProvider" class="h-5 w-5 sm:h-6 sm:w-6" />
+          <ProviderLogo v-if="connectedProvider" class="h-5 w-5 sm:h-6 sm:w-6" :provider-name="connectedProvider.name" />
           <template #content>
             <div class="flex w-full justify-between rounded-5 border border-gray-800 bg-gray-850 p-5">
               <div class="flex gap-4">
                 <div class="flex items-center gap-4">
-                  <component :is="connectedProvider.logo" v-if="connectedProvider" class="h-7.5 w-7.5 sm:h-9 sm:w-9" />
+                  <ProviderLogo v-if="connectedProvider" class="h-7.5 w-7.5 sm:h-9 sm:w-9" :provider-name="connectedProvider.name" />
                   <div class="flex flex-col items-start gap-2">
                     <span class="text-xs font-medium leading-[10px] text-gray-500">Owner's Address</span>
                     <span class="inline-flex items-center gap-2 text-lg font-semibold leading-5">{{ addressLabel }}
