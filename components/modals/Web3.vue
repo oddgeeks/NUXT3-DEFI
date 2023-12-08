@@ -93,7 +93,7 @@ const onSubmit = handleSubmit(() => {
       </div>
     </slot>
 
-    <ul class="grid gap-[15px] px-2 pb-2">
+    <ul class="grid gap-[15px]">
       <li v-for="provider in providers" :key="provider.name">
         <button
           v-if="isProviderVisible(provider)"
