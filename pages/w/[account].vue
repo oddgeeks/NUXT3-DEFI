@@ -18,7 +18,7 @@ if (!(await isSafeAddress(account)))
   <div class="container flex-1">
     <div class="flex items-center justify-center md:py-32">
       <div
-        class="flex flex-col justify-start space-y-6 rounded-5.5 bg-slate-50 p-5 dark:bg-gray-850 md:flex-row md:space-x-6 md:space-y-0 md:p-10"
+        class="flex flex-col justify-start space-y-6 rounded-5.5 bg-gray-850 p-5 md:flex-row md:space-x-6 md:space-y-0 md:p-10"
       >
         <div class="flex items-start">
           <StyledQrCode
@@ -38,7 +38,7 @@ if (!(await isSafeAddress(account)))
           </div>
 
           <Copy
-            class="text-wrap flex items-center justify-between gap-2 rounded-5 bg-slate-100 px-4 py-3 text-left text-xs dark:bg-slate-800"
+            class="text-wrap flex items-center justify-between gap-2 rounded-5 bg-gray-900 px-4 py-3 text-left text-xs"
             :text="account"
           >
             <template #content>

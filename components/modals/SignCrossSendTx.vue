@@ -94,13 +94,13 @@ watch(signatures, () => {
     <h1 class="mb-3 text-center">
       Sign Transaction
     </h1>
-    <h2 class="mb-7.5 text-center text-xs leading-5 text-slate-400">
+    <h2 class="mb-7.5 text-center text-xs leading-5 text-gray-400">
       Cross chain send transactions require <br>
       2 signatures
     </h2>
     <div class="grid grid-cols-2 gap-5">
-      <div class="flex flex-col items-center gap-5 rounded-5 p-4 dark:bg-gray-850">
-        <h1 class="text-xs text-slate-400">
+      <div class="flex flex-col items-center gap-5 rounded-5 bg-gray-850 p-4">
+        <h1 class="text-xs text-gray-400">
           Source Approval
         </h1>
         <div class="flex flex-col items-center gap-2.5">
@@ -111,8 +111,8 @@ watch(signatures, () => {
           {{ !!signatures.source ? 'Confirmed' : 'Confirm Now' }}
         </CommonButton>
       </div>
-      <div class="flex flex-col items-center gap-5 rounded-5 p-4 dark:bg-gray-850">
-        <h1 class="text-xs text-slate-400">
+      <div class="flex flex-col items-center gap-5 rounded-5 bg-gray-850 p-4">
+        <h1 class="text-xs text-gray-400">
           Dest. Approval
         </h1>
         <div class="flex flex-col items-center gap-2.5">

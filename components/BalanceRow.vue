@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { IBalance } from '~/stores/safe'
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
 
 const props = defineProps<{
   tokenBalance: IBalance
@@ -71,7 +70,7 @@ function onClick() {
           <span
             v-if="!summary"
             v-tippy="`${toBN(tokenBalance.balance).toFormat()} ${tokenBalance.symbol?.toUpperCase()}`"
-            class="max-w-[256px] text-sm font-medium uppercase text-slate-400"
+            class="max-w-[256px] text-sm font-medium uppercase text-gray-400"
           >
             {{
               formatDecimal(tokenBalance.balance)
@@ -81,7 +80,7 @@ function onClick() {
           <span
             v-else
             v-tippy="`${sum} ${tokenBalance.symbol?.toUpperCase()}`"
-            class="max-w-[256px] text-sm font-medium uppercase text-slate-400"
+            class="max-w-[256px] text-sm font-medium uppercase text-gray-400"
           >
             {{ formatDecimal(sum || 0) }}
             {{ tokenBalance.symbol }}
@@ -127,8 +126,7 @@ function onClick() {
       <ActionsButtonGroup v-if="!summary" :token-balance="balance" />
 
       <div v-else class="flex justify-end pr-7.5">
-        <ChevronDownSVG v-if="!collapse" class="h-[14px] w-[14px] text-slate-400" />
-        <ChevronDownSVG v-else class="h-[14px] w-[14px] rotate-180 text-slate-400" />
+        <SvgoChevronDown :class="collapse ? 'rotate-180' : ''" class="h-4 w-4 text-gray-400 " />
       </div>
     </td>
   </tr>

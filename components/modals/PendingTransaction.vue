@@ -11,6 +11,7 @@ const props = defineProps<{
 }>()
 
 const { getRpcProviderByChainId } = useShared()
+const { avoExplorerURL } = storeToRefs(useEnvironmentState())
 
 const events = [
   '0xacb5341cc21d71a005bd22634cec7391a7fd11ff2b563a7b301cac795f7a6a56',
@@ -106,30 +107,30 @@ const isSuccess = computed(() => {
         }}
       </h2>
 
-      <p v-if="!transaction" class="mt-2 text-xs leading-5 text-slate-400">
+      <p v-if="!transaction" class="mt-2 text-xs leading-5 text-gray-400">
         The transaction has been sent to be processed.
       </p>
 
       <p
         v-if="transaction && !isSuccess"
-        class="mt-2 text-xs text-slate-400"
+        class="mt-2 text-xs text-gray-400"
       >
         Try again or return to the home page.
       </p>
     </div>
 
     <div
-      class="bg flex items-center justify-between rounded-5 bg-slate-100 px-[18px] py-[14px] dark:bg-slate-800"
+      class="bg flex items-center justify-between rounded-5 bg-gray-900 px-[18px] py-[14px]"
     >
       <div v-if="type === 'bridge'" class="flex items-center gap-3">
         <div class="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-primary">
           <SVGBridge class="w-4" />
         </div>
-        <span class="text-sm font-medium text-slate-400">Bridge</span>
+        <span class="text-sm font-medium text-gray-400">Bridge</span>
       </div>
       <p v-else class="flex items-center gap-3">
         <ChainLogo class="h-[26px] w-[26px]" :chain="chainId" />
-        <span class="text-sm text-slate-400">{{ chainIdToName(chainId) }}</span>
+        <span class="text-sm text-gray-400">{{ chainIdToName(chainId) }}</span>
       </p>
       <CommonButton as="a" target="_blank" :href="`${avoExplorerURL}/tx/${hash}`" size="sm">
         View Explorer

@@ -2,12 +2,12 @@
 import InstadappSVG from '~/assets/images/logo/instadapp.svg?component'
 
 const info = useBuildInfo()
-const { isProd } = useAppConfig()
+const { isProd } = storeToRefs(useEnvironmentState())
 
 onMounted(() => {
   // console.clear()
   console.log(
-    `%cAvocado v${info.version} (${info.commit.slice(0, 8)}.${isProd ? 'PROD' : 'STAGING'})`,
+    `%cAvocado v${info.version} (${info.commit.slice(0, 8)}.${isProd.value ? 'PROD' : 'STAGING'})`,
     'color: white; background: #07A65D; font-size: 32px;padding: 8px;text-shadow: 2px 2px black;',
   )
 })
@@ -16,7 +16,7 @@ onMounted(() => {
 <template>
   <footer class="mt-24 hidden items-center justify-between px-10 py-8 sm:flex">
     <figure class="flex items-center gap-3">
-      <figcaption class="text-xs text-slate-400">
+      <figcaption class="text-xs text-gray-400">
         Built by
       </figcaption>
       <a target="_blank" href="https://instadapp.io/">
@@ -24,7 +24,7 @@ onMounted(() => {
       </a>
     </figure>
 
-    <nav class="flex gap-10 text-xs text-slate-400">
+    <nav class="flex gap-10 text-xs text-gray-400">
       <a target="_blank" href="https://guides.avocado.instadapp.io">Help</a>
       <a href="mailto:info@instadapp.io">Email</a>
       <a

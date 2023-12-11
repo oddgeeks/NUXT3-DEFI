@@ -1,4 +1,7 @@
 <script setup lang="ts">
+const props = defineProps<{
+  providerId?: string
+}>()
 const emit = defineEmits(['destroy', 'resolve'])
 const { avoProvider } = useSafe()
 
@@ -12,7 +15,8 @@ const pending = ref(false)
 async function handleSign() {
   try {
     const userNonce = useCookie<string | null>(`nonce-${account.value}`, {
-      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      // expires in 3 months
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30 * 3),
     })
 
     pending.value = true
@@ -30,10 +34,9 @@ Nonce: {{NONCE}}
       TIME: dateNow,
     }
 
-    const isReferrer = await avoProvider.send('api_hasReferralForUser', [account.value,
-    ])
+    const isReferrer = await avoProvider.send('api_hasReferralForUser', [account.value])
 
-    if (referral.value && !isReferrer) {
+    if (referral?.value && !isReferrer) {
       Object.assign(generateNonceParams, {
         referrer: referral.value,
       })
@@ -46,8 +49,6 @@ Nonce: {{NONCE}}
       generateNonceParams,
     ])
 
-    userNonce.value = nonce
-
     template = template.replaceAll('{{SIGNER}}', account.value)
     template = template.replaceAll('{{TIME}}', dateNow)
     template = template.replaceAll('{{NONCE}}', nonce)
@@ -56,13 +57,13 @@ Nonce: {{NONCE}}
 
     const signature = await signer.signMessage(template)
 
+    userNonce.value = nonce
+
     if (!isReferrer) {
-      const linkStatus = await avoProvider.send('api_signUser', [
+      await avoProvider.send('api_signUser', [
         signature,
         nonce,
       ])
-
-      console.log({ linkStatus })
     }
 
     setTimeout(() => {
@@ -73,9 +74,24 @@ Nonce: {{NONCE}}
   }
   catch (e: any) {
     const parsed = parseTransactionError(e)
-    openSnackbar({
-      message: parsed.formatted,
+
+    if (!parsed.userRejected) {
+      emit('resolve', true)
+    }
+    else {
+      openSnackbar({
+        message: parsed.formatted,
+        type: 'error',
+      })
+    }
+
+    logActionToSlack({
+      account: account.value,
       type: 'error',
+      action: 'sign-terms',
+      message: `Failed to sign terms: ${parsed.formatted}
+${'`Connector`'} ${props.providerId}
+<@UK9L88BS7>, <@U02NZML3JJ0>`,
     })
   }
   finally {
@@ -85,12 +101,12 @@ Nonce: {{NONCE}}
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center gap-7.5">
+  <div class="flex flex-col items-center justify-center gap-5 sm:gap-7.5">
     <SvgoAvocadoLogoMini class="h-20 w-20" />
-    <h1 class="text-3xl">
+    <h1 class="text-center text-2xl sm:text-3xl">
       Welcome to Avocado
     </h1>
-    <h2 class="text-center font-medium">
+    <h2 class="text-center text-sm font-medium sm:text-base">
       By connecting your wallet and using Avocado, you agree to our <NuxtLink class="text-primary" external target="_blank" to="https://instadapp.io/terms">
         Terms of Service
       </NuxtLink> and <NuxtLink class="text-primary" external target="_blank" to="https://instadapp.io/cookies">
@@ -98,7 +114,7 @@ Nonce: {{NONCE}}
       </NuxtLink>
     </h2>
 
-    <div class="flex w-full items-center justify-between gap-5 self-start">
+    <div class="flex w-full flex-col-reverse items-center justify-between gap-5 self-start sm:flex-row">
       <CommonButton class="flex-1 justify-center" size="lg" color="white" @click="$emit('resolve', false)">
         Cancel
       </CommonButton>

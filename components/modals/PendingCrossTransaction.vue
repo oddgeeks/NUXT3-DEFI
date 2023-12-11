@@ -10,6 +10,7 @@ const props = defineProps<{
 }>()
 
 const { avoProvider } = useSafe()
+const { avoExplorerURL } = storeToRefs(useEnvironmentState())
 
 const pending = ref(true)
 
@@ -118,23 +119,23 @@ onUnmounted(() => {
         Transaction {{ statusLabel }}
       </h2>
 
-      <p v-if="isPending" class="mt-3 text-xs font-medium leading-5 text-slate-400">
+      <p v-if="isPending" class="mt-3 text-xs font-medium leading-5 text-gray-400">
         The transaction has been sent to be processed.
       </p>
 
-      <p v-if="isFailed" class="mt-3 text-xs font-medium leading-5 text-slate-400">
+      <p v-if="isFailed" class="mt-3 text-xs font-medium leading-5 text-gray-400">
         Try again or return to the home page.
       </p>
 
       <div class="mt-7.5 flex items-center gap-2.5">
-        <div class="flex flex-1 items-center gap-3 rounded-5 bg-slate-100 px-4.5 py-[14px] dark:bg-slate-800">
+        <div class="-gray-900 flex flex-1 items-center gap-3 rounded-5 px-4.5 py-[14px]">
           <ChainLogo class="w-[26px]" :chain="fromChainId" />
-          <span class="text-sm text-slate-400"> {{ chainIdToName(fromChainId) }}</span>
+          <span class="text-sm text-gray-400"> {{ chainIdToName(fromChainId) }}</span>
         </div>
-        <ArrowRight class="text-slate-500" />
-        <div class="flex flex-1 items-center gap-3 rounded-5 bg-slate-100 px-4.5 py-[14px] dark:bg-slate-800">
+        <ArrowRight class="text-gray-500" />
+        <div class="flex flex-1 items-center gap-3 rounded-5 bg-gray-900 px-4.5 py-[14px]">
           <ChainLogo class="w-[26px]" :chain="toChainId" />
-          <span class="text-sm text-slate-400"> {{ chainIdToName(toChainId) }}</span>
+          <span class="text-sm text-gray-400"> {{ chainIdToName(toChainId) }}</span>
         </div>
       </div>
 

@@ -2,7 +2,6 @@ import type { SessionTypes } from '@walletconnect/types'
 import ExecuteTransaction from '~~/components/modals/Multisig/ExecuteTransaction.vue'
 import Bridge from '~~/components/modals/Bridge.vue'
 import Swap from '~~/components/modals/Swap.vue'
-import PendingTransaction from '~~/components/modals/PendingTransaction.vue'
 import Send from '~~/components/modals/Send/Main.vue'
 import SignCrossSendTx from '~~/components/modals/SignCrossSendTx.vue'
 import TopUpGas from '~~/components/modals/TopUpGas.vue'
@@ -61,6 +60,9 @@ import MFASignInstadappSigner from '~/components/modals/Mfa/SignInstadappSigner.
 import MFAActivateBackupSigner from '~/components/modals/Mfa/ActivateBackupSigner.vue'
 import MFAReviewBackupTransaction from '~/components/modals/Mfa/ReviewBackupTransaction.vue'
 import ReviewSignerProcess from '~/components/modals/Multisig/ReviewSignerProcess.vue'
+import AllWallets from '~/components/modals/AllWallets.vue'
+import TransactionShortcuts from '~/components/modals/TransactionShortcuts.vue'
+import AllDappConnections from '~/components/modals/AllDappConnections.vue'
 import RequestTermsSignature from '~/components/modals/RequestTermsSignature.vue'
 
 const { openModal } = useModal()
@@ -89,19 +91,8 @@ interface IWcTransactionModal {
   bookmark?: IBookmark
 }
 
-export function showPendingTransactionModal(hash: string,
-  chainId: number | string,
-  type?: IWeb3Action,
-  async = false) {
-  return openModal({
-    component: PendingTransaction,
-    async,
-    componentProps: {
-      hash,
-      chainId,
-      type,
-    },
-  })
+export function showPendingTransactionModal(params: IPendingTransactionModalParams) {
+  addTransactionToQueue(params)
 }
 
 export function openBridgeModal(address: string, chainId: number | string) {
@@ -113,6 +104,7 @@ export function openBridgeModal(address: string, chainId: number | string) {
     },
     options: {
       wrapperClass: 'max-w-[600px]',
+      contentClass: '!p-0',
     },
   })
 }
@@ -131,6 +123,7 @@ export function openSwapModal(address: string,
     },
     options: {
       wrapperClass: 'max-w-[600px]',
+      contentClass: '!p-0',
     },
   })
 }
@@ -150,7 +143,7 @@ export function openSendModal(chainId: number | string,
     },
     options: {
       wrapperClass: '!max-w-fit',
-      contentClass: '!px-7.5 !py-[32px]',
+      contentClass: '!p-0',
     },
   })
 }
@@ -158,6 +151,9 @@ export function openSendModal(chainId: number | string,
 export function openWalletConnectModal() {
   openModal({
     component: WalletConnect,
+    options: {
+      contentClass: '!p-0',
+    },
   })
 }
 
@@ -332,6 +328,9 @@ export function openYourWalletModal(address: string) {
 export function openNetworksModal() {
   openModal({
     component: Networks,
+    options: {
+      contentClass: '!p-0',
+    },
   })
 }
 
@@ -415,9 +414,12 @@ export function openSendNFTModal(NFTData: NFTData) {
   })
 }
 
-export function openSupportedNetworks() {
+export function openSupportedNetworks(networks?: Network[]) {
   openModal({
     component: SupportedNetworks,
+    componentProps: {
+      networks,
+    },
   })
 }
 
@@ -777,11 +779,14 @@ export function openPendingMigrationModal(
   })
 }
 
-export async function openRequestTermsSignature() {
+export async function openRequestTermsSignature(providerId?: string) {
   return openModal({
     component: RequestTermsSignature,
     id: 'request-terms-signature',
     async: true,
+    componentProps: {
+      providerId,
+    },
     options: {
       clickToClose: false,
       closeButton: false,
@@ -803,12 +808,13 @@ export async function openMfaTermsModal() {
 }
 
 export async function openMfaActivateModal(params: IMfaActivateModalParams) {
-  const { mfaType } = params || {}
+  const { mfaType, keyMfa } = params || {}
   return openModal({
     component: ActivateMFA,
     async: true,
     componentProps: {
       mfaType,
+      keyMfa,
     },
     options: {
       contentClass: '!p-0',
@@ -956,6 +962,36 @@ export function open2faTerminateSessionModal() {
     },
     cancelButtonProps: {
       color: 'white',
+    },
+  })
+}
+
+export function openAllWalletsModal() {
+  return openModal({
+    component: AllWallets,
+    options: {
+      wrapperClass: '!max-w-[800px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export function openTransactionShortcutsModal() {
+  return openModal({
+    component: TransactionShortcuts,
+    options: {
+      wrapperClass: '!max-w-[800px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export function openAllDappConnectionsModal() {
+  return openModal({
+    component: AllDappConnections,
+    options: {
+      wrapperClass: '!max-w-[800px]',
+      contentClass: '!p-0',
     },
   })
 }

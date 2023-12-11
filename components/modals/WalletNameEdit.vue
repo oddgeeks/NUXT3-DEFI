@@ -40,7 +40,7 @@ watch([walletName], () => {
       <p class="text-center text-[18px] font-semibold leading-[20px]">
         Edit Wallet Note
       </p>
-      <p class="text-[12px] font-medium leading-[20px] text-slate-400">
+      <p class="text-[12px] font-medium leading-[20px] text-gray-400">
         This is stored locally, and is visible only to you
       </p>
     </div>

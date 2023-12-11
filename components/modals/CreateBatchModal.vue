@@ -96,8 +96,12 @@ async function handleSubmit() {
       },
       'others')
 
-    if (tx)
-      showPendingTransactionModal(tx, props.chainId)
+    if (tx) {
+      showPendingTransactionModal({
+        chainId: props.chainId,
+        hash: tx,
+      })
+    }
 
     emit('destroy')
   }
@@ -178,7 +182,7 @@ watch(reactiveBatch, () => {
             </template>
           </div>
 
-          <p v-if="simulationDetails?.transaction.simulationId" class="text-xs font-medium text-slate-400">
+          <p v-if="simulationDetails?.transaction.simulationId" class="text-xs font-medium text-gray-400">
             View complete simulation report
             <NuxtLink target="_blank" class="inline-flex items-center gap-2 text-primary" external :to="`https://dashboard.tenderly.co/public/InstaDApp/avocado/simulator/${simulationDetails?.transaction.simulationId}?hideSidebar=true`">
               on Tenderly

@@ -20,7 +20,7 @@ defineEmits(['resolve', 'destroy'])
         Unable to execute transaction
       </h1>
       <div
-        class="text-center text-xs font-medium leading-5 text-slate-400"
+        class="text-center text-xs font-medium leading-5 text-gray-400"
       >
         Your transaction has been proposed but couldn't be executed. You can retry executing from <NuxtLink
           :to="`/multisig/${safeAddress}/pending-transactions/${proposalId}`"

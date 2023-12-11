@@ -27,9 +27,9 @@ watch(account, () => {
 </script>
 
 <template>
-  <div>
-    <div class="flex items-center justify-between border-b-[1px] border-white p-5 text-xs font-medium dark:border-slate-750">
-      <p class="text-slate-900 dark:text-white">
+  <div class="scroll-style overflow-auto sm:max-h-[65vh]">
+    <div class="flex items-center justify-between border-b-[1px] border-slate-750 p-5 text-xs font-medium">
+      <p>
         Select DeFi for migration
       </p>
       <button class="text-green-500" @click="() => setDefiForMigration(filteredPositions)">

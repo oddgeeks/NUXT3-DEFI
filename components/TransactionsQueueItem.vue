@@ -17,11 +17,14 @@ const crossTransaction = ref<ICrossChainTx>()
 const isCrossTransactionFetching = ref(true)
 const transactionPending = ref(true)
 const isSuccess = computed(() => status.value === TransactionStatus.Success)
+const { avoExplorerURL } = storeToRefs(useEnvironmentState())
+
 const events = [
   '0xacb5341cc21d71a005bd22634cec7391a7fd11ff2b563a7b301cac795f7a6a56',
   '0xdaf1e6e151973de199f3ea25b9c6a7c3d94299dc85e269cfd20e48e517ecf704',
 ]
 const provider = getRpcProviderByChainId(props.transactionParam.chainId)
+
 async function waitForTransaction() {
   try {
     await wait(5000)
@@ -31,6 +34,7 @@ async function waitForTransaction() {
     transactionPending.value = false
   }
 }
+
 async function waitForCrossTransaction() {
   await wait(5000)
   while (isCrossTransactionFetching.value) {
@@ -56,11 +60,11 @@ const status = computed(() => {
   else {
     if (transactionPending.value)
       return TransactionStatus.Pending
-    if ((!transactionPending.value && !transaction) || !transaction.value?.status)
-      return TransactionStatus.Failed
-    if (transaction.value.logs.some(i => i.topics.length && events.includes(i.topics[0])))
+
+    if (transaction.value && transaction.value.logs.some(i => i.topics.length && events.includes(i.topics[0])))
       return TransactionStatus.Success
-    return TransactionStatus.Failed
+
+    else return TransactionStatus.Failed
   }
 })
 function handleAnimationEnd() {
@@ -75,7 +79,7 @@ onMounted(() => {
 
 <template>
   <div
-    class="wrapper relative flex flex-col gap-3 overflow-hidden rounded-5 border p-4 dark:border-gray-800 dark:bg-gray-850 sm:w-[400px]"
+    class="wrapper relative flex flex-col gap-3 overflow-hidden rounded-5 border border-gray-800 bg-gray-850 p-4 sm:w-[400px]"
   >
     <div
       v-if="isSuccess && !transactionParam.preventAutoClose" class="countdown-animation absolute bottom-0 left-0 h-1 w-full bg-primary"
@@ -105,7 +109,7 @@ onMounted(() => {
         </span>
       </div>
       <button
-        class="flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 dark:bg-gray-800"
+        class="flex h-5 w-5 items-center justify-center rounded-full bg-gray-800"
         aria-label="Close modal" @click="removeTransactionFromQueue(transactionParam.hash)"
       >
         <SvgoX class="h-2.5 w-2.5" />

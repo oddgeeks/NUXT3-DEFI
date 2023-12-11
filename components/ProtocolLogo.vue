@@ -212,7 +212,7 @@ defineProps < {
     v-bind="$attrs"
     width="64"
     height="64"
-    class="fill-white dark:fill-[#231815]"
+    class="fill-[#231815]"
     viewBox="0 0 64 64"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

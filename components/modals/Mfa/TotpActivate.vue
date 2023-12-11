@@ -46,7 +46,7 @@ async function handleContinue() {
         <h1 class="text-lg">
           {{ mfa.title }}
         </h1>
-        <h2 class="text-xs font-medium text-slate-400">
+        <h2 class="text-xs font-medium text-gray-400">
           {{ mfa.description }}
         </h2>
       </div>

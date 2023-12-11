@@ -1,88 +1,54 @@
-import { JsonRpcRetryBatchProvider, StaticJsonRpcRetryProvider } from '@instadapp/utils'
+import { StaticJsonRpcRetryBatchProvider } from '@instadapp/utils'
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { ethers } from 'ethers'
+import type { ethers } from 'ethers'
 
-const rpcBatchInstances: Record<string, ethers.providers.StaticJsonRpcProvider> = {}
-const rpcBatchRetryInstances: Record<string, ethers.providers.StaticJsonRpcProvider> = {}
 const rpcInstances: Record<string, ethers.providers.StaticJsonRpcProvider> = {}
 
 export const useShared = defineStore('shared', () => {
-  const rpcs = ref<Record<string, string>>({})
-  const transactionStack = ref<IEstimatedActions[]>([])
+  const rpcList = ref<Record<string, string[]>>({})
+  const isProd = ref(false)
 
-  function getRpcFallbackUrl(chainId: string | number) {
-    const rpcURL = rpcs.value[chainId]
+  const rpcs = computed(() => networks.reduce((acc, network) => {
+    acc[network.chainId] = network.params.rpcUrls[0]
+    return acc
+  }, {} as Record<string, string>))
 
-    if (rpcURL)
-      return rpcURL
-
-    const network = availableNetworks.find(i => i.chainId == chainId)
-
-    if (network)
-      return network.params.rpcUrls[0]
-  }
+  const isAppProduction = useCookie<boolean | undefined>('app-production', {
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
+  })
 
   function getRpcProviderByChainId(chainId: number | string) {
-    const rpcURL = getRpcFallbackUrl(chainId)
+    const list = rpcList.value[chainId]
 
-    if (!rpcURL)
+    if (!list)
       throw new Error(`No RPC URL for chainId: ${chainId}`)
 
     if (!rpcInstances[chainId]) {
-      rpcInstances[chainId] = new StaticJsonRpcRetryProvider(rpcURL, {
+      rpcInstances[chainId] = new StaticJsonRpcRetryBatchProvider(list, {
         delay: 50,
+        timeouts: [5000, 7000, 10000],
       })
     }
 
     return rpcInstances[chainId]
   }
 
-  function getRpcBatchProviderByChainId(chainId: number | string) {
-    const rpcURL = getRpcFallbackUrl(chainId)
-
-    if (!rpcURL)
-      throw new Error(`No RPC URL for chainId: ${chainId}`)
-
-    if (!rpcBatchInstances[chainId])
-      rpcBatchInstances[chainId] = new ethers.providers.JsonRpcBatchProvider(rpcURL)
-
-    return rpcBatchInstances[chainId]
-  }
-
-  function getRpcBatchRetryProviderByChainId(chainId: number | string) {
-    const rpcURL = getRpcFallbackUrl(chainId)
-
-    if (!rpcURL)
-      throw new Error(`No RPC URL for chainId: ${chainId}`)
-
-    if (!rpcBatchRetryInstances[chainId]) {
-      rpcBatchRetryInstances[chainId] = new JsonRpcRetryBatchProvider(rpcURL, {
-        delay: 50,
-      })
-    }
-
-    return rpcBatchRetryInstances[chainId]
-  }
-
   function getRpcURLByChainId(chainId: number | string) {
-    const rpcURL = getRpcFallbackUrl(chainId)
+    const list = rpcList.value[chainId]
 
-    if (!rpcURL)
+    if (!list?.length)
       throw new Error(`No RPC URL for chainId: ${chainId}`)
 
-    return rpcURL
-  }
-
-  function addToTransactionStack(action: IEstimatedActions) {
-    transactionStack.value.push(action)
+    return list[0]
   }
 
   return {
+    isProd,
     rpcs,
+    rpcList,
     getRpcProviderByChainId,
     getRpcURLByChainId,
-    getRpcBatchProviderByChainId,
-    getRpcBatchRetryProviderByChainId,
+    isAppProduction,
     transactionStack,
     addToTransactionStack,
   }

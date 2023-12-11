@@ -11,11 +11,16 @@ import type { IBalance } from '~/stores/safe'
 const emit = defineEmits(['navigate'])
 
 const { tokenBalances, totalEoaBalance, eoaBalances, fundedEoaNetworks } = useAvocadoSafe()
+const { public: { isVercelProd } } = useRuntimeConfig()
+const { avoOnboardURL, isProd } = storeToRefs(useEnvironmentState())
+const { isAppProduction } = storeToRefs(useShared())
 const { isOnboardBannerVisible } = useBanner()
 const { authorisedNetworks } = useAuthorities()
 const [moreOptions, toggleOptions] = useToggle(false)
 const { safeAddress } = useAvocadoSafe()
 const { navigations } = useNavigation()
+
+const router = useRouter()
 
 const sortedBalances = computed(() => {
   return sortByMany<IBalance>(tokenBalances.value, [
@@ -28,6 +33,14 @@ const sortedBalances = computed(() => {
         .minus(a?.balance || 0)
         .toNumber(),
   ])
+})
+
+const toggleEnv = computed({
+  get: () => isProd.value,
+  set: (value) => {
+    isAppProduction.value = value
+    router.go(0)
+  },
 })
 
 const firstAvailableChain = computed(() => authorisedNetworks.value?.length ? authorisedNetworks.value[0]?.chainId : 1)
@@ -56,7 +69,7 @@ function openBridge() {
 
 <template>
   <div :class="{ 'pointer-events-none blur': !safeAddress }">
-    <div class="font-base flex w-full flex-col gap-2 border-y-1 border-slate-150 px-7.5 py-4 text-slate-400 dark:border-slate-750">
+    <div class="font-base flex w-full flex-col gap-2 border-y-1 border-slate-750 px-7.5 py-4 text-gray-400">
       <template
         v-for="nav in navigations"
         :key="nav.to"
@@ -72,17 +85,17 @@ function openBridge() {
         >
           <component :is="nav.icon" class="h-4 w-4" />
           {{ nav.label }}
-          <span v-if="nav?.count" class="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-slate-500 px-[5px] text-xs text-white">
+          <span v-if="nav?.count" class="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gray-500 px-[5px] text-xs text-white">
             {{ nav?.count }}
           </span>
         </NuxtLink>
       </template>
     </div>
-    <div class="flex w-full flex-col gap-2 border-b-1 border-slate-150 px-7.5 py-4 text-slate-400 dark:border-slate-750">
+    <div class="flex w-full flex-col gap-2 border-b-1 border-slate-750 px-7.5 py-4 text-gray-400">
       <button
         class="flex h-11 items-center justify-between"
         :class="{
-          'text-slate-900 dark:text-white': moreOptions,
+          'text-white': moreOptions,
         }"
         @click="toggleOptions(!moreOptions)"
       >
@@ -121,14 +134,13 @@ function openBridge() {
           <PlusCircleSVG class="h-4 w-4" />
           Add custom Tokens
         </button>
-        <NuxtLink
+        <button
           class="flex h-11 items-center gap-2.5"
-          :class="$route.query.tab === 'bookmarks' ? 'text-primary' : ''"
-          :to="{ path: '/', query: { tab: 'bookmarks' } }"
+          @click="openTransactionShortcutsModal()"
         >
           <SvgoBookmark class="h-4 w-4" />
           Transaction Shortcuts
-        </NuxtLink>
+        </button>
         <NuxtLink
           active-class="text-primary"
           class="flex h-11 items-center gap-2.5"
@@ -157,8 +169,11 @@ function openBridge() {
         </NuxtLink>
       </div>
     </div>
+    <div v-if="!isVercelProd" class="flex w-full flex-col gap-2  px-7.5 py-4 text-slate-400">
+      <CommonToggle v-model="toggleEnv" text-classes="!text-base !text-gray-400" text="Use Production" />
+    </div>
     <div v-if="eoaBalances && eoaBalances?.length && isOnboardBannerVisible" class="flex flex-col gap-[14px] px-7.5 py-6 text-xs">
-      <span class="text-center text-slate-400 sm:text-left">You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet (EOA)</span>
+      <span class="text-center text-gray-400 sm:text-left">You have {{ formatUsd(totalEoaBalance?.toNumber()) }} of assets spread across {{ fundedEoaNetworks }} networks on your wallet (EOA)</span>
       <div class="flex justify-center sm:justify-start">
         <CommonButton
           size="sm"

@@ -40,18 +40,11 @@ async function handleTerminate2faSession() {
 </script>
 
 <template>
-  <span v-if="formattedTime" class="flex w-fit items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-1.5 text-sm font-medium">
-    <SvgoInfo2 v-tippy="'You will not be asked to verify using OTP before doing a transaction for the specified time'" class="w-4 text-primary" />
+  <button v-if="formattedTime" type="button" class="flex w-fit items-center gap-2 rounded-5 bg-primary/10 px-3 py-1.5 text-sm font-medium" @click="handleTerminate2faSession">
+    <SvgoUnlocked v-tippy="'You will not be asked to verify using OTP before doing a transaction for the specified time'" class="w-4 text-primary" />
 
-    <span class="text-primary">
-      Session unlocked for
-
-    </span>
-    <span class="rounded-md bg-white px-1.5 text-xs leading-5 text-slate-900 dark:bg-slate-900 dark:text-white">
+    <span class="rounded-5 bg-primary px-1.5 text-xs tabular-nums leading-5 text-white">
       {{ formattedTime }}
     </span>
-    <button v-tippy="'Terminate Session'" type="button" @click="handleTerminate2faSession">
-      <SvgoX />
-    </button>
-  </span>
+  </button>
 </template>

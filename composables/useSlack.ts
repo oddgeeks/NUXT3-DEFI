@@ -2,7 +2,7 @@ type MetadataTypes = typeof MetadataEnums[keyof typeof MetadataEnums]
 
 interface ISlackMessage {
   message: string
-  action: IWeb3Action | MetadataTypes | 'add-token' | 'upgrade' | 'deploy' | 'network' | 'nft' | 'multisig' | 'proposal' | 'fetch-nonce' | '2fa-activated' | '2fa-deactivated' | '2fa-method-activated' | '2fa-method-deactivated'
+  action: IWeb3Action | MetadataTypes | 'add-token' | 'upgrade' | 'deploy' | 'network' | 'nft' | 'multisig' | 'proposal' | 'fetch-nonce' | '2fa-activated' | '2fa-deactivated' | '2fa-method-activated' | '2fa-method-deactivated' | 'sign-terms' | 'migration'
   account: string
   type?: ISlackMessageType
   txHash?: string
@@ -43,6 +43,9 @@ const prefixes: Record<ISlackMessage['action'], string> = {
   '2fa-deactivated': '2FA Deactivated',
   '2fa-method-activated': '2FA Activated',
   '2fa-method-deactivated': '2FA Deactivated',
+  'migration': 'Migration',
+  'sign-terms': 'Sign Terms',
+  'avocado-bridge': 'Avocado Bridge',
 }
 
 const ignoredMessages = [
@@ -57,8 +60,10 @@ const ignoredMessages = [
 export function logActionToSlack(slackMessage: ISlackMessage) {
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { atLeastOneMfaVerifed, getMFAToken } = useMfa()
+  const { avoExplorerURL, isProd } = storeToRefs(useEnvironmentState())
   const { isObservableAccount } = storeToRefs(useSafe())
   const latestMfaType = useState('latest-mfa-type')
+  const { provider } = useWeb3()
 
   const build = useBuildInfo()
 
@@ -84,7 +89,7 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
 
   const explorerLink
     = chainId && txHash
-      ? `<${`${avoExplorerURL}/tx/${txHash}`}|${shortenHash(
+      ? `<${`${avoExplorerURL.value}/tx/${txHash}`}|${shortenHash(
           txHash,
           12,
         )}>`
@@ -129,7 +134,12 @@ export function logActionToSlack(slackMessage: ISlackMessage) {
     logMessage = `<@UK9L88BS7>,<@U0146FL6CSZ> ${logMessage}`
   }
 
-  slack(logMessage, type, isBridgeError)
+  const providerName = getInjectedName(provider.value)
+
+  if (providerName)
+    logMessage += `\n${'`Wallet Provider`'} ${providerName}`
+
+  slack(logMessage, type, isBridgeError, isProd.value)
 
   latestMfaType.value = undefined
 }

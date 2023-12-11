@@ -69,13 +69,13 @@ const filteredContacts = computed(() => {
       >
         <li v-for="contact in filteredContacts" :key="contact.address + contact.chainId">
           <button
-            class="flex w-full flex-col gap-2.5 rounded-[20px] bg-slate-50 px-4 py-3 dark:bg-gray-850"
+            class="flex w-full flex-col gap-2.5 rounded-[20px] bg-gray-850 px-4 py-3"
             type="button"
             @click="emit('resolve', true, contact)"
           >
             <div class="flex w-full justify-between">
               <span class="text-sm font-semibold">{{ contact.name }}</span>
-              <ArrowRight class="h-4 w-4 text-slate-400" />
+              <ArrowRight class="h-4 w-4 text-gray-400" />
             </div>
             <div class="flex w-full items-center justify-between text-xs">
               <div class="flex items-center gap-2">
@@ -84,17 +84,17 @@ const filteredContacts = computed(() => {
                   class="h-4.5 w-4.5"
                   :chain="contact.chainId"
                 />
-                <span class="text-slate-900 dark:text-white">{{
+                <span>{{
                   shortenHash(contact.address)
                 }}</span>
               </div>
-              <span class="text-slate-400">{{ getSentTimes(contact) }}</span>
+              <span class="text-gray-400">{{ getSentTimes(contact) }}</span>
             </div>
           </button>
         </li>
       </ul>
       <div v-else class="flex h-64 flex-col items-center justify-center">
-        <p class="text-slate-400">
+        <p class="text-gray-400">
           Nothing could be found
         </p>
       </div>

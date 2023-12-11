@@ -46,7 +46,7 @@ async function handleTokenSelection() {
   <button
     type="button"
     :disabled="pending"
-    class="inline-flex h-fit items-center gap-2.5 rounded-2xl bg-white py-3 pl-[14px] pr-3 text-sm uppercase dark:bg-gray-900"
+    class="inline-flex h-fit items-center gap-2.5 rounded-10 bg-gray-900 py-3 pl-[14px] pr-3 text-sm uppercase"
     @click="handleTokenSelection"
   >
     <div v-if="pending" class="loading-box my-1 h-5 w-20 rounded-lg" />
@@ -54,7 +54,7 @@ async function handleTokenSelection() {
       <SafeTokenLogo :network-logo-class="networkLogoClass" :chain-id="chainId" class="h-6 w-6" :url="selectedToken?.logoURI" />
       <span class="inline-flex w-full items-center justify-between gap-[6px]">
         {{ selectedToken?.symbol }}
-        <ChevronDownSVG class="w-5 -rotate-90 text-slate-400" />
+        <ChevronDownSVG class="w-5 -rotate-90 text-gray-400" />
       </span>
     </template>
   </button>

@@ -22,7 +22,7 @@ watch(lastNoticeShowDate, () => {
     <p class="text-[18px] font-semibold leading-[25px]">
       Update Avocado
     </p>
-    <p class="mt-[12px] text-center text-[12px] leading-[20px] text-slate-400">
+    <p class="mt-[12px] text-center text-[12px] leading-[20px] text-gray-400">
       New Avocado version available. Please update to a newer version to ensure seamless experience & access to latest features.
     </p>
     <div class="mt-[30px] flex w-full flex-col-reverse items-center justify-center gap-[16px] md:flex-row md:gap-2">

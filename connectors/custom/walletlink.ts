@@ -7,6 +7,7 @@ interface WalletLinkConnectorArguments {
   appLogoUrl?: string
   darkMode?: boolean
   supportedChainIds?: number[]
+  avoChainId?: number
 }
 
 export class WalletLinkConnector extends AbstractConnector {
@@ -24,6 +25,7 @@ export class WalletLinkConnector extends AbstractConnector {
     appLogoUrl,
     darkMode,
     supportedChainIds,
+    avoChainId,
   }: WalletLinkConnectorArguments) {
     super({ supportedChainIds })
 
@@ -31,13 +33,14 @@ export class WalletLinkConnector extends AbstractConnector {
     this.appName = appName
     this.appLogoUrl = appLogoUrl
     this.darkMode = darkMode || false
+    // @ts-expect-error
+    this.avoChainId = avoChainId
 
     this.handleChainChanged = this.handleChainChanged.bind(this)
     this.handleAccountsChanged = this.handleAccountsChanged.bind(this)
   }
 
   public async activate(): Promise<ConnectorUpdate> {
-    // @ts-expect-error
     if (window.ethereum && window.ethereum.isCoinbaseWallet === true) {
       // user is in the dapp browser on Coinbase Wallet
       this.provider = window.ethereum
@@ -56,7 +59,8 @@ export class WalletLinkConnector extends AbstractConnector {
       })
       this.provider = this.walletLink.makeWeb3Provider(
         this.url,
-        avoChainId as any,
+        // @ts-expect-error
+        this.avoChainId as any,
       )
     }
 

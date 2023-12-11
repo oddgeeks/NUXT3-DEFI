@@ -1,3 +1,5 @@
+import type { UnwrapNestedRefs } from "nuxt/dist/app/compat/capi";
+
 interface Window {
   ethereum: any;
 }
@@ -24,7 +26,19 @@ declare module '*.svg?skipsvgo' {
   export default src
 }
 
-type ChainId = 1 | 137 | 42161 | 10 | 56 | 43114 | 100 | 1101 | 634 | 63400;
+declare global {
+  type ChainId = 1 | 137 | 42161 | 10 | 56 | 43114 | 100 | 1101 | 634 | 63400;
+
+interface IBlockQueryChain {
+  id: string
+  name: string
+  created_at: string
+  updated_at: string
+  native_token_address: string
+  wrapped_token_address: string
+  free_rpc_urls: string[]
+}
+
 
 interface Provider {
   id: string;
@@ -284,11 +298,13 @@ interface IOptionsParams {
   chainId: string | number,
   provider: ethers.providers.StaticJsonRpcProvider
   server?: boolean
+  is_prod: boolean
 } 
 
 interface IComputeSafeParams {
   provider: ethers.providers.StaticJsonRpcProvider
   accountAddress: string
+  isProd: boolean
 }
 
 interface IToToken {
@@ -374,7 +390,6 @@ interface IMigrationTransaction {
 
 interface IConnectionMeta {
   provider: string | null;
-  address: string;
 }
 
 interface IPendingTransactionModalParams {
@@ -396,6 +411,15 @@ type IOptions = {
   snackOptions?: ISnackOptions;
   sheetPosition?: "top" | "bottom";
 };
+
+interface IPendingTransactionModalParams {
+  hash: string
+  chainId: number | string
+  toChainId?: number | string
+  type?: IWeb3Action
+  async?: boolean
+  crossChain?: boolean
+}
 
 type IWeb3Action = "transfer" | "bridge" | "swap" | "gas-topup" | "reedem" | "claim" | 'deploy' | 'upgrade' | 'nft' | 'dapp';
 
@@ -733,12 +757,42 @@ interface ISigner {
   chainIds: string[]
 }
 
+interface PwaInjection {
+  isInstalled: boolean
+  showInstallPrompt: Ref<boolean>
+  cancelInstall: () => void
+  install: () => Promise<void>
+  swActivated: Ref<boolean>
+  registrationError: Ref<boolean>
+  offlineReady: Ref<boolean>
+  needRefresh: Ref<boolean>
+  updateServiceWorker: (reloadPage?: boolean | undefined) => Promise<void>
+  cancelPrompt: () => Promise<void>
+  getSWRegistration: () => ServiceWorkerRegistration | undefined
+}
+
+declare module '#app' {
+  interface NuxtApp {
+    $pwa: UnwrapNestedRefs<PwaInjection>
+  }
+}
+
 type ChainFees = Record<string, ICalculatedFee>
 type ChainFeeErrors = Record<string, string>
 
 interface ISignerAddress {
   name: string
   address: string
+}
+
+interface IWalletConnectBannedDappList {
+  bannedMessage: string;
+  warningMessage: string;
+  items: {
+    url: string;
+    warn?: boolean;
+    ban?: boolean;
+  }[]
 }
 
 interface INavigationTab {
@@ -761,10 +815,11 @@ interface IMfaAuthenticateParams {
   
 }
 
-type MfaRequestType = 'transaction' | 'delete' | 'update'
+type MfaRequestType = 'transaction' | 'delete' | 'update' | 'key'
 
 interface IMfaActivateModalParams {
   mfaType: IMfa
+  keyMfa: IKeyMfa
 }
 
 type MfaVerify = (mfa: IMfa, code: string) => Promise<boolean>
@@ -811,3 +866,8 @@ interface IOpenReviewSignerProcessModalParams{
     metadata: string
   }
 }
+}
+
+
+
+export {}

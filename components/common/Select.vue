@@ -104,7 +104,7 @@ whenever(open, () => {
         { 'adjuster rounded-b-none border-b-transparent': open },
         containerClasses,
       ]"
-      class="relative flex max-h-12 w-full items-center gap-2.5 rounded-[14px] border-1 border-slate-150 bg-slate-50 px-[14px] py-3 text-left dark:border-slate-700 dark:bg-gray-850"
+      class="relative flex max-h-12 w-full items-center gap-2.5 rounded-10 border-1  border-gray-800 bg-gray-850 px-[14px] py-3 text-left"
       @click="toggle()"
     >
       <slot name="button-prefix">
@@ -134,14 +134,14 @@ whenever(open, () => {
       <div v-if="open">
         <ul
           :class="listClasses"
-          class="absolute flex max-h-60 w-full flex-col gap-1.5 overflow-auto rounded-b-[14px] border-1 border-t-0 border-slate-150 bg-slate-50 px-1 py-[15px] dark:border-slate-700 dark:bg-gray-850"
+          class="absolute flex max-h-60 w-full flex-col gap-1.5 overflow-auto rounded-b-[14px] border-1 border-t-0 border-gray-800 bg-gray-850 px-1 py-[15px]"
         >
           <CommonInput v-if="searchable" v-model="search" autofocus placeholder="Search" name="search-input" class="-mt-3 !p-2" input-classes="!py-2" type="search" />
           <li
             v-for="(option, i) in actualOptions"
             :key="i"
-            class="rounded-[14px] text-left text-sm hover:bg-slate-100 hover:dark:bg-slate-800"
-            :class="{ 'bg-slate-100 dark:bg-slate-800': isSelected(option, i) }"
+            class="rounded-[14px] text-left text-sm  hover:bg-gray-900"
+            :class="{ 'bg-gray-900': isSelected(option, i) }"
           >
             <button
               type="button"
@@ -188,7 +188,7 @@ whenever(open, () => {
   bottom: -2px;
   width: 2px;
   height: 2px;
-  @apply dark:bg-slate-700 bg-slate-150;
+  @apply bg-slate-700 ;
 }
 
 .adjuster:after {
@@ -198,6 +198,6 @@ whenever(open, () => {
   bottom: -2px;
   width: 2px;
   height: 2px;
-  @apply dark:bg-slate-700 bg-slate-150;
+  @apply bg-slate-700;
 }
 </style>

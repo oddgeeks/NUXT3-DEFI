@@ -15,6 +15,7 @@ const { addSignersWithThreshold, removeSignerWithThreshold } = useAvocadoSafe()
 const { parseTransactionError } = useErrorHandler()
 const { selectedSafe } = storeToRefs(useSafe())
 const { instadappSignerNetworks } = storeToRefs(useMultisig())
+const { instadappSigner } = storeToRefs(useEnvironmentState())
 const { fetchSafeInstanceses } = useSafe()
 const { backupSigner, terminateMFAToken } = useMfa()
 const { account } = useWeb3()
@@ -22,8 +23,8 @@ const { $t } = useNuxtApp()
 
 const signerAdded = computed(() => isSignerAdded(selectedSafe.value!, props.address, props.chainId))
 
-const isInstadappSigner = computed(() => isAddressEqual(props.address, instadappSigner))
-const isInstadappSignerAdded = computed(() => isSignerAdded(selectedSafe.value!, instadappSigner, props.chainId))
+const isInstadappSigner = computed(() => isAddressEqual(props.address, instadappSigner.value))
+const isInstadappSignerAdded = computed(() => isSignerAdded(selectedSafe.value!, instadappSigner.value, props.chainId))
 
 const isBackupSignerAvailable = computed(() => {
   if (!backupSigner.value)
@@ -65,7 +66,7 @@ async function handleAddSigner() {
   try {
     pending.value = true
 
-    const { success } = await openReviewSignerProcessModal({
+    const { success, payload } = await openReviewSignerProcessModal({
       chainId: props.chainId,
       actions: addSignerActions.value,
       deleteSigner: false,
@@ -90,6 +91,7 @@ async function handleAddSigner() {
           action: '2fa-activated',
           chainId: String(props.chainId),
           message: `Instadapp signer activated on ${chainName}`,
+          txHash: payload.txHash,
         })
       }
 

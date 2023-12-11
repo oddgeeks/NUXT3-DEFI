@@ -24,16 +24,6 @@ export const useSafe = defineStore('safe', () => {
   const safeAddress = ref()
   const mainSafeAddress = ref()
   const multiSigSafeAddress = ref()
-  const { connectionMeta } = useConnectors()
-
-  const accountSafeMapping = useCookie<Record<string, string>>('account-safe-mapping', {
-    maxAge: 60 * 60 * 24 * 365 * 10,
-    default: () => ref({}),
-  })
-  const safeTotalBalanceMapping = useCookie<Record<string, string>>('safe-balance-mapping', {
-    maxAge: 60 * 60 * 24 * 365 * 10,
-    default: () => ref({}),
-  })
 
   const route = useRoute()
   const ensName = ref()
@@ -49,11 +39,26 @@ export const useSafe = defineStore('safe', () => {
   const safesLoading = ref(false)
   const optionsLoading = ref(false)
 
+  const accountSafeMapping = useCookie<Record<string, string>>('account-safe-mapping', {
+    maxAge: 60 * 60 * 24 * 365 * 10,
+    default: () => ref({}),
+  })
+  const safeTotalBalanceMapping = useCookie<Record<string, string>>('safe-balance-mapping', {
+    maxAge: 60 * 60 * 24 * 365 * 10,
+    default: () => ref({}),
+  })
+
+  const accountCustomSafeMapping = useCookie<Record<string, ISafe[]>>('account-custom-safe-mapping', {
+    maxAge: 60 * 60 * 24 * 365 * 10,
+    default: () => ref({}),
+  })
+
   const allSafes = computed<ISafe[]>(() => {
     const primary = [mainSafe.value, multiSigSafe.value, legacySafe.value].filter(Boolean)
     const secondary = safes.value.filter(s => !primary.some(p => isAddressEqual(p?.safe_address, s?.safe_address)))
+    const customSafes = accountCustomSafeMapping.value[account.value] || []
 
-    return [...primary, ...secondary].sort(a => isAddressEqual(a?.safe_address, selectedSafe.value?.safe_address) ? -1 : 1) as ISafe[]
+    return [...primary, ...secondary, ...customSafes].sort(a => isAddressEqual(a?.safe_address, selectedSafe.value?.safe_address) ? -1 : 1) as ISafe[]
   })
 
   const { account } = useWeb3()
@@ -61,11 +66,12 @@ export const useSafe = defineStore('safe', () => {
   const { fetchTokenByAddress } = useTokens()
   const documentVisibility = useDocumentVisibility()
   const { parseTransactionError } = useErrorHandler()
-  const { getRpcProviderByChainId, getRpcBatchProviderByChainId, getRpcBatchRetryProviderByChainId } = useShared()
+  const { getRpcProviderByChainId } = useShared()
   const { trackingAccount } = useAccountTrack()
 
-  const avoProvider = getRpcProviderByChainId(avoChainId)
-  const avoBatchProvider = getRpcBatchRetryProviderByChainId(avoChainId)
+  const { multisigForwarderProxyAddress, forwarderProxyAddress, multisigURL, avoChainId, isProd } = storeToRefs(useEnvironmentState())
+
+  const avoProvider = getRpcProviderByChainId(avoChainId.value)
 
   const isObservableAccount = computed(() => {
     if (!account.value)
@@ -75,13 +81,13 @@ export const useSafe = defineStore('safe', () => {
   })
 
   const forwarderProxyContract = Forwarder__factory.connect(
-    forwarderProxyAddress,
-    getRpcBatchProviderByChainId(137),
+    forwarderProxyAddress.value,
+    getRpcProviderByChainId(137),
   )
 
   const multisigForwarderProxyContract = MultisigForwarder__factory.connect(
-    multisigForwarderProxyAddress,
-    getRpcBatchProviderByChainId(137),
+    multisigForwarderProxyAddress.value,
+    getRpcProviderByChainId(137),
   )
 
   const balanceResolverContracts = availableNetworks.reduce((acc, curr) => {
@@ -94,10 +100,11 @@ export const useSafe = defineStore('safe', () => {
 
   async function computeAddresses() {
     try {
-      const polygonProvider = getRpcBatchProviderByChainId(137)
+      const polygonProvider = getRpcProviderByChainId(137)
       const { address, multisigAddress, oldSafeAddress } = await getComputedAddresses({
         accountAddress: account.value,
         provider: polygonProvider,
+        isProd: isProd.value,
       })
 
       logBalance({
@@ -116,6 +123,7 @@ export const useSafe = defineStore('safe', () => {
       const { address, multisigAddress, oldSafeAddress } = await http<IComputeAddresses>('/api/rpc/compute', {
         params: {
           address: account.value,
+          is_prod: isProd.value,
         },
         retry: 3,
       })
@@ -153,8 +161,6 @@ export const useSafe = defineStore('safe', () => {
 
     const cachedSafeAddress = getCachedSafeAddress(account.value)
 
-    console.log({ cachedSafeAddress })
-
     const [availableSafes, legacySafeInstance] = await Promise.all([
       getSafes(account.value),
       getSafe(oldSafeAddress),
@@ -162,7 +168,7 @@ export const useSafe = defineStore('safe', () => {
 
     safes.value = availableSafes.data
 
-    const isCachedSafeAvailable = availableSafes.data.some(i => isAddressEqual(cachedSafeAddress, i.safe_address))
+    const isCachedSafeAvailable = allSafes.value.some(i => isAddressEqual(cachedSafeAddress, i.safe_address))
       || isAddressEqual(cachedSafeAddress, multisigAddress)
       || isAddressEqual(cachedSafeAddress, address)
       || isAddressEqual(cachedSafeAddress, oldSafeAddress)
@@ -205,9 +211,9 @@ export const useSafe = defineStore('safe', () => {
   async function legacySafeAsDefault(oldSafeAddress?: string, legacySafeInstance?: ISafe) {
     if (oldSafeAddress) {
       const legacySafeHasGas = await getGasBalance(oldSafeAddress).then(toBN).then(b => b.gt(0))
-      const setLegacyAsDefault = legacySafeInstance && legacySafeHasGas
-      const hideLegacySafe = useLocalStorage('hide-legacy-safe', !legacySafeHasGas)
-      hideLegacySafe.value = !setLegacyAsDefault
+      const setLegacyAsDefault = !!(legacySafeInstance && legacySafeHasGas)
+      useLocalStorage<boolean>('show-legacy-safe', setLegacyAsDefault)
+
       return setLegacyAsDefault
     }
     return false
@@ -219,7 +225,6 @@ export const useSafe = defineStore('safe', () => {
       getSafe(mainSafeAddress.value),
       getSafe(multiSigSafeAddress.value),
     ])
-    console.log(_selectedSafe)
 
     if (!_selectedSafe) {
       const isMultisig = isAddressEqual(safeAddress.value, multiSigSafeAddress.value)
@@ -304,7 +309,7 @@ export const useSafe = defineStore('safe', () => {
   }
 
   const getSafe = async (address: string): Promise<ISafe> => {
-    return avoBatchProvider.send('api_getSafe', [address])
+    return avoProvider.send('api_getSafe', [address])
   }
 
   async function refreshSelectedSafe() {
@@ -431,7 +436,7 @@ export const useSafe = defineStore('safe', () => {
   async function getBalances(address: string, signal?: AbortSignal, updateState = false) {
     return Promise.all(
       availableNetworks.map(async (network) => {
-        if (String(network.chainId) == '122' && selectedSafe.value?.multisig === 0)
+        if (legacyNotSupportedChains.some(i => network.chainId == i) && selectedSafe.value?.multisig === 0)
           return []
 
         const customTokenAddress = customTokens.value
@@ -551,15 +556,17 @@ export const useSafe = defineStore('safe', () => {
     if (!safeAddress.value)
       return
 
-    gasBalance.value = undefined
-
     const b = await getGasBalance(safeAddress.value).then(toBN)
 
     gasBalance.value = b.div(10 ** 18).toFixed()
   }
 
+  useIntervalFn(setGasBalance, 15000, {
+    immediate: true,
+  })
+
   const getSafes = async (address: string): Promise<ISafesResponse> => {
-    return avoBatchProvider.send('api_getSafes', [{
+    return avoProvider.send('api_getSafes', [{
       address,
     }])
   }
@@ -572,6 +579,7 @@ export const useSafe = defineStore('safe', () => {
             multisig_index: safe.multisig_index,
             multisig: safe.multisig,
             owner_address: safe.owner_address,
+            is_prod: isProd.value,
           },
         }).then((e) => {
           logBalance({
@@ -590,7 +598,8 @@ export const useSafe = defineStore('safe', () => {
       const config = await getSafeOptionsByChain({
         safe,
         chainId,
-        provider: getRpcBatchProviderByChainId(chainId),
+        provider: getRpcProviderByChainId(chainId),
+        is_prod: isProd.value,
       })
 
       return config
@@ -601,6 +610,7 @@ export const useSafe = defineStore('safe', () => {
           multisig_index: safe.multisig_index,
           multisig: safe.multisig,
           owner_address: safe.owner_address,
+          is_prod: isProd.value,
         },
       })
 
@@ -614,15 +624,16 @@ export const useSafe = defineStore('safe', () => {
 
       const options = await Promise.all(
         availableNetworks.map((network) => {
-          const provider = getRpcBatchProviderByChainId(network.chainId)
+          const provider = getRpcProviderByChainId(network.chainId)
 
-          if (String(network.chainId) == '122' && safe.multisig === 0)
+          if (legacyNotSupportedChains.some(i => network.chainId == i) && safe.multisig === 0)
             return
 
           return getSafeOptionsByChain({
             safe,
             chainId: network.chainId,
             provider,
+            is_prod: isProd.value,
           })
             .catch((e) => {
               const msg = 'Failed to get safe options by public provider'
@@ -641,6 +652,7 @@ export const useSafe = defineStore('safe', () => {
                   multisig_index: safe.multisig_index,
                   multisig: safe.multisig,
                   owner_address: safe.owner_address,
+                  is_prod: isProd.value,
                 },
               })
             })
@@ -706,7 +718,7 @@ export const useSafe = defineStore('safe', () => {
         params: {
           status: 'pending',
         },
-        baseURL: multisigURL,
+        baseURL: multisigURL.value,
       })
       const txs: IMultisigTransactionResponse = resp.data
       return txs.meta.total
@@ -715,10 +727,6 @@ export const useSafe = defineStore('safe', () => {
       handleAxiosError(e, false)
     }
   }
-
-  useIntervalFn(setGasBalance, 15000, {
-    immediate: false,
-  })
 
   const { pause, resume } = useIntervalFn(fetchBalances, 15000)
 
@@ -748,8 +756,6 @@ export const useSafe = defineStore('safe', () => {
     async () => {
       if (!account.value)
         return
-
-      connectionMeta.value.address = account.value
 
       try {
         safesLoading.value = true
@@ -842,7 +848,6 @@ export const useSafe = defineStore('safe', () => {
     eoaBalances,
     totalEoaBalance,
     fetchBalances,
-    forwarderProxyAddress,
     networkPreference,
     avoProvider,
     getBalances,
@@ -869,6 +874,8 @@ export const useSafe = defineStore('safe', () => {
     allSafes,
     fetchSafeInstanceses,
     isObservableAccount,
+    accountCustomSafeMapping,
+    getDefaultSafe,
   }
 })
 

@@ -3,7 +3,6 @@ import { injected, walletconnect, walletlink } from '~~/connectors'
 
 const providers = {
   // network,
-  // torus,
   injected,
   walletlink,
   walletconnect,
@@ -21,7 +20,6 @@ export function useConnectors() {
     default() {
       return {
         provider: null,
-        address: '',
       }
     },
   })
@@ -31,16 +29,11 @@ export function useConnectors() {
   function onDisconnect() {
     const { terminateMFAToken } = useMfa()
 
-    const userNonce = useCookie<string | null>(`nonce-${account.value}`)
-
-    userNonce.value = null
-
     terminateMFAToken()
 
     resetAccounts()
     router.push('/login')
 
-    connectionMeta.value.address = ''
     connectionMeta.value.provider = null
 
     if (connector.value)
@@ -48,7 +41,11 @@ export function useConnectors() {
   }
 
   function setConnectorName(name: string | null) {
-    connectionMeta.value.provider = name
+    const obj = {
+      provider: name,
+    }
+
+    connectionMeta.value = obj
   }
 
   function getConnector(): any {

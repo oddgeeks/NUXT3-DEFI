@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
+import { Tippy } from 'vue-tippy'
 import GasSVG from '~/assets/images/icons/gas.svg?component'
 import PlusSVG from '~/assets/images/icons/plus.svg?component'
-import PowerOnSVG from '~/assets/images/icons/power-on.svg?component'
-import PowerOffSVG from '~/assets/images/icons/power-off.svg?component'
 
 defineProps({
   hideGas: Boolean,
@@ -20,6 +19,8 @@ const { providers } = useNetworks()
 
 const open = ref(false)
 const hovered = ref(false)
+
+const [DefineTemplate, DisconnectButton] = createReusableTemplate()
 
 const isActualActive = computed(() => {
   if (trackingAccount.value)
@@ -50,13 +51,27 @@ const connectedProvider = computed(() => {
 </script>
 
 <template>
-  <CommonButton v-show="!isActualActive" :class="buttonClass" size="lg" @click="openWeb3Modal">
+  <DefineTemplate>
+    <button
+      class="disconnect-btn relative flex h-4.5 w-4.5 items-center justify-center rounded-full bg-gray-900 text-primary hover:text-red-alert"
+      aria-label="Close Connection"
+      role="button"
+      @click="closeConnection"
+      @mouseenter="hovered = true"
+      @mouseleave="hovered = false"
+    >
+      <div class="disconnect-btn-svg-wrapper absolute left-1/2 top-1/2 flex h-full w-full -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+        <SvgoPowerOn class="shrink-0 " />
+      </div>
+    </button>
+  </DefineTemplate>
+  <CommonButton v-if="!isActualActive" :class="buttonClass" size="lg" @click="openWeb3Modal">
     Connect
   </CommonButton>
-  <div v-show="isActualActive" class="flex items-center gap-[14px]">
+  <div v-else class="flex items-center gap-4">
     <button
       v-if="!hideGas"
-      class="flex items-center justify-between gap-2 rounded-5 bg-slate-100 px-4 py-[9px] dark:bg-slate-800"
+      class="flex items-center justify-between gap-2 rounded-5 bg-gray-900 px-4 py-2 text-sm sm:py-3"
       @click="openTopUpGasModal()"
     >
       <GasSVG
@@ -64,7 +79,7 @@ const connectedProvider = computed(() => {
         :class="
           toBN(pendingGasAmount.data.value).gt('0')
             ? 'text-orange-400'
-            : 'text-slate-400'
+            : 'text-gray-400'
         "
       />
 
@@ -79,88 +94,38 @@ const connectedProvider = computed(() => {
 
       <div v-else class="loading-box h-5 w-20 rounded-5" />
 
-      <span
-        class="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-primary text-white"
-      ><PlusSVG />
+      <span class="ml-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-primary text-white">
+        <PlusSVG />
       </span>
     </button>
     <template v-if="!hideEOA">
-      <Popover
-        as="div" class="relative z-30 flex items-center gap-4"
-      >
-        <PopoverButton class="relative flex items-center justify-between gap-x-2.5 rounded-7.5 bg-slate-100 px-4.5 py-2.5 leading-5 dark:bg-slate-800 sm:px-4 sm:py-3">
-          <div class="flex gap-[14px]">
-            <div class="flex items-center gap-2.5">
-              <div v-if="connectedProvider">
-                <component :is="connectedProvider.logo" class="h-7.5 w-7.5 sm:h-6 sm:w-6" />
-              </div>
-              <div class="flex flex-col items-start gap-[6px]">
-                <span>{{ addressLabel }}</span>
-              </div>
-            </div>
-          </div>
-
-          <SvgoChevronDown class="shrink-0" />
-        </PopoverButton>
-        <transition
-          enter-active-class="transition duration-100 ease-out"
-          enter-from-class="transform scale-95 opacity-0"
-          enter-to-class="transform scale-100 opacity-100"
-          leave-active-class="transition duration-75 ease-out"
-          leave-from-class="transform scale-100 opacity-100"
-          leave-to-class="transform scale-95 opacity-0"
+      <button class="relative flex items-center justify-between gap-x-2.5 rounded-7.5 bg-gray-900 px-4 py-2 leading-5 sm:px-4 sm:py-2.5">
+        <Tippy
+          arrow
+          interactive
+          class="wallet-provider"
         >
-          <PopoverPanel
-            v-slot="{ close }"
-            as="div"
-            class="absolute right-0 top-0 flex flex-col justify-between gap-x-2.5 rounded-[25px] bg-slate-100 leading-5 ring-1 ring-slate-150 dark:bg-gray-850 dark:ring-slate-750 sm:w-[440px]"
-          >
-            <div class="flex w-full justify-between p-5">
-              <div class="flex gap-[14px]">
-                <div class="flex items-center gap-2.5">
-                  <div v-if="connectedProvider">
-                    <component :is="connectedProvider.logo" class="h-7.5 w-7.5 sm:h-9 sm:w-9" />
-                  </div>
-                  <div class="flex flex-col items-start gap-[6px]">
-                    <span class="text-xs font-medium leading-[10px] text-slate-500">Owner's Address</span>
-                    <span class="text-lg font-semibold leading-5">{{ addressLabel }}</span>
+          <component :is="connectedProvider.logo" v-if="connectedProvider" class="h-5 w-5 sm:h-6 sm:w-6" />
+          <template #content>
+            <div class="flex w-full justify-between rounded-5 border border-gray-800 bg-gray-850 p-5">
+              <div class="flex gap-4">
+                <div class="flex items-center gap-4">
+                  <component :is="connectedProvider.logo" v-if="connectedProvider" class="h-7.5 w-7.5 sm:h-9 sm:w-9" />
+                  <div class="flex flex-col items-start gap-2">
+                    <span class="text-xs font-medium leading-[10px] text-gray-500">Owner's Address</span>
+                    <span class="inline-flex items-center gap-2 text-lg font-semibold leading-5">{{ addressLabel }}
+                      <Copy :text="trackingAccount || account" :icon-only="true" />
+                    </span>
                   </div>
                 </div>
 
-                <button
-                  class="flex h-7.5 w-7.5 items-center justify-center overflow-hidden rounded-full bg-slate-150 dark:bg-slate-800"
-                  aria-label="Copy EOA"
-                >
-                  <Copy :text="trackingAccount || account" :icon-only="true" />
-                </button>
-
-                <button
-                  class="flex h-7.5 w-7.5 items-center justify-center overflow-hidden rounded-full bg-slate-150 dark:bg-slate-800"
-                  aria-label="Close Connection"
-                  @click="closeConnection"
-                  @mouseenter="hovered = true"
-                  @mouseleave="hovered = false"
-                >
-                  <div class="absolute overflow-hidden">
-                    <PowerOffSVG v-if="hovered" class="pointer-events-none h-12 w-12" />
-                    <PowerOnSVG v-else class="pointer-events-none h-12 w-12" />
-                  </div>
-                </button>
+                <DisconnectButton />
               </div>
-              <button
-                class="flex h-7.5 w-7.5 items-center justify-center rounded-full bg-slate-150 dark:bg-slate-800"
-                aria-label="Close EOA"
-                @click.stop="close"
-              >
-                <SvgoX />
-              </button>
             </div>
-            <div class="border-t border-slate-150 px-5 pb-5 pt-4 dark:border-slate-750">
-              <WalletItemList />
-            </div>
-          </PopoverPanel>
-        </transition>
-      </Popover>
+          </template>
+        </Tippy>
+        <DisconnectButton />
+      </button>
     </template>
   </div>
 </template>
@@ -179,5 +144,19 @@ const connectedProvider = computed(() => {
 .slide-up-leave-to {
   opacity: 0;
   transform: translateX(-30px);
+}
+</style>
+
+<style>
+.wallet-provider ~ [data-tippy-root] > .tippy-box {
+  @apply !p-0 !bg-transparent !rounded-none;
+}
+
+.disconnect-btn .disconnect-btn-svg-wrapper {
+filter: drop-shadow(0px 0px 6px theme('colors.primary.DEFAULT'));
+}
+
+.disconnect-btn:hover .disconnect-btn-svg-wrapper {
+filter: drop-shadow(0px 0px 6px theme('colors.red.alert'));
 }
 </style>

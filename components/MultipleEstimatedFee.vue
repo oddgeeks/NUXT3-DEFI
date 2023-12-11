@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <ul class="flex flex-col gap-4 rounded-2xl bg-slate-50 py-[14px] dark:bg-gray-850">
+  <ul class="flex flex-col gap-4 rounded-2xl  bg-gray-850 py-[14px]">
     <li v-for="item in data" :key="item.chainId" class="flex items-center justify-between px-4 font-medium">
       <div class="flex items-center gap-2.5 text-xs">
         <ChainLogo class="h-4.5 w-4.5" :chain="item.chainId" />
@@ -25,7 +25,7 @@ defineProps<{
         {{ item?.formattedAmountAfterDiscount }} USDC
       </p>
     </li>
-    <li class="border-t border-slate-150 px-4 pt-3 dark:border-slate-800">
+    <li class="border-t  border-slate-800 px-4 pt-3">
       <div class="flex w-full justify-between">
         <p class="flex items-center gap-2.5">
           <SvgoGas class="text-slate-400" />
@@ -43,8 +43,8 @@ defineProps<{
         </p>
       </div>
     </li>
-    <li class="px-4">
-      <CommonNotification v-if="error" type="error" :text="error">
+    <li v-if="error" class="px-4">
+      <CommonNotification type="error" :text="error">
         <template v-if="error.includes('gas')" #action>
           <CommonButton class="whitespace-nowrap" size="sm" @click="openTopUpGasModal()">
             Top-up

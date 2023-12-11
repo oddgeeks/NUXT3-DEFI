@@ -42,11 +42,37 @@ export function useBookmark() {
     return bookmarks.value.filter(b => getAddress(b.safeAddress) === getAddress(safeAddress.value))
   })
 
+  const getBookmarkTypeLabel = (type: IBookmarkType) => {
+    const labels: Record<IBookmarkType, string> = {
+      transfer: 'Transfer',
+      wc: 'WalletConnect',
+    }
+
+    return labels[type]
+  }
+
+  function initializeBookmark(bookmark: IBookmark) {
+    if (bookmark.type === 'wc') {
+      openWCTransactionModal({
+        chainId: String(bookmark.chainId),
+        payload: bookmark.payload,
+        sessionV2: bookmark.session,
+        metadata: bookmark.metadata || '0x',
+        bookmark,
+      })
+    }
+
+    if (bookmark.type === 'transfer')
+      openSendModal(bookmark.chainId, undefined, undefined, bookmark)
+  }
+
   return {
     bookmarks,
     addBookmark,
     updateBookmark,
     safeBookmarks,
     deleteBookmark,
+    getBookmarkTypeLabel,
+    initializeBookmark,
   }
 }
