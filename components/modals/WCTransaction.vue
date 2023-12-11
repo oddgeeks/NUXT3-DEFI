@@ -305,25 +305,6 @@ const metadata = computed(() => {
   }, false)
 })
 
-function handleAddBatch() {
-  const metadata = encodeDappMetadata({
-    name: props.sessionV2?.peer?.metadata?.name!,
-    url: props.sessionV2?.peer?.metadata?.url!,
-  }, false)
-
-  addToTransactionStack({
-    actions: transactions.value,
-    chainId: props.chainId,
-    options: {
-      metadata,
-    },
-  })
-
-  notify({
-    message: 'Transaction batch added!',
-  })
-}
-
 onUnmounted(() => {
   clearNuxtData('simulationDetails')
 })
@@ -462,7 +443,7 @@ onUnmounted(() => {
         </CommonButton>
       </div>
       <div class="flex justify-center">
-        <AddBatchButton v-if="!isSign" class="flex-1" :tx-actions="transactions" :chain-id="chainId" :metadata="metadata" @click="handleAddBatch" />
+        <AddBatchButton v-if="!isSign" class="flex-1" :tx-actions="transactions" :chain-id="chainId" :metadata="metadata" />
         <ManageBookmark class="flex-1" :bookmark="reactiveBookmark" @update-bookmark="handleUpdateBookmark" @create-bookmark="handleCreateBookmark" />
       </div>
     </div>

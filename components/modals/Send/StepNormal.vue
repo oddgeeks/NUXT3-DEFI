@@ -144,30 +144,6 @@ async function onSubmit() {
     isSubmitting.value = false
   }
 }
-
-function handleAddBatch() {
-  if (!token.value || !data.value || !metadata.value)
-    return
-
-  addToTransactionStack({
-    actions: txs.value as any,
-    chainId: data.value.toChainId,
-    options: {
-      metadata: encodeTransferMetadata(
-        {
-          token: token.value?.address!,
-          amount: toWei(data.value.amount, token.value?.decimals),
-          receiver: actualAddress.value,
-        },
-        false,
-      ),
-    },
-  })
-
-  notify({
-    message: 'Transaction batch added!',
-  })
-}
 </script>
 
 <template>
