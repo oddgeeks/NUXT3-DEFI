@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import SwapSVG from '~/assets/images/icons/refresh.svg?component'
-import BridgeSVG from '~/assets/images/icons/bridge.svg?component'
-import PlusCircleSVG from '~/assets/images/icons/plus-circle.svg?component'
-import RefreshSVG from '~/assets/images/icons/refresh-2.svg?component'
-import QuestionSVG from '~/assets/images/icons/question-circle-2.svg?component'
-import MoreOptionsSVG from '~/assets/images/icons/more-options.svg?component'
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
+import SwapSVG from '~/assets/images/icons/refresh.svg'
+import BridgeSVG from '~/assets/images/icons/bridge.svg'
+import PlusCircleSVG from '~/assets/images/icons/plus-circle.svg'
+import RefreshSVG from '~/assets/images/icons/refresh-2.svg'
+import QuestionSVG from '~/assets/images/icons/question-circle-2.svg'
+import MoreOptionsSVG from '~/assets/images/icons/more-options.svg'
+import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg'
 import type { IBalance } from '~/stores/safe'
 
 const emit = defineEmits(['navigate'])
 
 const { tokenBalances, totalEoaBalance, eoaBalances, fundedEoaNetworks } = useAvocadoSafe()
+const { isSelectedSafeLegacy } = storeToRefs(useSafe())
 const { public: { isVercelProd } } = useRuntimeConfig()
 const { avoOnboardURL, isProd } = storeToRefs(useEnvironmentState())
 const { isAppProduction } = storeToRefs(useShared())
@@ -70,6 +71,9 @@ function openBridge() {
 <template>
   <div :class="{ 'pointer-events-none blur': !safeAddress }">
     <div class="font-base flex w-full flex-col gap-2 border-y-1 border-slate-750 px-7.5 py-4 text-gray-400">
+      <CommonButton v-if="isSelectedSafeLegacy" as="NuxtLink" to="/migration" size="lg" class="justify-center">
+        Avo Migration
+      </CommonButton>
       <template
         v-for="nav in navigations"
         :key="nav.to"
@@ -111,6 +115,14 @@ function openBridge() {
         />
       </button>
       <div v-if="moreOptions" class="flex flex-col gap-2">
+        <NuxtLink
+          active-class="text-primary"
+          class="flex h-11 items-center gap-2.5"
+          to="/migration"
+        >
+          <SvgoArrowRight class="h-4 w-4" />
+          Avo Migration
+        </NuxtLink>
         <button
           class="flex h-11 items-center gap-2.5"
           :disabled="!tokenBalances || tokenBalances.length === 0"

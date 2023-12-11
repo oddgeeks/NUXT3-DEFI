@@ -36,13 +36,6 @@ export function useNavigation() {
         tooltip: 'Home',
       },
       {
-        label: 'Migration',
-        icon: 'SvgoArrowRight',
-        to: '/migration',
-        tooltip: 'Migrate your balances',
-        hidden: !isSelectedSafeLegacy.value,
-      },
-      {
         label: 'DeFi',
         icon: 'SvgoDefi',
         to: '/defi',
