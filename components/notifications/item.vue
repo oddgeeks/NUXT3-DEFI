@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import SVGX from '~/assets/images/icons/x.svg?component'
 import type { Notifications } from '~~/composables/useNotification'
 
 const props = defineProps<NotificationItem>()
@@ -15,9 +14,12 @@ onMounted(() => deleteItem(props.item.id, props.item.duration))
 
 <template>
   <li
-    class="flex items-center gap-5 rounded-2xl bg-gray-850 p-3.5 pr-3 ring-1 ring-gray-900"
+    class="flex items-center gap-5 rounded-5 border border-gray-800 bg-gray-850 p-3.5 pr-3"
   >
-    <NotificationsIcon :type="item.type" />
+    <div v-if="item.icon" class="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
+      <Component :is="item.icon" class="h-4 w-4" />
+    </div>
+    <NotificationsIcon v-else :type="item.type" />
     <div>
       <h1 class="text-md text-slate-300">
         {{ item.title }}
@@ -29,7 +31,7 @@ onMounted(() => deleteItem(props.item.id, props.item.duration))
       aria-label="Hide notification"
       @click="deleteItem(item.id, 0)"
     >
-      <SVGX class="inline-flex h-2.5 w-2.5 shrink-0 text-gray-400" />
+      <SvgoX class="inline-flex h-2.5 w-2.5 shrink-0 text-gray-400" />
     </button>
   </li>
 </template>

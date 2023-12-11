@@ -4,12 +4,8 @@ import * as yup from 'yup'
 import { storeToRefs } from 'pinia'
 import { utils } from 'ethers'
 import type { IBalance } from '~/stores/safe'
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
 import type { IToken } from '~~/stores/tokens'
 import { Erc20__factory } from '~~/contracts'
-import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
-import ArrowLeft from '~/assets/images/icons/arrow-left.svg?component'
-import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg?component'
 
 interface ISwap {
   sellToken: IToken
@@ -500,20 +496,34 @@ const {
 },
 )
 
+function getMetadata(single?: boolean) {
+  const minRecievedAfterSlippageInWei = toWei(minRecievedAfterSlippage.value, swap.value.buyToken.decimals)
+
+  return encodeSwapMetadata({
+    buyAmount: minRecievedAfterSlippageInWei,
+    sellAmount: swapDetails.value?.data?.data.sellTokenAmount!,
+    buyToken: swapDetails.value?.data?.data.buyToken.address!,
+    sellToken: swap.value.sellToken.address,
+    receiver: account.value,
+    protocol: utils.formatBytes32String(selectedRoute?.value?.name || ''),
+  }, single)
+}
+
+const metadata = computed(() => {
+  if (!swapDetails.value?.data?.data || !selectedRoute.value)
+    return
+
+  return getMetadata(false)
+})
+
 const onSubmit = handleSubmit(async () => {
   try {
     pause()
-    const metadata = encodeSwapMetadata({
-      buyAmount: swapDetails.value?.data?.data.buyTokenAmount!,
-      sellAmount: swapDetails.value?.data?.data.sellTokenAmount!,
-      buyToken: swapDetails.value?.data?.data.buyToken.address!,
-      sellToken: swap.value.sellToken.address,
-      receiver: account.value,
-      protocol: utils.formatBytes32String(selectedRoute?.value?.name || ''),
-    })
 
     if (!txActions.value?.length)
       throw new Error('No transaction actions found')
+
+    const metadata = getMetadata()
 
     const transactionHash = await sendTransactions(
       txActions.value,
@@ -752,14 +762,14 @@ onUnmounted(() => {
             v-if="sellAmountMeta.dirty && errors['sell-amount']"
             class="mt-2 flex items-center gap-2 text-left text-xs text-red-alert"
           >
-            <SVGInfo /> {{ errors["sell-amount"] }}
+            <SvgoInfo2 /> {{ errors["sell-amount"] }}
           </span>
           <button
             type="button"
             class="absolute bottom-[-26px] left-1/2 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full bg-slate-600  ring-[6px] ring-gray-975"
             @click="swapTokens"
           >
-            <ArrowLeft class="h-5 w-5 -rotate-90 text-gray-400" />
+            <SvgoArrowLeft class="h-5 w-5 -rotate-90 text-gray-400" />
           </button>
         </div>
 
@@ -843,10 +853,10 @@ onUnmounted(() => {
                       "
                       type="button"
                     >
-                      <QuestionCircleSVG class="h-5 w-5 text-primary" />
+                      <SvgoQuestionCircle class="h-5 w-5 text-primary" />
                     </button>
                   </span>
-                  <ChevronDownSVG
+                  <SvgoChevronDown
                     class="w-5 text-gray-400 group-open:rotate-180"
                   />
                 </summary>
@@ -889,7 +899,7 @@ onUnmounted(() => {
                   v-if="!!slippageError"
                   class="mt-4 flex items-center gap-2 text-left text-xs text-red-alert"
                 >
-                  <SVGInfo />
+                  <SvgoInfo2 />
                   {{ slippageError }}
                 </span>
               </details>
@@ -1051,6 +1061,7 @@ onUnmounted(() => {
         >
           Swap
         </CommonButton>
+        <AddBatchButton v-if="metadata" :metadata="metadata" :chain-id="toChainId" :tx-actions="txActions" />
       </div>
       <SessionLocked class="mx-auto" />
     </div>

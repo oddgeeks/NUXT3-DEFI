@@ -1,6 +1,7 @@
 export interface Notifications {
   id: string
   duration: number
+  icon?: any
   position:
   | 'center'
   | 'top-center'
@@ -26,6 +27,7 @@ export function notify({
   duration = 6000,
   message = '',
   title = '',
+  icon,
 }: Partial<Notifications>) {
   const id = `notification-${performance.now()}`
 
@@ -36,6 +38,7 @@ export function notify({
     position,
     title,
     type,
+    icon,
   })
 }
 

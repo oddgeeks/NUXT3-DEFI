@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia'
 
 const { safeAddress } = storeToRefs(useSafe())
+const { transactionStack } = storeToRefs(useShared())
 const { fromWei } = useBignumber()
 const { avoProvider } = useSafe()
 const route = useRoute()
@@ -44,6 +45,12 @@ useIntervalFn(refresh, 15000)
       Disable Dry Run
     </button>
     <nav class="relative ml-auto flex items-center gap-4">
+      <button v-if="transactionStack.length" class="relative flex h-11 w-11 items-center justify-center rounded-full bg-gray-900" @click="openTransactionBatchModal">
+        <SvgoLayer />
+        <div class="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-gray-700 text-[10px]/[14px]">
+          {{ transactionStack.length }}
+        </div>
+      </button>
       <SessionLocked />
       <Web3Button />
     </nav>

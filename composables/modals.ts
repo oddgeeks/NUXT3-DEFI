@@ -1001,7 +1001,7 @@ export function openTransactionBatchModal() {
     component: TransactionBatch,
     options: {
       contentClass: '!p-0',
-      wrapperClass: '!max-w-[560px]',
+      wrapperClass: '!max-w-[600px]',
     },
     async: true,
   })

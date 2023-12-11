@@ -67,7 +67,7 @@ const disabled = computed(() => {
   return !actualAddress.value || pending.value || error.value || isSubmitting.value
 })
 
-const metadata = computed(() => {
+function getMetadata(single?: boolean) {
   if (!token.value || !data.value)
     return
 
@@ -76,15 +76,22 @@ const metadata = computed(() => {
       token: token.value?.address!,
       amount: toWei(data.value.amount, token.value?.decimals),
       receiver: actualAddress.value,
-    },
-    true,
-  )
+    }, single)
+}
+
+const metadata = computed(() => {
+  if (!token.value || !data.value)
+    return
+
+  return getMetadata(false)
 })
 
 async function onSubmit() {
   try {
-    if (!token.value || !data.value || !metadata.value)
+    if (!token.value || !data.value)
       return
+
+    const metadata = getMetadata()
 
     isSubmitting.value = true
 
@@ -92,7 +99,7 @@ async function onSubmit() {
       txs.value!,
       Number(data.value.toChainId),
       {
-        metadata: metadata.value,
+        metadata,
       },
       'transfer',
     ) as string
@@ -101,7 +108,7 @@ async function onSubmit() {
       return
 
     logActionToSlack({
-      message: generateSlackMessage(metadata.value, data.value.toChainId),
+      message: generateSlackMessage(metadata!, data.value.toChainId),
       action: 'transfer',
       txHash: transactionHash,
       amountInUsd: amountInUsd.value.toFixed(),
@@ -231,8 +238,6 @@ function handleAddBatch() {
         Send
       </CommonButton>
     </div>
-    <button class="text-xs text-primary" type="button" @click="handleAddBatch">
-      Add Batch
-    </button>
+    <AddBatchButton v-if="metadata" :tx-actions="txs" :chain-id="data.toChainId" :metadata="metadata" />
   </form>
 </template>

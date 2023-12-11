@@ -2,10 +2,6 @@
 import type { SessionTypes } from '@walletconnect/types'
 import { storeToRefs } from 'pinia'
 import { Erc20__factory } from '@/contracts'
-import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg?component'
-import NetworkSVG from '~/assets/images/icons/network.svg?component'
-import FlowersSVG from '~/assets/images/icons/flowers.svg?component'
-import SVGClockCircle from '~/assets/images/icons/clock-circle.svg?component'
 
 const props = defineProps<{
   payload: any
@@ -131,7 +127,7 @@ async function handleSubmit() {
         ...options.value,
         id,
       },
-      'wc',
+      'dapp',
     )
 
     if (!transactionHash && web3WalletV2.value) {
@@ -302,6 +298,13 @@ async function addRevokeTransaction(tokenAddres: string, address: string) {
   refreshSimulation()
 }
 
+const metadata = computed(() => {
+  return encodeDappMetadata({
+    name: props.sessionV2?.peer?.metadata?.name!,
+    url: props.sessionV2?.peer?.metadata?.url!,
+  }, false)
+})
+
 function handleAddBatch() {
   const metadata = encodeDappMetadata({
     name: props.sessionV2?.peer?.metadata?.name!,
@@ -340,7 +343,7 @@ onUnmounted(() => {
         >
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2.5 text-gray-400">
-              <FlowersSVG />
+              <SvgoFlowers />
               <span class="text-xs font-medium leading-5">App Name</span>
             </div>
 
@@ -357,7 +360,7 @@ onUnmounted(() => {
           </div>
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2.5 text-gray-400">
-              <NetworkSVG />
+              <SvgoNetwork />
               <span class="text-xs font-medium leading-5">Network</span>
             </div>
 
@@ -378,7 +381,7 @@ onUnmounted(() => {
           <template v-if="isSign && signMessageDetails">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2.5 text-gray-400">
-                <SVGClockCircle class="w-4" />
+                <SvgoClockCircle class="w-4" />
                 <span class="text-xs font-medium leading-5">Exprires at</span>
               </div>
 
@@ -430,7 +433,7 @@ onUnmounted(() => {
         :has-error="!!error"
       />
       <p v-if="simulationError" class="flex items-center gap-2 text-xs leading-5 text-orange-400">
-        <SVGInfoCircle class="w-3" />
+        <SvgoExclamationCircle class="w-3" />
 
         {{ simulationError.message }}
       </p>
@@ -458,10 +461,10 @@ onUnmounted(() => {
           Submit
         </CommonButton>
       </div>
-      <button class="text-xs text-primary" type="button" @click="handleAddBatch">
-        Add Batch
-      </button>
-      <ManageBookmark :bookmark="reactiveBookmark" @update-bookmark="handleUpdateBookmark" @create-bookmark="handleCreateBookmark" />
+      <div class="flex justify-center">
+        <AddBatchButton v-if="!isSign" class="flex-1" :tx-actions="transactions" :chain-id="chainId" :metadata="metadata" @click="handleAddBatch" />
+        <ManageBookmark class="flex-1" :bookmark="reactiveBookmark" @update-bookmark="handleUpdateBookmark" @create-bookmark="handleCreateBookmark" />
+      </div>
     </div>
     <SessionLocked class="mx-auto" />
   </form>

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { serialize } from 'error-serializer'
-import RefreshSVG from '~/assets/images/icons/refresh.svg?component'
 
 const props = defineProps({
   address: {
@@ -217,20 +216,31 @@ function getRouteProvider(route?: IRoute) {
   return bridge?.protocol
 }
 
+function getMetadata(single?: boolean) {
+  return encodeBridgeMetadata({
+    amount: toWei(amount.value, fromToken.value.decimals),
+    bridgeFee: toWei(bridgeFee.value.amount, bridgeFee.value.asset.decimals),
+    nativeToken: bridgeFee.value.asset.address,
+    receiver: account.value,
+    fromToken: fromToken.value.address,
+    toToken: bridgeToToken.value?.address!,
+    toChainId: toChainId.value,
+  }, single)
+}
+
+const metadata = computed(() => {
+  if (!txRoute.value || !bridgeToToken.value || !amount.value || !toChainId.value)
+    return
+
+  return getMetadata(false)
+})
+
 const onSubmit = form.handleSubmit(async () => {
   if (!txRoute.value || !bridgeToToken.value)
     return
 
   try {
-    const metadata = encodeBridgeMetadata({
-      amount: toWei(amount.value, fromToken.value.decimals),
-      bridgeFee: toWei(bridgeFee.value.amount, bridgeFee.value.asset.decimals),
-      nativeToken: bridgeFee.value.asset.address,
-      receiver: account.value,
-      fromToken: fromToken.value.address,
-      toToken: bridgeToToken.value.address,
-      toChainId: toChainId.value,
-    })
+    const metadata = getMetadata()
 
     const transactionHash = await sendTransactions(
       transactions.data.value!,
@@ -560,7 +570,7 @@ const onSubmit = form.handleSubmit(async () => {
                 class="flex items-center justify-center gap-[6px]"
                 @click="handleSwapToken"
               >
-                <RefreshSVG class="h-[14px] w-[14px]" />
+                <SvgoRefresh class="h-[14px] w-[14px]" />
                 Swap Token
               </CommonButton>
             </template>
@@ -585,6 +595,7 @@ const onSubmit = form.handleSubmit(async () => {
         </div>
       </div>
       <SessionLocked class="mx-auto" />
+      <AddBatchButton v-if="metadata" :tx-actions="transactions.data.value" :chain-id="fromChainId" :metadata="metadata" />
     </div>
   </form>
 </template>
