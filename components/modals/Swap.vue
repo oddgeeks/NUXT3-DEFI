@@ -503,8 +503,11 @@ const {
 const onSubmit = handleSubmit(async () => {
   try {
     pause()
+
+    const minRecievedAfterSlippageInWei = toWei(minRecievedAfterSlippage.value, swap.value.buyToken.decimals)
+
     const metadata = encodeSwapMetadata({
-      buyAmount: swapDetails.value?.data?.data.buyTokenAmount!,
+      buyAmount: minRecievedAfterSlippageInWei,
       sellAmount: swapDetails.value?.data?.data.sellTokenAmount!,
       buyToken: swapDetails.value?.data?.data.buyToken.address!,
       sellToken: swap.value.sellToken.address,
