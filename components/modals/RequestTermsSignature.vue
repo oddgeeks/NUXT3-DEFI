@@ -34,10 +34,9 @@ Nonce: {{NONCE}}
       TIME: dateNow,
     }
 
-    const isReferrer = await avoProvider.send('api_hasReferralForUser', [account.value,
-    ])
+    const isReferrer = await avoProvider.send('api_hasReferralForUser', [account.value])
 
-    if (referral.value && !isReferrer) {
+    if (referral?.value && !isReferrer) {
       Object.assign(generateNonceParams, {
         referrer: referral.value,
       })

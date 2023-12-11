@@ -2,10 +2,20 @@ import { serialize } from 'error-serializer'
 
 export const errorMessages = {
   metamaskUserDeniedSignature: 'user rejected signing',
+  popupClosed: 'popup closed',
   estimateGasError: 'cannot estimate gas',
   quoteExpired: 'quote has expired',
   quoteExpired2: '0_K',
+  requestExpired: 'Request expired',
+  operationTimedOut: 'operation timed out',
 }
+
+export const userRejectedMessages = [
+  errorMessages.metamaskUserDeniedSignature,
+  errorMessages.popupClosed,
+  errorMessages.requestExpired,
+  errorMessages.operationTimedOut,
+]
 
 export class InvalidENSError extends Error {}
 
@@ -15,8 +25,6 @@ export function useErrorHandler() {
     const userRejected = isRequestUserRejected(error)
 
     const errorMessage = parsedError.message || ''
-
-    console.error(errorMessage)
 
     let formatted
       = parsedError?.error?.message

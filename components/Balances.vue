@@ -105,7 +105,7 @@ const groupedBalances = computed(() => {
   const result: { [symbol: string]: IBalance[] } = {}
   const balances = searchQuery.value.length > 0 ? filteredBalances : sortedBalances
   for (const balance of balances.value) {
-    const symbol = balance.symbol
+    const symbol = balance.symbol?.toLowerCase()
     if (!result[symbol])
       result[symbol] = []
 
