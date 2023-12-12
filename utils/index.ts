@@ -517,10 +517,7 @@ export function isRequestUserRejected(err: any) {
 
     const message = (parsedError.message || err?.message || '').toLowerCase()
 
-    return typeof err === 'object'
-      && 'code' in err
-      && (err?.code === 4001
-      || err?.code === 'ACTION_REJECTED' || userRejectedMessages.some(msg => message.includes(msg)))
+    return (typeof err === 'object' && 'code' in err && err?.code === 4001 || err?.code === 'ACTION_REJECTED') || userRejectedMessages.some(msg => message.includes(msg))
   }
   catch {
     return false

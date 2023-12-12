@@ -1,11 +1,12 @@
 <script setup lang="ts">
+const { account } = useWeb3()
 const { selectedSafe } = storeToRefs(useSafe())
 
 const { authorisedNetworks, isWalletSecondary } = useAuthorities()
 </script>
 
 <template>
-  <div v-if="selectedSafe && isWalletSecondary" class="flex flex-col items-baseline justify-between gap-2.5 rounded-5 bg-gray-850 px-4 py-[14px] sm:flex-row sm:items-center sm:px-5">
+  <div v-if="account && selectedSafe && isWalletSecondary" class="flex flex-col items-baseline justify-between gap-2.5 rounded-5 bg-gray-850 px-4 py-[14px] sm:flex-row sm:items-center sm:px-5">
     <div class="flex flex-col gap-0.5">
       <div class="flex gap-2">
         <span class="text-sm">Multisig owned by</span>
