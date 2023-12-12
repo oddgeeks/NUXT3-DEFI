@@ -13,6 +13,8 @@ export interface Notifications {
   title: string
   message: string
   type: 'success' | 'info' | 'warning' | 'error'
+  as?: any
+  onClick?: () => void
 }
 
 const notifications = ref<Notifications[]>([])
@@ -28,10 +30,14 @@ export function notify({
   message = '',
   title = '',
   icon,
+  as,
+  onClick,
 }: Partial<Notifications>) {
   const id = `notification-${performance.now()}`
 
   notifications.value.push({
+    as,
+    onClick,
     duration,
     id,
     message,

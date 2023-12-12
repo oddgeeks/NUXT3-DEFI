@@ -23,6 +23,10 @@ function handleAddBatch() {
     message: 'Transaction actions added to the stack',
     type: 'success',
     icon: 'SvgoLayer',
+    as: 'button',
+    onClick() {
+      openTransactionBatchModal()
+    },
   })
 
   if (lastModal.value)

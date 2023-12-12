@@ -114,7 +114,7 @@ onUnmounted(() => {
 
       <component :is="steps[activeStep].component" />
 
-      <ManageBookmark v-if="activeStep === 1" class="mt-5" :bookmark="reactiveBookmark" @update-bookmark="handleUpdateBookmark" @create-bookmark="handleCreateBookmark" />
+      <ManageBookmark v-if="activeStep === 1" :class="!isCrossChain ? 'absolute bottom-7.5 right-7.5' : 'mt-5'" :bookmark="reactiveBookmark" @update-bookmark="handleUpdateBookmark" @create-bookmark="handleCreateBookmark" />
     </div>
   </div>
 </template>

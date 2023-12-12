@@ -147,7 +147,7 @@ async function onSubmit() {
 </script>
 
 <template>
-  <form class="flex w-full flex-col gap-7.5 sm:w-[520px]" @submit.prevent="onSubmit">
+  <form class="flex w-full flex-col gap-7.5 pb-12 sm:w-[520px]" @submit.prevent="onSubmit">
     <div class="mx-[-0.75rem] rounded-5 bg-gray-850 px-3 py-[14px] text-sm sm:mx-0 sm:px-5">
       <div class="flex flex-col gap-2.5 font-medium">
         <dl class="flex items-center justify-between">
@@ -214,6 +214,6 @@ async function onSubmit() {
         Send
       </CommonButton>
     </div>
-    <AddBatchButton v-if="metadata" :tx-actions="txs" :chain-id="data.toChainId" :metadata="metadata" />
+    <AddBatchButton v-if="metadata" class="absolute bottom-7.5 left-7.5" :tx-actions="txs" :chain-id="data.toChainId" :metadata="metadata" />
   </form>
 </template>
