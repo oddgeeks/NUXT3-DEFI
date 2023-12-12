@@ -4,12 +4,8 @@ import * as yup from 'yup'
 import { storeToRefs } from 'pinia'
 import { utils } from 'ethers'
 import type { IBalance } from '~/stores/safe'
-import ChevronDownSVG from '~/assets/images/icons/chevron-down.svg?component'
 import type { IToken } from '~~/stores/tokens'
 import { Erc20__factory } from '~~/contracts'
-import SVGInfo from '~/assets/images/icons/exclamation-circle.svg?component'
-import ArrowLeft from '~/assets/images/icons/arrow-left.svg?component'
-import QuestionCircleSVG from '~/assets/images/icons/question-circle.svg?component'
 
 interface ISwap {
   sellToken: IToken
@@ -757,14 +753,14 @@ onUnmounted(() => {
             v-if="sellAmountMeta.dirty && errors['sell-amount']"
             class="mt-2 flex items-center gap-2 text-left text-xs text-red-alert"
           >
-            <SVGInfo /> {{ errors["sell-amount"] }}
+            <SvgoExclamationCircle /> {{ errors["sell-amount"] }}
           </span>
           <button
             type="button"
             class="absolute bottom-[-26px] left-1/2 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full bg-slate-600  ring-[6px] ring-gray-975"
             @click="swapTokens"
           >
-            <ArrowLeft class="h-5 w-5 -rotate-90 text-gray-400" />
+            <SvgoArrowLeft class="h-5 w-5 -rotate-90 text-gray-400" />
           </button>
         </div>
 
@@ -848,10 +844,10 @@ onUnmounted(() => {
                       "
                       type="button"
                     >
-                      <QuestionCircleSVG class="h-5 w-5 text-primary" />
+                      <SvgoQuestionCircle class="h-5 w-5 text-primary" />
                     </button>
                   </span>
-                  <ChevronDownSVG
+                  <SvgoChevronDown
                     class="w-5 text-gray-400 group-open:rotate-180"
                   />
                 </summary>
@@ -975,7 +971,7 @@ onUnmounted(() => {
                                     <span class="text-white">
                                       {{ formatProtocol(aggr.name) }}
                                     </span>
-                                    <span v-if="i === 0" class="rounded-lg bg-primary bg-opacity-10 px-2 text-[10px] uppercase leading-5 text-primary">
+                                    <span v-if="i === 0" class="rounded-lg bg-primary/10 px-2 text-[10px] uppercase leading-5 text-primary">
                                       Best Rate
                                     </span>
                                     <SvgoCheckCircle v-else-if="aggr.name === selectedRoute.name" class="success-circle w-4" />
