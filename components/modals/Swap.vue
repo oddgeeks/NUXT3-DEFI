@@ -349,12 +349,14 @@ const buyAmountInUsd = computed(() => {
 })
 
 const minRecievedAfterSlippage = computed(() => {
-  return formatDecimal(fromWei(
+  return fromWei(
     swapDetails.value?.data?.data.buyTokenAmount || 0,
     swap.value.buyToken.decimals,
   )
-    .div(toBN(1).plus(toBN(actualSlippage.value).div(100))).toFixed())
+    .div(toBN(1).plus(toBN(actualSlippage.value).div(100))).toFixed()
 })
+
+const formattedMinRecievedAfterSlippage = computed(() => formatDecimal(minRecievedAfterSlippage.value))
 
 const buyTokenAmountPerSellToken = computed(() => {
   const value = div(buyAmount.value, sellAmount.value)
@@ -762,7 +764,7 @@ onUnmounted(() => {
             v-if="sellAmountMeta.dirty && errors['sell-amount']"
             class="mt-2 flex items-center gap-2 text-left text-xs text-red-alert"
           >
-            <SvgoInfo2 /> {{ errors["sell-amount"] }}
+            <SvgoExclamationCircle /> {{ errors["sell-amount"] }}
           </span>
           <button
             type="button"
@@ -980,7 +982,7 @@ onUnmounted(() => {
                                     <span class="text-white">
                                       {{ formatProtocol(aggr.name) }}
                                     </span>
-                                    <span v-if="i === 0" class="rounded-lg bg-primary bg-opacity-10 px-2 text-[10px] uppercase leading-5 text-primary">
+                                    <span v-if="i === 0" class="rounded-lg bg-primary/10 px-2 text-[10px] uppercase leading-5 text-primary">
                                       Best Rate
                                     </span>
                                     <SvgoCheckCircle v-else-if="aggr.name === selectedRoute.name" class="success-circle w-4" />
@@ -1015,7 +1017,7 @@ onUnmounted(() => {
                     class="loading-box rounded-lg"
                   />
                   <span v-else class="uppercase">
-                    {{ minRecievedAfterSlippage }}
+                    {{ formattedMinRecievedAfterSlippage }}
                     {{ swap.buyToken.symbol }}
                   </span>
                 </div>
