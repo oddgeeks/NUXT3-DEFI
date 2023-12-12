@@ -353,12 +353,14 @@ const buyAmountInUsd = computed(() => {
 })
 
 const minRecievedAfterSlippage = computed(() => {
-  return formatDecimal(fromWei(
+  return fromWei(
     swapDetails.value?.data?.data.buyTokenAmount || 0,
     swap.value.buyToken.decimals,
   )
-    .div(toBN(1).plus(toBN(actualSlippage.value).div(100))).toFixed())
+    .div(toBN(1).plus(toBN(actualSlippage.value).div(100))).toFixed()
 })
+
+const formattedMinRecievedAfterSlippage = computed(() => formatDecimal(minRecievedAfterSlippage.value))
 
 const buyTokenAmountPerSellToken = computed(() => {
   const value = div(buyAmount.value, sellAmount.value)
@@ -1008,7 +1010,7 @@ onUnmounted(() => {
                     class="loading-box rounded-lg"
                   />
                   <span v-else class="uppercase">
-                    {{ minRecievedAfterSlippage }}
+                    {{ formattedMinRecievedAfterSlippage }}
                     {{ swap.buyToken.symbol }}
                   </span>
                 </div>
