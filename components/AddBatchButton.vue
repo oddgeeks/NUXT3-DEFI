@@ -7,6 +7,8 @@ const props = defineProps<{
 
 const { addToTransactionStack } = useShared()
 
+const { lastModal } = useModal()
+
 function handleAddBatch() {
   addToTransactionStack({
     actions: props.txActions,
@@ -22,12 +24,15 @@ function handleAddBatch() {
     type: 'success',
     icon: 'SvgoLayer',
   })
+
+  if (lastModal.value)
+    lastModal.value.destroy()
 }
 </script>
 
 <template>
   <button :disabled="!txActions?.length" class="mx-auto flex w-fit items-center justify-center gap-2 text-xs text-primary disabled:text-gray-400" type="button" @click="handleAddBatch">
     <SvgoLayer class="h-4 w-4" />
-    Add Batch
+    Add to Batch
   </button>
 </template>

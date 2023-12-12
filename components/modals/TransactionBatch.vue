@@ -141,9 +141,7 @@ watch(multipleActions, () => {
     <hr class="my-5 border-slate-150 dark:border-slate-800">
 
     <div class="flex flex-col gap-5 px-7.5 pb-7.5">
-      <div v-if="estimatedData?.length && totalAmountAfterDiscount">
-        <MultipleEstimatedFee v-if="totalAmountAfterDiscount" :error="estimateError" :total-amount-after-discount="totalAmountAfterDiscount?.toFixed()" :data="estimatedData" />
-      </div>
+      <MultipleEstimatedFee :error="estimateError" :total-amount-after-discount="totalAmountAfterDiscount ? totalAmountAfterDiscount?.toFixed() : '0'" :data="estimatedData" />
       <CommonButton :disabled="!!estimateError" :loading="estimatePending || loading" size="lg" class="w-full justify-center" @click="onSubmit">
         Submit
       </CommonButton>
