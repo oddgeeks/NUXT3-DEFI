@@ -2,6 +2,8 @@
 import { utils } from 'ethers'
 import {
   AvoFactoryProxy__factory,
+  AvoMultisigFactoryProxy__factory,
+  AvoMultisigSafe__factory,
   Forwarder__factory,
   GaslessWallet__factory,
   MultisigForwarder__factory,
@@ -14,11 +16,11 @@ const props = defineProps<{
 
 const emit = defineEmits(['destroy'])
 
-const { safeAddress, sendTransaction } = useAvocadoSafe()
-const { isSafeMultisig } = storeToRefs(useMultisig())
+const { safeAddress, selectedSafe, sendTransaction } = useAvocadoSafe()
 const { parseTransactionError } = useErrorHandler()
 const { getRpcProviderByChainId } = useShared()
 const { multisigForwarderProxyAddress, forwarderProxyAddress } = storeToRefs(useEnvironmentState())
+const isLegacy = computed(() => selectedSafe.value?.multisig === 0)
 
 const { account } = useWeb3()
 const submitting = ref(false)
@@ -45,14 +47,12 @@ async function fetchAvowalletImpl() {
     getRpcProviderByChainId(props.options.chainId),
   )
 
-  const multisigAvoFactoryProxyContract = AvoFactoryProxy__factory.connect(
+  const multisigAvoFactoryProxyContract = AvoMultisigFactoryProxy__factory.connect(
     avoMultisigFactory,
     getRpcProviderByChainId(props.options.chainId),
   )
 
-  const avoWalletImpl = isSafeMultisig.value ? await multisigAvoFactoryProxyContract.avoWalletImpl() : await avoFactoryProxyContract.avoWalletImpl()
-
-  console.log(avoWalletImpl, { isSafeMultisig: isSafeMultisig.value })
+  const avoWalletImpl = !isLegacy.value ? await multisigAvoFactoryProxyContract.avoImpl() : await avoFactoryProxyContract.avoWalletImpl()
 
   avoWalletImpAddress.value = avoWalletImpl
   return avoWalletImpl
@@ -63,15 +63,21 @@ const { data: txData } = useAsyncData(
   async () => {
     await fetchAvowalletImpl()
 
-    const wallet = GaslessWallet__factory.connect(
-      safeAddress.value,
-      getRpcProviderByChainId(props.options.chainId),
-    )
+    const wallet = !isLegacy.value
+      ? AvoMultisigSafe__factory.connect(
+        safeAddress.value,
+        getRpcProviderByChainId(props.options.chainId),
+      )
+      : GaslessWallet__factory.connect(
+        safeAddress.value,
+        getRpcProviderByChainId(props.options.chainId),
+      )
 
     const data = await wallet.populateTransaction.upgradeTo(
       avoWalletImpAddress.value,
+      // @ts-expect-error
+      !isLegacy.value ? '0x00' : undefined,
     )
-
     return data
   },
   {
@@ -157,30 +163,18 @@ onUnmounted(() => {
       <span class="text-lg leading-5">{{ chainIdToName(options.chainId) }} Upgrade</span>
     </div>
     <div class="flex items-center justify-center gap-3">
-      <span
-        class="flex items-center justify-center rounded-5 bg-gray-900 px-4 py-2 text-sm"
-      >
+      <span class="flex items-center justify-center rounded-5 bg-gray-900 px-4 py-2 text-sm">
         v{{ options.currentVersion }}
       </span>
       <ArrowRight class="h-[18px] w-[18px] text-gray-400" />
-      <span
-        class="flex items-center justify-center rounded-5 bg-gray-900 px-4 py-2 text-sm"
-      >
+      <span class="flex items-center justify-center rounded-5 bg-gray-900 px-4 py-2 text-sm">
         v{{ options.latestVersion }}
       </span>
     </div>
-    <EstimatedFee
-      :chain-id="String(options.chainId)"
-      :loading="pending"
-      :data="data"
-      :error="error"
-    />
+    <EstimatedFee :chain-id="String(options.chainId)" :loading="pending" :data="data" :error="error" />
     <CommonButton
-      :loading="pending || submitting"
-      :disabled="pending || submitting || error || !txData"
-      class="w-full justify-center"
-      size="lg"
-      @click="handleSubmit"
+      :loading="pending || submitting" :disabled="pending || submitting || error || !txData"
+      class="w-full justify-center" size="lg" @click="handleSubmit"
     >
       Upgrade
     </CommonButton>
