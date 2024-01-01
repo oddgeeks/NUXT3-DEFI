@@ -6,9 +6,6 @@ import {
   walletconnect,
   walletlink,
 } from '~~/connectors'
-import SVGWalletlink from '~/assets/images/wallet/walletlink.svg'
-import SVGMetamask from '~/assets/images/wallet/metamask.svg'
-import SVGWalletConnect from '~/assets/images/wallet/wallet-connect.svg'
 
 export function useNetworks() {
   const { chainId, provider, library } = useWeb3()
@@ -21,7 +18,6 @@ export function useNetworks() {
         return getInjectedName(window?.ethereum)
       },
       id: 'injected',
-      logo: SVGMetamask,
       switchNetwork: async (network: Network) => {
         return await changeMetamaskNetwork(network)
       },
@@ -32,7 +28,6 @@ export function useNetworks() {
     {
       name: 'Coinbase Wallet',
       id: 'walletlink',
-      logo: SVGWalletlink,
       switchNetwork: async (network: Network) => {
         return await changeMetamaskNetwork(network)
       },
@@ -43,7 +38,6 @@ export function useNetworks() {
     {
       name: 'WalletConnect',
       id: 'walletconnect',
-      logo: SVGWalletConnect,
       switchNetwork: async (network: Network) => {
         return await changeMetamaskNetwork(network)
       },
