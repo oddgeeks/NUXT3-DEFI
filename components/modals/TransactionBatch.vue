@@ -138,7 +138,7 @@ watch(multipleActions, () => {
       </ul>
     </div>
 
-    <hr class="my-5 border-slate-150 dark:border-slate-800">
+    <hr class="my-5 border-slate-800">
 
     <div class="flex flex-col gap-5 px-7.5 pb-7.5">
       <MultipleEstimatedFee :error="estimateError" :total-amount-after-discount="totalAmountAfterDiscount ? totalAmountAfterDiscount?.toFixed() : '0'" :data="estimatedData" />
