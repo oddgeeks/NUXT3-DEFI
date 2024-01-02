@@ -2,7 +2,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { AvoFactoryProxy } from "./AvoFactoryProxy";
+export type { AvoMultisigFactoryProxy } from "./AvoMultisigFactoryProxy";
 export type { AvoMultisigImplementation } from "./AvoMultisigImplementation";
+export type { AvoMultisigSafe } from "./AvoMultisigSafe";
 export type { AvoSafeImplementation } from "./AvoSafeImplementation";
 export type { BalanceResolver } from "./BalanceResolver";
 export type { Erc20 } from "./Erc20";
@@ -13,7 +15,9 @@ export type { MultisigForwarder } from "./MultisigForwarder";
 export type { TokenBalanceResolver } from "./TokenBalanceResolver";
 export * as factories from "./factories";
 export { AvoFactoryProxy__factory } from "./factories/AvoFactoryProxy__factory";
+export { AvoMultisigFactoryProxy__factory } from "./factories/AvoMultisigFactoryProxy__factory";
 export { AvoMultisigImplementation__factory } from "./factories/AvoMultisigImplementation__factory";
+export { AvoMultisigSafe__factory } from "./factories/AvoMultisigSafe__factory";
 export { AvoSafeImplementation__factory } from "./factories/AvoSafeImplementation__factory";
 export { BalanceResolver__factory } from "./factories/BalanceResolver__factory";
 export { Erc20__factory } from "./factories/Erc20__factory";

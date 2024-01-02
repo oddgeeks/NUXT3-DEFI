@@ -17,6 +17,8 @@ export function useBanner() {
   const isHideRabbyBanner = useLocalStorage('hide-rabby-banner', false)
   const isHideMigrationBanner = useLocalStorage('hide-migration-banner', false)
   const isOnboardHidden = useLocalStorage('hide-onboard', false)
+  const isAnnouncementHidden = useLocalStorage('hide-announcement', false)
+
   const [isMultisigOnboardHiddenToggle, toggle] = useToggle(false)
 
   const showWelcomeBanner = computed(() => {
@@ -72,6 +74,19 @@ export function useBanner() {
     )
   })
 
+  const isAnnouncementBannerVisible = computed(() => {
+    if (!account.value)
+      return false
+
+    const userNonce = useCookie<string | null>(`nonce-${account.value}`)
+
+    if (!userNonce.value)
+      return false
+
+    return !isAnnouncementHidden.value
+  },
+  )
+
   const isMultisigOnboardBannerVisible = computed(() => {
     if (!selectedSafe.value || $pwa?.needRefresh || showIncorrectNetworkBanner.value)
       return false
@@ -110,6 +125,7 @@ export function useBanner() {
     isHideRabbyBanner,
     isOnboardBannerVisible,
     isMultisigOnboardBannerVisible,
+    isAnnouncementBannerVisible,
     isMigrationBannerVisible,
     showTrackingBanner: computed(() => !!trackingAccount.value),
     toggleWelcomeBanner: (val: boolean) => (isHideWelcomeBanner.value = !val),
@@ -124,6 +140,7 @@ export function useBanner() {
     hideOnboardBanner: () => (isOnboardHidden.value = true),
     hideRabbyBanner: () => (isHideRabbyBanner.value = true),
     hideVersionUpdateBanner: () => (isVersionUpdateBannerHidden.value = true),
+    hideAnnouncementBanner: () => (isAnnouncementHidden.value = true),
     hideMigrationBanner: () => (isHideMigrationBanner.value = true),
   }
 }
