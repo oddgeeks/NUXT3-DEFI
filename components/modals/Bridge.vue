@@ -84,7 +84,31 @@ const { pending, error, data } = useEstimatedFee(
   },
 )
 
-const availableRoutes = computed(() => quote.data.value?.result?.routes || [])
+const availableRoutes = computed(() => {
+  const routes = quote.data.value?.result?.routes || []
+
+  const bestRoutes = routes.reduce((acc: IRoute[], curr) => {
+    const [bridgeName] = curr.usedBridgeNames || []
+
+    if (!bridgeName)
+      return acc
+
+    const existedBridge = acc.find(i => i.usedBridgeNames.includes(bridgeName))
+
+    if (existedBridge) {
+      const isCurrentRouteBetter = toBN(curr.receivedValueInUsd).gt(existedBridge.receivedValueInUsd)
+
+      if (isCurrentRouteBetter)
+        return [...acc.filter(i => !i.usedBridgeNames.includes(bridgeName)), curr]
+
+      return acc
+    }
+
+    return [...acc, curr]
+  }, [])
+
+  return bestRoutes
+})
 const fallbackRoutes = computed(() => availableRoutes.value.filter(i => getRouteProvider(i)?.displayName !== bridgeProtocol.value?.displayName))
 
 function formatRouteAmount(route: IRoute) {
