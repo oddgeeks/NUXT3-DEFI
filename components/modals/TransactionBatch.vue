@@ -5,7 +5,7 @@ import groupBy from 'lodash/groupBy'
 const emit = defineEmits(['destroy'])
 
 const { transactionStack } = storeToRefs(useShared())
-const { removeActionsByChainId } = useShared()
+const { removeActionsByChainId, removeActionsByMetadata } = useShared()
 const { tokens } = storeToRefs(useTokens())
 const { sendTransactions, authenticateTransactionMfa } = useAvocadoSafe()
 const { switchToAvocadoNetwork } = useNetworks()
@@ -27,6 +27,8 @@ const transformedTokens = computed(() => {
     }
   })
 })
+
+const groupedTransactions = computed(() => groupBy(transactionStack.value, 'chainId'))
 
 const multipleActions = computed<IEstimatedActions[]>(() => {
   const arr: IEstimatedActions[] = []
@@ -146,6 +148,10 @@ watch(multipleActions, () => {
                 {{ metadata.type }}
               </span>
               <ActionMetadata :key="metadata" :tokens="transformedTokens" compact :chain_id="tx.chainId" :metadata="metadata" />
+
+              <button class="ml-auto" type="button" @click="removeActionsByMetadata(groupedTransactions[tx.chainId][index].options?.metadata)">
+                <SvgoX />
+              </button>
             </div>
           </div>
         </li>

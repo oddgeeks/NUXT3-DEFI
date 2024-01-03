@@ -51,6 +51,10 @@ export const useShared = defineStore('shared', () => {
     transactionStack.value = transactionStack.value.filter(action => action.chainId != chainId)
   }
 
+  function removeActionsByMetadata(metadata: string) {
+    transactionStack.value = transactionStack.value.filter(action => action.options?.metadata != metadata)
+  }
+
   return {
     isProd,
     rpcs,
@@ -61,6 +65,7 @@ export const useShared = defineStore('shared', () => {
     transactionStack,
     addToTransactionStack,
     removeActionsByChainId,
+    removeActionsByMetadata,
   }
 })
 
