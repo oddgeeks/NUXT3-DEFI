@@ -418,6 +418,7 @@ export function useAvocadoSafe() {
       mfaRequestType: 'transaction',
       submitFn,
       defaultSessionAvailable,
+      forceGrabSession,
       chainId,
       expire,
     })

@@ -11,7 +11,7 @@ const { sendTransactions, authenticateTransactionMfa } = useAvocadoSafe()
 const { switchToAvocadoNetwork } = useNetworks()
 const { parseTransactionError } = useErrorHandler()
 
-const { is2FAenabled, getMFAToken } = useMfa()
+const { is2FAenabled, getMFAToken, terminateMFAToken } = useMfa()
 
 const loading = ref(false)
 
@@ -95,6 +95,8 @@ async function onSubmit() {
         continue
       }
     }
+
+    terminateMFAToken()
 
     emit('destroy')
   }

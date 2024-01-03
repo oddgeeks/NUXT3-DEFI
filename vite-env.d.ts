@@ -834,6 +834,7 @@ interface IMfaVerifyModalParams {
   inputValue?: string
   authenticate?: boolean,
   defaultSessionAvailable?: boolean
+  forceGrabSession?: boolean
   expire?: MfaExpire
   chainId?: number | string
 }
@@ -843,6 +844,7 @@ interface IAuthVerifyParams {
   mfaRequestType: MfaRequestType
   submitFn?: MfaVerify
   defaultSessionAvailable?: boolean
+  forceGrabSession?: boolean
   expire?: MfaExpire
   chainId?: number | string
 }
