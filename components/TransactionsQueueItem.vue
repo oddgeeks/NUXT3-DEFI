@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { TransactionReceipt } from '@ethersproject/abstract-provider'
-import { wait } from '@instadapp/utils'
-import retry from 'async-retry'
+import { retry, wait } from '@instadapp/utils'
 
 const props = defineProps<{
   transactionParam: IPendingTransactionModalParams
@@ -28,11 +27,11 @@ const events = [
 async function waitForTransaction() {
   try {
     await wait(5000)
-
     const provider = getRpcProviderByChainId(props.transactionParam.chainId)
 
-    transaction.value = await retry(() => provider.waitForTransaction(props.transactionParam.hash), {
-      maxTimeout: 5000,
+    transaction.value = await retry(() => provider.waitForTransaction(props.transactionParam.hash, 1, 20_000), {
+      timeouts: [5000, 10000, 15000],
+      delay: 10000,
     })
   }
   finally {
