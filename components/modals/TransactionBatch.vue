@@ -97,7 +97,7 @@ async function onSubmit() {
     }
 
     terminateMFAToken()
-
+    transactionStack.value = []
     emit('destroy')
   }
   catch (e: any) {
