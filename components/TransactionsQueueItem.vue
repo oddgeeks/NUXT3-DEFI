@@ -24,6 +24,7 @@ const events = [
   '0xdaf1e6e151973de199f3ea25b9c6a7c3d94299dc85e269cfd20e48e517ecf704',
 ]
 const provider = getRpcProviderByChainId(props.transactionParam.chainId)
+
 async function waitForTransaction() {
   try {
     await wait(5000)
@@ -33,6 +34,7 @@ async function waitForTransaction() {
     transactionPending.value = false
   }
 }
+
 async function waitForCrossTransaction() {
   await wait(5000)
   while (isCrossTransactionFetching.value) {
@@ -58,11 +60,11 @@ const status = computed(() => {
   else {
     if (transactionPending.value)
       return TransactionStatus.Pending
-    if ((!transactionPending.value && !transaction) || !transaction.value?.status)
-      return TransactionStatus.Failed
-    if (transaction.value.logs.some(i => i.topics.length && events.includes(i.topics[0])))
+
+    if (transaction.value && transaction.value.logs.some(i => i.topics.length && events.includes(i.topics[0])))
       return TransactionStatus.Success
-    return TransactionStatus.Failed
+
+    else return TransactionStatus.Failed
   }
 })
 function handleAnimationEnd() {

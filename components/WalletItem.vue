@@ -25,6 +25,8 @@ const walletName = useLocalStorage(`safe-label-${props.safe?.safe_address}`, isM
 
 const baseColorClass = computed(() => isMultisig.value ? 'text-purple' : isLegacy.value ? 'text-gray-400' : 'text-primary')
 
+const isSafeSecondary = computed(() => !isAddressEqual(props.safe.owner_address, selectedSafe.value?.owner_address))
+
 const active = computed(() => {
   return safeAddress.value === props.safe?.safe_address
 })
@@ -106,12 +108,12 @@ function handleClick() {
                 <SvgoDoubleUser v-if="isMultisig" />
                 <SvgoSingleUser v-else />
               </template>
-              <span class="truncate" :class="!detailed ? 'w-[75px]' : 'max-w-[140px]'">
+              <span class="truncate" :class="!detailed ? 'sm:w-[65px]' : 'max-w-[140px]'">
                 {{ walletName }}
               </span>
             </p>
             <span
-              v-if="props.safe.multisig" :class="{
+              v-if="props.safe.multisig && !isSafeSecondary" :class="{
                 'px-[5px] py-0.5 text-[10px]/[16px]': detailed,
                 'px-1 text-[8px]/[14px]': !detailed,
               }" class="inline-flex items-center justify-center rounded-lg bg-gray-700"
@@ -124,7 +126,11 @@ function handleClick() {
               </button>
               <SafeBadge show-tooltip class="!text-[10px]" :safe="safe" />
             </template>
-            <SvgoShieldChecked v-if="isProtected" v-tippy="'This account has Avocado Protect activated on 1 or more networks.'" class="text-primary" />
+            <SvgoShieldChecked
+              v-if="isProtected" v-tippy="'This account has Avocado Protect activated on 1 or more networks.'"
+              :class="!detailed ? 'h-4 w-4' : ''"
+              class="text-primary"
+            />
           </div>
           <button v-if="detailed" :disabled="pinnedSafes.length > 2 && !safePinned" @click.stop="togglePinSafe(safe.safe_address)">
             <SvgoPin :class="safePinned ? 'text-primary [&>path]:fill-primary' : 'text-gray-700'" />

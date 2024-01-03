@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import QrSVG from '~/assets/images/icons/qr.svg?component'
+import QrSVG from '~/assets/images/icons/qr.svg'
+
+defineProps<{
+  wrapperClass?: string
+}>()
 
 const { collapsed, toggleCollapse, hideSidebar, actualWidth, isMobile, hidden } = useSidebar()
 const { safeAddress } = useAvocadoSafe()
@@ -40,7 +44,7 @@ watch(() => route.fullPath, () => {
         :class="{ 'rotate-180': !collapsed }"
       />
     </button>
-    <aside ref="target" :style="{ width: `${actualWidth}px` }" style="scrollbar-gutter:stable;overflow-y:overlay;" class="scroll-style fixed top-0 z-30 flex h-full shrink-0 overflow-y-auto bg-gray-850 transition-all sm:h-screen">
+    <aside ref="target" :class="wrapperClass" :style="{ width: `${actualWidth}px` }" style="scrollbar-gutter:stable;overflow-y:overlay;" class="scroll-style fixed top-0 z-30 flex h-full shrink-0 overflow-y-auto bg-gray-850 transition-all sm:h-screen">
       <div v-if="collapsed && !isMobile" class="flex w-full flex-col items-center gap-6 p-7.5">
         <div class="flex flex-col items-center gap-5">
           <NuxtLink class="flex flex-col items-center gap-2.5" to="/">

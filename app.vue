@@ -9,6 +9,7 @@ const { safeAddress } = storeToRefs(useSafe())
 const { fromWei } = useBignumber()
 const { avoProvider } = useSafe()
 const { isMobile, actualWidth } = useSidebar()
+const { isAnnouncementBannerVisible } = useBanner()
 
 const actualWidthInPx = computed(() => `${actualWidth.value ? actualWidth.value : undefined}px`)
 
@@ -47,6 +48,18 @@ useScriptTag('https://app.chatwoot.com/packs/js/sdk.js', () => {
     websiteToken: 'pmgPtAUDhoeVv7h9nS2xk7PF',
     baseUrl: 'https://app.chatwoot.com',
   })
+
+  const originalOnMessage: ((event: MessageEvent) => void) | null = window.onmessage
+
+  window.onmessage = function (e) {
+    const trustedOrigins = [window.origin, 'https://app.chatwoot.com']
+
+    if (!trustedOrigins.includes(e.origin))
+      return
+
+    if (originalOnMessage)
+      originalOnMessage(e)
+  }
 }, {
   async: true,
   defer: true,
@@ -92,8 +105,10 @@ useIntervalFn(refresh, 15000)
 <template>
   <Html :class="isMobile && actualWidth ? 'overflow-hidden' : ''">
     <Body :class="isMobile && actualWidth ? 'overflow-hidden' : ''">
+      <BannerAnnouncement v-if="isAnnouncementBannerVisible" />
+
       <div class="layout-wrapper h-full">
-        <Sidebar />
+        <Sidebar :wrapper-class="isAnnouncementBannerVisible ? 'mt-7.5' : ''" />
 
         <NuxtLayout>
           <NuxtLoadingIndicator color="#07A65D" :height="2" />

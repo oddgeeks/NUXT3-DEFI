@@ -645,7 +645,7 @@ export function useAvocadoSafe() {
 
     const domain = {
       name: config.domainName,
-      version: config.latestVersion,
+      version: config.notdeployed ? config?.latestVersion : config.currentVersion,
       chainId: String(avoChainId.value),
       salt: ethers.utils.solidityKeccak256(['uint256'], [params.targetChainId]),
       verifyingContract: selectedSafe.value?.safe_address,
@@ -688,7 +688,7 @@ export function useAvocadoSafe() {
 
     const domain = {
       name: config?.domainName,
-      version: config?.latestVersion,
+      version: config.notdeployed ? config?.latestVersion : config.currentVersion,
       chainId: avoChainId.value,
       verifyingContract,
       salt: ethers.utils.solidityKeccak256(['uint256'], [chainId]),
@@ -959,6 +959,7 @@ ${parsed.message}`,
     totalBalance,
     account,
     safeAddress,
+    selectedSafe,
     sendTransaction,
     sendTransactions,
     isSafeAddress,

@@ -37,18 +37,15 @@ useIntervalFn(refresh, 15000)
 </script>
 
 <template>
-  <div class="hidden items-center justify-end py-8 sm:flex">
+  <div class="hidden items-center justify-between py-8 sm:flex">
     <WalletItemList />
-    <div class="mr-auto flex items-center gap-2.5">
-      <SessionLocked />
-    </div>
+
     <button v-if="dryRun" class="mr-4 text-sm text-orange" @click="dryRun = undefined">
       Disable Dry Run
     </button>
-    <nav class="relative flex items-center gap-7.5">
-      <div class="flex items-center gap-5">
-        <Web3Button />
-      </div>
+    <nav class="relative ml-auto flex items-center gap-4">
+      <SessionLocked />
+      <Web3Button />
     </nav>
   </div>
 </template>
