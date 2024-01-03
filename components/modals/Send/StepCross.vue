@@ -577,7 +577,7 @@ async function onSubmit() {
 
     if (isEligableToProceed2FA(source.threshold, data.value.fromChainId) && !transactionToken.value) {
       const { mfaToken } = await authenticateTransactionMfa({
-        expire: '60min',
+        expire: '60',
         defaultSessionAvailable: true,
         forceGrabSession: true,
       })
