@@ -25,7 +25,7 @@ export default defineNuxtConfig({
     slackStagingKey: process.env.SLACK_STAGING_KEY,
     public: {
       environment: process.env.ENVIRONMENT,
-      domainURL: process.env.VERCEL_BRANCH_URL ? `https://${process.env.VERCEL_BRANCH_URL}` : 'https://avocado.instadapp.io',
+      domainURL: 'https://avocado.instadapp.io',
       googleAnalyticsId: process.env.GA_ID,
       isVercelProd: process.env.VERCEL_ENV === 'production',
     },
