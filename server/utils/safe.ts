@@ -60,28 +60,15 @@ export async function getSafeOptionsByChain(params: IOptionsParams): Promise<ISa
 
   function latestVersion(): Promise<string> {
     if (safe.multisig == 1) {
-      return implInstance.DOMAIN_SEPARATOR_VERSION().catch(() => {
-        obj.notdeployed = true
-
-        return multisigForwarderInstance.avocadoVersion(
-          '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-          safe.multisig_index).catch(() => {
-          return '1.0.0'
-        })
+      return multisigForwarderInstance.avocadoVersion(
+        '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+        safe.multisig_index).catch(() => {
+        return '1.0.0'
       })
     }
 
-    const gaslessWalletInstance = GaslessWallet__factory.connect(
-      safe.safe_address!,
-      provider,
-    )
-
-    return gaslessWalletInstance.DOMAIN_SEPARATOR_VERSION().catch(() => {
-      obj.notdeployed = true
-
-      return legacyForwarderInstance
-        .avoWalletVersion('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE')
-    })
+    return legacyForwarderInstance
+      .avoWalletVersion('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE')
   }
 
   function domainName(): Promise<string> {

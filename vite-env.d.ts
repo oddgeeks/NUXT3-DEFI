@@ -43,7 +43,6 @@ interface IBlockQueryChain {
 interface Provider {
   id: string;
   name: string;
-  logo: any;
   connect: () => Promise<any>;
   switchNetwork: (network: Network) => Promise<any>;
 }

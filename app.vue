@@ -9,6 +9,7 @@ const { safeAddress } = storeToRefs(useSafe())
 const { fromWei } = useBignumber()
 const { avoProvider } = useSafe()
 const { isMobile, actualWidth } = useSidebar()
+const { isAnnouncementBannerVisible } = useBanner()
 
 const actualWidthInPx = computed(() => `${actualWidth.value ? actualWidth.value : undefined}px`)
 
@@ -104,8 +105,10 @@ useIntervalFn(refresh, 15000)
 <template>
   <Html :class="isMobile && actualWidth ? 'overflow-hidden' : ''">
     <Body :class="isMobile && actualWidth ? 'overflow-hidden' : ''">
+      <BannerAnnouncement v-if="isAnnouncementBannerVisible" />
+
       <div class="layout-wrapper h-full">
-        <Sidebar />
+        <Sidebar :wrapper-class="isAnnouncementBannerVisible ? 'mt-7.5' : ''" />
 
         <NuxtLayout>
           <NuxtLoadingIndicator color="#07A65D" :height="2" />

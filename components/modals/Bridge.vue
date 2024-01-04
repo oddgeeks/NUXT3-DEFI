@@ -53,7 +53,7 @@ const {
   disabled,
   loading,
   transactions,
-  routes,
+  quote,
   bridgeFee,
   selectableToChains,
   handleSwapToken,
@@ -65,6 +65,8 @@ const {
   dirty,
   toggleMax,
   toggleDirty,
+  isPriceImpactHigh,
+  priceImpact,
 } = useBridge(fromToken, fromChainId)
 
 const { pending, error, data } = useEstimatedFee(
@@ -82,7 +84,31 @@ const { pending, error, data } = useEstimatedFee(
   },
 )
 
-const availableRoutes = computed(() => routes.data.value?.result?.routes || [])
+const availableRoutes = computed(() => {
+  const routes = quote.data.value?.result?.routes || []
+
+  const bestRoutes = routes.reduce((acc: IRoute[], curr) => {
+    const [bridgeName] = curr.usedBridgeNames || []
+
+    if (!bridgeName)
+      return acc
+
+    const existedBridge = acc.find(i => i.usedBridgeNames.includes(bridgeName))
+
+    if (existedBridge) {
+      const isCurrentRouteBetter = toBN(curr.receivedValueInUsd).gt(existedBridge.receivedValueInUsd)
+
+      if (isCurrentRouteBetter)
+        return [...acc.filter(i => !i.usedBridgeNames.includes(bridgeName)), curr]
+
+      return acc
+    }
+
+    return [...acc, curr]
+  }, [])
+
+  return bestRoutes
+})
 const fallbackRoutes = computed(() => availableRoutes.value.filter(i => getRouteProvider(i)?.displayName !== bridgeProtocol.value?.displayName))
 
 function formatRouteAmount(route: IRoute) {
@@ -152,7 +178,10 @@ const availableTokens = computed(() => {
 },
 )
 
-watchThrottled(fromTokens.data, () => {
+watchThrottled(fromTokens.data, (_, oldVal) => {
+  if (!oldVal)
+    return
+
   const isTokenAvailable = availableTokens.value.some(i =>
     i.address?.toLocaleLowerCase() === fromToken.value.address?.toLocaleLowerCase()
     && String(i.chainId) == String(fromToken.value.chainId))
@@ -239,12 +268,18 @@ const onSubmit = form.handleSubmit(async () => {
   if (!txRoute.value || !bridgeToToken.value)
     return
 
+  const fromChain = quote.data.value?.result?.fromAsset?.chainId
+  const toChain = quote.data.value?.result?.toAsset?.chainId
+
+  if ((toChainId.value != toChain) || (fromChainId.value != fromChain))
+    throw new Error('ChainId mismatch, please try again')
+
   try {
     const metadata = getMetadata()
 
     const transactionHash = await sendTransactions(
       transactions.data.value!,
-      fromChainId.value,
+      fromChain,
       {
         metadata,
       },
@@ -256,9 +291,9 @@ const onSubmit = form.handleSubmit(async () => {
     }
 
     logActionToSlack({
-      message: generateSlackMessage(metadata, fromChainId.value),
+      message: generateSlackMessage(metadata, fromChain),
       action: 'bridge',
-      chainId: fromChainId.value,
+      chainId: fromChain,
       txHash: transactionHash,
       account: account.value,
       amountInUsd: toBN(recivedValueInUsd.value).toString(),
@@ -269,7 +304,7 @@ const onSubmit = form.handleSubmit(async () => {
 
     showPendingTransactionModal({
       hash: transactionHash,
-      chainId: fromChainId.value,
+      chainId: fromChain,
       type: 'bridge',
     })
   }
@@ -304,7 +339,6 @@ const onSubmit = form.handleSubmit(async () => {
         Migrate tokens across multiple networks with lowest slippage.
       </template>
     </ModalTitle>
-
     <div class="flex flex-col gap-7.5 p-5 sm:px-7.5 sm:pb-7.5 sm:pt-5">
       <div class="flex flex-col gap-5">
         <div class="space-y-2.5">
@@ -460,7 +494,7 @@ const onSubmit = form.handleSubmit(async () => {
                     Route Through
                   </span>
                   <div
-                    v-if="routes.pending.value"
+                    v-if="quote.pending.value"
                     style="width: 140px; height: 20px"
                     class="loading-box rounded-lg"
                   />
@@ -494,7 +528,7 @@ const onSubmit = form.handleSubmit(async () => {
                                     <span class="text-white">
                                       {{ getRouteProvider(route)?.displayName }}
                                     </span>
-                                    <span v-if="i === 0" class="rounded-lg bg-primary bg-opacity-10 px-2 text-[10px] uppercase leading-5 text-primary">
+                                    <span v-if="i === 0" class="rounded-lg bg-primary/10 px-2 text-[10px] uppercase leading-5 text-primary">
                                       Best Rate
                                     </span>
                                     <SvgoCheckCircle v-else-if="txRoute.routeId === route.routeId" class="success-circle w-4" />
@@ -522,11 +556,12 @@ const onSubmit = form.handleSubmit(async () => {
               <div class="divider" />
 
               <div
+                :class="isPriceImpactHigh ? 'text-red-alert' : ''"
                 class="flex items-start justify-between whitespace-nowrap sm:items-center"
               >
                 <span class="font-semibold !leading-5 md:text-lg">You receive</span>
                 <div
-                  v-if="routes.pending.value"
+                  v-if="quote.pending.value"
                   style="width: 140px; height: 20px"
                   class="loading-box rounded-lg"
                 />
@@ -576,9 +611,14 @@ const onSubmit = form.handleSubmit(async () => {
             </template>
           </CommonNotification>
           <CommonNotification
-            v-if="routes.error.value"
+            v-if="quote.error.value"
             type="warning"
-            :text="routes.error.value?.message"
+            :text="quote.error.value?.message"
+          />
+          <CommonNotification
+            v-if="isPriceImpactHigh"
+            type="warning"
+            :text="`Expected output is ${toBN(priceImpact).toFixed(2)}% lower than input. Please proceed carefully.`"
           />
         </div>
 
