@@ -131,8 +131,6 @@ export async function getSafeOptionsByChain(params: IOptionsParams): Promise<ISa
     })
   }
 
-  console.log(await latestVersion())
-
   const [_threshold, _nonce, _latestVersion, _currentVersion, _domainName] = await Promise.all([
     threshold(),
     nonce(),

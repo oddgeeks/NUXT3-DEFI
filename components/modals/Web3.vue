@@ -1,14 +1,48 @@
 <script setup lang="ts">
+import * as yup from 'yup'
+import { useField, useForm } from 'vee-validate'
+import { ethers } from 'ethers'
+
 defineProps<{
   buttonClass?: string
 }>()
 const emit = defineEmits(['destroy'])
+const router = useRouter()
 const { activate, account } = useWeb3()
+
+const { trackingAccount } = useAccountTrack()
 
 const { providers } = useNetworks()
 const { setConnectorName } = useConnectors()
 
 const loading = ref<Record<string, boolean>>({})
+
+const {
+  handleSubmit,
+  isSubmitting,
+  meta: formMeta,
+} = useForm({
+  validationSchema: yup.object({
+    address: yup.string()
+      .required('')
+      .test('is-address', 'Invalid address', (value) => {
+        if (!value)
+          return false
+
+        console.log(value)
+
+        try {
+          ethers.utils.getAddress(value)
+          return true
+        }
+        catch (e) {
+          return false
+        }
+      }),
+  }),
+})
+
+const { value: address, errorMessage } = useField<string>('address')
 
 async function connect(provider: any) {
   try {
@@ -38,11 +72,17 @@ async function connect(provider: any) {
 
 function isProviderVisible(provider: Provider) {
   if (process.client) {
-    if (provider.name === 'Metamask' && !window.ethereum)
+    if (provider.id === 'injected' && !window.ethereum)
       return false
     return true
   }
 }
+
+const onSubmit = handleSubmit(() => {
+  trackingAccount.value = address.value
+
+  router.push('/')
+})
 </script>
 
 <template>
@@ -53,14 +93,14 @@ function isProviderVisible(provider: Provider) {
       </div>
     </slot>
 
-    <ul class="grid gap-[15px] px-2 pb-2">
+    <ul class="grid gap-[15px]">
       <li v-for="provider in providers" :key="provider.name">
         <button
           v-if="isProviderVisible(provider)"
           class="group flex w-full items-center gap-4 rounded-[40px] bg-gray-850 px-5 py-[15px] transition-colors"
           :class="
             [
-              provider.name === 'Metamask'
+              provider.name === 'MetaMask'
                 ? 'hover:bg-[#282125]'
                 : 'hover:bg-[#15233C]',
               buttonClass,
@@ -69,14 +109,14 @@ function isProviderVisible(provider: Provider) {
           @click="connect(provider)"
         >
           <div class="flex flex-1 items-center gap-[15px]">
-            <component :is="provider.logo" class="h-7.5 w-7.5" />
+            <ProviderLogo :provider-name="provider.name" />
 
             <span class="text-[16px]">{{ provider.name }}</span>
           </div>
 
           <svg
             v-if="loading[provider.name]" :class="
-              provider.name === 'Metamask'
+              provider.name === 'MetaMask'
                 ? 'text-orange-500'
                 : 'text-primary'
             " class="-ml-1 mr-3 h-5 w-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -91,7 +131,7 @@ function isProviderVisible(provider: Provider) {
 
           <svg
             v-else class="text-gray-500 transition-all" :class="
-              provider.name === 'Metamask'
+              provider.name === 'MetaMask'
                 ? 'group-hover:text-orange-500'
                 : 'group-hover:text-primary'
             " width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -108,5 +148,13 @@ function isProviderVisible(provider: Provider) {
         </button>
       </li>
     </ul>
+
+    <form class="mt-7 flex flex-col gap-2.5" @submit.prevent="onSubmit">
+      <span class="text-sm">Track Portfolio</span>
+      <CommonInput v-model="address" name="address" :error-message="errorMessage" placeholder="EOA address" />
+      <CommonButton :disabled="!formMeta.valid" :loading="isSubmitting" type="submit" class="mt-2.5 justify-center" size="lg">
+        View Read-Only
+      </CommonButton>
+    </form>
   </div>
 </template>

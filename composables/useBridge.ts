@@ -32,7 +32,6 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
 
   const toChainId = ref(fromChainId.value == '137' ? '10' : '137')
   const bridgeToToken = ref<IBridgeTokensResult>()
-
   const txRoute = ref<IRoute>()
 
   const form = useForm({
@@ -127,7 +126,15 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
 
         tokensController = null
 
-        return sortTokensBestMatch(result, fromToken.value.symbol)
+        const sorted = sortTokensBestMatch(result, fromToken.value.symbol)
+
+        if (sorted.length) {
+          const [token] = sorted
+
+          bridgeToToken.value = token
+        }
+
+        return sorted
       }
       catch (e) {
       }
@@ -175,8 +182,8 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
     },
   )
 
-  const routes = useAsyncData(
-    'bridge-routes',
+  const quote = useAsyncData(
+    'bridge-quote',
     async () => {
       const { valid } = await form.validate()
 
@@ -350,6 +357,15 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
     times(nativeFee.value!, nativeCurrency.value?.price || 0),
   )
 
+  const priceImpact = computed(() => toBN(amountInUsd.value || '0').minus(recivedValueInUsd.value || '0').div(amountInUsd.value).times(100).toFixed())
+
+  const isPriceImpactHigh = computed(() => {
+    if (!amountInUsd.value || !txRoute.value)
+      return false
+
+    return toBN(priceImpact.value).gt(40)
+  })
+
   const isInsufficientBalance = computed(() => {
     const nativeBalance
       = tokenBalances.value.find(
@@ -506,33 +522,27 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
       || !form.meta.value.valid
       || !!transactions.error.value
       || loading.value
+      || !!quote.error.value?.message
       || isInsufficientBalance.value,
   )
 
   const loading = computed(
     () =>
       form.isSubmitting.value
-      || routes.pending.value
+      || quote.pending.value
       || transactions.pending.value
       || bridgeTokens.pending.value,
   )
 
-  watchThrottled(bridgeTokens.data, () => {
-    if (bridgeTokens.data.value?.length) {
-      const [token] = bridgeTokens.data.value
+  function clearData() {
+    bridgeToToken.value = undefined
+    txRoute.value = undefined
 
-      bridgeToToken.value = token
-    }
-  }, {
-    throttle: 500,
-  })
-
-  watchThrottled(fromChainId, () => {
-    if (fromChainId.value == toChainId.value)
-      toChainId.value = fromChainId.value == '137' ? '10' : '137'
-  }, {
-    throttle: 500,
-  })
+    clearNuxtData('bridge-transactions')
+    clearNuxtData('bridge-quote')
+    clearNuxtData('bridge-to-tokens')
+    clearNuxtData('bridge-from-tokens')
+  }
 
   onMounted(() => {
     const firstSelectableChain = selectableToChains.value[0]
@@ -541,11 +551,12 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
       toChainId.value = String(firstSelectableChain.chainId)
   })
 
+  watch([fromChainId, toChainId], () => {
+    clearData()
+  })
+
   onUnmounted(() => {
-    clearNuxtData('bridge-transactions')
-    clearNuxtData('bridge-routes')
-    clearNuxtData('bridge-to-tokens')
-    clearNuxtData('bridge-from-tokens')
+    clearData()
 
     // abort controllers if they are still running
     const controllers = [txController, tokensController, fromController, routesController]
@@ -564,7 +575,7 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
     toChainId,
     fromChainId,
     bridgeToToken,
-    routes,
+    quote,
     txRoute,
     form,
     bridgeFee,
@@ -588,5 +599,7 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
     toggleMax,
     dirty,
     toggleDirty,
+    isPriceImpactHigh,
+    priceImpact,
   }
 }
