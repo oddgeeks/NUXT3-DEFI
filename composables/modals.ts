@@ -604,12 +604,13 @@ export function openUpdateThresholdModal(chainId: number | string, additionalCou
   })
 }
 
-export function openWalletNameEditModal(safe: ISafe) {
+export function openWalletNameEditModal(safe: ISafe, walletName: string) {
   return openModal({
     component: WalletNameEdit,
     async: true,
     componentProps: {
       safe,
+      walletName,
     },
   })
 }

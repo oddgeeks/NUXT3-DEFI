@@ -7,6 +7,7 @@ const {
   showInsufficientGasBanner,
   showOnboardBanner,
   showVersionUpdateBanner,
+  isMigrationBannerVisible,
 } = useBanner()
 
 const route = useRoute()
@@ -89,6 +90,7 @@ ${stringified}`
           <TheHeader />
           <div class="container mt-20 flex flex-col gap-4 sm:mt-0">
             <WarningsGasBalance v-if="showInsufficientGasBanner" />
+            <BannerMigration v-if="isMigrationBannerVisible" />
           </div>
           <slot />
           <TheFooter />

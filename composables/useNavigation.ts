@@ -3,6 +3,7 @@ import axios from 'axios'
 export function useNavigation() {
   const { isSafeMultisig } = storeToRefs(useMultisig())
   const { safeAddress, account } = useAvocadoSafe()
+  const { isSelectedSafeLegacy } = storeToRefs(useSafe())
   const { isAvocadoProtectActive, isSafeBackupSigner } = useMfa()
   const { avoExplorerURL, multisigURL } = storeToRefs(useEnvironmentState())
 
