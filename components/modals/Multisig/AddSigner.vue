@@ -99,6 +99,7 @@ const onSubmit = handleSubmit(async () => {
       ? item
       : {
           ...item,
+          ensName: item.address,
           address: resolvedAddresses.value[item.address],
         }),
     gnosisAddress: props.gnosisAddress,
@@ -197,11 +198,15 @@ function handleBackClick() {
             </button>
           </div>
           <CommonInput
-            v-model="field.value.address"
+            :model-value="field.value.ensName || field.value.address"
             :name="`addresses[${key}].address`"
             :disabled="contactSelections.includes(key) || isGnosisMigration"
             :error-message="getErrorMessage(errors, `addresses[${key}].address`)"
             placeholder="Enter Address"
+            @update:model-value="v => {
+              field.value.ensName = ''
+              field.value.address = v
+            }"
           >
             <template #suffix>
               <button
