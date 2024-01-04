@@ -109,7 +109,7 @@ onMounted(() => {
         </div>
         <span v-if="!transactionParam.crossChain" class="inline-flex gap-1.5 text-xs text-gray-400">
           {{ shortenHash(transactionParam.hash) }}
-          <Copy icon-class="w-3" :text="transactionParam.hash" icon-only />
+          <Copy icon-class="w-3" :text="`${avoExplorerURL}/tx/${transactionParam.hash}`" icon-only />
         </span>
       </div>
       <button
