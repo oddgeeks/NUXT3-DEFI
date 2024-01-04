@@ -890,7 +890,7 @@ onUnmounted(() => {
                   v-if="!!slippageError"
                   class="mt-4 flex items-center gap-2 text-left text-xs text-red-alert"
                 >
-                  <SVGInfo />
+                  <SvgoInfo2 />
                   {{ slippageError }}
                 </span>
               </details>
