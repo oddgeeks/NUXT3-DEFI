@@ -52,7 +52,7 @@ const {
             async (value) => {
               const resolvedAddress = await provider.resolveName(value || '')
 
-              if (!resolvedAddress || !isAddress(value || ''))
+              if (!resolvedAddress && !isAddress(value || ''))
                 return true
 
               return account.value?.toLowerCase() !== (resolvedAddress ? resolvedAddress.toLowerCase() : value?.toLowerCase())
