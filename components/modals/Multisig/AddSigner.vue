@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import * as yup from 'yup'
+import { ethers } from 'ethers'
 import { isAddress } from '@ethersproject/address'
 import { useFieldArray, useForm } from 'vee-validate'
 
@@ -12,6 +13,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['destroy'])
 
+const provider = new ethers.providers.JsonRpcProvider('https://rpc.ankr.com/eth')
 const { account } = useWeb3()
 const contactSelections = ref<number[]>([])
 
@@ -30,8 +32,18 @@ const {
         name: yup.string(),
         address: yup.string()
           .required('')
-          .test('is-valid-address', 'Incorrect address', (value) => {
-            return value ? isAddress(value || '') : true
+          .test('is-valid-address', 'Incorrect address', async (value) => {
+            if (!value || isAddress(value || ''))
+              return true
+
+            let isENS = false
+
+            try {
+              isENS = !!(await provider.resolveName(value))
+            }
+            catch (e) {}
+
+            return isENS
           })
           .test(
             'cannot-add-self',
