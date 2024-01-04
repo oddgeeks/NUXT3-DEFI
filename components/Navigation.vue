@@ -115,14 +115,6 @@ function openBridge() {
         />
       </button>
       <div v-if="moreOptions" class="flex flex-col gap-2">
-        <NuxtLink
-          active-class="text-primary"
-          class="flex h-11 items-center gap-2.5"
-          to="/migration"
-        >
-          <SvgoArrowRight class="h-4 w-4" />
-          Avo Migration
-        </NuxtLink>
         <button
           class="flex h-11 items-center gap-2.5"
           :disabled="!tokenBalances || tokenBalances.length === 0"
@@ -169,6 +161,14 @@ function openBridge() {
         >
           <SvgoRocket class="h-4 w-4" />
           Onboard
+        </NuxtLink>
+        <NuxtLink
+          active-class="text-primary"
+          class="flex h-11 items-center gap-2.5"
+          to="/migration"
+        >
+          <SvgoArrowRight class="h-4 w-4" />
+          Avo Migration
         </NuxtLink>
         <NuxtLink
           class="flex h-11 items-center gap-2.5"
