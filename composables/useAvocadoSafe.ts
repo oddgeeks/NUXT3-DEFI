@@ -418,6 +418,7 @@ export function useAvocadoSafe() {
       mfaRequestType: 'transaction',
       submitFn,
       defaultSessionAvailable,
+      forceGrabSession,
       chainId,
       expire,
     })
@@ -441,7 +442,7 @@ export function useAvocadoSafe() {
         {
           owner: selectedSafe.value?.owner_address,
           index: selectedSafe.value?.multisig_index,
-          ttl: expire || '30min',
+          ttl: expire || '30',
           code: verifyPayload.code,
           type: mfa.value,
         },

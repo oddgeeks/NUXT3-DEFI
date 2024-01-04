@@ -245,6 +245,25 @@ function getRouteProvider(route?: IRoute) {
   return bridge?.protocol
 }
 
+function getMetadata(single?: boolean) {
+  return encodeBridgeMetadata({
+    amount: toWei(amount.value, fromToken.value.decimals),
+    bridgeFee: toWei(bridgeFee.value.amount, bridgeFee.value.asset.decimals),
+    nativeToken: bridgeFee.value.asset.address,
+    receiver: account.value,
+    fromToken: fromToken.value.address,
+    toToken: bridgeToToken.value?.address!,
+    toChainId: quote?.data?.value?.result?.toAsset?.chainId,
+  }, single)
+}
+
+const metadata = computed(() => {
+  if (!txRoute.value || !bridgeToToken.value || !amount.value || !toChainId.value)
+    return
+
+  return getMetadata(false)
+})
+
 const onSubmit = form.handleSubmit(async () => {
   if (!txRoute.value || !bridgeToToken.value)
     return
@@ -256,15 +275,7 @@ const onSubmit = form.handleSubmit(async () => {
     throw new Error('ChainId mismatch, please try again')
 
   try {
-    const metadata = encodeBridgeMetadata({
-      amount: toWei(amount.value, fromToken.value.decimals),
-      bridgeFee: toWei(bridgeFee.value.amount, bridgeFee.value.asset.decimals),
-      nativeToken: bridgeFee.value.asset.address,
-      receiver: account.value,
-      fromToken: fromToken.value.address,
-      toToken: bridgeToToken.value.address,
-      toChainId: toChain,
-    })
+    const metadata = getMetadata()
 
     const transactionHash = await sendTransactions(
       transactions.data.value!,
@@ -624,6 +635,7 @@ const onSubmit = form.handleSubmit(async () => {
         </div>
       </div>
       <SessionLocked class="mx-auto" />
+      <AddBatchButton v-if="metadata" :tx-actions="transactions.data.value" :chain-id="fromChainId" :metadata="metadata" />
     </div>
   </form>
 </template>
