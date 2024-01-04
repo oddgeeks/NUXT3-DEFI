@@ -61,8 +61,10 @@ const {
           .test(
             'duplicate-address',
             'Signer already added',
-            (value) => {
-              if (!isAddress(value || ''))
+            async (value) => {
+              const resolvedAddress = await provider.resolveName(value || '')
+
+              if (!isAddress(value || '') && !resolvedAddress)
                 return true
 
               const fieldCount = fields.value.filter(field => field.value.address.toLowerCase() === value?.toLowerCase())
