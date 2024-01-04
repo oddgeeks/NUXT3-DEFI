@@ -130,6 +130,9 @@ watch(multipleActions, () => {
       <template #title>
         Transaction Batch
       </template>
+      <template #subtitle>
+        Please avoid conflicting transactions in the batch to avoid transaction failure
+      </template>
     </ModalTitle>
     <div class="px-7.5 pt-5">
       <ul class="flex flex-col gap-2.5">
