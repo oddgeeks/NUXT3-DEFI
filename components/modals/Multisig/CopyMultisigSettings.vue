@@ -1,9 +1,9 @@
 <script setup lang="ts">
+const emits = defineEmits(['destroy'])
 const { selectedSafe } = storeToRefs(useSafe())
 const { getContactNameByAddress } = useContacts()
-const { addSignersWithThreshold } = useAvocadoSafe()
+const { addSignersWithThreshold, removeSignerWithThreshold, createProposalOrSignDirecty } = useAvocadoSafe()
 const { parseTransactionError } = useErrorHandler()
-
 function getSortedChain(reverse = false) {
   return Object.entries(selectedSafe.value?.signers || {}).map(([chainId, addresses]) => ({
     chainId,
@@ -21,14 +21,18 @@ const sourceThreshold = asyncComputed(() => getRequiredSigner(selectedSafe.value
 
 const sourceSigners = computed(() => selectedSafe.value?.signers[sourceChainId.value] || [])
 
-const targetSigners = computed(() => {
-  const signers = selectedSafe.value?.signers[targetChainId.value] || []
-  return [...new Set(signers.concat(sourceSigners.value))]
-})
+const targetSigners = computed(() => selectedSafe.value?.signers[targetChainId.value] || [])
+
+const signersWillbeAdded = computed(() => sourceSigners.value.filter(i => !targetSigners.value.includes(i))
+  .filter(i => !isAddressEqual(i, selectedSafe.value?.owner_address)))
+
+const signersWillbeDeleted = computed(() => targetSigners.value.filter(i => !sourceSigners.value.includes(i))
+  .filter(i => !isAddressEqual(i, selectedSafe.value?.owner_address)),
+)
 
 async function handleApply() {
   try {
-    const signersWithoutOwner = targetSigners.value.filter(i => !isAddressEqual(i, selectedSafe.value?.owner_address))
+    const addedSignersWithoutOwner = signersWillbeAdded.value
       .map((i) => {
         return {
           address: i,
@@ -36,14 +40,41 @@ async function handleApply() {
         }
       })
 
-    const txHash = await addSignersWithThreshold({
-      chainId: targetChainId.value,
-      threshold: sourceThreshold.value,
-      addresses: signersWithoutOwner,
-    })
+    const addSignerActions = addedSignersWithoutOwner?.length
+      ? await addSignersWithThreshold({
+        chainId: targetChainId.value,
+        threshold: sourceThreshold.value,
+        addresses: addedSignersWithoutOwner,
+        actionsOnly: true,
+      })
+      : []
 
-    if (txHash)
+    const deleteSignerActions = signersWillbeDeleted.value?.length
+      ? await removeSignerWithThreshold({
+        chainId: targetChainId.value,
+        addresses: signersWillbeDeleted.value,
+        actionsOnly: true,
+      })
+      : []
+
+    const actions = [...deleteSignerActions?.actions || [], ...addSignerActions?.actions || []]
+
+    const encodedMetadata = [encodeChangeThresholdMetadata(sourceThreshold.value, false)]
+
+    if (signersWillbeDeleted.value?.length)
+      encodedMetadata.push(encodeRemoveSignersMetadata(signersWillbeDeleted.value, false))
+
+    if (addedSignersWithoutOwner?.length)
+      encodedMetadata.push(encodeAddSignersMetadata(addedSignersWithoutOwner.map(i => i.address), false))
+
+    const metadata = encodeMultipleActions(...encodedMetadata)
+
+    const txHash = await createProposalOrSignDirecty({ chainId: targetChainId.value, actions, estimatedFee: true, metadata, clearModals: true })
+
+    if (txHash) {
       showPendingTransactionModal({ chainId: targetChainId.value, hash: txHash })
+      emits('destroy')
+    }
   }
   catch (e: any) {
     const parsed = parseTransactionError(e)
@@ -141,7 +172,11 @@ async function handleChangeNetwork(source = false) {
             <li class="flex gap-3 border-b border-gray-875 px-4 py-[14px] text-xs text-gray-400 last:border-b-0">
               Adding Signers
             </li>
-            <li v-for="signer in targetSigners" :key="signer" class="flex gap-3 border-b border-gray-875 p-2.5 last:border-b-0 sm:px-4 sm:py-[14px]">
+
+            <li v-if="!signersWillbeAdded.length" class="flex gap-3 px-4 py-[14px] text-sm">
+              No Signers will be added
+            </li>
+            <li v-for="signer in signersWillbeAdded" :key="signer" class="flex gap-3 border-b border-gray-875 p-2.5 last:border-b-0 sm:px-4 sm:py-[14px]">
               <AuthorityAvatar class="h-7.5 w-7.5" :address="signer" />
               <div class="flex flex-col gap-1">
                 <span v-if="getContactNameByAddress(signer)" class="max-w-[150px] truncate whitespace-nowrap text-xs">
@@ -161,6 +196,25 @@ async function handleChangeNetwork(source = false) {
               <span>{{ sourceThreshold }} out of {{ sourceSigners.length || 1 }}</span>
             </li>
           </ul>
+          <ul v-if="signersWillbeDeleted?.length" class="m-4 rounded-2xl border border-gray-800">
+            <li class="flex gap-3 border-b border-gray-875 px-4 py-[14px] text-xs text-gray-400 last:border-b-0">
+              Deleted Signers
+            </li>
+            <li v-for="signer in signersWillbeDeleted" :key="signer" class="flex gap-3 border-b border-gray-875 p-2.5 last:border-b-0 sm:px-4 sm:py-[14px]">
+              <AuthorityAvatar class="h-7.5 w-7.5" :address="signer" />
+              <div class="flex flex-col gap-1">
+                <span v-if="getContactNameByAddress(signer)" class="max-w-[150px] truncate whitespace-nowrap text-xs">
+                  {{ getContactNameByAddress(signer) }}
+                </span>
+                <button v-else class="text-left text-xs font-medium text-primary" @click="openAddContactModal(undefined, signer)">
+                  Save as Contact
+                </button>
+                <span class="text-xs text-gray-400">
+                  {{ shortenHash(signer, 9) }}
+                </span>
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
@@ -169,7 +223,7 @@ async function handleChangeNetwork(source = false) {
       <CommonButton class="justify-center" size="lg" color="white">
         Cancel
       </CommonButton>
-      <CommonButton :disabled="!targetSigners?.length" :loading="pending" class="justify-center" size="lg" @click="handleApply">
+      <CommonButton :disabled="!signersWillbeDeleted?.length && !signersWillbeAdded.length" :loading="pending" class="justify-center" size="lg" @click="handleApply">
         Apply
       </CommonButton>
     </div>

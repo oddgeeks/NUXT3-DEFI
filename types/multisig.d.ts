@@ -87,7 +87,7 @@ interface IChangeThresholdParams {
 interface IRemoveSignerParams {
   addresses: string[]
   chainId: number | string
-  threshold: number
+  threshold?: number
   actionsOnly?: boolean
 }
 

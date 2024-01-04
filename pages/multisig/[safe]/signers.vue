@@ -138,7 +138,7 @@ function handleProceed() {
         <MultisigSignerCard v-model="addedSigners" :safe="data.safe" :chain-id="item.chainId" />
       </template>
     </div>
-    <CommonNotification v-if="hasUnsavedChanges" type="warning" class="flex w-fit gap-5 !rounded-2xl">
+    <CommonNotification v-if="hasUnsavedChanges" type="warning" class="bottom-10 flex w-fit gap-5 !rounded-2xl !bg-[#201b1a] sm:fixed">
       <div class="flex gap-2.5 text-xs/5">
         <SvgoInfo2 class="mt-1" />
         You have unsaved changes to your Multisig <br>Signers. Click Proceed to finalized changeds.
