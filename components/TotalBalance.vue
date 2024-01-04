@@ -7,6 +7,7 @@ const { balances, safeAddress } = storeToRefs(useSafe())
 const { totalNetAssets } = storeToRefs(useDefi())
 const { totalBalance } = useAvocadoSafe()
 const { authorisedNetworks } = useAuthorities()
+const { transactionStack } = storeToRefs(useShared())
 
 function handleOpenSendModal() {
   const firstAvailableChain = authorisedNetworks.value[0]?.chainId || 1
@@ -63,10 +64,16 @@ function handleOpenSendModal() {
       <SessionLocked class="h-fit sm:hidden" />
     </div>
     <div class="flex flex-col-reverse items-baseline gap-2.5 sm:flex-row">
-      <button class="flex w-full items-center justify-center gap-2 rounded-5 border border-gray-800 px-4 py-2 text-xs text-gray-400 sm:w-fit sm:border-0 sm:text-sm" @click="openTransactionShortcutsModal">
-        <SvgoBookmark />
-        Tx Shortcuts
-      </button>
+      <div class="flex w-full items-center gap-2.5">
+        <button v-if="transactionStack.length" class="flex w-full flex-1 items-center justify-center gap-2 rounded-5 border border-gray-800 px-4 py-2 text-xs text-gray-400 sm:hidden sm:w-fit sm:border-0 sm:text-sm" @click="openTransactionBatchModal()">
+          <SvgoLayer class="h-4 w-4" />
+          Tx Batch
+        </button>
+        <button class="flex w-full flex-1 items-center justify-center gap-2 rounded-5 border border-gray-800 px-4 py-2 text-xs text-gray-400 sm:w-fit sm:border-0 sm:text-sm" @click="openTransactionShortcutsModal">
+          <SvgoBookmark />
+          Tx Shortcuts
+        </button>
+      </div>
       <CommonButton
         :disabled="!safeAddress"
         class="flex w-full items-center justify-center gap-2 !px-4 sm:w-fit"

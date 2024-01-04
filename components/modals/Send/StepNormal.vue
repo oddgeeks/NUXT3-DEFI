@@ -2,6 +2,7 @@
 import { Erc20__factory } from '~~/contracts'
 
 const { token, stepBack, data, actualAddress, isCrossChain } = useSend()
+const { addToTransactionStack } = useShared()
 const { account, library } = useWeb3()
 const { toWei } = useBignumber()
 const { sendTransactions } = useAvocadoSafe()
@@ -66,21 +67,33 @@ const disabled = computed(() => {
   return !actualAddress.value || pending.value || error.value || isSubmitting.value
 })
 
+function getMetadata(single?: boolean) {
+  if (!token.value || !data.value)
+    return
+
+  return encodeTransferMetadata(
+    {
+      token: token.value?.address!,
+      amount: toWei(data.value.amount, token.value?.decimals),
+      receiver: actualAddress.value,
+    }, single)
+}
+
+const metadata = computed(() => {
+  if (!token.value || !data.value)
+    return
+
+  return getMetadata(false)
+})
+
 async function onSubmit() {
   try {
     if (!token.value || !data.value)
       return
 
-    isSubmitting.value = true
+    const metadata = getMetadata()
 
-    const metadata = encodeTransferMetadata(
-      {
-        token: token.value?.address!,
-        amount: toWei(data.value.amount, token.value?.decimals),
-        receiver: actualAddress.value,
-      },
-      true,
-    )
+    isSubmitting.value = true
 
     const transactionHash = await sendTransactions(
       txs.value!,
@@ -95,7 +108,7 @@ async function onSubmit() {
       return
 
     logActionToSlack({
-      message: generateSlackMessage(metadata, data.value.toChainId),
+      message: generateSlackMessage(metadata!, data.value.toChainId),
       action: 'transfer',
       txHash: transactionHash,
       amountInUsd: amountInUsd.value.toFixed(),
@@ -134,7 +147,7 @@ async function onSubmit() {
 </script>
 
 <template>
-  <form class="flex w-full flex-col gap-7.5 sm:w-[520px]" @submit.prevent="onSubmit">
+  <form class="flex w-full flex-col gap-7.5 pb-12 sm:w-[520px]" @submit.prevent="onSubmit">
     <div class="mx-[-0.75rem] rounded-5 bg-gray-850 px-3 py-[14px] text-sm sm:mx-0 sm:px-5">
       <div class="flex flex-col gap-2.5 font-medium">
         <dl class="flex items-center justify-between">
@@ -201,5 +214,6 @@ async function onSubmit() {
         Send
       </CommonButton>
     </div>
+    <AddBatchButton v-if="metadata" class="absolute bottom-7.5 left-7.5" :tx-actions="txs" :chain-id="data.toChainId" :metadata="metadata" />
   </form>
 </template>
