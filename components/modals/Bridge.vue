@@ -253,7 +253,7 @@ function getMetadata(single?: boolean) {
     receiver: account.value,
     fromToken: fromToken.value.address,
     toToken: bridgeToToken.value?.address!,
-    toChainId: toChainId.value,
+    toChainId: quote?.data?.value?.result?.toAsset?.chainId,
   }, single)
 }
 
