@@ -199,6 +199,7 @@ watchThrottled(() => props.safe, async () => {
         <TransitionGroup tag="ul" class="scroll-style flex min-h-[20px] flex-col gap-2.5 overflow-auto sm:max-h-[200px]" name="signer-list">
           <AddressItem v-for="address in newSigners" :key="address" :removable="true" :address="address" />
           <AddressItem v-for="address in chainSigners" :key="address" :address="address" />
+          <AddressItem v-if="!chainSigners.length && account" :address="account" />
         </TransitionGroup>
         <div>
           <CommonInput v-model="value" :error-message="errorMessage" placeholder="Signer EOA Address" container-classes="!bg-gray-800">

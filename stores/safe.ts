@@ -693,6 +693,11 @@ export const useSafe = defineStore('safe', () => {
   }
 
   function getDefaultSafe(address: string, multisig: 0 | 1 = 0, multisig_index = 0): ISafe {
+    const defaultSigners = availableNetworks.reduce((acc, curr) => {
+      acc[curr.chainId] = []
+      return acc
+    }, {} as Record<string, []>)
+
     return {
       safe_address: address,
       authorities: {},
@@ -707,7 +712,7 @@ export const useSafe = defineStore('safe', () => {
       mfa_totp_verified: 0,
       version: {},
       multisig,
-      signers: {},
+      signers: defaultSigners,
       multisig_index,
     }
   }

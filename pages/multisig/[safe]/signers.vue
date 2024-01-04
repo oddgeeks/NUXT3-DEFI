@@ -2,7 +2,7 @@
 import { isAddress } from 'ethers/lib/utils'
 
 const route = useRoute()
-const { getSafe } = useSafe()
+const { getSafe, getDefaultSafe } = useSafe()
 
 if (!route.params.safe || !isAddress(route.params.safe as string))
   throw new Error('Safe address is required')
@@ -52,10 +52,10 @@ const navigation = [
 const { data, execute } = useAsyncData(
   `${route.params.safe}-signers`,
   async () => {
-    const safe = await getSafe(route.params.safe as string)
+    let safe = await getSafe(route.params.safe as string)
 
     if (!safe)
-      return
+      safe = getDefaultSafe(route.params.safe as string)
 
     const arr = Object.keys(safe.signers).map(key => ({ chainId: key, addresses: safe.signers[key] }))
 
