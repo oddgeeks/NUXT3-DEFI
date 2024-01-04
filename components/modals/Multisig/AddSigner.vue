@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import * as yup from 'yup'
-import { ethers } from 'ethers'
 import { isAddress } from '@ethersproject/address'
 import { useFieldArray, useForm } from 'vee-validate'
 
@@ -13,13 +12,16 @@ const props = defineProps<{
 
 const emit = defineEmits(['destroy'])
 
-const provider = new ethers.providers.JsonRpcProvider('https://rpc.ankr.com/eth')
 const { account } = useWeb3()
+const { getRpcProviderByChainId } = useShared()
 const contactSelections = ref<number[]>([])
+const resolvedAddresses = ref<Record<string, string>>({})
 
 const steps = useState<SignerSteps>('signer-steps')
 
 const isGnosisMigration = computed(() => !!props.gnosisAddress)
+
+const provider = getRpcProviderByChainId(1)
 
 const {
   handleSubmit,
@@ -36,14 +38,13 @@ const {
             if (!value || isAddress(value || ''))
               return true
 
-            let isENS = false
+            const resolvedAddress = await provider.resolveName(value)
 
-            try {
-              isENS = !!(await provider.resolveName(value))
-            }
-            catch (e) {}
+            if (!resolvedAddress)
+              return false
 
-            return isENS
+            resolvedAddresses.value[value] = resolvedAddress
+            return true
           })
           .test(
             'cannot-add-self',
@@ -91,7 +92,12 @@ const onSubmit = handleSubmit(async () => {
   const addresses = fields.value.map(field => field.value)
 
   openReviewSignerModal({
-    addresses,
+    addresses: addresses.map(item => isAddress(item.address)
+      ? item
+      : {
+          ...item,
+          address: resolvedAddresses.value[item.address],
+        }),
     gnosisAddress: props.gnosisAddress,
     defaultSelectedNetworks: props.defaultSelectedNetworks,
     defaultThreshold: props.defaultThreshold,
