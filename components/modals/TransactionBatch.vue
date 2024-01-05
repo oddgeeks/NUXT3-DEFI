@@ -142,7 +142,7 @@ watch(multipleActions, () => {
             {{ chainIdToName(tx.chainId) }}
 
             <button class="ml-auto" type="button" @click="removeActionsByChainId(tx.chainId)">
-              <SvgoX />
+              <SvgoTrash2 class="text-red-alert" />
             </button>
           </div>
           <div class="flex flex-col gap-2.5">
