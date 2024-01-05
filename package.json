@@ -2,7 +2,7 @@
   "name": "avocado",
   "version": "0.1.0",
   "engines": {
-    "node": ">=v20.0"
+    "node": ">=v18.18.0"
   },
   "scripts": {
     "build": "nuxt build",
