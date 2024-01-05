@@ -5,12 +5,16 @@ const props = defineProps<{
   txActions: any
   chainId: number | string
   metadata: string
+  disabledReason?: string
 }>()
 
 const { transactionStack } = storeToRefs(useShared())
 const { addToTransactionStack } = useShared()
 
 const disabled = computed(() => {
+  if (props.disabledReason)
+    return true
+
   if (!transactionStack.value.length)
     return false
 
@@ -47,7 +51,7 @@ function handleAddBatch() {
 </script>
 
 <template>
-  <Tippy :content="disabled ? 'The action should be on same chain' : undefined">
+  <Tippy :content="disabled ? disabledReason || 'The action should be on same chain' : undefined">
     <button :disabled="!txActions?.length || disabled" class="mx-auto flex w-fit items-center justify-center gap-2 text-xs text-primary disabled:text-gray-400" type="button" @click="handleAddBatch">
       <SvgoLayer class="h-4 w-4" />
       Add to Batch

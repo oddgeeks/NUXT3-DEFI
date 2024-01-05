@@ -114,7 +114,11 @@ onUnmounted(() => {
 
       <component :is="steps[activeStep].component" />
 
-      <ManageBookmark v-if="activeStep === 1" :class="!isCrossChain ? 'absolute bottom-7.5 right-7.5' : 'mt-5'" :bookmark="reactiveBookmark" @update-bookmark="handleUpdateBookmark" @create-bookmark="handleCreateBookmark" />
+      <div v-if="activeStep === 1" :class="!isCrossChain ? 'absolute bottom-7.5 right-7.5' : 'mt-5'" class="flex justify-between">
+        <AddBatchButton v-if="isCrossChain" disabled-reason="Batching is not supported in cross-chain transfers" :tx-actions="[]" :chain-id="1" metadata="" />
+
+        <ManageBookmark :bookmark="reactiveBookmark" @update-bookmark="handleUpdateBookmark" @create-bookmark="handleCreateBookmark" />
+      </div>
     </div>
   </div>
 </template>
