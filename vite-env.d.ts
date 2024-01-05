@@ -782,6 +782,7 @@ type ChainFeeErrors = Record<string, string>
 interface ISignerAddress {
   name: string
   address: string
+  ensName?: string
 }
 
 interface IWalletConnectBannedDappList {
