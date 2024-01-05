@@ -44,10 +44,7 @@ function formatAddress(addresses: string[]): ISignerAddress[] {
 
     <div class="grid grid-cols-1 gap-4 border-t border-gray-875 p-5 sm:grid-cols-2 sm:px-7.5 sm:pb-7.5">
       <CommonButton class="justify-center" size="lg" color="white" @click="handleBack">
-        Cancel
-      </CommonButton>
-      <CommonButton class="justify-center" size="lg" @click="$emit('resolve', true)">
-        Continue
+        Close
       </CommonButton>
     </div>
   </div>
