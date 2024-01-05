@@ -91,7 +91,7 @@ async function handleNext() {
                 <span class="text-gray-400">
                   {{ shortenHash(address.address) }}
                 </span>
-                <span v-if="address.ensName" class="text-gray-400">
+                <span v-if="address?.ensName" class="text-gray-400">
                   {{ ` ${address.ensName}` }}
                 </span>
                 <Copy icon-only :text="address.address" />
