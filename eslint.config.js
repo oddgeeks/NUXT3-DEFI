@@ -1,6 +1,7 @@
 const antfu = require('@antfu/eslint-config').default
 
 module.exports = antfu({
+  yaml: false,
   ignores: [
     '*.png',
     '*.ico',

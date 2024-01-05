@@ -94,7 +94,7 @@ jobs:
     environment:
       name: 'Production'
       url: 'https://internal.avocado.link'
-    needs: [build_image]
+    needs: [ build_image ]
     permissions:
       contents: read
       packages: read
@@ -118,3 +118,4 @@ jobs:
           # Erase CA from disk
           #!/bin/sh
           rm ca.crt
+
