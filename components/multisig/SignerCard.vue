@@ -237,6 +237,10 @@ watchThrottled(() => props.safe, async () => {
         <CommonButton type="submit" :disabled="!meta.valid" class="justify-center" size="lg">
           Add Signer
         </CommonButton>
+        <p v-if="!chainSigners?.length && !newSigners.length" class="text-xs flex items-center gap-2 text-orange-400">
+          <SvgoInfo2 />
+          Add Signer below to finalize deployment
+        </p>
       </div>
     </form>
     <Transition name="fade">
