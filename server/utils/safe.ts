@@ -62,7 +62,8 @@ export async function getSafeOptionsByChain(params: IOptionsParams): Promise<ISa
     if (safe.multisig == 1) {
       return multisigForwarderInstance.avocadoVersion(
         '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-        safe.multisig_index).catch(() => {
+        safe.multisig_index,
+      ).catch(() => {
         return '1.0.0'
       })
     }

@@ -143,7 +143,7 @@ export function useContacts() {
     const info = transferCounts.value.find(
       item =>
         item.to.toLowerCase() === contact.address.toLowerCase()
-          && item.chainId == contact.chainId,
+        && item.chainId == contact.chainId,
     )
     if (!info)
       return ''

@@ -46,10 +46,11 @@ async function disconnect() {
 
 <template>
   <div
+    v-if="trackingAccount"
     class="sticky top-0 z-50 flex h-9 w-full shrink-0 items-center justify-center gap-[15px] bg-primary/10 sm:relative"
   >
     <p class="text-xs text-primary">
-      Tracking account: {{ shortenHash(trackingAccount!) }}
+      Tracking account: {{ shortenHash(trackingAccount) }}
     </p>
     <button class="text-xs text-red-alert" @click="disconnect">
       (Disconnect)

@@ -10,7 +10,7 @@ const providers = {
 
 export function useConnectors() {
   const { rpcs } = storeToRefs(useShared())
-  const { deactivate, connector, account } = useWeb3()
+  const { deactivate, connector } = useWeb3()
   const { resetAccounts } = useSafe()
 
   const router = useRouter()

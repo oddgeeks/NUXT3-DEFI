@@ -127,7 +127,6 @@ export function useBanner() {
     isMultisigOnboardBannerVisible,
     isAnnouncementBannerVisible,
     isMigrationBannerVisible,
-    showTrackingBanner: computed(() => !!trackingAccount.value),
     toggleWelcomeBanner: (val: boolean) => (isHideWelcomeBanner.value = !val),
     hideMultisigOnboardBanner: () => {
       if (!selectedSafe.value)

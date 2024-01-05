@@ -93,7 +93,7 @@ onMounted(async () => {
   try {
     const lookup: any = await $fetch('https://ipapi.co/json')
 
-    const existingCode = countriesWithKey.value.find(c => c.key === `${lookup.country_code.toLowerCase()}${parseInt(lookup.country_calling_code)}`)?.key
+    const existingCode = countriesWithKey.value.find(c => c.key === `${lookup.country_code.toLowerCase()}${Number.parseInt(lookup.country_calling_code)}`)?.key
 
     if (existingCode)
       countryCode.value = existingCode

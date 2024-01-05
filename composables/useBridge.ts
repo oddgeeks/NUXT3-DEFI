@@ -471,7 +471,7 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
       const internalToken = tokenBalances.value.find(
         i =>
           getAddress(i.address) === getAddress(token.address)
-              && String(i.chainId) == String(token.chainId),
+          && String(i.chainId) == String(token.chainId),
       )
 
       token.balance = internalToken?.balance || '0'
@@ -498,7 +498,7 @@ export function useBridge(fromToken: Ref<IBalance>, fromChainId: Ref<string>) {
       const token = tokens.value.find(
         t =>
           getAddress(t.address) === getAddress(i.address)
-            && String(t.chainId) == String(i.chainId),
+          && String(t.chainId) == String(i.chainId),
       )
 
       return !!token

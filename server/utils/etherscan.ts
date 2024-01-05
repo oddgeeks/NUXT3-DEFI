@@ -12,9 +12,7 @@ const ETHERSCAN_BASE_URLS: Record<number, string> = {
   8453: 'https://api.basescan.org',
 }
 
-export async function getTokenTransfersByEtherscan(from: string,
-  to: string[],
-  chainId: number): Promise<Record<string, number>> {
+export async function getTokenTransfersByEtherscan(from: string, to: string[], chainId: number): Promise<Record<string, number>> {
   const baseUrl = ETHERSCAN_BASE_URLS[chainId]
 
   if (to.length === 0 || !baseUrl)
@@ -59,9 +57,7 @@ export async function getTokenTransfersByEtherscan(from: string,
   return transferCounts
 }
 
-export async function getEtherTransfersByEtherscan(from: string,
-  to: string[],
-  chainId: number): Promise<Record<string, number>> {
+export async function getEtherTransfersByEtherscan(from: string, to: string[], chainId: number): Promise<Record<string, number>> {
   const baseUrl = ETHERSCAN_BASE_URLS[chainId]
 
   if (to.length === 0 || !baseUrl)

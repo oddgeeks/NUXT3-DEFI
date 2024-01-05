@@ -8,8 +8,7 @@ interface ISlackParams {
 }
 
 // Added slack logs to understand how is exactly balance fetching happening on production
-export async function slackIt(type: ISlackMessageType,
-  params: ISlackParams) {
+export async function slackIt(type: ISlackMessageType, params: ISlackParams) {
   const { address, userAddress, message, chainId, title, isProd } = params
 
   const accountLink = userAddress

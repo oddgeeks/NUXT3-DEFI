@@ -109,10 +109,7 @@ export function openBridgeModal(address: string, chainId: number | string) {
   })
 }
 
-export function openSwapModal(address: string,
-  chainId: number | string,
-  toAddress?: string,
-  amount?: string) {
+export function openSwapModal(address: string, chainId: number | string, toAddress?: string, amount?: string) {
   openModal({
     component: Swap,
     componentProps: {
@@ -128,11 +125,7 @@ export function openSwapModal(address: string,
   })
 }
 
-export function openSendModal(chainId: number | string,
-  address?: string,
-  contact?: IContact,
-  bookmark?: IBookmark,
-) {
+export function openSendModal(chainId: number | string, address?: string, contact?: IContact, bookmark?: IBookmark) {
   openModal({
     component: Send,
     componentProps: {
@@ -343,10 +336,7 @@ export function openBalanceModal(balance: any) {
   })
 }
 
-export function openAddContactModal(name?: string,
-  address?: string,
-  chainId?: number | string,
-  isEdit?: boolean) {
+export function openAddContactModal(name?: string, address?: string, chainId?: number | string, isEdit?: boolean) {
   if (isEdit) {
     const { allSafes } = storeToRefs(useSafe())
     const safe = allSafes.value.find(i => isAddressEqual(i.safe_address, address))

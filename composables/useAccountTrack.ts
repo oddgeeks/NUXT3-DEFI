@@ -7,7 +7,10 @@ export function useAccountTrack(onSuccess?: () => void, onFailure?: () => void) 
 
   const actualTrackingAccount = computed({
     get: () => {
-      return process.server ? null : trackingAccount.value
+      if (process.server)
+        return null
+
+      return trackingAccount.value
     },
     set: (value: string | null) => {
       trackingAccount.value = value

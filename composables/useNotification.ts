@@ -3,13 +3,13 @@ export interface Notifications {
   duration: number
   icon?: any
   position:
-  | 'center'
-  | 'top-center'
-  | 'top-start'
-  | 'top-end'
-  | 'bottom-center'
-  | 'bottom-start'
-  | 'bottom-end'
+    | 'center'
+    | 'top-center'
+    | 'top-start'
+    | 'top-end'
+    | 'bottom-center'
+    | 'bottom-start'
+    | 'bottom-end'
   title: string
   message: string
   type: 'success' | 'info' | 'warning' | 'error'

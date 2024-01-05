@@ -146,7 +146,8 @@ const { value: gnosisAddress, errorMessage } = useField<string>('gnosisAddress',
 
 const { value: chainId, setState } = useField<string>(
   'chainId',
-  undefined, {
+  undefined,
+  {
     initialValue: '137',
   },
 )

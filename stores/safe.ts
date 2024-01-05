@@ -65,8 +65,7 @@ export const useSafe = defineStore('safe', () => {
       if (!acc.some(i => isAddressEqual(i?.safe_address, curr?.safe_address)))
         acc.push(curr)
       return acc
-    }
-    , [] as ISafe[])
+    }, [] as ISafe[])
 
     return uniqueSafes.sort(a => isAddressEqual(a?.safe_address, selectedSafe.value?.safe_address) ? -1 : 1)
   })
@@ -269,7 +268,9 @@ export const useSafe = defineStore('safe', () => {
           if (curr.chainId === network.chainId.toString())
             return acc.plus(curr.balanceInUSD || '0')
           return acc
-        }, toBN(0)) || toBN(0)
+        },
+        toBN(0),
+      ) || toBN(0)
 
       return {
         ...network,
@@ -332,9 +333,7 @@ export const useSafe = defineStore('safe', () => {
       selectedSafe.value = safe
   }
 
-  async function getChainBalances(chainId: string,
-    address: string,
-    tokens: string[] = []) {
+  async function getChainBalances(chainId: string, address: string, tokens: string[] = []) {
     const newBalances: IBalance[] = []
 
     const chainTokenAddresses = collect(tokens)

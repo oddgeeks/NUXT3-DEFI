@@ -59,15 +59,15 @@ const filteredBalances = computed(() => {
     name: (name: string, token: any) =>
       searchQuery.value
         ? name.toLowerCase().includes(searchQuery.value.toLowerCase())
-          || token.symbol.toLowerCase().includes(searchQuery.value.toLowerCase())
+        || token.symbol.toLowerCase().includes(searchQuery.value.toLowerCase())
         : true,
     balance: (balance: any) =>
       props.hideZeroBalances ? toBN(balance).gt(0) : true,
     chainId: (chainId: string) =>
       (networkPreference.value.length === availableNetworks.length
         ? true
-        : networkPreference.value.includes(parseInt(chainId) as any))
-      && availableNetworks.some(n => String(n.chainId) == String(chainId)),
+        : networkPreference.value.includes(Number.parseInt(chainId) as any))
+        && availableNetworks.some(n => String(n.chainId) == String(chainId)),
   }
 
   return filterArray(tokens, filters)

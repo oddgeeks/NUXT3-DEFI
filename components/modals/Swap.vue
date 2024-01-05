@@ -155,8 +155,7 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm }
         .required('')
         .test('min-amount', '', validateMinAmount)
         .test('max-amount', 'Insufficient balance', (val: any) =>
-          validateMaxAmount(val, sellTokenBalance.value),
-        ),
+          validateMaxAmount(val, sellTokenBalance.value)),
     }),
   })
 
@@ -249,22 +248,20 @@ async function fetchSwapDetails() {
     const actualName
       = name === 'Ethereum' ? 'mainnet' : name.replaceAll(' ', '-').toLowerCase()
 
-    const data: ISwapResponse = await http('/swap',
-      {
-        baseURL: swapAggregatorURL.value,
-        signal: abortController.value?.signal,
-        params: {
-          network: actualName,
-          buyToken: swap.value.buyToken.address,
-          sellToken: swap.value.sellToken.address,
-          sellAmount: toWei(sellAmount.value, swap.value.sellToken.decimals),
-          maxSlippage: actualSlippage.value,
-          slippage: actualSlippage.value,
-          user: safeAddress.value,
-          access_token: swapAggregatorAccessToken.value,
-        },
+    const data: ISwapResponse = await http('/swap', {
+      baseURL: swapAggregatorURL.value,
+      signal: abortController.value?.signal,
+      params: {
+        network: actualName,
+        buyToken: swap.value.buyToken.address,
+        sellToken: swap.value.sellToken.address,
+        sellAmount: toWei(sellAmount.value, swap.value.sellToken.decimals),
+        maxSlippage: actualSlippage.value,
+        slippage: actualSlippage.value,
+        user: safeAddress.value,
+        access_token: swapAggregatorAccessToken.value,
       },
-    )
+    })
     abortController.value = null
 
     const best = data?.aggregators[0]
@@ -489,14 +486,12 @@ const {
     resume()
     refreshing.value = false
   },
-},
-{
+}, {
   active: true,
   count: esimatedFeeRetryCount,
   max: 1,
   cb: changeRouteForRetry,
-},
-)
+})
 
 function getMetadata(single?: boolean) {
   const minRecievedAfterSlippageInWei = toWei(minRecievedAfterSlippage.value, swap.value.buyToken.decimals)

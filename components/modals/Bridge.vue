@@ -38,7 +38,6 @@ const fromToken = ref(
   )!,
 )
 
-// eslint-disable-next-line vue/no-dupe-keys
 const {
   txRoute,
   toChainId,

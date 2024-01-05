@@ -1,0 +1,38 @@
+const antfu = require('@antfu/eslint-config').default
+
+module.exports = antfu({
+  ignores: [
+    '*.png',
+    '*.ico',
+    '*.toml',
+    '*.yml',
+    '.github/',
+    'deployments/',
+    '*.patch',
+    '*.txt',
+    'Dockerfile',
+    'public/',
+    'contracts/',
+    'yarn.lock',
+  ],
+  rules: {
+    'yaml/plain-scalar': 'off',
+    'no-use-before-define': 'off',
+    'yaml/plain-scalar': 'off',
+    'eqeqeq': 'off',
+    'no-console': 'off',
+    'ts/ban-ts-comment': 'off',
+    'node/prefer-global/process': 'off',
+    'ts/no-use-before-define': 'off',
+    'style/no-mixed-operators': 'off',
+    'style/max-statements-per-line': 'off',
+    'ts/no-non-null-asserted-optional-chain': 'off',
+    'no-mixed-operators': 'off',
+    '@typescript-eslint/ban-ts-comment': 'off',
+    'array-callback-return': 'off',
+    'eslint-comments/no-unlimited-disable': 'off',
+    'tailwindcss/no-custom-classname': 'off',
+    'sort-keys': 'off',
+    'no-alert': 'warn',
+  },
+})
