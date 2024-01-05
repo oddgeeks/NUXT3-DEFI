@@ -143,7 +143,8 @@ export function useContacts() {
     return transferCounts.value.find(
       item =>
         item.to.toLowerCase() === address.toLowerCase()
-          && item.chainId == chainId)
+        && item.chainId == chainId,
+    )
   }
 
   const getSentTimes = (contact: IContact) => {
