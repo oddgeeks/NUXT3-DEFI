@@ -2,10 +2,6 @@
 import type { SessionTypes } from '@walletconnect/types'
 import { storeToRefs } from 'pinia'
 import { Erc20__factory } from '@/contracts'
-import SVGInfoCircle from '~/assets/images/icons/exclamation-circle.svg?component'
-import NetworkSVG from '~/assets/images/icons/network.svg?component'
-import FlowersSVG from '~/assets/images/icons/flowers.svg?component'
-import SVGClockCircle from '~/assets/images/icons/clock-circle.svg?component'
 
 const props = defineProps<{
   payload: any
@@ -130,7 +126,7 @@ async function handleSubmit() {
         ...options.value,
         id,
       },
-      'wc',
+      'dapp',
     )
 
     if (!transactionHash && web3WalletV2.value) {
@@ -187,9 +183,8 @@ async function handleSubmit() {
     })
 
     logActionToSlack({
-      message: `${props.isSign ? 'Permit2 Approval' : 'Txn'} ${
-        peerURL.value
-      } ${err.formatted}`,
+      message: `${props.isSign ? 'Permit2 Approval' : 'Txn'} ${peerURL.value
+        } ${err.formatted}`,
       type: 'error',
       action: 'dapp',
       chainId: props.chainId,
@@ -315,29 +310,22 @@ onUnmounted(() => {
         <span v-else>Send Transaction</span>
       </div>
       <div class="flex flex-col gap-2.5">
-        <div
-          class="flex flex-col gap-4 rounded-5 bg-gray-850 px-5 py-[14px]"
-        >
+        <div class="flex flex-col gap-4 rounded-5 bg-gray-850 px-5 py-[14px]">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2.5 text-gray-400">
-              <FlowersSVG />
+              <SvgoFlowers />
               <span class="text-xs font-medium leading-5">App Name</span>
             </div>
 
             <div class="flex items-center gap-2.5">
-              <a
-                rel="noopener noreferrer"
-                target="_blank"
-                class="text-sm text-primary"
-                :href="peerURL"
-              >
+              <a rel="noopener noreferrer" target="_blank" class="text-sm text-primary" :href="peerURL">
                 {{ formatURL(peerURL!) || sessionV2?.peer.metadata.name }}
               </a>
             </div>
           </div>
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2.5 text-gray-400">
-              <NetworkSVG />
+              <SvgoNetwork />
               <span class="text-xs font-medium leading-5">Network</span>
             </div>
 
@@ -348,17 +336,12 @@ onUnmounted(() => {
               <ChainLogo class="h-[18px] w-[18px]" :chain="chainId" />
             </div>
           </div>
-          <EstimatedFee
-            wrapper-class="!p-0"
-            :loading="pending"
-            :data="fee"
-            :error="error"
-          />
+          <EstimatedFee wrapper-class="!p-0" :loading="pending" :data="fee" :error="error" />
 
           <template v-if="isSign && signMessageDetails">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2.5 text-gray-400">
-                <SVGClockCircle class="w-4" />
+                <SvgoClockCircle class="w-4" />
                 <span class="text-xs font-medium leading-5">Exprires at</span>
               </div>
 
@@ -378,20 +361,25 @@ onUnmounted(() => {
             <SvgoInfo2 v-tippy="'Revoke tokens approvals of this transaction'" />
           </span>
 
-          <SvgoChevronDown
-            class="w-4 group-open:rotate-180"
-          />
+          <SvgoChevronDown class="w-4 group-open:rotate-180" />
         </summary>
 
         <div class="group-open:pb-5">
           <ul class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-            <li v-for="i in revokeTokens" :key="i.from" class="flex justify-between rounded-2xl border border-gray-800 px-2.5 py-2 text-[10px]">
+            <li
+              v-for="i in revokeTokens" :key="i.from"
+              class="flex justify-between rounded-2xl border border-gray-800 px-2.5 py-2 text-[10px]"
+            >
               <div class="flex items-center gap-2 font-medium">
                 <SafeTokenLogo class="h-4 w-4" :url="i.tokenObj?.logoURI" />
                 {{ shortenHash(i.to) }}
               </div>
               <div class="flex items-center gap-2.5">
-                <button :disabled="pending" type="button" class="flex items-center gap-1.5 text-primary disabled:text-gray-500" @click="addRevokeTransaction(i.token, i.to)">
+                <button
+                  :disabled="pending" type="button"
+                  class="flex items-center gap-1.5 text-primary disabled:text-gray-500"
+                  @click="addRevokeTransaction(i.token, i.to)"
+                >
                   <SvgoPlus class="h-2.5 w-2.5" />
                   Revoke tx
                 </button>
@@ -404,13 +392,11 @@ onUnmounted(() => {
 
     <div class="flex flex-col gap-7.5 px-6 sm:px-10">
       <SimulationDetails
-        v-if="simulationDetails && hasSimulationDetails"
-        :chain-id="chainId"
-        :details="simulationDetails"
+        v-if="simulationDetails && hasSimulationDetails" :chain-id="chainId" :details="simulationDetails"
         :has-error="!!error"
       />
       <p v-if="simulationError" class="flex items-center gap-2 text-xs leading-5 text-orange-400">
-        <SVGInfoCircle class="w-3" />
+        <SvgoExclamationCircle class="w-3" />
 
         {{ simulationError.message }}
       </p>
@@ -420,8 +406,7 @@ onUnmounted(() => {
       </p>
       <div class="flex items-center justify-between gap-4">
         <CommonButton
-          color="white"
-          size="lg"
+          color="white" size="lg"
           class="flex-1 items-center justify-center hover:!bg-red-alert hover:!bg-opacity-10 hover:text-red-alert"
           @click="handleReject"
         >
@@ -429,16 +414,16 @@ onUnmounted(() => {
         </CommonButton>
 
         <CommonButton
-          :loading="submitting"
-          :disabled="submitDisabled"
-          type="submit"
-          class="flex-1 items-center justify-center"
-          size="lg"
+          :loading="submitting" :disabled="submitDisabled" type="submit"
+          class="flex-1 items-center justify-center" size="lg"
         >
           Submit
         </CommonButton>
       </div>
-      <ManageBookmark :bookmark="reactiveBookmark" @update-bookmark="handleUpdateBookmark" @create-bookmark="handleCreateBookmark" />
+      <ManageBookmark
+        :bookmark="reactiveBookmark" @update-bookmark="handleUpdateBookmark"
+        @create-bookmark="handleCreateBookmark"
+      />
     </div>
     <SessionLocked class="mx-auto" />
   </form>

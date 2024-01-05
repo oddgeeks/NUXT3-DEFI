@@ -53,7 +53,9 @@ export default defineEventHandler(async (event) => {
         ],
       }),
     )
-    .catch(() => {})
+    .catch((e) => {
+      console.log(e)
+    })
 
   return {}
 })

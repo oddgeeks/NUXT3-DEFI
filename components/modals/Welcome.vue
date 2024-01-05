@@ -2,7 +2,7 @@
 import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
 
 const emit = defineEmits(['destroy'])
-const welcomeMessageShow = useLocalStorage<Boolean>('welcome_message_check', false)
+const welcomeMessageShow = useLocalStorage<boolean>('welcome_message_check', false)
 const data = [
   {
     icon: 'network',

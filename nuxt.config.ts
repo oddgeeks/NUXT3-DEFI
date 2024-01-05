@@ -25,7 +25,7 @@ export default defineNuxtConfig({
     slackStagingKey: process.env.SLACK_STAGING_KEY,
     public: {
       environment: process.env.ENVIRONMENT,
-      domainURL: process.env.VERCEL_BRANCH_URL ? `https://${process.env.VERCEL_BRANCH_URL}` : 'https://avocado.instadapp.io',
+      domainURL: 'https://avocado.instadapp.io',
       googleAnalyticsId: process.env.GA_ID,
       isVercelProd: process.env.VERCEL_ENV === 'production',
     },
@@ -60,6 +60,7 @@ export default defineNuxtConfig({
       navigateFallback: null,
       globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
     },
+    disable: process.env.NODE_ENV !== 'production',
     client: {
       // if enabling periodic sync for update use 1 hour or so (periodicSyncForUpdates: 3600)
       periodicSyncForUpdates: 20,
@@ -207,7 +208,8 @@ export default defineNuxtConfig({
         'aes-js',
         'bn.js',
         'js-sha3',
-        'hash.js'],
+        'hash.js',
+      ],
     },
     build: {
       commonjsOptions: {

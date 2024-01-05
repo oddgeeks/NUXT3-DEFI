@@ -90,11 +90,9 @@ async function handleSubmit() {
 
     const metadata = encodeTransactionBuilderMetadata(formatted)
 
-    const tx = await sendTransactions(actualTransactions.value, props.chainId,
-      {
-        metadata,
-      },
-      'others')
+    const tx = await sendTransactions(actualTransactions.value, props.chainId, {
+      metadata,
+    }, 'others')
 
     if (tx) {
       showPendingTransactionModal({

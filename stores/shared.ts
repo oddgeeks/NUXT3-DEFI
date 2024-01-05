@@ -6,6 +6,7 @@ const rpcInstances: Record<string, ethers.providers.StaticJsonRpcProvider> = {}
 
 export const useShared = defineStore('shared', () => {
   const rpcList = ref<Record<string, string[]>>({})
+  const transactionStack = ref<IEstimatedActions[]>([])
   const isProd = ref(false)
 
   const rpcs = computed(() => networks.reduce((acc, network) => {
@@ -42,6 +43,18 @@ export const useShared = defineStore('shared', () => {
     return list[0]
   }
 
+  function addToTransactionStack(action: IEstimatedActions) {
+    transactionStack.value.push(action)
+  }
+
+  function removeActionsByChainId(chainId: string | number) {
+    transactionStack.value = transactionStack.value.filter(action => action.chainId != chainId)
+  }
+
+  function removeActionsByMetadata(metadata: string) {
+    transactionStack.value = transactionStack.value.filter(action => action.options?.metadata != metadata)
+  }
+
   return {
     isProd,
     rpcs,
@@ -49,6 +62,10 @@ export const useShared = defineStore('shared', () => {
     getRpcProviderByChainId,
     getRpcURLByChainId,
     isAppProduction,
+    transactionStack,
+    addToTransactionStack,
+    removeActionsByChainId,
+    removeActionsByMetadata,
   }
 })
 

@@ -36,7 +36,7 @@ export function useAvocadoSafe() {
       chainId: number | string
       operation?: string
     },
-    options: { metadata?: string; id?: string } = {},
+    options: { metadata?: string, id?: string } = {},
     transactionType: TransactionActionType,
   ) => {
     if (isTrackingMode.value) {
@@ -87,7 +87,7 @@ export function useAvocadoSafe() {
   const sendTransactions = async (
     transactions: TransactionsAction[],
     chainId: number | string,
-    options: { metadata?: string; id?: string } = {},
+    options: { metadata?: string, id?: string } = {},
     transactionType: TransactionActionType,
   ) => {
     if (isTrackingMode.value) {
@@ -105,7 +105,8 @@ export function useAvocadoSafe() {
         actions: transactions,
         chainId,
         options: {
-          source: '0xE8385fB3A5F15dED06EB5E20E5A81BF43115eb8E', ...options,
+          source: '0xE8385fB3A5F15dED06EB5E20E5A81BF43115eb8E',
+          ...options,
         },
       })
 
@@ -418,6 +419,7 @@ export function useAvocadoSafe() {
       mfaRequestType: 'transaction',
       submitFn,
       defaultSessionAvailable,
+      forceGrabSession,
       chainId,
       expire,
     })
@@ -441,7 +443,7 @@ export function useAvocadoSafe() {
         {
           owner: selectedSafe.value?.owner_address,
           index: selectedSafe.value?.multisig_index,
-          ttl: expire || '30min',
+          ttl: expire || '30',
           code: verifyPayload.code,
           type: mfa.value,
         },

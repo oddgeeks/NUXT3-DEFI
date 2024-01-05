@@ -8,4 +8,3 @@ Closes #[issueNumber]
 
 ### Blockers
 Insert any known blockers or dependencies that might prevent this pull request from being merged successfully.
-

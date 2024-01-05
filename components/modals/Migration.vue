@@ -7,7 +7,7 @@ import { Erc20__factory } from '~/contracts'
 
 const props = defineProps<MigrateToModalProps>()
 
-defineEmits(['destroy'])
+const emit = defineEmits(['destroy'])
 
 const { parseTransactionError } = useErrorHandler()
 
@@ -225,6 +225,8 @@ async function migrate() {
 
     setTokensForMigration([])
     setNFTsForMigration([])
+
+    emit('destroy')
   }
   catch (e: any) {
     const err = parseTransactionError(e)
@@ -323,7 +325,7 @@ function logActions() {
             :key="`${asset.tokenId}-${asset.chainId}`"
             :asset="asset"
             show-selected-ui
-            @toggleCheck="() => toggleSelectedNFTsForMigration(asset)"
+            @toggle-check="() => toggleSelectedNFTsForMigration(asset)"
           />
           <p v-if="!selectedNFTsForMigration?.length" class="px-4 py-[14px] text-sm text-slate-400">
             No NFTs selected

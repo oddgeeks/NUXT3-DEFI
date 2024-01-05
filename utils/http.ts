@@ -40,7 +40,6 @@ export default ofetch.create({
 export function handleAxiosError(error: AxiosError, showUserError: boolean) {
   const data = error?.response?.data as any
   const message = data?.message || data?.error
-  const statusCode = error.response?.status
   // TODO: handle axios errors
   // Based on current env Log error to slack or sentry
 

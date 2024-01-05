@@ -191,7 +191,7 @@ export function useSend(initialSendData?: ISendData) {
       const token = tokens.value.find(
         t =>
           getAddress(t.address) === getAddress(i.address)
-            && String(t.chainId) == String(i.chainId),
+          && String(t.chainId) == String(i.chainId),
       )
 
       return !!token

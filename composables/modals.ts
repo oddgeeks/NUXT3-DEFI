@@ -20,6 +20,7 @@ import DeployNetwork from '~/components/modals/DeployNetwork.vue'
 import YourWallet from '~/components/modals/YourWallet.vue'
 import Networks from '~/components/modals/Networks.vue'
 import Balance from '~/components/modals/Balance.vue'
+import TransactionBatch from '~/components/modals/TransactionBatch.vue'
 import AddContact from '~/components/modals/AddContact.vue'
 import SelectContact from '~/components/modals/SelectContact.vue'
 import NFTDetails from '~/components/modals/NFTDetails.vue'
@@ -116,10 +117,7 @@ export function openBridgeModal(address: string, chainId: number | string) {
   })
 }
 
-export function openSwapModal(address: string,
-  chainId: number | string,
-  toAddress?: string,
-  amount?: string) {
+export function openSwapModal(address: string, chainId: number | string, toAddress?: string, amount?: string) {
   openModal({
     component: Swap,
     componentProps: {
@@ -135,11 +133,7 @@ export function openSwapModal(address: string,
   })
 }
 
-export function openSendModal(chainId: number | string,
-  address?: string,
-  contact?: IContact,
-  bookmark?: IBookmark,
-) {
+export function openSendModal(chainId: number | string, address?: string, contact?: IContact, bookmark?: IBookmark) {
   openModal({
     component: Send,
     componentProps: {
@@ -350,10 +344,7 @@ export function openBalanceModal(balance: any) {
   })
 }
 
-export function openAddContactModal(name?: string,
-  address?: string,
-  chainId?: number | string,
-  isEdit?: boolean) {
+export function openAddContactModal(name?: string, address?: string, chainId?: number | string, isEdit?: boolean) {
   if (isEdit) {
     const { allSafes } = storeToRefs(useSafe())
     const safe = allSafes.value.find(i => isAddressEqual(i.safe_address, address))
@@ -634,12 +625,13 @@ export function openUpdateThresholdModal(chainId: number | string, additionalCou
   })
 }
 
-export function openWalletNameEditModal(safe: ISafe) {
+export function openWalletNameEditModal(safe: ISafe, walletName: string) {
   return openModal({
     component: WalletNameEdit,
     async: true,
     componentProps: {
       safe,
+      walletName,
     },
   })
 }
@@ -884,7 +876,7 @@ export async function openMfaAuthenticateModal(mfaRequestType: MfaRequestType, e
 }
 
 export async function openVerifyMFAModal(params: IMfaVerifyModalParams) {
-  const { mfa, request, authenticate, mfaRequestType, verify, inputValue, defaultSessionAvailable, chainId, expire } = params || {}
+  const { mfa, request, authenticate, mfaRequestType, verify, inputValue, defaultSessionAvailable, forceGrabSession, chainId, expire } = params || {}
 
   return openModal({
     component: VerifyMFA,
@@ -899,6 +891,7 @@ export async function openVerifyMFAModal(params: IMfaVerifyModalParams) {
       mfaRequestType,
       defaultSessionAvailable,
       expire,
+      forceGrabSession,
     },
     options: {
       contentClass: '!p-0',
@@ -1023,6 +1016,17 @@ export function openAllDappConnectionsModal() {
       wrapperClass: '!max-w-[800px]',
       contentClass: '!p-0',
     },
+  })
+}
+
+export function openTransactionBatchModal() {
+  return openModal({
+    component: TransactionBatch,
+    options: {
+      contentClass: '!p-0',
+      wrapperClass: '!max-w-[600px]',
+    },
+    async: true,
   })
 }
 

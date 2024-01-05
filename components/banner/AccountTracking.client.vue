@@ -8,7 +8,7 @@ const { getSafes } = useSafe()
 const { accountSafeMapping } = storeToRefs(useSafe())
 
 async function disconnect() {
-  const selectedEOAAddress = window.ethereum.selectedAddress
+  const selectedEOAAddress = window?.ethereum?.selectedAddress
   const paramSafe = route.params.safe as string
 
   if (paramSafe && selectedEOAAddress) {
@@ -19,7 +19,7 @@ async function disconnect() {
     const cachedSafeAddress = accountSafeMapping.value[getAddress(selectedEOAAddress)]
 
     if (isSafeExist) {
-      trackingAccount.value = ''
+      trackingAccount.value = null
       router.go(0)
       return
     }
@@ -28,7 +28,7 @@ async function disconnect() {
       const matched = route.matched[0]?.path || ''
       const path = matched.replace(':safe()', actualSafeAddress)
 
-      trackingAccount.value = ''
+      trackingAccount.value = null
 
       if (path)
         window.location.assign(path)
@@ -39,17 +39,18 @@ async function disconnect() {
     }
   }
 
-  trackingAccount.value = ''
+  trackingAccount.value = null
   router.go(0)
 }
 </script>
 
 <template>
   <div
+    v-if="trackingAccount"
     class="sticky top-0 z-50 flex h-9 w-full shrink-0 items-center justify-center gap-[15px] bg-primary/10 sm:relative"
   >
     <p class="text-xs text-primary">
-      Tracking account: {{ shortenHash(trackingAccount!) }}
+      Tracking account: {{ shortenHash(trackingAccount) }}
     </p>
     <button class="text-xs text-red-alert" @click="disconnect">
       (Disconnect)

@@ -4,10 +4,11 @@ import { useField, useForm } from 'vee-validate'
 
 const props = defineProps<{
   safe: ISafe
+  walletName: string
 }>()
 
 const emit = defineEmits(['destroy'])
-const walletName = useLocalStorage(`safe-label-${props.safe?.safe_address}`, 'Personal')
+const walletName = useLocalStorage<string | null>(`safe-label-${props.safe?.safe_address}`, null)
 
 const {
   handleSubmit,
@@ -22,14 +23,11 @@ const {
   }),
 })
 
-const { value: name, meta: nameMeta } = useField<string>('wallet-name', {}, { initialValue: walletName.value })
+const { value: name, meta: nameMeta } = useField<string>('wallet-name', {}, { initialValue: props.walletName })
 const disabled = computed(() => !meta.value.valid || isSubmitting.value)
 
 const onSubmit = handleSubmit(() => {
   walletName.value = name.value
-})
-
-watch([walletName], () => {
   emit('destroy')
 })
 </script>

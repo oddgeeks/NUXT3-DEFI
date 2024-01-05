@@ -12,9 +12,7 @@ export const ANKR_API_UNSPPORTED_CHAINS: Record<number, boolean> = {
   8453: true,
 }
 
-export async function getTokenTransfersByAnkr(from: string,
-  to: string,
-  chainId?: number): Promise<number> {
+export async function getTokenTransfersByAnkr(from: string, to: string, chainId?: number): Promise<number> {
   if (chainId && ANKR_API_UNSPPORTED_CHAINS[chainId])
     return 0
 
@@ -71,9 +69,7 @@ export async function getTokenTransfersByAnkr(from: string,
   return totalTransfer
 }
 
-export async function getMultipleTokenTransfersByAnkr(from: string,
-  to: string[],
-  chainId?: number): Promise<Record<string, number>> {
+export async function getMultipleTokenTransfersByAnkr(from: string, to: string[], chainId?: number): Promise<Record<string, number>> {
   const res = await Promise.all(
     to.map(_to => getTokenTransfersByAnkr(from, _to, chainId)),
   )

@@ -1,17 +1,20 @@
 export interface Notifications {
   id: string
   duration: number
+  icon?: any
   position:
-  | 'center'
-  | 'top-center'
-  | 'top-start'
-  | 'top-end'
-  | 'bottom-center'
-  | 'bottom-start'
-  | 'bottom-end'
+    | 'center'
+    | 'top-center'
+    | 'top-start'
+    | 'top-end'
+    | 'bottom-center'
+    | 'bottom-start'
+    | 'bottom-end'
   title: string
   message: string
   type: 'success' | 'info' | 'warning' | 'error'
+  as?: any
+  onClick?: () => void
 }
 
 const notifications = ref<Notifications[]>([])
@@ -26,16 +29,22 @@ export function notify({
   duration = 6000,
   message = '',
   title = '',
+  icon,
+  as,
+  onClick,
 }: Partial<Notifications>) {
   const id = `notification-${performance.now()}`
 
   notifications.value.push({
+    as,
+    onClick,
     duration,
     id,
     message,
     position,
     title,
     type,
+    icon,
   })
 }
 

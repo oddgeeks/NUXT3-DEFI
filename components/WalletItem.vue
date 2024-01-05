@@ -21,7 +21,9 @@ const isLegacy = computed(() => props.safe?.multisig === 0)
 const balance = computed(() => safeTotalBalanceMapping.value[props.safe?.safe_address])
 const safePinned = computed(() => isSafePinned(props.safe.safe_address))
 
-const walletName = useLocalStorage(`safe-label-${props.safe?.safe_address}`, isMultisig.value ? 'MultiSig' : 'Personal')
+const walletStorageName = useLocalStorage(`safe-label-${props.safe?.safe_address}`, null)
+
+const walletName = computed(() => walletStorageName.value || (isMultisig.value ? 'MultiSig' : isLegacy.value ? 'Legacy' : 'Personal'))
 
 const baseColorClass = computed(() => isMultisig.value ? 'text-purple' : isLegacy.value ? 'text-gray-400' : 'text-primary')
 
@@ -39,7 +41,7 @@ const { data: pendingTxnsCount } = useAsyncData(`safe-pending-multisig-txns-${pr
 })
 
 async function onEdit() {
-  openWalletNameEditModal(props.safe)
+  openWalletNameEditModal(props.safe, walletName.value)
 }
 
 function handleClick() {

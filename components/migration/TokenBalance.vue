@@ -4,11 +4,9 @@ import SVGX from '~/assets/images/icons/x.svg?component'
 const props = withDefaults(defineProps<{
   tokenBalance: IBalance
   showSelectedUi?: boolean
-}>(),
-{
+}>(), {
   showSelectedUi: false,
-},
-)
+})
 
 const emits = defineEmits(['toggleCheck'])
 
@@ -38,8 +36,8 @@ const isChecked = computed(() => {
       <div class="text-sm font-medium ">
         {{ tokenBalance.name }}
       </div>
-      <div class="text-xs font-medium text-slate-400">
-        {{ tokenBalance.balance }} {{ tokenBalance.symbol.toUpperCase() }}
+      <div class="text-xs font-medium uppercase text-slate-400">
+        {{ formatDecimal(tokenBalance.balance) }} {{ tokenBalance.symbol }}
       </div>
     </div>
 

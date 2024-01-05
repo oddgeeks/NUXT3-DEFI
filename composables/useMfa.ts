@@ -5,7 +5,7 @@ const preferredMfaType = useLocalStorage('mfa-preferred-type', '')
 export function useMfa() {
   const { selectedSafe } = storeToRefs(useSafe())
   const { backupSigners } = storeToRefs(useMultisig())
-  const { avoChainId } = storeToRefs(useEnvironmentState())
+  const { avoChainId, instadappSigner } = storeToRefs(useEnvironmentState())
   const { avoProvider, fetchSafeInstanceses } = useSafe()
   const { switchToAvocadoNetwork } = useNetworks()
   const { account, library } = useWeb3()
@@ -19,6 +19,8 @@ export function useMfa() {
   const mfaPhoneVerifed = computed(() => selectedSafe.value?.mfa_phone_verified === 1)
 
   const atLeastOneMfaVerifed = computed(() => checkAtleastOneMfaVerified(selectedSafe.value!))
+
+  const is2FAenabled = computed(() => !!selectedSafe.value && atLeastOneMfaVerifed.value && checkHasInstadappSigner(selectedSafe.value, instadappSigner.value))
 
   const isSafeBackupSigner = computed(() => checkSafeBackupSigner(selectedSafe.value!, account.value))
 
@@ -91,7 +93,8 @@ export function useMfa() {
         icon: 'SvgoPhone',
         otpSentNotificationKey: 'mfa.notifications.SMSOtpSent',
 
-      }, {
+      },
+      {
         value: 'email',
         title: 'Enter your Email',
         enterOtpLabel: 'Enter email OTP',
@@ -190,7 +193,7 @@ export function useMfa() {
   }
 
   async function authVerify(params: IAuthVerifyParams) {
-    const { mfa, mfaRequestType, submitFn, defaultSessionAvailable = false, expire, chainId } = params || {}
+    const { mfa, mfaRequestType, submitFn, defaultSessionAvailable = false, expire, forceGrabSession, chainId } = params || {}
 
     const requestFunction = mfaRequestType === 'transaction' ? signAndRequestTransactionMfaCode : signAndRequestUpdateMfaCode
 
@@ -208,6 +211,7 @@ export function useMfa() {
       request: requestFunction.bind(null, mfa),
       verify: submitFn,
       defaultSessionAvailable,
+      forceGrabSession,
       expire,
       chainId,
     })
@@ -424,5 +428,6 @@ export function useMfa() {
     getMFAToken,
     terminateMFAToken,
     activeMfaTypes,
+    is2FAenabled,
   }
 }

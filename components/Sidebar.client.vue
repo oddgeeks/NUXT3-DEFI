@@ -7,7 +7,7 @@ defineProps<{
 
 const { collapsed, toggleCollapse, hideSidebar, actualWidth, isMobile, hidden } = useSidebar()
 const { safeAddress } = useAvocadoSafe()
-const { selectedSafe } = storeToRefs(useSafe())
+const { selectedSafe, isSelectedSafeLegacy } = storeToRefs(useSafe())
 const { navigations } = useNavigation()
 const route = useRoute()
 
@@ -80,6 +80,22 @@ watch(() => route.fullPath, () => {
           </div>
         </div>
         <div :class="{ 'pointer-events-none blur': !safeAddress }" class="flex w-full flex-col items-center gap-2.5 rounded-5 bg-gray-900 py-2.5 text-gray-400">
+          <NuxtLink
+            v-if="isSelectedSafeLegacy"
+            v-tippy="{
+              arrow: true,
+              arrowType: 'round',
+              animation: 'fade',
+              content: 'Migration',
+              placement: 'right',
+            }"
+            class="px-5 pb-1 pt-3"
+            active-class="text-primary"
+            to="/migration"
+          >
+            <SvgoArrowRight class="h-4 w-4" />
+          </NuxtLink>
+
           <template
             v-for="nav in navigations"
             :key="nav.to"

@@ -8,7 +8,7 @@ const props = defineProps<{
   name?: string
   address?: string
   chainId?: string
-  isEdit: Boolean
+  isEdit: boolean
 }>()
 
 const emit = defineEmits(['resolve', 'reject'])
@@ -84,7 +84,7 @@ const { value: chainId } = useField<string>(
 )
 const { value: contactName, setValue: setContactName }
   = useField<string>('contactName')
-// eslint-disable-next-line vue/no-dupe-keys
+
 const {
   value: address,
   meta: addressMeta,

@@ -14,8 +14,7 @@ interface AssetTransferCount {
   transferCount: number
 }
 
-export async function getTokenTransfersOnAllChain(from: string,
-  to: string[]): Promise<Record<string, number>> {
+export async function getTokenTransfersOnAllChain(from: string, to: string[]): Promise<Record<string, number>> {
   const transfers = await Promise.all([
     getMultipleTokenTransfersByAnkr(from, to),
     ...availableNetworks
@@ -36,8 +35,7 @@ export async function getTokenTransfersOnAllChain(from: string,
   return res
 }
 
-async function getEtherTransfersOnAllChain(from: string,
-  to: string[]): Promise<Record<string, number>> {
+async function getEtherTransfersOnAllChain(from: string, to: string[]): Promise<Record<string, number>> {
   const transfers = await Promise.all(
     availableNetworks.map(network =>
       getEtherTransfersByEtherscan(from, to, network.chainId),
@@ -55,9 +53,7 @@ async function getEtherTransfersOnAllChain(from: string,
   return res
 }
 
-async function getTransferCount(from: string,
-  to: string[],
-  chainId: number): Promise<AssetTransferCount[]> {
+async function getTransferCount(from: string, to: string[], chainId: number): Promise<AssetTransferCount[]> {
   const ethTransfer = chainId
     ? await getEtherTransfersByEtherscan(from, to, chainId)
     : await getEtherTransfersOnAllChain(from, to)

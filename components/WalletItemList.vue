@@ -30,7 +30,7 @@ const priorSafes = computed(() => {
     <TransitionGroup name="wallet-list">
       <WalletItem v-for="safe in priorSafes" :key="safe.safe_address" :safe="safe" />
     </TransitionGroup>
-    <button v-if="allSafes?.length" class="flex h-[44px] w-full items-center justify-center gap-2.5 rounded-7.5 border  border-slate-750 bg-gray-850 py-1 pl-[14px] pr-2.5 text-left text-xs" @click="openAllWalletsModal()">
+    <button v-if="allSafes?.length" class="flex h-[44px] w-full items-center justify-center gap-2.5 rounded-7.5 border  border-gray-800 bg-gray-850 py-1 pl-[14px] pr-2.5 text-left text-xs hover:bg-gray-900" @click="openAllWalletsModal()">
       All
       <SvgoChevronDown class="h-3.5 w-3.5 -rotate-90" />
     </button>

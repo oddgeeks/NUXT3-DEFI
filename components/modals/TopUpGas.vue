@@ -34,7 +34,8 @@ const usdcTokens = computed(() => {
       const tk = tokens.value.find(
         t =>
           String(t.chainId) === String(usdc.chainId)
-          && t.address.toLowerCase() === usdc.address.toLowerCase())
+          && t.address.toLowerCase() === usdc.address.toLowerCase(),
+      )
 
       if (!tk)
         return

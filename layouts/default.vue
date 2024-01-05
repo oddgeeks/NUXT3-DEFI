@@ -2,11 +2,11 @@
 import { gt } from 'semver'
 
 const {
-  showTrackingBanner,
   showIncorrectNetworkBanner,
   showInsufficientGasBanner,
   showOnboardBanner,
   showVersionUpdateBanner,
+  isMigrationBannerVisible,
 } = useBanner()
 
 const route = useRoute()
@@ -30,7 +30,7 @@ function isIgnoreVersion() {
   }))
 }
 
-const welcomeMessageShow = useLocalStorage<Boolean>('welcome_message_check', false)
+const welcomeMessageShow = useLocalStorage<boolean>('welcome_message_check', false)
 
 watch(showVersionUpdateBanner, async () => {
   if (showVersionUpdateBanner.value) {
@@ -79,7 +79,7 @@ ${stringified}`
 
 <template>
   <section class="flex h-full flex-col">
-    <BannerAccountTracking v-if="showTrackingBanner" />
+    <BannerAccountTracking />
 
     <div class="flex h-full">
       <div class="flex w-full justify-center">
@@ -89,6 +89,7 @@ ${stringified}`
           <TheHeader />
           <div class="container mt-20 flex flex-col gap-4 sm:mt-0">
             <WarningsGasBalance v-if="showInsufficientGasBanner" />
+            <BannerMigration v-if="isMigrationBannerVisible" />
           </div>
           <slot />
           <TheFooter />

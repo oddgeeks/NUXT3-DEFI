@@ -155,8 +155,7 @@ const { handleSubmit, errors, meta, validate, isSubmitting, resetForm }
         .required('')
         .test('min-amount', '', validateMinAmount)
         .test('max-amount', 'Insufficient balance', (val: any) =>
-          validateMaxAmount(val, sellTokenBalance.value),
-        ),
+          validateMaxAmount(val, sellTokenBalance.value)),
     }),
   })
 
@@ -249,22 +248,20 @@ async function fetchSwapDetails() {
     const actualName
       = name === 'Ethereum' ? 'mainnet' : name.replaceAll(' ', '-').toLowerCase()
 
-    const data: ISwapResponse = await http('/swap',
-      {
-        baseURL: swapAggregatorURL.value,
-        signal: abortController.value?.signal,
-        params: {
-          network: actualName,
-          buyToken: swap.value.buyToken.address,
-          sellToken: swap.value.sellToken.address,
-          sellAmount: toWei(sellAmount.value, swap.value.sellToken.decimals),
-          maxSlippage: actualSlippage.value,
-          slippage: actualSlippage.value,
-          user: safeAddress.value,
-          access_token: swapAggregatorAccessToken.value,
-        },
+    const data: ISwapResponse = await http('/swap', {
+      baseURL: swapAggregatorURL.value,
+      signal: abortController.value?.signal,
+      params: {
+        network: actualName,
+        buyToken: swap.value.buyToken.address,
+        sellToken: swap.value.sellToken.address,
+        sellAmount: toWei(sellAmount.value, swap.value.sellToken.decimals),
+        maxSlippage: actualSlippage.value,
+        slippage: actualSlippage.value,
+        user: safeAddress.value,
+        access_token: swapAggregatorAccessToken.value,
       },
-    )
+    })
     abortController.value = null
 
     const best = data?.aggregators[0]
@@ -489,32 +486,41 @@ const {
     resume()
     refreshing.value = false
   },
-},
-{
+}, {
   active: true,
   count: esimatedFeeRetryCount,
   max: 1,
   cb: changeRouteForRetry,
-},
-)
+})
+
+function getMetadata(single?: boolean) {
+  const minRecievedAfterSlippageInWei = toWei(minRecievedAfterSlippage.value, swap.value.buyToken.decimals)
+
+  return encodeSwapMetadata({
+    buyAmount: minRecievedAfterSlippageInWei,
+    sellAmount: swapDetails.value?.data?.data.sellTokenAmount!,
+    buyToken: swapDetails.value?.data?.data.buyToken.address!,
+    sellToken: swap.value.sellToken.address,
+    receiver: account.value,
+    protocol: utils.formatBytes32String(selectedRoute?.value?.name || ''),
+  }, single)
+}
+
+const metadata = computed(() => {
+  if (!swapDetails.value?.data?.data || !selectedRoute.value)
+    return
+
+  return getMetadata(false)
+})
 
 const onSubmit = handleSubmit(async () => {
   try {
     pause()
 
-    const minRecievedAfterSlippageInWei = toWei(minRecievedAfterSlippage.value, swap.value.buyToken.decimals)
-
-    const metadata = encodeSwapMetadata({
-      buyAmount: minRecievedAfterSlippageInWei,
-      sellAmount: swapDetails.value?.data?.data.sellTokenAmount!,
-      buyToken: swapDetails.value?.data?.data.buyToken.address!,
-      sellToken: swap.value.sellToken.address,
-      receiver: account.value,
-      protocol: utils.formatBytes32String(selectedRoute?.value?.name || ''),
-    })
-
     if (!txActions.value?.length)
       throw new Error('No transaction actions found')
+
+    const metadata = getMetadata()
 
     const transactionHash = await sendTransactions(
       txActions.value,
@@ -890,7 +896,7 @@ onUnmounted(() => {
                   v-if="!!slippageError"
                   class="mt-4 flex items-center gap-2 text-left text-xs text-red-alert"
                 >
-                  <SVGInfo />
+                  <SvgoInfo2 />
                   {{ slippageError }}
                 </span>
               </details>
@@ -1052,6 +1058,7 @@ onUnmounted(() => {
         >
           Swap
         </CommonButton>
+        <AddBatchButton v-if="metadata" :metadata="metadata" :chain-id="toChainId" :tx-actions="txActions" />
       </div>
       <SessionLocked class="mx-auto" />
     </div>

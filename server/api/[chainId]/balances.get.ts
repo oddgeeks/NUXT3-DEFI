@@ -34,8 +34,7 @@ const { ankrApiKey } = useRuntimeConfig()
 // Setup provider AnkrProvider
 const ankrProvider = new AnkrProvider(ankrApiKey)
 
-async function getFromAnkr(address: string,
-  blockchain?: any): Promise<IBalance[]> {
+async function getFromAnkr(address: string, blockchain?: any): Promise<IBalance[]> {
   const ankrBalances = await ankrProvider.getAccountBalance({
     blockchain: blockchain || [],
     walletAddress: address,
@@ -73,9 +72,7 @@ async function getFromAnkr(address: string,
   return balances as any
 }
 
-async function getChainBalances(chainId: string,
-  address: string,
-  customTokenAddresses: string[] = []) {
+async function getChainBalances(chainId: string, address: string, customTokenAddresses: string[] = []) {
   const newBalances: IBalance[] = []
 
   const chainTokenAddresses = collect([

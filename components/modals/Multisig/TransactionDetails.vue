@@ -116,8 +116,6 @@ const { data: isSameNonceExist } = useAsyncData(`${transactionRef.value.id}-same
     baseURL: multisigURL.value,
   })
 
-  console.log(data)
-
   return isNonseq.value ? data.meta.total > 0 : data.meta.total > 1
 }, {
   immediate: true,
@@ -163,6 +161,8 @@ const isColorRed = computed(() => {
 })
 
 const isRejection = computed(() => actionType.value === 'rejection')
+
+useIntervalFn(fetchTransactionDetails, 10000)
 
 const { data: simulationDetails, error: simulationError } = useAsyncData(
   `${transactionRef.value.id}`,
@@ -309,6 +309,17 @@ async function handleExecuteConfirmation(transaction: IMultisigTransaction) {
   finally {
     pending.value.execute = false
   }
+}
+
+async function fetchTransactionDetails() {
+  if (isTransactionExecuted.value)
+    return
+
+  const { data } = await axios.get(`/safes/${transactionRef.value.safe_address}/transactions/${transactionRef.value.id}`, {
+    baseURL: multisigURL.value,
+  })
+
+  transactionRef.value = data
 }
 
 onUnmounted(() => {

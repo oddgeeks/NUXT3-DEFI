@@ -58,7 +58,16 @@ export const useSafe = defineStore('safe', () => {
     const secondary = safes.value.filter(s => !primary.some(p => isAddressEqual(p?.safe_address, s?.safe_address)))
     const customSafes = accountCustomSafeMapping.value[account.value] || []
 
-    return [...primary, ...secondary, ...customSafes].sort(a => isAddressEqual(a?.safe_address, selectedSafe.value?.safe_address) ? -1 : 1) as ISafe[]
+    const uniqueSafes = [...primary, ...secondary, ...customSafes].reduce((acc, curr) => {
+      if (!curr)
+        return acc
+
+      if (!acc.some(i => isAddressEqual(i?.safe_address, curr?.safe_address)))
+        acc.push(curr)
+      return acc
+    }, [] as ISafe[])
+
+    return uniqueSafes.sort(a => isAddressEqual(a?.safe_address, selectedSafe.value?.safe_address) ? -1 : 1)
   })
 
   const { account } = useWeb3()
@@ -259,7 +268,9 @@ export const useSafe = defineStore('safe', () => {
           if (curr.chainId === network.chainId.toString())
             return acc.plus(curr.balanceInUSD || '0')
           return acc
-        }, toBN(0)) || toBN(0)
+        },
+        toBN(0),
+      ) || toBN(0)
 
       return {
         ...network,
@@ -322,9 +333,7 @@ export const useSafe = defineStore('safe', () => {
       selectedSafe.value = safe
   }
 
-  async function getChainBalances(chainId: string,
-    address: string,
-    tokens: string[] = []) {
+  async function getChainBalances(chainId: string, address: string, tokens: string[] = []) {
     const newBalances: IBalance[] = []
 
     const chainTokenAddresses = collect(tokens)
