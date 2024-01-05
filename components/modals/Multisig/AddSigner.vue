@@ -23,6 +23,17 @@ const isGnosisMigration = computed(() => !!props.gnosisAddress)
 
 const provider = getRpcProviderByChainId(1)
 
+async function resolveEnsAddress(ensName?: string) {
+  if (ensName && ensName.endsWith('.eth')) {
+    const resolvedAddress = await provider.resolveName(ensName || '')
+
+    if (!resolvedAddress)
+      return
+
+    return resolvedAddress
+  }
+}
+
 const {
   handleSubmit,
   errors,
@@ -38,7 +49,7 @@ const {
             if (!value || isAddress(value || ''))
               return true
 
-            const resolvedAddress = await provider.resolveName(value)
+            const resolvedAddress = await resolveEnsAddress(value)
 
             if (!resolvedAddress)
               return false
@@ -50,7 +61,7 @@ const {
             'cannot-add-self',
             'Cannot add self as signer',
             async (value) => {
-              const resolvedAddress = await provider.resolveName(value || '')
+              const resolvedAddress = await resolveEnsAddress(value)
 
               if (!resolvedAddress && !isAddress(value || ''))
                 return true
@@ -62,7 +73,7 @@ const {
             'duplicate-address',
             'Signer already added',
             async (value) => {
-              const resolvedAddress = await provider.resolveName(value || '')
+              const resolvedAddress = await resolveEnsAddress(value)
 
               if (!isAddress(value || '') && !resolvedAddress)
                 return true
@@ -165,11 +176,7 @@ function handleBackClick() {
 
     <hr class="border-gray-800">
     <div class="flex flex-col gap-7.5 p-5 sm:gap-5 sm:p-7.5">
-      <fieldset
-        v-for="field, key in fields"
-        :key="key"
-        class="flex flex-col gap-5 sm:flex-row"
-      >
+      <fieldset v-for="field, key in fields" :key="key" class="flex flex-col gap-5 sm:flex-row">
         <div class="flex flex-1 flex-col gap-2">
           <div class="flex w-full items-center justify-between">
             <span class="text-xs font-medium leading-5 text-gray-400">
@@ -177,12 +184,8 @@ function handleBackClick() {
             </span>
           </div>
           <CommonInput
-            v-model="field.value.name"
-            :disabled="contactSelections.includes(key as number)"
-            autofocus
-            :name="`addresses[${key}].name`"
-            placeholder="Signer Name (Optional)"
-            input-classes="placeholder:text-xs"
+            v-model="field.value.name" :disabled="contactSelections.includes(key as number)" autofocus
+            :name="`addresses[${key}].name`" placeholder="Signer Name (Optional)" input-classes="placeholder:text-xs"
             :error-message="getErrorMessage(errors, `addresses[${key}].name`)"
           />
         </div>
@@ -190,7 +193,10 @@ function handleBackClick() {
           <div class="flex w-full items-center justify-between">
             <span class="flex items-center gap-2.5 text-xs font-medium leading-5 text-gray-400">
               <span class="inline sm:hidden">{{ key + 1 }}</span> Signer EOA Address
-              <SvgoInfo2 v-if="!isGnosisMigration" v-tippy="'Please make sure you enter the EOA address and not Avocado address.'" class="text-orange" />
+              <SvgoInfo2
+                v-if="!isGnosisMigration"
+                v-tippy="'Please make sure you enter the EOA address and not Avocado address.'" class="text-orange"
+              />
             </span>
             <button
               v-if="fields.length > 1" class="flex h-5 w-5 items-center justify-center rounded-full bg-gray-900"
@@ -200,11 +206,9 @@ function handleBackClick() {
             </button>
           </div>
           <CommonInput
-            :model-value="field.value.ensName || field.value.address"
-            :name="`addresses[${key}].address`"
+            :model-value="field.value.ensName || field.value.address" :name="`addresses[${key}].address`"
             :disabled="contactSelections.includes(key) || isGnosisMigration"
-            :error-message="getErrorMessage(errors, `addresses[${key}].address`)"
-            placeholder="Enter Address"
+            :error-message="getErrorMessage(errors, `addresses[${key}].address`)" placeholder="Enter Address"
             @update:model-value="v => {
               field.value.ensName = ''
               field.value.address = v
@@ -212,18 +216,13 @@ function handleBackClick() {
           >
             <template #suffix>
               <button
-                v-if="contactSelections.includes(key)"
-                v-tippy="'Clear Contact'"
-                type="button"
-                class="ml-3" @click="handleUpdateField(key)"
+                v-if="contactSelections.includes(key)" v-tippy="'Clear Contact'" type="button" class="ml-3"
+                @click="handleUpdateField(key)"
               >
                 <SvgoBack class="text-gray-400" />
               </button>
               <button
-                v-else-if="!isGnosisMigration"
-                v-tippy="'Select contact'"
-                type="button"
-                class="ml-3"
+                v-else-if="!isGnosisMigration" v-tippy="'Select contact'" type="button" class="ml-3"
                 @click="handleSelectContact(key)"
               >
                 <SvgoContact class="text-gray-400" />
@@ -232,7 +231,10 @@ function handleBackClick() {
           </CommonInput>
         </div>
       </fieldset>
-      <button v-if="!isGnosisMigration" class="flex items-center gap-3 text-xs text-primary disabled:text-gray-500" :disabled="!meta.valid" @click="push({ address: '', name: '' })">
+      <button
+        v-if="!isGnosisMigration" class="flex items-center gap-3 text-xs text-primary disabled:text-gray-500"
+        :disabled="!meta.valid" @click="push({ address: '', name: '' })"
+      >
         <div :class="!meta.valid ? 'bg-gray-500' : ''" class="flex h-4 w-4 rounded-full bg-primary">
           <SvgoPlus class="m-auto h-2 w-2 text-white" />
         </div>
