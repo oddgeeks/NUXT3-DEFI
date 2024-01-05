@@ -8,7 +8,7 @@ const { getSafes } = useSafe()
 const { accountSafeMapping } = storeToRefs(useSafe())
 
 async function disconnect() {
-  const selectedEOAAddress = window.ethereum.selectedAddress
+  const selectedEOAAddress = window?.ethereum?.selectedAddress
   const paramSafe = route.params.safe as string
 
   if (paramSafe && selectedEOAAddress) {
@@ -19,7 +19,7 @@ async function disconnect() {
     const cachedSafeAddress = accountSafeMapping.value[getAddress(selectedEOAAddress)]
 
     if (isSafeExist) {
-      trackingAccount.value = ''
+      trackingAccount.value = null
       router.go(0)
       return
     }
@@ -28,7 +28,7 @@ async function disconnect() {
       const matched = route.matched[0]?.path || ''
       const path = matched.replace(':safe()', actualSafeAddress)
 
-      trackingAccount.value = ''
+      trackingAccount.value = null
 
       if (path)
         window.location.assign(path)
@@ -39,7 +39,7 @@ async function disconnect() {
     }
   }
 
-  trackingAccount.value = ''
+  trackingAccount.value = null
   router.go(0)
 }
 </script>

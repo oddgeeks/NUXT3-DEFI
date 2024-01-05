@@ -46,7 +46,6 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
   }
 
   function checkDappIsWarned(peerURL: string) {
-    console.log(walletConnectBannedDappList.value, peerURL)
     return walletConnectBannedDappList.value?.items.some(i => !!i?.warn && isSameOrigin(i.url, peerURL))
   }
 
