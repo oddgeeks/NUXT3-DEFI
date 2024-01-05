@@ -16,7 +16,7 @@ const disabled = computed(() => {
 
   const lastTx = transactionStack.value[transactionStack.value.length - 1]
 
-  return lastTx.chainId !== props.chainId
+  return lastTx.chainId != props.chainId
 })
 
 const { lastModal } = useModal()
