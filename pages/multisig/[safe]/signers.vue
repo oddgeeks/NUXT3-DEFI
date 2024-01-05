@@ -49,7 +49,7 @@ const navigation = [
   },
 ]
 
-const { data, execute } = useAsyncData(
+const { data, refresh } = useAsyncData(
   `${route.params.safe}-signers`,
   async () => {
     let safe = await getSafe(route.params.safe as string)
@@ -70,7 +70,7 @@ const { data, execute } = useAsyncData(
 )
 
 useIntervalFn(() => {
-  execute()
+  refresh()
 }, 10000)
 
 function clearState() {
