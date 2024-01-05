@@ -836,9 +836,12 @@ export const useSafe = defineStore('safe', () => {
   })
 
   watchDebounced(totalBalance, () => {
+    if (!safeAddress.value)
+      return
+
     const balance = toBN(totalBalance.value || 0).toFixed()
 
-    const clonedSafeTotalBalanceMapping = cloneDeep(safeTotalBalanceMapping.value || {})
+    const clonedSafeTotalBalanceMapping = cloneDeep(safeTotalBalanceMapping.value || {}) || {}
 
     clonedSafeTotalBalanceMapping[safeAddress.value] = balance
     safeTotalBalanceMapping.value = clonedSafeTotalBalanceMapping

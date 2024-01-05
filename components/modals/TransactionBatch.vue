@@ -7,11 +7,9 @@ const emit = defineEmits(['destroy'])
 const { transactionStack } = storeToRefs(useShared())
 const { removeActionsByChainId, removeActionsByMetadata } = useShared()
 const { tokens } = storeToRefs(useTokens())
-const { sendTransactions, authenticateTransactionMfa } = useAvocadoSafe()
+const { sendTransactions } = useAvocadoSafe()
 const { switchToAvocadoNetwork } = useNetworks()
 const { parseTransactionError } = useErrorHandler()
-
-const { is2FAenabled, getMFAToken, terminateMFAToken } = useMfa()
 
 const loading = ref(false)
 
@@ -61,16 +59,6 @@ async function onSubmit() {
 
     await switchToAvocadoNetwork()
 
-    const token = getMFAToken()
-
-    if (is2FAenabled.value && !token.value) {
-      await authenticateTransactionMfa({
-        expire: '3',
-        defaultSessionAvailable: true,
-        forceGrabSession: true,
-      })
-    }
-
     for await (const action of multipleActions.value) {
       try {
         const hash = await sendTransactions(
@@ -98,7 +86,6 @@ async function onSubmit() {
       }
     }
 
-    terminateMFAToken()
     transactionStack.value = []
     emit('destroy')
   }
