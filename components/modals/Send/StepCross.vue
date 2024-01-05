@@ -83,7 +83,7 @@ const nativeCurrency = computed(() => {
   return tokenBalances.value.find(
     t =>
       String(t.chainId) == String(data.value.fromChainId)
-        && t.symbol.toLowerCase() === nativeTokenMeta?.symbol?.toLowerCase(),
+      && t.symbol.toLowerCase() === nativeTokenMeta?.symbol?.toLowerCase(),
   )
 })
 
@@ -154,7 +154,7 @@ async function fetchQuoteWithGasFee() {
   const maxTries = 3
   let tries = 0
 
-  const desiredAmountInWei = toWei(data.value.amount, token.value?.decimals!)
+  const desiredAmountInWei = toWei(data.value.amount, token.value?.decimals)
   let inputAmountInWei = desiredAmountInWei
 
   while (tries < maxTries) {
@@ -225,14 +225,12 @@ async function fetchBestRoute() {
 
     bestRoute.value = route
 
-    const buildTx: IScoketBuildTxResult = await http('/api/socket/v2/build-tx',
-      {
-        method: 'POST',
-        body: {
-          route: bestRoute.value,
-        },
+    const buildTx: IScoketBuildTxResult = await http('/api/socket/v2/build-tx', {
+      method: 'POST',
+      body: {
+        route: bestRoute.value,
       },
-    )
+    })
 
     if (!buildTx.success)
       throw new Error('Socket build transaction error, please try again later')
@@ -614,8 +612,8 @@ function handleSwapToken() {
   const balancedToken = tokenBalances.value.find(
     t =>
       gt(t.balance, '0')
-        && String(t.chainId) == String(data.value.fromChainId)
-        && t.symbol !== nativeCurrency.value?.symbol,
+      && String(t.chainId) == String(data.value.fromChainId)
+      && t.symbol !== nativeCurrency.value?.symbol,
   )
 
   const fallbackToken = tokenBalances.value.find(

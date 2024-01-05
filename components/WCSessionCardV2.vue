@@ -61,9 +61,10 @@ const isConnectionWarned = computed(() => {
       >
         <h1
           :class="{
-            'text-shadow w-[88px] overflow-hidden sm:w-[109px] ': !detailed,
+            'w-[88px] sm:w-[109px]': !detailed,
+            'sm:w-[290px] w-[250px]': detailed,
           }"
-          class="whitespace-nowrap text-sm"
+          class="whitespace-nowrap text-sm overflow-hidden text-shadow"
         >
           {{ session?.peer.metadata.name }}
         </h1>

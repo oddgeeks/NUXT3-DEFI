@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import ExternalLinkSVG from '~/assets/images/icons/external-link.svg?component'
-import LinkSVG from '~/assets/images/icons/external-link.svg?component'
-
 defineProps({
   address: String,
 })
@@ -31,7 +28,7 @@ defineProps({
         target="_blank"
         class="absolute left-0 top-0 m-6 inline-flex items-center space-x-2 text-primary"
       >
-        <ExternalLinkSVG class="h-6.5 w-6.5 text-gray-400" />
+        <SvgoExternalLink class="h-6.5 w-6.5 text-gray-400" />
       </NuxtLink>
     </div>
 
@@ -65,7 +62,7 @@ defineProps({
         class="inline-flex items-center gap-2.5 text-xs font-medium text-primary"
       >
         <span class="underline underline-offset-4">Learn more about how to deposit</span>
-        <LinkSVG class="h-4 w-4" />
+        <SvgoExternalLink class="h-4 w-4" />
       </a>
     </div>
   </div>

@@ -9,7 +9,7 @@ export async function signTypedData(
   provider: JsonRpcProvider,
   address: string,
   data: TypedData,
-): Promise<{ signature?: string; method?: string; cancelled?: boolean }> {
+): Promise<{ signature?: string, method?: string, cancelled?: boolean }> {
   const message = await getTypedDataMessage(provider, data.domain, data.types, data.value)
 
   // MetaMask needs to use `eth_signTypedData_v4`.

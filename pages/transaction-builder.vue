@@ -50,8 +50,7 @@ const modes: ITxBuilderMode[] = [{
 }, {
   label: 'Super Collapse',
   value: 'super-collapse',
-},
-{
+}, {
   label: 'Raw',
   value: 'raw',
 }]
@@ -59,7 +58,7 @@ const mode = ref<TxBuilderModes>('expand')
 
 provide('mode', mode)
 
-const { handleSubmit, values, meta, setFieldValue, resetField, setFieldError, setValues, errors } = useForm({
+const { handleSubmit, values, meta, setFieldValue, resetField, setFieldError, setValues } = useForm({
   keepValuesOnUnmount: true,
 })
 
@@ -450,8 +449,7 @@ watch(method, (_, oldMethod) => {
 
     cleanupFormValues(inputMethods)
   }
-},
-)
+})
 
 watch(mode, async (newMode, oldMode) => {
   validateMethod()
@@ -481,7 +479,7 @@ watch(mode, async (newMode, oldMode) => {
   const wasSuperCollapse = oldMode === 'super-collapse'
 
   if (isSuperCollapse) {
-    const actualValues = inputMethods.map((i) => {
+    const actualValues = inputMethods.map((i: any) => {
       if (!i.name)
         throw new Error('Invalid input')
 
@@ -499,7 +497,7 @@ watch(mode, async (newMode, oldMode) => {
     return
   }
 
-  inputMethods.forEach((i) => {
+  inputMethods.forEach((i: any) => {
     if (!i.name)
       throw new Error('Invalid input')
 

@@ -29,7 +29,7 @@ function formatIPFS(ipfs: string) {
   return ipfs
 }
 
-export default defineEventHandler<IToken[]>(async (event) => {
+export default defineEventHandler<IToken[]>(async () => {
   const providers = [
     // Mainnet
     {

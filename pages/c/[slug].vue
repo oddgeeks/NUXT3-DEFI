@@ -23,7 +23,7 @@ const eligible = ref(false)
 const claimed = ref(false)
 const claimSuccess = ref(false)
 const claiming = ref(false)
-const promo = ref<{ code: string; amount: number }>()
+const promo = ref<{ code: string, amount: number }>()
 
 function claimedConfetti() {
   fire(1, {

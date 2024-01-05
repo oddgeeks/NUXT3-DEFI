@@ -24,8 +24,7 @@ export function useNft() {
           console.error(i.reason)
 
         return acc
-      }
-      , [] as NFTData[])
+      }, [] as NFTData[])
     }
 
     private async fetchAlchemyNFTData(

@@ -10,7 +10,8 @@ const props = defineProps<{
   root?: boolean
 }>()
 
-const emit = defineEmits(['update:modelValue'])
+defineEmits(['update:modelValue'])
+
 const newInputShape = {
   ...props.input,
   type: props.input.type.replace('[]', ''),

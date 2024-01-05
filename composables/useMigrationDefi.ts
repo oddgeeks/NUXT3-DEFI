@@ -115,7 +115,7 @@ export function useMigrationDefi() {
             },
           ]
 
-          const totalBorrowedAmount = parseFloat(i.basePosition.borrowInUsd)
+          const totalBorrowedAmount = Number.parseFloat(i.basePosition.borrowInUsd)
 
           const suppliedTokens = getCommonSuppliedTokens(i.tokens)
 
@@ -129,7 +129,7 @@ export function useMigrationDefi() {
           }
 
           const totalSuppliedAmount = suppliedTokens.reduce((sum, j) => {
-            return sum + parseFloat(j.supplyInUsd)
+            return sum + Number.parseFloat(j.supplyInUsd)
           }, 0)
 
           const netAssets = totalSuppliedAmount - totalBorrowedAmount
@@ -145,15 +145,17 @@ export function useMigrationDefi() {
           const interstGenerated = minus(
             plus(
               times(i.basePosition.supplyInUsd, plus(div(i.basePosition.supplyAPY, 100), i.rewards[0].supplyApy)),
-              stakingInterestGenerated)
-            , times(i.basePosition.borrowInUsd, minus(div(i.basePosition.borrowAPY, 100), i.rewards[0].borrowApy)))
+              stakingInterestGenerated,
+            )
+            , times(i.basePosition.borrowInUsd, minus(div(i.basePosition.borrowAPY, 100), i.rewards[0].borrowApy)),
+          )
 
           const netAPY = times(div(interstGenerated, netAssets), 100)
 
           return {
             ...p,
             label: `${p.label} (${i.marketName})`,
-            healthFactor: toBN(i.healthFactor).gt(1e29) ? '∞' : parseFloat(i.healthFactor).toFixed(2),
+            healthFactor: toBN(i.healthFactor).gt(1e29) ? '∞' : Number.parseFloat(i.healthFactor).toFixed(2),
             apy: netAPY.toFixed(2),
             borrowedTokens,
             suppliedTokens,

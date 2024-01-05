@@ -38,15 +38,15 @@ interface ToAsset {
 }
 
 interface BridgeRouteErrors {
-  "polygon-bridge": PolygonBridge
+  'polygon-bridge': PolygonBridge
   hyphen: Hyphen
-  "arbitrum-bridge": ArbitrumBridge
-  "anyswap-router-v4": AnyswapRouterV4
-  "anyswap-router-v6": AnyswapRouterV6
+  'arbitrum-bridge': ArbitrumBridge
+  'anyswap-router-v4': AnyswapRouterV4
+  'anyswap-router-v6': AnyswapRouterV6
   hop: Hop
   celer: Celer
-  "refuel-bridge": RefuelBridge
-  "optimism-bridge": OptimismBridge
+  'refuel-bridge': RefuelBridge
+  'optimism-bridge': OptimismBridge
   stargate: Stargate
   cctp: Cctp
   connext: Connext
@@ -100,7 +100,6 @@ interface Connext {
   status: string
 }
 
-
 interface IScoketBuildTxResult {
   success: boolean
   result: Result
@@ -124,7 +123,6 @@ interface ApprovalData {
   owner: string
 }
 
-
 interface IRoute {
   routeId: string
   isOnlySwapRoute: boolean
@@ -147,13 +145,13 @@ interface IRoute {
 }
 
 interface MinimumGasBalances {
-  "1": string
-  "137": string
+  '1': string
+  '137': string
 }
 
 interface ChainGasBalances {
-  "1": N1
-  "137": N137
+  '1': N1
+  '137': N137
 }
 
 interface N1 {
@@ -334,42 +332,41 @@ interface ICrossEstimatedFee {
 interface Source {
   fee: string
   multiplier: string
-  discount: IEstimatedDiscount;
+  discount: IEstimatedDiscount
 }
 
 interface Target {
   fee: string
   multiplier: string
-  discount: IEstimatedDiscount;
+  discount: IEstimatedDiscount
 }
 
-
 interface ICombineFeeParams {
-  source: CombineFee,
+  source: CombineFee
   target: CombineFee
 }
 
-type CombineFee = {
-  chainId: string,
-  fee: string,
-  multiplier: string,
+interface CombineFee {
+  chainId: string
+  fee: string
+  multiplier: string
 }
 
 interface ICrossSignatures {
-  source: CrossSignature,
+  source: CrossSignature
   target: CrossSignature
-} 
-
-type CrossSignature = {
-    signature: string,
-    owner: string,
-    chainId: string,
 }
 
-type TotalFee = {
-    amount: string,
-    amountInUsd: string,
-    token: IBalance | null,
+interface CrossSignature {
+  signature: string
+  owner: string
+  chainId: string
+}
+
+interface TotalFee {
+  amount: string
+  amountInUsd: string
+  token: IBalance | null
 }
 
 interface ICrossChainTx {

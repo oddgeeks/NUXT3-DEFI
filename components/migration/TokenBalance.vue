@@ -4,11 +4,9 @@ import SVGX from '~/assets/images/icons/x.svg?component'
 const props = withDefaults(defineProps<{
   tokenBalance: IBalance
   showSelectedUi?: boolean
-}>(),
-{
+}>(), {
   showSelectedUi: false,
-},
-)
+})
 
 const emits = defineEmits(['toggleCheck'])
 

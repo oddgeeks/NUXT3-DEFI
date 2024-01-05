@@ -1,5 +1,5 @@
 export function useEagerConnect() {
-  const { activate, active, provider } = useWeb3()
+  const { activate, active } = useWeb3()
   const { getConnector } = useConnectors()
 
   const tried = ref(false)

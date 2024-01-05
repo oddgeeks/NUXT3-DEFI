@@ -85,7 +85,7 @@ function setFallbackDefaultMfaType(mfa: IMfa) {
   }
 }
 
-async function handleActivate(mfa: IMfa, _authMfa: IMfa) {
+async function handleActivate(mfa: IMfa, _authMfa?: IMfa) {
   try {
     if (!mfaTermsAccepted().value) {
       const { success } = await openMfaTermsModal()
@@ -106,7 +106,8 @@ async function handleActivate(mfa: IMfa, _authMfa: IMfa) {
         {
           mfa: authMfa,
           mfaRequestType: 'key',
-        })
+        },
+      )
 
       if (!verifySuccess)
         throw new Error($t('mfa.notifications.failedToActivate', { method: mfa.label }))

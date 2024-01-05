@@ -1,4 +1,3 @@
-
 interface IMultisigTransaction {
   id: string
   chain_id: string
@@ -53,7 +52,6 @@ interface ForwardParams {
   validUntil: string
 }
 
-
 interface ISignatureParams {
   signature: string
   signer: string
@@ -73,9 +71,9 @@ interface IMultisigBroadcastParams {
   signers: string[]
   targetChainId: string | number
   ignoreSlack?: boolean
-  mfa_code?: string,
-  mfa_type?: Mfa,
-  mfa_token?: string,
+  mfa_code?: string
+  mfa_type?: Mfa
+  mfa_token?: string
   debug?: any
 }
 
@@ -98,7 +96,7 @@ interface IAddSignerParams {
   actionsOnly?: boolean
 }
 
-type TransactionsAction = {
+interface TransactionsAction {
   to: string
   value?: string
   data?: string
@@ -106,20 +104,20 @@ type TransactionsAction = {
   target?: string
 }
 
-interface TransactionAction extends TransactionsAction { 
- chainId: number | string
+interface TransactionAction extends TransactionsAction {
+  chainId: number | string
 }
 
-type ResponseMeta = {
-  "total": number,
-  "per_page": number,
-  "current_page": number,
-  "last_page": number,
-  "first_page": number,
-  "first_page_url": string,
-  "last_page_url": string,
-  "next_page_url": string,
-  "previous_page_url": string
+interface ResponseMeta {
+  'total': number
+  'per_page': number
+  'current_page': number
+  'last_page': number
+  'first_page': number
+  'first_page_url': string
+  'last_page_url': string
+  'next_page_url': string
+  'previous_page_url': string
 }
 
 interface IMultisigTransactionResponse {
@@ -142,8 +140,9 @@ interface IGenerateMultisigSignatureParams {
 }
 
 interface IOpenNonceModalParams {
-  chainId: number | string;
-  actions: any[]; defaultNonce?: number;
+  chainId: number | string
+  actions: any[]
+  defaultNonce?: number
   estimatedFee?: boolean
   rejection?: boolean
   rejectionId?: string
@@ -152,8 +151,8 @@ interface IOpenNonceModalParams {
   options?: any
 }
 
-interface ICreateBatchModal{
-  
+interface ICreateBatchModal {
+
 }
 
 interface IOpenExecuteModalParams {
@@ -161,7 +160,7 @@ interface IOpenExecuteModalParams {
   isGasTopup: boolean
 }
 
-type SignerSteps = {
+interface SignerSteps {
   currentStep: number
   totalSteps: number
 }
@@ -181,12 +180,12 @@ interface ISelectSignerNetworkModalParams {
 }
 
 interface IReviewSignerModalParams {
-  addresses: ISignerAddress[],
+  addresses: ISignerAddress[]
   gnosisAddress?: string
   defaultSelectedNetworks?: number[]
   defaultThreshold?: number
 }
 
-type IMultisigAction = "add-signers" | "remove-signers" | "change-threshold";
+type IMultisigAction = 'add-signers' | 'remove-signers' | 'change-threshold'
 
-type TransactionActionType = IWeb3Action | IMultisigAction | 'others';
+type TransactionActionType = IWeb3Action | IMultisigAction | 'others'

@@ -93,7 +93,8 @@ export function useMfa() {
         icon: 'SvgoPhone',
         otpSentNotificationKey: 'mfa.notifications.SMSOtpSent',
 
-      }, {
+      },
+      {
         value: 'email',
         title: 'Enter your Email',
         enterOtpLabel: 'Enter email OTP',

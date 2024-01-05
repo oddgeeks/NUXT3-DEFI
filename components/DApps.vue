@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import '@splidejs/vue-splide/css'
-import SVGWalletConnect from '~/assets/images/wallet/wallet-connect-lite.svg?component'
+import SVGWalletConnect from '~/assets/images/wallet/wallet-connect-lite.svg'
 
 const wcStoreV2 = useWalletConnectV2()
 
@@ -10,7 +10,7 @@ const reducedSessions = computed(() => {
   if (!wcStoreV2.sessions?.length)
     return []
 
-  return wcStoreV2.sessions.slice(0, 3)
+  return wcStoreV2.sessions.slice(0, 4)
 })
 </script>
 
@@ -38,12 +38,12 @@ const reducedSessions = computed(() => {
 </template>
 
 <style>
-.dapp-wrapper > div:nth-last-of-type(-n+2) {
+.dapp-wrapper > div:nth-last-of-type(-n+3) {
     @apply hidden;
   }
 
 @screen sm {
-  .dapp-wrapper > div:nth-last-of-type(-n+2) {
+  .dapp-wrapper > div:nth-last-of-type(-n+3) {
     @apply flex;
   }
 }

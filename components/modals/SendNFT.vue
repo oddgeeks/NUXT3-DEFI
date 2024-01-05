@@ -107,8 +107,7 @@ const { data: txs } = useAsyncData<any>(
 
     const contractInterface = new ethers.utils.Interface(erc712ABI)
 
-    console.log('safeAddress.value: ', safeAddress.value, 'actualAddress.value: ', actualAddress.value,
-      'props.asset.tokenId: ', props.asset.tokenId)
+    console.log('safeAddress.value: ', safeAddress.value, 'actualAddress.value: ', actualAddress.value, 'props.asset.tokenId: ', props.asset.tokenId)
     const calldata = contractInterface.encodeFunctionData('transferFrom', [safeAddress.value, actualAddress.value, props.asset.tokenId])
 
     console.log('props.asset.contractAddress: ', props.asset.contractAddress)

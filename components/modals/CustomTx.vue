@@ -97,8 +97,8 @@ async function onSubmit() {
           <template #button-prefix>
             <ChainLogo class="h-6 w-6" :chain="chainId" />
           </template>
-          <template #item-prefix="{ value }">
-            <ChainLogo class="h-6 w-6" :chain="value" />
+          <template #item-prefix="{ value: chain }">
+            <ChainLogo class="h-6 w-6" :chain="chain" />
           </template>
         </CommonSelect>
       </div>

@@ -1,6 +1,6 @@
 import { promos } from '~/server/data/promos'
 
-export default defineNuxtRouteMiddleware(({ params: { slug } }, from) => {
+export default defineNuxtRouteMiddleware(({ params: { slug } }) => {
   if (!promos.some(el => el.slug === slug))
     throw createError({ statusCode: 400, statusMessage: 'Promo Not Found', message: 'This promo is invalid or has expired.' })
 })

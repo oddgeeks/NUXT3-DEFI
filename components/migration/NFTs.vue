@@ -48,7 +48,7 @@ const { data, pending } = useAsyncData(
       v-else
       :key="asset.name + asset.contractAddress + asset.tokenId"
       :asset="asset"
-      @toggleCheck="() => toggleSelectedNFTsForMigration(asset)"
+      @toggle-check="() => toggleSelectedNFTsForMigration(asset)"
     />
   </div>
 </template>

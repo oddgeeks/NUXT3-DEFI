@@ -62,7 +62,7 @@ const tokensWithBalance = computed(() => {
     .filter(i =>
       search.value
         ? i.name.toLowerCase().includes(search.value.toLowerCase())
-          || i.symbol.toLowerCase().includes(search.value.toLowerCase())
+        || i.symbol.toLowerCase().includes(search.value.toLowerCase())
         : true,
     )
 })

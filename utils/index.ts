@@ -20,8 +20,7 @@ export const injectFavicon = function (src: string) {
   head.appendChild(iconElement)
 }
 
-export async function slack(message: string,
-  type: ISlackMessageType = 'success', isBridgeError = false, isProd = false) {
+export async function slack(message: string, type: ISlackMessageType = 'success', isBridgeError = false, isProd = false) {
   await http('/api/slack', {
     method: 'POST',
     body: {
@@ -321,7 +320,7 @@ export function isAddressEqual(a?: string, b?: string) {
 }
 
 export function abbreviateNumber(num: string | number) {
-  if (isNaN(toBN(num).toNumber()))
+  if (Number.isNaN(toBN(num).toNumber()))
     return num
 
   if (toBN(num).toNumber() < 100000)

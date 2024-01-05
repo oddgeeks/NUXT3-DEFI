@@ -21,7 +21,7 @@ export class WalletConnectConnector extends AbstractConnector {
 
   public walletConnectProvider?: EthereumProvider
 
-  constructor({ supportedChainIds, projectId, rpcMap, methods }: { methods?: string[]; supportedChainIds: number[]; projectId: string; rpcMap: EthereumProviderOptions['rpcMap'] }) {
+  constructor({ supportedChainIds, projectId, rpcMap, methods }: { methods?: string[], supportedChainIds: number[], projectId: string, rpcMap: EthereumProviderOptions['rpcMap'] }) {
     super()
 
     const [defaultChain, ...optionalChains] = supportedChainIds

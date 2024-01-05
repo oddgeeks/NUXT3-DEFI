@@ -2,7 +2,6 @@
 import { Erc20__factory } from '~~/contracts'
 
 const { token, stepBack, data, actualAddress, isCrossChain } = useSend()
-const { addToTransactionStack } = useShared()
 const { account, library } = useWeb3()
 const { toWei } = useBignumber()
 const { sendTransactions } = useAvocadoSafe()
@@ -76,7 +75,9 @@ function getMetadata(single?: boolean) {
       token: token.value?.address!,
       amount: toWei(data.value.amount, token.value?.decimals),
       receiver: actualAddress.value,
-    }, single)
+    },
+    single,
+  )
 }
 
 const metadata = computed(() => {

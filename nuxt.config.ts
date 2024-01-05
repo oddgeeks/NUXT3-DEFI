@@ -60,6 +60,7 @@ export default defineNuxtConfig({
       navigateFallback: null,
       globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
     },
+    disable: process.env.NODE_ENV !== 'production',
     client: {
       // if enabling periodic sync for update use 1 hour or so (periodicSyncForUpdates: 3600)
       periodicSyncForUpdates: 20,
@@ -207,7 +208,8 @@ export default defineNuxtConfig({
         'aes-js',
         'bn.js',
         'js-sha3',
-        'hash.js'],
+        'hash.js',
+      ],
     },
     build: {
       commonjsOptions: {

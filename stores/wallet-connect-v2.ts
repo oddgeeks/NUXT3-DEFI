@@ -46,7 +46,6 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
   }
 
   function checkDappIsWarned(peerURL: string) {
-    console.log(walletConnectBannedDappList.value, peerURL)
     return walletConnectBannedDappList.value?.items.some(i => !!i?.warn && isSameOrigin(i.url, peerURL))
   }
 
@@ -96,7 +95,8 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
                 events: [
                   ...requiredEvents,
                   'accountsChanged',
-                  'chainChanged'],
+                  'chainChanged',
+                ],
               },
             },
           })
@@ -121,7 +121,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
   const syncActiveSessions = async () => {
     const sessionObjects = await web3WalletV2.value?.getActiveSessions() ?? {}
 
-    sessions.value = Object.entries(sessionObjects).map(([key, value]) => {
+    sessions.value = Object.entries(sessionObjects).map(([_key, value]) => {
       return value
     })
   }
@@ -134,7 +134,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
       metadata: walletConnectMetadata,
     })
 
-    web3WalletV2.value.on('session_delete', async (event) => {
+    web3WalletV2.value.on('session_delete', async () => {
       syncActiveSessions()
     })
 
@@ -281,13 +281,13 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
       }
       else if (
         request.method === 'eth_signTypedData_v4'
-                && String(params.request.params[0]).toLowerCase()
-                  === String(safe.safeAddress.value).toLowerCase()
+        && String(params.request.params[0]).toLowerCase()
+        === String(safe.safeAddress.value).toLowerCase()
       ) {
         const eip712Data = JSON.parse(params.request.params[1])
         if (
           eip712Data.domain.verifyingContract.toLowerCase()
-                  === '0x000000000022d473030f116ddee9f6b43ac78ba3'
+          === '0x000000000022d473030f116ddee9f6b43ac78ba3'
         ) {
           await switchToAvocadoNetwork()
           delete eip712Data.types.EIP712Domain
@@ -507,7 +507,7 @@ export const useWalletConnectV2 = defineStore('wallet_connect_v2', () => {
     throttle: 500,
   })
 
-  const normalizeChainId = (eip155ChainId: string) => {
+  function normalizeChainId(eip155ChainId: string) {
     return eip155ChainId.replace('eip155:', '')
   }
 
