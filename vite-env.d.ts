@@ -775,6 +775,8 @@ interface Discount {
 type ChainFees = Record<string, ICalculatedFee>
 type ChainFeeErrors = Record<string, string>
 
+type ChainSigners = Record<number | string, string[]>
+
 interface ISignerAddress {
   name: string
   address: string

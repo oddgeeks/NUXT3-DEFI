@@ -6,8 +6,8 @@ defineProps<{
 </script>
 
 <template>
-  <ul class="flex justify-between gap-4">
-    <li v-for="i in totalSteps" :key="i" :class="i <= currentStep ? 'bg-primary' : 'bg-slate-700 '" class="h-1.5 flex-1 rounded-5">
+  <ul class="flex max-w-[90%] justify-between gap-4">
+    <li v-for="i in totalSteps" :key="i" :class="i <= currentStep ? 'bg-primary' : 'bg-slate-700 '" class="h-0.5 flex-1 rounded-[10px]">
       <span class="sr-only">
         {{ i }}
       </span>

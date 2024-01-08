@@ -1,22 +1,11 @@
 <script setup lang="ts">
-import { getAddress, isAddress } from 'ethers/lib/utils'
+import { isAddress } from 'ethers/lib/utils'
 
 const route = useRoute()
+const { getSafe, getDefaultSafe } = useSafe()
 
 if (!route.params.safe || !isAddress(route.params.safe as string))
   throw new Error('Safe address is required')
-
-useAccountTrack(undefined, () => {
-  useEagerConnect()
-})
-
-const { getSafe } = useSafe()
-const { selectedSafe } = storeToRefs(useSafe())
-const { removeSignerWithThreshold } = useAvocadoSafe()
-const { account } = useWeb3()
-
-const selectedAddresses = ref<string[]>([])
-const selectedChainId = ref<string | number>()
 
 function defaultSteps() {
   return {
@@ -25,101 +14,70 @@ function defaultSteps() {
   }
 }
 
+useAccountTrack(undefined, () => {
+  useEagerConnect()
+})
+
+const addedSigners = ref<ChainSigners>({})
+
 const signerSteps = useState('signer-steps', defaultSteps)
 
-const isSafeDoesNotMatch = computed(() => {
-  const safe = route.params.safe as string
-  if (!selectedSafe.value || !safe)
-    return true
+const hasUnsavedChanges = computed(() => Object.values(addedSigners.value || {}).some(i => !!i.length))
 
-  return getAddress(safe) !== getAddress(selectedSafe.value?.safe_address)
-})
+const navigation = [
+  {
+    label: 'Add New Signer',
+    icon: 'SvgoPlusCircle',
+    class: 'text-primary',
+    click: handleAddSigner,
+  },
+  {
+    label: 'Delete Signers',
+    icon: 'SvgoTrash2',
+    class: 'text-red-alert',
+    click: handleDeleteSigner,
+  },
+  {
+    label: 'Copy Multisig setup between Networks',
+    icon: 'SvgoCopy',
+    click: openCopyMultisigSettingsModal,
+  },
+  {
+    label: 'Clone Gnosis Settings',
+    icon: 'SvgoSafe',
+    click: handleGnosisSetup,
+  },
+]
 
-const { data: multisigSafe } = useAsyncData(`${route.params.safe}-signers`, async () => {
-  const safeAddress = route.params.safe as string
-  const safe = await getSafe(safeAddress)
+const { data, refresh } = useAsyncData(
+  `${route.params.safe}-signers`,
+  async () => {
+    let safe = await getSafe(route.params.safe as string)
 
-  return safe
-}, {
-  server: false,
-  immediate: true,
-})
+    if (!safe)
+      safe = getDefaultSafe(route.params.safe as string)
 
-const availableSigners = computed(() => {
-  if (!multisigSafe?.value)
-    return []
+    const arr = Object.keys(safe.signers).map(key => ({ chainId: key, addresses: safe.signers[key] }))
 
-  const signers = multisigSafe?.value?.signers || {}
+    // Sort the array based on the length of the value arrays
+    arr.sort((a, b) => b.addresses.length - a.addresses.length)
 
-  return Object.entries(signers).reduce<IAvailableSigner[]>((acc, [chainId, addresses]) => {
-    if (addresses.length) {
-      acc.push({
-        chainId,
-        addresses,
-      })
+    return {
+      safe,
+      formattedSigners: arr,
     }
+  },
+)
 
-    return acc
-  }, [])
-})
+useIntervalFn(() => {
+  refresh()
+}, 10000)
 
-provide('selectedAddresses', selectedAddresses)
-provide('selectedChainId', selectedChainId)
-
-async function handleDeleteSigner() {
-  if (!selectedChainId.value)
-    return
-
-  const { success, payload: addresses } = await openDeleteSigner(selectedAddresses.value, selectedChainId.value)
-
-  if (success && addresses) {
-    const { payload: threshold, success: thresholdSuccess } = await openUpdateThresholdModal(selectedChainId.value, addresses.length * -1, {
-      activeStep: 2,
-      totalSteps: 3,
-    })
-
-    if (!thresholdSuccess)
-      return
-
-    const metadata = encodeRemoveSignersMetadata(addresses)
-
-    const txHash = await removeSignerWithThreshold({
-      addresses,
-      chainId: selectedChainId.value,
-      threshold,
-    })
-
-    if (txHash) {
-      logActionToSlack({
-        action: 'remove-signers',
-        account: account.value,
-        txHash,
-        message: generateSlackMessage(metadata, selectedChainId.value),
-        chainId: String(selectedChainId.value),
-      })
-
-      showPendingTransactionModal({
-        hash: txHash,
-        chainId: selectedChainId.value,
-      })
-    }
-
-    selectedAddresses.value = []
-    selectedChainId.value = undefined
-  }
-}
-
-function handleAddSignerModal() {
-  // clear all signed states
+function clearState() {
   for (const network of availableNetworks) {
     clearNuxtState(`signed-${network.chainId}`)
     clearNuxtState(`executed-${network.chainId}`)
   }
-
-  signerSteps.value.currentStep = 1
-  signerSteps.value.totalSteps = 4
-
-  openAddSignerModal()
 }
 
 function handleGnosisSetup() {
@@ -129,60 +87,65 @@ function handleGnosisSetup() {
   openFetchGnosisSafeModal()
 }
 
-watch(selectedAddresses, () => {
-  setTimeout(() => {
-    if (selectedAddresses.value.length === 0)
-      selectedChainId.value = undefined
-  }, 0)
-})
+function handleAddSigner() {
+  clearState()
+  signerSteps.value.currentStep = 1
+  signerSteps.value.totalSteps = 4
 
-onMounted(() => {
-  signerSteps.value = defaultSteps()
-})
+  openAddSignerModal()
+}
+
+function handleDeleteSigner() {
+  openDeleteSignersModal()
+}
+
+function handleProceed() {
+  clearState()
+
+  openReviewSignersModal(addedSigners.value)
+}
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col gap-5 sm:gap-10">
-    <div class="flex flex-col gap-2.5">
-      <h2 class="text-base">
-        Manage Multisig Signers
-      </h2>
-      <div class="flex flex-wrap justify-between gap-5">
-        <span class="text-xs leading-5 text-gray-400">
-          Signers are addresses that are required to sign transactions before they can be executed on<br> the blockchain.
-        </span>
-        <fieldset :disabled="isSafeDoesNotMatch" class="flex w-full items-center justify-between gap-7.5 self-start sm:w-auto">
-          <button class="flex items-center gap-2.5 whitespace-nowrap text-xs text-primary disabled:text-gray-400" @click="handleAddSignerModal()">
-            <div class="flex h-4.5 w-4.5 rounded-full bg-current">
-              <SvgoPlus class="m-auto h-2 w-2 text-white" />
-            </div>
-            Add New Signer(s)
-          </button>
-          <button :disabled="!selectedAddresses.length" class="flex items-center gap-2.5 whitespace-nowrap text-xs text-red-alert disabled:text-gray-400" @click="handleDeleteSigner">
-            Delete Selected
-            <SvgoTrash2 class="h-3.5 w-3.5" />
-          </button>
-        </fieldset>
+  <div class="flex flex-1 flex-col gap-7.5">
+    <div class="flex flex-col gap-5">
+      <div class="flex flex-col gap-2.5">
+        <h1 class="text-3xl/10 font-bold">
+          Manage Multisig Signers
+        </h1>
+        <h2 class="text-sm text-gray-400 sm:max-w-lg">
+          Signers are addresses that are required to sign transactions before they can be executed on the blockchain.
+        </h2>
       </div>
-      <div v-if="!isSafeDoesNotMatch" class="mb-2.5 flex items-center justify-between rounded-[25px] bg-gray-850 p-[18px] font-medium sm:px-7.5 sm:py-6.5">
-        <div class="flex items-center gap-3">
-          <SvgoSafe class="h-7.5 w-7.5" />
-          <div class="flex flex-col gap-1.5">
-            Clone your existing Safe on Avocado in just 1 click!
-          </div>
-        </div>
-        <CommonButton @click="handleGnosisSetup">
-          Setup Now
+      <div class="flex flex-wrap items-center justify-between gap-5 sm:flex-nowrap">
+        <ul class="grid w-full grid-cols-2 gap-2.5 sm:flex sm:items-center">
+          <li v-for="item in navigation" :key="item.label">
+            <button :class="item.class" type="button" class="flex w-full items-center gap-1.5 rounded-2xl bg-gray-900 p-2.5 text-[10px] sm:gap-3 sm:px-4 sm:py-3 sm:text-xs" @click="item.click">
+              <Component :is="item.icon" class="h-3 w-3 shrink-0 sm:h-4.5 sm:w-4.5" />
+              <span class="max-w-[150px] truncate sm:max-w-none">
+                {{ item.label }}
+              </span>
+            </button>
+          </li>
+        </ul>
+        <CommonButton class="whitespace-nowrap" :disabled="!hasUnsavedChanges" @click="handleProceed">
+          Submit Changes
         </CommonButton>
       </div>
     </div>
-
-    <div class="flex flex-col gap-2">
-      <div class="flex flex-col gap-5">
-        <template v-for="item in availableSigners" :key="item.chainId">
-          <MultisigSignersItem v-if="multisigSafe" :chain-id="item.chainId" :multisig-safe="multisigSafe" :item="item" />
-        </template>
-      </div>
+    <div v-if="data" class="grid grid-cols-1 gap-4.5 sm:grid-cols-3">
+      <template v-for="item of data.formattedSigners" :key="item.chainId">
+        <MultisigSignerCard v-model="addedSigners" :safe="data.safe" :chain-id="item.chainId" />
+      </template>
     </div>
+    <CommonNotification v-if="hasUnsavedChanges" type="warning" class="bottom-10 flex w-fit gap-5 !rounded-2xl !bg-[#201b1a] sm:fixed">
+      <div class="flex gap-2.5 text-xs/5">
+        <SvgoInfo2 class="mt-1" />
+        You have unsaved changes to your Multisig Signers.,<br> click Submit Changes to proceed.
+      </div>
+      <CommonButton class="py-[5px]" size="sm" @click="handleProceed">
+        Submit Changes
+      </CommonButton>
+    </CommonNotification>
   </div>
 </template>
