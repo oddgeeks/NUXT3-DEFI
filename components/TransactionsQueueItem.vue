@@ -28,10 +28,14 @@ async function waitForTransaction() {
   try {
     await wait(5000)
     const provider = getRpcProviderByChainId(props.transactionParam.chainId)
+    const isMainnet = props.transactionParam.chainId == '1'
 
-    transaction.value = await retry(() => provider.waitForTransaction(props.transactionParam.hash, 1, 20_000), {
+    const confirmations = isMainnet ? 2 : 1
+    const delay = isMainnet ? 15000 : 10000
+
+    transaction.value = await retry(() => provider.waitForTransaction(props.transactionParam.hash, confirmations, 20_000), {
       timeouts: [5000, 10000, 15000],
-      delay: 10000,
+      delay,
     })
   }
   finally {

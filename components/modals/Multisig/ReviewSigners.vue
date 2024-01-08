@@ -20,7 +20,7 @@ const uniqueAddresses = computed(() => {
 })
 
 async function handleContinue() {
-  const { success: signSuccess } = await openSignSignersModal(props.chainSigners)
+  openSignSignersModal(props.chainSigners)
 }
 </script>
 

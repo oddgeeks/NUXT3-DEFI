@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const emit = defineEmits(['destroy'])
+defineEmits(['destroy'])
 
 const { signers } = storeToRefs(useMultisig())
 const { getContactNameByAddress } = useContacts()

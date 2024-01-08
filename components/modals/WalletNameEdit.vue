@@ -4,7 +4,6 @@ import { useField, useForm } from 'vee-validate'
 
 const props = defineProps<{
   safe: ISafe
-  walletName: string
 }>()
 
 const emit = defineEmits(['destroy'])
