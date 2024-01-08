@@ -10,6 +10,7 @@ export function useContacts() {
   const abortController = ref<AbortController | null>(null)
   const { parseTransactionError } = useErrorHandler()
   const { allSafes } = storeToRefs(useSafe())
+  const { getWalletLabel } = useSafeUtils()
 
   const ownerContact = computed(() => {
     if (!account.value)
@@ -37,12 +38,12 @@ export function useContacts() {
       if (existingContact)
         continue
 
-      const walletName = useLocalStorage(`safe-label-${safe.safe_address}`, '')
+      const walletName = getWalletLabel(safe)
 
       result.push({
         address: safe.safe_address,
         chainId: '',
-        name: walletName?.value || '',
+        name: walletName || '',
         notDeletable: true,
       })
     }

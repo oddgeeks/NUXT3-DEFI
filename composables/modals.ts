@@ -47,7 +47,7 @@ import SignSigners from '~/components/modals/Multisig/SignSigners.vue'
 import DeleteSigners from '~/components/modals/Multisig/DeleteSigners.vue'
 import DeleteSignersByNetwork from '~/components/modals/Multisig/DeleteSignersByNetwork.vue'
 import CopyMultisigSettings from '~/components/modals/Multisig/CopyMultisigSettings.vue'
-import MultisigSelectNetworkCopy from '~/components/modals/Multisig/MultisigSelectNetwork.vue'
+import MultisigSelectNetworks from '~/components/modals/Multisig/MultisigSelectNetworks.vue'
 
 import UpdateNoticeModal from '~/components/modals/UpdateNotice.vue'
 import CreateBatchModal from '~/components/modals/CreateBatchModal.vue'
@@ -625,13 +625,12 @@ export function openUpdateThresholdModal(chainId: number | string, additionalCou
   })
 }
 
-export function openWalletNameEditModal(safe: ISafe, walletName: string) {
+export function openWalletNameEditModal(safe: ISafe) {
   return openModal({
     component: WalletNameEdit,
     async: true,
     componentProps: {
       safe,
-      walletName,
     },
   })
 }
@@ -1071,7 +1070,7 @@ export function openCopyMultisigSettingsModal() {
 
 export function openSelectMultisigNetworkModal(selectedChainId: number | string) {
   return openModal({
-    component: MultisigSelectNetworkCopy,
+    component: MultisigSelectNetworks,
     async: true,
     options: {
       wrapperClass: '!max-w-[500px]',

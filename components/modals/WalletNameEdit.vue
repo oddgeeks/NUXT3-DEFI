@@ -9,6 +9,8 @@ const props = defineProps<{
 
 const emit = defineEmits(['destroy'])
 
+const { getStorageSafeLabel, getWalletLabel } = useSafeUtils()
+
 const {
   handleSubmit,
   isSubmitting,
@@ -22,12 +24,11 @@ const {
   }),
 })
 
-const { value: name, meta: nameMeta } = useField<string>('wallet-name', {}, { initialValue: props.walletName })
+const { value: name, meta: nameMeta } = useField<string | null>('wallet-name', {}, { initialValue: getWalletLabel(props.safe) })
 const disabled = computed(() => !meta.value.valid || isSubmitting.value)
 
 const onSubmit = handleSubmit(() => {
-  const storageWallet = useLocalStorage<string>(`safe-label-${props.safe?.safe_address}`, '')
-  storageWallet.value = name.value
+  getStorageSafeLabel(props.safe.safe_address).value = name.value
   emit('destroy')
 })
 </script>
