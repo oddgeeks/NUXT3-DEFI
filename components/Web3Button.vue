@@ -111,7 +111,8 @@ const connectedProvider = computed(() => {
                   <ProviderLogo v-if="connectedProvider" class="h-7.5 w-7.5 sm:h-9 sm:w-9" :provider-name="connectedProvider.name" />
                   <div class="flex flex-col items-start gap-2">
                     <span class="text-xs font-medium leading-[10px] text-gray-500">Owner's Address</span>
-                    <span class="inline-flex items-center gap-2 text-lg font-semibold leading-5">{{ addressLabel }}
+                    <span class="inline-flex items-center gap-2 text-lg font-semibold leading-5 text-white">
+                      {{ addressLabel }}
                       <Copy :text="trackingAccount || account" :icon-only="true" />
                     </span>
                   </div>
