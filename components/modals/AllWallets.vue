@@ -6,6 +6,7 @@ const { allSafes, mainSafe, selectedSafe, safeAddress, accountCustomSafeMapping 
 const { getDefaultSafe } = useSafe()
 const { userToggleShowLegacy, displayLegacySafe } = useAccountState()
 const { multisigForwarderProxyAddress } = storeToRefs(useEnvironmentState())
+const { getWalletLabel } = useSafeUtils()
 const { getRpcProviderByChainId } = useShared()
 const { account } = useWeb3()
 
@@ -100,7 +101,7 @@ const filteredSafes = computed(() => {
   const safesWithName = safes.map((i) => {
     return {
       ...i,
-      name: useLocalStorage(`safe-label-${i.safe_address}`, '').value,
+      name: getWalletLabel(i),
     }
   })
 

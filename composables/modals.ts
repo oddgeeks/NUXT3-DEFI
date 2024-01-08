@@ -11,7 +11,7 @@ import TokenSelection from '~~/components/modals/TokenSelection.vue'
 import ImportToken from '~~/components/modals/ImportToken.vue'
 import CustomToken from '~~/components/modals/CustomToken.vue'
 import WCTransaction from '~~/components/modals/WCTransaction.vue'
-import PowerOffSVG from '~/assets/images/icons/power-off-bg.svg?component'
+import PowerOffSVG from '~/assets/images/icons/power-off-bg.svg'
 import Dialog from '~~/components/modals/Dialog.vue'
 import CustomTx from '~~/components/modals/CustomTx.vue'
 import UpgradeVersion from '~~/components/modals/UpgradeVersion.vue'
@@ -41,6 +41,14 @@ import SignDeleteSigner from '~/components/modals/Multisig/SignDeleteSigner.vue'
 import UpdateThreshold from '~/components/modals/Multisig/UpdateThreshold.vue'
 import FetchGnosisSafe from '~/components/modals/Multisig/FetchGnosisSafe.vue'
 import MultisigSelectNetwork from '~/components/modals/Multisig/SelectNetwork.vue'
+
+import ReviewSigners from '~/components/modals/Multisig/ReviewSigners.vue'
+import SignSigners from '~/components/modals/Multisig/SignSigners.vue'
+import DeleteSigners from '~/components/modals/Multisig/DeleteSigners.vue'
+import DeleteSignersByNetwork from '~/components/modals/Multisig/DeleteSignersByNetwork.vue'
+import CopyMultisigSettings from '~/components/modals/Multisig/CopyMultisigSettings.vue'
+import MultisigSelectNetworks from '~/components/modals/Multisig/MultisigSelectNetworks.vue'
+
 import UpdateNoticeModal from '~/components/modals/UpdateNotice.vue'
 import CreateBatchModal from '~/components/modals/CreateBatchModal.vue'
 import ViewDecodedModal from '~/components/modals/Multisig/ViewDecodedModal.vue'
@@ -521,6 +529,29 @@ export function openSignSignerModal(addresses: ISignerAddress[], chainIds: numbe
   })
 }
 
+export function openDeleteSignersModal() {
+  return openModal({
+    component: DeleteSigners,
+    options: {
+      wrapperClass: 'max-w-[600px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export function openDeleteSignersByNetwork(addresses: string[]) {
+  return openModal({
+    component: DeleteSignersByNetwork,
+    componentProps: {
+      addresses,
+    },
+    options: {
+      wrapperClass: 'max-w-[600px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
 export function openDeleteSignerSign(address: string, chainId: number | string) {
   return openModal({
     component: SignDeleteSigner,
@@ -594,13 +625,12 @@ export function openUpdateThresholdModal(chainId: number | string, additionalCou
   })
 }
 
-export function openWalletNameEditModal(safe: ISafe, walletName: string) {
+export function openWalletNameEditModal(safe: ISafe) {
   return openModal({
     component: WalletNameEdit,
     async: true,
     componentProps: {
       safe,
-      walletName,
     },
   })
 }
@@ -996,6 +1026,59 @@ export function openTransactionBatchModal() {
       wrapperClass: '!max-w-[600px]',
     },
     async: true,
+  })
+}
+
+export function openReviewSignersModal(chainSigners: ChainSigners) {
+  return openModal({
+    component: ReviewSigners,
+    async: true,
+    options: {
+      wrapperClass: '!max-w-[600px]',
+      contentClass: '!p-0',
+    },
+    componentProps: {
+      chainSigners,
+    },
+  })
+}
+
+export function openSignSignersModal(chainSigners: ChainSigners) {
+  return openModal({
+    component: SignSigners,
+    async: true,
+    options: {
+      wrapperClass: '!max-w-[600px]',
+      contentClass: '!p-0',
+    },
+    componentProps: {
+      chainSigners,
+    },
+  })
+}
+
+export function openCopyMultisigSettingsModal() {
+  return openModal({
+    component: CopyMultisigSettings,
+    async: true,
+    options: {
+      wrapperClass: '!max-w-[600px]',
+      contentClass: '!p-0',
+    },
+  })
+}
+
+export function openSelectMultisigNetworkModal(selectedChainId: number | string) {
+  return openModal({
+    component: MultisigSelectNetworks,
+    async: true,
+    options: {
+      wrapperClass: '!max-w-[500px]',
+      contentClass: '!p-0',
+    },
+    componentProps: {
+      selectedChainId,
+    },
   })
 }
 

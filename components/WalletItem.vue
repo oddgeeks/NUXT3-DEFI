@@ -14,6 +14,7 @@ const { safeTotalBalanceMapping, selectedSafe } = storeToRefs(useSafe())
 const { checkSafeIsActualMultisig } = useMultisig()
 const { togglePinSafe, isSafePinned, pinnedSafes } = useAccountState()
 const { instadappSigner } = storeToRefs(useEnvironmentState())
+const { getFallbackLabel, safeLabelStorageKey } = useSafeUtils()
 
 const isMultisig = computed(() => checkSafeIsActualMultisig(props.safe))
 const isProtected = computed(() => checkSafeProtected(props.safe, instadappSigner.value))
@@ -21,9 +22,9 @@ const isLegacy = computed(() => props.safe?.multisig === 0)
 const balance = computed(() => safeTotalBalanceMapping.value[props.safe?.safe_address])
 const safePinned = computed(() => isSafePinned(props.safe.safe_address))
 
-const walletStorageName = useLocalStorage(`safe-label-${props.safe?.safe_address}`, null)
+const walletStorageName = useLocalStorage(`${safeLabelStorageKey}-${props.safe?.safe_address}`, null)
 
-const walletName = computed(() => walletStorageName.value || (isMultisig.value ? 'MultiSig' : isLegacy.value ? 'Legacy' : 'Personal'))
+const walletName = computed(() => walletStorageName.value || getFallbackLabel(props.safe))
 
 const baseColorClass = computed(() => isMultisig.value ? 'text-purple' : isLegacy.value ? 'text-gray-400' : 'text-primary')
 
@@ -41,7 +42,7 @@ const { data: pendingTxnsCount } = useAsyncData(`safe-pending-multisig-txns-${pr
 })
 
 async function onEdit() {
-  openWalletNameEditModal(props.safe, walletName.value)
+  openWalletNameEditModal(props.safe)
 }
 
 function handleClick() {

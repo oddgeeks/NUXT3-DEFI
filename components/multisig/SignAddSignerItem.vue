@@ -58,6 +58,9 @@ async function handleSign() {
     })
 
     for (const signer of actualSigners) {
+      if (!signer.name)
+        continue
+
       const contact = safeContacts.value.find(contact => getAddress(contact.address) === getAddress(signer.address))
 
       const newContact = {
@@ -115,10 +118,10 @@ async function handleSign() {
 <template>
   <li class="flex w-full items-center justify-between">
     <span class="flex items-center gap-3 text-sm leading-5">
-      <ChainLogo class="h-[26px] w-[26px]" :chain="chainId" />
+      <ChainLogo class="h-7.5 w-7.5" :chain="chainId" />
       {{ chainIdToName(chainId) }}
     </span>
-    <CommonButton :disabled="pending || signed || executed" :loading="pending" @click="handleSign">
+    <CommonButton class="min-w-[70px] justify-center" :disabled="pending || signed || executed" :loading="pending" @click="handleSign">
       {{ executed ? 'Executed' : signed ? 'Signed' : 'Sign' }}
     </CommonButton>
   </li>

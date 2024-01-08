@@ -10,6 +10,7 @@ export function useContacts() {
   const abortController = ref<AbortController | null>(null)
   const { parseTransactionError } = useErrorHandler()
   const { allSafes } = storeToRefs(useSafe())
+  const { getWalletLabel } = useSafeUtils()
 
   const ownerContact = computed(() => {
     if (!account.value)
@@ -37,12 +38,12 @@ export function useContacts() {
       if (existingContact)
         continue
 
-      const walletName = useLocalStorage(`safe-label-${safe.safe_address}`, '')
+      const walletName = getWalletLabel(safe)
 
       result.push({
         address: safe.safe_address,
         chainId: '',
-        name: walletName?.value || '',
+        name: walletName || '',
         notDeletable: true,
       })
     }
@@ -134,12 +135,17 @@ export function useContacts() {
     }
   }
 
-  const getSentTimes = (contact: IContact) => {
-    const info = transferCounts.value.find(
+  function getSentTimesByAddress(address: string, chainId: string | number) {
+    return transferCounts.value.find(
       item =>
-        item.to.toLowerCase() === contact.address.toLowerCase()
-        && item.chainId == contact.chainId,
+        item.to.toLowerCase() === address.toLowerCase()
+        && item.chainId == chainId,
     )
+  }
+
+  const getSentTimes = (contact: IContact) => {
+    const info = getSentTimesByAddress(contact.address, contact.chainId)
+
     if (!info)
       return ''
 
@@ -187,6 +193,12 @@ export function useContacts() {
     return ''
   }
 
+  function getContactByAddress(address: string) {
+    return safeContacts.value.find(
+      contact => getAddress(contact.address) === getAddress(address),
+    )
+  }
+
   return {
     ownerContact,
     safeContacts,
@@ -198,6 +210,8 @@ export function useContacts() {
     getSentTimes,
     migrateOldContacts,
     getContactNameByAddress,
+    getSentTimesByAddress,
     fetchTransferCounts,
+    getContactByAddress,
   }
 }

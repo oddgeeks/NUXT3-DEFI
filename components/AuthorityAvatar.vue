@@ -9,7 +9,7 @@ const randomId = Math.random().toString(36).substr(2, 9)
 <template>
   <svg
     :style="{
-      color: generateColor(address),
+      color: generateColor(address || '0x'),
     }" width="30" height="30" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 30 30"
   >
     <g fill="currentColor" :clip-path="`url(#${randomId})`">
