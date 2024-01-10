@@ -8,7 +8,6 @@ const { transactionStack } = storeToRefs(useShared())
 const { removeActionsByChainId, removeActionsByMetadata } = useShared()
 const { tokens } = storeToRefs(useTokens())
 const { sendTransactions } = useAvocadoSafe()
-const { switchToAvocadoNetwork } = useNetworks()
 const { parseTransactionError } = useErrorHandler()
 
 const loading = ref(false)
@@ -57,32 +56,19 @@ async function onSubmit() {
   try {
     loading.value = true
 
-    await switchToAvocadoNetwork()
-
     for await (const action of multipleActions.value) {
-      try {
-        const hash = await sendTransactions(
-          action.actions,
-          action.chainId,
-          action.options,
-          'transfer',
-        )
+      const hash = await sendTransactions(
+        action.actions,
+        action.chainId,
+        action.options,
+        'transfer',
+      )
 
-        if (hash) {
-          addTransactionToQueue({
-            hash,
-            chainId: action.chainId,
-          })
-        }
-      }
-      catch (e: any) {
-        const err = parseTransactionError(e)
-
-        openSnackbar({
-          message: err.formatted,
-          type: 'error',
+      if (hash) {
+        addTransactionToQueue({
+          hash,
+          chainId: action.chainId,
         })
-        continue
       }
     }
 
